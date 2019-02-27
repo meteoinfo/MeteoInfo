@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.meteoinfo</groupId>
+        <groupId>org.meteothink</groupId>
         <artifactId>MeteoInfo</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
@@ -89,11 +89,6 @@
             <version>0.97-incubator</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wContour</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <dependency>
             <groupId>com.toedter</groupId>
             <artifactId>jcalendar</artifactId>
             <version>1.4</version>
@@ -112,6 +107,16 @@
             <groupId>org.mozilla.intl</groupId>
             <artifactId>chardet</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.meteoinfo</groupId>
+            <artifactId>wContour</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wContour</artifactId>
+            <version>1.6.1</version>
         </dependency>
     </dependencies>
     <properties>

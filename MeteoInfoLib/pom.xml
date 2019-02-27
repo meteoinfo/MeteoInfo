@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.meteothink</groupId>
         <artifactId>MeteoInfo</artifactId>
-        <version>1.7-SNAPSHOT</version>
+        <version>1.7.5</version>
     </parent>
     <artifactId>MeteoInfoLib</artifactId>
     <packaging>jar</packaging>
@@ -109,7 +109,7 @@
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>org.meteoinfo</groupId>
+            <groupId>org.meteothink</groupId>
             <artifactId>wContour</artifactId>
             <version>1.6.1</version>
         </dependency>

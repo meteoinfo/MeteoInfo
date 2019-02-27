@@ -4,16 +4,11 @@
     <parent>
         <groupId>org.meteothink</groupId>
         <artifactId>MeteoInfo</artifactId>
-        <version>1.7-SNAPSHOT</version>
+        <version>1.7.5</version>
     </parent>
     <artifactId>MeteoInfoMap</artifactId>
     <packaging>jar</packaging>
     <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>MeteoInfoLib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -28,6 +23,11 @@
             <groupId>com.fifesoft</groupId>
             <artifactId>rsyntaxtextarea</artifactId>
             <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>MeteoInfoLib</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <properties>

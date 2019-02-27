@@ -207,6 +207,10 @@ public class Options {
      * @throws javax.xml.parsers.ParserConfigurationException
      */
     public void saveConfigFile(String fileName) throws ParserConfigurationException {
+        if (fileName == null) {
+            return;
+        }
+        
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.newDocument();

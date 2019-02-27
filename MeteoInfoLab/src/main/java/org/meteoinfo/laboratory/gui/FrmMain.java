@@ -119,14 +119,16 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             }
         }
         String cf = this.options.getCurrentFolder();
-        if (!new File(cf).isDirectory()) {
-            cf = this.startupPath;
-            this.options.setCurrentFolder(cf);
+        if (cf != null) {
+            if (!new File(cf).isDirectory()) {
+                cf = this.startupPath;
+                this.options.setCurrentFolder(cf);
+            }
+            if (!this.options.getRecentFolders().contains(cf)) {
+                this.jComboBox_CurrentFolder.addItem(cf);
+            }
+            this.jComboBox_CurrentFolder.setSelectedItem(cf);
         }
-        if (!this.options.getRecentFolders().contains(cf)) {
-            this.jComboBox_CurrentFolder.addItem(cf);
-        }
-        this.jComboBox_CurrentFolder.setSelectedItem(cf);
 
         //Add dockable panels
         CControl control = new CControl(this);
@@ -152,22 +154,24 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             toolboxPath = "D:/MyProgram/Java/MeteoInfoDev/toolbox";
         }
         String appConfFn = toolboxPath + File.separator + "apps.xml";
-        try {
-            this.apps.setPluginPath(toolboxPath);
-            this.apps.loadConfigFile(appConfFn);
-            if (this.apps.size() > 0) {
-                for (Application app : apps) {
-                    if (app.isLoad()) {
-                        this.loadApplication(app);
+        if (new File(appConfFn).exists()) {
+            try {
+                this.apps.setPluginPath(toolboxPath);
+                this.apps.loadConfigFile(appConfFn);
+                if (this.apps.size() > 0) {
+                    for (Application app : apps) {
+                        if (app.isLoad()) {
+                            this.loadApplication(app);
+                        }
                     }
                 }
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ParserConfigurationException | SAXException ex) {
+                Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException | SAXException ex) {
-            Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         final PythonInteractiveInterpreter interp = this.consoleDock.getInterpreter();
@@ -262,7 +266,9 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         figuresDock = new FigureDockable(this, "Figures", "Figures");
         this.variableDock = new VariableDockable("Variables", "Variable explorer");
         this.fileDock = new FileDockable("Files", "File explorer");
-        this.fileDock.setPath(new File(cf));
+        if (cf != null) {
+            this.fileDock.setPath(new File(cf));
+        }
         this.fileDock.getFileExplorer().addCurrentPathChangedListener(new ICurrentPathChangedListener() {
             @Override
             public void currentPathChangedEvent(CurrentPathChangedEvent event) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\ensemble"/>
@@ -21,12 +21,14 @@
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\xor.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\text_rotation.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\latex_4.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\xor.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\text_rotation.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\latex_4.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg_1.py"/>
     </RecentFiles>
   </File>
   <Font>

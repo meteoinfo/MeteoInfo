@@ -106,7 +106,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             mapPath = mapPath.substring(1);
         }
         if (isDebug) {
-            path = "D:/MyProgram/Java/MeteoInfoDev/MeteoInfoLab/pylib";
+            //path = "D:/MyProgram/Java/MeteoInfoDev/MeteoInfoLab/pylib";
             toolboxPath = "D:/MyProgram/Java/MeteoInfoDev/toolbox";
             mapPath = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo/map";
         }

@@ -24,7 +24,7 @@ import org.meteoinfo.projection.proj4j.datum.*;
  * <pre>
  * [ SrcProjCRS {InverseProjection} ] SrcGeoCRS [ {Datum Conversion} ] TgtGeoCRS [ {Projection} TgtProjCRS ]
  * </pre>
- * <tt>BasicCoordinateTransform</tt> objects are stateful, 
+ * BasicCoordinateTransform objects are stateful, 
  * and thus are not thread-safe.
  * However, they may be reused any number of times within a single thread.
  * <p>

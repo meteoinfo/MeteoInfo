@@ -2840,7 +2840,7 @@ public class VectorLayer extends MapLayer {
     }
 
     /**
-     * Update legend scheme -> update legend indexes of the shapes
+     * Update legend scheme - update legend indexes of the shapes
      */
     public void updateLegendIndexes() {
         LegendScheme ls = this.getLegendScheme();

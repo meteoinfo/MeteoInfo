@@ -30,7 +30,7 @@ public class ProjCoordinate {
     public double y;
     /**
      * The Z ordinate for this point. If this variable has the value
-     * <tt>Double.NaN</tt> then this coordinate does not have a Z value. <p>
+     * Double.NaN then this coordinate does not have a Z value. <p>
      * Note: This member variable can be accessed directly. In the future this
      * direct access should be replaced with getter and setter methods. This
      * will require refactoring of the Proj4J code base.
@@ -146,7 +146,7 @@ public class ProjCoordinate {
 
     /**
      * Sets the value of this coordinate to be equal to the given ordinates. The
-     * Z ordinate is set to <tt>NaN</tt>.
+     * Z ordinate is set to NaN.
      *
      * @param x the x ordinate
      * @param y the y ordinate
@@ -305,7 +305,7 @@ public class ProjCoordinate {
 
     /**
      * Returns a string representing the ProjPoint in the format:
-     * <tt>ProjCoordinate[X Y Z]</tt>. <p> Example:
+     * ProjCoordinate[X Y Z]. <p> Example:
      * <pre>
      *    ProjCoordinate[6241.11 5218.25 12.3]
      * </pre>
@@ -324,8 +324,8 @@ public class ProjCoordinate {
     }
 
     /**
-     * Returns a string representing the ProjPoint in the format: <tt>[X Y]</tt>
-     * or <tt>[X, Y, Z]</tt>. Z is not displayed if it is NaN. <p> Example:
+     * Returns a string representing the ProjPoint in the format: [X Y]
+     * or [X, Y, Z]. Z is not displayed if it is NaN. <p> Example:
      * <pre>
      * 		[6241.11, 5218.25, 12.3]
      * </pre>

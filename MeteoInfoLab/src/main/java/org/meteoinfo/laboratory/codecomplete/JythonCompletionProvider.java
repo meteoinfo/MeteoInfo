@@ -31,7 +31,6 @@ public class JythonCompletionProvider extends LanguageAwareCompletionProvider {
      * @return The provider.
      * @see #createCommentCompletionProvider()
      * @see #createStringCompletionProvider()
-     * @see #addShorthandCompletions(DefaultCompletionProvider)
      */
     protected CompletionProvider createCodeCompletionProvider() {
         CompletionProvider cp = new JythonSourceCompletionProvider();

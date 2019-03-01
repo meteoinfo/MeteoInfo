@@ -22,7 +22,7 @@ public interface JythonSourceCompletion extends Completion {
 
 
 	/**
-	 * Used by {@link JythonCellRenderer} to render this completion choice.
+	 * Used by JythonCellRenderer to render this completion choice.
 	 *
 	 * @param g
 	 * @param x

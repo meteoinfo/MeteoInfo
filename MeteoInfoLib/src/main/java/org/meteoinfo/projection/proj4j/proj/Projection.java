@@ -333,7 +333,7 @@ public abstract class Projection implements Cloneable {
 
     /**
      * Tests whether this projection has an inverse. If this method returns
-     * <tt>true</tt>
+     * true
      * then the {@link #inverseProject(ProjCoordinate, ProjCoordinate)} and
      * {@link #inverseProjectRadians(ProjCoordinate, ProjCoordinate)} methods
      * will return meaningful results.

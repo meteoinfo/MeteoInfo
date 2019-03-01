@@ -7,7 +7,7 @@ package org.meteoinfo.data.dataframe.impl;
 
 /**
  * A function that is applied to objects (rows or values) in a
- * {@linkplain DataFrame data frame}.
+ * DataFrame.
  *
  * <p>
  * Implementors define {@link #apply(Object)} to perform the desired calculation
@@ -15,8 +15,6 @@ package org.meteoinfo.data.dataframe.impl;
  *
  * @param <I> the type of the input values
  * @param <O> the type of the output values
- * @see DataFrame#apply(Function)
- * @see DataFrame#aggregate(Aggregate)
  */
 public interface Function<I, O> {
 

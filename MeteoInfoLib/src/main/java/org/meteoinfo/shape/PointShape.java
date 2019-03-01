@@ -18,9 +18,9 @@ import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.PointD;
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.jts.geom.Coordinate;
-import org.meteoinfo.jts.geom.Geometry;
-import org.meteoinfo.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 /**
  * Point shape class

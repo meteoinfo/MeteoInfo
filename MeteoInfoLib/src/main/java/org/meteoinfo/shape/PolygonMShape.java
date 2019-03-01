@@ -7,8 +7,9 @@ package org.meteoinfo.shape;
 import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.global.MIMath;
-import org.meteoinfo.jts.geom.Coordinate;
-import org.meteoinfo.jts.geom.Geometry;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateXYM;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  *
@@ -32,8 +33,10 @@ public class PolygonMShape extends PolygonShape{
     public PolygonMShape(Geometry geometry) {
         Coordinate[] cs = geometry.getCoordinates();
         List<PointZ> points = new ArrayList();
-        for (Coordinate c : cs)
-            points.add(new PointZ(c.x, c.y, c.z, c.m));
+        for (Coordinate c1 : cs) {
+            CoordinateXYM c = (CoordinateXYM) c1;
+            points.add(new PointZ(c.x, c.y, c.getZ(), c.getM()));
+        }
         this.setPoints(points);
     }
     // </editor-fold>

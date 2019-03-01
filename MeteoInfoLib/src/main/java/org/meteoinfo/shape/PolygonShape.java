@@ -21,10 +21,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.meteoinfo.global.PointF;
-import org.meteoinfo.jts.geom.Coordinate;
-import org.meteoinfo.jts.geom.Geometry;
-import org.meteoinfo.jts.geom.GeometryFactory;
-import org.meteoinfo.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.MultiPolygon;
 
 /**
  * PolygonShape class
@@ -87,7 +87,7 @@ public class PolygonShape extends Shape implements Cloneable {
                 List<Integer> partlist = new ArrayList<>();
                 int idx = 0;
                 for (int i = 0; i < n; i++) {
-                    org.meteoinfo.jts.geom.Polygon poly = (org.meteoinfo.jts.geom.Polygon) geometry.getGeometryN(i);
+                    org.locationtech.jts.geom.Polygon poly = (org.locationtech.jts.geom.Polygon) geometry.getGeometryN(i);
                     _numParts += poly.getNumInteriorRing() + 1;                    
                     partlist.add(idx);                    
                     Polygon polygon = new Polygon();
@@ -114,7 +114,7 @@ public class PolygonShape extends Shape implements Cloneable {
                 }
                 break;
             default:
-                org.meteoinfo.jts.geom.Polygon poly = (org.meteoinfo.jts.geom.Polygon) geometry;
+                org.locationtech.jts.geom.Polygon poly = (org.locationtech.jts.geom.Polygon) geometry;
                 _numParts = poly.getNumInteriorRing() + 1;                
                 parts = new int[_numParts];                
                 parts[0] = 0;
@@ -158,9 +158,9 @@ public class PolygonShape extends Shape implements Cloneable {
         if (this._polygons.size() == 1) {
             return this._polygons.get(0).toGeometry(factory);
         } else {
-            org.meteoinfo.jts.geom.Polygon[] polygons = new org.meteoinfo.jts.geom.Polygon[this._polygons.size()];
+            org.locationtech.jts.geom.Polygon[] polygons = new org.locationtech.jts.geom.Polygon[this._polygons.size()];
             for (int j = 0; j < polygons.length; j++) {
-                polygons[j] = (org.meteoinfo.jts.geom.Polygon) this._polygons.get(j).toGeometry(factory);
+                polygons[j] = (org.locationtech.jts.geom.Polygon) this._polygons.get(j).toGeometry(factory);
             }
             MultiPolygon mls = factory.createMultiPolygon(polygons);
             return mls;

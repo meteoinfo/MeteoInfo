@@ -55,7 +55,6 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 	/**
      * Specifies the angle of blur.
      * @param angle the angle of blur.
-     * @angle
      * @see #getAngle
      */
 	public void setAngle( float angle ) {

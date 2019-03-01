@@ -8,7 +8,7 @@ package org.meteoinfo.data.dataframe.impl;
 import java.util.List;
 
 /**
- * A function that converts lists of {@linkplain DataFrame data frame} values to
+ * A function that converts lists of data frame values to
  * aggregate results.
  *
  * <p>
@@ -17,7 +17,6 @@ import java.util.List;
  *
  * @param <I> the type of the input values
  * @param <O> the type of the result
- * @see DataFrame#aggregate(Aggregate)
  */
 public interface Aggregate<I, O>
         extends Function<List<I>, O> {

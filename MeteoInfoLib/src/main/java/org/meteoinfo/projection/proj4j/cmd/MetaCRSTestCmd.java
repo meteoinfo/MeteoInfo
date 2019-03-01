@@ -14,7 +14,7 @@ import org.meteoinfo.projection.proj4j.util.*;
  * <p>
  * Usage:
  * <pre>
- *   MetaCRSTestCmd <test-file-name>
+ *   MetaCRSTestCmd (test-file-name)
  * </pre>
  * 
  * @author Martin Davis

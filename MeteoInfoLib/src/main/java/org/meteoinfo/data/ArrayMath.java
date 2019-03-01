@@ -2971,7 +2971,7 @@ public class ArrayMath {
     }
 
     /**
-     * Bit and & operation
+     * Bit and operation
      *
      * @param a Array a
      * @param b Number b
@@ -2987,7 +2987,7 @@ public class ArrayMath {
     }
 
     /**
-     * Bit and & operation
+     * Bit and operation
      *
      * @param a Array a
      * @param b Array b
@@ -3088,7 +3088,7 @@ public class ArrayMath {
     }
 
     /**
-     * Bit left shift << operation
+     * Bit left shift operation
      *
      * @param a Array a
      * @param b Number b
@@ -3104,7 +3104,7 @@ public class ArrayMath {
     }
 
     /**
-     * Bit left shift << operation
+     * Bit left shift operation
      *
      * @param a Array a
      * @param b Array b
@@ -3120,7 +3120,7 @@ public class ArrayMath {
     }
 
     /**
-     * Bit right shift >> operation
+     * Bit right shift operation
      *
      * @param a Array a
      * @param b Number b
@@ -3136,7 +3136,7 @@ public class ArrayMath {
     }
 
     /**
-     * Bit right shift >> operation
+     * Bit right shift operation
      *
      * @param a Array a
      * @param b Array b
@@ -3256,7 +3256,7 @@ public class ArrayMath {
      *
      * @param y Vecotr array
      * @param x Spacing array between all y elements
-     * @param ranges
+     * @param ranges Ranges
      * @return Definite integral as approximated by trapezoidal rule
      * @throws ucar.ma2.InvalidRangeException
      */
@@ -3387,7 +3387,7 @@ public class ArrayMath {
  
     /**
      * Returns an element-wise indication of the sign of a number.
-     * The sign function returns -1 if x < 0, 0 if x==0, 1 if x > 0. nan is returned for nan inputs.
+     * The sign function returns -1 if x less than 0, 0 if x==0, 1 if x bigger than 0. nan is returned for nan inputs.
      * @param x Input array
      * @return The sign of x array
      */

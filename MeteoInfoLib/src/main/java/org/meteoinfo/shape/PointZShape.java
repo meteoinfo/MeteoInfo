@@ -16,8 +16,8 @@ package org.meteoinfo.shape;
 
 import org.meteoinfo.global.Extent3D;
 import org.meteoinfo.global.PointD;
-import org.meteoinfo.jts.geom.Coordinate;
-import org.meteoinfo.jts.geom.Geometry;
+import org.locationtech.jts.geom.CoordinateXYZM;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  *
@@ -44,8 +44,8 @@ public class PointZShape extends PointShape {
      * @param geometry Geometry
      */
     public PointZShape(Geometry geometry) {
-        Coordinate c = geometry.getCoordinate();
-        this.setPoint(new PointZ(c.x, c.y, c.z, c.m));
+        CoordinateXYZM c = (CoordinateXYZM)geometry.getCoordinate();
+        this.setPoint(new PointZ(c.x, c.y, c.getZ(), c.getM()));
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

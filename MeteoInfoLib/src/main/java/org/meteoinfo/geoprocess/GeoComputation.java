@@ -2041,7 +2041,7 @@ public class GeoComputation {
 
     /**
      * Finds the cross product of the 2 vectors created by the 3 vertices.
-     * Vector 1 = v1 -> v2, Vector 2 = v2 -> v3 The vectors make a "right turn"
+     * 
      * if the sign of the cross product is negative. The vectors make a "left
      * turn" if the sign of the cross product is positive. The vectors are
      * colinear (on the same line) if the cross product is zero.

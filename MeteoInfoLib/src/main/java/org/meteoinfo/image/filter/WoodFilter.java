@@ -46,8 +46,8 @@ public class WoodFilter extends PointFilter {
      * Specifies the rings value.
      *
      * @param rings the rings value.
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getRings
      */
     public void setRings(float rings) {
@@ -68,8 +68,8 @@ public class WoodFilter extends PointFilter {
      * Specifies the scale of the texture.
      *
      * @param scale the scale of the texture.
-     * @min-value 1
-     * @max-value 300+
+     * min-value 1
+     * max-value 300+
      * @see #getScale
      */
     public void setScale(float scale) {
@@ -90,8 +90,8 @@ public class WoodFilter extends PointFilter {
      * Specifies the stretch factor of the texture.
      *
      * @param stretch the stretch factor of the texture.
-     * @min-value 1
-     * @max-value 50+
+     * min-value 1
+     * max-value 50+
      * @see #getStretch
      */
     public void setStretch(float stretch) {
@@ -112,7 +112,7 @@ public class WoodFilter extends PointFilter {
      * Specifies the angle of the texture.
      *
      * @param angle the angle of the texture.
-     * @angle
+
      * @see #getAngle
      */
     public void setAngle(float angle) {
@@ -139,8 +139,8 @@ public class WoodFilter extends PointFilter {
      * Specifies the turbulence of the texture.
      *
      * @param turbulence the turbulence of the texture.
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getTurbulence
      */
     public void setTurbulence(float turbulence) {
@@ -161,8 +161,8 @@ public class WoodFilter extends PointFilter {
      * Specifies the amount of fibres in the texture.
      *
      * @param fibres the amount of fibres in the texture.
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getFibres
      */
     public void setFibres(float fibres) {
@@ -183,8 +183,8 @@ public class WoodFilter extends PointFilter {
      * Specifies the gain of the texture.
      *
      * @param gain the gain of the texture.
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getGain
      */
     public void setGain(float gain) {

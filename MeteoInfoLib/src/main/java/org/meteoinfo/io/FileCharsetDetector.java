@@ -5,8 +5,8 @@
  */
 package org.meteoinfo.io;
 
-//使用 jchardet 获得文件编码 -javacode   
-//当含中文的文件用ANSI编码保存时，检测还是出错。     
+//Use jchardet get file encoding -javacode   
+//Error with Chinese characters using ANSI encoding     
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,26 +16,22 @@ import org.mozilla.intl.chardet.nsDetector;
 import org.mozilla.intl.chardet.nsICharsetDetectionObserver;
 
 /**
- * 借助JCharDet获取文件字符集
+ * Using JCharDet get file charset
  *
- * @author icer PS: JCharDet 是mozilla自动字符集探测算法代码的java移植，其官方主页为：
+ * @author icer PS: JCharDet：
  * http://jchardet.sourceforge.net/
- * @date 2008/11/13
  */
 public class FileCharsetDetector {
 
     private boolean found = false;
 
-    /**
-     * 如果完全匹配某个字符集检测算法, 则该属性保存该字符集的名称. 否则(如二进制文件)其值就为默认值 null, 这时应当查询属性
-     */
     private String encoding = null;
 
     /**
-     * 传入一个文件(File)对象，检查文件编码
+     * Check file encoding
      *
-     * @param file File对象实例
-     * @return 文件编码，若无，则返回null
+     * @param file File object
+     * @return Encoding string
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -45,12 +41,12 @@ public class FileCharsetDetector {
     }
 
     /**
-     * 获取文件的编码
+     * Check file encoding
      *
-     * @param file File对象实例
-     * @param languageHint 语言提示区域代码 eg：1 : Japanese; 2 : Chinese; 3 : Simplified
+     * @param file File object
+     * @param languageHint Language comment code, eg: 1 : Japanese; 2 : Chinese; 3 : Simplified
      * Chinese; 4 : Traditional Chinese; 5 : Korean; 6 : Dont know (default)
-     * @return 文件编码，eg：UTF-8,GBK,GB2312形式，若无，则返回null
+     * @return File encoding, eg: UTF-8,GBK,GB2312
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -60,10 +56,10 @@ public class FileCharsetDetector {
     }
 
     /**
-     * 获取文件的编码
+     * Check file encoding
      *
-     * @param path 文件路径
-     * @return 文件编码，eg：UTF-8,GBK,GB2312形式，若无，则返回null
+     * @param path File path
+     * @return File encoding
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -73,10 +69,10 @@ public class FileCharsetDetector {
     }
 
     /**
-     * 获取文件的编码
+     * Get file encoding
      *
-     * @param path 文件路径
-     * @param languageHint 语言提示区域代码 eg：1 : Japanese; 2 : Chinese; 3 : Simplified
+     * @param path File path
+     * @param languageHint Language comment code, eg: 1 : Japanese; 2 : Chinese; 3 : Simplified
      * Chinese; 4 : Traditional Chinese; 5 : Korean; 6 : Dont know (default)
      * @return
      * @throws FileNotFoundException
@@ -88,11 +84,11 @@ public class FileCharsetDetector {
     }
 
     /**
-     * 获取文件的编码
+     * Get file encoding
      *
-     * @param file
-     * @param det
-     * @return
+     * @param file File object
+     * @param det Detector
+     * @return File encoding
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -137,7 +133,7 @@ public class FileCharsetDetector {
         if (!found) {
             String prob[] = det.getProbableCharsets();
             if (prob.length > 0) {
-                // 在没有发现情况下，则取第一个可能的编码   
+                // use file guess encoding when no encoding found   
                 encoding = prob[0];
             } else {
                 return null;

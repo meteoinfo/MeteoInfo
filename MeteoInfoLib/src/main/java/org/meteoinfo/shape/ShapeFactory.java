@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.shape;
 
-import org.meteoinfo.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  *

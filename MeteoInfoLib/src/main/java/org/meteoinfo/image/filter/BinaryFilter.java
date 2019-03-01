@@ -12,8 +12,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
-
+ */
 package org.meteoinfo.image.filter;
 
 import org.meteoinfo.image.math.BinaryFunction;
@@ -24,63 +23,65 @@ import org.meteoinfo.image.math.BlackFunction;
  */
 public abstract class BinaryFilter extends WholeImageFilter {
 
-	protected int newColor = 0xff000000;
-	protected BinaryFunction blackFunction = new BlackFunction();
-	protected int iterations = 1;
-	protected Colormap colormap;
+    protected int newColor = 0xff000000;
+    protected BinaryFunction blackFunction = new BlackFunction();
+    protected int iterations = 1;
+    protected Colormap colormap;
 
-	/**
-	 * Set the number of iterations the effect is performed.
-	 * @param iterations the number of iterations
-     * @min-value 0
+    /**
+     * Set the number of iterations the effect is performed.
+     *
+     * @param iterations the number of iterations
      * @see #getIterations
-	 */
-	public void setIterations(int iterations) {
-		this.iterations = iterations;
-	}
+     */
+    public void setIterations(int iterations) {
+        this.iterations = iterations;
+    }
 
-	/**
-	 * Get the number of iterations the effect is performed.
-	 * @return the number of iterations
+    /**
+     * Get the number of iterations the effect is performed.
+     *
+     * @return the number of iterations
      * @see #setIterations
-	 */
-	public int getIterations() {
-		return iterations;
-	}
+     */
+    public int getIterations() {
+        return iterations;
+    }
 
     /**
      * Set the colormap to be used for the filter.
+     *
      * @param colormap the colormap
      * @see #getColormap
      */
-	public void setColormap(Colormap colormap) {
-		this.colormap = colormap;
-	}
+    public void setColormap(Colormap colormap) {
+        this.colormap = colormap;
+    }
 
     /**
      * Get the colormap to be used for the filter.
+     *
      * @return the colormap
      * @see #setColormap
      */
-	public Colormap getColormap() {
-		return colormap;
-	}
+    public Colormap getColormap() {
+        return colormap;
+    }
 
-	public void setNewColor(int newColor) {
-		this.newColor = newColor;
-	}
+    public void setNewColor(int newColor) {
+        this.newColor = newColor;
+    }
 
-	public int getNewColor() {
-		return newColor;
-	}
+    public int getNewColor() {
+        return newColor;
+    }
 
-	public void setBlackFunction(BinaryFunction blackFunction) {
-		this.blackFunction = blackFunction;
-	}
+    public void setBlackFunction(BinaryFunction blackFunction) {
+        this.blackFunction = blackFunction;
+    }
 
-	public BinaryFunction getBlackFunction() {
-		return blackFunction;
-	}
+    public BinaryFunction getBlackFunction() {
+        return blackFunction;
+    }
 
 }
-

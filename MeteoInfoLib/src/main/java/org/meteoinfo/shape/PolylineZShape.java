@@ -17,8 +17,9 @@ import org.meteoinfo.global.MIMath;
 import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.global.Extent;
-import org.meteoinfo.jts.geom.Coordinate;
-import org.meteoinfo.jts.geom.Geometry;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateXYZM;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * PolylineZ shape class
@@ -47,8 +48,10 @@ public class PolylineZShape extends PolylineShape {
     public PolylineZShape(Geometry geometry) {
         Coordinate[] cs = geometry.getCoordinates();
         List<PointZ> points = new ArrayList();
-        for (Coordinate c : cs)
-            points.add(new PointZ(c.x, c.y, c.z, c.m));
+        for (Coordinate c1 : cs) {
+            CoordinateXYZM c = (CoordinateXYZM) c1;
+            points.add(new PointZ(c.x, c.y, c.getZ(), c.getM()));
+        }
         this.setPoints(points);
     }
     // </editor-fold>

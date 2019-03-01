@@ -87,16 +87,16 @@ public class GraphicCollection3D extends GraphicCollection{
     }
     
     /**
-     * Get start & end points [xstart, ystart, xend, yend]
-     * @return Start & end points
+     * Get start and end points [xstart, ystart, xend, yend]
+     * @return Start and end points
      */
     public List<Number> getSEPoint(){
         return this.sePoint;
     }
     
     /**
-     * Set start & end points
-     * @param value Start & end points
+     * Set start and end points
+     * @param value Start and end points
      */
     public void setSEPoint(List<Number> value){
         this.sePoint = value;

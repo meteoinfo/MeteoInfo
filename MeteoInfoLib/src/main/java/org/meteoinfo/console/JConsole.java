@@ -69,8 +69,8 @@ import org.meteoinfo.io.UnclosableOutputStream;
  * A JFC/Swing based console for the BeanShell desktop. This is a descendant of
  * the old AWTConsole.
  *
- * Improvements by: Mark Donszelmann <Mark.Donszelmann@cern.ch>
- * including Cut & Paste
+ * Improvements by: Mark Donszelmann (Mark.Donszelmann@cern.ch)
+ * including Cut and Paste
  *
  * Improvements by: Daniel Leuck including Color and Image support, key press
  * bug workaround

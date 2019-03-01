@@ -8,14 +8,13 @@ package org.meteoinfo.data.dataframe.impl;
 import java.util.List;
 
 /**
- * An interface used to filter a {@linkplain DataFrame data frame}.
+ * An interface used to filter a DataFrame.
  *
  * <p>
  * Implementors define {@link #apply(Object)} to return {@code true} for rows
  * that should be included in the filtered data frame.</p>
  *
  * @param <I> the type of the input values
- * @see DataFrame#select(Predicate)
  */
 public interface Predicate<I>
         extends Function<List<I>, Boolean> {

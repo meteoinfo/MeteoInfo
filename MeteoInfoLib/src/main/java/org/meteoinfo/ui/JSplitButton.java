@@ -8,25 +8,25 @@ import javax.swing.*;
 
 /**
  * An implementation of a "split" button.The left side acts like a normal
- * button, right side has a jPopupMenu attached. <br />
- * This class raises two events.<br />
+ * button, right side has a jPopupMenu attached.
+ * This class raises two events.
  * <ol>
  * <li>buttonClicked(e); //when the button is clicked</li>
  * <li>splitButtonClicked(e; //when the split part of the button is clicked)
  * </li>
  * </ol>
  * You need to subscribe to SplitButtonActionListener to handle these
- * events.<br /><br />
+ * events.
  *
- * Use as you wish, but an acknowlegement would be appreciated, ;) <br /><br />
- * <b>Known Issue:</b><br />
+ * Use as you wish, but an acknowlegement would be appreciated, ;) 
+ * <b>Known Issue:</b>
  * The 'button part' of the splitbutton is being drawn without the border??? and
  * this is only happening in CDE/Motif and Metal Look and Feels. GTK+ and nimbus
  * works perfect. No Idea why? if anybody could point out the mistake that'd be
- * nice.My email naveedmurtuza[at]gmail.com<br /><br />
+ * nice.My email naveedmurtuza[at]gmail.com
  * P.S. The fireXXX methods has been directly plagarized from JDK source code,
- * and yes even the javadocs..;)<br /><br />
- * The border bug in metal L&F is now fixed. Thanks to Hervé Guillaume.
+ * and yes even the javadocs..;)
+ * The border bug in metal Look and Feel is now fixed. Thanks to Hervé Guillaume.
  *
  * @author Naveed Quadri
  */

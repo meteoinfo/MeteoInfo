@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.jts.geom.Coordinate;
-import org.meteoinfo.jts.geom.Geometry;
-import org.meteoinfo.jts.geom.GeometryFactory;
-import org.meteoinfo.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
 
 /**
  * Polygon class

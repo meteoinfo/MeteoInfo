@@ -51,7 +51,6 @@ public class PointF implements Cloneable{
      * Clone
      * 
      * @return PointF object
-     * @throws java.lang.CloneNotSupportedException
      */
     @Override
     public Object clone() {

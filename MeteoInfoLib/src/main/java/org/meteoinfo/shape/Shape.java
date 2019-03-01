@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.PointD;
 import java.util.List;
-import org.meteoinfo.jts.geom.Coordinate;
-import org.meteoinfo.jts.geom.Geometry;
-import org.meteoinfo.jts.geom.GeometryFactory;
-import org.meteoinfo.jts.geom.LinearRing;
-import org.meteoinfo.jts.operation.polygonize.Polygonizer;
-import org.meteoinfo.jts.operation.union.CascadedPolygonUnion;
-import org.meteoinfo.jts.operation.union.UnaryUnionOp;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.operation.polygonize.Polygonizer;
+import org.locationtech.jts.operation.union.CascadedPolygonUnion;
+import org.locationtech.jts.operation.union.UnaryUnionOp;
 
 /**
  * Shape class
@@ -385,7 +385,7 @@ public abstract class Shape implements Cloneable{
             List<Geometry> polys = (List)polygonizer.getPolygons();   
             List<Shape> polyShapes = new ArrayList<>();
             for (int i = 0; i < polys.size(); i++){
-                org.meteoinfo.jts.geom.Polygon poly = (org.meteoinfo.jts.geom.Polygon)polys.get(i);
+                org.locationtech.jts.geom.Polygon poly = (org.locationtech.jts.geom.Polygon)polys.get(i);
                 if (poly.getInteriorPoint().within(g1))
                     polyShapes.add(new PolygonShape(poly));
             }
@@ -418,15 +418,15 @@ public abstract class Shape implements Cloneable{
             polygonizer.add(polygons);
             List<Geometry> polys = (List)polygonizer.getPolygons();
             Geometry mbgeo;
-            org.meteoinfo.jts.geom.Polygon poly1 = (org.meteoinfo.jts.geom.Polygon)g1;
+            org.locationtech.jts.geom.Polygon poly1 = (org.locationtech.jts.geom.Polygon)g1;
             if (poly1.getNumInteriorRing() == 0){
                 mbgeo = CascadedPolygonUnion.union(polys);
             } else {
                 GeometryFactory factory = new GeometryFactory();
-                org.meteoinfo.jts.geom.Polygon shell = factory.createPolygon((LinearRing)poly1.getExteriorRing());
+                org.locationtech.jts.geom.Polygon shell = factory.createPolygon((LinearRing)poly1.getExteriorRing());
                 List<Geometry> npolys = new ArrayList<>();
                 for (int i = 0; i < polys.size(); i++){
-                    org.meteoinfo.jts.geom.Polygon poly = (org.meteoinfo.jts.geom.Polygon)polys.get(i);
+                    org.locationtech.jts.geom.Polygon poly = (org.locationtech.jts.geom.Polygon)polys.get(i);
                     if (poly.getInteriorPoint().within(g1))
                         npolys.add(poly);
                     else {

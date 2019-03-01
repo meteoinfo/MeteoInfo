@@ -20,8 +20,8 @@ import org.meteoinfo.chart.plot.XAlign;
 import org.meteoinfo.chart.plot.YAlign;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.global.Extent;
-import org.meteoinfo.jts.geom.Geometry;
-import org.meteoinfo.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.meteoinfo.shape.Shape;
 import org.meteoinfo.shape.ShapeTypes;
 

@@ -56,7 +56,6 @@ public class ShadowFilter extends AbstractBufferedImageOp {
 	/**
      * Specifies the angle of the shadow.
      * @param angle the angle of the shadow.
-     * @angle
      * @see #getAngle
      */
 	public void setAngle(float angle) {

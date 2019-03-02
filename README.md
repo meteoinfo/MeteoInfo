@@ -23,9 +23,7 @@ Learn more about MeteoInfo in its official documentation at http://meteothink.or
 Get in touch
 ------------
 
-- Report bugs, suggest features or view the source code `on GitHub`_.
-
-.. _on GitHub: http://github.com/meteoinfo/MeteoInfo
+- Report bugs, suggest features or view the source code [`_on GitHub`](http://github.com/meteoinfo/MeteoInfo)
 
 License
 -------

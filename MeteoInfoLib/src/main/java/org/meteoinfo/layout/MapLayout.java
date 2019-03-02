@@ -1766,19 +1766,19 @@ public class MapLayout extends JPanel implements IWebMapPanel {
     private void onGraphicSmoothClick(ActionEvent e) {
         LayoutElement aElement = _selectedElements.get(0);
         Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
-        List<wContour.Global.PointD> pointList = new ArrayList<>();
+        List<wcontour.global.PointD> pointList = new ArrayList<>();
         List<PointD> newPoints = new ArrayList<>();
 
         for (PointD aP : aGraphic.getShape().getPoints()) {
-            pointList.add(new wContour.Global.PointD(aP.X, aP.Y));
+            pointList.add(new wcontour.global.PointD(aP.X, aP.Y));
         }
 
         if (aGraphic.getShape().getShapeType() == ShapeTypes.Polygon) {
             pointList.add(pointList.get(0));
         }
 
-        pointList = wContour.Contour.smoothPoints(pointList);
-        for (wContour.Global.PointD aP : pointList) {
+        pointList = wcontour.Contour.smoothPoints(pointList);
+        for (wcontour.global.PointD aP : pointList) {
             newPoints.add(new PointD(aP.X, aP.Y));
         }
         aGraphic.getShape().setPoints(newPoints);

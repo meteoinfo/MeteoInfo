@@ -72,7 +72,7 @@ import org.meteoinfo.shape.WindBarb;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
-import wContour.Global.PolyLine;
+import wcontour.global.PolyLine;
 
 /**
  *
@@ -2794,17 +2794,17 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
-        List<wContour.Global.PolyLine> ContourLines = (List<wContour.Global.PolyLine>) cbs[0];
+        List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
             return null;
         }
 
         if (isSmooth) {
-            ContourLines = wContour.Contour.smoothLines(ContourLines);
+            ContourLines = wcontour.Contour.smoothLines(ContourLines);
         }
 
-        wContour.Global.PolyLine aLine;
+        wcontour.global.PolyLine aLine;
         double v;
         ColorBreak cbb = ls.findLegendBreak(0);
         GraphicCollection graphics = new GraphicCollection();
@@ -2877,17 +2877,17 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
-        List<wContour.Global.PolyLine> ContourLines = (List<wContour.Global.PolyLine>) cbs[0];
+        List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
             return null;
         }
 
         if (isSmooth) {
-            ContourLines = wContour.Contour.smoothLines(ContourLines);
+            ContourLines = wcontour.Contour.smoothLines(ContourLines);
         }
 
-        wContour.Global.PolyLine aLine;
+        wcontour.global.PolyLine aLine;
         double v;
         ColorBreak cbb;
         GraphicCollection3D graphics = new GraphicCollection3D();
@@ -2963,17 +2963,17 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
-        List<wContour.Global.PolyLine> ContourLines = (List<wContour.Global.PolyLine>) cbs[0];
+        List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
             return null;
         }
 
         if (isSmooth) {
-            ContourLines = wContour.Contour.smoothLines(ContourLines);
+            ContourLines = wcontour.Contour.smoothLines(ContourLines);
         }
 
-        wContour.Global.PolyLine aLine;
+        wcontour.global.PolyLine aLine;
         double v;
         ColorBreak cbb;
         GraphicCollection3D graphics = new GraphicCollection3D();
@@ -3069,23 +3069,23 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
-        List<wContour.Global.PolyLine> contourLines = (List<wContour.Global.PolyLine>) cbs[0];
-        List<wContour.Global.Border> borders = (List<wContour.Global.Border>) cbs[1];
+        List<wcontour.global.PolyLine> contourLines = (List<wcontour.global.PolyLine>) cbs[0];
+        List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
         if (isSmooth) {
-            contourLines = wContour.Contour.smoothLines(contourLines);
+            contourLines = wcontour.Contour.smoothLines(contourLines);
         }
-        List<wContour.Global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
+        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
 
         double v;
         ColorBreak cbb = ls.findLegendBreak(0);
         GraphicCollection graphics = new GraphicCollection();
         for (int i = 0; i < contourPolygons.size(); i++) {
-            wContour.Global.Polygon poly = contourPolygons.get(i);
+            wcontour.global.Polygon poly = contourPolygons.get(i);
             v = poly.LowValue;
             PointD aPoint;
             List<PointD> pList = new ArrayList<>();
-            for (wContour.Global.PointD pointList : poly.OutLine.PointList) {
+            for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
                 aPoint = new PointD();
                 aPoint.X = pointList.X;
                 aPoint.Y = pointList.Y;
@@ -3101,7 +3101,7 @@ public class GraphicFactory {
             if (poly.HasHoles()) {
                 for (PolyLine holeLine : poly.HoleLines) {
                     pList = new ArrayList<>();
-                    for (wContour.Global.PointD pointList : holeLine.PointList) {
+                    for (wcontour.global.PointD pointList : holeLine.PointList) {
                         aPoint = new PointD();
                         aPoint.X = pointList.X;
                         aPoint.Y = pointList.Y;
@@ -3199,13 +3199,13 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
-        List<wContour.Global.PolyLine> contourLines = (List<wContour.Global.PolyLine>) cbs[0];
-        List<wContour.Global.Border> borders = (List<wContour.Global.Border>) cbs[1];
+        List<wcontour.global.PolyLine> contourLines = (List<wcontour.global.PolyLine>) cbs[0];
+        List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
         if (isSmooth) {
-            contourLines = wContour.Contour.smoothLines(contourLines);
+            contourLines = wcontour.Contour.smoothLines(contourLines);
         }
-        List<wContour.Global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
+        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
 
         double v;
         ColorBreak cbb;
@@ -3215,13 +3215,13 @@ public class GraphicFactory {
         zdir = zdir.toLowerCase();
         graphics.setZDir(zdir);
         for (int i = 0; i < contourPolygons.size(); i++) {
-            wContour.Global.Polygon poly = contourPolygons.get(i);
+            wcontour.global.Polygon poly = contourPolygons.get(i);
             v = poly.LowValue;
             PointZ aPoint;
             List<PointZ> pList = new ArrayList<>();
             switch (zdir) {
                 case "x":
-                    for (wContour.Global.PointD pointList : poly.OutLine.PointList) {
+                    for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
                         aPoint = new PointZ();
                         aPoint.Y = pointList.X;
                         aPoint.Z = pointList.Y;
@@ -3230,7 +3230,7 @@ public class GraphicFactory {
                     }
                     break;
                 case "y":
-                    for (wContour.Global.PointD pointList : poly.OutLine.PointList) {
+                    for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
                         aPoint = new PointZ();
                         aPoint.X = pointList.X;
                         aPoint.Z = pointList.Y;
@@ -3239,7 +3239,7 @@ public class GraphicFactory {
                     }
                     break;
                 case "z":
-                    for (wContour.Global.PointD pointList : poly.OutLine.PointList) {
+                    for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
                         aPoint = new PointZ();
                         aPoint.X = pointList.X;
                         aPoint.Y = pointList.Y;
@@ -3261,7 +3261,7 @@ public class GraphicFactory {
                     case "x":
                         for (PolyLine holeLine : poly.HoleLines) {
                             pList = new ArrayList<>();
-                            for (wContour.Global.PointD pointList : holeLine.PointList) {
+                            for (wcontour.global.PointD pointList : holeLine.PointList) {
                                 aPoint = new PointZ();
                                 aPoint.Y = pointList.X;
                                 aPoint.Z = pointList.Y;
@@ -3274,7 +3274,7 @@ public class GraphicFactory {
                     case "y":
                         for (PolyLine holeLine : poly.HoleLines) {
                             pList = new ArrayList<>();
-                            for (wContour.Global.PointD pointList : holeLine.PointList) {
+                            for (wcontour.global.PointD pointList : holeLine.PointList) {
                                 aPoint = new PointZ();
                                 aPoint.X = pointList.X;
                                 aPoint.Z = pointList.Y;
@@ -3287,7 +3287,7 @@ public class GraphicFactory {
                     case "z":
                         for (PolyLine holeLine : poly.HoleLines) {
                             pList = new ArrayList<>();
-                            for (wContour.Global.PointD pointList : holeLine.PointList) {
+                            for (wcontour.global.PointD pointList : holeLine.PointList) {
                                 aPoint = new PointZ();
                                 aPoint.X = pointList.X;
                                 aPoint.Y = pointList.Y;
@@ -3355,13 +3355,13 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
-        List<wContour.Global.PolyLine> contourLines = (List<wContour.Global.PolyLine>) cbs[0];
-        List<wContour.Global.Border> borders = (List<wContour.Global.Border>) cbs[1];
+        List<wcontour.global.PolyLine> contourLines = (List<wcontour.global.PolyLine>) cbs[0];
+        List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
         if (isSmooth) {
-            contourLines = wContour.Contour.smoothLines(contourLines);
+            contourLines = wcontour.Contour.smoothLines(contourLines);
         }
-        List<wContour.Global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
+        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
 
         double v;
         ColorBreak cbb;
@@ -3377,13 +3377,13 @@ public class GraphicFactory {
         xe = sePoint.get(2).doubleValue();
         ye = sePoint.get(3).doubleValue();
         for (int i = 0; i < contourPolygons.size(); i++) {
-            wContour.Global.Polygon poly = contourPolygons.get(i);
+            wcontour.global.Polygon poly = contourPolygons.get(i);
             v = poly.LowValue;
             PointZ aPoint;
             List<PointZ> pList = new ArrayList<>();
             switch (zdir) {
                 case "x":
-                    for (wContour.Global.PointD pointList : poly.OutLine.PointList) {
+                    for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
                         aPoint = new PointZ();
                         aPoint.Y = pointList.X;
                         aPoint.Z = pointList.Y;
@@ -3392,7 +3392,7 @@ public class GraphicFactory {
                     }
                     break;
                 case "y":
-                    for (wContour.Global.PointD pointList : poly.OutLine.PointList) {
+                    for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
                         aPoint = new PointZ();
                         aPoint.X = pointList.X;
                         aPoint.Z = pointList.Y;
@@ -3401,7 +3401,7 @@ public class GraphicFactory {
                     }
                     break;
                 case "xy":
-                    for (wContour.Global.PointD pointList : poly.OutLine.PointList) {
+                    for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
                         x = pointList.X;
                         y = pointList.Y;
                         aPoint = new PointZ();
@@ -3412,7 +3412,7 @@ public class GraphicFactory {
                     }
                     break;
                 case "z":
-                    for (wContour.Global.PointD pointList : poly.OutLine.PointList) {
+                    for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
                         aPoint = new PointZ();
                         aPoint.X = pointList.X;
                         aPoint.Y = pointList.Y;
@@ -3434,7 +3434,7 @@ public class GraphicFactory {
                     case "x":
                         for (PolyLine holeLine : poly.HoleLines) {
                             pList = new ArrayList<>();
-                            for (wContour.Global.PointD pointList : holeLine.PointList) {
+                            for (wcontour.global.PointD pointList : holeLine.PointList) {
                                 aPoint = new PointZ();
                                 aPoint.Y = pointList.X;
                                 aPoint.Z = pointList.Y;
@@ -3447,7 +3447,7 @@ public class GraphicFactory {
                     case "y":
                         for (PolyLine holeLine : poly.HoleLines) {
                             pList = new ArrayList<>();
-                            for (wContour.Global.PointD pointList : holeLine.PointList) {
+                            for (wcontour.global.PointD pointList : holeLine.PointList) {
                                 aPoint = new PointZ();
                                 aPoint.X = pointList.X;
                                 aPoint.Z = pointList.Y;
@@ -3460,7 +3460,7 @@ public class GraphicFactory {
                     case "z":
                         for (PolyLine holeLine : poly.HoleLines) {
                             pList = new ArrayList<>();
-                            for (wContour.Global.PointD pointList : holeLine.PointList) {
+                            for (wcontour.global.PointD pointList : holeLine.PointList) {
                                 aPoint = new PointZ();
                                 aPoint.X = pointList.X;
                                 aPoint.Y = pointList.Y;

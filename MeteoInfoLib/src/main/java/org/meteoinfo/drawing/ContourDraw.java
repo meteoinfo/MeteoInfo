@@ -40,9 +40,9 @@ public class ContourDraw {
      * @param undef Undefine value
      * @return Borders
      */
-    public static List<wContour.Global.Border> tracingBorders(double[][] gridData, double[] X, double[] Y, int[][] S1,
+    public static List<wcontour.global.Border> tracingBorders(double[][] gridData, double[] X, double[] Y, int[][] S1,
             double undef) {
-        return wContour.Contour.tracingBorders(gridData, X, Y, S1, undef);
+        return wcontour.Contour.tracingBorders(gridData, X, Y, S1, undef);
     }
 
 //    /**
@@ -77,8 +77,8 @@ public class ContourDraw {
     public static Object[] tracingContourLines(double[][] gridData, double[] cValues, double[] X,
             double[] Y, double noData, int[][] S1) {
         int nc = cValues.length;
-        List<wContour.Global.Border> borders = wContour.Contour.tracingBorders(gridData, X, Y, S1, noData);
-        List<wContour.Global.PolyLine> contourLines = wContour.Contour.tracingContourLines(gridData, X, Y, nc, cValues, noData, borders, S1);
+        List<wcontour.global.Border> borders = wcontour.Contour.tracingBorders(gridData, X, Y, S1, noData);
+        List<wcontour.global.PolyLine> contourLines = wcontour.Contour.tracingContourLines(gridData, X, Y, nc, cValues, noData, borders, S1);
         return new Object[]{contourLines, borders};
     }
 
@@ -91,9 +91,9 @@ public class ContourDraw {
      * @param cValues Values
      * @return Polygon list
      */
-    public static List<wContour.Global.Polygon> tracingPolygons(double[][] gridData,
-            List<wContour.Global.PolyLine> contourLines, List<wContour.Global.Border> borders, double[] cValues) {
-        return wContour.Contour.tracingPolygons(gridData, contourLines, borders, cValues);
+    public static List<wcontour.global.Polygon> tracingPolygons(double[][] gridData,
+            List<wcontour.global.PolyLine> contourLines, List<wcontour.global.Border> borders, double[] cValues) {
+        return wcontour.Contour.tracingPolygons(gridData, contourLines, borders, cValues);
     }
 
     /**

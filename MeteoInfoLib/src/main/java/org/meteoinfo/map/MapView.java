@@ -3190,19 +3190,19 @@ public class MapView extends JPanel implements IWebMapPanel {
 
     private void onGrahpicSmoothClick(ActionEvent e) {
         Graphic aGraphic = _selectedGraphics.get(0);
-        List<wContour.Global.PointD> pointList = new ArrayList<>();
+        List<wcontour.global.PointD> pointList = new ArrayList<>();
         List<PointD> newPoints = new ArrayList<>();
 
         for (PointD aP : aGraphic.getShape().getPoints()) {
-            pointList.add(new wContour.Global.PointD(aP.X, aP.Y));
+            pointList.add(new wcontour.global.PointD(aP.X, aP.Y));
         }
 
         if (aGraphic.getShape().getShapeType() == ShapeTypes.Polygon) {
             pointList.add(pointList.get(0));
         }
 
-        pointList = wContour.Contour.smoothPoints(pointList);
-        for (wContour.Global.PointD aP : pointList) {
+        pointList = wcontour.Contour.smoothPoints(pointList);
+        for (wcontour.global.PointD aP : pointList) {
             newPoints.add(new PointD(aP.X, aP.Y));
         }
 
@@ -3214,19 +3214,19 @@ public class MapView extends JPanel implements IWebMapPanel {
     }
 
     private void onShapeSmoothClick(VectorLayer layer, Shape shape) {
-        List<wContour.Global.PointD> pointList = new ArrayList<>();
+        List<wcontour.global.PointD> pointList = new ArrayList<>();
         List<PointD> newPoints = new ArrayList<>();
 
         for (PointD aP : shape.getPoints()) {
-            pointList.add(new wContour.Global.PointD(aP.X, aP.Y));
+            pointList.add(new wcontour.global.PointD(aP.X, aP.Y));
         }
 
         if (shape.getShapeType() == ShapeTypes.Polygon) {
             pointList.add(pointList.get(0));
         }
 
-        pointList = wContour.Contour.smoothPoints(pointList);
-        for (wContour.Global.PointD aP : pointList) {
+        pointList = wcontour.Contour.smoothPoints(pointList);
+        for (wcontour.global.PointD aP : pointList) {
             newPoints.add(new PointD(aP.X, aP.Y));
         }
 

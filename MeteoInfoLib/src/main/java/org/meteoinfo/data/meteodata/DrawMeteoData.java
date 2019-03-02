@@ -60,8 +60,8 @@ import org.meteoinfo.shape.PointZ;
 import org.meteoinfo.shape.PolylineZShape;
 import org.meteoinfo.shape.StationModelShape;
 import ucar.ma2.Array;
-import wContour.Global.PolyLine;
-import wContour.Global.Polygon;
+import wcontour.global.PolyLine;
+import wcontour.global.Polygon;
 
 /**
  * Template
@@ -573,17 +573,17 @@ public class DrawMeteoData {
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
-        List<wContour.Global.PolyLine> ContourLines = (List<wContour.Global.PolyLine>) cbs[0];
+        List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
             return null;
         }
 
         if (isSmooth) {
-            ContourLines = wContour.Contour.smoothLines(ContourLines);
+            ContourLines = wcontour.Contour.smoothLines(ContourLines);
         }
 
-        wContour.Global.PolyLine aLine;
+        wcontour.global.PolyLine aLine;
         double aValue;
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
         Field aDC = new Field(fieldName, DataTypes.Double);
@@ -662,14 +662,14 @@ public class DrawMeteoData {
         int[][] S1 = new int[data.length][data[0].length];
         Object[] cbs = ContourDraw.tracingContourLines(data,
                 cValues, xArray, yArray, missingValue, S1);
-        List<wContour.Global.PolyLine> ContourLines = (List<wContour.Global.PolyLine>) cbs[0];
+        List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
             return null;
         }
 
         if (isSmooth) {
-            ContourLines = wContour.Contour.smoothLines(ContourLines);
+            ContourLines = wcontour.Contour.smoothLines(ContourLines);
         }
 
         double aValue;
@@ -677,12 +677,12 @@ public class DrawMeteoData {
         Field aDC = new Field(fieldName, DataTypes.Double);
         aLayer.editAddField(aDC);
 
-        for (wContour.Global.PolyLine aLine : ContourLines) {
+        for (wcontour.global.PolyLine aLine : ContourLines) {
             aValue = aLine.Value;
             PolylineShape aPolyline = new PolylineShape();
             PointD aPoint;
             List<PointD> pList = new ArrayList<>();
-            for (wContour.Global.PointD p : aLine.PointList) {
+            for (wcontour.global.PointD p : aLine.PointList) {
                 aPoint = new PointD();
                 aPoint.X = p.X;
                 aPoint.Y = p.Y;
@@ -775,8 +775,8 @@ public class DrawMeteoData {
      * @return Vector layer
      */
     public static VectorLayer createShadedLayer(GridData gridData, LegendScheme aLS, String lName, String fieldName, boolean isSmooth) {
-        List<wContour.Global.PolyLine> ContourLines;
-        List<wContour.Global.Polygon> ContourPolygons;
+        List<wcontour.global.PolyLine> ContourLines;
+        List<wcontour.global.Polygon> ContourPolygons;
 
         LegendScheme ls = aLS.convertTo(ShapeTypes.Polygon);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
@@ -792,11 +792,11 @@ public class DrawMeteoData {
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
-        ContourLines = (List<wContour.Global.PolyLine>) cbs[0];
-        List<wContour.Global.Border> borders = (List<wContour.Global.Border>) cbs[1];
+        ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
+        List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
         if (isSmooth) {
-            ContourLines = wContour.Contour.smoothLines(ContourLines);
+            ContourLines = wcontour.Contour.smoothLines(ContourLines);
         }
         ContourPolygons = ContourDraw.tracingPolygons(gridData.data, ContourLines, borders, cValues);
 
@@ -815,7 +815,7 @@ public class DrawMeteoData {
             aValue = aPolygon.LowValue;
             PointD aPoint;
             List<PointD> pList = new ArrayList<>();
-            for (wContour.Global.PointD pointList : aPolygon.OutLine.PointList) {
+            for (wcontour.global.PointD pointList : aPolygon.OutLine.PointList) {
                 aPoint = new PointD();
                 aPoint.X = pointList.X;
                 aPoint.Y = pointList.Y;
@@ -834,7 +834,7 @@ public class DrawMeteoData {
                         continue;
                     }
                     pList = new ArrayList<>();
-                    for (wContour.Global.PointD pointList : holeLine.PointList) {
+                    for (wcontour.global.PointD pointList : holeLine.PointList) {
                         aPoint = new PointD();
                         aPoint.X = pointList.X;
                         aPoint.Y = pointList.Y;
@@ -1549,10 +1549,10 @@ public class DrawMeteoData {
             vGridData = uvData[1];
         }
 
-        List<wContour.Global.PolyLine> streamlines = wContour.Contour.tracingStreamline(uGridData.data, vGridData.data,
+        List<wcontour.global.PolyLine> streamlines = wcontour.Contour.tracingStreamline(uGridData.data, vGridData.data,
                 uGridData.xArray, vGridData.yArray, uGridData.missingValue, density);
 
-        wContour.Global.PolyLine aLine;
+        wcontour.global.PolyLine aLine;
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
         aLayer.editAddField("ID", DataTypes.Integer);
 

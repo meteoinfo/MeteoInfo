@@ -1168,7 +1168,7 @@ public class StationData {
     public GridData interpolate_Radius(double[][] S, double[] X, double[] Y,
             int minPNum, double radius, double missingValue) {
         double[][] dataArray;
-        dataArray = wContour.Interpolate.interpolation_IDW_Radius(S, X, Y, minPNum, radius, missingValue);
+        dataArray = wcontour.Interpolate.interpolation_IDW_Radius(S, X, Y, minPNum, radius, missingValue);
 
         GridData gridData = new GridData();
         gridData.data = dataArray;
@@ -1214,7 +1214,7 @@ public class StationData {
      * @return Grid data
      */
     public GridData interpolate_Neighbor(double[][] S, double[] X, double[] Y, int pNum, double missingValue) {
-        double[][] dataArray = wContour.Interpolate.interpolation_IDW_Neighbor(S, X, Y, pNum, missingValue);
+        double[][] dataArray = wcontour.Interpolate.interpolation_IDW_Neighbor(S, X, Y, pNum, missingValue);
 
         GridData gridData = new GridData();
         gridData.data = dataArray;
@@ -1259,7 +1259,7 @@ public class StationData {
      */
     public GridData interpolate_Cressman(double[][] S, double[] X, double[] Y,
             List<Double> radList, double missingValue) {
-        double[][] dataArray = wContour.Interpolate.cressman(S, X, Y, missingValue, radList);
+        double[][] dataArray = wcontour.Interpolate.cressman(S, X, Y, missingValue, radList);
 
         GridData gridData = new GridData();
         gridData.data = dataArray;
@@ -1307,7 +1307,7 @@ public class StationData {
      * @return Grid data
      */
     public GridData interpolate_Assign(double[][] S, double[] X, double[] Y, double missingValue) {
-        double[][] dataArray = wContour.Interpolate.assignPointToGrid(S, X, Y, missingValue);
+        double[][] dataArray = wcontour.Interpolate.assignPointToGrid(S, X, Y, missingValue);
 
         GridData gridData = new GridData();
         gridData.data = dataArray;
@@ -1349,7 +1349,7 @@ public class StationData {
         double xDelt = (gSet.dataExtent.maxX - gSet.dataExtent.minX) / (double) (gSet.xNum - 1);
         double yDelt = (gSet.dataExtent.maxY - gSet.dataExtent.minY) / (double) (gSet.yNum - 1);
 
-        return wContour.Interpolate.createGridXY_Delt(gSet.dataExtent.minX, gSet.dataExtent.minY,
+        return wcontour.Interpolate.createGridXY_Delt(gSet.dataExtent.minX, gSet.dataExtent.minY,
                 gSet.dataExtent.maxX, gSet.dataExtent.maxY, xDelt, yDelt);
     }
 

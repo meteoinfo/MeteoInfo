@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.meteothink</groupId>
         <artifactId>MeteoInfo</artifactId>
-        <version>1.7.5</version>
+        <version>1.7.6-SNAPSHOT</version>
     </parent>
     
     <artifactId>MeteoInfoLib</artifactId>
@@ -59,11 +59,6 @@
             <groupId>org.freehep</groupId>
             <artifactId>freehep-graphicsio-ps</artifactId>
             <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
         </dependency>
         <dependency>
             <groupId>org.scilab.forge</groupId>
@@ -125,6 +120,11 @@
             <artifactId>jts-core</artifactId>
             <version>1.16.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
     </dependencies>
     
     <properties>
@@ -140,6 +140,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.1.1</version>
             </plugin>
+            <!--
             <plugin>  
                 <groupId>org.apache.maven.plugins</groupId>  
                 <artifactId>maven-dependency-plugin</artifactId>  
@@ -157,6 +158,7 @@
                     </execution>  
                 </executions>  
             </plugin>
+            -->
         </plugins>
     </build>        
     

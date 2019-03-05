@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.meteothink</groupId>
         <artifactId>MeteoInfo</artifactId>
-        <version>1.7.5</version>
+        <version>1.7.6-SNAPSHOT</version>
     </parent>
     <artifactId>MeteoInfoLab</artifactId>
     <packaging>jar</packaging>
@@ -51,6 +51,7 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!--
             <plugin>  
                 <groupId>org.apache.maven.plugins</groupId>  
                 <artifactId>maven-dependency-plugin</artifactId>  
@@ -68,6 +69,7 @@
                     </execution>  
                 </executions>  
             </plugin>
+            -->
         </plugins>
     </build>
 </project>

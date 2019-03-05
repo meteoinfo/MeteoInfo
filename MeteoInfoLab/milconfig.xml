@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\micaps">
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\ensemble"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataconvert"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
@@ -16,23 +15,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\xor.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\latex_4.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\distance_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\split.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\dataframe_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\micaps\micaps_1_extract_st_data_dataframe_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\xor.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\latex_4.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\distance_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\split.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\array\dataframe_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\micaps\micaps_1_extract_st_data_dataframe_1.py"/>
     </RecentFiles>
   </File>
   <Font>

@@ -289,6 +289,22 @@ public class Index<V> implements Iterable<V>{
     }
     
     /**
+     * Get all indices of an index key
+     * @param k The index key
+     * @return Indices
+     */
+    public List<Integer> indexAll(Object k) {
+        List<Integer> idx = new ArrayList<>();
+        for (int i = 0; i < this.data.size(); i++) {
+            if (this.data.get(i).equals(k)) {
+                idx.add(i);
+            }
+        }
+        
+        return idx;
+    }
+    
+    /**
      * Index of
      * @param v Value
      * @return Index
@@ -359,14 +375,14 @@ public class Index<V> implements Iterable<V>{
         return r;
     }
     
-    /**
-     * Get indices
-     * @param labels Labels
-     * @return Indices
-     */
-    public Object[] getIndices(Array labels) {
-        return getIndices(ArrayMath.asList(labels));
-    }
+//    /**
+//     * Get indices
+//     * @param labels Labels
+//     * @return Indices
+//     */
+//    public Object[] getIndices(Array labels) {
+//        return getIndices(ArrayMath.asList(labels));
+//    }
     
     /**
      * Get indices
@@ -408,6 +424,27 @@ public class Index<V> implements Iterable<V>{
      * @return Indices
      */
     public Object[] getIndices(Object label) {
+        if (label instanceof Array) {
+            return getIndices(ArrayMath.asList((Array)label));
+        }
+        
+        List<Integer> r = new ArrayList<>();
+        List<Object> rIndex = new ArrayList<>();
+        List<Integer> idx = this.indexAll(label);
+        for (int i : idx) {
+            r.add(i);
+            rIndex.add(label);
+        }
+        
+        return new Object[]{r, rIndex};
+    }
+    
+    /**
+     * Get indices
+     * @param label Label
+     * @return Indices
+     */
+    public Object[] getIndices_s(Object label) {
         List<Integer> r = new ArrayList<>();
         List<Object> rIndex = new ArrayList<>();
         int idx = data.indexOf(label);

@@ -416,12 +416,12 @@ class DataFrame(object):
             step = 1 if k.step is None else k.step
             rowkey = Range(sidx, eidx, step)
         else:
-            if isinstance(k, (list, tuple, MIArray)):
-                rowkey, rkeys = self._index.get_loc(k, outkeys=True)
-            else:
-                rowkey = self._index.index(k)
-                if rowkey < 0:
-                    raise KeyError(key)
+            rowkey, rkeys = self._index.get_loc(k, outkeys=True)
+            if len(rowkey) == 0:
+                raise KeyError(key)
+                #rowkey = self._index.index(k)                
+                #if rowkey < 0:
+                #    raise KeyError(key)
                    
         k = key[1]
         if k is None:

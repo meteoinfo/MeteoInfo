@@ -1903,7 +1903,11 @@ class Axes(object):
         yoffset = kwargs.pop('yoffset', 0)
         labelset.setYOffset(yoffset)
         avoidcoll = kwargs.pop('avoidcoll', True)
-        labelset.setAvoidCollision(avoidcoll)    
+        labelset.setAvoidCollision(avoidcoll)
+        decimals = kwargs.pop('decimals', None)
+        if not decimals is None:
+            labelset.setAutoDecimal(False)
+            labelset.setDecimalDigits(decimals)
         if dynamic:
             gc.addLabelsContourDynamic(gc.getExtent())
         else:

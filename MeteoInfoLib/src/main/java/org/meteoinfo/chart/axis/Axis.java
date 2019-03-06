@@ -1261,6 +1261,55 @@ public class Axis implements Cloneable {
 
         return rlab;
     }
+    
+    /**
+     * Get maximum tick label dimension
+     * @param g Graphics2D
+     * @return Maximum tick label dimension
+     */
+    public Dimension getMaxTickDim(Graphics2D g) {
+        this.updateTickLabels();
+        Dimension dim = new Dimension();
+        if (this.tickLabels.isEmpty()) {
+            return dim;
+        }
+        
+        Dimension dim1;
+        double width = dim.getWidth(), height = dim.getHeight();
+        for (ChartText ct : this.tickLabels) {
+            dim1 = ct.getTrueDimension(g);
+            if (width < dim1.getWidth()){
+                width = dim1.getWidth();
+            }
+            if (height < dim1.getHeight()) {
+                height = dim1.getHeight();
+            }
+        }
+        
+        dim.setSize(width, height);
+        return dim;
+    }
+    
+    /**
+     * Get tick label text with maximum lines
+     *
+     * @return Maximum lines tick label text
+     */
+    public ChartText getMaxLinesText() {
+        this.updateTickLabels();
+        if (this.tickLabels.isEmpty()) {
+            return new ChartText("1");
+        }
+
+        ChartText rlab = this.tickLabels.get(0);
+        for (ChartText lab : this.tickLabels) {
+            if (lab.getTexts().size() > rlab.getTexts().size()) {
+                rlab = lab;
+            }
+        }
+
+        return rlab;
+    }
 
     /**
      * Get maximum tick label line number
@@ -1758,12 +1807,14 @@ public class Axis implements Cloneable {
         }
         this.updateTickLabels();
         if (this.isDrawTickLabel() && this.tickLabels.size() > 0) {
-            ChartText text = this.getMaxLenText();
-            text.setAngle(this.tickLabelAngle);
-            height += this.tickSpace + text.getTrueDimension(g).height;
-            Dimension dim = Draw.getStringDimension("Test", this.getTickLabelAngle(), g);
+            Dimension dim = this.getMaxTickDim(g);
+//            ChartText text = this.getMaxLenText();
+//            text.setAngle(this.tickLabelAngle);
+//            height += this.tickSpace + text.getTrueDimension(g).height;
+            height += this.tickSpace + dim.height;
+            Dimension dim1 = Draw.getStringDimension("Test", g);
             if (this instanceof TimeAxis) {
-                height += dim.height + this.tickSpace;
+                height += dim1.height + this.tickSpace;
             }
         }
         if (this.isDrawLabel()) {

@@ -14,3 +14,6 @@ currentfolder = None
 
 #Map folder
 mapfolder = None
+
+#Sample folder
+samplefolder = None

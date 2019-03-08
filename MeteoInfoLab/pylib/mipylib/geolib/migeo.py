@@ -45,7 +45,7 @@ def shaperead(fn, encoding=None):
     if not fn.endswith('.shp'):
         fn = fn + '.shp'
     if not os.path.exists(fn):
-        fn = os.path.join(migl.mapfolder, fn)
+        fn = os.path.join(migl.get_map_folder(), fn)
         
     if os.path.exists(fn):        
         try:

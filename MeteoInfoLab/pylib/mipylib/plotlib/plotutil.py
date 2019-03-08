@@ -20,6 +20,7 @@ from mipylib.numeric.dimarray import DimArray
 from mipylib.numeric.miarray import MIArray
 import mipylib.numeric.minum as minum
 import mipylib.miutil as miutil
+import mipylib.migl as migl
 
 def getplotdata(data):
     if isinstance(data, (MIArray, DimArray)):
@@ -190,12 +191,16 @@ def getcolormap(**kwargs):
         cmapstr = kwargs.pop('cmap', 'matlab_jet')
         if cmapstr is None:
             cmapstr = 'matlab_jet'
+        fn = cmapstr + '.rgb'
+        fn = os.path.join(migl.get_cmap_folder(), fn)
+        if not os.path.exists(fn):
+            raise IOError('cmap file not exists: %s' % fn)
         alpha = kwargs.pop('alpha', None)
         if alpha is None:
-            cmap = ColorUtil.getColorMap(cmapstr)
+            cmap = ColorUtil.loadColorMap(fn)
         else:
             alpha = (int)(alpha * 255)
-            cmap = ColorUtil.getColorMap(cmapstr, alpha)
+            cmap = ColorUtil.loadColorMap(fn, alpha)
     reverse = kwargs.pop('cmapreverse', False)
     if reverse:
         cmap.reverse()

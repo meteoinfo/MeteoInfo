@@ -100,20 +100,15 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         interp = new PythonInteractiveInterpreter(console);
         String path = this.startupPath + File.separator + "pylib";
         String toolboxPath = this.startupPath + "/toolbox";
-        String mapPath = this.startupPath + "/map";
-        String samplePath = this.startupPath + "/sample";
+        String miPath = this.startupPath;
         String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("windows") && mapPath.substring(0, 1).equals("/")) {
-            mapPath = mapPath.substring(1);
-        }
-        if (os.contains("windows") && samplePath.substring(0, 1).equals("/")) {
-            samplePath = samplePath.substring(1);
+        if (os.contains("windows") && miPath.substring(0, 1).equals("/")) {
+            miPath = miPath.substring(1);
         }
         if (isDebug) {
             //path = "D:/MyProgram/Java/MeteoInfoDev/MeteoInfoLab/pylib";
             toolboxPath = "D:/MyProgram/Java/MeteoInfoDev/toolbox";
-            mapPath = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo/map";
-            samplePath = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo/sample";
+            miPath = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo";
         }
         //console.println(path);
         //console.println(toolboxPath);
@@ -139,8 +134,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         try {
             interp.exec("mipylib.plotlib.miplot.isinteractive = True");
             interp.exec("mipylib.migl.milapp = milapp");
-            interp.exec("mipylib.migl.mapfolder = '" + mapPath + "'");
-            interp.exec("mipylib.migl.samplefolder = '" + samplePath + "'");
+            interp.exec("mipylib.migl.mifolder = '" + miPath + "'");
             currentPath = currentPath.replace("\\", "/");
             interp.exec("mipylib.migl.currentfolder = u'" + currentPath + "'");
         } catch (Exception e) {

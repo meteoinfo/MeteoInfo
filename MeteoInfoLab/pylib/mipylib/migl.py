@@ -6,14 +6,25 @@
 # Note: Put global variables
 #-----------------------------------------------------
 
+import os
+
 #MeteoInfoLab application object
 milapp = None
 
 #Current folder of MeteoInfoLab
 currentfolder = None
 
+#MeteoInfo folder
+mifolder = None
+
 #Map folder
-mapfolder = None
+def get_map_folder():
+    return None if (mifolder is None) else os.path.join(mifolder, 'map')
 
 #Sample folder
-samplefolder = None
+def get_sample_folder():
+    return None if (mifolder is None) else os.path.join(mifolder, 'sample')
+    
+#cmap folder
+def get_cmap_folder():
+    return None if (mifolder is None) else os.path.join(mifolder, 'colormaps')

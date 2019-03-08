@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map">
-    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\ensemble"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataconvert"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
@@ -16,23 +15,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\xor.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\array\dataframe_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\chart_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\dataframe_read_table_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\difference.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\bil_SRTM30_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\xor.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\array\dataframe_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\chart_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\array\dataframe_read_table_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\difference.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\bil_SRTM30_1.py"/>
     </RecentFiles>
   </File>
   <Font>

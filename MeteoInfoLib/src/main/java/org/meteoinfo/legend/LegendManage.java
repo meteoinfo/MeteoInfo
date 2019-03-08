@@ -1110,27 +1110,6 @@ public class LegendManage {
      *
      * @param min Minimum
      * @param max Maximum
-     * @param ctName Color table name
-     * @return LegendScheme
-     * @throws java.io.IOException
-     */
-    public static LegendScheme createLegendScheme(double min, double max, String ctName) throws IOException {
-        double[] values = createContourValues(min, max);
-        ColorMap ct = ColorUtil.getColorMap(ctName);
-        Color[] colors;
-        if (ct != null) {
-            colors = ct.getColors(values.length + 1);
-        } else {
-            colors = createRainBowColors(values.length + 1);
-        }
-        return createLegendScheme(min, max, values, colors, LegendType.GraduatedColor, ShapeTypes.Image, false, -9999.0);
-    }
-
-    /**
-     * Create legend scheme
-     *
-     * @param min Minimum
-     * @param max Maximum
      * @param interval Interval
      * @param legendType Legend type
      * @param shapeType Shape type
@@ -1295,25 +1274,6 @@ public class LegendManage {
      *
      * @param min Minimum
      * @param max Maximum
-     * @param n Level number
-     * @param ctName Color table name
-     * @return LegendScheme
-     * @throws java.io.IOException
-     */
-    public static LegendScheme createLegendScheme(double min, double max, int n, String ctName) throws IOException {
-        ColorMap ct = ColorUtil.getColorMap(ctName);
-        if (ct != null) {
-            return createLegendScheme(min, max, n, ct);
-        } else {
-            return createLegendScheme(min, max, n);
-        }
-    }
-
-    /**
-     * Create legend scheme
-     *
-     * @param min Minimum
-     * @param max Maximum
      * @param levs Level values
      * @param ct Color table
      * @return LegendScheme
@@ -1404,12 +1364,11 @@ public class LegendManage {
      *
      * @param gdata Grid data
      * @param n Level number
-     * @param ctName Color table name
+     * @param ct Color table name
      * @return LegendScheme
      * @throws java.io.IOException
      */
-    public static LegendScheme createLegendScheme(GridData gdata, int n, String ctName) throws IOException {
-        ColorMap ct = ColorUtil.getColorMap(ctName);
+    public static LegendScheme createLegendScheme(GridData gdata, int n, ColorMap ct) throws IOException {
         if (ct != null) {
             return createLegendScheme(gdata, n, ct, LegendType.GraduatedColor, ShapeTypes.Image);
         } else {
@@ -1420,38 +1379,16 @@ public class LegendManage {
     /**
      * Create legend scheme
      *
-     * @param gdata Grid data
-     * @param n Level number
-     * @param ctName Color table name
-     * @param legendType Legend type
-     * @param shapeType Shape type
-     * @return LegendScheme
-     * @throws java.io.IOException
-     */
-    public static LegendScheme createLegendScheme(GridData gdata, int n, String ctName,
-            LegendType legendType, ShapeTypes shapeType) throws IOException {
-        ColorMap ct = ColorUtil.getColorMap(ctName);
-        if (ct != null) {
-            return createLegendScheme(gdata, n, ct, legendType, shapeType);
-        } else {
-            return createLegendScheme(gdata, n, legendType, shapeType);
-        }
-    }
-
-    /**
-     * Create legend scheme
-     *
      * @param stdata Station data
      * @param n Level number
-     * @param ctName Color table name
+     * @param ct Color table name
      * @param legendType Legend type
      * @param shapeType Shape type
      * @return Legend scheme
      * @throws IOException
      */
-    public static LegendScheme createLegendScheme(StationData stdata, int n, String ctName,
+    public static LegendScheme createLegendScheme(StationData stdata, int n, ColorMap ct,
             LegendType legendType, ShapeTypes shapeType) throws IOException {
-        ColorMap ct = ColorUtil.getColorMap(ctName);
         double[] maxmin = new double[2];
         boolean hasMissingValue = stdata.getMaxMinValue(maxmin);
         double max = maxmin[0];

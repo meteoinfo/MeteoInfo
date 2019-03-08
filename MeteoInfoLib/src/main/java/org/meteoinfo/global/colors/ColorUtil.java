@@ -260,26 +260,12 @@ public class ColorUtil {
     }
     
     /**
-     * Get color map
-     * @param ctName Color map name
+     * Load color map from rgb file
+     * @param fn Color map rgb file path
      * @return Color table
      * @throws java.io.IOException
      */
-    public static ColorMap getColorMap(String ctName) throws IOException{
-        String fn = GlobalUtil.getAppPath(ColorUtil.class);
-        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
-                getInputArguments().toString().contains("jdwp");
-        if (isDebug) {
-            fn = "D:/MyProgram/java/MeteoInfoDev/MeteoInfoMap/";
-        }     
-        fn = fn.substring(0, fn.lastIndexOf("/"));
-        String path = fn + File.separator + "colormaps";
-        File pathDir = new File(path);
-        if (!pathDir.isDirectory()) {
-            return null;
-        }
-        
-        fn = path + File.separator + ctName + ".rgb";
+    public static ColorMap loadColorMap(String fn) throws IOException{
         File ctFile = new File(fn);
         if (!ctFile.isFile())
             return null;                
@@ -291,27 +277,13 @@ public class ColorUtil {
     }
     
     /**
-     * Get color map
-     * @param ctName Color map name
+     * Load color map from rgb file
+     * @param fn Color map rgb file path
      * @param alpha Alpha
      * @return Color table
      * @throws java.io.IOException
      */
-    public static ColorMap getColorMap(String ctName, int alpha) throws IOException{
-        String fn = GlobalUtil.getAppPath(ColorUtil.class);
-        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
-                getInputArguments().toString().contains("jdwp");
-        if (isDebug) {
-            fn = "D:/MyProgram/java/MeteoInfoDev/MeteoInfoMap/";
-        }     
-        fn = fn.substring(0, fn.lastIndexOf("/"));
-        String path = fn + File.separator + "colormaps";
-        File pathDir = new File(path);
-        if (!pathDir.isDirectory()) {
-            return null;
-        }
-        
-        fn = path + File.separator + ctName + ".rgb";
+    public static ColorMap loadColorMap(String fn, int alpha) throws IOException{
         File ctFile = new File(fn);
         if (!ctFile.isFile())
             return null;                

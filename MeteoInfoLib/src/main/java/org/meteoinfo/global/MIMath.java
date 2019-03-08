@@ -1093,8 +1093,11 @@ public class MIMath {
 
         //Get values
         List<Double> values = new ArrayList<>();
+        double v;
         for (i = 0; i < cNum; i++) {
-            values.add(BigDecimalUtil.add(newMin, BigDecimalUtil.mul(i, cDelt)));
+            v = BigDecimalUtil.add(newMin, BigDecimalUtil.mul(i, cDelt));
+            if (v >= min && v <= max)
+                values.add(v);
         }
 
         //Extend values

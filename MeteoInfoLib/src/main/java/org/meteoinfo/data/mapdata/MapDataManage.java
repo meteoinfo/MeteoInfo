@@ -64,6 +64,7 @@ import org.meteoinfo.shape.Shape;
 import static org.meteoinfo.shape.ShapeTypes.Point;
 import static org.meteoinfo.shape.ShapeTypes.Polygon;
 import static org.meteoinfo.shape.ShapeTypes.Polyline;
+import ucar.ma2.Array;
 
 /**
  *
@@ -400,10 +401,16 @@ public class MapDataManage {
     public static RasterLayer readBILFile(String fileName) {
         BILDataInfo dataInfo = new BILDataInfo();
         dataInfo.readDataInfo(fileName);
-        GridData gData = dataInfo.getGridData_LonLat(0, 0, 0);
-        LegendScheme aLS = LegendManage.createLegendSchemeFromGridData(gData, LegendType.GraduatedColor,
+        //GridData gData = dataInfo.getGridData_LonLat(0, 0, 0);
+        Array a = dataInfo.read(dataInfo.getVariableNames().get(0));
+        GridArray data = new GridArray();
+        data.data = a;
+        data.xArray = dataInfo.getXDimension().getValues();
+        data.yArray = dataInfo.getYDimension().getValues();
+        data.missingValue = dataInfo.getMissingValue();
+        LegendScheme aLS = LegendManage.createLegendSchemeFromGridData(data, LegendType.GraduatedColor,
                 ShapeTypes.Image);
-        RasterLayer aLayer = DrawMeteoData.createRasterLayer(gData, new File(fileName).getName(), aLS);
+        RasterLayer aLayer = DrawMeteoData.createRasterLayer(data, new File(fileName).getName(), aLS);
         aLayer.setFileName(fileName);
 
         return aLayer;

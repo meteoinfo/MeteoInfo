@@ -3528,7 +3528,7 @@ public class GridData {
         int idx = 0;
         for (int i = 0; i < this.getYNum(); i++) {
             for (int j = 0; j < this.getXNum(); j++) {
-                a.setDouble(idx, this.data[i][j]);
+                a.setDouble(idx, this.getDoubleValue(i, j));
                 idx += 1;
             }
         }

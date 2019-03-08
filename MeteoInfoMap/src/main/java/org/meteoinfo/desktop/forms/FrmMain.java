@@ -287,12 +287,14 @@ public class FrmMain extends JFrame implements IApplication {
 
         boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
                 getInputArguments().toString().contains("jdwp");
+        String pluginPath;
         if (isDebug) {
             this._startupPath = System.getProperty("user.dir");
+            pluginPath = "D:/MyProgram/Java/MeteoInfoDev/plugins";
         } else {
             this._startupPath = GlobalUtil.getAppPath(FrmMain.class);
+            pluginPath = this._startupPath + File.separator + "plugins";
         }
-        String pluginPath = this._startupPath + File.separator + "plugins";
         this._plugins.setPluginPath(pluginPath);
         this._plugins.setPluginConfigFile(pluginPath + File.separator + "plugins.xml");
 
@@ -1726,23 +1728,13 @@ public class FrmMain extends JFrame implements IApplication {
         this.loadDefaultPojectFile();
         this.loadConfigureFile();
         this.setLocation(this._options.getMainFormLocation());
-        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
-                getInputArguments().toString().contains("jdwp");
-//        if (isDebug) {
-//            this.setSize(1000, 650);
-//        } else {
-//            this.setSize(this._options.getMainFormSize());
-//        }
         this.setSize(this._options.getMainFormSize());
-        String pluginPath = this._startupPath + File.separator + "plugins" + File.separator + "plugins.xml";
         try {
-            this._plugins.loadConfigFile(pluginPath);
+            this._plugins.loadConfigFile(this._plugins.getPluginConfigFile());
             this.loadPlugins(this._plugins);
         } catch (MalformedURLException ex) {
             Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException | SAXException ex) {
+        } catch (IOException | ParserConfigurationException | SAXException ex) {
             Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
         }
         _mapView = _mapDocument.getActiveMapFrame().getMapView();

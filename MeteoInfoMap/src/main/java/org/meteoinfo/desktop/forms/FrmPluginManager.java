@@ -180,7 +180,7 @@ public class FrmPluginManager extends javax.swing.JDialog {
         // TODO add your handling code here:
         List<Plugin> plugins = new ArrayList<>();
 
-        String pluginPath = _parent.getStartupPath() + File.separator + "plugins";
+        String pluginPath = _parent.getPlugins().getPluginPath();
         if (new File(pluginPath).isDirectory()) {
             List<String> fileNames = GlobalUtil.getFiles(pluginPath, ".jar");
             for (String fn : fileNames) {

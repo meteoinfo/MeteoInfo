@@ -24,13 +24,29 @@
           <ChartGraphics/>
           <VisibleScale EnableMaxVisScale="false" EnableMinVisScale="false" MaxVisScale="0.0" MinVisScale="0.0"/>
         </Layer>
+        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\bou2_4p.shp" Handle="2" IsMaskout="false" LayerDrawType="Map" LayerName="bou2_4p.shp" LayerType="VectorLayer" ShapeType="Polygon" TransparencyPerc="0" Visible="true">
+          <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="Polygon" UNDEF="-9999.0">
+            <Breaks>
+              <Break BackColor="0x00ffffff" Caption="" Color="0xfffffbc3" DrawFill="true" DrawOutline="true" DrawShape="true" EndValue="0" OutlineColor="0xff808080" OutlineSize="1.0" StartValue="0" Style="NONE" StyleSize="8" Tag=""/>
+            </Breaks>
+          </LegendScheme>
+          <LabelSet AlignType="Center" AutoDecimal="true" AvoidCollision="true" DecimalDigits="2" DrawLabels="false" DrawShadow="false" FieldName="" FontName="宋体" FontSize="12" LabelColor="0xff000000" Offset="0" ShadowColor="0xffffffff"/>
+          <Graphics/>
+          <ChartSet AlignType="Center" AvoidCollision="true" BarWidth="8" ChartType="BarChart" DrawCharts="false" DrawLabel="false" FieldNames="" FontName="Arial" FontSize="12" LabelColor="0xff000000" MaxSize="50" MaxValue="0.0" MinSize="0" MinValue="0.0" Thickness="5" View3D="false" XShift="0" YShift="0">
+            <LegendScheme BreakNum="0" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="Polygon" UNDEF="0.0">
+              <Breaks/>
+            </LegendScheme>
+          </ChartSet>
+          <ChartGraphics/>
+          <VisibleScale EnableMaxVisScale="false" EnableMinVisScale="false" MaxVisScale="0.0" MinVisScale="0.0"/>
+        </Layer>
       </GroupLayer>
       <Graphics/>
     </MapFrame>
   </MapFrames>
   <Layout BackColor="0xffffffff" ForeColor="0xff000000" Landscape="true" PaperSizeHeight="750" PaperSizeName="Custom" PaperSizeWidth="500" SmoothingMode="false">
     <LayoutElements>
-      <LayoutMap DrawBackColor="false" DrawDegreeSymbol="false" DrawGridLabel="true" DrawGridLine="false" DrawNeatLine="true" ElementType="LayoutMap" GridFontName="Arial" GridFontSize="12" GridLabelPosition="LeftBottom" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH" GridXDelt="10.0" GridXOrigin="0.0" GridYDelt="10.0" GridYOrigin="0.0" Height="404" Left="48" NeatLineColor="0xff000000" NeatLineSize="1.0" Top="30" Width="592"/>
+      <LayoutMap DrawBackColor="false" DrawDegreeSymbol="false" DrawGridLabel="true" DrawGridLine="false" DrawNeatLine="true" ElementType="LayoutMap" GridFontName="Arial" GridFontSize="12" GridLabelPosition="LEFT_BOTTOM" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH" GridXDelt="10.0" GridXOrigin="0.0" GridYDelt="10.0" GridYOrigin="0.0" Height="404" Left="48" NeatLineColor="0xff000000" NeatLineSize="1.0" Top="30" Width="592"/>
       <LayoutGraphic ElementType="LayoutGraphic" Height="16" IsTitle="false" Left="309" Top="13" Width="106">
         <Graphic>
           <Shape Selected="false" ShapeType="Point" Visible="true">

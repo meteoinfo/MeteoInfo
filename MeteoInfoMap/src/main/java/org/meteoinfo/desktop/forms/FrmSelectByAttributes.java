@@ -394,7 +394,7 @@ public class FrmSelectByAttributes extends javax.swing.JDialog {
 
     private void jButton_GetValuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_GetValuesActionPerformed
         // TODO add your handling code here:
-        List<String> valueList = new ArrayList<String>();
+        List<String> valueList = new ArrayList<>();
         boolean isNumeric = MIMath.isNumeric(_selectLayer.getField(_selectField));
 
         for (int i = 0; i < _selectLayer.getAttributeTable().getTable().getRowCount(); i++) {
@@ -412,7 +412,7 @@ public class FrmSelectByAttributes extends javax.swing.JDialog {
             }
         } else {
             for (String vStr : valueList) {
-                listModel.addElement("'" + vStr + "'");
+                listModel.addElement("\"" + vStr + "\"");
             }
         }
 
@@ -545,6 +545,7 @@ public class FrmSelectByAttributes extends javax.swing.JDialog {
             shape.setVisible(true);
         }
         this._frmMain.refreshMap();
+        this.jTextField_QueryString.setText("");
         this.setCursor(Cursor.getDefaultCursor());
     }//GEN-LAST:event_jButton_ClearActionPerformed
 

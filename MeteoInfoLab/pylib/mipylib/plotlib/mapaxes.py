@@ -8,6 +8,7 @@
 
 import os
 
+from org.meteoinfo.chart import ChartScaleBar, ChartNorthArrow
 from org.meteoinfo.chart.plot import MapPlot, GraphicFactory
 from org.meteoinfo.data import ArrayUtil
 from org.meteoinfo.data.meteodata import DrawMeteoData
@@ -18,6 +19,7 @@ from org.meteoinfo.projection.info import ProjectionInfo
 from org.meteoinfo.global import Extent
 from org.meteoinfo.layer import LayerTypes, WebMapLayer
 from org.meteoinfo.data.mapdata.webmap import WebMapProvider
+from org.meteoinfo.layout import ScaleBarType
 
 from java.awt import Font, Color
 
@@ -168,6 +170,131 @@ class MapAxes(Axes):
         lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         circle = self.axes.addCircle(xy[0], xy[1], radius, lbreak)
         return circle
+        
+    def scale_bar(self, x, y, **kwargs):
+        '''
+        Set map scale bar.
+        
+        :param x: (*float*) The location x of the scale bar.
+        :param y: (*float*) The location y of the scale bar.
+        :param bartype: (*string*) Scale bar type ['scaleline_1' | 'scaleline_2' | 'alternating_bar'].
+        :param width: (*float*) The width of the scale bar with pixel unit.
+        :param height: (*float*) The height of the scale bar with pixel unit.
+        :param color: (*Color*) The color of the scale bar.
+        :param linewidth: (*float*) Line width.
+        :param labelcolor: (*Color*) Label color. Default to default is black.
+        :param fontname: (*string*) Label font name. Default is ``Arial`` .
+        :param fontsize: (*int*) Label font size. Default is ``12`` .
+        :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
+        :param fontproperties: (*dict*) A dictionary with keyword arguments accepted by the FontProperties
+            initializer: *family, style, variant, size, weight*.
+        '''
+        sb = ChartScaleBar(self.axes)
+        sb.setX(x)
+        sb.setY(y)
+        bartype = kwargs.pop('bartype', None)
+        if not bartype is None:
+            bartype = ScaleBarType.valueOf(bartype.upper())
+            sb.setScaleBarType(bartype)
+        linewidth = kwargs.pop('linewidth', None)
+        if not linewidth is None:
+            sb.setLineWidth(linewidth)
+        width = kwargs.pop('width', None)
+        if not width is None:
+            sb.setWidth(width)
+        height = kwargs.pop('height', None)
+        if not height is None:
+            sb.setHeight(height)
+        color = kwargs.pop('color', None)
+        if not color is None:
+            color = plotutil.getcolor(color)
+            sb.setForeground(color)
+        fontname = kwargs.pop('fontname', 'Arial')
+        fontsize = kwargs.pop('fontsize', 12)
+        bold = kwargs.pop('bold', False)
+        if bold:
+            font = Font(fontname, Font.BOLD, fontsize)
+        else:
+            font = Font(fontname, Font.PLAIN, fontsize)
+        sb.setFont(font)
+        bbox = kwargs.pop('bbox', None)
+        if not bbox is None:
+            fill = bbox.pop('fill', None)
+            if not fill is None:
+                sb.setFill(fill)
+            facecolor = bbox.pop('facecolor', None)
+            if not facecolor is None:
+                facecolor = plotutil.getcolor(facecolor)
+                sb.setFill(True)
+                sb.setBackground(facecolor)
+            edge = bbox.pop('edge', None)
+            if not edge is None:
+                sb.setDrawNeatline(edge)
+            edgecolor = bbox.pop('edgecolor', None)
+            if not edgecolor is None:
+                edgecolor = plotutil.getcolor(edgecolor)
+                sb.setNeatlineColor(edgecolor)
+                sb.setDrawNeatline(True)
+            linewidth = bbox.pop('linewidth', None)
+            if not linewidth is None:
+                sb.setNeatlineSize(linewidth)
+                sb.setDrawNeatline(True)
+        self.axes.setScaleBar(sb)
+        
+    def north_arrow(self, x, y, **kwargs):
+        '''
+        Set map scale bar.
+        
+        :param x: (*float*) The location x of the scale bar.
+        :param y: (*float*) The location y of the scale bar.
+        :param bartype: (*string*) Scale bar type ['scaleline_1' | 'scaleline_2' | 'alternating_bar'].
+        :param width: (*float*) The width of the scale bar with pixel unit.
+        :param height: (*float*) The height of the scale bar with pixel unit.
+        :param color: (*Color*) The color of the scale bar.
+        :param linewidth: (*float*) Line width.
+        :param labelcolor: (*Color*) Label color. Default to default is black.
+        :param fontproperties: (*dict*) A dictionary with keyword arguments accepted by the FontProperties
+            initializer: *family, style, variant, size, weight*.
+        '''
+        cna = ChartNorthArrow(self.axes)
+        cna.setX(x)
+        cna.setY(y)
+        linewidth = kwargs.pop('linewidth', None)
+        if not linewidth is None:
+            cna.setLineWidth(linewidth)
+        width = kwargs.pop('width', None)
+        if not width is None:
+            cna.setWidth(width)
+        height = kwargs.pop('height', None)
+        if not height is None:
+            cna.setHeight(height)
+        color = kwargs.pop('color', None)
+        if not color is None:
+            color = plotutil.getcolor(color)
+            cna.setForeground(color)
+        bbox = kwargs.pop('bbox', None)
+        if not bbox is None:
+            fill = bbox.pop('fill', None)
+            if not fill is None:
+                cna.setFill(fill)
+            facecolor = bbox.pop('facecolor', None)
+            if not facecolor is None:
+                facecolor = plotutil.getcolor(facecolor)
+                cna.setFill(True)
+                cna.setBackground(facecolor)
+            edge = bbox.pop('edge', None)
+            if not edge is None:
+                cna.setDrawNeatline(edge)
+            edgecolor = bbox.pop('edgecolor', None)
+            if not edgecolor is None:
+                edgecolor = plotutil.getcolor(edgecolor)
+                cna.setNeatlineColor(edgecolor)
+                cna.setDrawNeatline(True)
+            linewidth = bbox.pop('linewidth', None)
+            if not linewidth is None:
+                cna.setNeatlineSize(linewidth)
+                cna.setDrawNeatline(True)
+        self.axes.setNorthArrow(cna)
         
     def grid(self, b=None, which='major', axis='both', **kwargs):
         """

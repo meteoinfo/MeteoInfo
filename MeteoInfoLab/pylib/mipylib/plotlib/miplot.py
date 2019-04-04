@@ -42,7 +42,7 @@ __all__ = [
     'gca','annotate','antialias','arrow','arrowline','axes','axes3d','axesm','caxes','axis','axism','bar','barh','barbs','barbsm','bgcolor','box',
     'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
     'contourfm','contourm','draw','draw_if_interactive','errorbar',
-    'figure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','geoshow','gifaddframe','gifanimation','giffinish',
+    'figure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','legend','left_title','loglog','makecolors',
     'makelegend','makesymbolspec','masklayer','pcolor','pcolorm','pie','plot','plot3','plotm','quiver',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
@@ -1504,7 +1504,7 @@ def clc():
     '''
     if not migl.milapp is None:
         console = migl.milapp.getConsoleDockable().getConsole()
-        console.getTextPane().setText('')    
+        console.getTextPane().setText('')   
 
 def title(label, loc='center', fontname=None, fontsize=14, bold=True, color='black', **kwargs):
     """
@@ -2845,3 +2845,11 @@ def clear():
     Clear all variables.
     """
     migl.milapp.delVariables()
+    
+def gc_collect():
+    '''
+    Clear variables and release memory
+    '''
+    clear()
+    import gc
+    gc.collect()

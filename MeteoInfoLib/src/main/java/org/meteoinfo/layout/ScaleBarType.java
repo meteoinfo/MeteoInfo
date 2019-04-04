@@ -18,18 +18,18 @@ package org.meteoinfo.layout;
  *
  * @author Yaqiang Wang
  */
-public enum ScaleBarTypes {
+public enum ScaleBarType {
     /// <summary>
     /// Scale line1
     /// </summary>
 
-    ScaleLine1,
+    SCALELINE_1,
     /// <summary>
     /// Scale line 2
     /// </summary>
-    ScaleLine2,
+    SCALELINE_2,
     /// <summary>
     /// Alternating scale bar
     /// </summary>
-    AlternatingBar
+    ALTERNATING_BAR
 }

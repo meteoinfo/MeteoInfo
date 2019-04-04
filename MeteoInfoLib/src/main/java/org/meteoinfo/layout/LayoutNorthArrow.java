@@ -35,7 +35,7 @@ public class LayoutNorthArrow extends LayoutElement {
     private boolean _drawNeatLine;
     private Color _neatLineColor;
     private float _neatLineSize;
-    private NorthArrowTypes _northArrowType;
+    private NorthArrowType _northArrowType;
     private float _angle;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -58,7 +58,7 @@ public class LayoutNorthArrow extends LayoutElement {
         _drawNeatLine = false;
         _neatLineColor = Color.black;
         _neatLineSize = 1;
-        _northArrowType = NorthArrowTypes.NorthArrow1;
+        _northArrowType = NorthArrowType.NORTHARROW_1;
         _angle = 0;
     }
     // </editor-fold>
@@ -202,7 +202,7 @@ public class LayoutNorthArrow extends LayoutElement {
 
     private void drawNorthArrow(Graphics2D g, float zoom) {
         switch (_northArrowType) {
-            case NorthArrow1:
+            case NORTHARROW_1:
                 drawNorthArrow1(g, zoom);
                 break;
         }

@@ -4097,7 +4097,7 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         }
 
         try {
-            aLSB.setScaleBarType(ScaleBarTypes.valueOf(layoutScaleBar.getAttributes().getNamedItem("ScaleBarType").getNodeValue()));
+            aLSB.setScaleBarType(ScaleBarType.valueOf(layoutScaleBar.getAttributes().getNamedItem("ScaleBarType").getNodeValue()));
             aLSB.setBackColor(ColorUtil.parseToColor(layoutScaleBar.getAttributes().getNamedItem("BackColor").getNodeValue()));
             aLSB.setForeColor(ColorUtil.parseToColor(layoutScaleBar.getAttributes().getNamedItem("ForeColor").getNodeValue()));
             aLSB.setDrawNeatLine(Boolean.parseBoolean(layoutScaleBar.getAttributes().getNamedItem("DrawNeatLine").getNodeValue()));

@@ -22,7 +22,9 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.meteoinfo.chart.ChartNorthArrow;
 import org.meteoinfo.chart.ChartPanel;
+import org.meteoinfo.chart.ChartScaleBar;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.Location;
 import org.meteoinfo.chart.axis.LonLatAxis;
@@ -78,6 +80,8 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     private float[] lonLim;
     private float[] latLim;
     private Graphic boundary;
+    private ChartScaleBar scaleBar;
+    private ChartNorthArrow northArrow;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -370,6 +374,38 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             this.boundary = new Graphic(this.boundary.getShape(), pb);
         }
     }
+    
+    /**
+     * Get scale bar
+     * @return Scale bar
+     */
+    public ChartScaleBar getScaleBar() {
+        return this.scaleBar;
+    }
+    
+    /**
+     * Set scale bar
+     * @param value Scale bar
+     */
+    public void setScaleBar(ChartScaleBar value) {
+        this.scaleBar = value;
+    }
+    
+    /**
+     * Get north arrow
+     * @return North arrow
+     */
+    public ChartNorthArrow getNorthArrow() {
+        return this.northArrow;
+    }
+    
+    /**
+     * Set north arrow
+     * @param value North arrow
+     */
+    public void setNorthArrow(ChartNorthArrow value) {
+        this.northArrow = value;
+    }
 
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -396,6 +432,28 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     public void reDraw() {
         if (this.parent != null) {
             this.parent.paintGraphics();
+        }
+    }
+    
+    /**
+     * Draw plot
+     *
+     * @param g Graphics2D
+     * @param area Drawing area
+     */
+    @Override
+    public void draw(Graphics2D g, Rectangle2D area) {
+        super.draw(g, area);
+        if (this.scaleBar != null) {
+            float x = (float) (area.getWidth() * this.scaleBar.getX());
+            float y = (float) (area.getHeight() * (1 - this.scaleBar.getY()));
+            this.scaleBar.draw(g, x, y);
+        }
+        
+        if (this.northArrow != null) {
+            float x = (float) (area.getWidth() * this.northArrow.getX());
+            float y = (float) (area.getHeight() * (1 - this.northArrow.getY()));
+            this.northArrow.draw(g, x, y);
         }
     }
 

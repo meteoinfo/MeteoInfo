@@ -37,7 +37,7 @@ public class LayoutScaleBar extends LayoutElement {
     private LayoutMap _layoutMap;
     private boolean _antiAlias;
     private Font _font;
-    private ScaleBarTypes _scaleBarType;
+    private ScaleBarType _scaleBarType;
     private ScaleBarUnits _unit;
     private String _unitText;
     private int _numBreaks;
@@ -63,12 +63,12 @@ public class LayoutScaleBar extends LayoutElement {
         this.setHeight(50);
         _layoutMap = layoutMap;
         _antiAlias = true;
-        _scaleBarType = ScaleBarTypes.ScaleLine1;
+        _scaleBarType = ScaleBarType.SCALELINE_1;
         _drawNeatLine = false;
         _neatLineColor = Color.black;
         _neatLineSize = 1;
         _font = new Font("Arial", Font.PLAIN, 12);
-        _unit = ScaleBarUnits.Kilometers;
+        _unit = ScaleBarUnits.KILOMETERS;
         _unitText = "km";
         _numBreaks = 4;
         _drawScaleText = false;
@@ -90,7 +90,7 @@ public class LayoutScaleBar extends LayoutElement {
      *
      * @return Scale bar type
      */
-    public ScaleBarTypes getScaleBarType() {
+    public ScaleBarType getScaleBarType() {
         return _scaleBarType;
     }
 
@@ -99,7 +99,7 @@ public class LayoutScaleBar extends LayoutElement {
      *
      * @param type Scale bar type
      */
-    public void setScaleBarType(ScaleBarTypes type) {
+    public void setScaleBarType(ScaleBarType type) {
         _scaleBarType = type;
     }
 
@@ -295,13 +295,13 @@ public class LayoutScaleBar extends LayoutElement {
 
         //Draw scale bar
         switch (_scaleBarType) {
-            case ScaleLine1:
+            case SCALELINE_1:
                 drawScaleLine1(g, zoom, aFont, breakWidth, geoBreakWidth);
                 break;
-            case ScaleLine2:
+            case SCALELINE_2:
                 drawScaleLine2(g, zoom, aFont, breakWidth, geoBreakWidth);
                 break;
-            case AlternatingBar:
+            case ALTERNATING_BAR:
                 drawAlternatingBar(g, zoom, aFont, breakWidth, geoBreakWidth);
                 break;
         }
@@ -309,7 +309,7 @@ public class LayoutScaleBar extends LayoutElement {
 
     private double getConversionFactor(ScaleBarUnits unit) {
         switch (unit) {
-            case Kilometers:
+            case KILOMETERS:
                 return 1000;
             default:
                 return 1;
@@ -452,7 +452,7 @@ public class LayoutScaleBar extends LayoutElement {
          * @param type Scale bar type
          */
         public void setScaleBarType(String type) {
-            _scaleBarType = ScaleBarTypes.valueOf(type);
+            _scaleBarType = ScaleBarType.valueOf(type);
         }
 
         /**
@@ -715,10 +715,10 @@ public class LayoutScaleBar extends LayoutElement {
 
         public ScaleBarTypeEditor() {
             super();
-            ScaleBarTypes[] lutypes = ScaleBarTypes.values();
+            ScaleBarType[] lutypes = ScaleBarType.values();
             String[] types = new String[lutypes.length];
             int i = 0;
-            for (ScaleBarTypes type : lutypes) {
+            for (ScaleBarType type : lutypes) {
                 types[i] = type.toString();
                 i += 1;
             }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
@@ -16,6 +15,7 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,12 +23,14 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\xor.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\array\dataframe_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\map\northarrow.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\chart_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\xor.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\array\dataframe_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\map\northarrow.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\chart_1.py"/>
     </RecentFiles>
   </File>
   <Font>

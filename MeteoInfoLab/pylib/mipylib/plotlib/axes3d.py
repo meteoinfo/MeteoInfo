@@ -21,7 +21,7 @@ import mipylib.miutil as miutil
 
 import datetime
 
-from java.awt import Font, Color
+from java.awt import Font, Color, BasicStroke
 
 #########################################################
 class Axes3D(Axes):
@@ -268,6 +268,7 @@ class Axes3D(Axes):
         linestyle = kwargs.pop('linestyle', None)
         tickline = kwargs.pop('tickline', None)
         tickline = kwargs.pop('tickvisible', tickline)
+        tickwidth = kwargs.pop('tickwidth', None)
         ticklabel = kwargs.pop('ticklabel', None)
         minortick = kwargs.pop('minortick', False)
         minorticknum = kwargs.pop('minorticknum', 5)
@@ -295,6 +296,9 @@ class Axes3D(Axes):
                 axis.setLineStyle(linestyle)
             if not tickline is None:
                 axis.setDrawTickLine(tickline)
+            if not tickwidth is None:
+                stroke = BasicStroke(tickwidth)
+                axis.setTickStroke(stroke)
             if not ticklabel is None:
                 axis.setDrawTickLabel(ticklabel)
             axis.setMinorTickVisible(minortick)

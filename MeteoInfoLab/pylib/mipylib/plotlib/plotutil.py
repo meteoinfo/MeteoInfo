@@ -220,7 +220,8 @@ def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None):
     if isinstance(n, list):
         cols = getcolors(n, alpha)
     else:
-        ocmap = ColorUtil.getColorMap(cmap)
+        #ocmap = ColorUtil.getColorMap(cmap)
+        ocmap = getcolormap(cmap=cmap)
         if reverse:
             ocmap.reverse()
         if alpha is None:

@@ -17,7 +17,7 @@ from org.meteoinfo.shape import ShapeTypes, Graphic, GraphicCollection
 from org.meteoinfo.global import MIMath, Extent
 from org.meteoinfo.layer import MapLayer
 
-from java.awt import Font, Color
+from java.awt import Font, Color, BasicStroke
 from java.awt.image import BufferedImage
 
 import numbers
@@ -595,6 +595,7 @@ class Axes(object):
         linestyle = kwargs.pop('linestyle', None)
         tickline = kwargs.pop('tickline', None)
         tickline = kwargs.pop('tickvisible', tickline)
+        tickwidth = kwargs.pop('tickwidth', None)
         ticklength = kwargs.pop('ticklength', None)
         ticklabel = kwargs.pop('ticklabel', None)
         minortick = kwargs.pop('minortick', False)
@@ -638,6 +639,9 @@ class Axes(object):
                 axis.setLineStyle(linestyle)
             if not tickline is None:
                 axis.setDrawTickLine(tickline)
+            if not tickwidth is None:
+                stroke = BasicStroke(tickwidth)
+                axis.setTickStroke(stroke)
             if not ticklength is None:
                 axis.setTickLength(ticklength)
             if not ticklabel is None:
@@ -663,6 +667,7 @@ class Axes(object):
         linestyle = kwargs.pop('linestyle', None)
         tickline = kwargs.pop('tickline', None)
         tickline = kwargs.pop('tickvisible', tickline)
+        tickwidth = kwargs.pop('tickwidth', None)
         ticklength = kwargs.pop('ticklength', None)
         ticklabel = kwargs.pop('ticklabel', None)
         minortick = kwargs.pop('minortick', False)
@@ -706,6 +711,9 @@ class Axes(object):
                 axis.setLineStyle(linestyle)
             if not tickline is None:
                 axis.setDrawTickLine(tickline)
+            if not tickwidth is None:
+                stroke = BasicStroke(tickwidth)
+                axis.setTickStroke(stroke)
             if not ticklength is None:
                 axis.setTickLength(ticklength)
             if not ticklabel is None:

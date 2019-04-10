@@ -121,7 +121,7 @@
             <version>3.6.1</version>
         </dependency>
         <dependency>
-            <groupId>org.locationtech.jts</groupId>
+            <groupId>org.meteothink</groupId>
             <artifactId>jts-core</artifactId>
             <version>1.15.1</version>
         </dependency>

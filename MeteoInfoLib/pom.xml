@@ -125,6 +125,11 @@
             <artifactId>jts-core</artifactId>
             <version>1.15.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.7</version>
+        </dependency>
     </dependencies>
     
     <properties>

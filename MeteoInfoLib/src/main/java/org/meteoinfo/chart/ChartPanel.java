@@ -5,6 +5,12 @@
  */
 package org.meteoinfo.chart;
 
+import com.itextpdf.awt.PdfGraphics2D;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfTemplate;
+import com.itextpdf.text.pdf.PdfWriter;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -1055,7 +1061,7 @@ public class ChartPanel extends JPanel {
         }
         this.saveImage(aFile, w, h, sleep);
     }
-
+    
     /**
      * Save image to a picture file
      *
@@ -1068,6 +1074,109 @@ public class ChartPanel extends JPanel {
      * @throws java.lang.InterruptedException
      */
     public void saveImage(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException {
+        if (aFile.endsWith(".ps")) {
+            DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
+            String mimeType = "application/postscript";
+            StreamPrintServiceFactory[] factories = StreamPrintServiceFactory.lookupStreamPrintServiceFactories(flavor, mimeType);
+            FileOutputStream out = new FileOutputStream(aFile);
+            if (factories.length > 0) {
+                PrintService service = factories[0].getPrintService(out);
+                SimpleDoc doc = new SimpleDoc(new Printable() {
+                    @Override
+                    public int print(Graphics g, PageFormat pf, int page) {
+                        if (page >= 1) {
+                            return Printable.NO_SUCH_PAGE;
+                        } else {
+                            double sf1 = pf.getImageableWidth() / (getWidth() + 1);
+                            double sf2 = pf.getImageableHeight() / (getHeight() + 1);
+                            double s = Math.min(sf1, sf2);
+                            Graphics2D g2 = (Graphics2D) g;
+                            g2.translate((pf.getWidth() - pf.getImageableWidth()) / 2, (pf.getHeight() - pf.getImageableHeight()) / 2);
+                            g2.scale(s, s);
+
+                            paintGraphics(g2);
+                            return Printable.PAGE_EXISTS;
+                        }
+                    }
+                }, flavor, null);
+                DocPrintJob job = service.createPrintJob();
+                PrintRequestAttributeSet attributes = new HashPrintRequestAttributeSet();
+                job.print(doc, attributes);
+                out.close();
+            }
+        } else if (aFile.endsWith(".eps")) {
+            Properties p = new Properties();
+            p.setProperty("PageSize", "A5");
+            VectorGraphics g = new PSGraphics2D(new File(aFile), new Dimension(width, height));
+            //g.setProperties(p);
+            g.startExport();
+            //this.paintGraphics(g);
+            this.paintGraphics(g, width, height);
+            g.endExport();
+            g.dispose();
+        } else if (aFile.endsWith(".pdf")) {
+            try {
+                Document document = new Document(new com.itextpdf.text.Rectangle(width, height));
+                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(aFile));
+                document.open();
+                PdfContentByte cb = writer.getDirectContent();
+                PdfTemplate pdfTemp = cb.createTemplate(width, height); 
+                Graphics2D g2 = new PdfGraphics2D(pdfTemp, width, height, true);
+                this.paintGraphics(g2, width, height);
+                g2.dispose(); 
+                cb.addTemplate(pdfTemp, 0, 0);
+                document.close();
+            } catch (DocumentException | FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else if (aFile.endsWith(".emf")) {
+            VectorGraphics g = new EMFGraphics2D(new File(aFile), new Dimension(width, height));
+            //g.setProperties(p);
+            g.startExport();
+            //this.paintGraphics(g);
+            this.paintGraphics(g, width, height);
+            g.endExport();
+            g.dispose();
+        } else {
+            //String extension = aFile.substring(aFile.lastIndexOf('.') + 1);
+            //ImageIO.write(this.mapBitmap, extension, new File(aFile));
+
+            String extension = aFile.substring(aFile.lastIndexOf('.') + 1);
+            BufferedImage aImage;
+            if (extension.equalsIgnoreCase("bmp")) {
+                aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            } else {
+                aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            }
+            Graphics2D g = aImage.createGraphics();
+            paintGraphics(g, width, height);
+
+            if (sleep != null) {
+                Thread.sleep(sleep * 1000);
+            }
+
+            if (extension.equalsIgnoreCase("jpg")) {
+                BufferedImage newImage = new BufferedImage(aImage.getWidth(), aImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+                newImage.createGraphics().drawImage(aImage, 0, 0, Color.BLACK, null);
+                ImageIO.write(newImage, extension, new File(aFile));
+            } else {
+                ImageIO.write(aImage, extension, new File(aFile));
+            }
+        }
+    }
+
+    /**
+     * Save image to a picture file
+     *
+     * @param aFile File path
+     * @param width Width
+     * @param height Height
+     * @param sleep Sleep seconds for web map layer
+     * @throws java.io.FileNotFoundException
+     * @throws javax.print.PrintException
+     * @throws java.lang.InterruptedException
+     */
+    public void saveImage_bak(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException {
         if (aFile.endsWith(".ps")) {
             DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
             String mimeType = "application/postscript";

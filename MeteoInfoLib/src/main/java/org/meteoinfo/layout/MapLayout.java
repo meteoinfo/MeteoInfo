@@ -13,6 +13,11 @@
  */
 package org.meteoinfo.layout;
 
+import com.itextpdf.awt.PdfGraphics2D;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfTemplate;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.global.colors.ColorUtil;
@@ -126,7 +131,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
-import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.ps.PSGraphics2D;
 import org.meteoinfo.data.mapdata.webmap.IWebMapPanel;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
@@ -2859,12 +2863,20 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         } else if (aFile.endsWith(".pdf")) {
             int width = this.getPaperWidth();
             int height = this.getPaperHeight();
-            VectorGraphics g = new PDFGraphics2D(new File(aFile), new Dimension(width, height));
-            //g.setProperties(p);
-            g.startExport();
-            this.paintGraphics(g);
-            g.endExport();
-            g.dispose();
+            try {
+                com.itextpdf.text.Document document = new com.itextpdf.text.Document(new com.itextpdf.text.Rectangle(width, height));
+                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(aFile));
+                document.open();
+                PdfContentByte cb = writer.getDirectContent();
+                PdfTemplate pdfTemp = cb.createTemplate(width, height); 
+                Graphics2D g2 = new PdfGraphics2D(pdfTemp, width, height, true);
+                this.paintGraphics(g2);
+                g2.dispose(); 
+                cb.addTemplate(pdfTemp, 0, 0);
+                document.close();
+            } catch (DocumentException | FileNotFoundException e) {
+                e.printStackTrace();
+            }
         } else if (aFile.endsWith(".emf")) {
             int width = this.getPaperWidth();
             int height = this.getPaperHeight();

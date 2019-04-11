@@ -14,6 +14,7 @@ from org.meteoinfo.data.meteodata.bufr import BufrDataInfo
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
 from org.meteoinfo.data import ArrayUtil, TableUtil
 from ucar.nc2 import NetcdfFileWriter
+from ucar.ma2 import DataType
 
 import mipylib.numeric.minum as minum
 import mipylib.miutil as miutil
@@ -579,8 +580,12 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
     
     #Add dimensions
     dims = []
+    dimnames = []
     for dim in f.dimensions():
-        dims.append(ncfile.adddim(dim.getShortName(), dim.getLength()))
+        dimname = dim.getShortName()
+        if not dimname in dimnames:
+            dims.append(ncfile.adddim(dimname, dim.getLength()))
+            dimnames.append(dimname)
         
     #Add global attributes
     for attr in f.attributes():
@@ -623,6 +628,8 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
     for var in f.variables():    
         #print 'Variable: ' + var.getShortName()
         if var.hasNullDimension():
+            continue
+        if var.getDataType() == DataType.STRUCTURE:
             continue
         vdims = []
         missdim = False

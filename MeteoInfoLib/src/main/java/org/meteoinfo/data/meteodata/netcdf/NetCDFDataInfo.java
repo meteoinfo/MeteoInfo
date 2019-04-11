@@ -3029,6 +3029,20 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 ncfile = NetcdfFile.open(this.getFileName());
             }
             ucar.nc2.Variable var = ncfile.findVariable(varName);
+            if (var == null) {
+                List<ucar.nc2.Variable> vars = ncfile.getVariables();
+                for (ucar.nc2.Variable v : vars) {
+                    if (v.getShortName().equals(varName)) {
+                        var = v;
+                        break;
+                    }
+                }
+            }
+
+            if (var == null) {
+                System.out.println("Variable not exist: " + varName);
+                return null;
+            }
 
             Array data = var.read();
 

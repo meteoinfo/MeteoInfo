@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\random">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
@@ -16,6 +12,10 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\random"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,16 +23,18 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\xor.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\array\dataframe_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\normal_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\savefig_dpi_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\xor.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\array\dataframe_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\normal_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\savefig_dpi_1.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-4,3" MainFormSize="1370,763"/>
 </MeteoInfo>

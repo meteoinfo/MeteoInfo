@@ -1386,9 +1386,12 @@ public class ChartPanel extends JPanel {
     }
 
     public boolean saveImage_Jpeg(String file, int width, int height, int dpi) {
-        //BufferedImage bufferedImage = this.mapBitmap;
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        double scaleFactor = dpi / 72.0;
+        BufferedImage bufferedImage = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_RGB);
         Graphics2D g = bufferedImage.createGraphics();
+        AffineTransform at = g.getTransform();
+        at.scale(scaleFactor, scaleFactor);
+        g.setTransform(at);
         paintGraphics(g, width, height);
 
         try {
@@ -1418,6 +1421,7 @@ public class ChartPanel extends JPanel {
         } catch (Exception e) {
             return false;
         }
+        g.dispose();
 
         return true;
     }
@@ -1444,41 +1448,16 @@ public class ChartPanel extends JPanel {
      * @throws java.lang.InterruptedException
      */
     public void saveImage(String fileName, int dpi, Integer sleep) throws IOException, InterruptedException {
-        File output = new File(fileName);
-        output.delete();
-
-        String formatName = fileName.substring(fileName.lastIndexOf('.') + 1);
-        if (formatName.equals("jpg")) {
-            formatName = "jpeg";
-            saveImage_Jpeg(fileName, dpi);
-            return;
+        int width, height;
+        if (this.chartSize != null) {
+            height = this.chartSize.height;
+            width = this.chartSize.width;
+        } else {
+            width = this.getWidth();
+            height = this.getHeight();
         }
-
-        this.paintGraphics();
-        BufferedImage image = this.mapBitmap;
-        for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
-            ImageWriter writer = iw.next();
-            ImageWriteParam writeParam = writer.getDefaultWriteParam();
-            ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
-            IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
-            if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
-                continue;
-            }
-
-            setDPI(metadata, dpi);
-
-            if (sleep != null) {
-                Thread.sleep(sleep * 1000);
-            }
-            final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
-            try {
-                writer.setOutput(stream);
-                writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
-            } finally {
-                stream.close();
-            }
-            break;
-        }
+        
+        this.saveImage(fileName,dpi, width, height, sleep);
     }
 
     /**
@@ -1503,8 +1482,12 @@ public class ChartPanel extends JPanel {
             return;
         }
 
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        double scaleFactor = dpi / 72.0;
+        BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_RGB);
         Graphics2D g = image.createGraphics();
+        AffineTransform at = g.getTransform();
+        at.scale(scaleFactor, scaleFactor);
+        g.setTransform(at);
         paintGraphics(g, width, height);
         for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
             ImageWriter writer = iw.next();
@@ -1529,6 +1512,7 @@ public class ChartPanel extends JPanel {
             }
             break;
         }
+        g.dispose();
     }
 
     private void setDPI(IIOMetadata metadata, float dpi) throws IIOInvalidTreeException {

@@ -647,7 +647,8 @@ public class Plot2D extends AbstractPlot2D {
 
             AffineTransform tempTrans = g.getTransform();
             if (aLB.getAngle() != 0) {
-                AffineTransform myTrans = new AffineTransform();
+                //AffineTransform myTrans = new AffineTransform();
+                AffineTransform myTrans = (AffineTransform)tempTrans.clone();
                 myTrans.translate(aPoint.X, aPoint.Y);
                 myTrans.rotate(aLB.getAngle() * Math.PI / 180);
                 g.setTransform(myTrans);

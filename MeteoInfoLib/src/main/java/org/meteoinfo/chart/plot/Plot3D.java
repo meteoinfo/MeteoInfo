@@ -928,7 +928,8 @@ public class Plot3D extends Plot {
 
     private void drawText(Graphics2D g, ChartText3D text, float x, float y) {
         AffineTransform tempTrans = g.getTransform();
-        AffineTransform myTrans = new AffineTransform();
+        //AffineTransform myTrans = new AffineTransform();
+        AffineTransform myTrans = (AffineTransform)tempTrans.clone();
         myTrans.translate(x, y);
         if (text.getZDir() != null) {
             text.updateAngle(projector);
@@ -1389,7 +1390,8 @@ public class Plot3D extends Plot {
 
     private void outString(Graphics2D g, int x, int y, String s, XAlign x_align, YAlign y_align, float angle) {
         AffineTransform tempTrans = g.getTransform();
-        AffineTransform myTrans = new AffineTransform();
+        //AffineTransform myTrans = new AffineTransform();
+        AffineTransform myTrans = (AffineTransform)tempTrans.clone();
         myTrans.translate(x, y);
         myTrans.rotate(-angle * Math.PI / 180);
         g.setTransform(myTrans);
@@ -1435,7 +1437,8 @@ public class Plot3D extends Plot {
         }
 
         AffineTransform tempTrans = g.getTransform();
-        AffineTransform myTrans = new AffineTransform();
+        //AffineTransform myTrans = new AffineTransform();
+        AffineTransform myTrans = (AffineTransform)tempTrans.clone();
         myTrans.translate(x, y);
         myTrans.rotate(-angle * Math.PI / 180);
         g.setTransform(myTrans);

@@ -648,8 +648,10 @@ public class Draw {
 
         AffineTransform tempTrans = g.getTransform();
         if (angle != 0) {
-            AffineTransform myTrans = new AffineTransform();
-            myTrans.translate(tempTrans.getTranslateX() + sP.X, tempTrans.getTranslateY() + sP.Y);
+            //AffineTransform myTrans = new AffineTransform();         
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+            //myTrans.translate(tempTrans.getTranslateX() + sP.X, tempTrans.getTranslateY() + sP.Y);
+            myTrans.translate(sP.X, sP.Y);
             double angle1 = angle - 90;
             myTrans.rotate(angle1 * Math.PI / 180);
             g.setTransform(myTrans);
@@ -686,8 +688,10 @@ public class Draw {
 
         AffineTransform tempTrans = g.getTransform();
         if (angle != 0) {
-            AffineTransform myTrans = new AffineTransform();
-            myTrans.translate(tempTrans.getTranslateX() + sP.X, tempTrans.getTranslateY() + sP.Y);
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+            //myTrans.translate(tempTrans.getTranslateX() + sP.X, tempTrans.getTranslateY() + sP.Y);
+            myTrans.translate(sP.X, sP.Y);
             double angle1 = angle - 90;
             myTrans.rotate(angle1 * Math.PI / 180);
             g.setTransform(myTrans);
@@ -737,8 +741,10 @@ public class Draw {
         }
 
         AffineTransform tempTrans = g.getTransform();
-        AffineTransform myTrans = new AffineTransform();
-        myTrans.translate(tempTrans.getTranslateX() + sP.X, tempTrans.getTranslateY() + sP.Y);
+        //AffineTransform myTrans = new AffineTransform();
+        AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+        //myTrans.translate(tempTrans.getTranslateX() + sP.X, tempTrans.getTranslateY() + sP.Y);
+        myTrans.translate(sP.X, sP.Y);
         double angle1 = angle - 90;
         if (angle1 != 0) {
             myTrans.rotate(angle1 * Math.PI / 180);
@@ -792,8 +798,10 @@ public class Draw {
         }
 
         AffineTransform tempTrans = g.getTransform();
-        AffineTransform myTrans = new AffineTransform();
-        myTrans.translate(tempTrans.getTranslateX() + sP.X, tempTrans.getTranslateY() + sP.Y);
+        //AffineTransform myTrans = new AffineTransform();
+        AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+        //myTrans.translate(tempTrans.getTranslateX() + sP.X, tempTrans.getTranslateY() + sP.Y);
+        myTrans.translate(sP.X, sP.Y);
         double angle1 = angle - 90;
         if (angle1 != 0) {
             myTrans.rotate(angle1 * Math.PI / 180);
@@ -1080,8 +1088,10 @@ public class Draw {
     private static void drawPoint_Simple(PointF aP, PointBreak aPB, Graphics2D g) {
         AffineTransform tempTrans = g.getTransform();
         if (aPB.getAngle() != 0) {
-            AffineTransform myTrans = new AffineTransform();
-            myTrans.translate(tempTrans.getTranslateX() + aP.X, tempTrans.getTranslateY() + aP.Y);
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+            myTrans.translate(aP.X, aP.Y);
+            //myTrans.translate(tempTrans.getTranslateX() + aP.X, tempTrans.getTranslateY() + aP.Y);
             myTrans.rotate(aPB.getAngle() * Math.PI / 180);
             g.setTransform(myTrans);
             aP.X = 0;
@@ -1397,8 +1407,10 @@ public class Draw {
     private static void drawPoint_Simple_Up(PointF aP, PointBreak aPB, Graphics2D g) {
         AffineTransform tempTrans = g.getTransform();
         if (aPB.getAngle() != 0) {
-            AffineTransform myTrans = new AffineTransform();
-            myTrans.translate(tempTrans.getTranslateX() + aP.X, tempTrans.getTranslateY() + aP.Y);
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+            myTrans.translate(aP.X, aP.Y);
+            //myTrans.translate(tempTrans.getTranslateX() + aP.X, tempTrans.getTranslateY() + aP.Y);
             myTrans.rotate(aPB.getAngle() * Math.PI / 180);
             g.setTransform(myTrans);
             aP.X = 0;
@@ -1494,7 +1506,8 @@ public class Draw {
     private static void drawPoint_Character(PointF aP, PointBreak aPB, Graphics2D g) {
         AffineTransform tempTrans = g.getTransform();
         if (aPB.getAngle() != 0) {
-            AffineTransform myTrans = new AffineTransform();
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
             myTrans.translate(aP.X, aP.Y);
             myTrans.rotate(aPB.getAngle() * Math.PI / 180);
             g.setTransform(myTrans);
@@ -1523,7 +1536,8 @@ public class Draw {
     private static void drawPoint_Image(PointF aP, PointBreak aPB, Graphics2D g) {
         AffineTransform tempTrans = g.getTransform();
         if (aPB.getAngle() != 0) {
-            AffineTransform myTrans = new AffineTransform();
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
             myTrans.translate(aP.X, aP.Y);
             myTrans.rotate(aPB.getAngle() * Math.PI / 180);
             g.setTransform(myTrans);
@@ -1641,7 +1655,8 @@ public class Draw {
     public static AffineTransform transform(Graphics2D g, float x, float y, String s, XAlign x_align, YAlign y_align, float angle) {
         Dimension dim = getStringDimension(s, g);
         AffineTransform tempTrans = g.getTransform();
-        AffineTransform myTrans = new AffineTransform();
+        //AffineTransform myTrans = new AffineTransform();
+        AffineTransform myTrans = (AffineTransform)tempTrans.clone();
         switch (x_align) {
             case LEFT:
                 switch (y_align) {
@@ -1697,7 +1712,8 @@ public class Draw {
                 }
                 break;
         }
-        myTrans.translate(tempTrans.getTranslateX() + x, tempTrans.getTranslateY() + y);
+        //myTrans.translate(tempTrans.getTranslateX() + x, tempTrans.getTranslateY() + y);
+        myTrans.translate(x, y);
         myTrans.rotate(-angle * Math.PI / 180);
 
         return myTrans;
@@ -1733,7 +1749,8 @@ public class Draw {
 
         AffineTransform tempTrans = g.getTransform();
         if (aLB.getAngle() != 0) {
-            AffineTransform myTrans = new AffineTransform();
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
             myTrans.translate(aPoint.X, aPoint.Y);
             myTrans.rotate(aLB.getAngle() * Math.PI / 180);
             g.setTransform(myTrans);
@@ -1782,7 +1799,8 @@ public class Draw {
 
         AffineTransform tempTrans = g.getTransform();
         if (angle != 0) {
-            AffineTransform myTrans = new AffineTransform();
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
             myTrans.translate(x, y);
             myTrans.rotate(angle * Math.PI / 180);
             g.setTransform(myTrans);
@@ -1837,7 +1855,8 @@ public class Draw {
 
         AffineTransform tempTrans = g.getTransform();
         if (angle != 0) {
-            AffineTransform myTrans = new AffineTransform();
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
             myTrans.translate(x, y);
             myTrans.rotate(angle * Math.PI / 180);
             g.setTransform(myTrans);
@@ -1885,7 +1904,9 @@ public class Draw {
             Draw.drawString(g, text, x, y + labSize.height / 2);
         } else {
             AffineTransform tempTrans = g.getTransform();
-            AffineTransform myTrans = new AffineTransform();
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+            myTrans.translate(x, y);
             myTrans.translate(tempTrans.getTranslateX() + x, tempTrans.getTranslateY() + y);
             myTrans.rotate(-angle * Math.PI / 180);
             g.setTransform(myTrans);
@@ -1922,7 +1943,9 @@ public class Draw {
             Draw.drawString(g, text, x, y);
         } else {
             AffineTransform tempTrans = g.getTransform();
-            AffineTransform myTrans = new AffineTransform();
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+            myTrans.translate(x, y);
             myTrans.translate(tempTrans.getTranslateX() + x, tempTrans.getTranslateY() + y);
             myTrans.rotate(-angle * Math.PI / 180);
             g.setTransform(myTrans);
@@ -1958,7 +1981,8 @@ public class Draw {
             Draw.drawString(g, text, x, y);
         } else {
             AffineTransform tempTrans = g.getTransform();
-            AffineTransform myTrans = new AffineTransform();
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
             if (angle == 90) {
                 x += (float) (labSize.getHeight());
                 y += (float) (labSize.getWidth() * 0.5);
@@ -1970,7 +1994,8 @@ public class Draw {
             } else {
                 y += (float) (labSize.getHeight() * Math.cos(Math.toRadians(angle)) * 0.5);
             }
-            myTrans.translate(tempTrans.getTranslateX() + x, tempTrans.getTranslateY() + y);
+            //myTrans.translate(tempTrans.getTranslateX() + x, tempTrans.getTranslateY() + y);
+            myTrans.translate(x, y);
             myTrans.rotate(-angle * Math.PI / 180);
             g.setTransform(myTrans);
             Draw.drawString(g, text, 0, 0);
@@ -3608,20 +3633,23 @@ public class Draw {
 
         if (angle != 0) {
             AffineTransform tempTrans = g.getTransform();
-            AffineTransform myTrans = AffineTransform.getRotateInstance(Math.toRadians(angle),
-                    sx + width / 2 + tempTrans.getTranslateX(), sy + height / 2 + tempTrans.getTranslateY());
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+            myTrans.translate(sx + width / 2, sy + height / 2);
+            myTrans.rotate(Math.toRadians(angle));
+            //AffineTransform myTrans = AffineTransform.getRotateInstance(Math.toRadians(angle),
+             //       sx + width / 2 + tempTrans.getTranslateX(), sy + height / 2 + tempTrans.getTranslateY());
             g.setTransform(myTrans);
-            sx += tempTrans.getTranslateX();
-            sy += tempTrans.getTranslateY();
+            //sx += tempTrans.getTranslateX();
+            //sy += tempTrans.getTranslateY();
 
             if (aPGB.isDrawFill()) {
                 g.setColor(aPGB.getColor());
-                g.fill(new Ellipse2D.Float(sx, sy, width, height));
+                g.fill(new Ellipse2D.Float(-width / 2, -height / 2, width, height));
             }
             if (aPGB.isDrawOutline()) {
                 g.setColor(aPGB.getOutlineColor());
                 g.setStroke(new BasicStroke(aPGB.getOutlineSize()));
-                g.draw(new Ellipse2D.Float(sx, sy, width, height));
+                g.draw(new Ellipse2D.Float(-width / 2, -height / 2, width, height));
             }
 
             g.setTransform(tempTrans);

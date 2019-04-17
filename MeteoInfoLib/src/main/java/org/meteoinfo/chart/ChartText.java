@@ -620,8 +620,10 @@ public class ChartText extends Shape {
 
         AffineTransform tempTrans = g.getTransform();
         if (this.angle != 0) {
-            AffineTransform myTrans = new AffineTransform();
-            myTrans.translate(tempTrans.getTranslateX() + x, tempTrans.getTranslateY() + y);
+            //AffineTransform myTrans = new AffineTransform();
+            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+            myTrans.translate(x, y);
+            //myTrans.translate(tempTrans.getTranslateX() + x, tempTrans.getTranslateY() + y);
             myTrans.rotate(-angle * Math.PI / 180);
             g.setTransform(myTrans);
             x = 0;

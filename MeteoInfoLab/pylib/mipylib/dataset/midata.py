@@ -245,6 +245,7 @@ def addfile_mm5(fname, getfn=True, reffile=None):
     
     :param fname: (*string*) The MM5 file name.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
+    :param reffile: (*string*) Reference file, for the mm5 file lacking header part.
     
     :returns: (*DimDataFile*) Opened file object.
     '''

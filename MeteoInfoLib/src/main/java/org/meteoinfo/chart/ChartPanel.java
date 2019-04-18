@@ -56,7 +56,6 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
@@ -93,6 +92,7 @@ import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.GenericFileFilter;
 import org.meteoinfo.global.PointF;
+import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layer.RasterLayer;
@@ -123,8 +123,7 @@ public class ChartPanel extends JPanel {
     private boolean dragMode = false;
     private JPopupMenu popupMenu;
     private MouseMode mouseMode;
-    private List<int[]> selectedPoints;
-    private final double INCH_2_CM = 2.54;
+    private List<int[]> selectedPoints;    
     private int xShift = 0;
     private int yShift = 0;
     private double paintScale = 1.0;
@@ -1498,7 +1497,7 @@ public class ChartPanel extends JPanel {
                 continue;
             }
 
-            setDPI(metadata, dpi);
+            ImageUtil.setDPI(metadata, dpi);
 
             if (sleep != null) {
                 Thread.sleep(sleep * 1000);
@@ -1514,28 +1513,7 @@ public class ChartPanel extends JPanel {
         }
         g.dispose();
     }
-
-    private void setDPI(IIOMetadata metadata, float dpi) throws IIOInvalidTreeException {
-
-        // for PMG, it's dots per millimeter
-        double dotsPerMilli = 1.0 * dpi / 10 / INCH_2_CM;
-
-        IIOMetadataNode horiz = new IIOMetadataNode("HorizontalPixelSize");
-        horiz.setAttribute("value", Double.toString(dotsPerMilli));
-
-        IIOMetadataNode vert = new IIOMetadataNode("VerticalPixelSize");
-        vert.setAttribute("value", Double.toString(dotsPerMilli));
-
-        IIOMetadataNode dim = new IIOMetadataNode("Dimension");
-        dim.appendChild(horiz);
-        dim.appendChild(vert);
-
-        IIOMetadataNode root = new IIOMetadataNode("javax_imageio_1.0");
-        root.appendChild(dim);
-
-        metadata.mergeTree("javax_imageio_1.0", root);
-    }
-
+    
     /**
      * Get view image
      *

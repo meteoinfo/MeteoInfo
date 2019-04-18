@@ -3125,7 +3125,7 @@ public class FrmMain extends JFrame implements IApplication {
         // TODO add your handling code here:
         String path = System.getProperty("user.dir");
         File pathDir = new File(path);
-        JFileChooser aDlg = new JFileChooser();
+        ImageFileChooser aDlg = new ImageFileChooser();
         aDlg.setCurrentDirectory(pathDir);
         String[] fileExts = new String[]{"png"};
         GenericFileFilter pngFileFilter = new GenericFileFilter(fileExts, "Png Image (*.png)");
@@ -3164,10 +3164,11 @@ public class FrmMain extends JFrame implements IApplication {
             if (!fileName.substring(fileName.length() - extent.length()).equals(extent)) {
                 fileName = fileName + "." + extent;
             }
+            Integer dpi = aDlg.getDPI();
 
             if (this.jTabbedPane_Main.getSelectedIndex() == 0) {
                 try {
-                    _mapDocument.getActiveMapFrame().getMapView().exportToPicture(fileName);
+                    _mapDocument.getActiveMapFrame().getMapView().exportToPicture(fileName, dpi);
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (PrintException ex) {
@@ -3177,7 +3178,7 @@ public class FrmMain extends JFrame implements IApplication {
                 }
             } else if (this.jTabbedPane_Main.getSelectedIndex() == 1) {
                 try {
-                    _mapDocument.getMapLayout().exportToPicture(fileName);
+                    _mapDocument.getMapLayout().exportToPicture(fileName, dpi);
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (PrintException ex) {

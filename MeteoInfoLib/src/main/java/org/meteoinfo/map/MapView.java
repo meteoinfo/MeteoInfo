@@ -130,11 +130,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
 import javax.print.PrintException;
@@ -172,6 +180,7 @@ import org.meteoinfo.global.event.ShapeSelectedEvent;
 import org.meteoinfo.global.event.UndoEditEvent;
 import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.global.util.GeoUtil;
+import org.meteoinfo.image.ImageUtil;
 import static org.meteoinfo.layer.LayerDrawType.Barb;
 import static org.meteoinfo.layer.LayerDrawType.StationModel;
 import static org.meteoinfo.layer.LayerDrawType.Streamline;
@@ -4104,6 +4113,11 @@ public class MapView extends JPanel implements IWebMapPanel {
         if (this._lockViewUpdate) {
             return;
         }
+        
+        //Draw background
+        g.setColor(this.getBackground());
+        //g.clearRect(0, 0, this.getWidth(), this.getHeight());
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
         getMaskOutGraphicsPath(g);
 
@@ -6558,6 +6572,102 @@ public class MapView extends JPanel implements IWebMapPanel {
                 ImageIO.write(this._mapBitmap, extension, new File(aFile));
             }
         }
+    }
+    
+    /**
+     * Export to a picture file
+     *
+     * @param fileName File path
+     * @param dpi DPI
+     * @throws java.io.FileNotFoundException
+     * @throws javax.print.PrintException
+     */
+    public void exportToPicture(String fileName, Integer dpi) throws FileNotFoundException, PrintException, IOException {
+        if (dpi == null) {
+            exportToPicture(fileName);
+        } else {
+            File output = new File(fileName);
+            output.delete();
+
+            int width = this.getWidth();
+            int height = this.getHeight();
+            String formatName = fileName.substring(fileName.lastIndexOf('.') + 1);
+            if (formatName.equals("jpg")) {
+                formatName = "jpeg";
+                saveImage_Jpeg(fileName, width, height, dpi);
+                return;
+            }
+
+            double scaleFactor = dpi / 72.0;
+            BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = image.createGraphics();
+            AffineTransform at = g.getTransform();
+            at.scale(scaleFactor, scaleFactor);
+            g.setTransform(at);
+            paintGraphics(g);
+            for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
+                ImageWriter writer = iw.next();
+                ImageWriteParam writeParam = writer.getDefaultWriteParam();
+                ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
+                IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+                if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+                    continue;
+                }
+
+                ImageUtil.setDPI(metadata, dpi);
+
+                final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
+                try {
+                    writer.setOutput(stream);
+                    writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
+                } finally {
+                    stream.close();
+                }
+                break;
+            }
+            g.dispose();
+        }
+    }
+    
+    private boolean saveImage_Jpeg(String file, int width, int height, int dpi) {
+        double scaleFactor = dpi / 72.0;
+        BufferedImage bufferedImage = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = bufferedImage.createGraphics();
+        AffineTransform at = g.getTransform();
+        at.scale(scaleFactor, scaleFactor);
+        g.setTransform(at);
+        paintGraphics(g);
+
+        try {
+            // Image writer 
+            ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
+            ImageOutputStream ios = ImageIO.createImageOutputStream(new File(file));
+            imageWriter.setOutput(ios);
+
+            // Compression
+            JPEGImageWriteParam jpegParams = (JPEGImageWriteParam) imageWriter.getDefaultWriteParam();
+            jpegParams.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+            jpegParams.setCompressionQuality(0.85f);
+
+            // Metadata (dpi)
+            IIOMetadata data = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(bufferedImage), jpegParams);
+            Element tree = (Element) data.getAsTree("javax_imageio_jpeg_image_1.0");
+            Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
+            jfif.setAttribute("Xdensity", Integer.toString(dpi));
+            jfif.setAttribute("Ydensity", Integer.toString(dpi));
+            jfif.setAttribute("resUnits", "1"); // density is dots per inch	
+            data.setFromTree("javax_imageio_jpeg_image_1.0", tree);
+
+            // Write and clean up
+            imageWriter.write(null, new IIOImage(bufferedImage, null, data), jpegParams);
+            ios.close();
+            imageWriter.dispose();
+        } catch (Exception e) {
+            return false;
+        }
+        g.dispose();
+
+        return true;
     }
 
     // </editor-fold>

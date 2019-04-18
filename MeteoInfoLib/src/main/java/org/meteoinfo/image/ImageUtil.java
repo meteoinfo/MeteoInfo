@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.imageio.metadata.IIOInvalidTreeException;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
 import org.apache.sanselan.ImageFormat;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.ImageWriteException;
@@ -24,6 +27,9 @@ import org.apache.sanselan.Sanselan;
  * @author Yaqiang Wang
  */
 public class ImageUtil {
+    
+    private final static double INCH_2_CM = 2.54;
+    
     /**
      * Read RGB array data from image file
      * @param fileName Image file name
@@ -377,4 +383,32 @@ public class ImageUtil {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Set DPI
+     * @param metadata IIOMetadata
+     * @param dpi DPI
+     * @throws IIOInvalidTreeException 
+     */
+    public static void setDPI(IIOMetadata metadata, float dpi) throws IIOInvalidTreeException {
+
+        // for PMG, it's dots per millimeter
+        double dotsPerMilli = 1.0 * dpi / 10 / INCH_2_CM;
+
+        IIOMetadataNode horiz = new IIOMetadataNode("HorizontalPixelSize");
+        horiz.setAttribute("value", Double.toString(dotsPerMilli));
+
+        IIOMetadataNode vert = new IIOMetadataNode("VerticalPixelSize");
+        vert.setAttribute("value", Double.toString(dotsPerMilli));
+
+        IIOMetadataNode dim = new IIOMetadataNode("Dimension");
+        dim.appendChild(horiz);
+        dim.appendChild(vert);
+
+        IIOMetadataNode root = new IIOMetadataNode("javax_imageio_1.0");
+        root.appendChild(dim);
+
+        metadata.mergeTree("javax_imageio_1.0", root);
+    }
+
 }

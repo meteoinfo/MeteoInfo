@@ -106,7 +106,6 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
         try {
             RandomAccessFile br = new RandomAccessFile(fileName, "r");
             int flag;
-            SubHeader sh;
             int xn = 0, yn = 0, zn = 0;
             //byte[] bytes;
             List<Variable> variables = new ArrayList<>();
@@ -233,7 +232,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
                     }
                 } else if (flag == 1) {    //Read sub header
                     long pos = br.getFilePointer();
-                    sh = this.readSubHeader(br);
+                    SubHeader sh = this.readSubHeader(br);
                     sh.timeIndex = tn;
                     sh.position = pos;
                     sh.length = (int) (br.getFilePointer() - pos);
@@ -260,33 +259,6 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
                         br.skipBytes(zn * 4 + 8);
                     }
 
-                    boolean isNewVar = true;
-                    for (Variable var : variables) {
-                        if (var.getName().equals(sh.name)) {
-                            isNewVar = false;
-                            break;
-                        }
-                    }
-                    if (isNewVar) {
-                        Variable var = new Variable();
-                        var.setName(sh.name);
-                        var.setDataType(DataType.FLOAT);
-                        //var.addLevel(dh.level);
-                        var.setUnits(sh.unit);
-                        var.setDescription(sh.description);
-
-                        if (sh.ordering.equals("YXS") || sh.ordering.equals("YXP")
-                                || sh.ordering.equals("YXW") || sh.ordering.equals("YX")) {
-                            var.addDimension(xdim);
-                            var.addDimension(0, ydim);
-                        }
-                        if (sh.ordering.equals("YXS") || sh.ordering.equals("YXP")
-                                || sh.ordering.equals("YXW") || sh.ordering.equals("S")
-                                || sh.ordering.equals("P")) {
-                            var.addDimension(0, zdim);
-                        }
-                        variables.add(var);
-                    }
 //                    if (shIdx == 0) {
 //                        ct = format.parse(sh.current_date);
 //                        times.add(ct);
@@ -314,6 +286,55 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
             tDim.setValues(values);
             this.setTimeDimension(tDim);
             this.addDimension(tDim);
+
+            //Set variables
+            List<SubHeader> shs = new ArrayList<>();
+            List<String> varNames = new ArrayList<>();
+            boolean nameDup = false;
+            for (SubHeader sh : this._subHeaders) {
+                if (sh.timeIndex == 0) {
+                    if (varNames.contains(sh.name)) {
+                        sh.name = sh.name + String.valueOf(varNames.size());
+                        nameDup = true;
+                    }
+                    varNames.add(sh.name);
+                    shs.add(sh);
+                }
+            }
+            if (nameDup) {
+                for (int i = 1; i < times.size(); i++) {
+                    varNames = new ArrayList<>();
+                    for (SubHeader sh : this._subHeaders) {
+                        if (sh.timeIndex == i) {
+                            if (varNames.contains(sh.name)) {
+                                sh.name = sh.name + String.valueOf(varNames.size());
+                                nameDup = true;
+                            }
+                            varNames.add(sh.name);
+                        }
+                    }
+                }
+            }
+            for (SubHeader sh : shs) {
+                Variable var = new Variable();
+                var.setName(sh.name);
+                var.setDataType(DataType.FLOAT);
+                //var.addLevel(dh.level);
+                var.setUnits(sh.unit);
+                var.setDescription(sh.description);
+
+                if (sh.ordering.equals("YXS") || sh.ordering.equals("YXP")
+                        || sh.ordering.equals("YXW") || sh.ordering.equals("YX")) {
+                    var.addDimension(xdim);
+                    var.addDimension(0, ydim);
+                }
+                if (sh.ordering.equals("YXS") || sh.ordering.equals("YXP")
+                        || sh.ordering.equals("YXW") || sh.ordering.equals("S")
+                        || sh.ordering.equals("P")) {
+                    var.addDimension(0, zdim);
+                }
+                variables.add(var);
+            }
 
             for (Variable var : variables) {
                 var.addDimension(0, tDim);

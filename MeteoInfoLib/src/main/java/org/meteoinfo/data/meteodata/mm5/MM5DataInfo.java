@@ -4,7 +4,11 @@
  */
 package org.meteoinfo.data.meteodata.mm5;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
@@ -1010,6 +1014,48 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
     @Override
     public GridData getGridData_Lat(int timeIdx, int lonIdx, int varIdx, int levelIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    /**
+     * Add big header from a given file to a new file
+     * @param fileName The given file without big header
+     * @param newFileName The new file added big header
+     * @param refFileName The referece file with big header
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
+    public static void addBigHeader(String fileName, String newFileName, String refFileName) 
+            throws FileNotFoundException, IOException {
+        DataInputStream dis = new DataInputStream(new FileInputStream(fileName));
+        DataInputStream rdis = new DataInputStream(new FileInputStream(refFileName));
+        DataOutputStream dos = new DataOutputStream(new FileOutputStream(newFileName));
+        
+        //write flag 0
+        dos.writeInt(4);
+        dos.writeInt(0);
+        dos.writeInt(4);
+        
+        //write big header
+        int n = 117600;
+        byte[] bytes = new byte[n];
+        dos.writeInt(n);
+        rdis.read(new byte[12]);
+        rdis.readInt();
+        rdis.read(bytes);
+        dos.write(bytes);
+        dos.writeInt(n);
+        
+        //Write data
+        bytes = new byte[32 * 1024];
+        int numBytes;
+        while((numBytes = dis.read(bytes)) != -1) {
+            dos.write(bytes, 0, numBytes);
+        }
+        
+        //close
+        dis.close();
+        rdis.close();
+        dos.close();
     }
     // </editor-fold>       
 }

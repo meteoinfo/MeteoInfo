@@ -22,15 +22,17 @@
       <OpenedFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\mm5_reffile.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\mm5_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\mm5\add_bigheader.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\mm5_reffile.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\mm5_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\mm5\add_bigheader.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,0" MainFormSize="1387,789"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

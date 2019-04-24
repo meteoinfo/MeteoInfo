@@ -70,6 +70,7 @@
                 </executions>  
             </plugin>  
             -->
+            <!--
             <plugin>
                 <inherited>true</inherited>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -87,6 +88,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
     </build>
 </project>

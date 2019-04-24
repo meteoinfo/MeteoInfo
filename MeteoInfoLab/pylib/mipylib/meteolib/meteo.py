@@ -5,7 +5,7 @@
 # Note: Jython, some functions code revised from MetPy
 #-----------------------------------------------------
 
-from org.meteoinfo.data import ArrayMath
+from org.meteoinfo.data import ArrayMath, ArrayUtil
 from org.meteoinfo.math.meteo import MeteoMath
 import mipylib.numeric as np
 from mipylib.numeric.miarray import MIArray
@@ -14,8 +14,8 @@ import constants as constants
 
 __all__ = [
     'dewpoint','dewpoint2rh','dewpoint_rh','dry_lapse','ds2uv','equivalent_potential_temperature','exner_function','h2p',
-    'mixing_ratio','mixing_ratio_from_specific_humidity','moist_lapse','p2h','potential_temperature','qair2rh','rh2dewpoint','relative_humidity_from_specific_humidity',
-    'saturation_mixing_ratio','saturation_vapor_pressure','tc2tf','temperature_from_potential_temperature','tf2tc','uv2ds','pressure_to_height_std',
+    'interpolate_1d','log_interpolate_1d','mixing_ratio','mixing_ratio_from_specific_humidity','moist_lapse','p2h','potential_temperature','qair2rh','rh2dewpoint','relative_humidity_from_specific_humidity',
+    'saturation_mixing_ratio','saturation_vapor_pressure','sigma_to_pressure','tc2tf','temperature_from_potential_temperature','tf2tc','uv2ds','pressure_to_height_std',
     'height_to_pressure_std','eof','vapor_pressure','varimax'
     ]
 
@@ -121,6 +121,37 @@ def height_to_pressure_std(height):
     height = height * 0.001
     p = p0 * (1 - (gamma / t0) * height) ** (constants.g / (constants.Rd * gamma))
     return p
+    
+def sigma_to_pressure(sigma, psfc, ptop):
+    r"""Calculate pressure from sigma values.
+    Parameters
+    ----------
+    sigma : ndarray
+        The sigma levels to be converted to pressure levels.
+    psfc : ndarray
+        The surface pressure value.
+    ptop : ndarray
+        The pressure value at the top of the model domain.
+    Returns
+    -------
+    ndarray
+        The pressure values at the given sigma levels.
+    Notes
+    -----
+    Sigma definition adapted from [Philips1957]_.
+    .. math:: p = \sigma * (p_{sfc} - p_{top}) + p_{top}
+    * :math:`p` is pressure at a given `\sigma` level
+    * :math:`\sigma` is non-dimensional, scaled pressure
+    * :math:`p_{sfc}` is pressure at the surface or model floor
+    * :math:`p_{top}` is pressure at the top of the model domain
+    """
+    if np.any(sigma < 0) or np.any(sigma > 1):
+        raise ValueError('Sigma values should be bounded by 0 and 1')
+
+    if psfc.min() < 0 or ptop.min() < 0:
+        raise ValueError('Pressure input should be non-negative')
+
+    return sigma * (psfc - ptop) + ptop
         
 def tf2tc(tf):
     """
@@ -612,6 +643,72 @@ def temperature_from_potential_temperature(pressure, theta):
     >>> T = temperature_from_potential_temperature(p,theta)
     """
     return theta * exner_function(pressure)
+    
+def interpolate_1d(x, xp, *args, **kwargs):
+    '''
+    Interpolation over a specified axis for arrays of any shape.
+    
+    Parameters
+    ----------
+    x : array-like
+        1-D array of desired interpolated values.
+    xp : array-like
+        The x-coordinates of the data points.
+    args : array-like
+        The data to be interpolated. Can be multiple arguments, all must be the same shape as
+        xp.
+    axis : int, optional
+        The axis to interpolate over. Defaults to 0.
+
+    Returns
+    -------
+    array-like
+        Interpolated values for each point with coordinates sorted in ascending order.
+    '''
+    axis = kwargs.pop('axis', 0)
+    if isinstance(x, (list, tuple)):
+        x = np.array(x)
+        
+    if isinstance(x, MIArray):
+        x = x.array
+    
+    vars = args
+    
+    ret = []
+    for a in vars:
+        r = ArrayUtil.interpolate_1d(x, xp.array, a.array, axis)
+        ret.append(MIArray(r))
+        
+    if len(ret) == 1:
+        return ret[0]
+    else:
+        return ret
+    
+def log_interpolate_1d(x, xp, *args, **kwargs):
+    '''
+    Interpolation on a logarithmic x-scale for interpolation values in pressure coordintates.
+    
+    Parameters
+    ----------
+    x : array-like
+        1-D array of desired interpolated values.
+    xp : array-like
+        The x-coordinates of the data points.
+    args : array-like
+        The data to be interpolated. Can be multiple arguments, all must be the same shape as
+        xp.
+    axis : int, optional
+        The axis to interpolate over. Defaults to 0.
+
+    Returns
+    -------
+    array-like
+        Interpolated values for each point with coordinates sorted in ascending order.
+    '''
+    # Log x and xp
+    log_x = np.log(x)
+    log_xp = np.log(xp)
+    return interpolate_1d(log_x, log_xp, *args, **kwargs)
     
 def eof(x, svd=False, transform=False):
     '''

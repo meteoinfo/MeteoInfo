@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\wrf">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\onedim"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
@@ -16,23 +14,23 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\mm5_reffile.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\mm5_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\mm5\add_bigheader.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\interpolate_1d_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\cuace_dust\py\ensemble\daily_input.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\mm5_reffile.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\mm5_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\mm5\add_bigheader.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\interpolate_1d_1.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1377,800"/>
 </MeteoInfo>

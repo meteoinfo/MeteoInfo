@@ -207,13 +207,13 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void readDataInfo(NetcdfFile nf, boolean keepOpen) {
         this.ncfile = nf;
         readDataInfo(keepOpen);
     }
 
-   public void readDataInfo(boolean keepOpen) {
+    public void readDataInfo(boolean keepOpen) {
         try {
             _fileTypeStr = ncfile.getFileTypeDescription();
             _fileTypeId = ncfile.getFileTypeId();
@@ -972,7 +972,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             //getPSDTimeInfo(unitsStr, sTime, aTU);                        
 
             //Get data time
-            for (i = 0; i < values.getSize(); i++) {                
+            for (i = 0; i < values.getSize(); i++) {
                 switch (aTU) {
                     case Year:
                         cal.add(Calendar.YEAR, values.getInt(i));
@@ -992,7 +992,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         times.add(DateUtil.addDays(sTime, values.getFloat(i)));
                         break;
                     case Hour:
-                        
+
                         if (cal.get(Calendar.YEAR) == 1 && cal.get(Calendar.MONTH) == 1
                                 && cal.get(Calendar.DAY_OF_MONTH) == 1 && values.getInt(i) > 48) {
                             cal.add(Calendar.HOUR, values.getInt(i) - 48);
@@ -1120,8 +1120,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 //aDim.setValues(values);
                 switch (dimType) {
                     case X:
-                        double[] X = (double[])ArrayUtil.copyToNDJavaArray(values);
-                        double XDelt = X[1] - X[0];                        
+                        double[] X = (double[]) ArrayUtil.copyToNDJavaArray(values);
+                        double XDelt = X[1] - X[0];
                         if (this.getProjectionInfo().isLonLat()) {
                             if (X[X.length - 1] + XDelt
                                     - X[0] == 360) {
@@ -1141,7 +1141,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         this.setXDimension(dim);
                         break;
                     case Y:
-                        double[] Y = (double[])ArrayUtil.copyToNDJavaArray(values);
+                        double[] Y = (double[]) ArrayUtil.copyToNDJavaArray(values);
                         if (!this.getProjectionInfo().isLonLat()) {
                             ucar.nc2.Attribute unitAtt = var.findAttribute("units");
                             if (unitAtt != null) {
@@ -1156,7 +1156,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         this.setYDimension(dim);
                         break;
                     case Z:
-                        double[] levels = (double[])ArrayUtil.copyToNDJavaArray(values);
+                        double[] levels = (double[]) ArrayUtil.copyToNDJavaArray(values);
                         dim.setValues(levels);
                         this.setZDimension(dim);
                         break;
@@ -1172,7 +1172,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         this.setTimeDimension(dim);
                         break;
                     default:
-                        dim.setValues((double[])ArrayUtil.copyToNDJavaArray(values));
+                        dim.setValues((double[]) ArrayUtil.copyToNDJavaArray(values));
                         break;
                 }
             }
@@ -1776,9 +1776,14 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 String hmsStr = dataArray[3];
                 hmsStr = hmsStr.replace("0.0", "00");
                 try {
-                    hour = Integer.parseInt(hmsStr.split(":")[0]);
-                    min = Integer.parseInt(hmsStr.split(":")[1]);
-                    sec = Integer.parseInt(hmsStr.split(":")[2]);
+                    String[] hms = hmsStr.split(":");
+                    hour = Integer.parseInt(hms[0]);
+                    if (hms.length > 1) {
+                        min = Integer.parseInt(hms[1]);
+                    }
+                    if (hms.length > 2) {
+                        sec = Integer.parseInt(hms[2]);
+                    }
                 } catch (NumberFormatException e) {
                 }
             }
@@ -1786,9 +1791,14 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             String hmsStr = ST;
             hmsStr = hmsStr.replace("0.0", "00");
             try {
-                hour = Integer.parseInt(hmsStr.split(":")[0]);
-                min = Integer.parseInt(hmsStr.split(":")[1]);
-                sec = Integer.parseInt(hmsStr.split(":")[2]);
+                String[] hms = hmsStr.split(":");
+                hour = Integer.parseInt(hms[0]);
+                if (hms.length > 1) {
+                    min = Integer.parseInt(hms[1]);
+                }
+                if (hms.length > 2) {
+                    sec = Integer.parseInt(hms[2]);
+                }
             } catch (Exception e) {
             }
         }
@@ -1905,7 +1915,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 try {
                     missingValue = Double.parseDouble(att.getValue(0).toString());
                 } catch (NumberFormatException e) {
-                    
+
                 }
             }
         }

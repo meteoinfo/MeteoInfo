@@ -4171,6 +4171,150 @@ public class ArrayUtil {
 //        }
 //        return idx;
 //    }
+    
+    /**
+     * Interpolates data with any shape over a specified axis.
+     * @param x Desired interpolated value
+     * @param xp The x-coordinates of the data points.
+     * @param a The data to be interpolated.
+     * @param axis The axis to interpolate over.
+     * @return Interpolated data
+     * @throws InvalidRangeException 
+     */
+    public static Array interpolate_1d(double x, Array xp, Array a, int axis) throws InvalidRangeException {
+        int[] dataShape = xp.getShape();
+        int[] shape = new int[dataShape.length - 1];
+        for (int i = 0; i < dataShape.length; i++) {
+            if (i < axis)
+                shape[i] = dataShape[i];
+            else if (i > axis)
+                shape[i - 1] = dataShape[i];
+        }
+        
+        Array r = Array.factory(a.getDataType(), shape);
+        Index indexr = r.getIndex();
+        Index indexa = a.getIndex();
+        int[] current, dcurrent = new int[dataShape.length];
+        int idx;
+        Array tArray;
+        double belowp, abovep, belowa, abovea;
+        for (int i = 0; i < r.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            List<Range> ranges = new ArrayList<>();
+            for (int j = 0; j < dataShape.length; j++) {
+                if (j == axis) {
+                    ranges.add(new Range(0, dataShape[j] - 1, 1));
+                } else {
+                    idx = j;
+                    if (idx > axis) {
+                        idx -= 1;
+                    }
+                    ranges.add(new Range(current[idx], current[idx], 1));
+                    dcurrent[j] = current[idx];                    
+                }
+            }
+            tArray = ArrayMath.section(xp, ranges);
+            idx = searchSorted(tArray, x);
+            if (idx < 0)
+                r.setDouble(i, Double.NaN);
+            else if (idx == dataShape[axis] - 1) {      
+                dcurrent[axis] = idx;
+                r.setObject(i, a.getObject(indexa.set(dcurrent)));
+            } else {
+                dcurrent[axis] = idx;
+                indexa.set(dcurrent);
+                belowp = xp.getDouble(indexa);
+                belowa = a.getDouble(indexa);
+                dcurrent[axis] = idx + 1;
+                indexa.set(dcurrent);
+                abovep = xp.getDouble(indexa);
+                abovea = a.getDouble(indexa);
+                r.setDouble(i, (x - belowp) / (abovep - belowp) * (abovea - belowa) + belowa);
+            }
+            indexr.incr();
+        }
+        
+        return r;
+    }
+    
+        /**
+     * Interpolates data with any shape over a specified axis.
+     * @param xa Desired interpolated values
+     * @param xp The x-coordinates of the data points.
+     * @param a The data to be interpolated.
+     * @param axis The axis to interpolate over.
+     * @return Interpolated data
+     * @throws InvalidRangeException 
+     */
+    public static Array interpolate_1d(Array xa, Array xp, Array a, int axis) throws InvalidRangeException {
+        int[] dataShape = xp.getShape();
+        int[] shape = new int[dataShape.length];
+        int[] tshape = new int[shape.length - 1];
+        for (int i = 0; i < dataShape.length; i++) {
+            if (i == axis)
+                shape[i] = xa.getShape()[0];
+            else {
+                shape[i] = dataShape[i];
+                if (i < axis)
+                    tshape[i] = dataShape[i];
+                else
+                    tshape[i - 1] = dataShape[i];
+            }
+        }
+        
+        Array r = Array.factory(a.getDataType(), shape);
+        Array rr = Array.factory(DataType.BYTE, tshape);
+        Index indexrr = rr.getIndex();
+        Index indexr = r.getIndex();
+        Index indexa = a.getIndex();
+        int[] currentrr, currenta = new int[dataShape.length], currentr = new int[shape.length];
+        int idx;
+        Array tArray;
+        double belowp, abovep, belowa, abovea, x;
+        for (int i = 0; i < rr.getSize(); i++) {
+            currentrr = indexrr.getCurrentCounter();
+            List<Range> ranges = new ArrayList<>();
+            for (int j = 0; j < dataShape.length; j++) {
+                if (j == axis) {
+                    ranges.add(new Range(0, dataShape[j] - 1, 1));
+                } else {
+                    idx = j;
+                    if (idx > axis) {
+                        idx -= 1;
+                    }
+                    ranges.add(new Range(currentrr[idx], currentrr[idx], 1));
+                    currenta[j] = currentrr[idx];
+                    currentr[j] = currentrr[idx];
+                }
+            }
+            tArray = ArrayMath.section(xp, ranges);
+            for (int j = 0; j < xa.getSize(); j++) {
+                x = xa.getDouble(j);
+                idx = searchSorted(tArray, x);
+                currentr[axis] = j;
+                indexr.set(currentr);
+                if (idx < 0)
+                    r.setDouble(indexr, Double.NaN);
+                else if (idx == dataShape[axis] - 1) {      
+                    currenta[axis] = idx;
+                    r.setObject(indexr, a.getObject(indexa.set(currenta)));
+                } else {
+                    currenta[axis] = idx;
+                    indexa.set(currenta);
+                    belowp = xp.getDouble(indexa);
+                    belowa = a.getDouble(indexa);
+                    currenta[axis] = idx + 1;
+                    indexa.set(currenta);
+                    abovep = xp.getDouble(indexa);
+                    abovea = a.getDouble(indexa);
+                    r.setDouble(indexr, (x - belowp) / (abovep - belowp) * (abovea - belowa) + belowa);
+                }
+            }
+            indexrr.incr();
+        }
+        
+        return r;
+    }
     // </editor-fold>
     // <editor-fold desc="Geocomputation">
     /**

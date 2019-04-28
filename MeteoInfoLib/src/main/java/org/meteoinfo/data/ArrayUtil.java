@@ -636,21 +636,17 @@ public class ArrayUtil {
         }
         double startv = start.doubleValue();
         double stopv = stop.doubleValue();
-        double stepv = (stopv - startv) / (n - 1);
-        double endv = n * stepv + startv;
-        int nn = n;
-        if (endpoint) {
-            if (endv < stopv) {
-                nn += 1;
-            }
-        } else if (endv >= stopv) {
-            nn -= 1;
-        }
-        Array a = Array.factory(DataType.DOUBLE, new int[]{nn});
+        int div = endpoint ? (n - 1) : n; 
+        double stepv = (stopv - startv) / div;
+        Array a = Array.factory(DataType.DOUBLE, new int[]{n});
         double v = startv;
-        for (int i = 0; i < nn; i++) {
+        for (int i = 0; i < n; i++) {
             a.setDouble(i, v);
             v += stepv;
+        }
+        if (endpoint) {
+            if (a.getDouble(n - 1) != stopv)
+                a.setDouble(n - 1, stopv);
         }
 
         return a;

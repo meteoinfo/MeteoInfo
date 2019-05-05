@@ -1595,6 +1595,8 @@ public class GraphicFactory {
                 graphics.add(graphic);
             }
         }
+        graphics.setSingleLegend(false);
+        graphics.setLegendScheme(ls);
 
         return graphics;
     }

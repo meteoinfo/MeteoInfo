@@ -1522,6 +1522,82 @@ public class GraphicFactory {
 
         return graphics;
     }
+    
+    /**
+     * Add wireframe polylines
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate array
+     * @param ls Legend scheme
+     * @return Graphics
+     */
+    public static GraphicCollection createWireframe(Array xa, Array ya, Array za, LegendScheme ls) {
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        int[] shape = xa.getShape();
+        int colNum = shape[1];
+        int rowNum = shape[0];
+        double z1, z2, z3, z4, z;
+        int idx1, idx2, idx3, idx4;
+        PolylineBreak pb;
+        PolylineZShape ps;
+        Graphic graphic;
+        List<PointZ> points;
+        for (int i = 0; i < rowNum - 1; i++) {
+            for (int j = 0; j < colNum - 1; j++) {
+                idx1 = i * colNum + j;
+                idx2 = i * colNum + j + 1;
+                idx3 = (i + 1) * colNum + j;
+                idx4 = (i + 1) * colNum + j + 1;
+                z1 = za.getDouble(idx1);
+                z2 = za.getDouble(idx2);
+                z3 = za.getDouble(idx3);
+                z4 = za.getDouble(idx4);
+                ps = new PolylineZShape();
+                points = new ArrayList<>();
+                points.add(new PointZ(xa.getDouble(idx1), ya.getDouble(idx1), z1));
+                points.add(new PointZ(xa.getDouble(idx3), ya.getDouble(idx3), z3));
+                ps.setPoints(points);
+                z = (z1 + z3) * 0.5;
+                ps.setValue(z);
+                pb = (PolylineBreak) ls.findLegendBreak(z);
+                graphic = new Graphic(ps, pb);
+                graphics.add(graphic);
+                ps = new PolylineZShape();
+                points = new ArrayList<>();
+                points.add(new PointZ(xa.getDouble(idx3), ya.getDouble(idx3), z3));
+                points.add(new PointZ(xa.getDouble(idx4), ya.getDouble(idx4), z4));
+                ps.setPoints(points);
+                z = (z3 + z4) * 0.5;
+                ps.setValue(z);
+                pb = (PolylineBreak) ls.findLegendBreak(z);
+                graphic = new Graphic(ps, pb);
+                graphics.add(graphic);
+                ps = new PolylineZShape();
+                points = new ArrayList<>();
+                points.add(new PointZ(xa.getDouble(idx4), ya.getDouble(idx4), z4));
+                points.add(new PointZ(xa.getDouble(idx2), ya.getDouble(idx2), z2));
+                ps.setPoints(points);
+                z = (z4 + z2) * 0.5;
+                ps.setValue(z);
+                pb = (PolylineBreak) ls.findLegendBreak(z);
+                graphic = new Graphic(ps, pb);
+                graphics.add(graphic);
+                ps = new PolylineZShape();
+                points = new ArrayList<>();
+                points.add(new PointZ(xa.getDouble(idx2), ya.getDouble(idx2), z2));
+                points.add(new PointZ(xa.getDouble(idx1), ya.getDouble(idx1), z1));
+                ps.setPoints(points);
+                z = (z1 + z2) * 0.5;
+                ps.setValue(z);
+                pb = (PolylineBreak) ls.findLegendBreak(z);
+                graphic = new Graphic(ps, pb);
+                graphics.add(graphic);
+            }
+        }
+
+        return graphics;
+    }
 
     /**
      * Add mesh polygons

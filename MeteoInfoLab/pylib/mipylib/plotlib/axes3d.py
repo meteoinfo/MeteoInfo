@@ -654,8 +654,27 @@ class Axes3D(Axes):
             z = args[2]
             args = args[3:]
  
-        line = plotutil.getlegendbreak('line', **kwargs)[0]
-        graphics = GraphicFactory.createWireframe(x.asarray(), y.asarray(), z.asarray(), line)
+        zcolors = kwargs.pop('zcolors', False)
+        if not zcolors:
+            line = plotutil.getlegendbreak('line', **kwargs)[0]
+            graphics = GraphicFactory.createWireframe(x.asarray(), y.asarray(), z.asarray(), line)
+        else:
+            cmap = plotutil.getcolormap(**kwargs)
+            if len(args) > 0:
+                level_arg = args[0]
+                if isinstance(level_arg, int):
+                    cn = level_arg
+                    ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
+                else:
+                    if isinstance(level_arg, MIArray):
+                        level_arg = level_arg.aslist()
+                    ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
+            else:    
+                ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
+            ls = ls.convertTo(ShapeTypes.Polyline)
+            plotutil.setlegendscheme(ls, **kwargs)
+            graphics = GraphicFactory.createWireframe(x.asarray(), y.asarray(), z.asarray(), ls)
+        
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

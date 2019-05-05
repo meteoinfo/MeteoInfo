@@ -222,6 +222,7 @@ public class MIMath {
                     cET.minY = aP.Y;
                     cET.maxY = aP.Y;
                     cET.minZ = aP.Z;
+                    cET.maxZ = aP.Z;
                 } else {
                     if (cET.minX > aP.X) {
                         cET.minX = aP.X;

@@ -1911,7 +1911,12 @@ public class ArrayUtil {
     public static List<Array> histogram(Array a, int nbins) {
         double min = ArrayMath.getMinimum(a);
         double max = ArrayMath.getMaximum(a);
-        double[] bins = MIMath.getIntervalValues(min, max, nbins);
+        double interval = BigDecimalUtil.div(BigDecimalUtil.sub(max, min), nbins);
+        double[] bins = new double[nbins + 1];
+        for (int i = 0; i < nbins + 1; i++) {
+            bins[i] = min;
+            min = BigDecimalUtil.add(min, interval);
+        }
         Array ba = Array.factory(DataType.DOUBLE, new int[]{bins.length}, bins);
         return histogram(a, ba);
     }

@@ -8,6 +8,7 @@
 import math
 import cmath
 import datetime
+import numbers
 from org.meteoinfo.data import GridData, GridArray, StationData, DataMath, TableData, ArrayMath, ArrayUtil, TableUtil
 from org.meteoinfo.data.meteodata import Dimension
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
@@ -31,7 +32,7 @@ __all__ = [
     'pi','e','inf','nan','absolute','all','any','arange','arange1',    
     'argmin','argmax','array','asarray','asgridarray','asgriddata','asin','asmiarray','asstationdata',
     'atleast_1d','atleast_2d','atan','atan2','ave_month','histogram','broadcast_to','cdiff','concatenate',
-    'corrcoef','cos','degrees','delete','delnan','diag','dim_array','datatable','dot','empty','exp','eye','fmax','fmin','full',
+    'corrcoef','cos','cumsum','degrees','delete','delnan','diag','diff','dim_array','datatable','dot','empty','exp','eye','fmax','fmin','full',
     'griddata','hcurl','hdivg','hstack','identity','interp2d',
     'interpn','isarray','isnan','linint2','linregress','linspace','log','log10',
     'logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
@@ -929,6 +930,30 @@ def sum(x, axis=None):
                     dims.append(x.dims[i])
             return DimArray(MIArray(r), dims, x.fill_value, x.proj)
             
+def cumsum(x, axis=None):
+    """
+    Return the cumulative sum of the elements along a given axis.
+    
+    :param x: (*array_like or list*) Input values.
+    :param axis: (*int*) Axis along which the standard deviation is computed. 
+        The default is to compute the standard deviation of the flattened array.
+    
+    :returns: (*array_like*) Cumulative sum result.
+    """
+    x = asarray(x)
+    if axis is None:
+        x = x.flatten()
+        axis = 0
+    
+    r = ArrayMath.cumsum(x.asarray(), axis)
+    if type(x) is MIArray:
+        return MIArray(r)
+    else:
+        dims = []
+        for i in range(0, x.ndim):
+            dims.append(x.dims[i])
+        return DimArray(MIArray(r), dims, x.fill_value, x.proj)
+            
 def mean(x, axis=None):
     """
     Compute tha arithmetic mean along the specified axis.
@@ -1240,6 +1265,32 @@ def argmax(a, axis=None):
         r = ArrayMath.argMax(a.asarray(), axis)
         return MIArray(r)
         
+def diff(a, axis=-1):
+    '''
+    Calculate the n-th discrete difference along the given axis.
+    
+    The first difference is given by out[n] = a[n+1] - a[n] along the given axis.
+    
+    :param a: (*array_like*) Input array.
+    :param axis: (*int*) The axis along which the difference is taken, default is the last axis.
+        
+    :returns: The n-th differences. The shape of the output is the same as a except along axis 
+        where the dimension is smaller by n.
+    '''
+    a = asarray(a)
+    nd = a.ndim
+    if axis < 0:
+        axis = nd + axis
+    
+    slice1 = [slice(None)] * nd
+    slice2 = [slice(None)] * nd
+    slice1[axis] = slice(1, None)
+    slice2[axis] = slice(None, -1)
+    slice1 = tuple(slice1)
+    slice2 = tuple(slice2)
+    r = a[slice1] - a[slice2]
+    return r
+        
 def unravel_index(indices, dims):
     '''
     Converts a flat index or array of flat indices into a tuple of coordinate arrays.
@@ -1286,24 +1337,37 @@ def ave_month(data, colnames, t):
     r = TableUtil.ave_Month(a, colnames, jt)
     return PyTableData(TableData(r))
     
-def histogram(a, bins=10):
+def histogram(a, bins=10, density=False):
     '''
     Compute the histogram of a set of data.
     
     :param a: (*array_like*) Input data. The histogram is computed over the flattened array.
     :param bins: (*int or list*) If bins is an int, it defines the number of equal-width bins in the given 
         range (10, by default). If bins is a sequence, it defines the bin edges, including the rightmost edge, allowing for non-uniform bin widths.
+    :param density: (*boolean*) If False, the result will contain the number of samples in 
+        each bin. If True, the result is the value of the probability density function at 
+        the bin, normalized such that the integral over the range is 1.
     
     :returns: The values of the histogram (hist) and the bin edges (length(hist)+1).
     '''
     if isinstance(a, list):
         a = array(a)
-    elif isinstance(a, (int, long, float)):
+    elif isinstance(a, numbers.Number):
         a = array([a])
     if isinstance(bins, list):
         bins = array(bins)
-    r = ArrayUtil.histogram(a.asarray(), bins.asarray())
-    return MIArray(r[0]), MIArray(r[1])
+    if isinstance(bins, int):
+        r = ArrayUtil.histogram(a.asarray(), bins)
+    else:
+        r = ArrayUtil.histogram(a.asarray(), bins.asarray())
+    h = MIArray(r[0])
+    b = MIArray(r[1])
+    
+    if density:
+        db = diff(b).astype('float')
+        return h / db / h.sum(), b
+    else:
+        return h, b
                 
 def sort(a, axis=-1):
     """

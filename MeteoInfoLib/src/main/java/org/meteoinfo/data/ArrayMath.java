@@ -4650,6 +4650,81 @@ public class ArrayMath {
         }
         return sum;
     }
+    
+    /**
+     * Return the cumulative sum of the elements along a given axis.
+     *
+     * @param a Array a
+     * @param axis Axis
+     * @return Sum value array
+     * @throws ucar.ma2.InvalidRangeException
+     */
+    public static Array cumsum(Array a, int axis) throws InvalidRangeException {
+        int[] dataShape = a.getShape();
+        int[] shape = new int[dataShape.length - 1];
+        int idx;
+        for (int i = 0; i < dataShape.length; i++) {
+            idx = i;
+            if (idx == axis) {
+                continue;
+            } else if (idx > axis) {
+                idx -= 1;
+            }
+            shape[idx] = dataShape[i];
+        }
+        Array r = Array.factory(a.getDataType(), shape);
+        Array rr = Array.factory(a.getDataType(), dataShape);
+        List<Double> s;
+        Index indexr = r.getIndex();
+        Index indexrr = rr.getIndex();
+        int[] current, currentrr = indexrr.getCurrentCounter();
+        for (int i = 0; i < r.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            List<Range> ranges = new ArrayList<>();
+            for (int j = 0; j < dataShape.length; j++) {
+                if (j == axis) {
+                    ranges.add(new Range(0, dataShape[j] - 1, 1));
+                } else {
+                    idx = j;
+                    if (idx > axis) {
+                        idx -= 1;
+                    }
+                    ranges.add(new Range(current[idx], current[idx], 1));
+                    currentrr[j] = current[idx];
+                }
+            }
+            s = cumsum(a, ranges);
+            for (int j = 0; j < s.size(); j++) {
+                currentrr[axis] = j;
+                rr.setDouble(indexrr.set(currentrr), s.get(j));
+            }
+            indexr.incr();
+        }
+        r = null;
+
+        return rr;
+    }
+    
+    /**
+     * Compute cumulative sum value of an array
+     *
+     * @param a Array a
+     * @param ranges Range list
+     * @return Sum value
+     * @throws ucar.ma2.InvalidRangeException
+     */
+    public static List<Double> cumsum(Array a, List<Range> ranges) throws InvalidRangeException {
+        double s = 0.0, v;
+        IndexIterator ii = a.getRangeIterator(ranges);
+        List<Double> r = new ArrayList<>();
+        while (ii.hasNext()) {
+            v = ii.getDoubleNext();
+            s += v;
+            r.add(s);             
+        }
+
+        return r;
+    }
 
     /**
      * Produce array

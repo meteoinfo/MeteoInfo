@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\stats">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
@@ -16,25 +15,26 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\test_emis.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_mm5-2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\wireframe_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\wireframe_color.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\mlinregress_3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\histogram_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\hist_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\bar_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\hist_1.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\test_emis.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_mm5-2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\wireframe_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\wireframe_color.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\mlinregress_3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\array\histogram_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\hist_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\bar_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\hist_1.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,0" MainFormSize="1343,779"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

@@ -1411,14 +1411,15 @@ class Axes(object):
 
         return graphics 
             
-    def bar(self, *args, **kwargs):
+    def bar(self, x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
         """
         Make a bar plot.
         
-        Make a bar plot with rectangles bounded by:
-            left, left + width, bottom, bottom + height
+        The bars are positioned at x with the given alignment. Their dimensions are given by 
+        width and height. The vertical baseline is bottom (default 0).
         
-        :param left: (*array_like*) The x coordinates of the left sides of the bars.
+        :param x: (*array_like*) The x coordinates of the bars. See also align for the alignment 
+            of the bars to the coordinates.
         :param height: (*array_like*) The height of the bars.
         :param width: (*array_like*) Optional, the widths of the bars default: 0.8.
         :param bottom: (*array_like*) Optional, the y coordinates of the bars default: None
@@ -1453,32 +1454,13 @@ class Axes(object):
         """
         #Add data series
         label = kwargs.pop('label', 'S_0')
-        xdata = None
-        autowidth = True
-        width = 0.8
-        if len(args) == 1:
-            ydata = args[0]
-        elif len(args) == 2:
-            if isinstance(args[1], (int, float)):
-                ydata = args[0]
-                width = args[1]
-                autowidth = False
-            else:
-                xdata = args[0]
-                ydata = args[1]
-        else:
-            xdata = args[0]
-            ydata = args[1]
-            width = args[2]
-            autowidth = False        
-        
-        if xdata is None:
-            xdata = []
-            for i in range(1, len(args[0]) + 1):
-                xdata.append(i)
-        xdata = plotutil.getplotdata(xdata)
-        ydata = plotutil.getplotdata(ydata)
-        width = plotutil.getplotdata(width)
+        autowidth = False
+        x = minum.asarray(x)
+        height = minum.asarray(height)
+        width = minum.asarray(width)
+        if align == 'center':
+            x = x - width / 2
+            
         yerr = kwargs.pop('yerr', None)
         if not yerr is None:
             if not isinstance(yerr, (int, float)):
@@ -1527,11 +1509,13 @@ class Axes(object):
             barbreaks.append(lb)
             
         #Create bar graphics
+        if isinstance(width, MIArray):
+            width = width.asarray()
         if morepoints:
-            graphics = GraphicFactory.createBars1(xdata, ydata, autowidth, width, not yerr is None, yerr, \
+            graphics = GraphicFactory.createBars1(x.asarray(), height.asarray(), autowidth, width, not yerr is None, yerr, \
                 not bottom is None, bottom, barbreaks)
         else:
-            graphics = GraphicFactory.createBars(xdata, ydata, autowidth, width, not yerr is None, yerr, \
+            graphics = GraphicFactory.createBars(x.asarray(), height.asarray(), autowidth, width, not yerr is None, yerr, \
                 not bottom is None, bottom, barbreaks)        
 
         self.add_graphic(graphics)
@@ -1668,7 +1652,27 @@ class Axes(object):
 
         return barbreaks
         
-    def hist(self, x, bins=10, range=None, normed=False, cumulative=False,
+    def hist(self, x, bins=10, range=None, density=False, cumulative=False,
+            bottom=None, histtype='bar', align='mid',
+            orientation='vertical', rwidth=None, log=False, **kwargs):
+        """
+        Plot a histogram.
+        
+        :param x: (*array_like*) Input values, this takes either a single array or a sequency of arrays 
+            which are not required to be of the same length.
+        :param bins: (*int*) If an integer is given, bins + 1 bin edges are returned.
+        """
+        #Add data series
+        label = kwargs.pop('label', 'S_0')
+        
+        #histogram
+        m, bins = minum.histogram(x, bins=bins, density=density)
+        width = minum.diff(bins)
+        barbreaks = self.bar(bins[:-1], m, width, align='center', **kwargs)
+
+        return m, bins, barbreaks
+        
+    def hist_back(self, x, bins=10, range=None, density=False, cumulative=False,
             bottom=None, histtype='bar', align='mid',
             orientation='vertical', rwidth=None, log=False, **kwargs):
         """

@@ -448,7 +448,7 @@ def errorbar(x, y, yerr=None, xerr=None, fmt='', ecolor=None, elinewidth=None, c
         draw_if_interactive()
     return r    
 
-def bar(*args, **kwargs):
+def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
     """
     Make a bar plot.
     
@@ -498,7 +498,7 @@ def bar(*args, **kwargs):
         if gca.axestype != 'cartesian' and gca.axestype != 'polar':
             gca = axes()
             
-    r = gca.bar(*args, **kwargs)
+    r = gca.bar(x, height, width, bottom, align, data, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r    
@@ -558,7 +558,7 @@ def barh(*args, **kwargs):
         draw_if_interactive()
     return r
           
-def hist(x, bins=10, range=None, normed=False, cumulative=False,
+def hist(x, bins=10, range=None, density=False, cumulative=False,
         bottom=None, histtype='bar', align='mid',
         orientation='vertical', rwidth=None, log=False, **kwargs):
     """
@@ -578,7 +578,7 @@ def hist(x, bins=10, range=None, normed=False, cumulative=False,
         if gca.axestype != 'cartesian':
             gca = axes()
             
-    r = gca.hist(x, bins, range, normed, cumulative,
+    r = gca.hist(x, bins, range, density, cumulative,
         bottom, histtype, align, orientation, rwidth, log, **kwargs)
     if not r is None:
         draw_if_interactive()

@@ -47,7 +47,7 @@ __all__ = [
     'makelegend','makesymbolspec','masklayer','pcolor','pcolorm','pie','plot','plot3','plotm','quiver',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
     'semilogx','semilogy','set','show','stationmodel','stem','step','streamplotm','subplot','subplots','suptitle',
-    'surf','text','title','twinx','twiny','weatherspec','xaxis',
+    'surf','text','title','twinx','twiny','violinplot','weatherspec','xaxis',
     'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
     'isinteractive'
     ]
@@ -898,7 +898,7 @@ def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6
     return r
 
 def boxplot(x, sym=None, positions=None, widths=None, color=None, showcaps=True, showfliers=True, showmeans=False, \
-        meanline=False, boxprops=None, medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):
+        showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):
     """
     Make a box and whisker plot.
     
@@ -918,8 +918,11 @@ def boxplot(x, sym=None, positions=None, widths=None, color=None, showcaps=True,
     :param showcaps: (*boolean*) Show the caps on the ends of whiskers. Default is ``True``.
     :param showfliers: (*boolean*) Show the outliers beyond the caps. Defaul is ``True``.
     :param showmeans: (*boolean*) Default is ``False``. Show the mean or not.
+    :param showmedians: (*boolean*) Default is ``True``. Show the median or not.
     :param meanline: (*boolean*) Default is ``False``. If ``True`` (and showmeans is ``True``), will try to render
         the mean as a line spanning. Otherwise, means will be shown as points.
+    :param medianline: (*boolean*) Default is ``True``. If ``True`` (and showmedians is ``True``), will try to render
+        the median as a line spanning. Otherwise, medians will be shown as points.
     :param boxprops: (*dict*) Specifies the style of the box.
     :param medianprops: (*dict*) Specifies the style of the median.
     :param meanprops: (*dict*) Specifies the style of the mean.
@@ -938,7 +941,38 @@ def boxplot(x, sym=None, positions=None, widths=None, color=None, showcaps=True,
             gca = axes()
             
     r = gca.boxplot(x, sym, positions, widths, color, showcaps, showfliers, showmeans, \
-        meanline, boxprops, medianprops, meanprops, whiskerprops, capprops, flierprops)
+        showmedians, meanline, medianline, boxprops, medianprops, meanprops, whiskerprops, capprops, flierprops)
+    if not r is None:
+        draw_if_interactive()
+    return r
+    
+def violinplot(dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None, \
+    whiskerprops=None, **kwargs):
+    """
+    Make a violin plot.
+    
+    :param dateset: (*Array or a sequence of vectors*) The input data.
+    :param positions: (*array_like*) Sets the positions of the violins. The ticks and limits are automatically 
+        set to match the positions. Defaults to range(1, N+1) where N is the number of violins to be drawn.
+    :param widths: (*scalar or array_like*) Sets the width of each box either with a scalar or a sequence. 
+        The default is 0.5, or 0.15*(distance between extreme positions), if that is smaller.   
+    :param boxwidth: (*float*) box width.
+    :param boxprops: (*dict*) Specifies the style of the box.
+    :param whiskerprops: (*dict*) Specifies the style of the whiskers.
+    
+    :returns: Violin graphics.
+    """
+    global gca
+    if g_figure is None:
+        figure()
+
+    if gca is None:    
+        gca = axes()
+    else:
+        if gca.axestype != 'cartesian':
+            gca = axes()
+            
+    r = gca.violinplot(dataset, positions, widths, boxwidth, boxprops, whiskerprops, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r

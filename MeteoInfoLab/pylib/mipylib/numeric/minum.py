@@ -27,6 +27,7 @@ pi = Math.PI
 e = Math.E
 inf = Double.POSITIVE_INFINITY
 nan = Double.NaN
+newaxis = None
 
 __all__ = [
     'pi','e','inf','nan','absolute','all','any','arange','arange1',    
@@ -36,7 +37,7 @@ __all__ = [
     'griddata','hcurl','hdivg','hstack','identity','interp2d',
     'interpn','isarray','isnan','linint2','linregress','linspace','log','log10',
     'logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
-    'nonzero','ones','ones_like','pol2cart','polyval','power',
+    'newaxis','nonzero','ones','ones_like','pol2cart','polyval','power',
     'radians','reshape','repeat',
     'rolling_mean','rot90','sin','smooth5','smooth9','sort','squeeze','argsort','sqrt','std','sum','tan',
     'tile','transpose','trapz','vdot','unravel_index','var','vstack',

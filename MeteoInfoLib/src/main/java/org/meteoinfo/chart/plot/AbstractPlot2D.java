@@ -1089,12 +1089,13 @@ public abstract class AbstractPlot2D extends Plot {
                 }
                 xy = this.projToScreen(value, this.drawExtent.minY, area);
                 x = xy[0];
-                if (this.getXAxis().isInverse()) {
-                    x = area.getWidth() - x;
+                if (x > 0 && x < area.getWidth()) {                    
+                    if (this.getXAxis().isInverse()) {
+                        x = area.getWidth() - x;
+                    }
+                    x += minx;
+                    g.draw(new Line2D.Double(x, maxy, x, miny));
                 }
-                x += minx;
-                g.draw(new Line2D.Double(x, maxy, x, miny));
-
                 n += this.getXAxis().getTickLabelGap();
             }
         }
@@ -1112,12 +1113,13 @@ public abstract class AbstractPlot2D extends Plot {
                 }
                 xy = this.projToScreen(this.drawExtent.minX, value, area);
                 y = xy[1];
-                if (this.getYAxis().isInverse()) {
-                    y = area.getHeight() - y;
+                if (y > 0 && y < area.getHeight()) {
+                    if (this.getYAxis().isInverse()) {
+                        y = area.getHeight() - y;
+                    }
+                    y += miny;
+                    g.draw(new Line2D.Double(minx, y, maxx, y));
                 }
-                y += area.getY();
-                g.draw(new Line2D.Double(minx, y, maxx, y));
-
                 n += this.getYAxis().getTickLabelGap();
             }
         }

@@ -96,6 +96,18 @@ class MIArray(object):
         if self.ndim == 0:
             return self
         
+        newaxisn = 0
+        newaxis = False
+        if len(indices) > self.ndim:
+            newaxisn = len(indices) - self.ndim
+            newaxis = True
+            for i in range(newaxisn):
+                if not indices[-i - 1] is None:
+                    newaxis = False
+            if newaxis:
+                indices = list(indices)
+                indices = indices[:-newaxisn]
+        
         if len(indices) != self.ndim:
             print 'indices must be ' + str(self.ndim) + ' dimensions!'
             raise IndexError()
@@ -167,6 +179,18 @@ class MIArray(object):
                 r = ArrayMath.takeValues(self.array, ranges)
             else:
                 r = ArrayMath.take(self.array, ranges)
+        
+        if newaxis:
+            for i in flips:
+                r = r.flip(i)
+            rr = Array.factory(r.getDataType(), r.getShape());
+            MAMath.copy(rr, r);
+            rr = MIArray(rr)
+            newshape = list(rr.shape)
+            for i in range(newaxisn):
+                newshape.append(1)
+            return rr.reshape(newshape)
+                
         if r.getSize() == 1:
             r = r.getObject(0)
             if isinstance(r, Complex):

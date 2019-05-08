@@ -28,6 +28,7 @@ from mipylib.numeric.miarray import MIArray
 from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
 import mipylib.numeric.minum as minum
+import mipylib.numeric as np
 import mipylib.miutil as miutil
 
 class Axes(object):
@@ -2360,10 +2361,10 @@ class Axes(object):
             where = where.asarray()
         
         #Set plot data styles
-        if not 'fill' in kwargs:
-            kwargs['fill'] = True
-        if not 'edge' in kwargs:
-            kwargs['edge'] = False
+        # if not 'fill' in kwargs:
+            # kwargs['fill'] = True
+        # if not 'edge' in kwargs:
+            # kwargs['edge'] = False
         pb, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         pb.setCaption(label)
         
@@ -2408,10 +2409,10 @@ class Axes(object):
             where = where.asarray()
         
         #Set plot data styles
-        if not 'fill' in kwargs:
-            kwargs['fill'] = True
-        if not 'edge' in kwargs:
-            kwargs['edge'] = False
+        # if not 'fill' in kwargs:
+            # kwargs['fill'] = True
+        # if not 'edge' in kwargs:
+            # kwargs['edge'] = False
         pb, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         pb.setCaption(label)
         
@@ -2488,7 +2489,7 @@ class Axes(object):
             return graphics[0], graphics[1], graphics[2]
         
     def boxplot(self, x, sym=None, positions=None, widths=None, color=None, showcaps=True, showfliers=True, showmeans=False, \
-            meanline=False, boxprops=None, medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):
+            showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):
         """
         Make a box and whisker plot.
         
@@ -2508,8 +2509,11 @@ class Axes(object):
         :param showcaps: (*boolean*) Show the caps on the ends of whiskers. Default is ``True``.
         :param showfliers: (*boolean*) Show the outliers beyond the caps. Defaul is ``True``.
         :param showmeans: (*boolean*) Default is ``False``. Show the mean or not.
+        :param showmedians: (*boolean*) Default is ``True``. Show the median or not.
         :param meanline: (*boolean*) Default is ``False``. If ``True`` (and showmeans is ``True``), will try to render
             the mean as a line spanning. Otherwise, means will be shown as points.
+        :param medianline: (*boolean*) Default is ``True``. If ``True`` (and showmedians is ``True``), will try to render
+            the median as a line spanning. Otherwise, medians will be shown as points.
         :param boxprops: (*dict*) Specifies the style of the box.
         :param medianprops: (*dict*) Specifies the style of the median.
         :param meanprops: (*dict*) Specifies the style of the mean.
@@ -2554,11 +2558,18 @@ class Axes(object):
             boxprops.setOutlineColor(color is None and Color.blue or color)
         else:
             boxprops = plotutil.getlegendbreak('polygon', **boxprops)[0]
-        if medianprops is None:
-            medianprops = PolylineBreak()
-            medianprops.setColor(color is None and Color.red or color)
+        if medianline:
+            if medianprops is None:
+                medianprops = PolylineBreak()
+                medianprops.setColor(color is None and Color.red or color)
+            else:
+                medianprops = plotutil.getlegendbreak('line', **medianprops)[0]
         else:
-            medianprops = plotutil.getlegendbreak('line', **medianprops)[0]
+            if medianprops is None:
+                medianprops = PointBreak()
+                medianprops.setColor(color is None and Color.blue or color)
+            else:
+                medianprops = plotutil.getlegendbreak('point', **medianprops)[0]
         if whiskerprops is None:
             whiskerprops = PolylineBreak()
             whiskerprops.setColor(color is None and Color.black or color)
@@ -2594,12 +2605,67 @@ class Axes(object):
             flierprops.setStyle(PointStyle.Plus)
         
         #Create graphics
-        graphics = GraphicFactory.createBox(x, positions, widths, showcaps, showfliers, showmeans, boxprops, \
-            medianprops, whiskerprops, capprops, meanprops, flierprops)
+        graphics = GraphicFactory.createBox(x, positions, widths, showcaps, showfliers, showmeans, \
+            showmedians, boxprops, medianprops, whiskerprops, capprops, meanprops, flierprops)
 
         self.add_graphic(graphics)
         self.axes.setAutoExtent()
 
+        return graphics
+        
+    def violinplot(self, dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None, \
+        whiskerprops=None, **kwargs):
+        """
+        Make a violin plot.
+        
+        :param dateset: (*Array or a sequence of vectors*) The input data.
+        :param positions: (*array_like*) Sets the positions of the violins. The ticks and limits are automatically 
+            set to match the positions. Defaults to range(1, N+1) where N is the number of violins to be drawn.
+        :param widths: (*scalar or array_like*) Sets the width of each box either with a scalar or a sequence. 
+            The default is 0.5, or 0.15*(distance between extreme positions), if that is smaller.   
+        :param boxwidth: (*float*) box width.
+        :param boxprops: (*dict*) Specifies the style of the box.
+        :param whiskerprops: (*dict*) Specifies the style of the whiskers.
+        
+        :returns: Violin graphics.
+        """
+        if isinstance(dataset, MIArray):
+            dataset = [dataset]
+        n = len(dataset)
+        
+        if positions is None:
+            positions = np.arange(1, n+1)
+            
+        graphics = []
+        pdfs = []
+        xx = []
+        max = 0
+        for data,position in zip(dataset, positions):
+            kde = np.stats.GaussianKDE(data)
+            x = np.linspace(data.min(), data.max(), 100)            
+            pdf = kde.evaluate(x)
+            pdfs.append(pdf)
+            xx.append(x)
+            if pdf.max() > max:
+                max = pdf.max()
+            
+        if boxprops is None:
+            boxprops = dict(color='k',edgecolor=None)
+        if whiskerprops is None:
+            whiskerprops = whiskerprops=dict(color='k')
+        if not kwargs.has_key('color'):
+            kwargs['color'] = 'c'
+        if not kwargs.has_key('edgecolor'):
+            kwargs['edgecolor'] = 'b'
+        ratio = widths / max
+        for data,position,pdf,x in zip(dataset, positions, pdfs, xx):
+            pdf = pdf * ratio
+            self.fill_betweenx(x, position-pdf, position+pdf, **kwargs)
+            ggs = self.boxplot(data, positions=[position], widths=boxwidth, showfliers=False, \
+                showcaps=False, medianline=False, boxprops=boxprops, \
+                whiskerprops=whiskerprops, medianprops=dict(color='w',edgecolor=None))
+            graphics.extend(ggs)
+        
         return graphics
         
     def barbs(self, *args, **kwargs):

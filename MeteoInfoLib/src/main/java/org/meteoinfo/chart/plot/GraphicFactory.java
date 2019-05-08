@@ -36,6 +36,7 @@ import org.meteoinfo.legend.ArrowBreak;
 import org.meteoinfo.legend.ArrowLineBreak;
 import org.meteoinfo.legend.ArrowPolygonBreak;
 import org.meteoinfo.legend.BarBreak;
+import org.meteoinfo.legend.BreakTypes;
 import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.ColorBreakCollection;
 import org.meteoinfo.legend.LegendManage;
@@ -4585,6 +4586,7 @@ public class GraphicFactory {
      * @param showcaps Show caps or not
      * @param showfliers Show fliers or not
      * @param showmeans Show means or not
+     * @param showmedians Show medians or not
      * @param boxBreak Box polygon break
      * @param medianBreak Meandian line break
      * @param whiskerBreak Whisker line break
@@ -4594,8 +4596,8 @@ public class GraphicFactory {
      * @return GraphicCollection
      */
     public static GraphicCollection createBox(List<Array> xdata, List<Number> positions, List<Number> widths,
-            boolean showcaps, boolean showfliers, boolean showmeans, PolygonBreak boxBreak,
-            PolylineBreak medianBreak, PolylineBreak whiskerBreak, PolylineBreak capBreak,
+            boolean showcaps, boolean showfliers, boolean showmeans, boolean showmedians, PolygonBreak boxBreak,
+            ColorBreak medianBreak, PolylineBreak whiskerBreak, PolylineBreak capBreak,
             ColorBreak meanBreak, PointBreak flierBreak) {
         GraphicCollection gc = new GraphicCollection();
         int n = xdata.size();
@@ -4668,19 +4670,27 @@ public class GraphicFactory {
             gc.add(new Graphic(pgs, boxBreak));
 
             //Add meadian line
-            pList = new ArrayList<>();
-            pList.add(new PointD(v - width * 0.5, median));
-            pList.add(new PointD(v + width * 0.5, median));
-            PolylineShape pls = new PolylineShape();
-            pls.setPoints(pList);
-            gc.add(new Graphic(pls, medianBreak));
+            if (showmedians) {
+                if (medianBreak.getBreakType() == BreakTypes.PolylineBreak) {
+                    pList = new ArrayList<>();
+                    pList.add(new PointD(v - width * 0.5, median));
+                    pList.add(new PointD(v + width * 0.5, median));
+                    PolylineShape pls = new PolylineShape();
+                    pls.setPoints(pList);
+                    gc.add(new Graphic(pls, medianBreak));
+                } else {
+                    PointShape ps = new PointShape();
+                    ps.setPoint(new PointD(v, median));
+                    gc.add(new Graphic(ps, medianBreak));
+                }
+            }
 
             //Add low whisker line
             double min = Math.max(mino, mind);
             pList = new ArrayList<>();
             pList.add(new PointD(v, q1));
             pList.add(new PointD(v, min));
-            pls = new PolylineShape();
+            PolylineShape pls = new PolylineShape();
             pls.setPoints(pList);
             gc.add(new Graphic(pls, whiskerBreak));
             //Add cap
@@ -4738,9 +4748,18 @@ public class GraphicFactory {
             //Add mean line
             if (showmeans) {
                 double mean = ArrayMath.mean(a);
-                PointShape ps = new PointShape();
-                ps.setPoint(new PointD(v, mean));
-                gc.add(new Graphic(ps, meanBreak));
+                if (meanBreak.getBreakType() == BreakTypes.PointBreak) {
+                    PointShape ps = new PointShape();
+                    ps.setPoint(new PointD(v, mean));
+                    gc.add(new Graphic(ps, meanBreak));
+                } else {
+                    pList = new ArrayList<>();
+                    pList.add(new PointD(v - width * 0.5, mean));
+                    pList.add(new PointD(v + width * 0.5, mean));
+                    pls = new PolylineShape();
+                    pls.setPoints(pList);
+                    gc.add(new Graphic(pls, meanBreak));
+                }
             }
         }
         gc.setSingleLegend(false);

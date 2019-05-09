@@ -45,6 +45,7 @@ import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.ma.ArrayBoolean;
 import org.meteoinfo.math.Complex;
 import org.meteoinfo.math.ListIndexComparator;
+import org.meteoinfo.math.spatial.KDTree;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;
@@ -2633,7 +2634,7 @@ public class ArrayUtil {
      * @param radius Radius
      * @return grid data
      */
-    public static Array interpolation_Nearest(List<Number> x_s, List<Number> y_s, Array a, List<Number> X, List<Number> Y,
+    public static Array interpolation_Nearest_bak(List<Number> x_s, List<Number> y_s, Array a, List<Number> X, List<Number> Y,
             double radius) {
         int rowNum, colNum, pNum;
         colNum = X.size();
@@ -2669,6 +2670,47 @@ public class ArrayUtil {
                         }
                     }
                 }
+            }
+        }
+
+        return rdata;
+    }
+    
+    /**
+     * Interpolate with nearest method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param radius Radius
+     * @return grid data
+     */
+    public static Array interpolation_Nearest(List<Number> x_s, List<Number> y_s, Array a, List<Number> X, List<Number> Y,
+            double radius) {
+        int rowNum, colNum, pNum;
+        colNum = X.size();
+        rowNum = Y.size();
+        pNum = x_s.size();
+        Array rdata = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        double gx, gy;
+        
+        //Construct K-D tree
+        KDTree.Euclidean<double[]> kdTree = new KDTree.Euclidean<>(2);
+        for (int i = 0; i < pNum; i++) {
+            if (!Double.isNaN(a.getDouble(i)))
+                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, new double[]{a.getDouble(i)});
+        }
+
+        //Loop
+        for (int i = 0; i < rowNum; i++) {
+            gy = Y.get(i).doubleValue();
+            for (int j = 0; j < colNum; j++) {
+                rdata.setDouble(i * colNum + j, Double.NaN);
+                gx = X.get(j).doubleValue();
+                double[] point = (double[])(kdTree.nearestNeighbours(new double[]{gx, gy}, 1).get(0).payload);
+                rdata.setDouble(i * colNum + j, point[0]);                
             }
         }
 

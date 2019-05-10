@@ -2256,12 +2256,13 @@ def griddata(points, values, xi=None, **kwargs):
         y_g = xi[1]
     if isinstance(values, MIArray):
         values = values.asarray()    
-    if method == 'idw':
-        pnum = kwargs.pop('pointnum', 2)
+    if method == 'idw':        
         radius = kwargs.pop('radius', None)
         if radius is None:
+            pnum = kwargs.pop('pointnum', None)
             r = ArrayUtil.interpolation_IDW_Neighbor(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), pnum)
         else:
+            pnum = kwargs.pop('pointnum', 2)
             r = ArrayUtil.interpolation_IDW_Radius(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), pnum, radius)
     elif method == 'cressman':
         radius = kwargs.pop('radius', [10, 7, 4, 2, 1])

@@ -124,6 +124,26 @@ public abstract class KDTree<T> {
         }
         return results;
     }
+    
+    public ArrayList<SearchResult<T>> ballSearch_distance(double[] searchLocation, double radius) {
+        IntStack stack = new IntStack();
+        ArrayList<SearchResult<T>> results = new ArrayList<>();
+
+        stack.push(root.index);
+
+        while (stack.size() > 0) {
+            int nodeIndex = stack.pop();
+            if (radius > pointRectDist(nodeIndex, searchLocation)) {
+                Node node = nodeList.get(nodeIndex);
+                if (node.pointLocations == null) {
+                    stack.push(node.moreIndex).push(node.lessIndex);
+                } else {
+                    node.searchBall_distance(searchLocation, radius, results);
+                }
+            }
+        }
+        return results;
+    }
 
     public ArrayList<T> rectSearch(double[] mins, double[] maxs) {
         IntStack stack = new IntStack();
@@ -426,6 +446,15 @@ public abstract class KDTree<T> {
                 double distance = pointDist(pointLocations.array, searchLocation, j);
                 if (radius >= distance) {
                     results.add(pointPayloads.get(j));
+                }
+            }
+        }
+        
+        void searchBall_distance(double[] searchLocation, double radius, ArrayList<SearchResult<T>> results) {
+            for (int j = entries; j-- > 0;) {
+                double distance = pointDist(pointLocations.array, searchLocation, j);
+                if (radius >= distance) {
+                    results.add(new SearchResult(distance, pointPayloads.get(j)));
                 }
             }
         }

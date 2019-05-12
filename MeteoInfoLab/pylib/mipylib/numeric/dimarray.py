@@ -1047,16 +1047,12 @@ class DimArray(MIArray):
             method = ResampleMethods.Bilinear
         else:
             method = ResampleMethods.NearestNeighbor
-        if isinstance(x, list):
-            r = ArrayUtil.reproject(self.array, xx, yy, x, y, self.proj, toproj, self.fill_value, method)
-        elif isinstance(x, MIArray):
-            if x.ndim == 1:
-                r = ArrayUtil.reproject(self.array, xx, yy, x.aslist(), y.aslist(), self.proj, toproj, self.fill_value, method)
-            else:
-                r = ArrayUtil.reproject(self.array, xx, yy, x.asarray(), y.asarray(), self.proj, toproj, self.fill_value, method)
-        else:
-            r = ArrayUtil.reproject(self.array, xx, yy, x.asarray(), y.asarray(), self.proj, toproj, self.fill_value, method)
-        #r = ArrayUtil.reproject(self.array, xx, yy, x.asarray(), y.asarray(), self.proj, toproj, self.fill_value, method)
+        if isinstance(x, (list, tuple)):
+            x = MIArray(x)
+        if isinstance(y, (list, tuple)):
+            y = MIArray(y)
+        x, y = ArrayUtil.meshgrid(x.asarray(), y.asarray())
+        r = ArrayUtil.reproject(self.array, xx, yy, x, y, self.proj, toproj, method)
         return MIArray(r)
             
     def join(self, b, dimidx):

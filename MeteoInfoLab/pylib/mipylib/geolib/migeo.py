@@ -18,6 +18,7 @@ from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.projection.info import ProjectionInfo
 from org.meteoinfo.global import PointD
 from org.meteoinfo.io import IOUtil
+from org.meteoinfo.geoprocess.analysis import ResampleMethods
 
 from milayer import MILayer
 from mipylib.numeric.miarray import MIArray
@@ -30,7 +31,7 @@ from java.util import ArrayList
 __all__ = [
     'arrayinpolygon','circle','convert_encoding_dbf','distance','georead','geotiffread',
     'maplayer','inpolygon','maskin','maskout','polyarea','polygon','rmaskin','rmaskout','shaperead',
-    'projinfo','project','projectxy'
+    'projinfo','project','projectxy','reproject'
     ]
 
 def shaperead(fn, encoding=None):   
@@ -488,4 +489,44 @@ def projectxy(lon, lat, xnum, ynum, dx, dy, toproj, fromproj=None, pos='lowerlef
         xx = minum.arange1(llx, xnum, dx)
         yy = minum.arange1(lly, ynum, dy)
     return xx, yy
-        
+    
+def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, method='bilinear'):
+    """
+    Project array
+    
+    :param a: (*array_like*) Input array.
+    :param x: (*array_like*) Input x coordinates.
+    :param y: (*array_like*) Input y coordinates.
+    :param fromproj: (*ProjectionInfo*) Input projection.
+    :param xp: (*array_like*) Projected x coordinates.
+    :param yp: (*array_like*) Projected y coordinates.
+    :param toproj: (*ProjectionInfo*) Output projection.
+    :param method: Interpolation method: ``bilinear`` or ``neareast`` .
+    
+    :returns: (*MIArray*) Projected array
+    """
+    if isinstance(a, DimArray):
+        y = a.dimvalue(a.ndim - 2)
+        x = a.dimvalue(a.ndim - 1)
+        if fromproj is None:
+            fromproj = a.proj
+            
+    if toproj is None:
+        toproj = KnownCoordinateSystems.geographic.world.WGS1984
+    
+    if xp is None or yp is None:
+        pr = ArrayUtil.reproject(a.asarray(), x.aslist(), y.aslist(), fromproj, toproj)
+        r = pr[0]        
+        return MIArray(r)
+    
+    if method == 'bilinear':
+        method = ResampleMethods.Bilinear
+    else:
+        method = ResampleMethods.NearestNeighbor
+    if isinstance(xp, (list, tuple)):
+        xp = MIArray(xp)
+    if isinstance(yp, (list, tuple)):
+        yp = MIArray(yp)
+    xp, yp = ArrayUtil.meshgrid(xp.asarray(), yp.asarray())
+    r = ArrayUtil.reproject(a.asarray(), x.aslist(), y.aslist(), xp, yp, fromproj, toproj, method)
+    return MIArray(r)    

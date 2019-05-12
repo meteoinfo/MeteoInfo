@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\micaps">
+  <Path OpenPath="D:\Working\MIScript\cuace_dust\py\mm5">
     <RecentFolder Folder="D:\Working\MIScript\Jython"/>
     <RecentFolder Folder="D:\Working\MIScript"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
@@ -21,14 +21,16 @@
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\wireframe_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\violinplot_test.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar_bin_griddata-1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\micaps\micaps_1_rain_contour.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\project_test.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\mm5tonc.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\test_nc.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\wireframe_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\violinplot_test.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar_bin_griddata-1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\micaps\micaps_1_rain_contour.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\project_test.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\mm5tonc.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\test_nc.py"/>
     </RecentFiles>
   </File>
   <Font>

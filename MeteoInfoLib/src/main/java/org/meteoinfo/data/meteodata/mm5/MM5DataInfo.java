@@ -703,7 +703,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
             Section section = new Section(origin, size, stride);
             Array dataArray = Array.factory(DataType.FLOAT, section.getShape());
             int rangeIdx = 0;
-            Range timeRange = section.getRank() > 2 ? section
+            Range timeRange = var.getTDimension() != null ? section
                     .getRange(rangeIdx++)
                     : new Range(0, 0);
 
@@ -711,8 +711,12 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
                     .getRange(rangeIdx++)
                     : new Range(0, 0);
 
-            Range yRange = section.getRange(rangeIdx++);
-            Range xRange = section.getRange(rangeIdx);
+            Range yRange = var.getYDimension() != null ? 
+                    section.getRange(rangeIdx++)
+                    : new Range(0,0);
+            Range xRange = var.getXDimension() != null ?
+                    section.getRange(rangeIdx)
+                    : new Range(0, 0);
 
             IndexIterator ii = dataArray.getIndexIterator();
 
@@ -740,8 +744,8 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
             Variable var = this.getVariables().get(varIdx);
             Dimension xdim = var.getXDimension();
             Dimension ydim = var.getYDimension();
-            int xn = xdim.getLength();
-            int yn = ydim.getLength();
+            int xn = xdim != null ? xdim.getLength() : 1;
+            int yn = ydim != null ? ydim.getLength() : 1;
             SubHeader sh = this.findSubHeader(var.getName(), timeIdx);
             br.seek(sh.position + sh.length);
             int n = xn * yn;

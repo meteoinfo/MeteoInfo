@@ -1465,8 +1465,7 @@ class Axes(object):
         yerr = kwargs.pop('yerr', None)
         if not yerr is None:
             if not isinstance(yerr, (int, float)):
-                yerr = plotutil.getplotdata(yerr)
-        bottom = kwargs.pop('bottom', None)   
+                yerr = plotutil.getplotdata(yerr)  
         if not bottom is None:
             bottom = plotutil.getplotdata(bottom)
         

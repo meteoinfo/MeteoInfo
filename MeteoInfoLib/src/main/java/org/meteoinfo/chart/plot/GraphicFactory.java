@@ -32,7 +32,6 @@ import org.meteoinfo.global.PointD;
 import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.layer.ImageLayer;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.legend.ArrowBreak;
 import org.meteoinfo.legend.ArrowLineBreak;
 import org.meteoinfo.legend.ArrowPolygonBreak;
 import org.meteoinfo.legend.BarBreak;

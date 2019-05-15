@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types">
-    <RecentFolder Folder="D:\Working\MIScript"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\image">
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
@@ -16,6 +15,7 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
   </Path>
   <File>
     <OpenedFiles>

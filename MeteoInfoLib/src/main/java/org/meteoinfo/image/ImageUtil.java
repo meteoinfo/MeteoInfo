@@ -14,13 +14,14 @@ import javax.imageio.ImageIO;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-import org.apache.sanselan.ImageFormat;
-import org.apache.sanselan.ImageReadException;
-import org.apache.sanselan.ImageWriteException;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImageFormat;
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.ImageWriteException;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
-import org.apache.sanselan.Sanselan;
 
 /**
  *
@@ -35,7 +36,7 @@ public class ImageUtil {
      * @param fileName Image file name
      * @return RGB array data
      * @throws java.io.IOException
-     * @throws org.apache.sanselan.ImageReadException
+     * @throws ImageReadException
      */
     public static Array imageRead(String fileName) throws IOException, ImageReadException{
         String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
@@ -43,7 +44,7 @@ public class ImageUtil {
         if (extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg")){
             image = ImageIO.read(new File(fileName));
         } else {
-            image = Sanselan.getBufferedImage(new File(fileName));
+            image = Imaging.getBufferedImage(new File(fileName));
         }
         return imageRead(image);
     }
@@ -77,7 +78,7 @@ public class ImageUtil {
      * @param fileName Image file name
      * @return Image
      * @throws java.io.IOException
-     * @throws org.apache.sanselan.ImageReadException
+     * @throws ImageReadException
      */
     public static BufferedImage imageLoad(String fileName) throws IOException, ImageReadException{
         String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
@@ -85,7 +86,7 @@ public class ImageUtil {
         if (extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg")){
             image = ImageIO.read(new File(fileName));
         } else {
-            image = Sanselan.getBufferedImage(new File(fileName));
+            image = Imaging.getBufferedImage(new File(fileName));
         }
         return image;
     }
@@ -180,16 +181,16 @@ public class ImageUtil {
      * @param data RGB(A) data array
      * @param fileName Output image file name
      * @throws IOException 
-     * @throws org.apache.sanselan.ImageWriteException 
+     * @throws ImageWriteException 
      */
     public static void imageSave(Array data, String fileName) throws IOException, ImageWriteException{
         String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
         BufferedImage image = createImage(data);  
         ImageFormat format = getImageFormat(extension);
-        if (format == ImageFormat.IMAGE_FORMAT_JPEG){
+        if (format == ImageFormats.JPEG){
             ImageIO.write(image, extension, new File(fileName));
         } else {
-            Sanselan.writeImage(image, new File(fileName), format, null);       
+            Imaging.writeImage(image, new File(fileName), format, null);       
         }
     }
     
@@ -198,34 +199,34 @@ public class ImageUtil {
      * @param image Image
      * @param fileName Output image file name
      * @throws IOException 
-     * @throws org.apache.sanselan.ImageWriteException 
+     * @throws ImageWriteException 
      */
     public static void imageSave(BufferedImage image, String fileName) throws IOException, ImageWriteException{
         String extension = fileName.substring(fileName.lastIndexOf('.') + 1); 
         ImageFormat format = getImageFormat(extension);
-        if (format == ImageFormat.IMAGE_FORMAT_JPEG){
+        if (format == ImageFormats.JPEG){
             ImageIO.write(image, extension, new File(fileName));
         } else {
-            Sanselan.writeImage(image, new File(fileName), format, null);       
+            Imaging.writeImage(image, new File(fileName), format, null);       
         }
     }
     
     private static ImageFormat getImageFormat(String ext){
-        ImageFormat format = ImageFormat.IMAGE_FORMAT_PNG;
+        ImageFormat format = ImageFormats.PNG;
         switch(ext.toLowerCase()){
             case "gif":
-                format = ImageFormat.IMAGE_FORMAT_GIF;
+                format = ImageFormats.GIF;
                 break;
             case "jpeg":
             case "jpg":
-                format = ImageFormat.IMAGE_FORMAT_JPEG;
+                format = ImageFormats.JPEG;
                 break;
             case "bmp":
-                format = ImageFormat.IMAGE_FORMAT_BMP;
+                format = ImageFormats.BMP;
                 break;
             case "tif":
             case "tiff":
-                format = ImageFormat.IMAGE_FORMAT_TIFF;
+                format = ImageFormats.TIFF;
                 break;
         }
         return format;

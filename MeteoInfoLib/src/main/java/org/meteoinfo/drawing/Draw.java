@@ -304,6 +304,18 @@ public class Draw {
     public static void drawString(Graphics2D g, String str, float x, float y) {
         drawString(g, str, x, y, true);
     }
+    
+    /**
+     * Draw string
+     *
+     * @param g Graphics2D
+     * @param str String
+     * @param x X
+     * @param y Y
+     */
+    public static void drawString(Graphics2D g, String str, double x, double y) {
+        drawString(g, str, x, y, true);
+    }
 
     /**
      * Draw string
@@ -337,6 +349,42 @@ public class Draw {
             default:
                 FontMetrics fm = g.getFontMetrics();
                 g.drawString(str, x, y - fm.getDescent());
+                break;
+        }
+    }
+    
+    /**
+     * Draw string
+     *
+     * @param g Graphics2D
+     * @param str String
+     * @param x X
+     * @param y Y
+     * @param useExternalFont If use external font
+     */
+    public static void drawString(Graphics2D g, String str, double x, double y, boolean useExternalFont) {
+        switch (getStringType(str)) {
+            case LATEX:
+                drawLaTeX(g, str, (float)x, (float)y, useExternalFont);
+                break;
+            case MIXING:
+                List<String> strs = splitMixingString(str);
+                Dimension dim;
+                for (String s : strs) {
+                    if (s.startsWith("$") && s.endsWith("$")) {
+                        drawLaTeX(g, s, (float)x, (float)y, useExternalFont);
+                        dim = getStringDimension(s, g, true);
+                        x += dim.width;
+                    } else {
+                        dim = getStringDimension(s, g, false);
+                        g.drawString(s, (float)x, (float)(y - dim.getHeight() * 0.2));
+                        x += dim.width - 5;
+                    }
+                }
+                break;
+            default:
+                FontMetrics fm = g.getFontMetrics();
+                g.drawString(str, (float)x, (float)(y - fm.getDescent()));
                 break;
         }
     }
@@ -1615,6 +1663,40 @@ public class Draw {
                 break;
         }
     }
+    
+    /**
+     * Draws string at the specified coordinates with the specified alignment.
+     *
+     * @param g graphics context to draw
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param s the string to draw
+     * @param x_align the alignment in x direction
+     * @param y_align the alignment in y direction
+     * @param useExternalFont Use external font or not
+     */
+    public static void drawString(Graphics2D g, double x, double y, String s, XAlign x_align, YAlign y_align, boolean useExternalFont) {
+        Dimension dim = Draw.getStringDimension(s, g);
+        switch (y_align) {
+            case TOP:
+                y += dim.getHeight();
+                break;
+            case CENTER:
+                y += dim.getHeight() / 2;
+                break;
+        }
+        switch (x_align) {
+            case LEFT:
+                drawString(g, s, x, y, useExternalFont);
+                break;
+            case RIGHT:
+                drawString(g, s, x - (float) dim.getWidth(), y, useExternalFont);
+                break;
+            case CENTER:
+                drawString(g, s, x - (float) dim.getWidth() / 2, y, useExternalFont);
+                break;
+        }
+    }
 
     /**
      * Draw out string
@@ -1639,6 +1721,30 @@ public class Draw {
             g.setTransform(tempTrans);
         }
     }
+    
+    /**
+     * Draw out string
+     *
+     * @param g Graphics2D
+     * @param x X location
+     * @param y Y location
+     * @param s String
+     * @param x_align X align
+     * @param y_align Y align
+     * @param angle Angle
+     * @param useExternalFont Use external font or not
+     */
+    public static void drawString(Graphics2D g, double x, double y, String s, XAlign x_align, YAlign y_align, float angle, boolean useExternalFont) {
+        if (angle == 0) {
+            drawString(g, x, y, s, x_align, y_align, useExternalFont);
+        } else {
+            AffineTransform tempTrans = g.getTransform();
+            AffineTransform myTrans = transform(g, x, y, s, x_align, y_align, angle);
+            g.setTransform(myTrans);
+            Draw.drawString(g, s, 0, 0, useExternalFont);
+            g.setTransform(tempTrans);
+        }
+    }
 
     /**
      * Graphics transform
@@ -1653,6 +1759,85 @@ public class Draw {
      * @return AffineTransform
      */
     public static AffineTransform transform(Graphics2D g, float x, float y, String s, XAlign x_align, YAlign y_align, float angle) {
+        Dimension dim = getStringDimension(s, g);
+        AffineTransform tempTrans = g.getTransform();
+        //AffineTransform myTrans = new AffineTransform();
+        AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+        switch (x_align) {
+            case LEFT:
+                switch (y_align) {
+                    case CENTER:
+                        if (angle == 90) {
+                            x += (float) (dim.getHeight());
+                            y += (float) (dim.getWidth() * 0.5);
+                        } else if (angle == -90) {
+                            y -= (float) (dim.getWidth() * 0.5);
+                        } else if (angle > 0) {
+                            x += (float) (dim.getHeight() * Math.abs(Math.sin(Math.toRadians(angle))));
+                            y += (float) (dim.getHeight() * Math.cos(Math.toRadians(angle)) * 0.5);
+                        } else {
+                            y += (float) (dim.getHeight() * Math.cos(Math.toRadians(angle)) * 0.5);
+                        }
+                        break;
+                }
+                break;
+            case CENTER:
+                switch (y_align) {
+                    case TOP:
+                        if (angle == 90) {
+                            x += (float) (dim.getHeight() * 0.5);
+                            y += (float) (dim.getWidth());
+                        } else if (angle == -90) {
+                            x -= (float) (dim.getHeight() * 0.5);
+                        } else if (angle > 0) {
+                            x -= (float) (dim.getWidth() * Math.abs(Math.cos(Math.toRadians(angle))));
+                            y += (float) (dim.getWidth() * Math.sin(Math.toRadians(angle))) + dim.getHeight();
+                        } else {
+                            //y += (float) (dim.getHeight() * Math.cos(Math.toRadians(angle)) * 0.5);
+                            y += (float) (dim.getHeight() * Math.abs(Math.cos(Math.toRadians(angle))));
+                        }
+                        break;
+                }
+                break;
+            case RIGHT:
+                switch (y_align) {
+                    case CENTER:
+                        if (angle == 90) {
+                            x -= (float) (dim.getHeight());
+                            y += (float) (dim.getWidth() * 0.5);
+                        } else if (angle == -90) {
+                            x -= (float) (dim.getHeight());
+                            y -= (float) (dim.getWidth() * 0.5);
+                        } else if (angle > 0) {
+                            x -= (float) (dim.getWidth() * Math.abs(Math.cos(Math.toRadians(angle))));
+                            y += (float) (dim.getHeight() * Math.cos(Math.toRadians(angle)) * 0.5);
+                        } else {
+                            y += (float) (dim.getHeight() * Math.cos(Math.toRadians(angle)) * 0.5);
+                        }
+                        break;
+                }
+                break;
+        }
+        //myTrans.translate(tempTrans.getTranslateX() + x, tempTrans.getTranslateY() + y);
+        myTrans.translate(x, y);
+        myTrans.rotate(-angle * Math.PI / 180);
+
+        return myTrans;
+    }
+    
+    /**
+     * Graphics transform
+     *
+     * @param g Graphics2D
+     * @param x X location
+     * @param y Y location
+     * @param s String
+     * @param x_align X align
+     * @param y_align Y align
+     * @param angle Angle
+     * @return AffineTransform
+     */
+    public static AffineTransform transform(Graphics2D g, double x, double y, String s, XAlign x_align, YAlign y_align, float angle) {
         Dimension dim = getStringDimension(s, g);
         AffineTransform tempTrans = g.getTransform();
         //AffineTransform myTrans = new AffineTransform();
@@ -2337,6 +2522,25 @@ public class Draw {
 
         g.draw(path);
     }
+    
+    /**
+     * Draw polyline
+     *
+     * @param points The points array
+     * @param g Graphics2D
+     */
+    public static void drawPolyline(PointD[] points, Graphics2D g) {
+        GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.length);
+        for (int i = 0; i < points.length; i++) {
+            if (i == 0) {
+                path.moveTo(points[i].X, points[i].Y);
+            } else {
+                path.lineTo(points[i].X, points[i].Y);
+            }
+        }
+
+        g.draw(path);
+    }
 
     /**
      * Draw polyline
@@ -2372,6 +2576,39 @@ public class Draw {
      * @param aPGB Polygon break
      */
     public static void fillPolygon(PointF[] points, Graphics2D g, PolygonBreak aPGB) {
+        GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.length);
+        for (int i = 0; i < points.length; i++) {
+            if (i == 0) {
+                path.moveTo(points[i].X, points[i].Y);
+            } else {
+                path.lineTo(points[i].X, points[i].Y);
+            }
+        }
+        path.closePath();
+
+        if (aPGB != null) {
+            if (aPGB.isUsingHatchStyle()) {
+                int size = aPGB.getStyleSize();
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
+                g.setPaint(new TexturePaint(bi, rect));
+                g.fill(path);
+            } else {
+                g.fill(path);
+            }
+        } else {
+            g.fill(path);
+        }
+    }
+    
+    /**
+     * Fill polygon
+     *
+     * @param points The points array
+     * @param g Graphics2D
+     * @param aPGB Polygon break
+     */
+    public static void fillPolygon(PointD[] points, Graphics2D g, PolygonBreak aPGB) {
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.length);
         for (int i = 0; i < points.length; i++) {
             if (i == 0) {
@@ -2489,6 +2726,25 @@ public class Draw {
             drawPolyline(points, g);
         }
     }
+    
+    /**
+     * Draw polygon
+     *
+     * @param points The points
+     * @param aPGB The polygon break
+     * @param g Graphics2D
+     */
+    public static void drawPolygon(PointD[] points, PolygonBreak aPGB, Graphics2D g) {
+        if (aPGB.isDrawFill()) {
+            g.setColor(aPGB.getColor());
+            fillPolygon(points, g, aPGB);
+        }
+        if (aPGB.isDrawOutline()) {
+            g.setColor(aPGB.getOutlineColor());
+            g.setStroke(new BasicStroke(aPGB.getOutlineSize()));
+            drawPolyline(points, g);
+        }
+    }
 
     /**
      * Draw polygon
@@ -2501,6 +2757,28 @@ public class Draw {
      * @param g
      */
     public static void drawPolygon(PointF[] points, Color aColor, Color outlineColor,
+            boolean drawFill, boolean drawOutline, Graphics2D g) {
+        if (drawFill) {
+            g.setColor(aColor);
+            fillPolygon(points, g, null);
+        }
+        if (drawOutline) {
+            g.setColor(outlineColor);
+            drawPolyline(points, g);
+        }
+    }
+    
+    /**
+     * Draw polygon
+     *
+     * @param points The points
+     * @param aColor Fill oclor
+     * @param outlineColor Outline color
+     * @param drawFill
+     * @param drawOutline
+     * @param g
+     */
+    public static void drawPolygon(PointD[] points, Color aColor, Color outlineColor,
             boolean drawFill, boolean drawOutline, Graphics2D g) {
         if (drawFill) {
             g.setColor(aColor);
@@ -3394,10 +3672,43 @@ public class Draw {
 //            g.draw(new Rectangle.Float(aP.X, aP.Y, width, height));
 //        }
 //    }
+    
     /**
      * Draw polygon symbol
      *
-     * @param aP The point
+     * @param x X
+     * @param y Y
+     * @param width The width
+     * @param height The height
+     * @param aPGB The polygon break
+     * @param g Graphics2D
+     */
+    public static void drawPolygonSymbol(double x, double y, double width, double height, PolygonBreak aPGB,
+            Graphics2D g) {
+        if (aPGB.isDrawFill()) {
+            if (aPGB.isUsingHatchStyle()) {
+                int size = aPGB.getStyleSize();
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
+                g.setPaint(new TexturePaint(bi, rect));
+                g.fill(new Rectangle.Double(x, y, width, height));
+            } else {
+                g.setColor(aPGB.getColor());
+                g.fill(new Rectangle.Double(x, y, width, height));
+                g.draw(new Rectangle.Double(x, y, width, height));
+            }
+        }
+        if (aPGB.isDrawOutline()) {
+            g.setColor(aPGB.getOutlineColor());
+            g.setStroke(new BasicStroke(aPGB.getOutlineSize()));
+            g.draw(new Rectangle.Double(x, y, width, height));
+        }
+    }
+    
+    /**
+     * Draw polygon symbol
+     *
+     * @param aP The center point
      * @param width The width
      * @param height The height
      * @param aPGB The polygon break
@@ -3425,11 +3736,37 @@ public class Draw {
             g.draw(new Rectangle.Float(aP.X, aP.Y, width, height));
         }
     }
+    
+    /**
+     * Draw polygon symbol
+     *
+     * @param x X
+     * @param y Y
+     * @param aColor Fill color
+     * @param outlineColor Outline color
+     * @param width Width
+     * @param height Height
+     * @param drawFill If draw fill
+     * @param drawOutline If draw outline
+     * @param g Grahics2D
+     */
+    public static void drawPolygonSymbol(double x, double y, Color aColor, Color outlineColor,
+            double width, double height, Boolean drawFill, Boolean drawOutline, Graphics2D g) {
+        if (drawFill) {
+            g.setColor(aColor);
+            g.fill(new Rectangle.Double(x, y, width, height));
+            g.draw(new Rectangle.Double(x, y, width, height));
+        }
+        if (drawOutline) {
+            g.setColor(outlineColor);
+            g.draw(new Rectangle.Double(x, y, width, height));
+        }
+    }
 
     /**
      * Draw polygon symbol
      *
-     * @param aP The point
+     * @param aP The center point
      * @param aColor Fill color
      * @param outlineColor Outline color
      * @param width Width

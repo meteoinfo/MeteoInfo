@@ -29,10 +29,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.chart.plot.PlotOrientation;
@@ -75,8 +77,8 @@ public class ChartLegend {
     private float breakSpace;
     private float topSpace;
     private float leftSpace;
-    protected float _vBarWidth;
-    protected float _hBarHeight;
+    protected double _vBarWidth;
+    protected double _hBarHeight;
     private int rowColNum = 1;
     private boolean autoRowColNum = true;
     private Dimension symbolDimension;
@@ -290,36 +292,40 @@ public class ChartLegend {
     public void setHeight(int value) {
         this.height = value;
     }
-    
+
     /**
      * Get legend width
+     *
      * @return Legend width
      */
-    public int getLegendWidth(){
+    public int getLegendWidth() {
         return this.legendWidth;
     }
-    
+
     /**
      * Set legend width
+     *
      * @param value Legend width
      */
-    public void setLegendWidth(int value){
+    public void setLegendWidth(int value) {
         this.legendWidth = value;
     }
-    
+
     /**
      * Get legend height
+     *
      * @return Legend height
      */
-    public int getLegendHeight(){
+    public int getLegendHeight() {
         return this.legendHeight;
     }
-    
+
     /**
      * Set legend height
+     *
      * @param value Legend height
      */
-    public void setLegendHeight(int value){
+    public void setLegendHeight(int value) {
         this.legendHeight = value;
     }
 
@@ -538,21 +544,22 @@ public class ChartLegend {
     public void setTickLabelColor(Color value) {
         this.tickLabelColor = value;
     }
-    
-    
+
     /**
      * Get tick lable angle
+     *
      * @return Tick label angle
      */
-    public float getTickLabelAngle(){
+    public float getTickLabelAngle() {
         return this.tickLabelAngle;
     }
-    
+
     /**
      * Set tick label angle
+     *
      * @param value Tick label angle
      */
-    public void setTickLabelAngle(float value){
+    public void setTickLabelAngle(float value) {
         this.tickLabelAngle = value;
     }
 
@@ -785,24 +792,13 @@ public class ChartLegend {
 
         //Draw legend
         g.setStroke(new BasicStroke(1));
-        if (this.colorBar) {
-            switch (this.orientation) {
-                case HORIZONTAL:
-                    this.drawHorizontalBarLegend(g, legendScheme);
-                    break;
-                case VERTICAL:
-                    this.drawVerticalBarLegend(g, legendScheme);
-                    break;
-            }
-        } else {
-            switch (this.orientation) {
-                case HORIZONTAL:
-                    drawHorizontalLegend(g, legendScheme);
-                    break;
-                case VERTICAL:
-                    this.drawVerticalLegend(g, legendScheme);
-                    break;
-            }
+        switch (this.orientation) {
+            case HORIZONTAL:
+                drawHorizontalLegend(g, legendScheme);
+                break;
+            case VERTICAL:
+                this.drawVerticalLegend(g, legendScheme);
+                break;
         }
 
         //Draw neatline
@@ -839,13 +835,13 @@ public class ChartLegend {
 
         //Draw title        
         float y0 = 0;
-        if (this.label != null){
-            float x0 = (float)(this.width / 2.);
+        if (this.label != null) {
+            float x0 = (float) (this.width / 2.);
             y0 += this.breakSpace * 2;
             this.label.draw(g, x0, y0);
             y0 += this.label.getDimension(g).height + this.breakSpace * 2;
         }
-        
+
         //Draw legend                        
         float x, y;
         i = 0;
@@ -874,13 +870,13 @@ public class ChartLegend {
                 } else {
                     PolygonBreak pgb = new PolygonBreak();
                     pgb.setColor(cb.getColor());
-                    pgb.setOutlineColor(Color.black);                    
+                    pgb.setOutlineColor(Color.black);
                     Draw.drawPolygonSymbol(new PointF(x, y), symbolWidth, symbolHeight, pgb, g);
                 }
 
                 PointF sP = new PointF(0, 0);
                 sP.X = x + symbolWidth / 2;
-                sP.Y = y;               
+                sP.Y = y;
                 g.setColor(this.tickLabelColor);
                 g.setFont(this.tickLabelFont);
                 Draw.drawString(g, sP.X + 5, sP.Y, caption, XAlign.LEFT, YAlign.CENTER, true);
@@ -895,7 +891,7 @@ public class ChartLegend {
         String caption;
         float breakHeight = this.getBreakHeight(g);
         float symbolHeight = this.symbolDimension.height;
-        float symbolWidth = this.symbolDimension.width;        
+        float symbolWidth = this.symbolDimension.width;
 
         //Set columns
         int[] colNums = new int[rowColNum];
@@ -951,445 +947,6 @@ public class ChartLegend {
         }
     }
 
-    private void drawVerticalBarLegend(Graphics2D g, LegendScheme aLS) {
-        PointF aP = new PointF(0, 0);
-        PointF sP = new PointF(0, 0);
-        boolean DrawShape = true, DrawFill = true, DrawOutline = false;
-        Color FillColor = Color.red, OutlineColor = Color.black;
-        String caption;
-        Dimension aSF;
-
-        int bNum = aLS.getBreakNum();
-        if (aLS.getLegendBreaks().get(bNum - 1).isNoData()) {
-            bNum -= 1;
-        }
-
-        int tickGap = this.getTickGap(g);
-        List<Integer> labelIdxs = new ArrayList<>();
-        int sIdx = (bNum % tickGap) / 2;
-        int labNum = bNum - 1;
-        if (aLS.getLegendType() == LegendType.UniqueValue) {
-            labNum += 1;
-        } else if (this.drawMinLabel) {
-            sIdx = 0;
-            labNum = bNum;
-        }
-        while (sIdx < labNum) {
-            labelIdxs.add(sIdx);
-            sIdx += tickGap;
-        }
-
-        this._vBarWidth = (float) this.height / this.aspect;
-        _hBarHeight = (float) this.height / bNum;
-        aP.Y = this.height + _hBarHeight / 2;
-        int idx;
-        for (int i = 0; i < bNum; i++) {
-            idx = i;
-            switch (aLS.getShapeType()) {
-                case Point:
-                    PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(idx);
-                    DrawShape = aPB.isDrawShape();
-                    DrawFill = aPB.isDrawFill();
-                    FillColor = aPB.getColor();
-                    break;
-                case Polyline:
-                    PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
-                    DrawShape = aPLB.getDrawPolyline();
-                    FillColor = aPLB.getColor();
-                    break;
-                case Polygon:
-                    PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx);
-                    DrawShape = aPGB.isDrawShape();
-                    DrawFill = aPGB.isDrawFill();
-                    FillColor = aPGB.getColor();
-                    break;
-                case Image:
-                    ColorBreak aCB = aLS.getLegendBreaks().get(idx);
-                    DrawShape = true;
-                    DrawFill = true;
-                    FillColor = aCB.getColor();
-                    break;
-            }
-
-            aP.X = _vBarWidth / 2;
-            aP.Y = aP.Y - _hBarHeight;
-
-            if (DrawShape) {
-                if (this.extendRect) {
-                    if (aLS.getShapeType() == ShapeTypes.Polygon) {
-                        PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
-                        aPGB.setDrawOutline(false);
-                        Draw.drawPolygonSymbol((PointF) aP.clone(), _vBarWidth, _hBarHeight, aPGB, g);
-                    } else {
-                        Draw.drawPolygonSymbol((PointF) aP.clone(), FillColor, OutlineColor, _vBarWidth,
-                                _hBarHeight, DrawFill, DrawOutline, g);
-                    }
-                } else if (i == 0) {
-                    PointF[] Points = new PointF[4];
-                    Points[0] = new PointF();
-                    Points[0].X = aP.X;
-                    Points[0].Y = this.height;
-                    Points[1] = new PointF();
-                    Points[1].X = 0;
-                    Points[1].Y = aP.Y - _hBarHeight / 2 - 1.0f;
-                    Points[2] = new PointF();
-                    Points[2].X = _vBarWidth;
-                    Points[2].Y = aP.Y - _hBarHeight / 2 - 1.0f;
-                    Points[3] = new PointF();
-                    Points[3].X = aP.X;
-                    Points[3].Y = this.height;
-                    if (aLS.getShapeType() == ShapeTypes.Polygon) {
-                        PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
-                        aPGB.setDrawOutline(false);
-                        Draw.drawPolygon(Points, aPGB, g);
-                    } else {
-                        Draw.drawPolygon(Points, FillColor, OutlineColor, DrawFill, DrawOutline, g);
-                    }
-                } else if (i == bNum - 1) {
-                    PointF[] Points = new PointF[4];
-                    Points[0] = new PointF();
-                    Points[0].X = 0;
-                    Points[0].Y = _hBarHeight;
-                    Points[1] = new PointF();
-                    Points[1].X = _vBarWidth;
-                    Points[1].Y = _hBarHeight;
-                    Points[2] = new PointF();
-                    Points[2].X = aP.X;
-                    Points[2].Y = 0;
-                    Points[3] = new PointF();
-                    Points[3].X = 0;
-                    Points[3].Y = _hBarHeight;
-                    if (aLS.getShapeType() == ShapeTypes.Polygon) {
-                        PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
-                        aPGB.setDrawOutline(false);
-                        Draw.drawPolygon(Points, aPGB, g);
-                    } else {
-                        Draw.drawPolygon(Points, FillColor, OutlineColor, DrawFill, DrawOutline, g);
-                    }
-                } else if (aLS.getShapeType() == ShapeTypes.Polygon) {
-                    PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
-                    aPGB.setDrawOutline(false);
-                    Draw.drawPolygonSymbol((PointF) aP.clone(), _vBarWidth, _hBarHeight, aPGB, g);
-                } else {
-                    Draw.drawPolygonSymbol((PointF) aP.clone(), FillColor, OutlineColor, _vBarWidth,
-                            _hBarHeight, DrawFill, DrawOutline, g);
-                }
-            }
-        }
-        //Draw neatline
-        g.setColor(Color.black);
-        if (this.extendRect) {
-            g.draw(new Rectangle.Float(0, 0, this._vBarWidth, this._hBarHeight * bNum));
-        } else {
-            Polygon p = new Polygon();
-            p.addPoint((int) (this._vBarWidth / 2), 0);
-            p.addPoint(0, (int) this._hBarHeight);
-            p.addPoint(0, (int) (this._hBarHeight * (bNum - 1)));
-            p.addPoint((int) (this._vBarWidth / 2), (int) (this._hBarHeight * bNum));
-            p.addPoint((int) this._vBarWidth, (int) (this._hBarHeight * (bNum - 1)));
-            p.addPoint((int) this._vBarWidth, (int) this._hBarHeight);
-            g.drawPolygon(p);
-        }
-        //Draw ticks
-        aP.Y = this.height + _hBarHeight / 2;
-        int labLen = (int) (this._vBarWidth / 3);
-        if (labLen < 5) {
-            labLen = 5;
-            if (this._vBarWidth < 5) {
-                labLen = (int) this._vBarWidth;
-            }
-        }
-        g.setFont(tickLabelFont);
-        for (int i = 0; i < bNum; i++) {
-            idx = i;
-            ColorBreak cb = aLS.getLegendBreaks().get(idx);
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
-                caption = cb.getCaption();
-            } else {
-                caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
-            }
-            aSF = Draw.getStringDimension(caption, g);
-
-            aP.X = _vBarWidth / 2;
-            aP.Y = aP.Y - _hBarHeight;
-
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
-                if (labelIdxs.contains(idx)) {
-                    sP.X = aP.X + _vBarWidth / 2 + 5;
-                    sP.Y = aP.Y;
-                    g.setColor(Color.black);
-                    Draw.drawString(g, caption, sP.X, sP.Y + aSF.height / 4);
-                }
-            } else if (labelIdxs.contains(idx)) {
-                sP.X = aP.X + _vBarWidth / 2;
-                sP.Y = aP.Y - _hBarHeight / 2;
-                g.draw(new Line2D.Float(sP.X - labLen, sP.Y, sP.X, sP.Y));
-                sP.X = sP.X + 5;
-                if (i < bNum - 1) {
-                    Draw.drawString(g, caption, sP.X, sP.Y + aSF.height / 4);
-                    if (this.drawMinLabel && i == 0) {
-                        caption = DataConvert.removeTailingZeros(cb.getStartValue().toString());
-                        Draw.drawString(g, caption, sP.X, sP.Y + aSF.height / 4 + this._hBarHeight);
-                    }
-                } else if (this.drawMaxLabel) {
-                    Draw.drawString(g, caption, sP.X, sP.Y + aSF.height / 4);
-                }
-            }
-        }
-        //Draw label
-        if (this.label != null) {
-            g.setFont(this.label.getFont());
-            Dimension dim = Draw.getStringDimension(this.label.getText(), g);
-            switch (this.labelLocation) {
-                case "top":
-                case "right":
-                    x = dim.width * 0.5f;
-                    y = -(dim.height * 0.5f + 5);
-                    Draw.drawLabelPoint(x, y, this.getLabelFont(), label.getText(), this.getLabelColor(), 0, 
-                            g, null, this.label.isUseExternalFont());
-                    break;
-                case "bottom":
-                case "left":
-                    x = dim.width * 0.5f;
-                    y = this.height + dim.height + 5;
-                    Draw.drawLabelPoint(x, y, this.getLabelFont(), label.getText(), this.getLabelColor(), 0, 
-                            g, null, this.label.isUseExternalFont());
-                    break;
-                default:
-                    x = this.width - dim.height * 0.5f - 2;
-                    y = this.height * 0.5f;
-                    //Draw.drawLabelPoint_270((float) x, (float) y, this.getLabelFont(), this.label.getText(),
-                    //        this.getLabelColor(), g, null, this.label.isUseExternalFont());
-                    g.setFont(this.getLabelFont());
-                    g.setColor(this.getLabelColor());
-                    Draw.drawString(g, (float)x, (float)y, this.label.getText(), XAlign.LEFT, 
-                        YAlign.CENTER, 90, this.label.isUseExternalFont());
-                    break;
-            }
-        }
-    }
-
-    private void drawHorizontalBarLegend(Graphics2D g, LegendScheme aLS) {
-        PointF aP = new PointF(0, 0);
-        PointF sP = new PointF(0, 0);
-        boolean DrawShape = true, DrawFill = true, DrawOutline = false;
-        Color FillColor = Color.red, OutlineColor = Color.black;
-        String caption;
-        Dimension aSF;
-
-        int bNum = aLS.getBreakNum();
-        if (aLS.getLegendBreaks().get(bNum - 1).isNoData()) {
-            bNum -= 1;
-        }
-
-        int tickGap = this.getTickGap(g);
-        List<Integer> labelIdxs = new ArrayList<>();
-        int sIdx = (bNum % tickGap) / 2;
-        int labNum = bNum - 1;
-        if (aLS.getLegendType() == LegendType.UniqueValue) {
-            labNum += 1;
-        } else if (this.drawMinLabel) {
-            sIdx = 0;
-            labNum = bNum;
-        }
-        while (sIdx < labNum) {
-            labelIdxs.add(sIdx);
-            sIdx += tickGap;
-        }
-
-        this._hBarHeight = (float) this.width / this.aspect;
-        _vBarWidth = (float) this.width / bNum;
-        aP.X = -_vBarWidth / 2;
-        int idx;
-        for (int i = 0; i < bNum; i++) {
-            idx = i;
-            switch (aLS.getShapeType()) {
-                case Point:
-                    PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(idx);
-                    DrawShape = aPB.isDrawShape();
-                    DrawFill = aPB.isDrawFill();
-                    FillColor = aPB.getColor();
-                    break;
-                case Polyline:
-                    PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
-                    DrawShape = aPLB.getDrawPolyline();
-                    FillColor = aPLB.getColor();
-                    break;
-                case Polygon:
-                    PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx);
-                    DrawShape = aPGB.isDrawShape();
-                    DrawFill = aPGB.isDrawFill();
-                    FillColor = aPGB.getColor();
-                    break;
-                case Image:
-                    ColorBreak aCB = aLS.getLegendBreaks().get(idx);
-                    DrawShape = true;
-                    DrawFill = true;
-                    FillColor = aCB.getColor();
-                    break;
-            }
-
-            aP.X += _vBarWidth;
-            aP.Y = _hBarHeight / 2;
-
-            if (DrawShape) {
-                if (this.extendRect) {
-                    if (aLS.getShapeType() == ShapeTypes.Polygon) {
-                        PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
-                        aPGB.setDrawOutline(false);
-                        Draw.drawPolygonSymbol((PointF) aP.clone(), _vBarWidth, _hBarHeight, aPGB, g);
-                    } else {
-                        Draw.drawPolygonSymbol((PointF) aP.clone(), FillColor, OutlineColor, _vBarWidth,
-                                _hBarHeight, DrawFill, DrawOutline, g);
-                    }
-                } else {
-                    float extendw = _vBarWidth;
-                    if (this.autoExtendFrac) {
-                        extendw = _hBarHeight;
-                    }
-                    if (i == 0) {
-                        PointF[] Points = new PointF[4];
-                        Points[0] = new PointF();
-                        Points[0].X = _vBarWidth - extendw;
-                        Points[0].Y = aP.Y;
-                        Points[1] = new PointF();
-                        Points[1].X = _vBarWidth;
-                        Points[1].Y = 0;
-                        Points[2] = new PointF();
-                        Points[2].X = _vBarWidth;
-                        Points[2].Y = _hBarHeight;
-                        Points[3] = new PointF();
-                        Points[3].X = _vBarWidth - extendw;
-                        Points[3].Y = aP.Y;
-                        if (aLS.getShapeType() == ShapeTypes.Polygon) {
-                            PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
-                            aPGB.setDrawOutline(false);
-                            Draw.drawPolygon(Points, aPGB, g);
-                        } else {
-                            Draw.drawPolygon(Points, FillColor, OutlineColor, DrawFill, DrawOutline, g);
-                        }
-                    } else if (i == bNum - 1) {
-                        PointF[] Points = new PointF[4];
-                        Points[0] = new PointF();
-                        Points[0].X = i * _vBarWidth - 1.0f;
-                        Points[0].Y = _hBarHeight;
-                        Points[1] = new PointF();
-                        Points[1].X = i * _vBarWidth - 1.0f;
-                        Points[1].Y = 0;
-                        Points[2] = new PointF();
-                        Points[2].X = i * _vBarWidth + extendw;
-                        Points[2].Y = aP.Y;
-                        Points[3] = new PointF();
-                        Points[3].X = i * _vBarWidth - 1.0f;
-                        Points[3].Y = _hBarHeight;
-                        if (aLS.getShapeType() == ShapeTypes.Polygon) {
-                            PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
-                            aPGB.setDrawOutline(false);
-                            Draw.drawPolygon(Points, aPGB, g);
-                        } else {
-                            Draw.drawPolygon(Points, FillColor, OutlineColor, DrawFill, DrawOutline, g);
-                        }
-                    } else if (aLS.getShapeType() == ShapeTypes.Polygon) {
-                        PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
-                        aPGB.setDrawOutline(false);
-                        Draw.drawPolygonSymbol((PointF) aP.clone(), _vBarWidth, _hBarHeight, aPGB, g);
-                    } else {
-                        Draw.drawPolygonSymbol((PointF) aP.clone(), FillColor, OutlineColor, _vBarWidth,
-                                _hBarHeight, DrawFill, DrawOutline, g);
-                    }
-                }
-            }
-        }
-        //Draw neatline
-        g.setColor(Color.black);
-        if (this.extendRect) {
-            g.draw(new Rectangle.Float(0, 0, this._vBarWidth * bNum, this._hBarHeight));
-        } else {
-            float extendw = _vBarWidth;
-            if (this.autoExtendFrac) {
-                extendw = _hBarHeight;
-            }
-            Polygon p = new Polygon();
-            p.addPoint((int) (_vBarWidth - extendw), (int) (this._hBarHeight / 2));
-            p.addPoint((int) this._vBarWidth, 0);
-            p.addPoint((int) (this._vBarWidth * (bNum - 1)), 0);
-            p.addPoint((int) (this._vBarWidth * (bNum - 1) + extendw), (int) (this._hBarHeight / 2));
-            p.addPoint((int) (this._vBarWidth * (bNum - 1)), (int) this._hBarHeight);
-            p.addPoint((int) this._vBarWidth, (int) this._hBarHeight);
-            g.drawPolygon(p);
-        }
-        //Draw tick and label
-        aP.X = -_vBarWidth / 2;
-        int labLen = (int) (this._hBarHeight / 3);
-        if (labLen < 5) {
-            labLen = 5;
-            if (this._hBarHeight < 5) {
-                labLen = (int) this._hBarHeight;
-            }
-        }
-        g.setFont(tickLabelFont);
-        g.setColor(Color.black);
-        for (int i = 0; i < bNum; i++) {
-            idx = i;
-            ColorBreak cb = aLS.getLegendBreaks().get(idx);
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
-                caption = cb.getCaption();
-            } else {
-                caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
-            }
-            aSF = Draw.getStringDimension(caption, g);
-
-            aP.X += _vBarWidth;
-            aP.Y = _hBarHeight / 2;
-
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
-                if (labelIdxs.contains(idx)) {
-                    sP.X = aP.X;
-                    sP.Y = aP.Y + _hBarHeight / 2 + 5;
-                    Draw.drawString(g, caption, sP.X - aSF.width / 2, sP.Y + aSF.height * 3 / 4);
-                }
-            } else if (labelIdxs.contains(idx)) {
-                sP.X = aP.X + _vBarWidth / 2;
-                sP.Y = aP.Y + _hBarHeight / 2;
-                g.draw(new Line2D.Float(sP.X, sP.Y, sP.X, sP.Y - labLen));
-                sP.Y = sP.Y + 5;
-                if (i < bNum - 1) {
-                    Draw.drawString(g, caption, sP.X - aSF.width / 2, sP.Y + aSF.height * 3 / 4);
-                    if (this.drawMinLabel && i == 0) {
-                        caption = DataConvert.removeTailingZeros(cb.getStartValue().toString());
-                        Draw.drawString(g, caption, sP.X - aSF.width / 2 - this._vBarWidth, sP.Y + aSF.height * 3 / 4);
-                    }
-                } else if (this.drawMaxLabel) {
-                    Draw.drawString(g, caption, sP.X - aSF.width / 2, sP.Y + aSF.height * 3 / 4);
-                }
-            }
-        }
-
-        //Draw label
-        if (this.label != null) {
-            g.setFont(this.label.getFont());
-            g.setColor(this.label.getColor());
-            Dimension dim = Draw.getStringDimension(this.label.getText(), g);
-            switch(this.labelLocation){
-                case "top":
-                case "right":
-                    x = this.width + 10;
-                    y = this._hBarHeight * 0.5f + dim.height * 0.25f;
-                    break;
-                case "left":
-                case "bottom":
-                    x = -(dim.width + 10);
-                    y = this._hBarHeight * 0.5f + dim.height * 0.25f;
-                    break;
-                default:
-                    x = this.width * 0.5f - dim.width * 0.5f;
-                    y = this.height - dim.height * 0.25f - 2;
-                    break;
-            }            
-            Draw.drawString(g, label.getText(), x, y, label.isUseExternalFont());
-        }
-    }
-
     private int getMaxLabelWidth(Graphics2D g) {
         String caption;
         Dimension aSF;
@@ -1399,7 +956,7 @@ public class ChartLegend {
         for (int i = 0; i < bNum; i++) {
             caption = legendScheme.getLegendBreaks().get(i).getCaption();
             boolean isValid = true;
-            if (isValid) {                
+            if (isValid) {
                 aSF = Draw.getStringDimension(caption, this.tickLabelAngle, g);
                 int labwidth = aSF.width;
                 if (labWidth < labwidth) {
@@ -1441,7 +998,7 @@ public class ChartLegend {
                         if (this.label != null) {
                             g.setFont(this.label.getFont());
                             Dimension dim = Draw.getStringDimension(label.getText(), g);
-                            switch (this.labelLocation){
+                            switch (this.labelLocation) {
                                 case "top":
                                 case "right":
                                     this.width += dim.width + 10;
@@ -1449,7 +1006,7 @@ public class ChartLegend {
                                 default:
                                     this.height += (int) Draw.getStringDimension(label.getText(), g).height + 5;
                                     break;
-                            }                            
+                            }
                         }
                 }
             } else {
@@ -1458,7 +1015,7 @@ public class ChartLegend {
                 int titleWidth = 0;
                 if (this.label != null) {
                     Dimension dim = this.label.getDimension(g);
-                    titleHeight = dim.height + (int)(this.breakSpace * 4);
+                    titleHeight = dim.height + (int) (this.breakSpace * 4);
                     titleWidth = dim.width;
                 }
                 switch (this.orientation) {
@@ -1637,7 +1194,7 @@ public class ChartLegend {
             }
             if (isValid) {
                 //float labwidth = metrics.stringWidth(caption);
-                float labwidth = (float)Draw.getStringDimension(caption, this.tickLabelAngle, g).getWidth();
+                float labwidth = (float) Draw.getStringDimension(caption, this.tickLabelAngle, g).getWidth();
                 if (rwidth < labwidth) {
                     rwidth = labwidth;
                 }
@@ -1646,7 +1203,7 @@ public class ChartLegend {
 
         return (int) rwidth;
     }
-    
+
     protected int getTickHeight(Graphics2D g) {
         float rheight = 0;
         String caption = "";
@@ -1701,7 +1258,7 @@ public class ChartLegend {
                     break;
             }
             if (isValid) {
-                float labheight = (float)Draw.getStringDimension(caption, 90 - Math.abs(this.tickLabelAngle), g).getWidth();
+                float labheight = (float) Draw.getStringDimension(caption, 90 - Math.abs(this.tickLabelAngle), g).getWidth();
                 if (rheight < labheight) {
                     rheight = labheight;
                 }
@@ -1718,10 +1275,10 @@ public class ChartLegend {
      * @return Ticks gap
      */
     protected int getTickGap(Graphics2D g) {
-        if (this.tickLabelAngle != 0){
+        if (this.tickLabelAngle != 0) {
             return 1;
         }
-        
+
         double len;
         int n = this.legendScheme.getBreakNum();
         int nn;

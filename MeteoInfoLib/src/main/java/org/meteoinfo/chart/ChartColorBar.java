@@ -397,16 +397,16 @@ public class ChartColorBar extends ChartLegend {
                         PointD[] Points = new PointD[4];
                         Points[0] = new PointD();
                         Points[0].X = _vBarWidth - extendw;
-                        Points[0].Y = aP.Y;
+                        Points[0].Y = aP.Y + _hBarHeight * 0.5;
                         Points[1] = new PointD();
                         Points[1].X = _vBarWidth;
-                        Points[1].Y = y_shift;
+                        Points[1].Y = aP.Y;
                         Points[2] = new PointD();
                         Points[2].X = _vBarWidth;
-                        Points[2].Y = _hBarHeight + y_shift;
+                        Points[2].Y = aP.Y + _hBarHeight;
                         Points[3] = new PointD();
                         Points[3].X = _vBarWidth - extendw;
-                        Points[3].Y = aP.Y;
+                        Points[3].Y = aP.Y + _hBarHeight * 0.5;
                         if (aLS.getShapeType() == ShapeTypes.Polygon) {
                             PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                             aPGB.setDrawOutline(false);
@@ -418,16 +418,16 @@ public class ChartColorBar extends ChartLegend {
                         PointD[] Points = new PointD[4];
                         Points[0] = new PointD();
                         Points[0].X = i * _vBarWidth - 1.0f;
-                        Points[0].Y = _hBarHeight + y_shift;
+                        Points[0].Y = aP.Y + _hBarHeight;
                         Points[1] = new PointD();
                         Points[1].X = i * _vBarWidth - 1.0f;
-                        Points[1].Y = y_shift;
+                        Points[1].Y = aP.Y;
                         Points[2] = new PointD();
                         Points[2].X = i * _vBarWidth + extendw;
-                        Points[2].Y = aP.Y;
+                        Points[2].Y = aP.Y + _hBarHeight * 0.5;
                         Points[3] = new PointD();
                         Points[3].X = i * _vBarWidth - 1.0f;
-                        Points[3].Y = _hBarHeight + y_shift;
+                        Points[3].Y = aP.Y + _hBarHeight;
                         if (aLS.getShapeType() == ShapeTypes.Polygon) {
                             PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                             aPGB.setDrawOutline(false);
@@ -655,16 +655,16 @@ public class ChartColorBar extends ChartLegend {
                 } else if (i == 0) {
                     PointD[] Points = new PointD[4];
                     Points[0] = new PointD();
-                    Points[0].X = aP.X;
+                    Points[0].X = aP.X + _vBarWidth * 0.5;
                     Points[0].Y = this.legendHeight;
                     Points[1] = new PointD();
-                    Points[1].X = 0;
-                    Points[1].Y = aP.Y - _hBarHeight / 2 - 1.0f;
+                    Points[1].X = aP.X;
+                    Points[1].Y = aP.Y;
                     Points[2] = new PointD();
-                    Points[2].X = _vBarWidth;
-                    Points[2].Y = aP.Y - _hBarHeight / 2 - 1.0f;
+                    Points[2].X = aP.X + _vBarWidth;
+                    Points[2].Y = aP.Y;
                     Points[3] = new PointD();
-                    Points[3].X = aP.X;
+                    Points[3].X = aP.X + _vBarWidth * 0.5;
                     Points[3].Y = this.legendHeight;
                     if (aLS.getShapeType() == ShapeTypes.Polygon) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
@@ -676,16 +676,16 @@ public class ChartColorBar extends ChartLegend {
                 } else if (i == bNum - 1) {
                     PointD[] Points = new PointD[4];
                     Points[0] = new PointD();
-                    Points[0].X = 0;
+                    Points[0].X = aP.X;
                     Points[0].Y = _hBarHeight;
                     Points[1] = new PointD();
-                    Points[1].X = _vBarWidth;
+                    Points[1].X = aP.X + _vBarWidth;
                     Points[1].Y = _hBarHeight;
                     Points[2] = new PointD();
-                    Points[2].X = aP.X;
+                    Points[2].X = aP.X + _vBarWidth * 0.5;
                     Points[2].Y = 0;
                     Points[3] = new PointD();
-                    Points[3].X = 0;
+                    Points[3].X = aP.X;
                     Points[3].Y = _hBarHeight;
                     if (aLS.getShapeType() == ShapeTypes.Polygon) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();

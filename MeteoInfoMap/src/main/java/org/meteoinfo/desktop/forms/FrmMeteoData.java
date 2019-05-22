@@ -2933,10 +2933,10 @@ public class FrmMeteoData extends javax.swing.JDialog {
                                 LName = "Vector_" + LName;
                                 if (this.windColor) {
                                     aLayer = DrawMeteoData.createSTVectorLayer(stUData, stVData, _stationData,
-                                            aLS, LName, _meteoDataInfo.getMeteoUVSet().isUV());
+                                            aLS, LName, this.meteoUVSet.isUV());
                                 } else {
                                     aLayer = DrawMeteoData.createSTVectorLayer(stUData, stVData, aLS, LName,
-                                            _meteoDataInfo.getMeteoUVSet().isUV());
+                                            this.meteoUVSet.isUV());
                                 }
                             } else {
                                 LName = "Barb_" + LName;

@@ -2798,7 +2798,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                         }
                     }
                     aLayer = DrawMeteoData.createGridVectorLayer(uData, vData, _gridData, aLS, this.windColor,
-                            lName, _meteoDataInfo.getMeteoUVSet().isUV());
+                            lName, this.meteoUVSet.isUV());
                 } else {
                     ifAddLayer = false;
                 }
@@ -2814,7 +2814,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     }
                     //lName = lNameS;
                     lName = "Streamline_" + lName;
-                    aLayer = DrawMeteoData.createStreamlineLayer(uData, vData, _strmDensity, aLS, lName, true);
+                    aLayer = DrawMeteoData.createStreamlineLayer(uData, vData, _strmDensity, aLS, lName, this.meteoUVSet.isUV());
                 } else {
                     ifAddLayer = false;
                 }
@@ -2830,7 +2830,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                             _gridData = _gridData.skip(_skipY, _skipX);
                         }
                     }
-                    aLayer = DrawMeteoData.createGridBarbLayer(uData, vData, _gridData, aLS, this.windColor, lName, true);
+                    aLayer = DrawMeteoData.createGridBarbLayer(uData, vData, _gridData, aLS, this.windColor, lName, this.meteoUVSet.isUV());
                 } else {
                     ifAddLayer = false;
                 }
@@ -2942,10 +2942,10 @@ public class FrmMeteoData extends javax.swing.JDialog {
                                 LName = "Barb_" + LName;
                                 if (this.windColor) {
                                     aLayer = DrawMeteoData.createSTBarbLayer(stUData, stVData, _stationData,
-                                            aLS, LName, _meteoDataInfo.getMeteoUVSet().isUV());
+                                            aLS, LName, this.meteoUVSet.isUV());
                                 } else {
                                     aLayer = DrawMeteoData.createSTBarbLayer(stUData, stVData, aLS, LName,
-                                            _meteoDataInfo.getMeteoUVSet().isUV());
+                                            this.meteoUVSet.isUV());
                                 }
                             }
                             break;

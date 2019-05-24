@@ -29,20 +29,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.chart.plot.PlotOrientation;
 import org.meteoinfo.chart.plot.XAlign;
 import org.meteoinfo.chart.plot.YAlign;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.legend.LegendType;
-import org.meteoinfo.shape.ShapeTypes;
 
 /**
  *

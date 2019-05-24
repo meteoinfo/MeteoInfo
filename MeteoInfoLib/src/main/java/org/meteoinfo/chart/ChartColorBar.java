@@ -14,6 +14,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -456,14 +457,15 @@ public class ChartColorBar extends ChartLegend {
             if (this.autoExtendFrac) {
                 extendw = _hBarHeight;
             }
-            Polygon p = new Polygon();
-            p.addPoint((int) (_vBarWidth - extendw), (int) (this._hBarHeight / 2 + y_shift));
-            p.addPoint((int) this._vBarWidth, (int)y_shift);
-            p.addPoint((int) (this._vBarWidth * (bNum - 1)), (int)y_shift);
-            p.addPoint((int) (this._vBarWidth * (bNum - 1) + extendw), (int) (this._hBarHeight / 2 + y_shift));
-            p.addPoint((int) (this._vBarWidth * (bNum - 1)), (int) (this._hBarHeight + y_shift));
-            p.addPoint((int) this._vBarWidth, (int) (this._hBarHeight + y_shift));
-            g.drawPolygon(p);
+            Path2D p = new Path2D.Double();
+            p.moveTo(_vBarWidth - extendw, this._hBarHeight / 2 + y_shift);
+            p.lineTo(this._vBarWidth, y_shift);
+            p.lineTo(this._vBarWidth * (bNum - 1), y_shift);
+            p.lineTo(this._vBarWidth * (bNum - 1) + extendw, this._hBarHeight / 2 + y_shift);
+            p.lineTo(this._vBarWidth * (bNum - 1), this._hBarHeight + y_shift);
+            p.lineTo(this._vBarWidth, this._hBarHeight + y_shift);
+            p.closePath();
+            g.draw(p);
         }
         //Draw tick and label
         aP.X = -_vBarWidth / 2;
@@ -709,14 +711,15 @@ public class ChartColorBar extends ChartLegend {
         if (this.extendRect) {
             g.draw(new Rectangle.Double(x_shift, 0, this._vBarWidth, this._hBarHeight * bNum));
         } else {
-            Polygon p = new Polygon();
-            p.addPoint((int) (this._vBarWidth / 2 + x_shift), 0);
-            p.addPoint((int)x_shift, (int) this._hBarHeight);
-            p.addPoint((int)x_shift, (int) (this._hBarHeight * (bNum - 1)));
-            p.addPoint((int) (this._vBarWidth / 2 + x_shift), (int) (this._hBarHeight * bNum));
-            p.addPoint((int) (this._vBarWidth + x_shift), (int) (this._hBarHeight * (bNum - 1)));
-            p.addPoint((int) (this._vBarWidth + x_shift), (int) this._hBarHeight);
-            g.drawPolygon(p);
+            Path2D p = new Path2D.Double();
+            p.moveTo(this._vBarWidth / 2 + x_shift, 0);
+            p.lineTo(x_shift, this._hBarHeight);
+            p.lineTo(x_shift, (this._hBarHeight * (bNum - 1)));
+            p.lineTo(this._vBarWidth / 2 + x_shift, this._hBarHeight * bNum);
+            p.lineTo(this._vBarWidth + x_shift, this._hBarHeight * (bNum - 1));
+            p.lineTo(this._vBarWidth + x_shift, this._hBarHeight);
+            p.closePath();
+            g.draw(p);
         }
         //Draw ticks
         aP.Y = this.legendHeight + _hBarHeight / 2;

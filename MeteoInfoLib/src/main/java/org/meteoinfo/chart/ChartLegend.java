@@ -854,7 +854,8 @@ public class ChartLegend {
                 }
                 caption = aLS.getLegendBreaks().get(i).getCaption();
                 if (cb instanceof PointBreak) {
-                    PointBreak aPB = (PointBreak) cb;
+                    PointBreak aPB = (PointBreak) cb.clone();
+                    ((PointBreak) aPB).setSize(((PointBreak) cb).getSize() * (symbolHeight / 10.f));
                     Draw.drawPoint(new PointF(x, y), aPB, g);
                 } else if (cb instanceof PolylineBreak) {
                     PolylineBreak aPLB = (PolylineBreak) cb;

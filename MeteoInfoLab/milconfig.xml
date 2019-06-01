@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\hdf">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+  <Path OpenPath="D:\KeyData\BC_New\script">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
@@ -16,19 +15,18 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\KeyData\BC_New\script"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\wireframe_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\mm5tonc.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\windrose_imshow.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\hdf\CALIPSO_L1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
+      <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
+      <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_season_map.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\wireframe_1.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\mm5tonc.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\windrose_imshow.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\hdf\CALIPSO_L1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
+      <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
+      <RecentFile File="D:\KeyData\BC_New\script\plot_bc_season_map.py"/>
     </RecentFiles>
   </File>
   <Font>

@@ -77,7 +77,7 @@ class Index(object):
                 eidx = self.__len__() + eidx                    
             step = 1 if k.step is None else k.step
             r = self._index.subIndex(sidx, eidx, step)
-            return Index(index=r)
+            return Index.factory(index=r)
             
     def index(self, v):
         '''

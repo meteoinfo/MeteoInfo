@@ -72,7 +72,13 @@ class MIArray(object):
         return ArrayUtil.convertToString(self.array)
     
     def __getitem__(self, indices):
-        #print type(indices)            
+        if isinstance(indices, slice):
+            k = indices
+            if k.start is None and k.stop is None and k.step is None:
+                r = Array.factory(self.array.getDataType(), self.array.getShape())
+                MAMath.copy(r, self.array)
+                return MIArray(r)   
+                
         if not isinstance(indices, tuple):
             inds = []
             inds.append(indices)

@@ -67,6 +67,26 @@ class DimVariable(object):
         return self.__str__()
         
     def __getitem__(self, indices):
+        if isinstance(indices, slice):
+            k = indices
+            if k.start is None and k.stop is None and k.step is None:
+                r = self.dataset.dataset.read(self.name)
+                return DimArray(r, self.dims, self.fill_value, self.proj)
+            
+        if isinstance(indices, tuple):
+            allnone = True
+            for k in indices:
+                if isinstance(k, slice):
+                    if (not k.start is None) or (not k.stop is None) or (not k.step is None):
+                        allnone = False
+                        break
+                else:
+                    allnone = False
+                    break
+            if allnone:
+                r = self.dataset.dataset.read(self.name)
+                return DimArray(r, self.dims, self.fill_value, self.proj)
+            
         if indices is None:
             inds = []
             for i in range(self.ndim):

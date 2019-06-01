@@ -261,6 +261,43 @@ public class Series implements Iterable {
      */
     public Series getValueByIndex(List idxValues) {
         Object[] rii = this.index.getIndices(idxValues);
+        List<Integer> ii = (List<Integer>) rii[2];
+        List rIndex = (List) rii[3];
+        Array ra = Array.factory(this.data.getDataType(), new int[]{ii.size()});
+        for (int i = 0; i < ii.size(); i++) {
+            if (ii.get(i) < 0) {
+                if (ra.getDataType().isNumeric()) {
+                    ra.setObject(i, Double.NaN);
+                }
+            } else {
+                ra.setObject(i, this.data.getObject(ii.get(i)));
+            }
+        }
+        Index idx;
+        if (this.index instanceof DateTimeIndex && (rIndex.get(0) instanceof String)) {
+            List<DateTime> values = new ArrayList<>();
+            for (String v : (List<String>) rIndex) {
+                values.add(DateUtil.getDateTime(v));
+            }
+            idx = Index.factory(values);
+        } else {
+            idx = Index.factory(rIndex);
+        }
+        idx.format = this.index.format;
+//        if (idx instanceof DateTimeIndex) {
+//            ((DateTimeIndex) idx).setDateTimeFormatter(((DateTimeIndex) this.index).getDateTimeFormatter());
+//        }
+        return new Series(ra, idx, this.name);
+    }
+    
+    /**
+     * Get values by index
+     *
+     * @param idxValues index values
+     * @return Result series
+     */
+    public Series getValueByIndex_bak(List idxValues) {
+        Object[] rii = this.index.getIndices(idxValues);
         List<Integer> ii = (List<Integer>) rii[0];
         List rIndex = (List) rii[1];
         Array ra = Array.factory(this.data.getDataType(), new int[]{ii.size()});

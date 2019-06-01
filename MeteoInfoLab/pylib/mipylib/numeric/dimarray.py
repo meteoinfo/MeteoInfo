@@ -37,7 +37,13 @@ class DimArray(MIArray):
         self.proj = proj
         
     def __getitem__(self, indices):
-        #print type(indices)
+        if isinstance(indices, slice):
+            k = indices
+            if k.start is None and k.stop is None and k.step is None:
+                r = Array.factory(self.array.getDataType(), self.array.getShape())
+                MAMath.copy(r, self.array)
+                return DimArray(r, self.dims, self.fill_value, self.proj)        
+        
         if not isinstance(indices, tuple):
             inds = []
             inds.append(indices)
@@ -236,8 +242,8 @@ class DimArray(MIArray):
         else:
             for i in flips:
                 r = r.flip(i)
-            rr = Array.factory(r.getDataType(), r.getShape());
-            MAMath.copy(rr, r);
+            rr = Array.factory(r.getDataType(), r.getShape())
+            MAMath.copy(rr, r)
             array = MIArray(rr)
             data = DimArray(array, ndims, self.fill_value, self.proj)
             return data        

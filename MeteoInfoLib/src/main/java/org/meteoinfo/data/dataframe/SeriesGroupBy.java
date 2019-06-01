@@ -34,7 +34,8 @@ public class SeriesGroupBy extends GroupBy {
     @SuppressWarnings("unchecked")
     public <V> Series apply(final Function<?, ?> function) {
         Series s = this.groups.apply(this.series, function);
-        if (this.series.getIndex() instanceof DateTimeIndex) {
+        if (this.series.getIndex() instanceof DateTimeIndex &&
+                s.getIndex() instanceof DateTimeIndex) {
             ((DateTimeIndex) s.getIndex()).setPeriod(((DateTimeIndex) this.series.getIndex()).getResamplePeriod());
         }
         return s;

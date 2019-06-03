@@ -21,12 +21,14 @@
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
-      <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_season_map.py"/>
+      <OpenedFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
+      <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
-      <RecentFile File="D:\KeyData\BC_New\script\plot_bc_season_map.py"/>
+      <RecentFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
+      <RecentFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
     </RecentFiles>
   </File>
   <Font>

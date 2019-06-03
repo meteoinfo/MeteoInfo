@@ -1790,8 +1790,10 @@ public class Draw {
                         } else if (angle == -90) {
                             x -= (float) (dim.getHeight() * 0.5);
                         } else if (angle > 0) {
-                            x -= (float) (dim.getWidth() * Math.abs(Math.cos(Math.toRadians(angle))));
-                            y += (float) (dim.getWidth() * Math.sin(Math.toRadians(angle))) + dim.getHeight();
+                            //x -= (float) (dim.getWidth() * Math.abs(Math.cos(Math.toRadians(angle))));
+                            //y += (float) (dim.getWidth() * Math.sin(Math.toRadians(angle))) + dim.getHeight();
+                            x -= (float) (dim.getWidth()* Math.abs(Math.cos(Math.toRadians(angle))));
+                            y += (float) (dim.getWidth()* Math.sin(Math.toRadians(angle))) + dim.getHeight() * 0.5 * Math.cos(Math.toRadians(angle));
                         } else {
                             //y += (float) (dim.getHeight() * Math.cos(Math.toRadians(angle)) * 0.5);
                             y += (float) (dim.getHeight() * Math.abs(Math.cos(Math.toRadians(angle))));

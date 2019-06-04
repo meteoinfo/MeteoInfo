@@ -105,5 +105,16 @@ public class DataFrameGroupBy extends GroupBy {
         DataFrame r = this.apply(new Aggregation.Median());
         return r;
     }
+    
+    /**
+     * Compute the standard deviation of the numeric columns for each group.
+     *
+     * @return the new series
+     */
+    @Override
+    public DataFrame stdDev() {
+        DataFrame r = this.apply(new Aggregation.StdDev<>());
+        return r;
+    }
     // </editor-fold>
 }

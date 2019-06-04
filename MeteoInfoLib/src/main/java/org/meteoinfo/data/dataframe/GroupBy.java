@@ -31,5 +31,7 @@ public abstract class GroupBy {
     public abstract Object max();
     
     public abstract Object median();
+    
+    public abstract Object stdDev();
     // </editor-fold>
 }

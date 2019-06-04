@@ -24,7 +24,7 @@ class GroupBy(object):
         
     def count(self):
         '''
-        Compute count of group.
+        Compute count of groups.
         '''
         r = self._groupby.count()
         if isinstance(r, MIDataFrame):
@@ -34,7 +34,7 @@ class GroupBy(object):
             
     def sum(self):
         '''
-        Compute sum of group.
+        Compute sum of groups.
         '''
         r = self._groupby.sum()
         if isinstance(r, MIDataFrame):
@@ -44,7 +44,7 @@ class GroupBy(object):
             
     def mean(self):
         '''
-        Compute mean of group.
+        Compute mean of groups.
         '''
         r = self._groupby.mean()
         if isinstance(r, MIDataFrame):
@@ -54,7 +54,7 @@ class GroupBy(object):
             
     def max(self):
         '''
-        Compute maximum of group.
+        Compute maximum of groups.
         '''
         r = self._groupby.max()
         if isinstance(r, MIDataFrame):
@@ -64,7 +64,7 @@ class GroupBy(object):
             
     def min(self):
         '''
-        Compute minimum of group.
+        Compute minimum of groups.
         '''
         r = self._groupby.min()
         if isinstance(r, MIDataFrame):
@@ -74,7 +74,17 @@ class GroupBy(object):
             
     def median(self):
         '''
-        Compute median of group.
+        Compute median of groups.
+        '''
+        r = self._groupby.median()
+        if isinstance(r, MIDataFrame):
+            return dataframe.DataFrame(dataframe=r)
+        else:
+            return series.Series(series=r)
+            
+    def std(self):
+        '''
+        Compute standard deviation of groups.
         '''
         r = self._groupby.median()
         if isinstance(r, MIDataFrame):

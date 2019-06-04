@@ -2537,6 +2537,16 @@ public class DataFrame implements Iterable {
         DataFrame r = this.apply(new Aggregation.Median());
         return r;
     }
+    
+    /**
+     * Compute the median of the numeric columns.
+     *
+     * @return the new data frame
+     */
+    public DataFrame stdDev() {
+        DataFrame r = this.apply(new Aggregation.StdDev<>());
+        return r;
+    }
 
     @Override
     public Object clone() {

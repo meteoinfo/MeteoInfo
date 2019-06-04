@@ -270,6 +270,18 @@ class Series(object):
             return Series(series=r)
         else:
             return r
+            
+    def std(self):
+        '''
+        Return the standard deviation of the values
+        
+        :returns: Standard deviation value
+        '''
+        r = self._series.stdDev()
+        if isinstance(r, (MISeries)):
+            return Series(series=r)
+        else:
+            return r
         
     def groupby(self, by=None):
         '''

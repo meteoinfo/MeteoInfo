@@ -767,6 +767,12 @@ class DataFrame(object):
         Return the median of the values for the requested axis
         '''
         return DataFrame(dataframe=self._dataframe.median())
+        
+    def std(self):
+        '''
+        Return the standard deviation of the values for the requested axis
+        '''
+        return DataFrame(dataframe=self._dataframe.stdDev())
     
     @classmethod
     def read_table(cls, filepath, **kwargs):

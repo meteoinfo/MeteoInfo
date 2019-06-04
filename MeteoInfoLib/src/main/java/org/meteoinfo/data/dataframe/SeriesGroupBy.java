@@ -106,5 +106,16 @@ public class SeriesGroupBy extends GroupBy {
         Series r = this.apply(new Aggregation.Median());
         return r;
     }
+    
+    /**
+     * Compute the standard deviation of the numeric columns for each group.
+     *
+     * @return the new series
+     */
+    @Override
+    public Series stdDev() {
+        Series r = this.apply(new Aggregation.StdDev<>());
+        return r;
+    }
     // </editor-fold>
 }

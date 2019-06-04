@@ -20,6 +20,7 @@ import org.meteoinfo.data.dataframe.impl.Views;
 import org.meteoinfo.data.dataframe.impl.WindowFunction;
 import org.meteoinfo.global.util.DateUtil;
 import ucar.ma2.Array;
+import ucar.ma2.InvalidRangeException;
 import ucar.ma2.Range;
 
 /**
@@ -400,7 +401,7 @@ public class Series implements Iterable {
     }
 
     /**
-     * Group the data frame rows using the specified key function.
+     * Group the series rows using the specified key function.
      *
      * @param function the function to reduce rows to grouping keys
      * @return the grouping
@@ -411,7 +412,7 @@ public class Series implements Iterable {
     }
 
     /**
-     * Group the data frame rows using the specified key function.
+     * Group the series rows using the specified key function.
      *
      * @param pStr Period string
      * @return the grouping
@@ -423,8 +424,8 @@ public class Series implements Iterable {
     }
 
     /**
-     * Compute the mean of the numeric columns for each group or the entire data
-     * frame if the data is not grouped.
+     * Compute the mean of the numeric columns for each group or the entire series
+     * if the data is not grouped.
      *
      * @return Mean object
      */
@@ -434,7 +435,7 @@ public class Series implements Iterable {
 
     /**
      * Compute the maximum of the numeric columns for each group or the entire
-     * data frame if the data is not grouped.
+     * series if the data is not grouped.
      *
      * @return Maximum object
      */
@@ -444,12 +445,23 @@ public class Series implements Iterable {
 
     /**
      * Compute the minimum of the numeric columns for each group or the entire
-     * data frame if the data is not grouped.
+     * series if the data is not grouped.
      *
      * @return Minimum object
      */
     public Object min() {
         return ArrayMath.min(data);
+    }
+    
+    /**
+     * Compute the standard deviation of the numeric columns for each group or the entire
+     * series if the data is not grouped.
+     *
+     * @return Minimum object
+     * @throws ucar.ma2.InvalidRangeException
+     */
+    public Object stdDev() throws InvalidRangeException {
+        return ArrayMath.std(data);
     }
 
     /**

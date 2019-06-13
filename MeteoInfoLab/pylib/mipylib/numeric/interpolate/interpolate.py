@@ -10,7 +10,7 @@ from org.meteoinfo.math.interpolate import InterpUtil
 from org.meteoinfo.data import ArrayMath, ArrayUtil
 from ucar.ma2 import Array
 
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from mipylib.numeric.dimarray import DimArray
 
 __all__ = [
@@ -28,9 +28,9 @@ class interp1d(object):
     '''
     def __init__(self, x, y, kind='linear'):        
         if isinstance(x, list):
-            x = MIArray(ArrayUtil.array(x))
+            x = NDArray(ArrayUtil.array(x))
         if isinstance(y, list):
-            y = MIArray(ArrayUtil.array(y))
+            y = NDArray(ArrayUtil.array(y))
         self._func = InterpUtil.getInterpFunc(x.asarray(), y.asarray(), kind)
 
     def __call__(self, x):
@@ -40,14 +40,14 @@ class interp1d(object):
         :param x: (*array_like*) Points to evaluate the interpolant at.
         '''
         if isinstance(x, list):
-            x = MIArray(ArrayUtil.array(x))
-        if isinstance(x, (MIArray, DimArray)):
+            x = NDArray(ArrayUtil.array(x))
+        if isinstance(x, (NDArray, DimArray)):
             x = x.asarray()
         r = InterpUtil.evaluate(self._func, x)
         if isinstance(r, float):
             return r
         else:
-            return MIArray(r)
+            return NDArray(r)
             
 class interp2d(object):
     '''
@@ -67,11 +67,11 @@ class interp2d(object):
     '''
     def __init__(self, x, y, z, kind='linear'):
         if isinstance(x, list):
-            x = MIArray(ArrayUtil.array(x))
+            x = NDArray(ArrayUtil.array(x))
         if isinstance(y, list):
-            y = MIArray(ArrayUtil.array(y))
+            y = NDArray(ArrayUtil.array(y))
         if isinstance(z, list):
-            z = MIArray(ArrayUtil.array(z))
+            z = NDArray(ArrayUtil.array(z))
         self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.asarray())
         
     def __call__(self, x, y):
@@ -82,18 +82,18 @@ class interp2d(object):
         :param y: (*array_like*) Y to evaluate the interpolant at.
         '''
         if isinstance(x, list):
-            x = MIArray(ArrayUtil.array(x))
-        if isinstance(x, (MIArray, DimArray)):
+            x = NDArray(ArrayUtil.array(x))
+        if isinstance(x, (NDArray, DimArray)):
             x = x.asarray()
         if isinstance(y, list):
-            y = MIArray(ArrayUtil.array(y))
-        if isinstance(y, (MIArray, DimArray)):
+            y = NDArray(ArrayUtil.array(y))
+        if isinstance(y, (NDArray, DimArray)):
             y = y.asarray()
         r = InterpUtil.evaluate(self._func, x, y)
         if isinstance(r, float):
             return r
         else:
-            return MIArray(r)
+            return NDArray(r)
             
 class RectBivariateSpline(object):
     '''
@@ -107,11 +107,11 @@ class RectBivariateSpline(object):
     '''
     def __init__(self, x, y, z):        
         if isinstance(x, list):
-            x = MIArray(ArrayUtil.array(x))
+            x = NDArray(ArrayUtil.array(x))
         if isinstance(y, list):
-            y = MIArray(ArrayUtil.array(y))
+            y = NDArray(ArrayUtil.array(y))
         if isinstance(z, list):
-            z = MIArray(ArrayUtil.array(z))
+            z = NDArray(ArrayUtil.array(z))
         self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.asarray())
 
     def __call__(self, x, y):
@@ -122,17 +122,17 @@ class RectBivariateSpline(object):
         :param y: (*array_like*) Y to evaluate the interpolant at.
         '''
         if isinstance(x, list):
-            x = MIArray(ArrayUtil.array(x))
-        if isinstance(x, (MIArray, DimArray)):
+            x = NDArray(ArrayUtil.array(x))
+        if isinstance(x, (NDArray, DimArray)):
             x = x.asarray()
         if isinstance(y, list):
-            y = MIArray(ArrayUtil.array(y))
-        if isinstance(y, (MIArray, DimArray)):
+            y = NDArray(ArrayUtil.array(y))
+        if isinstance(y, (NDArray, DimArray)):
             y = y.asarray()
         r = InterpUtil.evaluate(self._func, x, y)
         if isinstance(r, float):
             return r
         else:
-            return MIArray(r)
+            return NDArray(r)
             
 ############################################################

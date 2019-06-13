@@ -9,7 +9,7 @@
 from org.meteoinfo.shape import Graphic
 from org.meteoinfo.image import ImageUtil, GifDecoder, AnimatedGifEncoder
 from mipylib.geolib.milayer import MILayer
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from org.meteoinfo.image.filter import ContrastFilter, SharpenFilter, RGBAdjustFilter, ChannelMixFilter, \
     GainFilter, GammaFilter, GrayFilter, GrayscaleFilter, HSBAdjustFilter, InvertAlphaFilter, \
     InvertFilter, LevelsFilter, MaskFilter, PosterizeFilter, RescaleFilter, SolarizeFilter, \
@@ -34,7 +34,7 @@ def imread(fname):
     if not os.path.exists(fname):
         raise IOError(fname)
     r = ImageUtil.imageRead(fname)
-    return MIArray(r)
+    return NDArray(r)
     
 def imload(fname):
     '''
@@ -85,7 +85,7 @@ def gifread(gif, frame=0):
         gif = gifopen(gif)
     im = gif.getFrame(frame)
     r = ImageUtil.imageRead(im)
-    return MIArray(r)
+    return NDArray(r)
     
 def gifload(gif, frame=0):
     '''

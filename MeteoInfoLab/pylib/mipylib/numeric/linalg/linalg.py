@@ -9,7 +9,7 @@
 from org.meteoinfo.math.linalg import LinalgUtil
 from org.meteoinfo.math.stats import StatsUtil
 
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 
 __all__ = [
     'solve','cholesky','det','lu','qr', 'svd','eig','inv','lstsq'
@@ -35,7 +35,7 @@ def solve(a, b):
         Solution to the system a x = b.  Returned shape is identical to ``b``.
     '''
     x = LinalgUtil.solve(a.asarray(), b.asarray())
-    return MIArray(x)
+    return NDArray(x)
     
 def cholesky(a):
     '''
@@ -60,7 +60,7 @@ def cholesky(a):
         matrix object if `a` is a matrix object.
     '''
     r = LinalgUtil.cholesky(a.asarray())
-    return MIArray(r)
+    return NDArray(r)
     
 def lu(a):
     '''
@@ -96,9 +96,9 @@ def lu(a):
         Upper triangular or trapezoidal matrix
     '''
     r = LinalgUtil.lu(a.asarray())
-    p = MIArray(r[0])
-    l = MIArray(r[1])
-    u = MIArray(r[2])
+    p = NDArray(r[0])
+    l = NDArray(r[1])
+    u = NDArray(r[2])
     return p, l, u
     
 def qr(a):
@@ -123,8 +123,8 @@ def qr(a):
         Of shape (M, N), or (K, N) for ``mode='economic'``.  ``K = min(M, N)``.
     '''
     r = LinalgUtil.qr(a.asarray())
-    q = MIArray(r[0])
-    r = MIArray(r[1])
+    q = NDArray(r[0])
+    r = NDArray(r[1])
     return q, r
 
 def svd(a):
@@ -155,9 +155,9 @@ def svd(a):
     '''
     #r = LinalgUtil.svd(a.asarray())
     r = LinalgUtil.svd_EJML(a.asarray())
-    U = MIArray(r[0])
-    s = MIArray(r[1])
-    Vh = MIArray(r[2])
+    U = NDArray(r[0])
+    s = NDArray(r[1])
+    Vh = NDArray(r[2])
     return U, s, Vh
     
 def eig(a):
@@ -186,8 +186,8 @@ def eig(a):
     '''
     r = LinalgUtil.eigen(a.asarray())
     #r = LinalgUtil.eigen_EJML(a.asarray())
-    w = MIArray(r[0])
-    v = MIArray(r[1])
+    w = NDArray(r[0])
+    v = NDArray(r[1])
     return w, v
     
 def inv(a):
@@ -199,7 +199,7 @@ def inv(a):
     :returns: Inverse matrix.
     '''
     r = LinalgUtil.inv(a.asarray())
-    return MIArray(r)
+    return NDArray(r)
     
 def lstsq(a, b):
     '''
@@ -222,7 +222,7 @@ def lstsq(a, b):
         Sums of residues, squared 2-norm for each column in b - a x.
     '''
     r = StatsUtil.multipleLineRegress_OLS(b.asarray(), a.asarray(), True)
-    return MIArray(r[0]), MIArray(r[1])
+    return NDArray(r[0]), NDArray(r[1])
     
 def det(a):
     '''

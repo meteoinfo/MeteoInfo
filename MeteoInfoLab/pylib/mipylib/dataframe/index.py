@@ -11,7 +11,7 @@ from org.joda.time import DateTime
 
 import datetime
 
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 import mipylib.miutil as miutil
 
 class Index(object):
@@ -40,7 +40,7 @@ class Index(object):
         :param name: (*string*) Index name                
         '''
         if index is None:
-            if isinstance(data, MIArray):
+            if isinstance(data, NDArray):
                 data = data.aslist()
             self.data = data
             self._index = MIIndex(data, name)            
@@ -129,7 +129,7 @@ class DateTimeIndex(Index):
     def __init__(self, data=None, start=None, end=None, periods=None, freq='D', index=None):
         if index is None:
             if not data is None:
-                if isinstance(data, MIArray):
+                if isinstance(data, NDArray):
                     data = data.aslist()
                 self.data = data
                 if isinstance(data[0], datetime.datetime):
@@ -173,7 +173,7 @@ class DateTimeIndex(Index):
         '''
         if isinstance(key, datetime.datetime):
             key = miutil.jdatetime(key)
-        elif isinstance(key, (list, tuple, MIArray)) and isinstance(key[0], datetime.datetime):
+        elif isinstance(key, (list, tuple, NDArray)) and isinstance(key[0], datetime.datetime):
             key = miutil.jdatetime(key)
         r = self._index.getIndices(key)
         if outkeys:            

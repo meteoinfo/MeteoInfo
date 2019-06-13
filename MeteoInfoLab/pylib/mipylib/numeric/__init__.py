@@ -1,4 +1,4 @@
-import miarray
+import multiarray
 import dimarray
 import minum
 from .minum import *

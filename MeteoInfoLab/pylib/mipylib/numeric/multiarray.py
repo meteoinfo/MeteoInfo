@@ -19,7 +19,7 @@ import numbers
 import datetime
         
 # The encapsulate class of Array
-class MIArray(object):
+class NDArray(object):
         
     # array must be a ucar.ma2.Array object
     def __init__(self, array):
@@ -77,7 +77,7 @@ class MIArray(object):
             if k.start is None and k.stop is None and k.step is None:
                 r = Array.factory(self.array.getDataType(), self.array.getShape())
                 MAMath.copy(r, self.array)
-                return MIArray(r)   
+                return NDArray(r)   
                 
         if not isinstance(indices, tuple):
             inds = []
@@ -143,8 +143,8 @@ class MIArray(object):
                 eidx -= 1                    
                 step = 1 if k.step is None else k.step
                 alllist = False
-            elif isinstance(k, (list, tuple, MIArray)):
-                if isinstance(k, MIArray):
+            elif isinstance(k, (list, tuple, NDArray)):
+                if isinstance(k, NDArray):
                     k = k.aslist()
                 if isinstance(k[0], bool):
                     kk = []
@@ -176,7 +176,7 @@ class MIArray(object):
 
         if isempty:
             r = ArrayUtil.zeros(nshape, 'int')
-            return MIArray(r)
+            return NDArray(r)
             
         if onlyrange:
             r = ArrayMath.section(self.array, ranges)
@@ -191,7 +191,7 @@ class MIArray(object):
                 r = r.flip(i)
             rr = Array.factory(r.getDataType(), r.getShape());
             MAMath.copy(rr, r);
-            rr = MIArray(rr)
+            rr = NDArray(rr)
             newshape = list(rr.shape)
             for i in range(newaxisn):
                 newshape.append(1)
@@ -208,12 +208,12 @@ class MIArray(object):
                 r = r.flip(i)
             rr = Array.factory(r.getDataType(), r.getShape());
             MAMath.copy(rr, r);
-            return MIArray(rr)
+            return NDArray(rr)
         
     def __setitem__(self, indices, value):
         #print type(indices) 
-        if isinstance(indices, MIArray):
-            if isinstance(value, MIArray):
+        if isinstance(indices, NDArray):
+            if isinstance(value, NDArray):
                 value = value.asarray()
             ArrayMath.setValue(self.array, indices.array, value)
             return None
@@ -244,8 +244,8 @@ class MIArray(object):
                 eidx = sidx
                 step = 1
                 alllist = False
-            elif isinstance(k, (list, tuple, MIArray)):
-                if isinstance(k, MIArray):
+            elif isinstance(k, (list, tuple, NDArray)):
+                if isinstance(k, NDArray):
                     k = k.aslist()
                 onlyrange = False
                 ranges.append(k)
@@ -268,7 +268,7 @@ class MIArray(object):
 
         if isinstance(value, (list,tuple)):
             value = ArrayUtil.array(value)
-        if isinstance(value, MIArray):
+        if isinstance(value, NDArray):
             value = value.asarray()
         if onlyrange:
             r = ArrayMath.setSection(self.array, ranges, value)
@@ -285,131 +285,131 @@ class MIArray(object):
         return other
     
     def __abs__(self):
-        return MIArray(ArrayMath.abs(self.array))
+        return NDArray(ArrayMath.abs(self.array))
     
     def __add__(self, other):
-        other = MIArray.__value_other(self, other)
+        other = NDArray.__value_other(self, other)
         r = ArrayMath.add(self.array, other)        
         if r is None:
             raise ValueError('Dimension missmatch, can not broadcast!')
-        return MIArray(r)
+        return NDArray(r)
         
     def __radd__(self, other):
-        return MIArray.__add__(self, other)
+        return NDArray.__add__(self, other)
         
     def __sub__(self, other):
-        other = MIArray.__value_other(self, other)
+        other = NDArray.__value_other(self, other)
         r = ArrayMath.sub(self.array, other)        
         if r is None:
             raise ValueError('Dimension missmatch, can not broadcast!')
-        return MIArray(r)
+        return NDArray(r)
         
     def __rsub__(self, other):
-        other = MIArray.__value_other(self, other)
+        other = NDArray.__value_other(self, other)
         r = ArrayMath.sub(other, self.array)        
         if r is None:
             raise ValueError('Dimension missmatch, can not broadcast!')
-        return MIArray(r)
+        return NDArray(r)
     
     def __mul__(self, other):
-        other = MIArray.__value_other(self, other)
+        other = NDArray.__value_other(self, other)
         r = ArrayMath.mul(self.array, other)
         if r is None:
             raise ValueError('Dimension missmatch, can not broadcast!')
-        return MIArray(r)
+        return NDArray(r)
         
     def __rmul__(self, other):
-        return MIArray.__mul__(self, other)
+        return NDArray.__mul__(self, other)
         
     def __div__(self, other):
-        other = MIArray.__value_other(self, other)
+        other = NDArray.__value_other(self, other)
         r = ArrayMath.div(self.array, other)        
         if r is None:
             raise ValueError('Dimension missmatch, can not broadcast!')
-        return MIArray(r)
+        return NDArray(r)
         
     def __rdiv__(self, other):
-        other = MIArray.__value_other(self, other)
+        other = NDArray.__value_other(self, other)
         r = ArrayMath.div(other, self.array)        
         if r is None:
             raise ValueError('Dimension missmatch, can not broadcast!')
-        return MIArray(r)
+        return NDArray(r)
         
     def __pow__(self, other):
-        other = MIArray.__value_other(self, other)
+        other = NDArray.__value_other(self, other)
         r = ArrayMath.pow(self.array, other)        
         if r is None:
             raise ValueError('Dimension missmatch, can not broadcast!')
-        return MIArray(r)
+        return NDArray(r)
         
     def __rpow__(self, other):
-        other = MIArray.__value_other(self, other)
+        other = NDArray.__value_other(self, other)
         r = ArrayMath.pow(other, self.array)        
         if r is None:
             raise ValueError('Dimension missmatch, can not broadcast!')
-        return MIArray(r)
+        return NDArray(r)
         
     def __neg__(self):
-        r = MIArray(ArrayMath.sub(0, self.array))
+        r = NDArray(ArrayMath.sub(0, self.array))
         return r
         
     def __lt__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.lessThan(self.array, other))
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.lessThan(self.array, other))
         return r
         
     def __le__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.lessThanOrEqual(self.array, other))        
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.lessThanOrEqual(self.array, other))        
         return r
         
     def __eq__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.equal(self.array, other))
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.equal(self.array, other))
         return r
         
     def __ne__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.notEqual(self.array, other))
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.notEqual(self.array, other))
         return r
         
     def __gt__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.greaterThan(self.array, other))
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.greaterThan(self.array, other))
         return r
         
     def __ge__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.greaterThanOrEqual(self.array, other))
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.greaterThanOrEqual(self.array, other))
         return r
         
     def __and__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.bitAnd(self.array, other))
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.bitAnd(self.array, other))
         return r
         
     def __or__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.bitOr(self.array, other))
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.bitOr(self.array, other))
         return r
         
     def __xor__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.bitXor(self.array, other))
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.bitXor(self.array, other))
         return r
         
     def __invert__(self):
-        r = MIArray(ArrayMath.bitInvert(self.array))
+        r = NDArray(ArrayMath.bitInvert(self.array))
         return r
         
     def __lshift__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.leftShift(self.array, other))
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.leftShift(self.array, other))
         return r
         
     def __rshift__(self, other):
-        other = MIArray.__value_other(self, other)
-        r = MIArray(ArrayMath.rightShift(self.array, other))
+        other = NDArray.__value_other(self, other)
+        r = NDArray(ArrayMath.rightShift(self.array, other))
         return r     
 
     def __iter__(self):
@@ -452,7 +452,7 @@ class MIArray(object):
         '''
         if not isinstance(other, (list, tuple)):
             other = other.aslist()
-        r = MIArray(ArrayMath.inValues(self.array, other))
+        r = NDArray(ArrayMath.inValues(self.array, other))
         return r
         
     def contains_nan(self):
@@ -480,11 +480,11 @@ class MIArray(object):
         :returns: (*array*) Converted array.
         '''
         if dtype == 'int' or dtype is int:
-            r = MIArray(ArrayUtil.toInteger(self.array))
+            r = NDArray(ArrayUtil.toInteger(self.array))
         elif dtype == 'float' or dtype is float:
-            r = MIArray(ArrayUtil.toFloat(self.array))
+            r = NDArray(ArrayUtil.toFloat(self.array))
         elif dtype == 'boolean' or dtype == 'bool' or dtype is bool:
-            r = MIArray(ArrayUtil.toBoolean(self.array))
+            r = NDArray(ArrayUtil.toBoolean(self.array))
         else:
             r = self
         return r
@@ -503,7 +503,7 @@ class MIArray(object):
             return r
         else:
             r = ArrayMath.min(self.array, axis)
-            return MIArray(r)
+            return NDArray(r)
             
     def argmin(self, axis=None):
         '''
@@ -520,7 +520,7 @@ class MIArray(object):
             return r
         else:
             r = ArrayMath.argMin(self.array, axis)
-            return MIArray(r)
+            return NDArray(r)
             
     def argmax(self, axis=None):
         '''
@@ -537,7 +537,7 @@ class MIArray(object):
             return r
         else:
             r = ArrayMath.argMax(self.array, axis)
-            return MIArray(r)
+            return NDArray(r)
         
     def max(self, axis=None):
         '''
@@ -553,7 +553,7 @@ class MIArray(object):
             return r
         else:
             r = ArrayMath.max(self.array, axis)
-            return MIArray(r)
+            return NDArray(r)
         
     def sum(self, axis=None):
         '''
@@ -568,7 +568,7 @@ class MIArray(object):
             return ArrayMath.sum(self.array)
         else:
             r = ArrayMath.sum(self.array, axis)
-            return MIArray(r)
+            return NDArray(r)
             
     def prod(self):
         '''
@@ -585,7 +585,7 @@ class MIArray(object):
         :returns: An array containing the absolute value of each element in x. 
             For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
         '''
-        return MIArray(ArrayMath.abs(self.array))
+        return NDArray(ArrayMath.abs(self.array))
             
     def ave(self, fill_value=None):
         if fill_value == None:
@@ -605,7 +605,7 @@ class MIArray(object):
         if axis is None:
             return ArrayMath.mean(self.array)
         else:
-            return MIArray(ArrayMath.mean(self.array, axis))
+            return NDArray(ArrayMath.mean(self.array, axis))
             
     def median(self, axis=None):
         '''
@@ -619,7 +619,7 @@ class MIArray(object):
         if axis is None:
             return ArrayMath.median(self.array)
         else:
-            return MIArray(ArrayMath.median(self.array, axis))
+            return NDArray(ArrayMath.median(self.array, axis))
             
     def std(self, axis=None):
         '''
@@ -636,37 +636,37 @@ class MIArray(object):
             return r
         else:
             r = ArrayMath.std(self.array, axis)
-            return MIArray(r)
+            return NDArray(r)
             
     def sqrt(self):
-        return MIArray(ArrayMath.sqrt(self.array))
+        return NDArray(ArrayMath.sqrt(self.array))
     
     def sin(self):
-        return MIArray(ArrayMath.sin(self.array))
+        return NDArray(ArrayMath.sin(self.array))
         
     def cos(self):
-        return MIArray(ArrayMath.cos(self.array))
+        return NDArray(ArrayMath.cos(self.array))
         
     def tan(self):
-        return MIArray(ArrayMath.tan(self.array))
+        return NDArray(ArrayMath.tan(self.array))
         
     def asin(self):
-        return MIArray(ArrayMath.asin(self.array))
+        return NDArray(ArrayMath.asin(self.array))
         
     def acos(self):
-        return MIArray(ArrayMath.acos(self.array))
+        return NDArray(ArrayMath.acos(self.array))
         
     def atan(self):
-        return MIArray(ArrayMath.atan(self.array))
+        return NDArray(ArrayMath.atan(self.array))
         
     def exp(self):
-        return MIArray(ArrayMath.exp(self.array))
+        return NDArray(ArrayMath.exp(self.array))
         
     def log(self):
-        return MIArray(ArrayMath.log(self.array))
+        return NDArray(ArrayMath.log(self.array))
         
     def log10(self):
-        return MIArray(ArrayMath.log10(self.array))
+        return NDArray(ArrayMath.log10(self.array))
         
     def sign(self):
         '''
@@ -674,7 +674,7 @@ class MIArray(object):
 
         The sign function returns -1 if x < 0, 0 if x==0, 1 if x > 0. nan is returned for nan inputs.
         '''
-        return MIArray(ArrayMath.sign(self.array))
+        return NDArray(ArrayMath.sign(self.array))
         
     def dot(self, other):
         """
@@ -687,7 +687,7 @@ class MIArray(object):
         if isinstance(other, list):
             other = array(other)
         r = ArrayMath.dot(self.array, other.array)
-        return MIArray(r)
+        return NDArray(r)
             
     def aslist(self):
         r = ArrayMath.asList(self.array)
@@ -723,7 +723,7 @@ class MIArray(object):
             for arg in args:
                 shape.append(arg)
         shape = jarray.array(shape, 'i')
-        return MIArray(self.array.reshape(shape))
+        return NDArray(self.array.reshape(shape))
         
     def transpose(self):
         '''
@@ -736,7 +736,7 @@ class MIArray(object):
         dim1 = 0
         dim2 = 1
         r = ArrayMath.transpose(self.asarray(), dim1, dim2)
-        return MIArray(r)
+        return NDArray(r)
         
     T = property(transpose)
     
@@ -747,7 +747,7 @@ class MIArray(object):
         :returns: Inverse matrix array.
         '''
         r = LinalgUtil.inv(self.array)
-        return MIArray(r)
+        return NDArray(r)
         
     I = property(inv)
         
@@ -755,7 +755,7 @@ class MIArray(object):
         '''
         Return a copy of the array collapsed into one dimension.
         
-        :returns: (*MIArray*) A copy of the input array, flattened to one dimension.
+        :returns: (*NDArray*) A copy of the input array, flattened to one dimension.
         '''
         r = self.reshape(int(self.array.getSize()))
         return r
@@ -777,7 +777,7 @@ class MIArray(object):
             r = ArrayUtil.repeat(self.array, repeats)
         else:
             r = ArrayUtil.repeat(self.array, repeats, axis)
-        return MIArray(r)
+        return NDArray(r)
         
     def take(self, indices):
         '''
@@ -789,7 +789,7 @@ class MIArray(object):
         '''
         ilist = [indices]
         r = ArrayMath.take(self.array, ilist)
-        return MIArray(r)
+        return NDArray(r)
     
     def asdimarray(self, x, y, fill_value=-9999.0):
         dims = []
@@ -803,7 +803,7 @@ class MIArray(object):
         
     def join(self, b, dimidx):
         r = ArrayMath.join(self.array, b.array, dimidx)
-        return MIArray(r)
+        return NDArray(r)
         
     def savegrid(self, x, y, fname, format='surfer', **kwargs):
         gdata = GridArray(self.array, x.array, y.array, -9999.0)

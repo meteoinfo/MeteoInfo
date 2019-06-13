@@ -18,7 +18,7 @@ from ucar.ma2 import DataType
 
 import mipylib.numeric.minum as minum
 import mipylib.miutil as miutil
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from mipylib.numeric.dimarray import DimArray
 from mipylib.numeric.mitable import PyTableData
 from dimdatafile import DimDataFile, DimDataFiles
@@ -508,7 +508,7 @@ def asciiread(filename, **kwargs):
         be readed as one dimension array.
     :param readfirstcol: (*boolean*) Read first column data or not. Default is ``True``.
     
-    :returns: (*MIArray*) The data array.
+    :returns: (*NDArray*) The data array.
     '''
     if not os.path.exists(filename):
         raise IOError('No such file: ' + filename)
@@ -518,7 +518,7 @@ def asciiread(filename, **kwargs):
     shape = kwargs.pop('shape', None)
     rfirstcol = kwargs.pop('readfirstcol', True)
     a = ArrayUtil.readASCIIFile(filename, delimiter, headerlines, datatype, shape, rfirstcol)
-    return MIArray(a)
+    return NDArray(a)
     
 def asciiwrite(fn, data, colnum=80, format=None, delimiter=None):
     """
@@ -542,12 +542,12 @@ def binread(fn, dim, datatype=None, skip=0, byteorder='little_endian'):
     :param skip: (*int*) Skip bytes number.
     :param byteorder: (*string*) Byte order. ``little_endian`` or ``big_endian``.
     
-    :returns: (*MIArray*) Data array
+    :returns: (*NDArray*) Data array
     """
     if not os.path.exists(fn):
         raise IOError('No such file: ' + fn)
     r = ArrayUtil.readBinFile(fn, dim, datatype, skip, byteorder);
-    return MIArray(r)
+    return NDArray(r)
         
 def binwrite(fn, data, byteorder='little_endian', append=False, sequential=False):
     """
@@ -798,7 +798,7 @@ def dimension(dimvalue, dimname='null', dimtype=None):
     :param dimname: (*string*) Dimension name.
     :param dimtype: (*DimensionType*) Dimension type.
     """
-    if isinstance(dimvalue, (MIArray, DimArray)):
+    if isinstance(dimvalue, (NDArray, DimArray)):
         dimvalue = dimvalue.aslist()
     dtype = DimensionType.Other
     if not dimtype is None:
@@ -828,7 +828,7 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
     :param largefile: (*boolean*) Create netCDF as large file or not.
     """
     if dims is None:
-        if isinstance(data, MIArray):
+        if isinstance(data, NDArray):
             dims = []
             for s in data.shape:
                 dimvalue = minum.arange(s)

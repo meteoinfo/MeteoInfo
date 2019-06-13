@@ -24,7 +24,7 @@ import numbers
 import datetime
 
 from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
 import mipylib.numeric.minum as minum
@@ -228,7 +228,7 @@ class Axes(object):
         Set x axis tick locations.
         '''
         axis = self.axes.getXAxis()
-        if isinstance(locs, (MIArray, DimArray)):
+        if isinstance(locs, (NDArray, DimArray)):
             locs = labels.aslist()
         axis.setTickLocations(locs)
         
@@ -252,7 +252,7 @@ class Axes(object):
         Set y axis tick locations.
         '''
         axis = self.axes.getYAxis()
-        if isinstance(locs, MIArray):
+        if isinstance(locs, NDArray):
             locs = locs.aslist()
         axis.setTickLocations(locs)
         
@@ -282,7 +282,7 @@ class Axes(object):
             axis_t = self.axes.getAxis(Location.TOP)
             
         if not labels is None:
-            if isinstance(labels, (MIArray, DimArray)):
+            if isinstance(labels, (NDArray, DimArray)):
                 labels = labels.aslist()
             if isinstance(labels[0], (int, long, float)):
                 axis.setTickLabels_Number(labels)
@@ -334,7 +334,7 @@ class Axes(object):
             axis_r = self.axes.getAxis(Location.RIGHT)
             
         if not labels is None:
-            if isinstance(labels, (MIArray, DimArray)):
+            if isinstance(labels, (NDArray, DimArray)):
                 labels = labels.aslist()
             if isinstance(labels[0], (int, long, float)):
                 axis.setTickLabels_Number(labels)
@@ -1102,7 +1102,7 @@ class Axes(object):
         pb.setStyle(pstyle)
         isvalue = False
         if len(c) > 1:
-            if isinstance(c, (MIArray, DimArray)):
+            if isinstance(c, (NDArray, DimArray)):
                 isvalue = True
             elif len(x) == len(c) and isinstance(c[0], (int, long, float)):
                 isvalue = True            
@@ -1509,7 +1509,7 @@ class Axes(object):
             barbreaks.append(lb)
             
         #Create bar graphics
-        if isinstance(width, MIArray):
+        if isinstance(width, NDArray):
             width = width.asarray()
         if morepoints:
             graphics = GraphicFactory.createBars1(x.asarray(), height.asarray(), autowidth, width, not yerr is None, yerr, \
@@ -1846,7 +1846,7 @@ class Axes(object):
                     cn = level_arg
                     ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cn, cmap)
                 else:
-                    if isinstance(level_arg, MIArray):
+                    if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
                     ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), level_arg, cmap)
             else:    
@@ -1971,7 +1971,7 @@ class Axes(object):
                     cn = level_arg
                     ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cn, cmap)
                 else:
-                    if isinstance(level_arg, MIArray):
+                    if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
                     ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), level_arg, cmap)
             else:    
@@ -2062,7 +2062,7 @@ class Axes(object):
                         cn = level_arg
                         ls = LegendManage.createImageLegend(gdata, cn, cmap)
                     else:
-                        if isinstance(level_arg, MIArray):
+                        if isinstance(level_arg, NDArray):
                             level_arg = level_arg.aslist()
                         ls = LegendManage.createImageLegend(gdata, level_arg, cmap)
                 else:
@@ -2234,7 +2234,7 @@ class Axes(object):
             
         alb, isunique = plotutil.getlegendbreak('line', **kwargs)
         alb = plotutil.line2arrow(alb, **kwargs)
-        if isinstance(x, MIArray):
+        if isinstance(x, NDArray):
             iscurve = kwargs.pop('iscurve', False)
             graphic = GraphicFactory.createArrowLine(x.array, y.array, alb, iscurve)
         else:
@@ -2530,7 +2530,7 @@ class Axes(object):
             x = [x]
         
         if not positions is None:
-            if isinstance(positions, (MIArray, DimArray)):
+            if isinstance(positions, (NDArray, DimArray)):
                 positions = positions.tolist()
         
         if not widths is None:
@@ -2539,7 +2539,7 @@ class Axes(object):
                 for i in range(len(x)):
                     nwidths.append(widths)
                 widths = nwidths
-            elif isinstance(widths, (MIArray, DimArray)):
+            elif isinstance(widths, (NDArray, DimArray)):
                 widths = widths.tolist()
             
         #Get box plot properties
@@ -2628,7 +2628,7 @@ class Axes(object):
         
         :returns: Violin graphics.
         """
-        if isinstance(dataset, MIArray):
+        if isinstance(dataset, NDArray):
             dataset = [dataset]
         n = len(dataset)
         
@@ -2737,7 +2737,7 @@ class Axes(object):
                     if levs is None:
                         ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
                     else:
-                        if isinstance(levs, MIArray):
+                        if isinstance(levs, NDArray):
                             levs = levs.aslist()
                         ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), levs, cmap)
             else:    
@@ -2832,7 +2832,7 @@ class Axes(object):
                     if levs is None:
                         ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
                     else:
-                        if isinstance(levs, MIArray):
+                        if isinstance(levs, NDArray):
                             levs = levs.tolist()
                         ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), levs, cmap)
             else:    
@@ -3225,12 +3225,12 @@ class Axes(object):
             legend.setTickLength(ticklen)
         ticks = kwargs.pop('ticks', None)
         if not ticks is None:
-            if isinstance(ticks, MIArray):
+            if isinstance(ticks, NDArray):
                 ticks = ticks.aslist()
             legend.setTickLocations(ticks)
         ticklabels = kwargs.pop('ticklabels', None)
         if not ticklabels is None:
-            if isinstance(ticklabels, (MIArray, DimArray)):
+            if isinstance(ticklabels, (NDArray, DimArray)):
                 ticklabels = ticklabels.aslist()
             if ls.getLegendType() == LegendType.UniqueValue:
                 legend.setTickCaptions(ticklabels)
@@ -3282,7 +3282,7 @@ class PolarAxes(Axes):
         
         :param pos: (*float*) The angular position of the radial labels in degrees.
         '''
-        if isinstance(pos, (DimArray, MIArray)):
+        if isinstance(pos, (DimArray, NDArray)):
             pos = pos.tolist()
         self.axes.setYTickLabelPos(pos)
         
@@ -3308,7 +3308,7 @@ class PolarAxes(Axes):
         
         :param loc: (*float list*) Tick locations.
         '''
-        if isinstance(loc, (DimArray, MIArray)):
+        if isinstance(loc, (DimArray, NDArray)):
             loc = loc.tolist()
         self.axes.setYTickLocations(loc)
         
@@ -3318,7 +3318,7 @@ class PolarAxes(Axes):
         
         :param loc: (*float list*) Tick locations.
         '''
-        if isinstance(loc, (DimArray, MIArray)):
+        if isinstance(loc, (DimArray, NDArray)):
             loc = loc.tolist()
         self.axes.setXTickLocations(loc)
         

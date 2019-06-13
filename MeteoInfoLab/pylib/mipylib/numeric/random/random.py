@@ -14,7 +14,7 @@ from org.apache.commons.math3.distribution import NormalDistribution, BetaDistri
     LogNormalDistribution, ParetoDistribution, TDistribution, TriangularDistribution, \
     UniformRealDistribution, WeibullDistribution
 
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 
 __all__ = [
     'beta','binomial','chisquare','exponential','f','gamma','gumbel','laplace','logistic',
@@ -49,9 +49,9 @@ def rand(*args):
     if len(args) == 0:
         return RandomUtil.rand()
     elif len(args) == 1:
-        return MIArray(RandomUtil.rand(args[0]))
+        return NDArray(RandomUtil.rand(args[0]))
     else:
-        return MIArray(RandomUtil.rand(args))
+        return NDArray(RandomUtil.rand(args))
         
 def randn(*args):
     """
@@ -68,9 +68,9 @@ def randn(*args):
     if len(args) == 0:
         return RandomUtil.randn()
     elif len(args) == 1:
-        return MIArray(RandomUtil.randn(args[0]))
+        return NDArray(RandomUtil.randn(args[0]))
     else:
-        return MIArray(RandomUtil.randn(args))
+        return NDArray(RandomUtil.randn(args))
         
 def randint(low, high=None, size=None):
     """
@@ -97,7 +97,7 @@ def randint(low, high=None, size=None):
         r = RandomUtil.randint(high)
         r += low
     else:
-        r = MIArray(RandomUtil.randint(high, size))
+        r = NDArray(RandomUtil.randint(high, size))
         if low != 0:
             r += low
     return r
@@ -115,7 +115,7 @@ def poisson(lam=1.0, size=None):
     if size is None:
         r = RandomUtil.poisson(lam)
     else:
-        r = MIArray(RandomUtil.poisson(lam, size))
+        r = NDArray(RandomUtil.poisson(lam, size))
     return r
     
 def normal(loc=0.0, scale=1.0, size=None):
@@ -131,7 +131,7 @@ def normal(loc=0.0, scale=1.0, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return MIArray(r)
+    return NDArray(r)
     
 def chisquare(df, size=None):
     """

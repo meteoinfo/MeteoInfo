@@ -17,13 +17,13 @@ from org.meteoinfo.chart import ChartText
 from java.awt import Color, Font
 
 from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 import mipylib.numeric.minum as minum
 import mipylib.miutil as miutil
 import mipylib.migl as migl
 
 def getplotdata(data):
-    if isinstance(data, (MIArray, DimArray)):
+    if isinstance(data, (NDArray, DimArray)):
         return data.asarray()
     elif isinstance(data, (list, tuple)):
         if isinstance(data[0], datetime.datetime):
@@ -161,7 +161,7 @@ def getcolor_style(style):
     
 def getcolors(cs, alpha=None):
     colors = []
-    if isinstance(cs, (tuple, list, MIArray)):
+    if isinstance(cs, (tuple, list, NDArray)):
         if isinstance(cs[0], int):
             colors.append(getcolor(cs, alpha))
         else:            
@@ -496,7 +496,7 @@ def getlegendscheme(args, min, max, **kwargs):
                 cn = level_arg
                 ls = LegendManage.createLegendScheme(min, max, cn, cmap)
             else:
-                if isinstance(level_arg, MIArray):
+                if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
                 ls = LegendManage.createLegendScheme(min, max, level_arg, cmap)
         else:    
@@ -542,11 +542,11 @@ def setlegendscheme_point(ls, **kwargs):
     marker = kwargs.get('marker', None)
     i = 0
     for lb in ls.getLegendBreaks():
-        if isinstance(sizes, (list, tuple, MIArray)): 
+        if isinstance(sizes, (list, tuple, NDArray)): 
             kwargs['size'] = sizes[i]
-        if isinstance(colors, (list, tuple, MIArray)):
+        if isinstance(colors, (list, tuple, NDArray)):
             kwargs['color'] = colors[i]
-        if isinstance(marker, (list, tuple, MIArray)):
+        if isinstance(marker, (list, tuple, NDArray)):
             kwargs['marker'] = marker[i]
         setpointlegendbreak(lb, **kwargs)
         i += 1
@@ -567,11 +567,11 @@ def setlegendscheme_arrow(ls, **kwargs):
     marker = kwargs.get('marker', None)    
     for i in range(ls.getBreakNum()):
         lb = ls.getLegendBreak(i)
-        if isinstance(sizes, (list, tuple, MIArray)): 
+        if isinstance(sizes, (list, tuple, NDArray)): 
             kwargs['size'] = sizes[i]
-        if isinstance(colors, (list, tuple, MIArray)):
+        if isinstance(colors, (list, tuple, NDArray)):
             kwargs['color'] = colors[i]
-        if isinstance(marker, (list, tuple, MIArray)):
+        if isinstance(marker, (list, tuple, NDArray)):
             kwargs['marker'] = marker[i]
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
@@ -872,7 +872,7 @@ def makesymbolspec(geometry, *args, **kwargs):
     cols = kwargs.pop('colors', None)
     field = kwargs.pop('field', '')
     if not levels is None and not cols is None:
-        if isinstance(levels, MIArray):
+        if isinstance(levels, NDArray):
             levels = levels.aslist()
         colors = []
         for cobj in cols:
@@ -944,7 +944,7 @@ def makelegend(source, **kwargs):
             if values is None:
                 ls = None
             else:
-                if isinstance(values, MIArray):
+                if isinstance(values, NDArray):
                     values = values.aslist()
                 cbs = source.findBreaks(values)
                 ls = LegendScheme(cbs)

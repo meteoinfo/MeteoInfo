@@ -12,7 +12,7 @@ from org.meteoinfo.data.dataframe import DataFrame as MIDataFrame
 from org.meteoinfo.data.dataframe import Series as MISeries
 from ucar.ma2 import Range, Array
 
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from mipylib.numeric.dimarray import DimArray
 import mipylib.numeric.minum as minum
 import mipylib.miutil as miutil
@@ -46,18 +46,18 @@ class DataFrame(object):
                         if isinstance(v, (list, tuple)):
                             n = len(v)
                             v = minum.array(v)                    
-                        elif isinstance(v, MIArray):
+                        elif isinstance(v, NDArray):
                             n = len(v)
                         dlist.append(v)
                     for i in range(len(dlist)):
                         d = dlist[i]
-                        if not isinstance(d, MIArray):
+                        if not isinstance(d, NDArray):
                             d = [d] * n
                             d = minum.array(d)
                             dlist[i] = d
                     data = dlist
                     
-                if isinstance(data, MIArray):
+                if isinstance(data, NDArray):
                     n = len(data)
                     data = data.array
                 else:
@@ -73,7 +73,7 @@ class DataFrame(object):
                     if n != len(index):
                         raise ValueError('Wrong length of index!')
                         
-            if isinstance(index, (MIArray, DimArray)):
+            if isinstance(index, (NDArray, DimArray)):
                 index = index.tolist()
                 
             if isinstance(index, Index):
@@ -104,11 +104,11 @@ class DataFrame(object):
     def get_data(self):
         r = self._dataframe.getData()
         if isinstance(r, Array):
-            r = MIArray(r)
+            r = NDArray(r)
         else:
             rr = []
             for d in r:
-                rr.append(MIArray(d))
+                rr.append(NDArray(d))
             r = rr
         return r
         
@@ -180,7 +180,7 @@ class DataFrame(object):
             if data is None:
                 return data
             idx = self._index[:]
-            r = series.Series(MIArray(data), idx, key)
+            r = series.Series(NDArray(data), idx, key)
             return r
             
         hascolkey = True
@@ -234,7 +234,7 @@ class DataFrame(object):
                     eidx = self.shape[0] + eidx                    
             step = 1 if k.step is None else k.step
             rowkey = Range(sidx, eidx, step)
-        elif isinstance(k, (list,tuple,MIArray)):
+        elif isinstance(k, (list,tuple,NDArray)):
             if isinstance(k[0], int):
                 rowkey = k
             else:
@@ -294,7 +294,7 @@ class DataFrame(object):
             if isinstance(value[0], datetime.datetime):
                 value = miutil.jdatetime(value)
             value = minum.array(value)
-        if isinstance(value, MIArray):
+        if isinstance(value, NDArray):
             value = value.array            
             
         if isinstance(key, basestring):
@@ -558,8 +558,8 @@ class DataFrame(object):
             else:
                 raise KeyError(key)
             return ikey, rindex
-        elif isinstance(key, (list, tuple, MIArray, DimArray)) and isinstance(key[0], basestring):
-            if isinstance(key, (MIArray, DimArray)):
+        elif isinstance(key, (list, tuple, NDArray, DimArray)) and isinstance(key[0], basestring):
+            if isinstance(key, (NDArray, DimArray)):
                 key = key.asarray()            
             rkey = self.index.get_indices(key)
             ikey = rkey[0]
@@ -642,7 +642,7 @@ class DataFrame(object):
             if isinstance(value[0], datetime.datetime):
                 value = miutil.jdatetime(value)
             value = minum.array(value)
-        if isinstance(value, MIArray):
+        if isinstance(value, NDArray):
             value = value.array 
         self._dataframe.addColumn(loc, column, value)
         

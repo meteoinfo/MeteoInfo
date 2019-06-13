@@ -11,7 +11,7 @@ from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from ucar.nc2 import Attribute
 from ucar.ma2 import Range, Array, MAMath
 from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 import mipylib.numeric.minum as minum
 import mipylib.miutil as miutil
 import datetime
@@ -97,7 +97,7 @@ class DimVariable(object):
             rr = self.dataset.read(self.name)
             m = rr.findMember(indices)
             data = rr.getArray(0, m)
-            return MIArray(data)
+            return NDArray(data)
         
         if not isinstance(indices, tuple):
             inds = []
@@ -292,14 +292,14 @@ class DimVariable(object):
             if len(flips) > 0:
                 rrr = Array.factory(rr.getDataType(), rr.getShape())
                 MAMath.copy(rrr, rr)
-                array = MIArray(rrr)
+                array = NDArray(rrr)
             else:
-                array = MIArray(rr)
+                array = NDArray(rr)
             data = DimArray(array, dims, self.fill_value, self.dataset.proj)
             return data
     
     def read(self):
-        return MIArray(self.dataset.read(self.name))
+        return NDArray(self.dataset.read(self.name))
     
     # get dimension length
     def dimlen(self, idx):
@@ -320,15 +320,15 @@ class DimVariable(object):
             if dim.getDimType() == DimensionType.T:
                 return miutil.nums2dates(dim.getDimValue())
             else:
-                return MIArray(ArrayUtil.array(self.dims[idx].getDimValue()))
+                return NDArray(ArrayUtil.array(self.dims[idx].getDimValue()))
         else:
-            return MIArray(ArrayUtil.array(self.dims[idx].getDimValue()))
+            return NDArray(ArrayUtil.array(self.dims[idx].getDimValue()))
         
     def attrvalue(self, key):
         attr = self.variable.findAttribute(key)
         if attr is None:
             return None
-        v = MIArray(attr.getValues())
+        v = NDArray(attr.getValues())
         return v
         
     def xdim(self):
@@ -356,13 +356,13 @@ class DimVariable(object):
         return None
         
     def adddim(self, dimtype, dimvalue):
-        if isinstance(dimvalue, MIArray):
+        if isinstance(dimvalue, NDArray):
             dimvalue = dimvalue.aslist()
         self.variable.addDimension(dimtype, dimvalue)
         self.ndim = self.variable.getDimNumber()
         
     def setdim(self, dimtype, dimvalue, index=None, reverse=False):
-        if isinstance(dimvalue, MIArray):
+        if isinstance(dimvalue, NDArray):
             dimvalue = dimvalue.aslist()
         if index is None:
             self.variable.setDimension(dimtype, dimvalue, reverse)

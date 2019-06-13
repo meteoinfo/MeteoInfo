@@ -10,7 +10,7 @@ from ucar.nc2 import Attribute
 from dimvariable import DimVariable, TDimVariable
 from mipylib.numeric.dimarray import DimArray, PyGridData, PyStationData
 from mipylib.geolib.milayer import MILayer, MIXYListData
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from mipylib.dataframe.dataframe import DataFrame
 import mipylib.miutil as miutil
 import mipylib.numeric.minum as minum
@@ -102,7 +102,7 @@ class DimDataFile(object):
         attr = self.dataset.getDataInfo().findGlobalAttribute(key)
         if attr is None:
             return None
-        v = MIArray(attr.getValues())
+        v = NDArray(attr.getValues())
         return v
         
     def variables(self):
@@ -307,7 +307,7 @@ class DimDataFile(object):
                     attrvalue[i] = Float(attrvalue[i])
             else:
                 attrvalue = Float(attrvalue)
-        if isinstance(attrvalue, MIArray):
+        if isinstance(attrvalue, NDArray):
             attrvalue = attrvalue.array
         return self.ncfile.addGroupAttribute(group, Attribute(attrname, attrvalue))
  
@@ -358,7 +358,7 @@ class DimDataFile(object):
         :param value: (*array_like*) Data array to be write.
         :param origin: (*list*) Dimensions origin indices. None means all from 0.
         '''
-        if isinstance(value, MIArray):
+        if isinstance(value, NDArray):
             value = value.array
         if self.access == 'c':
             ncvariable = variable.ncvariable
@@ -407,7 +407,7 @@ class DimDataFile(object):
         
         :param leveles: (*list*) Vertical levels.
         '''
-        if isinstance(levels, MIArray):
+        if isinstance(levels, NDArray):
             levels = levels.aslist()
         if levels[0] != 1:
             levels.insert(0, 1)

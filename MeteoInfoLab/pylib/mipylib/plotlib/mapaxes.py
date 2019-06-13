@@ -25,7 +25,7 @@ from java.awt import Font, Color
 
 from axes import Axes
 from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from mipylib.geolib.milayer import MILayer
 import mipylib.geolib.migeo as migeo
 import plotutil
@@ -515,9 +515,9 @@ class MapAxes(Axes):
                     if len(lat) == 1:
                         displaytype = 'point'
                     else:
-                        if isinstance(lon, (MIArray, DimArray)):
+                        if isinstance(lon, (NDArray, DimArray)):
                             lon = lon.aslist()
-                        if isinstance(lat, (MIArray, DimArray)):
+                        if isinstance(lat, (NDArray, DimArray)):
                             lat = lat.aslist()
 
                 lbreak, isunique = plotutil.getlegendbreak(displaytype, **kwargs)
@@ -865,16 +865,16 @@ class MapAxes(Axes):
         else:
             x = args[0]
             y = args[1]
-            if not isinstance(x, MIArray):
+            if not isinstance(x, NDArray):
                 x = minum.array(x)
-            if not isinstance(y, MIArray):
+            if not isinstance(y, NDArray):
                 y = minum.array(y)
             if n == 2:
                 a = x
                 args = args[2:]
             else:
                 a = args[2]
-                if not isinstance(a, MIArray):
+                if not isinstance(a, NDArray):
                     a = minum.array(a)
                 args = args[3:]
 		
@@ -893,11 +893,11 @@ class MapAxes(Axes):
                     isunique = True
             size = kwargs.get('size', None)
             if not size is None:
-                if isinstance(size, (list, tuple, MIArray)) and len(size) == x.size:
+                if isinstance(size, (list, tuple, NDArray)) and len(size) == x.size:
                     isunique = True
             marker = kwargs.get('marker', None)
             if not marker is None:
-                if isinstance(marker, (list, tuple, MIArray)) and len(marker) == x.size:
+                if isinstance(marker, (list, tuple, NDArray)) and len(marker) == x.size:
                     isunique = True
             if isunique:
                 ls = LegendManage.createUniqValueLegendScheme(x.size, ShapeTypes.Point)
@@ -1123,7 +1123,7 @@ class MapAxes(Axes):
                         cn = level_arg
                         ls = LegendManage.createImageLegend(gdata, cn, cmap)
                     else:
-                        if isinstance(level_arg, MIArray):
+                        if isinstance(level_arg, NDArray):
                             level_arg = level_arg.aslist()
                         ls = LegendManage.createImageLegend(gdata, level_arg, cmap)
             else:    
@@ -1304,7 +1304,7 @@ class MapAxes(Axes):
         iscolor = False
         cdata = None
         onlyuv = True
-        if n >= 4 and isinstance(args[3], (DimArray, MIArray)):
+        if n >= 4 and isinstance(args[3], (DimArray, NDArray)):
             onlyuv = False
         if onlyuv:
             u = minum.asarray(args[0])
@@ -1336,7 +1336,7 @@ class MapAxes(Axes):
                 if levs is None:
                     ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
                 else:
-                    if isinstance(levs, MIArray):
+                    if isinstance(levs, NDArray):
                         levs = levs.tolist()
                     ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), levs, cmap)
         else:    
@@ -1395,7 +1395,7 @@ class MapAxes(Axes):
         iscolor = False
         cdata = None
         onlyuv = True
-        if n >= 4 and isinstance(args[3], (DimArray, MIArray)):
+        if n >= 4 and isinstance(args[3], (DimArray, NDArray)):
             onlyuv = False
         if onlyuv:
             u = minum.asarray(args[0])
@@ -1427,7 +1427,7 @@ class MapAxes(Axes):
                 if levs is None:
                     ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
                 else:
-                    if isinstance(levs, MIArray):
+                    if isinstance(levs, NDArray):
                         levs = levs.tolist()
                     ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), levs, cmap)
         else:    

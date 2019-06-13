@@ -9,7 +9,7 @@
 from org.meteoinfo.math.fitting import FittingUtil
 from org.meteoinfo.data import ArrayMath, ArrayUtil
 
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 
 __all__ = [
     'powerfit', 'expfit','polyfit','polyval','predict'
@@ -26,9 +26,9 @@ def powerfit(x, y, func=False):
     :returns: Fitting parameters and function (optional).
     '''
     if isinstance(x, list):
-        x = MIArray(ArrayUtil.array(x))
+        x = NDArray(ArrayUtil.array(x))
     if isinstance(y, list):
-        y = MIArray(ArrayUtil.array(y))
+        y = NDArray(ArrayUtil.array(y))
     r = FittingUtil.powerFit(x.asarray(), y.asarray())
     if func:
         return r[0], r[1], r[2], r[3]
@@ -46,9 +46,9 @@ def expfit(x, y, func=False):
     :returns: Fitting parameters and function (optional).
     '''
     if isinstance(x, list):
-        x = MIArray(ArrayUtil.array(x))
+        x = NDArray(ArrayUtil.array(x))
     if isinstance(y, list):
-        y = MIArray(ArrayUtil.array(y))
+        y = NDArray(ArrayUtil.array(y))
     r = FittingUtil.expFit(x.asarray(), y.asarray())
     if func:
         return r[0], r[1], r[2], r[3]
@@ -67,9 +67,9 @@ def polyfit(x, y, degree, func=False):
     :returns: Fitting parameters and function (optional).
     '''
     if isinstance(x, list):
-        x = MIArray(ArrayUtil.array(x))
+        x = NDArray(ArrayUtil.array(x))
     if isinstance(y, list):
-        y = MIArray(ArrayUtil.array(y))
+        y = NDArray(ArrayUtil.array(y))
     r = FittingUtil.polyFit(x.asarray(), y.asarray(), degree)
     if func:
         return r[0], r[1], r[2]
@@ -95,8 +95,8 @@ def polyval(p, x):
     :returns: Polynomial value
     """
     if isinstance(x, list):
-        x = MIArray(ArrayUtil.array(x))
-    return MIArray(ArrayMath.polyVal(p, x.asarray()))
+        x = NDArray(ArrayUtil.array(x))
+    return NDArray(ArrayMath.polyVal(p, x.asarray()))
     
 def predict(func, x):
     '''
@@ -111,5 +111,5 @@ def predict(func, x):
         return func.predict(x)
         
     if isinstance(x, list):
-        x = MIArray(ArrayUtil.array(x))
-    return MIArray(FittingUtil.predict(x.asarray(), func))
+        x = NDArray(ArrayUtil.array(x))
+    return NDArray(FittingUtil.predict(x.asarray(), func))

@@ -8,7 +8,7 @@
 import datetime
 import mipylib.numeric.minum as minum
 import mipylib.miutil as miutil
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from mipylib.numeric.dimarray import DimArray
 import midata as midata
 from dimdatafile import DimDataFile
@@ -249,7 +249,7 @@ def dimension(dimvalue, dimname='null', dimtype=None):
     :param dimname: (*string*) Dimension name.
     :param dimtype: (*DimensionType*) Dimension type.
     """
-    if isinstance(dimvalue, (MIArray, DimArray)):
+    if isinstance(dimvalue, (NDArray, DimArray)):
         dimvalue = dimvalue.aslist()
     dtype = DimensionType.Other
     if not dimtype is None:
@@ -278,7 +278,7 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, largefile=False):
     :param largefile: (*boolean*) Create netCDF as large file or not.
     """
     if dims is None:
-        if isinstance(data, MIArray):
+        if isinstance(data, NDArray):
             dims = []
             for s in data.shape:
                 dimvalue = minum.arange(s)

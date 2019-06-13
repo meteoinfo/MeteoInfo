@@ -10,7 +10,7 @@ import datetime
 from org.meteoinfo.data import TableData, TimeTableData, ArrayUtil, TableUtil, DataTypes
 from ucar.ma2 import Range
 
-from miarray import MIArray
+from multiarray import NDArray
 import mipylib.miutil as miutil
 
 from java.util import Calendar, Date
@@ -31,7 +31,7 @@ class PyTableData(object):
         if isinstance(key, basestring):     
             coldata = self.data.getColumnData(key)
             if coldata.getDataType().isNumeric():
-                return MIArray(ArrayUtil.array(coldata.getDataValues()))
+                return NDArray(ArrayUtil.array(coldata.getDataValues()))
             elif coldata.getDataType() == DataTypes.Date:
                 vv = coldata.getData()
                 r = []
@@ -48,7 +48,7 @@ class PyTableData(object):
                     r.append(dt)
                 return r
             else:
-                return MIArray(ArrayUtil.array(coldata.getData()))
+                return NDArray(ArrayUtil.array(coldata.getData()))
                         
         hascolkey = True
         if isinstance(key, tuple): 
@@ -149,9 +149,9 @@ class PyTableData(object):
             rows = self.data.getRows(rowkey)
             coldata = self.data.getColumnData(rows, k)
             if coldata.getDataType().isNumeric():
-                return MIArray(ArrayUtil.array(coldata.getDataValues()))
+                return NDArray(ArrayUtil.array(coldata.getDataValues()))
             else:
-                return MIArray(ArrayUtil.array(coldata.getData()))
+                return NDArray(ArrayUtil.array(coldata.getData()))
         else:
             return None
         
@@ -163,7 +163,7 @@ class PyTableData(object):
         return PyTableData(r)
         
     def __setitem__(self, key, value):
-        if isinstance(value, MIArray):
+        if isinstance(value, NDArray):
             self.data.setColumnData(key, value.aslist())
         else:
             self.data.setColumnData(key, value)
@@ -239,12 +239,12 @@ class PyTableData(object):
         
         :param key: (*string*) Column name.
         
-        :returns: (*MIArray*) Colomn data.
+        :returns: (*NDArray*) Colomn data.
         '''
         if isinstance(key, str):
             print key     
             values = self.data.getColumnData(key).getDataValues()
-            return MIArray(ArrayUtil.array(values))
+            return NDArray(ArrayUtil.array(values))
         return None
         
     def getvalue(self, row, col):
@@ -281,7 +281,7 @@ class PyTableData(object):
         :param index: (*int*) The order index of the column to be added. Default is ``None``, the
             column will be added as last column.
         '''
-        if isinstance(coldata, MIArray):
+        if isinstance(coldata, NDArray):
             coldata = coldata.aslist()
         if index is None:
             self.data.addColumnData(colname, dtype, coldata)

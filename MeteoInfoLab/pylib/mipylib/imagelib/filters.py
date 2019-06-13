@@ -9,7 +9,7 @@
 from org.meteoinfo.shape import Graphic
 from org.meteoinfo.image import ImageUtil
 from mipylib.geolib.milayer import MILayer
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from org.meteoinfo.image.filter import ContrastFilter, SharpenFilter, RGBAdjustFilter, ChannelMixFilter, \
     GainFilter, GammaFilter, GrayFilter, GrayscaleFilter, HSBAdjustFilter, InvertAlphaFilter, \
     InvertFilter, LevelsFilter, MaskFilter, PosterizeFilter, RescaleFilter, SolarizeFilter, \
@@ -30,7 +30,7 @@ def __getimage(src):
         return src.getShape().getImage()
     elif isinstance(src, MILayer):
         return src.layer.getImage()
-    elif isinstance(src, MIArray):
+    elif isinstance(src, NDArray):
         return ImageUtil.createImage(src.asarray())
     return None
     
@@ -41,9 +41,9 @@ def __getreturn(src, dst):
     elif isinstance(src, MILayer):
         src.layer.setImage(dst)
         return src
-    elif isinstance(src, MIArray):
+    elif isinstance(src, NDArray):
         r = ImageUtil.imageRead(dst)
-        return MIArray(r)
+        return NDArray(r)
     else:
         return dst
     
@@ -557,7 +557,7 @@ def count(a, size):
     :returns: (*array_like*) Count result.
     '''
     r = ImageUtil.count(a.asarray(), size)
-    return MIArray(r)
+    return NDArray(r)
     
 def mean(a, size, positive=True):
     '''
@@ -570,4 +570,4 @@ def mean(a, size, positive=True):
     :returns: (*array_like*) Mean result.
     '''
     r = ImageUtil.mean(a.asarray(), size, positive)
-    return MIArray(r)
+    return NDArray(r)

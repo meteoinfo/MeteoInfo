@@ -22,7 +22,7 @@ from javax.swing import WindowConstants
 from java.awt import Font
 
 from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 import mipylib.numeric.minum as minum
 import mipylib.miutil as miutil
 from axes import Axes, PolarAxes
@@ -1673,7 +1673,7 @@ def xticks(*args, **kwargs):
     if len(args) > 0:
         locs = args[0]
         if len(locs) > 0:
-            if isinstance(locs, MIArray):
+            if isinstance(locs, NDArray):
                 locs = locs.aslist()
             if isinstance(locs[0], datetime.datetime):
                 for i in range(len(locs)):
@@ -1682,7 +1682,7 @@ def xticks(*args, **kwargs):
         args = args[1:]
     if len(args) > 0:
         labels = args[0]
-        if isinstance(labels, (MIArray, DimArray)):
+        if isinstance(labels, (NDArray, DimArray)):
             labels = labels.aslist()
     else:
         labels = None
@@ -1705,7 +1705,7 @@ def yticks(*args, **kwargs):
     if len(args) > 0:
         locs = args[0]
         if len(locs) > 0:
-            if isinstance(locs, (MIArray, DimArray)):
+            if isinstance(locs, (NDArray, DimArray)):
                 locs = locs.aslist()
             if isinstance(locs[0], datetime.datetime):
                 for i in range(len(locs)):
@@ -1714,7 +1714,7 @@ def yticks(*args, **kwargs):
         args = args[1:]
     if len(args) > 0:
         labels = args[0]
-        if isinstance(labels, (MIArray, DimArray)):
+        if isinstance(labels, (NDArray, DimArray)):
             labels = labels.aslist()
     else:
         labels = None
@@ -1739,7 +1739,7 @@ def zticks(*args, **kwargs):
         
     if len(args) > 0:
         locs = args[0]
-        if isinstance(locs, (MIArray, DimArray)):
+        if isinstance(locs, (NDArray, DimArray)):
             locs = locs.aslist()
         if isinstance(locs[0], datetime.datetime):
             for i in range(len(locs)):
@@ -1748,7 +1748,7 @@ def zticks(*args, **kwargs):
         args = args[1:]
     if len(args) > 0:
         labels = args[0]
-        if isinstance(labels, (MIArray, DimArray)):
+        if isinstance(labels, (NDArray, DimArray)):
             labels = labels.aslist()
     else:
         labels = None
@@ -2754,7 +2754,7 @@ def makesymbolspec(geometry, *args, **kwargs):
     cols = kwargs.pop('colors', None)
     field = kwargs.pop('field', '')
     if not levels is None and not cols is None:
-        if isinstance(levels, MIArray):
+        if isinstance(levels, NDArray):
             levels = levels.aslist()
         colors = []
         for cobj in cols:

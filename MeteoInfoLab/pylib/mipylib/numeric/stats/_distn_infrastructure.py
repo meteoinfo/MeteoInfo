@@ -10,7 +10,7 @@ from org.meteoinfo.math.distribution import DistributionUtil
 from org.apache.commons.math3.distribution import RealDistribution
 
 import mipylib.numeric.minum as minum
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 
 import numbers
 
@@ -58,7 +58,7 @@ class rv_continuous(object):
         dist = self._create_distribution(*args)
         size = kwargs.pop('size', 1)        
         r = DistributionUtil.rvs(dist, size)
-        return MIArray(r)
+        return NDArray(r)
     
     def pdf(self, x, *args, **kwargs):
         '''
@@ -73,10 +73,10 @@ class rv_continuous(object):
         dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
             x = minum.array(x)
-        if isinstance(x, MIArray):
+        if isinstance(x, NDArray):
             x = x.array
         r = DistributionUtil.pdf(dist, x)
-        return MIArray(r)
+        return NDArray(r)
         
     def logpdf(self, x, *args, **kwargs):
         '''
@@ -91,10 +91,10 @@ class rv_continuous(object):
         dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
             x = minum.array(x)
-        if isinstance(x, MIArray):
+        if isinstance(x, NDArray):
             x = x.array
         r = DistributionUtil.logpdf(dist, x)
-        return MIArray(r)
+        return NDArray(r)
         
     def cdf(self, x, *args, **kwargs):
         '''
@@ -109,10 +109,10 @@ class rv_continuous(object):
         dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
             x = minum.array(x)
-        if isinstance(x, MIArray):
+        if isinstance(x, NDArray):
             x = x.array
         r = DistributionUtil.cdf(dist, x)
-        return MIArray(r)
+        return NDArray(r)
         
     def pmf(self, x, *args, **kwargs):
         '''
@@ -127,10 +127,10 @@ class rv_continuous(object):
         dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
             x = minum.array(x)
-        if isinstance(x, MIArray):
+        if isinstance(x, NDArray):
             x = x.array
         r = DistributionUtil.pmf(dist, x)
-        return MIArray(r)
+        return NDArray(r)
         
     def ppf(self, x, *args, **kwargs):
         '''
@@ -145,10 +145,10 @@ class rv_continuous(object):
         dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
             x = minum.array(x)
-        if isinstance(x, MIArray):
+        if isinstance(x, NDArray):
             x = x.array
         r = DistributionUtil.ppf(dist, x)
-        return MIArray(r)
+        return NDArray(r)
         
     def mean(self, *args, **kwargs):
         '''

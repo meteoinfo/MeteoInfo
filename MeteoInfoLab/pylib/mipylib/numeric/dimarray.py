@@ -10,7 +10,7 @@ from org.meteoinfo.data.meteodata import Dimension, DimensionType
 from org.meteoinfo.geoprocess.analysis import ResampleMethods
 from org.meteoinfo.global import PointD
 from ucar.ma2 import Array, Range, MAMath, DataType
-from miarray import MIArray
+from multiarray import NDArray
 import math
 import datetime
 import mipylib.miutil as miutil
@@ -20,11 +20,11 @@ from java.util import ArrayList
 nan = Double.NaN
 
 # Dimension array
-class DimArray(MIArray):
+class DimArray(NDArray):
     
     # array must be a ucar.ma2.Array object
     def __init__(self, array, dims=None, fill_value=-9999.0, proj=None):
-        if isinstance(array, MIArray):
+        if isinstance(array, NDArray):
             array = array.array
         super(DimArray, self).__init__(array)
         self.dims = None
@@ -227,14 +227,14 @@ class DimArray(MIArray):
         
         if isempty:
             r = ArrayUtil.zeros(nshape, 'int')
-            return MIArray(r)
+            return NDArray(r)
         
         if onlyrange:
             r = ArrayMath.section(self.array, ranges)
         else:
             if alllist:
                 r = ArrayMath.takeValues(self.array, ranges)
-                return MIArray(r)
+                return NDArray(r)
             else:
                 r = ArrayMath.take(self.array, ranges)
         if r.getSize() == 1:
@@ -244,7 +244,7 @@ class DimArray(MIArray):
                 r = r.flip(i)
             rr = Array.factory(r.getDataType(), r.getShape())
             MAMath.copy(rr, r)
-            array = MIArray(rr)
+            array = NDArray(rr)
             data = DimArray(array, ndims, self.fill_value, self.proj)
             return data        
         
@@ -460,7 +460,7 @@ class DimArray(MIArray):
             r = r.flip(i)
         rr = Array.factory(r.getDataType(), r.getShape());
         MAMath.copy(rr, r);
-        array = MIArray(rr)
+        array = NDArray(rr)
         data = DimArray(array, dims, self.fill_value, self.proj)
         return data
     
@@ -490,9 +490,9 @@ class DimArray(MIArray):
             if dim.getDimType() == DimensionType.T:
                 return miutil.nums2dates(dim.getDimValue())
             else:
-                return MIArray(ArrayUtil.array(self.dims[idx].getDimValue()))
+                return NDArray(ArrayUtil.array(self.dims[idx].getDimValue()))
         else:
-            return MIArray(ArrayUtil.array(self.dims[idx].getDimValue()))
+            return NDArray(ArrayUtil.array(self.dims[idx].getDimValue()))
         
     def setdimvalue(self, idx, dimvalue):
         '''
@@ -501,7 +501,7 @@ class DimArray(MIArray):
         :param idx: (*int*) Dimension index.
         :param dimvalue: (*array_like*) Dimension value.
         '''
-        if isinstance(dimvalue, MIArray):
+        if isinstance(dimvalue, NDArray):
             dimvalue = dimvalue.aslist()
         self.dims[idx].setDimValues(dimvalue)
         
@@ -534,7 +534,7 @@ class DimArray(MIArray):
         if isinstance(dimvalue, Dimension):
             dim = dimvalue
         else:
-            if isinstance(dimvalue, (MIArray, DimArray)):
+            if isinstance(dimvalue, (NDArray, DimArray)):
                 dimvalue = dimvalue.aslist()
             dtype = DimensionType.Other
             if not dimtype is None:
@@ -817,16 +817,16 @@ class DimArray(MIArray):
         
         :returns: (*DimArray*) Maskouted data.
         '''
-        if isinstance(mask, MIArray):
+        if isinstance(mask, NDArray):
             r = ArrayMath.maskout(self.asarray(), mask.asarray())
-            return DimArray(MIArray(r), self.dims, self.fill_value, self.proj)
+            return DimArray(NDArray(r), self.dims, self.fill_value, self.proj)
         else:
             x = self.dims[1].getDimValue()
             y = self.dims[0].getDimValue()
             if not isinstance(mask, (list, ArrayList)):
                 mask = [mask]
             r = ArrayMath.maskout(self.asarray(), x, y, mask)
-            r = DimArray(MIArray(r), self.dims, self.fill_value, self.proj)
+            r = DimArray(NDArray(r), self.dims, self.fill_value, self.proj)
             return r
             
     def maskin(self, mask):
@@ -837,7 +837,7 @@ class DimArray(MIArray):
         
         :returns: (*DimArray*) Maskined data.
         '''
-        if isinstance(mask, MIArray):
+        if isinstance(mask, NDArray):
             r = ArrayMath.maskin(self.asarray(), mask.asarray())
             return DimArray(r, self.dims, self.fill_value, self.proj)
         else:
@@ -868,7 +868,7 @@ class DimArray(MIArray):
                 dims.append(self.dims[dim1])
             else:
                 dims.append(self.dims[i])
-        return DimArray(MIArray(r), dims, self.fill_value, self.proj) 
+        return DimArray(NDArray(r), dims, self.fill_value, self.proj) 
         
     T = property(transpose)
     
@@ -991,7 +991,7 @@ class DimArray(MIArray):
         for i in range(self.ndim):
             points.append(ArrayUtil.array(self.dims[i].getDimValue()))
         if isinstance(xi, (list, tuple)):
-            if isinstance(xi[0], MIArray):
+            if isinstance(xi[0], NDArray):
                 nxi = []
                 for x in xi:
                     nxi.append(x.array)
@@ -1001,20 +1001,20 @@ class DimArray(MIArray):
                     if isinstance(x, datetime.datetime):
                         x = miutil.date2num(x)
                     nxi.append(x)
-                nxi = MIArray(nxi).array
+                nxi = NDArray(nxi).array
         else:
             nxi = nxi.array
         r = ArrayUtil.interpn(points, self.array, nxi)
         if isinstance(r, Array):
-            return MIArray(r)
+            return NDArray(r)
         else:
             return r
      
     def tostation(self, x, y):
         gdata = self.asgriddata()
-        if isinstance(x, MIArray) or isinstance(x, DimArray):
+        if isinstance(x, NDArray) or isinstance(x, DimArray):
             r = gdata.data.toStation(x.aslist(), y.aslist())
-            return MIArray(ArrayUtil.array(r))
+            return NDArray(ArrayUtil.array(r))
         else:
             return gdata.data.toStation(x, y)
             
@@ -1027,7 +1027,7 @@ class DimArray(MIArray):
         :param toproj: To projection.
         :param method: Interpolation method: ``bilinear`` or ``neareast`` .
         
-        :returns: (*MIArray*) Projected array
+        :returns: (*NDArray*) Projected array
         """
         yy = self.dims[self.ndim - 2].getDimValue()
         xx = self.dims[self.ndim - 1].getDimValue()
@@ -1041,12 +1041,12 @@ class DimArray(MIArray):
             y = pr[2]
             dims = self.dims
             ydim = Dimension(DimensionType.Y)
-            ydim.setDimValues(MIArray(y).aslist())
+            ydim.setDimValues(NDArray(y).aslist())
             dims[-2] = ydim
             xdim = Dimension(DimensionType.X)
-            xdim.setDimValues(MIArray(x).aslist())    
+            xdim.setDimValues(NDArray(x).aslist())    
             dims[-1] = xdim
-            rr = DimArray(MIArray(r), dims, self.fill_value, toproj)
+            rr = DimArray(NDArray(r), dims, self.fill_value, toproj)
             return rr
         
         if method == 'bilinear':
@@ -1054,12 +1054,12 @@ class DimArray(MIArray):
         else:
             method = ResampleMethods.NearestNeighbor
         if isinstance(x, (list, tuple)):
-            x = MIArray(x)
+            x = NDArray(x)
         if isinstance(y, (list, tuple)):
-            y = MIArray(y)
+            y = NDArray(y)
         x, y = ArrayUtil.meshgrid(x.asarray(), y.asarray())
         r = ArrayUtil.reproject(self.array, xx, yy, x, y, self.proj, toproj, method)
-        return MIArray(r)
+        return NDArray(r)
             
     def join(self, b, dimidx):
         r = ArrayMath.join(self.array, b.array, dimidx)
@@ -1084,7 +1084,7 @@ class DimArray(MIArray):
                 rdims.append(ndim)
             else:
                 rdims.append(self.dims[i])
-        return DimArray(MIArray(r), rdims, self.fill_value, self.proj)
+        return DimArray(NDArray(r), rdims, self.fill_value, self.proj)
         
     def savegrid(self, fname, format='surfer', **kwargs):
         '''
@@ -1250,7 +1250,7 @@ class PyGridData():
     def asdimarray(self):
         a = self.data.getArray()
         dims = self.data.getDimensions()
-        return DimArray(MIArray(a), dims, self.data.missingValue, self.data.projInfo)
+        return DimArray(NDArray(a), dims, self.data.missingValue, self.data.projInfo)
 
     def savedata(self, filename):
         self.data.saveAsSurferASCIIFile(filename)
@@ -1351,7 +1351,7 @@ class PyStationData():
         
     def toarray(self):
         r = ArrayUtil.getArraysFromStationData(self.data)
-        return MIArray(r[0]), MIArray(r[1]), MIArray(r[2])
+        return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])
         
     def min(self):
         return self.data.getMinValue()
@@ -1393,23 +1393,23 @@ class PyStationData():
     def griddata(self, xi=None, **kwargs):
         method = kwargs.pop('method', 'idw')
         fill_value = self.data.missingValue
-        x_s = MIArray(ArrayUtil.array(self.data.getXList()))
-        y_s = MIArray(ArrayUtil.array(self.data.getYList()))
+        x_s = NDArray(ArrayUtil.array(self.data.getXList()))
+        y_s = NDArray(ArrayUtil.array(self.data.getYList()))
         if xi is None:            
             xn = int(math.sqrt(len(x_s)))
             yn = xn
-            x_g = MIArray(ArrayUtil.lineSpace(x_s.min(), x_s.max(), xn, True))
-            y_g = MIArray(ArrayUtil.lineSpace(y_s.min(), y_s.max(), yn, True))     
+            x_g = NDArray(ArrayUtil.lineSpace(x_s.min(), x_s.max(), xn, True))
+            y_g = NDArray(ArrayUtil.lineSpace(y_s.min(), y_s.max(), yn, True))     
         else:
             x_g = xi[0]
             y_g = xi[1]
-        if isinstance(x_s, MIArray):
+        if isinstance(x_s, NDArray):
             x_s = x_s.aslist()
-        if isinstance(y_s, MIArray):
+        if isinstance(y_s, NDArray):
             y_s = y_s.aslist()    
-        if isinstance(x_g, MIArray):
+        if isinstance(x_g, NDArray):
             x_g = x_g.aslist()
-        if isinstance(y_g, MIArray):
+        if isinstance(y_g, NDArray):
             y_g = y_g.aslist()
         if method == 'idw':
             pnum = kwargs.pop('pointnum', 2)
@@ -1422,7 +1422,7 @@ class PyStationData():
                 return PyGridData(r)
         elif method == 'cressman':
             radius = kwargs.pop('radius', [10, 7, 4, 2, 1])
-            if isinstance(radius, MIArray):
+            if isinstance(radius, NDArray):
                 radius = radius.aslist()
             r = self.data.interpolate_Cressman(x_g, y_g, radius, fill_value)
             return PyGridData(r)

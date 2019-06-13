@@ -6,7 +6,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.meteo import MeteoMath
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from mipylib.numeric.dimarray import DimArray
 import constants as constants
 import meteo as meteo

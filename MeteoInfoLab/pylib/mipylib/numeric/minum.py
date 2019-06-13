@@ -16,7 +16,7 @@ from org.meteoinfo.math.interpolate import InterpUtil
 from ucar.ma2 import Array
 
 from dimarray import PyGridData, DimArray, PyStationData
-from miarray import MIArray
+from multiarray import NDArray
 from mitable import PyTableData
 
 from java.lang import Math, Double, Float
@@ -56,7 +56,7 @@ def array(object):
     
     :param object: (*array_like*) A Jython list or digital object.
                         
-    :returns: (*MIArray*) An array object satisfying the specified requirements.
+    :returns: (*NDArray*) An array object satisfying the specified requirements.
                     
     Examples
     
@@ -75,20 +75,20 @@ def array(object):
         array([[1.0, 2.0]
               [3.0, 4.0]])
     """
-    if isinstance(object, MIArray):
+    if isinstance(object, NDArray):
         return object
-    return MIArray(ArrayUtil.array(object))
+    return NDArray(ArrayUtil.array(object))
     
 def dim_array(a, dims=None):
     '''
     Create a dimension array (DimArray).
     
-    :param a: (*array_like*) Array (MIArray) or data list.
+    :param a: (*array_like*) Array (NDArray) or data list.
     :param dims: (*list*) List of dimensions.
     
     :returns: (*DimArray*) Dimension array.
     '''
-    if not isinstance(a, MIArray):
+    if not isinstance(a, NDArray):
         a = array(a)
     if dims is None:
         dims = []
@@ -106,7 +106,7 @@ def isarray(a):
     
     :returns: (*boolean*) True if the input object is an array.
     '''
-    return isinstance(a, MIArray)
+    return isinstance(a, NDArray)
     
 def datatable(data=None):
     '''
@@ -139,7 +139,7 @@ def arange(*args):
     :param dtype: (*dtype*) The type of output array. If dtype is not given, infer the data
         type from the other input arguments.
         
-    :returns: (*MIArray*) Array of evenly spaced values.
+    :returns: (*NDArray*) Array of evenly spaced values.
     
     Examples::
     
@@ -160,7 +160,7 @@ def arange(*args):
         start = args[0]
         stop = args[1]
         step = args[2]
-    return MIArray(ArrayUtil.arrayRange(start, stop, step))
+    return NDArray(ArrayUtil.arrayRange(start, stop, step))
     
 def arange1(start, num=50, step=1):
     """
@@ -173,7 +173,7 @@ def arange1(start, num=50, step=1):
         is the distance between two adjacent values, ``out[i+1] - out[i]``. The default
         step size is 1.
         
-    :returns: (*MIArray*) Array of evenly spaced values.
+    :returns: (*NDArray*) Array of evenly spaced values.
     
     Examples::
     
@@ -182,7 +182,7 @@ def arange1(start, num=50, step=1):
         >>> arange1(2, 5, 0.1)
         array([2.0, 2.1, 2.2, 2.3, 2.4])
     """
-    return MIArray(ArrayUtil.arrayRange1(start, num, step))
+    return NDArray(ArrayUtil.arrayRange1(start, num, step))
     
 def linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None):
     """
@@ -204,7 +204,7 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None):
     :param dtype: (*dtype*) The type of output array. If dtype is not given, infer the data
         type from the other input arguments.
         
-    :returns: (*MIArray*) Array of evenly spaced values.
+    :returns: (*NDArray*) Array of evenly spaced values.
     
     Examples::
     
@@ -213,7 +213,7 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None):
         >>> linspace(2.0, 3.0, num=5, endpoint=False)
         array([2.0, 2.25, 2.5, 2.75])
     """
-    return MIArray(ArrayUtil.lineSpace(start, stop, num, endpoint))
+    return NDArray(ArrayUtil.lineSpace(start, stop, num, endpoint))
     
 def logspace(start, stop, num=50, endpoint=True, base=10.0, dtype=None):
     """
@@ -235,7 +235,7 @@ def logspace(start, stop, num=50, endpoint=True, base=10.0, dtype=None):
     :param dtype: (*dtype*) The type of output array. If dtype is not given, infer the data
         type from the other input arguments.
         
-    :returns: (*MIArray*) Array of evenly spaced values.
+    :returns: (*NDArray*) Array of evenly spaced values.
     
     Examples::
     
@@ -244,7 +244,7 @@ def logspace(start, stop, num=50, endpoint=True, base=10.0, dtype=None):
         >>> logspace(2.0, 3.0, num=4, base=2.0)
         array([4.0, 5.0396839219614975, 6.349604557649573, 8.0])
     """
-    r = MIArray(ArrayUtil.lineSpace(start, stop, num, endpoint))
+    r = NDArray(ArrayUtil.lineSpace(start, stop, num, endpoint))
     r = pow(base, r)
     return r
 
@@ -256,7 +256,7 @@ def empty(shape, dtype='float'):
     :param dtype: (*data-type, optional*) The desired data-type for the array, including 'int', 
         'float' and 'double'.
         
-    :returns: (*MIArray*) Array of zeros with the given shape and dtype.
+    :returns: (*NDArray*) Array of zeros with the given shape and dtype.
                     
     Examples::
     
@@ -273,7 +273,7 @@ def empty(shape, dtype='float'):
         shapelist.append(shape)
     else:
         shapelist = shape
-    return MIArray(ArrayUtil.zeros(shapelist, dtype))
+    return NDArray(ArrayUtil.zeros(shapelist, dtype))
     
 def zeros(shape, dtype='float'):
     """
@@ -283,7 +283,7 @@ def zeros(shape, dtype='float'):
     :param dtype: (*data-type, optional*) The desired data-type for the array, including 'int', 
         'float' and 'double'.
         
-    :returns: (*MIArray*) Array of zeros with the given shape and dtype.
+    :returns: (*NDArray*) Array of zeros with the given shape and dtype.
                     
     Examples::
     
@@ -300,7 +300,7 @@ def zeros(shape, dtype='float'):
         shapelist.append(shape)
     else:
         shapelist = shape
-    return MIArray(ArrayUtil.zeros(shapelist, dtype))
+    return NDArray(ArrayUtil.zeros(shapelist, dtype))
     
 def zeros_like(a, dtype=None):
     '''
@@ -315,7 +315,7 @@ def zeros_like(a, dtype=None):
     shape = a.shape
     if dtype is None:
         dtype = ArrayUtil.dataTypeString(a.dtype)
-    return MIArray(ArrayUtil.zeros(shape, dtype))
+    return NDArray(ArrayUtil.zeros(shape, dtype))
     
 def ones_like(a, dtype=None):
     '''
@@ -330,7 +330,7 @@ def ones_like(a, dtype=None):
     shape = a.shape
     if dtype is None:
         dtype = ArrayUtil.dataTypeString(a.dtype)
-    return MIArray(ArrayUtil.ones(shape, dtype))
+    return NDArray(ArrayUtil.ones(shape, dtype))
     
 def ones(shape, dtype='float'):
     """
@@ -340,7 +340,7 @@ def ones(shape, dtype='float'):
     :param dtype: (*data-type, optional*) The desired data-type for the array, including 'int', 
         'float' and 'double'.
         
-    :returns: (*MIArray*) Array of ones with the given shape and dtype.
+    :returns: (*NDArray*) Array of ones with the given shape and dtype.
                     
     Examples::
     
@@ -357,7 +357,7 @@ def ones(shape, dtype='float'):
         shapelist.append(shape)
     else:
         shapelist = shape
-    return MIArray(ArrayUtil.ones(shapelist, dtype))
+    return NDArray(ArrayUtil.ones(shapelist, dtype))
     
 def full(shape, fill_value, dtype=None):
     '''
@@ -368,7 +368,7 @@ def full(shape, fill_value, dtype=None):
     :param dtype: (*data-type, optional*) The desired data-type for the array, including 'int', 
         'float' and 'double'.
         
-    :returns: (*MIArray*) Array of ones with the given shape and dtype.
+    :returns: (*NDArray*) Array of ones with the given shape and dtype.
     '''
     shapelist = []
     if isinstance(shape, int):
@@ -377,7 +377,7 @@ def full(shape, fill_value, dtype=None):
         shapelist = shape
     if not dtype is None:
         dtype = ArrayUtil.toDataType(dtype)
-    return MIArray(ArrayUtil.full(shapelist, fill_value, dtype))
+    return NDArray(ArrayUtil.full(shapelist, fill_value, dtype))
     
 def identity(n, dtype='float'):
     '''
@@ -387,9 +387,9 @@ def identity(n, dtype='float'):
     :param dtype: (*string*) The desired data-type for the array, including 'int', 
         'float' and 'double'. Default is ``float``.
         
-    :returns: (*MIArray*) ``n x n`` array with its main diagonal set to one, and all other elements 0.
+    :returns: (*NDArray*) ``n x n`` array with its main diagonal set to one, and all other elements 0.
     '''
-    return MIArray(ArrayUtil.identity(n, dtype))
+    return NDArray(ArrayUtil.identity(n, dtype))
     
 def eye(n, m=None, k=0, dtype='float'):
     '''
@@ -402,11 +402,11 @@ def eye(n, m=None, k=0, dtype='float'):
     :param dtype: (*string*) The desired data-type for the array, including 'int', 
         'float' and 'double'. Default is ``float``.
         
-    :returns: (*MIArray*) ``n x n`` array with its main diagonal set to one, and all other elements 0.
+    :returns: (*NDArray*) ``n x n`` array with its main diagonal set to one, and all other elements 0.
     '''
     if m is None:
         m = n
-    return MIArray(ArrayUtil.eye(n, m, k, dtype))
+    return NDArray(ArrayUtil.eye(n, m, k, dtype))
     
 def diag(v, k=0):
     '''
@@ -430,7 +430,7 @@ def diag(v, k=0):
     '''
     if isinstance(v, (list, tuple)):
         v = array(v)
-    return MIArray(ArrayUtil.diag(v.asarray(), k))
+    return NDArray(ArrayUtil.diag(v.asarray(), k))
     
 def repeat(a, repeats, axis=None):
     '''
@@ -447,13 +447,13 @@ def repeat(a, repeats, axis=None):
         repeats = [repeats]
     if isinstance(a, (list, tuple)):
         a = array(a)
-    if isinstance(a, MIArray):
+    if isinstance(a, NDArray):
         a = a.asarray()    
     if axis is None:
         r = ArrayUtil.repeat(a, repeats)
     else:
         r = ArrayUtil.repeat(a, repeats, axis)
-    return MIArray(r)
+    return NDArray(r)
     
 def tile(a, repeats):
     '''
@@ -470,10 +470,10 @@ def tile(a, repeats):
         repeats = [repeats]
     if isinstance(a, (list, tuple)):
         a = array(a)
-    if isinstance(a, MIArray):
+    if isinstance(a, NDArray):
         a = a.asarray()    
     r = ArrayUtil.tile(a, repeats)
-    return MIArray(r)
+    return NDArray(r)
     
 def rand(*args):
     """
@@ -490,9 +490,9 @@ def rand(*args):
     if len(args) == 0:
         return ArrayUtil.rand()
     elif len(args) == 1:
-        return MIArray(ArrayUtil.rand(args[0]))
+        return NDArray(ArrayUtil.rand(args[0]))
     else:
-        return MIArray(ArrayUtil.rand(args))
+        return NDArray(ArrayUtil.rand(args))
         
 def absolute(x):
     '''
@@ -505,7 +505,7 @@ def absolute(x):
     '''
     if isinstance(x, list):
         x = array(x)
-    if isinstance(x, MIArray):
+    if isinstance(x, NDArray):
         return x.abs()
     else:
         return abs(x)
@@ -526,7 +526,7 @@ def sqrt(x):
     """
     if isinstance(x, list):
         return array(x).sqrt()
-    elif isinstance(x, MIArray):
+    elif isinstance(x, NDArray):
         return x.sqrt()
     else:
         return math.sqrt(x)
@@ -544,14 +544,14 @@ def power(x1, x2):
         x1 = array(x1)
     if isinstance(x2, list):
         x2 = array(x2)
-    if isinstance(x1, MIArray):
-        if isinstance(x2, MIArray):
-            return MIArray(ArrayMath.pow(x1.asarray(), x2.asarray()))
+    if isinstance(x1, NDArray):
+        if isinstance(x2, NDArray):
+            return NDArray(ArrayMath.pow(x1.asarray(), x2.asarray()))
         else:
-            return MIArray(ArrayMath.pow(x1.asarray(), x2))
+            return NDArray(ArrayMath.pow(x1.asarray(), x2))
     else:
-        if isinstance(x2, MIArray):
-            return MIArray(ArrayMath.pow(x1, x2.asarray()))
+        if isinstance(x2, NDArray):
+            return NDArray(ArrayMath.pow(x1, x2.asarray()))
         else:
             if isinstance(x1, complex):
                 return pow(x1, x2)
@@ -568,8 +568,8 @@ def degrees(x):
     '''
     if isinstance(x, (list, tuple)):
         x = array(x)
-    if isinstance(x, MIArray):
-        return MIArray(ArrayMath.toDegrees(x.asarray()))
+    if isinstance(x, NDArray):
+        return NDArray(ArrayMath.toDegrees(x.asarray()))
     else:
         return math.degrees(x)
         
@@ -583,8 +583,8 @@ def radians(x):
     '''
     if isinstance(x, (list, tuple)):
         x = array(x)
-    if isinstance(x, MIArray):
-        return MIArray(ArrayMath.toRadians(x.asarray()))
+    if isinstance(x, NDArray):
+        return NDArray(ArrayMath.toRadians(x.asarray()))
     else:
         return math.radians(x)
 
@@ -605,7 +605,7 @@ def sin(x):
     """
     if isinstance(x, list):
         return array(x).sin()
-    elif isinstance(x, MIArray):
+    elif isinstance(x, NDArray):
         return x.sin()
     else:
         if isinstance(x, complex):
@@ -628,7 +628,7 @@ def cos(x):
     """
     if isinstance(x, list):
         return array(x).cos()
-    elif isinstance(x, MIArray):
+    elif isinstance(x, NDArray):
         return x.cos()
     else:
         if isinstance(x, complex):
@@ -651,7 +651,7 @@ def tan(x):
     """
     if isinstance(x, list):
         return array(x).tan()
-    elif isinstance(x, MIArray):
+    elif isinstance(x, NDArray):
         return x.tan()
     else:
         if isinstance(x, complex):
@@ -675,7 +675,7 @@ def asin(x):
     """
     if isinstance(x, list):
         return array(x).asin()
-    elif isinstance(x, MIArray):
+    elif isinstance(x, NDArray):
         return x.asin()
     else:
         if isinstance(x, complex):
@@ -700,7 +700,7 @@ def acos(x):
     """
     if isinstance(x, list):
         return array(x).acos()
-    elif isinstance(x, MIArray):
+    elif isinstance(x, NDArray):
         return x.acos()
     else:
         if isinstance(x, complex):
@@ -726,7 +726,7 @@ def atan(x):
     """
     if isinstance(x, list):
         return array(x).atan()
-    elif isinstance(x, MIArray):
+    elif isinstance(x, NDArray):
         return x.atan()
     else:
         if isinstance(x, complex):
@@ -751,8 +751,8 @@ def atan2(x1, x2):
         >>> atan2(y, x) * 180 / pi
         array([-135.00000398439022, -45.000001328130075, 45.000001328130075, 135.00000398439022])
     """    
-    if isinstance(x1, MIArray):
-        r = MIArray(ArrayMath.atan2(x1.array, x2.array))
+    if isinstance(x1, NDArray):
+        r = NDArray(ArrayMath.atan2(x1.array, x2.array))
         if isinstance(x1, DimArray):
             return DimArray(r, x1.dims, x1.fill_value, x1.proj)
         else:
@@ -778,7 +778,7 @@ def exp(x):
     """
     if isinstance(x, list):
         return array(x).exp()
-    elif isinstance(x, MIArray):
+    elif isinstance(x, NDArray):
         return x.exp()
     else:
         if isinstance(x, complex):
@@ -804,7 +804,7 @@ def log(x):
     """
     if isinstance(x, list):
         return array(x).log()
-    elif isinstance(x, MIArray):
+    elif isinstance(x, NDArray):
         return x.log()
     else:
         if isinstance(x, complex):
@@ -827,7 +827,7 @@ def log10(x):
     """
     if isinstance(x, list):
         return array(x).log10()
-    elif isinstance(x, MIArray):
+    elif isinstance(x, NDArray):
         return x.log10()
     else:
         if isinstance(x, complex):
@@ -848,7 +848,7 @@ def sign(x):
     if isinstance(x, list):
         x = array(x)
         
-    if isinstance(x, MIArray):
+    if isinstance(x, NDArray):
         return x.sign()
     else:
         return math.copysign(1, x)
@@ -872,7 +872,7 @@ def any(x, axis=None):
     else:
         if axis < 0:
             axis += x.ndim
-        return MIArray(ArrayMath.any(x.array, axis))
+        return NDArray(ArrayMath.any(x.array, axis))
         
 def all(x, axis=None):
     '''
@@ -893,7 +893,7 @@ def all(x, axis=None):
     else:
         if axis < 0:
             axis += x.ndim
-        return MIArray(ArrayMath.all(x.array, axis))
+        return NDArray(ArrayMath.all(x.array, axis))
 
 def sum(x, axis=None):
     """
@@ -906,15 +906,15 @@ def sum(x, axis=None):
     :returns: (*array_like*) Sum result
     """
     if isinstance(x, list):
-        if isinstance(x[0], MIArray):
+        if isinstance(x[0], NDArray):
             a = []
             for xx in x:
                 a.append(xx.asarray())
             r = ArrayMath.sum(a)
-            if type(x[0]) is MIArray:            
-                return MIArray(r)
+            if type(x[0]) is NDArray:            
+                return NDArray(r)
             else:
-                return DimArray(MIArray(r), x[0].dims, x[0].fill_value, x[0].proj)
+                return DimArray(NDArray(r), x[0].dims, x[0].fill_value, x[0].proj)
         else:
             x = array(x)
     if axis is None:
@@ -922,14 +922,14 @@ def sum(x, axis=None):
         return r
     else:
         r = ArrayMath.sum(x.asarray(), axis)
-        if type(x) is MIArray:
-            return MIArray(r)
+        if type(x) is NDArray:
+            return NDArray(r)
         else:
             dims = []
             for i in range(0, x.ndim):
                 if i != axis:
                     dims.append(x.dims[i])
-            return DimArray(MIArray(r), dims, x.fill_value, x.proj)
+            return DimArray(NDArray(r), dims, x.fill_value, x.proj)
             
 def cumsum(x, axis=None):
     """
@@ -947,13 +947,13 @@ def cumsum(x, axis=None):
         axis = 0
     
     r = ArrayMath.cumsum(x.asarray(), axis)
-    if type(x) is MIArray:
-        return MIArray(r)
+    if type(x) is NDArray:
+        return NDArray(r)
     else:
         dims = []
         for i in range(0, x.ndim):
             dims.append(x.dims[i])
-        return DimArray(MIArray(r), dims, x.fill_value, x.proj)
+        return DimArray(NDArray(r), dims, x.fill_value, x.proj)
             
 def mean(x, axis=None):
     """
@@ -966,15 +966,15 @@ def mean(x, axis=None):
     returns: (*array_like*) Mean result
     """
     if isinstance(x, list):
-        if isinstance(x[0], MIArray):
+        if isinstance(x[0], NDArray):
             a = []
             for xx in x:
                 a.append(xx.asarray())
             r = ArrayMath.mean(a)
-            if type(x[0]) is MIArray:            
-                return MIArray(r)
+            if type(x[0]) is NDArray:            
+                return NDArray(r)
             else:
-                return DimArray(MIArray(r), x[0].dims, x[0].fill_value, x[0].proj)
+                return DimArray(NDArray(r), x[0].dims, x[0].fill_value, x[0].proj)
         elif isinstance(x[0], PyStationData):
             a = []
             for xx in x:
@@ -988,14 +988,14 @@ def mean(x, axis=None):
         return r
     else:
         r = ArrayMath.mean(x.asarray(), axis)
-        if type(x) is MIArray:
-            return MIArray(r)
+        if type(x) is NDArray:
+            return NDArray(r)
         else:
             dims = []
             for i in range(0, x.ndim):
                 if i != axis:
                     dims.append(x.dims[i])
-            return DimArray(MIArray(r), dims, x.fill_value, x.proj)
+            return DimArray(NDArray(r), dims, x.fill_value, x.proj)
             
 def std(x, axis=None):
     '''
@@ -1014,14 +1014,14 @@ def std(x, axis=None):
         return r
     else:
         r = ArrayMath.std(x.asarray(), axis)
-        if type(x) is MIArray:
-            return MIArray(r)
+        if type(x) is NDArray:
+            return NDArray(r)
         else:
             dims = []
             for i in range(0, x.ndim):
                 if i != axis:
                     dims.append(x.dims[i])
-            return DimArray(MIArray(r), dims, x.fill_value, x.proj)
+            return DimArray(NDArray(r), dims, x.fill_value, x.proj)
             
 def var(x, axis=None):
     '''
@@ -1040,14 +1040,14 @@ def var(x, axis=None):
         return r
     else:
         r = ArrayMath.var(x.asarray(), axis)
-        if type(x) is MIArray:
-            return MIArray(r)
+        if type(x) is NDArray:
+            return NDArray(r)
         else:
             dims = []
             for i in range(0, x.ndim):
                 if i != axis:
                     dims.append(x.dims[i])
-            return DimArray(MIArray(r), dims, x.fill_value, x.proj)
+            return DimArray(NDArray(r), dims, x.fill_value, x.proj)
                 
 def median(x, axis=None):
     """
@@ -1060,15 +1060,15 @@ def median(x, axis=None):
     returns: (*array_like*) Median result
     """
     if isinstance(x, list):
-        if isinstance(x[0], MIArray):
+        if isinstance(x[0], NDArray):
             a = []
             for xx in x:
                 a.append(xx.asarray())
             r = ArrayMath.median(a)
-            if type(x[0]) is MIArray:            
-                return MIArray(r)
+            if type(x[0]) is NDArray:            
+                return NDArray(r)
             else:
-                return DimArray(MIArray(r), x[0].dims, x[0].fill_value, x[0].proj)
+                return DimArray(NDArray(r), x[0].dims, x[0].fill_value, x[0].proj)
         elif isinstance(x[0], PyStationData):
             a = []
             for xx in x:
@@ -1085,14 +1085,14 @@ def median(x, axis=None):
             return r
         else:
             r = ArrayMath.median(x.asarray(), axis)
-            if type(x) is MIArray:
-                return MIArray(r)
+            if type(x) is NDArray:
+                return NDArray(r)
             else:
                 dims = []
                 for i in range(0, x.ndim):
                     if i != axis:
                         dims.append(x.dims[i])
-                return DimArray(MIArray(r), dims, x.fill_value, x.proj)
+                return DimArray(NDArray(r), dims, x.fill_value, x.proj)
                 
 def maximum(x1, x2):
     """
@@ -1112,10 +1112,10 @@ def maximum(x1, x2):
         x1 = array(x1)
     if isinstance(x2, list):
         x2 = array(x2)
-    if type(x1) is MIArray:
-        return MIArray(ArrayMath.maximum(x1.asarray(), x2.asarray()))
+    if type(x1) is NDArray:
+        return NDArray(ArrayMath.maximum(x1.asarray(), x2.asarray()))
     elif isinstance(x1, DimArray):
-        r = MIArray(ArrayMath.maximum(x1.asarray(), x2.asarray()))
+        r = NDArray(ArrayMath.maximum(x1.asarray(), x2.asarray()))
         return DimArray(r, x1.dims, x1.fill_value, x1.proj)
     else:
         return max(x1, x2)
@@ -1139,10 +1139,10 @@ def fmax(x1, x2):
         x1 = array(x1)
     if isinstance(x2, list):
         x2 = array(x2)
-    if type(x1) is MIArray:
-        return MIArray(ArrayMath.fmax(x1.asarray(), x2.asarray()))
+    if type(x1) is NDArray:
+        return NDArray(ArrayMath.fmax(x1.asarray(), x2.asarray()))
     elif isinstance(x1, DimArray):
-        r = MIArray(ArrayMath.fmax(x1.asarray(), x2.asarray()))
+        r = NDArray(ArrayMath.fmax(x1.asarray(), x2.asarray()))
         return DimArray(r, x1.dims, x1.fill_value, x1.proj)
     else:
         return max(x1, x2)
@@ -1165,10 +1165,10 @@ def minimum(x1, x2):
         x1 = array(x1)
     if isinstance(x2, list):
         x2 = array(x2)
-    if type(x1) is MIArray:
-        return MIArray(ArrayMath.minimum(x1.asarray(), x2.asarray()))
+    if type(x1) is NDArray:
+        return NDArray(ArrayMath.minimum(x1.asarray(), x2.asarray()))
     elif isinstance(x1, DimArray):
-        r = MIArray(ArrayMath.minimum(x1.asarray(), x2.asarray()))
+        r = NDArray(ArrayMath.minimum(x1.asarray(), x2.asarray()))
         return DimArray(r, x1.dims, x1.fill_value, x1.proj)
     else:
         return min(x1, x2)
@@ -1192,10 +1192,10 @@ def fmin(x1, x2):
         x1 = array(x1)
     if isinstance(x2, list):
         x2 = array(x2)
-    if type(x1) is MIArray:
-        return MIArray(ArrayMath.fmin(x1.asarray(), x2.asarray()))
+    if type(x1) is NDArray:
+        return NDArray(ArrayMath.fmin(x1.asarray(), x2.asarray()))
     elif isinstance(x1, DimArray):
-        r = MIArray(ArrayMath.fmin(x1.asarray(), x2.asarray()))
+        r = NDArray(ArrayMath.fmin(x1.asarray(), x2.asarray()))
         return DimArray(r, x1.dims, x1.fill_value, x1.proj)
     else:
         return min(x1, x2)
@@ -1246,7 +1246,7 @@ def argmin(a, axis=None):
         return r
     else:
         r = ArrayMath.argMin(a.asarray(), axis)
-        return MIArray(r)
+        return NDArray(r)
         
 def argmax(a, axis=None):
     '''
@@ -1264,7 +1264,7 @@ def argmax(a, axis=None):
         return r
     else:
         r = ArrayMath.argMax(a.asarray(), axis)
-        return MIArray(r)
+        return NDArray(r)
         
 def diff(a, axis=-1):
     '''
@@ -1329,7 +1329,7 @@ def ave_month(data, colnames, t):
     :returns: (*PyTableData*) Averaged table data.
     """
     jt = miutil.jdate(t)
-    if isinstance(data, MIArray):
+    if isinstance(data, NDArray):
         a = [data.asarray()]
     else:
         a = []
@@ -1361,8 +1361,8 @@ def histogram(a, bins=10, density=False):
         r = ArrayUtil.histogram(a.asarray(), bins)
     else:
         r = ArrayUtil.histogram(a.asarray(), bins.asarray())
-    h = MIArray(r[0])
-    b = MIArray(r[1])
+    h = NDArray(r[0])
+    b = NDArray(r[1])
     
     if density:
         db = diff(b).astype('float')
@@ -1378,12 +1378,12 @@ def sort(a, axis=-1):
     :param axis: (*int or None*) Optional. Axis along which to sort. If None, the array is
         flattened after sorting. The default is ``-1`` , which sorts along the last axis.
         
-    :returns: (*MIArray*) Sorted array.
+    :returns: (*NDArray*) Sorted array.
     """
     if isinstance(a, list):
         a = array(a)
     r = ArrayUtil.sort(a.asarray(), axis)
-    return MIArray(r)
+    return NDArray(r)
     
 def argsort(a, axis=-1):
     """
@@ -1393,13 +1393,13 @@ def argsort(a, axis=-1):
     :param axis: (*int or None*) Optional. Axis along which to sort. If None, the array is
         flattened after sorting. The default is ``-1`` , which sorts along the last axis.
         
-    :returns: (*MIArray*) Array of indices that sort a along the specified axis. If a is 
+    :returns: (*NDArray*) Array of indices that sort a along the specified axis. If a is 
         one-dimensional, a[index_array] yields a sorted a.
     """
     if isinstance(a, list):
         a = array(a)
     r = ArrayUtil.argSort(a.asarray(), axis)
-    return MIArray(r)
+    return NDArray(r)
     
 def isnan(a):
     '''
@@ -1427,11 +1427,11 @@ def delnan(a):
     
     :returns: The array or arrays without NaN values.
     '''
-    if isinstance(a, (list, tuple))and (not isinstance(a[0], MIArray)):
+    if isinstance(a, (list, tuple))and (not isinstance(a[0], NDArray)):
         a = array(a)
-    if isinstance(a, MIArray):
+    if isinstance(a, NDArray):
         r = ArrayMath.removeNaN(a.array)[0]
-        return MIArray(r)
+        return NDArray(r)
     else:
         aa = []
         for a0 in a:
@@ -1439,7 +1439,7 @@ def delnan(a):
         r = ArrayMath.removeNaN(aa)
         rr = []
         for r1 in r:
-            rr.append(MIArray(r1))
+            rr.append(NDArray(r1))
         return rr
     
 def nonzero(a):
@@ -1461,7 +1461,7 @@ def nonzero(a):
         
     r = []
     for aa in ra:
-        r.append(MIArray(aa))
+        r.append(NDArray(aa))
     return tuple(r)
     
 def where(condition):
@@ -1491,7 +1491,7 @@ def delete(arr, obj, axis=None):
     if isinstance(arr, (list, tuple)):
         arr = array(arr)
     
-    if isinstance(obj, MIArray):
+    if isinstance(obj, NDArray):
         obj = obj.aslist()
         
     if axis is None:
@@ -1499,7 +1499,7 @@ def delete(arr, obj, axis=None):
         axis = 0
     
     r = ArrayUtil.delete(arr.array, obj, axis)
-    return MIArray(r)
+    return NDArray(r)
     
 def concatenate(arrays, axis=0):
     '''
@@ -1515,7 +1515,7 @@ def concatenate(arrays, axis=0):
     for a in arrays:
         ars.append(a.asarray())
     r = ArrayUtil.concatenate(ars, axis)
-    return MIArray(r)
+    return NDArray(r)
 
 def atleast_1d(*args):
     '''
@@ -1629,7 +1629,7 @@ def dot(a, b):
     if isinstance(b, list):
         b = array(b)
     r = ArrayMath.dot(a.asarray(), b.asarray())
-    return MIArray(r)
+    return NDArray(r)
     
 def vdot(a, b):
     '''
@@ -1679,14 +1679,14 @@ def squeeze(a):
     '''
     da = a.asarray()
     da = da.reduce()
-    if type(a) is MIArray:
-        return MIArray(da)
+    if type(a) is NDArray:
+        return NDArray(da)
     else:
         dims = []
         for dim in a.dims:
             if dim.getLength() > 1:
                 dims.append(dim)
-        return DimArray(MIArray(da), dims, a.fill_value, a.proj)
+        return DimArray(NDArray(da), dims, a.fill_value, a.proj)
         
 def meshgrid(*args):
     '''
@@ -1712,7 +1712,7 @@ def meshgrid(*args):
     ra = ArrayUtil.meshgrid(xs)
     rs = []
     for r in ra:
-        rs.append(MIArray(r))
+        rs.append(NDArray(r))
     return tuple(rs)
     
 def meshgrid_bak(*args):
@@ -1739,7 +1739,7 @@ def meshgrid_bak(*args):
     xa = x.asarray()
     ya = y.asarray()
     ra = ArrayUtil.meshgrid(xa, ya)
-    return MIArray(ra[0]), MIArray(ra[1])
+    return NDArray(ra[0]), NDArray(ra[1])
     
 def broadcast_to(a, shape):
     """
@@ -1748,14 +1748,14 @@ def broadcast_to(a, shape):
     :param a: (*array_like*) The array to broadcast.
     :param shape: (*tuple*) The shape of the desired array.
     
-    :returns: (*MIArray*) A readonly view on the original array with the given shape.
+    :returns: (*NDArray*) A readonly view on the original array with the given shape.
     """
     if isinstance(a, list):
         a = array(a)
     r = ArrayUtil.broadcast(a.asarray(), shape)
     if r is None:
         raise ValueError('Can not broadcast to the shape!')
-    return MIArray(r)
+    return NDArray(r)
     
 def corrcoef(x, y):
     """
@@ -1813,7 +1813,7 @@ def polyval(p, x):
         
     :returns: Polynomial value
     """
-    return MIArray(ArrayMath.polyVal(p, x.asarray()))
+    return NDArray(ArrayMath.polyVal(p, x.asarray()))
     
 def transpose(a, dim1=0, dim2=1):
     '''
@@ -1824,8 +1824,8 @@ def transpose(a, dim1=0, dim2=1):
     :returns: Transposed array.
     '''
     r = ArrayMath.transpose(a.asarray(), dim1, dim2)
-    if type(a) is MIArray:
-        return MIArray(r)
+    if type(a) is NDArray:
+        return NDArray(r)
     else:
         dims = []
         for i in range(0, len(a.dims)):
@@ -1835,7 +1835,7 @@ def transpose(a, dim1=0, dim2=1):
                 dims.append(a.dims[dim1])
             else:
                 dims.append(a.dims[i])
-        return DimArray(MIArray(r), dims, a.fill_value, a.proj) 
+        return DimArray(NDArray(r), dims, a.fill_value, a.proj) 
         
 def rot90(a, k=1):
     """
@@ -1848,8 +1848,8 @@ def rot90(a, k=1):
     :returns: (*array_like*) Rotated array.
     """
     r = ArrayMath.rot90(a.asarray(), k)
-    if type(a) is MIArray:
-        return MIArray(r)
+    if type(a) is NDArray:
+        return NDArray(r)
     else:
         dims = []
         if Math.abs(k) == 1 or Math.abs(k) == 3:
@@ -1860,7 +1860,7 @@ def rot90(a, k=1):
         else:
             for i in range(0, len(a.dims)):
                 dims.append(a.dims[i])
-        return DimArray(MIArray(r), dims, a.fill_value, a.proj) 
+        return DimArray(NDArray(r), dims, a.fill_value, a.proj) 
         
 def trapz(y, x=None, dx=1.0, axis=-1):
     """
@@ -1897,14 +1897,14 @@ def trapz(y, x=None, dx=1.0, axis=-1):
             if isinstance(x, list):
                 x = array(x)
             r = ArrayMath.trapz(y.asarray(), x.asarray(), axis)
-        if type(y) is MIArray:
-            return MIArray(r)
+        if type(y) is NDArray:
+            return NDArray(r)
         else:
             dims = []
             for i in range(0, y.ndim):
                 if i != axis:
                     dims.append(y.dims[i])
-            return DimArray(MIArray(r), dims, y.fill_value, y.proj)
+            return DimArray(NDArray(r), dims, y.fill_value, y.proj)
             
 def rolling_mean(x, window, center=False):
     '''
@@ -1919,7 +1919,7 @@ def rolling_mean(x, window, center=False):
     if isinstance(x, list):
         x = array(x)
     r = ArrayMath.rolling_mean(x.asarray(), window, center)
-    return MIArray(r)  
+    return NDArray(r)  
     
 def smooth5(x):
     '''
@@ -1947,7 +1947,7 @@ def smooth5(x):
     if isinstance(x, DimArray):
         return DimArray(r, x.dims, x.fill_value, x.proj)
     else:
-        return MIArray(r)
+        return NDArray(r)
         
 def smooth9(x):
     '''
@@ -1975,7 +1975,7 @@ def smooth9(x):
     if isinstance(x, DimArray):
         return DimArray(r, x.dims, x.fill_value, x.proj)
     else:
-        return MIArray(r)
+        return NDArray(r)
  
 def cdiff(a, dimidx):
     '''
@@ -1988,9 +1988,9 @@ def cdiff(a, dimidx):
     '''
     if isinstance(a, DimArray):
         r = ArrayMath.cdiff(a.asarray(), dimidx)
-        return DimArray(MIArray(r), a.dims, a.fill_value, a.proj)
+        return DimArray(NDArray(r), a.dims, a.fill_value, a.proj)
     else:
-        return MIArray(ArrayMath.cdiff(a.asarray(), dimidx))
+        return NDArray(ArrayMath.cdiff(a.asarray(), dimidx))
 
 # Calculates the vertical component of the curl (ie, vorticity)    
 def hcurl(u, v):
@@ -2006,7 +2006,7 @@ def hcurl(u, v):
         ydim = u.ydim()
         xdim = u.xdim()
         r = ArrayMath.hcurl(u.asarray(), v.asarray(), xdim.getDimValue(), ydim.getDimValue())
-        return DimArray(MIArray(r), u.dims, u.fill_value, u.proj)
+        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
 
 #  Calculates the horizontal divergence using finite differencing        
 def hdivg(u, v):
@@ -2022,7 +2022,7 @@ def hdivg(u, v):
         ydim = u.ydim()
         xdim = u.xdim()
         r = ArrayMath.hdivg(u.asarray(), v.asarray(), xdim.getDimValue(), ydim.getDimValue())
-        return DimArray(MIArray(r), u.dims, u.fill_value, u.proj)
+        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
               
 def magnitude(u, v):
     '''
@@ -2035,40 +2035,40 @@ def magnitude(u, v):
     '''
     if isinstance(u, DimArray) and isinstance(v, DimArray):
         r = ArrayMath.magnitude(u.asarray(), v.asarray())
-        return DimArray(MIArray(r), u.dims, u.fill_value, u.proj)
-    elif isinstance(u, MIArray) and isinstance(v, MIArray):
+        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
+    elif isinstance(u, NDArray) and isinstance(v, NDArray):
         r = ArrayMath.magnitude(u.asarray(), v.asarray())
-        return MIArray(r)
+        return NDArray(r)
     else:
         r = sqrt(u * u + v * v)
         return r
 
 def asarray(data):
     '''
-    Convert the array_like data to MIArray data.
+    Convert the array_like data to NDArray data.
     
     :param data: (*array_like*) The input data.
     
-    :returns: MIArray data.
+    :returns: NDArray data.
     '''
     if isinstance(data, Array):
-        return MIArray(data)
-    elif isinstance(data, MIArray):
+        return NDArray(data)
+    elif isinstance(data, NDArray):
         return data
     else:
         return array(data) 
 
 def asmiarray(data):
     '''
-    Convert the array_like data to MIArray data.
+    Convert the array_like data to NDArray data.
     
     :param data: (*array_like*) The input data.
     
-    :returns: MIArray data.
+    :returns: NDArray data.
     '''
     if isinstance(data, Array):
-        return MIArray(data)
-    elif isinstance(data, MIArray):
+        return NDArray(data)
+    elif isinstance(data, NDArray):
         return data
     else:
         return array(data)       
@@ -2079,7 +2079,7 @@ def asgriddata(data, x=None, y=None, fill_value=-9999.0):
             return data
         elif isinstance(data, DimArray):
             return data.asgriddata()
-        elif isinstance(data, MIArray):
+        elif isinstance(data, NDArray):
             if x is None:
                 x = arange(0, data.shape[1])
             if y is None:
@@ -2098,7 +2098,7 @@ def asgridarray(data, x=None, y=None, fill_value=-9999.0):
             return data.data.toGridArray()
         elif isinstance(data, DimArray):
             return data.asgridarray()
-        elif isinstance(data, MIArray):
+        elif isinstance(data, NDArray):
             if x is None:
                 x = arange(0, data.shape[1])
             if y is None:
@@ -2145,7 +2145,7 @@ def linint2(*args, **kwargs):
     xq = array(xq).array
     yq = array(yq).array
     r = ArrayUtil.linint2(z, x, y, xq, yq)
-    return MIArray(r)
+    return NDArray(r)
     
 def interp2d(*args, **kwargs):
     """
@@ -2185,7 +2185,7 @@ def interp2d(*args, **kwargs):
     if r.getSize() == 1:
         return r.getDouble(0)
     else:
-        return MIArray(r)
+        return NDArray(r)
 
 def interpn(points, values, xi):
     """
@@ -2204,7 +2204,7 @@ def interpn(points, values, xi):
         npoints.append(p.array)
         
     if isinstance(xi, (list, tuple)):
-        if isinstance(xi[0], MIArray):
+        if isinstance(xi[0], NDArray):
             nxi = []
             for x in xi:
                 nxi.append(x.array)
@@ -2219,7 +2219,7 @@ def interpn(points, values, xi):
         nxi = nxi.array
     r = ArrayUtil.interpn(npoints, values.array, nxi)
     if isinstance(r, Array):
-        return MIArray(r)
+        return NDArray(r)
     else:
         return r
     
@@ -2254,7 +2254,7 @@ def griddata(points, values, xi=None, **kwargs):
     else:
         x_g = xi[0]
         y_g = xi[1]
-    if isinstance(values, MIArray):
+    if isinstance(values, NDArray):
         values = values.asarray()    
     if method == 'idw':        
         radius = kwargs.pop('radius', None)
@@ -2266,7 +2266,7 @@ def griddata(points, values, xi=None, **kwargs):
             r = ArrayUtil.interpolation_IDW_Radius(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), pnum, radius)
     elif method == 'cressman':
         radius = kwargs.pop('radius', [10, 7, 4, 2, 1])
-        if isinstance(radius, MIArray):
+        if isinstance(radius, NDArray):
             radius = radius.aslist()
         r = InterpUtil.cressman(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), radius)
     elif method == 'barnes':
@@ -2276,7 +2276,7 @@ def griddata(points, values, xi=None, **kwargs):
         if radius is None:
             r = InterpUtil.barnes(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), kappa, gamma)
         else:
-            if isinstance(radius, MIArray):
+            if isinstance(radius, NDArray):
                 radius = radius.aslist()
             r = InterpUtil.barnes(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), radius, kappa, gamma)
     elif method == 'nearest':
@@ -2290,7 +2290,7 @@ def griddata(points, values, xi=None, **kwargs):
         r = ArrayUtil.interpolation_Inside_Min(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist())
     elif method == 'inside_count':
         r = ArrayUtil.interpolation_Inside_Count(x_s.aslist(), y_s.aslist(), x_g.aslist(), y_g.aslist(), True)
-        return MIArray(r[0]), x_g, y_g, MIArray(r[1])
+        return NDArray(r[0]), x_g, y_g, NDArray(r[1])
     elif method == 'surface':        
         r = ArrayUtil.interpolation_Surface(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray())
     else:
@@ -2301,9 +2301,9 @@ def griddata(points, values, xi=None, **kwargs):
         polyshape = ArrayUtil.convexHull(x_s.asarray(), y_s.asarray())
         x_gg, y_gg = meshgrid(x_g, y_g)
         r = ArrayMath.maskout(r, x_gg.array, y_gg.array, [polyshape])
-        return MIArray(r), x_g, y_g
+        return NDArray(r), x_g, y_g
     else:
-        return MIArray(r), x_g, y_g
+        return NDArray(r), x_g, y_g
 
 def pol2cart(theta, rho):
     '''
@@ -2321,7 +2321,7 @@ def pol2cart(theta, rho):
         theta = array(theta)
         rho = array(rho)
         r = ArrayMath.polarToCartesian(theta.array, rho.array)
-        return MIArray(r[0]), MIArray(r[1])
+        return NDArray(r[0]), NDArray(r[1])
         
 def cart2pol(x, y):
     '''
@@ -2339,7 +2339,7 @@ def cart2pol(x, y):
         x = array(x)
         y = array(y)
         r = ArrayMath.cartesianToPolar(x.array, y.array)
-        return MIArray(r[0]), MIArray(r[1])
+        return NDArray(r[0]), NDArray(r[1])
     
 def addtimedim(infn, outfn, t, tunit='hours'):
     '''

@@ -14,7 +14,7 @@ from org.meteoinfo.layer import LayerTypes
 
 from axes import Axes
 from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 import mipylib.numeric.minum as minum
 import plotutil
 import mipylib.miutil as miutil
@@ -210,7 +210,7 @@ class Axes3D(Axes):
         Set z axis tick locations.
         '''
         axis = self.axes.getZAxis()
-        if isinstance(locs, (MIArray, DimArray)):
+        if isinstance(locs, (NDArray, DimArray)):
             locs = labels.aslist()
         axis.setTickLocations(locs)
     
@@ -229,7 +229,7 @@ class Axes3D(Axes):
         axis = self.axes.getZAxis()
 
         if not labels is None:
-            if isinstance(labels, (MIArray, DimArray)):
+            if isinstance(labels, (NDArray, DimArray)):
                 labels = labels.aslist()
             if isinstance(labels[0], (int, long, float)):
                 axis.setTickLabels_Number(labels)
@@ -442,7 +442,7 @@ class Axes3D(Axes):
         pb.setStyle(pstyle)
         isvalue = False
         if len(c) > 1:
-            if isinstance(c, (MIArray, DimArray)):
+            if isinstance(c, (NDArray, DimArray)):
                 isvalue = True
             elif isinstance(c[0], (int, long, float)):
                 isvalue = True            
@@ -541,7 +541,7 @@ class Axes3D(Axes):
         samestemcolor = kwargs.pop('samestemcolor', False)
         isvalue = False
         if len(c) > 1:
-            if isinstance(c, (MIArray, DimArray)):
+            if isinstance(c, (NDArray, DimArray)):
                 isvalue = True
             elif isinstance(c[0], (int, long, float)):
                 isvalue = True            
@@ -666,7 +666,7 @@ class Axes3D(Axes):
                     cn = level_arg
                     ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
                 else:
-                    if isinstance(level_arg, MIArray):
+                    if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
                     ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
             else:    
@@ -714,7 +714,7 @@ class Axes3D(Axes):
                 cn = level_arg
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
             else:
-                if isinstance(level_arg, MIArray):
+                if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
         else:    
@@ -774,7 +774,7 @@ class Axes3D(Axes):
                 cn = level_arg
                 ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cn, cmap)
             else:
-                if isinstance(level_arg, MIArray):
+                if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
                 ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), level_arg, cmap)
         else:    
@@ -840,7 +840,7 @@ class Axes3D(Axes):
                 cn = level_arg
                 ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cn, cmap)
             else:
-                if isinstance(level_arg, MIArray):
+                if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
                 ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), level_arg, cmap)
         else:    
@@ -892,7 +892,7 @@ class Axes3D(Axes):
             if isinstance(args[0], (list, tuple)):
                 isrgb = True
                 rgbdata = args[0]
-                if isinstance(rgbdata[0], MIArray):
+                if isinstance(rgbdata[0], NDArray):
                     x = minum.arange(0, rgbdata[0].shape[1])
                     y = minum.arange(0, rgbdata[0].shape[0])
                 else:
@@ -901,7 +901,7 @@ class Axes3D(Axes):
             elif args[0].ndim > 2:
                 isrgb = True
                 rgbdata = args[0]
-                if isinstance(rgbdata, MIArray):
+                if isinstance(rgbdata, NDArray):
                     x = minum.arange(0, rgbdata.shape[1])
                     y = minum.arange(0, rgbdata.shape[0])
                 else:
@@ -953,7 +953,7 @@ class Axes3D(Axes):
                     cn = level_arg
                     ls = LegendManage.createImageLegend(gdata, cn, cmap)
                 else:
-                    if isinstance(level_arg, MIArray):
+                    if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
                     ls = LegendManage.createImageLegend(gdata, level_arg, cmap)
             else:
@@ -1026,7 +1026,7 @@ class Axes3D(Axes):
                     if levs is None:
                         ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
                     else:
-                        if isinstance(levs, MIArray):
+                        if isinstance(levs, NDArray):
                             levs = levs.tolist()
                         ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), levs, cmap)
             else:    

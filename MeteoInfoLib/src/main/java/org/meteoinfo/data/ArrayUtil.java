@@ -2421,7 +2421,7 @@ public class ArrayUtil {
      * @param a scatter value array
      * @param X grid X array
      * @param Y grid Y array
-     * @param NeededPointNum needed at least point number
+     * @param neededPointNum needed at least point number
      * @param radius search radius
      * @return interpolated grid data
      */

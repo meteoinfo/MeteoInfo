@@ -21,7 +21,7 @@ from org.meteoinfo.io import IOUtil
 from org.meteoinfo.geoprocess.analysis import ResampleMethods
 
 from milayer import MILayer
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from mipylib.numeric.dimarray import DimArray
 import mipylib.migl as migl
 import mipylib.numeric.minum as minum
@@ -97,12 +97,12 @@ def geotiffread(filename):
     
     :param filename: (*string*) The GeoTiff file name.
     
-    :returns: (*MIArray*) Readed data array.
+    :returns: (*NDArray*) Readed data array.
     '''
     geotiff = GeoTiff(filename)
     geotiff.read()
     r = geotiff.readArray()
-    return MIArray(r)
+    return NDArray(r)
     
 def convert_encoding_dbf(filename, fromencoding, toencoding):
     '''
@@ -144,9 +144,9 @@ def polygon(x, y=None):
     if y is None:
         polygon = ShapeUtil.createPolygonShape(x)
     else:
-        if isinstance(x, MIArray):
+        if isinstance(x, NDArray):
             x = x.aslist()
-        if isinstance(y, MIArray):
+        if isinstance(y, NDArray):
             y = y.aslist()
         polygon = ShapeUtil.createPolygonShape(x, y)
     return polygon  
@@ -187,13 +187,13 @@ def inpolygon(x, y, polygon):
             x_p = minum.array(x_p)
         if isinstance(y_p, (list, tuple)):
             y_p = minum.array(y_p)
-        return MIArray(ArrayMath.inPolygon(x.array, y.array, x_p.array, y_p.array))
+        return NDArray(ArrayMath.inPolygon(x.array, y.array, x_p.array, y_p.array))
     else:
         if isinstance(polygon, MILayer):
             polygon = polygon.shapes()
         elif isinstance(polygon, PolygonShape):
             polygon = [polygon]
-        return MIArray(ArrayMath.inPolygon(x.array, y.array, polygon))
+        return NDArray(ArrayMath.inPolygon(x.array, y.array, polygon))
     
 def arrayinpolygon(a, polygon, x=None, y=None):
     '''
@@ -214,15 +214,15 @@ def arrayinpolygon(a, polygon, x=None, y=None):
         if isinstance(polygon, tuple):
             x_p = polygon[0]
             y_p = polygon[1]
-            if isinstance(x_p, MIArray):
+            if isinstance(x_p, NDArray):
                 x_p = x_p.aslist()
-            if isinstance(y_p, MIArray):
+            if isinstance(y_p, NDArray):
                 y_p = y_p.aslist()
-            return MIArray(ArrayMath.inPolygon(a.asarray(), x.aslist(), y.aslist(), x_p, y_p))
+            return NDArray(ArrayMath.inPolygon(a.asarray(), x.aslist(), y.aslist(), x_p, y_p))
         else:
             if isinstance(polygon, MILayer):
                 polygon = polygon.layer
-            return MIArray(ArrayMath.inPolygon(a.asarray(), x.aslist(), y.aslist(), polygon))
+            return NDArray(ArrayMath.inPolygon(a.asarray(), x.aslist(), y.aslist(), polygon))
     else:
         return None
             
@@ -241,9 +241,9 @@ def distance(*args, **kwargs):
     else:
         x = args[0]
         y = args[1]
-        if isinstance(x, (MIArray, DimArray)):
+        if isinstance(x, (NDArray, DimArray)):
             x = x.aslist()
-        if isinstance(y, (MIArray, DimArray)):
+        if isinstance(y, (NDArray, DimArray)):
             y = y.aslist()
         r = GeoComputation.getDistance(x, y, islonlat)
     return r
@@ -265,9 +265,9 @@ def polyarea(*args, **kwargs):
     else:
         x = args[0]
         y = args[1]
-        if isinstance(x, MIArray):
+        if isinstance(x, NDArray):
             x = x.aslist()
-        if isinstance(y, MIArray):
+        if isinstance(y, NDArray):
             y = y.aslist()
         r = GeoComputation.getArea(x, y, islonlat)
     return r
@@ -285,12 +285,12 @@ def maskout(data, mask, x=None, y=None):
     """
     if mask is None:
         return data        
-    elif isinstance(mask, (MIArray, DimArray)):
+    elif isinstance(mask, (NDArray, DimArray)):
         r = ArrayMath.maskout(data.asarray(), mask.asarray())
         if isinstance(data, DimArray):
             return DimArray(r, data.dims, data.fill_value, data.proj)
         else:
-            return MIArray(r)
+            return NDArray(r)
             
     if x is None or y is None:
         if isinstance(data, DimArray):
@@ -305,7 +305,7 @@ def maskout(data, mask, x=None, y=None):
     if isinstance(data, DimArray):
         return DimArray(r, data.dims, data.fill_value, data.proj)
     else:
-        return MIArray(r)
+        return NDArray(r)
         
 def rmaskout(data, x, y, mask):
     """
@@ -321,7 +321,7 @@ def rmaskout(data, x, y, mask):
     if not isinstance(mask, (list, ArrayList)):
         mask = [mask]
     r = ArrayMath.maskout_Remove(data.asarray(), x.asarray(), y.asarray(), mask)
-    return MIArray(r[0]), MIArray(r[1]), MIArray(r[2])  
+    return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])  
     
 def maskin(data, mask, x=None, y=None):
     """
@@ -336,12 +336,12 @@ def maskin(data, mask, x=None, y=None):
     """
     if mask is None:
         return data        
-    elif isinstance(mask, MIArray):
+    elif isinstance(mask, NDArray):
         r = ArrayMath.maskin(data.array, mask.array)
         if isinstance(data, DimArray):
             return DimArray(r, data.dims, data.fill_value, data.proj)
         else:
-            return MIArray(r)
+            return NDArray(r)
         
     if x is None or y is None:
         if isinstance(data, DimArray):
@@ -356,7 +356,7 @@ def maskin(data, mask, x=None, y=None):
     if isinstance(data, DimArray):
         return DimArray(r, data.dims, data.fill_value, data.proj)
     else:
-        return MIArray(r)
+        return NDArray(r)
         
 def rmaskin(data, x, y, mask):
     """
@@ -372,7 +372,7 @@ def rmaskin(data, x, y, mask):
     if not isinstance(mask, (list, ArrayList)):
         mask = [mask]
     r = ArrayMath.maskin_Remove(data.array, x.array, y.array, mask)
-    return MIArray(r[0]), MIArray(r[1]), MIArray(r[2])  
+    return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])  
     
 def projinfo(proj4string=None, proj='longlat', **kwargs):
     """
@@ -453,9 +453,9 @@ def project(x, y, fromproj=KnownCoordinateSystems.geographic.world.WGS1984, topr
         x = array(x)
     if isinstance(y, (tuple, list)):
         y = array(y)
-    if isinstance(x, MIArray):
+    if isinstance(x, NDArray):
         outxy = ArrayUtil.reproject(x.asarray(), y.asarray(), fromproj, toproj)
-        return MIArray(outxy[0]), MIArray(outxy[1])
+        return NDArray(outxy[0]), NDArray(outxy[1])
     else:
         inpt = PointD(x, y)
         outpt = Reproject.reprojectPoint(inpt, fromproj, toproj)
@@ -503,7 +503,7 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
     :param toproj: (*ProjectionInfo*) Output projection.
     :param method: Interpolation method: ``bilinear`` or ``neareast`` .
     
-    :returns: (*MIArray*) Projected array
+    :returns: (*NDArray*) Projected array
     """
     if isinstance(a, DimArray):
         y = a.dimvalue(a.ndim - 2)
@@ -517,16 +517,16 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
     if xp is None or yp is None:
         pr = ArrayUtil.reproject(a.asarray(), x.aslist(), y.aslist(), fromproj, toproj)
         r = pr[0]        
-        return MIArray(r)
+        return NDArray(r)
     
     if method == 'bilinear':
         method = ResampleMethods.Bilinear
     else:
         method = ResampleMethods.NearestNeighbor
     if isinstance(xp, (list, tuple)):
-        xp = MIArray(xp)
+        xp = NDArray(xp)
     if isinstance(yp, (list, tuple)):
-        yp = MIArray(yp)
+        yp = NDArray(yp)
     xp, yp = ArrayUtil.meshgrid(xp.asarray(), yp.asarray())
     r = ArrayUtil.reproject(a.asarray(), x.aslist(), y.aslist(), xp, yp, fromproj, toproj, method)
-    return MIArray(r)    
+    return NDArray(r)    

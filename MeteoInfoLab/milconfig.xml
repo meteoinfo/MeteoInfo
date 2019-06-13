@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\KeyData\BC_New\script">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataconvert">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
@@ -16,6 +14,8 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\KeyData\BC_New\script"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\data_process"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataconvert"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,18 +23,18 @@
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <OpenedFile File="D:\KeyData\BC_New\script\average_all_std.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataconvert\grib2nc-3.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <RecentFile File="D:\KeyData\BC_New\script\average_all_std.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\dataconvert\grib2nc-3.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,0" MainFormSize="1363,797"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

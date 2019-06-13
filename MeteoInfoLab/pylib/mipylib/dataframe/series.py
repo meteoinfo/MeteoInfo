@@ -10,7 +10,7 @@ import datetime
 from org.meteoinfo.data.dataframe import Series as MISeries
 from ucar.ma2 import Range
 
-from mipylib.numeric.miarray import MIArray
+from mipylib.numeric.multiarray import NDArray
 from mipylib.numeric.dimarray import DimArray
 import mipylib.numeric.minum as minum
 import mipylib.miutil as miutil
@@ -39,7 +39,7 @@ class Series(object):
             else:
                 if len(data) != len(index):
                     raise ValueError('Wrong length of index!')
-            if isinstance(index, (MIArray, DimArray)):
+            if isinstance(index, (NDArray, DimArray)):
                 index = index.tolist()
             if isinstance(index, Index):
                 self._index = index
@@ -49,7 +49,7 @@ class Series(object):
             self._series = MISeries(data.array, self._index._index, name)
         else:
             self._series = series
-            self._data = MIArray(self._series.getData())
+            self._data = NDArray(self._series.getData())
             self._index = Index.factory(index=self._series.getIndex())
         
     #---- index property
@@ -100,8 +100,8 @@ class Series(object):
             if key < 0 or key >= self.__len__():
                 raise KeyError(key)
             return self._series.getValue(key)
-        elif isinstance(key, (list, tuple, MIArray)):
-            if isinstance(key, MIArray):
+        elif isinstance(key, (list, tuple, NDArray)):
+            if isinstance(key, NDArray):
                 key = key.aslist()
             if isinstance(key[0], datetime.datetime):
                 key = miutil.jdatetime(key)
@@ -160,8 +160,8 @@ class Series(object):
             else:
                 raise KeyError(key)
             return ikey
-        elif isinstance(key, (list, tuple, MIArray, DimArray)) and isinstance(key[0], basestring):
-            if isinstance(key, (MIArray, DimArray)):
+        elif isinstance(key, (list, tuple, NDArray, DimArray)) and isinstance(key[0], basestring):
+            if isinstance(key, (NDArray, DimArray)):
                 key = key.asarray()            
             ikey = self.index.get_indices(key)
             if len(ikey) == 0:

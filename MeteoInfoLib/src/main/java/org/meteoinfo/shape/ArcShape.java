@@ -24,6 +24,7 @@ public class ArcShape extends PolygonShape {
     private float startAngle;
     private float sweepAngle;
     private float explode = 0;
+    private Float wedgeWidth = null;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -80,6 +81,22 @@ public class ArcShape extends PolygonShape {
      */
     public void setExplode(float value){
         this.explode = value;
+    }
+    
+    /**
+     * Get wedge width
+     * @return Wedge width
+     */
+    public Float getWedgeWidth() {
+        return this.wedgeWidth;
+    }
+    
+    /**
+     * Set wedge width
+     * @param value Wedge width
+     */
+    public void setWedgeWidth(Float value) {
+        this.wedgeWidth = value;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

@@ -201,7 +201,8 @@ public class Plot2D extends AbstractPlot2D {
                     break;
             }
         }
-        return isPie && n == 1;
+        //return isPie && n == 1;
+        return isPie;
     }
     
     void plotPie(Graphics2D g, Rectangle2D area){
@@ -969,9 +970,15 @@ public class Plot2D extends AbstractPlot2D {
         double y = sXY[1];
         double width = this.projXLength(extent.getWidth(), area);
         double height = this.projYLength(extent.getHeight(), area);
-        
-        Draw.drawPie(new PointF((float)x, (float)y),
+        Float wedgeWidth = aShape.getWedgeWidth();
+        if (wedgeWidth == null) {
+            Draw.drawPie(new PointF((float)x, (float)y),
                 (float) width, (float) height, startAngle, sweepAngle, aPGB, g);
+        } else {
+            wedgeWidth = (float)this.projXLength(wedgeWidth, area);
+            Draw.drawPie(new PointF((float)x, (float)y),
+                (float) width, (float) height, startAngle, sweepAngle, aPGB, wedgeWidth, g);
+        }
     }
 
     private void drawBar(Graphics2D g, BarShape bar, BarBreak bb, float width, Rectangle2D area) {

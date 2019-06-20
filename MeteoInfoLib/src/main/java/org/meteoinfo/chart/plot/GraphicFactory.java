@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
@@ -4457,11 +4458,14 @@ public class GraphicFactory {
      * @param labelDis Label distance
      * @param autopct pct format
      * @param pctDis pct distance
+     * @param radius Pie radius
+     * @param wedgeprops Wedge properties
      * @return GraphicCollection
      */
     public static GraphicCollection[] createPieArcs(Array xdata, List<Color> colors,
             List<String> labels, float startAngle, List<Number> explode, Font labelFont,
-            Color labelColor, float labelDis, String autopct, float pctDis) {
+            Color labelColor, float labelDis, String autopct, float pctDis, float radius,
+            HashMap wedgeprops) {
         GraphicCollection gc = new GraphicCollection();
         GraphicCollection lgc = new GraphicCollection();
         GraphicCollection pgc = new GraphicCollection();
@@ -4470,9 +4474,13 @@ public class GraphicFactory {
         int n = (int) xdata.getSize();
         float sweepAngle, angle;
         float ex;
-        double dx, dy, ldx, ldy, r = 1;
+        double dx, dy, ldx, ldy;
         String label, pct = null;
         LegendScheme ls = new LegendScheme(ShapeTypes.Polygon);
+        Boolean drawEdge = wedgeprops.get("drawedge") == null ? null : (Boolean)wedgeprops.get("drawedge");
+        Color edgeColor = wedgeprops.get("edgecolor") == null ? null : (Color)wedgeprops.get("edgecolor");
+        Float lineWidth = wedgeprops.get("linewidth") == null ? null : Float.parseFloat(String.valueOf(wedgeprops.get("linewidth")));
+        Float wedgeWidth = wedgeprops.get("width") == null ? null : Float.parseFloat(String.valueOf(wedgeprops.get("width")));
         for (int i = 0; i < n; i++) {
             v = xdata.getDouble(i);
             if (Double.isNaN(v)) {
@@ -4493,18 +4501,30 @@ public class GraphicFactory {
             } else {
                 ex = explode.get(i).floatValue();
                 aShape.setExplode(ex);
-                dx = r * ex * Math.cos(angle * Math.PI / 180);
-                dy = r * ex * Math.sin(angle * Math.PI / 180);
+                dx = radius * ex * Math.cos(angle * Math.PI / 180);
+                dy = radius * ex * Math.sin(angle * Math.PI / 180);
             }
             List<PointD> points = new ArrayList<>();
-            points.add(new PointD(-r + dx, -r + dy));
-            points.add(new PointD(-r + dx, r + dy));
-            points.add(new PointD(r + dx, r + dy));
-            points.add(new PointD(r + dx, -r + dy));
+            points.add(new PointD(-radius + dx, -radius + dy));
+            points.add(new PointD(-radius + dx, radius + dy));
+            points.add(new PointD(radius + dx, radius + dy));
+            points.add(new PointD(radius + dx, -radius + dy));
             points.add(new PointD(dx, dy));
             aShape.setPoints(points);
+            if (wedgeWidth != null) {
+                aShape.setWedgeWidth(wedgeWidth);
+            }
             PolygonBreak pgb = new PolygonBreak();
             pgb.setColor(colors.get(i));
+            if (drawEdge != null) {
+                pgb.setDrawOutline(drawEdge);
+            }
+            if (edgeColor != null) {
+                pgb.setOutlineColor(edgeColor);
+            }
+            if (lineWidth != null) {
+                pgb.setOutlineSize(lineWidth);
+            }
             if (labels == null) {
                 if (autopct == null) {
                     label = "";
@@ -4524,8 +4544,8 @@ public class GraphicFactory {
 
             //Label text
             ChartText ps = new ChartText();
-            ldx = dx + r * labelDis * Math.cos(angle * Math.PI / 180);
-            ldy = dy + r * labelDis * Math.sin(angle * Math.PI / 180);
+            ldx = dx + radius * labelDis * Math.cos(angle * Math.PI / 180);
+            ldy = dy + radius * labelDis * Math.sin(angle * Math.PI / 180);
             ps.setPoint(ldx, ldy);
             ps.setText(label);
             ps.setFont(labelFont);
@@ -4546,8 +4566,8 @@ public class GraphicFactory {
             //pct text
             if (pct != null) {
                 ps = new ChartText();
-                ldx = dx + r * pctDis * Math.cos(angle * Math.PI / 180);
-                ldy = dy + r * pctDis * Math.sin(angle * Math.PI / 180);
+                ldx = dx + radius * pctDis * Math.cos(angle * Math.PI / 180);
+                ldy = dy + radius * pctDis * Math.sin(angle * Math.PI / 180);
                 ps.setPoint(ldx, ldy);
                 ps.setText(pct);
                 ps.setFont(labelFont);
@@ -4563,7 +4583,7 @@ public class GraphicFactory {
         gc.setLegendScheme(ls);
         gc.getLabelSet().setLabelFont(labelFont);
         gc.getLabelSet().setLabelColor(labelColor);
-        dx = r * 0.1;
+        dx = radius * 0.1;
         if (labels != null || autopct != null) {
             Extent ext = gc.getExtent().extend(dx, dx);
             gc.setExtent(ext);

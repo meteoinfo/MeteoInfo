@@ -45,6 +45,7 @@ import java.awt.RenderingHints;
 import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -3842,6 +3843,38 @@ public class Draw {
             g.setColor(aPGB.getOutlineColor());
             g.setStroke(new BasicStroke(aPGB.getOutlineSize()));
             g.draw(new Arc2D.Float(aPoint.X, aPoint.Y, width, height, startAngle, sweepAngle, Arc2D.PIE));
+        }
+    }
+    
+    /**
+     * Draw pie
+     *
+     * @param aPoint Start point
+     * @param width Width
+     * @param height Height
+     * @param startAngle Start angle
+     * @param sweepAngle Sweep angle
+     * @param aPGB Polygon break
+     * @param wedgeWidth Wedge width
+     * @param g Graphics2D
+     */
+    public static void drawPie(PointF aPoint, float width, float height, float startAngle, 
+            float sweepAngle, PolygonBreak aPGB, float wedgeWidth, Graphics2D g) {
+        Color aColor = aPGB.getColor();
+        Arc2D.Float arc2D = new Arc2D.Float(aPoint.X, aPoint.Y, width, height, startAngle, sweepAngle, Arc2D.PIE);
+        Area area1 = new Area(arc2D);
+        Ellipse2D e2 = new Ellipse2D.Float(aPoint.X + wedgeWidth, aPoint.Y + wedgeWidth, width - wedgeWidth * 2, 
+                height - wedgeWidth * 2);
+        Area area2 = new Area(e2);
+        area1.subtract(area2);
+        if (aPGB.isDrawFill()) {
+            g.setColor(aColor);
+            g.fill(area1);
+        }
+        if (aPGB.isDrawOutline()) {
+            g.setColor(aPGB.getOutlineColor());
+            g.setStroke(new BasicStroke(aPGB.getOutlineSize()));
+            g.draw(area1);
         }
     }
 

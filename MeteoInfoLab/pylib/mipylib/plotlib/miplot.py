@@ -852,7 +852,7 @@ def fill_betweenx(y, x1, x2=0, where=None, **kwargs):
     return r
         
 def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6, shadow=False, 
-    labeldistance=1.1, startangle=0, radius=None, hold=None, **kwargs):
+    labeldistance=1.1, startangle=0, radius=None, wedgeprops=None, **kwargs):
     """
     Plot a pie chart.
     
@@ -875,7 +875,8 @@ def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6
     :param shadow: (*boolean*) Draw a shadow beneath the pie.
     :param startangle: (*float*) If not *0*, rotates the start of the pie chart by *angle* degrees
         counterclockwise from the x-axis.
-    :radius: (*float*) The radius of the pie, if *radius* is *None* it will be set to 1.
+    :param radius: (*float*) The radius of the pie, if *radius* is *None* it will be set to 1.
+    :param wedgeprops: (*dict*) Dict of arguments passed to the wedge objects making the pie. 
     :param fontname: (*string*) Font name. Default is ``Arial`` .
     :param fontsize: (*int*) Font size. Default is ``14`` .
     
@@ -892,7 +893,7 @@ def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6
             gca = axes()
             
     r = gca.pie(x, explode, labels, colors, autopct, pctdistance, shadow, 
-        labeldistance, startangle, radius, hold, **kwargs)
+        labeldistance, startangle, radius, wedgeprops, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r

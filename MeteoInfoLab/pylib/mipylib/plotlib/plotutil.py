@@ -450,6 +450,7 @@ def getlegendbreak(geometry, **kwargs):
         edge = kwargs.pop('edge', True)
         lb.setDrawOutline(edge)
         size = kwargs.pop('size', None)
+        size = kwargs.pop('linewidth', size)
         size = kwargs.pop('edgesize', size)
         if not size is None:
             lb.setOutlineSize(size)

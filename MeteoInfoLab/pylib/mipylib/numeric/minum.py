@@ -18,6 +18,7 @@ from ucar.ma2 import Array
 from dimarray import PyGridData, DimArray, PyStationData
 from multiarray import NDArray
 from mitable import PyTableData
+import mipylib.miutil as miutil
 
 from java.lang import Math, Double, Float
 from java.util import Calendar
@@ -77,6 +78,9 @@ def array(object):
     """
     if isinstance(object, NDArray):
         return object
+    if isinstance(object, (list, tuple)):
+        if isinstance(object[0], datetime.datetime):
+            object = miutil.dates2nums(object)
     return NDArray(ArrayUtil.array(object))
     
 def dim_array(a, dims=None):

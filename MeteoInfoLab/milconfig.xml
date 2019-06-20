@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataconvert">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
@@ -16,6 +15,7 @@
     <RecentFolder Folder="D:\KeyData\BC_New\script"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\data_process"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataconvert"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,14 +23,16 @@
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataconvert\grib2nc-3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\pie_nested.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\pie_nested_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\dataconvert\grib2nc-3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\pie_nested.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\pie_nested_1.py"/>
     </RecentFiles>
   </File>
   <Font>

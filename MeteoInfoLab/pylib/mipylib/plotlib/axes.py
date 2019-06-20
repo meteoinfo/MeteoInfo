@@ -19,6 +19,7 @@ from org.meteoinfo.layer import MapLayer
 
 from java.awt import Font, Color, BasicStroke
 from java.awt.image import BufferedImage
+from java.util import HashMap
 
 import numbers
 import datetime
@@ -1458,6 +1459,8 @@ class Axes(object):
         autowidth = False
         x = minum.asarray(x)
         height = minum.asarray(height)
+        if len(x) > 1 and isinstance(width, numbers.Number) and width <= 1:
+            width = (x[1] - x[0]) * width
         width = minum.asarray(width)
         if align == 'center':
             x = x - width / 2
@@ -2423,7 +2426,7 @@ class Axes(object):
         return pb
 
     def pie(self, x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6, shadow=False, 
-        labeldistance=1.1, startangle=0, radius=None, hold=None, **kwargs):
+        labeldistance=1.1, startangle=0, radius=None, wedgeprops=None, **kwargs):
         """
         Plot a pie chart.
         
@@ -2446,7 +2449,8 @@ class Axes(object):
         :param shadow: (*boolean*) Draw a shadow beneath the pie.
         :param startangle: (*float*) If not *0*, rotates the start of the pie chart by *angle* degrees
             counterclockwise from the x-axis.
-        :radius: (*float*) The radius of the pie, if *radius* is *None* it will be set to 1.
+        :param radius: (*float*) The radius of the pie, if *radius* is *None* it will be set to 1.
+        :param wedgeprops: (*dict*) Dict of arguments passed to the wedge objects making the pie. 
         :param fontname: (*string*) Font name. Default is ``Arial`` .
         :param fontsize: (*int*) Font size. Default is ``14`` .
         
@@ -2455,7 +2459,8 @@ class Axes(object):
         n = len(x)
         x = plotutil.getplotdata(x)
         if colors is None:
-            colors = plotutil.makecolors(n)
+            cmap = kwargs.pop('cmap', 'matlab_jet')
+            colors = plotutil.makecolors(n, cmap=cmap)
         else:
             colors = plotutil.getcolors(colors)
             
@@ -2468,10 +2473,27 @@ class Axes(object):
         else:
             font = Font(fontname, Font.PLAIN, fontsize)
         fontcolor = plotutil.getcolor(fontcolor)
+        if radius is None:
+            radius = 1
+        if wedgeprops is None:
+            wedgeprops = HashMap()
+        else:
+            jmap = HashMap()
+            for key in wedgeprops.keys():
+                value = wedgeprops[key]
+                if key == 'edgecolor':
+                    if value is None:
+                        jmap['drawedge'] = False
+                    else:
+                        value = plotutil.getcolor(value)
+                        jmap[key] = value
+                else:
+                    jmap[key] = value
+            wedgeprops = jmap
         
         #Create graphics
         graphics = GraphicFactory.createPieArcs(x, colors, labels, startangle, explode, font, fontcolor, \
-            labeldistance, autopct, pctdistance)
+            labeldistance, autopct, pctdistance, radius, wedgeprops)
 
         for graphic in graphics:
             self.add_graphic(graphic)

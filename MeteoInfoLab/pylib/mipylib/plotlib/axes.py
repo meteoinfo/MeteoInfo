@@ -2504,10 +2504,7 @@ class Axes(object):
         self.axes.getAxis(Location.TOP).setVisible(False)
         self.axes.getAxis(Location.RIGHT).setVisible(False)
 
-        if len(graphics) == 2:
-            return graphics[0], graphics[1]
-        else:
-            return graphics[0], graphics[1], graphics[2]
+        return tuple(graphics)
         
     def boxplot(self, x, sym=None, positions=None, widths=None, color=None, showcaps=True, showfliers=True, showmeans=False, \
             showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):

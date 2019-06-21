@@ -4543,29 +4543,31 @@ public class GraphicFactory {
             ls.addLegendBreak(pgb);
 
             //Label text
-            ChartText ps = new ChartText();
-            ldx = dx + radius * labelDis * Math.cos(angle * Math.PI / 180);
-            ldy = dy + radius * labelDis * Math.sin(angle * Math.PI / 180);
-            ps.setPoint(ldx, ldy);
-            ps.setText(label);
-            ps.setFont(labelFont);
-            ps.setColor(labelColor);
-            if (angle > 90 && angle < 270) {
-                ps.setXAlign(XAlign.RIGHT);
+            if (!label.isEmpty()) {
+                ChartText ps = new ChartText();
+                ldx = dx + radius * labelDis * Math.cos(angle * Math.PI / 180);
+                ldy = dy + radius * labelDis * Math.sin(angle * Math.PI / 180);
+                ps.setPoint(ldx, ldy);
+                ps.setText(label);
+                ps.setFont(labelFont);
+                ps.setColor(labelColor);
+                if (angle > 90 && angle < 270) {
+                    ps.setXAlign(XAlign.RIGHT);
+                }
+                if (angle > 180 && angle < 360) {
+                    ps.setYAlign(YAlign.TOP);
+                }
+                if (angle == 0 || angle == 180) {
+                    ps.setYAlign(YAlign.CENTER);
+                } else if (angle == 90 || angle == 270) {
+                    ps.setXAlign(XAlign.CENTER);
+                }
+                lgc.add(new Graphic(ps, new ColorBreak()));
             }
-            if (angle > 180 && angle < 360) {
-                ps.setYAlign(YAlign.TOP);
-            }
-            if (angle == 0 || angle == 180) {
-                ps.setYAlign(YAlign.CENTER);
-            } else if (angle == 90 || angle == 270) {
-                ps.setXAlign(XAlign.CENTER);
-            }
-            lgc.add(new Graphic(ps, new ColorBreak()));
 
             //pct text
             if (pct != null) {
-                ps = new ChartText();
+                ChartText ps = new ChartText();
                 ldx = dx + radius * pctDis * Math.cos(angle * Math.PI / 180);
                 ldy = dy + radius * pctDis * Math.sin(angle * Math.PI / 180);
                 ps.setPoint(ldx, ldy);
@@ -4590,9 +4592,15 @@ public class GraphicFactory {
         }
 
         if (pct == null) {
-            return new GraphicCollection[]{gc, lgc};
+            if (lgc.isEmpty())
+                return new GraphicCollection[]{gc};
+            else
+                return new GraphicCollection[]{gc, lgc};
         } else {
-            return new GraphicCollection[]{gc, lgc, pgc};
+            if (lgc.isEmpty())
+                return new GraphicCollection[]{gc, pgc};
+            else
+                return new GraphicCollection[]{gc, lgc, pgc};
         }
     }
 

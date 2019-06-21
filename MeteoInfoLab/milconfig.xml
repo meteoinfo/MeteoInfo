@@ -23,20 +23,18 @@
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\pie_nested.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\pie_nested_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\map_pie_nested.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\pie_nested.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\pie_nested_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\map_pie_nested.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1341,778"/>
 </MeteoInfo>

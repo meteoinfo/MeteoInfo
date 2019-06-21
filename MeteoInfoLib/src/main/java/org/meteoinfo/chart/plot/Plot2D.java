@@ -43,7 +43,6 @@ import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.global.PointF;
 import org.meteoinfo.legend.ArrowBreak;
-import org.meteoinfo.legend.ArrowLineBreak;
 import org.meteoinfo.legend.BarBreak;
 import static org.meteoinfo.legend.BreakTypes.LabelBreak;
 import org.meteoinfo.legend.ColorBreak;

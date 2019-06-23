@@ -3055,6 +3055,17 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             Array data = var.read();
+            
+            //Get pack info
+            double add_offset, scale_factor, missingValue;
+            double[] packData = this.getPackData(var);
+            add_offset = packData[0];
+            scale_factor = packData[1];
+            missingValue = packData[2];
+            if (add_offset != 0 || scale_factor != 1) {
+                //ArrayMath.fill_value = missingValue;
+                data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+            }
 
             return data;
         } catch (IOException ex) {
@@ -3177,6 +3188,17 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
             Section section = new Section(origin, size);
             Array data = var.read(section);
+            
+            //Get pack info
+            double add_offset, scale_factor, missingValue;
+            double[] packData = this.getPackData(var);
+            add_offset = packData[0];
+            scale_factor = packData[1];
+            missingValue = packData[2];
+            if (add_offset != 0 || scale_factor != 1) {
+                //ArrayMath.fill_value = missingValue;
+                data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+            }
 
             return data;
         } catch (IOException | InvalidRangeException ex) {

@@ -206,8 +206,8 @@ class NDArray(object):
         else:
             for i in flips:
                 r = r.flip(i)
-            rr = Array.factory(r.getDataType(), r.getShape());
-            MAMath.copy(rr, r);
+            rr = Array.factory(r.getDataType(), r.getShape())
+            MAMath.copy(rr, r)
             return NDArray(rr)
         
     def __setitem__(self, indices, value):

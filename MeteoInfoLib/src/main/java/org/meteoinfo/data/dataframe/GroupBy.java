@@ -33,5 +33,7 @@ public abstract class GroupBy {
     public abstract Object median();
     
     public abstract Object stdDev();
+    
+    public abstract Object percentile(double quantile);
     // </editor-fold>
 }

@@ -109,11 +109,23 @@ public class DataFrameGroupBy extends GroupBy {
     /**
      * Compute the standard deviation of the numeric columns for each group.
      *
-     * @return the new series
+     * @return the new dataframe
      */
     @Override
     public DataFrame stdDev() {
         DataFrame r = this.apply(new Aggregation.StdDev<>());
+        return r;
+    }
+    
+    /**
+     * Compute the percentile of the numeric columns for each group.
+     *
+     * @param quantile Quantile value
+     * @return the new dataframe
+     */
+    @Override
+    public DataFrame percentile(double quantile) {
+        DataFrame r = this.apply(new Aggregation.Percentile<>(quantile * 100));
         return r;
     }
     // </editor-fold>

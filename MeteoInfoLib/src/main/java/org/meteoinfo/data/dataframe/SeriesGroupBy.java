@@ -117,5 +117,17 @@ public class SeriesGroupBy extends GroupBy {
         Series r = this.apply(new Aggregation.StdDev<>());
         return r;
     }
+    
+    /**
+     * Compute the percentile of the numeric columns for each group.
+     *
+     * @param quantile Quantile value
+     * @return the new series
+     */
+    @Override
+    public Series percentile(double quantile) {
+        Series r = this.apply(new Aggregation.Percentile<>(quantile));
+        return r;
+    }
     // </editor-fold>
 }

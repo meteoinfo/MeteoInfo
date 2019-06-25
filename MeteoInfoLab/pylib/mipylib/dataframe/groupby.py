@@ -92,4 +92,18 @@ class GroupBy(object):
         else:
             return series.Series(series=r)
             
+    def quantile(self, q):
+        '''
+        Return values at the given quantile.
+        
+        :param q: (*float*) Value between 0 <= q <= 1, the quantile(s) to compute.
+        
+        :returns: Series or DataFrame
+        '''
+        r = self._groupby.percentile(q)
+        if isinstance(r, MIDataFrame):
+            return dataframe.DataFrame(dataframe=r)
+        else:
+            return series.Series(series=r)
+            
 ########################################################

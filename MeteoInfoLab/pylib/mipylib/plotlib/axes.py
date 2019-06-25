@@ -3031,7 +3031,9 @@ class Axes(object):
                     ls = LegendScheme()
                     for lb in lbs:
                         ls.addLegendBreak(lb)
-                    if lbs[0].getStartValue() == lbs[1].getEndValue():
+                    if len(lbs) == 1:
+                        ls.setLegendType(LegendType.SingleSymbol)
+                    elif lbs[0].getStartValue() == lbs[1].getEndValue():
                         ls.setLegendType(LegendType.UniqueValue)
                     else:
                         ls.setLegendType(LegendType.GraduatedColor)

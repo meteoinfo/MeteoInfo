@@ -126,7 +126,7 @@ public class SeriesGroupBy extends GroupBy {
      */
     @Override
     public Series percentile(double quantile) {
-        Series r = this.apply(new Aggregation.Percentile<>(quantile));
+        Series r = this.apply(new Aggregation.Percentile<>(quantile * 100));
         return r;
     }
     // </editor-fold>

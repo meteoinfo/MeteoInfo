@@ -77,17 +77,17 @@ class Axes(object):
         
         :returns: Axes outer position [left, bottom, width, height] in normalized (0, 1) units
         '''
-        pos = self.axes.getPosition()
+        pos = self.axes.getOuterPosition()
         return [pos.x, pos.y, pos.width, pos.height]
         
     def set_outerposition(self, pos):
         '''
         Set axes outer position
         
-        :param pos: (*list*) Axes outer position specified by *position=* [left, bottom, width,
+        :param pos: (*list*) Axes outer position specified by *outerposition=* [left, bottom, width,
             height] in normalized (0, 1) units
         '''
-        self.axes.setPosition(pos)
+        self.axes.setOuterPosition(pos)
         
     def active_outerposition(self, active):
         '''
@@ -2659,6 +2659,8 @@ class Axes(object):
         xx = []
         max = 0
         for data,position in zip(dataset, positions):
+            if data.contains_nan():
+                data = np.delnan(data)
             kde = np.stats.GaussianKDE(data)
             x = np.linspace(data.min(), data.max(), 100)            
             pdf = kde.evaluate(x)

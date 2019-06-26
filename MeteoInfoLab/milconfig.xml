@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\array">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
@@ -16,21 +14,21 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataconvert"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\dataframe_resample_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\dataframe_read_table_quantile.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\outerposition_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\array\dataframe_resample_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\array\dataframe_read_table_quantile.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\outerposition_1.py"/>
     </RecentFiles>
   </File>
   <Font>

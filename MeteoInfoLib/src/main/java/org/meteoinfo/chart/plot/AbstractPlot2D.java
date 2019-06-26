@@ -814,7 +814,7 @@ public abstract class AbstractPlot2D extends Plot {
      */
     @Override
     public Margin getTightInset(Graphics2D g, Rectangle2D positionArea) {
-        int left = 2, bottom = 2, right = 2, top = 5;
+        int left = 2, bottom = 2, right = 2, top = 10;
 
         top += this.getAxis(Location.TOP).getXAxisHeight(g);
         if (this.title != null) {

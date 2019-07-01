@@ -1047,10 +1047,8 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
         width = 1
     if width <= 0:
         width = 0.2
-    theta = minum.ones(wdN)
+    theta = rwdbins[:-1]
     width = 2. * width * minum.pi / wdN
-    for i in range(wdN):
-        theta[i] = rwdbins[i] - width/2
         
     bars = []
     hhist = 0

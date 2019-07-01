@@ -796,7 +796,7 @@ def dimension(dimvalue, dimname='null', dimtype=None):
     
     :param dimvalue: (*array_like*) Dimension value.
     :param dimname: (*string*) Dimension name.
-    :param dimtype: (*DimensionType*) Dimension type.
+    :param dimtype: (*DimensionType*) Dimension type ['X' | 'Y' | 'Z' | 'T'].
     """
     if isinstance(dimvalue, (NDArray, DimArray)):
         dimvalue = dimvalue.aslist()

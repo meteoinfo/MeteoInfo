@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.meteothink</groupId>
         <artifactId>MeteoInfo</artifactId>
-        <version>1.8.6-SNAPSHOT</version>
+        <version>1.8.6</version>
     </parent>
     
     <artifactId>MeteoInfoLib</artifactId>

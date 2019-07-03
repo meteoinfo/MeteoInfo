@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
@@ -22,17 +22,19 @@
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\outerposition_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\yyy_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\axis_position.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\outerposition_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\yyy_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\axis_position.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,0" MainFormSize="1356,797"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1334,787"/>
 </MeteoInfo>

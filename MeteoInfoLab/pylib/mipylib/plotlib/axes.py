@@ -585,10 +585,33 @@ class Axes(object):
         """
         Set x axis of the axes.
         
-        :param color: (*Color*) Color of the x axis. Default is 'black'.
-        :param shift: (*int) X axis shif along x direction. Units is pixel. Default is 0.
+        :param color: (*Color*) Color of the axis. Default is `black`.
+        :param position: (*tuple*) Axis position specified by a 2 tuple of (position type, amount). 
+            The position types are ['outerward' | 'axes' | 'data'].
+        :param shift: (*int) Axis shif along x direction. Units is pixel. Default is 0.
+        :param visible: (*boolean*) Set axis visible or not, Default is `None`.
+        :param linewidth: (*float*) Line width of the axis.
+        :param linestyle: (*string*) Line style of the axis.
+        :param tickline: (*boolean*) Draw tick line or not.
+        :param tickwidth: (*float*) Tick line width.
+        :param ticklength: (*float*) Tick line length.
+        :param ticklabel: (*boolean*) Draw tick label or not.
+        :param minortick: (*boolean*) Draw minor tick line or not.
+        :param minorticknum: (*int*) Minor tick line number between two adjacent major tick lines.
+        :param tickin: (*boolean*) Tick lines are ploted inside or outside of the axes.
+        :param axistype: (*string*) Axis type ['normal' | 'lon' | 'lat' | 'time' | 'log'].
+        :param timetickformat: (*string*) Time tick label format, only valid with time axis.
+        :param tickfontname: (*string*) Tick label font name.
+        :param tickfontsize: (*int*) Tick label font size.
+        :param tickbold: (*boolean*) Tick label font is bold or not.
+        :param location: (*string*) Locations of the axis ['both' | 'top' | 'bottom'].
         """
         visible = kwargs.pop('visible', None)
+        position = kwargs.pop('position', None)
+        if position == 'center':
+            position = ['axes', 0.5]
+        elif position == 'zero':
+            position = ['data', 0]
         shift = kwargs.pop('shift', None)
         color = kwargs.pop('color', None)
         if not color is None:
@@ -631,8 +654,13 @@ class Axes(object):
         for axis in axislist:
             if not visible is None:
                 axis.setVisible(visible)
-            if not shift is None:
-                axis.setShift(shift)
+            if not position is None:
+                axis.setPositionType(position[0])
+                axis.setPosition(position[1])
+            else:
+                if not shift is None:
+                    axis.setPositionType('OUTERWARD')
+                    axis.setPosition(shift)
             if not color is None:
                 axis.setColor_All(color)
             if not linewidth is None:
@@ -658,9 +686,32 @@ class Axes(object):
         Set y axis of the axes.
 
         :param color: (*Color*) Color of the y axis. Default is 'black'.
+        :param position: (*tuple*) Axis position specified by a 2 tuple of (position type, amount). 
+            The position types are ['outerward' | 'axes' | 'data'].
         :param shift: (*int) Y axis shif along x direction. Units is pixel. Default is 0.
+        :param visible: (*boolean*) Set axis visible or not, Default is `None`.
+        :param linewidth: (*float*) Line width of the axis.
+        :param linestyle: (*string*) Line style of the axis.
+        :param tickline: (*boolean*) Draw tick line or not.
+        :param tickwidth: (*float*) Tick line width.
+        :param ticklength: (*float*) Tick line length.
+        :param ticklabel: (*boolean*) Draw tick label or not.
+        :param minortick: (*boolean*) Draw minor tick line or not.
+        :param minorticknum: (*int*) Minor tick line number between two adjacent major tick lines.
+        :param tickin: (*boolean*) Tick lines are ploted inside or outside of the axes.
+        :param axistype: (*string*) Axis type ['normal' | 'lon' | 'lat' | 'time' | 'log'].
+        :param timetickformat: (*string*) Time tick label format, only valid with time axis.
+        :param tickfontname: (*string*) Tick label font name.
+        :param tickfontsize: (*int*) Tick label font size.
+        :param tickbold: (*boolean*) Tick label font is bold or not.
+        :param location: (*string*) Locations of the axis ['both' | 'left' | 'right'].
         """
         visible = kwargs.pop('visible', None)
+        position = kwargs.pop('position', None)
+        if position == 'center':
+            position = ['axes', 0.5]
+        elif position == 'zero':
+            position = ['data', 0]
         shift = kwargs.pop('shift', None)
         color = kwargs.pop('color', None)
         if not color is None:
@@ -703,8 +754,13 @@ class Axes(object):
         for axis in axislist:
             if not visible is None:
                 axis.setVisible(visible)
-            if not shift is None:
-                axis.setShift(shift)
+            if not position is None:
+                axis.setPositionType(position[0])
+                axis.setPosition(position[1])
+            else:
+                if not shift is None:
+                    axis.setPositionType('OUTERWARD')
+                    axis.setPosition(shift)
             if not color is None:
                 axis.setColor_All(color)
             if not linewidth is None:
@@ -3170,6 +3226,12 @@ class Axes(object):
             as a fraction of the interior colorbar length.
         :param ticks: [None | list of ticks] If None, ticks are determined automatically from the input.
         :param ticklabels: [None | list of ticklabels] Tick labels.
+        :param tickin: (*boolean*) Draw tick line inside or outside of the colorbar.
+        :param tickrotation: (*float*) Set tick label rotation angle.
+        :param xshift: (*float*) X shift of the colorbar with pixel coordinate.
+        :param yshift: (*float*) Y shift of the colorbar with pixel coordinate.
+        :param vmintick: (*boolean*) Draw minimum value tick or not.
+        :param vmaxtick: (*boolean*) Draw maximum value tick or not.
         """
         cmap = kwargs.pop('cmap', None)
         shrink = kwargs.pop('shrink', 1)

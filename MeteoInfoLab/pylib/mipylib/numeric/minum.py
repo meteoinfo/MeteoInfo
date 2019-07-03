@@ -78,6 +78,9 @@ def array(object):
     """
     if isinstance(object, NDArray):
         return object
+    elif isinstance(object, Array):
+        return NDArray(object)
+        
     if isinstance(object, (list, tuple)):
         if isinstance(object[0], datetime.datetime):
             object = miutil.dates2nums(object)

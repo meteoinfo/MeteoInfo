@@ -1361,6 +1361,22 @@ def xaxis(ax=None, **kwargs):
     :param ax: The axes.
     :param color: (*Color*) Color of the x axis. Default is 'black'.
     :param shift: (*int) X axis shif along x direction. Units is pixel. Default is 0.
+    :param visible: (*boolean*) Set axis visible or not, Default is `None`.
+    :param linewidth: (*float*) Line width of the axis.
+    :param linestyle: (*string*) Line style of the axis.
+    :param tickline: (*boolean*) Draw tick line or not.
+    :param tickwidth: (*float*) Tick line width.
+    :param ticklength: (*float*) Tick line length.
+    :param ticklabel: (*boolean*) Draw tick label or not.
+    :param minortick: (*boolean*) Draw minor tick line or not.
+    :param minorticknum: (*int*) Minor tick line number between two adjacent major tick lines.
+    :param tickin: (*boolean*) Tick lines are ploted inside or outside of the axes.
+    :param axistype: (*string*) Axis type ['normal' | 'lon' | 'lat' | 'time' | 'log'].
+    :param timetickformat: (*string*) Time tick label format, only valid with time axis.
+    :param tickfontname: (*string*) Tick label font name.
+    :param tickfontsize: (*int*) Tick label font size.
+    :param tickbold: (*boolean*) Tick label font is bold or not.
+    :param location: (*string*) Locations of the axis ['both' | 'top' | 'bottom'].
     """
     if ax is None:
         ax = gca
@@ -1374,6 +1390,22 @@ def yaxis(ax=None, **kwargs):
     :param ax: The axes.
     :param color: (*Color*) Color of the y axis. Default is 'black'.
     :param shift: (*int) Y axis shif along x direction. Units is pixel. Default is 0.
+    :param visible: (*boolean*) Set axis visible or not, Default is `None`.
+    :param linewidth: (*float*) Line width of the axis.
+    :param linestyle: (*string*) Line style of the axis.
+    :param tickline: (*boolean*) Draw tick line or not.
+    :param tickwidth: (*float*) Tick line width.
+    :param ticklength: (*float*) Tick line length.
+    :param ticklabel: (*boolean*) Draw tick label or not.
+    :param minortick: (*boolean*) Draw minor tick line or not.
+    :param minorticknum: (*int*) Minor tick line number between two adjacent major tick lines.
+    :param tickin: (*boolean*) Tick lines are ploted inside or outside of the axes.
+    :param axistype: (*string*) Axis type ['normal' | 'lon' | 'lat' | 'time' | 'log'].
+    :param timetickformat: (*string*) Time tick label format, only valid with time axis.
+    :param tickfontname: (*string*) Tick label font name.
+    :param tickfontsize: (*int*) Tick label font size.
+    :param tickbold: (*boolean*) Tick label font is bold or not.
+    :param location: (*string*) Locations of the axis ['both' | 'left' | 'right'].
     """
     if ax is None:
         ax = gca
@@ -1939,6 +1971,12 @@ def colorbar(mappable, **kwargs):
         as a fraction of the interior colorbar length.
     :param ticks: [None | list of ticks] If None, ticks are determined automatically from the input.
     :param ticklabels: [None | list of ticklabels] Tick labels.
+    :param tickin: (*boolean*) Draw tick line inside or outside of the colorbar.
+    :param tickrotation: (*float*) Set tick label rotation angle.
+    :param xshift: (*float*) X shift of the colorbar with pixel coordinate.
+    :param yshift: (*float*) Y shift of the colorbar with pixel coordinate.
+    :param vmintick: (*boolean*) Draw minimum value tick or not.
+    :param vmaxtick: (*boolean*) Draw maximum value tick or not.
     """
     cax = kwargs.pop('cax', None)
     if cax is None:

@@ -35,44 +35,46 @@ import org.meteoinfo.legend.LineStyles;
  * @author yaqiang
  */
 public class Axis implements Cloneable {
-
+    
     // <editor-fold desc="Variables">
-    private boolean xAxis;
-    private Location location;
-    private ChartText label;
-    private boolean visible;
-    private boolean drawTickLine;
-    private boolean drawTickLabel;
-    private boolean drawLabel;
-    private Color lineColor;
-    private float lineWidth;
-    private LineStyles lineStyle;
+    protected boolean xAxis;
+    protected Location location;
+    protected ChartText label;
+    protected boolean visible;
+    protected boolean drawTickLine;
+    protected boolean drawTickLabel;
+    protected boolean drawLabel;
+    protected Color lineColor;
+    protected float lineWidth;
+    protected LineStyles lineStyle;
     //private Stroke lineStroke;
-    private Color tickColor;
-    private Stroke tickStroke;
-    private int tickLength;
-    private boolean insideTick;
-    private Font tickLabelFont;
-    private Color tickLabelColor;
-    private float tickLabelAngle;
-    private int tickLabelGap;
-    private double tickStartValue;
-    private double tickDeltaValue;
-    private double minValue;
-    private double maxValue;
-    private double[] tickValues;
+    protected Color tickColor;
+    protected Stroke tickStroke;
+    protected int tickLength;
+    protected boolean insideTick;
+    protected Font tickLabelFont;
+    protected Color tickLabelColor;
+    protected float tickLabelAngle;
+    protected int tickLabelGap;
+    protected double tickStartValue;
+    protected double tickDeltaValue;
+    protected double minValue;
+    protected double maxValue;
+    protected double[] tickValues;
     //private boolean timeAxis;
     //private String timeFormat;
     //private TimeUnit timeUnit;
-    private boolean inverse;
-    private float shift;
-    private List<Double> tickLocations;
+    protected boolean inverse;
+    //private float shift;
+    protected List<Double> tickLocations;
     //private List<String> tickLabels;
-    private List<ChartText> tickLabels;
-    private boolean autoTick;
-    private boolean minorTickVisible;
-    private int minorTickNum;
-    private int tickSpace;
+    protected List<ChartText> tickLabels;
+    protected boolean autoTick;
+    protected boolean minorTickVisible;
+    protected int minorTickNum;
+    protected int tickSpace;
+    protected PositionType positionType;
+    protected float position;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -105,13 +107,15 @@ public class Axis implements Cloneable {
         //this.timeFormat = "yyyy-MM-dd";
         //this.timeUnit = TimeUnit.DAY;
         this.inverse = false;
-        this.shift = 0;
+        //this.shift = 0;
         this.tickLocations = new ArrayList<>();
         this.tickLabels = new ArrayList<>();
         this.autoTick = true;
         this.minorTickVisible = false;
         this.minorTickNum = 5;
         this.tickSpace = 5;
+        this.positionType = PositionType.OUTERWARD;
+        this.position = 0;
     }
 
     /**
@@ -216,14 +220,15 @@ public class Axis implements Cloneable {
         this.minValue = axis.getMinValue();
         this.minorTickNum = axis.getMinorTickNum();
         this.minorTickVisible = axis.isMinorTickVisible();
-        this.shift = axis.getShift();
+        //this.shift = axis.getShift();
         this.tickColor = axis.getTickColor();
         this.tickDeltaValue = axis.getTickDeltaValue();
         this.tickLabelColor = axis.getTickLabelColor();
         this.tickLabelFont = axis.getTickLabelFont();
         this.tickLength = axis.getTickLength();
         this.visible = axis.isVisible();
-        
+        this.position = axis.getPosition();
+        this.positionType = axis.getPositionType();
     }
 
     // </editor-fold>
@@ -809,23 +814,23 @@ public class Axis implements Cloneable {
         this.inverse = value;
     }
 
-    /**
-     * Get shift
-     *
-     * @return Shift
-     */
-    public float getShift() {
-        return this.shift;
-    }
-
-    /**
-     * Set shift
-     *
-     * @param value Shift
-     */
-    public void setShift(float value) {
-        this.shift = value;
-    }
+//    /**
+//     * Get shift
+//     *
+//     * @return Shift
+//     */
+//    public float getShift() {
+//        return this.shift;
+//    }
+//
+//    /**
+//     * Set shift
+//     *
+//     * @param value Shift
+//     */
+//    public void setShift(float value) {
+//        this.shift = value;
+//    }
 
     /**
      * Tick locations
@@ -995,6 +1000,46 @@ public class Axis implements Cloneable {
      */
     public void setTickSpace(int value){
         this.tickSpace = value;
+    }
+    
+    /**
+     * Get position type
+     * @return PositionType
+     */
+    public PositionType getPositionType() {
+        return this.positionType;
+    }
+    
+    /**
+     * Set position type
+     * @param value PositionType
+     */
+    public void setPositionType(PositionType value) {
+        this.positionType = value;
+    }
+    
+    /**
+     * Set position type
+     * @param value Position type string
+     */
+    public void setPositionType(String value) {
+        this.positionType = PositionType.valueOf(value.toUpperCase());
+    }
+    
+    /**
+     * Get position value
+     * @return Position value
+     */
+    public float getPosition() {
+        return this.position;
+    }
+    
+    /**
+     * Set position value
+     * @param value Position value
+     */
+    public void setPosition(float value) {
+        this.position = value;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -1416,7 +1461,7 @@ public class Axis implements Cloneable {
 
     private void drawXAxis(Graphics2D g, Rectangle2D area, AbstractPlot2D plot) {
         double[] xy;
-        double x, y;
+        double x, sy = 0;
         double miny = area.getY();
         double minx = area.getX();
         double maxx = area.getX() + area.getWidth();
@@ -1427,11 +1472,22 @@ public class Axis implements Cloneable {
         //Draw axis line
         g.setColor(this.lineColor);
         g.setStroke(this.getLineStroke());
-        if (this.location == Location.BOTTOM) {
-            g.draw(new Line2D.Double(minx, maxy, maxx, maxy));
-        } else {
-            g.draw(new Line2D.Double(minx, miny, maxx, miny));
-        }
+        switch (this.positionType) {
+            case OUTERWARD:
+                if (this.location == Location.BOTTOM)
+                    sy = maxy + this.position;
+                else
+                    sy = miny - this.position;
+                break;
+            case AXES:
+                sy = miny + this.position * area.getHeight();
+                break;
+            case DATA:
+                xy = plot.projToScreen(plot.getDrawExtent().minX, this.position, area);
+                sy = miny + xy[1];
+                break;
+        }    
+        g.draw(new Line2D.Double(minx, sy, maxx, sy));
 
         //Draw tick lines   
         int len = 0;
@@ -1453,15 +1509,15 @@ public class Axis implements Cloneable {
                     x += minx;
                     if (this.location == Location.BOTTOM) {
                         if (this.insideTick) {
-                            g.draw(new Line2D.Double(x, maxy, x, maxy - len));
+                            g.draw(new Line2D.Double(x, sy, x, sy - len));
                         } else {
-                            g.draw(new Line2D.Double(x, maxy, x, maxy + len));
+                            g.draw(new Line2D.Double(x, sy, x, sy + len));
                         }
                     } else {
                         if (this.insideTick) {
-                            g.draw(new Line2D.Double(x, miny, x, miny + len));
+                            g.draw(new Line2D.Double(x, sy, x, sy + len));
                         } else {
-                            g.draw(new Line2D.Double(x, miny, x, miny - len));
+                            g.draw(new Line2D.Double(x, sy, x, sy - len));
                         }
                     }
 
@@ -1471,16 +1527,16 @@ public class Axis implements Cloneable {
                         g.setFont(tickLabelFont);
                         if (this.location == Location.BOTTOM) {
                             if (this.insideTick){
-                                laby = (float)maxy;
+                                laby = (float)sy;
                             } else {
-                                laby = (float) (maxy + len);
+                                laby = (float) (sy + len);
                             }
                             laby += this.tickSpace;
                         } else {
                             if (this.insideTick){
-                                laby = (float)miny;
+                                laby = (float)sy;
                             } else {
-                                laby = (float) (miny - len);
+                                laby = (float) (sy - len);
                             }
                             laby -= this.tickSpace;
                         }
@@ -1548,14 +1604,16 @@ public class Axis implements Cloneable {
                         x = xx.get(i);
                         if (this.location == Location.BOTTOM) {
                             if (this.insideTick) {
-                                g.draw(new Line2D.Double(x, maxy, x, maxy - minorLen));
+                                g.draw(new Line2D.Double(x, sy, x, sy - minorLen));
                             } else {
-                                g.draw(new Line2D.Double(x, maxy, x, maxy + minorLen));
+                                g.draw(new Line2D.Double(x, sy, x, sy + minorLen));
                             }
-                        } else if (this.insideTick) {
-                            g.draw(new Line2D.Double(x, miny, x, miny + minorLen));
-                        } else {
-                            g.draw(new Line2D.Double(x, miny, x, miny - minorLen));
+                        } else { 
+                            if (this.insideTick) {
+                                g.draw(new Line2D.Double(x, sy, x, sy + minorLen));
+                            } else {
+                                g.draw(new Line2D.Double(x, sy, x, sy - minorLen));
+                            }
                         }
                     }
                 }
@@ -1614,7 +1672,7 @@ public class Axis implements Cloneable {
 
     private void drawYAxis(Graphics2D g, Rectangle2D area, AbstractPlot2D plot) {
         double[] xy;
-        double x, y, sx;
+        double x, y, sx = 0;
         double miny = area.getY();
         double minx = area.getX();
         double maxx = area.getX() + area.getWidth();
@@ -1625,14 +1683,23 @@ public class Axis implements Cloneable {
         //Draw axis line
         g.setColor(this.getLineColor());
         g.setStroke(this.getLineStroke());
-        if (this.location == Location.LEFT) {
-            sx = minx - shift;
-            g.draw(new Line2D.Double(sx, maxy, sx, miny));
-        } else {
-            sx = maxx + shift;
-            g.draw(new Line2D.Double(sx, maxy, sx, miny));
-        }
-
+        switch (this.positionType) {
+            case OUTERWARD:
+                if (this.location == Location.LEFT)
+                    sx = minx - this.position;
+                else
+                    sx = maxx + this.position;
+                break;
+            case AXES:
+                sx = minx + this.position * area.getWidth();
+                break;
+            case DATA:
+                xy = plot.projToScreen(this.position, plot.getDrawExtent().minY, area);
+                sx = minx + xy[0];
+                break;
+        }    
+        g.draw(new Line2D.Double(sx, maxy, sx, miny));
+        
         //Draw tick lines   
         int len = 0;
         if (this.drawTickLine) {

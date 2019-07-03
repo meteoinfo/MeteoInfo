@@ -47,28 +47,29 @@ public class LonLatAxis extends Axis implements Cloneable {
      */
     public LonLatAxis(Axis axis) {
         this(axis.getLabel().getText(), axis.isXAxis());
-        this.setAutoTick(axis.isAutoTick());
-        this.setDrawLabel(axis.isDrawLabel());
-        this.setDrawTickLabel(axis.isDrawTickLabel());
-        this.setDrawTickLine(axis.isDrawTickLine());
-        this.setInsideTick(axis.isInsideTick());
-        this.setInverse(axis.isInverse());
+        this.autoTick = axis.autoTick;
+        this.drawLabel = axis.drawLabel;
+        this.drawTickLabel = axis.drawTickLabel;
+        this.drawTickLine = axis.drawTickLine;
+        this.insideTick = axis.insideTick;
+        this.inverse = axis.inverse;
         this.setLabelColor(axis.getLabelColor());
-        this.setLineWidth(axis.getLineWidth());
-        this.setLineStyle(axis.getLineStyle());
-        //this.setLineStroke(axis.getLineStroke());
-        this.setLocation(axis.getLocation());
-        this.setMaxValue(axis.getMaxValue());
-        this.setMinValue(axis.getMinValue());
-        this.setMinorTickNum(axis.getMinorTickNum());
-        this.setMinorTickVisible(axis.isMinorTickVisible());
-        this.setShift(axis.getShift());
-        this.setTickColor(axis.getTickColor());
-        this.setTickDeltaValue(axis.getTickDeltaValue());
-        this.setTickLabelColor(axis.getTickLabelColor());
-        this.setTickLabelFont(axis.getTickLabelFont());
-        this.setTickLength(axis.getTickLength());
-        this.setVisible(axis.isVisible());
+        this.lineWidth = axis.lineWidth;
+        this.lineStyle = axis.lineStyle;
+        this.location = axis.location;
+        this.maxValue = axis.maxValue;
+        this.minValue = axis.minValue;
+        this.minorTickNum = axis.minorTickNum;
+        this.minorTickVisible = axis.minorTickVisible;
+        //this.setShift(axis.getShift());
+        this.tickColor = axis.tickColor;
+        this.tickDeltaValue = axis.tickDeltaValue;
+        this.tickLabelColor = axis.tickLabelColor;
+        this.tickLabelFont = axis.tickLabelFont;
+        this.tickLength = axis.tickLength;
+        this.visible = axis.visible;
+        this.positionType = axis.positionType;
+        this.position = axis.position;
     }
     
     /**

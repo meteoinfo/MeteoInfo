@@ -3668,6 +3668,9 @@ public class GraphicFactory {
                     x2 = x_s.getDouble(j - 1);
                     xd = x - x2;
                 }
+                if (j == 0) {
+                    x1 = x1 - xd * 0.5;
+                }
                 x2 = x + xd * 0.5;
                 PolygonShape ps = new PolygonShape();
                 List<PointD> points = new ArrayList<>();

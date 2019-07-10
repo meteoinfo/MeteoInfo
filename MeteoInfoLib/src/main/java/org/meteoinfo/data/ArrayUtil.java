@@ -2815,9 +2815,11 @@ public class ArrayUtil {
      * @param a scatter value array
      * @param X x coordinate
      * @param Y y coordinate
+     * @param centerPoint the points locate at center or border or grid
      * @return grid data
      */
-    public static Array interpolation_Inside(List<Number> x_s, List<Number> y_s, Array a, List<Number> X, List<Number> Y) {
+    public static Array interpolation_Inside(List<Number> x_s, List<Number> y_s, Array a, 
+            List<Number> X, List<Number> Y, boolean centerPoint) {
         int rowNum, colNum, pNum;
         colNum = X.size();
         rowNum = Y.size();
@@ -2826,7 +2828,18 @@ public class ArrayUtil {
         double dX = X.get(1).doubleValue() - X.get(0).doubleValue();
         double dY = Y.get(1).doubleValue() - Y.get(0).doubleValue();
         int[][] pNums = new int[rowNum][colNum];
-        double x, y, v;
+        double x, y, v, sx, sy, ex, ey;
+        if (centerPoint) {
+            sx = X.get(0).doubleValue() - dX * 0.5;
+            sy = Y.get(0).doubleValue() - dY * 0.5;
+            ex = X.get(colNum - 1).doubleValue() + dX * 0.5;
+            ey = Y.get(rowNum - 1).doubleValue() + dY * 0.5;
+        } else {
+            sx = X.get(0).doubleValue();
+            sy = Y.get(0).doubleValue();
+            ex = X.get(colNum - 1).doubleValue();
+            ey = Y.get(rowNum - 1).doubleValue();
+        }
 
         for (int i = 0; i < rowNum; i++) {
             for (int j = 0; j < colNum; j++) {
@@ -2843,15 +2856,15 @@ public class ArrayUtil {
 
             x = x_s.get(p).doubleValue();
             y = y_s.get(p).doubleValue();
-            if (x < X.get(0).doubleValue() || x > X.get(colNum - 1).doubleValue()) {
+            if (x < sx || x > ex) {
                 continue;
             }
-            if (y < Y.get(0).doubleValue() || y > Y.get(rowNum - 1).doubleValue()) {
+            if (y < sy || y > ey) {
                 continue;
             }
 
-            int j = (int) ((x - X.get(0).doubleValue()) / dX);
-            int i = (int) ((y - Y.get(0).doubleValue()) / dY);
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
             pNums[i][j] += 1;
             r.setDouble(i * colNum + j, r.getDouble(i * colNum + j) + v);
         }
@@ -2878,30 +2891,31 @@ public class ArrayUtil {
      * @param a scatter value array
      * @param X x coordinate
      * @param Y y coordinate
-     * @param center If the grid point is center or border
+     * @param centerPoint If the grid point is center or border
      * @return grid data
      */
-    public static Array interpolation_Inside(Array x_s, Array y_s, Array a, Array X, Array Y, boolean center) {
+    public static Array interpolation_Inside(Array x_s, Array y_s, Array a, Array X, Array Y, 
+            boolean centerPoint) {
         int rowNum, colNum, pNum;
-
-        if (center) {
-            Array[] xy = extendHalfCell(X, Y);
-            X = xy[0];
-            Y = xy[1];
-        }
-
         colNum = (int) X.getSize();
         rowNum = (int) Y.getSize();
-        if (center) {
-            colNum -= 1;
-            rowNum -= 1;
-        }
         pNum = (int) x_s.getSize();
         Array r = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
         double dX = X.getDouble(1) - X.getDouble(0);
         double dY = Y.getDouble(1) - Y.getDouble(0);
         int[][] pNums = new int[rowNum][colNum];
-        double x, y, v;
+        double x, y, v, sx, sy, ex, ey;
+        if (centerPoint) {
+            sx = X.getDouble(0) - dX * 0.5;
+            sy = Y.getDouble(0) - dY * 0.5;
+            ex = X.getDouble(colNum - 1) + dX * 0.5;
+            ey = Y.getDouble(rowNum - 1) + dY * 0.5;
+        } else {
+            sx = X.getDouble(0);
+            sy = Y.getDouble(0);
+            ex = X.getDouble(colNum - 1);
+            ey = Y.getDouble(rowNum - 1);
+        }
 
         for (int i = 0; i < rowNum; i++) {
             for (int j = 0; j < colNum; j++) {
@@ -2918,15 +2932,15 @@ public class ArrayUtil {
 
             x = x_s.getDouble(p);
             y = y_s.getDouble(p);
-            if (x < X.getDouble(0) || x > X.getDouble(colNum - 1)) {
+            if (x < sx || x > ex) {
                 continue;
             }
-            if (y < Y.getDouble(0) || y > Y.getDouble(rowNum - 1)) {
+            if (y < sy || y > ey) {
                 continue;
             }
 
-            int j = (int) ((x - X.getDouble(0)) / dX);
-            int i = (int) ((y - Y.getDouble(0)) / dY);
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
             pNums[i][j] += 1;
             r.setDouble(i * colNum + j, r.getDouble(i * colNum + j) + v);
         }
@@ -2953,9 +2967,11 @@ public class ArrayUtil {
      * @param a scatter value array
      * @param X x coordinate
      * @param Y y coordinate
+     * @param centerPoint points locate at center or border of grid
      * @return grid data
      */
-    public static Array interpolation_Inside_Max(List<Number> x_s, List<Number> y_s, Array a, List<Number> X, List<Number> Y) {
+    public static Array interpolation_Inside_Max(List<Number> x_s, List<Number> y_s, Array a, 
+            List<Number> X, List<Number> Y, boolean centerPoint) {
         int rowNum, colNum, pNum;
         colNum = X.size();
         rowNum = Y.size();
@@ -2964,8 +2980,19 @@ public class ArrayUtil {
         double dX = X.get(1).doubleValue() - X.get(0).doubleValue();
         double dY = Y.get(1).doubleValue() - Y.get(0).doubleValue();
         int[][] pNums = new int[rowNum][colNum];
-        double x, y, v;
+        double x, y, v, sx, sy, ex, ey;
         double min = Double.NEGATIVE_INFINITY;
+        if (centerPoint) {
+            sx = X.get(0).doubleValue() - dX * 0.5;
+            sy = Y.get(0).doubleValue() - dY * 0.5;
+            ex = X.get(colNum - 1).doubleValue() + dX * 0.5;
+            ey = Y.get(rowNum - 1).doubleValue() + dY * 0.5;
+        } else {
+            sx = X.get(0).doubleValue();
+            sy = Y.get(0).doubleValue();
+            ex = X.get(colNum - 1).doubleValue();
+            ey = Y.get(rowNum - 1).doubleValue();
+        }
 
         for (int i = 0; i < rowNum; i++) {
             for (int j = 0; j < colNum; j++) {
@@ -2982,15 +3009,15 @@ public class ArrayUtil {
 
             x = x_s.get(p).doubleValue();
             y = y_s.get(p).doubleValue();
-            if (x < X.get(0).doubleValue() || x > X.get(colNum - 1).doubleValue()) {
+            if (x < sx || x > ex) {
                 continue;
             }
-            if (y < Y.get(0).doubleValue() || y > Y.get(rowNum - 1).doubleValue()) {
+            if (y < sy || y > ey) {
                 continue;
             }
 
-            int j = (int) ((x - X.get(0).doubleValue()) / dX);
-            int i = (int) ((y - Y.get(0).doubleValue()) / dY);
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
             pNums[i][j] += 1;
             r.setDouble(i * colNum + j, Math.max(r.getDouble(i * colNum + j), v));
         }
@@ -3015,9 +3042,11 @@ public class ArrayUtil {
      * @param a scatter value array
      * @param X x coordinate
      * @param Y y coordinate
+     * @param centerPoint points locate at center or border of grid
      * @return grid data
      */
-    public static Array interpolation_Inside_Min(List<Number> x_s, List<Number> y_s, Array a, List<Number> X, List<Number> Y) {
+    public static Array interpolation_Inside_Min(List<Number> x_s, List<Number> y_s, Array a, 
+            List<Number> X, List<Number> Y, boolean centerPoint) {
         int rowNum, colNum, pNum;
         colNum = X.size();
         rowNum = Y.size();
@@ -3026,8 +3055,19 @@ public class ArrayUtil {
         double dX = X.get(1).doubleValue() - X.get(0).doubleValue();
         double dY = Y.get(1).doubleValue() - Y.get(0).doubleValue();
         int[][] pNums = new int[rowNum][colNum];
-        double x, y, v;
+        double x, y, v, sx, sy, ex, ey;
         double max = Double.MAX_VALUE;
+        if (centerPoint) {
+            sx = X.get(0).doubleValue() - dX * 0.5;
+            sy = Y.get(0).doubleValue() - dY * 0.5;
+            ex = X.get(colNum - 1).doubleValue() + dX * 0.5;
+            ey = Y.get(rowNum - 1).doubleValue() + dY * 0.5;
+        } else {
+            sx = X.get(0).doubleValue();
+            sy = Y.get(0).doubleValue();
+            ex = X.get(colNum - 1).doubleValue();
+            ey = Y.get(rowNum - 1).doubleValue();
+        }
 
         for (int i = 0; i < rowNum; i++) {
             for (int j = 0; j < colNum; j++) {
@@ -3044,15 +3084,15 @@ public class ArrayUtil {
 
             x = x_s.get(p).doubleValue();
             y = y_s.get(p).doubleValue();
-            if (x < X.get(0).doubleValue() || x > X.get(colNum - 1).doubleValue()) {
+            if (x < sx || x > ex) {
                 continue;
             }
-            if (y < Y.get(0).doubleValue() || y > Y.get(rowNum - 1).doubleValue()) {
+            if (y < sy || y > ey) {
                 continue;
             }
 
-            int j = (int) ((x - X.get(0).doubleValue()) / dX);
-            int i = (int) ((y - Y.get(0).doubleValue()) / dY);
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
             pNums[i][j] += 1;
             r.setDouble(i * colNum + j, Math.min(r.getDouble(i * colNum + j), v));
         }
@@ -3077,10 +3117,11 @@ public class ArrayUtil {
      * @param X x coordinate
      * @param Y y coordinate
      * @param pointDensity If return point density value
+     * @param centerPoint points locate at center or border of grid
      * @return grid data
      */
     public static Object interpolation_Inside_Count(List<Number> x_s, List<Number> y_s,
-            List<Number> X, List<Number> Y, boolean pointDensity) {
+            List<Number> X, List<Number> Y, boolean pointDensity, boolean centerPoint) {
         int rowNum, colNum, pNum;
         colNum = X.size();
         rowNum = Y.size();
@@ -3089,7 +3130,18 @@ public class ArrayUtil {
         double dX = X.get(1).doubleValue() - X.get(0).doubleValue();
         double dY = Y.get(1).doubleValue() - Y.get(0).doubleValue();
         int[][] pNums = new int[rowNum][colNum];
-        double x, y;
+        double x, y, sx, sy, ex, ey;
+        if (centerPoint) {
+            sx = X.get(0).doubleValue() - dX * 0.5;
+            sy = Y.get(0).doubleValue() - dY * 0.5;
+            ex = X.get(colNum - 1).doubleValue() + dX * 0.5;
+            ey = Y.get(rowNum - 1).doubleValue() + dY * 0.5;
+        } else {
+            sx = X.get(0).doubleValue();
+            sy = Y.get(0).doubleValue();
+            ex = X.get(colNum - 1).doubleValue();
+            ey = Y.get(rowNum - 1).doubleValue();
+        }
 
         for (int i = 0; i < rowNum; i++) {
             for (int j = 0; j < colNum; j++) {
@@ -3101,15 +3153,15 @@ public class ArrayUtil {
         for (int p = 0; p < pNum; p++) {
             x = x_s.get(p).doubleValue();
             y = y_s.get(p).doubleValue();
-            if (x < X.get(0).doubleValue() || x > X.get(colNum - 1).doubleValue()) {
+            if (x < sx || x > ex) {
                 continue;
             }
-            if (y < Y.get(0).doubleValue() || y > Y.get(rowNum - 1).doubleValue()) {
+            if (y < sy || y > ey) {
                 continue;
             }
 
-            int j = (int) ((x - X.get(0).doubleValue()) / dX);
-            int i = (int) ((y - Y.get(0).doubleValue()) / dY);
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
             pNums[i][j] += 1;
             //r.setInt(i * colNum + j, r.getInt(i * colNum + j) + 1);
         }
@@ -3125,15 +3177,15 @@ public class ArrayUtil {
             for (int p = 0; p < pNum; p++) {
                 x = x_s.get(p).doubleValue();
                 y = y_s.get(p).doubleValue();
-                if (x < X.get(0).doubleValue() || x > X.get(colNum - 1).doubleValue()) {
+                if (x < sx || x > ex) {
                     continue;
                 }
-                if (y < Y.get(0).doubleValue() || y > Y.get(rowNum - 1).doubleValue()) {
+                if (y < sy || y > ey) {
                     continue;
                 }
 
-                int j = (int) ((x - X.get(0).doubleValue()) / dX);
-                int i = (int) ((y - Y.get(0).doubleValue()) / dY);
+                int j = (int) ((x - sx) / dX);
+                int i = (int) ((y - sy) / dY);
                 pds.setInt(p, pNums[i][j]);
             }
             return new Array[]{r, pds};

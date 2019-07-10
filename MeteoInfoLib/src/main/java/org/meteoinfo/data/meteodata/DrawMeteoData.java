@@ -992,7 +992,6 @@ public class DrawMeteoData {
         int colNum = (int) x_s.getSize();
         int rowNum = (int) y_s.getSize();
         double x, x1 = 0, x2, y, y1 = 0, y2, xd, yd, v;
-        PolygonBreak pb;
         for (int i = 0; i < rowNum; i++) {
             if (i == 0) {
                 y1 = y_s.getDouble(i);
@@ -1020,6 +1019,9 @@ public class DrawMeteoData {
                 } else {
                     x2 = x_s.getDouble(j - 1);
                     xd = x - x2;
+                }
+                if (j == 0) {
+                    x1 = x1 - xd * 0.5;
                 }
                 x2 = x + xd * 0.5;
                 PolygonShape ps = new PolygonShape();

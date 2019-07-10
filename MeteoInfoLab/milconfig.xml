@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
   <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
-    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\micaps"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
@@ -16,25 +13,26 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\yyy_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\axis_position.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\scatterm_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\yyy_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\axis_position.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\scatterm_1.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,0" MainFormSize="1334,787"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

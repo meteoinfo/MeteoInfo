@@ -2246,6 +2246,8 @@ def griddata(points, values, xi=None, **kwargs):
     :param radius: (*float*) Used for 'idw', 'cressman' and 'neareast' methods. The searching raduis. Default 
         is ``None`` in 'idw' method, means no raduis was used. Default is ``[10, 7, 4, 2, 1]`` in cressman 
         method.
+    :param centerpoint: (*boolean*) The grid points located at center or border of grid. Default
+        is True (pont at center of grid).
     :param convexhull: (*boolean*) If the convexhull will be used to mask result grid data. Default is ``False``.
     
     :returns: (*array*) Interpolated grid data (2-D array)
@@ -2293,9 +2295,11 @@ def griddata(points, values, xi=None, **kwargs):
         centerpoint = kwargs.pop('centerpoint', True)
         r = ArrayUtil.interpolation_Inside(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(), centerpoint)
     elif method == 'inside_max':
-        r = ArrayUtil.interpolation_Inside_Max(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist())
+        centerpoint = kwargs.pop('centerpoint', True)
+        r = ArrayUtil.interpolation_Inside_Max(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
     elif method == 'inside_min':
-        r = ArrayUtil.interpolation_Inside_Min(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist())
+        centerpoint = kwargs.pop('centerpoint', True)
+        r = ArrayUtil.interpolation_Inside_Min(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
     elif method == 'inside_count':
         centerpoint = kwargs.pop('centerpoint', True)
         r = ArrayUtil.interpolation_Inside_Count(x_s.aslist(), y_s.aslist(), x_g.aslist(), y_g.aslist(), True, centerpoint)

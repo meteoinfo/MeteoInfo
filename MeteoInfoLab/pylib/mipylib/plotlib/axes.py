@@ -1130,7 +1130,7 @@ class Axes(object):
         self.axes.setAutoExtent()
         return graphics 
             
-    def scatter(self, x, y, s=8, c='b', marker='o', norm=None, vmin=None, vmax=None,
+    def scatter(self, x, y, s=8, c='b', norm=None, vmin=None, vmax=None,
                 alpha=None, linewidth=None, verts=None, hold=None, **kwargs):
         """
         Make a scatter plot of x vs y, where x and y are sequence like objects of the same lengths.
@@ -1155,8 +1155,8 @@ class Axes(object):
         #Set plot data styles
         pb, isunique = plotutil.getlegendbreak('point', **kwargs)
         pb.setCaption(label)
-        pstyle = plotutil.getpointstyle(marker)    
-        pb.setStyle(pstyle)
+        #pstyle = plotutil.getpointstyle(marker)    
+        #pb.setStyle(pstyle)
         isvalue = False
         if len(c) > 1:
             if isinstance(c, (NDArray, DimArray)):

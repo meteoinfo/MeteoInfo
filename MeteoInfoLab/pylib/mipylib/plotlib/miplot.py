@@ -615,7 +615,7 @@ def stem(self, *args, **kwargs):
         draw_if_interactive()
     return r
     
-def scatter(x, y, s=8, c='b', marker='o', norm=None, vmin=None, vmax=None,
+def scatter(x, y, s=8, c='b', norm=None, vmin=None, vmax=None,
             alpha=None, linewidth=None, verts=None, hold=None, **kwargs):
     """
     Make a scatter plot of x vs y, where x and y are sequence like objects of the same lengths.
@@ -642,7 +642,7 @@ def scatter(x, y, s=8, c='b', marker='o', norm=None, vmin=None, vmax=None,
         if gca.axestype != 'cartesian':
             gca = axes()
             
-    r = gca.scatter(x, y, s, c, marker, norm, vmin, vmax,
+    r = gca.scatter(x, y, s, c, norm, vmin, vmax,
             alpha, linewidth, verts, hold, **kwargs)
     if not r is None:
         draw_if_interactive()

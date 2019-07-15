@@ -71,7 +71,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
             this.setFileName(fileName);
 
             BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "utf-8"));
-            double xllCorner, yllCorner, cellSize, nodata_value;
+            double xllCenter, yllCenter, cellSize, nodata_value;
             int ncols, nrows, i;
             String aLine;
             String[] dataArray;
@@ -83,10 +83,18 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
             dataArray = aLine.split("\\s+");
             ncols = Integer.parseInt(dataArray[1]);
             nrows = Integer.parseInt(dataArray[3]);
-            xllCorner = Double.parseDouble(dataArray[5]);
-            yllCorner = Double.parseDouble(dataArray[7]);
+            String xll = dataArray[4];
+            xllCenter = Double.parseDouble(dataArray[5]);
+            String yll = dataArray[6];
+            yllCenter = Double.parseDouble(dataArray[7]);
             cellSize = Double.parseDouble(dataArray[9]);
             nodata_value = Double.parseDouble(dataArray[11]);
+            if (xll.toLowerCase().equals("xllcorner")) {
+                xllCenter += cellSize * 0.5;
+            }
+            if (yll.toLowerCase().equals("yllcorner")) {
+                yllCenter += cellSize * 0.5;
+            }
 
             aLine = sr.readLine();
             aLine = aLine.trim();
@@ -104,7 +112,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
 
             this.setMissingValue(nodata_value);
             double[] X = new double[ncols];
-            X[0] = xllCorner;
+            X[0] = xllCenter;
             for (i = 1; i < ncols; i++) {
                 X[i] = BigDecimalUtil.add(X[i - 1], cellSize);
             }
@@ -113,7 +121,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
             }
 
             double[] Y = new double[nrows];
-            Y[0] = yllCorner;
+            Y[0] = yllCenter;
             for (i = 1; i < nrows; i++) {
                 Y[i] = BigDecimalUtil.add(Y[i-1], cellSize);
             }

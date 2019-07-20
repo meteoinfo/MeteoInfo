@@ -10,6 +10,7 @@ from org.meteoinfo.data.dataframe import DateTimeIndex as MIDateTimeIndex
 from org.joda.time import DateTime
 
 import datetime
+import numbers
 
 from mipylib.numeric.multiarray import NDArray
 import mipylib.miutil as miutil
@@ -43,7 +44,7 @@ class Index(object):
             if isinstance(data, NDArray):
                 data = data.aslist()
             self.data = data
-            self._index = MIIndex(data, name)            
+            self._index = MIIndex.factory(data)        
             self.name = name
         else:
             self._index = index
@@ -79,6 +80,12 @@ class Index(object):
             r = self._index.subIndex(sidx, eidx, step)
             return Index.factory(index=r)
             
+    def __eq__(self, other):
+        if isinstance(other, numbers.Number):
+            return NDArray(self._index.equal(other))
+        else:
+            return False
+            
     def index(self, v):
         '''
         Get index of a value.
@@ -98,11 +105,15 @@ class Index(object):
         
         :returns: int if unique index, slice if monotonic index, else mask.
         '''
-        r = self._index.getIndices(key)
-        if outkeys:            
-            return list(r[0]), list(r[1])
-        else:
-            return list(r[0])
+        if isinstance(key, NDArray) and key.dtype.toString() == 'boolean':
+            r = self._index.filterIndices(key.asarray())
+            return list(r)
+        else:    
+            r = self._index.getIndices(key)
+            if outkeys:            
+                return list(r[0]), list(r[1])
+            else:
+                return list(r[0])
         
     def fill_keylist(self, rdata, rfdata):
         return self._index.fillKeyList(rdata.asarray(), rfdata)
@@ -171,7 +182,10 @@ class DateTimeIndex(Index):
         
         :returns: int if unique index, slice if monotonic index, else mask.
         '''
-        if isinstance(key, datetime.datetime):
+        if isinstance(key, NDArray) and key.dtype.toString() == 'boolean':
+            r = self._index.filterIndices(key.asarray())
+            return list(r)
+        elif isinstance(key, datetime.datetime):
             key = miutil.jdatetime(key)
         elif isinstance(key, (list, tuple, NDArray)) and isinstance(key[0], datetime.datetime):
             key = miutil.jdatetime(key)
@@ -180,6 +194,55 @@ class DateTimeIndex(Index):
             return list(r[0]), list(r[1])
         else:
             return list(r[0])
+            
+    @property
+    def year(self):
+        '''
+        Get year index.
+        '''
+        r = self._index.getYear()
+        return Index(index=r)
+    
+    @property
+    def month(self):
+        '''
+        Get month index.
+        '''
+        r = self._index.getMonth()
+        return Index(index=r)
+        
+    @property
+    def day(self):
+        '''
+        Get day index.
+        '''
+        r = self._index.getDay()
+        return Index(index=r)
+        
+    @property
+    def hour(self):
+        '''
+        Get hour index.
+        '''
+        r = self._index.getHOur()
+        return Index(index=r)
+        
+    @property
+    def minute(self):
+        '''
+        Get minute index.
+        '''
+        r = self._index.getMinute()
+        return Index(index=r)
+        
+    @property
+    def second(self):
+        '''
+        Get second index.
+        '''
+        r = self._index.getSecond()
+        return Index(index=r)
+
         
 #############################################
 def date_range(start=None, end=None, periods=None, freq='D'):

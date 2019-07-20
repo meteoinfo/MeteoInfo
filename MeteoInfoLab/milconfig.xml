@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\array">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\KeyData\BC_New\script"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\data_process"/>
@@ -16,21 +12,21 @@
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
+    <RecentFolder Folder="D:\KeyData\BC_New"/>
+    <RecentFolder Folder="D:\KeyData"/>
+    <RecentFolder Folder="D:\KeyData\Emission"/>
+    <RecentFolder Folder="D:\KeyData\Emission\script"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
-      <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter_image.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\scatterm_image.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\dataframe_dtindex_sel.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
-      <RecentFile File="D:\KeyData\BC_New\script\plot_bc_year_ave.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter_image.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\scatterm_image.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\array\dataframe_dtindex_sel.py"/>
     </RecentFiles>
   </File>
   <Font>

@@ -416,12 +416,15 @@ class DataFrame(object):
             step = 1 if k.step is None else k.step
             rowkey = Range(sidx, eidx, step)
         else:
-            rowkey, rkeys = self._index.get_loc(k, outkeys=True)
+            rloc = self._index.get_loc(k, outkeys=True)
+            if isinstance(rloc, tuple):
+                rowkey = rloc[0]
+                rkeys = rloc[1]
+            else:
+                rowkey = rloc
+                rkeys = None
             if len(rowkey) == 0:
                 raise KeyError(key)
-                #rowkey = self._index.index(k)                
-                #if rowkey < 0:
-                #    raise KeyError(key)
                    
         k = key[1]
         if k is None:
@@ -455,9 +458,12 @@ class DataFrame(object):
                 ncol = len(colkey)
             if len(rowkey) == 1 and ncol == 1:
                 return self._dataframe.getValue(rowkey[0], colkey[0])
-            if not isinstance(rkeys, list):
-                rkeys = [rkeys]
-            r = self._dataframe.select(rkeys, rowkey, colkey)
+            if rkeys is None:
+                r = self._dataframe.select(rowkey, colkey)
+            else:
+                if not isinstance(rkeys, list):
+                    rkeys = [rkeys]            
+                r = self._dataframe.select(rkeys, rowkey, colkey)
         if r is None:
             return None
         if isinstance(r, MISeries):

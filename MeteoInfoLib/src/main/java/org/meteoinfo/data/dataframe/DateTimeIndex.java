@@ -341,6 +341,78 @@ public class DateTimeIndex extends Index<DateTime> {
     }
     
     /**
+     * Get year index
+     * @return Year index
+     */
+    public Index getYear() {
+        List<Integer> years = new ArrayList<>();
+        for (DateTime dt : this.data) {
+            years.add(dt.getYear());
+        }
+        return Index.factory(years);
+    }
+    
+    /**
+     * Get month index
+     * @return Month index
+     */
+    public Index getMonth() {
+        List<Integer> months = new ArrayList<>();
+        for (DateTime dt : this.data) {
+            months.add(dt.getMonthOfYear());
+        }
+        return Index.factory(months);
+    }
+    
+    /**
+     * Get day index
+     * @return Day index
+     */
+    public Index getDay() {
+        List<Integer> days = new ArrayList<>();
+        for (DateTime dt : this.data) {
+            days.add(dt.getDayOfMonth());
+        }
+        return Index.factory(days);
+    }
+    
+    /**
+     * Get hour index
+     * @return HOur index
+     */
+    public Index getHour() {
+        List<Integer> hours = new ArrayList<>();
+        for (DateTime dt : this.data) {
+            hours.add(dt.getHourOfDay());
+        }
+        return Index.factory(hours);
+    }
+    
+    /**
+     * Get minute index
+     * @return Minute index
+     */
+    public Index getMinute() {
+        List<Integer> minutes = new ArrayList<>();
+        for (DateTime dt : this.data) {
+            minutes.add(dt.getMinuteOfHour());
+        }
+        return Index.factory(minutes);
+    }
+    
+    /**
+     * Get second index
+     * @return Second index
+     */
+    public Index getSecond() {
+        List<Integer> seconds = new ArrayList<>();
+        for (DateTime dt : this.data) {
+            seconds.add(dt.getSecondOfMinute());
+        }
+        return Index.factory(seconds);
+    }
+    
+    /**
      * Update format
      */
     @Override

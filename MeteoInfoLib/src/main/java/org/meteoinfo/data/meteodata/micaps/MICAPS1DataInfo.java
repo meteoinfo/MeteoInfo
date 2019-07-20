@@ -495,7 +495,7 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
             ArrayMath.missingToNaN(a, 9999);
         }
 
-        Index index = new Index(idxList);
+        Index index = Index.factory(idxList);
         DataFrame df = new DataFrame(data, index, columns);
         return df;
     }

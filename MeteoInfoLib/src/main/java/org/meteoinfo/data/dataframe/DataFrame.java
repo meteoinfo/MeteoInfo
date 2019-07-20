@@ -309,7 +309,7 @@ public class DataFrame implements Iterable {
      * @param value Index value
      */
     public void setIndex(List value) {
-        this.index = new Index(value);
+        this.index = Index.factory(value);
     }
 
     /**
@@ -1962,11 +1962,11 @@ public class DataFrame implements Iterable {
                 for (String s : indexValues) {
                     indexData.add(DataConvert.convertStringTo(s, idxDT, null));
                 }
-                index = new Index(indexData);
+                index = Index.factory(indexData);
                 index.updateFormat();
             }
         } else {
-            index = new Index(rn);
+            index = new IntIndex(rn);
             index.updateFormat();
         }
 
@@ -2238,11 +2238,11 @@ public class DataFrame implements Iterable {
                 for (String s : indexValues) {
                     indexData.add(DataConvert.convertStringTo(s, idxDT, null));
                 }
-                index = new Index(indexData);
+                index = Index.factory(indexData);
                 index.updateFormat();
             }
         } else {
-            index = new Index(rn);
+            index = new IntIndex(rn);
             index.updateFormat();
         }
 

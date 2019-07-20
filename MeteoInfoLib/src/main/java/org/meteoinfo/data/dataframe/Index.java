@@ -22,74 +22,13 @@ import ucar.ma2.DataType;
  */
 public class Index<V> implements Iterable<V>{
     // <editor-fold desc="Variables">
-    protected List<V> data;
+    protected List<V> data = new ArrayList<>();
     protected String format = "%4s";
     protected String name = "Index";
     protected DataType dataType = DataType.STRING;
     // </editor-fold>
     // <editor-fold desc="Constructor">
-    /**
-     * Constructor
-     */
-    public Index(){
-        data = new ArrayList<>();
-    }
     
-    /**
-     * Constructor
-     * @param array Index array
-     * @param name Index name
-     */
-    public Index(Array array, String name) {
-        this();
-        data = (List<V>)ArrayMath.asList(array);
-        this.name = name;
-        this.updateFormat();
-    }
-    
-    /**
-     * Constructor
-     * @param array Index array
-     */
-    public Index(Array array) {
-        this();
-        data = (List<V>)ArrayMath.asList(array);
-        this.updateFormat();
-    }
-    
-    /**
-     * Constructor
-     * @param size Index size
-     */
-    public Index(int size) {
-        this();
-        for (Integer i = 0; i < size; i++){
-            data.add((V)i);
-        }
-        this.updateFormat();
-    }
-    
-    /**
-     * Constructor
-     * @param data Index data
-     * @param name Index name
-     */
-    public Index(List data, String name){
-        this();
-        this.data = data;
-        this.name = name;
-        this.updateFormat();
-    }
-    
-    /**
-     * Constructor
-     * @param data Index data
-     */
-    public Index(List data){
-        this();
-        this.data = data;
-        this.updateFormat();
-    }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
     /**
@@ -179,9 +118,25 @@ public class Index<V> implements Iterable<V>{
     public static Index factory(List data) {
         if (data.get(0) instanceof DateTime) {
             return new DateTimeIndex(data);
+        } else if (data.get(0) instanceof Integer) {
+            return new IntIndex(data);
+        } else if (data.get(0) instanceof String) {
+            return new StringIndex(data);
         } else {
-            return new Index(data);
+            return null;
         }
+    }
+    
+    /**
+     * Factory method to create a new index object
+     * @param data Values
+     * @param name Index name
+     * @return Index object
+     */
+    public static Index factory(List data, String name) {
+        Index index = factory(data);
+        index.name = name;
+        return index;
     }
     
     /**
@@ -190,11 +145,20 @@ public class Index<V> implements Iterable<V>{
      * @return Index object
      */
     public static Index factory(Array data) {
-        if (data.getObject(0) instanceof DateTime) {
-            return new DateTimeIndex(data);
-        } else {
-            return new Index(data);
-        }
+        List ndata = ArrayMath.asList(data);
+        return factory(ndata);
+    }
+    
+    /**
+     * Factory method to create a new index object
+     * @param data Values
+     * @param name Index name
+     * @return Index object
+     */
+    public static Index factory(Array data, String name) {
+        Index index = factory(data);
+        index.name = name;
+        return index;
     }
     
     /**
@@ -240,7 +204,7 @@ public class Index<V> implements Iterable<V>{
      * @return Appended index
      */
     public Index append(Index idx) {
-        Index index = new Index(new ArrayList<>(this.data));
+        Index index = Index.factory(new ArrayList<>(this.data));
         index.setFormat(this.format);
         index.setName(this.name);
         index.data.addAll(idx.data);
@@ -263,7 +227,7 @@ public class Index<V> implements Iterable<V>{
      */
     public void set(int i, V value) {
         this.data.set(i, value);
-    }
+    }        
     
     /**
      * Get indices
@@ -340,7 +304,7 @@ public class Index<V> implements Iterable<V>{
      * @return Index
      */
     public Index subIndex(){
-        Index r = new Index(this.data);
+        Index r = Index.factory(this.data);
         r.setFormat(format);
         return r;
     }
@@ -370,7 +334,7 @@ public class Index<V> implements Iterable<V>{
         for (int i = start; i < end; i+=step){
             rv.add(this.data.get(i));
         }
-        Index r = new Index(rv);
+        Index r = Index.factory(rv);
         r.setFormat(format);
         return r;
     }
@@ -417,6 +381,22 @@ public class Index<V> implements Iterable<V>{
         }
         
         return new Object[]{r, rIndex, rData, rrIndex};
+    }
+    
+    /**
+     * Get indices
+     * @param arr Boolean array
+     * @return Indices
+     */
+    public List<Integer> filterIndices(Array arr) {
+        List<Integer> r = new ArrayList<>();       
+        for (int i = 0; i < this.size(); i++){
+            if (arr.getBoolean(i)) {
+                r.add(i);
+            }            
+        }
+        
+        return r;
     }
     
     /**
@@ -622,7 +602,7 @@ public class Index<V> implements Iterable<V>{
     @Override
     public Object clone() {
         List ndata = new ArrayList<>(this.data);
-        Index r = new Index(ndata, this.name);
+        Index r = Index.factory(ndata, this.name);
         r.format = this.format;
         return r;
     }

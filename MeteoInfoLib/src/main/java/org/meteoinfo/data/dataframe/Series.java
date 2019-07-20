@@ -67,7 +67,7 @@ public class Series implements Iterable {
      * @param name name
      */
     public Series(Array data, String name) {
-        this(data, new Index((int) data.getSize()), name);
+        this(data, new IntIndex((int) data.getSize()), name);
     }
 
     // </editor-fold>
@@ -114,7 +114,7 @@ public class Series implements Iterable {
      * @param value Index value
      */
     public void setIndex(List value) {
-        this.index = new Index(value);
+        this.index = Index.factory(value);
     }
 
     /**

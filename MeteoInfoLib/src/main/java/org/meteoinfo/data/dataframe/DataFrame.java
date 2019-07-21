@@ -1142,7 +1142,7 @@ public class DataFrame implements Iterable {
             return null;
         } else {
             Index rIndex = this.index.subIndex(row, row + 1, 1);
-            if (cols.size() == 1) {
+            if (cols.size() == 1 && this.columns.size() > 1) {
                 Series s = new Series((Array) r, rIndex, cols.get(0).getName());
                 return s;
             } else {
@@ -1253,7 +1253,7 @@ public class DataFrame implements Iterable {
             return null;
         } else {
             Index rIndex = this.index.subIndex(rowRange.first(), rowRange.last() + 1, rowRange.stride());
-            if (cols.size() == 1) {
+            if (cols.size() == 1 && this.columns.size() > 1) {
                 Series s = new Series((Array) r, rIndex, cols.get(0).getName());
                 return s;
             } else {
@@ -1310,7 +1310,7 @@ public class DataFrame implements Iterable {
             return null;
         } else {
             Index rIndex = this.index.subIndex(rowRange.first(), rowRange.last() + 1, rowRange.stride());
-            if (cols.size() == 1) {
+            if (cols.size() == 1 && this.columns.size() > 1) {
                 Series s = new Series((Array) r, rIndex, cols.get(0).getName());
                 return s;
             } else {
@@ -1367,7 +1367,7 @@ public class DataFrame implements Iterable {
             return null;
         } else {
             Index rIndex = this.index.subIndex(rowRange);
-            if (cols.size() == 1) {
+            if (cols.size() == 1 && this.columns.size() > 1) {
                 Series s = new Series((Array) r, rIndex, cols.get(0).getName());
                 return s;
             } else {
@@ -1447,7 +1447,7 @@ public class DataFrame implements Iterable {
             return null;
         } else {
             Index rIndex = Index.factory(rowKeys);
-            if (cols.size() == 1) {
+            if (cols.size() == 1 && this.columns.size() > 1) {
                 Series s = new Series((Array) r, rIndex, cols.get(0).getName());
                 return s;
             } else {
@@ -1527,7 +1527,7 @@ public class DataFrame implements Iterable {
             return null;
         } else {
             Index rIndex = Index.factory(rowKeys);
-            if (cols.size() == 1) {
+            if (cols.size() == 1 && this.columns.size() > 1) {
                 Series s = new Series((Array) r, rIndex, cols.get(0).getName());
                 return s;
             } else {
@@ -1583,7 +1583,7 @@ public class DataFrame implements Iterable {
             return null;
         } else {
             Index rIndex = this.index.subIndex(row, row + 1, 1);
-            if (cols.size() == 1) {
+            if (cols.size() == 1 && this.columns.size() > 1) {
                 Series s = new Series((Array) r, rIndex, cols.get(0).getName());
                 return s;
             } else {
@@ -1655,7 +1655,7 @@ public class DataFrame implements Iterable {
             return null;
         } else {
             Index rIndex = this.index.subIndex(rowRange);
-            if (cols.size() == 1) {
+            if (cols.size() == 1 && this.columns.size() > 1) {
                 Series s = new Series((Array) r, rIndex, cols.get(0).getName());
                 return s;
             } else {

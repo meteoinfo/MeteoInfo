@@ -192,7 +192,7 @@ public class RasterLayer extends ImageLayer {
         breakNum = als.getBreakNum();
         double[] breakValue = new double[breakNum];
         Color[] breakColor = new Color[breakNum];
-        Color undefColor = Color.white;
+        Color undefColor = new Color(255, 255, 255, 0);
         Color defaultColor = als.getLegendBreaks().get(breakNum - 1).getColor();
         Color color;
         for (int i = 0; i < breakNum; i++) {

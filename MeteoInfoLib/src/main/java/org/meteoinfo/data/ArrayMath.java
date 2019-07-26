@@ -2462,6 +2462,27 @@ public class ArrayMath {
     }
 
     /**
+     * Array equal
+     *
+     * @param a Array a
+     * @param b String b
+     * @return Result array
+     */
+    public static Array equal(Array a, String b) {
+        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+        Array r = new ArrayBoolean(a.getShape());
+        for (int i = 0; i < a.getSize(); i++) {
+            if (a.getObject(i).equals(b)) {
+                r.setBoolean(i, true);
+            } else {
+                r.setBoolean(i, false);
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Array less than
      *
      * @param a Array a
@@ -2681,9 +2702,10 @@ public class ArrayMath {
 
         return r;
     }
-    
+
     /**
      * Test whether any array element evaluates to True.
+     *
      * @param a The array
      * @return Boolean
      */
@@ -2696,7 +2718,7 @@ public class ArrayMath {
         }
         return false;
     }
-    
+
     /**
      * Test whether any array element along a given axis evaluates to True.
      *
@@ -2750,9 +2772,10 @@ public class ArrayMath {
 
         return r;
     }
-    
+
     /**
      * Test whether all array element evaluates to True.
+     *
      * @param a The array
      * @return Boolean
      */
@@ -2765,7 +2788,7 @@ public class ArrayMath {
         }
         return true;
     }
-    
+
     /**
      * Test whether all array element along a given axis evaluates to True.
      *
@@ -2859,9 +2882,10 @@ public class ArrayMath {
 
         return hasNaN;
     }
-    
+
     /**
      * Remove NaN values in an array
+     *
      * @param a The array
      * @return The array withou NaN values
      */
@@ -2872,32 +2896,33 @@ public class ArrayMath {
                 d.add(a.getObject(i));
             }
         }
-        
+
         if (d.isEmpty()) {
             return null;
         }
-        
+
         Array r = ArrayUtil.factory(a.getDataType(), new int[]{d.size()});
         for (int i = 0; i < d.size(); i++) {
             r.setObject(i, d.get(i));
         }
-        
+
         return r;
     }
-    
+
     /**
      * Remove NaN values in arrays
+     *
      * @param a The arrays
      * @return The array withou NaN values
      */
     public static Array[] removeNaN(Array... a) {
         if (a.length == 1) {
-            Array r0 = removeNaN(a[0]);            
+            Array r0 = removeNaN(a[0]);
             return r0 == null ? null : new Array[]{removeNaN(a[0])};
         }
-        
+
         List d = new ArrayList<>();
-        int n = (int)a[0].getSize();
+        int n = (int) a[0].getSize();
         int m = a.length;
         boolean isNan;
         for (int i = 0; i < n; i++) {
@@ -2909,16 +2934,16 @@ public class ArrayMath {
                 }
             }
             if (!isNan) {
-                for (Array aa :a) {
+                for (Array aa : a) {
                     d.add(aa.getObject(i));
                 }
             }
         }
-        
+
         if (d.isEmpty()) {
             return null;
         }
-        
+
         int len = d.size() / m;
         Array[] r = new Array[m];
         for (int i = 0; i < m; i++) {
@@ -2929,10 +2954,10 @@ public class ArrayMath {
                 jj += m;
             }
         }
-        
+
         return r;
     }
-    
+
     /**
      * Return the indices of the elements that are non-zero.
      *
@@ -3384,10 +3409,12 @@ public class ArrayMath {
 
         return r;
     }
- 
+
     /**
-     * Returns an element-wise indication of the sign of a number.
-     * The sign function returns -1 if x less than 0, 0 if x==0, 1 if x bigger than 0. nan is returned for nan inputs.
+     * Returns an element-wise indication of the sign of a number. The sign
+     * function returns -1 if x less than 0, 0 if x==0, 1 if x bigger than 0.
+     * nan is returned for nan inputs.
+     *
      * @param x Input array
      * @return The sign of x array
      */
@@ -3396,7 +3423,7 @@ public class ArrayMath {
         for (int i = 0; i < r.getSize(); i++) {
             r.setFloat(i, Math.signum(x.getFloat(i)));
         }
-        
+
         return r;
     }
 
@@ -4650,7 +4677,7 @@ public class ArrayMath {
         }
         return sum;
     }
-    
+
     /**
      * Return the cumulative sum of the elements along a given axis.
      *
@@ -4704,7 +4731,7 @@ public class ArrayMath {
 
         return rr;
     }
-    
+
     /**
      * Compute cumulative sum value of an array
      *
@@ -4720,7 +4747,7 @@ public class ArrayMath {
         while (ii.hasNext()) {
             v = ii.getDoubleNext();
             s += v;
-            r.add(s);             
+            r.add(s);
         }
 
         return r;

@@ -280,7 +280,7 @@ class NDArray(object):
         self.array = r
     
     def __value_other(self, other):
-        if not isinstance(other, numbers.Number):
+        if isinstance(other, NDArray):
             other = other.asarray()
         return other
     

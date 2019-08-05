@@ -1106,6 +1106,7 @@ class DimArray(NDArray):
             return
             
         gdata = self.asgridarray()
+        float_format = kwargs.pop('float_format', None)
         if format == 'surfer':
             gdata.saveAsSurferASCIIFile(fname)
         elif format == 'bil':
@@ -1119,8 +1120,7 @@ class DimArray(NDArray):
             hours = kwargs.pop('hours', 0)
             level = kwargs.pop('level', 0)
             smooth = kwargs.pop('smooth', 1)
-            boldvalue =kwargs.pop('boldvalue', 0)
-            float_format = kwargs.pop('float_format', None)
+            boldvalue =kwargs.pop('boldvalue', 0)            
             proj = kwargs.pop('proj', self.proj)
             if proj is None:
                 gdata.saveAsMICAPS4File(fname, desc, date, hours, level, smooth, boldvalue, float_format)

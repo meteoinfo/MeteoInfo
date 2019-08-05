@@ -227,7 +227,7 @@ public class ColorUtil {
         boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
                 getInputArguments().toString().contains("jdwp");
         if (isDebug) {
-            fn = "D:/MyProgram/java/MeteoInfoDev/MeteoInfoMap/";
+            fn = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo/";
         }     
         fn = fn.substring(0, fn.lastIndexOf("/"));
         String path = fn + File.separator + "colormaps";

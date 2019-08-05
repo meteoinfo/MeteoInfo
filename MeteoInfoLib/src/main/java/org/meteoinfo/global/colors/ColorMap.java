@@ -359,8 +359,9 @@ public class ColorMap {
         while (line != null){
             line = line.trim();
             strs = line.split("\\s+");
-            if (strs.length == 3){
-                if (MIMath.isNumeric(strs[0])){
+            if (strs.length >= 3){
+                if (MIMath.isNumeric(strs[0]) && MIMath.isNumeric(strs[1]) && 
+                        MIMath.isNumeric(strs[2])){
                     if (n == 0){
                         if (strs[0].contains("."))
                             isdouble = true;
@@ -400,8 +401,9 @@ public class ColorMap {
         while (line != null){
             line = line.trim();
             strs = line.split("\\s+");
-            if (strs.length == 3){
-                if (MIMath.isNumeric(strs[0])){
+            if (strs.length >= 3){
+                if (MIMath.isNumeric(strs[0]) && MIMath.isNumeric(strs[1]) && 
+                        MIMath.isNumeric(strs[2])){
                     if (n == 0){
                         if (strs[0].contains("."))
                             isdouble = true;

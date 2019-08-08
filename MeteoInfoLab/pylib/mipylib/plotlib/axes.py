@@ -1513,10 +1513,14 @@ class Axes(object):
         #Add data series
         label = kwargs.pop('label', 'S_0')
         autowidth = False
+        isdate = False
+        if isinstance(x, (list, tuple)):
+            if isinstance(x[0], datetime.datetime):
+                isdate = True
         x = minum.asarray(x)
         height = minum.asarray(height)
-        #if len(x) > 1 and isinstance(width, numbers.Number) and width <= 1:
-        #    width = (x[1] - x[0]) * width
+        if isdate and width <= 1:
+            width = (x[1] - x[0]) * width
         width = minum.asarray(width)
         if align == 'center':
             x = x - width / 2

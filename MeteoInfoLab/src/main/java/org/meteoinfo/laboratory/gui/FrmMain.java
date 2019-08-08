@@ -201,7 +201,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
                             className = ((PyInstance) var).instclass.__name__;
                             switch (className) {
                                 case "DimArray":
-                                case "MIArray":
+                                case "NDArray":
                                     if (var.__len__() <= 10) {
                                         value = var.__str__().toString();
                                     } else {
@@ -238,7 +238,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
                                     className = var.getType().getName();
                                     switch (className) {
                                         case "DimArray":
-                                        case "MIArray":
+                                        case "NDArray":
                                             if (var.__len__() <= 10) {
                                                 value = var.__str__().toString();
                                             } else {

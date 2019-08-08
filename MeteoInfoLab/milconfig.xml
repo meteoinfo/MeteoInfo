@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
   <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataconvert"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
@@ -16,23 +13,26 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <OpenedFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\annotate_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\surf_elev.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\surf_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
       <RecentFile File="D:\KeyData\BC_New\script\plot_month_ave.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\annotate_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\surf_elev.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\surf_2.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-5,2" MainFormSize="1293,743"/>
+  <Startup MainFormLocation="-5,2" MainFormSize="1373,823"/>
 </MeteoInfo>

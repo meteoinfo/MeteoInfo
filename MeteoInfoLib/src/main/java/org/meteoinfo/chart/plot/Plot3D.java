@@ -43,6 +43,7 @@ import org.meteoinfo.legend.ColorBreakCollection;
 import org.meteoinfo.legend.PointBreak;
 import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.legend.PolylineBreak;
+import org.meteoinfo.math.sort.QuickSort;
 import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.ImageShape;
 import org.meteoinfo.shape.PointZ;
@@ -778,6 +779,51 @@ public class Plot3D extends Plot {
     }
 
     private void drawGrahpics(Graphics2D g, Graphic graphic) {
+        if (graphic.getNumGraphics() == 1) {
+            Graphic gg = graphic.getGraphicN(0);
+            this.drawGrahic(g, gg);
+        } else {
+            int n = graphic.getNumGraphics();
+            double[] dds = new double[n];
+            int[] order = new int[n];
+            PointZ p;
+            double d;
+            float angle = projector.getRotationAngle();
+            boolean xdir = true;
+            if (angle < 45 || angle > 135 && angle < 225 || angle > 315) {
+                xdir = false;
+            }
+            
+            if (xdir) {
+                for (int i = 0; i < n; i++) {
+                    Graphic gg = graphic.getGraphicN(i);
+                    Shape shape = gg.getShape();
+                    p = (PointZ) shape.getPoints().get(0);
+                    d = p.X * projector.getSinRotationAngle();
+                    dds[i] = d;
+                    order[i] = i;
+                }
+            } else {
+                for (int i = 0; i < graphic.getNumGraphics(); i++) {
+                    Graphic gg = graphic.getGraphicN(i);
+                    Shape shape = gg.getShape();
+                    p = (PointZ) shape.getPoints().get(0);
+                    d = p.Y * projector.getCosRotationAngle();
+                    dds[i] = d;
+                    order[i] = i;
+                }
+            }
+            
+            QuickSort.sort(dds, order);
+
+            for (int i : order) {
+                Graphic gg = graphic.getGraphicN(i);
+                this.drawGrahic(g, gg);
+            }
+        }
+    }
+    
+    private void drawGrahpics_bak(Graphics2D g, Graphic graphic) {
         if (graphic.getNumGraphics() == 1) {
             Graphic gg = graphic.getGraphicN(0);
             this.drawGrahic(g, gg);

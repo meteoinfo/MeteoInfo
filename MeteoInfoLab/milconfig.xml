@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<MeteoInfo File="milconfig.xml" Type="configurefile">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types">
+    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+  </Path>
+  <File>
+    <OpenedFiles>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\bar_colors.py"/>
+    </OpenedFiles>
+    <RecentFiles>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\bar_colors.py"/>
+    </RecentFiles>
+  </File>
+  <Font>
+    <TextFont FontName="宋体" FontSize="15"/>
+  </Font>
+  <Startup MainFormLocation="0,0" MainFormSize="1360,772"/>
+</MeteoInfo>

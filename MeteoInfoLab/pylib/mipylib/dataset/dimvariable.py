@@ -9,6 +9,7 @@ from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.global import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.data.meteodata import Attribute
+from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from mipylib.numeric.dimarray import DimArray
 from mipylib.numeric.multiarray import NDArray
 import mipylib.numeric.minum as minum
@@ -97,8 +98,9 @@ class DimVariable(object):
                 
         if isinstance(indices, str):    #metadata
             rr = self.dataset.read(self.name)
-            m = rr.findMember(indices)
-            data = rr.getArray(0, m)
+            m = rr.getArrayObject().findMember(indices)
+            data = rr.getArrayObject().getArray(0, m)
+            data = NCUtil.convertArray(data)
             return NDArray(data)
         
         if not isinstance(indices, tuple):

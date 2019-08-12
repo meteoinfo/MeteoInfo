@@ -1200,8 +1200,7 @@ class MapAxes(Axes):
         else:
             lonlim = 0
             x, y = minum.project(x, y, toproj=proj)
-        layer = ArrayUtil.meshLayer(x.asarray(), y.asarray(), a.asarray(), ls, lonlim)
-        #layer = ArrayUtil.meshLayer(x.asarray(), y.asarray(), a.asarray(), ls)
+        layer = DrawMeteoData.meshLayer(x.asarray(), y.asarray(), a.asarray(), ls, lonlim)
         if not proj is None:
             layer.setProjInfo(proj)
             

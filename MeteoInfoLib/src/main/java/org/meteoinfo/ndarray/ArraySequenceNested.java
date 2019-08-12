@@ -48,7 +48,7 @@ package org.meteoinfo.ndarray;
  *
  * @author caron
  */
-public class ArraySequenceNested extends ArrayStructure {
+public class ArraySequenceNested extends ArrayStructureBak {
   private int[] sequenceLen;
   private int[] sequenceOffset;
   private int total = 0;
@@ -64,7 +64,7 @@ public class ArraySequenceNested extends ArrayStructure {
   }
 
   // not sure how this is used
-  protected StructureData makeStructureData( ArrayStructure as, int index) {
+  protected StructureData makeStructureData( ArrayStructureBak as, int index) {
     return new StructureDataA( as, index);
   }
 
@@ -137,7 +137,7 @@ public class ArraySequenceNested extends ArrayStructure {
    * Flatten the Structures into a 1D array of Structures of length getTotalNumberOfStructures().
    * @return Array of Structures
    */
-  public ArrayStructure flatten() {
+  public ArrayStructureBak flatten() {
     ArrayStructureW aw = new ArrayStructureW( getStructureMembers(), new int[] {total});
     for (int i=0; i<total; i++) {
       StructureData sdata = new StructureDataA( this, i);
@@ -296,16 +296,16 @@ public class ArraySequenceNested extends ArrayStructure {
 
   public StructureData getScalarStructure(int recnum, StructureMembers.Member m) {
     if (m.getDataType() == DataType.STRUCTURE) {
-      ArrayStructure data = (ArrayStructure) m.getDataArray();
+      ArrayStructureBak data = (ArrayStructureBak) m.getDataArray();
       return data.getStructureData( recnum * m.getSize());  // gets first in the array
     }
 
     throw new IllegalArgumentException("Type is " + m.getDataType() + ", must be Structure");
   }
 
-  public ArrayStructure getArrayStructure(int recnum, StructureMembers.Member m) {
+  public ArrayStructureBak getArrayStructure(int recnum, StructureMembers.Member m) {
     if (m.getDataType() == DataType.STRUCTURE) {
-      ArrayStructure data = (ArrayStructure) m.getDataArray();
+      ArrayStructureBak data = (ArrayStructureBak) m.getDataArray();
       // we need to subset this array structure to deal with just the subset for this recno
       // use "brute force" for now, see if we can finesse later
       int count = m.getSize();

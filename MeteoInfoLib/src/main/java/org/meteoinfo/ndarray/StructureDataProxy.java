@@ -145,7 +145,7 @@ public class StructureDataProxy extends StructureData {
     return org.getScalarStructure(m.getName());
   }
 
-  public ArrayStructure getArrayStructure(StructureMembers.Member m) {
+  public ArrayStructureBak getArrayStructure(StructureMembers.Member m) {
     return org.getArrayStructure(m.getName());
   }
 

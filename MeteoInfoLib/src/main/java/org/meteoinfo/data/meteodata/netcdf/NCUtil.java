@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import org.meteoinfo.data.meteodata.Attribute;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.ArrayStructure;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.InvalidRangeException;
@@ -55,7 +56,17 @@ public class NCUtil {
         if (dt == DataType.OBJECT && ncArray.getObject(0).getClass() == String.class){
             dt = DataType.STRING;
         }
-        Array array = Array.factory(dt, ncArray.getShape(), ncArray.getStorage());
+        Array array = null;
+        switch (dt) {
+            case STRUCTURE:
+            case SEQUENCE:
+                array = new ArrayStructure(ncArray.getShape());
+                ((ArrayStructure)array).setArrayObject(ncArray);
+                break;
+            default:
+                array = Array.factory(dt, ncArray.getShape(), ncArray.getStorage());
+                break;
+        }        
         
         return array;
     }
@@ -66,7 +77,16 @@ public class NCUtil {
      * @return Netcdf array
      */
     public static ucar.ma2.Array convertArray(Array array) {
-        ucar.ma2.Array ncArray = ucar.ma2.Array.factory(convertDataType(array.getDataType()), array.getShape(), array.getStorage());
+        ucar.ma2.Array ncArray = null;
+        switch (array.getDataType()) {
+            case STRUCTURE:
+            case SEQUENCE:
+                ncArray = (ucar.ma2.Array)((ArrayStructure)array).getArrayObject();
+                break;
+            default:
+                ncArray = ucar.ma2.Array.factory(convertDataType(array.getDataType()), array.getShape(), array.getStorage());
+                break;
+        }
         
         return ncArray;
     }

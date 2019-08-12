@@ -48,36 +48,17 @@ import java.util.List;
       Array sdataArray = sdata.getArray(m);
       ...
    }
-  </pre>
-
- * General ways to access data in an StructureData are:
-    <pre> Array getArray(Member m) </pre>
-    <pre> Array getArray(String memberName) </pre>
-
- * The following will return an object of type Byte, Char, Double, Float, Int, Long, Short, String, or Structure, depending 
- * upon the member type:
-   <pre> Object getScalarObject( Member m) </pre>
-
- * A number of convenience routines may be able to avoid extra Object creation, and so are recommended for efficiency.
- * These require that you know the data types of the member data, but they are the most efficent:
-   <pre>
+  <pre> Array getArray(Member m) <pre> Array getArray(String memberName) <pre> Object getScalarObject( Member m) <pre>
     getScalarXXX(int recnum, Member m)
-    getJavaArrayXXX(int recnum, Member m) </pre>
- * where XXX is Byte, Char, Double, Float, Int, Long, Short, or String. For members that are themselves Structures,
-   the equivilent is:
-   <pre>
+    getJavaArrayXXX(int recnum, Member m) <pre>
     StructureData getScalarStructure(int recnum, Member m)
-    ArrayStructure getArrayStructure(int recnum, Member m) </pre>
-
- * These will return any compatible type as a double or float, but may have extra overhead when the types dont match:
-   <pre>
+    ArrayStructure getArrayStructure(int recnum, Member m) <pre>
     convertScalarXXX(int recnum, Member m)
-    convertJavaArrayXXX(int recnum, Member m) </pre>
-  where XXX is Double or Float
+    convertJavaArrayXXX(int recnum, Member m)
 
  *
  * @author caron
- * @see ArrayStructure
+ * @see ArrayStructureBak
  */
 
 abstract public class StructureData {
@@ -637,7 +618,7 @@ abstract public class StructureData {
     * @return array of StructureData
     * @throws IllegalArgumentException if name is not legal member name.
     */
-  public ArrayStructure getArrayStructure(String memberName) {
+  public ArrayStructureBak getArrayStructure(String memberName) {
     StructureMembers.Member m = findMember(memberName);
     if (null == m) throw new IllegalArgumentException("Member not found= " + memberName);
     return getArrayStructure(m);
@@ -648,7 +629,7 @@ abstract public class StructureData {
    * @param m get data from this StructureMembers.Member. Must be of type Structure.
    * @return ArrayStructure
    */
-  abstract public ArrayStructure getArrayStructure(StructureMembers.Member m);
+  abstract public ArrayStructureBak getArrayStructure(StructureMembers.Member m);
 
   //////
 

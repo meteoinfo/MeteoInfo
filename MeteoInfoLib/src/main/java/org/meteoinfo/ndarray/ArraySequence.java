@@ -48,7 +48,7 @@ import java.util.Formatter;
  * @author caron
  * @since Feb 27, 2008
  */
-public class ArraySequence extends ArrayStructure {
+public class ArraySequence extends ArrayStructureBak {
   protected StructureDataIterator iter; // never use private
 
   protected ArraySequence(StructureMembers sm, int[] shape) {
@@ -94,7 +94,7 @@ public class ArraySequence extends ArrayStructure {
   }
 
   @Override
-  protected StructureData makeStructureData(ArrayStructure as, int index) {
+  protected StructureData makeStructureData(ArrayStructureBak as, int index) {
     throw new UnsupportedOperationException("Cannot subset a Sequence");
   }
 
@@ -197,7 +197,7 @@ public class ArraySequence extends ArrayStructure {
             for (String aData : data) resultIter.setObjectNext(aData);
 
           } else if (dataType == DataType.STRUCTURE) {
-            ArrayStructure as = sdata.getArrayStructure(realm);
+            ArrayStructureBak as = sdata.getArrayStructure(realm);
             StructureDataIterator innerIter = as.getStructureDataIterator();
             while (innerIter.hasNext())
               resultIter.setObjectNext(innerIter.next());
@@ -341,7 +341,7 @@ public class ArraySequence extends ArrayStructure {
         while (sdataIter.hasNext()) {
           StructureData sdata = sdataIter.next();
           StructureMembers.Member realm = sdata.getStructureMembers().findMember(proxym.getName());
-          ArrayStructure as = sdata.getArrayStructure(realm);
+          ArrayStructureBak as = sdata.getArrayStructure(realm);
           StructureDataIterator innerIter = as.getStructureDataIterator();
           while (innerIter.hasNext())
             result.add(innerIter.next());
@@ -369,8 +369,8 @@ public class ArraySequence extends ArrayStructure {
   public void showInternal(Formatter f, Indent indent) {
     super.showInternal(f, indent);
     f.format("%sStructureDataIterator Class=%s hash=0x%x%n", indent, iter.getClass().getName(), iter.hashCode());
-    if (iter instanceof ArrayStructure.ArrayStructureIterator) {
-      ArrayStructure.ArrayStructureIterator ii = (ArrayStructure.ArrayStructureIterator) iter;
+    if (iter instanceof ArrayStructureBak.ArrayStructureIterator) {
+      ArrayStructureBak.ArrayStructureIterator ii = (ArrayStructureBak.ArrayStructureIterator) iter;
       ii.getArrayStructure().showInternal(f, indent.incr());
       indent.decr();
     }

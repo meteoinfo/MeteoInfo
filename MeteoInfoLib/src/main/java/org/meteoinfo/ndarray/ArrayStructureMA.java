@@ -179,7 +179,7 @@ import java.io.IOException;
  * @author caron
  * @see Array
  */
-public class ArrayStructureMA extends ArrayStructure {
+public class ArrayStructureMA extends ArrayStructureBak {
   /* Implementation notes
      Most of the methods are now the default methods in the superclass, so that other subclasses can call them.
      This happens when the data is "enhanced", member arrays are set and must override the other possible storage methods.
@@ -212,7 +212,7 @@ public class ArrayStructureMA extends ArrayStructure {
    * @return equivilent ArrayStructureMA
    * @throws java.io.IOException on error reading a sequence
    */
-  static public ArrayStructureMA factoryMA(ArrayStructure from) throws IOException {
+  static public ArrayStructureMA factoryMA(ArrayStructureBak from) throws IOException {
     if (from instanceof ArrayStructureMA)
       return (ArrayStructureMA) from;
 
@@ -225,7 +225,7 @@ public class ArrayStructureMA extends ArrayStructure {
   }
 
   @Override
-  protected StructureData makeStructureData( ArrayStructure as, int index) {
+  protected StructureData makeStructureData( ArrayStructureBak as, int index) {
     return new StructureDataA( as, index);
   }
 

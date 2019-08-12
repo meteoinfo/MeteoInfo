@@ -2987,5 +2987,118 @@ public class DrawMeteoData {
 
         return aLS;
     }
+    
+    /**
+     * Create mesh polygon layer
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param ls Legend scheme
+     * @param lonlim Longiutde limitation - to avoid the polygon cross -180/180
+     * @return Mesh polygon layer
+     */
+    public static VectorLayer meshLayer(Array x_s, Array y_s, Array a, LegendScheme ls, double lonlim) {
+        VectorLayer layer = new VectorLayer(ShapeTypes.Polygon);
+        String fieldName = "Data";
+        Field aDC = new Field(fieldName, org.meteoinfo.ndarray.DataType.DOUBLE);
+        layer.editAddField(aDC);
+
+        int[] shape = x_s.getShape();
+        int colNum = shape[1];
+        int rowNum = shape[0];
+        double x1, x2, x3, x4;
+        for (int i = 0; i < rowNum - 1; i++) {
+            for (int j = 0; j < colNum - 1; j++) {
+                x1 = x_s.getDouble(i * colNum + j);
+                x2 = x_s.getDouble(i * colNum + j + 1);
+                x3 = x_s.getDouble((i + 1) * colNum + j);
+                x4 = x_s.getDouble((i + 1) * colNum + j + 1);
+                if (lonlim > 0) {
+                    if (Math.abs(x2 - x4) > lonlim || Math.abs(x1 - x4) > lonlim
+                            || Math.abs(x3 - x4) > lonlim || Math.abs(x1 - x2) > lonlim
+                            || Math.abs(x2 - x3) > lonlim) {
+                        continue;
+                    }
+                }
+
+                PolygonShape ps = new PolygonShape();
+                List<PointD> points = new ArrayList<>();
+                points.add(new PointD(x1, y_s.getDouble(i * colNum + j)));
+                points.add(new PointD(x3, y_s.getDouble((i + 1) * colNum + j)));
+                points.add(new PointD(x4, y_s.getDouble((i + 1) * colNum + j + 1)));
+                points.add(new PointD(x2, y_s.getDouble(i * colNum + j + 1)));
+                points.add((PointD) points.get(0).clone());
+                ps.setPoints(points);
+                ps.lowValue = a.getDouble(i * colNum + j);
+                ps.highValue = ps.lowValue;
+                int shapeNum = layer.getShapeNum();
+                try {
+                    if (layer.editInsertShape(ps, shapeNum)) {
+                        layer.editCellValue(fieldName, shapeNum, ps.lowValue);
+                    }
+                } catch (Exception ex) {
+
+                }
+            }
+        }
+        layer.setLayerName("Mesh_Layer");
+        ls.setFieldName(fieldName);
+        layer.setLegendScheme(ls.convertTo(ShapeTypes.Polygon));
+
+        return layer;
+    }
+
+    /**
+     * Create mesh polygon layer
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param ls Legend scheme
+     * @return Mesh polygon layer
+     */
+    public static VectorLayer meshLayer(Array x_s, Array y_s, Array a, LegendScheme ls) {
+        VectorLayer layer = new VectorLayer(ShapeTypes.Polygon);
+        String fieldName = "Data";
+        Field aDC = new Field(fieldName, org.meteoinfo.ndarray.DataType.DOUBLE);
+        layer.editAddField(aDC);
+
+        int[] shape = x_s.getShape();
+        int colNum = shape[1];
+        int rowNum = shape[0];
+        double x1, x2, x3, x4;
+        for (int i = 0; i < rowNum - 1; i++) {
+            for (int j = 0; j < colNum - 1; j++) {
+                x1 = x_s.getDouble(i * colNum + j);
+                x2 = x_s.getDouble(i * colNum + j + 1);
+                x3 = x_s.getDouble((i + 1) * colNum + j);
+                x4 = x_s.getDouble((i + 1) * colNum + j + 1);
+                PolygonShape ps = new PolygonShape();
+                List<PointD> points = new ArrayList<>();
+                points.add(new PointD(x1, y_s.getDouble(i * colNum + j)));
+                points.add(new PointD(x3, y_s.getDouble((i + 1) * colNum + j)));
+                points.add(new PointD(x4, y_s.getDouble((i + 1) * colNum + j + 1)));
+                points.add(new PointD(x2, y_s.getDouble(i * colNum + j + 1)));
+                points.add((PointD) points.get(0).clone());
+                ps.setPoints(points);
+                ps.lowValue = a.getDouble(i * colNum + j);
+                ps.highValue = ps.lowValue;
+                int shapeNum = layer.getShapeNum();
+                try {
+                    if (layer.editInsertShape(ps, shapeNum)) {
+                        layer.editCellValue(fieldName, shapeNum, ps.lowValue);
+                    }
+                } catch (Exception ex) {
+
+                }
+            }
+        }
+        layer.setLayerName("Mesh_Layer");
+        ls.setFieldName(fieldName);
+        layer.setLegendScheme(ls.convertTo(ShapeTypes.Polygon));
+
+        return layer;
+    }
     // </editor-fold>
 }

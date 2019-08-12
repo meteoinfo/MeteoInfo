@@ -1648,7 +1648,7 @@ public class Axis implements Cloneable {
                             labx = (float) minx;
                             laby = laby + this.tickSpace;
                             Draw.drawString(g, labx, laby, drawStr, XAlign.LEFT, YAlign.TOP, true);
-                            laby += Draw.getStringDimension(drawStr, g).height;
+                            laby += Draw.getStringDimension(drawStr, g).height + this.tickSpace;
                         }
                     }
                 }
@@ -1663,10 +1663,10 @@ public class Axis implements Cloneable {
             labx = (float)x;
             this.label.setXAlign(XAlign.CENTER);
             if (this.getLocation() == Location.BOTTOM) {
-                laby += this.tickSpace;
+                //laby += this.tickSpace;
                 this.label.setYAlign(YAlign.TOP);
             } else {
-                laby -= this.tickSpace;
+                //laby -= this.tickSpace;
                 this.label.setYAlign(YAlign.BOTTOM);
             }
             this.label.draw(g, labx, laby);

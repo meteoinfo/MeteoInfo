@@ -250,7 +250,6 @@ public class Draw {
      */
     public static Dimension getStringDimension(String str, Graphics2D g) {
         AffineTransform at = g.getTransform();
-        System.out.println(at.getType());
         if (at.getShearX() != 0 || at.getShearY() != 0) {            
             g.setTransform(new AffineTransform());
         }

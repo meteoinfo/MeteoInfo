@@ -45,9 +45,9 @@ import java.io.IOException;
 
 public class SequenceIterator implements StructureDataIterator {
   private int start, size, count;
-  private ArrayStructure abb;
+  private ArrayStructureBak abb;
 
-  public SequenceIterator(int start, int size, ArrayStructure abb) {
+  public SequenceIterator(int start, int size, ArrayStructureBak abb) {
     this.start = start;
     this.size = size;
     this.abb = abb;

@@ -41,7 +41,7 @@ package org.meteoinfo.ndarray;
  * @author caron
  * @see Array
  */
-public class ArrayStructureW extends ArrayStructure {
+public class ArrayStructureW extends ArrayStructureBak {
 
   /**
    * Create a new Array of type StructureData and the given members and shape.
@@ -84,7 +84,7 @@ public class ArrayStructureW extends ArrayStructure {
     sdata[index] = sd;
   }
 
-  protected StructureData makeStructureData( ArrayStructure as, int index) {
+  protected StructureData makeStructureData( ArrayStructureBak as, int index) {
     return new StructureDataW( as.getStructureMembers());
   }
 
@@ -215,7 +215,7 @@ public class ArrayStructureW extends ArrayStructure {
   }
 
   @Override
-  public ArrayStructure getArrayStructure(int recnum, StructureMembers.Member m) {
+  public ArrayStructureBak getArrayStructure(int recnum, StructureMembers.Member m) {
     if (m.getDataArray() != null) return super.getArrayStructure(recnum, m);
     StructureData sd = getStructureData(recnum);
     return sd.getArrayStructure( m.getName());

@@ -425,7 +425,7 @@ public abstract class Array {
     protected final int rank;
     protected boolean unsigned;
     private IndexIterator ii; // local iterator
-    private DataType datatype;
+    protected DataType datatype;
 
     // for subclasses only
     protected Array(int[] shape) {

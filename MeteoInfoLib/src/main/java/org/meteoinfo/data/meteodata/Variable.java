@@ -862,9 +862,9 @@ public class Variable {
         }
 
         if (this.getDimNumber() > idx) {
-            this.setDimension(idx, aDim);
+            this.dimensions.set(idx, aDim);
         } else {
-            this.setDimension(aDim);
+            this.dimensions.add(aDim);
         }
         this.resetShape();
     }

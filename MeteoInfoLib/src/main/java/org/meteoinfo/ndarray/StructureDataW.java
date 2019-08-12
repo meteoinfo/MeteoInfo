@@ -323,7 +323,7 @@ public class StructureDataW extends StructureData {
    * @return StructureData
    */
   public StructureData getScalarStructure(StructureMembers.Member m) {
-    ArrayStructure data = (ArrayStructure) getArray(m);
+    ArrayStructureBak data = (ArrayStructureBak) getArray(m);
     return data.getStructureData(0);
   }
 
@@ -333,8 +333,8 @@ public class StructureDataW extends StructureData {
    * @return StructureData
    */
   @Override
-  public ArrayStructure getArrayStructure(StructureMembers.Member m) {
-    return (ArrayStructure) getArray(m);
+  public ArrayStructureBak getArrayStructure(StructureMembers.Member m) {
+    return (ArrayStructureBak) getArray(m);
   }
 
   public ArraySequence getArraySequence(StructureMembers.Member m) {

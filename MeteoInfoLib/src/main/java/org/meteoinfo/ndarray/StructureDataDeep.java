@@ -64,7 +64,7 @@ public class StructureDataDeep extends StructureDataA {
    * @param canonical  packing must be canonical
    * @return ArrayStructureBB with all data self contained
    */
-  static public ArrayStructureBB copyToArrayBB(ArrayStructure as, ByteOrder bo, boolean canonical) throws IOException {
+  static public ArrayStructureBB copyToArrayBB(ArrayStructureBak as, ByteOrder bo, boolean canonical) throws IOException {
     if (!canonical && as.getClass().equals(ArrayStructureBB.class)) { // no subclasses, LOOK detect already canonical later
       ArrayStructureBB abb = (ArrayStructureBB) as;
       ByteBuffer bb = abb.getByteBuffer();

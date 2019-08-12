@@ -64,7 +64,7 @@ import java.util.ArrayList;
  * @author caron
  * @see Array
  */
-public class ArrayStructureBB extends ArrayStructure {
+public class ArrayStructureBB extends ArrayStructureBak {
 
   /**
    * Set the offsets, based on m.getSizeBytes().
@@ -136,7 +136,7 @@ public class ArrayStructureBB extends ArrayStructure {
   }
 
   @Override
-  protected StructureData makeStructureData(ArrayStructure as, int index) {
+  protected StructureData makeStructureData(ArrayStructureBak as, int index) {
     return new StructureDataA(as, index);
   }
 
@@ -467,7 +467,7 @@ public class ArrayStructureBB extends ArrayStructure {
   }
 
   @Override
-  public ArrayStructure getArrayStructure(int recnum, StructureMembers.Member m) {
+  public ArrayStructureBak getArrayStructure(int recnum, StructureMembers.Member m) {
     if (m.getDataType() != DataType.STRUCTURE) throw new IllegalArgumentException("Type is " + m.getDataType() + ", must be Structure");
     if (m.getDataArray() != null) return super.getArrayStructure(recnum, m);
 
@@ -552,8 +552,8 @@ public class ArrayStructureBB extends ArrayStructure {
       for (int i=0; i<heap.size(); i++) {
         Object o =  heap.get(i);
         f.format("%s   %d class=%s hash=0x%x = %s%n", indent, i, o.getClass().getName(), o.hashCode(), o);
-        if (o instanceof ArrayStructure) {
-          ((ArrayStructure) o).showInternal(f, indent.incr());
+        if (o instanceof ArrayStructureBak) {
+          ((ArrayStructureBak) o).showInternal(f, indent.incr());
           indent.decr();
         }
       }

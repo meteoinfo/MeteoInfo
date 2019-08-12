@@ -61,18 +61,18 @@ import java.util.ArrayList;
  * @author caron
  * @since Nov 19, 2009
  */
-public class ArrayStructureComposite extends ArrayStructure {
-  private List<ArrayStructure> compose = new ArrayList<>();
+public class ArrayStructureComposite extends ArrayStructureBak {
+  private List<ArrayStructureBak> compose = new ArrayList<>();
   private int[] start;
 
-  public ArrayStructureComposite(StructureMembers members, List<ArrayStructure> c, int total) {
+  public ArrayStructureComposite(StructureMembers members, List<ArrayStructureBak> c, int total) {
     super(members, new int[total]);
     this.compose = c;
 
     start = new int[total];
     int count = 0;
     int i = 0;
-    for (ArrayStructure as : compose) {
+    for (ArrayStructureBak as : compose) {
       start[i++] = count;
       count += (int) as.getSize();
     }
@@ -80,10 +80,10 @@ public class ArrayStructureComposite extends ArrayStructure {
 
 
   @Override
-  protected StructureData makeStructureData(ArrayStructure me, int recno) {
+  protected StructureData makeStructureData(ArrayStructureBak me, int recno) {
     for (int i=0; i< start.length; i++) {
       if (recno >= start[i]) {
-        ArrayStructure as = compose.get(i);
+        ArrayStructureBak as = compose.get(i);
         return as.makeStructureData(as, recno - start[i]);
       }
     }

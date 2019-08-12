@@ -43,7 +43,7 @@ import java.util.Formatter;
  */
 
 public class StructureDataA extends StructureData {
-  protected ArrayStructure sa;
+  protected ArrayStructureBak sa;
   protected int recno;
 
   /**
@@ -52,7 +52,7 @@ public class StructureDataA extends StructureData {
    * @param sa    StructureData is always contained in a StructureArray.
    * @param recno the recno in the StructureArray.
    */
-  public StructureDataA(ArrayStructure sa, int recno) {
+  public StructureDataA(ArrayStructureBak sa, int recno) {
     super(sa.getStructureMembers());
     this.sa = sa;
     this.recno = recno;
@@ -267,7 +267,7 @@ public class StructureDataA extends StructureData {
     return sa.getScalarStructure(recno, m);
   }
 
-  public ArrayStructure getArrayStructure(StructureMembers.Member m) {
+  public ArrayStructureBak getArrayStructure(StructureMembers.Member m) {
     return sa.getArrayStructure(recno, m);
   }
 

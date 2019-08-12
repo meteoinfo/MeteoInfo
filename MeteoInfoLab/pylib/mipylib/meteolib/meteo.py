@@ -5,7 +5,7 @@
 # Note: Jython, some functions code revised from MetPy
 #-----------------------------------------------------
 
-from org.meteoinfo.data import ArrayMath, ArrayUtil
+from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.math.meteo import MeteoMath
 import mipylib.numeric as np
 from mipylib.numeric.multiarray import NDArray
@@ -670,13 +670,13 @@ def interpolate_1d(x, xp, *args, **kwargs):
         x = np.array(x)
         
     if isinstance(x, NDArray):
-        x = x.array
+        x = x._array
     
     vars = args
     
     ret = []
     for a in vars:
-        r = ArrayUtil.interpolate_1d(x, xp.array, a.array, axis)
+        r = ArrayUtil.interpolate_1d(x, xp._array, a._array, axis)
         ret.append(NDArray(r))
         
     if len(ret) == 1:

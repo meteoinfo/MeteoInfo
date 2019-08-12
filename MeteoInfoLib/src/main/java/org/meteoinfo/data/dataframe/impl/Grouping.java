@@ -26,12 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.joda.time.DateTime;
-import org.meteoinfo.data.ArrayUtil;
-
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.data.dataframe.DataFrame;
 import org.meteoinfo.data.dataframe.Series;
 import org.meteoinfo.data.dataframe.impl.Transforms.CumulativeFunction;
-import ucar.ma2.Array;
+import org.meteoinfo.ndarray.Array;
 
 public class Grouping
         implements Iterable<Map.Entry<Object, SparseBitSet>> {

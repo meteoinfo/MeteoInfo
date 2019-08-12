@@ -23,6 +23,7 @@ import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.global.util.GlobalUtil;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *
@@ -42,7 +43,7 @@ public class TimeTableData extends TableData {
      */
     public TimeTableData() {
         super();
-        DataColumn col = new DataColumn("Time", DataTypes.Date);
+        DataColumn col = new DataColumn("Time", DataType.DATE);
         this.addColumn(col);
         this.times = new ArrayList<>();
     }
@@ -93,7 +94,7 @@ public class TimeTableData extends TableData {
      */
     public void readASCIIFile(String fileName, int timeColIdx, String formatStr, List<DataColumn> dataColumns) throws FileNotFoundException, IOException, Exception {
         //DataTable dTable = new DataTable();
-        this.addColumn("Time", DataTypes.Date);
+        this.addColumn("Time", DataType.DATE);
 
         BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "utf-8"));
         String title = sr.readLine().trim();
@@ -118,7 +119,7 @@ public class TimeTableData extends TableData {
                     continue;
                 }
                 for (DataColumn col : dataColumns) {
-                    if (col.getDataType() != DataTypes.Date) {
+                    if (col.getDataType() != DataType.DATE) {
                         if (fieldName.equals(col.getColumnName())) {
                             dataIdxs.add(i);
                         }
@@ -162,7 +163,7 @@ public class TimeTableData extends TableData {
      */
     public void readASCIIFile(String fileName, int timeColIdx, String formatStr) throws FileNotFoundException, IOException, Exception {
         //DataTable dTable = new DataTable();
-        this.addColumn("Time", DataTypes.Date);
+        this.addColumn("Time", DataType.DATE);
 
         BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "utf-8"));
         String title = sr.readLine().trim();
@@ -182,7 +183,7 @@ public class TimeTableData extends TableData {
                 if (i == timeColIdx) {
                     this.getColumns().get(0).setColumnName(fieldName);
                 } else {
-                    this.addColumn(fieldName, DataTypes.String);
+                    this.addColumn(fieldName, DataType.STRING);
                     dataIdxs.add(i);
                 }
             }
@@ -643,9 +644,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable ave_Year(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Year", DataTypes.Integer);
+        rTable.addColumn("Year", DataType.INT);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Integer> years = this.getYears();
@@ -672,9 +673,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable ave_Year(List<DataColumn> cols, int year) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Year", DataTypes.Integer);
+        rTable.addColumn("Year", DataType.INT);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         DataRow nRow = rTable.addRow();
@@ -697,9 +698,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable sum_Year(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Year", DataTypes.Integer);
+        rTable.addColumn("Year", DataType.INT);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Integer> years = this.getYears();
@@ -726,9 +727,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable ave_YearMonth(List<DataColumn> cols, int month) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Year", DataTypes.Integer);
+        rTable.addColumn("Year", DataType.INT);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Integer> years = this.getYears();
@@ -755,9 +756,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable sum_YearMonth(List<DataColumn> cols, int month) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Year", DataTypes.Integer);
+        rTable.addColumn("Year", DataType.INT);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Integer> years = this.getYears();
@@ -783,9 +784,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable ave_Month(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("YearMonth", DataTypes.String);
+        rTable.addColumn("YearMonth", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> yms = this.getYearMonths();
@@ -811,9 +812,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable sum_Month(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("YearMonth", DataTypes.String);
+        rTable.addColumn("YearMonth", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> yms = this.getYearMonths();
@@ -839,9 +840,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable ave_Day(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn(new DataColumn("Date", DataTypes.Date, "yyyyMMdd"));
+        rTable.addColumn(new DataColumn("Date", DataType.DATE, "yyyyMMdd"));
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Date> days = this.getDates_Day();
@@ -869,9 +870,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable sum_Day(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn(new DataColumn("Date", DataTypes.Date, "yyyyMMdd"));
+        rTable.addColumn(new DataColumn("Date", DataType.DATE, "yyyyMMdd"));
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Date> days = this.getDates_Day();
@@ -899,9 +900,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable ave_Hour(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn(new DataColumn("Date", DataTypes.Date, "yyyyMMddHH"));
+        rTable.addColumn(new DataColumn("Date", DataType.DATE, "yyyyMMddHH"));
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Date> hours = this.getDates_Hour();
@@ -929,9 +930,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable sum_Hour(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn(new DataColumn("Date", DataTypes.Date, "yyyyMMddHH"));
+        rTable.addColumn(new DataColumn("Date", DataType.DATE, "yyyyMMddHH"));
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Date> hours = this.getDates_Hour();
@@ -959,9 +960,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable ave_MonthOfYear(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Month", DataTypes.String);
+        rTable.addColumn("Month", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> monthNames = Arrays.asList(new String[]{"Jan", "Feb", "Mar", "Apr", "May",
@@ -996,9 +997,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable sum_MonthOfYear(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Month", DataTypes.String);
+        rTable.addColumn("Month", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> monthNames = Arrays.asList(new String[]{"Jan", "Feb", "Mar", "Apr", "May",
@@ -1033,9 +1034,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable ave_SeasonOfYear(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Season", DataTypes.String);
+        rTable.addColumn("Season", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> seasons = Arrays.asList(new String[]{"Spring", "Summer", "Autumn", "Winter"});
@@ -1061,9 +1062,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable sum_SeasonOfYear(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Season", DataTypes.String);
+        rTable.addColumn("Season", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> seasons = Arrays.asList(new String[]{"Spring", "Summer", "Autumn", "Winter"});
@@ -1089,9 +1090,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable ave_DayOfWeek(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Day", DataTypes.String);
+        rTable.addColumn("Day", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.STRING);
         }
 
         List<String> dowNames = Arrays.asList(new String[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
@@ -1127,9 +1128,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable sum_DayOfWeek(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Day", DataTypes.String);
+        rTable.addColumn("Day", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> dowNames = Arrays.asList(new String[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
@@ -1165,9 +1166,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable ave_HourOfDay(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Hour", DataTypes.Integer);
+        rTable.addColumn("Hour", DataType.INT);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Integer> hours = new ArrayList<>();
@@ -1197,9 +1198,9 @@ public class TimeTableData extends TableData {
      */
     public DataTable sum_HourOfDay(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Hour", DataTypes.Integer);
+        rTable.addColumn("Hour", DataType.INT);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Integer> hours = new ArrayList<>();

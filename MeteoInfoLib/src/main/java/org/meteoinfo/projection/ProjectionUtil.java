@@ -44,7 +44,7 @@ import org.meteoinfo.shape.WindBarb;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
-import ucar.ma2.InvalidRangeException;
+import org.meteoinfo.ndarray.InvalidRangeException;
 
 /**
  *

@@ -131,7 +131,7 @@ import static org.meteoinfo.shape.ShapeTypes.CurveLine;
 import static org.meteoinfo.shape.ShapeTypes.CurvePolygon;
 import static org.meteoinfo.shape.ShapeTypes.Polygon;
 import static org.meteoinfo.shape.ShapeTypes.Polyline;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.data.mapdata.ShapeFileManage;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
@@ -2616,7 +2616,7 @@ public class FrmMain extends JFrame implements IApplication {
             }
             VectorLayer layer = new VectorLayer(type);
             layer.setLayerName("New " + option);
-            layer.editAddField("ID", DataTypes.Integer);
+            layer.editAddField("ID", DataType.INT);
             layer.setProjInfo(this._mapDocument.getActiveMapFrame().getMapView().getProjection().getProjInfo());
             this._mapDocument.getActiveMapFrame().addLayer(layer);
             this._mapDocument.paintGraphics();

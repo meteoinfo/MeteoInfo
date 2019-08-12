@@ -515,14 +515,15 @@ public class ChartText extends Shape {
 
     /**
      * Get text dimension with angle
+     *
      * @param g Graphics2D
      * @return Dimension
      */
     public Dimension getTrueDimension(Graphics2D g) {
         Dimension dim = getDimension(g);
-        if (this.angle != 0){
+        if (this.angle != 0) {
             int width = dim.width;
-            int height = dim.height;                
+            int height = dim.height;
             int temp;
             if (angle == 90 || angle == -90) {
                 temp = width;
@@ -535,11 +536,12 @@ public class ChartText extends Shape {
             return new Dimension(width, height);
         } else {
             return dim;
-        }                
+        }
     }
-    
+
     /**
      * Get text dimension
+     *
      * @param g Graphics2D
      * @return Dimension
      */
@@ -621,7 +623,7 @@ public class ChartText extends Shape {
         AffineTransform tempTrans = g.getTransform();
         if (this.angle != 0) {
             //AffineTransform myTrans = new AffineTransform();
-            AffineTransform myTrans = (AffineTransform)tempTrans.clone();
+            AffineTransform myTrans = (AffineTransform) tempTrans.clone();
             myTrans.translate(x, y);
             //myTrans.translate(tempTrans.getTranslateX() + x, tempTrans.getTranslateY() + y);
             myTrans.rotate(-angle * Math.PI / 180);
@@ -667,9 +669,10 @@ public class ChartText extends Shape {
             g.setTransform(tempTrans);
         }
     }
-    
+
     /**
      * Clone
+     *
      * @return Cloned object
      */
     @Override
@@ -692,7 +695,7 @@ public class ChartText extends Shape {
         ct.xAlign = this.xAlign;
         ct.y = this.y;
         ct.yAlign = this.yAlign;
-        
+
         return ct;
     }
     // </editor-fold>

@@ -7,8 +7,8 @@ package org.meteoinfo.math.distribution;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

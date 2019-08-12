@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.data.ArrayMath;
+import org.meteoinfo.bak.ArrayMath;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;

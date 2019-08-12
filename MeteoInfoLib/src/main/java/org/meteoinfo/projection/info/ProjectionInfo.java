@@ -15,14 +15,14 @@ package org.meteoinfo.projection.info;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.data.ArrayUtil;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.proj4j.CRSFactory;
 import org.meteoinfo.projection.proj4j.CoordinateReferenceSystem;
 import org.meteoinfo.projection.proj4j.proj.Projection;
 import org.meteoinfo.shape.PolygonShape;
-import ucar.ma2.Array;
+import org.meteoinfo.ndarray.Array;
 
 /**
  *

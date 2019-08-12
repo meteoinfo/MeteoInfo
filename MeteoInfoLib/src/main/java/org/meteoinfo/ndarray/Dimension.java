@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
  * General Public License for more details.
  */
-package org.meteoinfo.data.meteodata;
+package org.meteoinfo.ndarray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +22,18 @@ import org.meteoinfo.global.util.BigDecimalUtil;
  *
  * @author Yaqiang Wang
  */
-public class Dimension extends ucar.nc2.Dimension {
+public class Dimension {
     // <editor-fold desc="Variables">
 
     //private ucar.nc2.Dimension _ncDimension = null;
-    //private String _dimName;
+    private String name;
     private DimensionType _dimType;
     private List<Double> _dimValue = new ArrayList<>();
     private int _dimId;
-    //private int _dimLength = 1;
-    //private boolean unlimited;
+    private int length = 1;
+    private boolean unlimited = false;
+    private boolean variableLength = false;
+    private boolean shared = true;
     private boolean reverse = false;
 
     /**
@@ -44,39 +46,12 @@ public class Dimension extends ucar.nc2.Dimension {
     /**
      * Constructor
      *
-     * @param dim Other dimension
-     */
-    public Dimension(ucar.nc2.Dimension dim) {
-        this(dim, DimensionType.Other);
-    }
-
-    /**
-     * Constructor
-     *
-     * @param dim Other dimension
-     * @param dimType Dimension type
-     */
-    public Dimension(ucar.nc2.Dimension dim, DimensionType dimType) {
-        this(dim.getShortName(), dim.getLength(), dimType);
-        this.setGroup(dim.getGroup());
-        this.setDODSName(dim.getDODSName());
-        this.setParentStructure(dim.getParentStructure());
-        this.setSort(dim.getSort());
-        this.setParentGroup(dim.getParentGroup());
-        this.setUnlimited(dim.isUnlimited());
-        this.setShared(dim.isShared());
-        this.setVariableLength(dim.isVariableLength());
-    }
-
-    /**
-     * Constructor
-     *
      * @param name Name
      * @param len Length
      */
     public Dimension(String name, int len) {
-        super(name, len);
-        this.setShared(true);
+        this.name = name;
+        this.length = len;
         _dimType = DimensionType.Other;
         _dimValue = new ArrayList<>();
     }
@@ -98,8 +73,7 @@ public class Dimension extends ucar.nc2.Dimension {
      * @param dimType Dimension type
      */
     public Dimension(String name, int len, DimensionType dimType) {
-        super(name, len);
-        this.setShared(true);
+        this(name, len);
         _dimType = dimType;
         _dimValue = new ArrayList<>();
     }
@@ -115,8 +89,7 @@ public class Dimension extends ucar.nc2.Dimension {
      * @param num value number
      */
     public Dimension(String name, int len, DimensionType dimType, double min, double delta, int num) {
-        super(name, len);
-        this.setShared(true);
+        this(name, len);
         _dimType = dimType;
         _dimValue = new ArrayList<>();
         for (int i = 0; i < num; i++) {
@@ -125,31 +98,56 @@ public class Dimension extends ucar.nc2.Dimension {
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
-
     /**
-     * Set dimension length
-     *
-     * @param value Dimension length
+     * Get short name
+     * @return Short name
      */
-    public void setDimLength(int value) {
-        super.setLength(value);
-        this._dimValue.clear();
-        for (int i = 0; i < value; i++) {
-            this._dimValue.add(Double.valueOf(i));
-        }
+    public String getShortName() {
+        return this.name;
     }
     
     /**
+     * Set short name
+     * @param value Short name
+     */
+    public void setShortName(String value) {
+        this.name = value;
+    }
+    
+    /**
+     * Get short name
+     * @return Short name
+     */
+    public String getName() {
+        return this.name;
+    }
+    
+    /**
+     * Set short name
+     * @param value Short name
+     */
+    public void setName(String value) {
+        this.name = value;
+    }
+    
+    /**
+     * Get length
+     * @return Length
+     */
+    public int getLength() {
+        return this.length;
+    }
+   
+    /**
      * Set dimension length
      *
      * @param value Dimension length
      */
-    @Override
     public void setLength(int value) {
         if (value <= 0)
             return;
                    
-        super.setLength(value);
+        this.length = value;
         if (this._dimValue == null)
             this._dimValue = new ArrayList<>();
         if (this._dimValue.size() != value){
@@ -186,6 +184,29 @@ public class Dimension extends ucar.nc2.Dimension {
     public List<Double> getDimValue() {
         return _dimValue;
     }
+    
+    /**
+     * Get dimension value array
+     * @return dimension value array
+     */
+    public Array getDimArray() {
+        int n = this.getLength();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{n});
+        for (int i = 0; i < n; i++) {
+            r.setDouble(i, _dimValue.get(i));
+        }
+        
+        return r;
+    }
+    
+    /**
+     * Get dimension value by index
+     * @param idx index
+     * @return Dimension value
+     */
+    public double getDimValue(int idx) {
+        return this._dimValue.get(idx);
+    }
 
     /**
      * Get dimension identifer
@@ -216,6 +237,54 @@ public class Dimension extends ucar.nc2.Dimension {
      */
     public void setReverse(boolean value) {
         this.reverse = value;
+    }
+    
+    /**
+     * Get is unlimited or not
+     * @return Boolean
+     */
+    public boolean isUnlimited() {
+        return this.unlimited;
+    }
+    
+    /**
+     * Set unlimited or not
+     * @param value Boolean
+     */
+    public void setUnlimited(boolean value) {
+        this.unlimited = value;
+    }
+    
+    /**
+     * Get is shared or not
+     * @return Boolean
+     */
+    public boolean isShared() {
+        return this.shared;
+    }
+    
+    /**
+     * Set is shared or not
+     * @param value Boolean
+     */
+    public void setShared(boolean value) {
+        this.shared = value;
+    }
+    
+    /**
+     * Get is variable length or not
+     * @return Boolean
+     */
+    public boolean isVariableLength() {
+        return this.variableLength;
+    }
+    
+    /**
+     * Set is variable length or not
+     * @param value 
+     */
+    public void setVariableLength(boolean value) {
+        this.variableLength = value;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -339,6 +408,15 @@ public class Dimension extends ucar.nc2.Dimension {
         }
 
         return BigDecimalUtil.sub(_dimValue.get(1), _dimValue.get(0));
+    }
+    
+    /**
+     * Extract dimension
+     * @param range The range
+     * @return Result dimension
+     */
+    public Dimension extract(Range range) {
+        return this.extract(range.first(), range.last(), range.stride());
     }
 
     /**

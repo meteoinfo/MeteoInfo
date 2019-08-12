@@ -1,4 +1,4 @@
- /* Copyright 2012 Yaqiang Wang,
+/* Copyright 2012 Yaqiang Wang,
  * yaqiang.wang@gmail.com
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -13,28 +13,35 @@
  */
 package org.meteoinfo.data.meteodata;
 
+import org.meteoinfo.ndarray.DimensionType;
+import org.meteoinfo.ndarray.Dimension;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.meteoinfo.global.util.DateUtil; 
-import ucar.ma2.DataType;
-import ucar.nc2.Attribute;
+import org.meteoinfo.global.util.DateUtil;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.Range;
+import org.meteoinfo.ndarray.Section;
 
 /**
  *
  * @author Yaqiang Wang
  */
-public class Variable extends ucar.nc2.Variable{
+public class Variable {
     // <editor-fold desc="Variables">
     /// <summary>
     /// Parameter number
     /// </summary>
 
     public int Number;
-    //private String _name;
+    private String shortName;
+    private DataType dataType;
+    protected int[] shape = new int[0];
+    protected List<Dimension> dimensions = new ArrayList<>();
+    protected List<Attribute> attributes = new ArrayList<>();
     private int _levelType;
     private List<Double> _levels;
-    private String _units;
+    private String units;
     private String _description;
     //private List<Dimension> _dimensions = new ArrayList<>();
     private String _hdfPath;
@@ -57,21 +64,10 @@ public class Variable extends ucar.nc2.Variable{
      * Constructor
      */
     public Variable() {
-        this.setShortName("null");
-        this.setDataType(DataType.FLOAT);
+        this.shortName = "null";
+        this.dataType = DataType.FLOAT;
         _levels = new ArrayList<>();
-        _units = "null";
-        _description = "null";
-    }
-    
-    /**
-     * Construct
-     * @param from From variable
-     */
-    public Variable(ucar.nc2.Variable from){
-        super(from);
-        _levels = new ArrayList<>();
-        _units = "null";
+        units = "null";
         _description = "null";
     }
 
@@ -85,34 +81,131 @@ public class Variable extends ucar.nc2.Variable{
      */
     public Variable(int aNum, String aName, String aDesc, String aUnit) {
         Number = aNum;
-        this.setShortName(aName);
-        this.setUnits(aUnit);
+        this.shortName = aName;
+        this.units = aUnit;
         _description = aDesc;
         _levels = new ArrayList<>();
     }
+
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
-
     /**
      * Get name
      *
      * @return Name
      */
-    @Override
     public String getName() {
         return this.getShortName();
+    }
+
+    /**
+     * Get short name
+     *
+     * @return Short name
+     */
+    public String getShortName() {
+        return this.shortName;
+    }
+
+    /**
+     * Set short name
+     *
+     * @param value Short name
+     */
+    public void setShortName(String value) {
+        this.shortName = value;
     }
 
     /**
      * Set name
      *
      * @param value Name
-     * @return 
      */
-    @Override
-    public String setName(String value) {
+    public void setName(String value) {
         this.setShortName(value);
-        return value;
+    }
+
+    /**
+     * Get data type
+     *
+     * @return Data type
+     */
+    public DataType getDataType() {
+        return this.dataType;
+    }
+
+    /**
+     * Set data type
+     *
+     * @param value Data type
+     */
+    public void setDataType(DataType value) {
+        this.dataType = value;
+    }
+
+    /**
+     * Get dimensions
+     *
+     * @return Dimensions
+     */
+    public List<Dimension> getDimensions() {
+        return this.dimensions;
+    }
+    
+    /**
+     * Get dimensions by section
+     * @param section The section
+     * @return Result dimesions
+     */
+    public List<Dimension> getDimensions(Section section) {
+        List<Dimension> dims = new ArrayList<>();
+        for (int i = 0; i < section.getRank(); i++) {
+            Range range = section.getRange(i);
+            if (range.length() > 1) {
+                Dimension dim = this.dimensions.get(i).extract(range);
+                dims.add(dim);
+            }
+        }
+        
+        return dims;
+    }
+
+    /**
+     * Get dimension
+     *
+     * @param index Dimension index
+     * @return Dimension
+     */
+    public Dimension getDimension(int index) {
+        return this.dimensions.get(index);
+    }
+
+    /**
+     * Set dimensions
+     *
+     * @param dims Dimensions
+     */
+    public void setDimensions(List<Dimension> dims) {
+        this.dimensions = dims;
+    }
+
+    /**
+     * Get attributes
+     *
+     * @return Attributes
+     */
+    public List<Attribute> getAttributes() {
+        return this.attributes;
+    }
+
+    /**
+     * Get attribute
+     *
+     * @param index Attribute index
+     * @return Attribute
+     */
+    public Attribute getAttribute(int index) {
+        return this.attributes.get(index);
     }
 
     /**
@@ -164,7 +257,7 @@ public class Variable extends ucar.nc2.Variable{
      * @return Units
      */
     public String getUnits() {
-        return _units;
+        return units;
     }
 
     /**
@@ -173,7 +266,7 @@ public class Variable extends ucar.nc2.Variable{
      * @param value Units
      */
     public void setUnits(String value) {
-        _units = value;
+        units = value;
     }
 
     /**
@@ -181,7 +274,6 @@ public class Variable extends ucar.nc2.Variable{
      *
      * @return Description
      */
-    @Override
     public String getDescription() {
         return _description;
     }
@@ -278,7 +370,7 @@ public class Variable extends ucar.nc2.Variable{
      *
      * @return Z dimension
      */
-     public Dimension getZDimension() {
+    public Dimension getZDimension() {
         return getDimension(DimensionType.Z);
     }
 
@@ -317,7 +409,7 @@ public class Variable extends ucar.nc2.Variable{
     public int[] getDimIds() {
         int[] dimids = new int[this.getDimensions().size()];
         for (int i = 0; i < this.getDimensions().size(); i++) {
-            dimids[i] = ((Dimension)this.getDimension(i)).getDimId();
+            dimids[i] = ((Dimension) this.getDimension(i)).getDimId();
         }
 
         return dimids;
@@ -458,56 +550,90 @@ public class Variable extends ucar.nc2.Variable{
     public void setVarInLevelIdxs(List<Integer> value) {
         _varInLevelIdxs = value;
     }
-    
+
     /**
      * Get fill value
+     *
      * @return Fill value
      */
-    public double getFillValue(){
+    public double getFillValue() {
         return this.fill_value;
     }
-    
+
     /**
      * Set fill value
+     *
      * @param value Fill value
      */
-    public void setFillValue(double value){
+    public void setFillValue(double value) {
         this.fill_value = value;
     }
-    
+
     /**
      * Get scale factor
+     *
      * @return Scale factor
      */
-    public double getScaleFactor(){
+    public double getScaleFactor() {
         return this.scale_factor;
     }
-    
+
     /**
      * Set scale factor
+     *
      * @param value Scale factor
      */
-    public void setScaleFactor(double value){
+    public void setScaleFactor(double value) {
         this.scale_factor = value;
     }
-    
+
     /**
      * Get add offset
+     *
      * @return Add offset
      */
-    public double getAddOffset(){
+    public double getAddOffset() {
         return this.add_offset;
     }
-    
+
     /**
      * Set add offset
+     *
      * @param value Add offset
      */
-    public void setAddOffset(double value){
+    public void setAddOffset(double value) {
         this.add_offset = value;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
+
+    /**
+     * Find an attribute by name
+     * @param name Attribute name
+     * @return Attribute
+     */
+    public Attribute findAttribute(String name) {
+        for (Attribute a : this.attributes) {
+            if (name.equals(a.getShortName())) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find an attribute by name ignoring string case
+     * @param name Attribute name
+     * @return Attribute
+     */
+    public Attribute findAttributeIgnoreCase(String name) {
+        for (Attribute a : this.attributes) {
+            if (name.equalsIgnoreCase(a.getShortName())) {
+                return a;
+            }
+        }
+        return null;
+    }
 
     /**
      * Clone
@@ -519,7 +645,7 @@ public class Variable extends ucar.nc2.Variable{
         Variable aPar = new Variable();
         aPar.Number = Number;
         aPar.setShortName(this.getShortName());
-        aPar.setUnits(_units);
+        aPar.setUnits(units);
         aPar.setDescription(_description);
         aPar.setLevelType(_levelType);
 
@@ -549,7 +675,7 @@ public class Variable extends ucar.nc2.Variable{
         if (!_description.equals(aVar.getDescription())) {
             return false;
         }
-        if (!_units.equals(aVar.getUnits())) {
+        if (!units.equals(aVar.getUnits())) {
             return false;
         }
 
@@ -572,7 +698,7 @@ public class Variable extends ucar.nc2.Variable{
         if (!_description.equals(aVar.getDescription())) {
             return false;
         }
-        if (!_units.equals(aVar.getUnits())) {
+        if (!units.equals(aVar.getUnits())) {
             return false;
         }
         if (_levelType != aVar.getLevelType()) {
@@ -614,7 +740,7 @@ public class Variable extends ucar.nc2.Variable{
      */
     public Dimension getDimension(DimensionType dimType) {
         for (int i = 0; i < getDimNumber(); i++) {
-            Dimension aDim = ((Dimension)this.getDimension(i));
+            Dimension aDim = ((Dimension) this.getDimension(i));
             if (aDim.getDimType() == dimType) {
                 return aDim;
             }
@@ -622,16 +748,29 @@ public class Variable extends ucar.nc2.Variable{
 
         return null;
     }
-    
+
+    /**
+     * Use when dimensions have changed, to recalculate the shape.
+     */
+    public void resetShape() {
+        // if (immutable) throw new IllegalStateException("Cant modify");  LOOK allow this for unlimited dimension updating
+        this.shape = new int[dimensions.size()];
+        for (int i = 0; i < dimensions.size(); i++) {
+            Dimension dim = dimensions.get(i);
+            shape[i] = dim.getLength();
+        }
+    }
+
     /**
      * Set a dimension
+     *
      * @param tstr Dimension type string
      * @param values Dimension values
      * @param reverse If is reverse
      */
-    public void setDimension(String tstr, List<Number> values, boolean reverse){
+    public void setDimension(String tstr, List<Number> values, boolean reverse) {
         DimensionType dType = DimensionType.Other;
-        switch(tstr){
+        switch (tstr) {
             case "X":
                 dType = DimensionType.X;
                 break;
@@ -650,17 +789,18 @@ public class Variable extends ucar.nc2.Variable{
         dim.setReverse(reverse);
         this.setDimension(dim);
     }
-    
+
     /**
      * Set a dimension
+     *
      * @param tstr Dimension type string
      * @param values Dimension values
      * @param index Index
      * @param reverse If is reverse
      */
-    public void setDimension(String tstr, List<Number> values, boolean reverse, int index){
+    public void setDimension(String tstr, List<Number> values, boolean reverse, int index) {
         DimensionType dType = DimensionType.Other;
-        switch(tstr){
+        switch (tstr) {
             case "X":
                 dType = DimensionType.X;
                 break;
@@ -677,7 +817,7 @@ public class Variable extends ucar.nc2.Variable{
         Dimension dim = new Dimension("null", values.size(), dType);
         dim.setDimValues(values);
         dim.setReverse(reverse);
-        this.setDimension(dim, index);
+        this.setDimension(index, dim);
     }
 
     /**
@@ -686,15 +826,16 @@ public class Variable extends ucar.nc2.Variable{
      * @param aDim The dimension
      */
     public void setDimension(Dimension aDim) {
-        if (aDim == null)
+        if (aDim == null) {
             return;
-        
+        }
+
         if (aDim.getDimType() == DimensionType.Other) {
             this.addDimension(aDim);
         } else {
             boolean hasDim = false;
             for (int i = 0; i < getDimNumber(); i++) {
-                Dimension bDim = (Dimension)this.getDimension(i);
+                Dimension bDim = (Dimension) this.getDimension(i);
                 if (bDim.getDimType() == aDim.getDimType()) {
                     this.setDimension(i, aDim);
                     hasDim = true;
@@ -708,22 +849,23 @@ public class Variable extends ucar.nc2.Variable{
             }
         }
     }
-    
+
     /**
      * Set dimension
      *
      * @param aDim The dimension
      * @param idx Index
      */
-    public void setDimension(Dimension aDim, int idx) {
-        if (aDim == null)
+    public void setDimension(int idx, Dimension aDim) {
+        if (aDim == null) {
             return;
-        
-        if (this.getDimNumber() > idx){
+        }
+
+        if (this.getDimNumber() > idx) {
             this.setDimension(idx, aDim);
         } else {
             this.setDimension(aDim);
-        }        
+        }
         this.resetShape();
     }
 
@@ -756,9 +898,10 @@ public class Variable extends ucar.nc2.Variable{
 
         return idx;
     }
-    
+
     /**
      * Get dimension length
+     *
      * @param idx Dimension index
      * @return Dimension length
      */
@@ -774,7 +917,7 @@ public class Variable extends ucar.nc2.Variable{
     public boolean hasXtrackDimension() {
         boolean has = false;
         for (int i = 0; i < getDimNumber(); i++) {
-            if (((Dimension)this.getDimension(i)).getDimType() == DimensionType.Xtrack) {
+            if (((Dimension) this.getDimension(i)).getDimType() == DimensionType.Xtrack) {
                 has = true;
                 break;
             }
@@ -791,7 +934,7 @@ public class Variable extends ucar.nc2.Variable{
      */
     public boolean hasDimension(int dimId) {
         for (int i = 0; i < this.getDimNumber(); i++) {
-            Dimension aDim = (Dimension)this.getDimension(i);
+            Dimension aDim = (Dimension) this.getDimension(i);
             if (aDim.getDimId() == dimId) {
                 return true;
             }
@@ -799,99 +942,113 @@ public class Variable extends ucar.nc2.Variable{
 
         return false;
     }
-    
+
     /**
      * If the variable has a null dimension
+     *
      * @return Boolean
      */
-    public boolean hasNullDimension(){
+    public boolean hasNullDimension() {
         for (int i = 0; i < this.getDimNumber(); i++) {
-            Dimension aDim = (Dimension)this.getDimension(i);
-            if (aDim == null)
+            Dimension aDim = (Dimension) this.getDimension(i);
+            if (aDim == null) {
                 return true;
-            if (aDim.getShortName() == null)
+            }
+            if (aDim.getShortName() == null) {
                 return true;
+            }
             if (aDim.getShortName().equals("null")) {
                 return true;
             }
         }
         return false;
     }
-    
+
     /**
      * If the dimensions equales with another variable
+     *
      * @param var Another variable
      * @return Boolean
      */
-    public boolean dimensionEquales(Variable var){
-        if (this.getDimNumber() != var.getDimNumber())
+    public boolean dimensionEquales(Variable var) {
+        if (this.getDimNumber() != var.getDimNumber()) {
             return false;
-        for (int i = 0; i < this.getDimNumber(); i++){
-            Dimension adim = (Dimension)this.getDimension(i);
-            Dimension bdim = (Dimension)var.getDimension(i);
-            if (!adim.getShortName().equals(bdim.getShortName()))
-                return false;
         }
-        
+        for (int i = 0; i < this.getDimNumber(); i++) {
+            Dimension adim = (Dimension) this.getDimension(i);
+            Dimension bdim = (Dimension) var.getDimension(i);
+            if (!adim.getShortName().equals(bdim.getShortName())) {
+                return false;
+            }
+        }
+
         return true;
     }
-    
+
     /**
      * If the dimensions size equales with another variable
+     *
      * @param var Another variable
      * @return Boolean
      */
-    public boolean dimensionSizeEquals(Variable var){
-        if (this.getDimNumber() != var.getDimNumber())
+    public boolean dimensionSizeEquals(Variable var) {
+        if (this.getDimNumber() != var.getDimNumber()) {
             return false;
-        
-        for (int i = 0; i < this.getDimNumber(); i++){
-           Dimension adim = (Dimension)this.getDimension(i);
-            Dimension bdim = (Dimension)var.getDimension(i);
-            if (adim.getLength() != bdim.getLength())
-                return false;
         }
-        
+
+        for (int i = 0; i < this.getDimNumber(); i++) {
+            Dimension adim = (Dimension) this.getDimension(i);
+            Dimension bdim = (Dimension) var.getDimension(i);
+            if (adim.getLength() != bdim.getLength()) {
+                return false;
+            }
+        }
+
         return true;
     }
-    
+
     /**
      * If the dimensions contains the diemsions of another variable
+     *
      * @param var Another variable
      * @return Boolean
      */
-    public boolean dimensionContains(Variable var){
-        if (this.getDimNumber() < var.getDimNumber())
+    public boolean dimensionContains(Variable var) {
+        if (this.getDimNumber() < var.getDimNumber()) {
             return false;
-        
+        }
+
         int sidx = 0;
-        if (this.getDimNumber() > var.getDimNumber()){
+        if (this.getDimNumber() > var.getDimNumber()) {
             sidx = this.getDimNumber() - var.getDimNumber();
         }
-        for (int i = sidx; i < var.getDimNumber(); i++){
-            Dimension adim = (Dimension)this.getDimension(i);
-            Dimension bdim = (Dimension)var.getDimension(i - sidx);
-            if (adim.getLength() != bdim.getLength())
+        for (int i = sidx; i < var.getDimNumber(); i++) {
+            Dimension adim = (Dimension) this.getDimension(i);
+            Dimension bdim = (Dimension) var.getDimension(i - sidx);
+            if (adim.getLength() != bdim.getLength()) {
                 return false;
+            }
         }
-        
+
         return true;
     }
-    
+
     /**
      * Get level dimension for SWATH data variable
+     *
      * @param var Variable
      * @return Dimension
      */
-    public Dimension getLevelDimension(Variable var){   
+    public Dimension getLevelDimension(Variable var) {
         if (this.getDimNumber() > var.getDimNumber()) {
             for (int i = var.getDimNumber(); i < this.getDimNumber(); i++) {
-                Dimension dim = (Dimension)this.getDimension(i);
-                if (dim.getDimType() == DimensionType.Other)
+                Dimension dim = (Dimension) this.getDimension(i);
+                if (dim.getDimType() == DimensionType.Other) {
                     return dim;
+                }
             }
         }
-        
+
         return null;
     }
 
@@ -949,22 +1106,6 @@ public class Variable extends ucar.nc2.Variable{
 
         return attStr;
     }
-    
-    /**
-     * To netCDF dimensions
-     * @return NC dimensions
-     */
-    public List<ucar.nc2.Dimension> toNCDimensions(){
-        List<ucar.nc2.Dimension> dims = new ArrayList<>();
-        for (int i = 0; i < this.getDimNumber(); i++){
-            Dimension dim = (Dimension)this.getDimension(i);
-            ucar.nc2.Dimension udim = new ucar.nc2.Dimension(dim.getShortName(), dim.getLength(), 
-                dim.isShared(), dim.isUnlimited(), dim.isVariableLength());
-            dims.add(udim);
-        }
-        
-        return dims;
-    }
 
     /**
      * Add a dimension
@@ -975,36 +1116,39 @@ public class Variable extends ucar.nc2.Variable{
         this.getDimensions().add(dim);
         this.resetShape();
     }
-    
+
     /**
      * Add a dimension
+     *
      * @param idx Index
      * @param dim Dimension
      */
-    public void addDimension(int idx, Dimension dim){
+    public void addDimension(int idx, Dimension dim) {
         this.getDimensions().add(idx, dim);
         this.resetShape();
     }
-    
+
     /**
      * Add a dimension
+     *
      * @param dType Dimension type
      * @param values Dimension values
      */
-    public void addDimension(DimensionType dType, List<Number> values){
+    public void addDimension(DimensionType dType, List<Number> values) {
         Dimension dim = new Dimension("null", values.size(), dType);
         dim.setDimValues(values);
         this.addDimension(dim);
     }
-    
+
     /**
      * Add a dimension
+     *
      * @param tstr Dimension type string
      * @param values Dimension values
      */
-    public void addDimension(String tstr, List<Number> values){
+    public void addDimension(String tstr, List<Number> values) {
         DimensionType dType = DimensionType.Other;
-        switch(tstr){
+        switch (tstr) {
             case "X":
                 dType = DimensionType.X;
                 break;
@@ -1021,8 +1165,17 @@ public class Variable extends ucar.nc2.Variable{
         Dimension dim = new Dimension("null", values.size(), dType);
         dim.setDimValues(values);
         this.addDimension(dim);
-    }        
-    
+    }
+
+    /**
+     * Add an attribute
+     *
+     * @param attr Attribute
+     */
+    public void addAttribute(Attribute attr) {
+        this.attributes.add(attr);
+    }
+
     /**
      * Add attribute
      *

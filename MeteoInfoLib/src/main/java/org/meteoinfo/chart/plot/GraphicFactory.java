@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
-import org.meteoinfo.data.ArrayMath;
-import org.meteoinfo.data.ArrayUtil;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.XYListDataset;
@@ -46,7 +46,6 @@ import org.meteoinfo.legend.LineStyles;
 import org.meteoinfo.legend.PointBreak;
 import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.ma.ArrayBoolean;
 import org.meteoinfo.shape.ArcShape;
 import org.meteoinfo.shape.BarShape;
 import org.meteoinfo.shape.CapPolylineShape;
@@ -70,9 +69,9 @@ import org.meteoinfo.shape.ShapeTypes;
 import org.meteoinfo.shape.WindArrow;
 import org.meteoinfo.shape.WindArrow3D;
 import org.meteoinfo.shape.WindBarb;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.Index;
 import wcontour.global.PolyLine;
 
 /**
@@ -3711,7 +3710,7 @@ public class GraphicFactory {
         int len = (int) xdata.getSize();
         if (where == null) {
             if (ArrayMath.containsNaN(y1data) || ArrayMath.containsNaN(y2data)) {
-                where = new ArrayBoolean(new int[]{len});
+                where = Array.factory(DataType.BOOLEAN, new int[]{len});
                 double v1, v2;
                 for (int i = 0; i < len; i++) {
                     v1 = y1data.getDouble(i);
@@ -3792,7 +3791,7 @@ public class GraphicFactory {
         int len = (int) ydata.getSize();
         if (where == null) {
             if (ArrayMath.containsNaN(x1data) || ArrayMath.containsNaN(x2data)) {
-                where = new ArrayBoolean(new int[]{len});
+                where = Array.factory(DataType.BOOLEAN, new int[]{len});
                 double v1, v2;
                 for (int i = 0; i < len; i++) {
                     v1 = x1data.getDouble(i);
@@ -3878,7 +3877,7 @@ public class GraphicFactory {
         int len = (int) xdata.getSize();
         if (where == null) {
             if (ArrayMath.containsNaN(y1data) || ArrayMath.containsNaN(y2data)) {
-                where = new ArrayBoolean(new int[]{len});
+                where = Array.factory(DataType.BOOLEAN, new int[]{len});
                 double v1, v2;
                 for (int i = 0; i < len; i++) {
                     v1 = y1data.getDouble(i);

@@ -87,7 +87,7 @@ import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.plot.Plot3D;
 import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.chart.plot3d.Projector;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.GenericFileFilter;
@@ -840,7 +840,7 @@ public class ChartPanel extends JPanel {
                                         value = aLayer.getCellValue(i, shapeIdx);
                                         if (value == null) {
                                             valueStr = "";
-                                        } else if (field.getDataType() == DataTypes.Date) {
+                                        } else if (field.getDataType() == DataType.DATE) {
                                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                                             valueStr = format.format((Date) value);
                                         } else {

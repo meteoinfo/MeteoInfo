@@ -8,7 +8,7 @@
 import datetime
 
 from org.meteoinfo.data.dataframe import Series as MISeries
-from ucar.ma2 import Range
+from org.meteoinfo.ndarray import Range
 
 from mipylib.numeric.multiarray import NDArray
 from mipylib.numeric.dimarray import DimArray
@@ -46,7 +46,7 @@ class Series(object):
             else:
                 self._index = Index.factory(index)
             self._data = data
-            self._series = MISeries(data.array, self._index._index, name)
+            self._series = MISeries(data._array, self._index._index, name)
         else:
             self._series = series
             self._data = NDArray(self._series.getData())
@@ -71,7 +71,7 @@ class Series(object):
         
     def set_values(self, value):
         self._data = minum.array(value)
-        self._series.setData(self._data.array)
+        self._series.setData(self._data._array)
         
     values = property(get_values, set_values)
     

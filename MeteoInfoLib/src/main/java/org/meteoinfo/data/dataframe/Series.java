@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.ListIterator;
 import org.joda.time.DateTime;
 import org.joda.time.ReadablePeriod;
-import org.meteoinfo.data.ArrayMath;
+import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.data.dataframe.impl.Grouping;
 import org.meteoinfo.data.dataframe.impl.KeyFunction;
 import org.meteoinfo.data.dataframe.impl.TimeFunction;
@@ -19,9 +19,9 @@ import org.meteoinfo.data.dataframe.impl.TimeFunctions;
 import org.meteoinfo.data.dataframe.impl.Views;
 import org.meteoinfo.data.dataframe.impl.WindowFunction;
 import org.meteoinfo.global.util.DateUtil;
-import ucar.ma2.Array;
-import ucar.ma2.InvalidRangeException;
-import ucar.ma2.Range;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.Range;
 
 /**
  *
@@ -458,7 +458,7 @@ public class Series implements Iterable {
      * series if the data is not grouped.
      *
      * @return Minimum object
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public Object stdDev() throws InvalidRangeException {
         return ArrayMath.std(data);

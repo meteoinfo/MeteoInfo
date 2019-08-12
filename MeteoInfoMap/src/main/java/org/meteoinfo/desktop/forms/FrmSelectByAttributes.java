@@ -395,7 +395,7 @@ public class FrmSelectByAttributes extends javax.swing.JDialog {
     private void jButton_GetValuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_GetValuesActionPerformed
         // TODO add your handling code here:
         List<String> valueList = new ArrayList<>();
-        boolean isNumeric = MIMath.isNumeric(_selectLayer.getField(_selectField));
+        boolean isNumeric = _selectLayer.getField(_selectField).isNumeric();
 
         for (int i = 0; i < _selectLayer.getAttributeTable().getTable().getRowCount(); i++) {
             if (!valueList.contains(_selectLayer.getAttributeTable().getTable().getValue(i, _selectField).toString())) {

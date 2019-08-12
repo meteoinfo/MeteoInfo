@@ -74,7 +74,7 @@ class rv_continuous(object):
         if isinstance(x, (list, tuple)):
             x = minum.array(x)
         if isinstance(x, NDArray):
-            x = x.array
+            x = x._array
         r = DistributionUtil.pdf(dist, x)
         return NDArray(r)
         
@@ -92,7 +92,7 @@ class rv_continuous(object):
         if isinstance(x, (list, tuple)):
             x = minum.array(x)
         if isinstance(x, NDArray):
-            x = x.array
+            x = x._array
         r = DistributionUtil.logpdf(dist, x)
         return NDArray(r)
         
@@ -110,7 +110,7 @@ class rv_continuous(object):
         if isinstance(x, (list, tuple)):
             x = minum.array(x)
         if isinstance(x, NDArray):
-            x = x.array
+            x = x._array
         r = DistributionUtil.cdf(dist, x)
         return NDArray(r)
         
@@ -128,7 +128,7 @@ class rv_continuous(object):
         if isinstance(x, (list, tuple)):
             x = minum.array(x)
         if isinstance(x, NDArray):
-            x = x.array
+            x = x._array
         r = DistributionUtil.pmf(dist, x)
         return NDArray(r)
         
@@ -146,7 +146,7 @@ class rv_continuous(object):
         if isinstance(x, (list, tuple)):
             x = minum.array(x)
         if isinstance(x, NDArray):
-            x = x.array
+            x = x._array
         r = DistributionUtil.ppf(dist, x)
         return NDArray(r)
         

@@ -13,12 +13,12 @@
  */
 package org.meteoinfo.table;
 
-import org.meteoinfo.data.DataTypes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *
@@ -31,7 +31,7 @@ public class DataColumn {
     private String columnName;
     private String captionName;
     private int columnIndex;
-    private DataTypes dataType;
+    private DataType dataType;
     private String format;
     private boolean joined = false;
     //private String dataTypeName;
@@ -48,7 +48,7 @@ public class DataColumn {
      *
      * @param dataType Data type
      */
-    public DataColumn(DataTypes dataType) {
+    public DataColumn(DataType dataType) {
         this("default1", dataType);
     }
 
@@ -58,7 +58,7 @@ public class DataColumn {
      * @param columnName Column name
      */
     public DataColumn(String columnName) {
-        this(columnName, DataTypes.Integer);
+        this(columnName, DataType.INT);
     }
 
     /**
@@ -67,10 +67,10 @@ public class DataColumn {
      * @param columnName Column name
      * @param dataType Data type
      */
-    public DataColumn(String columnName, DataTypes dataType) {
+    public DataColumn(String columnName, DataType dataType) {
         this.dataType = dataType;
         this.columnName = columnName;
-        if (this.dataType == DataTypes.Date){
+        if (this.dataType == DataType.DATE){
             this.format = "YYYYMMddHH";
         }
     }
@@ -82,7 +82,7 @@ public class DataColumn {
      * @param dataType Data type
      * @param format Data format string
      */
-    public DataColumn(String columnName, DataTypes dataType, String format) {
+    public DataColumn(String columnName, DataType dataType, String format) {
         this.dataType = dataType;
         this.columnName = columnName;
         this.format = format;
@@ -201,9 +201,9 @@ public class DataColumn {
      *
      * @param dataType Data type
      */
-    public void setDataType(DataTypes dataType) {
+    public void setDataType(DataType dataType) {
         this.dataType = dataType;
-        if (dataType == DataTypes.Date){
+        if (dataType == DataType.DATE){
             this.format = "YYYYMMddHH";
         }
     }
@@ -213,7 +213,7 @@ public class DataColumn {
      *
      * @return The data type
      */
-    public DataTypes getDataType() {
+    public DataType getDataType() {
         return dataType;
     }
 
@@ -253,22 +253,22 @@ public class DataColumn {
     public Object convertTo(Object value) {
         if (value == null) {
             switch (this.dataType) {
-                case Integer:
+                case INT:
                     return Integer.MIN_VALUE;
-                case Float:
+                case FLOAT:
                     return Float.NaN;
-                case Double:
+                case DOUBLE:
                     return Double.NaN;
-                case Boolean:
+                case BOOLEAN:
                     return false;
-                case String:
+                case STRING:
                     return "";
                 default:
                     return value;
             }
         } else {
             switch (this.dataType) {
-                case Integer:
+                case INT:
                     if (!(value instanceof Integer)) {
                         String vStr = value.toString();
                         if (vStr.isEmpty())
@@ -276,7 +276,7 @@ public class DataColumn {
                         return Integer.valueOf(vStr);
                     }
                     break;
-                case Double:
+                case DOUBLE:
                     if (!(value instanceof Double)) {
                         String vStr = value.toString();
                         if (vStr.isEmpty() || vStr.equalsIgnoreCase("nan")) {
@@ -286,7 +286,7 @@ public class DataColumn {
                         }
                     }
                     break;
-                case Float:
+                case FLOAT:
                     if (!(value instanceof Float)) {
                         String vStr = value.toString();
                         if (vStr.isEmpty() || vStr.equalsIgnoreCase("nan")) {
@@ -301,7 +301,7 @@ public class DataColumn {
                         }
                     }
                     break;
-                case Boolean:
+                case BOOLEAN:
                     if (!(value instanceof Boolean)) {
                         String vStr = value.toString();
                         if (vStr.isEmpty())
@@ -309,7 +309,7 @@ public class DataColumn {
                         return Boolean.valueOf(vStr);
                     }
                     break;
-                case Date:
+                case DATE:
                     if (!(value instanceof Date)) {
                         String vStr = value.toString();
                         if (vStr.isEmpty()) {

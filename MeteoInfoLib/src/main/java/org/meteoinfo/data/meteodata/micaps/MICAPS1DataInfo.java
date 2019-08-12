@@ -15,8 +15,8 @@ package org.meteoinfo.data.meteodata.micaps;
 
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.data.meteodata.Dimension;
-import org.meteoinfo.data.meteodata.DimensionType;
+import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
 import org.meteoinfo.data.meteodata.StationInfoData;
 import org.meteoinfo.data.meteodata.StationModel;
@@ -38,8 +38,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.data.ArrayMath;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.data.dataframe.Column;
 import org.meteoinfo.data.dataframe.ColumnIndex;
 import org.meteoinfo.data.dataframe.DataFrame;
@@ -47,10 +47,10 @@ import org.meteoinfo.data.dataframe.Index;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.table.DataTable;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
-import ucar.ma2.InvalidRangeException;
-import ucar.nc2.Attribute;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.data.meteodata.Attribute;
 
 /**
  *
@@ -508,11 +508,11 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
     public DataTable readTable() {
         List<List<String>> allDataList = this.readData();
         DataTable dTable = new DataTable();
-        DataTypes dtype;
+        DataType dtype;
         for (String vName : this._fieldList) {
             switch (vName) {
                 case "Stid":
-                    dtype = DataTypes.String;
+                    dtype = DataType.STRING;
                     break;
                 case "Grade":
                 case "CloudCover":
@@ -521,10 +521,10 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
                 case "WeatherNow":
                 case "MiddleCloudShape":
                 case "HighCloudShape":
-                    dtype = DataTypes.Integer;
+                    dtype = DataType.INT;
                     break;
                 default:
-                    dtype = DataTypes.Float;
+                    dtype = DataType.FLOAT;
                     break;
             }
             try {

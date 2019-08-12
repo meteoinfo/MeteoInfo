@@ -35,7 +35,7 @@ import org.meteoinfo.global.GenericFileFilter;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.legend.LegendType;
 import org.meteoinfo.projection.info.ProjectionInfo;
-import ucar.ma2.Index;
+import org.meteoinfo.ndarray.Index;
 
 /**
  *

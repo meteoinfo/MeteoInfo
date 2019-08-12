@@ -10,7 +10,7 @@ import os
 
 from org.meteoinfo.chart import ChartScaleBar, ChartNorthArrow
 from org.meteoinfo.chart.plot import MapPlot, GraphicFactory
-from org.meteoinfo.data import ArrayUtil
+from org.meteoinfo.math import ArrayUtil
 from org.meteoinfo.data.meteodata import DrawMeteoData
 from org.meteoinfo.map import MapView
 from org.meteoinfo.legend import BreakTypes, LegendManage, LegendScheme, LegendType
@@ -757,8 +757,8 @@ class MapAxes(Axes):
                 xdata = []
                 for i in range(0, len(args[0])):
                     xdata.append(i)
-            xdatalist.append(minum.asarray(xdata).array)
-            ydatalist.append(minum.asarray(ydata).array)
+            xdatalist.append(minum.asarray(xdata)._array)
+            ydatalist.append(minum.asarray(ydata)._array)
         elif n == 2:
             if isinstance(args[1], basestring):
                 ydata = plotutil.getplotdata(args[0])
@@ -772,16 +772,16 @@ class MapAxes(Axes):
             else:
                 xdata = plotutil.getplotdata(args[0])
                 ydata = plotutil.getplotdata(args[1])
-            xdatalist.append(minum.asarray(xdata).array)
-            ydatalist.append(minum.asarray(ydata).array)
+            xdatalist.append(minum.asarray(xdata)._array)
+            ydatalist.append(minum.asarray(ydata)._array)
         else:
             c = 'x'
             for arg in args: 
                 if c == 'x':    
-                    xdatalist.append(minum.asarray(arg).array)
+                    xdatalist.append(minum.asarray(arg)._array)
                     c = 'y'
                 elif c == 'y':
-                    ydatalist.append(minum.asarray(arg).array)
+                    ydatalist.append(minum.asarray(arg)._array)
                     c = 's'
                 elif c == 's':
                     if isinstance(arg, basestring):
@@ -789,7 +789,7 @@ class MapAxes(Axes):
                         c = 'x'
                     else:
                         styles.append('-')
-                        xdatalist.append(minum.asarray(arg).array)
+                        xdatalist.append(minum.asarray(arg)._array)
                         c = 'y'
         
         snum = len(xdatalist)
@@ -906,9 +906,9 @@ class MapAxes(Axes):
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
         
         if a.size == ls.getBreakNum() and ls.getLegendType() == LegendType.UniqueValue:
-            layer = DrawMeteoData.createSTPointLayer_Unique(a.array, x.array, y.array, ls, 'layer', 'data')
+            layer = DrawMeteoData.createSTPointLayer_Unique(a._array, x._array, y._array, ls, 'layer', 'data')
         else:
-            layer = DrawMeteoData.createSTPointLayer(a.array, x.array, y.array, ls, 'layer', 'data')
+            layer = DrawMeteoData.createSTPointLayer(a._array, x._array, y._array, ls, 'layer', 'data')
         
         proj = kwargs.pop('proj', None)
         if not proj is None:
@@ -966,7 +966,7 @@ class MapAxes(Axes):
         plotutil.setlegendscheme(ls, **kwargs)
         isadd = kwargs.pop('isadd', True)
         smooth = kwargs.pop('smooth', True)
-        layer = DrawMeteoData.createContourLayer(a.array, x.array, y.array, ls, 'layer', 'data', smooth)
+        layer = DrawMeteoData.createContourLayer(a._array, x._array, y._array, ls, 'layer', 'data', smooth)
         if layer is None:
             return None
             
@@ -1023,7 +1023,7 @@ class MapAxes(Axes):
         plotutil.setlegendscheme(ls, **kwargs)
         isadd = kwargs.pop('isadd', True)
         smooth = kwargs.pop('smooth', True)
-        layer = DrawMeteoData.createShadedLayer(a.array, x.array, y.array, ls, 'layer', 'data', smooth)
+        layer = DrawMeteoData.createShadedLayer(a._array, x._array, y._array, ls, 'layer', 'data', smooth)
         proj = kwargs.pop('proj', None)
         if not proj is None:
             layer.setProjInfo(proj)
@@ -1257,7 +1257,7 @@ class MapAxes(Axes):
         ls = ls.convertTo(ShapeTypes.Polygon)
         plotutil.setlegendscheme(ls, **kwargs)
 
-        layer = DrawMeteoData.createGridFillLayer(x.array, y.array, a.array, ls, 'layer', 'data')
+        layer = DrawMeteoData.createGridFillLayer(x._array, y._array, a._array, ls, 'layer', 'data')
         if not proj is None:
             layer.setProjInfo(proj)
             
@@ -1347,10 +1347,10 @@ class MapAxes(Axes):
             ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, c, 10)
         ls = plotutil.setlegendscheme_arrow(ls, **kwargs)
         if not cdata is None:
-            cdata = cdata.array
+            cdata = cdata._array
         if u.ndim == 2 and x.ndim == 1:
             x, y = minum.meshgrid(x, y)
-        layer = DrawMeteoData.createVectorLayer(x.array, y.array, u.array, v.array, cdata, ls, 'layer', isuv)
+        layer = DrawMeteoData.createVectorLayer(x._array, y._array, u._array, v._array, cdata, ls, 'layer', isuv)
         if not proj is None:
             layer.setProjInfo(proj)
             
@@ -1438,8 +1438,8 @@ class MapAxes(Axes):
             ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, c, 10)
         ls = plotutil.setlegendscheme_point(ls, **kwargs)
         if not cdata is None:
-            cdata = cdata.array
-        layer = DrawMeteoData.createBarbLayer(x.array, y.array, u.array, v.array, cdata, ls, 'layer', isuv)
+            cdata = cdata._array
+        layer = DrawMeteoData.createBarbLayer(x._array, y._array, u._array, v._array, cdata, ls, 'layer', isuv)
         if not proj is None:
             layer.setProjInfo(proj)
             
@@ -1496,7 +1496,7 @@ class MapAxes(Axes):
         ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, color, 1)
         plotutil.setlegendscheme(ls, **kwargs)
         #layer = __plot_uvgriddata_m(plot, udata, vdata, None, ls, 'streamplot', isuv, proj=proj, density=density)
-        layer = DrawMeteoData.createStreamlineLayer(u.array, v.array, x.array, y.array, density, ls, 'layer', isuv)
+        layer = DrawMeteoData.createStreamlineLayer(u._array, v._array, x._array, y._array, density, ls, 'layer', isuv)
         if not proj is None:
             layer.setProjInfo(proj)
             

@@ -5,7 +5,7 @@
 package org.meteoinfo.desktop.forms;
 
 import org.meteoinfo.data.GridData;
-import org.meteoinfo.data.meteodata.Dimension;
+import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.data.meteodata.DrawMeteoData;
 import org.meteoinfo.data.meteodata.DrawType2D;
 import org.meteoinfo.data.meteodata.MeteoDataInfo;
@@ -40,7 +40,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import org.meteoinfo.data.meteodata.DimensionType;
+import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.layer.FrmLabelSet;
 import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;

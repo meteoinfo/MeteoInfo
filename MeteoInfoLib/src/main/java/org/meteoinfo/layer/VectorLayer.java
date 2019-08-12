@@ -24,7 +24,7 @@ import org.meteoinfo.global.PointD;
 import org.meteoinfo.global.colors.ColorUtil;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.legend.ChartBreak;
 import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.LabelBreak;
@@ -1197,7 +1197,7 @@ public class VectorLayer extends MapLayer {
      * @param fieldName Field name
      * @param fieldType Field data type
      */
-    public void editAddField(String fieldName, DataTypes fieldType) {
+    public void editAddField(String fieldName, DataType fieldType) {
         Field aField = new Field(fieldName, fieldType);
         editAddField(aField);
     }
@@ -1259,7 +1259,7 @@ public class VectorLayer extends MapLayer {
      * @return Minimum data
      */
     public double getMinValue(String fieldName) {
-        if (MIMath.isNumeric((Field) _attributeTable.getTable().getColumns().get(fieldName))) {
+        if (((Field) _attributeTable.getTable().getColumns().get(fieldName)).isNumeric()) {
             double min = 0;
             int dNum = 0;
             for (int i = 0; i < this.getShapeNum(); i++) {
@@ -2038,7 +2038,7 @@ public class VectorLayer extends MapLayer {
 
         String dFormat = "%1$.1f";
         boolean isData = false;
-        if (MIMath.isNumeric((Field) _attributeTable.getTable().getColumns().get(_labelSet.getFieldName()))) {
+        if (((Field) _attributeTable.getTable().getColumns().get(_labelSet.getFieldName())).isNumeric()) {
             if (_labelSet.isAutoDecimal()) {
                 double min = getMinValue(_labelSet.getFieldName());
                 _labelSet.setDecimalDigits(MIMath.getDecimalNum(min));
@@ -2949,8 +2949,8 @@ public class VectorLayer extends MapLayer {
                 Color[] colors;
                 List<String> valueList = new ArrayList<>();
                 boolean isDateField = false;
-                DataTypes colType = this.getAttributeTable().getTable().getColumns().get(fieldName).getDataType();
-                if (colType == DataTypes.Date) {
+                DataType colType = this.getAttributeTable().getTable().getColumns().get(fieldName).getDataType();
+                if (colType == DataType.DATE) {
                     isDateField = true;
                 }
 

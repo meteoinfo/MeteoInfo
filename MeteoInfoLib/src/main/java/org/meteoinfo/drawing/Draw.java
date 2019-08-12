@@ -60,7 +60,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.meteoinfo.chart.plot.XAlign;
 import org.meteoinfo.chart.plot.YAlign;
-import org.meteoinfo.data.ArrayMath;
+import org.meteoinfo.bak.ArrayMath;
 import org.meteoinfo.legend.ArrowBreak;
 import org.meteoinfo.legend.ArrowLineBreak;
 import org.meteoinfo.legend.ColorBreakCollection;
@@ -249,20 +249,32 @@ public class Draw {
      * @return String dimension
      */
     public static Dimension getStringDimension(String str, Graphics2D g) {
+        AffineTransform at = g.getTransform();
+        System.out.println(at.getType());
+        if (at.getShearX() != 0 || at.getShearY() != 0) {            
+            g.setTransform(new AffineTransform());
+        }
+        Dimension dim;
         switch (getStringType(str)) {
             case LATEX:
-                return getStringDimension(str, g, true);
+                dim = getStringDimension(str, g, true);
+                break;
             case MIXING:
                 List<String> strs = splitMixingString(str);
-                Dimension dim = new Dimension(0, 0);
+                dim = new Dimension(0, 0);
                 for (String s : strs) {
                     Dimension dim1 = getStringDimension(s, g, s.startsWith("$") && s.endsWith("$"));
                     dim.setSize(dim.getWidth() + dim1.getWidth(), Math.max(dim.getHeight(), dim1.getHeight()));
                 }
-                return dim;
+                break;
             default:
-                return getStringDimension(str, g, false);
+                dim = getStringDimension(str, g, false);
+                break;
         }
+        if (at.getShearX() != 0 || at.getShearY() != 0) {            
+            g.setTransform(at);
+        }
+        return dim;
     }
 
     /**

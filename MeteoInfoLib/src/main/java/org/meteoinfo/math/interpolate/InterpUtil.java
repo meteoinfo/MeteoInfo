@@ -19,10 +19,10 @@ import org.apache.commons.math3.analysis.interpolation.NevilleInterpolator;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
-import org.meteoinfo.data.ArrayUtil;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.math.spatial.KDTree.Euclidean;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

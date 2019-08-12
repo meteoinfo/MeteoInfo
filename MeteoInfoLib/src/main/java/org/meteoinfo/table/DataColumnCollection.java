@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.table;
 
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +74,7 @@ public class DataColumnCollection extends ArrayList<DataColumn>{
      * @param dataType
      * @return The added data column
      */
-    public DataColumn add(String colName, DataTypes dataType){
+    public DataColumn add(String colName, DataType dataType){
         DataColumn aCol = new DataColumn(colName, dataType);
         this.add(aCol);
         nameMap.put(aCol.getColumnName(), aCol);

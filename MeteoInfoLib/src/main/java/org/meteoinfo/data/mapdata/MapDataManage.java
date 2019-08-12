@@ -20,7 +20,7 @@ import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.layer.ImageLayer;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.MapLayer;
@@ -64,7 +64,7 @@ import org.meteoinfo.shape.Shape;
 import static org.meteoinfo.shape.ShapeTypes.Point;
 import static org.meteoinfo.shape.ShapeTypes.Polygon;
 import static org.meteoinfo.shape.ShapeTypes.Polyline;
-import ucar.ma2.Array;
+import org.meteoinfo.ndarray.Array;
 
 /**
  *
@@ -250,7 +250,7 @@ public class MapDataManage {
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
         String columnName = "Value";
-        Field aDC = new Field(columnName, DataTypes.Integer);
+        Field aDC = new Field(columnName, DataType.INT);
         aLayer.editAddField(aDC);
 
         lineNum = 0;
@@ -480,7 +480,7 @@ public class MapDataManage {
             switch (shapeType) {
                 case "point":
                     aLayer = new VectorLayer(ShapeTypes.Point);
-                    aLayer.editAddField(columnName, DataTypes.Integer);
+                    aLayer.editAddField(columnName, DataType.INT);
                     for (i = 0; i < shapeNum; i++) {
                         aLine = sr.readLine();
                         dataArray = aLine.split(",");
@@ -506,7 +506,7 @@ public class MapDataManage {
                     break;
                 case "polyline":
                     aLayer = new VectorLayer(ShapeTypes.Polyline);
-                    aLayer.editAddField(columnName, DataTypes.Integer);
+                    aLayer.editAddField(columnName, DataType.INT);
                     for (i = 0; i < shapeNum; i++) {
                         pNum = Integer.parseInt(sr.readLine());
                         pList = new ArrayList<>();
@@ -537,7 +537,7 @@ public class MapDataManage {
                     break;
                 case "polygon":
                     aLayer = new VectorLayer(ShapeTypes.Polygon);
-                    aLayer.editAddField(columnName, DataTypes.Integer);
+                    aLayer.editAddField(columnName, DataType.INT);
                     //ArrayList polygons = new ArrayList();
                     for (i = 0; i < shapeNum; i++) {
                         pNum = Integer.parseInt(sr.readLine());

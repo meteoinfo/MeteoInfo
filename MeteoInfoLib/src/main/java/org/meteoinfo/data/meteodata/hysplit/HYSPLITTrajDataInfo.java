@@ -15,13 +15,13 @@ package org.meteoinfo.data.meteodata.hysplit;
 
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.data.meteodata.Dimension;
-import org.meteoinfo.data.meteodata.DimensionType;
+import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.TrajDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
@@ -55,13 +55,13 @@ import org.meteoinfo.shape.ShapeTypes;
 import org.meteoinfo.table.ColumnData;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataTable;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
-import ucar.ma2.InvalidRangeException;
-import ucar.ma2.Range;
-import ucar.ma2.Section;
-import ucar.nc2.Attribute;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.Range;
+import org.meteoinfo.ndarray.Section;
+import org.meteoinfo.data.meteodata.Attribute;
 
 /**
  *
@@ -220,11 +220,11 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
             //Dimensions
             Dimension trajDim = new Dimension(DimensionType.Other);
             trajDim.setName("trajectory");
-            trajDim.setDimLength(this.trajNum);
+            trajDim.setLength(this.trajNum);
             this.addDimension(trajDim);
             Dimension obsDim = new Dimension(DimensionType.Other);
             obsDim.setName("obs");
-            obsDim.setDimLength(this.endPointNum);
+            obsDim.setLength(this.endPointNum);
             this.addDimension(obsDim);
 
             //Variables
@@ -331,10 +331,10 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
             DataColumn col = this.dataTables.get(0).findColumn(varName);
             DataType dtype = DataType.FLOAT;
             switch (col.getDataType()){
-                case Date:
+                case DATE:
                     dtype = DataType.DOUBLE;
                     break;
-                case Integer:
+                case INT:
                     dtype = DataType.INT;
                     break;
             }
@@ -348,7 +348,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                 ColumnData colData = dTable.getColumnData(varName);
                 for (int obsIdx = obsRange.first(); obsIdx <= obsRange.last(); obsIdx += obsRange.stride()){
                     if (colData.size() > obsIdx)
-                        if (col.getDataType() == DataTypes.Date) {
+                        if (col.getDataType() == DataType.DATE) {
                             array.setObject(index, DateUtil.toOADate((Date)colData.getValue(obsIdx)));
                         } else {
                             array.setObject(index, colData.getValue(obsIdx));
@@ -373,13 +373,13 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
 
     public VectorLayer createTrajLineLayer(boolean zPres) {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.PolylineZ);
-        aLayer.editAddField("ID", DataTypes.Integer);
-        aLayer.editAddField("Date", DataTypes.Date);
-        aLayer.editAddField("Year", DataTypes.Integer);
-        aLayer.editAddField("Month", DataTypes.Integer);
-        aLayer.editAddField("Day", DataTypes.Integer);
-        aLayer.editAddField("Hour", DataTypes.Integer);
-        aLayer.editAddField("Height", DataTypes.Float);
+        aLayer.editAddField("ID", DataType.INT);
+        aLayer.editAddField("Date", DataType.DATE);
+        aLayer.editAddField("Year", DataType.INT);
+        aLayer.editAddField("Month", DataType.INT);
+        aLayer.editAddField("Day", DataType.INT);
+        aLayer.editAddField("Hour", DataType.INT);
+        aLayer.editAddField("Height", DataType.FLOAT);
 
         Calendar cal = Calendar.getInstance();
         int TrajNum = 0;
@@ -529,13 +529,13 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
         List<DataTable> tables = new ArrayList<>();
         for (int i = 0; i < this.trajNum; i++) {
             DataTable table = new DataTable();
-            table.addColumn("time", DataTypes.Date);
-            table.addColumn("run_hour", DataTypes.Float);
-            table.addColumn("lat", DataTypes.Float);
-            table.addColumn("lon", DataTypes.Float);
-            table.addColumn("height", DataTypes.Float);
+            table.addColumn("time", DataType.DATE);
+            table.addColumn("run_hour", DataType.FLOAT);
+            table.addColumn("lat", DataType.FLOAT);
+            table.addColumn("lon", DataType.FLOAT);
+            table.addColumn("height", DataType.FLOAT);
             for (String vName : this.varNames) {
-                table.addColumn(vName, DataTypes.Float);
+                table.addColumn(vName, DataType.FLOAT);
             }
             tables.add(table);
         }
@@ -623,17 +623,17 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
     @Override
     public VectorLayer createTrajPointLayer() {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        aLayer.editAddField(new Field("TrajID", DataTypes.Integer));
-        aLayer.editAddField(new Field("Date", DataTypes.String));
-        aLayer.editAddField(new Field("Lon", DataTypes.Double));
-        aLayer.editAddField(new Field("Lat", DataTypes.Double));
-        aLayer.editAddField(new Field("Altitude", DataTypes.Double));
-        aLayer.editAddField(new Field("Pressure", DataTypes.Double));
+        aLayer.editAddField(new Field("TrajID", DataType.INT));
+        aLayer.editAddField(new Field("Date", DataType.STRING));
+        aLayer.editAddField(new Field("Lon", DataType.DOUBLE));
+        aLayer.editAddField(new Field("Lat", DataType.DOUBLE));
+        aLayer.editAddField(new Field("Altitude", DataType.DOUBLE));
+        aLayer.editAddField(new Field("Pressure", DataType.DOUBLE));
         boolean isMultiVar = false;
         if (varNum > 1) {
             isMultiVar = true;
             for (int v = 1; v < varNum; v++) {
-                aLayer.editAddField(new Field(varNames.get(v), DataTypes.Double));
+                aLayer.editAddField(new Field(varNames.get(v), DataType.DOUBLE));
             }
         }
 
@@ -768,11 +768,11 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
     @Override
     public VectorLayer createTrajStartPointLayer() {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.PointZ);
-        aLayer.editAddField(new Field("TrajID", DataTypes.Integer));
-        aLayer.editAddField(new Field("StartDate", DataTypes.String));
-        aLayer.editAddField(new Field("StartLon", DataTypes.Double));
-        aLayer.editAddField(new Field("StartLat", DataTypes.Double));
-        aLayer.editAddField(new Field("StartHeight", DataTypes.Double));
+        aLayer.editAddField(new Field("TrajID", DataType.INT));
+        aLayer.editAddField(new Field("StartDate", DataType.STRING));
+        aLayer.editAddField(new Field("StartLon", DataType.DOUBLE));
+        aLayer.editAddField(new Field("StartLat", DataType.DOUBLE));
+        aLayer.editAddField(new Field("StartHeight", DataType.DOUBLE));
 
         int TrajNum = 0;
         try {

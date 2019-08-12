@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.table;
 
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,22 +31,22 @@ public class ColumnData {
     public ColumnData(DataColumn col) {
         dataColumn = col;
         switch (col.getDataType()) {
-            case Integer:
+            case INT:
                 data = new ArrayList<Integer>();
                 break;
-            case Float:
+            case FLOAT:
                 data = new ArrayList<Float>();
                 break;
-            case Double:
+            case DOUBLE:
                 data = new ArrayList<Double>();
                 break;
-            case String:
+            case STRING:
                 data = new ArrayList<String>();
                 break;
-            case Date:
+            case DATE:
                 data = new ArrayList<Date>();
                 break;
-            case Boolean:
+            case BOOLEAN:
                 data = new ArrayList<Boolean>();
                 break;
         }
@@ -58,7 +58,7 @@ public class ColumnData {
      * @param colName Data column name
      * @param type Data type
      */
-    public ColumnData(String colName, DataTypes type) {
+    public ColumnData(String colName, DataType type) {
         this(new DataColumn(colName, type));
     }
 
@@ -105,7 +105,7 @@ public class ColumnData {
      *
      * @return Data type
      */
-    public DataTypes getDataType() {
+    public DataType getDataType() {
         return dataColumn.getDataType();
     }
 
@@ -127,22 +127,22 @@ public class ColumnData {
      */
     public void addData(Object value) {
         switch (dataColumn.getDataType()) {
-            case Integer:
+            case INT:
                 this.addData((Integer) value);
                 break;
-            case Float:
+            case FLOAT:
                 this.addData((Float) value);
                 break;
-            case Double:
+            case DOUBLE:
                 this.addData((Double) value);
                 break;
-            case String:
+            case STRING:
                 this.addData((String) value);
                 break;
-            case Date:
+            case DATE:
                 this.addData((Date) value);
                 break;
-            case Boolean:
+            case BOOLEAN:
                 this.addData((Boolean) value);
                 break;
         }
@@ -210,17 +210,17 @@ public class ColumnData {
      */
     public Object getValue(int idx) {
         switch (dataColumn.getDataType()) {
-            case Integer:
+            case INT:
                 return (Integer) data.get(idx);
-            case Float:
+            case FLOAT:
                 return (Float) data.get(idx);
-            case Double:
+            case DOUBLE:
                 return (Double) data.get(idx);
-            case String:
+            case STRING:
                 return (String) data.get(idx);
-            case Date:
+            case DATE:
                 return (Date) data.get(idx);
-            case Boolean:
+            case BOOLEAN:
                 return (Boolean) data.get(idx);
         }
 
@@ -246,17 +246,17 @@ public class ColumnData {
      * @return Number data list
      */
     public List<Number> getDataValues() {
-        if (dataColumn.getDataType() == DataTypes.Double) {
+        if (dataColumn.getDataType() == DataType.DOUBLE) {
             return ((List<Number>) data);
         } else {
             List<Number> values = new ArrayList<>();
             switch (dataColumn.getDataType()) {
-                case Integer:
+                case INT:
                     for (int v : (List<Integer>) data) {
                         values.add(v);
                     }
                     break;
-                case Float:
+                case FLOAT:
                     for (Object v : (List<Object>) data) {
                         if (v == null){
                             values.add(Float.NaN);
@@ -265,7 +265,7 @@ public class ColumnData {
                         }
                     }
                     break;
-                case String:
+                case STRING:
                     for (String v : (List<String>)data){
                         if (v.isEmpty())
                             values.add(Double.NaN);
@@ -273,7 +273,7 @@ public class ColumnData {
                             values.add(Double.parseDouble(v));
                     }
                     break;
-                case Date:
+                case DATE:
                     for (Date v : (List<Date>)data){
                         values.add(DateUtil.toOADate(v));
                     }
@@ -319,13 +319,13 @@ public class ColumnData {
         double mean = 0.0;
         int n = 0;
         switch (dataColumn.getDataType()) {
-            case Integer:
+            case INT:
                 for (int v : (List<Integer>) data) {
                     mean += v;
                     n++;
                 }
                 break;
-            case Float:
+            case FLOAT:
                 for (float v : (List<Float>) data) {
                     if (v != Float.NaN) {
                         mean += v;
@@ -333,7 +333,7 @@ public class ColumnData {
                     }
                 }
                 break;
-            case Double:
+            case DOUBLE:
                 for (double v : (List<Double>) data) {
                     if (v != Double.NaN) {
                         mean += v;
@@ -359,12 +359,12 @@ public class ColumnData {
      * @return Result column data
      */
     public ColumnData add(Object value, String colName) {
-        DataTypes thisType = dataColumn.getDataType();
+        DataType thisType = dataColumn.getDataType();
         if (!thisType.isNumeric()) {
             return null;
         }
 
-        DataTypes inType = this.getDataType(value);
+        DataType inType = this.getDataType(value);
         if (!inType.isNumeric()){
             return null;
         }
@@ -372,66 +372,66 @@ public class ColumnData {
         ColumnData rColData = null;
         int i;
         switch (thisType) {
-            case Integer:
+            case INT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Integer);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.INT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((float)(Integer) this.getValue(i) + (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Integer) this.getValue(i) + (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Integer) this.getValue(i) + (Double) value);
                         }
                         break;
                 }
                 break;
-            case Float:
+            case FLOAT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) + (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) + (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) + (Double) value);
                         }
                         break;
                 }
                 break;
-            case Double:
+            case DOUBLE:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) + (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) + (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) + (Double) value);
                         }
@@ -451,47 +451,47 @@ public class ColumnData {
      * @return Result column data
      */
     public ColumnData add(ColumnData colData, String colName) {
-        DataTypes thisType = dataColumn.getDataType();
-        if (thisType == DataTypes.Date || thisType == DataTypes.Boolean) {
+        DataType thisType = dataColumn.getDataType();
+        if (thisType == DataType.DATE || thisType == DataType.BOOLEAN) {
             return null;
         }
 
-        DataTypes inType = colData.getDataType();
-        if (inType == DataTypes.Date || inType == DataTypes.Boolean) {
+        DataType inType = colData.getDataType();
+        if (inType == DataType.DATE || inType == DataType.BOOLEAN) {
             return null;
         }
 
-        if (thisType == DataTypes.String && inType != DataTypes.String) {
+        if (thisType == DataType.STRING && inType != DataType.STRING) {
             return null;
         }
 
-        if (inType == DataTypes.String && thisType != DataTypes.String) {
+        if (inType == DataType.STRING && thisType != DataType.STRING) {
             return null;
         }
 
         ColumnData rColData = null;
         int i;
         switch (thisType) {
-            case Integer:
+            case INT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Integer);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.INT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) + (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) + (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) + (Double) colData.getValue(i));
@@ -500,26 +500,26 @@ public class ColumnData {
                         break;
                 }
                 break;
-            case Float:
+            case FLOAT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) + (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) + (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) + (Double) colData.getValue(i));
@@ -528,26 +528,26 @@ public class ColumnData {
                         break;
                 }
                 break;
-            case Double:
+            case DOUBLE:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) + (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) + (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) + (Double) colData.getValue(i));
@@ -556,8 +556,8 @@ public class ColumnData {
                         break;
                 }
                 break;
-            case String:
-                rColData = new ColumnData(colName, DataTypes.String);
+            case STRING:
+                rColData = new ColumnData(colName, DataType.STRING);
                 for (i = 0; i < data.size(); i++) {
                     if (i < colData.size()) {
                         rColData.addData((String) this.getValue(i) + (String) colData.getValue(i));
@@ -577,12 +577,12 @@ public class ColumnData {
      * @return Result column data
      */
     public ColumnData sub(Object value, String colName) {
-        DataTypes thisType = dataColumn.getDataType();
+        DataType thisType = dataColumn.getDataType();
         if (!thisType.isNumeric()) {
             return null;
         }
 
-        DataTypes inType = this.getDataType(value);
+        DataType inType = this.getDataType(value);
         if (!inType.isNumeric()){
             return null;
         }
@@ -590,66 +590,66 @@ public class ColumnData {
         ColumnData rColData = null;
         int i;
         switch (thisType) {
-            case Integer:
+            case INT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Integer);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.INT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((float)(Integer) this.getValue(i) - (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Integer) this.getValue(i) - (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Integer) this.getValue(i) - (Double) value);
                         }
                         break;
                 }
                 break;
-            case Float:
+            case FLOAT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) - (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) - (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) - (Double) value);
                         }
                         break;
                 }
                 break;
-            case Double:
+            case DOUBLE:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) - (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) - (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) - (Double) value);
                         }
@@ -669,12 +669,12 @@ public class ColumnData {
      * @return Result column data
      */
     public ColumnData sub(ColumnData colData, String colName) {
-        DataTypes thisType = dataColumn.getDataType();
+        DataType thisType = dataColumn.getDataType();
         if (!thisType.isNumeric()) {
             return null;
         }
 
-        DataTypes inType = colData.getDataType();
+        DataType inType = colData.getDataType();
         if (!inType.isNumeric()) {
             return null;
         }
@@ -682,26 +682,26 @@ public class ColumnData {
         ColumnData rColData = null;
         int i;
         switch (thisType) {
-            case Integer:
+            case INT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Integer);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.INT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) - (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) - (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) - (Double) colData.getValue(i));
@@ -710,26 +710,26 @@ public class ColumnData {
                         break;
                 }
                 break;
-            case Float:
+            case FLOAT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) - (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) - (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) - (Double) colData.getValue(i));
@@ -738,26 +738,26 @@ public class ColumnData {
                         break;
                 }
                 break;
-            case Double:
+            case DOUBLE:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) - (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) - (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) - (Double) colData.getValue(i));
@@ -779,12 +779,12 @@ public class ColumnData {
      * @return Result column data
      */
     public ColumnData mul(Object value, String colName) {
-        DataTypes thisType = dataColumn.getDataType();
+        DataType thisType = dataColumn.getDataType();
         if (!thisType.isNumeric()) {
             return null;
         }
 
-        DataTypes inType = this.getDataType(value);
+        DataType inType = this.getDataType(value);
         if (!inType.isNumeric()){
             return null;
         }
@@ -792,66 +792,66 @@ public class ColumnData {
         ColumnData rColData = null;
         int i;
         switch (thisType) {
-            case Integer:
+            case INT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Integer);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.INT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((float)(Integer) this.getValue(i) * (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Integer) this.getValue(i) * (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Integer) this.getValue(i) * (Double) value);
                         }
                         break;
                 }
                 break;
-            case Float:
+            case FLOAT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) * (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) * (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) * (Double) value);
                         }
                         break;
                 }
                 break;
-            case Double:
+            case DOUBLE:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) * (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) * (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) * (Double) value);
                         }
@@ -871,12 +871,12 @@ public class ColumnData {
      * @return Result column data
      */
     public ColumnData mul(ColumnData colData, String colName) {
-        DataTypes thisType = dataColumn.getDataType();
+        DataType thisType = dataColumn.getDataType();
         if (!thisType.isNumeric()) {
             return null;
         }
 
-        DataTypes inType = colData.getDataType();
+        DataType inType = colData.getDataType();
         if (!inType.isNumeric()) {
             return null;
         }
@@ -884,26 +884,26 @@ public class ColumnData {
         ColumnData rColData = null;
         int i;
         switch (thisType) {
-            case Integer:
+            case INT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Integer);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.INT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) * (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) * (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) * (Double) colData.getValue(i));
@@ -912,26 +912,26 @@ public class ColumnData {
                         break;
                 }
                 break;
-            case Float:
+            case FLOAT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) * (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) * (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) * (Double) colData.getValue(i));
@@ -940,26 +940,26 @@ public class ColumnData {
                         break;
                 }
                 break;
-            case Double:
+            case DOUBLE:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) * (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) * (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) * (Double) colData.getValue(i));
@@ -981,12 +981,12 @@ public class ColumnData {
      * @return Result column data
      */
     public ColumnData div(ColumnData colData, String colName) {
-        DataTypes thisType = dataColumn.getDataType();
+        DataType thisType = dataColumn.getDataType();
         if (!thisType.isNumeric()) {
             return null;
         }
 
-        DataTypes inType = colData.getDataType();
+        DataType inType = colData.getDataType();
         if (!inType.isNumeric()) {
             return null;
         }
@@ -994,26 +994,26 @@ public class ColumnData {
         ColumnData rColData = null;
         int i;
         switch (thisType) {
-            case Integer:
+            case INT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((float)(Integer) this.getValue(i) / (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) / (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Integer) this.getValue(i) / (Double) colData.getValue(i));
@@ -1022,26 +1022,26 @@ public class ColumnData {
                         break;
                 }
                 break;
-            case Float:
+            case FLOAT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) / (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) / (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Float) this.getValue(i) / (Double) colData.getValue(i));
@@ -1050,26 +1050,26 @@ public class ColumnData {
                         break;
                 }
                 break;
-            case Double:
+            case DOUBLE:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) / (Integer) colData.getValue(i));
                             }
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) / (Float) colData.getValue(i));
                             }
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             if (i < colData.size()) {
                                 rColData.addData((Double) this.getValue(i) / (Double) colData.getValue(i));
@@ -1091,12 +1091,12 @@ public class ColumnData {
      * @return Result column data
      */
     public ColumnData div(Object value, String colName) {
-        DataTypes thisType = dataColumn.getDataType();
+        DataType thisType = dataColumn.getDataType();
         if (!thisType.isNumeric()) {
             return null;
         }
 
-        DataTypes inType = this.getDataType(value);
+        DataType inType = this.getDataType(value);
         if (!inType.isNumeric()){
             return null;
         }
@@ -1104,66 +1104,66 @@ public class ColumnData {
         ColumnData rColData = null;
         int i;
         switch (thisType) {
-            case Integer:
+            case INT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((float)(Integer) this.getValue(i) / (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Integer) this.getValue(i) / (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Integer) this.getValue(i) / (Double) value);
                         }
                         break;
                 }
                 break;
-            case Float:
+            case FLOAT:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) / (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Float);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.FLOAT);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) / (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Float) this.getValue(i) / (Double) value);
                         }
                         break;
                 }
                 break;
-            case Double:
+            case DOUBLE:
                 switch (inType) {
-                    case Integer:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case INT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) / (Integer) value);
                         }
                         break;
-                    case Float:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case FLOAT:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) / (Float) value);
                         }
                         break;
-                    case Double:
-                        rColData = new ColumnData(colName, DataTypes.Double);
+                    case DOUBLE:
+                        rColData = new ColumnData(colName, DataType.DOUBLE);
                         for (i = 0; i < data.size(); i++) {
                             rColData.addData((Double) this.getValue(i) / (Double) value);
                         }
@@ -1175,19 +1175,19 @@ public class ColumnData {
         return rColData;
     }
     
-    private DataTypes getDataType(Object value){
+    private DataType getDataType(Object value){
         if (value instanceof Integer)
-            return DataTypes.Integer;
+            return DataType.INT;
         else if (value instanceof Float)
-            return DataTypes.Float;
+            return DataType.FLOAT;
         else if (value instanceof Double)
-            return DataTypes.Double;
+            return DataType.DOUBLE;
         else if (value instanceof Boolean)
-            return DataTypes.Boolean;
+            return DataType.BOOLEAN;
         else if (value instanceof String)
-            return DataTypes.String;
+            return DataType.STRING;
         else if (value instanceof Date)
-            return DataTypes.Date;
+            return DataType.DATE;
         else
             return null;
     }

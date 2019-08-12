@@ -7,7 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.fitting import FittingUtil
-from org.meteoinfo.data import ArrayMath, ArrayUtil
+from org.meteoinfo.math import ArrayMath, ArrayUtil
 
 from mipylib.numeric.multiarray import NDArray
 

@@ -1106,14 +1106,14 @@ class Axes3D(Axes):
             yy = []
             for i in range(dn):
                 yy.append(y1)
-            y1 = minum.array(yy).array
+            y1 = minum.array(yy)._array
         else:
             y1 = plotutil.getplotdata(y1)
         if isinstance(y2, (int, long, float)):
             yy = []
             for i in range(dn):
                 yy.append(y2)
-            y2 = minum.array(yy).array
+            y2 = minum.array(yy)._array
         else:
             y2 = plotutil.getplotdata(y2)
         if not where is None:

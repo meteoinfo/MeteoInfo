@@ -357,7 +357,7 @@ public class FrmLabelSet extends javax.swing.JDialog {
         String fieldName = this.jComboBox_Field.getSelectedItem().toString();
         Field field = (Field) _layer.getAttributeTable().getTable().getColumns().
                 get(fieldName);
-        this.jCheckBox_AutoDecimal.setSelected(MIMath.isNumeric(field));
+        this.jCheckBox_AutoDecimal.setSelected(field.isNumeric());
     }//GEN-LAST:event_jComboBox_FieldActionPerformed
 
     private void jCheckBox_AvoidCollisionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox_AvoidCollisionActionPerformed

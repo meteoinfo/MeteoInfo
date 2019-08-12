@@ -36,8 +36,8 @@ import javax.swing.JOptionPane;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.io.FileCharsetDetector;
-import ucar.ma2.Array;
-import ucar.nc2.Attribute;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.data.meteodata.Attribute;
 
 /**
  *

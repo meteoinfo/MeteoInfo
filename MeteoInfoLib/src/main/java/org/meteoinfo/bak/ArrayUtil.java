@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.data;
+package org.meteoinfo.bak;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,10 +40,10 @@ import org.meteoinfo.io.EndianDataOutputStream;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.meteoinfo.data.StationData;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.ma.ArrayBoolean;
-import org.meteoinfo.math.Complex;
+import org.meteoinfo.ndarray.Complex;
 import org.meteoinfo.math.ListIndexComparator;
 import org.meteoinfo.math.spatial.KDTree;
 import org.meteoinfo.math.spatial.KDTree.SearchResult;
@@ -54,13 +54,13 @@ import org.meteoinfo.projection.Reproject;
 import org.meteoinfo.shape.PolygonShape;
 import org.meteoinfo.shape.ShapeTypes;
 import org.python.core.PyComplex;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
-import ucar.ma2.Index2D;
-import ucar.ma2.IndexIterator;
-import ucar.ma2.InvalidRangeException;
-import ucar.ma2.Range;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.ndarray.Index2D;
+import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.Range;
 
 /**
  *
@@ -399,38 +399,6 @@ public class ArrayUtil {
 
     // </editor-fold>
     // <editor-fold desc="Create">
-    /**
-     * Array factory
-     *
-     * @param dt Data type
-     * @param shape Shape
-     * @return Array
-     */
-    public static Array factory(DataType dt, int[] shape) {
-        Array r = Array.factory(dt, shape);
-        if (dt == DataType.BOOLEAN) {
-            return new ArrayBoolean(r);
-        }
-
-        return r;
-    }
-
-    /**
-     * Array factory
-     *
-     * @param dt Data type
-     * @param shape Shape
-     * @param storage Array values
-     * @return Array
-     */
-    public static Array factory(DataType dt, int[] shape, Object storage) {
-        Array r = Array.factory(dt, shape, storage);
-        if (dt == DataType.BOOLEAN) {
-            return new ArrayBoolean(r);
-        }
-
-        return r;
-    }
 
     /**
      * Create an array
@@ -487,8 +455,7 @@ public class ArrayUtil {
             }
             return a;
         } else if (d0 instanceof Boolean) {
-            //Array a = Array.factory(DataType.BOOLEAN, new int[]{data.size()});
-            Array a = new ArrayBoolean(new int[]{data.size()});
+            Array a = Array.factory(DataType.BOOLEAN, new int[]{data.size()});
             for (int i = 0; i < data.size(); i++) {
                 a.setObject(i, data.get(i));
             }
@@ -1473,8 +1440,7 @@ public class ArrayUtil {
      * @return Result array
      */
     public static Array toBoolean(Array a) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < r.getSize(); i++) {
             r.setBoolean(i, a.getDouble(i) != 0);
         }
@@ -1488,7 +1454,7 @@ public class ArrayUtil {
      * @param arrays Array list
      * @param axis The axis
      * @return Concatenated array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array concatenate(List<Array> arrays, Integer axis) throws InvalidRangeException {
         int ndim = arrays.get(0).getRank();
@@ -1539,7 +1505,7 @@ public class ArrayUtil {
      * @param b Array b
      * @param axis The axis
      * @return Concatenated array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array concatenate(Array a, Array b, Integer axis) throws InvalidRangeException {
         int n = a.getRank();
@@ -2157,7 +2123,7 @@ public class ArrayUtil {
     public static VectorLayer meshLayer(Array x_s, Array y_s, Array a, LegendScheme ls, double lonlim) {
         VectorLayer layer = new VectorLayer(ShapeTypes.Polygon);
         String fieldName = "Data";
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, org.meteoinfo.ndarray.DataType.DOUBLE);
         layer.editAddField(aDC);
 
         int[] shape = x_s.getShape();
@@ -2217,7 +2183,7 @@ public class ArrayUtil {
     public static VectorLayer meshLayer(Array x_s, Array y_s, Array a, LegendScheme ls) {
         VectorLayer layer = new VectorLayer(ShapeTypes.Polygon);
         String fieldName = "Data";
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, org.meteoinfo.ndarray.DataType.DOUBLE);
         layer.editAddField(aDC);
 
         int[] shape = x_s.getShape();
@@ -4120,7 +4086,7 @@ public class ArrayUtil {
      * @param values The data on the regular grid in n dimensions.
      * @param xi The coordinates to sample the gridded data at - 2D
      * @return Interpolation value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Object interpn(List<Array> points, Array values, Array xi) throws InvalidRangeException {
         if (xi.getRank() == 1) {
@@ -5114,7 +5080,7 @@ public class ArrayUtil {
      * @param fromProj From projection
      * @param toProj To projection
      * @return Porjected grid data
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Object[] reproject_back(Array data, List<Number> xx, List<Number> yy, ProjectionInfo fromProj, ProjectionInfo toProj) throws InvalidRangeException {
         Extent aExtent;
@@ -5186,7 +5152,7 @@ public class ArrayUtil {
      * @param toProj To projection
      * @param method Resample method
      * @return Porjected grid data
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Object[] reproject(Array data, List<Number> xx, List<Number> yy, ProjectionInfo fromProj,
             ProjectionInfo toProj, ResampleMethods method) throws InvalidRangeException {
@@ -5224,7 +5190,7 @@ public class ArrayUtil {
      * @param fromProj From projection
      * @param toProj To projection
      * @return Porjected grid data
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Object[] reproject(Array data, List<Number> xx, List<Number> yy, ProjectionInfo fromProj,
             ProjectionInfo toProj) throws InvalidRangeException {
@@ -5244,7 +5210,7 @@ public class ArrayUtil {
      * @param fill_value Fill value
      * @param resampleMethod Resample method
      * @return Result arrays
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array reproject(Array data, List<Number> x, List<Number> y, Array rx, Array ry,
             ProjectionInfo fromProj, ProjectionInfo toProj, double fill_value, ResampleMethods resampleMethod) throws InvalidRangeException {
@@ -5389,7 +5355,7 @@ public class ArrayUtil {
      * @param toProj To projection
      * @param resampleMethod Resample method
      * @return Result arrays
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array reproject(Array data, List<Number> x, List<Number> y, Array rx, Array ry,
             ProjectionInfo fromProj, ProjectionInfo toProj, ResampleMethods resampleMethod) throws InvalidRangeException {

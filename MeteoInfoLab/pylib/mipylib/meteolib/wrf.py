@@ -81,7 +81,7 @@ def get_slp(wrfin, timeidx=0, units='hPa'):
     full_ph = (ph + phb) / constants.g
     destag_ph = destagger(full_ph, -3)
     tk = meteo.temperature_from_potential_temperature(full_p * 0.01, full_t)
-    slp = MeteoMath.calSeaPrs(destag_ph.array, tk.array, full_p.array, qvapor.array)
+    slp = MeteoMath.calSeaPrs(destag_ph._array, tk._array, full_p._array, qvapor._array)
     
     return DimArray(slp, dims=t.dims[1:])
     

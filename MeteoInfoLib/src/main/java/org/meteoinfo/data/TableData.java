@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import org.meteoinfo.data.analysis.Statistics;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.util.GlobalUtil;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
@@ -127,9 +128,9 @@ public class TableData extends DataTable {
      */
     @Override
     public void addColumnData(String colName, String dt, List<Object> colData) throws Exception {
-        DataTypes dataType = TableUtil.toDataTypes(dt);
+        DataType dataType = TableUtil.toDataTypes(dt);
         switch (dataType) {
-            case Date:
+            case DATE:
                 if (colData.get(0) instanceof Date) {
                     this.addColumnData(colName, dataType, colData);
                 } else {
@@ -154,9 +155,9 @@ public class TableData extends DataTable {
      * @throws Exception
      */
     public void addColumnData(int index, String colName, String dt, List<Object> colData) throws Exception {
-        DataTypes dataType = TableUtil.toDataTypes(dt);
+        DataType dataType = TableUtil.toDataTypes(dt);
         switch (dataType) {
-            case Date:
+            case DATE:
                 if (colData.get(0) instanceof Date) {
                     this.addColumnData(index, colName, dataType, colData);
                 } else {
@@ -197,7 +198,7 @@ public class TableData extends DataTable {
     public List<DataColumn> getDataColumns() {
         List<DataColumn> cols = new ArrayList<>();
         for (DataColumn col : this.getColumns()) {
-            if (col.getDataType() != DataTypes.Date) {
+            if (col.getDataType() != DataType.DATE) {
                 cols.add(col);
             }
         }
@@ -232,16 +233,16 @@ public class TableData extends DataTable {
                 continue;
             }
             switch (col.getDataType()) {
-                case Integer:
+                case INT:
                     value = (double) (Integer) row.getValue(colName);
                     break;
-                case Float:
+                case FLOAT:
                     value = (double) (Float) row.getValue(colName);
                     break;
-                case Double:
+                case DOUBLE:
                     value = (Double) row.getValue(colName);
                     break;
-                case String:
+                case STRING:
                     vstr = (String) row.getValue(colName);
                     if (!vstr.isEmpty()) {
                         value = Double.parseDouble(vstr);
@@ -276,19 +277,19 @@ public class TableData extends DataTable {
      */
     public void columnToDouble(String colName) {
         DataColumn col = this.findColumn(colName);
-        DataTypes oldType = col.getDataType();
-        col.setDataType(DataTypes.Double);
+        DataType oldType = col.getDataType();
+        col.setDataType(DataType.DOUBLE);
         Object value;
         for (DataRow row : this.getRows()) {
             value = row.getValue(colName);
             switch (oldType) {
-                case Integer:
+                case INT:
                     row.setValue(col, (double) (Integer) value);
                     break;
-                case Float:
+                case FLOAT:
                     row.setValue(col, (double) (Float) value);
                     break;
-                case String:
+                case STRING:
                     if (MIMath.isNumeric((String) value)) {
                         row.setValue(col, Double.parseDouble((String) value));
                     } else {
@@ -309,7 +310,7 @@ public class TableData extends DataTable {
     public DataTable average(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
         DataRow nRow = rTable.addRow();
 
@@ -332,7 +333,7 @@ public class TableData extends DataTable {
     public DataTable sum(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
         DataRow nRow = rTable.addRow();
 
@@ -355,8 +356,8 @@ public class TableData extends DataTable {
     public DataTable ave_stdev(List<DataColumn> cols) throws Exception {
         DataTable rTable = new DataTable();
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
-            rTable.addColumn(col.getColumnName() + "_sd", DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
+            rTable.addColumn(col.getColumnName() + "_sd", DataType.DOUBLE);
         }
         DataRow nRow = rTable.addRow();
 
@@ -380,15 +381,15 @@ public class TableData extends DataTable {
      */
     public DataTable statistics(List<DataColumn> dataColumns) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Type", DataTypes.String);
-        rTable.addColumn("Mean", DataTypes.Double);
-        rTable.addColumn("Minimum", DataTypes.Double);
-        rTable.addColumn("Q1", DataTypes.Double);
-        rTable.addColumn("Meadian", DataTypes.Double);
-        rTable.addColumn("Q3", DataTypes.Double);
-        rTable.addColumn("Maximum", DataTypes.Double);
-        rTable.addColumn("StdDev", DataTypes.Double);
-        rTable.addColumn("Count", DataTypes.Integer);
+        rTable.addColumn("Type", DataType.STRING);
+        rTable.addColumn("Mean", DataType.DOUBLE);
+        rTable.addColumn("Minimum", DataType.DOUBLE);
+        rTable.addColumn("Q1", DataType.DOUBLE);
+        rTable.addColumn("Meadian", DataType.DOUBLE);
+        rTable.addColumn("Q3", DataType.DOUBLE);
+        rTable.addColumn("Maximum", DataType.DOUBLE);
+        rTable.addColumn("StdDev", DataType.DOUBLE);
+        rTable.addColumn("Count", DataType.INT);
 
         int i = 0;
         for (DataColumn col : dataColumns) {
@@ -492,27 +493,27 @@ public class TableData extends DataTable {
                 switch (colFormat) {
                     case "C":
                     case "s":
-                        this.addColumn(titleArray[idx], DataTypes.String);
+                        this.addColumn(titleArray[idx], DataType.STRING);
                         break;
                     case "i":
-                        this.addColumn(titleArray[idx], DataTypes.Integer);
+                        this.addColumn(titleArray[idx], DataType.INT);
                         break;
                     case "f":
-                        this.addColumn(titleArray[idx], DataTypes.Float);
+                        this.addColumn(titleArray[idx], DataType.FLOAT);
                         break;
                     case "d":
-                        this.addColumn(titleArray[idx], DataTypes.Double);
+                        this.addColumn(titleArray[idx], DataType.DOUBLE);
                         break;
                     case "B":
-                        this.addColumn(titleArray[idx], DataTypes.Boolean);
+                        this.addColumn(titleArray[idx], DataType.BOOLEAN);
                         break;
                     default:
                         if (colFormat.substring(0, 1).equals("{")) {    //Date
                             int eidx = colFormat.indexOf("}");
                             String formatStr = colFormat.substring(1, eidx);
-                            this.addColumn(new DataColumn(titleArray[idx], DataTypes.Date, formatStr));
+                            this.addColumn(new DataColumn(titleArray[idx], DataType.DATE, formatStr));
                         } else {
-                            this.addColumn(titleArray[idx], DataTypes.String);
+                            this.addColumn(titleArray[idx], DataType.STRING);
                         }
                         break;
                 }
@@ -628,7 +629,7 @@ public class TableData extends DataTable {
             String fieldName;
             for (int i = 0; i < titleArray.length; i++) {
                 fieldName = titleArray[i];
-                this.addColumn(fieldName, DataTypes.String);
+                this.addColumn(fieldName, DataType.STRING);
                 dataIdxs.add(i);
             }
 
@@ -668,7 +669,7 @@ public class TableData extends DataTable {
      */
     public DataTable toSingleRowTable(DataTable inTable, String firstColName, String firstColValue) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn(firstColName, DataTypes.String);
+        rTable.addColumn(firstColName, DataType.STRING);
         List<Object> values = new ArrayList<>();
 
         if (inTable.getColumnCount() == 2) {
@@ -1064,9 +1065,9 @@ public class TableData extends DataTable {
      */
     public DataTable ave_Year(List<DataColumn> cols, String tColName) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Year", DataTypes.Integer);
+        rTable.addColumn("Year", DataType.INT);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Integer> years = this.getYears(tColName);
@@ -1093,9 +1094,9 @@ public class TableData extends DataTable {
      */
     public DataTable ave_Month(List<DataColumn> cols, String tColName) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("YearMonth", DataTypes.String);
+        rTable.addColumn("YearMonth", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> yms = this.getYearMonths(tColName);
@@ -1122,9 +1123,9 @@ public class TableData extends DataTable {
      */
     public DataTable ave_MonthOfYear(List<DataColumn> cols, String tColName) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Month", DataTypes.String);
+        rTable.addColumn("Month", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> monthNames = Arrays.asList(new String[]{"Jan", "Feb", "Mar", "Apr", "May",
@@ -1160,9 +1161,9 @@ public class TableData extends DataTable {
      */
     public DataTable ave_SeasonOfYear(List<DataColumn> cols, String tColName) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Season", DataTypes.String);
+        rTable.addColumn("Season", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> seasons = Arrays.asList(new String[]{"Spring", "Summer", "Autumn", "Winter"});
@@ -1189,9 +1190,9 @@ public class TableData extends DataTable {
      */
     public DataTable ave_DayOfWeek(List<DataColumn> cols, String tColName) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Day", DataTypes.String);
+        rTable.addColumn("Day", DataType.STRING);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<String> dowNames = Arrays.asList(new String[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
@@ -1228,9 +1229,9 @@ public class TableData extends DataTable {
      */
     public DataTable ave_HourOfDay(List<DataColumn> cols, String tColName) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("Hour", DataTypes.Integer);
+        rTable.addColumn("Hour", DataType.INT);
         for (DataColumn col : cols) {
-            rTable.addColumn(col.getColumnName(), DataTypes.Double);
+            rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
         List<Integer> hours = new ArrayList<>();

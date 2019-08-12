@@ -5,8 +5,8 @@
  */
 package org.meteoinfo.math.linalg;
 
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

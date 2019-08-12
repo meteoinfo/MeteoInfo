@@ -8,7 +8,7 @@ package org.meteoinfo.data.dataframe;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

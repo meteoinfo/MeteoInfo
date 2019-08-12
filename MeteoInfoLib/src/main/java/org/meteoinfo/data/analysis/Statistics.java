@@ -8,8 +8,8 @@ package org.meteoinfo.data.analysis;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import ucar.ma2.Array;
-import ucar.ma2.IndexIterator;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.IndexIterator;
 
 /**
  *

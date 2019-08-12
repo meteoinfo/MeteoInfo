@@ -8,8 +8,8 @@ package org.meteoinfo.math;
 import java.util.List;
 import java.util.Random;
 import org.apache.commons.math3.random.RandomDataGenerator;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

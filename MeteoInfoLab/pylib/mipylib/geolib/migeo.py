@@ -11,8 +11,8 @@ import numbers
 from org.meteoinfo.data.mapdata.geotiff import GeoTiff
 from org.meteoinfo.shape import ShapeUtil, PolygonShape
 from org.meteoinfo.legend import BreakTypes
-from org.meteoinfo.geoprocess import GeoComputation
-from org.meteoinfo.data import ArrayMath, ArrayUtil
+from org.meteoinfo.geoprocess import GeoComputation, GeometryUtil
+from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.data.mapdata import MapDataManage, AttributeTable
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.projection.info import ProjectionInfo
@@ -75,7 +75,7 @@ def georead(fn):
     :returns: (*MILayer*) The created layer.
     '''
     if not os.path.exists(fn):
-        fn = os.path.join(migl.mapfolder, fn)
+        fn = os.path.join(migl.get_map_folder(), fn)
         
     if os.path.exists(fn):        
         try:
@@ -187,13 +187,13 @@ def inpolygon(x, y, polygon):
             x_p = minum.array(x_p)
         if isinstance(y_p, (list, tuple)):
             y_p = minum.array(y_p)
-        return NDArray(ArrayMath.inPolygon(x.array, y.array, x_p.array, y_p.array))
+        return NDArray(ArrayMath.inPolygon(x._array, y._array, x_p._array, y_p._array))
     else:
         if isinstance(polygon, MILayer):
             polygon = polygon.shapes()
         elif isinstance(polygon, PolygonShape):
             polygon = [polygon]
-        return NDArray(ArrayMath.inPolygon(x.array, y.array, polygon))
+        return NDArray(ArrayMath.inPolygon(x._array, y._array, polygon))
     
 def arrayinpolygon(a, polygon, x=None, y=None):
     '''
@@ -301,7 +301,11 @@ def maskout(data, mask, x=None, y=None):
 
     if not isinstance(mask, (list, ArrayList)):
         mask = [mask]
-    r = ArrayMath.maskout(data.array, x.array, y.array, mask)
+        
+    if data.ndim == 2 and x.ndim == 1 and y.ndim == 1:
+        x, y = minum.meshgrid(x, y)
+        
+    r = GeometryUtil.maskout(data._array, x._array, y._array, mask)
     if isinstance(data, DimArray):
         return DimArray(r, data.dims, data.fill_value, data.proj)
     else:
@@ -320,7 +324,7 @@ def rmaskout(data, x, y, mask):
     """
     if not isinstance(mask, (list, ArrayList)):
         mask = [mask]
-    r = ArrayMath.maskout_Remove(data.asarray(), x.asarray(), y.asarray(), mask)
+    r = GeometryUtil.maskout_Remove(data.asarray(), x.asarray(), y.asarray(), mask)
     return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])  
     
 def maskin(data, mask, x=None, y=None):
@@ -337,7 +341,7 @@ def maskin(data, mask, x=None, y=None):
     if mask is None:
         return data        
     elif isinstance(mask, NDArray):
-        r = ArrayMath.maskin(data.array, mask.array)
+        r = ArrayMath.maskin(data._array, mask._array)
         if isinstance(data, DimArray):
             return DimArray(r, data.dims, data.fill_value, data.proj)
         else:
@@ -349,10 +353,13 @@ def maskin(data, mask, x=None, y=None):
             y = data.dimvalue(data.ndim - 2)
         else:
             return None
+    
+    if data.ndim == 2 and x.ndim == 1 and y.ndim == 1:
+        x, y = minum.meshgrid(x, y)
 
     if not isinstance(mask, (list, ArrayList)):
         mask = [mask]
-    r = ArrayMath.maskin(data.array, x.array, y.array, mask)
+    r = GeometryUtil.maskin(data._array, x._array, y._array, mask)
     if isinstance(data, DimArray):
         return DimArray(r, data.dims, data.fill_value, data.proj)
     else:
@@ -371,7 +378,7 @@ def rmaskin(data, x, y, mask):
     """
     if not isinstance(mask, (list, ArrayList)):
         mask = [mask]
-    r = ArrayMath.maskin_Remove(data.array, x.array, y.array, mask)
+    r = GeometryUtil.maskin_Remove(data._array, x._array, y._array, mask)
     return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])  
     
 def projinfo(proj4string=None, proj='longlat', **kwargs):

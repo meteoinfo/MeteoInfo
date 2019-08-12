@@ -10,7 +10,7 @@ import datetime
 
 from org.meteoinfo.data.dataframe import DataFrame as MIDataFrame
 from org.meteoinfo.data.dataframe import Series as MISeries
-from ucar.ma2 import Range, Array
+from org.meteoinfo.ndarray import Range, Array
 
 from mipylib.numeric.multiarray import NDArray
 from mipylib.numeric.dimarray import DimArray
@@ -59,12 +59,12 @@ class DataFrame(object):
                     
                 if isinstance(data, NDArray):
                     n = len(data)
-                    data = data.array
+                    data = data._array
                 else:
                     dlist = []
                     n = len(data[0])
                     for dd in data:
-                        dlist.append(dd.array)
+                        dlist.append(dd._array)
                     data = dlist
                         
                 if index is None:
@@ -114,7 +114,7 @@ class DataFrame(object):
         
     def set_data(self, value):
         value = minum.array(value)
-        self._dataframe.setData(value.array)
+        self._dataframe.setData(value._array)
         
     values = property(get_data, set_data)
     
@@ -295,11 +295,11 @@ class DataFrame(object):
                 value = miutil.jdatetime(value)
             value = minum.array(value)
         if isinstance(value, NDArray):
-            value = value.array            
+            value = value._array            
             
         if isinstance(key, basestring):
             if isinstance(value, series.Series):
-                value = value.values.array
+                value = value.values._array
             self._dataframe.setColumn(key, value)
             return
             
@@ -649,7 +649,7 @@ class DataFrame(object):
                 value = miutil.jdatetime(value)
             value = minum.array(value)
         if isinstance(value, NDArray):
-            value = value.array 
+            value = value._array 
         self._dataframe.addColumn(loc, column, value)
         
     def drop(self, columns=None):

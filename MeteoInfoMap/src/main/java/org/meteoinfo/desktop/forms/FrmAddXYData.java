@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.global.GenericFileFilter;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
@@ -237,13 +236,13 @@ public class FrmAddXYData extends javax.swing.JDialog {
                         return;
                     }
                     String fieldName;
-                    DataTypes dataType;
+                    DataType dataType;
                     for (int i = 0; i < dataArray.length; i++) {
                         fieldName = titleArray[i];
                         if (MIMath.isNumeric(dataArray[i])) {
-                            dataType = DataTypes.Double;
+                            dataType = DataType.DOUBLE;
                         } else {
-                            dataType = DataTypes.String;
+                            dataType = DataType.STRING;
                         }
                         fields.add(new Field(fieldName, dataType));
                     }
@@ -336,10 +335,10 @@ public class FrmAddXYData extends javax.swing.JDialog {
                         for (int j = 0; j < aLayer.getFieldNumber(); j++) {
                             Field field = aLayer.getField(j);
                             switch (field.getDataType()) {
-                                case Double:
+                                case DOUBLE:
                                     aLayer.editCellValue(j, shapeNum, Double.parseDouble(dataArray[j].trim()));
                                     break;
-                                case String:
+                                case STRING:
                                     aLayer.editCellValue(j, shapeNum, dataArray[j].trim());
                                     break;
                             }

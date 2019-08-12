@@ -4,7 +4,7 @@
  */
 package org.meteoinfo.desktop.forms;
 
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *
@@ -24,9 +24,9 @@ public class FrmAddField extends javax.swing.JDialog {
         initComponents();
         
         this.jComboBox_FieldType.removeAllItems();
-        this.jComboBox_FieldType.addItem(DataTypes.String);
-        this.jComboBox_FieldType.addItem(DataTypes.Integer);
-        this.jComboBox_FieldType.addItem(DataTypes.Double);
+        this.jComboBox_FieldType.addItem(DataType.STRING);
+        this.jComboBox_FieldType.addItem(DataType.INT);
+        this.jComboBox_FieldType.addItem(DataType.DOUBLE);
     }
 
     /**
@@ -135,8 +135,8 @@ public class FrmAddField extends javax.swing.JDialog {
         return this.jTextField_FieldName.getText();
     }
     
-    public DataTypes getDataType(){
-        return DataTypes.valueOf(this.jComboBox_FieldType.getSelectedItem().toString());
+    public DataType getDataType(){
+        return DataType.valueOf(this.jComboBox_FieldType.getSelectedItem().toString());
     }
     
     /**

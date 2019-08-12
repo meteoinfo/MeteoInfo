@@ -18,10 +18,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.meteoinfo.global.util.DateUtil;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
-import ucar.ma2.Array;
-import ucar.nc2.Attribute;
 
 /**
  * Template
@@ -473,7 +473,7 @@ public abstract class DataInfo {
     public String generateInfoText() {
         String dataInfo;
         int i, j;
-        ucar.nc2.Attribute aAttS;
+        Attribute aAttS;
         dataInfo = "File Name: " + this.getFileName();
         //dataInfo += System.getProperty("line.separator") + "File type: " + _fileTypeStr + " (" + _fileTypeId + ")";
         dataInfo += System.getProperty("line.separator") + "Dimensions: " + _dimensions.size();
@@ -505,13 +505,13 @@ public abstract class DataInfo {
         for (i = 0; i < _variables.size(); i++) {
             dataInfo += System.getProperty("line.separator") + "\t" + _variables.get(i).getDataType().toString()
                     + " " + _variables.get(i).getShortName() + "(";
-            List<ucar.nc2.Dimension> dims = _variables.get(i).getDimensions();
+            List<Dimension> dims = _variables.get(i).getDimensions();
             for (j = 0; j < dims.size(); j++) {
                 dataInfo += dims.get(j).getShortName() + ",";
             }
             dataInfo = dataInfo.substring(0, dataInfo.length() - 1);
             dataInfo += ");";
-            List<ucar.nc2.Attribute> atts = _variables.get(i).getAttributes();
+            List<Attribute> atts = _variables.get(i).getAttributes();
             for (j = 0; j < atts.size(); j++) {
                 aAttS = atts.get(j);
                 dataInfo += System.getProperty("line.separator") + "\t" + "\t" + _variables.get(i).getShortName()
@@ -519,7 +519,7 @@ public abstract class DataInfo {
             }
         }
 
-        for (ucar.nc2.Dimension dim : _dimensions) {
+        for (Dimension dim : _dimensions) {
             if (dim.isUnlimited()) {
                 dataInfo += System.getProperty("line.separator") + "Unlimited dimension: " + dim.getShortName();
             }

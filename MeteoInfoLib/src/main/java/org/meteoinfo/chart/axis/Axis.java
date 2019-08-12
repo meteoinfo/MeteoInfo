@@ -1661,10 +1661,13 @@ public class Axis implements Cloneable {
             g.setFont(this.getLabelFont());
             g.setColor(this.getLabelColor());
             labx = (float)x;
-            if (this.getLocation() == Location.BOTTOM)
+            this.label.setXAlign(XAlign.CENTER);
+            if (this.getLocation() == Location.BOTTOM) {
                 laby += this.tickSpace;
-            else{
+                this.label.setYAlign(YAlign.TOP);
+            } else {
                 laby -= this.tickSpace;
+                this.label.setYAlign(YAlign.BOTTOM);
             }
             this.label.draw(g, labx, laby);
         }

@@ -28,10 +28,10 @@ import org.ejml.simple.SimpleBase;
 import org.ejml.simple.SimpleEVD;
 import org.ejml.simple.SimpleMatrix;
 import org.ejml.simple.SimpleSVD;
-import org.meteoinfo.data.ArrayUtil;
-import org.meteoinfo.math.Complex;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
+import org.meteoinfo.bak.ArrayUtil;
+import org.meteoinfo.ndarray.Complex;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

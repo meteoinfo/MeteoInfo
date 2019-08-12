@@ -30,7 +30,7 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
 import org.meteoinfo.data.dataframe.Column;
 
 import org.meteoinfo.data.dataframe.DataFrame;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.DataType;
 
 public class Aggregation {
 

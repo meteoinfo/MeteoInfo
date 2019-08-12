@@ -4,12 +4,11 @@
 # Purpose: MeteoInfo Dataset module
 # Note: Jython
 #-----------------------------------------------------
-from org.meteoinfo.data.meteodata import Dimension, DimensionType
-from org.meteoinfo.data import ArrayMath, ArrayUtil
+from org.meteoinfo.ndarray import Dimension, DimensionType, Range, Array, MAMath
+from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.global import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
-from ucar.nc2 import Attribute
-from ucar.ma2 import Range, Array, MAMath
+from org.meteoinfo.data.meteodata import Attribute
 from mipylib.numeric.dimarray import DimArray
 from mipylib.numeric.multiarray import NDArray
 import mipylib.numeric.minum as minum

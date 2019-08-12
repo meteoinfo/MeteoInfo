@@ -5,12 +5,10 @@
  */
 package org.meteoinfo.math.fitting;
 
-import java.util.Arrays;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
-import ucar.ma2.Array;
-import ucar.ma2.Index;
+import org.meteoinfo.ndarray.Array;
 
 /**
  *

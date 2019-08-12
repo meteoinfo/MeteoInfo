@@ -10,11 +10,11 @@ import java.util.Date;
 import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.ReadablePeriod;
-import org.meteoinfo.data.ArrayMath;
+import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.util.DateUtil;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *
@@ -32,7 +32,7 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     public DateTimeIndex(){
         this.format = "yyyy-MM-dd";
-        this.dataType = DataType.OBJECT;
+        this.dataType = DataType.DATE;
     }
     
     /**

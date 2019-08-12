@@ -13,6 +13,8 @@
  */
 package org.meteoinfo.data;
 
+import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.math.ArrayMath;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -28,8 +30,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import org.meteoinfo.data.meteodata.Dimension;
-import org.meteoinfo.data.meteodata.DimensionType;
+import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.GridDataSetting;
 import org.meteoinfo.geoprocess.analysis.ResampleMethods;
 import org.meteoinfo.global.util.BigDecimalUtil;
@@ -38,9 +40,9 @@ import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;
 import org.meteoinfo.projection.Reproject;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
-import ucar.ma2.InvalidRangeException;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.InvalidRangeException;
 
 /**
  *
@@ -560,7 +562,7 @@ public class GridArray {
      *
      * @param toProj To projection
      * @return Projected grid data
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public GridArray project(ProjectionInfo toProj) throws InvalidRangeException {
         if (this.projInfo == null) {
@@ -576,7 +578,7 @@ public class GridArray {
      * @param fromProj From projection
      * @param toProj To projection
      * @return Porjected grid data
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public GridArray project(ProjectionInfo fromProj, ProjectionInfo toProj) throws InvalidRangeException {
         //return project(fromProj, toProj, ResampleMethods.NearestNeighbor);
@@ -588,7 +590,7 @@ public class GridArray {
         for (Double y : this.yArray) {
             yy.add(y);
         }
-        Object[] r = ArrayUtil.reproject(data, xx, yy, fromProj, toProj);
+        Object[] r = Reproject.reproject(data, xx, yy, fromProj, toProj);
         GridArray rdata = new GridArray((Array) r[0], (Array) r[1], (Array) r[2], missingValue);
         rdata.projInfo = toProj;
 
@@ -602,7 +604,7 @@ public class GridArray {
      * @param toProj To projection
      * @param resampleMethod Interpolation method
      * @return Porjected grid data
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public GridArray project(ProjectionInfo fromProj, ProjectionInfo toProj, ResampleMethods resampleMethod) throws InvalidRangeException {
         Extent aExtent;
@@ -633,7 +635,7 @@ public class GridArray {
         Array rrx = rxy[0];
         Array rry = rxy[1];
 
-        Array r = ArrayUtil.reproject(data, x, y, rrx, rry, fromProj, toProj, missingValue, resampleMethod);
+        Array r = Reproject.reproject(data, x, y, rrx, rry, fromProj, toProj, missingValue, resampleMethod);
         GridArray rdata = new GridArray(r, rx, ry, missingValue);
         rdata.projInfo = toProj;
 

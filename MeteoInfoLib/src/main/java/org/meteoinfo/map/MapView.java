@@ -40,7 +40,7 @@ import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.global.PointF;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.layer.ChartSet;
 import org.meteoinfo.layer.ImageLayer;
 import org.meteoinfo.layer.LabelSet;
@@ -2568,7 +2568,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                         value = aLayer.getCellValue(i, shapeIdx);
                                         if (value == null) {
                                             valueStr = "";
-                                        } else if (field.getDataType() == DataTypes.Date) {
+                                        } else if (field.getDataType() == DataType.DATE) {
                                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                                             valueStr = format.format((Date) value);
                                         } else {
@@ -6690,9 +6690,9 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
         String columnName = "Value";
-        Field aDC = new Field(columnName, DataTypes.Float);
+        Field aDC = new Field(columnName, DataType.FLOAT);
         aLayer.editAddField(aDC);
-        aDC = new Field("Longitude", DataTypes.String);
+        aDC = new Field("Longitude", DataType.STRING);
         aLayer.editAddField(aDC);
         int shapeNum;
 
@@ -6908,9 +6908,9 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
         String columnName = "Value";
-        Field aDC = new Field(columnName, DataTypes.Float);
+        Field aDC = new Field(columnName, DataType.FLOAT);
         aLayer.editAddField(aDC);
-        aDC = new Field("Longitude", DataTypes.String);
+        aDC = new Field("Longitude", DataType.STRING);
         aLayer.editAddField(aDC);
         int shapeNum;
 

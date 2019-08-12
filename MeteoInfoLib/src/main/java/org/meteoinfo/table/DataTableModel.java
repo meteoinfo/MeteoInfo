@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.table;
 
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.table.AbstractTableModel;
@@ -51,7 +51,7 @@ public class DataTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        if (_dataTable.getColumns().get(columnIndex).getDataType() == DataTypes.Date){
+        if (_dataTable.getColumns().get(columnIndex).getDataType() == DataType.DATE){
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             return format.format((Date)_dataTable.getValue(rowIndex, columnIndex));
         } else 

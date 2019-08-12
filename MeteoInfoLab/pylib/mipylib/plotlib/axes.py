@@ -1407,12 +1407,16 @@ class Axes(object):
                 ye = []
                 for i in range(xdata.getSize()):
                     ye.append(yerr)
-                yerrB = minum.array(ye).array
+                yerrB = minum.array(ye)._array
                 yerrU = yerrB
             else:
                 if isinstance(yerr, (list, tuple)):
-                    yerrB = plotutil.getplotdata(yerr[0])
-                    yerrU = plotutil.getplotdata(yerr[1])
+                    if isinstance(yerr[0], numbers.Number):
+                        yerrB = plotutil.getplotdata(yerr)
+                        yerrU = yerrB
+                    else:
+                        yerrB = plotutil.getplotdata(yerr[0])
+                        yerrU = plotutil.getplotdata(yerr[1])
                 elif yerr.ndim == 2:
                     yerrB = yerr[0,:].asarray()
                     yerrU = yerr[1,:].asarray()
@@ -1428,7 +1432,7 @@ class Axes(object):
                 ye = []
                 for i in range(xdata.getSize()):
                     ye.append(xerr)
-                xerrL = minum.array(ye).array
+                xerrL = minum.array(ye)._array
                 xerrR = xerrL         
             else:
                 if isinstance(xerr, (list, tuple)):
@@ -2299,7 +2303,7 @@ class Axes(object):
         alb = plotutil.line2arrow(alb, **kwargs)
         if isinstance(x, NDArray):
             iscurve = kwargs.pop('iscurve', False)
-            graphic = GraphicFactory.createArrowLine(x.array, y.array, alb, iscurve)
+            graphic = GraphicFactory.createArrowLine(x._array, y._array, alb, iscurve)
         else:
             graphic = GraphicFactory.createArrowLine(x, y, dx, dy, alb)
             
@@ -2407,14 +2411,14 @@ class Axes(object):
             yy = []
             for i in range(dn):
                 yy.append(y1)
-            y1 = minum.array(yy).array
+            y1 = minum.array(yy)._array
         else:
             y1 = plotutil.getplotdata(y1)
         if isinstance(y2, (int, long, float)):
             yy = []
             for i in range(dn):
                 yy.append(y2)
-            y2 = minum.array(yy).array
+            y2 = minum.array(yy)._array
         else:
             y2 = plotutil.getplotdata(y2)
         if not where is None:
@@ -2455,14 +2459,14 @@ class Axes(object):
             xx = []
             for i in range(dn):
                 xx.append(x1)
-            x1 = minum.array(xx).array
+            x1 = minum.array(xx)._array
         else:
             x1 = plotutil.getplotdata(x1)
         if isinstance(x2, (int, long, float)):
             xx = []
             for i in range(dn):
                 xx.append(x2)
-            x2 = minum.array(xx).array
+            x2 = minum.array(xx)._array
         else:
             x2 = plotutil.getplotdata(x2)
         if not where is None:

@@ -10,10 +10,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.joda.time.DateTime;
-import org.meteoinfo.data.ArrayMath;
+import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.global.MIMath;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.math.fitting;
 
-import ucar.ma2.Array;
+import org.meteoinfo.ndarray.Array;
 
 /**
  *

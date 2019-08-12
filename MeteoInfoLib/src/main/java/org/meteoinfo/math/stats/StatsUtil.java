@@ -16,14 +16,14 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
-import org.meteoinfo.data.ArrayMath;
-import org.meteoinfo.data.ArrayUtil;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
-import ucar.ma2.InvalidRangeException;
-import ucar.ma2.MAMath;
-import ucar.ma2.Range;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.MAMath;
+import org.meteoinfo.ndarray.Range;
 
 /**
  *
@@ -176,7 +176,7 @@ public class StatsUtil {
      * @param y Y data
      * @param axis Special axis for calculation
      * @return Pearson correlation and p-value.
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array[] pearsonr(Array x, Array y, int axis) throws InvalidRangeException {
         int[] dataShape = x.getShape();

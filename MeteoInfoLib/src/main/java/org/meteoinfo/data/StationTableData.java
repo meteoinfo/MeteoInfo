@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import org.meteoinfo.global.util.GlobalUtil;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
-import org.meteoinfo.table.DataTable;
 
 /**
  *
@@ -147,9 +147,9 @@ public class StationTableData extends TableData{
             for (int i = 0; i < titleArray.length; i++) {
                 fieldName = titleArray[i];
                 if (i == lonIdx || i == latIdx)
-                    this.addColumn(fieldName, DataTypes.Float);
+                    this.addColumn(fieldName, DataType.FLOAT);
                 else
-                    this.addColumn(fieldName, DataTypes.String);
+                    this.addColumn(fieldName, DataType.STRING);
                 dataIdxs.add(i);
             }
 

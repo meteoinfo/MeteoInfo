@@ -7,8 +7,9 @@
 
 import datetime
 
-from org.meteoinfo.data import TableData, TimeTableData, ArrayUtil, TableUtil, DataTypes
-from ucar.ma2 import Range
+from org.meteoinfo.data import TableData, TimeTableData, TableUtil
+from org.meteoinfo.math import ArrayUtil
+from org.meteoinfo.ndarray import Range, DataType
 
 from multiarray import NDArray
 import mipylib.miutil as miutil
@@ -32,7 +33,7 @@ class PyTableData(object):
             coldata = self.data.getColumnData(key)
             if coldata.getDataType().isNumeric():
                 return NDArray(ArrayUtil.array(coldata.getDataValues()))
-            elif coldata.getDataType() == DataTypes.Date:
+            elif coldata.getDataType() == DataType.DATE:
                 vv = coldata.getData()
                 r = []
                 cal = Calendar.getInstance()

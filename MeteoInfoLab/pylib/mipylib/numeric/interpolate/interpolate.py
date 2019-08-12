@@ -7,7 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.interpolate import InterpUtil
-from org.meteoinfo.data import ArrayMath, ArrayUtil
+from org.meteoinfo.math import ArrayMath, ArrayUtil
 from ucar.ma2 import Array
 
 from mipylib.numeric.multiarray import NDArray

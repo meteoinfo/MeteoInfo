@@ -8,13 +8,14 @@
 import os
 import datetime
 
-from org.meteoinfo.data.meteodata import MeteoDataInfo, Dimension, DimensionType
+from org.meteoinfo.data.meteodata import MeteoDataInfo
+from org.meteoinfo.ndarray import Dimension, DimensionType, DataType
 from org.meteoinfo.data.meteodata.arl import ARLDataInfo
 from org.meteoinfo.data.meteodata.bufr import BufrDataInfo
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
-from org.meteoinfo.data import ArrayUtil, TableUtil
+from org.meteoinfo.data import TableUtil
+from org.meteoinfo.math import ArrayUtil
 from ucar.nc2 import NetcdfFileWriter
-from ucar.ma2 import DataType
 
 import mipylib.numeric.minum as minum
 import mipylib.miutil as miutil

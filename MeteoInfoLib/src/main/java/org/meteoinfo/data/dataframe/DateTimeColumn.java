@@ -7,8 +7,8 @@ package org.meteoinfo.data.dataframe;
 
 import org.joda.time.DateTime;
 import org.meteoinfo.global.DataConvert;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

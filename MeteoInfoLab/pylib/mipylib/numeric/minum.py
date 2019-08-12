@@ -9,11 +9,11 @@ import math
 import cmath
 import datetime
 import numbers
-from org.meteoinfo.data import GridData, GridArray, StationData, DataMath, TableData, ArrayMath, ArrayUtil, TableUtil
-from org.meteoinfo.data.meteodata import Dimension
+from org.meteoinfo.data import GridData, GridArray, StationData, DataMath, TableData, TableUtil
+from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
 from org.meteoinfo.math.interpolate import InterpUtil
-from ucar.ma2 import Array
+from org.meteoinfo.ndarray import Array, Dimension
 
 from dimarray import PyGridData, DimArray, PyStationData
 from multiarray import NDArray
@@ -759,7 +759,7 @@ def atan2(x1, x2):
         array([-135.00000398439022, -45.000001328130075, 45.000001328130075, 135.00000398439022])
     """    
     if isinstance(x1, NDArray):
-        r = NDArray(ArrayMath.atan2(x1.array, x2.array))
+        r = NDArray(ArrayMath.atan2(x1._array, x2._array))
         if isinstance(x1, DimArray):
             return DimArray(r, x1.dims, x1.fill_value, x1.proj)
         else:
@@ -875,11 +875,11 @@ def any(x, axis=None):
         x = array(x)
         
     if axis is None:
-        return ArrayMath.any(x.array)
+        return ArrayMath.any(x._array)
     else:
         if axis < 0:
             axis += x.ndim
-        return NDArray(ArrayMath.any(x.array, axis))
+        return NDArray(ArrayMath.any(x._array, axis))
         
 def all(x, axis=None):
     '''
@@ -896,11 +896,11 @@ def all(x, axis=None):
         x = array(x)
         
     if axis is None:
-        return ArrayMath.all(x.array)
+        return ArrayMath.all(x._array)
     else:
         if axis < 0:
             axis += x.ndim
-        return NDArray(ArrayMath.all(x.array, axis))
+        return NDArray(ArrayMath.all(x._array, axis))
 
 def sum(x, axis=None):
     """
@@ -1437,12 +1437,12 @@ def delnan(a):
     if isinstance(a, (list, tuple))and (not isinstance(a[0], NDArray)):
         a = array(a)
     if isinstance(a, NDArray):
-        r = ArrayMath.removeNaN(a.array)[0]
+        r = ArrayMath.removeNaN(a._array)[0]
         return NDArray(r)
     else:
         aa = []
         for a0 in a:
-            aa.append(a0.array)
+            aa.append(a0._array)
         r = ArrayMath.removeNaN(aa)
         rr = []
         for r1 in r:
@@ -1505,7 +1505,7 @@ def delete(arr, obj, axis=None):
         arr = arr.reshape(arr.size)
         axis = 0
     
-    r = ArrayUtil.delete(arr.array, obj, axis)
+    r = ArrayUtil.delete(arr._array, obj, axis)
     return NDArray(r)
     
 def concatenate(arrays, axis=0):
@@ -1714,7 +1714,7 @@ def meshgrid(*args):
         if x.ndim != 1:
             print 'The paramters must be vector arrays!'
             return None
-        xs.append(x.array)
+        xs.append(x._array)
 
     ra = ArrayUtil.meshgrid(xs)
     rs = []
@@ -1950,7 +1950,7 @@ def smooth5(x):
     if x.ndim != 2:
         print 'The array must be 2 dimension!'
         raise ValueError()
-    r = ArrayUtil.smooth5(x.array)
+    r = ArrayUtil.smooth5(x._array)
     if isinstance(x, DimArray):
         return DimArray(r, x.dims, x.fill_value, x.proj)
     else:
@@ -1978,7 +1978,7 @@ def smooth9(x):
     if x.ndim != 2:
         print 'The array must be 2 dimension!'
         raise ValueError()
-    r = ArrayUtil.smooth9(x.array)
+    r = ArrayUtil.smooth9(x._array)
     if isinstance(x, DimArray):
         return DimArray(r, x.dims, x.fill_value, x.proj)
     else:
@@ -2091,7 +2091,7 @@ def asgriddata(data, x=None, y=None, fill_value=-9999.0):
                 x = arange(0, data.shape[1])
             if y is None:
                 y = arange(0, data.shape[0])
-            gdata = GridData(data.array, x.array, y.array, fill_value)
+            gdata = GridData(data._array, x._array, y._array, fill_value)
             return PyGridData(gdata)
         else:
             return None
@@ -2110,7 +2110,7 @@ def asgridarray(data, x=None, y=None, fill_value=-9999.0):
                 x = arange(0, data.shape[1])
             if y is None:
                 y = arange(0, data.shape[0])
-            gdata = GridArray(data.array, x.array, y.array, fill_value)
+            gdata = GridArray(data._array, x._array, y._array, fill_value)
             return gdata
         else:
             return None
@@ -2146,11 +2146,11 @@ def linint2(*args, **kwargs):
         z = args[2]
         xq = args[3]
         yq = args[4]
-    x = array(x).array
-    y = array(y).array
-    z = array(z).array
-    xq = array(xq).array
-    yq = array(yq).array
+    x = array(x)._array
+    y = array(y)._array
+    z = array(z)._array
+    xq = array(xq)._array
+    yq = array(yq)._array
     r = ArrayUtil.linint2(z, x, y, xq, yq)
     return NDArray(r)
     
@@ -2179,11 +2179,11 @@ def interp2d(*args, **kwargs):
         z = args[2]
         xq = args[3]
         yq = args[4]
-    x = array(x).array
-    y = array(y).array
-    z = array(z).array
-    xq = array(xq).array
-    yq = array(yq).array
+    x = array(x)._array
+    y = array(y)._array
+    z = array(z)._array
+    xq = array(xq)._array
+    yq = array(yq)._array
     kind = kwargs.pop('kind', 'linear')
     if kind == 'neareast':
         r = ArrayUtil.resample_Neighbor(z, x, y, xq, yq)
@@ -2208,23 +2208,23 @@ def interpn(points, values, xi):
     for p in points:
         if isinstance(p, (list,tuple)):
             p = array(p)
-        npoints.append(p.array)
+        npoints.append(p._array)
         
     if isinstance(xi, (list, tuple)):
         if isinstance(xi[0], NDArray):
             nxi = []
             for x in xi:
-                nxi.append(x.array)
+                nxi.append(x._array)
         else:
             nxi = []
             for x in xi:
                 if isinstance(x, datetime.datetime):
                     x = miutil.date2num(x)
                 nxi.append(x)
-            nxi = array(nxi).array        
+            nxi = array(nxi)._array        
     else:
-        nxi = nxi.array
-    r = ArrayUtil.interpn(npoints, values.array, nxi)
+        nxi = nxi._array
+    r = ArrayUtil.interpn(npoints, values._array, nxi)
     if isinstance(r, Array):
         return NDArray(r)
     else:
@@ -2313,7 +2313,7 @@ def griddata(points, values, xi=None, **kwargs):
     if convexhull:
         polyshape = ArrayUtil.convexHull(x_s.asarray(), y_s.asarray())
         x_gg, y_gg = meshgrid(x_g, y_g)
-        r = ArrayMath.maskout(r, x_gg.array, y_gg.array, [polyshape])
+        r = ArrayMath.maskout(r, x_gg._array, y_gg._array, [polyshape])
         return NDArray(r), x_g, y_g
     else:
         return NDArray(r), x_g, y_g
@@ -2333,7 +2333,7 @@ def pol2cart(theta, rho):
     else:
         theta = array(theta)
         rho = array(rho)
-        r = ArrayMath.polarToCartesian(theta.array, rho.array)
+        r = ArrayMath.polarToCartesian(theta._array, rho._array)
         return NDArray(r[0]), NDArray(r[1])
         
 def cart2pol(x, y):
@@ -2351,7 +2351,7 @@ def cart2pol(x, y):
     else:
         x = array(x)
         y = array(y)
-        r = ArrayMath.cartesianToPolar(x.array, y.array)
+        r = ArrayMath.cartesianToPolar(x._array, y._array)
         return NDArray(r[0]), NDArray(r[1])
     
 def addtimedim(infn, outfn, t, tunit='hours'):

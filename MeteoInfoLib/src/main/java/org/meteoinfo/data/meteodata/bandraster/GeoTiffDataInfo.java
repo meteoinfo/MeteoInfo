@@ -18,21 +18,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.data.ArrayMath;
+import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.mapdata.geotiff.GeoTiff;
 import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.data.meteodata.Dimension;
-import org.meteoinfo.data.meteodata.DimensionType;
+import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.Variable;
-import ucar.ma2.Array;
-import ucar.ma2.IndexIterator;
-import ucar.ma2.InvalidRangeException;
-import ucar.ma2.Range;
-import ucar.nc2.Attribute;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.Range;
+import org.meteoinfo.data.meteodata.Attribute;
 
 /**
  *

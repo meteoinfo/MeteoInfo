@@ -5,9 +5,9 @@
  */
 package org.meteoinfo.math.meteo;
 
-import ucar.ma2.Array;
-import ucar.ma2.Index;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

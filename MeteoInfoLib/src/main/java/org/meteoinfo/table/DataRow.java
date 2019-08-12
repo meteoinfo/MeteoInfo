@@ -16,9 +16,8 @@ package org.meteoinfo.table;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *
@@ -145,16 +144,16 @@ public class DataRow {
     public void addColumn(DataColumn column) {
         Object value = null;
         switch (column.getDataType()) {
-            case Integer:
+            case INT:
                 value = 0;
                 break;
-            case String:
+            case STRING:
                 value = "";
                 break;
-            case Float:
+            case FLOAT:
                 value = 0.0f;
                 break;
-            case Double:
+            case DOUBLE:
                 value = 0.0d;
                 break;
         }
@@ -222,7 +221,7 @@ public class DataRow {
         if (dc.getFormat() == null) {
             return this.getValue(columnName).toString();
         } else {
-            if (dc.getDataType() == DataTypes.Date) {
+            if (dc.getDataType() == DataType.DATE) {
                 SimpleDateFormat format = new SimpleDateFormat(dc.getFormat());
                 return format.format((Date) this.getValue(columnName));
             } else {
@@ -244,7 +243,7 @@ public class DataRow {
         }
 
         DataColumn dc = this.columns.get(columnName);
-        if (dc.getDataType() == DataTypes.Date) {
+        if (dc.getDataType() == DataType.DATE) {
             SimpleDateFormat dformat = new SimpleDateFormat(formatStr);
             return dformat.format((Date) this.getValue(columnName));
         } else {

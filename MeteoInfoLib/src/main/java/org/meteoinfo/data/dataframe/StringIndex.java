@@ -6,7 +6,7 @@
 package org.meteoinfo.data.dataframe;
 
 import java.util.List;
-import org.meteoinfo.data.ArrayUtil;
+import org.meteoinfo.math.ArrayUtil;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 
@@ -31,7 +31,7 @@ public class StringIndex extends Index<String> {
      * @return Boolean array
      */
     public Array equal(String v) {
-        Array r = ArrayUtil.factory(DataType.BOOLEAN, new int[]{this.size()});
+        Array r = Array.factory(DataType.BOOLEAN, new int[]{this.size()});
         int i = 0;
         for (String d : this.data) {
             r.setBoolean(i, d.equals(v));

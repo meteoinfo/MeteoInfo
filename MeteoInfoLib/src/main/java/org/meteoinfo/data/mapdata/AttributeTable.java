@@ -16,7 +16,7 @@ package org.meteoinfo.data.mapdata;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.io.EndianDataOutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -388,7 +388,7 @@ public final class AttributeTable implements Cloneable {
         if (!_file.exists()) {
             _numRecords = numRows;
             //_dataTable.BeginLoadData();
-            _dataTable.addColumn("FID", DataTypes.Integer);
+            _dataTable.addColumn("FID", DataType.INT);
             for (int row = 0; row < numRows; row++) {
                 DataRow dr = _dataTable.newRow();
                 dr.setValue("FID", row);
@@ -484,15 +484,15 @@ public final class AttributeTable implements Cloneable {
                         if (tempStr.trim().isEmpty()) {
                             tempStr = "0";
                         }
-                        DataTypes t = CurrentField.getDataType();
+                        DataType t = CurrentField.getDataType();
                         switch (t) {
-                            case Integer:
+                            case INT:
                                 tempObject = Integer.parseInt(tempStr.trim());
                                 break;
-                            case Float:
+                            case FLOAT:
                                 tempObject = Float.parseFloat(tempStr);
                                 break;
-                            case Double:
+                            case DOUBLE:
                                 tempObject = Double.parseDouble(tempStr);
                                 break;
                         }
@@ -744,7 +744,7 @@ public final class AttributeTable implements Cloneable {
                     case 'n':
                         // int?
                         String fs;
-                        if (currentField.getDataType() == DataTypes.Integer) {
+                        if (currentField.getDataType() == DataType.INT) {
                             fs = String.format("%1$" + String.valueOf(currentField.getLength()) + "d", columnValue);
                         } else {
                             fs = String.format("%1$" + String.valueOf(currentField.getLength()) + "."

@@ -188,24 +188,6 @@ public class MIMath {
     }
 
     /**
-     * Determine if a field is numeric
-     *
-     * @param field The field
-     * @return Boolean
-     */
-    public static boolean isNumeric(Field field) {
-        switch (field.getDataType()) {
-            case Integer:
-            case Float:
-            case Double:
-            case Decimal:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Get extent from point list
      *
      * @param PList point list

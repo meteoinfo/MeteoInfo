@@ -32,8 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.data.meteodata.Dimension;
-import org.meteoinfo.data.meteodata.DimensionType;
+import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.GridDataSetting;
 import org.meteoinfo.geoprocess.analysis.ResampleMethods;
 import org.meteoinfo.global.DataConvert;
@@ -45,10 +45,9 @@ import org.meteoinfo.projection.ProjectionUtil;
 import org.meteoinfo.projection.Reproject;
 import org.meteoinfo.shape.PolygonShape;
 import org.meteoinfo.shape.ShapeTypes;
-import org.meteoinfo.table.DataTable;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
-import ucar.ma2.IndexIterator;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.IndexIterator;
 
 /**
  *
@@ -671,7 +670,7 @@ public class GridData {
         int latIdx = stData.getLatIndex();
         double x, y;
         try {
-            stData.addColumn(this.fieldName, DataTypes.Float);
+            stData.addColumn(this.fieldName, DataType.FLOAT);
         } catch (Exception ex) {
             Logger.getLogger(GridData.class.getName()).log(Level.SEVERE, null, ex);
         }

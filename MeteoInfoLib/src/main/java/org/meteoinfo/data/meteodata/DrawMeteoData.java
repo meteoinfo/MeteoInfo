@@ -23,7 +23,7 @@ import org.meteoinfo.legend.MarkerType;
 import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.LegendManage;
@@ -42,8 +42,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.data.ArrayMath;
-import org.meteoinfo.data.ArrayUtil;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.global.Extent;
@@ -53,13 +53,12 @@ import org.meteoinfo.layer.WorldFilePara;
 import org.meteoinfo.legend.ArrowBreak;
 import org.meteoinfo.legend.LegendType;
 import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.ImageShape;
 import org.meteoinfo.shape.PointZ;
 import org.meteoinfo.shape.PolylineZShape;
 import org.meteoinfo.shape.StationModelShape;
-import ucar.ma2.Array;
+import org.meteoinfo.ndarray.Array;
 import wcontour.global.PolyLine;
 import wcontour.global.Polygon;
 
@@ -89,7 +88,7 @@ public class DrawMeteoData {
     public static VectorLayer createPolylineLayer(XYListDataset data, LegendScheme ls,
             String layerName, String fieldName) {
         VectorLayer layer = new VectorLayer(ShapeTypes.Polyline);
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
         for (int i = 0; i < data.getSeriesCount(); i++) {
             double[] xd = data.getXValues(i);
@@ -137,7 +136,7 @@ public class DrawMeteoData {
     public static VectorLayer createPolylineLayer(List<Array> xdata, List<Array> ydata, LegendScheme ls,
             String layerName, String fieldName) {
         VectorLayer layer = new VectorLayer(ShapeTypes.Polyline);
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
         for (int i = 0; i < xdata.size(); i++) {
             Array xd = xdata.get(i);
@@ -188,7 +187,7 @@ public class DrawMeteoData {
     public static VectorLayer createPolylineLayer(XYListDataset data, LegendScheme ls,
             String layerName, String fieldName, double westLon, double eastLon) {
         VectorLayer layer = new VectorLayer(ShapeTypes.Polyline);
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
         for (int i = 0; i < data.getSeriesCount(); i++) {
             double[] xd = data.getXValues(i);
@@ -266,7 +265,7 @@ public class DrawMeteoData {
     public static VectorLayer createPolylineLayer(List<Array> xdata, List<Array> ydata, LegendScheme ls,
             String layerName, String fieldName, double westLon, double eastLon) {
         VectorLayer layer = new VectorLayer(ShapeTypes.Polyline);
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
         for (int i = 0; i < xdata.size(); i++) {
             Array xd = xdata.get(i);
@@ -397,7 +396,7 @@ public class DrawMeteoData {
     public static VectorLayer createPolylineLayer(Array xdata, Array ydata, Array zdata, LegendScheme ls,
             String layerName, String fieldName, double westLon, double eastLon) {
         VectorLayer layer = new VectorLayer(ShapeTypes.PolylineZ);
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
 
         PointZ aPoint;
@@ -586,7 +585,7 @@ public class DrawMeteoData {
         wcontour.global.PolyLine aLine;
         double aValue;
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
         for (int i = 0; i < ContourLines.size(); i++) {
@@ -674,7 +673,7 @@ public class DrawMeteoData {
 
         double aValue;
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
         for (wcontour.global.PolyLine aLine : ContourLines) {
@@ -805,9 +804,9 @@ public class DrawMeteoData {
         double aValue;
         int valueIdx;
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polygon);
-        Field aDC = new Field(fieldName + "_Low", DataTypes.Double);
+        Field aDC = new Field(fieldName + "_Low", DataType.DOUBLE);
         aLayer.editAddField(aDC);
-        aDC = new Field(fieldName + "_High", DataTypes.Double);
+        aDC = new Field(fieldName + "_High", DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
         for (Polygon aPolygon : ContourPolygons) {
@@ -923,7 +922,7 @@ public class DrawMeteoData {
 
         List<PointD> PList;
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polygon);
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
         double XDelt = gridData.xArray[1] - gridData.xArray[0];
@@ -986,7 +985,7 @@ public class DrawMeteoData {
      */
     public static VectorLayer createGridFillLayer(Array x_s, Array y_s, Array a, LegendScheme ls, String lName, String fieldName) {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polygon);
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
         int colNum = (int) x_s.getSize();
@@ -1085,7 +1084,7 @@ public class DrawMeteoData {
         PointD aPoint;
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        Field aDC = new Field(fieldName, DataTypes.Double);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
         for (i = 0; i < gridData.getYNum(); i++) {
@@ -1225,17 +1224,17 @@ public class DrawMeteoData {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
         //Add data column   
         if (isUV) {
-            aLayer.editAddField("U", DataTypes.Float);
-            aLayer.editAddField("V", DataTypes.Float);
+            aLayer.editAddField("U", DataType.FLOAT);
+            aLayer.editAddField("V", DataType.FLOAT);
         }
-        aLayer.editAddField("WindDirection", DataTypes.Float);
-        aLayer.editAddField("WindSpeed", DataTypes.Float);
+        aLayer.editAddField("WindDirection", DataType.FLOAT);
+        aLayer.editAddField("WindSpeed", DataType.FLOAT);
         boolean ifAdd = true;
         if (aLayer.getFieldNames().contains(columnName)) {
             ifAdd = false;
         }
         if (ifColor && ifAdd) {
-            aLayer.editAddField(columnName, DataTypes.Float);
+            aLayer.editAddField(columnName, DataType.FLOAT);
         }
 
         for (i = 0; i < YNum; i++) {
@@ -1407,17 +1406,17 @@ public class DrawMeteoData {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
         //Add data column  
         if (isUV) {
-            aLayer.editAddField("U", DataTypes.Float);
-            aLayer.editAddField("V", DataTypes.Float);
+            aLayer.editAddField("U", DataType.FLOAT);
+            aLayer.editAddField("V", DataType.FLOAT);
         }
-        aLayer.editAddField("WindDirection", DataTypes.Float);
-        aLayer.editAddField("WindSpeed", DataTypes.Float);
+        aLayer.editAddField("WindDirection", DataType.FLOAT);
+        aLayer.editAddField("WindSpeed", DataType.FLOAT);
         boolean ifAdd = true;
         if (aLayer.getFieldNames().contains(columnName)) {
             ifAdd = false;
         }
         if (ifColor && ifAdd) {
-            aLayer.editAddField(columnName, DataTypes.Float);
+            aLayer.editAddField(columnName, DataType.FLOAT);
         }
 
         for (i = 0; i < YNum; i++) {
@@ -1556,7 +1555,7 @@ public class DrawMeteoData {
 
         wcontour.global.PolyLine aLine;
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
-        aLayer.editAddField("ID", DataTypes.Integer);
+        aLayer.editAddField("ID", DataType.INT);
 
         for (int i = 0; i < streamlines.size() - 1; i++) {
             aLine = streamlines.get(i);
@@ -1784,7 +1783,7 @@ public class DrawMeteoData {
         }
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        aLayer.editAddField(fieldName, DataTypes.Double);
+        aLayer.editAddField(fieldName, DataType.DOUBLE);
 
         for (i = 0; i < data.getSize(); i++) {
             aPoint = new PointD();
@@ -1829,8 +1828,8 @@ public class DrawMeteoData {
         PointD aPoint;
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        aLayer.editAddField("Stid", DataTypes.String);
-        aLayer.editAddField(fieldName, DataTypes.Double);
+        aLayer.editAddField("Stid", DataType.STRING);
+        aLayer.editAddField(fieldName, DataType.DOUBLE);
 
         for (i = 0; i < stationData.data.length; i++) {
             aPoint = new PointD();
@@ -1885,8 +1884,8 @@ public class DrawMeteoData {
         }
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        aLayer.editAddField("ID", DataTypes.Integer);
-        aLayer.editAddField(fieldName, DataTypes.Double);
+        aLayer.editAddField("ID", DataType.INT);
+        aLayer.editAddField(fieldName, DataType.DOUBLE);
 
         for (i = 0; i < data.getSize(); i++) {
             aPoint = new PointD();
@@ -1932,9 +1931,9 @@ public class DrawMeteoData {
         PointD aPoint;
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        aLayer.editAddField("ID", DataTypes.Integer);
-        aLayer.editAddField("Stid", DataTypes.String);
-        aLayer.editAddField(fieldName, DataTypes.Double);
+        aLayer.editAddField("ID", DataType.INT);
+        aLayer.editAddField("Stid", DataType.STRING);
+        aLayer.editAddField(fieldName, DataType.DOUBLE);
 
         for (i = 0; i < stationData.data.length; i++) {
             aPoint = new PointD();
@@ -1995,9 +1994,9 @@ public class DrawMeteoData {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
         for (i = 0; i < stInfoData.getFields().size(); i++) {
             String fieldName = stInfoData.getFields().get(i);
-            DataTypes dtype = DataTypes.String;
+            DataType dtype = DataType.STRING;
             if (stInfoData.getVariables().contains(stInfoData.getFields().get(i))) {
-                dtype = DataTypes.Double;
+                dtype = DataType.DOUBLE;
             }
             aLayer.editAddField(fieldName, dtype);
         }
@@ -2098,17 +2097,17 @@ public class DrawMeteoData {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.WindArraw);
         //Add data column         
         if (isUV) {
-            aLayer.editAddField("U", DataTypes.Float);
-            aLayer.editAddField("V", DataTypes.Float);
+            aLayer.editAddField("U", DataType.FLOAT);
+            aLayer.editAddField("V", DataType.FLOAT);
         }
-        aLayer.editAddField("WindDirection", DataTypes.Float);
-        aLayer.editAddField("WindSpeed", DataTypes.Float);
+        aLayer.editAddField("WindDirection", DataType.FLOAT);
+        aLayer.editAddField("WindSpeed", DataType.FLOAT);
         boolean ifAdd = true;
         if (aLayer.getFieldNames().contains(columnName)) {
             ifAdd = false;
         }
         if (ifAdd) {
-            aLayer.editAddField(columnName, DataTypes.Float);
+            aLayer.editAddField(columnName, DataType.FLOAT);
         }
 
         for (i = 0; i < windDirData.getStNum(); i++) {
@@ -2189,17 +2188,17 @@ public class DrawMeteoData {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.WindArraw);
         //Add data column         
         if (isUV) {
-            aLayer.editAddField("U", DataTypes.Float);
-            aLayer.editAddField("V", DataTypes.Float);
+            aLayer.editAddField("U", DataType.FLOAT);
+            aLayer.editAddField("V", DataType.FLOAT);
         }
-        aLayer.editAddField("WindDirection", DataTypes.Float);
-        aLayer.editAddField("WindSpeed", DataTypes.Float);
+        aLayer.editAddField("WindDirection", DataType.FLOAT);
+        aLayer.editAddField("WindSpeed", DataType.FLOAT);
         boolean ifAdd = true;
         if (aLayer.getFieldNames().contains(columnName)) {
             ifAdd = false;
         }
         if (ifAdd) {
-            aLayer.editAddField(columnName, DataTypes.Float);
+            aLayer.editAddField(columnName, DataType.FLOAT);
         }
 
         for (i = 0; i < windDirData.getSize(); i++) {
@@ -2284,17 +2283,17 @@ public class DrawMeteoData {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.WindArraw);
         //Add data column         
         if (isUV) {
-            aLayer.editAddField("U", DataTypes.Float);
-            aLayer.editAddField("V", DataTypes.Float);
+            aLayer.editAddField("U", DataType.FLOAT);
+            aLayer.editAddField("V", DataType.FLOAT);
         }
-        aLayer.editAddField("WindDirection", DataTypes.Float);
-        aLayer.editAddField("WindSpeed", DataTypes.Float);
+        aLayer.editAddField("WindDirection", DataType.FLOAT);
+        aLayer.editAddField("WindSpeed", DataType.FLOAT);
         boolean ifAdd = true;
         if (aLayer.getFieldNames().contains(columnName)) {
             ifAdd = false;
         }
         if (ifAdd) {
-            aLayer.editAddField(columnName, DataTypes.Float);
+            aLayer.editAddField(columnName, DataType.FLOAT);
         }
 
         WindBarb aWB;
@@ -2389,11 +2388,11 @@ public class DrawMeteoData {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.WindArraw);
         //Add data column         
         if (isUV) {
-            aLayer.editAddField("U", DataTypes.Float);
-            aLayer.editAddField("V", DataTypes.Float);
+            aLayer.editAddField("U", DataType.FLOAT);
+            aLayer.editAddField("V", DataType.FLOAT);
         }
-        aLayer.editAddField("WindDirection", DataTypes.Float);
-        aLayer.editAddField("WindSpeed", DataTypes.Float);
+        aLayer.editAddField("WindDirection", DataType.FLOAT);
+        aLayer.editAddField("WindSpeed", DataType.FLOAT);
 
         for (i = 0; i < windDirData.getStNum(); i++) {
             windDir = (float) windDirData.data[i][2];
@@ -2496,17 +2495,17 @@ public class DrawMeteoData {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.WindBarb);
         //Add data column        
         if (isUV) {
-            aLayer.editAddField("U", DataTypes.Float);
-            aLayer.editAddField("V", DataTypes.Float);
+            aLayer.editAddField("U", DataType.FLOAT);
+            aLayer.editAddField("V", DataType.FLOAT);
         }
-        aLayer.editAddField("WindDirection", DataTypes.Float);
-        aLayer.editAddField("WindSpeed", DataTypes.Float);
+        aLayer.editAddField("WindDirection", DataType.FLOAT);
+        aLayer.editAddField("WindSpeed", DataType.FLOAT);
         boolean ifAdd = true;
         if (aLayer.getFieldNames().contains(columnName)) {
             ifAdd = false;
         }
         if (ifAdd) {
-            aLayer.editAddField(columnName, DataTypes.Float);
+            aLayer.editAddField(columnName, DataType.FLOAT);
         }
 
         for (i = 0; i < windDirData.getStNum(); i++) {
@@ -2607,11 +2606,11 @@ public class DrawMeteoData {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.WindBarb);
         //Add data column        
         if (isUV) {
-            aLayer.editAddField("U", DataTypes.Float);
-            aLayer.editAddField("V", DataTypes.Float);
+            aLayer.editAddField("U", DataType.FLOAT);
+            aLayer.editAddField("V", DataType.FLOAT);
         }
-        aLayer.editAddField("WindDirection", DataTypes.Float);
-        aLayer.editAddField("WindSpeed", DataTypes.Float);
+        aLayer.editAddField("WindDirection", DataType.FLOAT);
+        aLayer.editAddField("WindSpeed", DataType.FLOAT);
 
         for (i = 0; i < windDirData.getStNum(); i++) {
             windDir = (float) windDirData.data[i][2];
@@ -2720,13 +2719,13 @@ public class DrawMeteoData {
         PointD aPoint;
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        aLayer.editAddField(new Field("WindDirection", DataTypes.Float));
-        aLayer.editAddField(new Field("WindSpeed", DataTypes.Float));
-        aLayer.editAddField(new Field("Weather", DataTypes.Integer));
-        aLayer.editAddField(new Field("Temperature", DataTypes.Integer));
-        aLayer.editAddField(new Field("DewPoint", DataTypes.Integer));
-        aLayer.editAddField(new Field("Pressure", DataTypes.Integer));
-        aLayer.editAddField(new Field("CloudCoverage", DataTypes.Integer));
+        aLayer.editAddField(new Field("WindDirection", DataType.FLOAT));
+        aLayer.editAddField(new Field("WindSpeed", DataType.FLOAT));
+        aLayer.editAddField(new Field("Weather", DataType.INT));
+        aLayer.editAddField(new Field("Temperature", DataType.INT));
+        aLayer.editAddField(new Field("DewPoint", DataType.INT));
+        aLayer.editAddField(new Field("Pressure", DataType.INT));
+        aLayer.editAddField(new Field("CloudCoverage", DataType.INT));
 
         for (i = 0; i < stationModelData.getDataNum(); i++) {
             StationModel sm = stationModelData.getData().get(i);
@@ -2842,7 +2841,7 @@ public class DrawMeteoData {
 
         String columnName = "Weather";
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        aLayer.editAddField(columnName, DataTypes.Double);
+        aLayer.editAddField(columnName, DataType.DOUBLE);
 
         for (i = 0; i < weatherData.getStNum(); i++) {
             weather = (int) weatherData.data[i][2];

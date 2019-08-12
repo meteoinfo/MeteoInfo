@@ -29,8 +29,8 @@ import java.util.logging.Logger;
 import org.joda.time.ReadablePeriod;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
-import org.meteoinfo.data.ArrayMath;
-import org.meteoinfo.data.ArrayUtil;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.data.dataframe.impl.Aggregation;
 import org.meteoinfo.data.dataframe.impl.Function;
 import org.meteoinfo.data.dataframe.impl.Grouping;
@@ -43,10 +43,10 @@ import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.global.util.TypeUtils;
-import ucar.ma2.Array;
-import ucar.ma2.InvalidRangeException;
-import ucar.ma2.Range;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.Range;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *
@@ -930,7 +930,7 @@ public class DataFrame implements Iterable {
      *
      * @param nrow Number of rows
      * @param ncol Number of columns
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public void dataReshape(int nrow, int ncol) throws InvalidRangeException {
         if (this.array2D) {
@@ -1110,7 +1110,7 @@ public class DataFrame implements Iterable {
      * @param row Row index
      * @param colRange Column range
      * @return Selected data frame or series
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public Object select(int row, Range colRange) throws InvalidRangeException {
         ColumnIndex cols = new ColumnIndex();
@@ -1163,7 +1163,7 @@ public class DataFrame implements Iterable {
      * @param row Row index
      * @param colRange Column range
      * @param value The value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public void setValues(int row, Range colRange, Number value) throws InvalidRangeException {
         ColumnIndex cols = new ColumnIndex();
@@ -1189,7 +1189,7 @@ public class DataFrame implements Iterable {
      * @param row Row index
      * @param colRange Column range
      * @param value The value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public void setValues(int row, Range colRange, Array value) throws InvalidRangeException {
         ColumnIndex cols = new ColumnIndex();
@@ -1217,7 +1217,7 @@ public class DataFrame implements Iterable {
      * @param rowRange Row range
      * @param colRange Column range
      * @return Selected data frame or series
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public Object select(Range rowRange, Range colRange) throws InvalidRangeException {
         ColumnIndex cols = new ColumnIndex();
@@ -1274,7 +1274,7 @@ public class DataFrame implements Iterable {
      * @param rowRange Row range
      * @param colRange Column range
      * @return Selected data frame or series
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public Object select(Range rowRange, List<Integer> colRange) throws InvalidRangeException {
         ColumnIndex cols = new ColumnIndex();
@@ -1331,7 +1331,7 @@ public class DataFrame implements Iterable {
      * @param rowRange Row range
      * @param colRange Column range
      * @return Selected data frame or series
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public Object select(List<Integer> rowRange, Range colRange) throws InvalidRangeException {
         ColumnIndex cols = new ColumnIndex();
@@ -1389,7 +1389,7 @@ public class DataFrame implements Iterable {
      * @param rowRange Row range
      * @param colRange Column range
      * @return Selected data frame or series
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public Object select(List rowKeys, List<Integer> rowRange, Range colRange) throws InvalidRangeException {
         ColumnIndex cols = new ColumnIndex();
@@ -1469,7 +1469,7 @@ public class DataFrame implements Iterable {
      * @param rowRange Row range
      * @param colRange Column range
      * @return Selected data frame or series
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public Object select(List rowKeys, List<Integer> rowRange, List<Integer> colRange) throws InvalidRangeException {
         ColumnIndex cols = new ColumnIndex();

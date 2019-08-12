@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.meteoinfo.table.DataTable;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *
@@ -127,14 +127,14 @@ public class StationInfoData {
      */
     public DataTable extractStationData(List<String> sts, List<String> colNames, Date time) throws Exception{
         DataTable dt = new DataTable();
-        dt.addColumn("Station", DataTypes.String);
-        dt.addColumn("Longitude", DataTypes.Float);
-        dt.addColumn("Latitude", DataTypes.Float);
+        dt.addColumn("Station", DataType.STRING);
+        dt.addColumn("Longitude", DataType.FLOAT);
+        dt.addColumn("Latitude", DataType.FLOAT);
         if (time != null)
-            dt.addColumn("Time", DataTypes.Date);
+            dt.addColumn("Time", DataType.DATE);
         for (String colName : colNames){
             if (this._fields.contains(colName))
-                dt.addColumn(colName, DataTypes.String);
+                dt.addColumn(colName, DataType.STRING);
         }
         
         int idx, cidx;

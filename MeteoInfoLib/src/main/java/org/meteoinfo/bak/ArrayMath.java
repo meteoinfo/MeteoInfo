@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.data;
+package org.meteoinfo.bak;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,17 +14,16 @@ import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.ma.ArrayBoolean;
-import org.meteoinfo.math.Complex;
+import org.meteoinfo.ndarray.Complex;
 import org.meteoinfo.shape.PolygonShape;
 import org.python.core.PyComplex;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
-import ucar.ma2.IndexIterator;
-import ucar.ma2.InvalidRangeException;
-import ucar.ma2.MAMath;
-import ucar.ma2.Range;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.MAMath;
+import org.meteoinfo.ndarray.Range;
 
 /**
  *
@@ -2416,8 +2415,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array equal(Array a, Array b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getDouble(i) == b.getDouble(i)) {
                 r.setBoolean(i, true);
@@ -2437,8 +2435,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array equal(Array a, Number b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         double v = b.doubleValue();
         if (Double.isNaN(v)) {
             for (int i = 0; i < a.getSize(); i++) {
@@ -2469,8 +2466,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array equal(Array a, String b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getObject(i).equals(b)) {
                 r.setBoolean(i, true);
@@ -2490,8 +2486,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array lessThan(Array a, Array b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getDouble(i) < b.getDouble(i)) {
                 r.setBoolean(i, true);
@@ -2511,8 +2506,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array lessThan(Array a, Number b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getDouble(i) < b.doubleValue()) {
                 r.setBoolean(i, true);
@@ -2532,8 +2526,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array lessThanOrEqual(Array a, Array b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getDouble(i) <= b.getDouble(i)) {
                 r.setBoolean(i, true);
@@ -2553,8 +2546,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array lessThanOrEqual(Array a, Number b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getDouble(i) <= b.doubleValue()) {
                 r.setBoolean(i, true);
@@ -2574,8 +2566,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array greaterThan(Array a, Array b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getDouble(i) > b.getDouble(i)) {
                 r.setBoolean(i, true);
@@ -2595,8 +2586,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array greaterThan(Array a, Number b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getDouble(i) > b.doubleValue()) {
                 r.setBoolean(i, true);
@@ -2616,8 +2606,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array greaterThanOrEqual(Array a, Array b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getDouble(i) >= b.getDouble(i)) {
                 r.setBoolean(i, true);
@@ -2637,8 +2626,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array greaterThanOrEqual(Array a, Number b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getDouble(i) >= b.doubleValue()) {
                 r.setBoolean(i, true);
@@ -2658,8 +2646,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array notEqual(Array a, Array b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (a.getDouble(i) != b.getDouble(i)) {
                 r.setBoolean(i, true);
@@ -2679,8 +2666,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array notEqual(Array a, Number b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         double v = b.doubleValue();
         if (Double.isNaN(v)) {
             for (int i = 0; i < a.getSize(); i++) {
@@ -2725,7 +2711,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Boolean array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array any(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -2740,7 +2726,7 @@ public class ArrayMath {
             }
             shape[idx] = dataShape[i];
         }
-        Array r = new ArrayBoolean(shape);
+        Array r = Array.factory(DataType.BOOLEAN, shape);
         boolean b;
         Index indexr = r.getIndex();
         int[] current;
@@ -2749,7 +2735,7 @@ public class ArrayMath {
             List<Range> ranges = new ArrayList<>();
             for (int j = 0; j < dataShape.length; j++) {
                 if (j == axis) {
-                    ranges.add(new Range(0, dataShape[j] - 1, 1));
+                   ranges.add(new Range(0, dataShape[j] - 1, 1));
                 } else {
                     idx = j;
                     if (idx > axis) {
@@ -2795,7 +2781,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Boolean array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array all(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -2810,7 +2796,7 @@ public class ArrayMath {
             }
             shape[idx] = dataShape[i];
         }
-        Array r = new ArrayBoolean(shape);
+        Array r = Array.factory(DataType.BOOLEAN, shape);
         boolean b;
         Index indexr = r.getIndex();
         int[] current;
@@ -2852,8 +2838,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array inValues(Array a, List b) {
-        //Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        Array r = new ArrayBoolean(a.getShape());
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             if (b.contains(a.getObject(i))) {
                 r.setBoolean(i, true);
@@ -2901,7 +2886,7 @@ public class ArrayMath {
             return null;
         }
 
-        Array r = ArrayUtil.factory(a.getDataType(), new int[]{d.size()});
+        Array r = Array.factory(a.getDataType(), new int[]{d.size()});
         for (int i = 0; i < d.size(); i++) {
             r.setObject(i, d.get(i));
         }
@@ -2947,7 +2932,7 @@ public class ArrayMath {
         int len = d.size() / m;
         Array[] r = new Array[m];
         for (int i = 0; i < m; i++) {
-            r[i] = ArrayUtil.factory(a[i].getDataType(), new int[]{len});
+            r[i] = Array.factory(a[i].getDataType(), new int[]{len});
             int jj = i;
             for (int j = 0; j < len; j++) {
                 r[i].setObject(j, d.get(jj));
@@ -3003,7 +2988,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array bitAnd(Array a, Number b) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             r.setObject(i, a.getInt(i) & b.intValue());
         }
@@ -3019,7 +3004,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array bitAnd(Array a, Array b) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             r.setObject(i, a.getInt(i) & b.getInt(i));
         }
@@ -3035,7 +3020,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array bitOr(Array a, Number b) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             r.setObject(i, a.getInt(i) | b.intValue());
         }
@@ -3051,7 +3036,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array bitOr(Array a, Array b) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             r.setObject(i, a.getInt(i) | b.getInt(i));
         }
@@ -3067,7 +3052,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array bitXor(Array a, Number b) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             r.setObject(i, a.getInt(i) ^ b.intValue());
         }
@@ -3083,7 +3068,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array bitXor(Array a, Array b) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             r.setObject(i, a.getInt(i) ^ b.getInt(i));
         }
@@ -3098,7 +3083,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array bitInvert(Array a) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         if (a.getDataType() == DataType.BOOLEAN) {
             for (int i = 0; i < a.getSize(); i++) {
                 r.setObject(i, !a.getBoolean(i));
@@ -3120,7 +3105,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array leftShift(Array a, Number b) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             r.setObject(i, a.getInt(i) << b.intValue());
         }
@@ -3136,7 +3121,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array leftShift(Array a, Array b) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             r.setObject(i, a.getInt(i) << b.getInt(i));
         }
@@ -3152,7 +3137,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array rightShift(Array a, Number b) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             r.setObject(i, a.getInt(i) >> b.intValue());
         }
@@ -3168,7 +3153,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array rightShift(Array a, Array b) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         for (int i = 0; i < a.getSize(); i++) {
             r.setObject(i, a.getInt(i) >> b.getInt(i));
         }
@@ -3215,7 +3200,7 @@ public class ArrayMath {
      * @param dx Spacing between all y elements
      * @param ranges
      * @return Definite integral as approximated by trapezoidal rule
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double trapz(Array y, double dx, List<Range> ranges) throws InvalidRangeException {
         int n = 1;
@@ -3283,7 +3268,7 @@ public class ArrayMath {
      * @param x Spacing array between all y elements
      * @param ranges Ranges
      * @return Definite integral as approximated by trapezoidal rule
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double trapz(Array y, Array x, List<Range> ranges) throws InvalidRangeException {
         double r = 0;
@@ -3321,7 +3306,7 @@ public class ArrayMath {
      * @param dx
      * @param axis Axis
      * @return Mean value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array trapz(Array a, double dx, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -3369,7 +3354,7 @@ public class ArrayMath {
      * @param x Array x
      * @param axis Axis
      * @return Mean value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array trapz(Array a, Array x, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -3921,7 +3906,7 @@ public class ArrayMath {
                 iter.setObjectNext(v);
             }
         }
-        r = ArrayUtil.factory(a.getDataType(), a.getShape(), r.getStorage());
+        r = Array.factory(a.getDataType(), a.getShape(), r.getStorage());
         return r;
     }
 
@@ -3946,7 +3931,7 @@ public class ArrayMath {
             iter.setObjectCurrent(v.getObject(index));
             index.incr();
         }
-        r = ArrayUtil.factory(a.getDataType(), a.getShape(), r.getStorage());
+        r = Array.factory(a.getDataType(), a.getShape(), r.getStorage());
         return r;
     }
 
@@ -3959,7 +3944,7 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array setSection_Mix(Array a, List<Object> ranges, Number v) {
-        Array r = ArrayUtil.factory(a.getDataType(), a.getShape());
+        Array r = Array.factory(a.getDataType(), a.getShape());
         int n = a.getRank();
         IndexIterator iter = r.getIndexIterator();
         Index aidx = a.getIndex();
@@ -4366,7 +4351,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Minimum value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array min(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -4413,7 +4398,7 @@ public class ArrayMath {
      * @param a Array a
      * @param ranges Range list
      * @return Minimum value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double min(Array a, List<Range> ranges) throws InvalidRangeException {
         double min = 1.7976931348623157E+308D;
@@ -4465,7 +4450,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Maximum value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array max(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -4512,7 +4497,7 @@ public class ArrayMath {
      * @param a Array a
      * @param ranges Range list
      * @return Maximum value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double max(Array a, List<Range> ranges) throws InvalidRangeException {
         double max = -1.797693134862316E+307D;
@@ -4539,7 +4524,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Sum value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array sum(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -4586,7 +4571,7 @@ public class ArrayMath {
      * @param a Array a
      * @param ranges Range list
      * @return Sum value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double sum(Array a, List<Range> ranges) throws InvalidRangeException {
         double s = 0.0, v;
@@ -4684,7 +4669,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Sum value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array cumsum(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -4738,7 +4723,7 @@ public class ArrayMath {
      * @param a Array a
      * @param ranges Range list
      * @return Sum value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static List<Double> cumsum(Array a, List<Range> ranges) throws InvalidRangeException {
         double s = 0.0, v;
@@ -4823,7 +4808,7 @@ public class ArrayMath {
      *
      * @param a Array a
      * @return Minimum value index
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static int argMin(Array a) throws InvalidRangeException {
         double min = Double.MAX_VALUE, v;
@@ -4849,7 +4834,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Indices
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array argMin(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -4894,7 +4879,7 @@ public class ArrayMath {
      *
      * @param a Array a
      * @return Maximum value index
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static int argMax(Array a) throws InvalidRangeException {
         double max = Double.MIN_VALUE, v;
@@ -4920,7 +4905,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Indices
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array argMax(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -4966,7 +4951,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Mean value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array mean(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -5068,7 +5053,7 @@ public class ArrayMath {
      * @param a Array a
      * @param ranges Range list
      * @return Mean value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double mean(Array a, List<Range> ranges) throws InvalidRangeException {
         double mean = 0.0, v;
@@ -5095,7 +5080,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Standard deviation value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array std(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -5142,7 +5127,7 @@ public class ArrayMath {
      * @param a Array a
      * @param ranges Range list
      * @return Standard deviation value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double std(Array a, List<Range> ranges) throws InvalidRangeException {
         double mean = 0.0, v;
@@ -5183,7 +5168,7 @@ public class ArrayMath {
      *
      * @param a Array a
      * @return Standard deviation value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double std(Array a) throws InvalidRangeException {
         double mean = 0.0, v;
@@ -5222,7 +5207,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Variance value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array var(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -5269,7 +5254,7 @@ public class ArrayMath {
      * @param a Array a
      * @param ranges Range list
      * @return Variance value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double var(Array a, List<Range> ranges) throws InvalidRangeException {
         double mean = 0.0, v;
@@ -5311,7 +5296,7 @@ public class ArrayMath {
      * @param a Array a
      * @param axis Axis
      * @return Median value array
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array median(Array a, int axis) throws InvalidRangeException {
         int[] dataShape = a.getShape();
@@ -5358,7 +5343,7 @@ public class ArrayMath {
      * @param a Array a
      * @param ranges Range list
      * @return Median value
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double median(Array a, List<Range> ranges) throws InvalidRangeException {
         Array b = a.section(ranges);

@@ -15,8 +15,8 @@ package org.meteoinfo.data.meteodata.micaps;
 
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.data.meteodata.Dimension;
-import org.meteoinfo.data.meteodata.DimensionType;
+import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
 import org.meteoinfo.data.meteodata.StationInfoData;
 import org.meteoinfo.data.meteodata.StationModelData;
@@ -35,18 +35,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.data.ArrayMath;
+import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.data.dataframe.Column;
 import org.meteoinfo.data.dataframe.ColumnIndex;
 import org.meteoinfo.data.dataframe.DataFrame;
 import org.meteoinfo.data.dataframe.Index;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.util.DateUtil;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
-import ucar.nc2.Attribute;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.data.meteodata.Attribute;
 
 /**
  *

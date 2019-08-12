@@ -26,7 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.JTableHeader;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.table.DataTableModel;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.table.MyCellEditor;
 import org.meteoinfo.table.RowHeaderTable;
 import org.meteoinfo.layer.VectorLayer;
@@ -268,7 +268,7 @@ public class FrmAttriData extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Field name has exist in the data table!");
                 return;
             }
-            DataTypes dataType = frmField.getDataType();
+            DataType dataType = frmField.getDataType();
             try {                
                 _dataTable.addColumn(new Field(fieldName, dataType));
                 //this.jTable1.revalidate();

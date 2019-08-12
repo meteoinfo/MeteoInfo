@@ -5,8 +5,8 @@
 # Note: Jython
 #-----------------------------------------------------
 from org.meteoinfo.data.meteodata import MeteoDataType
-from ucar.ma2 import DataType
-from ucar.nc2 import Attribute
+from org.meteoinfo.ndarray import DataType
+from org.meteoinfo.data.meteodata import Attribute
 from dimvariable import DimVariable, TDimVariable
 from mipylib.numeric.dimarray import DimArray, PyGridData, PyStationData
 from mipylib.geolib.milayer import MILayer, MIXYListData
@@ -308,7 +308,7 @@ class DimDataFile(object):
             else:
                 attrvalue = Float(attrvalue)
         if isinstance(attrvalue, NDArray):
-            attrvalue = attrvalue.array
+            attrvalue = attrvalue._array
         return self.ncfile.addGroupAttribute(group, Attribute(attrname, attrvalue))
  
     def __getdatatype(self, datatype):
@@ -359,7 +359,7 @@ class DimDataFile(object):
         :param origin: (*list*) Dimensions origin indices. None means all from 0.
         '''
         if isinstance(value, NDArray):
-            value = value.array
+            value = value._array
         if self.access == 'c':
             ncvariable = variable.ncvariable
         else:

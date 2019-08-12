@@ -5,11 +5,12 @@
 # Note: Jython
 #-----------------------------------------------------
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
-from org.meteoinfo.data import GridData, GridArray, ArrayMath, ArrayUtil
-from org.meteoinfo.data.meteodata import Dimension, DimensionType
+from org.meteoinfo.data import GridData, GridArray
+from org.meteoinfo.math import ArrayMath, ArrayUtil
+from org.meteoinfo.geoprocess import GeometryUtil
 from org.meteoinfo.geoprocess.analysis import ResampleMethods
 from org.meteoinfo.global import PointD
-from ucar.ma2 import Array, Range, MAMath, DataType
+from org.meteoinfo.ndarray import Array, Range, MAMath, DataType, Dimension, DimensionType
 from multiarray import NDArray
 import math
 import datetime
@@ -22,10 +23,9 @@ nan = Double.NaN
 # Dimension array
 class DimArray(NDArray):
     
-    # array must be a ucar.ma2.Array object
     def __init__(self, array, dims=None, fill_value=-9999.0, proj=None):
         if isinstance(array, NDArray):
-            array = array.array
+            array = array._array
         super(DimArray, self).__init__(array)
         self.dims = None
         if not dims is None:
@@ -40,8 +40,8 @@ class DimArray(NDArray):
         if isinstance(indices, slice):
             k = indices
             if k.start is None and k.stop is None and k.step is None:
-                r = Array.factory(self.array.getDataType(), self.array.getShape())
-                MAMath.copy(r, self.array)
+                r = Array.factory(self._array.getDataType(), self._array.getShape())
+                MAMath.copy(r, self._array)
                 return DimArray(r, self.dims, self.fill_value, self.proj)        
         
         if not isinstance(indices, tuple):
@@ -50,7 +50,7 @@ class DimArray(NDArray):
             indices = inds
             
         allint = True
-        aindex = self.array.getIndex()
+        aindex = self._array.getIndex()
         i = 0
         for ii in indices:
             if isinstance(ii, int):
@@ -62,7 +62,7 @@ class DimArray(NDArray):
                 break;
             i += 1
         if allint:
-            return self.array.getObject(aindex)
+            return self._array.getObject(aindex)
         
         if len(indices) != self.ndim:
             print 'indices must be ' + str(self.ndim) + ' dimensions!'
@@ -230,22 +230,22 @@ class DimArray(NDArray):
             return NDArray(r)
         
         if onlyrange:
-            r = ArrayMath.section(self.array, ranges)
+            r = ArrayMath.section(self._array, ranges)
         else:
             if alllist:
-                r = ArrayMath.takeValues(self.array, ranges)
+                r = ArrayMath.takeValues(self._array, ranges)
                 return NDArray(r)
             else:
-                r = ArrayMath.take(self.array, ranges)
+                r = ArrayMath.take(self._array, ranges)
         if r.getSize() == 1:
             return r.getObject(0)
         else:
             for i in flips:
                 r = r.flip(i)
-            rr = Array.factory(r.getDataType(), r.getShape())
-            MAMath.copy(rr, r)
-            array = NDArray(rr)
-            data = DimArray(array, ndims, self.fill_value, self.proj)
+            #rr = Array.factory(r.getDataType(), r.getShape())
+            #MAMath.copy(rr, r)
+            #array = NDArray(r)
+            data = DimArray(r, ndims, self.fill_value, self.proj)
             return data        
         
     def __add__(self, other):
@@ -344,11 +344,11 @@ class DimArray(NDArray):
         
         :returns: (*list*) Member names
         '''
-        if self.array.getDataType() != DataType.STRUCTURE:
+        if self._array.getDataType() != DataType.STRUCTURE:
             print 'This method is only valid for structure array!'
             return None
             
-        ms = self.array.getStructureMemberNames()
+        ms = self._array.getStructureMemberNames()
         return list(ms)
     
     def member_array(self, member, indices=None):
@@ -360,15 +360,15 @@ class DimArray(NDArray):
         
         :returns: (*array*) Extracted member array.
         '''
-        if self.array.getDataType() != DataType.STRUCTURE:
+        if self._array.getDataType() != DataType.STRUCTURE:
             print 'This method is only valid for structure array!'
             return None
         
-        m = self.array.findMember(member)
+        m = self._array.findMember(member)
         if m is None:
             raise KeyError('The member %s not exists!' % member)
             
-        a = self.array.extractMemberArray(m)
+        a = self._array.extractMemberArray(m)
         r = DimArray(a, self.dims, self.fill_value, self.proj)
         if not indices is None:
             r = r.__getitem__(indices)
@@ -454,8 +454,8 @@ class DimArray(NDArray):
                 dim = self.dims[i]
                 dims.append(dim.extract(sidx, eidx, step))
                     
-        #r = ArrayMath.section(self.array, origin, size, stride)
-        r = ArrayMath.section(self.array, ranges)
+        #r = ArrayMath.section(self._array, origin, size, stride)
+        r = ArrayMath.section(self._array, ranges)
         for i in flips:
             r = r.flip(i)
         rr = Array.factory(r.getDataType(), r.getShape());
@@ -463,6 +463,12 @@ class DimArray(NDArray):
         array = NDArray(rr)
         data = DimArray(array, dims, self.fill_value, self.proj)
         return data
+        
+    def copy(self):
+        '''
+        Copy array vlaues to a new array.
+        '''
+        return DimArray(self._array.copy(), self.dims, self.fill_value, self.proj)
     
     # get dimension length
     def dimlen(self, idx=0):
@@ -572,8 +578,8 @@ class DimArray(NDArray):
             ss = list(self.shape)
             ss.insert(0, 1)
             ss = tuple(ss)
-            self.array = self.array.reshape(ss)
-            #self.shape = self.array.shape
+            self._array = self._array.reshape(ss)
+            #self.shape = self._array.shape
         
     def xdim(self):
         '''
@@ -658,13 +664,13 @@ class DimArray(NDArray):
     def asgriddata(self):
         xdata = self.dims[1].getDimValue()
         ydata = self.dims[0].getDimValue()
-        gdata = GridData(self.array, xdata, ydata, self.fill_value, self.proj)
+        gdata = GridData(self._array, xdata, ydata, self.fill_value, self.proj)
         return PyGridData(gdata)
         
     def asgridarray(self):
         xdata = self.dims[1].getDimValue()
         ydata = self.dims[0].getDimValue()
-        gdata = GridArray(self.array, xdata, ydata, self.fill_value, self.proj)
+        gdata = GridArray(self._array, xdata, ydata, self.fill_value, self.proj)
         return gdata
         
     def sum(self, axis=None):
@@ -825,7 +831,7 @@ class DimArray(NDArray):
             y = self.dims[0].getDimValue()
             if not isinstance(mask, (list, ArrayList)):
                 mask = [mask]
-            r = ArrayMath.maskout(self.asarray(), x, y, mask)
+            r = GeometryUtil.maskout(self.asarray(), x, y, mask)
             r = DimArray(NDArray(r), self.dims, self.fill_value, self.proj)
             return r
             
@@ -845,7 +851,7 @@ class DimArray(NDArray):
             y = self.dimvalue(0)
             if not isinstance(mask, (list, ArrayList)):
                 mask = [mask]
-            r = ArrayMath.maskin(self.array, x.array, y.array, mask)
+            r = GeometryUtil.maskin(self._array, x._array, y._array, mask)
             r = DimArray(r, self.dims, self.fill_value, self.proj)
             return r
         
@@ -994,17 +1000,17 @@ class DimArray(NDArray):
             if isinstance(xi[0], NDArray):
                 nxi = []
                 for x in xi:
-                    nxi.append(x.array)
+                    nxi.append(x._array)
             else:
                 nxi = []
                 for x in xi:
                     if isinstance(x, datetime.datetime):
                         x = miutil.date2num(x)
                     nxi.append(x)
-                nxi = NDArray(nxi).array
+                nxi = NDArray(nxi)._array
         else:
-            nxi = nxi.array
-        r = ArrayUtil.interpn(points, self.array, nxi)
+            nxi = nxi._array
+        r = ArrayUtil.interpn(points, self._array, nxi)
         if isinstance(r, Array):
             return NDArray(r)
         else:
@@ -1035,7 +1041,7 @@ class DimArray(NDArray):
             toproj = self.proj
         
         if x is None or y is None:
-            pr = ArrayUtil.reproject(self.array, xx, yy, self.proj, toproj)
+            pr = ArrayUtil.reproject(self._array, xx, yy, self.proj, toproj)
             r = pr[0]
             x = pr[1]
             y = pr[2]
@@ -1058,11 +1064,11 @@ class DimArray(NDArray):
         if isinstance(y, (list, tuple)):
             y = NDArray(y)
         x, y = ArrayUtil.meshgrid(x.asarray(), y.asarray())
-        r = ArrayUtil.reproject(self.array, xx, yy, x, y, self.proj, toproj, method)
+        r = ArrayUtil.reproject(self._array, xx, yy, x, y, self.proj, toproj, method)
         return NDArray(r)
             
     def join(self, b, dimidx):
-        r = ArrayMath.join(self.array, b.array, dimidx)
+        r = ArrayMath.join(self._array, b._array, dimidx)
         dima = self.dimvalue(dimidx)
         dimb = b.dimvalue(dimidx)
         dimr = []

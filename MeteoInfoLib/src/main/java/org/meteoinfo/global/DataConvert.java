@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.global.util.TypeUtils;
-import ucar.ma2.DataType;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

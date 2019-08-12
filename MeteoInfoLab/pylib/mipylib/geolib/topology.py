@@ -6,7 +6,7 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.data import ArrayUtil
+from org.meteoinfo.geoprocess import GeometryUtil
 from org.meteoinfo.shape import Graphic
 
 __all__ = [
@@ -64,7 +64,7 @@ def convexhull(*args):
     else:
         x = args[0]
         y = args[1]
-        r = ArrayUtil.convexHull(x.asarray(), y.asarray())
+        r = GeometryUtil.convexHull(x.asarray(), y.asarray())
         return r    
 
 def coveredby(a, b):

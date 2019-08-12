@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.table;
 
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -217,13 +217,13 @@ public class DataTable {
         tempRow.setRowIndex(nextRowIndex++);
         for (DataColumn col : columns) {
             switch (col.getDataType()) {
-                case String:
+                case STRING:
                     tempRow.setValue(col.getColumnName(), "");
                     break;
-                case Date:
+                case DATE:
                     tempRow.setValue(col.getColumnName(), new Date());
                     break;
-                case Boolean:
+                case BOOLEAN:
                     tempRow.setValue(col.getColumnName(), Boolean.TRUE);
                     break;
                 default:
@@ -350,7 +350,7 @@ public class DataTable {
      */
     public boolean hasTimeColumn(){
         for (DataColumn col : this.columns){
-            if (col.getDataType() == DataTypes.Date){
+            if (col.getDataType() == DataType.DATE){
                 return true;
             }
         }
@@ -365,7 +365,7 @@ public class DataTable {
      * @return The data column
      * @throws Exception
      */
-    public DataColumn addColumn(String columnName, DataTypes dataType) throws Exception {
+    public DataColumn addColumn(String columnName, DataType dataType) throws Exception {
         DataColumn col = new DataColumn(columnName, dataType);
         addColumn(col);
         return col;
@@ -380,7 +380,7 @@ public class DataTable {
      * @return The data column
      * @throws Exception
      */
-    public DataColumn addColumn(int index, String columnName, DataTypes dataType) throws Exception {
+    public DataColumn addColumn(int index, String columnName, DataType dataType) throws Exception {
         DataColumn col = new DataColumn(columnName, dataType);
         addColumn(index, col);
         return col;
@@ -633,7 +633,7 @@ public class DataTable {
      * @param colData The column data
      * @throws Exception
      */
-    public void addColumnData(String colName, DataTypes dataType, List<Object> colData) throws Exception {
+    public void addColumnData(String colName, DataType dataType, List<Object> colData) throws Exception {
         DataColumn col = this.addColumn(colName, dataType);
         setColumnData(col, colData);
     }
@@ -647,7 +647,7 @@ public class DataTable {
      * @param colData The column data
      * @throws Exception
      */
-    public void addColumnData(int index, String colName, DataTypes dataType, List<Object> colData) throws Exception {
+    public void addColumnData(int index, String colName, DataType dataType, List<Object> colData) throws Exception {
         DataColumn col = this.addColumn(index, colName, dataType);
         setColumnData(col, colData);
     }
@@ -661,7 +661,7 @@ public class DataTable {
      * @throws Exception
      */
     public void addColumnData(String colName, String dt, List<Object> colData) throws Exception {
-        DataTypes dataType = TableUtil.toDataTypes(dt);
+        DataType dataType = TableUtil.toDataTypes(dt);
         this.addColumnData(colName, dataType, colData);
     }
 
@@ -1170,11 +1170,11 @@ public class DataTable {
                     sb.append("\t");
                 }
                 switch (col.getDataType()) {
-                    case Date:
+                    case DATE:
                         format = new SimpleDateFormat(col.getFormat());
                         sb.append(format.format((Date) row.getValue(col.getColumnName())));
                         break;
-                    case String:
+                    case STRING:
                         sb.append("'").append(row.getValue(col.getColumnName()).toString()).append("'");
                         break;
                     default:
@@ -1229,11 +1229,11 @@ public class DataTable {
                     sb.append("\t");
                 }
                 switch (col.getDataType()) {
-                    case Date:
+                    case DATE:
                         format = new SimpleDateFormat(col.getFormat());
                         sb.append(format.format((Date) row.getValue(col.getColumnName())));
                         break;
-                    case String:
+                    case STRING:
                         sb.append("'").append(row.getValue(col.getColumnName()).toString()).append("'");
                         break;
                     default:
@@ -1279,7 +1279,7 @@ public class DataTable {
         for (DataRow row : this.rows) {
             String line = "";
             for (DataColumn col : this.columns) {
-                if (col.getDataType() == DataTypes.Date) {
+                if (col.getDataType() == DataType.DATE) {
                     line += "," + format.format((Date) row.getValue(col.getColumnName()));
                 } else {
                     line += "," + row.getValue(col.getColumnName()).toString();
@@ -1323,15 +1323,15 @@ public class DataTable {
             for (DataColumn col : this.columns) {
                 vstr = row.getValue(col.getColumnName()).toString();
                 switch (col.getDataType()) {
-                    case Float:
-                    case Double:
+                    case FLOAT:
+                    case DOUBLE:
                         if (MIMath.isNumeric(vstr)) {
                             line += "," + String.format(dFormat, Double.parseDouble(vstr));
                         } else {
                             line += ",";
                         }
                         break;
-                    case Date:
+                    case DATE:
                         line += "," + format.format((Date) row.getValue(col.getColumnName()));
                         break;
                     default:
@@ -1450,11 +1450,11 @@ public class DataTable {
             for (int i = 0; i < n; i++) {
                 col = this.columns.get(i);
                 switch (col.getDataType()){
-                    case Date:
+                    case DATE:
                         vstr = row.getValueStr(col.getColumnName(), dateFormat);
                         break;
-                    case Float:
-                    case Double:
+                    case FLOAT:
+                    case DOUBLE:
                         vstr = row.getValueStr(col.getColumnName(), floatFormat);
                         break;
                     default:

@@ -36,7 +36,7 @@ import org.meteoinfo.projection.info.ProjectionInfo;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.data.ArrayMath;
+import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.data.meteodata.micaps.MICAPS11DataInfo;
 import org.meteoinfo.data.meteodata.micaps.MICAPS120DataInfo;
 import org.meteoinfo.data.meteodata.micaps.MICAPS13DataInfo;
@@ -54,9 +54,9 @@ import org.meteoinfo.data.meteodata.metar.METARDataInfo;
 import org.meteoinfo.data.meteodata.micaps.MICAPS131DataInfo;
 import org.meteoinfo.data.meteodata.micaps.MICAPS2DataInfo;
 import org.meteoinfo.data.meteodata.synop.SYNOPDataInfo;
-import ucar.ma2.Array;
-import ucar.ma2.InvalidRangeException;
-import ucar.ma2.Range;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.Range;
 import ucar.nc2.NetcdfFile;
 
 /**

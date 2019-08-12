@@ -14,7 +14,7 @@
 package org.meteoinfo.data.mapdata;
 
 import org.meteoinfo.table.DataColumn;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  * The field in attribute table of shape file
@@ -38,7 +38,7 @@ public class Field extends DataColumn {
      * @param fLen Field length
      * @param fNumDec Field decimal number
      */
-    public Field(String fName, DataTypes type, int fLen, int fNumDec){
+    public Field(String fName, DataType type, int fLen, int fNumDec){
         this.setColumnName(fName);
         this.setDataType(type);
         this.fieldLen = fLen;
@@ -50,32 +50,28 @@ public class Field extends DataColumn {
      * @param fName Field name
      * @param type Field data type
      */
-    public Field(String fName, DataTypes type) {
+    public Field(String fName, DataType type) {
         this.setColumnName(fName);
         this.setDataType(type);
         switch (type) {
-            case String:
+            case STRING:
                 fieldLen = 255;
                 break;
-            case Date:
+            case DATE:
                 fieldLen = 8;
                 break;
-            case Float:
+            case FLOAT:
                 fieldLen = 18;
                 fieldNumDec = 6;
                 break;
-            case Double:
+            case DOUBLE:
                 fieldLen = 18;
                 fieldNumDec = 9;
                 break;
-            case Decimal:
-                fieldLen = 18;
-                fieldNumDec = 9;
-                break;
-            case Integer:
+            case INT:
                 fieldLen = 11;
                 break;
-            case Boolean:
+            case BOOLEAN:
                 fieldLen = 1;
                 break;
         }
@@ -97,23 +93,23 @@ public class Field extends DataColumn {
         switch (fType) {
             case 'D':   //Date
             case 'T':
-                this.setDataType(DataTypes.Date);
+                this.setDataType(DataType.DATE);
                 break;
             case 'L':
-                this.setDataType(DataTypes.Boolean);
+                this.setDataType(DataType.BOOLEAN);
                 break;
             case 'F':
-                this.setDataType(DataTypes.Float);
+                this.setDataType(DataType.FLOAT);
                 break;
             case 'N':
                 if (fNumDec == 0 && fLen <= 11){
-                    this.setDataType(DataTypes.Integer);
+                    this.setDataType(DataType.INT);
                 }
                 else
-                    this.setDataType(DataTypes.Double);
+                    this.setDataType(DataType.DOUBLE);
                 break;
             default:
-                this.setDataType(DataTypes.String);
+                this.setDataType(DataType.STRING);
                 break;
         }
     }
@@ -177,15 +173,14 @@ public class Field extends DataColumn {
      */
     public char getTypeCharacter() {
         switch (this.getDataType()) {
-            case Boolean:
+            case BOOLEAN:
                 return 'L';
-            case Date:
+            case DATE:
                 return 'D';
-            case Float:
+            case FLOAT:
                 return 'F';
-            case Double:
-            case Decimal:
-            case Integer:
+            case DOUBLE:
+            case INT:
                 return 'N';
             default:
                 return 'C';
@@ -197,15 +192,7 @@ public class Field extends DataColumn {
      * @return Boolean
      */
     public boolean isNumeric(){
-        switch (this.getDataType()){
-            case Integer:
-            case Float:
-            case Double:
-            case Decimal:
-                return true;
-            default:
-                return false;
-        }
+        return this.getDataType().isNumeric();
     }
     // </editor-fold>
     // <editor-fold desc="Methods">   
@@ -222,31 +209,27 @@ public class Field extends DataColumn {
         // These sizes represent the "maximized" length and decimal counts that will be shrunk in order
         // to fit the data before saving.
         switch (this.getDataType()) {
-            case Float:
+            case FLOAT:
                 //_decimalCount = (byte)40;  // Singles  -3.402823E+38 to 3.402823E+38
                 //_length = (byte)40;
                 this.fieldLen = 18;
                 this.fieldNumDec = 6;
                 break;
-            case Double:
+            case DOUBLE:
                 //_decimalCount = (byte)255; // Doubles -1.79769313486232E+308 to 1.79769313486232E+308
                 //_length = (byte)255;
                 this.fieldLen = 18;
                 this.fieldNumDec = 9;
                 break;
-            case Decimal:
-                this.fieldNumDec = 9; // Decimals -79228162514264337593543950335 to 79228162514264337593543950335
-                this.fieldLen = 18;
-                break;
-            case Integer:
+            case INT:
                 this.fieldNumDec = 0;
                 this.fieldLen = 11;
                 break;
-            case String:
+            case STRING:
                 this.fieldNumDec = 0;
                 this.fieldLen = 255;
                 break;
-            case Date:
+            case DATE:
                 this.fieldNumDec = 0;
                 this.fieldLen = 8;
                 break;

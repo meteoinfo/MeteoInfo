@@ -314,7 +314,7 @@
                                   <Component id="jCheckBox_Lat" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jComboBox_Lat2" alignment="0" pref="124" max="32767" attributes="0"/>
+                                      <Component id="jComboBox_Lat2" alignment="0" pref="0" max="32767" attributes="0"/>
                                       <Component id="jComboBox_Lat1" alignment="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                               </Group>

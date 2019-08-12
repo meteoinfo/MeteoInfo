@@ -7,9 +7,9 @@ package org.meteoinfo.math.fitting;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.data.ArrayMath;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *

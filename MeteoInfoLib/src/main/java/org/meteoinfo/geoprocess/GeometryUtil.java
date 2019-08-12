@@ -7,7 +7,13 @@ package org.meteoinfo.geoprocess;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.meteoinfo.global.PointD;
+import org.meteoinfo.layer.VectorLayer;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.shape.PolygonShape;
 
 /**
  *
@@ -72,6 +78,289 @@ public class GeometryUtil {
         }
         
         return points;
+    }
+    
+    /**
+     * Computes the smallest convex <code>Polygon</code> that contains all the
+     * points
+     *
+     * @param x X array
+     * @param y Y array
+     * @return PolygonShape
+     */
+    public static PolygonShape convexHull(Array x, Array y) {
+        int n = (int) x.getSize();
+        Geometry[] geos = new Geometry[n];
+        GeometryFactory factory = new GeometryFactory();
+        for (int i = 0; i < n; i++) {
+            Coordinate c = new Coordinate(x.getDouble(i), y.getDouble(i));
+            geos[i] = factory.createPoint(c);
+        }
+        Geometry gs = factory.createGeometryCollection(geos);
+        Geometry ch = gs.convexHull();
+        return new PolygonShape(ch);
+    }
+    
+    /**
+     * Maskout function
+     *
+     * @param a Array a
+     * @param x X dimension values
+     * @param y Y dimension values
+     * @param layer VectorLayer
+     * @param missingValue Missing value
+     * @return Result array with cell values of missing outside polygons
+     */
+    public static Array maskout(Array a, List<Number> x, List<Number> y, VectorLayer layer, Number missingValue) {
+        List<PolygonShape> polygons = (List<PolygonShape>) layer.getShapes();
+        return maskout(a, x, y, polygons, missingValue);
+    }
+
+    /**
+     * Maskout function
+     *
+     * @param a Array a
+     * @param x X dimension values
+     * @param y Y dimension values
+     * @param polygon Polygon shape
+     * @param missingValue Missing value
+     * @return Result array with cell values of missing outside polygons
+     */
+    public static Array maskout(Array a, List<Number> x, List<Number> y, PolygonShape polygon, Number missingValue) {
+        List<PolygonShape> polygons = new ArrayList<>();
+        polygons.add(polygon);
+        return maskout(a, x, y, polygons, missingValue);
+    }
+
+    /**
+     * Maskout function
+     *
+     * @param a Array a
+     * @param x X Array
+     * @param y Y Array
+     * @param polygons Polygons for maskout
+     * @return Result array with cell values of missing outside polygons
+     */
+    public static Array maskout(Array a, Array x, Array y, List<PolygonShape> polygons) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        for (int i = 0; i < a.getSize(); i++) {
+            if (GeoComputation.pointInPolygons(polygons, new PointD(x.getDouble(i), y.getDouble(i)))) {
+                r.setObject(i, a.getObject(i));
+            } else {
+                r.setObject(i, Double.NaN);
+            }
+        }
+        return r;
+    }
+
+    /**
+     * Maskin function
+     *
+     * @param a Array a
+     * @param x X Array
+     * @param y Y Array
+     * @param polygons Polygons for maskin
+     * @return Result array with cell values of missing inside polygons
+     */
+    public static Array maskin(Array a, Array x, Array y, List<PolygonShape> polygons) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        for (int i = 0; i < a.getSize(); i++) {
+            if (GeoComputation.pointInPolygons(polygons, new PointD(x.getDouble(i), y.getDouble(i)))) {
+                r.setObject(i, Double.NaN);
+            } else {
+                r.setObject(i, a.getObject(i));
+            }
+        }
+        return r;
+    }
+
+    /**
+     * Maskout function
+     *
+     * @param a Array a
+     * @param x X Array
+     * @param y Y Array
+     * @param polygons Polygons for maskout
+     * @return Result arrays removing cells outside polygons
+     */
+    public static Array[] maskout_Remove(Array a, Array x, Array y, List<PolygonShape> polygons) {
+        List<Object> rdata = new ArrayList<>();
+        List<Double> rxdata = new ArrayList<>();
+        List<Double> rydata = new ArrayList<>();
+        for (int i = 0; i < a.getSize(); i++) {
+            if (GeoComputation.pointInPolygons(polygons, new PointD(x.getDouble(i), y.getDouble(i)))) {
+                rdata.add(a.getObject(i));
+                rxdata.add(x.getDouble(i));
+                rydata.add(y.getDouble(i));
+            }
+        }
+
+        int n = rdata.size();
+        int[] shape = new int[1];
+        shape[0] = n;
+        Array r = Array.factory(a.getDataType(), shape);
+        Array rx = Array.factory(x.getDataType(), shape);
+        Array ry = Array.factory(y.getDataType(), shape);
+        for (int i = 0; i < n; i++) {
+            r.setObject(i, rdata.get(i));
+            rx.setDouble(i, rxdata.get(i));
+            ry.setDouble(i, rydata.get(i));
+        }
+
+        return new Array[]{r, rx, ry};
+    }
+
+    /**
+     * Maskin function
+     *
+     * @param a Array a
+     * @param x X Array
+     * @param y Y Array
+     * @param polygons Polygons for maskin
+     * @return Result arrays removing cells inside polygons
+     */
+    public static Array[] maskin_Remove(Array a, Array x, Array y, List<PolygonShape> polygons) {
+        List<Object> rdata = new ArrayList<>();
+        List<Double> rxdata = new ArrayList<>();
+        List<Double> rydata = new ArrayList<>();
+        for (int i = 0; i < a.getSize(); i++) {
+            if (!GeoComputation.pointInPolygons(polygons, new PointD(x.getDouble(i), y.getDouble(i)))) {
+                rdata.add(a.getObject(i));
+                rxdata.add(x.getDouble(i));
+                rydata.add(y.getDouble(i));
+            }
+        }
+
+        int n = rdata.size();
+        int[] shape = new int[1];
+        shape[0] = n;
+        Array r = Array.factory(a.getDataType(), shape);
+        Array rx = Array.factory(x.getDataType(), shape);
+        Array ry = Array.factory(y.getDataType(), shape);
+        for (int i = 0; i < n; i++) {
+            r.setObject(i, rdata.get(i));
+            rx.setDouble(i, rxdata.get(i));
+            ry.setDouble(i, rydata.get(i));
+        }
+
+        return new Array[]{r, rx, ry};
+    }
+
+    /**
+     * Maskout function
+     *
+     * @param a Array a
+     * @param x X dimension values
+     * @param y Y dimension values
+     * @param polygons PolygonShape list
+     * @return Result array with cell values of missing outside polygons
+     */
+    public static Array maskout(Array a, List<Number> x, List<Number> y, List<PolygonShape> polygons) {
+        return maskout(a, x, y, polygons, Double.NaN);
+    }
+
+    /**
+     * Maskout function
+     *
+     * @param a Array a
+     * @param x X dimension values
+     * @param y Y dimension values
+     * @param polygons PolygonShape list
+     * @param missingValue Missing value
+     * @return Result array with cell values of missing outside polygons
+     */
+    public static Array maskout(Array a, List<Number> x, List<Number> y, List<PolygonShape> polygons, Number missingValue) {
+        int xNum = x.size();
+        int yNum = y.size();
+
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        if (a.getRank() == 1) {
+            for (int i = 0; i < xNum; i++) {
+                if (GeoComputation.pointInPolygons(polygons, new PointD(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
+                    r.setObject(i, a.getObject(i));
+                } else {
+                    r.setObject(i, missingValue);
+                }
+            }
+        } else if (a.getRank() == 2) {
+            int idx;
+            for (int i = 0; i < yNum; i++) {
+                for (int j = 0; j < xNum; j++) {
+                    idx = i * xNum + j;
+                    if (GeoComputation.pointInPolygons(polygons, new PointD(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
+                        r.setObject(idx, a.getObject(idx));
+                    } else {
+                        r.setObject(idx, missingValue);
+                    }
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Maskout function
+     *
+     * @param a Array a
+     * @param m Array mask
+     * @param missingValue Missing value
+     * @return Result array
+     */
+    public static Array maskout(Array a, Array m, Number missingValue) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        int n = (int) a.getSize();
+        for (int i = 0; i < n; i++) {
+            if (m.getDouble(i) < 0) {
+                r.setObject(i, missingValue);
+            } else {
+                r.setObject(i, a.getObject(i));
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Maskout function
+     *
+     * @param a Array a
+     * @param m Array mask
+     * @return Result array
+     */
+    public static Array maskout(Array a, Array m) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        int n = (int) a.getSize();
+        for (int i = 0; i < n; i++) {
+            if (m.getDouble(i) < 0) {
+                r.setObject(i, Double.NaN);
+            } else {
+                r.setObject(i, a.getObject(i));
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Maskin function
+     *
+     * @param a Array a
+     * @param m Array mask
+     * @return Result array
+     */
+    public static Array maskin(Array a, Array m) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        int n = (int) a.getSize();
+        for (int i = 0; i < n; i++) {
+            if (m.getDouble(i) < 0) {
+                r.setObject(i, a.getObject(i));
+            } else {
+                r.setObject(i, Double.NaN);
+            }
+        }
+
+        return r;
     }
     // </editor-fold>
 }

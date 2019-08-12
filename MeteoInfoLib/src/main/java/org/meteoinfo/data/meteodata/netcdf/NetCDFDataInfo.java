@@ -16,8 +16,8 @@ package org.meteoinfo.data.meteodata.netcdf;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.data.meteodata.Dimension;
-import org.meteoinfo.data.meteodata.DimensionType;
+import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
 import org.meteoinfo.data.meteodata.StationInfoData;
@@ -26,7 +26,6 @@ import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.MIMath;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,23 +36,23 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import org.meteoinfo.data.ArrayMath;
-import org.meteoinfo.data.ArrayUtil;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.Reproject;
-import ucar.ma2.Array;
-import ucar.ma2.ArrayInt;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
-import ucar.ma2.IndexIterator;
-import ucar.ma2.InvalidRangeException;
-import ucar.ma2.MAMath;
-import ucar.ma2.Section;
-import ucar.nc2.Attribute;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.ArrayInt;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.MAMath;
+import org.meteoinfo.ndarray.Section;
+import org.meteoinfo.data.meteodata.Attribute;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -72,8 +71,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     private boolean keepOpen = false;
     private List<ucar.nc2.Variable> _variables = new ArrayList<>();
     private List<ucar.nc2.Dimension> _dimensions = new ArrayList<>();
-    private List<Dimension> _miDims = new ArrayList<>();
+    private List<Dimension> dimensions = new ArrayList<>();
     private List<ucar.nc2.Attribute> _gAtts = new ArrayList<>();
+    private List<Attribute> attributes = new ArrayList<>();
     private ucar.nc2.Variable _xVar = null;
     private ucar.nc2.Variable _yVar = null;
     private ucar.nc2.Variable _levelVar = null;
@@ -109,7 +109,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      */
     @Override
     public List<Dimension> getDimensions() {
-        return this._miDims;
+        return this.dimensions;
     }
 
     /**
@@ -127,8 +127,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return Global attributes
      */
     @Override
-    public List<ucar.nc2.Attribute> getGlobalAttributes() {
-        return this._gAtts;
+    public List<Attribute> getGlobalAttributes() {
+        return this.attributes;
     }
 
     /**
@@ -260,13 +260,13 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
             }
-            _miDims = new ArrayList<>();
+            this.dimensions = new ArrayList<>();
             for (ucar.nc2.Dimension dim : _dimensions) {
-                Dimension ndim = new Dimension(dim);
+                Dimension ndim = NCUtil.convertDimension(dim);
                 if (dim.getShortName().equals("nXtrack")) {
                     ndim.setDimType(DimensionType.Xtrack);
                 }
-                _miDims.add(ndim);
+                this.dimensions.add(ndim);
             }
 
             //Read global attribute
@@ -294,7 +294,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             List<Variable> vars = new ArrayList<>();
             //List<Dimension> coorDims = new ArrayList<Dimension>();
             for (ucar.nc2.Variable var : _variables) {
-                Variable nvar = new Variable(var);
+                Variable nvar = NCUtil.convertVariable(var);
                 //nvar.setName(var.getShortName());
                 //nvar.setCoorVar(var.isCoordinateVariable());
                 nvar.setDimVar(var.getRank() <= 1);
@@ -307,10 +307,11 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     //Dimension ndim = this.getCoordDimension(dim);
                     int idx = this.getDimensionIndex(dim);
                     if (idx >= 0) {
-                        Dimension ndim = _miDims.get(idx);
+                        Dimension ndim = this.dimensions.get(idx);
                         nvar.addDimension(ndim);
                     } else {
-                        Dimension ndim = new Dimension(dim, DimensionType.Other);
+                        Dimension ndim = NCUtil.convertDimension(dim);
+                        ndim.setDimType(DimensionType.Other);
                         nvar.addDimension(ndim);
                     }
                 }
@@ -409,7 +410,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return Dimension
      */
     public Dimension findDimension(String dimName) {
-        for (Dimension dim : this._miDims) {
+        for (Dimension dim : this.dimensions) {
             if (dim.getShortName().equalsIgnoreCase(dimName)) {
                 return dim;
             }
@@ -521,7 +522,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 if (proj.contains("GCTP_GEO")) {
                 } else {
                     ucar.nc2.Attribute paraAtt = pVar.findAttributeIgnoreCase("ProjParams");
-                    Array params = paraAtt.getValues();
+                    Array params = NCUtil.convertArray(paraAtt.getValues());
                     if (proj.contains("GCTP_SNSOID")) {
                         projStr = "+proj=sinu"
                                 + "+lon_0=" + params.getObject(4).toString();
@@ -601,7 +602,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     switch (attStr) {
                         case "albers_conical_equal_area": {
                             //Two standard parallels condition need to be considered
-                            Array values = pVar.findAttribute("standard_parallel").getValues();
+                            Array values = NCUtil.convertArray(pVar.findAttribute("standard_parallel").getValues());
                             String sp1 = String.valueOf(values.getDouble(0));
                             String sp2 = "";
                             if (values.getSize() == 2) {
@@ -646,7 +647,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                             break;
                         case "lambert_conformal_conic": {
                             //Two standard parallels condition need to be considered
-                            Array values = pVar.findAttribute("standard_parallel").getValues();
+                            Array values = NCUtil.convertArray(pVar.findAttribute("standard_parallel").getValues());
                             String sp1 = String.valueOf(values.getDouble(0));
                             String sp2 = "";
                             if (values.getSize() == 2) {
@@ -1049,7 +1050,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         if (this._isSWATH || this._isPROFILE) {
             ucar.nc2.Variable var = this.findNCVariable("Pressure");
             if (var != null) {
-                Array darray = var.read();
+                Array darray = NCUtil.convertArray(var.read());
                 int n = (int) darray.getSize();
                 double[] values = new double[n];
                 for (int i = 0; i < n; i++) {
@@ -1065,7 +1066,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
             var = this.findNCVariable("Time");
             if (var != null && var.getDimensions().size() == 1) {
-                Array darray = var.read();
+                Array darray = NCUtil.convertArray(var.read());
                 List<Date> times = this.getTimes(var, darray);
                 List<Double> ts = new ArrayList<>();
                 for (Date t : times) {
@@ -1093,14 +1094,14 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 if (idx == -1) {
                     continue;
                 }
-                Dimension dim = this._miDims.get(idx);
+                Dimension dim = this.dimensions.get(idx);
                 if (dim.getDimType() != DimensionType.Other) {
                     continue;
                 }
 
                 DimensionType dimType = getDimType(var);
                 dim.setDimType(dimType);
-                Array values = var.read();
+                Array values = NCUtil.convertArray(var.read());
                 if (values.getSize() > 1) {
                     if (values.getDouble(0) > values.getDouble(1)) {
                         switch (dimType) {
@@ -1236,7 +1237,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
         //Get levels
         ucar.nc2.Attribute levAtt = this.findGlobalAttribute("VGLVLS");
-        Array array = levAtt.getValues();
+        Array array = NCUtil.convertArray(levAtt.getValues());
         int znum = (int) array.getSize() - 1;
         double[] levels = new double[znum];
         for (i = 0; i < znum; i++) {
@@ -1317,7 +1318,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         double[][] points = new double[1][];
         if (_yVar != null && _xVar != null) {
             dimLen = yNum;
-            Array yarray = _yVar.read().reduce();
+            Array yarray = NCUtil.convertArray(_yVar.read().reduce());
             double[] xlat = new double[dimLen];
             for (i = 0; i < dimLen; i++) {
                 xlat[i] = yarray.getDouble(i);
@@ -1325,7 +1326,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             orgLat = xlat[0];
 
             dimLen = xNum;
-            Array xarray = _xVar.read().reduce();
+            Array xarray = NCUtil.convertArray(_xVar.read().reduce());
             double[] xlon = new double[dimLen];
             for (i = 0; i < dimLen; i++) {
                 xlon[i] = xarray.getDouble(i);
@@ -1368,7 +1369,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             int lNum = zDim.getLength();
             if (_levelVar != null) {
                 dimLen = lNum;
-                Array larray = _levelVar.read().reduce();
+                Array larray = NCUtil.convertArray(_levelVar.read().reduce());
                 double[] levels = new double[lNum];
                 for (i = 0; i < lNum; i++) {
                     if (i < dimLen) {
@@ -1393,7 +1394,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             ucar.nc2.Variable levelVar = ncfile.findVariable("ZNW");
             if (levelVar != null) {
                 dimLen = lNum;
-                Array larray = levelVar.read().reduce();
+                Array larray = NCUtil.convertArray(levelVar.read().reduce());
                 double[] levels = new double[lNum];
                 for (i = 0; i < lNum; i++) {
                     if (i < dimLen) {
@@ -1415,7 +1416,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             ucar.nc2.Variable levelVar = ncfile.findVariable("ZS");
             if (levelVar != null) {
                 dimLen = lNum;
-                Array larray = levelVar.read().reduce();
+                Array larray = NCUtil.convertArray(levelVar.read().reduce());
                 double[] levels = new double[lNum];
                 for (i = 0; i < lNum; i++) {
                     if (i < dimLen) {
@@ -1440,7 +1441,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 ucar.nc2.Dimension tsDim = ncfile.findDimension("DateStrLen");
                 int strLen = tsDim.getLength();
                 char[] charData = new char[tNum * strLen];
-                Array tarray = aVarS.read();
+                Array tarray = NCUtil.convertArray(aVarS.read());
                 for (i = 0; i < tNum * strLen; i++) {
                     charData[i] = tarray.getChar(i);
                 }
@@ -2002,7 +2003,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array data2D = var.read(origin, size).reduce();
+            Array data2D = NCUtil.convertArray(var.read(origin, size).reduce());
 
             double v;
             if (ydimIdx < xdimIdx) {
@@ -2050,7 +2051,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             return aGridData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -2120,7 +2121,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array data2D = var.read(origin, size).reduce();
+            Array data2D = NCUtil.convertArray(var.read(origin, size).reduce());
 
             double v;
             for (i = 0; i < yNum; i++) {
@@ -2145,7 +2146,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             return aGridData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -2214,7 +2215,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array data2D = var.read(origin, size).reduce();
+            Array data2D = NCUtil.convertArray(var.read(origin, size).reduce());
 
             double v;
             for (i = 0; i < yNum; i++) {
@@ -2235,7 +2236,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             aGridData.missingValue = missingValue;
 
             return aGridData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -2306,7 +2307,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array data2D = var.read(origin, size).reduce();
+            Array data2D = NCUtil.convertArray(var.read(origin, size).reduce());
 
             double v;
             for (i = 0; i < yNum; i++) {
@@ -2331,7 +2332,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             return aGridData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -2401,7 +2402,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array data2D = var.read(origin, size).reduce();
+            Array data2D = NCUtil.convertArray(var.read(origin, size).reduce());
 
             double v;
             for (i = 0; i < yNum; i++) {
@@ -2422,7 +2423,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             aGridData.missingValue = missingValue;
 
             return aGridData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -2492,7 +2493,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array data2D = var.read(origin, size).reduce();
+            Array data2D = NCUtil.convertArray(var.read(origin, size).reduce());
             if (data2D.getShape()[0] == xNum) {
                 data2D = data2D.transpose(0, 1);
             }
@@ -2518,7 +2519,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             aGridData.missingValue = missingValue;
 
             return aGridData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -2586,7 +2587,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array data1D = var.read(origin, size).reduce();
+            Array data1D = NCUtil.convertArray(var.read(origin, size).reduce());
 
             double v;
             for (i = 0; i < dNum; i++) {
@@ -2605,7 +2606,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             aGridData.missingValue = missingValue;
 
             return aGridData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -2673,7 +2674,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array data1D = var.read(origin, size).reduce();
+            Array data1D = NCUtil.convertArray(var.read(origin, size).reduce());
 
             double v;
             for (i = 0; i < dNum; i++) {
@@ -2692,7 +2693,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             aGridData.missingValue = missingValue;
 
             return aGridData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -2760,7 +2761,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array data1D = var.read(origin, size).reduce();
+            Array data1D = NCUtil.convertArray(var.read(origin, size).reduce());
 
             double v;
             for (i = 0; i < dNum; i++) {
@@ -2779,7 +2780,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             aGridData.missingValue = missingValue;
 
             return aGridData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -2847,7 +2848,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array data1D = var.read(origin, size).reduce();
+            Array data1D = NCUtil.convertArray(var.read(origin, size).reduce());
 
             double v;
             for (i = 0; i < dNum; i++) {
@@ -2866,7 +2867,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             aGridData.missingValue = missingValue;
 
             return aGridData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -2899,8 +2900,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             ucar.nc2.Variable latvar = this.findNCVariable("Latitude");
             lonvar = ncfile.getVariables().get(this._variables.indexOf(lonvar));
             latvar = ncfile.getVariables().get(this._variables.indexOf(latvar));
-            Array lonarray = lonvar.read();
-            Array latarray = latvar.read();
+            Array lonarray = NCUtil.convertArray(lonvar.read());
+            Array latarray = NCUtil.convertArray(latvar.read());
             int stNum = (int) lonarray.getSize();
             List<ucar.nc2.Dimension> lldims = lonvar.getDimensions();
 
@@ -2953,7 +2954,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            Array darray = var.read(origin, size).reduce();
+            Array darray = NCUtil.convertArray(var.read(origin, size).reduce());
 
             double minx, maxx, miny, maxy;
             minx = maxx = lonarray.getDouble(0);
@@ -3001,7 +3002,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             stData.stations = stations;
 
             return stData;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -3054,7 +3055,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 return null;
             }
 
-            Array data = var.read();
+            Array data = NCUtil.convertArray(var.read());
             
             //Get pack info
             double add_offset, scale_factor, missingValue;
@@ -3132,16 +3133,16 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         flips.add(i);
                     }
                 }
-                Section section = new Section(origin, size, pStride);
-                Array r = var.read(section);
+                ucar.ma2.Section section = new ucar.ma2.Section(origin, size, pStride);
+                Array r = NCUtil.convertArray(var.read(section));
                 for (int i : flips) {
                     r = r.flip(i);
                 }
                 data = Array.factory(r.getDataType(), r.getShape());
                 MAMath.copy(data, r);
             } else {
-                Section section = new Section(origin, size, stride);
-                data = var.read(section);
+                ucar.ma2.Section section = new ucar.ma2.Section(origin, size, stride);
+                data = NCUtil.convertArray(var.read(section));
             }
 
             //Get pack info
@@ -3156,7 +3157,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             return data;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -3186,8 +3187,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
             ucar.nc2.Variable var = ncfile.findVariable(varName);
 
-            Section section = new Section(origin, size);
-            Array data = var.read(section);
+            ucar.ma2.Section section = new ucar.ma2.Section(origin, size);
+            Array data = NCUtil.convertArray(var.read(section));
             
             //Get pack info
             double add_offset, scale_factor, missingValue;
@@ -3201,7 +3202,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             return data;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -3231,8 +3232,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
             ucar.nc2.Variable var = ncfile.findVariable(varName);
 
-            Section section = new Section(origin, size);
-            Array data = var.read(section);
+            ucar.ma2.Section section = new ucar.ma2.Section(origin, size);
+            Array data = NCUtil.convertArray(var.read(section));
 
             //Get pack info
             double add_offset, scale_factor, missingValue;
@@ -3246,7 +3247,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             return data;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -3268,10 +3269,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
             ucar.nc2.Variable var = ncfile.findVariable(varName);
 
-            Array data = var.read(key);
+            Array data = NCUtil.convertArray(var.read(key));
 
             return data;
-        } catch (IOException | InvalidRangeException ex) {
+        } catch (IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
@@ -3376,7 +3377,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         NetcdfFileWriter ncfilew = NetcdfFileWriter.createNew(NetcdfFileWriter.Version.netcdf3, fileName);
 
         //Define dimensions
-        for (Dimension dim : this._miDims) {
+        for (Dimension dim : this.dimensions) {
             ncfilew.addDimension(null, dim.getShortName(), dim.getLength(), dim.isShared(),
                     dim.isUnlimited(), dim.isVariableLength());
         }
@@ -3437,7 +3438,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         {
             try {
                 joinDataFiles_Variable(inFiles, outFile);
-            } catch (IOException | InvalidRangeException ex) {
+            } catch (IOException | ucar.ma2.InvalidRangeException ex) {
                 Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else //Join time
@@ -3448,7 +3449,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 } else {
                     joinDataFiles_Time_pack(inFiles, outFile, tDimName);
                 }
-            } catch (IOException | InvalidRangeException | ParseException ex) {
+            } catch (IOException | ucar.ma2.InvalidRangeException | ParseException ex) {
                 Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -3464,7 +3465,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @throws ucar.ma2.InvalidRangeException
      * @throws java.text.ParseException
      */
-    public static void joinDataFiles_Time(List<String> inFiles, String outFile, String timeDimStr) throws IOException, InvalidRangeException, ParseException {
+    public static void joinDataFiles_Time(List<String> inFiles, String outFile, String timeDimStr) throws IOException, ucar.ma2.InvalidRangeException, ParseException {
         //Check number of selected files
         int fNum = inFiles.size();
         if (fNum < 2) {
@@ -3506,7 +3507,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
         //Define dimensions
         List<ucar.nc2.Dimension> dims = new ArrayList<>();
-        for (Dimension dim : aDataInfo._miDims) {
+        for (Dimension dim : aDataInfo.dimensions) {
             if (dim.getShortName().equals(timeDimStr)) {
                 dims.add(ncfilew.addUnlimitedDimension(dim.getShortName()));
             } else {
@@ -3565,7 +3566,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                     if (!dimNames.contains(timeDimStr)) {
                         Array varaData = aDataInfo.read(var.getShortName());
-                        ncfilew.write(var, varaData);
+                        ncfilew.write(var, NCUtil.convertArray(varaData));
                     }
                 }
             }
@@ -3603,7 +3604,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
                             Array varaData = aDataInfo.read(dvar.getShortName(), start, count);
                             start[tDimIdx] += tDimNum;
-                            ncfilew.write(var, start, varaData);
+                            ncfilew.write(var, start, NCUtil.convertArray(varaData));
                         }
                     }
                 } else if (dimNum == 3) {
@@ -3617,7 +3618,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
                         Array varaData = aDataInfo.read(dvar.getShortName(), start, count);
                         start[tDimIdx] += tDimNum;
-                        ncfilew.write(var, start, varaData);
+                        ncfilew.write(var, start, NCUtil.convertArray(varaData));
                     }
                 } else {
                     for (int v = 0; v < dvar.getDimensions().size(); v++) {
@@ -3628,7 +3629,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     start[tDimIdx] += tDimNum;
                     if (dimNum == 1) {
                         List<Integer> times = aDataInfo.getTimeValues(sTime, "hours");
-                        varaData = Array.factory(dvar.getDataType(), dvar.getShape());
+                        varaData = Array.factory(NCUtil.convertDataType(dvar.getDataType()), dvar.getShape());
                         for (int j = 0; j < times.size(); j++) {
                             varaData.setDouble(j, times.get(j));
                         }
@@ -3636,7 +3637,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                             var.getDimension(0).setLength(var.getDimension(0).getLength() + varaData.getShape()[0]);
                         }
                     }
-                    ncfilew.write(var, start, varaData);
+                    ncfilew.write(var, start, NCUtil.convertArray(varaData));
                 }
             }
             tDimNum += aDataInfo.findDimension(timeDimStr).getLength();
@@ -3654,10 +3655,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @param outFile Output nc file
      * @param timeDimStr Time dimension name
      * @throws java.io.IOException
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws ucar.ma2..InvalidRangeException
      * @throws java.text.ParseException
      */
-    public static void joinDataFiles_Time_pack(List<String> inFiles, String outFile, String timeDimStr) throws IOException, InvalidRangeException, ParseException {
+    public static void joinDataFiles_Time_pack(List<String> inFiles, String outFile, String timeDimStr) throws IOException, ucar.ma2.InvalidRangeException, ParseException {
         //Check number of selected files
         int fNum = inFiles.size();
         if (fNum < 2) {
@@ -3699,7 +3700,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
         //Define dimensions
         List<ucar.nc2.Dimension> dims = new ArrayList<>();
-        for (Dimension dim : aDataInfo._miDims) {
+        for (Dimension dim : aDataInfo.dimensions) {
             if (dim.getShortName().equals(timeDimStr)) {
                 dims.add(ncfilew.addUnlimitedDimension(dim.getShortName()));
             } else {
@@ -3725,7 +3726,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
             ucar.nc2.Variable nvar;
             if (var.findAttribute("add_offset") != null || var.findAttribute("scale_factor") != null) {
-                nvar = ncfilew.addVariable(null, var.getShortName(), DataType.DOUBLE, vdims);
+                nvar = ncfilew.addVariable(null, var.getShortName(), ucar.ma2.DataType.DOUBLE, vdims);
             } else {
                 nvar = ncfilew.addVariable(null, var.getShortName(), var.getDataType(), vdims);
             }
@@ -3765,7 +3766,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                     if (!dimNames.contains(timeDimStr)) {
                         Array varaData = aDataInfo.read(var.getShortName());
-                        ncfilew.write(var, varaData);
+                        ncfilew.write(var, NCUtil.convertArray(varaData));
                     }
                 }
             }
@@ -3807,7 +3808,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                                 varaData = aDataInfo.read(dvar.getShortName(), start, count);
                             }
                             start[tDimIdx] += tDimNum;
-                            ncfilew.write(var, start, varaData);
+                            ncfilew.write(var, start, NCUtil.convertArray(varaData));
                         }
                     }
                 } else if (dimNum == 3) {
@@ -3825,7 +3826,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                             varaData = aDataInfo.read(dvar.getShortName(), start, count);
                         }
                         start[tDimIdx] += tDimNum;
-                        ncfilew.write(var, start, varaData);
+                        ncfilew.write(var, start, NCUtil.convertArray(varaData));
                     }
                 } else {
                     for (int v = 0; v < dvar.getDimensions().size(); v++) {
@@ -3836,7 +3837,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     start[tDimIdx] += tDimNum;
                     if (dimNum == 1) {
                         List<Integer> times = aDataInfo.getTimeValues(sTime, "hours");
-                        varaData = Array.factory(dvar.getDataType(), dvar.getShape());
+                        varaData = Array.factory(NCUtil.convertDataType(dvar.getDataType()), dvar.getShape());
                         for (int j = 0; j < times.size(); j++) {
                             varaData.setDouble(j, times.get(j));
                         }
@@ -3844,7 +3845,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                             var.getDimension(0).setLength(var.getDimension(0).getLength() + varaData.getShape()[0]);
                         }
                     }
-                    ncfilew.write(var, start, varaData);
+                    ncfilew.write(var, start, NCUtil.convertArray(varaData));
                 }
             }
             tDimNum += aDataInfo.findDimension(timeDimStr).getLength();
@@ -3861,9 +3862,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @param inFiles Input nc files
      * @param outFile Output nc file
      * @throws java.io.IOException
-     * @throws ucar.ma2.InvalidRangeException
+     * @throws ucar.ma2..InvalidRangeException
      */
-    public static void joinDataFiles_Variable(List<String> inFiles, String outFile) throws IOException, InvalidRangeException {
+    public static void joinDataFiles_Variable(List<String> inFiles, String outFile) throws IOException, ucar.ma2.InvalidRangeException {
         //Check number of selected files
         int fNum = inFiles.size();
         if (fNum < 2) {
@@ -3880,7 +3881,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         NetcdfFileWriter ncfile = NetcdfFileWriter.createNew(NetcdfFileWriter.Version.netcdf3, outFile);
 
         //Define dimensions
-        for (Dimension dim : aDataInfo._miDims) {
+        for (Dimension dim : aDataInfo.dimensions) {
             ncfile.addDimension(null, dim.getShortName(), dim.getLength(), dim.isShared(),
                     dim.isUnlimited(), dim.isVariableLength());
         }
@@ -3927,7 +3928,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
         //Write variable data
         for (ucar.nc2.Variable nvar : nvars) {
-            ncfile.write(nvar, aDataInfo.read(nvar.getShortName()));
+            ncfile.write(nvar, NCUtil.convertArray(aDataInfo.read(nvar.getShortName())));
         }
 
         //Add data in more files
@@ -3938,7 +3939,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
             NetCDFDataInfo df = mncf.get(i);
             for (ucar.nc2.Variable nvar : vars) {
-                ncfile.write(nvar, df.read(nvar.getShortName()));
+                ncfile.write(nvar, NCUtil.convertArray(df.read(nvar.getShortName())));
             }
         }
 
@@ -4063,7 +4064,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     public static void addTimeDimension(String inFile, String outFile, Date aTime) {
         try {
             addTimeDimension(inFile, outFile, aTime, "days");
-        } catch (ParseException | IOException | InvalidRangeException ex) {
+        } catch (ParseException | IOException | ucar.ma2.InvalidRangeException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -4077,9 +4078,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @param timeUnit Time unit (days, hours, minutes, seconds)
      * @throws ParseException
      * @throws IOException
-     * @throws InvalidRangeException
+     * @throws ucar.ma2.InvalidRangeException
      */
-    public static void addTimeDimension(String inFile, String outFile, Date aTime, String timeUnit) throws ParseException, IOException, InvalidRangeException {
+    public static void addTimeDimension(String inFile, String outFile, Date aTime, String timeUnit) throws ParseException, IOException, ucar.ma2.InvalidRangeException {
         //Set data info
         NetCDFDataInfo aDataInfo = new NetCDFDataInfo();
         aDataInfo.readDataInfo(inFile);
@@ -4098,7 +4099,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         NetcdfFileWriter ncfilew = NetcdfFileWriter.createNew(NetcdfFileWriter.Version.netcdf3, outFile);
 
         //Define dimensions
-        for (Dimension dim : aDataInfo._miDims) {
+        for (Dimension dim : aDataInfo.dimensions) {
             ncfilew.addDimension(null, dim.getShortName(), dim.getLength(), dim.isShared(),
                     dim.isUnlimited(), dim.isVariableLength());
         }
@@ -4122,7 +4123,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         }
         List<ucar.nc2.Dimension> dims = new ArrayList<>();
         dims.add(tdim);
-        ucar.nc2.Variable tvar = ncfilew.addVariable(null, "time", DataType.INT, dims);
+        ucar.nc2.Variable tvar = ncfilew.addVariable(null, "time", ucar.ma2.DataType.INT, dims);
         tvar.addAttribute(new ucar.nc2.Attribute("units", timeUnit.toLowerCase() + " since 1800-1-1 00:00:00"));
         tvar.addAttribute(new ucar.nc2.Attribute("long_name", "Time"));
         tvar.addAttribute(new ucar.nc2.Attribute("standard_name", "time"));
@@ -4150,7 +4151,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         count[1] = 1;
 
                         Array varaData = aDataInfo.read(var.getShortName(), start, count);
-                        ncfilew.write(var, start, varaData);
+                        ncfilew.write(var, start, NCUtil.convertArray(varaData));
                     }
                 }
             } else if (dimNum == 3) {
@@ -4163,7 +4164,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     count[0] = 1;
 
                     Array varaData = aDataInfo.read(var.getShortName(), start, count);
-                    ncfilew.write(var, start, varaData);
+                    ncfilew.write(var, start, NCUtil.convertArray(varaData));
                 }
             } else {
                 for (int v = 0; v < var.getDimensions().size(); v++) {
@@ -4171,10 +4172,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     count[v] = var.getDimension(v).getLength();
                 }
                 Array varaData = aDataInfo.read(var.getShortName(), start, count);
-                ncfilew.write(var, start, varaData);
+                ncfilew.write(var, start, NCUtil.convertArray(varaData));
             }
         }
-        Array timeValue = new ArrayInt.D1(tvalue);
+        ucar.ma2.Array timeValue = new ucar.ma2.ArrayInt.D1(tvalue);
         ncfilew.write(tvar, timeValue);
 
         //Close data file

@@ -7,7 +7,7 @@
 
 from org.meteoinfo.global import PointD
 from org.meteoinfo.global.util import DateUtil
-from org.meteoinfo.math import Complex
+from org.meteoinfo.ndarray import Complex
 from org.meteoinfo.shape import PointShape, ShapeUtil
 from java.util import Calendar, Locale
 from java.text import SimpleDateFormat

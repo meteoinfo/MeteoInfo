@@ -21,7 +21,8 @@ import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
-import ucar.ma2.Array;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *
@@ -102,29 +103,29 @@ public class TableUtil {
                     String colName = titleArray[idx].trim();
                     if (colFormat.equals("C") || colFormat.equals("s")) //String
                     {
-                        tableData.addColumn(colName, DataTypes.String);
+                        tableData.addColumn(colName, DataType.STRING);
                     } else if (colFormat.equals("i")) //Integer
                     {
-                        tableData.addColumn(colName, DataTypes.Integer);
+                        tableData.addColumn(colName, DataType.INT);
                     } else if (colFormat.equals("f")) //Float
                     {
-                        tableData.addColumn(colName, DataTypes.Float);
+                        tableData.addColumn(colName, DataType.FLOAT);
                     } else if (colFormat.equals("d")) //Double
                     {
-                        tableData.addColumn(colName, DataTypes.Double);
+                        tableData.addColumn(colName, DataType.DOUBLE);
                     } else if (colFormat.equals("B")) //Boolean
                     {
-                        tableData.addColumn(colName, DataTypes.Boolean);
+                        tableData.addColumn(colName, DataType.BOOLEAN);
                     } else if (colFormat.substring(0, 1).equals("{")) {    //Date
                         int eidx = colFormat.indexOf("}");
                         String formatStr = colFormat.substring(1, eidx);
-                        tableData.addColumn(new DataColumn(colName, DataTypes.Date, formatStr));
+                        tableData.addColumn(new DataColumn(colName, DataType.DATE, formatStr));
                         hasTimeCol = true;
                         if (tcolName == null) {
                             tcolName = titleArray[idx];
                         }
                     } else {
-                        tableData.addColumn(colName, DataTypes.String);
+                        tableData.addColumn(colName, DataType.STRING);
                     }
                     idx += 1;
                     if (idx == colNum) {
@@ -139,7 +140,7 @@ public class TableUtil {
 
             if (idx < colNum) {
                 for (int i = idx; i < colNum; i++) {
-                    tableData.addColumn(titleArray[i], DataTypes.String);
+                    tableData.addColumn(titleArray[i], DataType.STRING);
                 }
             }
 
@@ -289,29 +290,29 @@ public class TableUtil {
                     String colName = titleArray.get(idx).trim();
                     if (colFormat.equals("C") || colFormat.equals("s")) //String
                     {
-                        tableData.addColumn(colName, DataTypes.String);
+                        tableData.addColumn(colName, DataType.STRING);
                     } else if (colFormat.equals("i")) //Integer
                     {
-                        tableData.addColumn(colName, DataTypes.Integer);
+                        tableData.addColumn(colName, DataType.INT);
                     } else if (colFormat.equals("f")) //Float
                     {
-                        tableData.addColumn(colName, DataTypes.Float);
+                        tableData.addColumn(colName, DataType.FLOAT);
                     } else if (colFormat.equals("d")) //Double
                     {
-                        tableData.addColumn(colName, DataTypes.Double);
+                        tableData.addColumn(colName, DataType.DOUBLE);
                     } else if (colFormat.equals("B")) //Boolean
                     {
-                        tableData.addColumn(colName, DataTypes.Boolean);
+                        tableData.addColumn(colName, DataType.BOOLEAN);
                     } else if (colFormat.substring(0, 1).equals("{")) {    //Date
                         int eidx = colFormat.indexOf("}");
                         String formatStr = colFormat.substring(1, eidx);
-                        tableData.addColumn(new DataColumn(colName, DataTypes.Date, formatStr));
+                        tableData.addColumn(new DataColumn(colName, DataType.DATE, formatStr));
                         hasTimeCol = true;
                         if (tcolName == null) {
                             tcolName = titleArray.get(idx);
                         }
                     } else {
-                        tableData.addColumn(colName, DataTypes.String);
+                        tableData.addColumn(colName, DataType.STRING);
                     }
                     idx += 1;
                     if (idx == colNum) {
@@ -326,7 +327,7 @@ public class TableUtil {
 
             if (idx < colNum) {
                 for (int i = idx; i < colNum; i++) {
-                    tableData.addColumn(titleArray.get(i), DataTypes.String);
+                    tableData.addColumn(titleArray.get(i), DataType.STRING);
                 }
             }
 
@@ -415,7 +416,7 @@ public class TableUtil {
      * @param dt Data type string
      * @return Data type
      */
-    public static DataTypes toDataTypes(String dt) {
+    public static DataType toDataTypes(String dt) {
         if (dt.contains("%")) {
             dt = dt.split("%")[1];
         }
@@ -423,21 +424,21 @@ public class TableUtil {
             case "c":
             case "s":
             case "string":
-                return DataTypes.String;
+                return DataType.STRING;
             case "i":
             case "int":
-                return DataTypes.Integer;
+                return DataType.INT;
             case "f":
             case "float":
-                return DataTypes.Float;
+                return DataType.FLOAT;
             case "d":
             case "double":
-                return DataTypes.Double;
+                return DataType.DOUBLE;
             default:
                 if (dt.substring(0, 1).equals("{")) {    //Date
-                    return DataTypes.Date;
+                    return DataType.DATE;
                 } else {
-                    return DataTypes.String;
+                    return DataType.STRING;
                 }
         }
     }
@@ -466,9 +467,9 @@ public class TableUtil {
      */
     public static DataTable ave_Month(List<Array> data, List<String> colNames, List<Date> time) throws Exception {
         DataTable rTable = new DataTable();
-        rTable.addColumn("YearMonth", DataTypes.String);
+        rTable.addColumn("YearMonth", DataType.STRING);
         for (String col : colNames) {
-            rTable.addColumn(col, DataTypes.Double);
+            rTable.addColumn(col, DataType.DOUBLE);
         }
 
         List<String> yms = getYearMonths(time);

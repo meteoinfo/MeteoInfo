@@ -31,11 +31,11 @@ def getplotdata(data):
             for d in data:
                 v = miutil.date2num(d)
                 dd.append(v)
-            return minum.array(dd).array
+            return minum.array(dd)._array
         else:
-            return minum.array(data).array
+            return minum.array(data)._array
     else:
-        return minum.array([data]).array
+        return minum.array([data])._array
         
 def getfont(fontdic, **kwargs):
     basefont = kwargs.pop('basefont', None)

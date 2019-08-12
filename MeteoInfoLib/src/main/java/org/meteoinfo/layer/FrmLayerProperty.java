@@ -6,7 +6,7 @@ package org.meteoinfo.layer;
 
 import org.meteoinfo.global.GenericFileFilter;
 import org.meteoinfo.global.MIMath;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.FrmLegendBreaks;
 import org.meteoinfo.legend.LegendManage;
@@ -1056,7 +1056,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                     this.jComboBox_Field.setEnabled(true);
                     this.jComboBox_Field.removeAllItems();
                     for (int i = 0; i < aLayer.getFieldNumber(); i++) {
-                        if (MIMath.isNumeric(aLayer.getField(i))) {
+                        if (aLayer.getField(i).isNumeric()) {
                             this.jComboBox_Field.addItem(aLayer.getFieldName(i));
                         }
                     }
@@ -1119,8 +1119,8 @@ public class FrmLayerProperty extends javax.swing.JDialog {
 
                     VectorLayer aLayer = (VectorLayer) _mapLayer;
                     boolean isDateField = false;
-                    DataTypes colType = aLayer.getAttributeTable().getTable().getColumns().get(fieldName).getDataType();
-                    if (colType == DataTypes.Date) {
+                    DataType colType = aLayer.getAttributeTable().getTable().getColumns().get(fieldName).getDataType();
+                    if (colType == DataType.DATE) {
                         isDateField = true;
                     }
 
@@ -1353,7 +1353,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                         DefaultListModel listModel = new DefaultListModel();
                         boolean isCheck;
                         for (int i = 0; i < aLayer.getFieldNumber(); i++) {
-                            if (MIMath.isNumeric(aLayer.getField(i))) {
+                            if (aLayer.getField(i).isNumeric()) {
                                 String fn = aLayer.getFieldName(i);
                                 isCheck = false;
                                 if (aLayer.getChartSet().getFieldNames().contains(fn)) {

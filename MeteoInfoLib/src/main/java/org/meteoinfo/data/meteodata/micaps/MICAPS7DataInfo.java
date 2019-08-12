@@ -28,8 +28,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.data.meteodata.Dimension;
-import org.meteoinfo.data.meteodata.DimensionType;
+import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.TrajDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
@@ -37,7 +37,7 @@ import org.meteoinfo.data.meteodata.hysplit.TrajectoryInfo;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.global.util.DateUtil;
-import org.meteoinfo.data.DataTypes;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.LegendManage;
@@ -46,8 +46,8 @@ import org.meteoinfo.legend.LegendType;
 import org.meteoinfo.shape.PointShape;
 import org.meteoinfo.shape.PolylineShape;
 import org.meteoinfo.shape.ShapeTypes;
-import ucar.ma2.Array;
-import ucar.nc2.Attribute;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.data.meteodata.Attribute;
 
 /**
  *
@@ -282,14 +282,14 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
     @Override
     public VectorLayer createTrajLineLayer() {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
-        aLayer.editAddField(new Field("TrajIndex", DataTypes.Integer));
-        aLayer.editAddField(new Field("TrajName", DataTypes.String));
-        aLayer.editAddField(new Field("TrajID", DataTypes.String));
-        aLayer.editAddField(new Field("TrajCenter", DataTypes.String));
-        aLayer.editAddField(new Field("StartDate", DataTypes.String));
-        aLayer.editAddField(new Field("StartLon", DataTypes.Double));
-        aLayer.editAddField(new Field("StartLat", DataTypes.Double));
-        aLayer.editAddField(new Field("StartHeight", DataTypes.Double));
+        aLayer.editAddField(new Field("TrajIndex", DataType.INT));
+        aLayer.editAddField(new Field("TrajName", DataType.STRING));
+        aLayer.editAddField(new Field("TrajID", DataType.STRING));
+        aLayer.editAddField(new Field("TrajCenter", DataType.STRING));
+        aLayer.editAddField(new Field("StartDate", DataType.STRING));
+        aLayer.editAddField(new Field("StartLon", DataType.DOUBLE));
+        aLayer.editAddField(new Field("StartLat", DataType.DOUBLE));
+        aLayer.editAddField(new Field("StartHeight", DataType.DOUBLE));
 
         int TrajNum = 0;
         for (int t = 0; t < FileNames.size(); t++) {
@@ -375,16 +375,16 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
     @Override
     public VectorLayer createTrajPointLayer() {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        aLayer.editAddField(new Field("TrajID", DataTypes.Integer));
-        aLayer.editAddField(new Field("Date", DataTypes.String));
-        aLayer.editAddField(new Field("PreHour", DataTypes.Integer));
-        aLayer.editAddField(new Field("Lon", DataTypes.Double));
-        aLayer.editAddField(new Field("Lat", DataTypes.Double));
-        aLayer.editAddField(new Field("WindSpeed", DataTypes.Double));
-        aLayer.editAddField(new Field("Radius_W7", DataTypes.Double));
-        aLayer.editAddField(new Field("Radius_W10", DataTypes.Double));
-        aLayer.editAddField(new Field("MoveDir", DataTypes.Double));
-        aLayer.editAddField(new Field("MoveSpeed", DataTypes.Double));
+        aLayer.editAddField(new Field("TrajID", DataType.INT));
+        aLayer.editAddField(new Field("Date", DataType.STRING));
+        aLayer.editAddField(new Field("PreHour", DataType.INT));
+        aLayer.editAddField(new Field("Lon", DataType.DOUBLE));
+        aLayer.editAddField(new Field("Lat", DataType.DOUBLE));
+        aLayer.editAddField(new Field("WindSpeed", DataType.DOUBLE));
+        aLayer.editAddField(new Field("Radius_W7", DataType.DOUBLE));
+        aLayer.editAddField(new Field("Radius_W10", DataType.DOUBLE));
+        aLayer.editAddField(new Field("MoveDir", DataType.DOUBLE));
+        aLayer.editAddField(new Field("MoveSpeed", DataType.DOUBLE));
 
         int TrajNum = 0;
         for (int t = 0; t < FileNames.size(); t++) {
@@ -485,11 +485,11 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
     @Override
     public VectorLayer createTrajStartPointLayer() {
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        aLayer.editAddField(new Field("TrajID", DataTypes.Integer));
-        aLayer.editAddField(new Field("StartDate", DataTypes.String));
-        aLayer.editAddField(new Field("StartLon", DataTypes.Double));
-        aLayer.editAddField(new Field("StartLat", DataTypes.Double));
-        aLayer.editAddField(new Field("StartHeight", DataTypes.Double));
+        aLayer.editAddField(new Field("TrajID", DataType.INT));
+        aLayer.editAddField(new Field("StartDate", DataType.STRING));
+        aLayer.editAddField(new Field("StartLon", DataType.DOUBLE));
+        aLayer.editAddField(new Field("StartLat", DataType.DOUBLE));
+        aLayer.editAddField(new Field("StartHeight", DataType.DOUBLE));
 
         int TrajNum = 0;
         for (int t = 0; t < FileNames.size(); t++) {

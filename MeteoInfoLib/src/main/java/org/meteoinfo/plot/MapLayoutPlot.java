@@ -76,6 +76,9 @@ public class MapLayoutPlot extends javax.swing.JFrame {
      * Load project file
      *
      * @param aFile
+     * @throws javax.xml.parsers.ParserConfigurationException
+     * @throws org.xml.sax.SAXException
+     * @throws java.io.IOException
      */
     public void loadProjectFile(String aFile) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -87,13 +90,14 @@ public class MapLayoutPlot extends javax.swing.JFrame {
         Properties property = System.getProperties();
         String path = System.getProperty("user.dir");
         property.setProperty("user.dir", new File(aFile).getAbsolutePath());
+        String pPath = new File(aFile).getParent();
 
         //Load map frames content
-        List<MapFrame> mfs = new ArrayList<MapFrame>();
+        List<MapFrame> mfs = new ArrayList<>();
         Element mapFrames = (Element) root.getElementsByTagName("MapFrames").item(0);
         if (mapFrames == null) {
             MapFrame mf = new MapFrame();
-            mf.importProjectXML(root);
+            mf.importProjectXML(pPath, root);
             mf.setActive(true);
             mfs.add(mf);
         } else {
@@ -101,7 +105,7 @@ public class MapLayoutPlot extends javax.swing.JFrame {
             for (int i = 0; i < mfNodes.getLength(); i++) {
                 Node mapFrame = mfNodes.item(i);
                 MapFrame mf = new MapFrame();
-                mf.importProjectXML((Element) mapFrame);
+                mf.importProjectXML(pPath, (Element) mapFrame);
                 mfs.add(mf);
             }
         }

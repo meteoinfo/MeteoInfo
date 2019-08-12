@@ -125,6 +125,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9596,23 +9598,30 @@ public class MapView extends JPanel implements IWebMapPanel {
     /**
      * Load vector layer
      *
+     * @param pPath Project file parent path
      * @param aVLayer Vector layer XML node
      * @return Vector layer
      */
-    public VectorLayer loadVectorLayer(Node aVLayer) {
-        String aFile = aVLayer.getAttributes().getNamedItem("FileName").getNodeValue();
-        File lFile = new File(aFile);
-        String curDir = System.getProperty("user.dir");
-        if (new File(curDir).isFile()) {
-            System.setProperty("user.dir", new File(curDir).getParent());
+    public VectorLayer loadVectorLayer(String pPath, Node aVLayer) {
+        String fn = aVLayer.getAttributes().getNamedItem("FileName").getNodeValue();
+        File lFile = new File(fn);
+        if (!lFile.isAbsolute()) {
+            Path path = Paths.get(pPath, fn);
+            fn = path.toString();
+        } else {
+            fn = lFile.getAbsolutePath();
         }
-        aFile = lFile.getAbsolutePath();
-        System.out.println(aFile);
+//        String curDir = System.getProperty("user.dir");
+//        if (new File(curDir).isFile()) {
+//            System.setProperty("user.dir", new File(curDir).getParent());
+//        }
+        
+        System.out.println(fn);
         VectorLayer aLayer = null;
 
-        if (new File(aFile).isFile()) {
+        if (new File(fn).isFile()) {
             try {
-                aLayer = (VectorLayer) MapDataManage.loadLayer(aFile);
+                aLayer = (VectorLayer) MapDataManage.loadLayer(fn);
             } catch (IOException ex) {
                 Logger.getLogger(MapView.class.getName()).log(Level.SEVERE, null, ex);
             } catch (Exception ex) {

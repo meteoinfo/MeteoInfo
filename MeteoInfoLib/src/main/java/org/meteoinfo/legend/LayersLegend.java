@@ -1771,9 +1771,10 @@ public class LayersLegend extends JPanel {
         Properties property = System.getProperties();
         String path = System.getProperty("user.dir");
         property.setProperty("user.dir", new File(fileName).getAbsolutePath());
+        String pPath = new File(fileName).getParent();
 
         this.getActiveMapFrame().getMapView().setLockViewUpdate(true);
-        this.importProjectXML(root);
+        this.importProjectXML(pPath, root);
         this.getActiveMapFrame().getMapView().setLockViewUpdate(false);
         this.paintGraphics();
         this.getActiveMapFrame().getMapView().paintLayers();
@@ -1784,14 +1785,15 @@ public class LayersLegend extends JPanel {
     /**
      * Import project XML content
      *
+     * @param pPath Project file parent path
      * @param parent Parent XML element
      */
-    public void importProjectXML(Element parent) {
+    public void importProjectXML(String pPath, Element parent) {
         _mapFrames.clear();
         Element mapFrames = (Element) parent.getElementsByTagName("MapFrames").item(0);
         if (mapFrames == null) {
             MapFrame mf = new MapFrame(this);
-            mf.importProjectXML(parent);
+            mf.importProjectXML(pPath, parent);
             mf.addLayersUpdatedListener(new ILayersUpdatedListener() {
                 @Override
                 public void layersUpdatedEvent(LayersUpdatedEvent event) {
@@ -1805,7 +1807,7 @@ public class LayersLegend extends JPanel {
             for (int i = 0; i < mfNodes.getLength(); i++) {
                 Node mapFrame = mfNodes.item(i);
                 MapFrame mf = new MapFrame(this);
-                mf.importProjectXML((Element) mapFrame);
+                mf.importProjectXML(pPath, (Element) mapFrame);
                 mf.addLayersUpdatedListener(new ILayersUpdatedListener() {
                     @Override
                     public void layersUpdatedEvent(LayersUpdatedEvent event) {
@@ -1817,6 +1819,7 @@ public class LayersLegend extends JPanel {
             }
         }
     }
+    
     // </editor-fold>
     // </editor-fold>
 }

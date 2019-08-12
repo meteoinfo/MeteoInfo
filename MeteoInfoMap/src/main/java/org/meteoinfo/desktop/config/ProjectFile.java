@@ -167,6 +167,7 @@ public class ProjectFile {
         Properties property = System.getProperties();
         String path = System.getProperty("user.dir");
         property.setProperty("user.dir", new File(aFile).getAbsolutePath());
+        String pPath = new File(aFile).getParent();
 
         //Load elements
         //_mainForm.getMapDocument().getActiveMapFrame().getMapView().setLockViewUpdate(true);
@@ -174,7 +175,7 @@ public class ProjectFile {
         mapView.setLockViewUpdate(true);
         //LoadLanguageElement(root);         
         //Load map frames content
-        _mainForm.getMapDocument().importProjectXML(root);
+        _mainForm.getMapDocument().importProjectXML(pPath, root);
         _mainForm.getMapDocument().getMapLayout().setMapFrames(_mainForm.getMapDocument().getMapFrames());
         //Load MapLayout content
         _mainForm.getMapDocument().getMapLayout().importProjectXML(root);

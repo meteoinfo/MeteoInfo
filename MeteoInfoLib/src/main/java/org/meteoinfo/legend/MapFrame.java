@@ -1682,9 +1682,10 @@ public class MapFrame extends ItemNode {
     /**
      * Import project XML content
      *
+     * @param pPath Projection file parent path
      * @param parent Parent XML element
      */
-    public void importProjectXML(Element parent) {
+    public void importProjectXML(String pPath, Element parent) {
         this.getNodes().clear();
         this.getMapView().removeAllLayers();
 
@@ -1731,13 +1732,13 @@ public class MapFrame extends ItemNode {
         _mapView.loadGridLineElement(parent);
         _mapView.loadMaskOutElement(parent);
         _mapView.loadProjectionElement(parent);
-        loadGroupLayer(parent);
+        loadGroupLayer(pPath, parent);
         _mapView.loadGraphics(parent);
         _mapView.loadExtentsElement(parent);
         _mapView.setLockViewUpdate(false);
     }
-
-    private void loadGroupLayer(Element parent) {
+  
+    private void loadGroupLayer(String pPath, Element parent) {
         Node theNode;
         if (parent.getElementsByTagName("GroupLayer").getLength() > 0) {
             theNode = parent.getElementsByTagName("GroupLayer").item(0);
@@ -1747,14 +1748,14 @@ public class MapFrame extends ItemNode {
         for (int i = 0; i < theNode.getChildNodes().getLength(); i++) {
             Node aGL = theNode.getChildNodes().item(i);
             if ("Group".equals(aGL.getNodeName())) {
-                loadGroup(aGL);
+                loadGroup(pPath, aGL);
             } else if ("Layer".equals(aGL.getNodeName())) {
-                loadLayer(aGL, -1);
+                loadLayer(pPath, aGL, -1);
             }
         }
     }
 
-    private void loadGroup(Node aGroup) {
+    private void loadGroup(String pPath, Node aGroup) {
         GroupNode aGN = new GroupNode(aGroup.getAttributes().getNamedItem("GroupName").getNodeValue());
         try {
             boolean expanded = Boolean.parseBoolean(aGroup.getAttributes().getNamedItem("Expanded").getNodeValue());
@@ -1769,19 +1770,19 @@ public class MapFrame extends ItemNode {
             NodeList layerNodes = ((Element) aGroup).getElementsByTagName("Layer");
             for (int i = 0; i < layerNodes.getLength(); i++) {
                 Node aLayerNode = layerNodes.item(i);
-                loadLayer(aLayerNode, aGN.getGroupHandle());
+                loadLayer(pPath, aLayerNode, aGN.getGroupHandle());
             }
             aGN.updateCheckStatus();
         }
     }
 
-    private void loadLayer(Node aLayer, int groupHnd) {
+    private void loadLayer(String pPath, Node aLayer, int groupHnd) {
         try {
             LayerTypes aLayerType = LayerTypes.valueOf(aLayer.getAttributes().getNamedItem("LayerType").getNodeValue());
 
             switch (aLayerType) {
                 case VectorLayer:
-                    VectorLayer aVLayer = _mapView.loadVectorLayer(aLayer);
+                    VectorLayer aVLayer = _mapView.loadVectorLayer(pPath, aLayer);
                     if (aVLayer != null) {
                         addLayer(aVLayer, groupHnd);
                     }

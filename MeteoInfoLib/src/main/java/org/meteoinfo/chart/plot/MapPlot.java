@@ -1288,6 +1288,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         File file = new File(fn);
         String userDir = System.getProperty("user.dir");
         System.setProperty("user.dir", file.getParent());
+        String pPath = file.getParent();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(new File(fn));
@@ -1296,11 +1297,11 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
 
         Element mapFrames = (Element) root.getElementsByTagName("MapFrames").item(0);
         if (mapFrames == null) {
-            this.mapFrame.importProjectXML(root);
+            this.mapFrame.importProjectXML(pPath, root);
         } else {
             NodeList mfNodes = mapFrames.getElementsByTagName("MapFrame");
             Node mfNode = mfNodes.item(mfidx);
-            this.mapFrame.importProjectXML((Element) mfNode);
+            this.mapFrame.importProjectXML(pPath, (Element) mfNode);
         }
         this.setDrawExtent(this.mapView.getViewExtent());
         this.setExtent(this.mapView.getViewExtent());

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.meteothink</groupId>
         <artifactId>MeteoInfo</artifactId>
-        <version>2.0-SNAPSHOT</version>
+        <version>1.9-SNAPSHOT</version>
     </parent>
     <artifactId>MeteoInfoLab</artifactId>
     <packaging>jar</packaging>

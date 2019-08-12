@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.MIMath;
-import ucar.ma2.Array;
+import org.meteoinfo.ndarray.Array;
 
 /**
  *

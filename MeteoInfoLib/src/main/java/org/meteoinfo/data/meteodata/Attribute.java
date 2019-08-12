@@ -6,6 +6,7 @@
 package org.meteoinfo.data.meteodata;
 
 import java.nio.ByteBuffer;
+import java.util.Formatter;
 import java.util.List;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.ArrayChar;
@@ -36,9 +37,10 @@ public class Attribute {
         }
         this.name = name;
     }
-    
+
     /**
      * Constructor
+     *
      * @param name Name of attribute
      * @param values Values of attribute
      */
@@ -152,7 +154,7 @@ public class Attribute {
         this(name);
         setStringValue(val);
     }
-    
+
     /**
      * Get short name
      *
@@ -187,6 +189,15 @@ public class Attribute {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Get length
+     *
+     * @return Length
+     */
+    public int getLength() {
+        return this.nelems;
     }
 
     /**
@@ -275,12 +286,27 @@ public class Attribute {
         return getNumericValue(index);
     }
 
+    /**
+     * The value is String or not
+     *
+     * @return Boolean
+     */
     public boolean isString() {
         return (this.dataType == DataType.STRING) && (null != getStringValue());
     }
 
     /**
+     * The value is Unsigned or not
+     *
+     * @return Boolean
+     */
+    public boolean isUnsigned() {
+        return (this.isUnsigned) || ((this.values != null) && (this.values.isUnsigned()));
+    }
+
+    /**
      * Get numeric value
+     *
      * @return Numeric value
      */
     public Number getNumericValue() {
@@ -289,6 +315,7 @@ public class Attribute {
 
     /**
      * Get numeric value
+     *
      * @param index Index
      * @return Numeric value
      */
@@ -382,5 +409,60 @@ public class Attribute {
         this.values = arr;
         this.nelems = (int) arr.getSize();
         this.dataType = DataType.getType(arr.getElementType());
+    }
+
+    protected void writeCDL(Formatter f) {
+        f.format("%s", new Object[]{getShortName()});
+        if (isString()) {
+            f.format(" = ", new Object[0]);
+            for (int i = 0; i < getLength(); i++) {
+                if (i != 0) {
+                    f.format(", ", new Object[0]);
+                }
+                String val = getStringValue(i);
+                if (val != null) {
+                    f.format("\"%s\"", new Object[]{val});
+                }
+            }
+        } else {
+            f.format(" = ", new Object[0]);
+            for (int i = 0; i < getLength(); i++) {
+                if (i != 0) {
+                    f.format(", ", new Object[0]);
+                }
+                f.format("%s", new Object[]{getNumericValue(i)});
+                if (this.dataType == DataType.FLOAT) {
+                    f.format("f", new Object[0]);
+                } else if (this.dataType == DataType.SHORT) {
+                    if (isUnsigned()) {
+                        f.format("US", new Object[0]);
+                    } else {
+                        f.format("S", new Object[0]);
+                    }
+                } else if (this.dataType == DataType.BYTE) {
+                    if (isUnsigned()) {
+                        f.format("UB", new Object[0]);
+                    } else {
+                        f.format("B", new Object[0]);
+                    }
+                } else if (this.dataType == DataType.LONG) {
+                    if (isUnsigned()) {
+                        f.format("UL", new Object[0]);
+                    } else {
+                        f.format("L", new Object[0]);
+                    }
+                } else if ((this.dataType == DataType.INT)
+                        && (isUnsigned())) {
+                    f.format("U", new Object[0]);
+                }
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        Formatter f = new Formatter();
+        writeCDL(f);
+        return f.toString();
     }
 }

@@ -260,6 +260,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
             for (i = 0; i < pollutant_num; i++) {
                 br.read(aBytes);
                 vName = new String(aBytes);
+                vName = vName.trim();
                 Variable var = new Variable();
                 var.setName(vName);
                 var.setDataType(DataType.FLOAT);

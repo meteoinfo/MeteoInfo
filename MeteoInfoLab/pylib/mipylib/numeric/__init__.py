@@ -1,5 +1,5 @@
-import multiarray
-import dimarray
+from multiarray import NDArray
+from dimarray import DimArray
 import minum
 from .minum import *
 from . import linalg

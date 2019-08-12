@@ -6,7 +6,7 @@
 package org.meteoinfo.data;
 
 import java.util.List;
-import ucar.ma2.Array;
+import org.meteoinfo.ndarray.Array;
 
 /**
  *

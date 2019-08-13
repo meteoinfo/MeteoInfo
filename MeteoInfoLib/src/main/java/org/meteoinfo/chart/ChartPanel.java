@@ -1493,6 +1493,9 @@ public class ChartPanel extends JPanel {
             ImageWriteParam writeParam = writer.getDefaultWriteParam();
             ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
             IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+            if (metadata == null) {
+                metadata = writer.getDefaultImageMetadata(typeSpecifier, null);
+            }
             if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
                 continue;
             }
@@ -1543,6 +1546,32 @@ public class ChartPanel extends JPanel {
         paintGraphics(g);
 
         return aImage;
+    }
+    
+    /**
+     * Paint view image
+     *
+     * @param dpi Image resolution
+     * @return View image
+     */
+    public BufferedImage paintViewImage(int dpi) {
+        int w, h;
+        if (this.chartSize == null) {
+            w = this.getWidth();
+            h = this.getHeight();
+        } else {
+            w = this.chartSize.width;
+            h = this.chartSize.height;
+        }
+        double scaleFactor = dpi / 72.0;
+        BufferedImage image = new BufferedImage((int)(w * scaleFactor), (int)(h * scaleFactor), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = image.createGraphics();
+        AffineTransform at = g.getTransform();
+        at.scale(scaleFactor, scaleFactor);
+        g.setTransform(at);
+        paintGraphics(g, w, h);
+
+        return image;
     }
 
     /**

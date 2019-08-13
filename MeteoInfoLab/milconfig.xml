@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\sunphotometer">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\image">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
@@ -16,21 +14,27 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\qaqc"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\verification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\sunphotometer"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\bar_colors.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\two_yaxis.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\savefig_dpi_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\image\gif_animitor.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\bar_colors.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\two_yaxis.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\savefig_dpi_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\image\gif_animitor.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1376,805"/>
 </MeteoInfo>

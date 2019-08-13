@@ -19,9 +19,9 @@ import org.apache.commons.imaging.ImageFormat;
 import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.ImageWriteException;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.Index;
 
 /**
  *

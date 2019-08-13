@@ -116,14 +116,18 @@ def gifanimation(filename, repeat=0, delay=1000):
     encoder.start(filename)
     return encoder
 
-def gifaddframe(animation):
+def gifaddframe(animation, dpi=None):
     """
     Add a frame to an gif animation object
     
     :param animation: Gif animation object
+    :param dpi: (*int*) Image resolution
     """
     #chartpanel.paintGraphics()
-    animation.addFrame(chartpanel.paintViewImage())
+    if dpi is None:
+        animation.addFrame(chartpanel.paintViewImage())
+    else:
+        animation.addFrame(chartpanel.paintViewImage(dpi))
     
 def giffinish(animation):
     """

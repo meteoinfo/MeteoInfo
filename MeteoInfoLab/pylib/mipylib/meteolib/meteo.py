@@ -5,7 +5,7 @@
 # Note: Jython, some functions code revised from MetPy
 #-----------------------------------------------------
 
-from org.meteoinfo.math import ArrayMath, ArrayUtil
+from org.meteoinfo.math import ArrayUtil
 from org.meteoinfo.math.meteo import MeteoMath
 import mipylib.numeric as np
 from mipylib.numeric.multiarray import NDArray
@@ -29,7 +29,7 @@ def uv2ds(u, v):
     :returns: Wind direction and wind speed.
     '''
     if isinstance(u, NDArray):
-        r = ArrayMath.uv2ds(u.asarray(), v.asarray())
+        r = MeteoMath.uv2ds(u.asarray(), v.asarray())
         d = NDArray(r[0])
         s = NDArray(r[1])
         if isinstance(u, DimArray) and isinstance(v, DimArray):
@@ -37,7 +37,7 @@ def uv2ds(u, v):
             s = DimArray(s, u.dims, u.fill_value, u.proj)
         return d, s
     else:
-        r = ArrayMath.uv2ds(u, v)
+        r = MeteoMath.uv2ds(u, v)
         return r[0], r[1]
         
 def ds2uv(d, s):
@@ -50,7 +50,7 @@ def ds2uv(d, s):
     :returns: Wind U/V.
     '''
     if isinstance(d, NDArray):
-        r = ArrayMath.ds2uv(d.asarray(), s.asarray())
+        r = MeteoMath.ds2uv(d.asarray(), s.asarray())
         u = NDArray(r[0])
         v = NDArray(r[1])
         if isinstance(d, DimArray) and isinstance(s, DimArray):
@@ -58,7 +58,7 @@ def ds2uv(d, s):
             v = DimArray(v, d.dims, d.fill_value, d.proj)
         return u, v
     else:
-        r = ArrayMath.ds2uv(d, s)
+        r = MeteoMath.ds2uv(d, s)
         return r[0], r[1]
         
 def p2h(press):
@@ -70,7 +70,7 @@ def p2h(press):
     :returns: (*float*) Height - meter.
     """
     if isinstance(press, NDArray):
-        r = NDArray(ArrayMath.press2Height(press.asarray()))
+        r = NDArray(MeteoMath.press2Height(press.asarray()))
         if isinstance(press, DimArray):
             r = DimArray(r, press.dims, press.fill_value, press.proj)
         return r
@@ -100,7 +100,7 @@ def h2p(height):
     :returns: (*float*) Pressure - hPa.
     """
     if isinstance(height, NDArray):
-        r = NDArray(ArrayMath.height2Press(height.asarray()))
+        r = NDArray(MeteoMath.height2Press(height.asarray()))
         if isinstance(height, DimArray):
             r = DimArray(r, height.dims, height.fill_value, height.proj)
         return r
@@ -164,7 +164,7 @@ def tf2tc(tf):
         Celsius temperature - degree c
     """    
     if isinstance(tf, NDArray):
-        r = NDArray(ArrayMath.tf2tc(tf.asarray()))
+        r = NDArray(MeteoMath.tf2tc(tf.asarray()))
         if isinstance(tf, DimArray):
             r = DimArray(r, tf.dims, tf.fill_value, tf.proj)
         return r
@@ -182,7 +182,7 @@ def tc2tf(tc):
         Fahrenheit temperature - degree f
     """    
     if isinstance(tc, NDArray):
-        r = NDArray(ArrayMath.tc2tf(tc.asarray()))
+        r = NDArray(MeteoMath.tc2tf(tc.asarray()))
         if isinstance(tc, DimArray):
             r = DimArray(r, tc.dims, tc.fill_value, tc.proj)
         return r
@@ -208,7 +208,7 @@ def qair2rh(qair, temp, press=1013.25):
     else:
         p = press
     if isinstance(qair, NDArray):
-        r = NDArray(ArrayMath.qair2rh(qair.asarray(), temp.asarray(), p))
+        r = NDArray(MeteoMath.qair2rh(qair.asarray(), temp.asarray(), p))
         if isinstance(qair, DimArray):
             r = DimArray(r, qair.dims, qair.fill_value, qair.proj)
         return r

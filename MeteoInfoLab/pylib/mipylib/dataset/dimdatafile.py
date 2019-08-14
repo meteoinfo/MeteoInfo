@@ -5,8 +5,9 @@
 # Note: Jython
 #-----------------------------------------------------
 from org.meteoinfo.data.meteodata import MeteoDataType
-from org.meteoinfo.ndarray import DataType
-from org.meteoinfo.data.meteodata import Attribute
+from org.meteoinfo.data.meteodata.netcdf import NCUtil
+from ucar.ma2 import DataType as NCDataType
+from ucar.nc2 import Attribute as NCAttribute
 from dimvariable import DimVariable, TDimVariable
 from mipylib.numeric.dimarray import DimArray, PyGridData, PyStationData
 from mipylib.geolib.milayer import MILayer, MIXYListData
@@ -309,24 +310,24 @@ class DimDataFile(object):
                 attrvalue = Float(attrvalue)
         if isinstance(attrvalue, NDArray):
             attrvalue = attrvalue._array
-        return self.ncfile.addGroupAttribute(group, Attribute(attrname, attrvalue))
+        return self.ncfile.addGroupAttribute(group, NCAttribute(attrname, attrvalue))
  
     def __getdatatype(self, datatype):
         if isinstance(datatype, str):
             if datatype == 'string':
-                dt = DataType.STRING
+                dt = NCDataType.STRING
             elif datatype == 'int':
-                dt = DataType.INT
+                dt = NCDataType.INT
             elif datatype == 'long':
-                dt = DataType.LONG
+                dt = NCDataType.LONG
             elif datatype == 'float':
-                dt = DataType.FLOAT
+                dt = NCDataType.FLOAT
             elif datatype == 'double':
-                dt = DataType.DOUBLE
+                dt = NCDataType.DOUBLE
             elif datatype == 'char':
-                dt = DataType.CHAR
+                dt = NCDataType.CHAR
             else:
-                dt = DataType.STRING
+                dt = NCDataType.STRING
             return dt
         else:
             return datatype
@@ -359,7 +360,7 @@ class DimDataFile(object):
         :param origin: (*list*) Dimensions origin indices. None means all from 0.
         '''
         if isinstance(value, NDArray):
-            value = value._array
+            value = NCUtil.convertArray(value._array)
         if self.access == 'c':
             ncvariable = variable.ncvariable
         else:

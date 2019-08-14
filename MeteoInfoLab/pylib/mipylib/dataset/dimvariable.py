@@ -8,7 +8,7 @@ from org.meteoinfo.ndarray import Dimension, DimensionType, Range, Array, MAMath
 from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.global import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
-from org.meteoinfo.data.meteodata import Attribute
+from ucar.nc2 import Attribute as NCAttribute
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from mipylib.numeric.dimarray import DimArray
 from mipylib.numeric.multiarray import NDArray
@@ -378,7 +378,7 @@ class DimVariable(object):
         self.dims[idx].setReverse(reverse)
         
     def addattr(self, attrname, attrvalue):
-        self.ncvariable.addAttribute(Attribute(attrname, attrvalue))
+        self.ncvariable.addAttribute(NCAttribute(attrname, attrvalue))
 
 # Variable in multiple data files (DimDataFiles) - only time dimension is different.
 class TDimVariable():

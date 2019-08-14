@@ -461,7 +461,7 @@ def project(x, y, fromproj=KnownCoordinateSystems.geographic.world.WGS1984, topr
     if isinstance(y, (tuple, list)):
         y = array(y)
     if isinstance(x, NDArray):
-        outxy = ArrayUtil.reproject(x.asarray(), y.asarray(), fromproj, toproj)
+        outxy = Reproject.reproject(x.asarray(), y.asarray(), fromproj, toproj)
         return NDArray(outxy[0]), NDArray(outxy[1])
     else:
         inpt = PointD(x, y)
@@ -522,7 +522,7 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
         toproj = KnownCoordinateSystems.geographic.world.WGS1984
     
     if xp is None or yp is None:
-        pr = ArrayUtil.reproject(a.asarray(), x.aslist(), y.aslist(), fromproj, toproj)
+        pr = Reproject.reproject(a.asarray(), x.aslist(), y.aslist(), fromproj, toproj)
         r = pr[0]        
         return NDArray(r)
     
@@ -535,5 +535,5 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
     if isinstance(yp, (list, tuple)):
         yp = NDArray(yp)
     xp, yp = ArrayUtil.meshgrid(xp.asarray(), yp.asarray())
-    r = ArrayUtil.reproject(a.asarray(), x.aslist(), y.aslist(), xp, yp, fromproj, toproj, method)
+    r = Reproject.reproject(a.asarray(), x.aslist(), y.aslist(), xp, yp, fromproj, toproj, method)
     return NDArray(r)    

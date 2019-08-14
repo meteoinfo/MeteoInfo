@@ -1041,7 +1041,7 @@ class DimArray(NDArray):
             toproj = self.proj
         
         if x is None or y is None:
-            pr = ArrayUtil.reproject(self._array, xx, yy, self.proj, toproj)
+            pr = Reproject.reproject(self._array, xx, yy, self.proj, toproj)
             r = pr[0]
             x = pr[1]
             y = pr[2]
@@ -1064,7 +1064,7 @@ class DimArray(NDArray):
         if isinstance(y, (list, tuple)):
             y = NDArray(y)
         x, y = ArrayUtil.meshgrid(x.asarray(), y.asarray())
-        r = ArrayUtil.reproject(self._array, xx, yy, x, y, self.proj, toproj, method)
+        r = Reproject.reproject(self._array, xx, yy, x, y, self.proj, toproj, method)
         return NDArray(r)
             
     def join(self, b, dimidx):

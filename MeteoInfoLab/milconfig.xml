@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\image">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
+  <Path OpenPath="D:\Working\MIScript\cuace_dust\py\mm5">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
@@ -16,21 +11,28 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\sunphotometer"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython"/>
+    <RecentFolder Folder="D:\Working\MIScript"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\bar_colors.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\two_yaxis.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\savefig_dpi_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\image\gif_animitor.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\mm5tonc.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_cuace_3d.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_cuace_3d_lat_loop_angle.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\bar_colors.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\two_yaxis.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\savefig_dpi_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\image\gif_animitor.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\mm5tonc.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_cuace_3d.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_cuace_3d_lat_loop_angle.py"/>
     </RecentFiles>
   </File>
   <Font>

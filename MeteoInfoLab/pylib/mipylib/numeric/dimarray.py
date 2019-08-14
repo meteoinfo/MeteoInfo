@@ -1063,7 +1063,11 @@ class DimArray(NDArray):
             x = NDArray(x)
         if isinstance(y, (list, tuple)):
             y = NDArray(y)
-        x, y = ArrayUtil.meshgrid(x.asarray(), y.asarray())
+        if x.ndim == 1:
+            x, y = ArrayUtil.meshgrid(x.asarray(), y.asarray())
+        else:
+            x = x._array
+            y = y._array
         r = Reproject.reproject(self._array, xx, yy, x, y, self.proj, toproj, method)
         return NDArray(r)
             

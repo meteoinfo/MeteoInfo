@@ -41,7 +41,7 @@ public class NCUtil {
      * @return Netcdf data type
      */
     public static ucar.ma2.DataType convertDataType(DataType dataType) {
-        ucar.ma2.DataType ncDataType = ucar.ma2.DataType.valueOf(dataType.toString());
+        ucar.ma2.DataType ncDataType = ucar.ma2.DataType.getType(dataType.toString());
         
         return ncDataType;
     }

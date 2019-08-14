@@ -42,7 +42,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.XYListDataset;
@@ -53,6 +52,7 @@ import org.meteoinfo.layer.WorldFilePara;
 import org.meteoinfo.legend.ArrowBreak;
 import org.meteoinfo.legend.LegendType;
 import org.meteoinfo.legend.PointBreak;
+import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.ImageShape;
 import org.meteoinfo.shape.PointZ;
@@ -2172,7 +2172,7 @@ public class DrawMeteoData {
         Array windDirData;
         Array windSpeedData;
         if (isUV) {
-            Array[] dsData = ArrayMath.uv2ds(uData, vData);
+            Array[] dsData = MeteoMath.uv2ds(uData, vData);
             windDirData = dsData[0];
             windSpeedData = dsData[1];
         } else {
@@ -2267,7 +2267,7 @@ public class DrawMeteoData {
         Array windDirData;
         Array windSpeedData;
         if (isUV) {
-            Array[] dsData = ArrayMath.uv2ds(uData, vData);
+            Array[] dsData = MeteoMath.uv2ds(uData, vData);
             windDirData = dsData[0];
             windSpeedData = dsData[1];
         } else {

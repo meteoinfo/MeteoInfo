@@ -5,9 +5,11 @@
  */
 package org.meteoinfo.math.meteo;
 
+import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.IndexIterator;
 
 /**
  *
@@ -450,5 +452,284 @@ public class MeteoMath {
         //$OMP END PARALLEL DO
 
         return sea_level_pressure;
+    }
+    
+    /**
+     * Calculate fahrenheit temperature from celsius temperature
+     *
+     * @param tc Celsius temperature
+     * @return Fahrenheit temperature
+     */
+    public static Array tc2tf(Array tc) {
+        Array r = Array.factory(tc.getDataType(), tc.getShape());
+        for (int i = 0; i < r.getSize(); i++) {
+            r.setDouble(i, MeteoMath.tc2tf(tc.getDouble(i)));
+        }
+
+        return r;
+    }
+
+    /**
+     * Calculate celsius temperature from fahrenheit temperature
+     *
+     * @param tf Fahrenheit temperature
+     * @return Celsius temperature
+     */
+    public static Array tf2tc(Array tf) {
+        Array r = Array.factory(tf.getDataType(), tf.getShape());
+        for (int i = 0; i < r.getSize(); i++) {
+            r.setDouble(i, MeteoMath.tf2tc(tf.getDouble(i)));
+        }
+
+        return r;
+    }
+
+    /**
+     * Calculate relative humidity from specific humidity
+     *
+     * @param qair Specific humidity, dimensionless (e.g. kg/kg) ratio of water
+     * mass / total air mass
+     * @param temp Temperature - degree c
+     * @param press Pressure - hPa (mb)
+     * @return Relative humidity as percent (i.e. 80%)
+     */
+    public static Array qair2rh(Array qair, Array temp, double press) {
+        Array r = Array.factory(DataType.DOUBLE, qair.getShape());
+        double rh;
+        for (int i = 0; i < r.getSize(); i++) {
+            rh = MeteoMath.qair2rh(qair.getDouble(i), temp.getDouble(i), press);
+            r.setDouble(i, rh);
+        }
+
+        return r;
+    }
+
+    /**
+     * Calculate relative humidity
+     *
+     * @param qair Specific humidity, dimensionless (e.g. kg/kg) ratio of water
+     * mass / total air mass
+     * @param temp Temperature - degree c
+     * @param press Pressure - hPa (mb)
+     * @return Relative humidity as percent (i.e. 80%)
+     */
+    public static Array qair2rh(Array qair, Array temp, Array press) {
+        Array r = Array.factory(DataType.DOUBLE, qair.getShape());
+        double rh;
+        for (int i = 0; i < r.getSize(); i++) {
+            rh = MeteoMath.qair2rh(qair.getDouble(i), temp.getDouble(i), press.getDouble(i));
+            r.setDouble(i, rh);
+        }
+
+        return r;
+    }
+
+    /**
+     * Calculate height from pressure
+     *
+     * @param press Pressure - hPa
+     * @return Height - m
+     */
+    public static Array press2Height(Array press) {
+        Array r = Array.factory(DataType.DOUBLE, press.getShape());
+        double rh;
+        for (int i = 0; i < r.getSize(); i++) {
+            rh = MeteoMath.press2Height(press.getDouble(i));
+            r.setDouble(i, rh);
+        }
+
+        return r;
+    }
+
+    /**
+     * Calculate pressure from height
+     *
+     * @param height Height - m
+     * @return Pressure - hPa
+     */
+    public static Array height2Press(Array height) {
+        Array r = Array.factory(DataType.DOUBLE, height.getShape());
+        double rh;
+        for (int i = 0; i < r.getSize(); i++) {
+            rh = MeteoMath.height2Press(height.getDouble(i));
+            r.setDouble(i, rh);
+        }
+
+        return r;
+    }
+    
+    /**
+     * Get wind direction and wind speed from U/V
+     *
+     * @param u U component
+     * @param v V component
+     * @return Wind direction and wind speed
+     */
+    public static Array[] uv2ds(Array u, Array v) {
+        Array windSpeed = ArrayMath.sqrt(ArrayMath.add(ArrayMath.mul(u, u), ArrayMath.mul(v, v)));
+        Array windDir = Array.factory(windSpeed.getDataType(), windSpeed.getShape());
+        double ws, wd, U, V;
+        if (u.getIndexPrivate().isFastIterator() && v.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < windSpeed.getSize(); i++) {
+                U = u.getDouble(i);
+                V = v.getDouble(i);
+                if (Double.isNaN(U) || Double.isNaN(V)) {
+                    windDir.setDouble(i, Double.NaN);
+                    continue;
+                }
+                ws = windSpeed.getDouble(i);
+                if (ws == 0) {
+                    wd = 0;
+                } else {
+                    wd = Math.asin(U / ws) * 180 / Math.PI;
+                    if (U <= 0 && V < 0) {
+                        wd = 180.0 - wd;
+                    } else if (U > 0 && V < 0) {
+                        wd = 180.0 - wd;
+                    } else if (U < 0 && V > 0) {
+                        wd = 360.0 + wd;
+                    }
+                    wd += 180;
+                    if (wd >= 360) {
+                        wd -= 360;
+                    }
+                }
+                windDir.setDouble(i, wd);
+            }
+        } else {
+            IndexIterator iterU = u.getIndexIterator();
+            IndexIterator iterV = v.getIndexIterator();
+            IndexIterator iterWS = windSpeed.getIndexIterator();
+            IndexIterator iterWD = windDir.getIndexIterator();
+            while (iterU.hasNext()) {
+                U = iterU.getDoubleNext();
+                V = iterV.getDoubleNext();
+                if (Double.isNaN(U) || Double.isNaN(V)) {
+                    iterWD.setDoubleNext(Double.NaN);
+                    continue;
+                }
+                ws = iterWS.getDoubleNext();
+                if (ws == 0) {
+                    wd = 0;
+                } else {
+                    wd = Math.asin(U / ws) * 180 / Math.PI;
+                    if (U <= 0 && V < 0) {
+                        wd = 180.0 - wd;
+                    } else if (U > 0 && V < 0) {
+                        wd = 180.0 - wd;
+                    } else if (U < 0 && V > 0) {
+                        wd = 360.0 + wd;
+                    }
+                    wd += 180;
+                    if (wd >= 360) {
+                        wd -= 360;
+                    }
+                }
+                iterWD.setDoubleNext(wd);
+            }
+        }
+
+        return new Array[]{windDir, windSpeed};
+    }
+
+    /**
+     * Get wind direction and wind speed from U/V
+     *
+     * @param u U component
+     * @param v V component
+     * @return Wind direction and wind speed
+     */
+    public static double[] uv2ds(double u, double v) {
+        double ws = Math.sqrt(u * u + v * v);
+        double wd;
+        if (ws == 0) {
+            wd = 0;
+        } else {
+            wd = Math.asin(u / ws) * 180 / Math.PI;
+            if (u <= 0 && v < 0) {
+                wd = 180.0 - wd;
+            } else if (u > 0 && v < 0) {
+                wd = 180.0 - wd;
+            } else if (u < 0 && v > 0) {
+                wd = 360.0 + wd;
+            }
+            wd += 180;
+            if (wd >= 360) {
+                wd -= 360;
+            }
+        }
+
+        return new double[]{wd, ws};
+    }
+
+    /**
+     * Get wind U/V components from wind direction and speed
+     *
+     * @param windDir Wind direction
+     * @param windSpeed Wind speed
+     * @return Wind U/V components
+     */
+    public static Array[] ds2uv(Array windDir, Array windSpeed) {
+        Array U = Array.factory(DataType.DOUBLE, windDir.getShape());
+        Array V = Array.factory(DataType.DOUBLE, windDir.getShape());
+        if (windDir.getIndexPrivate().isFastIterator() && windSpeed.getIndexPrivate().isFastIterator()) {
+            double dir;
+            for (int i = 0; i < U.getSize(); i++) {
+                if (Double.isNaN(windDir.getDouble(i)) || Double.isNaN(windSpeed.getDouble(i))) {
+                    U.setDouble(i, Double.NaN);
+                    V.setDouble(i, Double.NaN);
+                }
+                dir = windDir.getDouble(i) + 180;
+                if (dir > 360) {
+                    dir = dir - 360;
+                }
+                dir = dir * Math.PI / 180;
+                U.setDouble(i, windSpeed.getDouble(i) * Math.sin(dir));
+                V.setDouble(i, windSpeed.getDouble(i) * Math.cos(dir));
+            }
+        } else {
+            IndexIterator iterU = U.getIndexIterator();
+            IndexIterator iterV = V.getIndexIterator();
+            IndexIterator iterWS = windSpeed.getIndexIterator();
+            IndexIterator iterWD = windDir.getIndexIterator();
+            double dir, wd, ws;
+            while (iterU.hasNext()) {
+                wd = iterWD.getDoubleNext();
+                ws = iterWS.getDoubleNext();
+                if (Double.isNaN(wd) || Double.isNaN(ws)) {
+                    iterU.setDoubleNext(Double.NaN);
+                    iterV.setDoubleNext(Double.NaN);
+                }
+                dir = wd + 180;
+                if (dir > 360) {
+                    dir = dir - 360;
+                }
+                dir = dir * Math.PI / 180;
+                iterU.setDoubleNext(ws * Math.sin(dir));
+                iterV.setDoubleNext(ws * Math.cos(dir));
+            }
+        }
+
+        return new Array[]{U, V};
+    }
+
+    /**
+     * Get wind U/V components from wind direction and speed
+     *
+     * @param windDir Wind direction
+     * @param windSpeed Wind speed
+     * @return Wind U/V components
+     */
+    public static double[] ds2uv(double windDir, double windSpeed) {
+        double dir;
+        dir = windDir + 180;
+        if (dir > 360) {
+            dir = dir - 360;
+        }
+        dir = dir * Math.PI / 180;
+        double u = windSpeed * Math.sin(dir);
+        double v = windSpeed * Math.cos(dir);
+
+        return new double[]{u, v};
     }
 }

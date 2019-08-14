@@ -3677,14 +3677,14 @@ public class ArrayMath {
      */
     public static double trapz(Array y, Array x, List<Range> ranges) throws InvalidRangeException {
         double r = 0;
-        double v;
+        double v, x1, x2;
         double v0 = Double.NEGATIVE_INFINITY;
         IndexIterator iterY = y.getRangeIterator(ranges);
         IndexIterator iterX = x.getIndexIterator();
-        iterY.next();
+        x1 = iterX.getDoubleNext();
         int n = 0;
         while (iterY.hasNext()) {
-            v = iterY.getDoubleCurrent();
+            v = iterY.getDoubleNext();
             if (Double.isNaN(v)) {
                 continue;
             }
@@ -3692,9 +3692,11 @@ public class ArrayMath {
                 v0 = v;
                 continue;
             }
-            r += (iterY.getDoubleNext() - iterX.getDoubleCurrent()) * (v + v0);
+            x2 = iterX.getDoubleNext();
+            r += (x2 - x1) * (v + v0);
             v0 = v;
             n += 1;
+            x1 = x2;
         }
         if (n >= 2) {
             r = r / 2;
@@ -6426,182 +6428,7 @@ public class ArrayMath {
                 break;
         }
         return r;
-    }
-
-    /**
-     * Get wind direction and wind speed from U/V
-     *
-     * @param u U component
-     * @param v V component
-     * @return Wind direction and wind speed
-     */
-    public static Array[] uv2ds(Array u, Array v) {
-        Array windSpeed = ArrayMath.sqrt(ArrayMath.add(ArrayMath.mul(u, u), ArrayMath.mul(v, v)));
-        Array windDir = Array.factory(windSpeed.getDataType(), windSpeed.getShape());
-        double ws, wd, U, V;
-        if (u.getIndexPrivate().isFastIterator() && v.getIndexPrivate().isFastIterator()) {
-            for (int i = 0; i < windSpeed.getSize(); i++) {
-                U = u.getDouble(i);
-                V = v.getDouble(i);
-                if (Double.isNaN(U) || Double.isNaN(V)) {
-                    windDir.setDouble(i, Double.NaN);
-                    continue;
-                }
-                ws = windSpeed.getDouble(i);
-                if (ws == 0) {
-                    wd = 0;
-                } else {
-                    wd = Math.asin(U / ws) * 180 / Math.PI;
-                    if (U <= 0 && V < 0) {
-                        wd = 180.0 - wd;
-                    } else if (U > 0 && V < 0) {
-                        wd = 180.0 - wd;
-                    } else if (U < 0 && V > 0) {
-                        wd = 360.0 + wd;
-                    }
-                    wd += 180;
-                    if (wd >= 360) {
-                        wd -= 360;
-                    }
-                }
-                windDir.setDouble(i, wd);
-            }
-        } else {
-            IndexIterator iterU = u.getIndexIterator();
-            IndexIterator iterV = v.getIndexIterator();
-            IndexIterator iterWS = windSpeed.getIndexIterator();
-            IndexIterator iterWD = windDir.getIndexIterator();
-            while (iterU.hasNext()) {
-                U = iterU.getDoubleNext();
-                V = iterV.getDoubleNext();
-                if (Double.isNaN(U) || Double.isNaN(V)) {
-                    iterWD.setDoubleNext(Double.NaN);
-                    continue;
-                }
-                ws = iterWS.getDoubleNext();
-                if (ws == 0) {
-                    wd = 0;
-                } else {
-                    wd = Math.asin(U / ws) * 180 / Math.PI;
-                    if (U <= 0 && V < 0) {
-                        wd = 180.0 - wd;
-                    } else if (U > 0 && V < 0) {
-                        wd = 180.0 - wd;
-                    } else if (U < 0 && V > 0) {
-                        wd = 360.0 + wd;
-                    }
-                    wd += 180;
-                    if (wd >= 360) {
-                        wd -= 360;
-                    }
-                }
-                iterWD.setDoubleNext(wd);
-            }
-        }
-
-        return new Array[]{windDir, windSpeed};
-    }
-
-    /**
-     * Get wind direction and wind speed from U/V
-     *
-     * @param u U component
-     * @param v V component
-     * @return Wind direction and wind speed
-     */
-    public static double[] uv2ds(double u, double v) {
-        double ws = Math.sqrt(u * u + v * v);
-        double wd;
-        if (ws == 0) {
-            wd = 0;
-        } else {
-            wd = Math.asin(u / ws) * 180 / Math.PI;
-            if (u <= 0 && v < 0) {
-                wd = 180.0 - wd;
-            } else if (u > 0 && v < 0) {
-                wd = 180.0 - wd;
-            } else if (u < 0 && v > 0) {
-                wd = 360.0 + wd;
-            }
-            wd += 180;
-            if (wd >= 360) {
-                wd -= 360;
-            }
-        }
-
-        return new double[]{wd, ws};
-    }
-
-    /**
-     * Get wind U/V components from wind direction and speed
-     *
-     * @param windDir Wind direction
-     * @param windSpeed Wind speed
-     * @return Wind U/V components
-     */
-    public static Array[] ds2uv(Array windDir, Array windSpeed) {
-        Array U = Array.factory(DataType.DOUBLE, windDir.getShape());
-        Array V = Array.factory(DataType.DOUBLE, windDir.getShape());
-        if (windDir.getIndexPrivate().isFastIterator() && windSpeed.getIndexPrivate().isFastIterator()) {
-            double dir;
-            for (int i = 0; i < U.getSize(); i++) {
-                if (Double.isNaN(windDir.getDouble(i)) || Double.isNaN(windSpeed.getDouble(i))) {
-                    U.setDouble(i, Double.NaN);
-                    V.setDouble(i, Double.NaN);
-                }
-                dir = windDir.getDouble(i) + 180;
-                if (dir > 360) {
-                    dir = dir - 360;
-                }
-                dir = dir * Math.PI / 180;
-                U.setDouble(i, windSpeed.getDouble(i) * Math.sin(dir));
-                V.setDouble(i, windSpeed.getDouble(i) * Math.cos(dir));
-            }
-        } else {
-            IndexIterator iterU = U.getIndexIterator();
-            IndexIterator iterV = V.getIndexIterator();
-            IndexIterator iterWS = windSpeed.getIndexIterator();
-            IndexIterator iterWD = windDir.getIndexIterator();
-            double dir, wd, ws;
-            while (iterU.hasNext()) {
-                wd = iterWD.getDoubleNext();
-                ws = iterWS.getDoubleNext();
-                if (Double.isNaN(wd) || Double.isNaN(ws)) {
-                    iterU.setDoubleNext(Double.NaN);
-                    iterV.setDoubleNext(Double.NaN);
-                }
-                dir = wd + 180;
-                if (dir > 360) {
-                    dir = dir - 360;
-                }
-                dir = dir * Math.PI / 180;
-                iterU.setDoubleNext(ws * Math.sin(dir));
-                iterV.setDoubleNext(ws * Math.cos(dir));
-            }
-        }
-
-        return new Array[]{U, V};
-    }
-
-    /**
-     * Get wind U/V components from wind direction and speed
-     *
-     * @param windDir Wind direction
-     * @param windSpeed Wind speed
-     * @return Wind U/V components
-     */
-    public static double[] ds2uv(double windDir, double windSpeed) {
-        double dir;
-        dir = windDir + 180;
-        if (dir > 360) {
-            dir = dir - 360;
-        }
-        dir = dir * Math.PI / 180;
-        double u = windSpeed * Math.sin(dir);
-        double v = windSpeed * Math.cos(dir);
-
-        return new double[]{u, v};
-    }
+    }    
 
     // </editor-fold>       
     // <editor-fold desc="Location">

@@ -46,6 +46,7 @@ import org.meteoinfo.legend.LineStyles;
 import org.meteoinfo.legend.PointBreak;
 import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.legend.PolylineBreak;
+import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.shape.ArcShape;
 import org.meteoinfo.shape.BarShape;
 import org.meteoinfo.shape.CapPolylineShape;
@@ -4137,7 +4138,7 @@ public class GraphicFactory {
         Array windDirData;
         Array windSpeedData;
         if (isUV) {
-            Array[] wwData = ArrayMath.uv2ds(udata, vdata);
+            Array[] wwData = MeteoMath.uv2ds(udata, vdata);
             windDirData = wwData[0];
             windSpeedData = wwData[1];
         } else {
@@ -4201,7 +4202,7 @@ public class GraphicFactory {
      * @return Arrow polygon graphic
      */
     public static Graphic createArrow(double x, double y, double dx, double dy, ArrowPolygonBreak ab) {
-        double[] r = ArrayMath.uv2ds(dx, dy);
+        double[] r = MeteoMath.uv2ds(dx, dy);
         double length = r[1];
         if (ab.isLengthIncludesHead()) {
             length = length - ab.getHeadLength();
@@ -4305,7 +4306,7 @@ public class GraphicFactory {
         Array windDirData;
         Array windSpeedData;
         if (isUV) {
-            Array[] wwData = ArrayMath.uv2ds(udata, vdata);
+            Array[] wwData = MeteoMath.uv2ds(udata, vdata);
             windDirData = wwData[0];
             windSpeedData = wwData[1];
         } else {

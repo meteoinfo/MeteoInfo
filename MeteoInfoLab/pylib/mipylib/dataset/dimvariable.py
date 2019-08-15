@@ -65,35 +65,12 @@ class DimVariable(object):
     def __repr__(self):
         return self.__str__()
         
-    def __getitem__(self, indices):
-        if isinstance(indices, slice) and self.ndim > 1:
-            k = indices
-            if k.start is None and k.stop is None and k.step is None:
-                inds = []
-                for i in range(self.ndim):
-                    inds.append(slice(None))
-                indices = tuple(inds)
-            
-        # if isinstance(indices, tuple):
-            # allnone = True
-            # for k in indices:
-                # if isinstance(k, slice):
-                    # if (not k.start is None) or (not k.stop is None) or (not k.step is None):
-                        # allnone = False
-                        # break
-                # else:
-                    # allnone = False
-                    # break
-            # if allnone:
-                # r = self.dataset.dataset.read(self.name)
-                # ArrayMath.missingToNaN(r, self.fill_value)
-                # return np.DimArray(r, self.dims, self.fill_value, self.proj)
-            
+    def __getitem__(self, indices):                    
         if indices is None:
             inds = []
             for i in range(self.ndim):
                 inds.append(slice(None))
-            indices = tuple(inds)
+            indices = tuple(inds)                   
                 
         if isinstance(indices, str):    #metadata
             rr = self.dataset.read(self.name)
@@ -106,6 +83,10 @@ class DimVariable(object):
             inds = []
             inds.append(indices)
             indices = inds
+            
+        if len(indices) < self.ndim:
+            for i in range(self.ndim - len(indices)):
+                indices.append(slice(None))
         
         if len(indices) != self.ndim:
             print 'indices must be ' + str(self.ndim) + ' dimensions!'

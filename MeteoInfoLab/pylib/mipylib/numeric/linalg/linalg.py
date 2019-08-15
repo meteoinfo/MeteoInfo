@@ -9,7 +9,7 @@
 from org.meteoinfo.math.linalg import LinalgUtil
 from org.meteoinfo.math.stats import StatsUtil
 
-from mipylib.numeric.multiarray import NDArray
+from ..core import NDArray
 
 __all__ = [
     'solve','cholesky','det','lu','qr', 'svd','eig','inv','lstsq'

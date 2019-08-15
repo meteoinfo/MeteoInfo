@@ -1,4 +1,4 @@
-import mipylib.numeric as np
+from ..core import numeric as np
 
 class GaussianKDE(object):
     """

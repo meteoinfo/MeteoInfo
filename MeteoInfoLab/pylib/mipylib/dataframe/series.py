@@ -10,9 +10,7 @@ import datetime
 from org.meteoinfo.data.dataframe import Series as MISeries
 from org.meteoinfo.ndarray import Range
 
-from mipylib.numeric.multiarray import NDArray
-from mipylib.numeric.dimarray import DimArray
-import mipylib.numeric.minum as minum
+import mipylib.numeric as np
 import mipylib.miutil as miutil
 from index import Index, DateTimeIndex
 import groupby
@@ -33,13 +31,13 @@ class Series(object):
         '''
         if series is None:
             if isinstance(data, (list, tuple)):
-                data = minum.array(data)
+                data = np.array(data)
             if index is None:
                 index = range(0, len(data))
             else:
                 if len(data) != len(index):
                     raise ValueError('Wrong length of index!')
-            if isinstance(index, (NDArray, DimArray)):
+            if isinstance(index, np.NDArray):
                 index = index.tolist()
             if isinstance(index, Index):
                 self._index = index
@@ -49,7 +47,7 @@ class Series(object):
             self._series = MISeries(data._array, self._index._index, name)
         else:
             self._series = series
-            self._data = NDArray(self._series.getData())
+            self._data = np.array(self._series.getData())
             self._index = Index.factory(index=self._series.getIndex())
         
     #---- index property
@@ -70,7 +68,7 @@ class Series(object):
             return self._data
         
     def set_values(self, value):
-        self._data = minum.array(value)
+        self._data = np.array(value)
         self._series.setData(self._data._array)
         
     values = property(get_values, set_values)
@@ -100,8 +98,8 @@ class Series(object):
             if key < 0 or key >= self.__len__():
                 raise KeyError(key)
             return self._series.getValue(key)
-        elif isinstance(key, (list, tuple, NDArray)):
-            if isinstance(key, NDArray):
+        elif isinstance(key, (list, tuple, np.NDArray)):
+            if isinstance(key, np.NDArray):
                 key = key.aslist()
             if isinstance(key[0], datetime.datetime):
                 key = miutil.jdatetime(key)
@@ -160,8 +158,8 @@ class Series(object):
             else:
                 raise KeyError(key)
             return ikey
-        elif isinstance(key, (list, tuple, NDArray, DimArray)) and isinstance(key[0], basestring):
-            if isinstance(key, (NDArray, DimArray)):
+        elif isinstance(key, (list, tuple, np.NDArray)) and isinstance(key[0], basestring):
+            if isinstance(key, np.NDArray):
                 key = key.asarray()            
             ikey = self.index.get_indices(key)
             if len(ikey) == 0:

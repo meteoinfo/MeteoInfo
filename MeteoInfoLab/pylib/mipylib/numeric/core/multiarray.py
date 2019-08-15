@@ -22,7 +22,7 @@ class NDArray(object):
 
     def __init__(self, array):
         if not isinstance(array, Array):
-            array = ArrayUtil.array(array)
+            array = ArrayUtil.array(array, None)
         self._array = array
         self.ndim = array.getRank()
         s = array.getShape()
@@ -70,17 +70,21 @@ class NDArray(object):
         return ArrayUtil.convertToString(self._array)
     
     def __getitem__(self, indices):
-        if isinstance(indices, slice):
-            k = indices
-            if k.start is None and k.stop is None and k.step is None:
-                r = Array.factory(self._array.getDataType(), self._array.getShape())
-                MAMath.copy(r, self._array)
-                return NDArray(r)   
+        # if isinstance(indices, slice):
+            # k = indices
+            # if k.start is None and k.stop is None and k.step is None:
+                # r = Array.factory(self._array.getDataType(), self._array.getShape())
+                # MAMath.copy(r, self._array)
+                # return NDArray(r)   
                 
         if not isinstance(indices, tuple):
             inds = []
-            inds.append(indices)
+            inds.append(indices)            
             indices = inds
+        
+        if len(indices) < self.ndim:
+            for i in range(self.ndim - len(indices)):
+                indices.append(slice(None))
             
         allint = True
         aindex = self._array.getIndex()
@@ -221,6 +225,10 @@ class NDArray(object):
             inds = []
             inds.append(indices)
             indices = inds
+            
+        if len(indices) < self.ndim:
+            for i in range(self.ndim - len(indices)):
+                indices.append(slice(None))
         
         if self.ndim == 0:
             self._array.setObject(0, value)

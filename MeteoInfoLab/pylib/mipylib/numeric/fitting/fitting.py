@@ -9,7 +9,7 @@
 from org.meteoinfo.math.fitting import FittingUtil
 from org.meteoinfo.math import ArrayMath, ArrayUtil
 
-from mipylib.numeric.multiarray import NDArray
+from ..core import NDArray
 
 __all__ = [
     'powerfit', 'expfit','polyfit','polyval','predict'

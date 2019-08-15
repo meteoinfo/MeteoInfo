@@ -9,12 +9,10 @@ from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from ucar.ma2 import DataType as NCDataType
 from ucar.nc2 import Attribute as NCAttribute
 from dimvariable import DimVariable, TDimVariable
-from mipylib.numeric.dimarray import DimArray, PyGridData, PyStationData
 from mipylib.geolib.milayer import MILayer, MIXYListData
-from mipylib.numeric.multiarray import NDArray
 from mipylib.dataframe.dataframe import DataFrame
 import mipylib.miutil as miutil
-import mipylib.numeric.minum as minum
+import mipylib.numeric as np
 
 import datetime
 
@@ -103,7 +101,7 @@ class DimDataFile(object):
         attr = self.dataset.getDataInfo().findGlobalAttribute(key)
         if attr is None:
             return None
-        v = NDArray(attr.getValues())
+        v = np.array(attr.getValues())
         return v
         
     def variables(self):
@@ -147,7 +145,7 @@ class DimDataFile(object):
         Read data table from dataset.
         '''
         dt = self.dataset.getDataInfo().readTable()
-        return minum.datatable(dt)
+        return np.datatable(dt)
         
     def griddata(self, varname='var', timeindex=0, levelindex=0, yindex=None, xindex=None):
         if self.dataset.isGridData():
@@ -308,7 +306,7 @@ class DimDataFile(object):
                     attrvalue[i] = Float(attrvalue[i])
             else:
                 attrvalue = Float(attrvalue)
-        if isinstance(attrvalue, NDArray):
+        if isinstance(attrvalue, np.NDArray):
             attrvalue = attrvalue._array
         return self.ncfile.addGroupAttribute(group, NCAttribute(attrname, attrvalue))
  
@@ -359,7 +357,7 @@ class DimDataFile(object):
         :param value: (*array_like*) Data array to be write.
         :param origin: (*list*) Dimensions origin indices. None means all from 0.
         '''
-        if isinstance(value, NDArray):
+        if isinstance(value, np.NDArray):
             value = NCUtil.convertArray(value._array)
         if self.access == 'c':
             ncvariable = variable.ncvariable
@@ -408,7 +406,7 @@ class DimDataFile(object):
         
         :param leveles: (*list*) Vertical levels.
         '''
-        if isinstance(levels, NDArray):
+        if isinstance(levels, np.NDArray):
             levels = levels.aslist()
         if levels[0] != 1:
             levels.insert(0, 1)

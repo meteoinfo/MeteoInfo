@@ -7,11 +7,10 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.stats import StatsUtil
-from org.meteoinfo.math import ArrayMath, ArrayUtil
-from ucar.ma2 import Array
+from org.meteoinfo.math import ArrayMath
+from org.meteoinfo.ndarray import Array
 
-from mipylib.numeric.multiarray import NDArray
-import mipylib.numeric.minum as minum
+from ..core import numeric as np
 
 __all__ = [
     'chi2_contingency','chisquare','covariance','cov','pearsonr','spearmanr','kendalltau',
@@ -31,9 +30,9 @@ def covariance(x, y, bias=False):
     returns: Covariance
     '''
     if isinstance(x, (list, tuple)):
-        x = NDArray(ArrayUtil.array(x))
+        x = np.array(x)
     if isinstance(y, (list, tuple)):
-        y = NDArray(ArrayUtil.array(y))
+        y = np.array(y)
     r = StatsUtil.covariance(x.asarray(), y.asarray(), bias)
     return r
     
@@ -53,22 +52,22 @@ def cov(m, y=None, rowvar=True, bias=False):
     :returns: Covariance.
     '''
     if isinstance(m, list):
-        m = NDArray(ArrayUtil.array(m))
+        m = np.array(m)
     if rowvar == True and m.ndim == 2:
         m = m.T
     if y is None:        
         r = StatsUtil.cov(m.asarray(), not bias)
         if isinstance(r, Array):
-            return NDArray(r)
+            return np.array(r)
         else:
             return r
     else:
         if isinstance(y, list):
-            y = NDArray(ArrayUtil.array(y))
+            y = np.array(y)
         if rowvar == True and y.ndim == 2:
             y = y.T
         r = StatsUtil.cov(m.asarray(), y.asarray(), not bias)
-        return NDArray(r)
+        return np.array(r)
         
 def pearsonr(x, y, axis=None):
     '''
@@ -94,15 +93,15 @@ def pearsonr(x, y, axis=None):
     :returns: Pearson’s correlation coefficient and 2-tailed p-value.
     '''
     if isinstance(x, list):
-        x = NDArray(ArrayUtil.array(x))
+        x = np.array(x)
     if isinstance(y, list):
-        y = NDArray(ArrayUtil.array(y))
+        y = np.array(y)
     if axis is None:
         r = StatsUtil.pearsonr(x.asarray(), y.asarray())
         return r[0], r[1]
     else:
         r = StatsUtil.pearsonr(x.array, y.array, axis)
-        return NDArray(r[0]), NDArray(r[1])
+        return np.array(r[0]), np.array(r[1])
     
 def kendalltau(x, y):
     '''
@@ -140,9 +139,9 @@ def kendalltau(x, y):
            pp. 327-336, 1994.
     '''
     if isinstance(x, list):
-        x = NDArray(ArrayUtil.array(x))
+        x = np.array(x)
     if isinstance(y, list):
-        y = NDArray(ArrayUtil.array(y))
+        y = np.array(y)
     r = StatsUtil.kendalltau(x.asarray(), y.asarray())
     return r
 
@@ -167,22 +166,22 @@ def spearmanr(m, y=None, axis=0):
     :returns: Spearman correlation matrix.
     '''
     if isinstance(m, list):
-        m = NDArray(ArrayUtil.array(m))
+        m = np.array(m)
     if axis == 1 and m.ndim == 2:
         m = m.T
     if y is None:        
         r = StatsUtil.spearmanr(m.asarray())
         if isinstance(r, Array):
-            return NDArray(r)
+            return np.array(r)
         else:
             return r
     else:
         if isinstance(y, list):
-            y = NDArray(ArrayUtil.array(y))
+            y = np.array(y)
         if axis == 1 and y.ndim == 2:
             y = y.T
         r = StatsUtil.spearmanr(m.asarray(), y.asarray())
-        return NDArray(r)
+        return np.array(r)
         
 def linregress(x, y, outvdn=False):
     '''
@@ -196,9 +195,9 @@ def linregress(x, y, outvdn=False):
         validate data number (remove NaN values).
     '''
     if isinstance(x, list):
-        x = NDArray(ArrayUtil.array(x))
+        x = np.array(x)
     if isinstance(y, list):
-        y = NDArray(ArrayUtil.array(y))
+        y = np.array(y)
     r = ArrayMath.lineRegress(x.asarray(), y.asarray())
     if outvdn:
         return r[0], r[1], r[2], r[3], r[4], r[5]
@@ -216,11 +215,11 @@ def mlinregress(y, x):
     :returns: Estimated regression parameters and residuals.
     '''
     if isinstance(x, list):
-        x = NDArray(ArrayUtil.array(x))
+        x = np.array(x)
     if isinstance(y, list):
-        y = NDArray(ArrayUtil.array(y))
+        y = np.array(y)
     r = StatsUtil.multipleLineRegress_OLS(y.asarray(), x.asarray())
-    return NDArray(r[0]), NDArray(r[1])
+    return np.array(r[0]), np.array(r[1])
     
 def percentile(a, q, axis=None):
     '''
@@ -235,12 +234,12 @@ def percentile(a, q, axis=None):
     :returns: (*float*) qth percentile value.
     '''
     if isinstance(a, list):
-        a = NDArray(ArrayUtil.array(x))
+        a = np.array(x)
     if axis is None:
         r = StatsUtil.percentile(a.asarray(), q)
     else:
         r = StatsUtil.percentile(a.asarray(), q, axis)
-        r = NDArray(r)
+        r = np.array(r)
     return r
     
 def ttest_1samp(a, popmean):
@@ -256,7 +255,7 @@ def ttest_1samp(a, popmean):
     :returns: t-statistic and p-value
     '''
     if isinstance(a, list):
-        a = NDArray(ArrayUtil.array(x))
+        a = np.array(x)
     r = StatsUtil.tTest(a.asarray(), popmean)
     return r[0], r[1]
     
@@ -273,9 +272,9 @@ def ttest_rel(a, b):
     :returns: t-statistic and p-value
     '''
     if isinstance(a, list):
-        a = NDArray(ArrayUtil.array(a))
+        a = np.array(a)
     if isinstance(b, list):
-        b = NDArray(ArrayUtil.array(b))
+        b = np.array(b)
     r = StatsUtil.pairedTTest(a.asarray(), b.asarray())
     return r[0], r[1]
     
@@ -293,9 +292,9 @@ def ttest_ind(a, b):
     :returns: t-statistic and p-value
     '''
     if isinstance(a, list):
-        a = NDArray(ArrayUtil.array(a))
+        a = np.array(a)
     if isinstance(b, list):
-        b = NDArray(ArrayUtil.array(b))
+        b = np.array(b)
     r = StatsUtil.tTest(a.asarray(), b.asarray())
     return r[0], r[1]
     
@@ -313,12 +312,12 @@ def chisquare(f_obs, f_exp=None):
     :returns: Chi-square statistic and p-value
     '''
     if isinstance(f_obs, list):
-        f_obs = NDArray(ArrayUtil.array(f_obs))
+        f_obs = np.array(f_obs)
     if f_exp is None:
         n = len(f_obs)
-        f_exp = minum.ones(n) / n * f_obs.sum()
+        f_exp = np.ones(n) / n * f_obs.sum()
     elif isinstance(f_exp, list):
-        f_exp = NDArray(ArrayUtil.array(f_exp))
+        f_exp = np.array(f_exp)
     r = StatsUtil.chiSquareTest(f_exp.asarray(), f_obs.asarray())
     return r[0], r[1]
     
@@ -336,6 +335,6 @@ def chi2_contingency(observed):
     :returns: Chi-square statistic and p-value
     '''
     if isinstance(observed, list):
-        observed = NDArray(ArrayUtil.array(observed))
+        observed = np.array(observed)
     r = StatsUtil.chiSquareTest(observed.asarray())
     return r[0], r[1]

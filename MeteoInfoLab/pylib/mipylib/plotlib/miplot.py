@@ -21,9 +21,8 @@ from org.meteoinfo.shape import ShapeTypes
 from javax.swing import WindowConstants
 from java.awt import Font
 
-from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.multiarray import NDArray
-import mipylib.numeric.minum as minum
+from mipylib.numeric.core import NDArray, DimArray
+import mipylib.numeric as np
 import mipylib.miutil as miutil
 from axes import Axes, PolarAxes
 from mapaxes import MapAxes
@@ -1004,17 +1003,17 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
         raise ValueError(nwdbins)
         
     if isinstance(wd, list):
-        wd = minum.array(wd)
+        wd = np.array(wd)
     if isinstance(ws, list):
-        ws = minum.array(ws)
+        ws = np.array(ws)
     
-    wdbins = minum.linspace(0.0, 2 * minum.pi, nwdbins + 1)    
+    wdbins = np.linspace(0.0, 2 * np.pi, nwdbins + 1)    
     if wsbins is None:
-        wsbins = minum.arange(0., ws.max(), 2.).tolist()
+        wsbins = np.arange(0., ws.max(), 2.).tolist()
         wsbins.append(100)
-        wsbins = minum.array(wsbins)            
+        wsbins = np.array(wsbins)            
     
-    dwdbins = minum.degrees(wdbins)
+    dwdbins = np.degrees(wdbins)
     dwdbins = dwdbins - 90
     for i in range(len(dwdbins)):
         if dwdbins[i] < 0:
@@ -1023,7 +1022,7 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
         d = dwdbins[i]
         d = 360 - d
         dwdbins[i] = d
-    rwdbins = minum.radians(dwdbins)
+    rwdbins = np.radians(dwdbins)
         
     N = len(wd)
     wdN = nwdbins
@@ -1033,7 +1032,7 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
     
     wd = wd + 360./wdN/2
     wd[wd>360] = wd - 360
-    rwd = minum.radians(wd)    
+    rwd = np.radians(wd)    
     
     global gca
     if gca is None:
@@ -1048,18 +1047,18 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
     if width <= 0:
         width = 0.2
     theta = rwdbins[:-1]
-    width = 2. * width * minum.pi / wdN
+    width = 2. * width * np.pi / wdN
         
     bars = []
     hhist = 0
     rrmax = 0       
     for i in range(wsN):
-        idx = minum.where((ws>=wsbins[i]) * (ws<wsbins[i+1]))
+        idx = np.where((ws>=wsbins[i]) * (ws<wsbins[i+1]))
         if idx is None:
             continue
         print wsbins[i], wsbins[i+1]
         s_wd = rwd[idx]
-        wdhist = minum.histogram(s_wd, wdbins)[0].astype('float')
+        wdhist = np.histogram(s_wd, wdbins)[0].astype('float')
         wdhist = wdhist / N
         rrmax = max(rrmax, wdhist.max())
         lab = '%s - %s' % (wsbins[i], wsbins[i+1])
@@ -1079,7 +1078,7 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
         gca.set_rticks(rticks)
     gca.set_rtick_format('%')
     gca.set_rlabel_position(rlabelpos)
-    gca.set_xtick_locations(minum.arange(0., 360., 360./wdN))
+    gca.set_xtick_locations(np.arange(0., 360., 360./wdN))
     step = 16 / nwdbins
     if xticks is None:
         xticks = ['E','ENE','NE','NNE','N','NNW','NW','WNW','W','WSW',\

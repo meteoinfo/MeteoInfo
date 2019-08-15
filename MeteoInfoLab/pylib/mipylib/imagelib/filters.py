@@ -9,7 +9,7 @@
 from org.meteoinfo.shape import Graphic
 from org.meteoinfo.image import ImageUtil
 from mipylib.geolib.milayer import MILayer
-from mipylib.numeric.multiarray import NDArray
+from mipylib.numeric.core import NDArray
 from org.meteoinfo.image.filter import ContrastFilter, SharpenFilter, RGBAdjustFilter, ChannelMixFilter, \
     GainFilter, GammaFilter, GrayFilter, GrayscaleFilter, HSBAdjustFilter, InvertAlphaFilter, \
     InvertFilter, LevelsFilter, MaskFilter, PosterizeFilter, RescaleFilter, SolarizeFilter, \

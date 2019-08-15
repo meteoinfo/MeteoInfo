@@ -9,8 +9,8 @@
 from org.meteoinfo.math.distribution import DistributionUtil
 from org.apache.commons.math3.distribution import RealDistribution
 
-import mipylib.numeric.minum as minum
-from mipylib.numeric.multiarray import NDArray
+from ..core import numeric as np
+from ..core import NDArray
 
 import numbers
 
@@ -72,7 +72,7 @@ class rv_continuous(object):
         '''
         dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
-            x = minum.array(x)
+            x = np.array(x)
         if isinstance(x, NDArray):
             x = x._array
         r = DistributionUtil.pdf(dist, x)
@@ -90,7 +90,7 @@ class rv_continuous(object):
         '''
         dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
-            x = minum.array(x)
+            x = np.array(x)
         if isinstance(x, NDArray):
             x = x._array
         r = DistributionUtil.logpdf(dist, x)
@@ -108,7 +108,7 @@ class rv_continuous(object):
         '''
         dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
-            x = minum.array(x)
+            x = np.array(x)
         if isinstance(x, NDArray):
             x = x._array
         r = DistributionUtil.cdf(dist, x)
@@ -126,7 +126,7 @@ class rv_continuous(object):
         '''
         dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
-            x = minum.array(x)
+            x = np.array(x)
         if isinstance(x, NDArray):
             x = x._array
         r = DistributionUtil.pmf(dist, x)
@@ -144,7 +144,7 @@ class rv_continuous(object):
         '''
         dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
-            x = minum.array(x)
+            x = np.array(x)
         if isinstance(x, NDArray):
             x = x._array
         r = DistributionUtil.ppf(dist, x)

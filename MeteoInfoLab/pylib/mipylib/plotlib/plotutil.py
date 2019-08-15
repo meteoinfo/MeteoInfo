@@ -16,9 +16,8 @@ from org.meteoinfo.chart import ChartText
 
 from java.awt import Color, Font
 
-from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.multiarray import NDArray
-import mipylib.numeric.minum as minum
+from mipylib.numeric.core import NDArray, DimArray
+import mipylib.numeric as np
 import mipylib.miutil as miutil
 import mipylib.migl as migl
 
@@ -31,11 +30,11 @@ def getplotdata(data):
             for d in data:
                 v = miutil.date2num(d)
                 dd.append(v)
-            return minum.array(dd)._array
+            return np.array(dd)._array
         else:
-            return minum.array(data)._array
+            return np.array(data)._array
     else:
-        return minum.array([data])._array
+        return np.array([data])._array
         
 def getfont(fontdic, **kwargs):
     basefont = kwargs.pop('basefont', None)

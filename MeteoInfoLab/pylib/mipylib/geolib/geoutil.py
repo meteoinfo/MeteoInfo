@@ -7,7 +7,7 @@
 
 from org.meteoinfo.shape import ShapeUtil, PointShape
 from org.meteoinfo.global import PointD
-import mipylib.numeric.minum as minum
+import mipylib.numeric as np
 
 __all__ = [
     'makeshapes'
@@ -31,14 +31,14 @@ def makeshapes(x, y, type=None, z=None, m=None):
         shape.setPoint(PointD(x, y))
         shapes.append(shape)    
     else:
-        x = minum.asarray(x).array
-        y = minum.asarray(y).array
+        x = np.asarray(x).array
+        y = np.asarray(y).array
         if not z is None:            
             if m is None:
-                m = minum.zeros(len(z)).array
+                m = np.zeros(len(z)).array
             else:
-                m = minum.asarray(m).array
-            z = minum.asarray(z).array
+                m = np.asarray(m).array
+            z = np.asarray(z).array
         if type == 'point':
             if z is None:
                 shapes = ShapeUtil.createPointShapes(x, y)

@@ -8,7 +8,7 @@
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from ucar.ma2 import Array
 
-from mipylib.numeric.multiarray import NDArray
+from mipylib.numeric.core import NDArray
 
 __all__ = [
     'convert_array'

@@ -10,9 +10,8 @@ from org.meteoinfo.global import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from ucar.nc2 import Attribute as NCAttribute
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
-from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.multiarray import NDArray
-import mipylib.numeric.minum as minum
+
+import mipylib.numeric as np
 import mipylib.miutil as miutil
 import datetime
 
@@ -88,7 +87,7 @@ class DimVariable(object):
             # if allnone:
                 # r = self.dataset.dataset.read(self.name)
                 # ArrayMath.missingToNaN(r, self.fill_value)
-                # return DimArray(r, self.dims, self.fill_value, self.proj)
+                # return np.DimArray(r, self.dims, self.fill_value, self.proj)
             
         if indices is None:
             inds = []
@@ -101,7 +100,7 @@ class DimVariable(object):
             m = rr.getArrayObject().findMember(indices)
             data = rr.getArrayObject().getArray(0, m)
             data = NCUtil.convertArray(data)
-            return NDArray(data)
+            return np.array(data)
         
         if not isinstance(indices, tuple):
             inds = []
@@ -296,14 +295,14 @@ class DimVariable(object):
             if len(flips) > 0:
                 rrr = Array.factory(rr.getDataType(), rr.getShape())
                 MAMath.copy(rrr, rr)
-                array = NDArray(rrr)
+                array = np.array(rrr)
             else:
-                array = NDArray(rr)
-            data = DimArray(array, dims, self.fill_value, self.dataset.proj)
+                array = np.array(rr)
+            data = np.DimArray(array, dims, self.fill_value, self.dataset.proj)
             return data
     
     def read(self):
-        return NDArray(self.dataset.read(self.name))
+        return np.array(self.dataset.read(self.name))
     
     # get dimension length
     def dimlen(self, idx):
@@ -324,15 +323,15 @@ class DimVariable(object):
             if dim.getDimType() == DimensionType.T:
                 return miutil.nums2dates(dim.getDimValue())
             else:
-                return NDArray(ArrayUtil.array(self.dims[idx].getDimValue()))
+                return np.array(ArrayUtil.array(self.dims[idx].getDimValue()))
         else:
-            return NDArray(ArrayUtil.array(self.dims[idx].getDimValue()))
+            return np.array(ArrayUtil.array(self.dims[idx].getDimValue()))
         
     def attrvalue(self, key):
         attr = self.variable.findAttribute(key)
         if attr is None:
             return None
-        v = NDArray(attr.getValues())
+        v = np.array(attr.getValues())
         return v
         
     def xdim(self):
@@ -360,13 +359,13 @@ class DimVariable(object):
         return None
         
     def adddim(self, dimtype, dimvalue):
-        if isinstance(dimvalue, NDArray):
+        if isinstance(dimvalue, np.NDArray):
             dimvalue = dimvalue.aslist()
         self.variable.addDimension(dimtype, dimvalue)
         self.ndim = self.variable.getDimNumber()
         
     def setdim(self, dimtype, dimvalue, index=None, reverse=False):
-        if isinstance(dimvalue, NDArray):
+        if isinstance(dimvalue, np.NDArray):
             dimvalue = dimvalue.aslist()
         if index is None:
             self.variable.setDimension(dimtype, dimvalue, reverse)
@@ -463,7 +462,7 @@ class TDimVariable():
                     data = aa
                     isfirst = False
                 else:
-                    data = minum.concatenate([data, aa])
+                    data = np.concatenate([data, aa])
                 si = i
                 sfidx = fidx
                 
@@ -484,7 +483,7 @@ class TDimVariable():
                 data = aa
                 isfirst = False
             else:
-                data = minum.concatenate([data, aa])
+                data = np.concatenate([data, aa])
         
         if aa is None:
             sfidx = self.dataset.datafileindex(sidx)
@@ -497,10 +496,10 @@ class TDimVariable():
             aa = var.__getitem__(nindices)            
             return aa
                 
-        if isinstance(data, DimArray):
+        if isinstance(data, np.DimArray):
             return data
         else:
             dims = aa.dims
             dims[0].setDimValues(times)
-            r = DimArray(data, dims, aa.fill_value, aa.proj)
+            r = np.DimArray(data, dims, aa.fill_value, aa.proj)
             return r

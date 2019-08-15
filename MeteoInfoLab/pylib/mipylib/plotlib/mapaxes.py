@@ -24,12 +24,11 @@ from org.meteoinfo.layout import ScaleBarType
 from java.awt import Font, Color
 
 from axes import Axes
-from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.multiarray import NDArray
+import mipylib.numeric as np
+from mipylib.numeric.core import NDArray, DimArray
 from mipylib.geolib.milayer import MILayer
 import mipylib.geolib.migeo as migeo
 import plotutil
-import mipylib.numeric.minum as minum
 import mipylib.migl as migl
 import mipylib.miutil as miutil
 
@@ -624,7 +623,7 @@ class MapAxes(Axes):
             ls = kwargs.pop('symbolspec', None)
             if ls is None:        
                 if isinstance(zvalues, (list, tuple)):
-                    zvalues = minum.array(zvalues)
+                    zvalues = np.array(zvalues)
                 levels = kwargs.pop('levs', None)
                 if levels is None:
                     levels = kwargs.pop('levels', None)
@@ -757,8 +756,8 @@ class MapAxes(Axes):
                 xdata = []
                 for i in range(0, len(args[0])):
                     xdata.append(i)
-            xdatalist.append(minum.asarray(xdata)._array)
-            ydatalist.append(minum.asarray(ydata)._array)
+            xdatalist.append(np.asarray(xdata)._array)
+            ydatalist.append(np.asarray(ydata)._array)
         elif n == 2:
             if isinstance(args[1], basestring):
                 ydata = plotutil.getplotdata(args[0])
@@ -772,16 +771,16 @@ class MapAxes(Axes):
             else:
                 xdata = plotutil.getplotdata(args[0])
                 ydata = plotutil.getplotdata(args[1])
-            xdatalist.append(minum.asarray(xdata)._array)
-            ydatalist.append(minum.asarray(ydata)._array)
+            xdatalist.append(np.asarray(xdata)._array)
+            ydatalist.append(np.asarray(ydata)._array)
         else:
             c = 'x'
             for arg in args: 
                 if c == 'x':    
-                    xdatalist.append(minum.asarray(arg)._array)
+                    xdatalist.append(np.asarray(arg)._array)
                     c = 'y'
                 elif c == 'y':
-                    ydatalist.append(minum.asarray(arg)._array)
+                    ydatalist.append(np.asarray(arg)._array)
                     c = 's'
                 elif c == 's':
                     if isinstance(arg, basestring):
@@ -789,7 +788,7 @@ class MapAxes(Axes):
                         c = 'x'
                     else:
                         styles.append('-')
-                        xdatalist.append(minum.asarray(arg)._array)
+                        xdatalist.append(np.asarray(arg)._array)
                         c = 'y'
         
         snum = len(xdatalist)
@@ -866,20 +865,20 @@ class MapAxes(Axes):
             x = args[0]
             y = args[1]
             if not isinstance(x, NDArray):
-                x = minum.array(x)
+                x = np.array(x)
             if not isinstance(y, NDArray):
-                y = minum.array(y)
+                y = np.array(y)
             if n == 2:
                 a = x
                 args = args[2:]
             else:
                 a = args[2]
                 if not isinstance(a, NDArray):
-                    a = minum.array(a)
+                    a = np.array(a)
                 args = args[3:]
 		
 		if (a.ndim == 2) and (x.ndim == 1):
-			x, y = minum.meshgrid(x, y)
+			x, y = np.meshgrid(x, y)
 			
 		if (a.size != x.size) or (a.size != y.size):
 			raise ValueError('Sizes of x/y and data are not same!')			
@@ -1076,15 +1075,15 @@ class MapAxes(Axes):
                     x = rgbdata[0].dimvalue(1)
                     y = rgbdata[0].dimvalue(0)                
                 else:
-                    x = minum.arange(0, rgbdata[0].shape[1])
-                    y = minum.arange(0, rgbdata[0].shape[0])
+                    x = np.arange(0, rgbdata[0].shape[1])
+                    y = np.arange(0, rgbdata[0].shape[0])
             elif args[0].ndim > 2:
                 isrgb = True
                 rgbdata = args[0]
                 x = rgbdata.dimvalue(1)
                 y = rgbdata.dimvalue(0)
             else:
-                gdata = minum.asgridarray(args[0])
+                gdata = np.asgridarray(args[0])
                 args = args[1:]
         elif n <=4:
             x = args[0]
@@ -1097,7 +1096,7 @@ class MapAxes(Axes):
                 isrgb = True
                 rgbdata = a
             else:
-                gdata = minum.asgridarray(a, x, y, fill_value)
+                gdata = np.asgridarray(a, x, y, fill_value)
                 args = args[3:]    
         
         isadd = kwargs.pop('isadd', True)
@@ -1189,7 +1188,7 @@ class MapAxes(Axes):
             args = args[3:]
             
         if a.ndim == 2 and x.ndim == 1:            
-            x, y = minum.meshgrid(x, y)  
+            x, y = np.meshgrid(x, y)  
             
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
         ls = ls.convertTo(ShapeTypes.Polygon)
@@ -1199,7 +1198,7 @@ class MapAxes(Axes):
             lonlim = 90
         else:
             lonlim = 0
-            x, y = minum.project(x, y, toproj=proj)
+            x, y = np.project(x, y, toproj=proj)
         layer = DrawMeteoData.meshLayer(x.asarray(), y.asarray(), a.asarray(), ls, lonlim)
         if not proj is None:
             layer.setProjInfo(proj)
@@ -1306,24 +1305,24 @@ class MapAxes(Axes):
         if n >= 4 and isinstance(args[3], (DimArray, NDArray)):
             onlyuv = False
         if onlyuv:
-            u = minum.asarray(args[0])
-            v = minum.asarray(args[1])
+            u = np.asarray(args[0])
+            v = np.asarray(args[1])
             xx = args[0].dimvalue(1)
             yy = args[0].dimvalue(0)
-            x, y = minum.meshgrid(xx, yy)
+            x, y = np.meshgrid(xx, yy)
             args = args[2:]
             if len(args) > 0:
-                cdata = minum.asarray(args[0])
+                cdata = np.asarray(args[0])
                 iscolor = True
                 args = args[1:]
         else:
-            x = minum.asarray(args[0])
-            y = minum.asarray(args[1])
-            u = minum.asarray(args[2])
-            v = minum.asarray(args[3])
+            x = np.asarray(args[0])
+            y = np.asarray(args[1])
+            u = np.asarray(args[2])
+            v = np.asarray(args[3])
             args = args[4:]
             if len(args) > 0:
-                cdata = minum.asarray(args[0])
+                cdata = np.asarray(args[0])
                 iscolor = True
                 args = args[1:]
         if iscolor:
@@ -1348,7 +1347,7 @@ class MapAxes(Axes):
         if not cdata is None:
             cdata = cdata._array
         if u.ndim == 2 and x.ndim == 1:
-            x, y = minum.meshgrid(x, y)
+            x, y = np.meshgrid(x, y)
         layer = DrawMeteoData.createVectorLayer(x._array, y._array, u._array, v._array, cdata, ls, 'layer', isuv)
         if not proj is None:
             layer.setProjInfo(proj)
@@ -1397,24 +1396,24 @@ class MapAxes(Axes):
         if n >= 4 and isinstance(args[3], (DimArray, NDArray)):
             onlyuv = False
         if onlyuv:
-            u = minum.asarray(args[0])
-            v = minum.asarray(args[1])
+            u = np.asarray(args[0])
+            v = np.asarray(args[1])
             xx = args[0].dimvalue(1)
             yy = args[0].dimvalue(0)
-            x, y = minum.meshgrid(xx, yy)
+            x, y = np.meshgrid(xx, yy)
             args = args[2:]
             if len(args) > 0:
-                cdata = minum.asarray(args[0])
+                cdata = np.asarray(args[0])
                 iscolor = True
                 args = args[1:]
         else:
-            x = minum.asarray(args[0])
-            y = minum.asarray(args[1])
-            u = minum.asarray(args[2])
-            v = minum.asarray(args[3])
+            x = np.asarray(args[0])
+            y = np.asarray(args[1])
+            u = np.asarray(args[2])
+            v = np.asarray(args[3])
             args = args[4:]
             if len(args) > 0:
-                cdata = minum.asarray(args[0])
+                cdata = np.asarray(args[0])
                 iscolor = True
                 args = args[1:]
         if iscolor:

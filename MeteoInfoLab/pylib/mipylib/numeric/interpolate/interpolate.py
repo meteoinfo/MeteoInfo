@@ -8,10 +8,9 @@
 
 from org.meteoinfo.math.interpolate import InterpUtil
 from org.meteoinfo.math import ArrayMath, ArrayUtil
-from ucar.ma2 import Array
+from org.meteoinfo.ndarray import Array
 
-from mipylib.numeric.multiarray import NDArray
-from mipylib.numeric.dimarray import DimArray
+from ..core import NDArray, DimArray
 
 __all__ = [
     'interp1d','RectBivariateSpline'

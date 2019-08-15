@@ -7,9 +7,10 @@
 
 from org.meteoinfo.math import ArrayUtil
 from org.meteoinfo.math.meteo import MeteoMath
+
 import mipylib.numeric as np
-from mipylib.numeric.multiarray import NDArray
-from mipylib.numeric.dimarray import DimArray
+from mipylib.numeric.core import NDArray, DimArray
+
 import constants as constants
 
 __all__ = [

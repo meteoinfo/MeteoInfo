@@ -12,9 +12,7 @@ from org.meteoinfo.data.dataframe import DataFrame as MIDataFrame
 from org.meteoinfo.data.dataframe import Series as MISeries
 from org.meteoinfo.ndarray import Range, Array
 
-from mipylib.numeric.multiarray import NDArray
-from mipylib.numeric.dimarray import DimArray
-import mipylib.numeric.minum as minum
+import mipylib.numeric as np
 import mipylib.miutil as miutil
 from index import Index
 import series
@@ -45,19 +43,19 @@ class DataFrame(object):
                     for v in data.values():
                         if isinstance(v, (list, tuple)):
                             n = len(v)
-                            v = minum.array(v)                    
-                        elif isinstance(v, NDArray):
+                            v = np.array(v)                    
+                        elif isinstance(v, np.NDArray):
                             n = len(v)
                         dlist.append(v)
                     for i in range(len(dlist)):
                         d = dlist[i]
-                        if not isinstance(d, NDArray):
+                        if not isinstance(d, np.NDArray):
                             d = [d] * n
-                            d = minum.array(d)
+                            d = np.array(d)
                             dlist[i] = d
                     data = dlist
                     
-                if isinstance(data, NDArray):
+                if isinstance(data, np.NDArray):
                     n = len(data)
                     data = data._array
                 else:
@@ -73,7 +71,7 @@ class DataFrame(object):
                     if n != len(index):
                         raise ValueError('Wrong length of index!')
                         
-            if isinstance(index, (NDArray, DimArray)):
+            if isinstance(index, np.NDArray):
                 index = index.tolist()
                 
             if isinstance(index, Index):
@@ -104,16 +102,16 @@ class DataFrame(object):
     def get_data(self):
         r = self._dataframe.getData()
         if isinstance(r, Array):
-            r = NDArray(r)
+            r = np.array(r)
         else:
             rr = []
             for d in r:
-                rr.append(NDArray(d))
+                rr.append(np.array(d))
             r = rr
         return r
         
     def set_data(self, value):
-        value = minum.array(value)
+        value = np.array(value)
         self._dataframe.setData(value._array)
         
     values = property(get_data, set_data)
@@ -180,7 +178,7 @@ class DataFrame(object):
             if data is None:
                 return data
             idx = self._index[:]
-            r = series.Series(NDArray(data), idx, key)
+            r = series.Series(np.array(data), idx, key)
             return r
             
         hascolkey = True
@@ -234,7 +232,7 @@ class DataFrame(object):
                     eidx = self.shape[0] + eidx                    
             step = 1 if k.step is None else k.step
             rowkey = Range(sidx, eidx, step)
-        elif isinstance(k, (list,tuple,NDArray)):
+        elif isinstance(k, (list,tuple,np.NDArray)):
             if isinstance(k[0], int):
                 rowkey = k
             else:
@@ -293,8 +291,8 @@ class DataFrame(object):
         if isinstance(value, (list, tuple)):
             if isinstance(value[0], datetime.datetime):
                 value = miutil.jdatetime(value)
-            value = minum.array(value)
-        if isinstance(value, NDArray):
+            value = np.array(value)
+        if isinstance(value, np.NDArray):
             value = value._array            
             
         if isinstance(key, basestring):
@@ -564,8 +562,8 @@ class DataFrame(object):
             else:
                 raise KeyError(key)
             return ikey, rindex
-        elif isinstance(key, (list, tuple, NDArray, DimArray)) and isinstance(key[0], basestring):
-            if isinstance(key, (NDArray, DimArray)):
+        elif isinstance(key, (list, tuple, np.NDArray)) and isinstance(key[0], basestring):
+            if isinstance(key, (np.NDArray)):
                 key = key.asarray()            
             rkey = self.index.get_indices(key)
             ikey = rkey[0]
@@ -647,8 +645,8 @@ class DataFrame(object):
         if isinstance(value, (list, tuple)):
             if isinstance(value[0], datetime.datetime):
                 value = miutil.jdatetime(value)
-            value = minum.array(value)
-        if isinstance(value, NDArray):
+            value = np.array(value)
+        if isinstance(value, np.NDArray):
             value = value._array 
         self._dataframe.addColumn(loc, column, value)
         

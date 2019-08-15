@@ -37,17 +37,21 @@ class DimArray(NDArray):
         self.proj = proj
         
     def __getitem__(self, indices):
-        if isinstance(indices, slice):
-            k = indices
-            if k.start is None and k.stop is None and k.step is None:
-                r = Array.factory(self._array.getDataType(), self._array.getShape())
-                MAMath.copy(r, self._array)
-                return DimArray(r, self.dims, self.fill_value, self.proj)        
+        # if isinstance(indices, slice):
+            # k = indices
+            # if k.start is None and k.stop is None and k.step is None:
+                # r = Array.factory(self._array.getDataType(), self._array.getShape())
+                # MAMath.copy(r, self._array)
+                # return DimArray(r, self.dims, self.fill_value, self.proj)        
         
         if not isinstance(indices, tuple):
             inds = []
             inds.append(indices)
             indices = inds
+            
+        if len(indices) < self.ndim:
+            for i in range(self.ndim - len(indices)):
+                indices.append(slice(None))
             
         allint = True
         aindex = self._array.getIndex()

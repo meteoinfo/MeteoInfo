@@ -24,12 +24,10 @@ from java.util import HashMap
 import numbers
 import datetime
 
-from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.multiarray import NDArray
+import mipylib.numeric as np
+from mipylib.numeric.core import DimArray, NDArray
 from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
-import mipylib.numeric.minum as minum
-import mipylib.numeric as np
 import mipylib.miutil as miutil
 
 class Axes(object):
@@ -923,12 +921,12 @@ class Axes(object):
                 snum = args[0].size()
                 isxylistdata = True
             else:
-                ydata = minum.array(args[0])
+                ydata = np.array(args[0])
                 if isinstance(ydata, DimArray):
                     xdata = ydata.dimvalue(0)
                     if ydata.ndim == 2:
                         xdata = ydata.dimvalue(1)
-                        xx = minum.zeros(ydata.shape)
+                        xx = np.zeros(ydata.shape)
                         xx[:,:] = xdata
                         xdata = xx
                     if ydata.islondim(0):
@@ -938,21 +936,21 @@ class Axes(object):
                     elif ydata.istimedim(0):
                         xaxistype = 'time'
                 else:
-                    xdata = minum.arange(ydata.shape[-1])
+                    xdata = np.arange(ydata.shape[-1])
                     if ydata.ndim == 2:
-                        xx = minum.zeros(ydata.shape)
+                        xx = np.zeros(ydata.shape)
                         xx[:,:] = xdata
                         xdata = xx
                 xdatalist.append(xdata)
                 ydatalist.append(ydata)
         elif len(args) == 2:
             if isinstance(args[1], basestring):
-                ydata = minum.array(args[0])
+                ydata = np.array(args[0])
                 if isinstance(ydata, DimArray):
                     xdata = ydata.dimvalue(0)
                     if ydata.ndim == 2:
                         xdata = ydata.dimvalue(1)
-                        xx = minum.zeros(ydata.shape)
+                        xx = np.zeros(ydata.shape)
                         xx[:,:] = xdata
                         xdata = xx
                     if ydata.islondim(0):
@@ -962,9 +960,9 @@ class Axes(object):
                     elif ydata.istimedim(0):
                         xaxistype = 'time'
                 else:
-                    xdata = minum.arange(ydata.shape[-1])
+                    xdata = np.arange(ydata.shape[-1])
                     if ydata.ndim == 2:
-                        xx = minum.zeros(ydata.shape)
+                        xx = np.zeros(ydata.shape)
                         xx[:,:] = xdata
                         xdata = xx
                 styles.append(args[1])
@@ -1023,7 +1021,7 @@ class Axes(object):
             ls = kwargs.pop('symbolspec', None)
             if ls is None:        
                 if isinstance(zvalues, (list, tuple)):
-                    zvalues = minum.array(zvalues)
+                    zvalues = np.array(zvalues)
                 levels = kwargs.pop('levs', None)
                 if levels is None:
                     levels = kwargs.pop('levels', None)
@@ -1167,7 +1165,7 @@ class Axes(object):
             ls = kwargs.pop('symbolspec', None)
             if ls is None:        
                 if isinstance(c, (list, tuple)):
-                    c = minum.array(c)
+                    c = np.array(c)
                 levels = kwargs.pop('levs', None)
                 if levels is None:
                     levels = kwargs.pop('levels', None)
@@ -1407,7 +1405,7 @@ class Axes(object):
                 ye = []
                 for i in range(xdata.getSize()):
                     ye.append(yerr)
-                yerrB = minum.array(ye)._array
+                yerrB = np.array(ye)._array
                 yerrU = yerrB
             else:
                 if isinstance(yerr, (list, tuple)):
@@ -1432,7 +1430,7 @@ class Axes(object):
                 ye = []
                 for i in range(xdata.getSize()):
                     ye.append(xerr)
-                xerrL = minum.array(ye)._array
+                xerrL = np.array(ye)._array
                 xerrR = xerrL         
             else:
                 if isinstance(xerr, (list, tuple)):
@@ -1521,11 +1519,11 @@ class Axes(object):
         if isinstance(x, (list, tuple)):
             if isinstance(x[0], datetime.datetime):
                 isdate = True
-        x = minum.asarray(x)
-        height = minum.asarray(height)
+        x = np.asarray(x)
+        height = np.asarray(height)
         if isdate and width <= 1:
             width = (x[1] - x[0]) * width
-        width = minum.asarray(width)
+        width = np.asarray(width)
         if align == 'center':
             x = x - width / 2
             
@@ -1733,8 +1731,8 @@ class Axes(object):
         label = kwargs.pop('label', 'S_0')
         
         #histogram
-        m, bins = minum.histogram(x, bins=bins, density=density)
-        width = minum.diff(bins)
+        m, bins = np.histogram(x, bins=bins, density=density)
+        width = np.diff(bins)
         barbreaks = self.bar(bins[:-1], m, width, align='center', **kwargs)
 
         return m, bins, barbreaks
@@ -1891,7 +1889,7 @@ class Axes(object):
         fill_value = kwargs.pop('fill_value', -9999.0)
         xaxistype = None
         if n <= 2:
-            gdata = minum.asgriddata(args[0])
+            gdata = np.asgriddata(args[0])
             if isinstance(args[0], DimArray):
                 if args[0].islondim(1):
                     xaxistype = 'lon'
@@ -1904,7 +1902,7 @@ class Axes(object):
             x = args[0]
             y = args[1]
             a = args[2]
-            gdata = minum.asgriddata(a, x, y, fill_value)
+            gdata = np.asgriddata(a, x, y, fill_value)
             args = args[3:]
         if ls is None:
             if len(args) > 0:
@@ -2016,7 +2014,7 @@ class Axes(object):
         fill_value = kwargs.pop('fill_value', -9999.0)
         xaxistype = None
         if n <= 2:
-            gdata = minum.asgriddata(args[0])
+            gdata = np.asgriddata(args[0])
             if isinstance(args[0], DimArray):
                 if args[0].islondim(1):
                     xaxistype = 'lon'
@@ -2029,7 +2027,7 @@ class Axes(object):
             x = args[0]
             y = args[1]
             a = args[2]
-            gdata = minum.asgriddata(a, x, y, fill_value)
+            gdata = np.asgriddata(a, x, y, fill_value)
             args = args[3:]
         if ls is None:
             if len(args) > 0:
@@ -2096,7 +2094,7 @@ class Axes(object):
         elif X.ndim > 2:
             isrgb = True
         else:
-            gdata = minum.asgridarray(X)
+            gdata = np.asgridarray(X)
             if isinstance(X, DimArray):
                 if X.islondim(1):
                     xaxistype = 'lon'
@@ -2186,7 +2184,7 @@ class Axes(object):
             a = args[2]
             args = args[3:]
         if a.ndim == 2 and x.ndim == 1:            
-            x, y = minum.meshgrid(x, y)            
+            x, y = np.meshgrid(x, y)            
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
         ls = ls.convertTo(ShapeTypes.Polygon)
         plotutil.setlegendscheme(ls, **kwargs)
@@ -2295,9 +2293,9 @@ class Axes(object):
         :returns: Arrow line graphic.
         '''
         if isinstance(x, (list, tuple)):
-            x = minum.array(x)
+            x = np.array(x)
         if isinstance(y, (list, tuple)):
-            y = minum.array(y)
+            y = np.array(y)
             
         alb, isunique = plotutil.getlegendbreak('line', **kwargs)
         alb = plotutil.line2arrow(alb, **kwargs)
@@ -2411,19 +2409,19 @@ class Axes(object):
             yy = []
             for i in range(dn):
                 yy.append(y1)
-            y1 = minum.array(yy)._array
+            y1 = np.array(yy)._array
         else:
             y1 = plotutil.getplotdata(y1)
         if isinstance(y2, (int, long, float)):
             yy = []
             for i in range(dn):
                 yy.append(y2)
-            y2 = minum.array(yy)._array
+            y2 = np.array(yy)._array
         else:
             y2 = plotutil.getplotdata(y2)
         if not where is None:
             if isinstance(where, (tuple, list)):
-                where = minum.array(where)
+                where = np.array(where)
             where = where.asarray()
         
         #Set plot data styles
@@ -2459,19 +2457,19 @@ class Axes(object):
             xx = []
             for i in range(dn):
                 xx.append(x1)
-            x1 = minum.array(xx)._array
+            x1 = np.array(xx)._array
         else:
             x1 = plotutil.getplotdata(x1)
         if isinstance(x2, (int, long, float)):
             xx = []
             for i in range(dn):
                 xx.append(x2)
-            x2 = minum.array(xx)._array
+            x2 = np.array(xx)._array
         else:
             x2 = plotutil.getplotdata(x2)
         if not where is None:
             if isinstance(where, (tuple, list)):
-                where = minum.array(where)
+                where = np.array(where)
             where = where.asarray()
         
         #Set plot data styles
@@ -2783,7 +2781,7 @@ class Axes(object):
         if n <= 3 or (n == 4 and isinstance(args[3], int)):
             x = args[0].dimvalue(1)
             y = args[0].dimvalue(0)
-            x, y = minum.meshgrid(x, y)
+            x, y = np.meshgrid(x, y)
             u = args[0]
             v = args[1]
             if args[0].islondim(1):
@@ -2878,7 +2876,7 @@ class Axes(object):
         if n < 4 or (n == 4 and isinstance(args[3], int)):
             x = args[0].dimvalue(1)
             y = args[0].dimvalue(0)
-            x, y = minum.meshgrid(x, y)
+            x, y = np.meshgrid(x, y)
             u = args[0]
             v = args[1]
             if args[0].islondim(1):

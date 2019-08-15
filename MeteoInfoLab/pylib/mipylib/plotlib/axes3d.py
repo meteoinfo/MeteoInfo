@@ -13,9 +13,8 @@ from org.meteoinfo.shape import ShapeTypes, Graphic
 from org.meteoinfo.layer import LayerTypes
 
 from axes import Axes
-from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.multiarray import NDArray
-import mipylib.numeric.minum as minum
+from mipylib.numeric.core import NDArray, DimArray
+import mipylib.numeric as np
 import plotutil
 import mipylib.miutil as miutil
 
@@ -383,7 +382,7 @@ class Axes3D(Axes):
             ls = kwargs.pop('symbolspec', None)
             if ls is None:        
                 if isinstance(mvalues, (list, tuple)):
-                    mvalues = minum.array(mvalues)
+                    mvalues = np.array(mvalues)
                 levels = kwargs.pop('levs', None)
                 if levels is None:
                     levels = kwargs.pop('levels', None)
@@ -450,7 +449,7 @@ class Axes3D(Axes):
             ls = kwargs.pop('symbolspec', None)
             if ls is None:        
                 if isinstance(c, (list, tuple)):
-                    c = minum.array(c)
+                    c = np.array(c)
                 levels = kwargs.pop('levs', None)
                 if levels is None:
                     levels = kwargs.pop('levels', None)
@@ -549,7 +548,7 @@ class Axes3D(Axes):
             ls = kwargs.pop('symbolspec', None)
             if ls is None:        
                 if isinstance(c, (list, tuple)):
-                    c = minum.array(c)
+                    c = np.array(c)
                 levels = kwargs.pop('levs', None)
                 if levels is None:
                     levels = kwargs.pop('levels', None)
@@ -645,7 +644,7 @@ class Axes3D(Axes):
         if len(args) == 1:
             x = args[0].dimvalue(1)
             y = args[0].dimvalue(0)
-            x, y = minum.meshgrid(x, y)
+            x, y = np.meshgrid(x, y)
             z = args[0]    
             args = args[1:]
         else:
@@ -699,7 +698,7 @@ class Axes3D(Axes):
         if len(args) <= 2:
             x = args[0].dimvalue(1)
             y = args[0].dimvalue(0)
-            x, y = minum.meshgrid(x, y)
+            x, y = np.meshgrid(x, y)
             z = args[0]    
             args = args[1:]
         else:
@@ -753,7 +752,7 @@ class Axes3D(Axes):
         offset = kwargs.pop('offset', 0)
         xaxistype = None
         if n <= 2:
-            gdata = minum.asgriddata(args[0])
+            gdata = np.asgriddata(args[0])
             if isinstance(args[0], DimArray):
                 if args[0].islondim(1):
                     xaxistype = 'lon'
@@ -766,7 +765,7 @@ class Axes3D(Axes):
             x = args[0]
             y = args[1]
             a = args[2]
-            gdata = minum.asgriddata(a, x, y, fill_value)
+            gdata = np.asgriddata(a, x, y, fill_value)
             args = args[3:]
         if len(args) > 0:
             level_arg = args[0]
@@ -819,7 +818,7 @@ class Axes3D(Axes):
         offset = kwargs.pop('offset', 0)
         xaxistype = None
         if n <= 2:
-            gdata = minum.asgriddata(args[0])
+            gdata = np.asgriddata(args[0])
             if isinstance(args[0], DimArray):
                 if args[0].islondim(1):
                     xaxistype = 'lon'
@@ -832,7 +831,7 @@ class Axes3D(Axes):
             x = args[0]
             y = args[1]
             a = args[2]
-            gdata = minum.asgriddata(a, x, y, fill_value)
+            gdata = np.asgriddata(a, x, y, fill_value)
             args = args[3:]
         if len(args) > 0:
             level_arg = args[0]
@@ -893,8 +892,8 @@ class Axes3D(Axes):
                 isrgb = True
                 rgbdata = args[0]
                 if isinstance(rgbdata[0], NDArray):
-                    x = minum.arange(0, rgbdata[0].shape[1])
-                    y = minum.arange(0, rgbdata[0].shape[0])
+                    x = np.arange(0, rgbdata[0].shape[1])
+                    y = np.arange(0, rgbdata[0].shape[0])
                 else:
                     x = rgbdata[0].dimvalue(1)
                     y = rgbdata[0].dimvalue(0)
@@ -902,13 +901,13 @@ class Axes3D(Axes):
                 isrgb = True
                 rgbdata = args[0]
                 if isinstance(rgbdata, NDArray):
-                    x = minum.arange(0, rgbdata.shape[1])
-                    y = minum.arange(0, rgbdata.shape[0])
+                    x = np.arange(0, rgbdata.shape[1])
+                    y = np.arange(0, rgbdata.shape[0])
                 else:
                     x = rgbdata.dimvalue(1)
                     y = rgbdata.dimvalue(0)
             else:
-                gdata = minum.asgridarray(args[0])
+                gdata = np.asgridarray(args[0])
                 if isinstance(args[0], DimArray):
                     if args[0].islondim(1):
                         xaxistype = 'lon'
@@ -928,7 +927,7 @@ class Axes3D(Axes):
                 isrgb = True
                 rgbdata = a
             else:
-                gdata = minum.asgridarray(a, x, y, fill_value)
+                gdata = np.asgridarray(a, x, y, fill_value)
                 args = args[3:]   
         
         offset = kwargs.pop('offset', 0)
@@ -1106,19 +1105,19 @@ class Axes3D(Axes):
             yy = []
             for i in range(dn):
                 yy.append(y1)
-            y1 = minum.array(yy)._array
+            y1 = np.array(yy)._array
         else:
             y1 = plotutil.getplotdata(y1)
         if isinstance(y2, (int, long, float)):
             yy = []
             for i in range(dn):
                 yy.append(y2)
-            y2 = minum.array(yy)._array
+            y2 = np.array(yy)._array
         else:
             y2 = plotutil.getplotdata(y2)
         if not where is None:
             if isinstance(where, (tuple, list)):
-                where = minum.array(where)
+                where = np.array(where)
             where = where.asarray()
         
         #Set plot data styles

@@ -13,7 +13,7 @@ from java.util import Date, Calendar
 from java.awt import Font
 from datetime import datetime
 import mipylib.miutil as miutil
-import mipylib.numeric.minum as minum
+import mipylib.numeric as np
 import geoutil
 
 class MILayer(object):
@@ -67,7 +67,7 @@ class MILayer(object):
         :returns: (*PyTableData') Attribute table.
         '''
         r = self.layer.getAttributeTable().getTable()
-        return minum.datatable(r)
+        return np.datatable(r)
     
     def cellvalue(self, fieldname, shapeindex):
         '''

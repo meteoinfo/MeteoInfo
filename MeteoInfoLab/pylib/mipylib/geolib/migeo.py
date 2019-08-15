@@ -21,10 +21,9 @@ from org.meteoinfo.io import IOUtil
 from org.meteoinfo.geoprocess.analysis import ResampleMethods
 
 from milayer import MILayer
-from mipylib.numeric.multiarray import NDArray
-from mipylib.numeric.dimarray import DimArray
+from mipylib.numeric.core import NDArray, DimArray
 import mipylib.migl as migl
-import mipylib.numeric.minum as minum
+import mipylib.numeric as np
 
 from java.util import ArrayList
 
@@ -177,16 +176,16 @@ def inpolygon(x, y, polygon):
         return GeoComputation.pointInPolygon(polygon, x, y)
     
     if isinstance(x, (list, tuple)):
-        x = minum.array(x)
+        x = np.array(x)
     if isinstance(y, (list, tuple)):
-        y = minum.array(y)
+        y = np.array(y)
     if isinstance(polygon, tuple):
         x_p = polygon[0]
         y_p = polygon[1]
         if isinstance(x_p, (list, tuple)):
-            x_p = minum.array(x_p)
+            x_p = np.array(x_p)
         if isinstance(y_p, (list, tuple)):
-            y_p = minum.array(y_p)
+            y_p = np.array(y_p)
         return NDArray(ArrayMath.inPolygon(x._array, y._array, x_p._array, y_p._array))
     else:
         if isinstance(polygon, MILayer):
@@ -303,7 +302,7 @@ def maskout(data, mask, x=None, y=None):
         mask = [mask]
         
     if data.ndim == 2 and x.ndim == 1 and y.ndim == 1:
-        x, y = minum.meshgrid(x, y)
+        x, y = np.meshgrid(x, y)
         
     r = GeometryUtil.maskout(data._array, x._array, y._array, mask)
     if isinstance(data, DimArray):
@@ -355,7 +354,7 @@ def maskin(data, mask, x=None, y=None):
             return None
     
     if data.ndim == 2 and x.ndim == 1 and y.ndim == 1:
-        x, y = minum.meshgrid(x, y)
+        x, y = np.meshgrid(x, y)
 
     if not isinstance(mask, (list, ArrayList)):
         mask = [mask]
@@ -488,13 +487,13 @@ def projectxy(lon, lat, xnum, ynum, dx, dy, toproj, fromproj=None, pos='lowerlef
         fromproj = KnownCoordinateSystems.geographic.world.WGS1984
     x, y = project(lon, lat, toproj, fromproj)
     if pos == 'lowerleft':
-        xx = minum.arange1(x, xnum, dx)
-        yy = minum.arange1(y, ynum, dy)
+        xx = np.arange1(x, xnum, dx)
+        yy = np.arange1(y, ynum, dy)
     else:
         llx = x - ((xnum - 1) * 0.5 * dx)
         lly = y - ((ynum - 1) * 0.5 * dy)
-        xx = minum.arange1(llx, xnum, dx)
-        yy = minum.arange1(lly, ynum, dy)
+        xx = np.arange1(llx, xnum, dx)
+        yy = np.arange1(lly, ynum, dy)
     return xx, yy
     
 def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, method='bilinear'):

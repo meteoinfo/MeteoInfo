@@ -12,7 +12,7 @@ from org.joda.time import DateTime
 import datetime
 import numbers
 
-from mipylib.numeric.multiarray import NDArray
+from mipylib.numeric.core import NDArray
 import mipylib.miutil as miutil
 
 class Index(object):

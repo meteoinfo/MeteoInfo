@@ -31,7 +31,7 @@ nan = Double.NaN
 newaxis = None
 
 __all__ = [
-    'pi','e','inf','nan','absolute','all','any','arange','arange1',    
+    'pi','e','inf','nan','int','float','float64','absolute','all','any','arange','arange1',    
     'argmin','argmax','array','asarray','asgridarray','asgriddata','asin','asmiarray','asstationdata',
     'atleast_1d','atleast_2d','atan','atan2','ave_month','histogram','broadcast_to','cdiff','concatenate',
     'corrcoef','cos','cumsum','degrees','delete','delnan','diag','diff','dim_array','datatable','dot','empty','exp','eye','fmax','fmin','full',
@@ -51,11 +51,12 @@ def isgriddata(gdata):
 def isstationdata(sdata):
     return isinstance(sdata, PyStationData)
     
-def array(object):
+def array(object, dtype=None):
     """
     Create an array.
     
     :param object: (*array_like*) A Jython list or digital object.
+    :param dtype: (*string*) Data type
                         
     :returns: (*NDArray*) An array object satisfying the specified requirements.
                     
@@ -84,7 +85,7 @@ def array(object):
     if isinstance(object, (list, tuple)):
         if isinstance(object[0], datetime.datetime):
             object = miutil.dates2nums(object)
-    return NDArray(ArrayUtil.array(object))
+    return NDArray(ArrayUtil.array(object, dtype))
     
 def dim_array(a, dims=None):
     '''
@@ -2050,11 +2051,12 @@ def magnitude(u, v):
         r = sqrt(u * u + v * v)
         return r
 
-def asarray(data):
+def asarray(data, dtype=None):
     '''
     Convert the array_like data to NDArray data.
     
     :param data: (*array_like*) The input data.
+    :param dtype: (*datatype*) Data type.
     
     :returns: NDArray data.
     '''
@@ -2063,7 +2065,7 @@ def asarray(data):
     elif isinstance(data, NDArray):
         return data
     else:
-        return array(data) 
+        return array(data, dtype) 
 
 def asmiarray(data):
     '''

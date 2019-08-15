@@ -17,11 +17,10 @@ from org.meteoinfo.data import TableUtil
 from org.meteoinfo.math import ArrayUtil
 from ucar.nc2 import NetcdfFileWriter
 
-import mipylib.numeric.minum as minum
+import mipylib.numeric as np
 import mipylib.miutil as miutil
-from mipylib.numeric.multiarray import NDArray
-from mipylib.numeric.dimarray import DimArray
-from mipylib.numeric.mitable import PyTableData
+from mipylib.numeric.core import NDArray, DimArray, PyTableData
+
 from dimdatafile import DimDataFile, DimDataFiles
 import mipylib.migl as migl
 
@@ -659,7 +658,7 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
     if writedimvar:
         for dimvar, dim in zip(dimvars, f.dimensions()):
             if dim.getDimType() != DimensionType.T:
-                ncfile.write(dimvar, minum.array(dim.getDimValue()))
+                ncfile.write(dimvar, np.array(dim.getDimValue()))
     
     #Write time dimension variable data
     if writedimvar and not tvar is None:
@@ -670,7 +669,7 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
             st = f.gettime(t)
             hs = (st - sst).total_seconds() // 3600
             hours.append(hs)
-        ncfile.write(tvar, minum.array(hours))
+        ncfile.write(tvar, np.array(hours))
     
     #Write variable data
     for var in variables:
@@ -759,7 +758,7 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
     #Write variable data
     for dimvar, dim in zip(dimvars, f.dimensions()):
         if dim.getShortName() != 'T':
-            ncfile.write(dimvar, minum.array(dim.getDimValue()))
+            ncfile.write(dimvar, np.array(dim.getDimValue()))
 
     sst = datetime.datetime(1900,1,1)
     for t in range(0, tnum):
@@ -767,12 +766,12 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
         print st.strftime('%Y-%m-%d %H:00')
         hours = (st - sst).total_seconds() // 3600
         origin = [t]
-        ncfile.write(tvar, minum.array([hours]), origin=origin)
+        ncfile.write(tvar, np.array([hours]), origin=origin)
         for var in variables:
             print 'Variable: ' + var.name
             if var.ndim == 3:
                 data = f[str(var.name)][t,:,:]    
-                data[data==minum.nan] = -9999.0        
+                data[data==np.nan] = -9999.0        
                 origin = [t, 0, 0]
                 shape = [1, ynum, xnum]
                 data = data.reshape(shape)
@@ -781,7 +780,7 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
                 znum = var.dims[1].getLength()
                 for z in range(0, znum):
                     data = f[str(var.name)][t,z,:,:]
-                    data[data==minum.nan] = -9999.0
+                    data[data==np.nan] = -9999.0
                     origin = [t, z, 0, 0]
                     shape = [1, 1, ynum, xnum]
                     data = data.reshape(shape)
@@ -832,7 +831,7 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
         if isinstance(data, NDArray):
             dims = []
             for s in data.shape:
-                dimvalue = minum.arange(s)
+                dimvalue = np.arange(s)
                 dimname = 'dim' + str(len(dims))
                 dims.append(dimension(dimvalue, dimname))
         else:
@@ -893,9 +892,9 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
             hours = []
             for t in tt:
                 hours.append((t - sst).total_seconds() // 3600)
-            ncfile.write(dimvar, minum.array(hours))
+            ncfile.write(dimvar, np.array(hours))
         else:
-            ncfile.write(dimvar, minum.array(dim.getDimValue()))
+            ncfile.write(dimvar, np.array(dim.getDimValue()))
     ncfile.write(var, data)
     #Close netCDF file
     ncfile.close()

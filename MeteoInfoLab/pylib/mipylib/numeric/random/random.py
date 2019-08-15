@@ -14,7 +14,7 @@ from org.apache.commons.math3.distribution import NormalDistribution, BetaDistri
     LogNormalDistribution, ParetoDistribution, TDistribution, TriangularDistribution, \
     UniformRealDistribution, WeibullDistribution
 
-from mipylib.numeric.multiarray import NDArray
+from ..core import NDArray
 
 __all__ = [
     'beta','binomial','chisquare','exponential','f','gamma','gumbel','laplace','logistic',

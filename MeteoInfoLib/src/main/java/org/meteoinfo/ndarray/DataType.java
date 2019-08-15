@@ -124,6 +124,14 @@ public enum DataType {
     public boolean isString() {
         return (this == DataType.STRING) || (this == DataType.CHAR);
     }
+    
+    /**
+     * Is Boolean
+     * @return true if Boolean
+     */
+    public boolean isBoolean() {
+        return this == DataType.BOOLEAN;
+    }
 
     /**
      * Is Byte, Float, Double, Int, Short, or Long

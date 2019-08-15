@@ -280,6 +280,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     _isPROFILE = true;
                     break;
             }
+            for (ucar.nc2.Attribute ncattr : _gAtts) {
+                this.attributes.add(NCUtil.convertAttribute(ncattr));
+            }
 
             //Get convention
             _convention = this.getConvention();
@@ -424,8 +427,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @param attName Attribute name
      * @return Global attribute
      */
-    public ucar.nc2.Attribute findGlobalAttribute(String attName) {
-        for (ucar.nc2.Attribute att : this._gAtts) {
+    public Attribute findGlobalAttribute(String attName) {
+        for (Attribute att : this.attributes) {
             if (att.getShortName().equalsIgnoreCase(attName)) {
                 return att;
             }
@@ -1236,8 +1239,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         }
 
         //Get levels
-        ucar.nc2.Attribute levAtt = this.findGlobalAttribute("VGLVLS");
-        Array array = NCUtil.convertArray(levAtt.getValues());
+        Attribute levAtt = this.findGlobalAttribute("VGLVLS");
+        Array array = levAtt.getValues();
         int znum = (int) array.getSize() - 1;
         double[] levels = new double[znum];
         for (i = 0; i < znum; i++) {

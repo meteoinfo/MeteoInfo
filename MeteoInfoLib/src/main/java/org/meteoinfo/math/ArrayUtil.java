@@ -1226,11 +1226,16 @@ public class ArrayUtil {
                 sbuff.append("[");
             }
             data = ii.getObjectNext();
-            dstr = data.toString();
-            if (a.getDataType() == DataType.BOOLEAN) {
+            dstr = data.toString();            
+            if (a.getDataType().isBoolean()) {
                 dstr = GlobalUtil.capitalize(dstr);
-            }
-            sbuff.append(dstr);
+            } 
+            if (a.getDataType().isString()) {
+                sbuff.append("'");
+                sbuff.append(dstr);
+                sbuff.append("'");
+            } else
+                sbuff.append(dstr);
             i += 1;
             if (i == len) {
                 sbuff.append("]");

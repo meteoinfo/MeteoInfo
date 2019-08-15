@@ -395,58 +395,77 @@ public class ArrayUtil {
 
     // </editor-fold>
     // <editor-fold desc="Create">
-    /**
+     /**
      * Create an array
      *
      * @param data Object
      * @return Array
      */
     public static Array array(Object data) {
-        if (data instanceof Number) {
-            DataType dt = ArrayMath.getDataType(data);
-            Array a = Array.factory(dt, new int[]{1});
-            a.setObject(0, data);
-            return a;
-        } else if (data instanceof Array) {
+        return array(data, null);
+    }
+    
+    /**
+     * Create an array
+     *
+     * @param data Object
+     * @param dt Data type
+     * @return Array
+     */
+    public static Array array(Object data, DataType dt) {
+        if (data instanceof Array) {
             return (Array) data;
-        } else if (data instanceof ArrayList) {
-            return array((List<Object>) data);
+        } else if (data instanceof List) {
+            return array_list((List) data, dt);
         } else if (data.getClass().isArray()) {
             return Array.factory(data);
         } else {
-            return null;
+            if (dt == null)
+                dt = ArrayMath.getDataType(data);
+            Array a = Array.factory(dt, new int[]{1});
+            if (data instanceof String) {
+                a.setString(0, (String)data);
+            } else {
+                a.setObject(0, data);
+            }
+            return a;
         }
     }
 
-    /**
-     * Create an array
-     *
-     * @param data Array like data
-     * @return
-     */
-    public static Array array(ArrayList data) {
-        return array((List<Object>) data);
-    }
+//    /**
+//     * Create an array
+//     *
+//     * @param data Array like data
+//     * @param dt Data type
+//     * @return Array
+//     */
+//    public static Array array(ArrayList data, DataType dt) {
+//        return array((List<Object>) data, dt);
+//    }
 
     /**
      * Create an array
      *
      * @param data Array like data
+     * @param dt Data type
      * @return Array
      */
-    public static Array array(List<Object> data) {
+    public static Array array_list(List data, DataType dt) {
         Object d0 = data.get(0);
         if (d0 instanceof Number) {
-            DataType dt = ArrayUtil.objectsToType(data);
+            if (dt == null)
+                dt = ArrayUtil.objectsToType(data);
             Array a = Array.factory(dt, new int[]{data.size()});
             for (int i = 0; i < data.size(); i++) {
                 a.setObject(i, data.get(i));
             }
             return a;
         } else if (d0 instanceof String) {
-            Array a = Array.factory(DataType.STRING, new int[]{data.size()});
+            if (dt == null)
+                dt = DataType.STRING;
+            Array a = Array.factory(dt, new int[]{data.size()});
             for (int i = 0; i < data.size(); i++) {
-                a.setObject(i, data.get(i));
+                a.setString(i, (String)data.get(i));
             }
             return a;
         } else if (d0 instanceof Boolean) {
@@ -467,7 +486,8 @@ public class ArrayUtil {
         } else if (d0 instanceof List) {
             int ndim = data.size();
             int len = ((List) d0).size();
-            DataType dt = ArrayUtil.objectsToType((List<Object>) d0);
+            if (dt == null)
+                dt = ArrayUtil.objectsToType((List<Object>) d0);
             Array a = Array.factory(dt, new int[]{ndim, len});
             for (int i = 0; i < ndim; i++) {
                 List<Object> d = (List) data.get(i);

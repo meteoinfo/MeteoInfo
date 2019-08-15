@@ -3271,7 +3271,7 @@ public class ArrayMath {
 
         List<Array> ra = new ArrayList<>();
         for (int i = 0; i < ndim; i++) {
-            ra.add(ArrayUtil.array(r.get(i)));
+            ra.add(ArrayUtil.array(r.get(i), null));
         }
         return ra;
     }

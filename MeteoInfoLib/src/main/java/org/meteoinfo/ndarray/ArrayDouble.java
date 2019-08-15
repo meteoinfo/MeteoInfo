@@ -241,14 +241,14 @@ public class ArrayDouble extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public String getString(Index i) {
-        throw new ForbiddenConversionException();
+        return String.valueOf(storageD[i.currentElement()]);
     }
 
     /**
      * not legal, throw ForbiddenConversionException
      */
     public void setString(Index i, String value) {
-        throw new ForbiddenConversionException();
+        storageD[i.currentElement()] = Double.parseDouble(value);
     }
 
     /**
@@ -339,11 +339,11 @@ public class ArrayDouble extends Array {
     }
 
     public String getString(int index) {
-        throw new ForbiddenConversionException();
+        return String.valueOf(storageD[index]);
     }
 
     public void setString(int index, String value) {
-        throw new ForbiddenConversionException();
+        storageD[index] = Double.parseDouble(value);
     }
 
     public Complex getComplex(int index) {

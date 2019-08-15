@@ -207,7 +207,7 @@ public class Grouping
         }
 
         if (!column.isEmpty()) {
-            Array grouped = ArrayUtil.array(column);
+            Array grouped = ArrayUtil.array(column, null);
             return new Series(grouped, index, name);
         }
 
@@ -297,7 +297,7 @@ public class Grouping
                 }
 
                 if (!column.isEmpty()) {
-                    grouped.add(ArrayUtil.array(column));
+                    grouped.add(ArrayUtil.array(column, null));
                     newcols.add(names.get(c));
                 }
             }

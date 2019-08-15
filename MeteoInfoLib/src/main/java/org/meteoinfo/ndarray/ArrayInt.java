@@ -260,14 +260,14 @@ public class ArrayInt extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public String getString(Index i) {
-        throw new ForbiddenConversionException();
+        return String.valueOf(this.storage[i.currentElement()]);
     }
 
     /**
      * not legal, throw ForbiddenConversionException
      */
     public void setString(Index i, String value) {
-        throw new ForbiddenConversionException();
+        this.storage[i.currentElement()] = Integer.parseInt(value);
     }
 
     /**
@@ -361,11 +361,11 @@ public class ArrayInt extends Array {
     }
 
     public String getString(int index) {
-        throw new ForbiddenConversionException();
+        return String.valueOf(this.storage[index]);
     }
 
     public void setString(int index, String value) {
-        throw new ForbiddenConversionException();
+        this.storage[index] = Integer.parseInt(value);
     }
 
     public Complex getComplex(int index) {

@@ -600,6 +600,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_File.setText("File");
 
         jMenuItem_NewFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem_NewFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewFile.Image.png"))); // NOI18N
         jMenuItem_NewFile.setText("New");
         jMenuItem_NewFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -609,6 +610,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_File.add(jMenuItem_NewFile);
 
         jMenuItem_OpenFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem_OpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
         jMenuItem_OpenFile.setText("Open ...");
         jMenuItem_OpenFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -618,6 +620,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_File.add(jMenuItem_OpenFile);
 
         jMenuItem_SaveFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem_SaveFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
         jMenuItem_SaveFile.setText("Save");
         jMenuItem_SaveFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -626,6 +629,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jMenu_File.add(jMenuItem_SaveFile);
 
+        jMenuItem_SaveAs.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_16.png"))); // NOI18N
         jMenuItem_SaveAs.setText("Save As ...");
         jMenuItem_SaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -634,6 +638,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jMenu_File.add(jMenuItem_SaveAs);
 
+        jMenuItem_CloseAllFiles.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/closefile.png"))); // NOI18N
         jMenuItem_CloseAllFiles.setText("Close All Files");
         jMenuItem_CloseAllFiles.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -701,6 +706,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Options.add(jMenuItem_SetFont);
         jMenu_Options.add(jSeparator4);
 
+        jMenuItem_ColorMaps.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/colors.png"))); // NOI18N
         jMenuItem_ColorMaps.setText("Color Maps");
         jMenuItem_ColorMaps.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -709,6 +715,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jMenu_Options.add(jMenuItem_ColorMaps);
 
+        jMenuItem_ColorDialog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Color_Wheel.png"))); // NOI18N
         jMenuItem_ColorDialog.setText("Color Dialog");
         jMenuItem_ColorDialog.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -735,6 +742,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         jMenu_Help.setText("Help");
 
+        jMenuItem_About.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png"))); // NOI18N
         jMenuItem_About.setText("About");
         jMenuItem_About.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

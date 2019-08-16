@@ -16,6 +16,9 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+N"/>
                 </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/TSB_NewFile.Image.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="New"/>
               </Properties>
               <Events>
@@ -26,6 +29,9 @@
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+O"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/Folder_1_16x16x8.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Open ..."/>
               </Properties>
@@ -38,6 +44,9 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+S"/>
                 </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/Disk_1_16x16x8.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Save"/>
               </Properties>
               <Events>
@@ -46,6 +55,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_SaveAs">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/save_16.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Save As ..."/>
               </Properties>
               <Events>
@@ -54,6 +66,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_CloseAllFiles">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/closefile.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Close All Files"/>
               </Properties>
               <Events>
@@ -84,7 +99,7 @@
                   <KeyStroke key="Ctrl+X"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/TSMI_EditCut.Image.png"/>
+                  <Image iconType="3" name="/images/TSMI_EditCut.Image.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Cut"/>
               </Properties>
@@ -98,7 +113,7 @@
                   <KeyStroke key="Ctrl+C"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/menuEditCopy.Image.png"/>
+                  <Image iconType="3" name="/images/menuEditCopy.Image.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Copy"/>
               </Properties>
@@ -112,7 +127,7 @@
                   <KeyStroke key="Ctrl+V"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/pasteToolStripButton.Image.png"/>
+                  <Image iconType="3" name="/images/pasteToolStripButton.Image.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Paste"/>
               </Properties>
@@ -131,7 +146,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_SetFont">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/miSetFont.Image.png"/>
+                  <Image iconType="3" name="/images/miSetFont.Image.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Set Font"/>
               </Properties>
@@ -143,6 +158,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_ColorMaps">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/colors.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Color Maps"/>
               </Properties>
               <Events>
@@ -151,6 +169,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_ColorDialog">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/Color_Wheel.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Color Dialog"/>
               </Properties>
               <Events>
@@ -167,7 +188,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_AppsManager">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/plugin_edit_green.png"/>
+                  <Image iconType="3" name="/images/plugin_edit_green.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Application Manager"/>
               </Properties>
@@ -186,6 +207,9 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_About">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/information.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="About"/>
               </Properties>
               <Events>
@@ -251,7 +275,7 @@
             <Component class="javax.swing.JButton" name="jButton_NewFile">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/TSB_NewFile.Image.png"/>
+                  <Image iconType="3" name="/images/TSB_NewFile.Image.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="New File"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -265,7 +289,7 @@
             <Component class="javax.swing.JButton" name="jButton_OpenFile">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/Folder_1_16x16x8.png"/>
+                  <Image iconType="3" name="/images/Folder_1_16x16x8.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Open File"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -279,7 +303,7 @@
             <Component class="javax.swing.JButton" name="jButton_SaveFile">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/Disk_1_16x16x8.png"/>
+                  <Image iconType="3" name="/images/Disk_1_16x16x8.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Save File"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -293,7 +317,7 @@
             <Component class="javax.swing.JButton" name="jButton_SaveAs">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/save_16.png"/>
+                  <Image iconType="3" name="/images/save_16.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Save As"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -309,7 +333,7 @@
             <Component class="javax.swing.JButton" name="jButton_Undo">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/TSB_Undo.Image.png"/>
+                  <Image iconType="3" name="/images/TSB_Undo.Image.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Undo"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -323,7 +347,7 @@
             <Component class="javax.swing.JButton" name="jButton_Redo">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/TSB_Redo.Image.png"/>
+                  <Image iconType="3" name="/images/TSB_Redo.Image.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Redo"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -339,7 +363,7 @@
             <Component class="javax.swing.JButton" name="jButton_RunScript">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/TSB_RunScript.Image.png"/>
+                  <Image iconType="3" name="/images/TSB_RunScript.Image.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Run Script"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -391,7 +415,7 @@
             <Component class="javax.swing.JButton" name="jButton_CurrentFolder">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/meteoinfo/laboratory/resources/folder.png"/>
+                  <Image iconType="3" name="/images/folder.png"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>

@@ -99,6 +99,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         }
 
         //Set icon image
+        System.out.println("Set icon image...");
         BufferedImage image = null;
         try {
             image = ImageIO.read(this.getClass().getResource("/images/MeteoLab_32.png"));
@@ -107,6 +108,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         this.setIconImage(image);
 
         //Load configure file
+        System.out.println("Load configure file...");
         this.loadConfigureFile();
         this.setLocation(this.options.getMainFormLocation());
         this.setSize(this.options.getMainFormSize());
@@ -131,11 +133,13 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         }
 
         //Add dockable panels
+        System.out.println("Add dockable panels...");
         CControl control = new CControl(this);
         this.add(control.getContentArea());
 
         control.putProperty(ScreenDockStation.WINDOW_FACTORY, new CustomWindowFactory());
 
+        System.out.println("Editor and Console panels...");
         CGrid grid = new CGrid(control);
         //this.outputDock = new OutputDockable("Output", "Output");
         editorDock = new EditorDockable(this, "Editor", "Editor");
@@ -148,7 +152,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         this.editorDock.addNewTextEditor("New file");
         this.editorDock.openFiles(this.options.getOpenedFiles());
 
-        //Load applications        
+        //Load toolbox applications        
+        System.out.println("Load toolbox applications...");
         String toolboxPath = this.startupPath + File.separator + "toolbox";
         if (isDebug) {
             toolboxPath = "D:/MyProgram/Java/MeteoInfoDev/toolbox";
@@ -263,8 +268,14 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             }
 
         });
+        
+        //Add figure panel
+        System.out.println("Add figure panel...");
         figuresDock = new FigureDockable(this, "Figures", "Figures");
         this.variableDock = new VariableDockable("Variables", "Variable explorer");
+        
+        //Add file panel
+        System.out.println("Add file panel...");
         this.fileDock = new FileDockable("Files", "File explorer");
         if (cf != null) {
             this.fileDock.setPath(new File(cf));
@@ -300,6 +311,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         grid.add(5, 0, 5, 5, this.fileDock);
         grid.add(5, 5, 5, 5, figuresDock);
         control.getContentArea().deploy(grid);
+        
+        System.out.println("Main form is loaded!");
     }
 
     /**

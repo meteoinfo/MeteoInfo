@@ -229,24 +229,26 @@ public class MeteoInfoLab {
                     Locale.setDefault(Locale.ENGLISH);
                 }
 
-                StackWindow sw = null;
-                if (!isDebug) {
-                    sw = new StackWindow("Show Exception Stack", 600, 400);
-                    Thread.UncaughtExceptionHandler handler = sw;
-                    Thread.setDefaultUncaughtExceptionHandler(handler);
-                    System.setOut(sw.printStream);
-                    System.setErr(sw.printStream);
-                }
+//                StackWindow sw = null;
+//                if (!isDebug) {
+//                    sw = new StackWindow("Show Exception Stack", 600, 400);
+//                    Thread.UncaughtExceptionHandler handler = sw;
+//                    Thread.setDefaultUncaughtExceptionHandler(handler);
+//                    System.setOut(sw.printStream);
+//                    System.setErr(sw.printStream);
+//                }
 
                 //registerFonts();
+                System.out.println("Register weather font...");
                 org.meteoinfo.global.util.FontUtil.registerWeatherFont();
+                System.out.println("Open main form...");
                 FrmMain frame = new FrmMain();
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 //frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
-                if (sw != null) {
-                    sw.setLocationRelativeTo(frame);
-                }
+//                if (sw != null) {
+//                    sw.setLocationRelativeTo(frame);
+//                }
             }
         });
     }

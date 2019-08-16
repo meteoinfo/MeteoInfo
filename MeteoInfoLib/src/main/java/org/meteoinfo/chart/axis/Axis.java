@@ -1321,7 +1321,8 @@ public class Axis implements Cloneable {
         
         Dimension dim1;
         double width = dim.getWidth(), height = dim.getHeight();
-        for (ChartText ct : this.tickLabels) {
+        for (int i = 0; i < this.tickLabels.size(); i++) {
+            ChartText ct = this.tickLabels.get(i);
             ct.setAngle(this.tickLabelAngle);
             dim1 = ct.getTrueDimension(g);
             if (width < dim1.getWidth()){

@@ -186,13 +186,13 @@ def inpolygon(x, y, polygon):
             x_p = np.array(x_p)
         if isinstance(y_p, (list, tuple)):
             y_p = np.array(y_p)
-        return NDArray(ArrayMath.inPolygon(x._array, y._array, x_p._array, y_p._array))
+        return NDArray(GeometryUtil.inPolygon(x._array, y._array, x_p._array, y_p._array))
     else:
         if isinstance(polygon, MILayer):
             polygon = polygon.shapes()
         elif isinstance(polygon, PolygonShape):
             polygon = [polygon]
-        return NDArray(ArrayMath.inPolygon(x._array, y._array, polygon))
+        return NDArray(GeometryUtil.inPolygon(x._array, y._array, polygon))
     
 def arrayinpolygon(a, polygon, x=None, y=None):
     '''
@@ -217,11 +217,11 @@ def arrayinpolygon(a, polygon, x=None, y=None):
                 x_p = x_p.aslist()
             if isinstance(y_p, NDArray):
                 y_p = y_p.aslist()
-            return NDArray(ArrayMath.inPolygon(a.asarray(), x.aslist(), y.aslist(), x_p, y_p))
+            return NDArray(GeometryUtil.inPolygon(a.asarray(), x.aslist(), y.aslist(), x_p, y_p))
         else:
             if isinstance(polygon, MILayer):
                 polygon = polygon.layer
-            return NDArray(ArrayMath.inPolygon(a.asarray(), x.aslist(), y.aslist(), polygon))
+            return NDArray(GeometryUtil.inPolygon(a.asarray(), x.aslist(), y.aslist(), polygon))
     else:
         return None
             

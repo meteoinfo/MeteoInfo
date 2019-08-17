@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\verification"/>
@@ -16,23 +14,25 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\bar_colors.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\two_yaxis.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\netcdf\wrfchem_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\inpolygon_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\bar_colors.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\two_yaxis.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\bufr_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\netcdf\wrfchem_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\inpolygon_1.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,0" MainFormSize="1341,809"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

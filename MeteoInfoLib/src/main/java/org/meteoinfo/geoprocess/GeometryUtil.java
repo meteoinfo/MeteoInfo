@@ -13,6 +13,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.shape.PolygonShape;
 
 /**
@@ -99,6 +100,148 @@ public class GeometryUtil {
         Geometry gs = factory.createGeometryCollection(geos);
         Geometry ch = gs.convexHull();
         return new PolygonShape(ch);
+    }
+    
+    /**
+     * In polygon function
+     *
+     * @param a Array a
+     * @param x X dimension values
+     * @param y Y dimension values
+     * @param layer Polygon vector layer
+     * @return Result array with cell values of 1 inside polygons and -1 outside
+     * polygons
+     */
+    public static Array inPolygon(Array a, List<Number> x, List<Number> y, VectorLayer layer) {
+        List<PolygonShape> polygons = (List<PolygonShape>) layer.getShapes();
+        return inPolygon(a, x, y, polygons);
+    }
+
+    /**
+     * In polygon function
+     *
+     * @param a Array a
+     * @param x X dimension values
+     * @param y Y dimension values
+     * @param ps Polygon shape
+     * @return Result array with cell values of 1 inside polygons and -1 outside
+     * polygons
+     */
+    public static Array inPolygon(Array a, List<Number> x, List<Number> y, PolygonShape ps) {
+        List<PolygonShape> polygons = new ArrayList<>();
+        polygons.add(ps);
+        return inPolygon(a, x, y, polygons);
+    }
+
+    /**
+     * In polygon function
+     *
+     * @param a Array a
+     * @param x X dimension values
+     * @param y Y dimension values
+     * @param polygons PolygonShape list
+     * @return Result array with cell values of 1 inside polygons and -1 outside
+     * polygons
+     */
+    public static Array inPolygon(Array a, List<Number> x, List<Number> y, List<PolygonShape> polygons) {
+        if (a.getRank() == 2) {
+            int xNum = x.size();
+            int yNum = y.size();
+
+            Array r = Array.factory(DataType.INT, a.getShape());
+            for (int i = 0; i < yNum; i++) {
+                for (int j = 0; j < xNum; j++) {
+                    if (GeoComputation.pointInPolygons(polygons, new PointD(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
+                        r.setInt(i * xNum + j, 1);
+                    } else {
+                        r.setInt(i * xNum + j, -1);
+                    }
+                }
+            }
+
+            return r;
+        } else if (a.getRank() == 1) {
+            int n = x.size();
+            Array r = Array.factory(DataType.INT, a.getShape());
+            for (int i = 0; i < n; i++) {
+                if (GeoComputation.pointInPolygons(polygons, new PointD(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
+                    r.setInt(i, 1);
+                } else {
+                    r.setInt(i, -1);
+                }
+            }
+
+            return r;
+        }
+
+        return null;
+    }
+
+    /**
+     * In polygon function
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @param polygons PolygonShape list
+     * @return Result boolean array
+     */
+    public static Array inPolygon(Array x, Array y, List<PolygonShape> polygons) {
+        Array r = Array.factory(DataType.BOOLEAN, x.getShape());
+        for (int i = 0; i < r.getSize(); i++) {
+            if (GeoComputation.pointInPolygons(polygons, new PointD(x.getDouble(i), y.getDouble(i)))) {
+                r.setBoolean(i, true);
+            } else {
+                r.setBoolean(i, false);
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * In polygon function
+     *
+     * @param a Array a
+     * @param x X dimension values
+     * @param y Y dimension values
+     * @param x_p X coordinate of the polygon
+     * @param y_p Y coordinate of the polygon
+     * @return Result array with cell values of 1 inside polygons and -1 outside
+     * polygons
+     */
+    public static Array inPolygon(Array a, List<Number> x, List<Number> y, List<Number> x_p, List<Number> y_p) {
+        PolygonShape ps = new PolygonShape();
+        List<PointD> points = new ArrayList<>();
+        for (int i = 0; i < x_p.size(); i++) {
+            points.add(new PointD(x_p.get(i).doubleValue(), y_p.get(i).doubleValue()));
+        }
+        ps.setPoints(points);
+        List<PolygonShape> shapes = new ArrayList<>();
+        shapes.add(ps);
+
+        return inPolygon(a, x, y, shapes);
+    }
+
+    /**
+     * In polygon function
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @param x_p X coordinate of the polygon
+     * @param y_p Y coordinate of the polygon
+     * @return Result boolean array
+     */
+    public static Array inPolygon(Array x, Array y, Array x_p, Array y_p) {
+        PolygonShape ps = new PolygonShape();
+        List<PointD> points = new ArrayList<>();
+        for (int i = 0; i < x_p.getSize(); i++) {
+            points.add(new PointD(x_p.getDouble(i), y_p.getDouble(i)));
+        }
+        ps.setPoints(points);
+        List<PolygonShape> shapes = new ArrayList<>();
+        shapes.add(ps);
+
+        return inPolygon(x, y, shapes);
     }
     
     /**

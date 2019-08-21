@@ -3029,7 +3029,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     public StationModelData getStationModelData(int timeIdx, int levelIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     /**
      * Read array data of the variable
      *
@@ -3038,6 +3038,17 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      */
     @Override
     public Array read(String varName) {
+        return read(varName, true);
+    }
+
+    /**
+     * Read array data of the variable
+     *
+     * @param varName Variable name
+     * @param unpack Unpack data or not
+     * @return Array data
+     */
+    public Array read(String varName, boolean unpack) {
         try {
             if (ncfile == null) {
                 ncfile = NetcdfFile.open(this.getFileName());
@@ -3060,15 +3071,17 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
             Array data = NCUtil.convertArray(var.read());
             
-            //Get pack info
-            double add_offset, scale_factor, missingValue;
-            double[] packData = this.getPackData(var);
-            add_offset = packData[0];
-            scale_factor = packData[1];
-            missingValue = packData[2];
-            if (add_offset != 0 || scale_factor != 1) {
-                //ArrayMath.fill_value = missingValue;
-                data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+            if (unpack) {
+                //Get pack info
+                double add_offset, scale_factor, missingValue;
+                double[] packData = this.getPackData(var);
+                add_offset = packData[0];
+                scale_factor = packData[1];
+                missingValue = packData[2];
+                if (add_offset != 0 || scale_factor != 1) {
+                    //ArrayMath.fill_value = missingValue;
+                    data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+                }
             }
 
             return data;
@@ -3086,7 +3099,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
         }
     }
-
+    
     /**
      * Read array data of the variable
      *
@@ -3098,6 +3111,20 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      */
     @Override
     public Array read(String varName, int[] origin, int[] size, int[] stride) {
+        return read(varName, origin, size, stride, true);
+    }
+
+    /**
+     * Read array data of the variable
+     *
+     * @param varName Variable name
+     * @param origin The origin array
+     * @param size The size array
+     * @param stride The stride array
+     * @param unpack Unpack data or not
+     * @return Array data
+     */
+    public Array read(String varName, int[] origin, int[] size, int[] stride, boolean unpack) {
         try {
             if (ncfile == null) {
                 ncfile = NetcdfDataset.openFile(this.getFileName(), null);
@@ -3148,15 +3175,17 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 data = NCUtil.convertArray(var.read(section));
             }
 
-            //Get pack info
-            double add_offset, scale_factor, missingValue;
-            double[] packData = this.getPackData(var);
-            add_offset = packData[0];
-            scale_factor = packData[1];
-            missingValue = packData[2];
-            if (add_offset != 0 || scale_factor != 1) {
-                //ArrayMath.fill_value = missingValue;
-                data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+            if (unpack) {
+                //Get pack info
+                double add_offset, scale_factor, missingValue;
+                double[] packData = this.getPackData(var);
+                add_offset = packData[0];
+                scale_factor = packData[1];
+                missingValue = packData[2];
+                if (add_offset != 0 || scale_factor != 1) {
+                    //ArrayMath.fill_value = missingValue;
+                    data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+                }
             }
 
             return data;
@@ -3174,7 +3203,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
         }
     }
-
+    
     /**
      * Read array data of the variable
      *
@@ -3184,6 +3213,19 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return Array data
      */
     public Array read(String varName, int[] origin, int[] size) {
+        return read(varName, origin, size, true);
+    }
+
+    /**
+     * Read array data of the variable
+     *
+     * @param varName Variable name
+     * @param origin The origin array
+     * @param size The size array
+     * @param unpack Unpack data or not
+     * @return Array data
+     */
+    public Array read(String varName, int[] origin, int[] size, boolean unpack) {
         try {
             if (ncfile == null) {
                 ncfile = NetcdfFile.open(this.getFileName());
@@ -3193,15 +3235,17 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             ucar.ma2.Section section = new ucar.ma2.Section(origin, size);
             Array data = NCUtil.convertArray(var.read(section));
             
-            //Get pack info
-            double add_offset, scale_factor, missingValue;
-            double[] packData = this.getPackData(var);
-            add_offset = packData[0];
-            scale_factor = packData[1];
-            missingValue = packData[2];
-            if (add_offset != 0 || scale_factor != 1) {
-                //ArrayMath.fill_value = missingValue;
-                data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+            if (unpack) {
+                //Get pack info
+                double add_offset, scale_factor, missingValue;
+                double[] packData = this.getPackData(var);
+                add_offset = packData[0];
+                scale_factor = packData[1];
+                missingValue = packData[2];
+                if (add_offset != 0 || scale_factor != 1) {
+                    //ArrayMath.fill_value = missingValue;
+                    data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+                }
             }
 
             return data;
@@ -3568,7 +3612,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         dimNames.add(dim.getShortName());
                     }
                     if (!dimNames.contains(timeDimStr)) {
-                        Array varaData = aDataInfo.read(var.getShortName());
+                        Array varaData = aDataInfo.read(var.getShortName(), false);
                         ncfilew.write(var, NCUtil.convertArray(varaData));
                     }
                 }
@@ -3605,7 +3649,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                             start[1] = d2;
                             count[1] = 1;
 
-                            Array varaData = aDataInfo.read(dvar.getShortName(), start, count);
+                            Array varaData = aDataInfo.read(dvar.getShortName(), start, count, false);
                             start[tDimIdx] += tDimNum;
                             ncfilew.write(var, start, NCUtil.convertArray(varaData));
                         }
@@ -3619,7 +3663,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         start[0] = d1;
                         count[0] = 1;
 
-                        Array varaData = aDataInfo.read(dvar.getShortName(), start, count);
+                        Array varaData = aDataInfo.read(dvar.getShortName(), start, count, false);
                         start[tDimIdx] += tDimNum;
                         ncfilew.write(var, start, NCUtil.convertArray(varaData));
                     }
@@ -3931,7 +3975,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
         //Write variable data
         for (ucar.nc2.Variable nvar : nvars) {
-            ncfile.write(nvar, NCUtil.convertArray(aDataInfo.read(nvar.getShortName())));
+            ncfile.write(nvar, NCUtil.convertArray(aDataInfo.read(nvar.getShortName(), false)));
         }
 
         //Add data in more files
@@ -3942,7 +3986,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
             NetCDFDataInfo df = mncf.get(i);
             for (ucar.nc2.Variable nvar : vars) {
-                ncfile.write(nvar, NCUtil.convertArray(df.read(nvar.getShortName())));
+                ncfile.write(nvar, NCUtil.convertArray(df.read(nvar.getShortName(), false)));
             }
         }
 

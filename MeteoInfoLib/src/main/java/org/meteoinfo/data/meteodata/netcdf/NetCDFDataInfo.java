@@ -3029,7 +3029,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     public StationModelData getStationModelData(int timeIdx, int levelIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     /**
      * Read array data of the variable
      *
@@ -3070,7 +3070,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             Array data = NCUtil.convertArray(var.read());
-            
+
             if (unpack) {
                 //Get pack info
                 double add_offset, scale_factor, missingValue;
@@ -3099,7 +3099,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
         }
     }
-    
+
     /**
      * Read array data of the variable
      *
@@ -3203,7 +3203,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
         }
     }
-    
+
     /**
      * Read array data of the variable
      *
@@ -3234,7 +3234,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
             ucar.ma2.Section section = new ucar.ma2.Section(origin, size);
             Array data = NCUtil.convertArray(var.read(section));
-            
+
             if (unpack) {
                 //Get pack info
                 double add_offset, scale_factor, missingValue;
@@ -3975,7 +3975,23 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
         //Write variable data
         for (ucar.nc2.Variable nvar : nvars) {
-            ncfile.write(nvar, NCUtil.convertArray(aDataInfo.read(nvar.getShortName(), false)));
+            int ndim = nvar.getDimensions().size();
+            if (ndim < 4) {
+                ncfile.write(nvar, NCUtil.convertArray(aDataInfo.read(nvar.getShortName(), false)));
+            } else {
+                int[] start = new int[ndim];
+                int[] count = new int[ndim];
+                int n = nvar.getDimension(0).getLength();
+                for (int i = 0; i < n; i++) {
+                    start[0] = i;
+                    count[0] = 1;
+                    for (int j = 1; j < ndim; j++) {
+                        start[j] = 0;
+                        count[j] = nvar.getDimension(j).getLength();
+                    }
+                }
+                ncfile.write(nvar, NCUtil.convertArray(aDataInfo.read(nvar.getShortName(), start, count, false)));
+            }
         }
 
         //Add data in more files
@@ -3986,7 +4002,23 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
             NetCDFDataInfo df = mncf.get(i);
             for (ucar.nc2.Variable nvar : vars) {
-                ncfile.write(nvar, NCUtil.convertArray(df.read(nvar.getShortName(), false)));
+                int ndim = nvar.getDimensions().size();
+                if (ndim < 4) {
+                    ncfile.write(nvar, NCUtil.convertArray(df.read(nvar.getShortName(), false)));
+                } else {
+                    int[] start = new int[ndim];
+                    int[] count = new int[ndim];
+                    int n = nvar.getDimension(0).getLength();
+                    for (int k = 0; k < n; k++) {
+                        start[0] = k;
+                        count[0] = 1;
+                        for (int j = 1; j < ndim; j++) {
+                            start[j] = 0;
+                            count[j] = nvar.getDimension(j).getLength();
+                        }
+                    }
+                    ncfile.write(nvar, NCUtil.convertArray(df.read(nvar.getShortName(), start, count, false)));
+                }
             }
         }
 

@@ -737,7 +737,8 @@ public class FrmLayerProperty extends javax.swing.JDialog {
             case RasterLayer:
                 switch (aLT) {
                     case UniqueValue:
-
+                        List<Number> values = ((RasterLayer) _mapLayer).getGridData().getUniqueValues();
+                        this._legendScheme = LegendManage.createUniqValueLegendScheme(values, ShapeTypes.Image);
                         break;
                     case GraduatedColor:
                         if (this._legendScheme == null || this._legendScheme.getLegendType() != LegendType.GraduatedColor)

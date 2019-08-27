@@ -6,7 +6,6 @@
 package org.meteoinfo.data.dataframe;
 
 import java.util.List;
-import org.meteoinfo.math.ArrayUtil;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 

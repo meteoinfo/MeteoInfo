@@ -14,6 +14,7 @@ import mipylib.numeric as np
 import mipylib.miutil as miutil
 from index import Index, DateTimeIndex
 import groupby
+from indexing import LocIndexer, ILocIndexer, AtIndexer, IAtIndexer
 
 from java.lang import Double
 from java.util import Date
@@ -87,6 +88,20 @@ class Series(object):
         return self.values.dtype
         
     dtype = property(get_dtype)
+    
+    @property
+    def loc(self):
+        '''
+        Access a group of rows and columns by label(s) or a boolean array.
+        '''
+        return LocIndexer(self)
+        
+    @property
+    def iloc(self):
+        '''
+        Purely integer-location based indexing for selection by position.
+        '''
+        return ILocIndexer(self)
         
     def __getitem__(self, key):
         if isinstance(key, Index):
@@ -94,19 +109,12 @@ class Series(object):
         elif isinstance(key, datetime.datetime):
             key = miutil.jdatetime(key)
             
-        if isinstance(key, int):
-            if key < 0 or key >= self.__len__():
-                raise KeyError(key)
-            return self._series.getValue(key)
-        elif isinstance(key, (list, tuple, np.NDArray)):
+        if isinstance(key, (list, tuple, np.NDArray)):
             if isinstance(key, np.NDArray):
                 key = key.aslist()
             if isinstance(key[0], datetime.datetime):
                 key = miutil.jdatetime(key)
-            if isinstance(key[0], int):
-                r = self._series.getValues(key)
-            else:                
-                r = self._series.getValueByIndex(key)
+            r = self._series.getValueByIndex(key)
             return Series(series=r)
         elif isinstance(key, slice):
             if isinstance(key.start, basestring):
@@ -135,10 +143,6 @@ class Series(object):
                 return Series(series=r)
             else:
                 return r
-            # i = self._series.getIndex().indexOf(key)
-            # if i < 0:
-                # raise KeyError(key)
-            # return self._series.getValue(i)
         
     def __setitem__(self, key, value):
         if isinstance(key, Series):
@@ -147,6 +151,88 @@ class Series(object):
             
         ikey = self.__getkey(key)
         self.values.__setitem__(ikey, value)
+        
+    def _getitem_loc(self, key):
+        if isinstance(key, Index):
+            key = key.data
+        elif isinstance(key, datetime.datetime):
+            key = miutil.jdatetime(key)
+            
+        if isinstance(key, (list, tuple, np.NDArray)):
+            if isinstance(key, np.NDArray):
+                key = key.aslist()
+            if isinstance(key[0], datetime.datetime):
+                key = miutil.jdatetime(key)
+            r = self._series.getValueByIndex(key)
+            return Series(series=r)
+        elif isinstance(key, slice):
+            if isinstance(key.start, basestring):
+                sidx = self._index.index(key.start)
+                if sidx < 0:
+                    sidx = 0
+            else:
+                sidx = 0 if key.start is None else key.start
+                if sidx < 0:
+                    sidx = self.__len__() + sidx
+            if isinstance(key.stop, basestring):
+                eidx = self._index.index(key.stop)
+                if eidx < 0:
+                    eidx = self.__len__()
+            else:
+                eidx = self.__len__() - 1 if key.stop is None else key.stop - 1
+                if eidx < 0:
+                    eidx = self.__len__() + eidx                    
+            step = 1 if key.step is None else key.step
+            rowkey = Range(sidx, eidx, step)   
+            r = self._series.getValues(rowkey)
+            return Series(series=r)
+        else:
+            r = self._series.getValueByIndex(key)
+            if isinstance(r, MISeries):
+                return Series(series=r)
+            else:
+                return r
+            
+    def _getitem_iloc(self, key):
+        if isinstance(key, Index):
+            key = key.data
+            
+        if isinstance(key, int):
+            if key < 0 or key >= self.__len__():
+                raise KeyError(key)
+            return self._series.getValue(key)
+        elif isinstance(key, (list, tuple, np.NDArray)):
+            if isinstance(key, np.NDArray):
+                key = key.aslist()
+            r = self._series.getValues(key)
+            return Series(series=r)
+        elif isinstance(key, slice):
+            if isinstance(key.start, basestring):
+                sidx = self._index.index(key.start)
+                if sidx < 0:
+                    sidx = 0
+            else:
+                sidx = 0 if key.start is None else key.start
+                if sidx < 0:
+                    sidx = self.__len__() + sidx
+            if isinstance(key.stop, basestring):
+                eidx = self._index.index(key.stop)
+                if eidx < 0:
+                    eidx = self.__len__()
+            else:
+                eidx = self.__len__() - 1 if key.stop is None else key.stop - 1
+                if eidx < 0:
+                    eidx = self.__len__() + eidx                    
+            step = 1 if key.step is None else key.step
+            rowkey = Range(sidx, eidx, step)   
+            r = self._series.getValues(rowkey)
+            return Series(series=r)
+        else:
+            r = self._series.getValues(key)
+            if isinstance(r, MISeries):
+                return Series(series=r)
+            else:
+                return r
     
     def __getkey(self, key):
         if isinstance(key, basestring):

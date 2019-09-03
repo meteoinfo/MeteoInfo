@@ -53,6 +53,7 @@ import org.meteoinfo.data.meteodata.ascii.ASCIIGridDataInfo;
 import org.meteoinfo.data.meteodata.ascii.SurferGridDataInfo;
 import org.meteoinfo.data.meteodata.bandraster.BILDataInfo;
 import org.meteoinfo.global.DataConvert;
+import org.meteoinfo.io.IOUtil;
 import org.meteoinfo.layer.RasterLayer;
 import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.legend.LegendType;
@@ -165,15 +166,15 @@ public class MapDataManage {
                 aLayer = readMapFile_GrADS(aFile);
                 break;
         }
-        
-        if (aLayer != null){
+
+        if (aLayer != null) {
             switch (mdt) {
                 case BIL:
                 case ESRI_ASCII_GRID:
                 case SURFER_ASCII_GRID:
                     String projFn = aFile.substring(0, aFile.length() - 4) + ".prj";
                     File pFile = new File(projFn);
-                    if (pFile.isFile()){
+                    if (pFile.isFile()) {
                         ProjectionInfo projInfo = ShapeFileManage.loadProjFile(pFile);
                         aLayer.setProjInfo(projInfo);
                     }
@@ -204,17 +205,20 @@ public class MapDataManage {
     /**
      * Read shape file as map
      *
-     * @param aFile File name
+     * @param fn File name
      * @return Vector layer
      * @throws java.io.IOException
      * @throws java.io.FileNotFoundException
      */
-    public static VectorLayer readMapFile_ShapeFile(String aFile) throws IOException, FileNotFoundException, Exception {
-        VectorLayer aLayer = ShapeFileManage.loadShapeFile(aFile);
+    public static VectorLayer readMapFile_ShapeFile(String fn) throws IOException, FileNotFoundException, Exception {
+        String encoding = IOUtil.encodingDetectShp(fn);
+        if (encoding.equals("ISO8859_1")) {
+            encoding = "UTF-8";
+        }
 
-        return aLayer;
+        return readMapFile_ShapeFile(fn, encoding);
     }
-    
+
     /**
      * Read shape file as map
      *
@@ -714,9 +718,10 @@ public class MapDataManage {
             }
         }
     }
-    
+
     /**
      * Write projection file
+     *
      * @param projFilePath Projection file path
      * @param projInfo Projection info
      */
@@ -732,8 +737,9 @@ public class MapDataManage {
             Logger.getLogger(ShapeFileManage.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
-                if (sw != null)
+                if (sw != null) {
                     sw.close();
+                }
             } catch (IOException ex) {
                 Logger.getLogger(ShapeFileManage.class.getName()).log(Level.SEVERE, null, ex);
             }

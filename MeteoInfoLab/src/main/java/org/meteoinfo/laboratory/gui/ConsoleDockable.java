@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.SwingWorker;
 import org.meteoinfo.chart.ChartPanel;
+import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.laboratory.codecomplete.JIntrospect;
 import org.python.core.Py;
 
@@ -272,7 +273,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             protected void done() {
                 //System.setOut(oout);
                 //System.setErr(oerr);
-                ChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                IChartPanel cp = parent.getFigureDock().getCurrentFigure();
                 if (cp != null) {
                     cp.paintGraphics();
                 }
@@ -382,7 +383,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             protected void done() {
                 //System.setOut(oout);
                 //System.setErr(oerr);
-                ChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                IChartPanel cp = parent.getFigureDock().getCurrentFigure();
                 if (cp != null) {
                     cp.paintGraphics();
                 }

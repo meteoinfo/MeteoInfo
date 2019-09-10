@@ -14,12 +14,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.meteoinfo.chart.ChartPanel;
+import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
+import org.meteoinfo.chart.jogl.GLChartPanel;
 import org.meteoinfo.ui.ButtonTabComponent;
 
 /**
@@ -56,19 +59,20 @@ public class FigureDockable extends DefaultSingleCDockable {
         });
         this.getContentPane().add(tabbedPanel);
         //this.setCloseable(false);
-        
+
         //Add actions     
         //Select action
         CButton button = new CButton();
         button.setText("Select");
         button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Arrow.png")));
         button.setTooltip("Select");
-        button.addActionListener( new ActionListener(){
+        button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed( ActionEvent e ){
-                ChartPanel cp = FigureDockable.this.getCurrentFigure();
-                if (cp != null)
+            public void actionPerformed(ActionEvent e) {
+                IChartPanel cp = FigureDockable.this.getCurrentFigure();
+                if (cp != null) {
                     cp.setMouseMode(MouseMode.SELECT);
+                }
             }
         });
         this.addAction(button);
@@ -78,12 +82,13 @@ public class FigureDockable extends DefaultSingleCDockable {
         button.setText("Zoom In");
         button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomIn.Image.png")));
         button.setTooltip("Zoom In");
-        button.addActionListener( new ActionListener(){
+        button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed( ActionEvent e ){
-                ChartPanel cp = FigureDockable.this.getCurrentFigure();
-                if (cp != null)
+            public void actionPerformed(ActionEvent e) {
+                IChartPanel cp = FigureDockable.this.getCurrentFigure();
+                if (cp != null) {
                     cp.setMouseMode(MouseMode.ZOOM_IN);
+                }
             }
         });
         this.addAction(button);
@@ -92,12 +97,13 @@ public class FigureDockable extends DefaultSingleCDockable {
         button.setText("Zoom Out");
         button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomOut.Image.png")));
         button.setTooltip("Zoom Out");
-        button.addActionListener( new ActionListener(){
+        button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed( ActionEvent e ){
-                ChartPanel cp = FigureDockable.this.getCurrentFigure();
-                if (cp != null)
+            public void actionPerformed(ActionEvent e) {
+                IChartPanel cp = FigureDockable.this.getCurrentFigure();
+                if (cp != null) {
                     cp.setMouseMode(MouseMode.ZOOM_OUT);
+                }
             }
         });
         this.addAction(button);
@@ -106,12 +112,13 @@ public class FigureDockable extends DefaultSingleCDockable {
         button.setText("Pan");
         button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Pan.Image.png")));
         button.setTooltip("Pan");
-        button.addActionListener( new ActionListener(){
+        button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed( ActionEvent e ){
-                ChartPanel cp = FigureDockable.this.getCurrentFigure();
-                if (cp != null)
+            public void actionPerformed(ActionEvent e) {
+                IChartPanel cp = FigureDockable.this.getCurrentFigure();
+                if (cp != null) {
                     cp.setMouseMode(MouseMode.PAN);
+                }
             }
         });
         this.addAction(button);
@@ -120,12 +127,13 @@ public class FigureDockable extends DefaultSingleCDockable {
         button.setText("Rotate");
         button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/rotate_16.png")));
         button.setTooltip("Rotate");
-        button.addActionListener( new ActionListener(){
+        button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed( ActionEvent e ){
-                ChartPanel cp = FigureDockable.this.getCurrentFigure();
-                if (cp != null)
+            public void actionPerformed(ActionEvent e) {
+                IChartPanel cp = FigureDockable.this.getCurrentFigure();
+                if (cp != null) {
                     cp.setMouseMode(MouseMode.ROTATE);
+                }
             }
         });
         this.addAction(button);
@@ -134,12 +142,13 @@ public class FigureDockable extends DefaultSingleCDockable {
         button.setText("Full Extent");
         button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_FullExtent.Image.png")));
         button.setTooltip("Full Extent");
-        button.addActionListener( new ActionListener(){
+        button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed( ActionEvent e ){
-                ChartPanel cp = FigureDockable.this.getCurrentFigure();
-                if (cp != null)
+            public void actionPerformed(ActionEvent e) {
+                IChartPanel cp = FigureDockable.this.getCurrentFigure();
+                if (cp != null) {
                     cp.onUndoZoomClick();
+                }
             }
         });
         this.addAction(button);
@@ -149,12 +158,13 @@ public class FigureDockable extends DefaultSingleCDockable {
         button.setText("Identifer");
         button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png")));
         button.setTooltip("Identifer");
-        button.addActionListener( new ActionListener(){
+        button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed( ActionEvent e ){
-                ChartPanel cp = FigureDockable.this.getCurrentFigure();
-                if (cp != null)
+            public void actionPerformed(ActionEvent e) {
+                IChartPanel cp = FigureDockable.this.getCurrentFigure();
+                if (cp != null) {
                     cp.setMouseMode(MouseMode.IDENTIFER);
+                }
             }
         });
         this.addAction(button);
@@ -168,7 +178,7 @@ public class FigureDockable extends DefaultSingleCDockable {
      * @param cp
      * @return Figure chart panel
      */
-    public final ChartPanel addNewFigure(String title, final ChartPanel cp) {
+    public final IChartPanel addNewFigure(String title, final JPanel cp) {
         final JScrollPane sp = new JScrollPane(cp);
         this.tabbedPanel.add(sp, title);
         this.tabbedPanel.setSelectedComponent(sp);
@@ -177,12 +187,12 @@ public class FigureDockable extends DefaultSingleCDockable {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tabbedPanel.remove(sp);
+                removeFigure(cp);
             }
         });
         tabbedPanel.setTabComponentAt(tabbedPanel.indexOfComponent(sp), btc);
 
-        return cp;
+        return (IChartPanel) cp;
     }
 
     /**
@@ -191,7 +201,7 @@ public class FigureDockable extends DefaultSingleCDockable {
      * @param ncp
      * @return Figure chart panel
      */
-    public final ChartPanel addFigure(final ChartPanel ncp) {
+    public final IChartPanel addFigure(final JPanel ncp) {
         int idx = 1;
         if (this.tabbedPanel.getTabCount() > 0) {
             List<Integer> idxes = new ArrayList<>();
@@ -203,7 +213,7 @@ public class FigureDockable extends DefaultSingleCDockable {
                     try {
                         idx = Integer.parseInt(idxStr);
                         idxes.add(idx);
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
                 }
@@ -232,26 +242,39 @@ public class FigureDockable extends DefaultSingleCDockable {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (tabbedPanel.getTabCount() > 0)
-                    tabbedPanel.remove(tabbedPanel.indexOfTabComponent(btc));
-                PythonInteractiveInterpreter interp = parent.getConsoleDockable().getInterpreter();
-                if (tabbedPanel.getTabCount() == 0) {
-                    try {
-                        interp.exec("mipylib.plotlib.miplot.chartpanel = None");
-                        interp.exec("mipylib.plotlib.miplot.c_plot = None");
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                } else {
-                    interp.set("cp", getCurrentFigure());
-                    interp.exec("mipylib.plotlib.miplot.chartpanel = cp");
-                    interp.exec("mipylib.plotlib.miplot.c_plot = None");
-                }
+                removeFigure(ncp);
             }
         });
         tabbedPanel.setTabComponentAt(tabbedPanel.indexOfComponent(sp), btc);
 
-        return ncp;
+        return (IChartPanel) ncp;
+    }
+
+    /**
+     * Remove chart panel
+     * @param cp Chart panel
+     */
+    public void removeFigure(JPanel cp) {
+        if (cp instanceof GLChartPanel) {
+            ((GLChartPanel) cp).animator_stop();
+        }
+        JScrollPane sp = (JScrollPane) cp.getParent().getParent();
+        if (tabbedPanel.getTabCount() > 0) {
+            tabbedPanel.remove(sp);
+        }
+        PythonInteractiveInterpreter interp = parent.getConsoleDockable().getInterpreter();
+        if (tabbedPanel.getTabCount() == 0) {
+            try {
+                interp.exec("mipylib.plotlib.miplot.chartpanel = None");
+                interp.exec("mipylib.plotlib.miplot.c_plot = None");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            interp.set("cp", getCurrentFigure());
+            interp.exec("mipylib.plotlib.miplot.chartpanel = cp");
+            interp.exec("mipylib.plotlib.miplot.c_plot = None");
+        }
     }
 
     /**
@@ -259,12 +282,12 @@ public class FigureDockable extends DefaultSingleCDockable {
      *
      * @return Figure
      */
-    public ChartPanel getCurrentFigure() {
+    public IChartPanel getCurrentFigure() {
         if (this.tabbedPanel.getTabCount() == 0) {
             return null;
         }
-        JScrollPane sp = (JScrollPane)this.tabbedPanel.getSelectedComponent();
-        return (ChartPanel)sp.getViewport().getView();
+        JScrollPane sp = (JScrollPane) this.tabbedPanel.getSelectedComponent();
+        return (IChartPanel) sp.getViewport().getView();
     }
 
     /**
@@ -275,8 +298,8 @@ public class FigureDockable extends DefaultSingleCDockable {
      */
     public ChartPanel getFigure(int idx) {
         if (this.tabbedPanel.getTabCount() > idx) {
-            JScrollPane sp = (JScrollPane)this.tabbedPanel.getTabComponentAt(idx);
-            return (ChartPanel)sp.getViewport().getView();
+            JScrollPane sp = (JScrollPane) this.tabbedPanel.getTabComponentAt(idx);
+            return (ChartPanel) sp.getViewport().getView();
         } else {
             return null;
         }
@@ -284,10 +307,11 @@ public class FigureDockable extends DefaultSingleCDockable {
 
     /**
      * Set current figure
+     *
      * @param cp ChartPanel
      */
-    public void setCurrentFigure(ChartPanel cp){
-        if (this.tabbedPanel.getTabCount() > 0){
+    public void setCurrentFigure(ChartPanel cp) {
+        if (this.tabbedPanel.getTabCount() > 0) {
             JScrollPane sp = new JScrollPane(cp);
             this.tabbedPanel.setComponentAt(this.tabbedPanel.getSelectedIndex(), sp);
         }

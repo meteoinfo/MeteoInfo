@@ -1646,6 +1646,7 @@ public class GraphicFactory {
                 graphics.add(graphic);
             }
         }
+        graphics.setAllQuads(true);
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);
         return graphics;

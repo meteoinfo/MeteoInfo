@@ -29,6 +29,7 @@ from mapaxes import MapAxes
 from axes3d import Axes3D
 import plotutil
 from figure import Figure
+from glfigure import GLFigure
 import mipylib.migl as migl
 
 ## Global ##
@@ -38,10 +39,10 @@ g_figure = None
 gca = None
 
 __all__ = [
-    'gca','annotate','antialias','arrow','arrowline','axes','axes3d','axesm','caxes','axis','axism','bar','barh','barbs','barbsm','bgcolor','box',
+    'gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis','axism','bar','barh','barbs','barbsm','bgcolor','box',
     'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
     'contourfm','contourm','draw','draw_if_interactive','errorbar',
-    'figure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow','gifaddframe','gifanimation','giffinish',
+    'figure','glfigure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','legend','left_title','loglog','makecolors',
     'makelegend','makesymbolspec','masklayer','pcolor','pcolorm','pie','plot','plot3','plotm','quiver',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
@@ -1109,6 +1110,21 @@ def figure(bgcolor='w', figsize=None, newfig=True):
         show(newfig)
         
     return g_figure
+    
+def glfigure(bgcolor='w', newfig=True):
+    """
+    Creates a figure.
+    
+    :param bgcolor: (*Color*) Optional, background color of the figure. Default is ``w`` (white) .
+    :param newfig: (*boolean*) Optional, if creates a new figure. Default is ``True`` .
+    """
+    global g_figure
+    g_figure = GLFigure()
+    g_figure.animator_start()
+    if not batchmode:
+        show(newfig)
+        
+    return g_figure
         
 def show(newfig=True):
     if migl.milapp == None:
@@ -1260,7 +1276,7 @@ def axes(*args, **kwargs):
     """
     global gca    
                
-    if g_figure is None:
+    if g_figure is None or isinstance(g_figure, GLFigure):
         figure()
     ax = g_figure.add_axes(*args, **kwargs) 
     # chart = g_figure.getChart()
@@ -1322,6 +1338,21 @@ def axes3d(*args, **kwargs):
     """
     kwargs['axestype'] = '3d'
     return axes(*args, **kwargs)
+    
+def axes3dgl(*args, **kwargs):
+    """
+    Add an 3d axes with JOGL to the figure.
+    
+    :returns: The axes.
+    """
+    global gca    
+               
+    if g_figure is None or isinstance(g_figure, Figure):
+        glfigure()
+        
+    ax = g_figure.axes
+    gca = ax
+    return ax
     
 def twinx(ax):
     """
@@ -1533,6 +1564,21 @@ def cla():
 
 # Clear current figure    
 def clf():
+    '''
+    Clear current figure.
+    '''
+    if g_figure is None:
+        return
+    
+    figureDock = migl.milapp.getFigureDock()
+    figureDock.removeFigure(g_figure)
+    
+    global gca
+    gca = None
+    #draw_if_interactive()
+    
+# Clear current figure    
+def clf_bak():
     '''
     Clear current figure.
     '''

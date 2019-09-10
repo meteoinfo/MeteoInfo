@@ -18,6 +18,9 @@ public class GraphicCollection3D extends GraphicCollection{
     private double zValue;
     private String zdir;
     private List<Number> sePoint;
+    private boolean allQuads;
+    private boolean allTriangle;
+    private boolean allConvexPolygon;
     
     /**
      * Constructor
@@ -27,6 +30,9 @@ public class GraphicCollection3D extends GraphicCollection{
         fixZ = false;
         zdir = "z";
         sePoint = null;
+        allQuads = false;
+        allTriangle = false;
+        allConvexPolygon = false;
     }
     
     /**
@@ -100,5 +106,57 @@ public class GraphicCollection3D extends GraphicCollection{
      */
     public void setSEPoint(List<Number> value){
         this.sePoint = value;
+    }
+    
+    /**
+     * Get is all quads or not
+     * @return All quads or not
+     */
+    public boolean isAllQuads() {
+        return this.allQuads;
+    }
+    
+    /**
+     * Set is all quads or not
+     * @param value All quads or not
+     */
+    public void setAllQuads(boolean value) {
+        this.allQuads = value;
+    }
+    
+    /**
+     * Get is all triangle or not
+     * @return All triangle or not
+     */
+    public boolean isAllTriangle() {
+        return this.allTriangle;
+    }
+    
+    /**
+     * Set is all triangle or not
+     * @param value All triangle or not
+     */
+    public void setAllTriangle(boolean value) {
+        this.allTriangle = value;
+    }
+    
+    /**
+     * Get is all convex polygon or not
+     * @return All convex polygon or not
+     */
+    public boolean isAllConvexPolygon() {
+        if (this.allConvexPolygon) {
+            return true;
+        } else {
+            return this.allQuads || this.allTriangle;
+        }
+    }
+    
+    /**
+     * Set is all convex polygon or not
+     * @param value All convex polygon or not
+     */
+    public void setAllConvexPolygon(boolean value) {
+        this.allConvexPolygon = value;
     }
 }

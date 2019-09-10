@@ -63,7 +63,7 @@ public class GlobalUtil {
      * @return Software version
      */
     public static String getVersion(){
-        return "1.9";
+        return "2.0 alpha 1";
     }
 
     /**

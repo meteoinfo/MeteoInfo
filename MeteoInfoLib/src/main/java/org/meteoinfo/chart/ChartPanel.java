@@ -109,7 +109,7 @@ import org.w3c.dom.NodeList;
  *
  * @author yaqiang
  */
-public class ChartPanel extends JPanel {
+public class ChartPanel extends JPanel implements IChartPanel{
 
     // <editor-fold desc="Variables">
     private final EventListenerList listeners = new EventListenerList();
@@ -291,6 +291,7 @@ public class ChartPanel extends JPanel {
      *
      * @param value Mouse mode
      */
+    @Override
     public void setMouseMode(MouseMode value) {
         this.mouseMode = value;
         Image image;
@@ -473,6 +474,7 @@ public class ChartPanel extends JPanel {
     /**
      * Paint graphics
      */
+    @Override
     public void paintGraphics() {
         if (this.getWidth() < 5 || this.getHeight() < 5) {
             return;
@@ -967,6 +969,7 @@ public class ChartPanel extends JPanel {
     /**
      * Zoom back to full extent
      */
+    @Override
     public void onUndoZoomClick() {
         AbstractPlot2D xyplot;
         if (this.currentPlot == null) {
@@ -1018,13 +1021,7 @@ public class ChartPanel extends JPanel {
                 fileName = fileName + "." + extent;
             }
 
-            try {
-                this.saveImage(fileName);
-            } catch (PrintException | FileNotFoundException | InterruptedException ex) {
-                Logger.getLogger(ChartPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ChartPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            this.saveImage(fileName);
         }
     }
 
@@ -1032,12 +1029,14 @@ public class ChartPanel extends JPanel {
      * Save image to a picture file
      *
      * @param aFile File path
-     * @throws java.io.FileNotFoundException
-     * @throws javax.print.PrintException
-     * @throws java.lang.InterruptedException
      */
-    public void saveImage(String aFile) throws FileNotFoundException, PrintException, IOException, InterruptedException {
-        saveImage(aFile, null);
+    @Override
+    public void saveImage(String aFile) {
+        try {
+            saveImage(aFile, null);
+        } catch (PrintException | IOException | InterruptedException ex) {
+            Logger.getLogger(ChartPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

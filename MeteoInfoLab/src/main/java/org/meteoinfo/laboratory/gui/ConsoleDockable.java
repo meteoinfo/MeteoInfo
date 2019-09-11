@@ -21,7 +21,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.SwingWorker;
-import org.meteoinfo.chart.ChartPanel;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.laboratory.codecomplete.JIntrospect;
 import org.python.core.Py;

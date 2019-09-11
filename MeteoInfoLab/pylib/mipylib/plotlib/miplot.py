@@ -1100,12 +1100,6 @@ def figure(bgcolor='w', figsize=None, newfig=True):
     """
     global g_figure
     g_figure = Figure(figsize, bgcolor=bgcolor)
-    # chart = Chart()
-    # chart.setBackground(plotutil.getcolor(bgcolor))
-    # if figsize is None:
-        # g_figure = g_figure(chart)
-    # else:
-        # g_figure = g_figure(chart, figsize[0], figsize[1])
     if not batchmode:
         show(newfig)
         
@@ -1120,7 +1114,6 @@ def glfigure(bgcolor='w', newfig=True):
     """
     global g_figure
     g_figure = GLFigure()
-    g_figure.animator_start()
     if not batchmode:
         show(newfig)
         

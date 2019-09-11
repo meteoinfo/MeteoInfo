@@ -20,25 +20,21 @@
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\two_yaxis.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contourf_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_5.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\layer_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\layer_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contourf_xdir.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot3_multi_color_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_8.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\two_yaxis.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contourf_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_5.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\layer_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\layer_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contourf_xdir.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot3_multi_color_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_8.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1424,836"/>
 </MeteoInfo>

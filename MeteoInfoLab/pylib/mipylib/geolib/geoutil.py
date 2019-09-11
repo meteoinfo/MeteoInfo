@@ -31,14 +31,14 @@ def makeshapes(x, y, type=None, z=None, m=None):
         shape.setPoint(PointD(x, y))
         shapes.append(shape)    
     else:
-        x = np.asarray(x).array
-        y = np.asarray(y).array
+        x = np.asarray(x)._array
+        y = np.asarray(y)._array
         if not z is None:            
             if m is None:
-                m = np.zeros(len(z)).array
+                m = np.zeros(len(z))._array
             else:
-                m = np.asarray(m).array
-            z = np.asarray(z).array
+                m = np.asarray(m)._array
+            z = np.asarray(z)._array
         if type == 'point':
             if z is None:
                 shapes = ShapeUtil.createPointShapes(x, y)

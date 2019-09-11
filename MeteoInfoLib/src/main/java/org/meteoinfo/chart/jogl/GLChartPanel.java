@@ -63,7 +63,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     
     private void init(Plot3DGL pltGL) {
         this.plot3DGL = pltGL;
-        this.addGLEventListener(pltGL);
+        this.addGLEventListener(pltGL);        
         
         this.setMouseMode(MouseMode.ROTATE);
 
@@ -183,7 +183,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                     this.plot3DGL.setAngleX(this.plot3DGL.getAngleX() - thetaX);
                     this.plot3DGL.setAngleY(this.plot3DGL.getAngleY() + thetaY);
                 }
-                
+                this.repaint();
                 break;
         }
         mouseLastPos.x = x;
@@ -209,7 +209,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      */
     @Override
     public void paintGraphics() {
-        
+        this.repaint();
     }
     
     /**
@@ -224,7 +224,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * Start animator
      */
     public void animator_stop() {
-        animator.stop();
+        if (animator != null)
+            animator.stop();
     }
     // </editor-fold>
 }

@@ -8,7 +8,7 @@ package org.meteoinfo.shape;
 import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.global.PointD;
-import ucar.ma2.Array;
+import org.meteoinfo.ndarray.Array;
 
 /**
  *

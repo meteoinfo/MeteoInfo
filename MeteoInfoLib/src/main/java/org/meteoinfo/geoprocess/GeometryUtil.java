@@ -14,6 +14,7 @@ import org.meteoinfo.global.PointD;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.shape.Polygon;
 import org.meteoinfo.shape.PolygonShape;
 
 /**
@@ -504,6 +505,45 @@ public class GeometryUtil {
         }
 
         return r;
+    }
+    
+    /**
+     * Check if a polygon is convex
+     * @param points Outline point of the polygon
+     * @return Is convex or not
+     */
+    public static boolean isConvex(List<? extends PointD> points) {
+        if (points.size() <= 5)
+            return true;
+        
+        PointD p0, p1, p2;
+        int sign = 0;
+        for (int i = 0; i < points.size() - 1; i++) {
+            p0 = points.get(i == 0 ? points.size() - 2 : i - 1);
+            p1 = points.get(i);
+            p2 = points.get(i + 1);
+            double dx1 = p1.X - p0.X;
+            double dy1 = p1.Y - p0.Y;
+            double dx2 = p2.X - p1.X;
+            double dy2 = p2.Y - p2.Y;
+            double z = dx1 * dy2 - dy1 * dx2;
+            int s = z >= 0.0 ? 1 : -1;
+            if(sign == 0) {
+                sign = s; 
+            } else if(sign != s) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Check if a polygon is convex
+     * @param polygon The polygon
+     * @return Is convex or not
+     */
+    public static boolean isConvex(Polygon polygon) {
+        return isConvex(polygon.getOutLine());
     }
     // </editor-fold>
 }

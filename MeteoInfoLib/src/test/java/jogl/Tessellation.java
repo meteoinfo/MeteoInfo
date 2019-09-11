@@ -79,6 +79,15 @@ public class Tessellation extends JFrame implements GLEventListener, KeyListener
     public void init(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
         glu = new GLU();
+        
+    }
+
+    public void display(GLAutoDrawable drawable) {
+        GL2 gl = drawable.getGL().getGL2();
+
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+        gl.glColor3f(1.0f, 1.0f, 1.0f);
+        
         /*
      * jogl specific addition for tessellation
          */
@@ -152,13 +161,7 @@ public class Tessellation extends JFrame implements GLEventListener, KeyListener
         glu.gluTessEndPolygon(tobj);
         gl.glEndList();
         glu.gluDeleteTess(tobj);
-    }
-
-    public void display(GLAutoDrawable drawable) {
-        GL2 gl = drawable.getGL().getGL2();
-
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-        gl.glColor3f(1.0f, 1.0f, 1.0f);
+        
         gl.glCallList(startList);
         gl.glCallList(startList + 1);
         gl.glFlush();

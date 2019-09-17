@@ -10,14 +10,16 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class CubeTexture implements GLEventListener {
@@ -35,6 +37,84 @@ public class CubeTexture implements GLEventListener {
         gl.glRotatef(xrot, 1.0f, 1.0f, 1.0f);
         gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f);
         gl.glRotatef(zrot, 0.0f, 0.0f, 1.0f);
+        
+        //drawImage(gl);
+        this.drawBoxGridsTicksLabels(gl);        
+        drawImage(gl);
+        
+        gl.glFlush();
+        //change the speeds here  
+        xrot += .1f;
+        yrot += .1f;
+        zrot += .1f;
+    }
+    
+    private void drawBoxGridsTicksLabels(GL2 gl) {
+        gl.glColor3f(0.0f, 0.0f, 0.0f);
+        gl.glLineWidth(1.0f);
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(1f, 1f, -1f);
+        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+        gl.glEnd();
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+        gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+        gl.glEnd();
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+        gl.glVertex3f(1.0f, 1.0f, 1.0f);
+        gl.glEnd();
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(1.0f, 1.0f, 1.0f);
+        gl.glVertex3f(1f, 1f, -1f);
+        gl.glEnd();
+
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(1f, 1f, -1f);
+        gl.glVertex3f(1f, -1f, -1f);
+        gl.glEnd();
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(1f, -1f, -1f);
+        gl.glVertex3f(1f, -1f, 1f);
+        gl.glEnd();
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(1f, -1f, 1f);
+        gl.glVertex3f(1f, 1f, 1f);
+        gl.glEnd();
+
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(-1f, 1f, -1f);
+        gl.glVertex3f(-1f, -1f, -1f);
+        gl.glEnd();
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(-1f, -1f, -1f);
+        gl.glVertex3f(1f, -1f, -1f);
+        gl.glEnd();
+
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(-1f, 1f, 1f);
+        gl.glVertex3f(-1f, -1f, 1f);
+        gl.glEnd();
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(-1f, -1f, 1f);
+        gl.glVertex3f(-1f, -1f, -1f);
+        gl.glEnd();
+
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(-1f, -1f, 1f);
+        gl.glVertex3f(1f, -1f, 1f);
+        gl.glEnd();
+
+//        gl.glColor3f(1.0f, 0.0f, 0.0f);
+//        gl.glBegin(GL2.GL_LINES);
+//        gl.glVertex3f(0f, 0f, -1f);
+//        gl.glVertex3f(0f, 0f, 0f);
+//        gl.glEnd();
+    }
+    
+    private void drawImage(GL2 gl) {        
+        
+        gl.glColor3f(1f, 1f, 1f);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture);
         gl.glBegin(GL2.GL_QUADS);
         // Front Face
@@ -92,11 +172,6 @@ public class CubeTexture implements GLEventListener {
         gl.glTexCoord2f(0.0f, 1.0f);
         gl.glVertex3f(-1.0f, 1.0f, -1.0f);
         gl.glEnd();
-        gl.glFlush();
-        //change the speeds here  
-        xrot += .1f;
-        yrot += .1f;
-        zrot += .1f;
     }
 
     @Override
@@ -108,15 +183,19 @@ public class CubeTexture implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
         gl.glShadeModel(GL2.GL_SMOOTH);
-        gl.glClearColor(0f, 0f, 0f, 0f);
+        gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         gl.glClearDepth(1.0f);
         gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glDepthFunc(GL2.GL_LEQUAL);
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
         gl.glEnable(GL2.GL_TEXTURE_2D);
+        
         try {
             File im = new File("D:\\Temp\\image\\lenna.jpg ");
-            Texture t = TextureIO.newTexture(im, true);
+            //File im = new File("D:\\Temp\\Map\\GLOBALeb3colshade.jpg");
+            BufferedImage image = ImageIO.read(im);
+            Texture t = AWTTextureIO.newTexture(gl.getGLProfile(), image, true);
+            //Texture t = TextureIO.newTexture(im, true);
             texture = t.getTextureObject(gl);
         } catch (IOException e) {
             e.printStackTrace();
@@ -148,7 +227,7 @@ public class CubeTexture implements GLEventListener {
         glcanvas.setSize(400, 400);
         final JFrame frame = new JFrame(" Textured Cube");
         frame.getContentPane().add(glcanvas);
-        frame.setSize(frame.getContentPane().getPreferredSize());
+        frame.setSize(600, 600);
         frame.setVisible(true);
         final FPSAnimator animator = new FPSAnimator(glcanvas, 300, true);
         animator.start();

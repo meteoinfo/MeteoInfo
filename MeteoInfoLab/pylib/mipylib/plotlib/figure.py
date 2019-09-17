@@ -384,19 +384,22 @@ class Figure(ChartPanel):
         polar = kwargs.pop('polar', False)
         if polar:
             axestype = 'polar'
+         
+        kwargs['figure'] = self
+         
         if axestype == 'polar':
-            ax = PolarAxes(figure=self)
-            self.__set_axes(ax, **kwargs)
+            ax = PolarAxes(*args, **kwargs)
+            #self.__set_axes(ax, **kwargs)
         elif axestype == 'map':
-            ax = MapAxes(figure=self, **kwargs)
-            self.__set_axesm(ax, **kwargs)
+            ax = MapAxes(*args, **kwargs)
+            #self.__set_axesm(ax, **kwargs)
         elif axestype == '3d':
-            ax = Axes3D(figure = self, **kwargs)
-            self.__set_axes3d(ax, **kwargs)
+            ax = Axes3D(*args, **kwargs)
+            #self.__set_axes3d(ax, **kwargs)
         else:
-            ax = Axes(figure=self)
-            self.__set_axes(ax, **kwargs)
-        self.__set_axes_common(ax, *args, **kwargs)   
+            ax = Axes(*args, **kwargs)
+            #self.__set_axes(ax, **kwargs)
+        #self.__set_axes_common(ax, *args, **kwargs)   
 
         return ax
      
@@ -692,6 +695,20 @@ class Figure(ChartPanel):
         ctitle.setColor(c)
         self.getChart().setTitle(ctitle)
         return ctitle
+        
+    def set_antialias(self, b=None, symbol=None):
+        """
+        Set figure antialias or not.
+        
+        :param b: (*boolean*) Antialias or not.
+        :param symbol: (*boolean*) Set symbol antialias or not.
+        """
+        if b is None:
+            b = not self.getChart().isAntiAlias()
+        self.getChart().setAntiAlias(b)
+        
+        if not symbol is None:
+            self.getChart().setSymbolAntialias(symbol)
         
 ########################################################3
 class Test():

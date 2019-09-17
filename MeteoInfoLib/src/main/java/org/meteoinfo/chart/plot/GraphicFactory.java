@@ -499,7 +499,7 @@ public class GraphicFactory {
             int[] shape = xdata.getShape();
             int yn = shape[0];
             int xn = shape[1];
-            for (int j = 0; j < yn; j++){
+            for (int j = 0; j < yn; j++) {
                 for (int i = 0; i < xn; i++) {
                     x = xdata.getDouble(j * xn + i);
                     y = ydata.getDouble(j * xn + i);
@@ -532,7 +532,7 @@ public class GraphicFactory {
 
         return gc;
     }
-    
+
     /**
      * Create 3D LineString graphic
      *
@@ -585,7 +585,7 @@ public class GraphicFactory {
             int[] shape = xdata.getShape();
             int yn = shape[0];
             int xn = shape[1];
-            for (int j = 0; j < yn; j++){
+            for (int j = 0; j < yn; j++) {
                 cb = cbs.get(j);
                 for (int i = 0; i < xn; i++) {
                     x = xdata.getDouble(j * xn + i);
@@ -670,16 +670,16 @@ public class GraphicFactory {
                     cbs.add(cb);
                 }
             }
-            if (points.size() > 1) {            
+            if (points.size() > 1) {
                 pls = new PolylineZShape();
                 pls.setPoints(points);
-                gc.add(new Graphic(pls, cbs));        
+                gc.add(new Graphic(pls, cbs));
             }
         } else {    //two dimensions
             int[] shape = xdata.getShape();
             int yn = shape[0];
             int xn = shape[1];
-            for (int j = 0; j < yn; j++){
+            for (int j = 0; j < yn; j++) {
                 cbs = new ColorBreakCollection();
                 for (int i = 0; i < xn; i++) {
                     x = xdata.getDouble(j * xn + i);
@@ -706,10 +706,10 @@ public class GraphicFactory {
                         cbs.add(cb);
                     }
                 }
-                if (points.size() > 1) {            
+                if (points.size() > 1) {
                     pls = new PolylineZShape();
                     pls.setPoints(points);
-                    gc.add(new Graphic(pls, cbs));        
+                    gc.add(new Graphic(pls, cbs));
                     points = new ArrayList<>();
                 }
             }
@@ -1523,7 +1523,7 @@ public class GraphicFactory {
 
         return graphics;
     }
-    
+
     /**
      * Add wireframe polylines
      *
@@ -2538,21 +2538,35 @@ public class GraphicFactory {
         if (interpolation != null) {
             ((ImageShape) gg.getShape()).setInterpolation(interpolation);
         }
-        Shape shape = gg.getShape();
+        ImageShape shape = (ImageShape)gg.getShape();
         Extent extent = shape.getExtent();
         Extent3D ex3 = new Extent3D();
+        List<PointZ> coords = new ArrayList<>();
         switch (zdir.toLowerCase()) {
             case "x":
                 ex3 = new Extent3D(offset, offset, extent.minX, extent.maxX, extent.minY, extent.maxY);
+                coords.add(new PointZ(offset, extent.minX, extent.minY));
+                coords.add(new PointZ(offset, extent.maxX, extent.minY));
+                coords.add(new PointZ(offset, extent.maxX, extent.maxY));
+                coords.add(new PointZ(offset, extent.minX, extent.maxY));
                 break;
             case "y":
                 ex3 = new Extent3D(extent.minX, extent.maxX, offset, offset, extent.minY, extent.maxY);
+                coords.add(new PointZ(extent.minX, offset, extent.minY));
+                coords.add(new PointZ(extent.maxX, offset, extent.minY));
+                coords.add(new PointZ(extent.maxX, offset, extent.maxY));
+                coords.add(new PointZ(extent.minX, offset, extent.maxY));
                 break;
             case "z":
                 ex3 = new Extent3D(extent.minX, extent.maxX, extent.minY, extent.maxY, offset, offset);
+                coords.add(new PointZ(extent.minX, extent.minY, offset));
+                coords.add(new PointZ(extent.maxX, extent.minY, offset));
+                coords.add(new PointZ(extent.maxX, extent.maxY, offset));
+                coords.add(new PointZ(extent.minX, extent.maxY, offset));
                 break;
         }
         shape.setExtent(ex3);
+        shape.setCoords(coords);
         GraphicCollection3D graphics = new GraphicCollection3D();
         graphics.setFixZ(true);
         graphics.setZDir(zdir);
@@ -2798,25 +2812,43 @@ public class GraphicFactory {
         if (interpolation != null) {
             ((ImageShape) gg.getShape()).setInterpolation(interpolation);
         }
-        Shape shape = gg.getShape();
+        ImageShape shape = (ImageShape) gg.getShape();
         Extent extent = shape.getExtent();
         Extent3D ex3 = new Extent3D();
+        List<PointZ> coords = new ArrayList<>();
         switch (zdir.toLowerCase()) {
             case "x":
                 ex3 = new Extent3D(offset, offset, extent.minX, extent.maxX, extent.minY, extent.maxY);
+                coords.add(new PointZ(offset, extent.minX, extent.minY));
+                coords.add(new PointZ(offset, extent.maxX, extent.minY));
+                coords.add(new PointZ(offset, extent.maxX, extent.maxY));
+                coords.add(new PointZ(offset, extent.minX, extent.maxY));
                 break;
             case "y":
                 ex3 = new Extent3D(extent.minX, extent.maxX, offset, offset, extent.minY, extent.maxY);
+                coords.add(new PointZ(extent.minX, offset, extent.minY));
+                coords.add(new PointZ(extent.maxX, offset, extent.minY));
+                coords.add(new PointZ(extent.maxX, offset, extent.maxY));
+                coords.add(new PointZ(extent.minX, offset, extent.maxY));
                 break;
             case "xy":
                 ex3 = new Extent3D(sePoint.get(0).doubleValue(), sePoint.get(2).doubleValue(),
                         sePoint.get(1).doubleValue(), sePoint.get(3).doubleValue(), extent.minY, extent.maxY);
+                coords.add(new PointZ(sePoint.get(0).doubleValue(), sePoint.get(1).doubleValue(), extent.minY));
+                coords.add(new PointZ(sePoint.get(2).doubleValue(), sePoint.get(1).doubleValue(), extent.minY));
+                coords.add(new PointZ(sePoint.get(2).doubleValue(), sePoint.get(3).doubleValue(), extent.maxY));
+                coords.add(new PointZ(sePoint.get(0).doubleValue(), sePoint.get(3).doubleValue(), extent.maxY));
                 break;
             case "z":
                 ex3 = new Extent3D(extent.minX, extent.maxX, extent.minY, extent.maxY, offset, offset);
+                coords.add(new PointZ(extent.minX, extent.minY, offset));
+                coords.add(new PointZ(extent.maxX, extent.minY, offset));
+                coords.add(new PointZ(extent.maxX, extent.maxY, offset));
+                coords.add(new PointZ(extent.minX, extent.maxY, offset));
                 break;
         }
         shape.setExtent(ex3);
+        shape.setCoords(coords);
         GraphicCollection3D graphics = new GraphicCollection3D();
         graphics.setFixZ(true);
         graphics.setZDir(zdir);
@@ -2848,7 +2880,13 @@ public class GraphicFactory {
         ishape.setImage(layer.getImage());
         Extent extent = layer.getExtent();
         Extent3D ex3 = new Extent3D(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
+        List<PointZ> coords = new ArrayList<>();
+        coords.add(new PointZ(extent.minX + xshift, extent.minY, offset));
+        coords.add(new PointZ(extent.maxX + xshift, extent.minY, offset));
+        coords.add(new PointZ(extent.maxX + xshift, extent.maxY, offset));
+        coords.add(new PointZ(extent.minX + xshift, extent.maxY, offset));
         ishape.setExtent(ex3);
+        ishape.setCoords(coords);
         Graphic gg = new Graphic(ishape, new ColorBreak());
         if (interpolation != null) {
             ((ImageShape) gg.getShape()).setInterpolation(interpolation);
@@ -4191,10 +4229,10 @@ public class GraphicFactory {
 
         return gc;
     }
-    
+
     /**
      * Create arrow polygon
-     * 
+     *
      * @param x X coordinate
      * @param y Y coordinate
      * @param dx The length of arrow along x direction
@@ -4208,12 +4246,12 @@ public class GraphicFactory {
         if (ab.isLengthIncludesHead()) {
             length = length - ab.getHeadLength();
         }
-        
+
         AffineTransform atf = new AffineTransform();
         atf.translate(x, y);
         atf.rotate(dx, dy);
-        
-        float width = ab.getWidth();   
+
+        float width = ab.getWidth();
         float headLength = ab.getHeadLength();
         float overhang = ab.getOverhang();
         float lenShift = headLength * overhang;
@@ -4236,18 +4274,18 @@ public class GraphicFactory {
         srcPts[15] = -width * 0.5;
         atf.transform(srcPts, 0, srcPts, 0, 8);
         List<PointD> points = new ArrayList<>();
-        for (int i = 0; i < srcPts.length; i+=2) {
+        for (int i = 0; i < srcPts.length; i += 2) {
             points.add(new PointD(srcPts[i], srcPts[i + 1]));
         }
         PolygonShape pgs = new PolygonShape();
         pgs.setPoints(points);
-        
+
         return new Graphic(pgs, ab);
     }
-    
+
     /**
      * Create arrow line
-     * 
+     *
      * @param x X coordinate
      * @param y Y coordinate
      * @param dx The length of arrow along x direction
@@ -4261,13 +4299,13 @@ public class GraphicFactory {
         points.add(new PointD(x + dx, y + dy));
         PolylineShape pls = new PolylineShape();
         pls.setPoints(points);
-        
+
         return new Graphic(pls, ab);
     }
-    
+
     /**
      * Create arrow line
-     * 
+     *
      * @param x X coordinates
      * @param y Y coordinates
      * @param ab The arrow line break
@@ -4280,12 +4318,13 @@ public class GraphicFactory {
             points.add(new PointD(x.getDouble(i), y.getDouble(i)));
         }
         PolylineShape pls;
-        if (iscurve)
+        if (iscurve) {
             pls = new CurveLineShape();
-        else
+        } else {
             pls = new PolylineShape();
+        }
         pls.setPoints(points);
-        
+
         return new Graphic(pls, ab);
     }
 
@@ -4364,7 +4403,7 @@ public class GraphicFactory {
 
         return gc;
     }
-    
+
     /**
      * Create wind arrows
      *
@@ -4379,7 +4418,7 @@ public class GraphicFactory {
      * @param ls Legend scheme
      * @return GraphicCollection
      */
-    public static GraphicCollection createArrows3D(Array xdata, Array ydata, Array zdata, Array udata, 
+    public static GraphicCollection createArrows3D(Array xdata, Array ydata, Array zdata, Array udata,
             Array vdata, Array wdata, float length, Array cdata, LegendScheme ls) {
         GraphicCollection gc = new GraphicCollection();
         ShapeTypes sts = ls.getShapeType();
@@ -4402,25 +4441,25 @@ public class GraphicFactory {
             v = vdata.getDouble(i);
             w = wdata.getDouble(i);
             if (!Double.isNaN(u) && !Double.isNaN(v) && !Double.isNaN(w)) {
-                    aPoint = new PointZ();
-                    aPoint.X = xdata.getDouble(i);
-                    aPoint.Y = ydata.getDouble(i);
-                    aPoint.Z = zdata.getDouble(i);
-                    wa = new WindArrow3D();
-                    wa.u = u;
-                    wa.v = v;
-                    wa.w = w;
-                    wa.length = length;
-                    wa.setPoint(aPoint);
-                    if (cdata == null) {
-                        cb = ls.getLegendBreaks().get(0);
-                    } else {
-                        value = cdata.getDouble(i);
-                        wa.setValue(value);
-                        cb = ls.findLegendBreak(value);
-                    }
-                    Graphic graphic = new Graphic(wa, cb);
-                    gc.add(graphic);
+                aPoint = new PointZ();
+                aPoint.X = xdata.getDouble(i);
+                aPoint.Y = ydata.getDouble(i);
+                aPoint.Z = zdata.getDouble(i);
+                wa = new WindArrow3D();
+                wa.u = u;
+                wa.v = v;
+                wa.w = w;
+                wa.length = length;
+                wa.setPoint(aPoint);
+                if (cdata == null) {
+                    cb = ls.getLegendBreaks().get(0);
+                } else {
+                    value = cdata.getDouble(i);
+                    wa.setValue(value);
+                    cb = ls.findLegendBreak(value);
+                }
+                Graphic graphic = new Graphic(wa, cb);
+                gc.add(graphic);
             }
         }
 
@@ -4431,7 +4470,7 @@ public class GraphicFactory {
 
         return gc;
     }
-    
+
 //    /**
 //     * Create annotate
 //     * @param text The text
@@ -4448,7 +4487,6 @@ public class GraphicFactory {
 //        Graphic gg = createArrowLine(x, y, xText - x, xText - y, ab);
 //        gc.add(gg)
 //    }
-
     /**
      * Create pie arc polygons
      *
@@ -4481,8 +4519,8 @@ public class GraphicFactory {
         double dx, dy, ldx, ldy;
         String label, pct = null;
         LegendScheme ls = new LegendScheme(ShapeTypes.Polygon);
-        Boolean drawEdge = wedgeprops.get("drawedge") == null ? null : (Boolean)wedgeprops.get("drawedge");
-        Color edgeColor = wedgeprops.get("edgecolor") == null ? null : (Color)wedgeprops.get("edgecolor");
+        Boolean drawEdge = wedgeprops.get("drawedge") == null ? null : (Boolean) wedgeprops.get("drawedge");
+        Color edgeColor = wedgeprops.get("edgecolor") == null ? null : (Color) wedgeprops.get("edgecolor");
         Float lineWidth = wedgeprops.get("linewidth") == null ? null : Float.parseFloat(String.valueOf(wedgeprops.get("linewidth")));
         Float wedgeWidth = wedgeprops.get("width") == null ? null : Float.parseFloat(String.valueOf(wedgeprops.get("width")));
         for (int i = 0; i < n; i++) {
@@ -4596,15 +4634,17 @@ public class GraphicFactory {
         }
 
         if (pct == null) {
-            if (lgc.isEmpty())
+            if (lgc.isEmpty()) {
                 return new GraphicCollection[]{gc};
-            else
+            } else {
                 return new GraphicCollection[]{gc, lgc};
+            }
         } else {
-            if (lgc.isEmpty())
+            if (lgc.isEmpty()) {
                 return new GraphicCollection[]{gc, pgc};
-            else
+            } else {
                 return new GraphicCollection[]{gc, lgc, pgc};
+            }
         }
     }
 

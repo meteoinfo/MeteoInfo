@@ -450,7 +450,7 @@ public class Plot3D extends Plot {
      *
      * @return Boolean
      */
-    public boolean getDrawBoundingBox() {
+    public boolean isDrawBoundingBox() {
         return this.drawBoundingBox;
     }
 

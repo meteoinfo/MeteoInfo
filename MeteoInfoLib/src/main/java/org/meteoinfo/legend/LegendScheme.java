@@ -92,6 +92,35 @@ public class LegendScheme {
     
     /**
      * Constructor
+     *
+     * @param aShapeType
+     * @param n Break number
+     */
+    public LegendScheme(ShapeTypes aShapeType, int n) {
+        shapeType = aShapeType;        
+        legendBreaks = new ArrayList<>();
+        ColorBreak cb;
+        for (int i = 0; i < n; i++) {
+            switch (aShapeType) {
+                case Point:
+                    legendBreaks.add(cb = new PointBreak());                    
+                    break;
+                case Polyline:
+                    legendBreaks.add(cb = new PolylineBreak());
+                    break;
+                case Polygon:
+                    legendBreaks.add(cb = new PolygonBreak());
+                    break;
+                default:
+                    legendBreaks.add(cb = new ColorBreak());
+                    break;
+            }
+            cb.setColor(ColorUtil.getCommonColor(i));
+        }
+    }
+    
+    /**
+     * Constructor
      * @param lbs Legend breaks
      */
     public LegendScheme(List<ColorBreak> lbs){

@@ -5,6 +5,7 @@
  */
 package org.meteoinfo.chart.jogl;
 
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -39,6 +40,13 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     private FPSAnimator animator;
     // </editor-fold>
     // <editor-fold desc="Construction">
+    /**
+     * Constructor
+     */
+    public GLChartPanel() {
+        super();
+    }
+    
     /**
      * Constructor
      * @param pltGL Plot3DGL
@@ -103,6 +111,22 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     }
     // </editor-fold>
     // <editor-fold desc="Get set methods">
+    /**
+     * Get plot
+     * @return Plot
+     */
+    public Plot3DGL getPlot() {
+        return this.plot3DGL;
+    }
+    
+    /**
+     * Set plot
+     * @param plot Plot
+     */
+    public void setPlot(Plot3DGL plot) {
+        init(plot);
+    }
+    
     /**
      * Get mouse mode
      *
@@ -180,8 +204,19 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                     float thetaY = 360.0f * ((float) (x - this.mouseLastPos.x) / size.width);
                     float thetaX = 360.0f * ((float) (this.mouseLastPos.y - y) / size.height);
 
-                    this.plot3DGL.setAngleX(this.plot3DGL.getAngleX() - thetaX);
-                    this.plot3DGL.setAngleY(this.plot3DGL.getAngleY() + thetaY);
+                    float elevation = this.plot3DGL.getAngleX() - thetaX;
+                    if (elevation > 0)
+                        elevation = 0;
+                    if (elevation < -180)
+                        elevation = -180;
+                    this.plot3DGL.setAngleX(elevation);        
+                    
+                    float rotation = this.plot3DGL.getAngleY() + thetaY;
+                    if (rotation >= 360)
+                        rotation -= 360;
+                    if (rotation < 0)
+                        rotation += 360;
+                    this.plot3DGL.setAngleY(rotation);
                 }
                 this.repaint();
                 break;
@@ -191,6 +226,14 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
+    /**
+     * Get GL2
+     * @return 
+     */
+    public GL2 getGL2() {
+        return this.getGL().getGL2();
+    }
+    
     @Override
     public void saveImage(String fn) {
         

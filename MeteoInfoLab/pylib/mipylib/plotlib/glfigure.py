@@ -19,9 +19,18 @@ class GLFigure(GLChartPanel):
         :param ax: (*Axes3DGL*) 3D axes with JOGL
         '''
         if ax is None:
-            ax = Axes3DGL()
+            ax = Axes3DGL(figure=self)
         self.axes = ax
-        super(GLFigure, self).__init__(ax.axes)
+        super(GLFigure, self).__init__(ax.axes)           
+        
+    def _add_axes(self, ax):
+        '''
+        Add a axes.
+        
+        :param ax: (*Axes*) The axes.
+        '''
+        self.axes.append(ax)
+        self.getChart().addPlot(ax.axes)
         
         
 ############################################

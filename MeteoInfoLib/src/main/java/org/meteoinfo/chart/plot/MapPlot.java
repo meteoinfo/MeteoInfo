@@ -245,6 +245,14 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     public ProjectionInfo getProjInfo() {
         return this.getMapView().getProjection().getProjInfo();
     }
+    
+    /**
+     * Set projection info
+     * @param proj Projection info
+     */
+    public void setProjInfo(ProjectionInfo proj) {
+        this.getMapView().getProjection().setProjInfo(proj);
+    }
 
     /**
      * Is lon/lat map or not

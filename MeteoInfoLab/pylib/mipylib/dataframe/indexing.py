@@ -13,6 +13,9 @@ class LocIndexer(object):
     def __getitem__(self, key):
         return self._dataobj._getitem_loc(key)
         
+    def __setitem__(self, key, value):
+        return self._dataobj._setitem_loc(key, value)
+        
 class ILocIndexer(object):
     
     def __init__(self, dataobj):

@@ -308,7 +308,7 @@ public abstract class Plot {
      */
     public abstract void draw(Graphics2D g2, Rectangle2D area);
     
-    private Rectangle2D positionArea = new Rectangle2D.Double();
+    protected Rectangle2D positionArea = new Rectangle2D.Double();
     
     /**
      * Get position area

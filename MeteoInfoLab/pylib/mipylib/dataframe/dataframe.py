@@ -470,6 +470,18 @@ class DataFrame(object):
             r = DataFrame(dataframe=r)
         return r
         
+    def _setitem_loc(self, key, value):
+        if isinstance(value, datetime.datetime):
+            value = [miutil.jdatetime(value)]
+        if isinstance(value, (list, tuple)):
+            if isinstance(value[0], datetime.datetime):
+                value = miutil.jdatetime(value)
+            #value = np.array(value)
+        if isinstance(value, np.NDArray):
+            value = value._array            
+                    
+        self._dataframe.setRow(key, value)
+        
     def _getitem_iloc(self, key):
         if not isinstance(key, tuple): 
             key = (key, None)
@@ -665,12 +677,16 @@ class DataFrame(object):
         '''
         Append another data frame.
         
-        :param other: (*DataFrame*) Other data frame.
+        :param other: (*DataFrame, dict, list*) Other data frame or row data.
         
         :returns: (*DataFrame*) Appended data frame.
         '''
-        r = self._dataframe.append(other._dataframe)
-        return DataFrame(dataframe=r)
+        if isinstance(other, DataFrame):
+            r = self._dataframe.append(other._dataframe)
+            return DataFrame(dataframe=r)
+        else:
+            self._dataframe.append(other)
+            return self
         
     def describe(self):
         '''

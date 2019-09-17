@@ -1271,21 +1271,9 @@ def axes(*args, **kwargs):
                
     if g_figure is None or isinstance(g_figure, GLFigure):
         figure()
+        
     ax = g_figure.add_axes(*args, **kwargs) 
-    # chart = g_figure.getChart()
-    # newaxes = kwargs.pop('newaxes', True)
-    # if not newaxes and gca is None:
-        # newaxes = True
-    # if newaxes:
-        # chart.addPlot(ax.axes)
-    # else:
-        # chart.setCurrentPlot(chart.getPlotIndex(gca.axes))
-        # if gca.axes.isSubPlot:
-            # ax.axes.isSubPlot = True
-            # position = kwargs.pop('position', None)
-            # if position is None:
-                # ax.set_position(gca.get_position())  
-        # chart.setCurrentPlot(ax.axes)
+
     gca = ax
     return ax
 
@@ -1481,11 +1469,8 @@ def antialias(b=None, symbol=None):
     if g_figure is None:
         figure()
     
-    if b is None:
-        b = not g_figure.getChart().isAntiAlias()
-    g_figure.getChart().setAntiAlias(b)
-    if not symbol is None:
-        g_figure.getChart().setSymbolAntialias(symbol)
+    if isinstance(g_figure, Figure):
+        g_figure.set_antialias(b, symbol)
     draw_if_interactive()
     
 def savefig(fname, width=None, height=None, dpi=None, sleep=None):

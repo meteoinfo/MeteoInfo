@@ -28,13 +28,39 @@ class Axes3D(Axes):
     Axes with 3 dimensional.
     '''
     
-    def __init__(self, axes=None, figure=None, **kwargs):
+    def __init__(self, *args, **kwargs):
+        axes = kwargs.pop('axes', None)
+        self._set_plot(axes)
+        
+        figure = kwargs.pop('figure', None)
         self.figure = figure
-        if axes is None:        
-            self.axes = Plot3D()
+        
+        if len(args) > 0:
+            position = args[0]
         else:
-            self.axes = axes
-        self.axestype = '3d'
+            position = kwargs.pop('position', None)    
+        outerposition = kwargs.pop('outerposition', None)
+        if position is None:
+            position = [0.13, 0.11, 0.71, 0.815]
+            self.active_outerposition(True)
+        else:        
+            self.active_outerposition(False)        
+        self.set_position(position)   
+        if not outerposition is None:
+            self.set_outerposition(outerposition)
+            self.active_outerposition(True)
+        units = kwargs.pop('units', None)
+        if not units is None:
+            self.axes.setUnits(units)
+        tickfontname = kwargs.pop('tickfontname', 'Arial')
+        tickfontsize = kwargs.pop('tickfontsize', 14)
+        tickbold = kwargs.pop('tickbold', False)
+        if tickbold:
+            font = Font(tickfontname, Font.BOLD, tickfontsize)
+        else:
+            font = Font(tickfontname, Font.PLAIN, tickfontsize)
+        self.axes.setAxisTickFont(font)
+        
         self.projector = self.axes.getProjector()
         #distance = kwargs.pop('distance', 10000)
         #self.projector.setDistance(distance)
@@ -53,6 +79,21 @@ class Axes3D(Axes):
         bbox = kwargs.pop('bbox', False)
         self.axes.setDrawBoundingBox(bbox)
         
+    def _set_plot(self, plot):
+        '''
+        Set plot.
+        
+        :param plot: (*Plot3D*) Plot.
+        '''
+        if plot is None:
+            self.axes = Plot3D()
+        else:
+            self.axes = plot
+    
+    @property
+    def axestype(self):
+        return '3d'
+    
     def get_distance(self):
         '''
         Get distance to object.
@@ -132,6 +173,14 @@ class Axes3D(Axes):
         :param db: (*boolean*) Draw bounding box or not.
         '''
         self.axes.setDrawBoundingBox(bbox)
+        
+    def set_draw_grid(self, grid):
+        '''
+        Set draw grid lines or not.
+        
+        :param grid: (*boolean*) Draw grid line or not.
+        '''
+        self.axes.setDisplayGrids(grid)
         
     def get_xlim(self):
         """

@@ -35,14 +35,105 @@ class Axes(object):
     Axes with Cartesian coordinate.
     '''
 
-    def __init__(self, axes=None, figure=None):
-        if axes is None:
+    def __init__(self, *args, **kwargs):
+        axes = kwargs.pop('axes', None)
+        self._set_plot(axes)
+        
+        figure = kwargs.pop('figure', None)
+        self.figure = figure
+        
+        if len(args) > 0:
+            position = args[0]
+        else:
+            position = kwargs.pop('position', None)    
+        outerposition = kwargs.pop('outerposition', None)
+        if position is None:
+            position = [0.13, 0.11, 0.775, 0.815]
+            self.active_outerposition(True)
+        else:        
+            self.active_outerposition(False)        
+        self.set_position(position)   
+        if not outerposition is None:
+            self.set_outerposition(outerposition)
+            self.active_outerposition(True)
+        units = kwargs.pop('units', None)
+        if not units is None:
+            self.axes.setUnits(units)
+            
+        aspect = kwargs.pop('aspect', 'auto')
+        axis = kwargs.pop('axis', True)
+        b_axis = self.get_axis(Location.BOTTOM)
+        l_axis = self.get_axis(Location.LEFT)
+        t_axis = self.get_axis(Location.TOP)
+        r_axis = self.get_axis(Location.RIGHT)
+        if axis:
+            bottomaxis = kwargs.pop('bottomaxis', True)
+            leftaxis = kwargs.pop('leftaxis', True)
+            topaxis = kwargs.pop('topaxis', True)
+            rightaxis = kwargs.pop('rightaxis', True)
+        else:
+            bottomaxis = False
+            leftaxis = False
+            topaxis = False
+            rightaxis = False
+        xreverse = kwargs.pop('xreverse', False)
+        yreverse = kwargs.pop('yreverse', False)
+        xaxistype = kwargs.pop('xaxistype', None)
+        bgcobj = kwargs.pop('bgcolor', None)        
+        
+        if aspect == 'equal':
+            self.axes.setAutoAspect(False)
+        else:
+            if isinstance(aspect, (int, float)):
+                self.axes.setAspect(aspect)
+                self.axes.setAutoAspect(False)
+        if bottomaxis == False:
+            b_axis.setVisible(False)
+        if leftaxis == False:
+            l_axis.setVisible(False)
+        if topaxis == False:
+            t_axis.setVisible(False)
+        if rightaxis == False:
+            r_axis.setVisible(False)
+        if xreverse:
+            b_axis.setInverse(True)
+            t_axis.setInverse(True)
+        if yreverse:
+            l_axis.setInverse(True)
+            r_axis.setInverse(True)        
+        if not xaxistype is None:
+            self.set_xaxis_type(xaxistype)
+        bgcolor = plotutil.getcolor(bgcobj)
+        self.axes.setBackground(bgcolor)
+        tickline = kwargs.pop('tickline', True)
+        b_axis.setDrawTickLine(tickline)
+        t_axis.setDrawTickLine(tickline)
+        l_axis.setDrawTickLine(tickline)
+        r_axis.setDrawTickLine(tickline)
+        tickfontname = kwargs.pop('tickfontname', 'Arial')
+        tickfontsize = kwargs.pop('tickfontsize', 14)
+        tickbold = kwargs.pop('tickbold', False)
+        if tickbold:
+            font = Font(tickfontname, Font.BOLD, tickfontsize)
+        else:
+            font = Font(tickfontname, Font.PLAIN, tickfontsize)
+        self.axes.setAxisLabelFont(font)
+    
+    def _set_plot(self, plot):
+        '''
+        Set plot.
+        
+        :param plot: (*Plot2D*) Plot.
+        '''
+        if plot is None:
             self.axes = Plot2D()
         else:
-            self.axes = axes
-        self.axestype = 'cartesian'
-        self.figure = figure
-            
+            self.axes = plot
+    
+    @property
+    def axestype(self):
+        return 'cartesian'
+    
     def get_type(self):
         '''
         Get axes type
@@ -3351,13 +3442,23 @@ class PolarAxes(Axes):
     Axes with polar coordinate.
     '''
     
-    def __init__(self, axes=None, figure=None):
-        if axes is None:
+    def __init__(self, *args, **kwargs):
+        super(PolarAxes, self).__init__(*args, **kwargs)
+        
+    def _set_plot(self, plot):
+        '''
+        Set plot.
+        
+        :param plot: (*PolarPlot*) Plot.
+        '''
+        if plot is None:
             self.axes = PolarPlot()
         else:
-            self.axes = axes
-        self.axestype = 'polar'
-        self.figure = figure
+            self.axes = plot
+        
+    @property
+    def axestype(self):
+        return 'polar'
     
     def set_rmax(self, rmax):
         '''

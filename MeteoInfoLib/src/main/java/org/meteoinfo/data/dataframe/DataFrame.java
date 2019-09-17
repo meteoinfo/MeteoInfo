@@ -1001,6 +1001,122 @@ public class DataFrame implements Iterable {
             }
         }
     }
+    
+    /**
+     * Append row data
+     *
+     * @param name Index element
+     * @param row Row data array
+     */
+    public void append(Object name, Array row) {
+        if (this.index == null) {
+            List idx = new ArrayList<>();
+            idx.add(name);
+            this.index = Index.factory(idx);
+        } else {
+            this.index.add(name);
+        }
+        if (this.data == null) {
+            this.data = new ArrayList<Array>();
+            if (row == null) {
+                for (Column col : this.columns) {
+                    ((ArrayList<Array>) this.data).add(Array.factory(col.dataType, new int[]{1}));
+                }
+            } else {
+                int i = 0;
+                for (Column col : this.columns) {
+                    Array a = Array.factory(col.dataType, new int[]{1});
+                    a.setObject(0, row.getObject(i));
+                    ((ArrayList<Array>) this.data).add(a);
+                    i += 1;
+                }
+            }
+        } else {
+            try {
+                this.dataReshape(this.length() + 1, this.size());
+            } catch (InvalidRangeException ex) {
+                Logger.getLogger(DataFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (row != null) {
+                if (this.array2D) {
+                    for (int i = 0; i < this.size(); i++) {
+                        ((Array) this.data).setObject(this.length() * this.size() + i, row.getObject(i));
+                    }
+                } else {
+                    for (int i = 0; i < this.size(); i++) {
+                        ((List<Array>) this.data).get(i).setObject(this.length(), i < row.getSize() ? row.getObject(i) : null);
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Append row data
+     *
+     * @param row Row data list
+     */
+    public void append(List row) {
+        Object name = row.get(0);
+        row.remove(0);
+        this.append(name, row);
+    }
+    
+    /**
+     * Set row data
+     * @param key Index key
+     * @param row Row data
+     */
+    public void setRow(Object key, List row) {
+        List<Integer> ii = this.index.indexAll(key);
+        if (ii.isEmpty()) {
+            this.append(key, row);
+        } else {
+            for (int i : ii) {
+                if (this.array2D) {
+                    Array a = (Array)this.data;
+                    int[] shape = a.getShape();
+                    org.meteoinfo.ndarray.Index2D idx = (org.meteoinfo.ndarray.Index2D)a.getIndex();
+                    for (int j = 0; j < shape[1]; j++) {
+                        idx.set(j, j);
+                        a.setObject(idx, row.get(j));
+                    }
+                } else {
+                    for (int j = 0; j < this.size(); j++) {
+                        ((List<Array>) this.data).get(j).setObject(i, row.get(i));
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Set row data
+     * @param key Index key
+     * @param row Row data
+     */
+    public void setRow(Object key, Array row) {
+        List<Integer> ii = this.index.indexAll(key);
+        if (ii.isEmpty()) {
+            this.append(key, row);
+        } else {
+            for (int i : ii) {
+                if (this.array2D) {
+                    Array a = (Array)this.data;
+                    int[] shape = a.getShape();
+                    org.meteoinfo.ndarray.Index2D idx = (org.meteoinfo.ndarray.Index2D)a.getIndex();
+                    for (int j = 0; j < shape[1]; j++) {
+                        idx.set(j, j);
+                        a.setObject(idx, row.getObject(j));
+                    }
+                } else {
+                    for (int j = 0; j < this.size(); j++) {
+                        ((List<Array>) this.data).get(j).setObject(i, row.getObject(i));
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Create a new data frame by leaving out the specified columns.

@@ -7,6 +7,8 @@ package org.meteoinfo.shape;
 
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -16,6 +18,7 @@ public class ImageShape extends PointShape {
     // <editor-fold desc="Variables">
     private BufferedImage image;
     private Object interp;
+    private List<PointZ> coords;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -24,6 +27,7 @@ public class ImageShape extends PointShape {
     public ImageShape(){
         super();
         interp = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
+        this.coords = new ArrayList<>();
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -42,8 +46,7 @@ public class ImageShape extends PointShape {
     public void setImage(BufferedImage value){
         this.image = value;
     }
-    // </editor-fold>
-    // <editor-fold desc="Methods">
+    
     @Override
     public ShapeTypes getShapeType(){
         return ShapeTypes.Image;
@@ -83,14 +86,24 @@ public class ImageShape extends PointShape {
         }
     }
     
-//    @Override
-//    public Extent getExtent(){
-//        Extent extent = new Extent();
-//        extent.minX = this.getPoint().X;
-//        extent.minY = this.getPoint().Y;
-//        extent.maxX = extent.minX + this.image.getWidth();
-//        extent.maxY = extent.minY + this.image.getHeight();
-//        return extent;
-//    }
+    /**
+     * Get coordinates - lower left, lower right, upper right, upper left
+     * @return Coordinates
+     */
+    public List<PointZ> getCoords() {
+        return this.coords;
+    }
+    
+    /**
+     * Set coordinates
+     * @param value Coordinates
+     */
+    public void setCoords(List<PointZ> value) {
+        this.coords = value;
+    }
+    
+    // </editor-fold>
+    // <editor-fold desc="Methods">
+    
     // </editor-fold>
 }

@@ -430,6 +430,22 @@ public class ChartLegend {
     public void setNeatLineSize(float size) {
         neatLineSize = size;
     }
+    
+    /**
+     * Get break space
+     * @return Break space
+     */
+    public float getBreakSpace() {
+        return this.breakSpace;
+    }
+    
+    /**
+     * Set break space
+     * @param value Break space
+     */
+    public void setBreakSpace(float value) {
+        this.breakSpace = value;
+    }
 
     /**
      * Get label

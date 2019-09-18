@@ -120,7 +120,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.graphics = new GraphicCollection3D();
         this.hideOnDrag = false;
         this.boxed = true;
-        this.displayGrids = true;
+        this.displayGrids = false;
         this.displayXY = true;
         this.displayZ = true;
         this.drawBoundingBox = false;

@@ -3141,6 +3141,7 @@ class Axes(object):
         :param titlefontname: (*string*) Title font name.
         :param titlefontsize: (*int*) Title font size.
         :param titlecolor: (*color*) Title color. Default is ``black`` .
+        :param breakspace: (*float*) Break space.
         :param markerscale: (*float*) Marker symbol scale.
         :param markerwidth: (*float*) Marker symbol width.
         :param markerheight: (*float*) Marker symbol height.
@@ -3273,6 +3274,9 @@ class Axes(object):
             title.setXAlign(XAlign.CENTER)
             title.setYAlign(YAlign.TOP)
             clegend.setLabel(title)
+        breakspace = kwargs.pop('breakspace', None)
+        if not breakspace is None:
+            clegend.setBreakSpace(breakspace)
         markerscale = kwargs.pop('markerscale', None)
         if not markerscale is None:
             clegend.setSymbolScale(markerscale)

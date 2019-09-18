@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\micaps">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\qaqc"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\sunphotometer"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\trajstat"/>
@@ -25,7 +25,6 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_6.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_elev.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surface_paraboloid.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\two_yaxis.py"/>
@@ -34,11 +33,10 @@
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_6.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_elev.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surface_paraboloid.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-3,2" MainFormSize="1393,832"/>
 </MeteoInfo>

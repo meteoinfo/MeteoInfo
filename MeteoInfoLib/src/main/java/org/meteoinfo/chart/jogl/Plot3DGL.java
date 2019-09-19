@@ -50,6 +50,7 @@ import org.meteoinfo.legend.LegendType;
 import org.meteoinfo.legend.PointBreak;
 import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.legend.PolylineBreak;
+import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.ImageShape;
 import org.meteoinfo.shape.PointZ;
@@ -59,7 +60,6 @@ import org.meteoinfo.shape.PolygonZShape;
 import org.meteoinfo.shape.Polyline;
 import org.meteoinfo.shape.PolylineZShape;
 import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.ShapeTypes;
 import static org.meteoinfo.shape.ShapeTypes.PointZ;
 
 /**
@@ -110,12 +110,15 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //this.legends.add(new ChartColorBar(new LegendScheme(ShapeTypes.Polygon, 5)));
         this.xAxis = new Axis();
         this.xAxis.setLabel("X");
+        //this.xAxis.setLabel("Longitude");
         this.xAxis.setTickLength(8);
         this.yAxis = new Axis();
         this.yAxis.setLabel("Y");
+        //this.yAxis.setLabel("Latitude");
         this.yAxis.setTickLength(8);
         this.zAxis = new Axis();
         this.zAxis.setLabel("Z");
+        //this.zAxis.setLabel("Altitude");
         this.zAxis.setTickLength(8);
         this.graphics = new GraphicCollection3D();
         this.hideOnDrag = false;
@@ -746,6 +749,17 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         return (float) Math.sqrt(Math.pow(sx2 - sx1, 2) + Math.pow(sy2 - sy1, 2));
     }
+    
+    private float toScreenAngle(float x1, float y1, float z1, float x2, float y2, float z2) {
+        float[] coord = toScreen(x1, y1, z1);
+        float sx1 = coord[0];
+        float sy1 = coord[1];
+        coord = toScreen(x2, y2, z2);
+        float sx2 = coord[0];
+        float sy2 = coord[1];
+
+        return (float) MeteoMath.uv2ds(sx2 -  sx1, sy2 - sy1)[0];
+    }
 
     private int getLabelGap(Font font, List<ChartText> labels, double len) {
         TextRenderer textRenderer = new TextRenderer(font);
@@ -919,10 +933,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
             //Draw x axis label
             ChartText label = this.xAxis.getLabel();
             if (label != null) {
-                strWidth += 10;
-                float xShift = xAlign == XAlign.LEFT ? strWidth : -strWidth;
-                float yShift = this.angleX > -120 ? -strHeight : strHeight;
-                drawString(gl, label, 0.0f, y1, -1.0f, xAlign, yAlign, xShift, yShift);
+                strWidth += this.tickSpace;
+                float angle = this.toScreenAngle(-1.0f, y, -1.0f, 1.0f, y, -1.0f);
+                angle = y < 0 ? 270 - angle : 90 - angle;
+                float yShift = Math.min(-strWidth, -strWidth);
+                if (this.angleX <= -120)
+                    yShift = -yShift;
+                drawString(gl, label, 0.0f, y1, -1.0f, XAlign.CENTER, yAlign, angle, 0, yShift);
             }
 
             ////////////////////////////////////////////
@@ -1006,11 +1023,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
             //Draw y axis label
             label = this.yAxis.getLabel();
-            if (label != null) {
-                strWidth += 10;
-                float xShift = xAlign == XAlign.LEFT ? strWidth : -strWidth;
-                float yShift = this.angleX > -120 ? -strHeight : strHeight;
-                drawString(gl, label, x1, 0.0f, -1.0f, xAlign, yAlign, xShift, yShift);
+            if (label != null) { 
+                strWidth += this.tickSpace;
+                float angle = this.toScreenAngle(x, -1.0f, -1.0f, x, 1.0f, -1.0f);
+                angle = x > 0 ? 270 - angle : 90 - angle;
+                float yShift = Math.min(-strWidth, -strWidth);
+                if (this.angleX <= -120)
+                    yShift = -yShift;
+                drawString(gl, label, x1, 0.0f, -1.0f, XAlign.CENTER, yAlign, angle, 0, yShift);
             }
         }
 
@@ -1108,7 +1128,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glEnd();
 
                 //Draw tick label                
-                rect = drawString(gl, tlabs.get(i), x1, y1, v, xAlign, yAlign);
+                rect = drawString(gl, tlabs.get(i), x1, y1, v, xAlign, yAlign, -this.tickSpace, 0);
                 if (strWidth < rect.getWidth()) {
                     strWidth = (float) rect.getWidth();
                 }
@@ -1117,9 +1137,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
             //Draw z axis label
             ChartText label = this.zAxis.getLabel();
             if (label != null) {
-                strWidth += 10;
-                float xShift = xAlign == XAlign.LEFT ? strWidth : -strWidth;
-                drawString(gl, label, x1, y1, 0.0f, xAlign, yAlign, xShift, 0);
+                float yShift = strWidth + this.tickSpace * 3;
+                drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
             }
         }
     }
@@ -1132,6 +1151,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
             XAlign xAlign, YAlign yAlign, float xShift, float yShift) {
         return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx,
                 vy, vz, xAlign, yAlign, xShift, yShift);        
+    }
+    
+    Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
+            XAlign xAlign, YAlign yAlign) {
+        return drawString(gl, str, font, color, vx, vy, vz, xAlign, yAlign, 0, 0);
     }
     
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
@@ -1163,11 +1187,69 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 y -= rect.getHeight();
                 break;
         }
-        if (xAlign == XAlign.RIGHT && yAlign == YAlign.CENTER) {
-            x -= this.tickSpace;
-        }
         textRenderer.draw(str, (int) (x + xShift), (int) (y + yShift));
         textRenderer.endRendering();
+
+        return rect;
+    }
+    
+    Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz, 
+            XAlign xAlign, YAlign yAlign, float angle) {
+        return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy, vz, xAlign, yAlign, angle, 0, 0);
+    }
+    
+    Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz, 
+            XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
+        return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy, 
+                vz, xAlign, yAlign, angle, xShift, yShift);
+    }
+    
+    Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
+            XAlign xAlign, YAlign yAlign, float angle) {
+        return drawString(gl, str, font, color, vx, vy, vz, xAlign, yAlign, angle, 0, 0);
+    }
+    
+    Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
+            XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
+        //Get screen coordinates
+        float coord[] = this.toScreen(vx, vy, vz);
+        float x = coord[0];
+        float y = coord[1];
+
+        //Rendering text string
+        TextRenderer textRenderer = new TextRenderer(font, true);
+        textRenderer.beginRendering(this.width, this.height);
+        textRenderer.setColor(color);
+        textRenderer.setSmoothing(true);
+        Rectangle2D rect = textRenderer.getBounds(str.subSequence(0, str.length()));                
+        gl.glMatrixMode(GL2.GL_MODELVIEW); 
+        gl.glPushMatrix(); 
+        gl.glTranslatef(x, y, 0.0f); 
+        if (angle != 0) {                        
+            gl.glRotatef(angle, 0.0f, 0.0f, 1.0f); 
+        }
+        x = 0; y = 0;
+        switch (xAlign) {
+            case CENTER:
+                x -= rect.getWidth() * 0.5;
+                break;
+            case RIGHT:
+                x -= rect.getWidth();
+                break;
+        }
+        switch (yAlign) {
+            case CENTER:
+                y -= rect.getHeight() * 0.5;
+                break;
+            case TOP:
+                y -= rect.getHeight();
+                break;
+        }
+        x += xShift;
+        y += yShift;
+        textRenderer.draw(str, (int)x, (int)y);
+        textRenderer.endRendering();
+        gl.glPopMatrix(); 
 
         return rect;
     }

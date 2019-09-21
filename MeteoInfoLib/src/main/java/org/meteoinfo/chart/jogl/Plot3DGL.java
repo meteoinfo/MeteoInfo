@@ -99,6 +99,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private int height;
     float tickSpace = 5.0f;
     float tickLen = 0.08f;
+    private Lighting lighting = new Lighting();
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -193,7 +194,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     public void setLineBoxColor(Color value) {
         this.lineboxColor = value;
     }
-    
+
     /**
      * Get if draw bounding box or not
      *
@@ -211,8 +212,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     public void setDrawBoundingBox(boolean value) {
         this.drawBoundingBox = value;
     }
-    
-    
+
     /**
      * Set display X/Y axis or not
      *
@@ -557,6 +557,24 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.zAxis.setMinMaxValue(min, max);
     }
 
+    /**
+     * Get lighting set
+     *
+     * @return Lighting set
+     */
+    public Lighting getLighting() {
+        return this.lighting;
+    }
+
+    /**
+     * Set lighting set
+     *
+     * @param value Lighting set
+     */
+    public void setLighting(Lighting value) {
+        this.lighting = value;
+    }
+
     // </editor-fold>
     // <editor-fold desc="methods">
     /**
@@ -702,7 +720,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.updateMatrix(gl);
         this.drawLegend(gl);
 
-        gl.glFlush();
+        gl.glFlush();      
+        
+        //Set lighting
+        if (this.lighting != null && this.lighting.isEnable()) {
+            this.lighting.start(gl);
+        }
     }
 
     /**
@@ -749,7 +772,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         return (float) Math.sqrt(Math.pow(sx2 - sx1, 2) + Math.pow(sy2 - sy1, 2));
     }
-    
+
     private float toScreenAngle(float x1, float y1, float z1, float x2, float y2, float z2) {
         float[] coord = toScreen(x1, y1, z1);
         float sx1 = coord[0];
@@ -758,7 +781,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         float sx2 = coord[0];
         float sy2 = coord[1];
 
-        return (float) MeteoMath.uv2ds(sx2 -  sx1, sy2 - sy1)[0];
+        return (float) MeteoMath.uv2ds(sx2 - sx1, sy2 - sy1)[0];
     }
 
     private int getLabelGap(Font font, List<ChartText> labels, double len) {
@@ -937,8 +960,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 float angle = this.toScreenAngle(-1.0f, y, -1.0f, 1.0f, y, -1.0f);
                 angle = y < 0 ? 270 - angle : 90 - angle;
                 float yShift = Math.min(-strWidth, -strWidth);
-                if (this.angleX <= -120)
+                if (this.angleX <= -120) {
                     yShift = -yShift;
+                }
                 drawString(gl, label, 0.0f, y1, -1.0f, XAlign.CENTER, yAlign, angle, 0, yShift);
             }
 
@@ -1023,13 +1047,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
             //Draw y axis label
             label = this.yAxis.getLabel();
-            if (label != null) { 
+            if (label != null) {
                 strWidth += this.tickSpace;
                 float angle = this.toScreenAngle(x, -1.0f, -1.0f, x, 1.0f, -1.0f);
                 angle = x > 0 ? 270 - angle : 90 - angle;
                 float yShift = Math.min(-strWidth, -strWidth);
-                if (this.angleX <= -120)
+                if (this.angleX <= -120) {
                     yShift = -yShift;
+                }
                 drawString(gl, label, x1, 0.0f, -1.0f, XAlign.CENTER, yAlign, angle, 0, yShift);
             }
         }
@@ -1150,14 +1175,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
             XAlign xAlign, YAlign yAlign, float xShift, float yShift) {
         return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx,
-                vy, vz, xAlign, yAlign, xShift, yShift);        
+                vy, vz, xAlign, yAlign, xShift, yShift);
     }
-    
+
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
             XAlign xAlign, YAlign yAlign) {
         return drawString(gl, str, font, color, vx, vy, vz, xAlign, yAlign, 0, 0);
     }
-    
+
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
             XAlign xAlign, YAlign yAlign, float xShift, float yShift) {
         //Get screen coordinates
@@ -1192,23 +1217,23 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         return rect;
     }
-    
-    Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz, 
+
+    Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
             XAlign xAlign, YAlign yAlign, float angle) {
         return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy, vz, xAlign, yAlign, angle, 0, 0);
     }
-    
-    Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz, 
+
+    Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
             XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
-        return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy, 
+        return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy,
                 vz, xAlign, yAlign, angle, xShift, yShift);
     }
-    
+
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
             XAlign xAlign, YAlign yAlign, float angle) {
         return drawString(gl, str, font, color, vx, vy, vz, xAlign, yAlign, angle, 0, 0);
     }
-    
+
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
             XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
         //Get screen coordinates
@@ -1221,14 +1246,15 @@ public class Plot3DGL extends Plot implements GLEventListener {
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
         textRenderer.setSmoothing(true);
-        Rectangle2D rect = textRenderer.getBounds(str.subSequence(0, str.length()));                
-        gl.glMatrixMode(GL2.GL_MODELVIEW); 
-        gl.glPushMatrix(); 
-        gl.glTranslatef(x, y, 0.0f); 
-        if (angle != 0) {                        
-            gl.glRotatef(angle, 0.0f, 0.0f, 1.0f); 
+        Rectangle2D rect = textRenderer.getBounds(str.subSequence(0, str.length()));
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPushMatrix();
+        gl.glTranslatef(x, y, 0.0f);
+        if (angle != 0) {
+            gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
         }
-        x = 0; y = 0;
+        x = 0;
+        y = 0;
         switch (xAlign) {
             case CENTER:
                 x -= rect.getWidth() * 0.5;
@@ -1247,9 +1273,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
         x += xShift;
         y += yShift;
-        textRenderer.draw(str, (int)x, (int)y);
+        textRenderer.draw(str, (int) x, (int) y);
         textRenderer.endRendering();
-        gl.glPopMatrix(); 
+        gl.glPopMatrix();
 
         return rect;
     }
@@ -1273,18 +1299,25 @@ public class Plot3DGL extends Plot implements GLEventListener {
             Graphic gg = graphic.getGraphicN(0);
             this.drawGraphic(gl, gg);
         } else {
-            boolean isDraw = true;
-            if (graphic instanceof GraphicCollection3D) {
-                GraphicCollection3D gg = (GraphicCollection3D) graphic;
-                if (gg.isAllQuads()) {
-                    this.drawQuadsPolygons(gl, gg);
-                    isDraw = false;
+            if (graphic instanceof IsosurfaceGraphics) {
+                this.drawIsosurface(gl, (IsosurfaceGraphics)graphic);
+            } else {
+                boolean isDraw = true;
+                if (graphic instanceof GraphicCollection3D) {
+                    GraphicCollection3D gg = (GraphicCollection3D) graphic;
+                    if (gg.isAllQuads()) {
+                        this.drawQuadsPolygons(gl, gg);
+                        isDraw = false;
+                    } else if (gg.isAllTriangle()) {
+                        this.drawTrianglePolygons(gl, gg);
+                        isDraw = false;
+                    }
                 }
-            }
-            if (isDraw) {
-                for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                    Graphic gg = graphic.getGraphicN(i);
-                    this.drawGraphic(gl, gg);
+                if (isDraw) {
+                    for (int i = 0; i < graphic.getNumGraphics(); i++) {
+                        Graphic gg = graphic.getGraphicN(i);
+                        this.drawGraphic(gl, gg);
+                    }
                 }
             }
         }
@@ -1493,6 +1526,82 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
     }
 
+    private void drawTrianglePolygons(GL2 gl, GraphicCollection3D graphic) {
+        PointZ p;
+        for (int i = 0; i < graphic.getNumGraphics(); i++) {
+            Graphic gg = graphic.getGraphicN(i);
+            if (extent.intersects(gg.getExtent())) {
+                PolygonZShape shape = (PolygonZShape) gg.getShape();
+                PolygonBreak pb = (PolygonBreak) gg.getLegend();
+                for (PolygonZ poly : (List<PolygonZ>) shape.getPolygons()) {
+                    drawTriangle(gl, poly, pb);
+                }
+            }
+        }
+    }
+
+    private void drawTriangle(GL2 gl, PolygonZ aPG, PolygonBreak aPGB) {
+        PointZ p;
+        float[] rgba = aPGB.getColor().getRGBComponents(null);
+        if (aPGB.isDrawFill()) {
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glBegin(GL2.GL_TRIANGLES);
+            for (int i = 0; i < aPG.getOutLine().size(); i++) {
+                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+            }
+            gl.glEnd();
+        }
+
+        if (aPGB.isDrawOutline()) {
+            rgba = aPGB.getOutlineColor().getRGBComponents(null);
+            gl.glLineWidth(aPGB.getOutlineSize());
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            for (int i = 0; i < aPG.getOutLine().size(); i++) {
+                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+            }
+            gl.glEnd();
+        }
+    }
+    
+    private void drawTriangle(GL2 gl, PointZ[] points, PolygonBreak aPGB) {
+        PointZ p;
+        float[] rgba = aPGB.getColor().getRGBComponents(null);
+        if (aPGB.isDrawFill()) {
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glBegin(GL2.GL_TRIANGLES);
+            for (int i = 0; i < 3; i++) {
+                p = points[i];
+                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+            }
+            gl.glEnd();
+        }
+
+        if (aPGB.isDrawOutline()) {
+            rgba = aPGB.getOutlineColor().getRGBComponents(null);
+            gl.glLineWidth(aPGB.getOutlineSize());
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            for (int i = 0; i < 3; i++) {
+                p = points[i];
+                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+            }
+            gl.glEnd();
+        }
+    }
+    
+    private void drawIsosurface(GL2 gl, IsosurfaceGraphics isosurface) {        
+        List<PointZ[]> triangles = isosurface.getTriangles();
+        PolygonBreak pgb = (PolygonBreak)isosurface.getLegendBreak();
+        //this.lighting.setEnable(true);
+        this.lighting.setMat_Ambient(pgb.getColor().getRGBComponents(null));
+        for (PointZ[] triangle : triangles) {
+            this.drawTriangle(gl, triangle, pgb);
+        }
+    }
+
     private void drawImage(GL2 gl, Graphic graphic) {
         ImageShape ishape = (ImageShape) graphic.getShape();
         BufferedImage image = ishape.getImage();
@@ -1697,7 +1806,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         caption = tLabels.get(idx);
                     }
                     if (ls.getLegendType() == LegendType.UniqueValue) {
-                        this.drawString(gl, caption, legend.getTickLabelFont(), Color.black, 
+                        this.drawString(gl, caption, legend.getTickLabelFont(), Color.black,
                                 x + lWidth, yy + barHeight * 0.5f, 0, XAlign.LEFT, YAlign.CENTER, 5, 0);
                     } else {
                         rgba = Color.black.getRGBComponents(null);
@@ -1707,10 +1816,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         gl.glVertex2f(x + lWidth * 0.5f, yy + barHeight);
                         gl.glVertex2f(x + lWidth, yy + barHeight);
                         gl.glEnd();
-                        this.drawString(gl, caption, legend.getTickLabelFont(), Color.black, 
+                        this.drawString(gl, caption, legend.getTickLabelFont(), Color.black,
                                 x + lWidth, yy + barHeight, 0, XAlign.LEFT, YAlign.CENTER, 5, 0);
                     }
-                    
+
                     idx += 1;
                 }
                 yy += barHeight;

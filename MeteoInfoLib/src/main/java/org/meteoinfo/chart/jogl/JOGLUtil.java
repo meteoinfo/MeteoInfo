@@ -6,21 +6,23 @@
 package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureIO;
-import java.io.File;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.meteoinfo.chart.jogl.mc.MarchingCubes;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.Extent3D;
 import org.meteoinfo.layer.ImageLayer;
 import org.meteoinfo.legend.ColorBreak;
+import org.meteoinfo.legend.PolygonBreak;
+import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.GraphicCollection;
 import org.meteoinfo.shape.ImageShape;
 import org.meteoinfo.shape.PointZ;
+import org.meteoinfo.shape.PolygonZShape;
 
 /**
  *
@@ -62,6 +64,71 @@ public class JOGLUtil {
         }
         graphics.add(gg);
 
+        return graphics;
+    }
+    
+    /**
+     * Create isosurface graphics
+     * @param data 3d data array
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @param z Z coordinates
+     * @param isoLevel iso level
+     * @param pb Polygon break
+     * @return Graphics
+     */
+    public static GraphicCollection isosurface(Array data, Array x, Array y, Array z,
+            float isoLevel, PolygonBreak pb) {
+        List<float[]> vertices = MarchingCubes.marchingCubes(data, x, y, z, isoLevel);
+        IsosurfaceGraphics graphics = new IsosurfaceGraphics();
+        graphics.setLegendBreak(pb);
+        float[] v1, v2, v3;
+        for (int i = 0; i < vertices.size(); i += 3) {            
+            PointZ[] points = new PointZ[3];
+            v1 = vertices.get(i);
+            v2 = vertices.get(i + 1);
+            v3 = vertices.get(i + 2);
+            points[0] = new PointZ(v1[0], v1[1], v1[2]);
+            points[1] = new PointZ(v2[0], v2[1], v2[2]);
+            points[2] = new PointZ(v3[0], v3[1], v3[2]);
+            graphics.addTriangle(points);
+        }
+        
+        return graphics;
+    }
+    
+    /**
+     * Create isosurface graphics
+     * @param data 3d data array
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @param z Z coordinates
+     * @param isoLevel iso level
+     * @param pb Polygon break
+     * @return Graphics
+     */
+    public static GraphicCollection isosurface_bak(Array data, Array x, Array y, Array z,
+            float isoLevel, PolygonBreak pb) {
+        List<float[]> vertices = MarchingCubes.marchingCubes(data, x, y, z, isoLevel);
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        pb.setColor(Color.cyan);
+        float[] v1, v2, v3;
+        for (int i = 0; i < vertices.size(); i += 3) {
+            PolygonZShape ps = new PolygonZShape();
+            List<PointZ> points = new ArrayList<>();
+            v1 = vertices.get(i);
+            v2 = vertices.get(i + 1);
+            v3 = vertices.get(i + 2);
+            points.add(new PointZ(v1[0], v1[1], v1[2]));
+            points.add(new PointZ(v2[0], v2[1], v2[2]));
+            points.add(new PointZ(v3[0], v3[1], v3[2]));
+            points.add(new PointZ(v1[0], v1[1], v1[2]));
+            ps.setPoints(points);
+            Graphic graphic = new Graphic(ps, pb);
+            graphics.add(graphic);
+        }
+        graphics.setAllTriangle(true);
+        
         return graphics;
     }
 }

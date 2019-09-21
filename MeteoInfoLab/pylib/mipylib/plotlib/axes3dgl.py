@@ -7,8 +7,9 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.chart.plot import GraphicFactory
-from org.meteoinfo.legend import BreakTypes
+from org.meteoinfo.legend import BreakTypes, LegendManage
 from org.meteoinfo.layer import LayerTypes
+from org.meteoinfo.shape import ShapeTypes
 from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil
 from javax.swing import WindowConstants
 from java.awt import Font, Color, BasicStroke
@@ -98,6 +99,31 @@ class Axes3DGL(Axes3D):
         '''
         self.axes.setAngleX(elevation)
         
+    def set_lighting(self, enable, **kwargs):
+        '''
+        Set lighting.
+        
+        :param enable: (*boolean*) Set lighting enable or not.
+        :param position: (*list of float*) Lighting position.
+        :param ambient: (*list of float*) Ambient light.
+        :param diffuse: (*list of float*) Diffuse light.
+        :param specular: (*list of float*) Specular light.        
+        '''
+        lighting = self.axes.getLighting()
+        lighting.setEnable(enable)
+        position = kwargs.pop('position', None)
+        if not position is None:
+            lighting.setPosition(position)
+        ambient = kwargs.pop('ambient', None)
+        if not ambient is None:
+            lighting.setAmbient(ambient)
+        diffuse = kwargs.pop('diffuse', None)
+        if not diffuse is None:
+            lighting.setDiffuse(diffuse)
+        specular = kwargs.pop('specular', None)
+        if not specular is None:
+            lighting.setSpecular(specular)
+        
     def plot_layer(self, layer, **kwargs):
         '''
         Plot a layer in 3D axes.
@@ -131,6 +157,63 @@ class Axes3DGL(Axes3D):
             interpolation = kwargs.pop('interpolation', None)
             graphics = JOGLUtil.createTexture(self.figure.getGL2(), layer, offset, xshift, interpolation)
         
+        visible = kwargs.pop('visible', True)
+        if visible:
+            self.add_graphic(graphics)
+        return graphics
+        
+    def plot_isosurface(self, *args, **kwargs):
+        '''
+        creates a three-dimensional isosurface plot
+        
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param z: (*array_like*) Optional. Z coordinate array.
+        :param data: (*array_like*) 3D data array.
+        :param cmap: (*string*) Color map string.
+        :param xyaxis: (*boolean*) Draw x and y axis or not.
+        :param zaxis: (*boolean*) Draw z axis or not.
+        :param grid: (*boolean*) Draw grid or not.
+        :param boxed: (*boolean*) Draw boxed or not.
+        :param mesh: (*boolean*) Draw mesh line or not.
+        
+        :returns: Legend
+        '''        
+        if len(args) <= 3:
+            x = args[0].dimvalue(2)
+            y = args[0].dimvalue(1)
+            z = args[0].dimvalue(0)
+            data = args[0]   
+            isovalue = args[1]
+            args = args[2:]
+        else:
+            x = args[0]
+            y = args[1]
+            z = args[2]
+            data = args[3]
+            isovalue = args[4]
+            args = args[5:]
+        cmap = plotutil.getcolormap(**kwargs)
+        cvalue = kwargs.pop('cvalue', None)
+        if not cvalue is None:
+            if len(args) > 0:
+                level_arg = args[0]
+                if isinstance(level_arg, int):
+                    cn = level_arg
+                    ls = LegendManage.createLegendScheme(data.min(), data.max(), cn, cmap)
+                else:
+                    if isinstance(level_arg, NDArray):
+                        level_arg = level_arg.aslist()
+                    ls = LegendManage.createLegendScheme(data.min(), data.max(), level_arg, cmap)
+            else:    
+                ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
+            ls = ls.convertTo(ShapeTypes.Polygon)
+            edge = kwargs.pop('edge', True)
+            kwargs['edge'] = edge
+            plotutil.setlegendscheme(ls, **kwargs)
+        else:
+            ls = plotutil.getlegendbreak('polygon', **kwargs)[0]
+        graphics = JOGLUtil.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls)
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

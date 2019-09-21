@@ -18,9 +18,9 @@ public class GraphicCollection3D extends GraphicCollection{
     private double zValue;
     private String zdir;
     private List<Number> sePoint;
-    private boolean allQuads;
-    private boolean allTriangle;
-    private boolean allConvexPolygon;
+    protected boolean allQuads;
+    protected boolean allTriangle;
+    protected boolean allConvexPolygon;
     
     /**
      * Constructor

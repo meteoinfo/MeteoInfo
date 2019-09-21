@@ -571,6 +571,52 @@ public class MIMath {
 
         return extent;
     }
+    
+    /**
+     * Get extent of the points
+     *
+     * @param points
+     * @return Extent
+     */
+    public static Extent3D getExtent(PointZ[] points) { 
+        PointZ p = points[0];
+        double minx = p.X;
+        double maxx = p.X;
+        double miny = p.Y;
+        double maxy = p.Y;
+        double minz = p.Z;
+        double maxz = p.Z;
+        for (int i = 1; i < points.length; i++) {
+            if (minx > p.X) {
+                minx = p.M;
+            }
+            if (maxx < p.X) {
+                maxx = p.M;
+            }
+            if (miny > p.Y) {
+                miny = p.Y;
+            }
+            if (maxy < p.Y) {
+                maxy = p.Y;
+            }
+            if (minz > p.Z) {
+                minz = p.Z;
+            }
+            if (maxz < p.Z) {
+                maxz = p.Z;
+            }
+        }
+
+        Extent3D extent = new Extent3D();
+        extent.minX = minx;
+        extent.maxX = maxx;
+        extent.minY = miny;
+        extent.maxY = maxy;
+        extent.minZ = minz;
+        extent.maxZ = maxz;
+
+        return extent;
+    }
 
     /**
      * Determine if two extent cross each other

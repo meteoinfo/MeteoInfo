@@ -35,14 +35,14 @@ import org.meteoinfo.legend.PointBreak;
 public class GraphicCollection extends Graphic implements Iterator {
 
     // <editor-fold desc="Variables">
-    List<Graphic> graphics = new ArrayList<>();
+    private List<Graphic> graphics = new ArrayList<>();
     private Extent _extent = new Extent();
-    private boolean singleLegend = true;
+    protected boolean singleLegend = true;
     private int index;
     private LabelSet labelSet;
     private List<Graphic> labelPoints;
-    private LegendScheme legendScheme;
-    private ColorBreak legendBreak;
+    protected LegendScheme legendScheme;
+    protected ColorBreak legendBreak;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 

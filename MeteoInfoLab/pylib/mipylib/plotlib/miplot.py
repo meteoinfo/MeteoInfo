@@ -1499,7 +1499,10 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
         if (not width is None) and (not height is None):
             g_figure.saveImage(fname, width, height, sleep)
         else:
-            g_figure.saveImage(fname, sleep)  
+            if sleep is None:
+                g_figure.saveImage(fname)
+            else:
+                g_figure.saveImage(fname, sleep)
         
 def savefig_jpeg(fname, width=None, height=None, dpi=None):
     """

@@ -23,6 +23,7 @@ public class IsosurfaceGraphics extends GraphicCollection3D {
      * Constructor
      */
     public IsosurfaceGraphics() {
+        super();
         this.allTriangle = true;
     }
     

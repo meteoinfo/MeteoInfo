@@ -454,6 +454,33 @@ public class LegendScheme {
         else
             return this.legendBreaks.get(0);
     }
+    
+    /**
+     * Get legend break index by value
+     * @param v Value
+     * @return Legend break index
+     */
+    public int legendBreakIndex(double v) {
+        double sv, ev;
+        for (int i = 0; i < this.legendBreaks.size(); i ++){
+            ColorBreak cb = this.legendBreaks.get(i);
+            sv = Double.parseDouble(cb.getStartValue().toString());
+            ev = Double.parseDouble(cb.getEndValue().toString());
+            if (sv == ev){
+                if (v == sv)
+                    return i;
+            } else {
+                if (v >= sv && v < ev){
+                    return i;
+                }
+            }
+        }
+        if (v >= this.getMaxValue())
+            return this.getBreakNum() - 1;
+        else
+            return 0;
+
+    }
 
     /**
      * Get color list

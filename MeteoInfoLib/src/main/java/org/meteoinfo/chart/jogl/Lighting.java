@@ -46,7 +46,7 @@ public class Lighting {
         if (far)
             this.position = new float[]{0.f, 0.f, 1.f, 0.f};
         else
-            this.position = new float[]{0.f, 1.f, 0.f, 1.f};
+            this.position = new float[]{-1.f, -1.f, 1.f, 1.f};
         this.mat_ambient = new float[]{0.f, 0.f, 0.f, 0.f};
         this.mat_specular = new float[]{ 1.0f, 1.0f, 1.0f, 1.0f };
         this.mat_shininess = 50.0f;
@@ -292,7 +292,7 @@ public class Lighting {
         gl.glLightfv(this.light, GL2.GL_POSITION, position, 0);
         
         //Material
-        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, mat_ambient, 0);
+        //gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, mat_ambient, 0);
         //gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, mat_specular, 0);
         //gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, mat_shininess);
     }

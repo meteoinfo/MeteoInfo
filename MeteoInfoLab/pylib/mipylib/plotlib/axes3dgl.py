@@ -16,6 +16,8 @@ from java.awt import Font, Color, BasicStroke
 
 import plotutil
 from axes3d import Axes3D
+from mipylib.numeric.core import NDArray
+import mipylib.numeric as np
 
 class Axes3DGL(Axes3D):
     
@@ -157,6 +159,57 @@ class Axes3DGL(Axes3D):
             interpolation = kwargs.pop('interpolation', None)
             graphics = JOGLUtil.createTexture(self.figure.getGL2(), layer, offset, xshift, interpolation)
         
+        visible = kwargs.pop('visible', True)
+        if visible:
+            self.add_graphic(graphics)
+        return graphics
+        
+    def plot_surface(self, *args, **kwargs):
+        '''
+        creates a three-dimensional surface plot
+        
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param z: (*array_like*) 2-D z value array.
+        :param cmap: (*string*) Color map string.
+        
+        :returns: Legend
+        '''        
+        if len(args) <= 2:
+            x = args[0].dimvalue(1)
+            y = args[0].dimvalue(0)
+            x, y = np.meshgrid(x, y)
+            z = args[0]    
+            args = args[1:]
+        else:
+            x = args[0]
+            y = args[1]
+            z = args[2]
+            args = args[3:]
+        if kwargs.has_key('colors'):
+            cn = len(kwargs['colors'])
+        else:
+            cn = None
+        cmap = plotutil.getcolormap(**kwargs)
+        if len(args) > 0:
+            level_arg = args[0]
+            if isinstance(level_arg, int):
+                cn = level_arg
+                ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
+            else:
+                if isinstance(level_arg, NDArray):
+                    level_arg = level_arg.aslist()
+                ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
+        else:  
+            if cn is None:
+                ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
+            else:
+                ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
+        ls = ls.convertTo(ShapeTypes.Polygon)
+        edge = kwargs.pop('edge', True)
+        kwargs['edge'] = edge
+        plotutil.setlegendscheme(ls, **kwargs)
+        graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), ls)
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

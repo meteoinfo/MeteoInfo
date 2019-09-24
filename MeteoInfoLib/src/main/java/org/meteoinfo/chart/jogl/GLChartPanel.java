@@ -19,6 +19,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JPopupMenu;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
@@ -28,6 +34,7 @@ import org.meteoinfo.chart.MouseMode;
  * @author Yaqiang Wang
  */
 public class GLChartPanel extends GLJPanel implements IChartPanel {
+
     // <editor-fold desc="Variables">
     private Plot3DGL plot3DGL;
     private final Point mouseDownPoint = new Point(0, 0);
@@ -38,6 +45,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     private float distanceX = 0.0f;
     private float distanceY = 0.0f;
     private FPSAnimator animator;
+
     // </editor-fold>
     // <editor-fold desc="Construction">
     /**
@@ -46,17 +54,18 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     public GLChartPanel() {
         super();
     }
-    
+
     /**
      * Constructor
+     *
      * @param pltGL Plot3DGL
      */
     public GLChartPanel(Plot3DGL pltGL) {
         super();
-        
+
         init(pltGL);
     }
-    
+
     /**
      * Constructor
      *
@@ -68,11 +77,11 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
 
         init(pltGL);
     }
-    
+
     private void init(Plot3DGL pltGL) {
         this.plot3DGL = pltGL;
-        this.addGLEventListener(pltGL);        
-        
+        this.addGLEventListener(pltGL);
+
         this.setMouseMode(MouseMode.ROTATE);
 
         this.addMouseListener(new MouseAdapter() {
@@ -109,24 +118,27 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
             }
         });
     }
+
     // </editor-fold>
     // <editor-fold desc="Get set methods">
     /**
      * Get plot
+     *
      * @return Plot
      */
     public Plot3DGL getPlot() {
         return this.plot3DGL;
     }
-    
+
     /**
      * Set plot
+     *
      * @param plot Plot
      */
     public void setPlot(Plot3DGL plot) {
         init(plot);
     }
-    
+
     /**
      * Get mouse mode
      *
@@ -174,6 +186,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         }
         this.setCursor(customCursor);
     }
+
     // </editor-fold>
     // <editor-fold desc="Events">
     void onMousePressed(MouseEvent e) {
@@ -205,17 +218,21 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                     float thetaX = 360.0f * ((float) (this.mouseLastPos.y - y) / size.height);
 
                     float elevation = this.plot3DGL.getAngleX() - thetaX;
-                    if (elevation > 0)
+                    if (elevation > 0) {
                         elevation = 0;
-                    if (elevation < -180)
+                    }
+                    if (elevation < -180) {
                         elevation = -180;
-                    this.plot3DGL.setAngleX(elevation);        
-                    
+                    }
+                    this.plot3DGL.setAngleX(elevation);
+
                     float rotation = this.plot3DGL.getAngleY() + thetaY;
-                    if (rotation >= 360)
+                    if (rotation >= 360) {
                         rotation -= 360;
-                    if (rotation < 0)
+                    }
+                    if (rotation < 0) {
                         rotation += 360;
+                    }
                     this.plot3DGL.setAngleY(rotation);
                 }
                 this.repaint();
@@ -224,29 +241,82 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         mouseLastPos.x = x;
         mouseLastPos.y = y;
     }
+
     // </editor-fold>
     // <editor-fold desc="Methods">
     /**
      * Get GL2
-     * @return 
+     *
+     * @return
      */
     public GL2 getGL2() {
         return this.getGL().getGL2();
     }
     
+    /**
+     * Paint view image
+     *
+     * @return View image
+     */
+    public BufferedImage paintViewImage() {
+        this.plot3DGL.getDrawable().display();
+        return this.plot3DGL.getScreenImage();
+    }
+
     @Override
     public void saveImage(String fn) {
-        
+        try {
+            saveImage(fn, null);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    
+
+    public void saveImage(String fn, Integer sleep) throws InterruptedException {
+        //this.repaint();
+        this.plot3DGL.getDrawable().display();
+        if (sleep != null) {
+            Thread.sleep(sleep * 1000);
+        }
+        BufferedImage image = this.plot3DGL.getScreenImage();
+        if (image != null) {
+            String extension = fn.substring(fn.lastIndexOf('.') + 1);
+            try {
+                ImageIO.write(image, extension, new File(fn));
+            } catch (IOException ex) {
+                Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void saveImage(String fn, int width, int height, Integer sleep) throws InterruptedException {
+        int oWidth = this.getWidth();
+        int oHeight = this.getHeight();
+        this.setSize(width, height);
+        this.plot3DGL.getDrawable().display();
+        if (sleep != null) {
+            Thread.sleep(sleep * 1000);
+        }
+        BufferedImage image = this.plot3DGL.getScreenImage();
+        if (image != null) {
+            String extension = fn.substring(fn.lastIndexOf('.') + 1);
+            try {
+                ImageIO.write(image, extension, new File(fn));
+            } catch (IOException ex) {
+                Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        this.setSize(oWidth, oHeight);
+    }
+
     /**
      * Zoom back to full extent
      */
     @Override
     public void onUndoZoomClick() {
-        
+
     }
-    
+
     /**
      * Paint graphics
      */
@@ -254,7 +324,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     public void paintGraphics() {
         this.repaint();
     }
-    
+
     /**
      * Start animator
      */
@@ -262,13 +332,14 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         animator = new FPSAnimator(this, 300, true);
         animator.start();
     }
-    
+
     /**
      * Start animator
      */
     public void animator_stop() {
-        if (animator != null)
+        if (animator != null) {
             animator.stop();
+        }
     }
     // </editor-fold>
 }

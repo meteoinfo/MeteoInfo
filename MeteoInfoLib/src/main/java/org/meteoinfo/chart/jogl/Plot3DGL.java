@@ -11,11 +11,14 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallback;
+import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import com.jogamp.opengl.math.VectorUtil;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -32,6 +35,7 @@ import javax.swing.JFrame;
 import org.meteoinfo.chart.ChartColorBar;
 import org.meteoinfo.chart.ChartLegend;
 import org.meteoinfo.chart.ChartText;
+import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.plot.Plot;
@@ -44,7 +48,9 @@ import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.Extent3D;
+import org.meteoinfo.legend.BreakTypes;
 import org.meteoinfo.legend.ColorBreak;
+import org.meteoinfo.legend.ColorBreakCollection;
 import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.legend.LegendType;
 import org.meteoinfo.legend.PointBreak;
@@ -60,7 +66,9 @@ import org.meteoinfo.shape.PolygonZShape;
 import org.meteoinfo.shape.Polyline;
 import org.meteoinfo.shape.PolylineZShape;
 import org.meteoinfo.shape.Shape;
+import org.meteoinfo.shape.ShapeTypes;
 import static org.meteoinfo.shape.ShapeTypes.PointZ;
+import org.meteoinfo.shape.WindArrow3D;
 
 /**
  *
@@ -69,6 +77,8 @@ import static org.meteoinfo.shape.ShapeTypes.PointZ;
 public class Plot3DGL extends Plot implements GLEventListener {
 
     // <editor-fold desc="Variables">
+    private GLAutoDrawable drawable;
+    private BufferedImage screenImage;
     private final GLU glu = new GLU();
     private final GraphicCollection3D graphics;
     private Extent3D extent;
@@ -132,6 +142,24 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     // </editor-fold>
     // <editor-fold desc="GetSet">
+    /**
+     * Get GLAutoDrawable
+     *
+     * @return GLAutoDrawable
+     */
+    public GLAutoDrawable getDrawable() {
+        return this.drawable;
+    }
+
+    /**
+     * Get screen image
+     *
+     * @return Screen image
+     */
+    public BufferedImage getScreenImage() {
+        return this.screenImage;
+    }
+
     /**
      * Get extent
      *
@@ -670,6 +698,28 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.setExtent((Extent3D) ex);
     }
 
+    /**
+     * Remove a graphic by index
+     *
+     * @param idx Index
+     */
+    public void removeGraphic(int idx) {
+        this.graphics.remove(idx);
+    }
+
+    /**
+     * Remove last graphic
+     */
+    public void removeLastGraphic() {
+        this.graphics.remove(this.graphics.size() - 1);
+    }
+
+    /**
+     * Set auto extent
+     */
+    public void setAutoExtent() {
+    }
+
     @Override
     public void display(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
@@ -681,6 +731,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glRotatef(angleY, 0.0f, 0.0f, 1.0f);
 
         this.updateMatrix(gl);
+
+        //keep material colors
+        if (this.lighting.isEnable()) {
+            this.lighting.start(gl);
+            gl.glColorMaterial(GL2.GL_FRONT, GL2.GL_DIFFUSE);
+            gl.glEnable(GL2.GL_COLOR_MATERIAL);
+        }
 
         gl.glColor3f(0.0f, 0.0f, 0.0f);
 
@@ -715,17 +772,39 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glDisable(GL2.GL_CLIP_PLANE4);
         gl.glDisable(GL2.GL_CLIP_PLANE5);
 
+        //Draw text
+        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
+            Graphic graphic = this.graphics.get(m);
+            if (graphic.getNumGraphics() == 1) {
+                Shape shape = graphic.getGraphicN(0).getShape();
+                if (shape.getShapeType() == ShapeTypes.TEXT) {
+                    this.drawText(gl, (ChartText3D) shape);
+                }
+            } else {
+                for (int i = 0; i < graphic.getNumGraphics(); i++) {
+                    Shape shape = graphic.getGraphicN(i).getShape();
+                    if (shape.getShapeType() == ShapeTypes.TEXT) {
+                        this.drawText(gl, (ChartText3D) shape);
+                    }
+                }
+            }
+        }
+
+        //Stop lighting
+        if (this.lighting.isEnable()) {
+            this.lighting.stop(gl);
+        }
+
         //Draw legend
         gl.glPopMatrix();
         this.updateMatrix(gl);
         this.drawLegend(gl);
 
-        gl.glFlush();      
-        
-        //Set lighting
-        if (this.lighting != null && this.lighting.isEnable()) {
-            this.lighting.start(gl);
-        }
+        gl.glFlush();
+
+        //Draw screen image
+        AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
+        this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
     }
 
     /**
@@ -1299,8 +1378,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
             Graphic gg = graphic.getGraphicN(0);
             this.drawGraphic(gl, gg);
         } else {
-            if (graphic instanceof IsosurfaceGraphics) {
-                this.drawIsosurface(gl, (IsosurfaceGraphics)graphic);
+            if (graphic instanceof SurfaceGraphics) {
+                this.drawSurface(gl, (SurfaceGraphics) graphic);
+            } else if (graphic instanceof IsosurfaceGraphics) {
+                this.drawIsosurface(gl, (IsosurfaceGraphics) graphic);
             } else {
                 boolean isDraw = true;
                 if (graphic instanceof GraphicCollection3D) {
@@ -1331,7 +1412,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 this.drawPoint(gl, graphic);
                 break;
             case TEXT:
-                //this.drawText((ChartText3D) shape, g);
+                //this.drawText(gl, (ChartText3D) shape);
                 break;
             case Polyline:
             case PolylineZ:
@@ -1342,7 +1423,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 this.drawPolygonShape(gl, graphic);
                 break;
             case WindArraw:
-                //this.drawWindArrow(g, graphic);
+                this.drawWindArrow(gl, graphic);
                 break;
             case Image:
                 this.drawImage(gl, graphic);
@@ -1351,6 +1432,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 this.drawTexture(gl, graphic);
                 break;
         }
+    }
+
+    private void drawText(GL2 gl, ChartText3D text) {
+        float x = this.transform_xf((float) text.getX());
+        float y = this.transform_yf((float) text.getY());
+        float z = this.transform_zf((float) text.getZ());
+        this.drawString(gl, text, x, y, z, text.getXAlign(), text.getYAlign());
     }
 
     private void drawPoint(GL2 gl, Graphic graphic) {
@@ -1370,18 +1458,37 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawLineString(GL2 gl, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
-            PolylineBreak pb = (PolylineBreak) graphic.getLegend();
-            float[] rgba = pb.getColor().getRGBComponents(null);
-            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
-            gl.glLineWidth(pb.getWidth());
-            gl.glBegin(GL2.GL_LINE_STRIP);
-            for (Polyline line : shape.getPolylines()) {
+            ColorBreak cb = graphic.getLegend();
+            if (cb.getBreakType() == BreakTypes.ColorBreakCollection) {
+                ColorBreakCollection cbc = (ColorBreakCollection) cb;
+                Polyline line = shape.getPolylines().get(0);
                 List<PointZ> ps = (List<PointZ>) line.getPointList();
-                for (PointZ p : ps) {
+                float[] rgba;
+                PointZ p;
+                gl.glBegin(GL2.GL_LINE_STRIP);
+                for (int i = 0; i < ps.size(); i++) {
+                    PolylineBreak plb = (PolylineBreak) cbc.get(i);
+                    rgba = plb.getColor().getRGBComponents(null);
+                    gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+                    gl.glLineWidth(plb.getWidth());
+                    p = ps.get(i);
                     gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
                 }
+                gl.glEnd();
+            } else {
+                PolylineBreak pb = (PolylineBreak) cb;
+                float[] rgba = pb.getColor().getRGBComponents(null);
+                gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+                gl.glLineWidth(pb.getWidth());
+                gl.glBegin(GL2.GL_LINE_STRIP);
+                for (Polyline line : shape.getPolylines()) {
+                    List<PointZ> ps = (List<PointZ>) line.getPointList();
+                    for (PointZ p : ps) {
+                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                    }
+                }
+                gl.glEnd();
             }
-            gl.glEnd();
         }
     }
 
@@ -1401,7 +1508,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     private void drawPolygon(GL2 gl, PolygonZ aPG, PolygonBreak aPGB) {
         PointZ p;
-        if (aPGB.isDrawFill()) {
+        if (aPGB.isDrawFill() && aPGB.getColor().getAlpha() > 0) {
             float[] rgba = aPGB.getColor().getRGBComponents(null);
             gl.glColor3f(rgba[0], rgba[1], rgba[2]);
 
@@ -1565,12 +1672,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glEnd();
         }
     }
-    
+
     private void drawTriangle(GL2 gl, PointZ[] points, PolygonBreak aPGB) {
         PointZ p;
         float[] rgba = aPGB.getColor().getRGBComponents(null);
         if (aPGB.isDrawFill()) {
-            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            //gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_TRIANGLES);
             for (int i = 0; i < 3; i++) {
                 p = points[i];
@@ -1591,12 +1699,64 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glEnd();
         }
     }
-    
-    private void drawIsosurface(GL2 gl, IsosurfaceGraphics isosurface) {        
+
+    private void drawSurface(GL2 gl, SurfaceGraphics surface) {
+        PolygonBreak pgb = (PolygonBreak) surface.getLegendBreak(0, 0);
+        int dim1 = surface.getDim1();
+        int dim2 = surface.getDim2();
+        float[] rgba;
+        PointZ p;
+        if (pgb.isDrawFill()) {
+            for (int i = 0; i < dim1 - 1; i++) {
+                for (int j = 0; j < dim2 - 1; j++) {
+                    gl.glBegin(GL2.GL_QUADS);
+                    p = surface.getVertex(i, j);
+                    rgba = surface.getRGBA(i, j);
+                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                    p = surface.getVertex(i + 1, j);
+                    rgba = surface.getRGBA(i + 1, j);
+                    gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                    p = surface.getVertex(i + 1, j + 1);
+                    rgba = surface.getRGBA(i + 1, j + 1);
+                    gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                    p = surface.getVertex(i, j + 1);
+                    rgba = surface.getRGBA(i, j + 1);
+                    gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                    gl.glEnd();
+                }
+            }
+        }
+
+        if (pgb.isDrawOutline()) {
+            rgba = pgb.getOutlineColor().getRGBComponents(null);
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glLineWidth(pgb.getOutlineSize());
+            for (int i = 0; i < dim1; i++) {
+                gl.glBegin(GL2.GL_LINE_STRIP);
+                for (int j = 0; j < dim2; j++) {
+                    p = surface.getVertex(i, j);
+                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                }
+                gl.glEnd();
+            }
+            for (int j = 0; j < dim2; j++) {
+                gl.glBegin(GL2.GL_LINE_STRIP);
+                for (int i = 0; i < dim1; i++) {
+                    p = surface.getVertex(i, j);
+                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                }
+                gl.glEnd();
+            }
+        }
+    }
+
+    private void drawIsosurface(GL2 gl, IsosurfaceGraphics isosurface) {
         List<PointZ[]> triangles = isosurface.getTriangles();
-        PolygonBreak pgb = (PolygonBreak)isosurface.getLegendBreak();
-        //this.lighting.setEnable(true);
-        this.lighting.setMat_Ambient(pgb.getColor().getRGBComponents(null));
+        PolygonBreak pgb = (PolygonBreak) isosurface.getLegendBreak();
         for (PointZ[] triangle : triangles) {
             this.drawTriangle(gl, triangle, pgb);
         }
@@ -1714,6 +1874,130 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         // Unbinding the texture
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+    }
+
+    void drawWindArrow(GL2 gl, Graphic graphic) {
+        if (extent.intersects(graphic.getExtent())) {
+            WindArrow3D shape = (WindArrow3D) graphic.getShape();
+            PointBreak pb = (PointBreak) graphic.getLegend();
+            PointZ sp = (PointZ) shape.getPoint();
+            PointZ ep = (PointZ) shape.getEndPoint();
+            float x1 = transform_xf((float) sp.X);
+            float y1 = transform_yf((float) sp.Y);
+            float z1 = transform_zf((float) sp.Z);
+            float x2 = transform_xf((float) ep.X);
+            float y2 = transform_yf((float) ep.Y);
+            float z2 = transform_zf((float) ep.Z);
+
+            gl.glPushMatrix();
+            gl.glPushAttrib(GL2.GL_POLYGON_BIT); // includes GL_CULL_FACE
+            gl.glDisable(GL2.GL_CULL_FACE); // draw from all sides
+
+            float[] rgba = pb.getColor().getRGBComponents(null);
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glLineWidth(pb.getOutlineSize());
+            gl.glBegin(GL2.GL_LINES);
+            gl.glVertex3f(x1, y1, z1);
+            gl.glVertex3f(x2, y2, z2);
+            gl.glEnd();
+
+            // Calculate vector along direction of line
+            float[] v = {x2 - x1, y2 - y1, z2 - z1};
+            float norm_of_v = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+
+            // Size of cone in arrow:
+            //float coneFractionAxially = 0.025f; // radius at thickest part
+            //float coneFractionRadially = 0.12f; // length of arrow
+
+            //float coneHgt = coneFractionAxially * norm_of_v;
+            //float coneRadius = coneFractionRadially * norm_of_v;
+            float coneRadius = 0.05f;
+            float coneHgt = coneRadius * 0.4f;
+
+            // Set location of arrowhead to be at the startpoint of the line
+            float[] vConeLocation = {x1, y1, z1};
+
+            // Initialize transformation matrix
+            float[] mat44
+                    = {1, 0, 0, 0,
+                        0, 1, 0, 0,
+                        0, 0, 1, 0,
+                        0, 0, 0, 1};
+
+            // The direction of the arrowhead is the line vector
+            float[] dVec = {v[0], v[1], v[2]};
+
+            // Normalize dVec to get Unit Vector norm_startVec
+            float[] norm_startVec = VectorUtil.normalizeVec3(dVec);
+
+            // Normalize zaxis to get Unit Vector norm_endVec
+            float[] zaxis = {0.0f, 0.0f, 1.0f};
+            float[] norm_endVec = VectorUtil.normalizeVec3(zaxis);
+
+            if (Float.isNaN(norm_endVec[0]) || Float.isNaN(norm_endVec[1]) || Float.isNaN(norm_endVec[2])) {
+                norm_endVec[0] = 0.0f;
+                norm_endVec[1] = 0.0f;
+                norm_endVec[2] = 0.0f;
+            }
+
+            // If vectors are identical, set transformation matrix to identity
+            if (((norm_startVec[0] - norm_endVec[0]) > 1e-14) && ((norm_startVec[1] - norm_endVec[1]) > 1e-14) && ((norm_startVec[2] - norm_endVec[2]) > 1e-14)) {
+                mat44[0] = 1.0f;
+                mat44[5] = 1.0f;
+                mat44[10] = 1.0f;
+                mat44[15] = 1.0f;
+            } // otherwise create the matrix
+            else {
+                // Vector cross-product, result = axb
+                float[] axb = new float[3];
+                VectorUtil.crossVec3(axb, norm_startVec, norm_endVec);
+
+                // Normalize axb to get Unit Vector norm_axb
+                float[] norm_axb = VectorUtil.normalizeVec3(axb);
+
+                if (Float.isNaN(norm_axb[0]) || Float.isNaN(norm_axb[1]) || Float.isNaN(norm_axb[2])) {
+                    norm_axb[0] = 0.0f;
+                    norm_axb[1] = 0.0f;
+                    norm_axb[2] = 0.0f;
+                }
+
+                // Build the rotation matrix
+                float ac = (float) Math.acos(VectorUtil.dotVec3(norm_startVec, norm_endVec));
+
+                float s = (float) Math.sin(ac);
+                float c = (float) Math.cos(ac);
+                float t = 1 - c;
+
+                float x = norm_axb[0];
+                float y = norm_axb[1];
+                float z = norm_axb[2];
+
+                // Fill top-left 3x3
+                mat44[0] = t * x * x + c;
+                mat44[1] = t * x * y - s * z;
+                mat44[2] = t * x * z + s * y;
+
+                mat44[4] = t * x * y + s * z;
+                mat44[5] = t * y * y + c;
+                mat44[6] = t * y * z - s * x;
+
+                mat44[8] = t * x * z - s * y;
+                mat44[9] = t * y * z + s * x;
+                mat44[10] = t * z * z + c;
+
+                mat44[15] = 1.0f;
+            }
+
+            // Translate and rotate arrowhead to correct position
+            gl.glTranslatef(vConeLocation[0], vConeLocation[1], vConeLocation[2]);
+            gl.glMultMatrixf(mat44, 0);
+
+            GLUquadric cone_obj = glu.gluNewQuadric();
+            glu.gluCylinder(cone_obj, 0, coneHgt, coneRadius, 8, 1);
+
+            gl.glPopAttrib(); // GL_CULL_FACE
+            gl.glPopMatrix();
+        }
     }
 
     void drawLegend(GL2 gl) {
@@ -1866,6 +2150,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     @Override
     public void init(GLAutoDrawable drawable) {
+        this.drawable = drawable;
         GL2 gl = drawable.getGL().getGL2();
         //White background
         gl.glClearColor(1f, 1f, 1f, 1.0f);

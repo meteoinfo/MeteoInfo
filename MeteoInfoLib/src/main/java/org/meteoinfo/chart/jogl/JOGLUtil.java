@@ -16,6 +16,7 @@ import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.Extent3D;
 import org.meteoinfo.layer.ImageLayer;
 import org.meteoinfo.legend.ColorBreak;
+import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.shape.Graphic;
@@ -29,6 +30,15 @@ import org.meteoinfo.shape.PolygonZShape;
  * @author yaqiang
  */
 public class JOGLUtil {
+    /**
+     * Get RGBA components from a legend break
+     * @param cb Legend break
+     * @return RGBA float array
+     */
+    public static float[] getRGBA(ColorBreak cb) {
+        return cb.getColor().getRGBComponents(null);
+    }
+    
     /**
      * Create Texture
      *
@@ -64,6 +74,33 @@ public class JOGLUtil {
         }
         graphics.add(gg);
 
+        return graphics;
+    }
+    
+    /**
+     * Create surface graphics
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate array
+     * @param ls Legend scheme
+     * @return Surface graphics
+     */
+    public static SurfaceGraphics surface(Array xa, Array ya, Array za, LegendScheme ls) {
+        SurfaceGraphics graphics = new SurfaceGraphics();
+        int[] shape = xa.getShape();
+        int colNum = shape[1];
+        int rowNum = shape[0];
+        int idx;
+        PointZ[][] vertices = new PointZ[rowNum][colNum];
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                idx = i * colNum + j;
+                vertices[i][j] = new PointZ(xa.getDouble(idx), ya.getDouble(idx), za.getDouble(idx), za.getDouble(idx));
+            }
+        }
+        graphics.setVertices(vertices);
+        graphics.setLegendScheme(ls);
         return graphics;
     }
     

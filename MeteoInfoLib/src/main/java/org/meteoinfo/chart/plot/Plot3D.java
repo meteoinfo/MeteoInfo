@@ -521,6 +521,28 @@ public class Plot3D extends Plot {
         }
         this.setExtent((Extent3D)ex);
     }
+    
+    /**
+     * Remove a graphic by index
+     *
+     * @param idx Index
+     */
+    public void removeGraphic(int idx) {
+        this.graphics.remove(idx);
+    }
+
+    /**
+     * Remove last graphic
+     */
+    public void removeLastGraphic() {
+        this.graphics.remove(this.graphics.size() - 1);
+    }
+    
+    /**
+     * Set auto extent
+     */
+    public void setAutoExtent() {
+    }
 
     /**
      * Destroys the internal image. It will force <code>SurfaceCanvas</code> to

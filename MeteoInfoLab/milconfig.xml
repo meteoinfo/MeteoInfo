@@ -24,8 +24,6 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_elev.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_5.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_cuace_3d_isosurface_relief_loop.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_cuace_3d_isosurface_relief.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\two_yaxis.py"/>
@@ -33,12 +31,10 @@
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_elev.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_5.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_cuace_3d_isosurface_relief_loop.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_cuace_3d_isosurface_relief.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,0" MainFormSize="1427,876"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1379,812"/>
 </MeteoInfo>

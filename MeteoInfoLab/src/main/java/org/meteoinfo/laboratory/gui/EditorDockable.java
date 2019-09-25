@@ -289,6 +289,12 @@ public class EditorDockable extends DefaultSingleCDockable {
                 fileName = fileName + "." + extent;
             }
             file = new File(fileName);
+            if (file.exists()) {
+                int overwrite = JOptionPane.showConfirmDialog(null, "File exists! Overwrite it?");
+                if (overwrite == JOptionPane.NO_OPTION) {
+                    return false;
+                }
+            }
             editor.saveFile(file);
             this.setTitleText(editor.getFileName());
             return true;

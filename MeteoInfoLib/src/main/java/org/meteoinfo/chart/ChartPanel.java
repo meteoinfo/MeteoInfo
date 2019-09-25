@@ -70,6 +70,7 @@ import javax.print.attribute.PrintRequestAttributeSet;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -1020,8 +1021,14 @@ public class ChartPanel extends JPanel implements IChartPanel{
             if (!fileName.substring(fileName.length() - extent.length()).equals(extent)) {
                 fileName = fileName + "." + extent;
             }
-
-            this.saveImage(fileName);
+            if (new File(fileName).exists()) {
+                int overwrite = JOptionPane.showConfirmDialog(this, "File exists! Overwrite it?");
+                if (overwrite == JOptionPane.YES_OPTION) {
+                    this.saveImage(fileName);
+                }
+            } else {
+                this.saveImage(fileName);
+            }
         }
     }
 

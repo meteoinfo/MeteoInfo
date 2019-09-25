@@ -3164,6 +3164,14 @@ public class FrmMain extends JFrame implements IApplication {
             if (!fileName.substring(fileName.length() - extent.length()).equals(extent)) {
                 fileName = fileName + "." + extent;
             }
+
+            if (new File(fileName).exists()) {
+                int overwrite = JOptionPane.showConfirmDialog(this, "File exists! Overwrite it?");
+                if (overwrite == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+                
             Integer dpi = aDlg.getDPI();
 
             if (this.jTabbedPane_Main.getSelectedIndex() == 0) {

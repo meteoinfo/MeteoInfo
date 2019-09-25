@@ -6,11 +6,11 @@
 package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.GL2;
-import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.chart.jogl.mc.MarchingCubes;
+import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.Extent3D;
@@ -23,22 +23,23 @@ import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.GraphicCollection;
 import org.meteoinfo.shape.ImageShape;
 import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.PolygonZShape;
 
 /**
  *
  * @author yaqiang
  */
 public class JOGLUtil {
+
     /**
      * Get RGBA components from a legend break
+     *
      * @param cb Legend break
      * @return RGBA float array
      */
     public static float[] getRGBA(ColorBreak cb) {
         return cb.getColor().getRGBComponents(null);
     }
-    
+
     /**
      * Create Texture
      *
@@ -76,7 +77,7 @@ public class JOGLUtil {
 
         return graphics;
     }
-    
+
     /**
      * Create surface graphics
      *
@@ -103,9 +104,10 @@ public class JOGLUtil {
         graphics.setLegendScheme(ls);
         return graphics;
     }
-    
+
     /**
      * Create isosurface graphics
+     *
      * @param data 3d data array
      * @param x X coordinates
      * @param y Y coordinates
@@ -120,7 +122,7 @@ public class JOGLUtil {
         IsosurfaceGraphics graphics = new IsosurfaceGraphics();
         graphics.setLegendBreak(pb);
         float[] v1, v2, v3;
-        for (int i = 0; i < vertices.size(); i += 3) {            
+        for (int i = 0; i < vertices.size(); i += 3) {
             PointZ[] points = new PointZ[3];
             v1 = vertices.get(i);
             v2 = vertices.get(i + 1);
@@ -130,42 +132,94 @@ public class JOGLUtil {
             points[2] = new PointZ(v3[0], v3[1], v3[2]);
             graphics.addTriangle(points);
         }
-        
+
         return graphics;
     }
-    
+
     /**
      * Create isosurface graphics
+     *
      * @param data 3d data array
      * @param x X coordinates
      * @param y Y coordinates
      * @param z Z coordinates
      * @param isoLevel iso level
      * @param pb Polygon break
+     * @param nThreads Thread number
      * @return Graphics
      */
-    public static GraphicCollection isosurface_bak(Array data, Array x, Array y, Array z,
-            float isoLevel, PolygonBreak pb) {
-        List<float[]> vertices = MarchingCubes.marchingCubes(data, x, y, z, isoLevel);
-        GraphicCollection3D graphics = new GraphicCollection3D();
-        pb.setColor(Color.cyan);
-        float[] v1, v2, v3;
-        for (int i = 0; i < vertices.size(); i += 3) {
-            PolygonZShape ps = new PolygonZShape();
-            List<PointZ> points = new ArrayList<>();
-            v1 = vertices.get(i);
-            v2 = vertices.get(i + 1);
-            v3 = vertices.get(i + 2);
-            points.add(new PointZ(v1[0], v1[1], v1[2]));
-            points.add(new PointZ(v2[0], v2[1], v2[2]));
-            points.add(new PointZ(v3[0], v3[1], v3[2]));
-            points.add(new PointZ(v1[0], v1[1], v1[2]));
-            ps.setPoints(points);
-            Graphic graphic = new Graphic(ps, pb);
-            graphics.add(graphic);
+    public static GraphicCollection isosurface(final Array data, final Array x, final Array y, final Array z,
+            final float isoLevel, PolygonBreak pb, int nThreads) {
+        // TIMER
+        ArrayList<Thread> threads = new ArrayList<>();
+        final ArrayList<ArrayList<float[]>> results = new ArrayList<>();
+
+        // Thread work distribution
+        int nz = (int) z.getSize();
+        int remainder = nz % nThreads;
+        int segment = nz / nThreads;
+
+        // Z axis offset for vertice position calculation
+        int zAxisOffset = 0;
+
+        for (int i = 0; i < nThreads; i++) {
+            // Distribute remainder among first (remainder) threads
+            int segmentSize = (remainder-- > 0) ? segment + 1 : segment;
+
+            // Padding needs to be added to correctly close the gaps between segments
+            final int paddedSegmentSize = (i != nThreads - 1) ? segmentSize + 1 : segmentSize;
+
+            // Finished callback
+            final CallbackMC callback = new CallbackMC() {
+                @Override
+                public void run() {
+                    results.add(getVertices());
+                }
+            };
+
+            // Java...
+            final int finalZAxisOffset = zAxisOffset;
+
+            // Start the thread
+            Thread t = new Thread() {
+                public void run() {
+                    MarchingCubes.marchingCubes(data, x, y, z, isoLevel, paddedSegmentSize, finalZAxisOffset, callback);
+                }
+            };
+
+            threads.add(t);
+            t.start();
+
+            // Correct offsets for next iteration
+            zAxisOffset += segmentSize;
         }
-        graphics.setAllTriangle(true);
-        
+
+        // Join the threads
+        for (int i = 0; i < threads.size(); i++) {
+            try {
+                threads.get(i).join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        IsosurfaceGraphics graphics = new IsosurfaceGraphics();
+        graphics.setLegendBreak(pb);
+        float[] v1, v2, v3;
+        for (List<float[]> vertices : results) {
+            for (int i = 0; i < vertices.size(); i += 3) {
+                PointZ[] points = new PointZ[3];
+                v1 = vertices.get(i);
+                v2 = vertices.get(i + 1);
+                v3 = vertices.get(i + 2);
+                points[0] = new PointZ(v1[0], v1[1], v1[2]);
+                points[1] = new PointZ(v2[0], v2[1], v2[2]);
+                points[2] = new PointZ(v3[0], v3[1], v3[2]);
+                graphics.addTriangle(points);
+            }
+        }
+
         return graphics;
     }
+
 }

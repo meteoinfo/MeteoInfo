@@ -224,11 +224,7 @@ class Axes3DGL(Axes3D):
         :param z: (*array_like*) Optional. Z coordinate array.
         :param data: (*array_like*) 3D data array.
         :param cmap: (*string*) Color map string.
-        :param xyaxis: (*boolean*) Draw x and y axis or not.
-        :param zaxis: (*boolean*) Draw z axis or not.
-        :param grid: (*boolean*) Draw grid or not.
-        :param boxed: (*boolean*) Draw boxed or not.
-        :param mesh: (*boolean*) Draw mesh line or not.
+        :param nthread: (*int*) Thread number.
         
         :returns: Legend
         '''        
@@ -266,7 +262,11 @@ class Axes3DGL(Axes3D):
             plotutil.setlegendscheme(ls, **kwargs)
         else:
             ls = plotutil.getlegendbreak('polygon', **kwargs)[0]
-        graphics = JOGLUtil.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls)
+        nthread = kwargs.pop('nthread', None)
+        if nthread is None:
+            graphics = JOGLUtil.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls)
+        else:
+            graphics = JOGLUtil.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls, nthread)
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

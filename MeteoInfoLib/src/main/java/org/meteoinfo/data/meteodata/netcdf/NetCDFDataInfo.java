@@ -3973,7 +3973,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         //Create netCDF file
         ncfile.create();
 
-        //Write variable data
+        //Write variable data of first NC file
         for (ucar.nc2.Variable nvar : nvars) {
             int ndim = nvar.getDimensions().size();
             if (ndim < 4) {
@@ -3981,16 +3981,16 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             } else {
                 int[] start = new int[ndim];
                 int[] count = new int[ndim];
+                for (int j = 1; j < ndim; j++) {
+                    start[j] = 0;
+                    count[j] = nvar.getDimension(j).getLength();
+                }
                 int n = nvar.getDimension(0).getLength();
                 for (int i = 0; i < n; i++) {
                     start[0] = i;
                     count[0] = 1;
-                    for (int j = 1; j < ndim; j++) {
-                        start[j] = 0;
-                        count[j] = nvar.getDimension(j).getLength();
-                    }
+                    ncfile.write(nvar, start, NCUtil.convertArray(aDataInfo.read(nvar.getShortName(), start, count, false)));
                 }
-                ncfile.write(nvar, NCUtil.convertArray(aDataInfo.read(nvar.getShortName(), start, count, false)));
             }
         }
 
@@ -4009,15 +4009,15 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     int[] start = new int[ndim];
                     int[] count = new int[ndim];
                     int n = nvar.getDimension(0).getLength();
+                    for (int j = 1; j < ndim; j++) {
+                        start[j] = 0;
+                        count[j] = nvar.getDimension(j).getLength();
+                    }
                     for (int k = 0; k < n; k++) {
                         start[0] = k;
                         count[0] = 1;
-                        for (int j = 1; j < ndim; j++) {
-                            start[j] = 0;
-                            count[j] = nvar.getDimension(j).getLength();
-                        }
+                        ncfile.write(nvar, start, NCUtil.convertArray(df.read(nvar.getShortName(), start, count, false)));
                     }
-                    ncfile.write(nvar, NCUtil.convertArray(df.read(nvar.getShortName(), start, count, false)));
                 }
             }
         }

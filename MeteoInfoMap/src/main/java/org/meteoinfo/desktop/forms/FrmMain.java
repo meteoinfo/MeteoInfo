@@ -3166,7 +3166,7 @@ public class FrmMain extends JFrame implements IApplication {
             }
 
             if (new File(fileName).exists()) {
-                int overwrite = JOptionPane.showConfirmDialog(this, "File exists! Overwrite it?");
+                int overwrite = JOptionPane.showConfirmDialog(this, "File exists! Overwrite it?", "Confirm", JOptionPane.YES_NO_OPTION);
                 if (overwrite == JOptionPane.NO_OPTION) {
                     return;
                 }

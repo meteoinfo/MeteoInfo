@@ -290,7 +290,7 @@ public class EditorDockable extends DefaultSingleCDockable {
             }
             file = new File(fileName);
             if (file.exists()) {
-                int overwrite = JOptionPane.showConfirmDialog(null, "File exists! Overwrite it?");
+                int overwrite = JOptionPane.showConfirmDialog(null, "File exists! Overwrite it?", "Confirm", JOptionPane.YES_NO_OPTION);
                 if (overwrite == JOptionPane.NO_OPTION) {
                     return false;
                 }

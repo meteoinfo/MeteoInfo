@@ -720,9 +720,10 @@ public class FrmLayerProperty extends javax.swing.JDialog {
 
     private void jComboBox_LegendTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_LegendTypeActionPerformed
         // TODO add your handling code here:
-//        if (this._isLoading){
-//            return;
-//        }
+        if (this._isLoading){
+            return;
+        }
+        
         if (this.jComboBox_LegendType.getItemCount() == 0) {
             return;
         }

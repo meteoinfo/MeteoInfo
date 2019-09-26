@@ -29,6 +29,7 @@ class DimVariable(object):
             self.datatype = variable.getDataType()
             self.dims = variable.getDimensions()
             self.ndim = variable.getDimNumber()
+            self.attributes = variable.getAttributes()
             self.fill_value = variable.getFillValue()
             self.scale_factor = variable.getScaleFactor()
             self.add_offset = variable.getAddOffset()
@@ -308,8 +309,14 @@ class DimVariable(object):
         else:
             return np.array(ArrayUtil.array(self.dims[idx].getDimValue()))
         
-    def attrvalue(self, key):
-        attr = self.variable.findAttribute(key)
+    def attrvalue(self, attr):
+        '''
+        Get a global attribute value.
+        
+        :param attr: (*string or Attribute*) Attribute or Attribute name
+        '''
+        if isinstance(attr, str):
+            attr = self.variable.findAttribute(attr)
         if attr is None:
             return None
         v = np.array(attr.getValues())
@@ -358,6 +365,8 @@ class DimVariable(object):
         self.dims[idx].setReverse(reverse)
         
     def addattr(self, attrname, attrvalue):
+        if isinstance(attrvalue, np.NDArray):
+            attrvalue = NCUtil.convertArray(attrvalue._array)
         self.ncvariable.addAttribute(NCAttribute(attrname, attrvalue))
 
 # Variable in multiple data files (DimDataFiles) - only time dimension is different.

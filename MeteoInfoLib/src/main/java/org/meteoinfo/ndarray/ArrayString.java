@@ -79,6 +79,38 @@ public class ArrayString extends Array {
                 return new ArrayString(index, storage);
         }
     }
+    
+    /* create new ArrayString with given indexImpl and backing store.
+   * Should be private.
+   * @param index use this Index
+   * @param stor. use this storage. if null, allocate.
+   * @return. new ArrayString.D<rank> or ArrayString object.
+     */
+    static ArrayString factory(Index index, Object[] objStorage) {
+        int n = objStorage.length;
+        String[] stor = new String[n];
+        System.arraycopy(objStorage, 0, stor, 0, n);
+        switch (index.getRank()) {
+            case 0:
+                return new ArrayString.D0(index, stor);
+            case 1:
+                return new ArrayString.D1(index, stor);
+            case 2:
+                return new ArrayString.D2(index, stor);
+            case 3:
+                return new ArrayString.D3(index, stor);
+            case 4:
+                return new ArrayString.D4(index, stor);
+            case 5:
+                return new ArrayString.D5(index, stor);
+            case 6:
+                return new ArrayString.D6(index, stor);
+            case 7:
+                return new ArrayString.D7(index, stor);
+            default:
+                return new ArrayString(index, stor);
+        }
+    }
 
     //////////////////////////////////////////////////////
     protected String[] storage;

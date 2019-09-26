@@ -94,11 +94,15 @@ class DimDataFile(object):
         '''
         return self.dataset.getDataInfo().getGlobalAttributes()
     
-    def attrvalue(self, key):
+    def attrvalue(self, attr):
         '''
-        Get a global attribute value by key.
+        Get a global attribute value.
+        
+        :param attr: (*string or Attribute*) Attribute or Attribute name
         '''
-        attr = self.dataset.getDataInfo().findGlobalAttribute(key)
+        if isinstance(attr, str):
+            attr = self.dataset.getDataInfo().findGlobalAttribute(attr)
+        
         if attr is None:
             return None
         v = np.array(attr.getValues())
@@ -108,7 +112,11 @@ class DimDataFile(object):
         '''
         Get all variables.
         '''
-        return self.dataset.getDataInfo().getVariables()
+        vars = []
+        for var in self.dataset.getDataInfo().getVariables():
+            vars.append(DimVariable(var))
+            
+        return vars
         
     def varnames(self):
         '''
@@ -307,7 +315,7 @@ class DimDataFile(object):
             else:
                 attrvalue = Float(attrvalue)
         if isinstance(attrvalue, np.NDArray):
-            attrvalue = attrvalue._array
+            attrvalue = NCUtil.convertArray(attrvalue._array)
         return self.ncfile.addGroupAttribute(group, NCAttribute(attrname, attrvalue))
  
     def __getdatatype(self, datatype):
@@ -328,6 +336,8 @@ class DimDataFile(object):
                 dt = NCDataType.STRING
             return dt
         else:
+            if not isinstance(datatype, NCDataType):
+                datatype = NCUtil.convertDataType(datatype)
             return datatype
  
     def addvar(self, varname, datatype, dims, group=None):
@@ -339,7 +349,7 @@ class DimDataFile(object):
             char].
         :param dims: (*list*) Dimensions.        
         '''
-        dt = self.__getdatatype(datatype)        
+        dt = self.__getdatatype(datatype)
         return DimVariable(ncvariable=self.ncfile.addVariable(group, varname, dt, dims))
         
     def create(self):

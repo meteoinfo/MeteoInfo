@@ -43,38 +43,58 @@ import java.util.Date;
  */
 public enum DataType {
 
-    BOOLEAN("boolean", 1, boolean.class),
-    BYTE("byte", 1, byte.class),
-    CHAR("char", 1, char.class),
-    SHORT("short", 2, short.class),
-    INT("int", 4, int.class),
-    LONG("long", 8, long.class),
-    FLOAT("float", 4, float.class),
-    DOUBLE("double", 8, double.class),
-    COMPLEX("complex", 1, Complex.class),
-    DATE("date", 1, Date.class),
+    BOOLEAN("boolean", 1, boolean.class, false),
+    BYTE("byte", 1, byte.class, false),
+    CHAR("char", 1, char.class, false),
+    SHORT("short", 2, short.class, false),
+    INT("int", 4, int.class, false),
+    LONG("long", 8, long.class, false),
+    FLOAT("float", 4, float.class, false),
+    DOUBLE("double", 8, double.class, false),
+    COMPLEX("complex", 1, Complex.class, false),
+    DATE("date", 1, Date.class, false),
     
     // object types
-    SEQUENCE("Sequence", 4, StructureDataIterator.class), // 32-bit index
-    STRING("String", 4, String.class), // 32-bit index
-    STRUCTURE("Structure", 1, StructureData.class), // size meaningless
+    SEQUENCE("Sequence", 4, StructureDataIterator.class, false), // 32-bit index
+    STRING("String", 4, String.class, false), // 32-bit index
+    STRUCTURE("Structure", 1, StructureData.class, false), // size meaningless
 
-    ENUM1("enum1", 1, byte.class), // byte
-    ENUM2("enum2", 2, short.class), // short
-    ENUM4("enum4", 4, int.class), // int
+    ENUM1("enum1", 1, byte.class, false), // byte
+    ENUM2("enum2", 2, short.class, false), // short
+    ENUM4("enum4", 4, int.class, false), // int
 
-    OPAQUE("opaque", 1, ByteBuffer.class), // byte blobs
+    OPAQUE("opaque", 1, ByteBuffer.class, false), // byte blobs
 
-    OBJECT("object", 1, Object.class); // added for use with Array
+    OBJECT("object", 1, Object.class, false), // added for use with Array
+    
+    UBYTE("ubyte", 1, byte.class, true), USHORT("ushort", 2, short.class, true), UINT("uint", 4, int.class,
+      true), ULONG("ulong", 8, long.class, true);
+      
+    /**
+    * A property of {@link #isIntegral() integral} data types that determines whether they can represent both
+    * positive and negative numbers (signed), or only non-negative numbers (unsigned).
+    */
+    public enum Signedness {
+        /** The data type can represent both positive and negative numbers. */
+        SIGNED,
+        /** The data type can represent only non-negative numbers. */
+        UNSIGNED
+    }
 
     private final String niceName;
     private final int size;
     private final Class primitiveClass;
+    private final Signedness signedness;
 
-    private DataType(String s, int size, Class primitiveClass) {
+    DataType(String s, int size, Class primitiveClass, boolean isUnsigned) {
+        this(s, size, primitiveClass, isUnsigned ? Signedness.UNSIGNED : Signedness.SIGNED);
+    }
+
+    DataType(String s, int size, Class primitiveClass, Signedness signedness) {
         this.niceName = s;
         this.size = size;
         this.primitiveClass = primitiveClass;
+        this.signedness = signedness;
     }
 
     /**
@@ -114,6 +134,26 @@ public enum DataType {
      */
     public Class getPrimitiveClassType() {
         return primitiveClass;
+    }
+    
+    /**
+    * Returns the {@link Signedness signedness} of this data type.
+    * For non-{@link #isIntegral() integral} data types, it is guaranteed to be {@link Signedness#SIGNED}.
+    *
+    * @return the signedness of this data type.
+    */
+    public Signedness getSignedness() {
+        return signedness;
+    }
+
+    /**
+     * Returns {@code true} if the data type is {@link Signedness#UNSIGNED unsigned}.
+     * For non-{@link #isIntegral() integral} data types, it is guaranteed to be {@code false}.
+     *
+     * @return {@code true} if the data type is unsigned.
+     */
+    public boolean isUnsigned() {
+        return signedness == Signedness.UNSIGNED;
     }
 
     /**

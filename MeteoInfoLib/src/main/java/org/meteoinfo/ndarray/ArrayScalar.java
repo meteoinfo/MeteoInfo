@@ -32,7 +32,7 @@
  */
 package org.meteoinfo.ndarray;
 
-import net.jcip.annotations.Immutable;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Helper class for StructureDataAscii

@@ -135,6 +135,17 @@ public class NCUtil {
     }
     
     /**
+     * Convert meoteoinfo attribute to netcdf attribute
+     * @param attr Attribute
+     * @return MeteoInfo attribute
+     */
+    public static ucar.nc2.Attribute convertAttribute(Attribute attr) {
+        ucar.nc2.Attribute ncAttr = new ucar.nc2.Attribute(attr.getShortName(), convertArray(attr.getValues()));
+        
+        return ncAttr;
+    }
+    
+    /**
      * Convert netcdf variable to meteothink variable
      * @param ncVar Netcdf variable
      * @return MeteoThink variable

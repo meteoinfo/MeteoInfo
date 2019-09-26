@@ -191,6 +191,10 @@ public abstract class Array {
             return ArrayChar.factory(indexCalc, (char[]) storage);
         } else if ((classType == boolean.class) || (classType == Boolean.class)) {
             return ArrayBoolean.factory(indexCalc, (boolean[]) storage);
+        } else if (classType == String.class) {
+            return ArrayString.factory(indexCalc, (Object[]) storage);
+        } else if (classType == Complex.class) {
+            return ArrayComplex.factory(indexCalc, (Complex[]) storage);
         } else {
             return ArrayObject.factory(classType, indexCalc, (Object[]) storage);
         }

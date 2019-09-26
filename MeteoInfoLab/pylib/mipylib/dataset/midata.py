@@ -590,7 +590,7 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
         
     #Add global attributes
     for attr in f.attributes():
-        ncfile.addgroupattr(attr.getName(), attr.getValues())
+        ncfile.addgroupattr(attr.getName(), f.attrvalue(attr))
         
     #Add dimension variables
     tvar = None
@@ -627,14 +627,14 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
     #Add variables
     variables = []
     for var in f.variables():    
-        #print 'Variable: ' + var.getShortName()
-        if var.hasNullDimension():
+        #print 'Variable: ' + var.name
+        if var.variable.hasNullDimension():
             continue
-        if var.getDataType() == DataType.STRUCTURE:
+        if var.datatype == DataType.STRUCTURE:
             continue
         vdims = []
         missdim = False
-        for vdim in var.getDimensions():
+        for vdim in var.dims:
             isvalid = False
             for dim in dims:
                 if dim.getShortName() == vdim.getShortName():
@@ -646,9 +646,9 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
                 break
         if missdim:
             continue
-        nvar = ncfile.addvar(var.getShortName(), var.getDataType(), vdims)
-        for attr in var.getAttributes():
-            nvar.addattr(attr.getName(), attr.getValues())
+        nvar = ncfile.addvar(var.name, var.datatype, vdims)
+        for attr in var.attributes:
+            nvar.addattr(attr.getName(), var.attrvalue(attr))
         variables.append(nvar)
         
     #Create netCDF file

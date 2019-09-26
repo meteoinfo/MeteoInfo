@@ -432,9 +432,9 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 //                            + "+lat_0=" + String.valueOf(aDH.POLE_LAT)
 //                            + "+lon_0=" + String.valueOf(aDH.REF_LON + aDH.ORIENT);
                     ProjStr = "+proj=lcc"
-                            + "+lat_0=" + String.valueOf(aDH.TANG_LAT)
-                            + "+lat_1=" + String.valueOf(aDH.REF_LAT)
-                            + "+lat_2=" + String.valueOf(aDH.REF_LAT)
+                            + "+lat_0=" + String.valueOf(aDH.REF_LAT)
+                            + "+lat_1=" + String.valueOf(aDH.TANG_LAT)
+                            + "+lat_2=" + String.valueOf(aDH.TANG_LAT)
                             + "+lon_0=" + String.valueOf(aDH.REF_LON + aDH.ORIENT);
                 }
 
@@ -1547,8 +1547,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                     //aDH.POLE_LAT = 90;
                     aDH.POLE_LON = (float) aProj.getProjectionLongitudeDegrees();
                     //aDH.POLE_LON = 0;
-                    aDH.REF_LAT = (float) tanLat;
-                    //aDH.REF_LAT = (float) aProj.getProjectionLatitudeDegrees();
+                    //aDH.REF_LAT = (float) tanLat;
+                    aDH.REF_LAT = (float) aProj.getProjectionLatitudeDegrees();
                     aDH.REF_LON = (float) aProj.getProjectionLongitudeDegrees();
                     aDH.SIZE = (float) (X[1] - X[0]) / 1000;
                     aDH.ORIENT = 0;

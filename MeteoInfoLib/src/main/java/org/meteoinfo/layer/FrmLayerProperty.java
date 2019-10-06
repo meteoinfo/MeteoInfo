@@ -1315,6 +1315,8 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                         this.jButton_MoveBreakUp.setEnabled(false);
                         this.jButton_MoveBreakDown.setEnabled(false);
                         this.jButton_MakeBreaks.setEnabled(false);
+                        this.jComboBox_Field.setEnabled(false);
+                        this.jComboBox_Field.removeAllItems();
                         break;
                     default:
                         this.jButton_AddBreak.setEnabled(true);

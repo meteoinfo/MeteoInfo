@@ -140,11 +140,13 @@ public class ArrayUtil {
     public static int numASCIIRow(String fileName) throws FileNotFoundException {
         File f = new File(fileName);
         int lineNumber;
+        String line;
         try (Scanner fileScanner = new Scanner(f)) {
             lineNumber = 0;
             while (fileScanner.hasNextLine()) {
-                fileScanner.nextLine();
-                lineNumber++;
+                line = fileScanner.nextLine(); 
+                if (!line.isEmpty())
+                    lineNumber++;
             }
         }
 

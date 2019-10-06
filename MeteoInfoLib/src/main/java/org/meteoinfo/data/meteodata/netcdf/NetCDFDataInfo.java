@@ -45,13 +45,9 @@ import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.Reproject;
 import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.ArrayInt;
-import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.IndexIterator;
-import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.MAMath;
-import org.meteoinfo.ndarray.Section;
 import org.meteoinfo.data.meteodata.Attribute;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
@@ -3702,7 +3698,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @param outFile Output nc file
      * @param timeDimStr Time dimension name
      * @throws java.io.IOException
-     * @throws ucar.ma2..InvalidRangeException
+     * @throws ucar.ma2.InvalidRangeException
      * @throws java.text.ParseException
      */
     public static void joinDataFiles_Time_pack(List<String> inFiles, String outFile, String timeDimStr) throws IOException, ucar.ma2.InvalidRangeException, ParseException {
@@ -3909,7 +3905,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @param inFiles Input nc files
      * @param outFile Output nc file
      * @throws java.io.IOException
-     * @throws ucar.ma2..InvalidRangeException
+     * @throws ucar.ma2.InvalidRangeException
      */
     public static void joinDataFiles_Variable(List<String> inFiles, String outFile) throws IOException, ucar.ma2.InvalidRangeException {
         //Check number of selected files

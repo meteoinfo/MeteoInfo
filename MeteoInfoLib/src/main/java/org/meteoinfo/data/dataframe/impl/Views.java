@@ -8,6 +8,7 @@ package org.meteoinfo.data.dataframe.impl;
 import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -135,7 +136,7 @@ public class Views {
             return new AbstractSet<Map.Entry<Object, V>>() {
                 @Override
                 public Iterator<Map.Entry<Object, V>> iterator() {
-                    final List<Object> names = transpose ? df.getIndex().getValues() : df.getColumns().getNames();
+                    final List<Object> names = transpose ? df.getIndex().getValues() : new ArrayList<>(df.getColumns().getNames());
                     final Iterator<Object> it = names.iterator();
 
                     return new Iterator<Map.Entry<Object, V>>() {

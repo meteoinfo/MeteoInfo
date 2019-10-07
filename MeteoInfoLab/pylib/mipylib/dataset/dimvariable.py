@@ -370,7 +370,7 @@ class DimVariable(object):
         self.ncvariable.addAttribute(NCAttribute(attrname, attrvalue))
 
 # Variable in multiple data files (DimDataFiles) - only time dimension is different.
-class TDimVariable():
+class TDimVariable(object):
     
     # variable must be org.meteoinfo.data.meteodata.Variable
     # dataset is DimDataFiles

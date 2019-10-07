@@ -749,17 +749,23 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         //Draw graphics
         float s = 1.01f;
-        gl.glClipPlanef(GL2.GL_CLIP_PLANE0, new float[]{1, 0, 0, s}, 0);
+        //gl.glClipPlanef(GL2.GL_CLIP_PLANE0, new float[]{1, 0, 0, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{1, 0, 0, s}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE0);
-        gl.glClipPlanef(GL2.GL_CLIP_PLANE1, new float[]{-1, 0, 0, s}, 0);
+        //gl.glClipPlanef(GL2.GL_CLIP_PLANE1, new float[]{-1, 0, 0, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[]{-1, 0, 0, s}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE1);
-        gl.glClipPlanef(GL2.GL_CLIP_PLANE2, new float[]{0, -1, 0, s}, 0);
+        //gl.glClipPlanef(GL2.GL_CLIP_PLANE2, new float[]{0, -1, 0, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[]{0, -1, 0, s}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE2);
-        gl.glClipPlanef(GL2.GL_CLIP_PLANE3, new float[]{0, 1, 0, s}, 0);
+        //gl.glClipPlanef(GL2.GL_CLIP_PLANE3, new float[]{0, 1, 0, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[]{0, 1, 0, s}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE3);
-        gl.glClipPlanef(GL2.GL_CLIP_PLANE4, new float[]{0, 0, 1, s}, 0);
+        //gl.glClipPlanef(GL2.GL_CLIP_PLANE4, new float[]{0, 0, 1, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE4, new double[]{0, 0, 1, s}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE4);
-        gl.glClipPlanef(GL2.GL_CLIP_PLANE5, new float[]{0, 0, -1, s}, 0);
+        //gl.glClipPlanef(GL2.GL_CLIP_PLANE5, new float[]{0, 0, -1, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE5, new double[]{0, 0, -1, s}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE5);
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);

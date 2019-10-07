@@ -11,7 +11,9 @@ the spatial and meteorological data with multiple data formats.
 **MeteoInfoLab** is a scientific computation and visualization environment using Jython scripting with the 
 ability of multiple dimensional array calculation and 2D/3D plotting.
 
-It requires that Java 7 or greater be installed on your computer. See the
+**MeteoInfoLib** is a Java library providing main functions of MeteoInfoMap and MeteoInfoLab.
+
+It requires that Java 8 or greater be installed on your computer. See the
 http://www.java.com website for a free download of Java if you do not have it
 already installed.
 

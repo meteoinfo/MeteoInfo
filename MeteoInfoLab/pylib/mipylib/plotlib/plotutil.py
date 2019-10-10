@@ -808,6 +808,12 @@ def text(x, y, s, **kwargs):
     text.setColor(c)
     text.setX(x)
     text.setY(y)
+    xshift = kwargs.pop('xshift', None)
+    if not xshift is None:
+        text.setXShift(xshift)
+    yshift = kwargs.pop('yshift', None)
+    if not yshift is None:
+        text.setYShift(yshift)
     xalign = kwargs.pop('xalign', None)
     if not xalign is None:
         text.setXAlign(xalign)

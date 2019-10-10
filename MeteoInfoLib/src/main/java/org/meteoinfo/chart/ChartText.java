@@ -49,6 +49,8 @@ public class ChartText extends Shape {
     private XAlign xAlign;
     private YAlign yAlign;
     private boolean useExternalFont;
+    protected double xShift;
+    protected double yShift;
 
     // </editor-fold>    
     // <editor-fold desc="Constructor">
@@ -70,6 +72,8 @@ public class ChartText extends Shape {
         this.xAlign = XAlign.LEFT;
         this.yAlign = YAlign.BOTTOM;
         this.useExternalFont = false;
+        this.xShift = 0;
+        this.yShift = 0;
     }
 
     /**
@@ -487,6 +491,38 @@ public class ChartText extends Shape {
     public void setUseExternalFont(boolean value) {
         this.useExternalFont = value;
     }
+    
+    /**
+     * Get x shift
+     * @return X shift
+     */
+    public double getXShift() {
+        return this.xShift;
+    }
+    
+    /**
+     * Set x shift
+     * @param value X shift 
+     */
+    public void setXShift(double value) {
+        this.xShift = value;
+    }
+     
+    /**
+     * Get y shift
+     * @return Y shift
+     */
+    public double getYShift() {
+        return this.yShift;
+    }
+    
+    /**
+     * Set y shift
+     * @param value Y shift 
+     */
+    public void setYShift(double value) {
+        this.yShift = value;
+    }
 
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -619,6 +655,8 @@ public class ChartText extends Shape {
      */
     public void draw(Graphics2D g, float x, float y) {
         Dimension dim = this.getDimension(g);
+        x += this.xShift;
+        y += this.yShift;
 
         AffineTransform tempTrans = g.getTransform();
         if (this.angle != 0) {

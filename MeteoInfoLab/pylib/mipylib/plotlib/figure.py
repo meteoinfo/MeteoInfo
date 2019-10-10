@@ -424,7 +424,10 @@ class Figure(ChartPanel):
         
         :returns: The axes.
         '''
-        ax = self.new_axes(*args, **kwargs)
+        if len(args) > 0 and isinstance(args[0], Axes):
+            ax = args[0]
+        else:
+            ax = self.new_axes(*args, **kwargs)
         newaxes = kwargs.pop('newaxes', True)
         chart = self.getChart()
         if newaxes:
@@ -446,6 +449,7 @@ class Figure(ChartPanel):
         
         :param ax: (*Axes*) The axes.
         '''
+        ax.figure = self
         self.axes.append(ax)
         self.getChart().addPlot(ax.axes)
         
@@ -560,8 +564,9 @@ class Figure(ChartPanel):
             self.__set_axes(ax, **kwargs)
 
         if isnew:
-            chart.addPlot(ax.axes)
-            chart.setCurrentPlot(chart.getPlots().size() - 1)
+            self._add_axes(ax)
+            #chart.addPlot(ax.axes)
+            #chart.setCurrentPlot(chart.getPlots().size() - 1)
 
         return ax
 
@@ -651,7 +656,8 @@ class Figure(ChartPanel):
                 if sharey:
                     if j > 0:
                         ax.axes.getAxis(Location.LEFT).setDrawTickLabel(False)
-                chart.addPlot(ax.axes)
+                #chart.addPlot(ax.axes)
+                self._add_axes(ax)
                 if ax2d:
                     axs2d.append(ax)
                 else:

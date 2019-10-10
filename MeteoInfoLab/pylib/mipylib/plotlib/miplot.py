@@ -39,10 +39,11 @@ g_figure = None
 gca = None
 
 __all__ = [
-    'gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis','axism','bar','barh','barbs','barbsm','bgcolor','box',
+    'g_figure','gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis','axism','bar','barh','barbs','barbsm','bgcolor','box',
     'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
     'contourfm','contourm','draw','draw_if_interactive','errorbar',
-    'figure','glfigure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow','gifaddframe','gifanimation','giffinish',
+    'figure','glfigure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow',
+    'get_figure','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','legend','left_title','loglog','makecolors',
     'makelegend','makesymbolspec','masklayer','pcolor','pcolorm','pie','plot','plot3','plotm','quiver',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
@@ -1117,6 +1118,14 @@ def glfigure(bgcolor='w', newfig=True):
     if not batchmode:
         show(newfig)
         
+    return g_figure
+    
+def get_figure():
+    """
+    Get figure object.
+    
+    :returns: (*Figure*) Figure object.
+    """
     return g_figure
         
 def show(newfig=True):

@@ -14,6 +14,7 @@ from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
 from org.meteoinfo.math.interpolate import InterpUtil
 from org.meteoinfo.ndarray import Array, Dimension
+from org.meteoinfo.geoprocess import GeometryUtil
 
 from dimarray import PyGridData, DimArray, PyStationData
 from multiarray import NDArray
@@ -2313,9 +2314,9 @@ def griddata(points, values, xi=None, **kwargs):
     
     convexhull = kwargs.pop('convexhull', False)
     if convexhull:
-        polyshape = ArrayUtil.convexHull(x_s.asarray(), y_s.asarray())
+        polyshape = GeometryUtil.convexHull(x_s.asarray(), y_s.asarray())
         x_gg, y_gg = meshgrid(x_g, y_g)
-        r = ArrayMath.maskout(r, x_gg._array, y_gg._array, [polyshape])
+        r = GeometryUtil.maskout(r, x_gg._array, y_gg._array, [polyshape])
         return NDArray(r), x_g, y_g
     else:
         return NDArray(r), x_g, y_g

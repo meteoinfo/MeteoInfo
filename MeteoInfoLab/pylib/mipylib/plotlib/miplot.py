@@ -771,9 +771,9 @@ def patch(x, y=None, **kwargs):
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+    # else:
+        # if gca.axestype != 'cartesian':
+            # gca = axes()
             
     r = gca.patch(x, y, **kwargs)
     if not r is None:

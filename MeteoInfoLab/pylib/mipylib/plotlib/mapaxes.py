@@ -39,8 +39,9 @@ class MapAxes(Axes):
     '''
     
     def __init__(self, *args, **kwargs):
-        super(MapAxes, self).__init__(*args, **kwargs)
+        super(MapAxes, self).__init__(*args, **kwargs)               
      
+        # Set projection
         projinfo = kwargs.pop('projinfo', None)
         if projinfo == None:
             proj = kwargs.pop('proj', 'longlat')
@@ -75,14 +76,35 @@ class MapAxes(Axes):
                 + ' +k=' + str(k) \
                 + ' +x_0=' + str(x_0) \
                 + ' +y_0=' + str(y_0) \
-                + ' +h=' + str(h)
+                #+ ' +h=' + str(h)
             projinfo = ProjectionInfo.factory(projstr)
         cutoff = kwargs.pop('cutoff', None)
         if not cutoff is None:
-            projinfo.setCutoff(cutoff)
-        
+            projinfo.setCutoff(cutoff)        
         self.axes.setProjInfo(projinfo)
         self.proj = self.axes.getProjInfo()
+        
+        # set other properties
+        frameon = kwargs.pop('frameon', None)
+        if not frameon is None:
+            self.axes.setDrawNeatLine(frameon)
+        gridlabel = kwargs.pop('gridlabel', True)
+        gridlabelloc = kwargs.pop('gridlabelloc', 'left_bottom')
+        gridline = kwargs.pop('gridline', False)
+        griddx = kwargs.pop('griddx', 10)
+        griddy = kwargs.pop('griddy', 10)
+        xyscale = kwargs.pop('xyscale', 1)
+        mapframe = self.axes.getMapFrame()
+        mapframe.setDrawGridLabel(gridlabel)
+        mapframe.setDrawGridTickLine(gridlabel)
+        mapframe.setGridLabelPosition(gridlabelloc)
+        mapframe.setDrawGridLine(gridline)
+        mapframe.setGridXDelt(griddx)
+        mapframe.setGridYDelt(griddy)
+        boundaryprop = kwargs.pop('boundaryprop', None)
+        if not boundaryprop is None:
+            boundaryprop = plotutil.getlegendbreak('polygon', **boundaryprop)[0]
+            self.axes.setBoundaryProp(boundaryprop)               
     
     def _set_plot(self, plot):
         '''

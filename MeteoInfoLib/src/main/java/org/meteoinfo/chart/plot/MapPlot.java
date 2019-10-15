@@ -252,6 +252,9 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      */
     public void setProjInfo(ProjectionInfo proj) {
         this.getMapView().getProjection().setProjInfo(proj);
+        if (proj.getBoundary() != null) {
+            this.setBoundary(proj.getBoundary());
+        }
     }
 
     /**

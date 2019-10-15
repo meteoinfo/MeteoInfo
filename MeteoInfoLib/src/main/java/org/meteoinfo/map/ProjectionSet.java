@@ -43,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.event.EventListenerList;
 import org.meteoinfo.projection.ProjectionUtil;
-import org.meteoinfo.projection.proj4j.CRSFactory;
+import org.locationtech.proj4j.CRSFactory;
 
 /**
  *

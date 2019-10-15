@@ -27,10 +27,10 @@ import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.IndexIterator;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
-import org.meteoinfo.projection.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.projection.proj4j.CoordinateTransform;
-import org.meteoinfo.projection.proj4j.CoordinateTransformFactory;
-import org.meteoinfo.projection.proj4j.ProjCoordinate;
+import org.locationtech.proj4j.CoordinateReferenceSystem;
+import org.locationtech.proj4j.CoordinateTransform;
+import org.locationtech.proj4j.CoordinateTransformFactory;
+import org.locationtech.proj4j.ProjCoordinate;
 
 /**
  *

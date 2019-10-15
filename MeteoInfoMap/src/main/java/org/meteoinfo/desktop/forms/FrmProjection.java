@@ -9,7 +9,7 @@ import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import java.awt.Component;
 import java.awt.Cursor;
-import org.meteoinfo.projection.proj4j.proj.Projection;
+import org.locationtech.proj4j.proj.Projection;
 import static org.meteoinfo.projection.ProjectionNames.Mercator;
 
 /**

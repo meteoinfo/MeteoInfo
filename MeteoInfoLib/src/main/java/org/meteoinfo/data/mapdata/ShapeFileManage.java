@@ -47,8 +47,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.projection.info.ProjectionInfo;
-import org.meteoinfo.projection.proj4j.CRSFactory;
-import org.meteoinfo.projection.proj4j.CoordinateReferenceSystem;
+import org.locationtech.proj4j.CRSFactory;
+import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.meteoinfo.shape.PointM;
 import org.meteoinfo.shape.PointZShape;
 import org.meteoinfo.shape.PolygonMShape;
@@ -715,9 +715,7 @@ public class ShapeFileManage {
         String esriString = buffer.toString();
         sr.close();
 
-        CRSFactory crsFactory = new CRSFactory();        
-        CoordinateReferenceSystem crs = crsFactory.createFromEsriString(esriString);
-        ProjectionInfo projInfo = ProjectionInfo.factory(crs);
+        ProjectionInfo projInfo = ProjectionInfo.factoryESRI(esriString);
         
         return projInfo;
     }

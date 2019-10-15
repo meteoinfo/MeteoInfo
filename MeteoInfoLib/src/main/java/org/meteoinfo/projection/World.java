@@ -14,7 +14,7 @@
 package org.meteoinfo.projection;
 
 import org.meteoinfo.projection.info.ProjectionInfo;
-import org.meteoinfo.projection.proj4j.CRSFactory;
+import org.locationtech.proj4j.CRSFactory;
 
 /**
  *

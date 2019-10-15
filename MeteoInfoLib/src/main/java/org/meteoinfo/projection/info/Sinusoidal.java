@@ -19,7 +19,7 @@ import org.meteoinfo.global.PointD;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.ProjectionUtil;
-import org.meteoinfo.projection.proj4j.CoordinateReferenceSystem;
+import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.meteoinfo.shape.PolygonShape;
 
 /**

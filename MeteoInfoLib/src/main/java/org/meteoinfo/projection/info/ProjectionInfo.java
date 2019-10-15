@@ -14,15 +14,24 @@
 package org.meteoinfo.projection.info;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.projection.ProjectionNames;
-import org.meteoinfo.projection.proj4j.CRSFactory;
-import org.meteoinfo.projection.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.projection.proj4j.proj.Projection;
+import org.locationtech.proj4j.CRSFactory;
+import org.locationtech.proj4j.CoordinateReferenceSystem;
+import org.locationtech.proj4j.InvalidValueException;
+import org.locationtech.proj4j.datum.Datum;
+import org.locationtech.proj4j.datum.Ellipsoid;
+import org.locationtech.proj4j.parser.Proj4Keyword;
+import org.locationtech.proj4j.parser.Proj4Parser;
+import org.locationtech.proj4j.proj.Projection;
 import org.meteoinfo.shape.PolygonShape;
 import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.projection.ProjRegistry;
 
 /**
  *
@@ -111,6 +120,20 @@ public abstract class ProjectionInfo {
         proj4Str = proj4Str.replace("+", " +");
         proj4Str = proj4Str.trim();
         return factory(crsFactory.createFromParameters("custom", proj4Str));
+    }
+    
+    /**
+     * Create new ProjectionInfo with ESRI projection string
+     * @param esriStr ESRI projection string
+     * @return Projection info
+     */
+    public static ProjectionInfo factoryESRI(String esriStr) {
+        CRSFactory crsFactory = new CRSFactory();
+        ProjRegistry registry = new ProjRegistry();
+        String[] params = getParameterArray(esriStringToProj4Params(registry, esriStr));
+        Proj4Parser parser = new Proj4Parser(crsFactory.getRegistry());
+        CoordinateReferenceSystem crs = parser.parse("custom", params);
+        return factory(crs);
     }
     
     /**
@@ -266,11 +289,214 @@ public abstract class ProjectionInfo {
     }
     
     /**
+     * Calculates the inverse of the flattening factor, commonly saved to ESRI
+     * projections, or else provided as the "rf" parameter for Proj4 strings.This is simply calculated 
+     * as a / (a - b) where a is the semi-major axis and b is the semi-minor axis.
+     *
+     * @param ellipsoid
+     * @return Inverse flatting
+     */
+    public double getInverseFlattening(Ellipsoid ellipsoid) {
+        if (ellipsoid.poleRadius == ellipsoid.equatorRadius) {
+            return 0; // prevent divide by zero for spheres.
+        }
+        return (ellipsoid.equatorRadius) / (ellipsoid.equatorRadius - ellipsoid.poleRadius);
+    }
+    
+    private static String[] getParameterArray(Map params) {
+        String[] args = new String[params.size()];
+        int i = 0;
+        Set<String> key = params.keySet();
+        for (String s : key) {
+            args[i] = "+" + s + "=" + params.get(s);
+            i += 1;
+        }
+
+        return args;
+    }
+    
+    /**
+     * Convert ESRI projection string to Proj4 param map
+     * @param registry Registry
+     * @param esriString ESRI projection string
+     * @return Proj4 param map
+     */
+    public static Map esriStringToProj4Params(ProjRegistry registry, String esriString) {
+        Map params = new HashMap();
+        String key, value, name;
+        int iStart, iEnd;
+
+        //Projection
+        if (!esriString.contains("PROJCS")) {
+            key = Proj4Keyword.proj;
+            value = "longlat";
+            params.put(key, value);
+        } else {
+            Projection projection = null;
+            iStart = esriString.indexOf("PROJECTION") + 12;
+            iEnd = esriString.indexOf("]", iStart) - 1;
+            String s = esriString.substring(iStart, iEnd);
+            if (s != null) {
+                projection = registry.getProjectionEsri(s);
+                if (projection == null) {
+                    throw new InvalidValueException("Unknown projection: " + s);
+                }
+            }
+
+            String proj4Name = registry.getProj4Name(projection);
+            key = Proj4Keyword.proj;
+            value = proj4Name;
+            params.put(key, value);
+        }
+
+        //Datum
+        if (esriString.contains("DATUM")) {
+            iStart = esriString.indexOf("DATUM") + 7;
+            iEnd = esriString.indexOf(",", iStart) - 1;
+            if (iEnd > iStart) {
+                key = Proj4Keyword.datum;
+                value = esriString.substring(iStart, iEnd);
+                if (value.equals("D_WGS_1984")) {
+                    value = "WGS84";
+                } else {
+                    value = "WGS84";
+                }
+                params.put(key, value);
+            }
+        }
+
+        //Ellipsoid
+        if (esriString.contains("SPHEROID")) {
+            iStart = esriString.indexOf("SPHEROID") + 9;
+            iEnd = esriString.indexOf("]", iStart);
+            if (iEnd > iStart) {
+                String extracted = esriString.substring(iStart, iEnd);
+                String[] terms = extracted.split(",");
+                name = terms[0];
+                name = name.substring(1, name.length() - 1);
+                if (name.equals("WGS_1984")) {
+                    name = "WGS84";
+                } else {
+                    name = "WGS84";
+                }
+                key = Proj4Keyword.ellps;
+                value = name;
+                params.put(key, value);
+                key = Proj4Keyword.a;
+                value = terms[1];
+                params.put(key, value);
+                key = Proj4Keyword.rf;
+                value = terms[2];
+                params.put(key, value);
+            }
+        }
+
+//        //Primem
+//        if (esriString.contains("PRIMEM")) {
+//            iStart = esriString.indexOf("PRIMEM") + 7;
+//            iEnd = esriString.indexOf("]", iStart);
+//            if (iEnd > iStart) {
+//                String extracted = esriString.substring(iStart, iEnd);
+//                String[] terms = extracted.split(",");
+//                name = terms[0];
+//                name = name.substring(1, name.length() - 1);
+//                key = Proj4Keyword.pm;
+//                value = terms[1];
+//                params.put(key, value);
+//            }
+//        }
+
+        //Projection parameters
+        value = getParameter("False_Easting", esriString);
+        if (value != null) {
+            key = Proj4Keyword.x_0;
+            params.put(key, value);
+        }
+        value = getParameter("False_Northing", esriString);
+        if (value != null) {
+            key = Proj4Keyword.y_0;
+            params.put(key, value);
+        }
+        value = getParameter("Central_Meridian", esriString);
+        if (value != null) {
+            key = Proj4Keyword.lon_0;
+            params.put(key, value);
+        }
+        value = getParameter("Standard_Parallel_1", esriString);
+        if (value != null) {
+            key = Proj4Keyword.lat_1;
+            params.put(key, value);
+        }
+        value = getParameter("Standard_Parallel_2", esriString);
+        if (value != null) {
+            key = Proj4Keyword.lat_2;
+            params.put(key, value);
+        }
+        value = getParameter("Scale_Factor", esriString);
+        if (value != null) {
+            key = Proj4Keyword.k_0;
+            params.put(key, value);
+        }
+        value = getParameter("Latitude_Of_Origin", esriString);
+        if (value != null) {
+            key = Proj4Keyword.lat_0;
+            params.put(key, value);
+        }
+
+        //Unit
+
+        return params;
+    }
+    
+    private static String getParameter(String name, String esriString) {
+        String result = null;
+        String par = "PARAMETER[\"" + name;
+        int iStart = esriString.toLowerCase().indexOf(par.toLowerCase());
+        if (iStart >= 0) {
+            iStart += 13 + name.length();
+            int iEnd = esriString.indexOf(",", iStart) - 1;
+            result = esriString.substring(iStart, iEnd);
+        }
+        return result;
+    }
+    
+    public String toEsriString(Ellipsoid ellipsoid) {
+        return "SPHEROID[\"" + ellipsoid.getName() + "\"," + ellipsoid.getEquatorRadius() + "," + getInverseFlattening(ellipsoid) + "]";
+    }
+    
+    public String toEsriString(Datum datum) {
+        return "DATUM[\"" + datum.getName() + "\"," + toEsriString(datum.getEllipsoid()) + "]";
+    }
+    
+    /**
      * Get Esri projection string
      * @return Esri projection string
      */
-    public String toEsriString(){
-        return crs.toEsriString();
+    public String toEsriString(){       
+        String result = "";
+        String geoName = "GCS_WGS_1984";
+        Projection proj = this.crs.getProjection();
+        if (proj.getName().equals("longlat")) {
+            result = "GEOGCS[\"" + geoName + "\"," + toEsriString(this.crs.getDatum()) + "," + "PRIMEM[\"Greenwich\",0.0]"
+                    + "," + "UNIT[\"Degree\",0.0174532925199433]" + "]";
+            return result;
+        } else {
+            String name = "Custom";
+            result = "PROJCS[\"" + name + "\"," + "GEOGCS[\"" + geoName + "\"," + toEsriString(this.crs.getDatum()) + ","
+                    + "PRIMEM[\"Greenwich\",0.0]" + "," + "UNIT[\"Degree\",0.0174532925199433]" + "]" + ", ";
+        }
+
+        result += "PROJECTION[\"" + proj.getName() + "\"],";        
+        result += "PARAMETER[\"False_Easting\"," + String.valueOf(proj.getFalseEasting()) + "],";
+        result += "PARAMETER[\"False_Northing\"," + String.valueOf(proj.getFalseNorthing()) + "],";
+        result += "PARAMETER[\"Central_Meridian\"," + String.valueOf(proj.getProjectionLongitudeDegrees()) + "],";
+        result += "PARAMETER[\"Standard_Parallel_1\"," + String.valueOf(proj.getProjectionLatitude1Degrees()) + "],";
+        result += "PARAMETER[\"Standard_Parallel_2\"," + String.valueOf(proj.getProjectionLatitude2Degrees()) + "],";
+        result += "PARAMETER[\"Scale_Factor\"," + String.valueOf(proj.getScaleFactor()) + "],";
+        result += "PARAMETER[\"Latitude_Of_Origin\"," + String.valueOf(proj.getProjectionLatitudeDegrees()) + "],";
+        result += "UNIT[\"Meter\",1.0]]";
+        return result;
+    
     }
     
     /**
@@ -280,6 +506,47 @@ public abstract class ProjectionInfo {
     @Override
     public String toString(){
         return crs.getParameterString();
+    }
+    
+    /**
+     * Check if two projections are equals
+     * @param projA Projection A.
+     * @param projB Projection B.
+     * @return Boolean
+     */
+    public boolean equals(Projection projA, Projection projB){
+        if (!projA.getName().equals(projB.getName()))
+            return false;
+        if (projA.getEquatorRadius() != projB.getEquatorRadius())
+            return false;        
+        if (projA.getEllipsoid().eccentricity != projB.getEllipsoid().eccentricity)
+            return false;
+        if (!projA.getEllipsoid().isEqual(projA.getEllipsoid(), 0.0000001))
+            return false;
+        if (projA.getEllipsoid().eccentricity2 != projB.getEllipsoid().eccentricity2)
+            return false;
+        if (projA.getFalseEasting() != projB.getFalseEasting())
+            return false;
+        if (projA.getFalseNorthing() != projB.getFalseNorthing())
+            return false;
+        if (projA.getFromMetres() != projB.getFromMetres())
+            return false;
+//        if (projA.getHeightOfOrbit() != projB.getHeightOfOrbit())
+//            return false;
+        if (projA.getProjectionLatitudeDegrees() != projB.getProjectionLatitudeDegrees())
+            return false;
+        if (projA.getProjectionLatitude1Degrees() != projB.getProjectionLatitude1Degrees())
+            return false;
+//        if (this.getProjectionLatitude2Degrees() != projB.getProjectionLatitude2Degrees())
+//            return false;
+        if (projA.getProjectionLongitudeDegrees() != projB.getProjectionLongitudeDegrees())
+            return false;
+        if (projA.getScaleFactor() != projB.getScaleFactor())
+            return false;
+        if (projA.getTrueScaleLatitudeDegrees() != projB.getTrueScaleLatitudeDegrees())
+            return false;
+        
+        return true;        
     }
     
     /**
@@ -299,7 +566,7 @@ public abstract class ProjectionInfo {
             else {
                 if (!this.crs.getDatum().isEqual(projInfo.crs.getDatum()))
                     return false;
-                return this.crs.getProjection().isEqual(projInfo.crs.getProjection());
+                return equals(this.crs.getProjection(), projInfo.crs.getProjection());
             }
         }            
     }

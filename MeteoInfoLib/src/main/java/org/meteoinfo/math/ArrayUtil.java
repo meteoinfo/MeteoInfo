@@ -1735,7 +1735,7 @@ public class ArrayUtil {
     public static Object copyToNDJavaArray(Array a) {
         Object javaArray;
         try {
-            javaArray = java.lang.reflect.Array.newInstance(Double.TYPE, a.getShape());
+            javaArray = java.lang.reflect.Array.newInstance(a.getDataType().getPrimitiveClassType(), a.getShape());
         } catch (IllegalArgumentException | NegativeArraySizeException e) {
             throw new IllegalArgumentException(e);
         }
@@ -1800,9 +1800,8 @@ public class ArrayUtil {
     }
 
     protected static void copyTo1DJavaArray(IndexIterator iter, Object javaArray) {
-        double[] ja = (double[]) javaArray;
-        for (int i = 0; i < ja.length; i++) {
-            ja[i] = iter.getDoubleNext();
+        for (int i = 0; i < java.lang.reflect.Array.getLength(javaArray); i++) {
+            java.lang.reflect.Array.set(javaArray, i, iter.getObjectNext());
         }
     }
 

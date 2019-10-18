@@ -1279,6 +1279,10 @@ public class LegendManage {
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, List<Number> levs, ColorMap ct) {
+        if (levs.size() == ct.getColorCount()){
+            return createUniqValueLegendScheme(levs, ct.getColors(), ShapeTypes.Image);
+        }
+        
         double[] values = new double[levs.size()];
         for (int i = 0; i < levs.size(); i++) {
             values[i] = levs.get(i).doubleValue();

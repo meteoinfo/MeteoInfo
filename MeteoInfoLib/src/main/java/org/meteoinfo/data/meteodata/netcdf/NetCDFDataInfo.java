@@ -1120,7 +1120,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 //aDim.setValues(values);
                 switch (dimType) {
                     case X:
-                        double[] X = (double[]) ArrayUtil.copyToNDJavaArray(values);
+                        double[] X = (double[]) ArrayUtil.copyToNDJavaArray_Double(values);
                         double XDelt = X[1] - X[0];
                         if (this.getProjectionInfo().isLonLat()) {
                             if (X[X.length - 1] + XDelt
@@ -1141,7 +1141,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         this.setXDimension(dim);
                         break;
                     case Y:
-                        double[] Y = (double[]) ArrayUtil.copyToNDJavaArray(values);
+                        double[] Y = (double[]) ArrayUtil.copyToNDJavaArray_Double(values);
                         if (!this.getProjectionInfo().isLonLat()) {
                             ucar.nc2.Attribute unitAtt = var.findAttribute("units");
                             if (unitAtt != null) {
@@ -1156,7 +1156,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         this.setYDimension(dim);
                         break;
                     case Z:
-                        double[] levels = (double[]) ArrayUtil.copyToNDJavaArray(values);
+                        double[] levels = (double[]) ArrayUtil.copyToNDJavaArray_Double(values);
                         dim.setValues(levels);
                         this.setZDimension(dim);
                         break;
@@ -1172,7 +1172,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         this.setTimeDimension(dim);
                         break;
                     default:
-                        dim.setValues((double[]) ArrayUtil.copyToNDJavaArray(values));
+                        dim.setValues((double[]) ArrayUtil.copyToNDJavaArray_Double(values));
                         break;
                 }
             }

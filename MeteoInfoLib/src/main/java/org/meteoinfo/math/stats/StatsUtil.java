@@ -40,8 +40,8 @@ public class StatsUtil {
      * @return The covariance
      */
     public static double covariance(Array x, Array y, boolean bias){
-        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray(x);
-        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray(y);
+        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray_Double(x);
+        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray_Double(y);
         double r = new Covariance().covariance(xd, yd, bias);
         return r;
     }
@@ -92,11 +92,11 @@ public class StatsUtil {
      */
     public static Object cov(Array a, boolean bias) {
         if (a.getRank() == 1) {
-            double[] ad = (double[]) ArrayUtil.copyToNDJavaArray(a);
+            double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
             Covariance cov = new Covariance();
             return cov.covariance(ad, ad);
         } else {
-            double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+            double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
             RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
             Covariance cov = new Covariance(matrix, bias);
             RealMatrix mcov = cov.getCovarianceMatrix();
@@ -121,8 +121,8 @@ public class StatsUtil {
      * @return Kendall's tau correlation.
      */
     public static double kendalltau(Array x, Array y) {
-        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray(x);
-        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray(y);
+        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray_Double(x);
+        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray_Double(y);
         KendallsCorrelation kc = new KendallsCorrelation();
         double r = kc.correlation(xd, yd);
         return r;
@@ -264,11 +264,11 @@ public class StatsUtil {
      */
     public static Object spearmanr(Array a) {
         if (a.getRank() == 1) {
-            double[] ad = (double[]) ArrayUtil.copyToNDJavaArray(a);
+            double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
             Covariance cov = new Covariance();
             return cov.covariance(ad, ad);
         } else {
-            double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+            double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
             RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
             SpearmansCorrelation cov = new SpearmansCorrelation(matrix);
             RealMatrix mcov = cov.getCorrelationMatrix();
@@ -307,8 +307,8 @@ public class StatsUtil {
     public static Array[] multipleLineRegress_OLS(Array y, Array x, boolean noIntercept) {
         OLSMultipleLinearRegression regression = new OLSMultipleLinearRegression();
         regression.setNoIntercept(noIntercept);
-        double[] yy = (double[])ArrayUtil.copyToNDJavaArray(y);
-        double[][] xx = (double[][])ArrayUtil.copyToNDJavaArray(x);
+        double[] yy = (double[])ArrayUtil.copyToNDJavaArray_Double(y);
+        double[][] xx = (double[][])ArrayUtil.copyToNDJavaArray_Double(x);
         regression.newSampleData(yy, xx);
         double[] para = regression.estimateRegressionParameters();
         double[] residuals = regression.estimateResiduals();
@@ -393,7 +393,7 @@ public class StatsUtil {
      * @return t_statistic and p_value
      */
     public static double[] tTest(Array a, double mu){
-        double[] ad = (double[]) ArrayUtil.copyToNDJavaArray(a);
+        double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
         double s = TestUtils.t(mu, ad);
         double p = TestUtils.tTest(mu, ad);
         
@@ -408,8 +408,8 @@ public class StatsUtil {
      * @return t_statistic and p_value
      */
     public static double[] tTest(Array a, Array b) {
-        double[] ad = (double[]) ArrayUtil.copyToNDJavaArray(a);
-        double[] bd = (double[]) ArrayUtil.copyToNDJavaArray(b);
+        double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
+        double[] bd = (double[]) ArrayUtil.copyToNDJavaArray_Double(b);
         double s = TestUtils.t(ad, bd);
         double p = TestUtils.tTest(ad, bd);
         
@@ -426,8 +426,8 @@ public class StatsUtil {
      * @return t_statistic and p_value
      */
     public static double[] pairedTTest(Array a, Array b) {
-        double[] ad = (double[]) ArrayUtil.copyToNDJavaArray(a);
-        double[] bd = (double[]) ArrayUtil.copyToNDJavaArray(b);
+        double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
+        double[] bd = (double[]) ArrayUtil.copyToNDJavaArray_Double(b);
         double s = TestUtils.pairedT(ad, bd);
         double p = TestUtils.pairedTTest(ad, bd);
         
@@ -442,7 +442,7 @@ public class StatsUtil {
      * @return Chi-square_statistic and p_value
      */
     public static double[] chiSquareTest(Array e, Array o) {
-        double[] ed = (double[]) ArrayUtil.copyToNDJavaArray(e);
+        double[] ed = (double[]) ArrayUtil.copyToNDJavaArray_Double(e);
         long[] od = (long[]) ArrayUtil.copyToNDJavaArray_Long(o);
         double s = TestUtils.chiSquare(ed, od);
         double p = TestUtils.chiSquareTest(ed, od);

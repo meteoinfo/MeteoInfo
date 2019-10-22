@@ -38,8 +38,8 @@ public class InterpUtil {
      * @return Linear interpolation function
      */
     public static PolynomialSplineFunction linearInterpFunc(Array x, Array y) {
-        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray(x);
-        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray(y);
+        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray_Double(x);
+        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray_Double(y);
         LinearInterpolator li = new LinearInterpolator();
         PolynomialSplineFunction psf = li.interpolate(xd, yd);
 
@@ -56,8 +56,8 @@ public class InterpUtil {
      * @return Interpolation function
      */
     public static UnivariateFunction getInterpFunc(Array x, Array y, String kind) {
-        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray(x);
-        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray(y);
+        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray_Double(x);
+        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray_Double(y);
         UnivariateInterpolator li;
         switch (kind) {
             case "spline":
@@ -94,9 +94,9 @@ public class InterpUtil {
      * @return Interpolation function
      */
     public static BivariateFunction getBiInterpFunc(Array x, Array y, Array z) {
-        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray(x);
-        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray(y);
-        double[][] zd = (double[][]) ArrayUtil.copyToNDJavaArray(z);
+        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray_Double(x);
+        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray_Double(y);
+        double[][] zd = (double[][]) ArrayUtil.copyToNDJavaArray_Double(z);
         BivariateGridInterpolator li = new BicubicInterpolator();
         BivariateFunction func = li.interpolate(xd, yd, zd);
 

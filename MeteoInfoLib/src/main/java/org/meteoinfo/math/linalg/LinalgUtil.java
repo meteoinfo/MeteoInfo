@@ -48,10 +48,10 @@ public class LinalgUtil {
      */
     public static Array solve(Array a, Array b) {
         Array r = Array.factory(DataType.DOUBLE, b.getShape());
-        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
         RealMatrix coefficients = new Array2DRowRealMatrix(aa, false);
         DecompositionSolver solver = new LUDecomposition(coefficients).getSolver();
-        double[] bb = (double[]) ArrayUtil.copyToNDJavaArray(b);
+        double[] bb = (double[]) ArrayUtil.copyToNDJavaArray_Double(b);
         RealVector constants = new ArrayRealVector(bb, false);
         RealVector solution = solver.solve(constants);
         for (int i = 0; i < r.getSize(); i++) {
@@ -72,7 +72,7 @@ public class LinalgUtil {
      */
     public static Array cholesky(Array a) {
         Array r = Array.factory(DataType.DOUBLE, a.getShape());
-        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
         RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
         CholeskyDecomposition decomposition = new CholeskyDecomposition(matrix);
         RealMatrix L = decomposition.getL();
@@ -101,7 +101,7 @@ public class LinalgUtil {
         Array Pa = Array.factory(DataType.DOUBLE, a.getShape());
         Array La = Array.factory(DataType.DOUBLE, a.getShape());
         Array Ua = Array.factory(DataType.DOUBLE, a.getShape());
-        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
         RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
         LUDecomposition decomposition = new LUDecomposition(matrix);
         RealMatrix P = decomposition.getP();
@@ -134,7 +134,7 @@ public class LinalgUtil {
         int n = a.getShape()[1];
         Array Qa = Array.factory(DataType.DOUBLE, new int[]{m, m});
         Array Ra = Array.factory(DataType.DOUBLE, a.getShape());
-        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
         RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
         QRDecomposition decomposition = new QRDecomposition(matrix);
         RealMatrix Q = decomposition.getQ();
@@ -171,7 +171,7 @@ public class LinalgUtil {
         Array Ua = Array.factory(DataType.DOUBLE, new int[]{m, k});
         Array Va = Array.factory(DataType.DOUBLE, new int[]{k, n});
         Array Sa = Array.factory(DataType.DOUBLE, new int[]{k});
-        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
         RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
         SingularValueDecomposition decomposition = new SingularValueDecomposition(matrix);
         RealMatrix U = decomposition.getU();
@@ -207,7 +207,7 @@ public class LinalgUtil {
 //        int m = a.getShape()[0];        
 //        int n = a.getShape()[1];
 //        int k = Math.min(m, n);
-//        double[][] aa = (double[][])ArrayUtil.copyToNDJavaArray(a);
+//        double[][] aa = (double[][])ArrayUtil.copyToNDJavaArray_Double(a);
 //        Matrix M = new Matrix(aa);
 //        Jama.SingularValueDecomposition svd = M.svd();
 //        Array Ua = Array.factory(DataType.DOUBLE, new int[]{m, k});
@@ -247,7 +247,7 @@ public class LinalgUtil {
         int m = a.getShape()[0];
         int n = a.getShape()[1];
         int k = Math.min(m, n);
-        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
         SimpleMatrix M = new SimpleMatrix(aa);
         SimpleSVD svd = M.svd(false);
         Array Ua = Array.factory(DataType.DOUBLE, new int[]{m, m});
@@ -285,7 +285,7 @@ public class LinalgUtil {
         int m = a.getShape()[0];
         Array Wa;
         Array Va = Array.factory(DataType.DOUBLE, new int[]{m, m});
-        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
         RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
         EigenDecomposition decomposition = new EigenDecomposition(matrix);
         if (decomposition.hasComplexEigenvalues()) {
@@ -328,7 +328,7 @@ public class LinalgUtil {
         int m = a.getShape()[0];
         Array Wa;
         Array Va = Array.factory(DataType.DOUBLE, new int[]{m, m});
-        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
         RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
         EigenDecomposition decomposition = new EigenDecomposition(matrix);
         double[] rev = decomposition.getRealEigenvalues();
@@ -368,7 +368,7 @@ public class LinalgUtil {
         int m = a.getShape()[0];
         Array Wa;
         Array Va = Array.factory(DataType.DOUBLE, new int[]{m, m});
-        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
         SimpleMatrix M = new SimpleMatrix(aa);
         SimpleEVD evd = M.eig();
         List<Complex_F64> evs = evd.getEigenvalues();
@@ -400,7 +400,7 @@ public class LinalgUtil {
      * @return Inverse matrix array
      */
     public static Array inv(Array a) {
-        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
         RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
         RealMatrix invm = MatrixUtils.inverse(matrix);
         if (invm == null) {
@@ -427,8 +427,8 @@ public class LinalgUtil {
      * @return
      */
     public static Array lstsq(Array a, Array b) {
-        final double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray(a);
-        final double[] bb = (double[]) ArrayUtil.copyToNDJavaArray(b);
+        final double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
+        final double[] bb = (double[]) ArrayUtil.copyToNDJavaArray_Double(b);
 
         // the model function 
         MultivariateJacobianFunction function = new MultivariateJacobianFunction() {
@@ -535,7 +535,7 @@ public class LinalgUtil {
      */
     public static double determinantOfMatrix(Array mat) {
         int n = mat.getShape()[0];
-        double[][] a = (double[][]) ArrayUtil.copyToNDJavaArray(mat);
+        double[][] a = (double[][]) ArrayUtil.copyToNDJavaArray_Double(mat);
         return determinantOfMatrix(a, n, n);
     }
 }

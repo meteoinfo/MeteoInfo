@@ -452,6 +452,7 @@ class Figure(ChartPanel):
         ax.figure = self
         self.axes.append(ax)
         self.getChart().addPlot(ax.axes)
+        self.getChart().setCurrentPlot(self.getChart().getPlots().size())
         
     def remove_axes(self, ax=None):
         '''
@@ -503,11 +504,12 @@ class Figure(ChartPanel):
         polar = kwargs.pop('polar', False)
         isnew = True
         if isnew:
-            polar = kwargs.pop('polar', False)
-            if polar:
-                ax = PolarAxes()
-            else:
-                ax = Axes()
+            ax = self.new_axes(**kwargs)
+            #polar = kwargs.pop('polar', False)
+            #if polar:
+            #    ax = PolarAxes()
+            #else:
+            #    ax = Axes()
             ax.axes.isSubPlot = True        
         else:
             chart.setCurrentPlot(plot_number - 1)  
@@ -558,10 +560,10 @@ class Figure(ChartPanel):
             ax.set_outerposition(outerposition)
             ax.active_outerposition(True)
 
-        if isinstance(ax, MapAxes):
-            self.__set_axesm(ax, **kwargs)
-        else:
-            self.__set_axes(ax, **kwargs)
+        # if isinstance(ax, MapAxes):
+            # self.__set_axesm(ax, **kwargs)
+        # else:
+            # self.__set_axes(ax, **kwargs)
 
         if isnew:
             self._add_axes(ax)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
@@ -21,18 +21,12 @@
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\test_arl.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\GRIB_TO_ARL.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\test_grib.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\xmeans_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\test_arl.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\GRIB_TO_ARL.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\test_grib.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\xmeans_1.py"/>
     </RecentFiles>
   </File>
   <Font>

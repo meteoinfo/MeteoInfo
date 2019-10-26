@@ -6386,6 +6386,32 @@ public class ArrayMath {
     }
 
     /**
+     * Replace value
+     *
+     * @param a Array a
+     * @param oValue Replaced value
+     * @param value New value
+     */
+    public static void replaceValue(Array a, Object oValue, Object value) {
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                if (a.getObject(i) == oValue) {
+                    a.setObject(i, value);
+                }
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            while (iterA.hasNext()) {
+                if (iterA.getObjectNext() == oValue) {
+                    iterA.setObjectCurrent(value);
+                } else {
+                    iterA.next();
+                }
+            }
+        }
+    }
+
+    /**
      * As number list
      *
      * @param a Array a
@@ -6428,7 +6454,7 @@ public class ArrayMath {
                 break;
         }
         return r;
-    }    
+    }
 
     // </editor-fold>       
     // <editor-fold desc="Location">

@@ -46,6 +46,7 @@ import org.meteoinfo.legend.LineStyles;
 import org.meteoinfo.legend.PointBreak;
 import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.legend.PolylineBreak;
+import org.meteoinfo.legend.StreamlineBreak;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.shape.ArcShape;
 import org.meteoinfo.shape.BarShape;
@@ -4470,7 +4471,58 @@ public class GraphicFactory {
 
         return gc;
     }
+    
+    /**
+     * Create stream line
+     *
+     * @param xdata X data array
+     * @param ydata Y data array
+     * @param udata U/WindDirection data array
+     * @param vdata V/WindSpeed data array
+     * @param density Streamline density
+     * @param slb Streamline break
+     * @param isUV Is U/V or not
+     * @return GraphicCollection
+     */
+    public static GraphicCollection createStreamlines(Array xdata, Array ydata, Array udata, Array vdata,
+            int density, StreamlineBreak slb, boolean isUV) {
+        GraphicCollection gc = new GraphicCollection();
+        if (!isUV) {            
+            Array[] uvData = MeteoMath.ds2uv(udata, vdata);
+            udata = uvData[0];
+            vdata = uvData[1];
+        }
+        if (ArrayMath.containsNaN(udata))
+            ArrayMath.replaceValue(udata, Double.NaN, -9999.0);
+        if (ArrayMath.containsNaN(vdata))
+            ArrayMath.replaceValue(vdata, Double.NaN, -9999.0);
+        
+        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
+        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
+        double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
+        double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
+        List<wcontour.global.PolyLine> streamlines = wcontour.Contour.tracingStreamline(u, v,
+                x, y, -9999.0, density);
+        wcontour.global.PolyLine line;        
+        for (int i = 0; i < streamlines.size() - 1; i++) {
+            line = streamlines.get(i);
+            PolylineShape aPolyline = new PolylineShape();
+            PointD aPoint;
+            List<PointD> pList = new ArrayList<>();
+            for (int j = 0; j < line.PointList.size(); j++) {
+                aPoint = new PointD();
+                aPoint.X = (line.PointList.get(j)).X;
+                aPoint.Y = (line.PointList.get(j)).Y;
+                pList.add(aPoint);
+            }
+            aPolyline.setPoints(pList);
+            aPolyline.setValue(density);
+            gc.add(new Graphic(aPolyline, slb));
+        }
 
+        return gc;
+    }
+  
 //    /**
 //     * Create annotate
 //     * @param text The text

@@ -13,11 +13,11 @@ import java.awt.Color;
  */
 public class ArrowLineBreak extends PolylineBreak {
     // <editor-fold desc="Variables">
-    private float arrowHeadWidth;
-    private float arrowHeadLength;
-    private float arrowOverhang;
-    private Color ArrowFillColor;
-    private Color ArrowOutlineColor;
+    protected float arrowHeadWidth;
+    protected float arrowHeadLength;
+    protected float arrowOverhang;
+    protected Color ArrowFillColor;
+    protected Color ArrowOutlineColor;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -37,6 +37,7 @@ public class ArrowLineBreak extends PolylineBreak {
      * @param pb PolylineBreak
      */
     public ArrowLineBreak(PolylineBreak pb) {
+        this();
         this.breakType = pb.breakType;
         this.caption = pb.caption;
         this.color = pb.color;
@@ -55,11 +56,7 @@ public class ArrowLineBreak extends PolylineBreak {
         this.symbolStyle = pb.symbolStyle;
         this.tag = pb.tag;
         this.width = pb.width;
-        this.arrowHeadWidth = this.width * 5;
-        this.arrowHeadLength = this.arrowHeadWidth * 1.5f;
-        this.arrowOverhang = 0;
         this.ArrowFillColor = this.color;
-        this.ArrowOutlineColor = null;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

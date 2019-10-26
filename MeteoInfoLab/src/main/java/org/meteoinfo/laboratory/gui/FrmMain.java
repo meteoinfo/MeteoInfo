@@ -93,7 +93,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
                 getInputArguments().toString().contains("jdwp");
         if (isDebug) {
-            this.startupPath = System.getProperty("user.dir");
+            this.startupPath = System.getProperty("user.dir") + "/MeteoInfoLab";
         } else {
             this.startupPath = GlobalUtil.getAppPath(FrmMain.class);
         }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="MeteoInfoLab" />
+        <module name="MeteoInfoLib" />
+        <module name="MeteoInfoMap" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="MeteoInfo" target="1.8" />
+      <module name="MeteoInfoLab" target="1.8" />
+      <module name="MeteoInfoLib" target="1.8" />
+      <module name="MeteoInfoMap" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

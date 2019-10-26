@@ -63,6 +63,9 @@ public class JIntrospect implements NameCompletion {
             }
         }
         PyList plist = (PyList) module.__dir__();
+        if (plist.contains("__all__")) {
+            plist = (PyList) module.__getattr__("__all__");
+        }
         List<String> list = new ArrayList<>();
         String name;
         for (int i = 0; i < plist.__len__(); i++) {
@@ -135,13 +138,22 @@ public class JIntrospect implements NameCompletion {
         try {
             PyObject object = this.interp.eval(root);
             PyList plist = (PyList) object.__dir__();
+            if (plist.contains("__all__")) {
+                PyList nPlist = (PyList) object.__getattr__("__all__");
+                for (int i = 0; i < nPlist.__len__(); i++) {
+                    if (! plist.__contains__(nPlist.__getitem__(i))) {
+                        plist.add(nPlist.__getitem__(i));
+                    }
+                }
+            }
             List<String> list = new ArrayList<>();
             String name;
             for (int i = 0; i < plist.__len__(); i++) {
                 name = plist.get(i).toString();
-                if (!name.startsWith("__")) {
-                    list.add(name);
-                }
+                list.add(name);
+//                if (!name.startsWith("__")) {
+//                    list.add(name);
+//                }
             }
             return list;
         } catch (Exception e){

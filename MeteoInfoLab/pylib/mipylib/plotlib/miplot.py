@@ -47,7 +47,7 @@ __all__ = [
     'grid','gridshow','gridshowm','hist','imshow','imshowm','legend','left_title','loglog','makecolors',
     'makelegend','makesymbolspec','masklayer','pcolor','pcolorm','pie','plot','plot3','plotm','quiver',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
-    'semilogx','semilogy','set','show','stationmodel','stem','step','streamplotm','subplot','subplots','suptitle',
+    'semilogx','semilogy','set','show','stationmodel','stem','step','streamplot','streamplotm','subplot','subplots','suptitle',
     'surf','text','title','twinx','twiny','violinplot','weatherspec','xaxis',
     'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
     'isinteractive'
@@ -2270,7 +2270,39 @@ def barbs(*args, **kwargs):
     r = gca.barbs(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r    
+    return r  
+
+def streamplot(*args, **kwargs):
+    """
+    Plot streamline.
+    
+    :param x: (*array_like*) Optional. X coordinate array.
+    :param y: (*array_like*) Optional. Y coordinate array.
+    :param u: (*array_like*) U component of the arrow vectors (wind field) or wind direction.
+    :param v: (*array_like*) V component of the arrow vectors (wind field) or wind speed.
+    :param z: (*array_like*) Optional, 2-D z value array.
+    :param color: (*Color*) Streamline color.
+    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
+    :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
+    :param density: (*int*) Streamline density. Default is 4.
+    :param zorder: (*int*) Z-order of streamline graphic for display.
+    
+    :returns: (*VectoryLayer*) Created streamline VectoryLayer.
+    """
+    global gca
+    if g_figure is None:
+        figure()
+
+    if gca is None:    
+        gca = axes()
+    else:
+        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
+            gca = axes()
+            
+    r = gca.streamplot(*args, **kwargs)
+    if not r is None:
+        draw_if_interactive()
+    return r      
  
 def scatterm(*args, **kwargs):
     """

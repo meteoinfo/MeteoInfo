@@ -9,7 +9,8 @@ import os
 import datetime
 
 from org.meteoinfo.legend import LineStyles, HatchStyle, ColorBreak, PointBreak, PolylineBreak, \
-    PolygonBreak, ArrowBreak, ArrowLineBreak, ArrowPolygonBreak, LegendManage, PointStyle, MarkerType, LegendScheme
+    PolygonBreak, ArrowBreak, ArrowLineBreak, ArrowPolygonBreak, StreamlineBreak, LegendManage, \
+    PointStyle, MarkerType, LegendScheme
 from org.meteoinfo.global.colors import ColorUtil, ColorMap
 from org.meteoinfo.shape import ShapeTypes
 from org.meteoinfo.chart import ChartText
@@ -394,6 +395,8 @@ def getlegendbreak(geometry, **kwargs):
         else:
             pstyle = getpointstyle(marker)
             lb.setStyle(pstyle)
+        if not color is None:
+            lb.setColor(color)
         size = kwargs.pop('size', 6)
         lb.setSize(size)
         ecobj = kwargs.pop('edgecolor', 'k')
@@ -407,6 +410,8 @@ def getlegendbreak(geometry, **kwargs):
         lb.setDrawOutline(edge)
     elif geometry == 'line':
         lb = PolylineBreak()
+        if not color is None:
+            lb.setColor(color)
         size = kwargs.pop('size', 1.0)
         size = kwargs.pop('linewidth', size)
         lb.setWidth(size)
@@ -635,6 +640,41 @@ def line2arrow(lb, **kwargs):
     if kwargs.has_key('edgecolor'):
         edgecolor = kwargs.pop('edgecolor')
         albreak.setArrowOutlineColor(getcolor(edgecolor))
+    
+    return albreak
+    
+def line2stream(lb, **kwargs):
+    '''
+    Convert linestring break to stream line break.
+    
+    :param lb: (*PolylineBreak*) Linestring break.
+    :param headwidth: (*float*) Arrow head width. Default is ``width*5``.
+    :param headlength: (*float*) Arrow head length. 
+    :param overhang: (*float*) fraction that the arrow is swept back (0 overhang means 
+        triangular shape). Can be negative or greater than one.
+    :param fillcolor: (*Color*) Arrow fill color.
+    :param edgecolor: (*Color*) Arrow edge color.
+    :param interval: (*int*) Arrow interval.
+    
+    :returns: (*StreamineBreak*) Stream line break.
+    '''
+    albreak = StreamlineBreak(lb)
+    headwidth = kwargs.pop('headwidth', lb.getWidth() * 5.)
+    albreak.setArrowHeadWidth(headwidth)
+    headlength = kwargs.pop('headlength', headwidth * 1.5)
+    albreak.setArrowHeadLength(headlength)
+    overhang = kwargs.pop('overhang', None)
+    if not overhang is None:
+        albreak.setArrowOverhang(overhang)
+    if kwargs.has_key('fillcolor'):
+        fillcolor = kwargs.pop('fillcolor')
+        albreak.setArrowFillColor(getcolor(fillcolor))
+    if kwargs.has_key('edgecolor'):
+        edgecolor = kwargs.pop('edgecolor')
+        albreak.setArrowOutlineColor(getcolor(edgecolor))
+    if kwargs.has_key('interval'):
+        interval = kwargs.pop('interval')
+        albreak.setInterval(interval)
     
     return albreak
     

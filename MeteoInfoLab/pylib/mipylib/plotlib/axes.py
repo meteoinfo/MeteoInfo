@@ -2858,7 +2858,7 @@ class Axes(object):
         :param size: (*float*) Base size of the arrows.
         :param order: (*int*) Z-order of created layer for display.
         
-        :returns: (*VectoryLayer*) Created barbs VectoryLayer.
+        :returns: Barbs graphics.
         """
         ls = kwargs.pop('symbolspec', None)
         cmap = plotutil.getcolormap(**kwargs)
@@ -2953,7 +2953,7 @@ class Axes(object):
             triangular shape). Can be negative or greater than one.
         :param zorder: (*int*) Z-order of created layer for display.
         
-        :returns: (*VectoryLayer*) Created quiver VectoryLayer.
+        :returns: Quiver graphics.
         """
         ls = kwargs.pop('symbolspec', None)
         cmap = plotutil.getcolormap(**kwargs)
@@ -3108,6 +3108,52 @@ class Axes(object):
                 wa.setNeatlineSize(linewidth)
                 wa.setDrawNeatline(True)
         self.axes.setWindArrow(wa)
+        
+    def streamplot(self, *args, **kwargs):
+        """
+        Plot streamline.
+        
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param u: (*array_like*) U component of the arrow vectors (wind field) or wind direction.
+        :param v: (*array_like*) V component of the arrow vectors (wind field) or wind speed.
+        :param z: (*array_like*) Optional, 2-D z value array.
+        :param color: (*Color*) Streamline color.
+        :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
+        :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
+        :param density: (*int*) Streamline density. Default is 4.
+        :param zorder: (*int*) Z-order of streamline graphic for display.
+        
+        :returns: (*VectoryLayer*) Created streamline VectoryLayer.
+        """
+        cmap = plotutil.getcolormap(**kwargs)
+        fill_value = kwargs.pop('fill_value', -9999.0)
+        proj = kwargs.pop('proj', None)
+        isuv = kwargs.pop('isuv', True)
+        density = kwargs.pop('density', 4)
+        n = len(args)
+        if n < 4:
+            u = args[0]
+            v = args[1]
+            y = u.dimvalue(0)
+            x = u.dimvalue(1)
+            args = args[2:]
+        else:
+            x = args[0]
+            y = args[1]
+            u = args[2]
+            v = args[3]
+            args = args[4:]  
+        alb, isunique = plotutil.getlegendbreak('line', **kwargs)
+        alb = plotutil.line2stream(alb, **kwargs)
+        
+        igraphic = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array, 
+            density, alb, isuv)
+
+        self.add_graphic(igraphic)
+        self.axes.setAutoExtent()
+
+        return igraphic
         
     def get_legend(self):
         '''

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.desktop.forms;
+package org.meteoinfo.desktop;
 
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.meteoinfo.desktop.forms.FrmMain;
+import org.meteoinfo.desktop.forms.FrmTextEditor;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.util.FontUtil;
 import org.meteoinfo.global.util.GlobalUtil;
@@ -30,7 +32,7 @@ import org.python.util.PythonInterpreter;
  *
  * @author yaqiang
  */
-public class Program {
+public class MeteoInfoMap {
 
     /**
      * @param args the command line arguments
@@ -134,9 +136,9 @@ public class Program {
                 System.exit(0);
             }
         } catch (CompilationFailedException ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MeteoInfoMap.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MeteoInfoMap.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -326,9 +328,9 @@ public class Program {
                     Font font = Font.createFont(Font.TRUETYPE_FONT, file);
                     ge.registerFont(font);
                 } catch (FontFormatException ex) {
-                    Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MeteoInfoMap.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MeteoInfoMap.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

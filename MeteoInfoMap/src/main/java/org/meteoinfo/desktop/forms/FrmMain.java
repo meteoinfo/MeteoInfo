@@ -289,7 +289,7 @@ public class FrmMain extends JFrame implements IApplication {
                 getInputArguments().toString().contains("jdwp");
         String pluginPath;
         if (isDebug) {
-            this._startupPath = System.getProperty("user.dir") + "/MeteoInfoMap";
+            this._startupPath = System.getProperty("user.dir");
             pluginPath = "D:/MyProgram/Java/MeteoInfoDev/plugins";
         } else {
             this._startupPath = GlobalUtil.getAppPath(FrmMain.class);

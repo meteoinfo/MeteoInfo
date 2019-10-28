@@ -146,7 +146,7 @@ import org.xml.sax.SAXException;
 public class FrmMain extends JFrame implements IApplication {
     // <editor-fold desc="Variables">
 
-    private final String _startupPath;
+    private String _startupPath;
     private Options _options = new Options();
     private JButton _currentTool = null;
     ResourceBundle bundle;
@@ -290,6 +290,9 @@ public class FrmMain extends JFrame implements IApplication {
         String pluginPath;
         if (isDebug) {
             this._startupPath = System.getProperty("user.dir");
+            if (this._startupPath.endsWith("MeteoInfo")) {
+                this._startupPath += "/MeteoInfoLab";
+            }
             pluginPath = "D:/MyProgram/Java/MeteoInfoDev/plugins";
         } else {
             this._startupPath = GlobalUtil.getAppPath(FrmMain.class);

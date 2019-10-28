@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.bytedeco:mkl-dnn:windows-x86_64:0.20-1.5.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/mkl-dnn/0.20-1.5.1/mkl-dnn-0.20-1.5.1-windows-x86_64.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/mkl-dnn/0.20-1.5.1/mkl-dnn-0.20-1.5.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/mkl-dnn/0.20-1.5.1/mkl-dnn-0.20-1.5.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

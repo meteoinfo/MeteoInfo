@@ -22,21 +22,19 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\test_conf.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\test_nd4j.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\test_conf.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\test_nd4j.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-7,0" MainFormSize="1345,851"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1403,840"/>
 </MeteoInfo>

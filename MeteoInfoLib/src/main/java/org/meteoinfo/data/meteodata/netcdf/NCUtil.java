@@ -52,6 +52,10 @@ public class NCUtil {
      * @return MeteoThink array
      */
     public static Array convertArray(ucar.ma2.Array ncArray) {
+        if (ncArray == null) {
+            return null;
+        }
+        
         DataType dt = convertDataType(ncArray.getDataType());
         if (dt == DataType.OBJECT && ncArray.getObject(0).getClass() == String.class){
             dt = DataType.STRING;

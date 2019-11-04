@@ -182,7 +182,7 @@ class DateTimeIndex(Index):
         
         :returns: int if unique index, slice if monotonic index, else mask.
         '''
-        if isinstance(key, NDArray) and key.dtype.toString() == 'boolean':
+        if isinstance(key, NDArray) and key.dtype.kind == 'b':
             r = self._index.filterIndices(key.asarray())
             return list(r)
         elif isinstance(key, datetime.datetime):

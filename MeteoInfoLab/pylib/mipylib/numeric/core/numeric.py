@@ -15,11 +15,14 @@ from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
 from org.meteoinfo.math.interpolate import InterpUtil
 from org.meteoinfo.ndarray import Array, Dimension
 from org.meteoinfo.geoprocess import GeometryUtil
+from org.meteoinfo.laboratory.util import JythonUtil
+from org.python.core import PyComplex
 
 from dimarray import PyGridData, DimArray, PyStationData
 from multiarray import NDArray
 from mitable import PyTableData
 import mipylib.miutil as miutil
+import _dtype
 
 from java.lang import Math, Double, Float
 from java.util import Calendar
@@ -37,12 +40,12 @@ __all__ = [
     'atleast_1d','atleast_2d','atan','atan2','ave_month','histogram','broadcast_to','cdiff','concatenate',
     'corrcoef','cos','cumsum','degrees','delete','delnan','diag','diff','dim_array','datatable','dot','empty','exp','eye','fmax','fmin','full',
     'griddata','hcurl','hdivg','hstack','identity','interp2d',
-    'interpn','isarray','isnan','linint2','linregress','linspace','log','log10',
+    'interpn','isarray','isnan','linint2','linregress','linspace','log','log10','logical_not',
     'logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'newaxis','nonzero','ones','ones_like','pol2cart','polyval','power',
     'radians','reshape','repeat',
     'rolling_mean','rot90','sin','smooth5','smooth9','sort','squeeze','argsort','sqrt','std','sum','tan',
-    'tile','transpose','trapz','vdot','unravel_index','var','vstack',
+    'tile','transpose','trapz','vdot','unique','unravel_index','var','vstack',
     'where','zeros','zeros_like'
     ]
 
@@ -57,7 +60,7 @@ def array(object, dtype=None):
     Create an array.
     
     :param object: (*array_like*) A Jython list or digital object.
-    :param dtype: (*string*) Data type
+    :param dtype: (*DataType*) Data type
                         
     :returns: (*NDArray*) An array object satisfying the specified requirements.
                     
@@ -82,10 +85,24 @@ def array(object, dtype=None):
         return object
     elif isinstance(object, Array):
         return NDArray(object)
-        
+
+    if isinstance(object, PyComplex):
+        return NDArray(JythonUtil.toComplexArray(object))
+
     if isinstance(object, (list, tuple)):
         if isinstance(object[0], datetime.datetime):
             object = miutil.dates2nums(object)
+        elif isinstance(object[0], PyComplex):
+            return NDArray(JythonUtil.toComplexArray(object))
+        elif isinstance(object[0], (list, tuple)):
+            if isinstance(object[0][0], PyComplex):
+                return NDArray(JythonUtil.toComplexArray(object))
+
+    if isinstance(dtype, basestring):
+        dtype = _dtype.DataType(dtype)
+    if not dtype is None:
+        dtype = dtype._dtype
+
     return NDArray(ArrayUtil.array(object, dtype))
     
 def dim_array(a, dims=None):
@@ -282,7 +299,9 @@ def empty(shape, dtype='float'):
         shapelist.append(shape)
     else:
         shapelist = shape
-    return NDArray(ArrayUtil.zeros(shapelist, dtype))
+    if isinstance(dtype, basestring):
+        dtype = _dtype.DataType(dtype)
+    return NDArray(ArrayUtil.zeros(shapelist, dtype._dtype))
     
 def zeros(shape, dtype='float'):
     """
@@ -309,7 +328,9 @@ def zeros(shape, dtype='float'):
         shapelist.append(shape)
     else:
         shapelist = shape
-    return NDArray(ArrayUtil.zeros(shapelist, dtype))
+    if isinstance(dtype, basestring):
+        dtype = _dtype.DataType(dtype)
+    return NDArray(ArrayUtil.zeros(shapelist, dtype._dtype))
     
 def zeros_like(a, dtype=None):
     '''
@@ -323,8 +344,10 @@ def zeros_like(a, dtype=None):
     '''
     shape = a.shape
     if dtype is None:
-        dtype = ArrayUtil.dataTypeString(a.dtype)
-    return NDArray(ArrayUtil.zeros(shape, dtype))
+        dtype = _dtype.fromjava(a.dtype)
+    elif isinstance(dtype, basestring):
+        dtype = _dtype.DataType(dtype)
+    return NDArray(ArrayUtil.zeros(shape, dtype._dtype))
     
 def ones_like(a, dtype=None):
     '''
@@ -338,8 +361,10 @@ def ones_like(a, dtype=None):
     '''
     shape = a.shape
     if dtype is None:
-        dtype = ArrayUtil.dataTypeString(a.dtype)
-    return NDArray(ArrayUtil.ones(shape, dtype))
+        dtype = _dtype.fromjava(a.dtype)
+    elif isinstance(dtype, basestring):
+        dtype = _dtype.DataType(dtype)
+    return NDArray(ArrayUtil.ones(shape, dtype._dtype))
     
 def ones(shape, dtype='float'):
     """
@@ -366,7 +391,9 @@ def ones(shape, dtype='float'):
         shapelist.append(shape)
     else:
         shapelist = shape
-    return NDArray(ArrayUtil.ones(shapelist, dtype))
+    if isinstance(dtype, basestring):
+        dtype = _dtype.DataType(dtype)
+    return NDArray(ArrayUtil.ones(shapelist, dtype._dtype))
     
 def full(shape, fill_value, dtype=None):
     '''
@@ -384,9 +411,9 @@ def full(shape, fill_value, dtype=None):
         shapelist.append(shape)
     else:
         shapelist = shape
-    if not dtype is None:
-        dtype = ArrayUtil.toDataType(dtype)
-    return NDArray(ArrayUtil.full(shapelist, fill_value, dtype))
+    if isinstance(dtype, basestring):
+        dtype = _dtype.DataType(dtype)
+    return NDArray(ArrayUtil.full(shapelist, fill_value, dtype._dtype))
     
 def identity(n, dtype='float'):
     '''
@@ -398,7 +425,9 @@ def identity(n, dtype='float'):
         
     :returns: (*NDArray*) ``n x n`` array with its main diagonal set to one, and all other elements 0.
     '''
-    return NDArray(ArrayUtil.identity(n, dtype))
+    if isinstance(dtype, basestring):
+        dtype = _dtype.DataType(dtype)
+    return NDArray(ArrayUtil.identity(n, dtype._dtype))
     
 def eye(n, m=None, k=0, dtype='float'):
     '''
@@ -415,7 +444,9 @@ def eye(n, m=None, k=0, dtype='float'):
     '''
     if m is None:
         m = n
-    return NDArray(ArrayUtil.eye(n, m, k, dtype))
+    if isinstance(dtype, basestring):
+        dtype = _dtype.DataType(dtype)
+    return NDArray(ArrayUtil.eye(n, m, k, dtype._dtype))
     
 def diag(v, k=0):
     '''
@@ -1409,6 +1440,23 @@ def argsort(a, axis=-1):
         a = array(a)
     r = ArrayUtil.argSort(a.asarray(), axis)
     return NDArray(r)
+
+def unique(a, axis=None):
+    """
+    Find the unique elements of an array.
+
+    Returns the sorted unique elements of an array.
+
+    :param a: (*array_like*) Array to be sorted.
+    :param axis: (*int or None*) Optional. Axis along which to operate on. If None, the array is
+        flattened.
+
+    :returns: (*NDArray*) Sorted unique elements of input array.
+    """
+    if isinstance(a, list):
+        a = array(a)
+    r = ArrayUtil.unique(a.asarray(), axis)
+    return NDArray(r)
     
 def isnan(a):
     '''
@@ -1484,6 +1532,24 @@ def where(condition):
     :returns: (*tuple*) Indices of elements that are non-zero.
     '''
     return nonzero(condition)
+
+def logical_not(arr):
+    '''
+    Compute the truth value of NOT x element-wise.
+
+    :param arr: (*array_like*) Input array.
+    :return: (*array_like*) Boolean result with the same shape as x of the NOT operation on elements of x.
+        This is a scalar if x is a scalar.
+    '''
+    if isinstance(arr, int):
+        return arr == 0
+    elif isinstance(arr, bool):
+        return not arr
+
+    if isinstance(arr, (list, tuple)):
+        arr = array(arr)
+    r = ArrayMath.logicalNot(arr._array)
+    return NDArray(r)
     
 def delete(arr, obj, axis=None):
     '''

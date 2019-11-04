@@ -4,18 +4,16 @@
 # Purpose: MeteoInfo Dataset module
 # Note: Jython
 #-----------------------------------------------------
-#import math
+
 from org.meteoinfo.data import GridArray
 from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.math.linalg import LinalgUtil
 from org.meteoinfo.ndarray import Array, Range, MAMath, Complex, Dimension
+
 import jarray
-import numbers
-
-#import milayer
-#from milayer import MILayer
-
 import datetime
+
+import _dtype
         
 # The encapsulate class of Array
 class NDArray(object):
@@ -30,9 +28,8 @@ class NDArray(object):
         for i in range(len(s)):
             s1.append(s[i])
         self._shape = tuple(s1)
-        self.dtype = array.getDataType()
+        self.dtype = _dtype.fromjava(array.getDataType())
         self.size = int(self._array.getSize())
-        #self.idx = -1
         self.iterator = array.getIndexIterator()
         if self.ndim > 0:
             self.sizestr = str(self.shape[0])
@@ -270,6 +267,8 @@ class NDArray(object):
             if step < 0:
                 step = abs(step)
                 flips.append(i)
+            if eidx < sidx:
+                return
             rr = Range(sidx, eidx, step)
             ranges.append(rr)
 

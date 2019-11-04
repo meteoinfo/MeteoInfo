@@ -20,7 +20,8 @@ import math
 __all__ = [
     'contrast','sharpen','rgb_adjust','channel_mix','gain','gamma','gray','gray_scale',
     'hsb_adjust','invert_alpha','invert','levels','mask','posterize','rescale','solarize',
-    'threshold','tritone','flip','rotate','emboss','light','opacity','count','mean'
+    'threshold','tritone','flip','rotate','emboss','light','opacity','count','mean','minimum_filter',
+    'maximum_filter'
     ]
 
 def __getimage(src):
@@ -570,4 +571,26 @@ def mean(a, size, positive=True):
     :returns: (*array_like*) Mean result.
     '''
     r = ImageUtil.mean(a.asarray(), size, positive)
+    return NDArray(r)
+
+def minimum_filter(a, size):
+    '''
+    Calculate a multi-dimensional minimum filter.
+
+    :param a: (*array*) Input array
+    :param size: (*int*) Window size
+    :return: Filtered array. Has the same shape as input array.
+    '''
+    r = ImageUtil.minimumFilter(a._array, size)
+    return NDArray(r)
+
+def maximum_filter(a, size):
+    '''
+    Calculate a multi-dimensional maximum filter.
+
+    :param a: (*array*) Input array
+    :param size: (*int*) Window size
+    :return: Filtered array. Has the same shape as input array.
+    '''
+    r = ImageUtil.maximumFilter(a._array, size)
     return NDArray(r)

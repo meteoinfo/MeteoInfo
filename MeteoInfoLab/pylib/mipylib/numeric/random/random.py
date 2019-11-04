@@ -6,7 +6,7 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.math import RandomUtil
+from org.meteoinfo.math.random import RandomUtil
 from org.meteoinfo.math.distribution import DistributionUtil
 from org.apache.commons.math3.distribution import NormalDistribution, BetaDistribution, \
     BinomialDistribution, ChiSquaredDistribution, ExponentialDistribution, FDistribution, \

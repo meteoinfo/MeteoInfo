@@ -101,12 +101,12 @@ public class FrmMeteoData extends javax.swing.JDialog {
     private int _skipX = 1;
     private boolean _hasUndefData;
     private boolean _isLoading = false;
-    private final MeteoDataDrawSet _meteoDataDrawSet = new MeteoDataDrawSet();
     private InterpolationSetting _interpolationSetting = new InterpolationSetting();
     private boolean _enableAnimation = true;
     private boolean _isRunning = false;
     private boolean windColor = false;
     private boolean smooth = true;
+    private String weatherString = "All Weather";
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -1098,8 +1098,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         // TODO add your handling code here:
         _useSameLegendScheme = true;
         _useSameGridInterSet = true;
-        switch (_meteoDataInfo.getDataType()) {
-            case MICAPS_1:
+        switch (_meteoDataInfo.getDataType()) {            
             case MICAPS_2:
             case MICAPS_3:
             case MICAPS_4:
@@ -1129,6 +1128,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     this.jComboBox_Time.addItem(format.format(aTime));
                 }
                 break;
+            case MICAPS_1:
             case MICAPS_120:
                 cal = Calendar.getInstance();
                 cal.setTime(_meteoDataInfo.getDataInfo().getTimes().get(0));
@@ -1136,7 +1136,14 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 aTime = cal.getTime();
                 aFile = _meteoDataInfo.getFileName();
                 path = new File(aFile).getParent();
-                format = new SimpleDateFormat("yyyyMMddHH");
+                switch (_meteoDataInfo.getDataType()) {
+                    case MICAPS_120:
+                        format = new SimpleDateFormat("yyyyMMddHH");
+                        break;
+                    default:
+                        format = new SimpleDateFormat("yyMMddHH");
+                        break;
+                }   
                 for (int i = 0; i < 100; i++) {
                     aFile = path + File.separator + format.format(aTime) + ".000";
                     if (new File(aFile).exists()) {
@@ -1193,7 +1200,6 @@ public class FrmMeteoData extends javax.swing.JDialog {
         _useSameLegendScheme = true;
         _useSameGridInterSet = true;
         switch (_meteoDataInfo.getDataType()) {
-            case MICAPS_1:
             case MICAPS_2:
             case MICAPS_3:
             case MICAPS_4:
@@ -1224,6 +1230,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     this.jComboBox_Time.addItem(format.format(aTime));
                 }
                 break;
+            case MICAPS_1:
             case MICAPS_120:
                 cal = Calendar.getInstance();
                 cal.setTime(_meteoDataInfo.getDataInfo().getTimes().get(0));
@@ -1231,7 +1238,14 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 aTime = cal.getTime();
                 aFile = _meteoDataInfo.getFileName();
                 path = new File(aFile).getParent();
-                format = new SimpleDateFormat("yyyyMMddHH");
+                switch (_meteoDataInfo.getDataType()) {
+                    case MICAPS_120:
+                        format = new SimpleDateFormat("yyyyMMddHH");
+                        break;
+                    default:
+                        format = new SimpleDateFormat("yyMMddHH");
+                        break;
+                }                
                 for (int i = 0; i < 100; i++) {
                     aFile = path + File.separator + format.format(aTime) + ".000";
                     if (new File(aFile).exists()) {
@@ -1514,9 +1528,10 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     Object[] possibleValues = {"All Weather", "SDS", "SDS, Haze", "Smoke", "Haze", "Mist", "Smoke, Haze, Mist", "Fog"};
                     Object selectedValue = JOptionPane.showInputDialog(null,
                             "Choose one", "Input", JOptionPane.INFORMATION_MESSAGE,
-                            null, possibleValues, possibleValues[0]);
+                            null, possibleValues, this.weatherString);
                     if (selectedValue != null) {
-                        VectorLayer layer = DrawMeteoData.createWeatherSymbolLayer(_stationData, selectedValue.toString(), "Weather");
+                        this.weatherString = selectedValue.toString();
+                        VectorLayer layer = DrawMeteoData.createWeatherSymbolLayer(_stationData, this.weatherString, "Weather");
                         layer.setProjInfo(this._meteoDataInfo.getProjectionInfo());
                         this._parent.getMapDocument().getActiveMapFrame().removeLayerByHandle(this._lastAddedLayerHandle);
                         this._lastAddedLayerHandle = this._parent.getMapDocument().getActiveMapFrame().addLayer(layer);
@@ -2973,8 +2988,9 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 break;
             case Weather_Symbol:
                 LName = "Weather_" + LName;
-                aLayer = DrawMeteoData.createWeatherSymbolLayer(_stationData,
-                        _meteoDataDrawSet.getWeatherType(), LName);
+//                aLayer = DrawMeteoData.createWeatherSymbolLayer(_stationData,
+//                        _meteoDataDrawSet.getWeatherType(), LName);
+                aLayer = DrawMeteoData.createWeatherSymbolLayer(_stationData, this.weatherString, LName);
                 break;
             case Station_Model:
                 StationModelData stationModelData = _meteoDataInfo.getStationModelData();

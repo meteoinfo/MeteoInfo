@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.imageio.metadata.IIOInvalidTreeException;
@@ -19,9 +20,8 @@ import org.apache.commons.imaging.ImageFormat;
 import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.ImageWriteException;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.ndarray.*;
 
 /**
  *
@@ -325,6 +325,76 @@ public class ImageUtil {
             }
         }
         
+        return r;
+    }
+
+    /**
+     * Calculate a multi-dimensional minimum filter.
+     * @param data Input data
+     * @param size Window size
+     * @return Minimum filter array
+     */
+    public static Array minimumFilter(Array data, int size) throws InvalidRangeException {
+        int[] shape = data.getShape();
+        int half = size / 2;
+        double min;
+        int n = data.getRank();
+        Array r = Array.factory(data.getDataType(), shape);
+        IndexIterator iter = data.getIndexIterator();
+        IndexIterator riter = r.getIndexIterator();
+        int[] counter;
+        List<Range> ranges;
+        int si, ei;
+        Array temp;
+        while(iter.hasNext()) {
+            iter.next();
+            counter = iter.getCurrentCounter();
+            ranges = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                si = (counter[i] - half) >= 0 ? counter[i] - half : 0;
+                ei = (counter[i] + half < shape[i]) ? counter[i] + half : shape[i] - 1;
+                ranges.add(new Range(si, ei));
+            }
+            temp = data.section(ranges);
+            min = ArrayMath.min(temp);
+            riter.setDoubleNext(min);
+        }
+
+        return r;
+    }
+
+    /**
+     * Calculate a multi-dimensional maximum filter.
+     * @param data Input data
+     * @param size Window size
+     * @return Maximum filter array
+     */
+    public static Array maximumFilter(Array data, int size) throws InvalidRangeException {
+        int[] shape = data.getShape();
+        int half = size / 2;
+        double max;
+        int n = data.getRank();
+        Array r = Array.factory(data.getDataType(), shape);
+        IndexIterator iter = data.getIndexIterator();
+        IndexIterator riter = r.getIndexIterator();
+        int[] counter;
+        List<Range> ranges;
+        int si, ei;
+        Array temp;
+        while(iter.hasNext()) {
+            iter.next();
+            counter = iter.getCurrentCounter();
+            ranges = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                si = (counter[i] - half) >= 0 ? counter[i] - half : 0;
+                ei = (counter[i] + half < shape[i]) ? counter[i] + half : shape[i] - 1;
+                ranges.add(new Range(si, ei));
+            }
+            temp = data.section(ranges);
+            max = ArrayMath.max(temp);
+            riter.setDoubleNext(max);
+        }
+
         return r;
     }
     

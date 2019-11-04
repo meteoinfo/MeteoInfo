@@ -3461,6 +3461,43 @@ public class ArrayMath {
     }
 
     /**
+     * Logical not
+     *
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array logicalNot(Array a) {
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+        if (a.getDataType() == DataType.BOOLEAN) {
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setBoolean(i, !a.getBoolean(i));
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterA.hasNext()) {
+                    iterR.setBooleanNext(!iterA.getBooleanNext());
+                }
+            }
+        } else {
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setObject(i, a.getInt(i) == 0);
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterA.hasNext()) {
+                    iterR.setObjectNext(iterA.getIntNext() == 0);
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Bit left shift operation
      *
      * @param a Array a
@@ -4466,6 +4503,43 @@ public class ArrayMath {
             boolean b = true;
             if (v.doubleValue() == 0) {
                 b = false;
+            }
+            while (iter.hasNext()) {
+                iter.setObjectNext(b);
+            }
+        } else {
+            while (iter.hasNext()) {
+                iter.setObjectNext(v);
+            }
+        }
+        r = Array.factory(a.getDataType(), a.getShape(), r.getStorage());
+        return r;
+    }
+
+    /**
+     * Set section
+     *
+     * @param a Array a
+     * @param ranges Ranges
+     * @param v Object value
+     * @return Result array
+     * @throws InvalidRangeException
+     */
+    public static Array setSection(Array a, List<Range> ranges, Object v) throws InvalidRangeException {
+        Array r = a.section(ranges);
+        IndexIterator iter = r.getIndexIterator();
+        if (a.getDataType() == DataType.BOOLEAN) {
+            boolean b = true;
+            if (v instanceof Number) {
+                if (((Number)v).doubleValue() == 0) {
+                    b = false;
+                }
+            } else if (v instanceof Boolean) {
+                if (!((Boolean)v)) {
+                    b = false;
+                }
+            } else {
+                return a;
             }
             while (iter.hasNext()) {
                 iter.setObjectNext(b);
@@ -6299,41 +6373,51 @@ public class ArrayMath {
      * @param value Value
      */
     public static void setValue(Array a, Array b, Number value) {
-        if (b.getDataType() == DataType.BOOLEAN) {
-            if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
-                for (int i = 0; i < a.getSize(); i++) {
-                    if (b.getBoolean(i)) {
-                        a.setObject(i, value);
+        if (a.getShape() == b.getShape()) {
+            if (b.getDataType() == DataType.BOOLEAN) {
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        if (b.getBoolean(i)) {
+                            a.setObject(i, value);
+                        }
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        if (iterB.getBooleanNext()) {
+                            iterA.setObjectNext(value);
+                        } else {
+                            iterA.next();
+                        }
                     }
                 }
             } else {
-                IndexIterator iterA = a.getIndexIterator();
-                IndexIterator iterB = b.getIndexIterator();
-                while (iterA.hasNext()) {
-                    if (iterB.getBooleanNext()) {
-                        iterA.setObjectNext(value);
-                    } else {
-                        iterA.next();
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        if (b.getInt(i) == 1) {
+                            a.setObject(i, value);
+                        }
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        if (iterB.getIntNext() == 1) {
+                            iterA.setObjectNext(value);
+                        } else {
+                            iterA.next();
+                        }
                     }
                 }
             }
         } else {
-            if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
-                for (int i = 0; i < a.getSize(); i++) {
-                    if (b.getInt(i) == 1) {
-                        a.setObject(i, value);
-                    }
-                }
-            } else {
-                IndexIterator iterA = a.getIndexIterator();
-                IndexIterator iterB = b.getIndexIterator();
-                while (iterA.hasNext()) {
-                    if (iterB.getIntNext() == 1) {
-                        iterA.setObjectNext(value);
-                    } else {
-                        iterA.next();
-                    }
-                }
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterB = b.getIndexIterator();
+            int v;
+            while(iterB.hasNext()) {
+                v = iterB.getIntNext();
+                a.setObject(v, value);
             }
         }
     }

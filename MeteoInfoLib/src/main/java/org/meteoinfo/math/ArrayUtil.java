@@ -767,13 +767,12 @@ public class ArrayUtil {
      * @param dtype Data type
      * @return Array Result array
      */
-    public static Array ones(List<Integer> shape, String dtype) {
-        DataType dt = toDataType(dtype);
+    public static Array ones(List<Integer> shape, DataType dtype) {
         int[] ashape = new int[shape.size()];
         for (int i = 0; i < shape.size(); i++) {
             ashape[i] = shape.get(i);
         }
-        Array a = Array.factory(dt, ashape);
+        Array a = Array.factory(dtype, ashape);
         for (int i = 0; i < a.getSize(); i++) {
             a.setObject(i, 1);
         }
@@ -789,10 +788,9 @@ public class ArrayUtil {
      * @param dtype Data type
      * @return Identity array
      */
-    public static Array identity(int n, String dtype) {
-        DataType dt = toDataType(dtype);
+    public static Array identity(int n, DataType dtype) {
         int[] shape = new int[]{n, n};
-        Array a = Array.factory(dt, shape);
+        Array a = Array.factory(dtype, shape);
         IndexIterator index = a.getIndexIterator();
         int[] current;
         while (index.hasNext()) {
@@ -819,10 +817,9 @@ public class ArrayUtil {
      * @param dtype Data type
      * @return Created array
      */
-    public static Array eye(int n, int m, int k, String dtype) {
-        DataType dt = toDataType(dtype);
+    public static Array eye(int n, int m, int k, DataType dtype) {
         int[] shape = new int[]{n, m};
-        Array a = Array.factory(dt, shape);
+        Array a = Array.factory(dtype, shape);
         IndexIterator index = a.getIndexIterator();
         int[] current;
         int i, j;
@@ -1700,6 +1697,66 @@ public class ArrayUtil {
                 }
             }
 
+            return r;
+        }
+    }
+
+    /**
+     * Find the unique elements of an array.
+     *
+     * @param a Array a
+     * @param axis The axis
+     * @return  The sorted unique elements of an array
+     * @throws InvalidRangeException
+     */
+    public static Array unique(Array a, Integer axis) throws InvalidRangeException {
+        int n = a.getRank();
+        int[] shape = a.getShape();
+        if (axis == null) {
+            List tList = new ArrayList();
+            IndexIterator ii = a.getIndexIterator();
+            Object o;
+            while (ii.hasNext()) {
+                o = ii.getObjectNext();
+                if (!tList.contains(o))
+                    tList.add(o);
+            }
+            Collections.sort(tList);
+            int[] nShape = new int[]{tList.size()};
+            Array r = Array.factory(a.getDataType(), nShape);
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setObject(i, tList.get(i));
+            }
+
+            return r;
+        } else {
+            if (axis == -1) {
+                axis = n - 1;
+            }
+            List<Array> tList = new ArrayList();
+            Array ta;
+            int nn = shape[axis];
+            shape[axis] = 1;
+            int[] origin = new int[shape.length];
+            for (int i = 0; i < nn; i++) {
+                origin[axis] = i;
+                ta = a.section(origin, shape);
+                if (!tList.contains(ta)) {
+                    tList.add(ta);
+                }
+            }
+            shape[axis] = tList.size();
+            Array r = Array.factory(a.getDataType(), shape);
+            List<Range> ranges = new ArrayList<>();
+            for (int i = 0; i < shape.length; i++) {
+                ranges.add(new Range(0, shape[i] - 1, 1));
+            }
+            Range range = ranges.get(axis);
+            for (int i = 0; i < tList.size(); i++) {
+                range = new Range(i, i, 1);
+                ranges.set(i, range);
+                ArrayMath.setSection(r, ranges, tList.get(i));
+            }
             return r;
         }
     }

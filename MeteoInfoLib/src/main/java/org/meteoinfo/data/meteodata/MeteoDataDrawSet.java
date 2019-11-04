@@ -56,7 +56,7 @@ public class MeteoDataDrawSet {
      * @return Weather list
      */
     public static List<Integer> getWeatherTypes(String weatherType) {
-        List<Integer> weatherList = new ArrayList<Integer>();
+        List<Integer> weatherList = new ArrayList<>();
         int i;
         int[] weathers = new int[1];
         if (weatherType.equals("All Weather")) {

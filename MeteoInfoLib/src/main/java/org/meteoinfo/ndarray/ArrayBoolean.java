@@ -388,7 +388,10 @@ public class ArrayBoolean extends Array {
     }
 
     public void setObject(int index, Object value) {
-        storage[index] = (Boolean) value;
+        if (value instanceof Integer)
+            storage[index] = ((Integer) value == 1);
+        else
+            storage[index] = (Boolean) value;
     }
 
     /**

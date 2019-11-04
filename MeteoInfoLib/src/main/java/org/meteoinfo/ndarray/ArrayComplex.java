@@ -367,7 +367,7 @@ public class ArrayComplex extends Array {
     }
 
     public Object getObject(int index) {
-        return getDouble(index);
+        return getComplex(index);
     }
 
     public void setObject(int index, Object value) {

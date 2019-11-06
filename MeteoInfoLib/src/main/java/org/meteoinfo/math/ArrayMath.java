@@ -4420,6 +4420,71 @@ public class ArrayMath {
      * Take elements from an array along an axis.
      *
      * @param a The array
+     * @param indices The indices of the values to extract.
+     * @param axis The axis over which to select values.
+     * @return The returned array has the same type as a.
+     */
+    public static Array take(Array a, Array indices, Integer axis) throws InvalidRangeException {
+        int nIdx = (int)indices.getSize();
+        if (axis == null) {
+            int[] shape = a.getShape();
+            Array r = Array.factory(a.getDataType(), new int[]{nIdx});
+            for (int i = 0; i < nIdx; i++) {
+                r.setObject(i, a.getObject(indices.getInt(i)));
+            }
+            return r;
+        } else {
+            int[] shape = a.getShape();
+            int[] nshape = new int[shape.length];
+            List<Range> ranges = new ArrayList<>();
+            for (int i = 0; i < shape.length; i++) {
+                if (i == axis) {
+                    nshape[i] = nIdx;
+                } else {
+                    nshape[i] = shape[i];
+                }
+                ranges.add(new Range(0, shape[i] - 1));
+            }
+            Array r = Array.factory(a.getDataType(), nshape);
+            IndexIterator iter = a.getIndexIterator();
+            int idx;
+            if (axis == 0) {
+                IndexIterator riter = r.getIndexIterator();
+                for (int i = 0; i < indices.getSize(); i++) {
+                    idx = indices.getInt(i);
+                    ranges.set(axis, new Range(idx, idx));
+                    Array temp = a.section(ranges);
+                    IndexIterator titer = temp.getIndexIterator();
+                    while (titer.hasNext()) {
+                        riter.setObjectNext(titer.getObjectNext());
+                    }
+                }
+            } else {
+                Index rindex = r.getIndex();
+                for (int i = 0; i < indices.getSize(); i++) {
+                    idx = indices.getInt(i);
+                    ranges.set(axis, new Range(idx, idx));
+                    Array temp = a.sectionNoReduce(ranges);
+                    IndexIterator titer = temp.getIndexIterator();
+                    int[] current;
+                    while (titer.hasNext()) {
+                        titer.next();
+                        current = titer.getCurrentCounter();
+                        current[axis] = i;
+                        rindex.set(current);
+                        r.setObject(rindex, titer.getObjectCurrent());
+                    }
+                }
+            }
+
+            return r;
+        }
+    }
+
+    /**
+     * Take elements from an array along an axis.
+     *
+     * @param a The array
      * @param ranges The indices of the values to extract.
      * @return The returned array has the same type as a.
      */

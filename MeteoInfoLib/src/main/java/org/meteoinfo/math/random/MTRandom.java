@@ -153,7 +153,7 @@ public class MTRandom extends MersenneTwister {
      *
      * @param x array to be shuffled
      */
-    public void suffle(Array x) {
+    public void shuffle(Array x) {
         for (int i = (int)x.getSize() - 1; i > 0; i--) {
             int index = this.nextInt(i);
             // swap

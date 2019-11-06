@@ -1,6 +1,7 @@
 from org.meteoinfo.math.random import MTRandom
 
 from ..core import NDArray
+from ..core import numeric as np
 
 class RandomState(object):
     '''
@@ -50,6 +51,24 @@ class RandomState(object):
         :param x: (*array*) Input array
         :return: None
         '''
-        self._mtrand.suffle(x._array)
+        self._mtrand.shuffle(x._array)
+
+    def permutation(self, x):
+        '''
+        MRandomly permute a sequence, or return a permuted range.
+
+        If x is a multi-dimensional array, it is only shuffled along its first index.
+
+        :param x: (*array*) Input array
+
+        :return: Permutation array
+        '''
+        if isinstance(x, int):
+            arr = np.arange(x)
+        else:
+            x = np.asanyarray(x)
+            arr = x.copy()
+        self._mtrand.shuffle(arr._array)
+        return arr
 
 _rand = RandomState()

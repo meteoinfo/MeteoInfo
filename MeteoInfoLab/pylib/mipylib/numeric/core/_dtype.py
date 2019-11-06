@@ -52,7 +52,7 @@ class DataType(object):
         elif self.name == 'int' or self.name == 'integer' or self.name == 'int32' or self.name == 'int16' or \
             self.name == 'short' or self.name == 'int64' or self.name == 'long':
             return 'i'
-        elif self.name == 'float' or self.name == 'float64':
+        elif self.name == 'float' or self.name == 'float64' or self.name == 'double':
             return 'f'
         elif self.name == 'str' or self.name == 'string':
             return 'S'

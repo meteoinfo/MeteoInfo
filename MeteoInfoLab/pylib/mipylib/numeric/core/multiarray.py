@@ -830,16 +830,18 @@ class NDArray(object):
             r = ArrayUtil.repeat(self._array, repeats, axis)
         return NDArray(r)
         
-    def take(self, indices):
+    def take(self, indices, axis=None):
         '''
         Take elements from an array along an axis.
         
         :param indices: (*array_like*) The indices of the values to extract.
+        :param axis: (*int*) The axis over which to select values.
         
         :returns: (*array*) The returned array has the same type as a.
         '''
-        ilist = [indices]
-        r = ArrayMath.take(self._array, ilist)
+        if isinstance(indices, (list, tuple)):
+            indices = NDArray(indices)
+        r = ArrayMath.take(self._array, indices._array, axis)
         return NDArray(r)
     
     def asdimarray(self, x, y, fill_value=-9999.0):

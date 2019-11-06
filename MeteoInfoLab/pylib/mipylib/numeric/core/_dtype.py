@@ -25,6 +25,12 @@ class DataType(object):
     '''
 
     def __init__(self, name):
+        if name is int:
+            name = 'int'
+        elif name is float:
+            name = 'float'
+        elif name is bool:
+            name = 'bool'
         self.name = name
         self._dtype = _dtype_dict[name]
 

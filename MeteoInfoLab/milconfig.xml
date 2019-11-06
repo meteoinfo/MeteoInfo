@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\netcdf">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
@@ -16,6 +9,13 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\metrics"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,12 +23,14 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection\kfold_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\metrics\accuracy_score.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection\kfold_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\metrics\accuracy_score.py"/>
     </RecentFiles>
   </File>
   <Font>

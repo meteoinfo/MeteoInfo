@@ -36,15 +36,15 @@ newaxis = None
 
 __all__ = [
     'pi','e','inf','nan','int','float','float64','absolute','all','any','arange','arange1',    
-    'argmin','argmax','array','asarray','asgridarray','asgriddata','asin','asmiarray','asstationdata',
-    'atleast_1d','atleast_2d','atan','atan2','ave_month','histogram','broadcast_to','cdiff','concatenate',
+    'argmin','argmax','array','asanyarray','asarray','asgridarray','asgriddata','asin','asmiarray','asstationdata',
+    'atleast_1d','atleast_2d','atan','atan2','ave_month','average','histogram','broadcast_to','cdiff','concatenate',
     'corrcoef','cos','cumsum','degrees','delete','delnan','diag','diff','dim_array','datatable','dot','empty','exp','eye','fmax','fmin','full',
     'griddata','hcurl','hdivg','hstack','identity','interp2d',
     'interpn','isarray','isnan','linint2','linregress','linspace','log','log10','logical_not',
     'logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'newaxis','nonzero','ones','ones_like','pol2cart','polyval','power',
-    'radians','reshape','repeat',
-    'rolling_mean','rot90','sin','smooth5','smooth9','sort','squeeze','argsort','sqrt','std','sum','tan',
+    'radians','ravel','reshape','repeat',
+    'rolling_mean','rot90','sin','smooth5','smooth9','sort','squeeze','argsort','sqrt','std','sum','swapaxes','tan',
     'tile','transpose','trapz','vdot','unique','unravel_index','var','vstack',
     'where','zeros','zeros_like'
     ]
@@ -999,7 +999,7 @@ def mean(x, axis=None):
     """
     Compute tha arithmetic mean along the specified axis.
     
-    :param x: (*array_like or list*) Input values.
+    :param x: (*array_like*) Input values.
     :param axis: (*int*) Axis along which the standard deviation is computed. 
         The default is to compute the standard deviation of the flattened array.
     
@@ -1036,6 +1036,53 @@ def mean(x, axis=None):
                 if i != axis:
                     dims.append(x.dims[i])
             return DimArray(NDArray(r), dims, x.fill_value, x.proj)
+
+def average(a, axis=None, weights=None):
+    """
+    Compute tha arithmetic mean along the specified axis.
+
+    :param a: (*array_like*) Input values.
+    :param axis: (*int*) Axis along which the standard deviation is computed.
+        The default is to compute the standard deviation of the flattened array.
+    :param weights: (*array_like*) An array of weights associated with the values in `a`. Each value in
+        `a` contributes to the average according to its associated weight.
+
+    returns: (*array_like*) Average result
+    """
+    a = asanyarray(a)
+
+    if weights is None:
+        return a.mean(axis)
+    else:
+        wgt = asanyarray(weights)
+        # Sanity checks
+        if a.shape != wgt.shape:
+            if axis is None:
+                raise TypeError(
+                    "Axis must be specified when shapes of a and weights "
+                    "differ.")
+            if wgt.ndim != 1:
+                raise TypeError(
+                    "1D weights expected when shapes of a and weights differ.")
+            if wgt.shape[0] != a.shape[axis]:
+                raise ValueError(
+                    "Length of weights not compatible with specified axis.")
+
+            # setup wgt to broadcast along axis
+            wgt = broadcast_to(wgt, (a.ndim-1)*(1,) + wgt.shape)
+            wgt = wgt.swapaxes(-1, axis)
+
+        scl = wgt.sum(axis=axis)
+        avg = (a * wgt).sum(axis) / scl
+
+        if type(a) is NDArray:
+            return avg
+        else:
+            dims = []
+            for i in range(0, a.ndim):
+                if i != axis:
+                    dims.append(a.dims[i])
+            return DimArray(avg, dims, x.fill_value, x.proj)
             
 def std(x, axis=None):
     '''
@@ -1762,6 +1809,15 @@ def squeeze(a):
             if dim.getLength() > 1:
                 dims.append(dim)
         return DimArray(NDArray(da), dims, a.fill_value, a.proj)
+
+def ravel(a):
+    '''
+    Return a contiguous flattened array.
+
+    :param a: (*array*) Input array.
+    :return: A contiguous flattened array.
+    '''
+    return a.ravel()
         
 def meshgrid(*args):
     '''
@@ -1890,15 +1946,17 @@ def polyval(p, x):
     """
     return NDArray(ArrayMath.polyVal(p, x.asarray()))
     
-def transpose(a, dim1=0, dim2=1):
+def transpose(a, axes=None):
     '''
     Transpose 2-D array.
     
     :param a: (*array*) 2-D array to be transposed.
+    :param axes: (*list of int*) By default, reverse the dimensions, otherwise permute the axes according to the
+            values given.
     
     :returns: Transposed array.
     '''
-    r = ArrayMath.transpose(a.asarray(), dim1, dim2)
+    r = a.transpose(axes)
     if type(a) is NDArray:
         return NDArray(r)
     else:
@@ -1910,8 +1968,31 @@ def transpose(a, dim1=0, dim2=1):
                 dims.append(a.dims[dim1])
             else:
                 dims.append(a.dims[i])
-        return DimArray(NDArray(r), dims, a.fill_value, a.proj) 
-        
+        return DimArray(NDArray(r), dims, a.fill_value, a.proj)
+
+def swapaxes(a, axis1, axis2):
+    '''
+    Interchange two axes of an array.
+
+    :param axis1: (*int*) First axis.
+    :param axis2: (*int*) Second axis.
+
+    :returns: Axes swapped array.
+    '''
+    r = a.swapaxes(axis1, axis2)
+    if type(a) is NDArray:
+        return NDArray(r)
+    else:
+        dims = []
+        for i in range(0, len(a.dims)):
+            if i == dim1:
+                dims.append(a.dims[dim2])
+            elif i == dim2:
+                dims.append(a.dims[dim1])
+            else:
+                dims.append(a.dims[i])
+        return DimArray(NDArray(r), dims, a.fill_value, a.proj)
+
 def rot90(a, k=1):
     """
     Rotate an array by 90 degrees in the counter-clockwise direction. The first two dimensions
@@ -2128,11 +2209,25 @@ def asarray(data, dtype=None):
     :returns: NDArray data.
     '''
     if isinstance(data, Array):
-        return NDArray(data)
-    elif isinstance(data, NDArray):
-        return data
+        data = NDArray(data)
+    if isinstance(data, NDArray):
+        if dtype is None:
+            return data
+        else:
+            return a.astype(dtype)
     else:
-        return array(data, dtype) 
+        return array(data, dtype)
+
+def asanyarray(data, dtype=None):
+    '''
+    Convert the array_like data to NDArray data.
+
+    :param data: (*array_like*) The input data.
+    :param dtype: (*datatype*) Data type.
+
+    :returns: NDArray data.
+    '''
+    return asarray(data, dtype)
 
 def asmiarray(data):
     '''

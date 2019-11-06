@@ -491,11 +491,13 @@ class NDArray(object):
         
         :returns: (*array*) Converted array.
         '''
-        if dtype == 'int' or dtype is int:
+        if not isinstance(dtype, _dtype.DataType):
+            dtype = _dtype.DataType(dtype)
+        if dtype.kind == 'i':
             r = NDArray(ArrayUtil.toInteger(self._array))
-        elif dtype == 'float' or dtype is float:
+        elif dtype.kind == 'f':
             r = NDArray(ArrayUtil.toFloat(self._array))
-        elif dtype == 'boolean' or dtype == 'bool' or dtype is bool:
+        elif dtype.kind == 'b':
             r = NDArray(ArrayUtil.toBoolean(self._array))
         else:
             r = self
@@ -737,20 +739,48 @@ class NDArray(object):
         shape = jarray.array(shape, 'i')
         return NDArray(self._array.reshape(shape))
         
-    def transpose(self):
+    def transpose(self, axes=None):
         '''
-        Transpose 2-D array.
+        Permute the dimensions of an array.
+
+        :param axes: (*list of int*) By default, reverse the dimensions, otherwise permute the axes according to the
+            values given.
         
-        :returns: Transposed array.
+        :returns: Permuted array.
         '''
         if self.ndim == 1:
             return self[:]
-        dim1 = 0
-        dim2 = 1
-        r = ArrayMath.transpose(self.asarray(), dim1, dim2)
+
+        if axes is None:
+            axes = [self.ndim-i-1 for i in range(self.ndim)]
+
+        r = self._array.permute(axes)
         return NDArray(r)
         
     T = property(transpose)
+
+    def swapaxes(self, axis1, axis2):
+        '''
+        Interchange two axes of an array.
+
+        :param axis1: (*int*) First axis.
+        :param axis2: (*int*) Second axis.
+
+        :returns: Axes swapped array.
+        '''
+        if self.ndim == 1:
+            return self
+
+        if axis1 < 0:
+            axis1 = self.ndim + axis1
+        if axis2 < 0:
+            axis2 = self.ndim + axis2
+
+        if axis1 == axis2:
+            return self
+
+        r = self._array.transpose(axis1, axis2)
+        return NDArray(r)
     
     def inv(self):
         '''
@@ -767,6 +797,15 @@ class NDArray(object):
         '''
         Return a copy of the array collapsed into one dimension.
         
+        :returns: (*NDArray*) A copy of the input array, flattened to one dimension.
+        '''
+        r = self.reshape(int(self._array.getSize()))
+        return r
+
+    def ravel(self):
+        '''
+        Return a copy of the array collapsed into one dimension.
+
         :returns: (*NDArray*) A copy of the input array, flattened to one dimension.
         '''
         r = self.reshape(int(self._array.getSize()))

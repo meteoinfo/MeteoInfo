@@ -61,7 +61,9 @@ class Axes(object):
             self.axes.setUnits(units)
             
         aspect = kwargs.pop('aspect', 'auto')
-        axis = kwargs.pop('axis', True)
+        axis = kwargs.pop('axis', None)
+        if axis is None:
+            axis = kwargs.pop('axison', True)
         b_axis = self.get_axis(Location.BOTTOM)
         l_axis = self.get_axis(Location.LEFT)
         t_axis = self.get_axis(Location.TOP)

@@ -6438,7 +6438,7 @@ public class ArrayMath {
      * @param value Value
      */
     public static void setValue(Array a, Array b, Number value) {
-        if (a.getShape() == b.getShape()) {
+        if (Arrays.equals(a.getShape(), b.getShape())) {
             if (b.getDataType() == DataType.BOOLEAN) {
                 if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
                     for (int i = 0; i < a.getSize(); i++) {

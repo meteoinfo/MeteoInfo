@@ -732,10 +732,23 @@ class NDArray(object):
             shape = args[0]
             if isinstance(shape, int):
                 shape = [shape]
+            elif isinstance(shape, tuple):
+                shape = list(shape)
         else:
             shape = []
             for arg in args:
                 shape.append(arg)
+        n = 1
+        idx = None
+        i = 0
+        for s in shape:
+            if s == -1:
+                idx = i
+            else:
+                n = n * s
+            i += 1
+        if not idx is None:
+            shape[idx] = self.size / n
         shape = jarray.array(shape, 'i')
         return NDArray(self._array.reshape(shape))
         

@@ -5,6 +5,7 @@ org\meteoinfo\laboratory\gui\FrmMain$15.class
 org\meteoinfo\laboratory\gui\ConsoleDockable.class
 org\meteoinfo\laboratory\gui\MITextEditorPane$1.class
 org\meteoinfo\laboratory\codecomplete\JIntrospect.class
+org\meteoinfo\laboratory\util\JythonUtil.class
 org\meteoinfo\laboratory\gui\FrmAppsManager$5$1.class
 org\meteoinfo\laboratory\codecomplete\LanguageSupport.class
 org\meteoinfo\laboratory\gui\FrmCustom$1.class

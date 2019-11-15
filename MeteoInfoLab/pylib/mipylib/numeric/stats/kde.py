@@ -1,4 +1,6 @@
 from ..core import numeric as np
+import stats
+from ..linalg import linalg
 
 class GaussianKDE(object):
     """
@@ -71,12 +73,12 @@ class GaussianKDE(object):
         self.factor = self.covariance_factor()
         # Cache covariance and inverse covariance of the data
         if not hasattr(self, '_data_inv_cov'):
-            self.data_covariance = np.atleast_2d(np.stats.cov(self.dataset, rowvar=1, bias=False))
-            self.data_inv_cov = np.linalg.inv(self.data_covariance)
+            self.data_covariance = np.atleast_2d(stats.cov(self.dataset, rowvar=1, bias=False))
+            self.data_inv_cov = linalg.inv(self.data_covariance)
 
         self.covariance = self.data_covariance * self.factor ** 2
         self.inv_cov = self.data_inv_cov / self.factor ** 2
-        self.norm_factor = np.sqrt(np.linalg.det(2 * np.pi * self.covariance)) * self.num_dp
+        self.norm_factor = np.sqrt(linalg.det(2 * np.pi * self.covariance)) * self.num_dp
 
     def scotts_factor(self):
         return np.power(self.num_dp, -1. / (self.dim + 4))

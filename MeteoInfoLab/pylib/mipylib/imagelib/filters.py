@@ -21,7 +21,7 @@ __all__ = [
     'contrast','sharpen','rgb_adjust','channel_mix','gain','gamma','gray','gray_scale',
     'hsb_adjust','invert_alpha','invert','levels','mask','posterize','rescale','solarize',
     'threshold','tritone','flip','rotate','emboss','light','opacity','count','mean','minimum_filter',
-    'maximum_filter'
+    'maximum_filter','gaussian_filter'
     ]
 
 def __getimage(src):
@@ -593,4 +593,16 @@ def maximum_filter(a, size):
     :return: Filtered array. Has the same shape as input array.
     '''
     r = ImageUtil.maximumFilter(a._array, size)
+    return NDArray(r)
+
+def gaussian_filter(a, sigma, size=3):
+    '''
+    Calculate a multi-dimensional gaussian filter.
+
+    :param a: (*array*) Input array
+    :param sigma: (*float*) Standard deviation for Gaussian kernel.
+    :param size: (*int*) Window size
+    :return: Filtered array. Has the same shape as input array.
+    '''
+    r = ImageUtil.gaussianFilter(a._array, size, sigma)
     return NDArray(r)

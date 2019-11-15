@@ -286,6 +286,7 @@ org\meteoinfo\data\mathparser\ExpressionBase.class
 org\meteoinfo\data\dataframe\impl\Views$TransformedSeriesView.class
 org\meteoinfo\image\composite\ScreenComposite$Context.class
 org\meteoinfo\ndarray\ArrayDouble$D6.class
+org\meteoinfo\math\random\RandomUtil.class
 org\meteoinfo\data\meteodata\StationInfoData.class
 org\meteoinfo\image\filter\PremultiplyFilter.class
 org\meteoinfo\layout\MapLayout$15.class
@@ -903,7 +904,6 @@ org\meteoinfo\legend\LayerNode.class
 org\meteoinfo\image\filter\SharpenFilter.class
 org\meteoinfo\math\stats\kde\kdtree\HRect.class
 org\meteoinfo\image\filter\ColorHalftoneFilter.class
-org\meteoinfo\math\RandomUtil.class
 org\meteoinfo\ndarray\ArrayByte$D5.class
 org\meteoinfo\legend\LabelBreak.class
 org\meteoinfo\ndarray\ArrayChar$D5.class
@@ -1587,6 +1587,7 @@ org\meteoinfo\ndarray\ArrayComplex$D0.class
 org\meteoinfo\data\meteodata\micaps\MICAPS1DataInfo.class
 org\meteoinfo\script\MeteoInfoScript.class
 org\meteoinfo\layout\MapLayout$7.class
+org\meteoinfo\math\random\MTRandom.class
 org\meteoinfo\drawing\StringType.class
 org\meteoinfo\ui\TristateCheckBox$TristateDecorator.class
 org\meteoinfo\legend\LegendView$2.class

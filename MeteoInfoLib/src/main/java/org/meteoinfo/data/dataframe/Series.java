@@ -5,6 +5,10 @@
  */
 package org.meteoinfo.data.dataframe;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +24,7 @@ import org.meteoinfo.data.dataframe.impl.Views;
 import org.meteoinfo.data.dataframe.impl.WindowFunction;
 import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 
@@ -574,6 +579,67 @@ public class Series implements Iterable {
     @Override
     public String toString() {
         return head(100);
+    }
+
+    /**
+     * Save as CSV file
+     *
+     * @param fileName File name
+     * @param delimiter Delimiter
+     * @param dateFormat Date format string
+     * @param floatFormat Float format string
+     * @param index If write index
+     * @throws java.io.IOException
+     */
+    public void saveCSV(String fileName, String delimiter, String dateFormat, String floatFormat,
+                        boolean index) throws IOException {
+        BufferedWriter sw = new BufferedWriter(new FileWriter(new File(fileName)));
+        String str = "";
+        String idxFormat = this.index.format;
+        if (index) {
+            str = this.index.getName();
+            if (dateFormat != null && (this.index instanceof DateTimeIndex)) {
+                idxFormat = dateFormat;
+            }
+        }
+        for (int i = 0; i < this.size(); i++) {
+            if (str.isEmpty()) {
+                str = this.name;
+            } else {
+                str = str + delimiter + this.name;
+            }
+        }
+        sw.write(str);
+
+        String line, vstr;
+        String format;
+        DataType dtype = this.data.getDataType();
+        Column col = new Column(this.name, dtype);
+        if (dtype == DataType.FLOAT || dtype == DataType.DOUBLE) {
+            format = floatFormat == null ? col.getFormat() : floatFormat;
+        } else {
+            format = col.getFormat();
+        }
+        for (int i = 0; i < this.data.getSize(); i++) {
+            line = "";
+            if (index) {
+                line = this.index.toString(i, idxFormat).trim();
+            }
+            if (format == null) {
+                vstr = this.getValue(i).toString();
+            } else {
+                vstr = String.format(format, this.getValue(i));
+            }
+            if (line.isEmpty()) {
+                line = vstr;
+            } else {
+                line += delimiter + vstr;
+            }
+            sw.newLine();
+            sw.write(line);
+        }
+        sw.flush();
+        sw.close();
     }
     // </editor-fold>
 }

@@ -438,9 +438,17 @@ class NDArray(object):
         
     def copy(self):
         '''
-        Copy array vlaues to a new array.
+        Copy array values to a new array.
         '''
         return NDArray(self._array.copy())
+
+    def view(self):
+        '''
+        New view of array with the same data.
+
+        :return: New view of array with the same data.
+        '''
+        return NDArray(ArrayUtil.view(self._array))
         
     def tojarray(self, dtype=None):
         '''

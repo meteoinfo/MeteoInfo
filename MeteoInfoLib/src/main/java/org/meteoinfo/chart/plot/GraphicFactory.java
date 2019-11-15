@@ -48,6 +48,7 @@ import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.legend.PolylineBreak;
 import org.meteoinfo.legend.StreamlineBreak;
 import org.meteoinfo.math.meteo.MeteoMath;
+import org.meteoinfo.ndarray.IndexIterator;
 import org.meteoinfo.shape.ArcShape;
 import org.meteoinfo.shape.BarShape;
 import org.meteoinfo.shape.CapPolylineShape;
@@ -95,9 +96,11 @@ public class GraphicFactory {
         PolylineShape pls;
         List<PointD> points = new ArrayList<>();
         double x, y;
-        for (int i = 0; i < xdata.getSize(); i++) {
-            x = xdata.getDouble(i);
-            y = ydata.getDouble(i);
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        while (xIter.hasNext()) {
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             if (Double.isNaN(y) || Double.isNaN(x)) {
                 if (points.isEmpty()) {
                     continue;
@@ -139,10 +142,12 @@ public class GraphicFactory {
         PolylineShape pls;
         List<PointD> points = new ArrayList<>();
         double x, y;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
         if (xdata.getRank() == 1) {
-            for (int i = 0; i < xdata.getSize(); i++) {
-                x = xdata.getDouble(i);
-                y = ydata.getDouble(i);
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
                 if (Double.isNaN(y) || Double.isNaN(x)) {
                     if (points.isEmpty()) {
                         continue;
@@ -181,8 +186,10 @@ public class GraphicFactory {
             for (int j = 0; j < yn; j++) {
                 points = new ArrayList<>();
                 for (int i = 0; i < xn; i++) {
-                    x = xdata.getDouble(j * xn + i);
-                    y = ydata.getDouble(j * xn + i);
+                    x = xIter.getDoubleNext();
+                    y = yIter.getDoubleNext();
+                    //x = xdata.getDouble(j * xn + i);
+                    //y = ydata.getDouble(j * xn + i);
                     if (Double.isNaN(y) || Double.isNaN(x)) {
                         if (points.isEmpty()) {
                             continue;
@@ -231,13 +238,16 @@ public class GraphicFactory {
         PolylineShape pls;
         List<PointD> points;
         double x, y;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
         ColorBreak cb = cbs.get(0);
         if (xdata.getRank() == 1) {
             points = new ArrayList<>();
             ColorBreakCollection cbc = new ColorBreakCollection();
-            for (int i = 0; i < xdata.getSize(); i++) {
-                x = xdata.getDouble(i);
-                y = ydata.getDouble(i);
+            int i = 0;
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
                 if (cbs.size() > i) {
                     cb = cbs.get(i);
                 }
@@ -261,6 +271,7 @@ public class GraphicFactory {
                     points.add(new PointD(x, y));
                     cbc.add(cb);
                 }
+                i++;
             }
             if (points.size() > 1) {
                 if (iscurve) {
@@ -279,8 +290,10 @@ public class GraphicFactory {
                 points = new ArrayList<>();
                 cb = cbs.get(j);
                 for (int i = 0; i < xn; i++) {
-                    x = xdata.getDouble(j * xn + i);
-                    y = ydata.getDouble(j * xn + i);
+                    x = xIter.getDoubleNext();
+                    y = yIter.getDoubleNext();
+                    //x = xdata.getDouble(j * xn + i);
+                    //y = ydata.getDouble(j * xn + i);
                     if (Double.isNaN(y) || Double.isNaN(x)) {
                         if (points.isEmpty()) {
                             continue;
@@ -332,14 +345,17 @@ public class GraphicFactory {
         List<PointD> points;
         ColorBreakCollection cbc;
         double x, y, z;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
         ColorBreak cb;
         if (xdata.getRank() == 1) {
             points = new ArrayList<>();
             cbc = new ColorBreakCollection();
-            for (int i = 0; i < xdata.getSize(); i++) {
-                x = xdata.getDouble(i);
-                y = ydata.getDouble(i);
-                z = zdata.getDouble(i);
+            while (xIter.hasNext()){
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                z = zIter.getDoubleNext();
                 cb = ls.findLegendBreak(z);
                 if (Double.isNaN(y) || Double.isNaN(x)) {
                     if (points.isEmpty()) {
@@ -380,9 +396,12 @@ public class GraphicFactory {
                 points = new ArrayList<>();
                 cbc = new ColorBreakCollection();
                 for (int i = 0; i < xn; i++) {
-                    x = xdata.getDouble(j * xn + i);
-                    y = ydata.getDouble(j * xn + i);
-                    z = zdata.getDouble(j * xn + i);
+                    x = xIter.getDoubleNext();
+                    y = yIter.getDoubleNext();
+                    z = zIter.getDoubleNext();
+                    //x = xdata.getDouble(j * xn + i);
+                    //y = ydata.getDouble(j * xn + i);
+                    //z = zdata.getDouble(j * xn + i);
                     cb = ls.findLegendBreak(z);
                     if (Double.isNaN(y) || Double.isNaN(x)) {
                         if (points.isEmpty()) {
@@ -464,17 +483,20 @@ public class GraphicFactory {
         PolylineZShape pls;
         List<PointZ> points = new ArrayList<>();
         double x, y, z = 0;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
         boolean fixZ = false;
         if (zdata.getSize() == 1 && xdata.getSize() > 1) {
             fixZ = true;
             z = zdata.getDouble(0);
         }
         if (xdata.getRank() == 1) {
-            for (int i = 0; i < xdata.getSize(); i++) {
-                x = xdata.getDouble(i);
-                y = ydata.getDouble(i);
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
                 if (!fixZ) {
-                    z = zdata.getDouble(i);
+                    z = zIter.getDoubleNext();
                 }
                 if (Double.isNaN(y) || Double.isNaN(x)) {
                     if (points.isEmpty()) {
@@ -502,10 +524,13 @@ public class GraphicFactory {
             int xn = shape[1];
             for (int j = 0; j < yn; j++) {
                 for (int i = 0; i < xn; i++) {
-                    x = xdata.getDouble(j * xn + i);
-                    y = ydata.getDouble(j * xn + i);
+                    x = xIter.getDoubleNext();
+                    y = yIter.getDoubleNext();
+                    //x = xdata.getDouble(j * xn + i);
+                    //y = ydata.getDouble(j * xn + i);
                     if (!fixZ) {
-                        z = zdata.getDouble(j * xn + i);
+                        z = zIter.getDoubleNext();
+                        //z = zdata.getDouble(j * xn + i);
                     }
                     if (Double.isNaN(y) || Double.isNaN(x)) {
                         if (points.isEmpty()) {
@@ -548,6 +573,9 @@ public class GraphicFactory {
         PolylineZShape pls;
         List<PointZ> points = new ArrayList<>();
         double x, y, z = 0;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
         boolean fixZ = false;
         if (zdata.getSize() == 1 && xdata.getSize() > 1) {
             fixZ = true;
@@ -556,11 +584,11 @@ public class GraphicFactory {
         ColorBreak cb;
         if (xdata.getRank() == 1) {
             cb = cbs.get(0);
-            for (int i = 0; i < xdata.getSize(); i++) {
-                x = xdata.getDouble(i);
-                y = ydata.getDouble(i);
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
                 if (!fixZ) {
-                    z = zdata.getDouble(i);
+                    z = zIter.getDoubleNext();
                 }
                 if (Double.isNaN(y) || Double.isNaN(x)) {
                     if (points.isEmpty()) {
@@ -589,10 +617,13 @@ public class GraphicFactory {
             for (int j = 0; j < yn; j++) {
                 cb = cbs.get(j);
                 for (int i = 0; i < xn; i++) {
-                    x = xdata.getDouble(j * xn + i);
-                    y = ydata.getDouble(j * xn + i);
+                    x = xIter.getDoubleNext();
+                    y = yIter.getDoubleNext();
+                    //x = xdata.getDouble(j * xn + i);
+                    //y = ydata.getDouble(j * xn + i);
                     if (!fixZ) {
-                        z = zdata.getDouble(j * xn + i);
+                        z = zIter.getDoubleNext();
+                        //z = zdata.getDouble(j * xn + i);
                     }
                     if (Double.isNaN(y) || Double.isNaN(x)) {
                         if (points.isEmpty()) {
@@ -637,6 +668,10 @@ public class GraphicFactory {
         PolylineZShape pls;
         List<PointZ> points = new ArrayList<>();
         double x, y, z = 0, m;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
+        IndexIterator mIter = mdata.getIndexIterator();
         boolean fixZ = false;
         if (zdata.getSize() == 1 && xdata.getSize() > 1) {
             fixZ = true;
@@ -646,13 +681,13 @@ public class GraphicFactory {
         ColorBreakCollection cbs;
         if (xdata.getRank() == 1) {
             cbs = new ColorBreakCollection();
-            for (int i = 0; i < xdata.getSize(); i++) {
-                x = xdata.getDouble(i);
-                y = ydata.getDouble(i);
+            while (xIter.hasNext()){
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
                 if (!fixZ) {
-                    z = zdata.getDouble(i);
+                    z = zIter.getDoubleNext();
                 }
-                m = mdata.getDouble(i);
+                m = mIter.getDoubleNext();
                 cb = ls.findLegendBreak(m);
                 if (Double.isNaN(y) || Double.isNaN(x)) {
                     if (points.isEmpty()) {
@@ -683,12 +718,16 @@ public class GraphicFactory {
             for (int j = 0; j < yn; j++) {
                 cbs = new ColorBreakCollection();
                 for (int i = 0; i < xn; i++) {
-                    x = xdata.getDouble(j * xn + i);
-                    y = ydata.getDouble(j * xn + i);
+                    x = xIter.getDoubleNext();
+                    y = yIter.getDoubleNext();
+                    //x = xdata.getDouble(j * xn + i);
+                    //y = ydata.getDouble(j * xn + i);
                     if (!fixZ) {
-                        z = zdata.getDouble(j * xn + i);
+                        z = zIter.getDoubleNext();
+                        //z = zdata.getDouble(j * xn + i);
                     }
-                    m = mdata.getDouble(j * xn + i);
+                    m = mIter.getDoubleNext();
+                    //m = mdata.getDouble(j * xn + i);
                     cb = ls.findLegendBreak(m);
                     if (Double.isNaN(y) || Double.isNaN(x)) {
                         if (points.isEmpty()) {
@@ -742,10 +781,16 @@ public class GraphicFactory {
         List<PointD> points = new ArrayList<>();
         List<PointD> eps;
         double x, y, xerrL, xerrR, yerrB, yerrU;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator xelIter = xErrorLeft == null ? null : xErrorLeft.getIndexIterator();
+        IndexIterator xerIter = xErrorRight == null ? null : xErrorRight.getIndexIterator();
+        IndexIterator yebIter = yErrorBottom == null ? null : yErrorBottom.getIndexIterator();
+        IndexIterator yeuIter = yErrorUp == null ? null : yErrorUp.getIndexIterator();
         //Loop
-        for (int i = 0; i < xdata.getSize(); i++) {
-            x = xdata.getDouble(i);
-            y = ydata.getDouble(i);
+        while (xIter.hasNext()) {
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             if (Double.isNaN(y) || Double.isNaN(x)) {
                 if (points.isEmpty()) {
                     continue;
@@ -757,11 +802,19 @@ public class GraphicFactory {
                 pls.setPoints(points);
                 gc.add(new Graphic(pls, cb));
                 points = new ArrayList<>();
+                if (yebIter != null) {
+                    yebIter.next();
+                    yeuIter.next();
+                }
+                if (xelIter != null) {
+                    xelIter.next();
+                    xerIter.next();
+                }
             } else {
                 points.add(new PointD(x, y));
-                if (yErrorBottom != null) {
-                    yerrB = yErrorBottom.getDouble(i);
-                    yerrU = yErrorUp.getDouble(i);
+                if (yebIter != null) {
+                    yerrB = yebIter.getDoubleNext();
+                    yerrU = yeuIter.getDoubleNext();
                     eps = new ArrayList<>();
                     eps.add(new PointD(x, y + yerrU));
                     eps.add(new PointD(x, y - yerrB));
@@ -770,9 +823,9 @@ public class GraphicFactory {
                     epls.setPoints(eps);
                     gc.add(new Graphic(epls, ecb));
                 }
-                if (xErrorLeft != null) {
-                    xerrL = xErrorLeft.getDouble(i);
-                    xerrR = xErrorRight.getDouble(i);
+                if (xelIter != null) {
+                    xerrL = xelIter.getDoubleNext();
+                    xerrR = xerIter.getDoubleNext();
                     eps = new ArrayList<>();
                     eps.add(new PointD(x - xerrL, y));
                     eps.add(new PointD(x + xerrR, y));
@@ -821,6 +874,12 @@ public class GraphicFactory {
         List<PointD> points = new ArrayList<>();
         List<PointD> eps;
         double x, y, xerrL, xerrR, yerrB, yerrU;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator xelIter = xErrorLeft == null ? null : xErrorLeft.getIndexIterator();
+        IndexIterator xerIter = xErrorRight == null ? null : xErrorRight.getIndexIterator();
+        IndexIterator yebIter = yErrorBottom == null ? null : yErrorBottom.getIndexIterator();
+        IndexIterator yeuIter = yErrorUp == null ? null : yErrorUp.getIndexIterator();
         double width;
         if (capSize == null) {
             width = (ArrayMath.getMaximum(xdata) - ArrayMath.getMinimum(xdata)) / xdata.getSize() * 0.1;
@@ -828,9 +887,9 @@ public class GraphicFactory {
             width = capSize * 0.5;
         }
         //Loop
-        for (int i = 0; i < xdata.getSize(); i++) {
-            x = xdata.getDouble(i);
-            y = ydata.getDouble(i);
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             if (Double.isNaN(y) || Double.isNaN(x)) {
                 if (points.isEmpty()) {
                     continue;
@@ -842,11 +901,19 @@ public class GraphicFactory {
                 pls.setPoints(points);
                 gc.add(new Graphic(pls, cb));
                 points = new ArrayList<>();
+                if (yebIter != null) {
+                    yebIter.next();
+                    yeuIter.next();
+                }
+                if (xelIter != null) {
+                    xelIter.next();
+                    xerIter.next();
+                }
             } else {
                 points.add(new PointD(x, y));
                 if (yErrorBottom != null) {
-                    yerrB = yErrorBottom.getDouble(i);
-                    yerrU = yErrorUp.getDouble(i);
+                    yerrB = yebIter.getDoubleNext();
+                    yerrU = yeuIter.getDoubleNext();
                     eps = new ArrayList<>();
                     eps.add(new PointD(x, y + yerrU));
                     eps.add(new PointD(x, y - yerrB));
@@ -867,8 +934,8 @@ public class GraphicFactory {
                     gc.add(new Graphic(epls, ecb));
                 }
                 if (xErrorLeft != null) {
-                    xerrL = xErrorLeft.getDouble(i);
-                    xerrR = xErrorRight.getDouble(i);
+                    xerrL = xelIter.getDoubleNext();
+                    xerrR = xerIter.getDoubleNext();
                     eps = new ArrayList<>();
                     eps.add(new PointD(x - xerrL, y));
                     eps.add(new PointD(x + xerrR, y));
@@ -904,73 +971,6 @@ public class GraphicFactory {
     }
 
     /**
-     * Create error LineString graphic
-     *
-     * @param xdata X data array
-     * @param ydata Y data array
-     * @param xError X error array
-     * @param yError Y error array
-     * @param cb Color break
-     * @return LineString graphic
-     */
-    public static GraphicCollection createErrorLineString_bak(Array xdata, Array ydata, Array xError, Array yError, ColorBreak cb) {
-        GraphicCollection gc = new GraphicCollection();
-        PolylineErrorShape pls;
-        List<PointD> points = new ArrayList<>();
-        List<Number> xerrors = new ArrayList<>();
-        List<Number> yerrors = new ArrayList<>();
-        double x, y;
-        for (int i = 0; i < xdata.getSize(); i++) {
-            x = xdata.getDouble(i);
-            y = ydata.getDouble(i);
-            if (Double.isNaN(y) || Double.isNaN(x)) {
-                if (points.isEmpty()) {
-                    continue;
-                }
-                if (points.size() == 1) {
-                    points.add((PointD) points.get(0).clone());
-                }
-                pls = new PolylineErrorShape();
-                pls.setPoints(points);
-                if (xError != null) {
-                    pls.setXerror(xerrors);
-                }
-                if (yError != null) {
-                    pls.setYerror(yerrors);
-                }
-                pls.updateExtent();
-                gc.add(new Graphic(pls, cb));
-                points = new ArrayList<>();
-                xerrors = new ArrayList<>();
-                yerrors = new ArrayList<>();
-            } else {
-                points.add(new PointD(x, y));
-                if (xError != null) {
-                    xerrors.add(xError.getDouble(i));
-                }
-                if (yError != null) {
-                    yerrors.add(yError.getDouble(i));
-                }
-            }
-        }
-        if (points.size() == 1) {
-            points.add((PointD) points.get(0).clone());
-        }
-        pls = new PolylineErrorShape();
-        pls.setPoints(points);
-        if (xError != null) {
-            pls.setXerror(xerrors);
-        }
-        if (yError != null) {
-            pls.setYerror(yerrors);
-        }
-        pls.updateExtent();
-        gc.add(new Graphic(pls, cb));
-
-        return gc;
-    }
-
-    /**
      * Create step LineString graphic
      *
      * @param xdata X data array
@@ -984,6 +984,12 @@ public class GraphicFactory {
         PolylineShape pls;
         List<PointD> points = new ArrayList<>();
         double x, x1, x2, y, y1, y2;
+        if (!xdata.getIndexPrivate().isFastIterator()) {
+            xdata = xdata.copy();
+        }
+        if (!ydata.getIndexPrivate().isFastIterator()) {
+            ydata = ydata.copy();
+        }
         switch (where) {
             case "mid":
                 for (int i = 0; i < xdata.getSize() - 1; i++) {
@@ -1100,9 +1106,11 @@ public class GraphicFactory {
             graphics.add(createLineString(xdata, ydata, cb));
         } else {
             PointShape ps;
-            for (int i = 0; i < xdata.getSize(); i++) {
+            IndexIterator xIter = xdata.getIndexIterator();
+            IndexIterator yIter = ydata.getIndexIterator();
+            while (xIter.hasNext()){
                 ps = new PointShape();
-                ps.setPoint(new PointD(xdata.getDouble(i), ydata.getDouble(i)));
+                ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
                 graphics.add(new Graphic(ps, cb));
             }
         }
@@ -1120,11 +1128,15 @@ public class GraphicFactory {
     public static GraphicCollection createPoints(Array xdata, Array ydata, List<ColorBreak> cbs) {
         GraphicCollection graphics = new GraphicCollection();
         PointShape ps;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
         if (cbs.size() == xdata.getSize()) {
-            for (int i = 0; i < xdata.getSize(); i++) {
+            int i = 0;
+            while (xIter.hasNext()){
                 ps = new PointShape();
-                ps.setPoint(new PointD(xdata.getDouble(i), ydata.getDouble(i)));
+                ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
                 graphics.add(new Graphic(ps, cbs.get(i)));
+                i++;
             }
             graphics.setSingleLegend(false);
             LegendScheme ls = new LegendScheme();
@@ -1133,9 +1145,9 @@ public class GraphicFactory {
             ls.setShapeType(ShapeTypes.Point);
             graphics.setLegendScheme(ls);
         } else {
-            for (int i = 0; i < xdata.getSize(); i++) {
+            while (xIter.hasNext()){
                 ps = new PointShape();
-                ps.setPoint(new PointD(xdata.getDouble(i), ydata.getDouble(i)));
+                ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
                 graphics.add(new Graphic(ps, cbs.get(0)));
                 LegendScheme ls = new LegendScheme();
                 ls.setLegendBreaks(cbs);
@@ -1161,10 +1173,13 @@ public class GraphicFactory {
         PointShape ps;
         double z;
         ColorBreak cb;
-        for (int i = 0; i < xdata.getSize(); i++) {
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
+        while (xIter.hasNext()) {
             ps = new PointShape();
-            ps.setPoint(new PointD(xdata.getDouble(i), ydata.getDouble(i)));
-            z = zdata.getDouble(i);
+            ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
+            z = zIter.getDoubleNext();
             cb = ls.findLegendBreak(z);
             graphics.add(new Graphic(ps, cb));
         }
@@ -1206,15 +1221,20 @@ public class GraphicFactory {
             fixZ = true;
             z = zdata.getDouble(0);
         }
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
         if (cbs.size() == xdata.getSize()) {
-            for (int i = 0; i < xdata.getSize(); i++) {
+            int i = 0;
+            while (xIter.hasNext()) {
                 ps = new PointZShape();
                 if (fixZ) {
-                    ps.setPoint(new PointZ(xdata.getDouble(i), ydata.getDouble(i), z));
+                    ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext(), z));
                 } else {
-                    ps.setPoint(new PointZ(xdata.getDouble(i), ydata.getDouble(i), zdata.getDouble(i)));
+                    ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext(), zIter.getDoubleNext()));
                 }
                 graphics.add(new Graphic(ps, cbs.get(i)));
+                i++;
             }
             graphics.setSingleLegend(false);
             LegendScheme ls = new LegendScheme();
@@ -1223,12 +1243,12 @@ public class GraphicFactory {
             ls.setShapeType(ShapeTypes.Point);
             graphics.setLegendScheme(ls);
         } else {
-            for (int i = 0; i < xdata.getSize(); i++) {
+            while (xIter.hasNext()) {
                 ps = new PointZShape();
                 if (fixZ) {
-                    ps.setPoint(new PointZ(xdata.getDouble(i), ydata.getDouble(i), z));
+                    ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext(), z));
                 } else {
-                    ps.setPoint(new PointZ(xdata.getDouble(i), ydata.getDouble(i), zdata.getDouble(i)));
+                    ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext(), zIter.getDoubleNext()));
                 }
                 graphics.add(new Graphic(ps, cbs.get(0)));
                 LegendScheme ls = new LegendScheme();
@@ -1262,14 +1282,18 @@ public class GraphicFactory {
             fixZ = true;
             z = zdata.getDouble(0);
         }
-        for (int i = 0; i < xdata.getSize(); i++) {
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
+        IndexIterator cIter = cdata.getIndexIterator();
+        while (xIter.hasNext()) {
             ps = new PointZShape();
             if (fixZ) {
-                ps.setPoint(new PointZ(xdata.getDouble(i), ydata.getDouble(i), z));
+                ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext(), z));
             } else {
-                ps.setPoint(new PointZ(xdata.getDouble(i), ydata.getDouble(i), zdata.getDouble(i)));
+                ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext(), zIter.getDoubleNext()));
             }
-            c = cdata.getDouble(i);
+            c = cIter.getDoubleNext();
             cb = ls.findLegendBreak(c);
             graphics.add(new Graphic(ps, cb));
         }
@@ -1303,10 +1327,14 @@ public class GraphicFactory {
         }
         List<PointZ> pzs;
         PolylineZShape pls;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
         if (cbs.size() == xdata.getSize()) {
-            for (int i = 0; i < xdata.getSize(); i++) {
-                x = xdata.getDouble(i);
-                y = ydata.getDouble(i);
+            int i = 0;
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
                 if (Double.isNaN(x) || Double.isNaN(y)) {
                     continue;
                 }
@@ -1317,7 +1345,7 @@ public class GraphicFactory {
                     pzs.add(new PointZ(x, y, bottom));
                     pzs.add(new PointZ(x, y, z0));
                 } else {
-                    z = zdata.getDouble(i);
+                    z = zIter.getDoubleNext();
                     if (Double.isNaN(z)) {
                         continue;
                     }
@@ -1335,6 +1363,7 @@ public class GraphicFactory {
                 } else {
                     stemlines.add(new Graphic(pls, plb));
                 }
+                i++;
             }
             graphics.setSingleLegend(false);
             LegendScheme ls = new LegendScheme();
@@ -1343,17 +1372,20 @@ public class GraphicFactory {
             ls.setShapeType(ShapeTypes.Point);
             graphics.setLegendScheme(ls);
         } else {
-            for (int i = 0; i < xdata.getSize(); i++) {
+            while (xIter.hasNext()) {
                 ps = new PointZShape();
                 pzs = new ArrayList<>();
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
                 if (fixZ) {
-                    ps.setPoint(new PointZ(xdata.getDouble(i), ydata.getDouble(i), z0));
-                    pzs.add(new PointZ(xdata.getDouble(i), ydata.getDouble(i), bottom));
-                    pzs.add(new PointZ(xdata.getDouble(i), ydata.getDouble(i), z0));
+                    ps.setPoint(new PointZ(x, y, z0));
+                    pzs.add(new PointZ(x, y, bottom));
+                    pzs.add(new PointZ(x, y, z0));
                 } else {
-                    ps.setPoint(new PointZ(xdata.getDouble(i), ydata.getDouble(i), zdata.getDouble(i)));
-                    pzs.add(new PointZ(xdata.getDouble(i), ydata.getDouble(i), bottom));
-                    pzs.add(new PointZ(xdata.getDouble(i), ydata.getDouble(i), zdata.getDouble(i)));
+                    z = zIter.getDoubleNext();
+                    ps.setPoint(new PointZ(x, y, z));
+                    pzs.add(new PointZ(x, y, bottom));
+                    pzs.add(new PointZ(x, y, z));
                 }
                 graphics.add(new Graphic(ps, cbs.get(0)));
                 pls = new PolylineZShape();
@@ -1403,9 +1435,13 @@ public class GraphicFactory {
         }
         List<PointZ> pzs;
         PolylineZShape pls;
-        for (int i = 0; i < xdata.getSize(); i++) {
-            x = xdata.getDouble(i);
-            y = ydata.getDouble(i);
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
+        IndexIterator cIter = cdata.getIndexIterator();
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             if (Double.isNaN(x) || Double.isNaN(y)) {
                 continue;
             }
@@ -1416,7 +1452,7 @@ public class GraphicFactory {
                 pzs.add(new PointZ(x, y, bottom));
                 pzs.add(new PointZ(x, y, z0));
             } else {
-                z = zdata.getDouble(i);
+                z = zIter.getDoubleNext();
                 if (Double.isNaN(z)) {
                     continue;
                 }
@@ -1424,7 +1460,7 @@ public class GraphicFactory {
                 pzs.add(new PointZ(x, y, bottom));
                 pzs.add(new PointZ(x, y, z));
             }
-            c = cdata.getDouble(i);
+            c = cIter.getDoubleNext();
             cb = ls.findLegendBreak(c);
             graphics.add(new Graphic(ps, cb));
             pls = new PolylineZShape();
@@ -1457,9 +1493,11 @@ public class GraphicFactory {
         PolygonShape pgs;
         PointD p;
         List<PointD> points = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            x = xa.getDouble(i);
-            y = ya.getDouble(i);
+        IndexIterator xIter = xa.getIndexIterator();
+        IndexIterator yIter = ya.getIndexIterator();
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             if (Double.isNaN(x)) {
                 if (points.size() > 2) {
                     pgs = new PolygonShape();
@@ -1498,6 +1536,12 @@ public class GraphicFactory {
         int rowNum = shape[0];
         double z1, z2, z3, z4, z;
         int idx1, idx2, idx3, idx4;
+        if (!xa.getIndexPrivate().isFastIterator())
+            xa = xa.copy();
+        if (!ya.getIndexPrivate().isFastIterator())
+            ya = ya.copy();
+        if (!za.getIndexPrivate().isFastIterator())
+            za = za.copy();
         for (int i = 0; i < rowNum - 1; i++) {
             for (int j = 0; j < colNum - 1; j++) {
                 idx1 = i * colNum + j;
@@ -1545,6 +1589,12 @@ public class GraphicFactory {
         PolylineZShape ps;
         Graphic graphic;
         List<PointZ> points;
+        if (!xa.getIndexPrivate().isFastIterator())
+            xa = xa.copy();
+        if (!ya.getIndexPrivate().isFastIterator())
+            ya = ya.copy();
+        if (!za.getIndexPrivate().isFastIterator())
+            za = za.copy();
         for (int i = 0; i < rowNum - 1; i++) {
             for (int j = 0; j < colNum - 1; j++) {
                 idx1 = i * colNum + j;
@@ -1620,6 +1670,12 @@ public class GraphicFactory {
         double z1, z2, z3, z4, z;
         int idx1, idx2, idx3, idx4;
         PolygonBreak pb;
+        if (!xa.getIndexPrivate().isFastIterator())
+            xa = xa.copy();
+        if (!ya.getIndexPrivate().isFastIterator())
+            ya = ya.copy();
+        if (!za.getIndexPrivate().isFastIterator())
+            za = za.copy();
         for (int i = 0; i < rowNum - 1; i++) {
             for (int j = 0; j < colNum - 1; j++) {
                 idx1 = i * colNum + j;
@@ -1825,9 +1881,12 @@ public class GraphicFactory {
         }
         double miny = 0;
         boolean baseLine = false;
-        for (int i = 0; i < n; i++) {
-            x = xdata.getDouble(i);
-            y = ydata.getDouble(i);
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        int i = 0;
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             // Add bar
             if (drawBottom) {
                 if (bottom.getSize() > i) {
@@ -1878,6 +1937,7 @@ public class GraphicFactory {
                 pls.setPoints(pList);
                 graphics.add(new Graphic(pls, ebreak));
             }
+            i++;
         }
 
         if (baseLine) {
@@ -1933,9 +1993,12 @@ public class GraphicFactory {
         }
         double minx = 0;
         boolean baseLine = false;
-        for (int i = 0; i < n; i++) {
-            x = xdata.getDouble(i);
-            y = ydata.getDouble(i);
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        int i = 0;
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             // Add bar
             if (drawLeft) {
                 if (left.getSize() > i) {
@@ -1986,6 +2049,7 @@ public class GraphicFactory {
                 pls.setPoints(pList);
                 graphics.add(new Graphic(pls, ebreak));
             }
+            i++;
         }
 
         if (baseLine) {
@@ -2041,9 +2105,12 @@ public class GraphicFactory {
         }
         double miny = 0;
         boolean baseLine = false;
-        for (int i = 0; i < n; i++) {
-            x = xdata.getDouble(i);
-            y = ydata.getDouble(i);
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        int i = 0;
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             // Add bar
             if (drawBottom) {
                 if (bottom.getSize() > i) {
@@ -2098,6 +2165,7 @@ public class GraphicFactory {
                 pls.setPoints(pList);
                 graphics.add(new Graphic(pls, ebreak));
             }
+            i++;
         }
 
         if (baseLine) {
@@ -2115,56 +2183,6 @@ public class GraphicFactory {
             graphics.add(new Graphic(pls, ebreak));
         }
         graphics.setSingleLegend(false);
-
-        return graphics;
-    }
-
-    /**
-     * Create bar graphics
-     *
-     * @param xdata X data array
-     * @param ydata Y data array
-     * @param autoWidth Is auto width or not
-     * @param width Width
-     * @param drawError Is draw error or not
-     * @param error Error
-     * @param drawBottom Is draw bottom or not
-     * @param bottom Bottom
-     * @param bbs Bar breaks
-     * @return Bar graphics
-     */
-    public static GraphicCollection createBars_bak(Array xdata, Array ydata, boolean autoWidth,
-            double width, boolean drawError, Array error, boolean drawBottom, Array bottom,
-            List<BarBreak> bbs) {
-        GraphicCollection graphics = new GraphicCollection();
-        int n = (int) xdata.getSize();
-        double x, y;
-        BarBreak bb = bbs.get(0);
-        for (int i = 0; i < n; i++) {
-            x = xdata.getDouble(i);
-            y = ydata.getDouble(i);
-            BarShape bs = new BarShape();
-            bs.setPoint(new PointD(x, y));
-            bs.setAutoWidth(autoWidth);
-            bs.setWidth(width);
-            bs.setDrawError(drawError);
-            if (drawError) {
-                bs.setError(error.getDouble(i));
-            }
-            bs.setDrawBottom(drawBottom);
-            if (drawBottom) {
-                bs.setBottom(bottom.getDouble(i));
-            }
-            if (bbs.size() > i) {
-                bb = bbs.get(i);
-            }
-            graphics.add(new Graphic(bs, bb));
-        }
-        if (bbs.size() == 1) {
-            graphics.setSingleLegend(true);
-        } else {
-            graphics.setSingleLegend(false);
-        }
 
         return graphics;
     }
@@ -2216,6 +2234,10 @@ public class GraphicFactory {
         int n = (int) ydata.getSize();
         double x, y, width;
         BarBreak bb = bbs.get(0);
+        if (!xdata.getIndexPrivate().isFastIterator())
+            xdata = xdata.copy();
+        if (!ydata.getIndexPrivate().isFastIterator())
+            ydata = ydata.copy();
         for (int i = 0; i < n; i++) {
             x = (xdata.getDouble(i + 1) + xdata.getDouble(i)) * 0.5;
             width = xdata.getDouble(i + 1) - xdata.getDouble(i);
@@ -2257,9 +2279,11 @@ public class GraphicFactory {
         double x, y;
         double miny = bottom;
         boolean baseLine = false;
-        for (int i = 0; i < n; i++) {
-            x = xdata.getDouble(i);
-            y = ydata.getDouble(i);
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        while (xIter.hasNext()) {
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             if (Double.isNaN(x) || Double.isNaN(y)) {
                 continue;
             }
@@ -2280,8 +2304,11 @@ public class GraphicFactory {
 
         if (baseLine) {
             List<PointD> pList = new ArrayList<>();
-            double x1 = xdata.getDouble(0);
-            double x2 = xdata.getDouble((int) xdata.getSize() - 1);
+            Index xIdx = xdata.getIndex();
+            xIdx.setCurrentCounter(0);
+            double x1 = xdata.getDouble(xIdx);
+            xIdx.setCurrentCounter((int)xdata.getSize() - 1);
+            double x2 = xdata.getDouble(xIdx);
             pList.add(new PointD(x1, miny));
             pList.add(new PointD(x2, miny));
             PolylineShape pls = new PolylineShape();
@@ -2599,20 +2626,20 @@ public class GraphicFactory {
                 undefColor = ls.getLegendBreaks().get(i).getColor();
             }
         }
-        Color defaultColor = breakColor[breakNum - 1];    //默认颜色为最后一个颜色
+        Color defaultColor = breakColor[breakNum - 1];    //Last color
         BufferedImage aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         double oneValue;
         Color oneColor;
+        Index index = gdata.getIndex();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                //oneValue = gdata.data[i][j];
-                oneValue = gdata.getDouble(i * width + j);
+                index.set(i, j);
+                oneValue = gdata.getDouble(index);
                 if (Double.isNaN(oneValue)) {
                     oneColor = undefColor;
                 } else {
                     oneColor = defaultColor;
                     if (ls.getLegendType() == LegendType.GraduatedColor) {
-                        //循环只到breakNum-1 是因为最后一个LegendBreaks的EndValue和StartValue是一样的
                         for (int k = 0; k < breakNum - 1; k++) {
                             if (oneValue < breakValue[k]) {
                                 oneColor = breakColor[k];
@@ -2673,20 +2700,18 @@ public class GraphicFactory {
                 undefColor = ls.getLegendBreaks().get(i).getColor();
             }
         }
-        Color defaultColor = breakColor[breakNum - 1];    //默认颜色为最后一个颜色
+        Color defaultColor = breakColor[breakNum - 1];    //Last color
         BufferedImage aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         double oneValue;
         Color oneColor;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                //oneValue = gdata.data[i][j];
                 oneValue = gdata.getDoubleValue(i, j);
                 if (Double.isNaN(oneValue) || MIMath.doubleEquals(oneValue, gdata.missingValue)) {
                     oneColor = undefColor;
                 } else {
                     oneColor = defaultColor;
                     if (ls.getLegendType() == LegendType.GraduatedColor) {
-                        //循环只到breakNum-1 是因为最后一个LegendBreaks的EndValue和StartValue是一样的
                         for (int k = 0; k < breakNum - 1; k++) {
                             if (oneValue < breakValue[k]) {
                                 oneColor = breakColor[k];
@@ -2742,20 +2767,18 @@ public class GraphicFactory {
                 undefColor = ls.getLegendBreaks().get(i).getColor();
             }
         }
-        Color defaultColor = breakColor[breakNum - 1];    //默认颜色为最后一个颜色
+        Color defaultColor = breakColor[breakNum - 1];    //Last color
         BufferedImage aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         double oneValue;
         Color oneColor;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                //oneValue = gdata.data[i][j];
                 oneValue = gdata.getDoubleValue(i, j);
                 if (Double.isNaN(oneValue) || MIMath.doubleEquals(oneValue, gdata.missingValue)) {
                     oneColor = undefColor;
                 } else {
                     oneColor = defaultColor;
                     if (ls.getLegendType() == LegendType.GraduatedColor) {
-                        //循环只到breakNum-1 是因为最后一个LegendBreaks的EndValue和StartValue是一样的
                         for (int k = 0; k < breakNum - 1; k++) {
                             if (oneValue < breakValue[k]) {
                                 oneColor = breakColor[k];
@@ -3637,6 +3660,12 @@ public class GraphicFactory {
         int rowNum = shape[0];
         double x1, x2, x3, x4, v;
         PolygonBreak pb;
+        if (!x_s.getIndexPrivate().isFastIterator())
+            x_s = x_s.copy();
+        if (!y_s.getIndexPrivate().isFastIterator())
+            y_s = y_s.copy();
+        if (!a.getIndexPrivate().isFastIterator())
+            a = a.copy();
         for (int i = 0; i < rowNum - 1; i++) {
             for (int j = 0; j < colNum - 1; j++) {
                 x1 = x_s.getDouble(i * colNum + j);
@@ -3675,6 +3704,13 @@ public class GraphicFactory {
      */
     public static GraphicCollection createGridPolygons(Array x_s, Array y_s, Array a, LegendScheme ls) {
         GraphicCollection gc = new GraphicCollection();
+
+        if (!x_s.getIndexPrivate().isFastIterator())
+            x_s = x_s.copy();
+        if (!y_s.getIndexPrivate().isFastIterator())
+            y_s = y_s.copy();
+        if (!a.getIndexPrivate().isFastIterator())
+            a = a.copy();
 
         int colNum = (int) x_s.getSize();
         int rowNum = (int) y_s.getSize();
@@ -3749,6 +3785,12 @@ public class GraphicFactory {
             Array y2data, Array where, PolygonBreak pb) {
         GraphicCollection gc = new GraphicCollection();
         int len = (int) xdata.getSize();
+        if (!xdata.getIndexPrivate().isFastIterator())
+            xdata = xdata.copy();
+        if (!y1data.getIndexPrivate().isFastIterator())
+            y1data = y1data.copy();
+        if (!y2data.getIndexPrivate().isFastIterator())
+            y2data = y2data.copy();
         if (where == null) {
             if (ArrayMath.containsNaN(y1data) || ArrayMath.containsNaN(y2data)) {
                 where = Array.factory(DataType.BOOLEAN, new int[]{len});
@@ -3777,6 +3819,8 @@ public class GraphicFactory {
             Graphic graphic = new Graphic(pgs, pb);
             gc.add(graphic);
         } else {
+            if (!where.getIndexPrivate().isFastIterator())
+                where = where.copy();
             boolean ob = false;
             List<List<Integer>> idxs = new ArrayList<>();
             List<Integer> idx = new ArrayList<>();
@@ -3830,6 +3874,12 @@ public class GraphicFactory {
             Array x2data, Array where, PolygonBreak pb) {
         GraphicCollection gc = new GraphicCollection();
         int len = (int) ydata.getSize();
+        if (!ydata.getIndexPrivate().isFastIterator())
+            ydata = ydata.copy();
+        if (!x1data.getIndexPrivate().isFastIterator())
+            x1data = x1data.copy();
+        if (!x2data.getIndexPrivate().isFastIterator())
+            x2data = x2data.copy();
         if (where == null) {
             if (ArrayMath.containsNaN(x1data) || ArrayMath.containsNaN(x2data)) {
                 where = Array.factory(DataType.BOOLEAN, new int[]{len});
@@ -3858,6 +3908,8 @@ public class GraphicFactory {
             Graphic graphic = new Graphic(pgs, pb);
             gc.add(graphic);
         } else {
+            if (!where.getIndexPrivate().isFastIterator())
+                where = where.copy();
             boolean ob = false;
             List<List<Integer>> idxs = new ArrayList<>();
             List<Integer> idx = new ArrayList<>();
@@ -3916,6 +3968,12 @@ public class GraphicFactory {
         gc.setZValue(offset);
         gc.setZDir(zdir);
         int len = (int) xdata.getSize();
+        if (!xdata.getIndexPrivate().isFastIterator())
+            xdata = xdata.copy();
+        if (!y1data.getIndexPrivate().isFastIterator())
+            y1data = y1data.copy();
+        if (!y2data.getIndexPrivate().isFastIterator())
+            y2data = y2data.copy();
         if (where == null) {
             if (ArrayMath.containsNaN(y1data) || ArrayMath.containsNaN(y2data)) {
                 where = Array.factory(DataType.BOOLEAN, new int[]{len});
@@ -3964,6 +4022,8 @@ public class GraphicFactory {
             Graphic graphic = new Graphic(pgs, pb);
             gc.add(graphic);
         } else {
+            if (!where.getIndexPrivate().isFastIterator())
+                where = where.copy();
             boolean ob = false;
             List<List<Integer>> idxs = new ArrayList<>();
             List<Integer> idx = new ArrayList<>();
@@ -4047,6 +4107,12 @@ public class GraphicFactory {
         gc.setZValue(offset);
         gc.setZDir(zdir);
         int len = (int) xdata.getSize();
+        if (!xdata.getIndexPrivate().isFastIterator())
+            xdata = xdata.copy();
+        if (!y1data.getIndexPrivate().isFastIterator())
+            y1data = y1data.copy();
+        if (!y2data.getIndexPrivate().isFastIterator())
+            y2data = y2data.copy();
         if (where == null) {
             PolygonZShape pgs = new PolygonZShape();
             List<PointZ> points = new ArrayList<>();
@@ -4068,6 +4134,8 @@ public class GraphicFactory {
                     }
                     break;
                 case "xy":
+                    if (!ydata.getIndexPrivate().isFastIterator())
+                        ydata = ydata.copy();
                     for (int i = 0; i < len; i++) {
                         points.add(new PointZ(xdata.getDouble(i), ydata.getDouble(i), y1data.getDouble(i)));
                     }
@@ -4130,6 +4198,8 @@ public class GraphicFactory {
                             }
                             break;
                         case "xy":
+                            if (!ydata.getIndexPrivate().isFastIterator())
+                                ydata = ydata.copy();
                             for (int j = 0; j < nn; j++) {
                                 ii = index.get(j);
                                 points.add(new PointZ(xdata.getDouble(ii), ydata.getDouble(ii), y1data.getDouble(ii)));
@@ -4200,26 +4270,35 @@ public class GraphicFactory {
         PointD aPoint;
         ColorBreak cb;
         double v;
-        int dn = (int) xdata.getSize();
-        for (i = 0; i < dn; i++) {
-            windDir = windDirData.getDouble(i);
-            windSpeed = windSpeedData.getDouble(i);
-            if (!Double.isNaN(windDir)) {
-                if (!Double.isNaN(windSpeed)) {
-                    aPoint = new PointD();
-                    aPoint.X = xdata.getDouble(i);
-                    aPoint.Y = ydata.getDouble(i);
-                    aWB = Draw.calWindBarb((float) windDir, (float) windSpeed, 0, 10, aPoint);
-                    if (cdata == null) {
-                        cb = ls.getLegendBreaks().get(0);
-                    } else {
-                        v = cdata.getDouble(i);
-                        aWB.setValue(v);
-                        cb = ls.findLegendBreak(v);
-                    }
-                    Graphic graphic = new Graphic(aWB, cb);
-                    gc.add(graphic);
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator wdIter = windDirData.getIndexIterator();
+        IndexIterator wsIter = windSpeedData.getIndexIterator();
+        IndexIterator cIter = cdata == null ? null : cdata.getIndexIterator();
+        while (xIter.hasNext()){
+            windDir = wdIter.getDoubleNext();
+            windSpeed = wsIter.getDoubleNext();
+            if (!Double.isNaN(windDir) && !Double.isNaN(windSpeed)) {
+                aPoint = new PointD();
+                aPoint.X = xIter.getDoubleNext();
+                aPoint.Y = yIter.getDoubleNext();
+                aWB = Draw.calWindBarb((float) windDir, (float) windSpeed, 0, 10, aPoint);
+                if (cdata == null) {
+                    cb = ls.getLegendBreaks().get(0);
+                } else {
+                    v = cIter.getDoubleNext();
+                    aWB.setValue(v);
+                    cb = ls.findLegendBreak(v);
                 }
+                Graphic graphic = new Graphic(aWB, cb);
+                gc.add(graphic);
+            } else {
+                wdIter.next();
+                wsIter.next();
+                xIter.next();
+                yIter.next();
+                if (cIter != null)
+                    cIter.next();
             }
         }
 
@@ -4315,8 +4394,10 @@ public class GraphicFactory {
      */
     public static Graphic createArrowLine(Array x, Array y, ArrowLineBreak ab, boolean iscurve) {
         List<PointD> points = new ArrayList<>();
-        for (int i = 0; i < x.getSize(); i++) {
-            points.add(new PointD(x.getDouble(i), y.getDouble(i)));
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        while (xIter.hasNext()){
+            points.add(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
         }
         PolylineShape pls;
         if (iscurve) {
@@ -4368,32 +4449,37 @@ public class GraphicFactory {
         double windDir, windSpeed;
         PointD aPoint;
         ColorBreak cb;
-        double v;
-        int dn = (int) xdata.getSize();
+        double x, y, v = 0;
         float size = 6;
-        for (i = 0; i < dn; i++) {
-            windDir = windDirData.getDouble(i);
-            windSpeed = windSpeedData.getDouble(i);
-            if (!Double.isNaN(windDir)) {
-                if (!Double.isNaN(windSpeed)) {
-                    aPoint = new PointD();
-                    aPoint.X = xdata.getDouble(i);
-                    aPoint.Y = ydata.getDouble(i);
-                    wa = new WindArrow();
-                    wa.angle = windDir;
-                    wa.length = (float) windSpeed;
-                    wa.size = size;
-                    wa.setPoint(aPoint);
-                    if (cdata == null) {
-                        cb = ls.getLegendBreaks().get(0);
-                    } else {
-                        v = cdata.getDouble(i);
-                        wa.setValue(v);
-                        cb = ls.findLegendBreak(v);
-                    }
-                    Graphic graphic = new Graphic(wa, cb);
-                    gc.add(graphic);
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator wdIter = windDirData.getIndexIterator();
+        IndexIterator wsIter = windSpeedData.getIndexIterator();
+        IndexIterator cIter = cdata == null ? null : cdata.getIndexIterator();
+        while (xIter.hasNext()){
+            windDir = wdIter.getDoubleNext();
+            windSpeed = wsIter.getDoubleNext();
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            if (cdata != null)
+                v = cIter.getDoubleNext();
+            if (!Double.isNaN(windDir) && !Double.isNaN(windSpeed)) {
+                aPoint = new PointD();
+                aPoint.X = x;
+                aPoint.Y = y;
+                wa = new WindArrow();
+                wa.angle = windDir;
+                wa.length = (float) windSpeed;
+                wa.size = size;
+                wa.setPoint(aPoint);
+                if (cdata == null) {
+                    cb = ls.getLegendBreaks().get(0);
+                } else {
+                    wa.setValue(v);
+                    cb = ls.findLegendBreak(v);
                 }
+                Graphic graphic = new Graphic(wa, cb);
+                gc.add(graphic);
             }
         }
 
@@ -4436,16 +4522,22 @@ public class GraphicFactory {
         PointZ aPoint;
         ColorBreak cb;
         double value;
-        int dn = (int) xdata.getSize();
-        for (i = 0; i < dn; i++) {
-            u = udata.getDouble(i);
-            v = vdata.getDouble(i);
-            w = wdata.getDouble(i);
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
+        IndexIterator uIter = udata.getIndexIterator();
+        IndexIterator vIter = vdata.getIndexIterator();
+        IndexIterator wIter = wdata.getIndexIterator();
+        IndexIterator cIter = cdata == null ? null : cdata.getIndexIterator();
+        while (xIter.hasNext()){
+            u = uIter.getDoubleNext();
+            v = vIter.getDoubleNext();
+            w = wIter.getDoubleNext();
             if (!Double.isNaN(u) && !Double.isNaN(v) && !Double.isNaN(w)) {
                 aPoint = new PointZ();
-                aPoint.X = xdata.getDouble(i);
-                aPoint.Y = ydata.getDouble(i);
-                aPoint.Z = zdata.getDouble(i);
+                aPoint.X = xIter.getDoubleNext();
+                aPoint.Y = yIter.getDoubleNext();
+                aPoint.Z = zIter.getDoubleNext();
                 wa = new WindArrow3D();
                 wa.u = u;
                 wa.v = v;
@@ -4455,12 +4547,18 @@ public class GraphicFactory {
                 if (cdata == null) {
                     cb = ls.getLegendBreaks().get(0);
                 } else {
-                    value = cdata.getDouble(i);
+                    value = cIter.getDoubleNext();
                     wa.setValue(value);
                     cb = ls.findLegendBreak(value);
                 }
                 Graphic graphic = new Graphic(wa, cb);
                 gc.add(graphic);
+            } else {
+                xIter.next();
+                yIter.next();
+                zIter.next();
+                if (cdata != null)
+                    cIter.next();
             }
         }
 
@@ -4565,7 +4663,6 @@ public class GraphicFactory {
         GraphicCollection pgc = new GraphicCollection();
         double sum = ArrayMath.sum(xdata);
         double v;
-        int n = (int) xdata.getSize();
         float sweepAngle, angle;
         float ex;
         double dx, dy, ldx, ldy;
@@ -4575,8 +4672,10 @@ public class GraphicFactory {
         Color edgeColor = wedgeprops.get("edgecolor") == null ? null : (Color) wedgeprops.get("edgecolor");
         Float lineWidth = wedgeprops.get("linewidth") == null ? null : Float.parseFloat(String.valueOf(wedgeprops.get("linewidth")));
         Float wedgeWidth = wedgeprops.get("width") == null ? null : Float.parseFloat(String.valueOf(wedgeprops.get("width")));
-        for (int i = 0; i < n; i++) {
-            v = xdata.getDouble(i);
+        IndexIterator xIter = xdata.getIndexIterator();
+        int i = 0;
+        while (xIter.hasNext()){
+            v = xIter.getDoubleNext();
             if (Double.isNaN(v)) {
                 continue;
             }
@@ -4674,6 +4773,7 @@ public class GraphicFactory {
             }
 
             startAngle += sweepAngle;
+            i++;
         }
         gc.setSingleLegend(false);
         gc.setLegendScheme(ls);

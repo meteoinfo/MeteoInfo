@@ -508,6 +508,16 @@ public class ArrayUtil {
     }
 
     /**
+     * New view of array with the same data.
+     *
+     * @param a Input array
+     * @return View array
+     */
+    public static Array view(Array a) {
+        return Array.factory(a.getElementType(), a.getIndex(), a.getStorage());
+    }
+
+    /**
      * Array range
      *
      * @param start Start value

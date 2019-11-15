@@ -451,7 +451,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
     @Override
     public GridArray getGridArray(String varName) {
         GridArray ga = new GridArray();
-        ga.data = this.read(varName);
+        ga.setData(this.read(varName));
         ga.xArray = this.getXDimension().getValues();
         ga.yArray = this.getYDimension().getValues();
         ga.missingValue = this.getMissingValue();

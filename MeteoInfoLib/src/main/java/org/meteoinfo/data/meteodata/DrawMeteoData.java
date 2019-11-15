@@ -28,6 +28,7 @@ import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.LegendManage;
 import org.meteoinfo.legend.LegendScheme;
+import org.meteoinfo.ndarray.IndexIterator;
 import org.meteoinfo.shape.PointShape;
 import org.meteoinfo.shape.PolygonShape;
 import org.meteoinfo.shape.PolylineShape;
@@ -59,6 +60,7 @@ import org.meteoinfo.shape.PointZ;
 import org.meteoinfo.shape.PolylineZShape;
 import org.meteoinfo.shape.StationModelShape;
 import org.meteoinfo.ndarray.Array;
+import org.python.indexer.IndexingException;
 import wcontour.global.PolyLine;
 import wcontour.global.Polygon;
 
@@ -144,10 +146,12 @@ public class DrawMeteoData {
             PolylineShape aPolyline = new PolylineShape();
             PointD aPoint;
             List<PointD> pList = new ArrayList<>();
-            for (int j = 0; j < xd.getSize(); j++) {
+            IndexIterator xIter = xd.getIndexIterator();
+            IndexIterator yIter = yd.getIndexIterator();
+            while (xIter.hasNext()){
                 aPoint = new PointD();
-                aPoint.X = xd.getDouble(j);
-                aPoint.Y = yd.getDouble(j);
+                aPoint.X = xIter.getDoubleNext();
+                aPoint.Y = yIter.getDoubleNext();
                 pList.add(aPoint);
             }
             aPolyline.setPoints(pList);
@@ -274,15 +278,18 @@ public class DrawMeteoData {
             List<PointD> pList;
             List<List<PointD>> ppList = new ArrayList<>();
             double preLon;
+            IndexIterator xIter = xd.getIndexIterator();
+            IndexIterator yIter = yd.getIndexIterator();
             if (xd.getRank() == 1) {
                 pList = new ArrayList<>();
                 preLon = 0;
-                for (int j = 0; j < xd.getSize(); j++) {
+                int j = 0;
+                while (xIter.hasNext()){
                     aPoint = new PointD();
-                    aPoint.X = xd.getDouble(j);
-                    aPoint.Y = yd.getDouble(j);
+                    aPoint.X = xIter.getDoubleNext();
+                    aPoint.Y = yIter.getDoubleNext();
                     if (j == 0) {
-                        preLon = xd.getDouble(j);
+                        preLon = aPoint.X;
                         pList.add(aPoint);
                     } else {
                         if (Double.isNaN(aPoint.X)) {
@@ -304,8 +311,9 @@ public class DrawMeteoData {
                         } else {
                             pList.add(aPoint);
                         }
-                        preLon = xd.getDouble(j);
+                        preLon = aPoint.X;
                     }
+                    j++;
                 }
                 if (pList.size() > 1) {
                     ppList.add(pList);
@@ -319,8 +327,10 @@ public class DrawMeteoData {
                     preLon = 0;
                     for (int j = 0; j < nx; j++) {
                         aPoint = new PointD();
-                        aPoint.X = xd.getDouble(k * nx + j);
-                        aPoint.Y = yd.getDouble(k * nx + j);
+                        aPoint.X = xIter.getDoubleNext();
+                        aPoint.Y = yIter.getDoubleNext();
+                        //aPoint.X = xd.getDouble(k * nx + j);
+                        //aPoint.Y = yd.getDouble(k * nx + j);
                         if (j == 0) {
                             preLon = aPoint.X;
                             pList.add(aPoint);
@@ -344,7 +354,7 @@ public class DrawMeteoData {
                             } else {
                                 pList.add(aPoint);
                             }
-                            preLon = xd.getDouble(j);
+                            preLon = aPoint.X;
                         }
                     }
                     if (pList.size() > 1) {
@@ -403,16 +413,20 @@ public class DrawMeteoData {
         List<PointZ> pList;
         List<List<PointZ>> ppList = new ArrayList<>();
         double preLon;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
         if (xdata.getRank() == 1) {
             pList = new ArrayList<>();
             preLon = 0;
-            for (int j = 0; j < xdata.getSize(); j++) {
+            int j = 0;
+            while (xIter.hasNext()){
                 aPoint = new PointZ();
-                aPoint.X = xdata.getDouble(j);
-                aPoint.Y = ydata.getDouble(j);
-                aPoint.Z = zdata.getDouble(j);
+                aPoint.X = xIter.getDoubleNext();
+                aPoint.Y = yIter.getDoubleNext();
+                aPoint.Z = zIter.getDoubleNext();
                 if (j == 0) {
-                    preLon = xdata.getDouble(j);
+                    preLon = aPoint.X;
                     pList.add(aPoint);
                 } else {
                     if (Double.isNaN(aPoint.X)) {
@@ -434,8 +448,9 @@ public class DrawMeteoData {
                     } else {
                         pList.add(aPoint);
                     }
-                    preLon = xdata.getDouble(j);
+                    preLon = aPoint.X;
                 }
+                j++;
             }
 
             if (pList.size() > 1) {
@@ -450,9 +465,12 @@ public class DrawMeteoData {
                 preLon = 0;
                 for (int j = 0; j < nx; j++) {
                     aPoint = new PointZ();
-                    aPoint.X = xdata.getDouble(i * nx + j);
-                    aPoint.Y = ydata.getDouble(i * nx + j);
-                    aPoint.Z = zdata.getDouble(i * nx + j);
+                    aPoint.X = xIter.getDoubleNext();
+                    aPoint.Y = yIter.getDoubleNext();
+                    aPoint.Z = zIter.getDoubleNext();
+                    //aPoint.X = xdata.getDouble(i * nx + j);
+                    //aPoint.Y = ydata.getDouble(i * nx + j);
+                    //aPoint.Z = zdata.getDouble(i * nx + j);
                     if (j == 0) {
                         preLon = aPoint.X;
                         pList.add(aPoint);
@@ -476,7 +494,7 @@ public class DrawMeteoData {
                         } else {
                             pList.add(aPoint);
                         }
-                        preLon = xdata.getDouble(j);
+                        preLon = aPoint.X;
                     }
                 }
 
@@ -2201,43 +2219,57 @@ public class DrawMeteoData {
             aLayer.editAddField(columnName, DataType.FLOAT);
         }
 
-        for (i = 0; i < windDirData.getSize(); i++) {
-            windDir = (float) windDirData.getDouble(i);
-            windSpeed = (float) windSpeedData.getDouble(i);
-            if (!Double.isNaN(windDir)) {
-                if (!Double.isNaN(windSpeed)) {
-                    aPoint = new PointD();
-                    aPoint.X = xData.getDouble(i);
-                    aPoint.Y = yData.getDouble(i);
+        IndexIterator xIter = xData.getIndexIterator();
+        IndexIterator yIter = yData.getIndexIterator();
+        IndexIterator wdIter = windDirData.getIndexIterator();
+        IndexIterator wsIter = windSpeedData.getIndexIterator();
+        IndexIterator cIter = stData == null ? null : stData.getIndexIterator();
+        IndexIterator uIter = uData.getIndexIterator();
+        IndexIterator vIter = vData.getIndexIterator();
+        double v = 0.;
+        while (xIter.hasNext()){
+            windDir = wdIter.getFloatNext();
+            windSpeed = wsIter.getFloatNext();
+            if (!Double.isNaN(windDir) && !Double.isNaN(windSpeed)) {
+                aPoint = new PointD();
+                aPoint.X = xIter.getDoubleNext();
+                aPoint.Y = yIter.getDoubleNext();
 
-                    WindArrow aArraw = new WindArrow();
-                    aArraw.angle = windDir;
-                    aArraw.length = (float) windSpeed;
-                    aArraw.size = 6;
-                    aArraw.setPoint(aPoint);
-                    if (stData != null) {
-                        aArraw.setValue(stData.getDouble(i));
-                    }
+                WindArrow aArraw = new WindArrow();
+                aArraw.angle = windDir;
+                aArraw.length = (float) windSpeed;
+                aArraw.size = 6;
+                aArraw.setPoint(aPoint);
+                if (stData != null) {
+                    v = cIter.getDoubleNext();
+                    aArraw.setValue(v);
+                }
 
-                    int shapeNum = aLayer.getShapeNum();
-                    try {
-                        if (aLayer.editInsertShape(aArraw, shapeNum)) {
-                            if (isUV) {
-                                aLayer.editCellValue("U", shapeNum, uData.getDouble(i));
-                                aLayer.editCellValue("V", shapeNum, vData.getDouble(i));
-                            }
-                            aLayer.editCellValue("WindDirection", shapeNum, windDir);
-                            aLayer.editCellValue("WindSpeed", shapeNum, windSpeed);
-                            if (ifAdd) {
-                                if (stData != null) {
-                                    aLayer.editCellValue(columnName, shapeNum, stData.getDouble(i));
-                                }
+                int shapeNum = aLayer.getShapeNum();
+                try {
+                    if (aLayer.editInsertShape(aArraw, shapeNum)) {
+                        if (isUV) {
+                            aLayer.editCellValue("U", shapeNum, uIter.getDoubleNext());
+                            aLayer.editCellValue("V", shapeNum, vIter.getDoubleNext());
+                        }
+                        aLayer.editCellValue("WindDirection", shapeNum, windDir);
+                        aLayer.editCellValue("WindSpeed", shapeNum, windSpeed);
+                        if (ifAdd) {
+                            if (stData != null) {
+                                aLayer.editCellValue(columnName, shapeNum, v);
                             }
                         }
-                    } catch (Exception ex) {
-                        Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                } catch (Exception ex) {
+                    Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            } else {
+                xIter.next();
+                yIter.next();
+                uIter.next();
+                vIter.next();
+                if (vIter != null)
+                    vIter.next();
             }
         }
 
@@ -2297,38 +2329,52 @@ public class DrawMeteoData {
         }
 
         WindBarb aWB;
-        for (i = 0; i < windDirData.getSize(); i++) {
-            windDir = (float) windDirData.getDouble(i);
-            windSpeed = (float) windSpeedData.getDouble(i);
-            if (!Double.isNaN(windDir)) {
-                if (!Double.isNaN(windSpeed)) {
+        IndexIterator xIter = xData.getIndexIterator();
+        IndexIterator yIter = yData.getIndexIterator();
+        IndexIterator wdIter = windDirData.getIndexIterator();
+        IndexIterator wsIter = windSpeedData.getIndexIterator();
+        IndexIterator cIter = stData == null ? null : stData.getIndexIterator();
+        IndexIterator uIter = uData.getIndexIterator();
+        IndexIterator vIter = vData.getIndexIterator();
+        double v = 0.;
+        while (xIter.hasNext()){
+            windDir = wdIter.getFloatNext();
+            windSpeed = wsIter.getFloatNext();
+            if (!Double.isNaN(windDir) && !Double.isNaN(windSpeed)) {
                     aPoint = new PointD();
-                    aPoint.X = xData.getDouble(i);
-                    aPoint.Y = yData.getDouble(i);
+                    aPoint.X = xIter.getDoubleNext();
+                    aPoint.Y = yIter.getDoubleNext();
                     aWB = Draw.calWindBarb((float) windDir, (float) windSpeed, 0, 10, aPoint);
                     if (stData != null) {
-                        aWB.setValue(stData.getDouble(i));
+                        v = cIter.getDoubleNext();
+                        aWB.setValue(v);
                     }
 
                     int shapeNum = aLayer.getShapeNum();
                     try {
                         if (aLayer.editInsertShape(aWB, shapeNum)) {
                             if (isUV) {
-                                aLayer.editCellValue("U", shapeNum, uData.getDouble(i));
-                                aLayer.editCellValue("V", shapeNum, vData.getDouble(i));
+                                aLayer.editCellValue("U", shapeNum, uIter.getDoubleNext());
+                                aLayer.editCellValue("V", shapeNum, vIter.getDoubleNext());
                             }
                             aLayer.editCellValue("WindDirection", shapeNum, aWB.angle);
                             aLayer.editCellValue("WindSpeed", shapeNum, aWB.windSpeed);
                             if (ifAdd) {
                                 if (stData != null) {
-                                    aLayer.editCellValue(columnName, shapeNum, stData.getDouble(i));
+                                    aLayer.editCellValue(columnName, shapeNum, v);
                                 }
                             }
                         }
                     } catch (Exception ex) {
                         Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }
+                } else {
+                xIter.next();
+                yIter.next();
+                uIter.next();
+                vIter.next();
+                if (cIter != null)
+                    cIter.next();
             }
         }
 

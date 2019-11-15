@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import org.meteoinfo.ndarray.Dimension;
-import org.meteoinfo.ndarray.DimensionType;
+
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.data.meteodata.GridDataSetting;
 import org.meteoinfo.geoprocess.analysis.ResampleMethods;
 import org.meteoinfo.global.util.BigDecimalUtil;
@@ -40,9 +40,6 @@ import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;
 import org.meteoinfo.projection.Reproject;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.InvalidRangeException;
 
 /**
  *
@@ -54,7 +51,8 @@ public class GridArray {
     /**
      * Grid data
      */
-    public Array data;
+    private Array data;
+    private Index2D index2D;
     /// <summary>
     /// x coordinate array
     /// </summary>
@@ -94,8 +92,7 @@ public class GridArray {
         xArray = aGridData.xArray.clone();
         yArray = aGridData.yArray.clone();
         missingValue = aGridData.missingValue;
-        data = Array.factory(aGridData.data.getDataType(), aGridData.data.getShape());
-        Array.arraycopy(aGridData.data, 0, data, 0, (int) aGridData.data.getSize());
+        this.setData(aGridData.data.copy());
     }
 
     /**
@@ -120,7 +117,7 @@ public class GridArray {
 
         missingValue = -9999;
         int[] shape = new int[]{yNum, xNum};
-        data = Array.factory(DataType.DOUBLE, shape);
+        this.setData(Array.factory(DataType.DOUBLE, shape));
     }
 
     /**
@@ -135,7 +132,7 @@ public class GridArray {
     public GridArray(Array array, List<Number> xdata, List<Number> ydata, double missingValue, ProjectionInfo projInfo) {
         int yn = ydata.size();
         int xn = xdata.size();
-        this.data = array;
+        this.setData(array);
         this.xArray = new double[xn];
         this.yArray = new double[yn];
         for (int i = 0; i < xn; i++) {
@@ -160,7 +157,7 @@ public class GridArray {
     public GridArray(Array array, Array xdata, Array ydata, Number missingValue) {
         int yn = (int) ydata.getSize();
         int xn = (int) xdata.getSize();
-        this.data = array;
+        this.setData(array);
 
         this.xArray = new double[xn];
         this.yArray = new double[yn];
@@ -176,6 +173,21 @@ public class GridArray {
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
+
+    /**
+     * Get data array
+     * @return Data array
+     */
+    public Array getData() { return this.data; }
+
+    /**
+     * Set data array
+     * @param value Data array
+     */
+    public void setData(Array value) {
+        this.data = value;
+        this.index2D = (Index2D) this.data.getIndex();
+    }
 
     /**
      * Get xArray number

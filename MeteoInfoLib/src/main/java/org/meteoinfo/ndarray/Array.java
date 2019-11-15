@@ -174,7 +174,15 @@ public abstract class Array {
         return factory(classType, indexCalc, storage);
     }
 
-    static private Array factory(Class classType, Index indexCalc, Object storage) {
+    /**
+     * Create new array with given type, index, storage.
+     *
+     * @param classType element class type, eg double.class.
+     * @param indexCalc array index.
+     * @param storage 1D java array of type classType.
+     * @return Array of give type, index and storage.
+     */
+    static public Array factory(Class classType, Index indexCalc, Object storage) {
         if ((classType == double.class) || (classType == Double.class)) {
             return ArrayDouble.factory(indexCalc, (double[]) storage);
         } else if ((classType == float.class) || (classType == Float.class)) {

@@ -408,7 +408,7 @@ public class MapDataManage {
         //GridData gData = dataInfo.getGridData_LonLat(0, 0, 0);
         Array a = dataInfo.read(dataInfo.getVariableNames().get(0));
         GridArray data = new GridArray();
-        data.data = a;
+        data.setData(a);
         data.xArray = dataInfo.getXDimension().getValues();
         data.yArray = dataInfo.getYDimension().getValues();
         data.missingValue = dataInfo.getMissingValue();

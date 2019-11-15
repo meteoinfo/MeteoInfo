@@ -4396,9 +4396,9 @@ public class ArrayMath {
      */
     public static Array section(Array a, int[] origin, int[] size, int[] stride) throws InvalidRangeException {
         Array r = a.section(origin, size, stride);
-        Array rr = Array.factory(r.getDataType(), r.getShape());
-        MAMath.copy(rr, r);
-        return rr;
+        //Array rr = Array.factory(r.getDataType(), r.getShape());
+        //MAMath.copy(rr, r);
+        return r;
     }
 
     /**
@@ -4411,9 +4411,9 @@ public class ArrayMath {
      */
     public static Array section(Array a, List<Range> ranges) throws InvalidRangeException {
         Array r = a.section(ranges);
-        Array rr = Array.factory(r.getDataType(), r.getShape());
-        MAMath.copy(rr, r);
-        return rr;
+        //Array rr = Array.factory(r.getDataType(), r.getShape());
+        //MAMath.copy(rr, r);
+        return r;
     }
 
     /**

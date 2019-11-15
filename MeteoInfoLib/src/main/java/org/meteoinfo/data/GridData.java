@@ -3250,7 +3250,7 @@ public class GridData {
             }
 
             GridArray r = new GridArray();
-            r.data = a;
+            r.setData(a);
             r.xArray = this.xArray;
             r.yArray = this.yArray;
             r.projInfo = this.projInfo;
@@ -3533,7 +3533,7 @@ public class GridData {
         }
 
         GridArray r = new GridArray();
-        r.data = a;
+        r.setData(a);
         r.xArray = this.xArray;
         r.yArray = this.yArray;
         r.projInfo = this.projInfo;

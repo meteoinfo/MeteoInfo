@@ -625,7 +625,7 @@ public class GeoTiff {
             int width = widthIFD.value[0];
             int height = heightIFD.value[0];
             GridArray gData = new GridArray();
-            gData.data = readArray();
+            gData.setData(readArray());
 
             //Grid data coordinate
             double[] X = new double[width];

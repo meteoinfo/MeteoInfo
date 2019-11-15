@@ -147,7 +147,7 @@ public class RasterLayer extends ImageLayer {
      */
     public void updateImage(LegendScheme als) {
         BufferedImage image;
-        if (_gridData.data.getRank() <= 2) {
+        if (_gridData.getData().getRank() <= 2) {
             image = getImageFromGridData(_gridData, als);
         } else {
             image = getRGBImage(_gridData);
@@ -169,14 +169,14 @@ public class RasterLayer extends ImageLayer {
         width = gdata.getXNum();
         height = gdata.getYNum();
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Index index = gdata.data.getIndex();
+        Index index = gdata.getData().getIndex();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                r = gdata.data.getInt(index);
+                r = gdata.getData().getInt(index);
                 index.incr();
-                g = gdata.data.getInt(index);
+                g = gdata.getData().getInt(index);
                 index.incr();
-                b = gdata.data.getInt(index);
+                b = gdata.getData().getInt(index);
                 index.incr();
                 image.setRGB(j, height - i - 1, new Color(r, g, b).getRGB());
             }

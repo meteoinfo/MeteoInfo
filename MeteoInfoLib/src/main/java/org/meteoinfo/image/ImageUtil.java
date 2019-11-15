@@ -397,6 +397,101 @@ public class ImageUtil {
 
         return r;
     }
+
+    private static Array corrlated1D(Array a, double[] weights) {
+        int size = weights.length;
+        int origin = size / 2;
+        int n = (int)a.getSize();
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        double v;
+        Index1D index = (Index1D)a.getIndex();
+        int idx;
+        for (int i = 0; i < r.getSize(); i++) {
+            v = 0;
+            for (int j = 0; j < size; j++) {
+                idx = i - origin + j;
+                if (idx < 0)
+                    idx = -idx;
+                else if (idx > n - 1)
+                    idx = n - 1 - (idx - (n - 1));
+                index.set(idx);
+                v += a.getDouble(index) * weights[j];
+            }
+            r.setDouble(i, v);
+        }
+
+        return r;
+    }
+
+    /**
+     * Calculate a multi-dimensional gaussian filter.
+     * @param data Input data
+     * @param size Window size
+     * @param sigma Sigma
+     * @return Gaussian filter array
+     */
+    public static Array gaussianFilter(Array data, int size, double sigma) throws InvalidRangeException {
+        //Create 1D template
+        double[] weights = new double[size];
+        double sum = 0;
+        int origin = size / 2;
+        for (int i = 0; i < size; i++)
+        {
+            //The first constant does not need to be calculate, which will be eliminated finally
+            double g = Math.exp(-(i - origin) * (i - origin) / (2 * sigma * sigma));
+            sum += g;
+            weights[i] = g;
+        }
+        //Normalized
+        for (int i = 0; i < size; i++)
+            weights[i] /= sum;
+
+        //Filter
+        int ndim = data.getRank();
+        int[] shape = data.getShape();
+        Array r = Array.factory(data.getDataType(), shape);
+        Index rindex = r.getIndex();
+        int[] rcurrent = new int[ndim];
+        int idx;
+        for (int axis = 0; axis < ndim; axis++) {
+            int[] nshape = new int[ndim - 1];
+            for (int i = 0; i < ndim; i++) {
+                if (i < axis)
+                    nshape[i] = shape[i];
+                else if (i > axis)
+                    nshape[i - 1] = shape[i];
+            }
+            Index index = Index.factory(nshape);
+            int[] current;
+            for (int i = 0; i < index.getSize(); i++) {
+                current = index.getCurrentCounter();
+                List<Range> ranges = new ArrayList<>();
+                for (int j = 0; j < ndim; j++) {
+                    if (j == axis) {
+                        ranges.add(new Range(0, shape[j] - 1, 1));
+                        rcurrent[j] = 0;
+                    } else {
+                        idx = j;
+                        if (idx > axis) {
+                            idx -= 1;
+                        }
+                        ranges.add(new Range(current[idx], current[idx], 1));
+                        rcurrent[j] = current[idx];
+                    }
+                }
+                Array temp = data.section(ranges);
+                temp = corrlated1D(temp, weights);
+                for (int j = 0; j < shape[axis]; j++) {
+                    rcurrent[axis] = j;
+                    rindex.set(rcurrent);
+                    r.setDouble(rindex, temp.getDouble(j));
+                }
+                index.incr();
+            }
+        }
+
+        return r;
+    }
     
     /**
      * Create gif animator file from image files

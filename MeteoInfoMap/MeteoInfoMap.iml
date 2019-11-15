@@ -12,7 +12,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: com.sun.woodstock.dependlibs:jhall:2.0" level="project" />
-    <orderEntry type="module" module-name="MeteoInfoLib" />
+    <orderEntry type="library" name="Maven: org.meteothink:MeteoInfoLib:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:0.1" level="project" />
     <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.1.0" level="project" />
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.10" level="project" />

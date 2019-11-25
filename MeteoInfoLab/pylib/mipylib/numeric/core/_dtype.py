@@ -15,7 +15,8 @@ _dtype_dict = dict(byte = JDataType.BYTE,
     double = JDataType.DOUBLE,
     string = JDataType.STRING,
     complex = JDataType.COMPLEX,
-    date = JDataType.DATE)
+    date = JDataType.DATE,
+    object = JDataType.OBJECT)
 
 class DataType(object):
     '''
@@ -32,7 +33,10 @@ class DataType(object):
         elif name is bool:
             name = 'bool'
         self.name = name
-        self._dtype = _dtype_dict[name]
+        if _dtype_dict.has_key(name):
+            self._dtype = _dtype_dict[name]
+        else:
+            self._dtype = JDataType.OBJECT
 
     def __str__(self):
         return self.name
@@ -81,6 +85,7 @@ string = DataType('string')
 complex = DataType('complex')
 date = DataType('date')
 datetime = DataType('date')
+obj = DataType('object')
 
 def fromjava(dt):
     '''

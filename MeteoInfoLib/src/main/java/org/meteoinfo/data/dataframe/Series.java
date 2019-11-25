@@ -602,12 +602,10 @@ public class Series implements Iterable {
                 idxFormat = dateFormat;
             }
         }
-        for (int i = 0; i < this.size(); i++) {
-            if (str.isEmpty()) {
-                str = this.name;
-            } else {
-                str = str + delimiter + this.name;
-            }
+        if (str.isEmpty()) {
+            str = this.name;
+        } else {
+            str = str + delimiter + this.name;
         }
         sw.write(str);
 

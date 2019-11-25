@@ -1284,6 +1284,7 @@ def axes(*args, **kwargs):
     ax = g_figure.add_axes(*args, **kwargs) 
 
     gca = ax
+    draw_if_interactive()
     return ax
 
 def axesm(*args, **kwargs):  
@@ -1342,6 +1343,7 @@ def axes3dgl(*args, **kwargs):
         
     ax = g_figure.axes
     gca = ax
+    draw_if_interactive()
     return ax
     
 def twinx(ax):

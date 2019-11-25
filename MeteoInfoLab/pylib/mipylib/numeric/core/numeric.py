@@ -412,8 +412,9 @@ def full(shape, fill_value, dtype=None):
     else:
         shapelist = shape
     if isinstance(dtype, basestring):
-        dtype = _dtype.DataType(dtype)
-    return NDArray(ArrayUtil.full(shapelist, fill_value, dtype._dtype))
+        dtype = _dtype.DataType(dtype)._dtype
+
+    return NDArray(ArrayUtil.full(shapelist, fill_value, dtype))
     
 def identity(n, dtype='float'):
     '''

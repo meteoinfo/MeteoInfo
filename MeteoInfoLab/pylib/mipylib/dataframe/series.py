@@ -389,14 +389,13 @@ class Series(object):
         gb = self._series.resample(by)
         return groupby.GroupBy(gb)
 
-    def to_csv(self, filepath, delimiter=',', format=None, date_format=None, \
+    def to_csv(self, filepath, delimiter=',', date_format=None, \
                float_format=None, index=True):
         '''
         Save the data to an csv file.
 
-        :param filename: (*string*) The file name.
+        :param filepath: (*string*) The file name.
         :param delimiter: (*string*) Field delimiter character. Default is ``,``.
-        :param format: (*string*) Format string.
         :param date_format: (*string*) Date format string. i.e. 'yyyyMMddHH'.
         :param float_format: (*string*) Float format string. i.e. '%.2f'.
         :param index: (*boolean*) Write index or not.

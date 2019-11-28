@@ -1982,7 +1982,7 @@ def swapaxes(a, axis1, axis2):
     '''
     r = a.swapaxes(axis1, axis2)
     if type(a) is NDArray:
-        return NDArray(r)
+        return r
     else:
         dims = []
         for i in range(0, len(a.dims)):
@@ -1992,7 +1992,7 @@ def swapaxes(a, axis1, axis2):
                 dims.append(a.dims[dim1])
             else:
                 dims.append(a.dims[i])
-        return DimArray(NDArray(r), dims, a.fill_value, a.proj)
+        return DimArray(r, dims, a.fill_value, a.proj)
 
 def rot90(a, k=1):
     """

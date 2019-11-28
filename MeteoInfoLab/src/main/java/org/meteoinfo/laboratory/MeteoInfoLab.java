@@ -149,7 +149,8 @@ public class MeteoInfoLab {
             interp.exec("import os");
             interp.exec("import datetime");
             interp.exec("sys.path.append('" + path + "')");
-            interp.exec("from milab import *");
+            //interp.exec("from milab import *");
+            interp.execfile(path + "/milab.py");
             if (!isDebug) {
                 interp.exec("sys.path.append('" + toolboxPath + "')");
                 //interp.exec("from toolbox import *");
@@ -182,7 +183,8 @@ public class MeteoInfoLab {
             console.exec("import os");
             console.exec("import datetime");
             console.exec("sys.path.append('" + path + "')");
-            console.exec("from milab import *");
+            //console.exec("from milab import *");
+            console.execfile(path + "/milab.py");
             console.exec("sys.path.append('" + toolboxPath + "')");
             //console.exec("from toolbox import *");
             console.exec("mipylib.plotlib.miplot.isinteractive = True");

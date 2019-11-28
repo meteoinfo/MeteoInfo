@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\micaps">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats\learn"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\datasets"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
@@ -16,19 +15,24 @@
     <RecentFolder Folder="D:\KeyData\PMMUL\script"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\xor_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\micaps\micaps_1_extract_st_data_dataframe.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\argsort_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\chinese_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\anomalies.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\xor_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\micaps\micaps_1_extract_st_data_dataframe.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\array\argsort_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\chinese_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\anomalies.py"/>
     </RecentFiles>
   </File>
   <Font>

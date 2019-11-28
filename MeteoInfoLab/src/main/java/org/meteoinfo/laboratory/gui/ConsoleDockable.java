@@ -122,7 +122,9 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             interp.exec("import datetime");
             //interp.exec("sys.setdefaultencoding('utf-8')");
             interp.exec("sys.path.append('" + path + "')");
-            interp.exec("from milab import *");
+            //interp.exec("from milab import *");
+            interp.exec("import mipylib");
+            interp.execfile(path + "/milab.py");
             interp.exec("sys.path.append('" + toolboxPath + "')");
             if (isDebug) {
                 interp.exec("sys.path.append('" + toolboxPath + "/miml_dev')");
@@ -252,7 +254,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
 
                 try {
                     interp.exec("mipylib.plotlib.miplot.isinteractive = False");
-                    interp.exec("clf()");
+                    interp.exec("mipylib.plotlib.miplot.clf()");
                     interp.execfile(fn);
                     interp.exec("mipylib.plotlib.miplot.isinteractive = True");
                 } catch (Exception e) {
@@ -346,7 +348,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                 String encoding = "utf-8";
                 try {
                     interp.exec("mipylib.plotlib.miplot.isinteractive = False");
-                    interp.exec("clf()");
+                    interp.exec("mipylib.plotlib.miplot.clf()");
                     interp.execfile(new ByteArrayInputStream(code.getBytes(encoding)));
                     interp.exec("mipylib.plotlib.miplot.isinteractive = True");
                 } catch (Exception e) {

@@ -150,10 +150,10 @@ public class JIntrospect implements NameCompletion {
             String name;
             for (int i = 0; i < plist.__len__(); i++) {
                 name = plist.get(i).toString();
-                list.add(name);
-//                if (!name.startsWith("__")) {
-//                    list.add(name);
-//                }
+                //list.add(name);
+                if (!name.startsWith("__")) {
+                    list.add(name);
+                }
             }
             return list;
         } catch (Exception e){
@@ -204,8 +204,14 @@ public class JIntrospect implements NameCompletion {
         if (terminator.equals("(")){
             if (command.endsWith("("))
                 command = command.substring(0, command.length() - 1);
-        } else
+        } else {
             command = rtrimTerminus(command, terminator);
+            if (terminator.equals(".")) {
+                if (command.contains("(")) {
+                    command = command.substring(command.lastIndexOf("(") + 1);
+                }
+            }
+        }
         PyList tokens = this.getTokens(command);
         if (tokens == null || tokens.isEmpty())
             return "";
@@ -332,7 +338,11 @@ public class JIntrospect implements NameCompletion {
      */
     public String rtrimTerminus(String command, String terminator){
         if (terminator != null){
-            String[] pieces = command.split(terminator);
+            String[] pieces;
+            if (terminator.equals("."))
+                pieces = command.split("\\.");
+            else
+                pieces = command.split(terminator);
             if (pieces.length > 1){
                 command = pieces[0];
                 for (int i = 1; i < pieces.length - 1; i++){

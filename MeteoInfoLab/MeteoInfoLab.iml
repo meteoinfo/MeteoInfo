@@ -141,11 +141,11 @@
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-native:windows-x86_64:1.0.0-beta5" level="project" />
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-native:linux-ppc64le:1.0.0-beta5" level="project" />
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-native:linux-armhf:1.0.0-beta5" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.19" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.19" level="project" />
     <orderEntry type="library" name="Maven: de.sciss:docking-frames-common:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: de.sciss:docking-frames-core:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:2.6.0" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.19" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.19" level="project" />
   </component>
 </module>

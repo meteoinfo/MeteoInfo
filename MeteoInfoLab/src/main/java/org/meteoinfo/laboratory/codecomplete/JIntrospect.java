@@ -337,7 +337,7 @@ public class JIntrospect implements NameCompletion {
      * @return Result string
      */
     public String rtrimTerminus(String command, String terminator){
-        if (terminator != null){
+        if ((terminator != null) && (!command.endsWith(terminator))) {
             String[] pieces;
             if (terminator.equals("."))
                 pieces = command.split("\\.");

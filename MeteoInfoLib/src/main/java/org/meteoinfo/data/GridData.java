@@ -201,11 +201,17 @@ public class GridData {
 
         this.xArray = new double[xn];
         this.yArray = new double[yn];
-        for (int i = 0; i < xn; i++) {
-            this.xArray[i] = xdata.getDouble(i);
+        iter = xdata.getIndexIterator();
+        int i = 0;
+        while(iter.hasNext()) {
+            this.xArray[i] = iter.getDoubleNext();
+            i++;
         }
-        for (int i = 0; i < yn; i++) {
-            this.yArray[i] = ydata.getDouble(i);
+        iter = ydata.getIndexIterator();
+        i = 0;
+        while(iter.hasNext()) {
+            this.yArray[i] = iter.getDoubleNext();
+            i++;
         }
 
         this.missingValue = missingValue.doubleValue();

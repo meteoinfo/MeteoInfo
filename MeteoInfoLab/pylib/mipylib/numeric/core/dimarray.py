@@ -228,7 +228,7 @@ class DimArray(NDArray):
                 if len(k) > 1:
                     dim = self.dims[i]
                     ndims.append(dim.extract(k))
-        
+
         if isempty:
             r = ArrayUtil.zeros(nshape, 'int')
             return NDArray(r)
@@ -242,7 +242,8 @@ class DimArray(NDArray):
             else:
                 r = ArrayMath.take(self._array, ranges)
         if r.getSize() == 1:
-            return r.getObject(0)
+            iter = r.getIndexIterator()
+            return iter.getObjectNext()
         else:
             for i in flips:
                 r = r.flip(i)

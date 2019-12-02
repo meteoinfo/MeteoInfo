@@ -197,7 +197,8 @@ class NDArray(object):
             return rr.reshape(newshape)
                 
         if r.getSize() == 1:
-            r = r.getObject(0)
+            iter = r.getIndexIterator()
+            r = iter.getObjectNext()
             if isinstance(r, Complex):
                 return complex(r.getReal(), r.getImaginary())
             else:

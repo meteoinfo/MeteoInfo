@@ -10,6 +10,7 @@ from org.meteoinfo.global import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from ucar.nc2 import Attribute as NCAttribute
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
+from org.meteoinfo.ndarray import DataType
 
 import mipylib.numeric as np
 import mipylib.miutil as miutil
@@ -74,11 +75,12 @@ class DimVariable(object):
             indices = tuple(inds)                   
                 
         if isinstance(indices, str):    #metadata
-            rr = self.dataset.read(self.name)
-            m = rr.getArrayObject().findMember(indices)
-            data = rr.getArrayObject().getArray(0, m)
-            data = NCUtil.convertArray(data)
-            return np.array(data)
+            if self.variable.getDataType() == DataType.STRUCTURE:
+                rr = self.dataset.read(self.name)
+                m = rr.getArrayObject().findMember(indices)
+                data = rr.getArrayObject().getArray(0, m)
+                data = NCUtil.convertArray(data)
+                return np.array(data)
         
         if not isinstance(indices, tuple):
             inds = []
@@ -268,7 +270,8 @@ class DimVariable(object):
         else:
             rr = self.dataset.dataset.take(self.name, ranges)
         if rr.getSize() == 1:
-            return rr.getObject(0)
+            iter = rr.getIndexIterator()
+            return iter.getObjectNext()
         else:
             for i in flips:
                 rr = rr.flip(i)

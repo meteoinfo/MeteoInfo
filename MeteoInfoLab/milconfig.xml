@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\metrics">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\neural_network"/>
-    <RecentFolder Folder="D:\KeyData\PMMUL\script"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\contour">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\regression"/>
@@ -16,23 +9,32 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\metrics"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\adaboost_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection\train_test_split_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\svm_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\test_one_vs_one.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\conoutm_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\adaboost_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection\train_test_split_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\svm_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\test_one_vs_one.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\conoutm_1.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="宋体" FontSize="15"/>
   </Font>
-  <Startup MainFormLocation="-6,1" MainFormSize="1290,684"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

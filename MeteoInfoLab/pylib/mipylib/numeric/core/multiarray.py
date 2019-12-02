@@ -188,8 +188,8 @@ class NDArray(object):
         if newaxis:
             for i in flips:
                 r = r.flip(i)
-            rr = Array.factory(r.getDataType(), r.getShape());
-            MAMath.copy(rr, r);
+            rr = Array.factory(r.getDataType(), r.getShape())
+            MAMath.copy(rr, r)
             rr = NDArray(rr)
             newshape = list(rr.shape)
             for i in range(newaxisn):

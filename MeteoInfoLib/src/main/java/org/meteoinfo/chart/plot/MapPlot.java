@@ -970,7 +970,8 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             String drawStr;
             PointF sP = new PointF(0, 0);
             PointF eP = new PointF(0, 0);
-            Font font = new Font(this.mapFrame.getGridFont().getFontName(), this.mapFrame.getGridFont().getStyle(), (int) (this.mapFrame.getGridFont().getSize()));
+            Font font = this.getXAxis().getTickLabelFont();
+            //Font font = new Font(this.mapFrame.getGridFont().getFontName(), this.mapFrame.getGridFont().getStyle(), (int) (this.mapFrame.getGridFont().getSize()));
             g.setFont(font);
             float labX, labY;
             int len = mapFrame.getTickLineLength();

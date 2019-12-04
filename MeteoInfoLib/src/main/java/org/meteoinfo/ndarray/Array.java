@@ -787,6 +787,30 @@ public abstract class Array {
     }
 
     /**
+     * Get if the this Array is view - the physical order is not same as
+     * logical order
+     *
+     * @return Is view or not
+     */
+    public boolean isView() {
+        return !this.getIndexPrivate().isFastIterator();
+    }
+
+    /**
+     * Create a copy of this Array if it's physical order is
+     * not the same as logical order
+     *
+     * @return the new Array
+     */
+    public Array copyIfView() {
+        if (this.isView()) {
+            return this.copy();
+        } else {
+            return this;
+        }
+    }
+
+    /**
      * This gets the equivalent java array of the wanted type, in correct order.
      * It avoids copying if possible.
      *

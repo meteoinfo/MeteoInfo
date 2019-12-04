@@ -2382,12 +2382,11 @@ public class ArrayUtil {
         boolean match;
 
         //Construct K-D tree
-        int n = 0;
         KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
+        IndexIterator iter = a.getIndexIterator();
         for (i = 0; i < pNum; i++) {
             if (!Double.isNaN(a.getDouble(i))) {
-                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, a.getDouble(i));
-                n += 1;
+                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, iter.getDoubleNext());
             }
         }
 
@@ -2448,10 +2447,11 @@ public class ArrayUtil {
 
         //Construct K-D tree
         int n = 0;
+        IndexIterator iter = a.getIndexIterator();
         KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
         for (i = 0; i < pNum; i++) {
             if (!Double.isNaN(a.getDouble(i))) {
-                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, a.getDouble(i));
+                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, iter.getDoubleNext());
                 n += 1;
             }
         }
@@ -2622,9 +2622,10 @@ public class ArrayUtil {
 
         //Construct K-D tree
         KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
+        IndexIterator iter = a.getIndexIterator();
         for (int i = 0; i < pNum; i++) {
             if (!Double.isNaN(a.getDouble(i))) {
-                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, a.getDouble(i));
+                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, iter.getDoubleNext());
             }
         }
 
@@ -2776,9 +2777,11 @@ public class ArrayUtil {
      */
     public static Array interpolation_Inside(Array x_s, Array y_s, Array a, Array X, Array Y, boolean center) {
         int rowNum, colNum, pNum;
-        if (!a.getIndexPrivate().isFastIterator()) {
-            a = a.copy();
-        }
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
 
         if (center) {
             Array[] xy = extendHalfCell(X, Y);
@@ -2863,9 +2866,7 @@ public class ArrayUtil {
         double x, y, v;
         double min = Double.NEGATIVE_INFINITY;
 
-        if (!a.getIndexPrivate().isFastIterator()) {
-            a = a.copy();
-        }
+        a = a.copyIfView();
         for (int i = 0; i < rowNum; i++) {
             for (int j = 0; j < colNum; j++) {
                 pNums[i][j] = 0;
@@ -2928,9 +2929,7 @@ public class ArrayUtil {
         double x, y, v;
         double max = Double.MAX_VALUE;
 
-        if (!a.getIndexPrivate().isFastIterator()) {
-            a = a.copy();
-        }
+        a = a.copyIfView();
         for (int i = 0; i < rowNum; i++) {
             for (int j = 0; j < colNum; j++) {
                 pNums[i][j] = 0;
@@ -3113,6 +3112,8 @@ public class ArrayUtil {
      */
     public static Array cressman(List<Number> x_s, List<Number> y_s, Array v_s, List<Number> X, List<Number> Y,
             List<Number> radList) {
+        v_s = v_s.copyIfView();
+
         int xNum = X.size();
         int yNum = Y.size();
         int pNum = x_s.size();
@@ -3312,6 +3313,8 @@ public class ArrayUtil {
      */
     public static Array cressman_bak(List<Number> x_s, List<Number> y_s, Array v_s, List<Number> X, List<Number> Y,
             List<Number> radList) {
+        v_s = v_s.copyIfView();
+
         int xNum = X.size();
         int yNum = Y.size();
         int pNum = x_s.size();

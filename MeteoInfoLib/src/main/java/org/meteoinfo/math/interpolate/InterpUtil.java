@@ -172,6 +172,8 @@ public class InterpUtil {
      */
     public static Array cressman(List<Number> x_s, List<Number> y_s, Array v_s, List<Number> X, List<Number> Y,
             List<Number> radList) {
+        v_s = v_s.copyIfView();
+
         int xNum = X.size();
         int yNum = Y.size();
         int pNum = x_s.size();
@@ -351,6 +353,8 @@ public class InterpUtil {
      */
     public static Array barnes(List<Number> x_s, List<Number> y_s, Array v_s, List<Number> X, List<Number> Y,
             List<Number> radList, double kappa, double gamma) {
+        v_s = v_s.copyIfView();
+
         int xNum = X.size();
         int yNum = Y.size();
         int pNum = x_s.size();
@@ -534,6 +538,8 @@ public class InterpUtil {
      */
     public static Array barnes(List<Number> x_s, List<Number> y_s, Array v_s, List<Number> X, List<Number> Y,
             double kappa, double gamma) {
+        v_s = v_s.copyIfView();
+
         int xNum = X.size();
         int yNum = Y.size();
         int pNum = x_s.size();

@@ -11,12 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.meteodata.Attribute;
 import org.meteoinfo.data.meteodata.Variable;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.ArrayStructure;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.Dimension;
-import org.meteoinfo.ndarray.InvalidRangeException;
-import org.meteoinfo.ndarray.Section;
+import org.meteoinfo.ndarray.*;
 
 /**
  *
@@ -175,7 +170,10 @@ public class NCUtil {
      */
     public static Section convertSection(ucar.ma2.Section ncSection) {
         try {
-            Section section = new Section(ncSection.getOrigin(), ncSection.getShape(), ncSection.getStride());
+            List<Range> ranges = new ArrayList<>();
+            for (ucar.ma2.Range range : ncSection.getRanges())
+                ranges.add(new Range(range.getName(), range.first(), range.last(), range.stride()));
+            Section section = new Section(ranges);
             return section;
         } catch (InvalidRangeException ex) {
             Logger.getLogger(NCUtil.class.getName()).log(Level.SEVERE, null, ex);

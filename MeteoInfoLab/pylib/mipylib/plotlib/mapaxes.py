@@ -101,6 +101,9 @@ class MapAxes(Axes):
         mapframe.setDrawGridLine(gridline)
         mapframe.setGridXDelt(griddx)
         mapframe.setGridYDelt(griddy)
+        mapview = self.axes.getMapView()
+        mapview.setXYScaleFactor(xyscale)
+        self.axes.setAspect(xyscale)
         boundaryprop = kwargs.pop('boundaryprop', None)
         if not boundaryprop is None:
             boundaryprop = plotutil.getlegendbreak('polygon', **boundaryprop)[0]

@@ -3917,6 +3917,7 @@ public class ArrayUtil {
      * @return Index
      */
     public static int searchSorted(Array a, double v) {
+        a = a.copyIfView();
         int idx = -1;
         int n = (int) a.getSize();
         if (a.getDouble(1) > a.getDouble(0)) {

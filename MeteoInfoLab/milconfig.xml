@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\linalg">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\metrics"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\interpolation">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
@@ -16,17 +13,24 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\data"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection\train_test_split_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\svm_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\lda_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\log_interpolate_1d_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection\train_test_split_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\svm_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\lda_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\log_interpolate_1d_1.py"/>
     </RecentFiles>
   </File>
   <Font>

@@ -30,6 +30,7 @@ class NDArray(object):
         self.dtype = _dtype.fromjava(array.getDataType())
         self.size = int(self._array.getSize())
         self.iterator = array.getIndexIterator()
+        self.base = None
         if self.ndim > 0:
             self.sizestr = str(self.shape[0])
             if self.ndim > 1:
@@ -55,6 +56,15 @@ class NDArray(object):
         self.__init__(self._array.reshape(nshape))
         
     shape = property(get_shape, set_shape)
+
+    def get_base(self):
+        '''
+        Get base array.
+        '''
+        if self.base is None:
+            return self
+        else:
+            return self.base.get_base()
         
     def __len__(self):
         return self._shape[0]         
@@ -205,10 +215,10 @@ class NDArray(object):
         else:
             for i in flips:
                 r = r.flip(i)
-            return NDArray(r)
-            #rr = Array.factory(r.getDataType(), r.getShape())
-            #MAMath.copy(rr, r)
-            #return NDArray(rr)
+            r = NDArray(r)
+            if onlyrange:
+                r.base = self.get_base()
+            return r
         
     def __setitem__(self, indices, value):
         #print type(indices) 
@@ -770,8 +780,10 @@ class NDArray(object):
             i += 1
         if not idx is None:
             shape[idx] = self.size / n
-        #shape = jarray.array(shape, 'i')
-        return NDArray(self._array.reshape(shape))
+
+        r = NDArray(self._array.reshape(shape))
+        r.base = self.get_base()
+        return r
         
     def transpose(self, axes=None):
         '''
@@ -789,7 +801,9 @@ class NDArray(object):
             axes = [self.ndim-i-1 for i in range(self.ndim)]
 
         r = self._array.permute(axes)
-        return NDArray(r)
+        r = NDArray(r)
+        r.base = self.get_base()
+        return r
         
     T = property(transpose)
 
@@ -814,7 +828,9 @@ class NDArray(object):
             return self
 
         r = self._array.transpose(axis1, axis2)
-        return NDArray(r)
+        r = NDArray(r)
+        r.base = self.get_base()
+        return r
     
     def inv(self):
         '''

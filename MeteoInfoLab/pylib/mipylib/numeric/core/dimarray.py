@@ -247,10 +247,9 @@ class DimArray(NDArray):
         else:
             for i in flips:
                 r = r.flip(i)
-            #rr = Array.factory(r.getDataType(), r.getShape())
-            #MAMath.copy(rr, r)
-            #array = NDArray(r)
             data = DimArray(r, ndims, self.fill_value, self.proj)
+            if onlyrange:
+                data.base = self.get_base()
             return data        
         
     def __add__(self, other):

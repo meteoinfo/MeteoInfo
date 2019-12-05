@@ -55,6 +55,9 @@ public class StatsUtil {
      * @return The covariance matrix
      */
     public static Array cov(Array x, Array y, boolean bias) {
+        x = x.copyIfView();
+        y = y.copyIfView();
+
         int m = x.getShape()[0];
         int n = 1;
         if (x.getRank() == 2)
@@ -136,6 +139,9 @@ public class StatsUtil {
      * @return Pearson correlation and p-value.
      */
     public static double[] pearsonr(Array x, Array y) {
+        x = x.copyIfView();
+        y = y.copyIfView();
+
         if (ArrayMath.containsNaN(x) || ArrayMath.containsNaN(y)) {
             Array[] xy = ArrayMath.removeNaN(x, y);
             if (xy == null) {
@@ -228,6 +234,9 @@ public class StatsUtil {
      * @return Spearman's rank correlation
      */
     public static Array spearmanr(Array x, Array y) {
+        x = x.copyIfView();
+        y = y.copyIfView();
+
         int m = x.getShape()[0];
         int n = 1;
         if (x.getRank() == 2)

@@ -1957,19 +1957,7 @@ def transpose(a, axes=None):
     
     :returns: Transposed array.
     '''
-    r = a.transpose(axes)
-    if type(a) is NDArray:
-        return NDArray(r)
-    else:
-        dims = []
-        for i in range(0, len(a.dims)):
-            if i == dim1:
-                dims.append(a.dims[dim2])
-            elif i == dim2:
-                dims.append(a.dims[dim1])
-            else:
-                dims.append(a.dims[i])
-        return DimArray(NDArray(r), dims, a.fill_value, a.proj)
+    return a.transpose(axes)
 
 def swapaxes(a, axis1, axis2):
     '''
@@ -1980,19 +1968,7 @@ def swapaxes(a, axis1, axis2):
 
     :returns: Axes swapped array.
     '''
-    r = a.swapaxes(axis1, axis2)
-    if type(a) is NDArray:
-        return r
-    else:
-        dims = []
-        for i in range(0, len(a.dims)):
-            if i == dim1:
-                dims.append(a.dims[dim2])
-            elif i == dim2:
-                dims.append(a.dims[dim1])
-            else:
-                dims.append(a.dims[i])
-        return DimArray(r, dims, a.fill_value, a.proj)
+    return a.swapaxes(axis1, axis2)
 
 def rot90(a, k=1):
     """

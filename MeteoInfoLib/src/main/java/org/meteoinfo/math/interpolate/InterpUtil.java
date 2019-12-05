@@ -23,6 +23,7 @@ import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.math.spatial.KDTree.Euclidean;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.IndexIterator;
 
 /**
  *
@@ -112,8 +113,9 @@ public class InterpUtil {
      */
     public static Array evaluate(UnivariateFunction func, Array x) {
         Array r = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator xIter = x.getIndexIterator();
         for (int i = 0; i < r.getSize(); i++) {
-            r.setDouble(i, func.value(x.getDouble(i)));
+            r.setDouble(i, func.value(xIter.getDoubleNext()));
         }
 
         return r;
@@ -140,8 +142,10 @@ public class InterpUtil {
      */
     public static Array evaluate(BivariateFunction func, Array x, Array y) {
         Array r = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
         for (int i = 0; i < r.getSize(); i++) {
-            r.setDouble(i, func.value(x.getDouble(i), y.getDouble(i)));
+            r.setDouble(i, func.value(xIter.getDoubleNext(), yIter.getDoubleNext()));
         }
 
         return r;

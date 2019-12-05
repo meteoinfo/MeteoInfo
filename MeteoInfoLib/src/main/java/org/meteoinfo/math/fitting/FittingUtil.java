@@ -10,6 +10,7 @@ import java.util.List;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.IndexIterator;
 
 /**
  *
@@ -23,6 +24,9 @@ public class FittingUtil {
      * @return Fitting parameters and trend line object
      */
     public static Object[] powerFit(Array x, Array y){
+        x = x.copyIfView();
+        y = y.copyIfView();
+
         PowerTrendLine t = new PowerTrendLine();
         t.setValues(y, x);
         double y_mean = ArrayMath.mean(y);
@@ -44,6 +48,9 @@ public class FittingUtil {
      * @return Fitting parameters and trend line object
      */
     public static Object[] expFit(Array x, Array y){
+        x = x.copyIfView();
+        y = y.copyIfView();
+
         ExpTrendLine t = new ExpTrendLine();
         t.setValues(y, x);
         double y_mean = ArrayMath.mean(y);
@@ -66,6 +73,9 @@ public class FittingUtil {
      * @return Fitting parameters and trend line object
      */
     public static Object[] polyFit(Array x, Array y, int degree){
+        x = x.copyIfView();
+        y = y.copyIfView();
+
         PolyTrendLine t = new PolyTrendLine(degree);
         t.setValues(y, x);
         double y_mean = ArrayMath.mean(y);
@@ -103,8 +113,9 @@ public class FittingUtil {
      */
     public static Array predict(Array x, OLSTrendLine tl){
         Array y = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator iter = x.getIndexIterator();
         for (int i = 0; i < y.getSize(); i++){
-            y.setDouble(i, tl.predict(x.getDouble(i)));
+            y.setDouble(i, tl.predict(iter.getDoubleNext()));
         }
         return y;
     }

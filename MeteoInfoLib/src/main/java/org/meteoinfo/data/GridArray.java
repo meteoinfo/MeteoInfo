@@ -161,11 +161,13 @@ public class GridArray {
 
         this.xArray = new double[xn];
         this.yArray = new double[yn];
+        IndexIterator iter = xdata.getIndexIterator();
         for (int i = 0; i < xn; i++) {
-            this.xArray[i] = xdata.getDouble(i);
+            this.xArray[i] = iter.getDoubleNext();
         }
+        iter = ydata.getIndexIterator();
         for (int i = 0; i < yn; i++) {
-            this.yArray[i] = ydata.getDouble(i);
+            this.yArray[i] = iter.getDoubleNext();
         }
 
         this.missingValue = missingValue.doubleValue();
@@ -298,7 +300,7 @@ public class GridArray {
      * @return Value
      */
     public Number getValue(int i, int j) {
-        return (Number) data.getObject(i * this.getXNum() + j);
+        return (Number) data.getObject(this.index2D.set(i, j));
     }
 
     /**
@@ -309,7 +311,7 @@ public class GridArray {
      * @return Double value
      */
     public double getDoubleValue(int i, int j) {
-        return data.getDouble(i * this.getXNum() + j);
+        return data.getDouble(this.index2D.set(i, j));
     }
 
     // </editor-fold>
@@ -510,21 +512,24 @@ public class GridArray {
         double min = 0;
         int vdNum = 0;
         boolean hasUndef = false;
-        for (int i = 0; i < data.getSize(); i++) {
-            if (java.lang.Double.isNaN(data.getDouble(i)) || MIMath.doubleEquals(data.getDouble(i), missingValue)) {
+        IndexIterator iter = this.data.getIndexIterator();
+        double v;
+        while (iter.hasNext()) {
+            v = iter.getDoubleNext();
+            if (java.lang.Double.isNaN(v) || MIMath.doubleEquals(v, missingValue)) {
                 hasUndef = true;
                 continue;
             }
 
             if (vdNum == 0) {
-                min = data.getDouble(i);
+                min = v;
                 max = min;
             } else {
-                if (min > data.getDouble(i)) {
-                    min = data.getDouble(i);
+                if (min > v) {
+                    min = v;
                 }
-                if (max < data.getDouble(i)) {
-                    max = data.getDouble(i);
+                if (max < v) {
+                    max = v;
                 }
             }
             vdNum += 1;
@@ -559,14 +564,7 @@ public class GridArray {
      * @return Boolean
      */
     public boolean hasNaN() {
-        boolean hasNaN = false;
-        for (int i = 0; i < data.getSize(); i++) {
-            if (java.lang.Double.isNaN(data.getDouble(i)) || MIMath.doubleEquals(data.getDouble(i), missingValue)) {
-                hasNaN = true;
-                break;
-            }
-        }
-        return hasNaN;
+        return ArrayMath.containsNaN(this.data);
     }
 
     /**
@@ -677,7 +675,7 @@ public class GridArray {
             String aLine = "";
             for (int i = 0; i < this.getYNum(); i++) {
                 for (int j = 0; j < this.getXNum(); j++) {
-                    value = data.getObject(i * this.getXNum() + j);
+                    value = this.getValue(i, j);
                     if (j == 0) {
                         aLine = value.toString();
                     } else {
@@ -725,7 +723,7 @@ public class GridArray {
             int yn = this.getYNum();
             for (int i = 0; i < yn; i++) {
                 for (int j = 0; j < xn; j++) {
-                    value = data.getObject((yn - i - 1) * xn + j).toString();
+                    value = this.getValue(yn - i - 1, j).toString();
                     if (j == 0) {
                         aLine = value;
                     } else {
@@ -756,7 +754,7 @@ public class GridArray {
             int yn = this.getYNum();
             for (int i = 0; i < yn; i++) {
                 for (int j = 0; j < xn; j++) {
-                    outs.writeFloat((this.data.getFloat((yn - i - 1) * xn + j)));
+                    outs.writeFloat((float)this.getDoubleValue(yn - i - 1, j));
                 }
             }
             outs.close();
@@ -846,7 +844,7 @@ public class GridArray {
         double value;
         for (int i = 0; i < this.getYNum(); i++) {
             for (int j = 0; j < this.getXNum(); j++) {
-                value = this.data.getDouble(i * this.getXNum() + j);
+                value = this.getDoubleValue(i, j);
                 if (Double.isNaN(value)) {
                     value = undef;
                 } else if (MIMath.doubleEquals(value, this.missingValue)) {
@@ -948,7 +946,7 @@ public class GridArray {
         double value;
         for (int i = 0; i < this.getYNum(); i++) {
             for (int j = 0; j < this.getXNum(); j++) {
-                value = this.data.getDouble(i * this.getXNum() + j);
+                value = this.getDoubleValue(i, j);
                 if (Double.isNaN(value)) {
                     value = undef;
                 } else if (MIMath.doubleEquals(value, this.missingValue)) {

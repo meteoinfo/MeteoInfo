@@ -28,9 +28,6 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-//import org.meteoinfo.data.mapdata.Field;
-//import org.meteoinfo.geoprocess.GeoComputation;
-//import org.meteoinfo.geoprocess.analysis.ResampleMethods;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.util.BigDecimalUtil;
@@ -4291,6 +4288,7 @@ public class ArrayUtil {
      * @return value index
      */
     public static int getDimIndex(Array dim, double v) {
+        dim = dim.copyIfView();
         int n = (int) dim.getSize();
         if (v < dim.getDouble(0) || v > dim.getDouble(n - 1)) {
             return -1;
@@ -4334,6 +4332,9 @@ public class ArrayUtil {
     }
 
     private static double bilinear(Array data, Index dindex, Array xdim, Array ydim, double x, double y) {
+        xdim = xdim.copyIfView();
+        ydim = ydim.copyIfView();
+
         double iValue = Double.NaN;
         int[] xyIdx = gridIndex(xdim, ydim, x, y);
         if (xyIdx == null) {
@@ -4344,7 +4345,7 @@ public class ArrayUtil {
         int j1 = xyIdx[1];
         int i2 = xyIdx[2];
         int j2 = xyIdx[3];
-        Index index = Index.factory(data.getShape());
+        Index index = data.getIndex();
         int n = index.getRank();
         for (int i = 0; i < n - 2; i++) {
             index.setDim(i, dindex.getCurrentCounter()[i]);
@@ -4406,6 +4407,9 @@ public class ArrayUtil {
      * @return Interpolated value
      */
     public static double toStation(Array data, Array xArray, Array yArray, double x, double y) {
+        xArray = xArray.copyIfView();
+        yArray = yArray.copyIfView();
+
         double iValue = Double.NaN;
         int nx = (int) xArray.getSize();
         int ny = (int) yArray.getSize();
@@ -4638,6 +4642,9 @@ public class ArrayUtil {
      * @return Interpolated value
      */
     public static double toStation_Neighbor(Array data, Array xArray, Array yArray, double x, double y) {
+        xArray = xArray.copyIfView();
+        yArray = yArray.copyIfView();
+
         //ouble iValue = Double.NaN;
         int nx = (int) xArray.getSize();
         int ny = (int) yArray.getSize();

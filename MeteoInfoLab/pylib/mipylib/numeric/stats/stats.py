@@ -100,7 +100,7 @@ def pearsonr(x, y, axis=None):
         r = StatsUtil.pearsonr(x.asarray(), y.asarray())
         return r[0], r[1]
     else:
-        r = StatsUtil.pearsonr(x.array, y.array, axis)
+        r = StatsUtil.pearsonr(x.asarray(), y.asarray(), axis)
         return np.array(r[0]), np.array(r[1])
     
 def kendalltau(x, y):

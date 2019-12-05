@@ -860,28 +860,61 @@ class DimArray(NDArray):
             r = DimArray(r, self.dims, self.fill_value, self.proj)
             return r
         
-    def transpose(self):
+    def transpose(self, axes=None):
         '''
-        Transpose 2-D array.
-        
-        :returns: Transposed array.
+        Permute the dimensions of an array.
+
+        :param axes: (*list of int*) By default, reverse the dimensions, otherwise permute the axes according to the
+            values given.
+
+        :returns: Permuted array.
         '''
+        if axes is None:
+            axes = [self.ndim-i-1 for i in range(self.ndim)]
+
+        r = super(DimArray, self).transpose(axes)
+
         if self.ndim == 1:
-            return self[:]
-        dim1 = 0
-        dim2 = 1
-        r = ArrayMath.transpose(self.asarray(), dim1, dim2)
-        dims = []
-        for i in range(0, self.ndim):
-            if i == dim1:
-                dims.append(self.dims[dim2])
-            elif i == dim2:
-                dims.append(self.dims[dim1])
-            else:
-                dims.append(self.dims[i])
-        return DimArray(NDArray(r), dims, self.fill_value, self.proj) 
+            dims = self.dims
+        else:
+            dims = []
+            for ax in axes:
+                dims.append(self.dims[ax])
+
+        return DimArray(r, dims, self.fill_value, self.proj)
         
     T = property(transpose)
+
+    def swapaxes(self, axis1, axis2):
+        '''
+        Interchange two axes of an array.
+
+        :param axis1: (*int*) First axis.
+        :param axis2: (*int*) Second axis.
+
+        :returns: Axes swapped array.
+        '''
+        if self.ndim == 1:
+            return self
+
+        if axis1 < 0:
+            axis1 = self.ndim + axis1
+        if axis2 < 0:
+            axis2 = self.ndim + axis2
+
+        if axis1 == axis2:
+            return self
+
+        r = self._array.transpose(axis1, axis2)
+        dims = []
+        for i in range(self.ndim):
+            if i == axis1:
+                dims.append(self.dims[axis2])
+            elif i == axis2:
+                dims.append(self.dims[axis1])
+            else:
+                dims.append(self.dims[i])
+        return DimArray(r, dims, self.fill_value, self.proj)
     
     def inv(self):
         '''

@@ -26,7 +26,11 @@ public abstract class OLSTrendLine implements TrendLine {
         if (x.getSize() != y.getSize()) {
             throw new IllegalArgumentException(String.format("The numbers of y and x values must be equal (%d != %d)",y.getSize(),x.getSize()));
         }
-        double[][] xData = new double[(int)x.getSize()][]; 
+
+        y = y.copyIfView();
+        x = x.copyIfView();
+
+        double[][] xData = new double[(int)x.getSize()][];
         for (int i = 0; i < x.getSize(); i++) {
             // the implementation determines how to produce a vector of predictors from a single x
             xData[i] = xVector(x.getDouble(i));

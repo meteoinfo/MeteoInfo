@@ -10,7 +10,6 @@ from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.math.linalg import LinalgUtil
 from org.meteoinfo.ndarray import Array, Range, MAMath, Complex, Dimension
 
-import jarray
 import datetime
 
 import _dtype
@@ -732,8 +731,21 @@ class NDArray(object):
         :returns: (*int*) Value index.
         '''
         return self.tolist().index(v)
-        
+
     def asarray(self):
+        '''
+        Get backend Java Array
+
+        :return: Backend Java Array
+        '''
+        return self._array
+
+    def backend(self):
+        '''
+        Get backend Java Array
+
+        :return: Backend Java Array
+        '''
         return self._array
         
     def reshape(self, *args):
@@ -758,7 +770,7 @@ class NDArray(object):
             i += 1
         if not idx is None:
             shape[idx] = self.size / n
-        shape = jarray.array(shape, 'i')
+        #shape = jarray.array(shape, 'i')
         return NDArray(self._array.reshape(shape))
         
     def transpose(self, axes=None):

@@ -118,8 +118,11 @@ public class MeteoMath {
      */
     public static Array dewpoint2rh(Array tdc, Array tc) {
         Array r = Array.factory(tdc.getDataType(), tdc.getShape());
-        for (int i = 0; i < r.getSize(); i++) {
-            r.setDouble(i, MeteoMath.dewpoint2rh(tc.getDouble(i), tdc.getDouble(i)));
+        IndexIterator iter = r.getIndexIterator();
+        IndexIterator iter_tdc = tdc.getIndexIterator();
+        IndexIterator iter_tc = tc.getIndexIterator();
+        while(iter.hasNext()) {
+            iter.setDoubleNext(MeteoMath.dewpoint2rh(iter_tc.getDoubleNext(), iter_tdc.getDoubleNext()));
         }
 
         return r;
@@ -147,8 +150,11 @@ public class MeteoMath {
      */
     public static Array rh2dewpoint(Array rh, Array tc) {
         Array r = Array.factory(rh.getDataType(), rh.getShape());
-        for (int i = 0; i < r.getSize(); i++) {
-            r.setDouble(i, MeteoMath.rh2dewpoint(rh.getDouble(i), tc.getDouble(i)));
+        IndexIterator iter = r.getIndexIterator();
+        IndexIterator iter_rh = rh.getIndexIterator();
+        IndexIterator iter_tc = tc.getIndexIterator();
+        while (r.hasNext()) {
+            iter.setDoubleNext(MeteoMath.rh2dewpoint(iter_rh.getDoubleNext(), iter_tc.getDoubleNext()));
         }
 
         return r;
@@ -334,6 +340,169 @@ public class MeteoMath {
         bad_j = -1;
         bad_sfp = -1;
         int[][] level = new int[ny][nx];
+        Index pIdx = p.getIndex();
+        for (i = 0; i < ny; i++) {
+            for (j = 0; j < nx; j++) {
+                level[i][j] = -1;
+                k = 0;
+                found = false;
+                while ((!found) && (k < nz)) {
+                    if (p.getDouble(pIdx.set(k, i, j)) < p.getDouble(pIdx.set(0, i, j)) - PCONST) {
+                        level[i][j] = k;
+                        found = true;
+                    }
+                    k = k + 1;
+                }
+
+                if (level[i][j] == -1) {
+                    errcnt = errcnt + 1;
+                    //$OMP CRITICAL
+                    // Only do this the first time
+                    if (bad_i == -1) {
+                        bad_i = i;
+                        bad_j = j;
+                        bad_sfp = p.getDouble(pIdx.set(0, i, j)) / 100.;
+                    }
+                    //$OMP END CRITICAL
+                }
+            }
+        }
+
+        if (errcnt > 0) {
+            //errstat = ALGERR;
+            System.out.println("Error in finding 100 hPa up.  i=" + bad_i + "j=" + bad_j + "sfc_p=" + bad_sfp);
+            return null;
+        }
+
+        //     Get temperature PCONST Pa above surface.  Use this to extrapolate
+        //     the temperature at the surface and down to sea level.
+        //$OMP PARALLEL DO COLLAPSE(2) PRIVATE(i,j,klo,khi,plo, &
+        //$OMP phi,tlo,thi,zlo,zhi,p_at_pconst,t_at_pconst,z_at_pconst) &
+        //$OMP REDUCTION(+:errcnt) SCHEDULE(runtime)
+        double[][] t_surf = new double[ny][nx];
+        double[][] t_sea_level = new double[ny][nx];
+        Index tIdx = t.getIndex();
+        Index zIdx = z.getIndex();
+        Index qIdx = q.getIndex();
+        for (i = 0; i < ny; i++) {
+            for (j = 0; j < nx; j++) {
+                klo = Math.max(level[i][j] - 1, 0);
+                khi = Math.min(klo + 1, nz - 1);
+
+                if (klo == khi) {
+                    errcnt = errcnt + 1;
+                    //$OMP CRITICAL
+                    if (bad_i == -1) {
+                        bad_i = i;
+                        bad_j = j;
+                    }
+                    //$OMP END CRITICAL
+                }
+
+                plo = p.getDouble(pIdx.set(klo, i, j));
+                phi = p.getDouble(pIdx.set(khi, i, j));
+                tlo = t.getDouble(tIdx.set(klo, i, j)) * (1.0 + 0.6080 * q.getDouble(qIdx.set(klo, i, j)));
+                thi = t.getDouble(tIdx.set(khi, i, j)) * (1.0 + 0.6080 * q.getDouble(qIdx.set(khi, i, j)));
+                zlo = z.getDouble(zIdx.set(klo, i, j));
+                zhi = z.getDouble(zIdx.set(khi, i, j));
+                p_at_pconst = p.getDouble(pIdx.set(0, i, j)) - PCONST;
+                t_at_pconst = thi - (thi - tlo) * Math.log(p_at_pconst / phi) * Math.log(plo / phi);
+                z_at_pconst = zhi - (zhi - zlo) * Math.log(p_at_pconst / phi) * Math.log(plo / phi);
+
+                t_surf[i][j] = t_at_pconst * Math.pow(p.getDouble(pIdx.set(0, i, j)) / p_at_pconst, USSALR * RD / G);
+                t_sea_level[i][j] = t_at_pconst + USSALR * z_at_pconst;
+            }
+        }
+        //$OMP END PARALLEL DO
+
+        if (errcnt > 0) {
+            //errstat = ALGERR;
+            System.out.println("Error trapping levels at i=" + bad_i + "j=" + bad_j);
+            return null;
+        }
+
+        // If we follow a traditional computation, there is a correction to the
+        // sea level temperature if both the surface and sea level
+        // temperatures are *too* hot.
+        if (ridiculous_mm5_test) {
+            //$OMP PARALLEL DO COLLAPSE(2) PRIVATE(l1,l2,l3) SCHEDULE(runtime)   
+            l1 = true;
+            for (i = 0; i < ny; i++) {
+                for (j = 0; j < nx; j++) {
+                    l1 = (t_sea_level[i][j] < TC);                
+                    l2 = (t_surf[i][j] <= TC);
+                    l3 = !l1;
+                    if (l2 && l3) {
+                        t_sea_level[i][j] = TC;
+                    } else {
+                        t_sea_level[i][j] = TC - 0.0050 * Math.pow(t_surf[i][j] - TC, 2);
+                    }
+                }
+            }
+        }
+        //$OMP END PARALLEL DO
+
+        //     The grand finale: ta da!
+        //$OMP PARALLEL DO COLLAPSE(2) SCHEDULE(runtime)
+        Array sea_level_pressure = Array.factory(DataType.DOUBLE, new int[]{ny, nx});
+        double v;
+        for (i = 0; i < ny; i++) {
+            for (j = 0; j < nx; j++) {
+                //z_half_lowest = z(i,j,1)
+
+                // Convert to hPa in this step, by multiplying by 0.01. The original
+                // Fortran routine didn't do this, but the NCL script that called it
+                // did, so we moved it here.
+                v = 0.01 * (p.getDouble(pIdx.set(0, i, j)) * Math.exp((2.0 * G * z.getDouble(zIdx.set(0, i, j)))
+                        / (RD * (t_sea_level[i][j] + t_surf[i][j]))));
+                sea_level_pressure.setDouble(i * nx + j, v);
+            }
+        }
+        //$OMP END PARALLEL DO
+
+        return sea_level_pressure;
+    }
+
+    /**
+     * Estimate sea level pressure
+     *
+     * @param z Height (m)
+     * @param t Temperature array (K)
+     * @param p Pressure array (Pa)
+     * @param q Mixing ratio (kg/kg)
+     * @return Sea level pressure (Pa)
+     */
+    public static Array calSeaPrs_bak(Array z, Array t, Array p, Array q) {
+        //Specific constants for assumptions made in this routine:
+        double RD = 287.0;
+        double G = 9.81;
+        double USSALR = 0.00650;      // deg C per m
+        double TC = 273.16 + 17.5;
+        double PCONST = 10000.;
+        boolean ridiculous_mm5_test = true;
+
+        int[] shape = z.getShape();
+        int nz = shape[0];
+        int ny = shape[1];
+        int nx = shape[2];
+        int i, j, k;
+        int klo, khi;
+        int errcnt, bad_i, bad_j;
+        double bad_sfp;
+        double plo, phi, tlo, thi, zlo, zhi;
+        double p_at_pconst, t_at_pconst, z_at_pconst;
+        boolean l1, l2, l3, found;
+
+        //  Find least zeta level that is PCONST Pa above the surface.  We
+        //  later use this level to extrapolate a surface pressure and
+        //  temperature, which is supposed to reduce the effect of the diurnal
+        //  heating cycle in the pressure field.
+        //int errstat = 0;
+        errcnt = 0;
+        bad_i = -1;
+        bad_j = -1;
+        bad_sfp = -1;
+        int[][] level = new int[ny][nx];
         Index idx3 = Index.factory(shape);
         for (i = 0; i < ny; i++) {
             for (j = 0; j < nx; j++) {
@@ -416,11 +585,11 @@ public class MeteoMath {
         // sea level temperature if both the surface and sea level
         // temperatures are *too* hot.
         if (ridiculous_mm5_test) {
-            //$OMP PARALLEL DO COLLAPSE(2) PRIVATE(l1,l2,l3) SCHEDULE(runtime)   
+            //$OMP PARALLEL DO COLLAPSE(2) PRIVATE(l1,l2,l3) SCHEDULE(runtime)
             l1 = true;
             for (i = 0; i < ny; i++) {
                 for (j = 0; j < nx; j++) {
-                    l1 = (t_sea_level[i][j] < TC);                
+                    l1 = (t_sea_level[i][j] < TC);
                     l2 = (t_surf[i][j] <= TC);
                     l3 = !l1;
                     if (l2 && l3) {
@@ -462,8 +631,10 @@ public class MeteoMath {
      */
     public static Array tc2tf(Array tc) {
         Array r = Array.factory(tc.getDataType(), tc.getShape());
-        for (int i = 0; i < r.getSize(); i++) {
-            r.setDouble(i, MeteoMath.tc2tf(tc.getDouble(i)));
+        IndexIterator rIter = r.getIndexIterator();
+        IndexIterator tcIter = tc.getIndexIterator();
+        while (rIter.hasNext()) {
+            rIter.setDoubleNext(MeteoMath.tc2tf(tcIter.getDoubleNext()));
         }
 
         return r;
@@ -477,8 +648,10 @@ public class MeteoMath {
      */
     public static Array tf2tc(Array tf) {
         Array r = Array.factory(tf.getDataType(), tf.getShape());
-        for (int i = 0; i < r.getSize(); i++) {
-            r.setDouble(i, MeteoMath.tf2tc(tf.getDouble(i)));
+        IndexIterator rIter = r.getIndexIterator();
+        IndexIterator tfIter = tf.getIndexIterator();
+        while (rIter.hasNext()) {
+            rIter.setDoubleNext(MeteoMath.tf2tc(tfIter.getDoubleNext()));
         }
 
         return r;
@@ -495,10 +668,13 @@ public class MeteoMath {
      */
     public static Array qair2rh(Array qair, Array temp, double press) {
         Array r = Array.factory(DataType.DOUBLE, qair.getShape());
+        IndexIterator rIter = r.getIndexIterator();
+        IndexIterator qairIter = qair.getIndexIterator();
+        IndexIterator tempIter = temp.getIndexIterator();
         double rh;
-        for (int i = 0; i < r.getSize(); i++) {
-            rh = MeteoMath.qair2rh(qair.getDouble(i), temp.getDouble(i), press);
-            r.setDouble(i, rh);
+        while (rIter.hasNext()) {
+            rh = MeteoMath.qair2rh(qairIter.getDoubleNext(), tempIter.getDoubleNext(), press);
+            rIter.setDoubleNext(rh);
         }
 
         return r;
@@ -515,10 +691,14 @@ public class MeteoMath {
      */
     public static Array qair2rh(Array qair, Array temp, Array press) {
         Array r = Array.factory(DataType.DOUBLE, qair.getShape());
+        IndexIterator rIter = r.getIndexIterator();
+        IndexIterator qairIter = qair.getIndexIterator();
+        IndexIterator tempIter = temp.getIndexIterator();
+        IndexIterator pressIter = press.getIndexIterator();
         double rh;
-        for (int i = 0; i < r.getSize(); i++) {
-            rh = MeteoMath.qair2rh(qair.getDouble(i), temp.getDouble(i), press.getDouble(i));
-            r.setDouble(i, rh);
+        while (rIter.hasNext()) {
+            rh = MeteoMath.qair2rh(qairIter.getDoubleNext(), tempIter.getDoubleNext(), pressIter.getDoubleNext());
+            rIter.setDoubleNext(rh);
         }
 
         return r;
@@ -532,10 +712,12 @@ public class MeteoMath {
      */
     public static Array press2Height(Array press) {
         Array r = Array.factory(DataType.DOUBLE, press.getShape());
+        IndexIterator rIter = r.getIndexIterator();
+        IndexIterator pressIter = press.getIndexIterator();
         double rh;
-        for (int i = 0; i < r.getSize(); i++) {
-            rh = MeteoMath.press2Height(press.getDouble(i));
-            r.setDouble(i, rh);
+        while (rIter.hasNext()) {
+            rh = MeteoMath.press2Height(pressIter.getDoubleNext());
+            rIter.setDoubleNext(rh);
         }
 
         return r;
@@ -549,9 +731,10 @@ public class MeteoMath {
      */
     public static Array height2Press(Array height) {
         Array r = Array.factory(DataType.DOUBLE, height.getShape());
+        IndexIterator iter = height.getIndexIterator();
         double rh;
         for (int i = 0; i < r.getSize(); i++) {
-            rh = MeteoMath.height2Press(height.getDouble(i));
+            rh = MeteoMath.height2Press(iter.getDoubleNext());
             r.setDouble(i, rh);
         }
 

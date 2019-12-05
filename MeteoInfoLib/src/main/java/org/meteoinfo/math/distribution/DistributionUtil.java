@@ -9,6 +9,7 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.IndexIterator;
 
 /**
  *
@@ -45,8 +46,9 @@ public class DistributionUtil {
      */
     public static Array pdf(RealDistribution dis, Array x){
         Array r = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator iter = x.getIndexIterator();
         for (int i = 0; i < r.getSize(); i++){
-            r.setDouble(i, dis.density(x.getDouble(i)));
+            r.setDouble(i, dis.density(iter.getDoubleNext()));
         }
         
         return r;
@@ -70,8 +72,9 @@ public class DistributionUtil {
      */
     public static Array logpdf(NormalDistribution dis, Array x){
         Array r = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator iter = x.getIndexIterator();
         for (int i = 0; i < r.getSize(); i++){
-            r.setDouble(i, dis.logDensity(x.getDouble(i)));
+            r.setDouble(i, dis.logDensity(iter.getDoubleNext()));
         }
         
         return r;
@@ -95,8 +98,9 @@ public class DistributionUtil {
      */
     public static Array cdf(RealDistribution dis, Array x){
         Array r = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator iter = x.getIndexIterator();
         for (int i = 0; i < r.getSize(); i++){
-            r.setDouble(i, dis.cumulativeProbability(x.getDouble(i)));
+            r.setDouble(i, dis.cumulativeProbability(iter.getDoubleNext()));
         }
         
         return r;
@@ -120,8 +124,9 @@ public class DistributionUtil {
      */
     public static Array pmf(RealDistribution dis, Array x){
         Array r = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator iter = x.getIndexIterator();
         for (int i = 0; i < r.getSize(); i++){
-            r.setDouble(i, dis.probability(x.getDouble(i)));
+            r.setDouble(i, dis.probability(iter.getDoubleNext()));
         }
         
         return r;
@@ -145,8 +150,9 @@ public class DistributionUtil {
      */
     public static Array ppf(RealDistribution dis, Array q){
         Array r = Array.factory(DataType.DOUBLE, q.getShape());
+        IndexIterator iter = q.getIndexIterator();
         for (int i = 0; i < r.getSize(); i++){
-            r.setDouble(i, dis.inverseCumulativeProbability(q.getDouble(i)));
+            r.setDouble(i, dis.inverseCumulativeProbability(iter.getDoubleNext()));
         }
         
         return r;

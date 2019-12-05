@@ -178,7 +178,7 @@ public class Reproject {
      * @param fromProj From projection
      * @param toProj To projection
      * @return Porjected grid data
-     * @throws org.meteothink.ndarray.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Object[] reproject(Array data, List<Number> xx, List<Number> yy, ProjectionInfo fromProj,
             ProjectionInfo toProj) throws InvalidRangeException {
@@ -198,7 +198,7 @@ public class Reproject {
      * @param fill_value Fill value
      * @param resampleMethod Resample method
      * @return Result arrays
-     * @throws org.meteothink.ndarray.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array reproject(Array data, List<Number> x, List<Number> y, Array rx, Array ry,
             ProjectionInfo fromProj, ProjectionInfo toProj, double fill_value, ResampleMethods resampleMethod) throws InvalidRangeException {
@@ -343,7 +343,7 @@ public class Reproject {
      * @param toProj To projection
      * @param resampleMethod Resample method
      * @return Result arrays
-     * @throws org.meteothink.ndarray.InvalidRangeException
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Array reproject(Array data, List<Number> x, List<Number> y, Array rx, Array ry,
             ProjectionInfo fromProj, ProjectionInfo toProj, ResampleMethods resampleMethod) throws InvalidRangeException {

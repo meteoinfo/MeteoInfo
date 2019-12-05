@@ -7,6 +7,7 @@ package org.meteoinfo.math.linalg;
 
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.IndexIterator;
 
 /**
  *
@@ -140,10 +141,11 @@ public class EOF {
         int LL = shape[0];
         int N = shape[1];
         Array H = Array.factory(DataType.DOUBLE, shape);
+        IndexIterator iter = f.getIndexIterator();
         switch (method) {
             case NONE:
                 for (int i = 0; i < H.getSize(); i++) {
-                    H.setDouble(i, f.getDouble(i));
+                    H.setDouble(i, iter.getDoubleNext());
                 }
                 break;
             case DEPARTURE:
@@ -168,10 +170,11 @@ public class EOF {
      */
     public static Object[] SEOF(int N, int LL, Array f, DataProMethod method) {
         Array H = Array.factory(DataType.DOUBLE, f.getShape());
+        IndexIterator iter = f.getIndexIterator();
         switch (method) {
             case NONE:
                 for (int i = 0; i < H.getSize(); i++) {
-                    H.setDouble(i, f.getDouble(i));
+                    H.setDouble(i, iter.getDoubleNext());
                 }
                 break;
             case DEPARTURE:
@@ -195,6 +198,9 @@ public class EOF {
      * ordered eigen value
      */
     public static Object[] SEOF(int N, int LL, Array f, Array H) {
+        f = f.copyIfView();
+        H = H.copyIfView();
+
         Array A = Array.factory(DataType.DOUBLE, new int[]{N, N});
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
@@ -435,6 +441,8 @@ public class EOF {
      * @return Eigen value and eigen vector
      */
     public static Object[] jacobi(int N, boolean EV, Array A, int MAXTIMES) {
+        A = A.copyIfView();
+
         Array D = Array.factory(DataType.DOUBLE, new int[]{N});
         Array V = Array.factory(DataType.DOUBLE, new int[]{N, N});
         int IRT = 0;
@@ -578,6 +586,7 @@ public class EOF {
     }
     
     static double[] average(int N, int LL, Array f) {
+        f = f.copyIfView();
         double[] Aver = new double[N];
         for (int j = 0; j < N; j++) {
             Aver[j] = 0;
@@ -605,6 +614,7 @@ public class EOF {
     
     static Array dep(int N, int LL, Array f)///距平，N：格点；LL：时间；f原始值；H：距平；W：平均值
     {
+        f = f.copyIfView();
         Array H = Array.factory(DataType.DOUBLE, f.getShape());
         double[] Aver = average(N, LL, f);
 
@@ -640,6 +650,7 @@ public class EOF {
     }
     
     static Array nor(int N, int LL, Array f) {
+        f = f.copyIfView();
         Array H = Array.factory(DataType.DOUBLE, f.getShape());
         double[] Std = new double[N];
 

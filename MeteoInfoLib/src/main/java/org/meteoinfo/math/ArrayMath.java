@@ -6850,20 +6850,23 @@ public class ArrayMath {
         int n = 0;
         List<Double> xi = new ArrayList<>();
         List<Double> yi = new ArrayList<>();
-        for (int i = 0; i < xData.getSize(); i++) {
-            if (Double.isNaN(xData.getDouble(i))) {
+        IndexIterator xIter = xData.getIndexIterator();
+        IndexIterator yIter = yData.getIndexIterator();
+        double xv, yv;
+        while (xIter.hasNext()) {
+            xv = xIter.getDoubleNext();
+            if (Double.isNaN(xv))
                 continue;
-            }
-            if (Double.isNaN(yData.getDouble(i))) {
+            yv = yIter.getDoubleNext();
+            if (Double.isNaN(yv))
                 continue;
-            }
-            xi.add(xData.getDouble(i));
-            yi.add(yData.getDouble(i));
-            x_sum += xData.getDouble(i);
-            y_sum += yData.getDouble(i);
-            sx_sum += xData.getDouble(i) * xData.getDouble(i);
-            sy_sum += yData.getDouble(i) * yData.getDouble(i);
-            xy_sum += xData.getDouble(i) * yData.getDouble(i);
+            xi.add(xv);
+            yi.add(yv);
+            x_sum += xv;
+            y_sum += yv;
+            sx_sum += xv * xv;
+            sy_sum += yv * yv;
+            xy_sum += xv * yv;
             n += 1;
         }
 

@@ -2447,8 +2447,9 @@ public class ArrayUtil {
         IndexIterator iter = a.getIndexIterator();
         KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
         for (i = 0; i < pNum; i++) {
-            if (!Double.isNaN(a.getDouble(i))) {
-                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, iter.getDoubleNext());
+            v = iter.getDoubleNext();
+            if (!Double.isNaN(v)) {
+                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
                 n += 1;
             }
         }

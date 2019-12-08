@@ -140,6 +140,6 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.19" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.19" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-all:2.1.4" level="project" />
-    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:2.6.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.0.4" level="project" />
   </component>
 </module>

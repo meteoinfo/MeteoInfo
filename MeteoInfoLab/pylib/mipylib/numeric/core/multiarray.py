@@ -42,6 +42,8 @@ class NDArray(object):
         return self._shape
         
     def set_shape(self, value):
+        if isinstance(value, int):
+            value = tuple([value])
         if -1 in value:
             nvalue = list(value)
             l = 1
@@ -52,8 +54,7 @@ class NDArray(object):
             nvalue[idx] = int(self._array.getSize() / l)
             value = tuple(nvalue)
         self._shape = value
-        nshape = jarray.array(value, 'i')
-        self.__init__(self._array.reshape(nshape))
+        self.__init__(self._array.reshape(value))
         
     shape = property(get_shape, set_shape)
 

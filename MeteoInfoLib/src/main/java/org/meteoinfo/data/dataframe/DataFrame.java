@@ -627,6 +627,7 @@ public class DataFrame implements Iterable {
             ranges.add(rowRange);
             ranges.add(colRange);
             r = ArrayMath.section((Array) this.data, ranges);
+            r = r.copy();
         } else {
             r = (Array) ((List) this.data).get(col);
         }

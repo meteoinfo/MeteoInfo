@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.TextEditorPane;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.meteoinfo.global.GenericFileFilter;
 import org.meteoinfo.laboratory.codecomplete.JIntrospect;
 import org.meteoinfo.ui.ButtonTabComponent;
@@ -48,21 +50,30 @@ public class EditorDockable extends DefaultSingleCDockable {
     private final JTabbedPane tabbedPanel;
     private Font textFont;
     private PythonInterpreter interp;
+    private Theme theme;
 
     public EditorDockable(FrmMain parent, String id, String title, CAction... actions) {
         super(id, title, actions);
 
         this.parent = parent;
+        String themeName = this.parent.getOptions().getEditorTheme();
+        try {
+            theme = Theme.load(getClass().getResourceAsStream(
+                    "/org/fife/ui/rsyntaxtextarea/themes/" + themeName + ".xml"));
+        } catch (IOException ioe) { // Never happens
+            ioe.printStackTrace();
+        }
         tabbedPanel = new JTabbedPane();
         tabbedPanel.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
-                TextEditor te = (TextEditor)sourceTabbedPane.getSelectedComponent();
-                if (te != null)
+                TextEditor te = (TextEditor) sourceTabbedPane.getSelectedComponent();
+                if (te != null) {
                     EditorDockable.this.setTitleText("Editor - " + te.getFileName());
+                }
             }
-            
+
         });
         this.getContentPane().add(tabbedPanel);
         //this.setCloseable(false);
@@ -76,12 +87,12 @@ public class EditorDockable extends DefaultSingleCDockable {
 //    public void setStartupPath(String path) {
 //        this.startupPath = path;
 //    }
-    
     /**
      * Get tabbed pane
+     *
      * @return Tabbed pane
      */
-    public JTabbedPane getTabbedPane(){
+    public JTabbedPane getTabbedPane() {
         return this.tabbedPanel;
     }
 
@@ -107,12 +118,13 @@ public class EditorDockable extends DefaultSingleCDockable {
             }
         }
     }
-    
+
     /**
      * Set python interpreter
+     *
      * @param value Python interpreter
      */
-    public void setInterp(PythonInterpreter value){
+    public void setInterp(PythonInterpreter value) {
         this.interp = value;
     }
 
@@ -126,10 +138,11 @@ public class EditorDockable extends DefaultSingleCDockable {
         final TextEditor tab = new TextEditor(tabbedPanel, title);
         tabbedPanel.add(tab, title);
         tabbedPanel.setSelectedComponent(tab);
-        final MITextEditorPane textArea = (MITextEditorPane)tab.getTextArea();
+        final MITextEditorPane textArea = (MITextEditorPane) tab.getTextArea();
         tab.setTextFont(this.textFont);
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
         textArea.discardAllEdits();
+        this.theme.apply(textArea);
         JPopupMenu popup = textArea.getPopupMenu();
         JMenuItem evaluate = new JMenuItem("Evaluate Selection");
         evaluate.addActionListener(new ActionListener() {
@@ -146,18 +159,17 @@ public class EditorDockable extends DefaultSingleCDockable {
         popup.insert(new Separator(), 1);
         tab.getTextArea().setDirty(false);
         tab.setTitle(title);
-        
+
         //Set name completion
         JIntrospect nameComplete = new JIntrospect(this.interp);
         textArea.setNameCompletion(nameComplete);
-        
+
 //        //Set language support - code auto completion
 //        JythonLanguageSupport ac = new JythonLanguageSupport();
 //        ac.install(textArea);        
 //        JythonCompletionProvider cp = ac.getProvider();
 //        if (this.interp != null)
 //            ((JythonSourceCompletionProvider)cp.getDefaultCompletionProvider()).setInterp(interp);
-
         ButtonTabComponent btc = new ButtonTabComponent(tabbedPanel);
         JButton button = btc.getTabButton();
         button.addActionListener(new ActionListener() {
@@ -166,7 +178,7 @@ public class EditorDockable extends DefaultSingleCDockable {
                 closeFile(tab);
             }
         });
-        tabbedPanel.setTabComponentAt(tabbedPanel.indexOfComponent(tab), btc);        
+        tabbedPanel.setTabComponentAt(tabbedPanel.indexOfComponent(tab), btc);
 
         return tab;
     }
@@ -183,9 +195,24 @@ public class EditorDockable extends DefaultSingleCDockable {
             return (TextEditor) this.tabbedPanel.getSelectedComponent();
         }
     }
-    
+
+    /**
+     * Get all text editors
+     *
+     * @return All text editors
+     */
+    public List<TextEditor> getAllTextEditor() {
+        List<TextEditor> tes = new ArrayList<>();
+        for (int i = 0; i < this.tabbedPanel.getComponentCount(); i++) {
+            tes.add((TextEditor) this.tabbedPanel.getComponent(i));
+        }
+
+        return tes;
+    }
+
     /**
      * Set active text editor
+     *
      * @param te Text editor
      */
     public void setActiveTextEditor(TextEditor te) {
@@ -238,7 +265,7 @@ public class EditorDockable extends DefaultSingleCDockable {
      * Close all files
      */
     public void closeAllFiles() {
-        while (this.tabbedPanel.getTabCount() > 0){
+        while (this.tabbedPanel.getTabCount() > 0) {
             this.closeFile();
         }
 //        for (int i = 0; i < this.tabbedPanel.getTabCount(); i++) {
@@ -329,23 +356,24 @@ public class EditorDockable extends DefaultSingleCDockable {
             this.openFiles(files);
         }
     }
-    
+
     /**
      * Open files
+     *
      * @param fileNames File name list
      */
-    public void openFiles(List<String> fileNames){
+    public void openFiles(List<String> fileNames) {
         List<File> files = new ArrayList<>();
-        for (String fn : fileNames){
+        for (String fn : fileNames) {
             File file = new File(fn);
-            if (file.exists()){
+            if (file.exists()) {
                 files.add(file);
             }
         }
-        
-        if (files.size() > 0){
+
+        if (files.size() > 0) {
             File[] fs = new File[files.size()];
-            for (int i = 0; i < files.size(); i++){
+            for (int i = 0; i < files.size(); i++) {
                 fs[i] = files.get(i);
             }
             this.openFiles(fs);
@@ -417,22 +445,23 @@ public class EditorDockable extends DefaultSingleCDockable {
             this.setTitleText(editor.getFileName());
         }
     }
-    
+
     /**
      * Get opened file names
+     *
      * @return Opened file names
      */
-    public List<String> getOpenedFiles(){
+    public List<String> getOpenedFiles() {
         List<String> fns = new ArrayList<>();
         for (int i = 0; i < this.tabbedPanel.getTabCount(); i++) {
             TextEditor te = (TextEditor) this.tabbedPanel.getComponentAt(i);
             fns.add(te.getFileName());
         }
-        
+
         return fns;
     }
-    
-    private void runCodeLines(MITextEditorPane textArea) throws InterruptedException{
+
+    private void runCodeLines(MITextEditorPane textArea) throws InterruptedException {
         String code = textArea.getSelectedText();
         this.parent.getConsoleDockable().run(code);
     }

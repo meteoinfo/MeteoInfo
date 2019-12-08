@@ -58,6 +58,7 @@ public class Options {
     private List<String> recentFolders = new ArrayList<>();
     private List<String> openedFiles = new ArrayList<>();
     private List<String> recentFiels = new ArrayList<>();
+    private String editorTheme;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     
@@ -186,6 +187,22 @@ public class Options {
     public void setRecentFiles(List<String> value){
         this.recentFiels = value;
     }
+    
+    /**
+     * Get editor theme
+     * @return Editor theme
+     */
+    public String getEditorTheme() {
+        return this.editorTheme;
+    }
+    
+    /**
+     * Set editor theme
+     * @param theme Editor theme
+     */
+    public void setEditorTheme(String theme) {
+        this.editorTheme = theme;
+    }
     // </editor-fold>
     // <editor-fold desc="Methods">
 
@@ -271,6 +288,15 @@ public class Options {
         textFont.setAttributeNode(sizeAttr);
         font.appendChild(textFont);
         root.appendChild(font);
+        
+        //Theme
+        Element theme = doc.createElement("Theme");
+        Element editorThemeElement = doc.createElement("EditorTheme");
+        Attr themeName = doc.createAttribute("ThemeName");
+        themeName.setValue(this.editorTheme);
+        editorThemeElement.setAttributeNode(themeName);
+        theme.appendChild(editorThemeElement);
+        root.appendChild(theme);
         
         //Start up form setting
         Element startForm = doc.createElement("Startup");
@@ -372,6 +398,12 @@ public class Options {
             String fontName = textFont.getAttributes().getNamedItem("FontName").getNodeValue();
             float fontSize = Float.parseFloat(textFont.getAttributes().getNamedItem("FontSize").getNodeValue());
             this._textFont = new Font(fontName, Font.PLAIN, (int) fontSize);  
+            
+            //Theme
+            Element theme = (Element) root.getElementsByTagName("Theme").item(0);
+            Node editorThemeNode = theme.getElementsByTagName("EditorTheme").item(0);
+            String themeName = editorThemeNode.getAttributes().getNamedItem("ThemeName").getNodeValue();
+            this.editorTheme = themeName;
             
             //Start up form setting
             Node startForm = root.getElementsByTagName("Startup").item(0);            

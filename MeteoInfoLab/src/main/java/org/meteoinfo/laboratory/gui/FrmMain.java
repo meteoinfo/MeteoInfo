@@ -456,7 +456,10 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenuItem_Cut = new javax.swing.JMenuItem();
         jMenuItem_Copy = new javax.swing.JMenuItem();
         jMenuItem_Paste = new javax.swing.JMenuItem();
+        jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem_FindReplace = new javax.swing.JMenuItem();
         jMenu_Options = new javax.swing.JMenu();
+        jMenuItem_Setting = new javax.swing.JMenuItem();
         jMenuItem_SetFont = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         jMenuItem_ColorMaps = new javax.swing.JMenuItem();
@@ -676,6 +679,11 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         jMenu_Editor.setMnemonic('E');
         jMenu_Editor.setText("Edit");
+        jMenu_Editor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu_EditorActionPerformed(evt);
+            }
+        });
 
         jMenuItem_Cut.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem_Cut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSMI_EditCut.Image.png"))); // NOI18N
@@ -706,11 +714,31 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             }
         });
         jMenu_Editor.add(jMenuItem_Paste);
+        jMenu_Editor.add(jSeparator6);
+
+        jMenuItem_FindReplace.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem_FindReplace.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/find.png"))); // NOI18N
+        jMenuItem_FindReplace.setText("Find & Replace");
+        jMenuItem_FindReplace.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_FindReplaceActionPerformed(evt);
+            }
+        });
+        jMenu_Editor.add(jMenuItem_FindReplace);
 
         jMenuBar1.add(jMenu_Editor);
 
         jMenu_Options.setMnemonic('O');
         jMenu_Options.setText("Options");
+
+        jMenuItem_Setting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/setting.png"))); // NOI18N
+        jMenuItem_Setting.setText("Setting");
+        jMenuItem_Setting.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_SettingActionPerformed(evt);
+            }
+        });
+        jMenu_Options.add(jMenuItem_Setting);
 
         jMenuItem_SetFont.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/miSetFont.Image.png"))); // NOI18N
         jMenuItem_SetFont.setText("Set Font");
@@ -1066,6 +1094,25 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         this.jButton_SaveAs.doClick();
     }//GEN-LAST:event_jMenuItem_SaveAsActionPerformed
 
+    private void jMenu_EditorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_EditorActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jMenu_EditorActionPerformed
+
+    private void jMenuItem_FindReplaceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_FindReplaceActionPerformed
+        // TODO add your handling code here:
+        FrmFindReplace frm = new FrmFindReplace(this, false, this.editorDock.getActiveTextEditor());    
+        frm.setLocationRelativeTo(this);
+        frm.setVisible(true);
+    }//GEN-LAST:event_jMenuItem_FindReplaceActionPerformed
+
+    private void jMenuItem_SettingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_SettingActionPerformed
+        // TODO add your handling code here:
+        FrmSetting frm = new FrmSetting(this, false);
+        frm.setLocationRelativeTo(this);
+        frm.setVisible(true);
+    }//GEN-LAST:event_jMenuItem_SettingActionPerformed
+
     /**
      * Get figure dockable
      *
@@ -1073,6 +1120,14 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
      */
     public FigureDockable getFigureDock() {
         return this.figuresDock;
+    }
+    
+    /**
+     * Get editor dockable
+     * @return Editor dockable
+     */
+    public EditorDockable getEditorDock() {
+        return this.editorDock;
     }
 
     /**
@@ -1287,12 +1342,14 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     private javax.swing.JMenuItem jMenuItem_Copy;
     private javax.swing.JMenuItem jMenuItem_Cut;
     private javax.swing.JMenuItem jMenuItem_Exit;
+    private javax.swing.JMenuItem jMenuItem_FindReplace;
     private javax.swing.JMenuItem jMenuItem_NewFile;
     private javax.swing.JMenuItem jMenuItem_OpenFile;
     private javax.swing.JMenuItem jMenuItem_Paste;
     private javax.swing.JMenuItem jMenuItem_SaveAs;
     private javax.swing.JMenuItem jMenuItem_SaveFile;
     private javax.swing.JMenuItem jMenuItem_SetFont;
+    private javax.swing.JMenuItem jMenuItem_Setting;
     private javax.swing.JMenu jMenu_Apps;
     private javax.swing.JMenu jMenu_Editor;
     private javax.swing.JMenu jMenu_File;
@@ -1305,6 +1362,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JSeparator jSeparator6;
     private javax.swing.JToolBar jToolBar_CurrentFolder;
     private javax.swing.JToolBar jToolBar_Editor;
     // End of variables declaration//GEN-END:variables

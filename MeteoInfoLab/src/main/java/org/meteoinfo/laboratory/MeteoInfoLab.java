@@ -5,8 +5,10 @@
  */
 package org.meteoinfo.laboratory;
 
+import com.bulenkov.darcula.DarculaLaf;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -17,6 +19,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import javax.swing.plaf.basic.BasicLookAndFeel;
+import javax.xml.parsers.ParserConfigurationException;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.util.FontUtil;
 import org.meteoinfo.global.util.GlobalUtil;
@@ -25,6 +29,7 @@ import org.meteoinfo.laboratory.gui.MyPythonInterpreter;
 import org.python.core.Py;
 import org.python.core.PySystemState;
 import org.python.util.InteractiveConsole;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -201,19 +206,94 @@ public class MeteoInfoLab {
         //runApplication(true);
     }
 
-    private static void runApplication(final boolean isEng) {
-        try {
-            /* Set look and feel */
-            //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-            /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-            * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-             */
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(MeteoInfoLab.class.getName()).log(Level.SEVERE, null, ex);
+    /**
+     * Get startup path.
+     *
+     * @return Startup path.
+     */
+    private static String getStartupPath() {
+        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
+                getInputArguments().toString().contains("jdwp");
+        String startupPath;
+        if (isDebug) {
+            startupPath = System.getProperty("user.dir");
+            if (startupPath.endsWith("MeteoInfo")) {
+                startupPath += "/MeteoInfoLab";
+            }
+        } else {
+            startupPath = GlobalUtil.getAppPath(FrmMain.class);
         }
-        //</editor-fold>
+        return startupPath;
+    }
 
+    /**
+     * Load configure file
+     *
+     * @return Configure file
+     */
+    private static Options loadConfigureFile(String startupPath) {
+        String fn = startupPath + File.separator + "milconfig.xml";
+        Options options = new Options();
+        if (new File(fn).exists()) {
+            try {
+                options.loadConfigFile(fn);
+            } catch (SAXException | IOException | ParserConfigurationException ex) {
+                Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return options;
+    }
+
+    private static void runApplication(final boolean isEng) {
+        String startupPath = getStartupPath();
+        Options options = loadConfigureFile(startupPath);
+        if (options.getLookFeel().equals("Darcula")) {
+            //Darcula look and feel
+            try {
+                BasicLookAndFeel darcula = new DarculaLaf();
+                UIManager.setLookAndFeel(darcula);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                String laf = options.getLookFeel();
+                String lafName;
+                switch (laf) {
+                    case "CDE/Motif":
+                        lafName = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+                        break;
+                    case "Metal":
+                        lafName = "javax.swing.plaf.metal.MetalLookAndFeel";
+                        break;
+                    case "Windows":
+                        lafName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+                        break;
+                    case "Windows Classic":
+                        lafName = "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";
+                        break;
+                    case "Nimbus":  
+                        lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                        break;
+                    case "Mac":
+                        lafName = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
+                        break;
+                    case "GTK":
+                        lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+                        break;
+                    default:
+                        lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                        break;
+                }
+                
+                UIManager.setLookAndFeel(lafName);
+
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                Logger.getLogger(MeteoInfoLab.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        //</editor-fold>
         //System.setProperty("-Dsun.java2d.dpiaware", "false");
 
         /* Create and display the form */
@@ -221,8 +301,8 @@ public class MeteoInfoLab {
             //java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
-                        getInputArguments().toString().contains("jdwp");
+//                boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
+//                        getInputArguments().toString().contains("jdwp");
 //                if (isDebug) {
 //                    Locale.setDefault(Locale.ENGLISH);
 //                }
@@ -239,12 +319,11 @@ public class MeteoInfoLab {
 //                    System.setOut(sw.printStream);
 //                    System.setErr(sw.printStream);
 //                }
-
                 //registerFonts();
                 System.out.println("Register weather font...");
                 org.meteoinfo.global.util.FontUtil.registerWeatherFont();
                 System.out.println("Open main form...");
-                FrmMain frame = new FrmMain();
+                FrmMain frame = new FrmMain(startupPath, options);
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 //frame.setLocationRelativeTo(null);
                 frame.setVisible(true);

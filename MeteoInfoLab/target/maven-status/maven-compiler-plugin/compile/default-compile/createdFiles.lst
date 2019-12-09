@@ -12,6 +12,7 @@ org\meteoinfo\laboratory\gui\FrmAppsManager$5$1.class
 org\meteoinfo\laboratory\codecomplete\LanguageSupport.class
 org\meteoinfo\laboratory\gui\FrmCustom$1.class
 org\meteoinfo\laboratory\gui\FigureDockable$2.class
+org\meteoinfo\laboratory\gui\FrmSetting$4$1.class
 org\meteoinfo\laboratory\gui\MyPythonInterpreter.class
 org\meteoinfo\laboratory\MeteoInfoLab$1.class
 org\meteoinfo\laboratory\gui\FrmSetting$2.class
@@ -42,6 +43,7 @@ org\meteoinfo\laboratory\gui\MITextEditorPane$2.class
 org\meteoinfo\laboratory\gui\MITextEditorPane.class
 org\meteoinfo\laboratory\gui\FigureDockable$6.class
 org\meteoinfo\laboratory\gui\FrmMain$4.class
+org\meteoinfo\laboratory\gui\FrmSetting$4.class
 org\meteoinfo\laboratory\codecomplete\JythonLanguageSupport.class
 org\meteoinfo\laboratory\gui\FrmMain$1.class
 org\meteoinfo\laboratory\gui\FigureDockable$9.class
@@ -60,7 +62,6 @@ org\meteoinfo\laboratory\gui\FrmMain$13.class
 org\meteoinfo\laboratory\gui\JTextAreaWriter.class
 org\meteoinfo\laboratory\gui\ConsoleDockable$3.class
 org\meteoinfo\laboratory\gui\FrmMain$12.class
-org\meteoinfo\laboratory\gui\FrmSetting$3$1.class
 org\meteoinfo\laboratory\gui\GuiUtil.class
 org\meteoinfo\laboratory\codecomplete\AbstractLanguageSupport.class
 org\meteoinfo\laboratory\gui\FileDockable.class
@@ -99,7 +100,6 @@ org\meteoinfo\laboratory\codecomplete\JythonSourceCompletion.class
 org\meteoinfo\laboratory\gui\EditorDockable$1.class
 org\meteoinfo\laboratory\gui\FigureDockable$4.class
 org\meteoinfo\laboratory\StackWindow$2.class
-org\meteoinfo\laboratory\gui\FrmMain$32.class
 org\meteoinfo\laboratory\gui\FrmFindReplace$2.class
 org\meteoinfo\laboratory\gui\GuiUtil$1.class
 org\meteoinfo\laboratory\gui\FrmFindReplace$7.class
@@ -135,4 +135,5 @@ org\meteoinfo\laboratory\gui\FrmMain$30.class
 org\meteoinfo\laboratory\gui\FrmMain$19.class
 org\meteoinfo\laboratory\gui\CustomWindowFactory.class
 org\meteoinfo\laboratory\gui\FrmMain$24.class
+org\meteoinfo\laboratory\gui\ConsoleColors.class
 org\meteoinfo\laboratory\gui\FileExplorer.class

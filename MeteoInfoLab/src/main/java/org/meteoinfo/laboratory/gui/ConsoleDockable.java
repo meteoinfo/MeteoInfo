@@ -9,7 +9,6 @@ import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.action.CAction;
 import org.meteoinfo.console.JConsole;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -36,13 +35,16 @@ public class ConsoleDockable extends DefaultSingleCDockable {
     private PythonInteractiveInterpreter interp;
     private JConsole console;
     private SwingWorker myWorker;
+    private ConsoleColors consoleColors;
 
     public ConsoleDockable(FrmMain parent, String startupPath, String id, String title, CAction... actions) {
         super(id, title, actions);
 
         this.parent = parent;
         this.startupPath = startupPath;
+        this.consoleColors = new ConsoleColors(this.parent.getOptions().getLookFeel());
         console = new JConsole();
+        console.setCommandColor(this.consoleColors.getCommandColor());
         console.setLocale(Locale.getDefault());
         //System.out.println(console.getFont());
         console.setPreferredSize(new Dimension(600, 400));
@@ -98,6 +100,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             e.printStackTrace();
         }
         interp = new PythonInteractiveInterpreter(console);
+        interp.setConsoleColors(consoleColors);
         String path = this.startupPath + File.separator + "pylib";
         String toolboxPath = this.startupPath + "/toolbox";
         String miPath = this.startupPath;
@@ -190,17 +193,18 @@ public class ConsoleDockable extends DefaultSingleCDockable {
      * @param command Command line
      */
     public void run(String command) {
+        interp.console.setStyle(this.consoleColors.getCommandColor());
         interp.console.println("evaluate selection...");
-        interp.console.setStyle(Color.blue);
+        interp.console.setStyle(this.consoleColors.getCodeLinesColor());
         this.interp.console.println(command);
-        interp.console.setStyle(Color.black);
+        interp.console.setStyle(this.consoleColors.getCommandColor());
         try {
             this.interp.exec(command);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            interp.console.print(">>> ", Color.red);
-            interp.console.setStyle(Color.black);
+            interp.console.print(">>> ", this.consoleColors.getPromptColor());
+            interp.console.setStyle(this.consoleColors.getCommandColor());
             interp.exec("mipylib.plotlib.miplot.isinteractive = True");
         }
     }
@@ -209,8 +213,8 @@ public class ConsoleDockable extends DefaultSingleCDockable {
      * Do Enter key
      */
     public void enter() {
-        interp.console.print(">>> ", Color.red);
-        interp.console.setStyle(Color.black);
+        interp.console.print(">>> ", this.consoleColors.getPromptColor());
+        interp.console.setStyle(this.consoleColors.getCommandColor());
         interp.exec("mipylib.plotlib.miplot.isinteractive = True");
     }
 
@@ -220,12 +224,14 @@ public class ConsoleDockable extends DefaultSingleCDockable {
      * @param command Command line
      */
     public void exec(String command) {
+        interp.console.setStyle(this.consoleColors.getCommandColor());
         this.interp.console.println("run script...");
         //this.interp.console.error(this.interp.err);
         this.interp.exec(command);
         //this.interp.push(command);
-        this.interp.console.print(">>> ");
+        this.interp.console.print(">>> ", this.consoleColors.getPromptColor());
         interp.exec("mipylib.plotlib.miplot.isinteractive = True");
+        console.setStyle(consoleColors.getCommandColor());
     }
 
     /**
@@ -243,7 +249,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                 //JTextPane jTextPane_Output = interp.console.getTextPane();
                 //JTextPaneWriter writer = new JTextPaneWriter(jTextPane_Output);
                 //JTextPanePrintStream printStream = new JTextPanePrintStream(System.out, jTextPane_Output);
-
+                interp.console.setStyle(consoleColors.getCommandColor());
                 interp.console.println("run script...");
                 interp.console.setFocusable(true);
                 interp.console.requestFocusInWindow();
@@ -256,7 +262,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                     interp.exec("mipylib.plotlib.miplot.isinteractive = False");
                     interp.exec("mipylib.plotlib.miplot.clf()");
                     interp.execfile(fn);
-                    interp.exec("mipylib.plotlib.miplot.isinteractive = True");
+                    interp.exec("mipylib.plotlib.miplot.isinteractive = True");                    
                 } catch (Exception e) {
                     e.printStackTrace();
                     try {
@@ -264,9 +270,8 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                     } catch (InterruptedException ex) {
                         Logger.getLogger(PythonInteractiveInterpreter.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    interp.console.print(">>> ", Color.red);
-                    interp.console.setStyle(Color.black);
-                    //interp.console.setForeground(Color.black);
+                    interp.console.print(">>> ", consoleColors.getPromptColor());
+                    interp.console.setStyle(consoleColors.getCommandColor());
                     interp.exec("mipylib.plotlib.miplot.isinteractive = True");
                 }
 
@@ -293,6 +298,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
      */
     public void runfile(String code) {
         try {
+            interp.console.setStyle(consoleColors.getCommandColor());
             this.interp.console.println("run script...");
             this.interp.setOut(this.interp.console.getOut());
             this.interp.setErr(this.interp.console.getErr());
@@ -310,7 +316,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                 } catch (Exception e) {
                 }
             }
-            this.interp.console.print(">>> ");
+            this.interp.console.print(">>> ", consoleColors.getPromptColor());
         } catch (IOException ex) {
             Logger.getLogger(ConsoleDockable.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -337,6 +343,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                 //JTextPane jTextPane_Output = interp.console.getTextPane();
                 //JTextPaneWriter writer = new JTextPaneWriter(jTextPane_Output);
                 //JTextPanePrintStream printStream = new JTextPanePrintStream(System.out, jTextPane_Output);
+                interp.console.setStyle(consoleColors.getCommandColor());
                 interp.console.println("run script...");
                 interp.console.setFocusable(true);
                 interp.console.requestFocusInWindow();

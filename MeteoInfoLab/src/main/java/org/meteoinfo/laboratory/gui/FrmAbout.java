@@ -84,7 +84,7 @@ public class FrmAbout extends javax.swing.JDialog {
         jLabel10.setFont(new java.awt.Font("宋体", 1, 15)); // NOI18N
         jLabel10.setText("Homepage:");
 
-        jLabel_web.setForeground(new java.awt.Color(0, 0, 255));
+        jLabel_web.setForeground(new java.awt.Color(0, 153, 204));
         jLabel_web.setText("http://www.meteothink.org");
         jLabel_web.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel_web.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -174,7 +174,7 @@ public class FrmAbout extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton_Close)

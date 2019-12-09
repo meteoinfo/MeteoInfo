@@ -56,7 +56,7 @@ public class EditorDockable extends DefaultSingleCDockable {
         super(id, title, actions);
 
         this.parent = parent;
-        String themeName = this.parent.getOptions().getEditorTheme();
+        String themeName = this.parent.getOptions().getLookFeel().equals("Darcula") ? "dark" : "default";
         try {
             theme = Theme.load(getClass().getResourceAsStream(
                     "/org/fife/ui/rsyntaxtextarea/themes/" + themeName + ".xml"));
@@ -203,8 +203,11 @@ public class EditorDockable extends DefaultSingleCDockable {
      */
     public List<TextEditor> getAllTextEditor() {
         List<TextEditor> tes = new ArrayList<>();
+        Component comp;
         for (int i = 0; i < this.tabbedPanel.getComponentCount(); i++) {
-            tes.add((TextEditor) this.tabbedPanel.getComponent(i));
+            comp = this.tabbedPanel.getComponent(i);
+            if (comp instanceof TextEditor)
+                tes.add((TextEditor) comp);
         }
 
         return tes;

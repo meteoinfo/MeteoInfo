@@ -31,6 +31,7 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
     private PrintStream err;
     JConsole console;
     private final EventListenerList listeners = new EventListenerList();
+    private ConsoleColors consoleColors;
 
     public PythonInteractiveInterpreter(JConsole console) {
         super();
@@ -63,6 +64,14 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
         err = console.getErr();
         setOut(out);
         setErr(err);
+    }
+    
+    /**
+     * Set console colors
+     * @param value Console colors
+     */
+    public void setConsoleColors(ConsoleColors value) {
+        this.consoleColors = value;
     }
     
     /**
@@ -108,12 +117,13 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
 //        String ps2 = ps2Obj.toString();
         String ps2 = "... ";
         //out.print(getDefaultBanner() + "\n");
-        this.console.print(getDefaultBanner() + "\n", Color.red);
+        this.console.print(getDefaultBanner() + "\n", this.consoleColors.getPromptColor());
         //out.print(ps1);
-        this.console.print(ps1, Color.red);        
+        this.console.print(ps1, this.consoleColors.getPromptColor());         
         String line;
         boolean retVal = false;
         while (!eof) {
+            this.console.setStyle(this.consoleColors.getCommandColor());
             // try to sync up the console
             System.out.flush();
             System.err.flush();
@@ -192,9 +202,9 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
         } catch (InterruptedException ex) {
             Logger.getLogger(PythonInteractiveInterpreter.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.console.print(">>> ", Color.red);
-        this.console.setStyle(Color.black);
-        this.console.setForeground(Color.black);
+        this.console.print(">>> ", this.consoleColors.getPromptColor());
+        this.console.setStyle(this.consoleColors.getCommandColor());
+        this.console.setForeground(this.consoleColors.getCommandColor());
     }
 
     private void fireConsoleExecEvent(ConsoleExecEvent event) {

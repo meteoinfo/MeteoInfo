@@ -331,7 +331,7 @@ public class FrmAppsManager extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                FrmAppsManager dialog = new FrmAppsManager(new FrmMain(), true);
+                FrmAppsManager dialog = new FrmAppsManager(new FrmMain(null, null), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

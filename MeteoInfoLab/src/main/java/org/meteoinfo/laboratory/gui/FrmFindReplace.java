@@ -5,6 +5,8 @@
  */
 package org.meteoinfo.laboratory.gui;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
@@ -16,6 +18,8 @@ import org.fife.ui.rtextarea.SearchEngine;
 public class FrmFindReplace extends javax.swing.JDialog {
     
     private TextEditor textEditor;
+    private List<String> findStrs = new ArrayList<>();
+    private List<String> replaceStrs = new ArrayList<>();
 
     /**
      * Creates new form FrmFindReplace
@@ -360,6 +364,12 @@ public class FrmFindReplace extends javax.swing.JDialog {
         boolean found = SearchEngine.find(this.textEditor.getTextArea(), context).wasFound();
         if (!found) {
             JOptionPane.showMessageDialog(this, "Text not found");
+        } else {
+            if (!this.findStrs.contains(text)) {
+                this.findStrs.add(text);
+                this.jComboBox_Find.addItem(text);
+                this.jComboBox_Find1.addItem(text);
+            }
         }
     }//GEN-LAST:event_jButton_FindActionPerformed
 
@@ -380,6 +390,12 @@ public class FrmFindReplace extends javax.swing.JDialog {
         boolean found = SearchEngine.find(this.textEditor.getTextArea(), context).wasFound();
         if (!found) {
             JOptionPane.showMessageDialog(this, "Text not found");
+        } else {
+            if (!this.findStrs.contains(text)) {
+                this.findStrs.add(text);
+                this.jComboBox_Find.addItem(text);
+                this.jComboBox_Find1.addItem(text);
+            }
         }
     }//GEN-LAST:event_jButton_Find1ActionPerformed
 
@@ -402,6 +418,16 @@ public class FrmFindReplace extends javax.swing.JDialog {
         boolean found = SearchEngine.replace(this.textEditor.getTextArea(), context).wasFound();
         if (!found) {
             JOptionPane.showMessageDialog(this, "Text not found");
+        } else {
+            if (!this.findStrs.contains(text)) {
+                this.findStrs.add(text);
+                this.jComboBox_Find.addItem(text);
+                this.jComboBox_Find1.addItem(text);
+            }
+            if (!this.replaceStrs.contains(rText)) {
+                this.replaceStrs.add(rText);
+                this.jComboBox_ReplaceWith.addItem(rText);
+            }
         }
     }//GEN-LAST:event_jButton_ReplaceActionPerformed
 

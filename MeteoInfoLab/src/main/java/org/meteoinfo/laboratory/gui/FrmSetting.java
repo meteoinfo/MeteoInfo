@@ -5,7 +5,17 @@
  */
 package org.meteoinfo.laboratory.gui;
 
+import com.bulenkov.darcula.DarculaLaf;
+import com.l2fprod.common.swing.JFontChooser;
+import java.awt.Font;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.basic.BasicLookAndFeel;
 import org.fife.ui.rsyntaxtextarea.Theme;
 
 /**
@@ -25,16 +35,18 @@ public class FrmSetting extends javax.swing.JDialog {
         
         initComponents();
         
-        this.jComboBox_Theme.removeAllItems();
-        this.jComboBox_Theme.addItem("default");        
-        this.jComboBox_Theme.addItem("dark");
-        this.jComboBox_Theme.addItem("eclipse");
-        this.jComboBox_Theme.addItem("idea");
-        this.jComboBox_Theme.addItem("monokai");
-        this.jComboBox_Theme.addItem("vs");
-        this.jComboBox_Theme.addItem("default-alt");
-        String themeName = this.parent.getOptions().getEditorTheme();
-        this.jComboBox_Theme.setSelectedItem(themeName);
+        //Look & feel
+        UIManager.LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
+        for (UIManager.LookAndFeelInfo lnf : lnfs) {
+            this.jComboBox_LookFeel.addItem(lnf.getName());
+        }
+        this.jComboBox_LookFeel.addItem("Darcula");
+        this.jComboBox_LookFeel.setSelectedItem(UIManager.getLookAndFeel().getName());
+        
+        //Editor font
+        TextEditor textEditor = this.parent.getEditorDock().getActiveTextEditor();
+        Font font = textEditor.getTextArea().getFont();
+        this.jTextField_Font.setText(font.getFontName() + "  " + String.valueOf(font.getSize()));
     }
 
     /**
@@ -47,18 +59,22 @@ public class FrmSetting extends javax.swing.JDialog {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel_Editor = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jComboBox_Theme = new javax.swing.JComboBox<>();
+        jPanel_Appearance = new javax.swing.JPanel();
+        jLabel_LookFeel = new javax.swing.JLabel();
+        jComboBox_LookFeel = new javax.swing.JComboBox<>();
         jButton_Apply = new javax.swing.JButton();
+        jLabel_Font = new javax.swing.JLabel();
+        jTextField_Font = new javax.swing.JTextField();
+        jButton_Font = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Setting");
 
-        jLabel1.setText("Theme");
+        jLabel_LookFeel.setText("Look&Feel:");
 
-        jComboBox_Theme.addActionListener(new java.awt.event.ActionListener() {
+        jComboBox_LookFeel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox_ThemeActionPerformed(evt);
+                jComboBox_LookFeelActionPerformed(evt);
             }
         });
 
@@ -69,35 +85,57 @@ public class FrmSetting extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout jPanel_EditorLayout = new javax.swing.GroupLayout(jPanel_Editor);
-        jPanel_Editor.setLayout(jPanel_EditorLayout);
-        jPanel_EditorLayout.setHorizontalGroup(
-            jPanel_EditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_EditorLayout.createSequentialGroup()
-                .addGroup(jPanel_EditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel_EditorLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+        jLabel_Font.setText("Font:");
+
+        jTextField_Font.setEditable(false);
+
+        jButton_Font.setText("...");
+        jButton_Font.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_FontActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel_AppearanceLayout = new javax.swing.GroupLayout(jPanel_Appearance);
+        jPanel_Appearance.setLayout(jPanel_AppearanceLayout);
+        jPanel_AppearanceLayout.setHorizontalGroup(
+            jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AppearanceLayout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addComponent(jButton_Apply, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22))
+            .addGroup(jPanel_AppearanceLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel_LookFeel)
+                    .addComponent(jLabel_Font))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                .addGroup(jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_AppearanceLayout.createSequentialGroup()
+                        .addComponent(jTextField_Font)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox_Theme, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel_EditorLayout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(jButton_Apply, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(142, Short.MAX_VALUE))
+                        .addComponent(jButton_Font, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBox_LookFeel, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel_EditorLayout.setVerticalGroup(
-            jPanel_EditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_EditorLayout.createSequentialGroup()
+        jPanel_AppearanceLayout.setVerticalGroup(
+            jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AppearanceLayout.createSequentialGroup()
                 .addGap(14, 14, 14)
-                .addGroup(jPanel_EditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jComboBox_Theme, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
+                .addGroup(jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel_LookFeel)
+                    .addComponent(jComboBox_LookFeel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel_Font)
+                    .addComponent(jTextField_Font, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton_Font))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
                 .addComponent(jButton_Apply)
                 .addGap(17, 17, 17))
         );
 
-        jTabbedPane1.addTab("Editor", jPanel_Editor);
+        jTabbedPane1.addTab("Appearance", jPanel_Appearance);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -113,17 +151,81 @@ public class FrmSetting extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jComboBox_ThemeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_ThemeActionPerformed
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_jComboBox_ThemeActionPerformed
-
     private void jButton_ApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ApplyActionPerformed
         // TODO add your handling code here:
-        String theme = (String)this.jComboBox_Theme.getSelectedItem();
-        this.changeStyleViaThemeXml(theme);
-        this.parent.getOptions().setEditorTheme(theme);
+        
+        //Look and feel
+        String laf = this.jComboBox_LookFeel.getSelectedItem().toString();
+        String lafName = UIManager.getLookAndFeel().getClass().getName();
+        switch (laf) {
+            case "CDE/Motif":
+                lafName = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+                break;
+            case "Metal":
+                lafName = "javax.swing.plaf.metal.MetalLookAndFeel";
+                break;
+            case "Windows":
+                lafName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+                break;
+            case "Windows Classic":
+                lafName = "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";
+                break;
+            case "Nimbus":  
+                lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                break;
+            case "Mac":
+                lafName = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
+                break;
+            case "GTK":
+                lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+                break;
+            case "Darcula":
+                lafName = "Darcula";
+                break;
+            default:
+                lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                break;
+        }
+        
+        try {
+                JFrame.setDefaultLookAndFeelDecorated(true);
+                if (lafName.equals("Darcula")) {
+                    BasicLookAndFeel darcula = new DarculaLaf();            
+                    UIManager.setLookAndFeel(darcula);
+                    this.changeStyleViaThemeXml("dark");
+                } else {
+                    UIManager.setLookAndFeel(lafName);
+                    this.changeStyleViaThemeXml("default");
+                }
+                SwingUtilities.updateComponentTreeUI(this);
+                SwingUtilities.updateComponentTreeUI(this.parent);
+                this.parent.getOptions().setLookFeel(laf);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(FrmSetting.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InstantiationException ex) {
+                Logger.getLogger(FrmSetting.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(FrmSetting.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedLookAndFeelException ex) {
+                Logger.getLogger(FrmSetting.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }//GEN-LAST:event_jButton_ApplyActionPerformed
+
+    private void jComboBox_LookFeelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_LookFeelActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_jComboBox_LookFeelActionPerformed
+
+    private void jButton_FontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_FontActionPerformed
+        // TODO add your handling code here:
+        TextEditor textEditor = this.parent.getEditorDock().getActiveTextEditor();
+        Font tFont = JFontChooser.showDialog(this, null, textEditor.getTextArea().getFont());
+        if (tFont != null) {
+            this.parent.getEditorDock().setTextFont(tFont);
+            this.parent.getOptions().setTextFont(tFont);
+            this.jTextField_Font.setText(tFont.getFontName() + "  " + String.valueOf(tFont.getSize()));
+        }
+    }//GEN-LAST:event_jButton_FontActionPerformed
 
     /**
     * Changes the styles used by the editor via an XML file specification. This
@@ -184,9 +286,12 @@ public class FrmSetting extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_Apply;
-    private javax.swing.JComboBox<String> jComboBox_Theme;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel_Editor;
+    private javax.swing.JButton jButton_Font;
+    private javax.swing.JComboBox<String> jComboBox_LookFeel;
+    private javax.swing.JLabel jLabel_Font;
+    private javax.swing.JLabel jLabel_LookFeel;
+    private javax.swing.JPanel jPanel_Appearance;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextField jTextField_Font;
     // End of variables declaration//GEN-END:variables
 }

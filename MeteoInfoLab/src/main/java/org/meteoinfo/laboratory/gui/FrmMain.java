@@ -87,19 +87,21 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     /**
      * Creates new form FrmMain
      */
-    public FrmMain() {
+    public FrmMain(String startupPath, Options options) {
         initComponents();
 
+        this.startupPath = startupPath;
+        this.options = options;
         boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
                 getInputArguments().toString().contains("jdwp");
-        if (isDebug) {
-            this.startupPath = System.getProperty("user.dir");
-            if (this.startupPath.endsWith("MeteoInfo")) {
-                this.startupPath += "/MeteoInfoLab";
-            }
-        } else {
-            this.startupPath = GlobalUtil.getAppPath(FrmMain.class);
-        }
+//        if (isDebug) {
+//            this.startupPath = System.getProperty("user.dir");
+//            if (this.startupPath.endsWith("MeteoInfo")) {
+//                this.startupPath += "/MeteoInfoLab";
+//            }
+//        } else {
+//            this.startupPath = GlobalUtil.getAppPath(FrmMain.class);
+//        }
 
         //Set icon image
         System.out.println("Set icon image...");
@@ -111,8 +113,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         this.setIconImage(image);
 
         //Load configure file
-        System.out.println("Load configure file...");
-        this.loadConfigureFile();
+        //System.out.println("Load configure file...");
+        //this.loadConfigureFile();
         this.setLocation(this.options.getMainFormLocation());
         this.setSize(this.options.getMainFormSize());
 
@@ -460,7 +462,6 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenuItem_FindReplace = new javax.swing.JMenuItem();
         jMenu_Options = new javax.swing.JMenu();
         jMenuItem_Setting = new javax.swing.JMenuItem();
-        jMenuItem_SetFont = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         jMenuItem_ColorMaps = new javax.swing.JMenuItem();
         jMenuItem_ColorDialog = new javax.swing.JMenuItem();
@@ -739,15 +740,6 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             }
         });
         jMenu_Options.add(jMenuItem_Setting);
-
-        jMenuItem_SetFont.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/miSetFont.Image.png"))); // NOI18N
-        jMenuItem_SetFont.setText("Set Font");
-        jMenuItem_SetFont.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem_SetFontActionPerformed(evt);
-            }
-        });
-        jMenu_Options.add(jMenuItem_SetFont);
         jMenu_Options.add(jSeparator4);
 
         jMenuItem_ColorMaps.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/colors.png"))); // NOI18N
@@ -894,16 +886,6 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             this.editorDock.doSaveAs_Jython(editor);
         }
     }//GEN-LAST:event_jButton_SaveAsActionPerformed
-
-    private void jMenuItem_SetFontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_SetFontActionPerformed
-        // TODO add your handling code here:
-        TextEditor textEditor = this.editorDock.getActiveTextEditor();
-        Font tFont = JFontChooser.showDialog(this, null, textEditor.getTextArea().getFont());
-        if (tFont != null) {
-            this.editorDock.setTextFont(tFont);
-            this.options.setTextFont(tFont);
-        }
-    }//GEN-LAST:event_jMenuItem_SetFontActionPerformed
 
     private void jMenuItem_CutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_CutActionPerformed
         // TODO add your handling code here:
@@ -1313,7 +1295,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             @Override
             public void run() {
                 //new FrmMain().setVisible(true);
-                FrmMain frame = new FrmMain();
+                FrmMain frame = new FrmMain(null, null);
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
@@ -1348,7 +1330,6 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     private javax.swing.JMenuItem jMenuItem_Paste;
     private javax.swing.JMenuItem jMenuItem_SaveAs;
     private javax.swing.JMenuItem jMenuItem_SaveFile;
-    private javax.swing.JMenuItem jMenuItem_SetFont;
     private javax.swing.JMenuItem jMenuItem_Setting;
     private javax.swing.JMenu jMenu_Apps;
     private javax.swing.JMenu jMenu_Editor;
@@ -1362,7 +1343,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
-    private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JToolBar jToolBar_CurrentFolder;
     private javax.swing.JToolBar jToolBar_Editor;
     // End of variables declaration//GEN-END:variables

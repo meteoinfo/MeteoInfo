@@ -58,7 +58,7 @@ public class Options {
     private List<String> recentFolders = new ArrayList<>();
     private List<String> openedFiles = new ArrayList<>();
     private List<String> recentFiels = new ArrayList<>();
-    private String editorTheme;
+    private String lookFeel = "Nimbus";
     // </editor-fold>
     // <editor-fold desc="Constructor">
     
@@ -189,19 +189,19 @@ public class Options {
     }
     
     /**
-     * Get editor theme
-     * @return Editor theme
+     * Get look and feel
+     * @return Look and feel
      */
-    public String getEditorTheme() {
-        return this.editorTheme;
+    public String getLookFeel() {
+        return this.lookFeel;
     }
     
     /**
-     * Set editor theme
-     * @param theme Editor theme
+     * Set look and feel
+     * @param value look and feel
      */
-    public void setEditorTheme(String theme) {
-        this.editorTheme = theme;
+    public void setLookFeel(String value) {
+        this.lookFeel = value;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -289,14 +289,12 @@ public class Options {
         font.appendChild(textFont);
         root.appendChild(font);
         
-        //Theme
-        Element theme = doc.createElement("Theme");
-        Element editorThemeElement = doc.createElement("EditorTheme");
-        Attr themeName = doc.createAttribute("ThemeName");
-        themeName.setValue(this.editorTheme);
-        editorThemeElement.setAttributeNode(themeName);
-        theme.appendChild(editorThemeElement);
-        root.appendChild(theme);
+        //Look and feel
+        Element lf = doc.createElement("LookFeel");
+        Attr lfAttr = doc.createAttribute("Name");
+        lfAttr.setValue(this.lookFeel);
+        lf.setAttributeNode(lfAttr);
+        root.appendChild(lf);
         
         //Start up form setting
         Element startForm = doc.createElement("Startup");
@@ -399,11 +397,11 @@ public class Options {
             float fontSize = Float.parseFloat(textFont.getAttributes().getNamedItem("FontSize").getNodeValue());
             this._textFont = new Font(fontName, Font.PLAIN, (int) fontSize);  
             
-            //Theme
-            Element theme = (Element) root.getElementsByTagName("Theme").item(0);
-            Node editorThemeNode = theme.getElementsByTagName("EditorTheme").item(0);
-            String themeName = editorThemeNode.getAttributes().getNamedItem("ThemeName").getNodeValue();
-            this.editorTheme = themeName;
+            //Look and feel
+            if (root.getElementsByTagName("LookFeel") != null) {
+                Element lf = (Element) root.getElementsByTagName("LookFeel").item(0);
+                this.lookFeel = lf.getAttributes().getNamedItem("Name").getNodeValue();
+            }
             
             //Start up form setting
             Node startForm = root.getElementsByTagName("Startup").item(0);            

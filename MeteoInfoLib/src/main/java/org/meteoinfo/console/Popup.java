@@ -65,6 +65,7 @@ public class Popup extends JWindow {
             }
         });
         this.list.setBackground(new Color(255,255,225));
+        this.list.setForeground(Color.BLACK);
         this.getContentPane().add(new JScrollPane(this.list));
         this.list.setSelectedIndex(0);
         this.typed = "";

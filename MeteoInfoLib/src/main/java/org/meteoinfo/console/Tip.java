@@ -32,6 +32,7 @@ public class Tip extends JWindow {
         super(frame);
         this.textarea = new JTextArea();
         this.textarea.setBackground(new Color(225, 255, 255));
+        this.textarea.setForeground(Color.BLACK);
         this.textarea.setEditable(false);
         JScrollPane jscrollpane = new JScrollPane(this.textarea);
         this.getContentPane().add(jscrollpane);

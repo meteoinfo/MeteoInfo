@@ -126,6 +126,8 @@ public class JConsole extends JScrollPane
 
     NameCompletion nameCompletion;
     final int SHOW_AMBIG_MAX = 10;
+    
+    private Color commandColor;
 
     // hack to prevent key repeat for some reason?
     private boolean gotUp = true;
@@ -188,6 +190,7 @@ public class JConsole extends JScrollPane
         FontMetrics metrics = this.text.getFontMetrics(this.text.getFont());
         this.dotWidth = metrics.stringWidth(".");
         this.textHeight = metrics.getHeight();
+        this.commandColor = Color.BLACK;
 
         outPipe = cout;
         if (outPipe == null) {
@@ -213,6 +216,22 @@ public class JConsole extends JScrollPane
         new Thread(this).start();
 
         requestFocus();
+    }
+    
+    /**
+     * Get command color
+     * @return Command color
+     */
+    public Color getCommandColor() {
+        return this.commandColor;
+    }
+    
+    /**
+     * Set command color
+     * @param value Command color
+     */
+    public void setCommandColor(Color value) {
+        this.commandColor = value;
     }
 
     /**
@@ -303,7 +322,7 @@ public class JConsole extends JScrollPane
                     // This doesn't work for backspace.
                     // See default case for workaround
                     e.consume();
-                    this.setStyle(Color.black);
+                    this.setStyle(this.commandColor);
                 }
                 break;
 
@@ -1017,7 +1036,7 @@ public class JConsole extends JScrollPane
     // MouseListener Interface
     @Override
     public void mouseClicked(MouseEvent event) {
-        this.setStyle(Color.black);
+        //this.setStyle(Color.black);
     }
 
     @Override

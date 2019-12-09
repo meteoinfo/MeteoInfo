@@ -18,6 +18,7 @@ D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinf
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\gui\EditorDockable.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\codecomplete\TokenScanner.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\gui\FileDockable.java
+D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\gui\FrmFindReplace.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\gui\VariableExplorer.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\gui\FileExplorer.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\codecomplete\MethodCompletion.java
@@ -46,6 +47,7 @@ D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinf
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\gui\ConsoleDockable.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\codecomplete\LanguageSupport.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\event\CurrentPathChangedEvent.java
+D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\gui\FrmSetting.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\gui\JTextPanePrintStream.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\codecomplete\CodeBlock.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLab\src\main\java\org\meteoinfo\laboratory\codecomplete\VariableDeclaration.java

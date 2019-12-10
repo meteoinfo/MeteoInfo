@@ -460,6 +460,9 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenuItem_Paste = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         jMenuItem_FindReplace = new javax.swing.JMenuItem();
+        jMenuItem_Comment = new javax.swing.JMenuItem();
+        jMenuItem_InsertTab = new javax.swing.JMenuItem();
+        jMenuItem_DeleteTab = new javax.swing.JMenuItem();
         jMenu_Options = new javax.swing.JMenu();
         jMenuItem_Setting = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
@@ -726,6 +729,33 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             }
         });
         jMenu_Editor.add(jMenuItem_FindReplace);
+
+        jMenuItem_Comment.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem_Comment.setText("Toggle Comment");
+        jMenuItem_Comment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_CommentActionPerformed(evt);
+            }
+        });
+        jMenu_Editor.add(jMenuItem_Comment);
+
+        jMenuItem_InsertTab.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_TAB, 0));
+        jMenuItem_InsertTab.setText("Insert Tab (4 spaces)");
+        jMenuItem_InsertTab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_InsertTabActionPerformed(evt);
+            }
+        });
+        jMenu_Editor.add(jMenuItem_InsertTab);
+
+        jMenuItem_DeleteTab.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_TAB, java.awt.event.InputEvent.SHIFT_MASK));
+        jMenuItem_DeleteTab.setText("Delete Tab (4 spaces)");
+        jMenuItem_DeleteTab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_DeleteTabActionPerformed(evt);
+            }
+        });
+        jMenu_Editor.add(jMenuItem_DeleteTab);
 
         jMenuBar1.add(jMenu_Editor);
 
@@ -1095,6 +1125,21 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         frm.setVisible(true);
     }//GEN-LAST:event_jMenuItem_SettingActionPerformed
 
+    private void jMenuItem_CommentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_CommentActionPerformed
+        // TODO add your handling code here:
+        this.editorDock.Comment();
+    }//GEN-LAST:event_jMenuItem_CommentActionPerformed
+
+    private void jMenuItem_InsertTabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_InsertTabActionPerformed
+        // TODO add your handling code here:
+        this.editorDock.insertTab();
+    }//GEN-LAST:event_jMenuItem_InsertTabActionPerformed
+
+    private void jMenuItem_DeleteTabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_DeleteTabActionPerformed
+        // TODO add your handling code here:
+        this.editorDock.delTab();
+    }//GEN-LAST:event_jMenuItem_DeleteTabActionPerformed
+
     /**
      * Get figure dockable
      *
@@ -1321,10 +1366,13 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     private javax.swing.JMenuItem jMenuItem_CloseAllFiles;
     private javax.swing.JMenuItem jMenuItem_ColorDialog;
     private javax.swing.JMenuItem jMenuItem_ColorMaps;
+    private javax.swing.JMenuItem jMenuItem_Comment;
     private javax.swing.JMenuItem jMenuItem_Copy;
     private javax.swing.JMenuItem jMenuItem_Cut;
+    private javax.swing.JMenuItem jMenuItem_DeleteTab;
     private javax.swing.JMenuItem jMenuItem_Exit;
     private javax.swing.JMenuItem jMenuItem_FindReplace;
+    private javax.swing.JMenuItem jMenuItem_InsertTab;
     private javax.swing.JMenuItem jMenuItem_NewFile;
     private javax.swing.JMenuItem jMenuItem_OpenFile;
     private javax.swing.JMenuItem jMenuItem_Paste;

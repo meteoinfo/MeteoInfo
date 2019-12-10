@@ -333,6 +333,7 @@ public class JConsole extends JScrollPane
             case (KeyEvent.VK_HOME):
                 text.setCaretPosition(cmdStart);
                 e.consume();
+                this.setStyle(this.commandColor);
                 break;
 
             case (KeyEvent.VK_U): // clear line

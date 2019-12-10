@@ -40,7 +40,9 @@ org\meteoinfo\laboratory\gui\FileDockable$2.class
 org\meteoinfo\laboratory\gui\FrmMain$11.class
 org\meteoinfo\laboratory\gui\FrmMain$21.class
 org\meteoinfo\laboratory\gui\MITextEditorPane$2.class
+org\meteoinfo\laboratory\gui\FrmMain$34.class
 org\meteoinfo\laboratory\gui\MITextEditorPane.class
+org\meteoinfo\laboratory\gui\EditorDockable$7.class
 org\meteoinfo\laboratory\gui\FigureDockable$6.class
 org\meteoinfo\laboratory\gui\FrmMain$4.class
 org\meteoinfo\laboratory\gui\FrmSetting$4.class
@@ -100,12 +102,15 @@ org\meteoinfo\laboratory\codecomplete\JythonSourceCompletion.class
 org\meteoinfo\laboratory\gui\EditorDockable$1.class
 org\meteoinfo\laboratory\gui\FigureDockable$4.class
 org\meteoinfo\laboratory\StackWindow$2.class
+org\meteoinfo\laboratory\gui\FrmMain$32.class
 org\meteoinfo\laboratory\gui\FrmFindReplace$2.class
 org\meteoinfo\laboratory\gui\GuiUtil$1.class
 org\meteoinfo\laboratory\gui\FrmFindReplace$7.class
 org\meteoinfo\laboratory\gui\FrmAppsManager$4.class
 org\meteoinfo\laboratory\gui\ConsoleDockable$1.class
+org\meteoinfo\laboratory\gui\EditorDockable$6.class
 org\meteoinfo\laboratory\gui\FrmSetting.class
+org\meteoinfo\laboratory\gui\FrmMain$33.class
 org\meteoinfo\laboratory\codecomplete\MethodCompletion.class
 org\meteoinfo\laboratory\gui\FrmAbout$3$1.class
 org\meteoinfo\laboratory\gui\FrmFindReplace.class
@@ -122,6 +127,7 @@ org\meteoinfo\laboratory\gui\FrmMain$17.class
 org\meteoinfo\laboratory\gui\EditorDockable$2.class
 org\meteoinfo\laboratory\StackWindow$1.class
 org\meteoinfo\laboratory\codecomplete\JythonCompletionProvider.class
+org\meteoinfo\laboratory\gui\EditorDockable$5.class
 org\meteoinfo\laboratory\gui\FrmMain$26.class
 org\meteoinfo\laboratory\gui\FrmCustom.class
 org\meteoinfo\laboratory\gui\JTextAreaPrintStream.class

@@ -7,10 +7,13 @@ package org.meteoinfo.laboratory.gui;
 
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.action.CAction;
+import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +34,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
+
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.TextEditorPane;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -143,6 +148,8 @@ public class EditorDockable extends DefaultSingleCDockable {
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
         textArea.discardAllEdits();
         this.theme.apply(textArea);
+        
+        //Evaluate menu
         JPopupMenu popup = textArea.getPopupMenu();
         JMenuItem evaluate = new JMenuItem("Evaluate Selection");
         evaluate.addActionListener(new ActionListener() {
@@ -152,11 +159,62 @@ public class EditorDockable extends DefaultSingleCDockable {
                     runCodeLines(textArea);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
         popup.insert(evaluate, 0);
         popup.insert(new Separator(), 1);
+        
+        //Comment menu
+        JMenuItem comment = new JMenuItem("Comment or Uncomment");
+        comment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    comment(textArea);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        popup.insert(comment, 2);
+        
+        //Insert Tab menu
+        JMenuItem insertTab = new JMenuItem("Insert Tab");
+        insertTab.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    insertTab(textArea);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (AWTException ex) {
+                    Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        popup.insert(insertTab, 3);
+        
+        //Delete Tab menu
+        JMenuItem delTab = new JMenuItem("Delete Tab");
+        delTab.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    delTab(textArea);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        popup.insert(delTab, 4);
+        
         tab.getTextArea().setDirty(false);
         tab.setTitle(title);
 
@@ -464,9 +522,114 @@ public class EditorDockable extends DefaultSingleCDockable {
         return fns;
     }
 
-    private void runCodeLines(MITextEditorPane textArea) throws InterruptedException {
+    private void runCodeLines(MITextEditorPane textArea) throws InterruptedException, BadLocationException {
+        int sLine = textArea.getLineOfOffset(textArea.getSelectionStart());
+        int sIdx = textArea.getLineStartOffset(sLine);
+        int eLine = textArea.getLineOfOffset(textArea.getSelectionEnd());
+        int eIdx = textArea.getLineEndOffset(eLine);
+        textArea.setSelectionStart(sIdx);
+        textArea.setSelectionEnd(eIdx);        
         String code = textArea.getSelectedText();
+        
         this.parent.getConsoleDockable().run(code);
+    }
+    
+    /**
+     * Toggle comment to the selected lines
+     */
+    public void Comment() {
+        try {
+            comment((MITextEditorPane)this.getActiveTextArea());
+        } catch (InterruptedException ex) {
+            Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void comment(MITextEditorPane textArea) throws InterruptedException, BadLocationException {
+        int sLine = textArea.getLineOfOffset(textArea.getSelectionStart());
+        int sIdx = textArea.getLineStartOffset(sLine);
+        int eLine = textArea.getLineOfOffset(textArea.getSelectionEnd());
+        int eIdx = textArea.getLineEndOffset(eLine);
+        textArea.setSelectionStart(sIdx);
+        textArea.setSelectionEnd(eIdx);
+        String text = textArea.getSelectedText();
+        
+        String[] lines = text.split("\n");
+        StringBuilder sb = new StringBuilder();
+        for (String line : lines) {
+            String nLine = line.trim();
+            if (nLine.startsWith("#")) {
+                sb.append(line.replaceFirst("#", ""));
+            } else {
+                sb.append("#" + line);
+            }
+                
+            sb.append("\n");
+        }        
+        text = sb.toString();
+        textArea.replaceSelection(text);
+    }
+    
+    /**
+     * Delete first 4 spaces to the seleted lines
+     */
+    public void delTab() {
+        try {
+            delTab((MITextEditorPane)this.getActiveTextArea());
+        } catch (InterruptedException ex) {
+            Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void delTab(MITextEditorPane textArea) throws InterruptedException, BadLocationException {
+        int sLine = textArea.getLineOfOffset(textArea.getSelectionStart());
+        int sIdx = textArea.getLineStartOffset(sLine);
+        int eLine = textArea.getLineOfOffset(textArea.getSelectionEnd());
+        int eIdx = textArea.getLineEndOffset(eLine);
+        textArea.setSelectionStart(sIdx);
+        textArea.setSelectionEnd(eIdx);        
+        String text = textArea.getSelectedText();
+        
+        String[] lines = text.split("\n");
+        StringBuilder sb = new StringBuilder();
+        for (String line : lines) {
+            if (line.startsWith("    "))
+                sb.append(line.substring(4));
+            else if (line.startsWith("   "))
+                sb.append(line.substring(3));
+            else if (line.startsWith("  "))
+                sb.append(line.substring(2));
+            else if (line.startsWith(" "))
+                sb.append(line.substring(1));
+            else
+                sb.append(line);
+           
+            sb.append("\n");
+        }        
+        text = sb.toString();
+        textArea.replaceSelection(text);
+    }
+    
+    /**
+     * Insert first 4 spaces to the seleted lines
+     */
+    public void insertTab() {
+        try {
+            insertTab((MITextEditorPane)this.getActiveTextArea());
+        } catch (InterruptedException ex) {
+            Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (AWTException ex) {
+            Logger.getLogger(EditorDockable.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void insertTab(MITextEditorPane textArea) throws InterruptedException, AWTException {
+        Robot robot = new Robot();
+        robot.keyPress(KeyEvent.VK_TAB);
     }
 
     /**

@@ -200,6 +200,7 @@ public class FrmSetting extends javax.swing.JDialog {
                 SwingUtilities.updateComponentTreeUI(this);
                 SwingUtilities.updateComponentTreeUI(this.parent);
                 this.parent.getOptions().setLookFeel(laf);
+                this.parent.getConsoleDockable().setLookFeel(laf);
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(FrmSetting.class.getName()).log(Level.SEVERE, null, ex);
             } catch (InstantiationException ex) {

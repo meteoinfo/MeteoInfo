@@ -81,6 +81,17 @@ public class ConsoleDockable extends DefaultSingleCDockable {
 
         });
     }
+    
+    /**
+     * Set Look and feel
+     * @param laf Look and feel
+     */
+    public void setLookFeel(String laf) {
+        this.consoleColors = new ConsoleColors(laf);
+        this.console.setCommandColor(this.consoleColors.getCommandColor());
+        this.console.setStyle(this.consoleColors.getCommandColor());
+        this.console.repaint();        
+    }
 
     /**
      * Initialize console

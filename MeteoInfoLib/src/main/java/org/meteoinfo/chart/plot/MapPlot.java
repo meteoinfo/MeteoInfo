@@ -960,7 +960,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
 
         //Draw lon/lat grid labels
         if (this.mapFrame.isDrawGridLabel()) {
-            float shift = 5;
+            final float shift = 5.0F;
             List<Extent> extentList = new ArrayList<>();
             Extent maxExtent = new Extent();
             Extent aExtent;
@@ -975,7 +975,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             g.setFont(font);
             float labX, labY;
             int len = mapFrame.getTickLineLength();
-            int space = len + mapFrame.getGridLabelShift();
+            int space = len + this.mapFrame.getGridLabelShift();
             if (mapFrame.isInsideTickLine()) {
                 space = mapFrame.getGridLabelShift();
             }
@@ -1102,10 +1102,10 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                         }
                         g.setColor(mapFrame.getGridLineColor());
                         g.draw(new Line2D.Float(sP.X, sP.Y, eP.X, eP.Y));
-                        g.setColor(this.mapFrame.getForeColor());
+                        g.setColor(this.getXAxis().getTickLabelColor());
                         g.drawString(drawStr, labX, labY);
                     } else {
-                        g.setColor(this.mapFrame.getForeColor());
+                        g.setColor(this.getXAxis().getTickLabelColor());
                         switch (this.getProjInfo().getProjectionName()) {
                             case Orthographic_Azimuthal:
                             case Geostationary_Satellite:

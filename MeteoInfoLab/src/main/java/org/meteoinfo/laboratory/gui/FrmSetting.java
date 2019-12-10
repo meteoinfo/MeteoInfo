@@ -223,6 +223,7 @@ public class FrmSetting extends javax.swing.JDialog {
         Font tFont = JFontChooser.showDialog(this, null, textEditor.getTextArea().getFont());
         if (tFont != null) {
             this.parent.getEditorDock().setTextFont(tFont);
+            this.parent.getConsoleDockable().getConsole().setFont(tFont);
             this.parent.getOptions().setTextFont(tFont);
             this.jTextField_Font.setText(tFont.getFontName() + "  " + String.valueOf(tFont.getSize()));
         }

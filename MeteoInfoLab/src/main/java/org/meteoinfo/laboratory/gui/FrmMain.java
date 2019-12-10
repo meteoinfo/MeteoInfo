@@ -8,11 +8,9 @@ package org.meteoinfo.laboratory.gui;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
-import com.l2fprod.common.swing.JFontChooser;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -45,7 +43,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.meteoinfo.global.colors.ColorMap;
 import org.meteoinfo.global.colors.ColorUtil;
 import org.meteoinfo.laboratory.Options;
-import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.laboratory.application.AppCollection;
 import org.meteoinfo.laboratory.application.Application;
 import org.meteoinfo.laboratory.event.ConsoleExecEvent;
@@ -86,6 +83,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
     /**
      * Creates new form FrmMain
+     * @param startupPath Startup path
+     * @param options Options
      */
     public FrmMain(String startupPath, Options options) {
         initComponents();
@@ -108,7 +107,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         BufferedImage image = null;
         try {
             image = ImageIO.read(this.getClass().getResource("/images/MeteoLab_32.png"));
-        } catch (Exception e) {
+        } catch (IOException e) {
         }
         this.setIconImage(image);
 
@@ -146,16 +145,15 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         System.out.println("Editor and Console panels...");
         CGrid grid = new CGrid(control);
-        //this.outputDock = new OutputDockable("Output", "Output");
         editorDock = new EditorDockable(this, "Editor", "Editor");
-        //this.editorDock.setStartupPath(startupPath);
-        this.editorDock.setTextFont(this.options.getTextFont());
 
         consoleDock = new ConsoleDockable(this, this.startupPath, "Console", "Console");
+        consoleDock.getConsole().setFont(this.options.getTextFont());
 
         this.editorDock.setInterp(this.consoleDock.getInterpreter());
         this.editorDock.addNewTextEditor("New file");
         this.editorDock.openFiles(this.options.getOpenedFiles());
+        this.editorDock.setTextFont(this.options.getTextFont());
 
         //Load toolbox applications        
         System.out.println("Load toolbox applications...");

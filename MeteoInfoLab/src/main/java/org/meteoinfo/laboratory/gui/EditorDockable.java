@@ -33,7 +33,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -69,16 +68,12 @@ public class EditorDockable extends DefaultSingleCDockable {
             ioe.printStackTrace();
         }
         tabbedPanel = new JTabbedPane();
-        tabbedPanel.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
-                TextEditor te = (TextEditor) sourceTabbedPane.getSelectedComponent();
-                if (te != null) {
-                    EditorDockable.this.setTitleText("Editor - " + te.getFileName());
-                }
+        tabbedPanel.addChangeListener((ChangeEvent e) -> {
+            JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
+            TextEditor te = (TextEditor) sourceTabbedPane.getSelectedComponent();
+            if (te != null) {
+                EditorDockable.this.setTitleText("Editor - " + te.getFileName());
             }
-
         });
         this.getContentPane().add(tabbedPanel);
         //this.setCloseable(false);
@@ -143,11 +138,11 @@ public class EditorDockable extends DefaultSingleCDockable {
         final TextEditor tab = new TextEditor(tabbedPanel, title);
         tabbedPanel.add(tab, title);
         tabbedPanel.setSelectedComponent(tab);
-        final MITextEditorPane textArea = (MITextEditorPane) tab.getTextArea();
-        tab.setTextFont(this.textFont);
+        final MITextEditorPane textArea = (MITextEditorPane) tab.getTextArea();        
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
         textArea.discardAllEdits();
         this.theme.apply(textArea);
+        tab.setTextFont(this.textFont);
         
         //Evaluate menu
         JPopupMenu popup = textArea.getPopupMenu();

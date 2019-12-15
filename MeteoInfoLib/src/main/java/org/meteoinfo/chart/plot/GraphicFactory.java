@@ -1880,7 +1880,7 @@ public class GraphicFactory {
             bot = bottom.getDouble(0);
         }
         double miny = 0;
-        boolean baseLine = false;
+        //boolean baseLine = false;
         IndexIterator xIter = xdata.getIndexIterator();
         IndexIterator yIter = ydata.getIndexIterator();
         int i = 0;
@@ -1895,9 +1895,9 @@ public class GraphicFactory {
                 miny = bot;
                 y += miny;
             }
-            if (y < miny) {
-                baseLine = true;
-            }
+//            if (y < miny) {
+//                baseLine = true;
+//            }
             if (widths.getSize() > 1 && widths.getSize() > i) {
                 width = widths.getDouble(i);
             }
@@ -1940,20 +1940,20 @@ public class GraphicFactory {
             i++;
         }
 
-        if (baseLine) {
-            List<PointD> pList = new ArrayList<>();
-            double x1 = xdata.getDouble(0);
-            double x2 = xdata.getDouble((int) xdata.getSize() - 1);
-            x1 -= (x2 - x1);
-            x2 += (x2 - x1);
-            pList.add(new PointD(x1, miny));
-            pList.add(new PointD(x2, miny));
-            PolylineShape pls = new PolylineShape();
-            pls.setPoints(pList);
-            ebreak = new PolylineBreak();
-            ebreak.setColor(Color.black);
-            graphics.add(new Graphic(pls, ebreak));
-        }
+//        if (baseLine) {
+//            List<PointD> pList = new ArrayList<>();
+//            double x1 = xdata.getDouble(0);
+//            double x2 = xdata.getDouble((int) xdata.getSize() - 1);
+//            x1 -= (x2 - x1);
+//            x2 += (x2 - x1);
+//            pList.add(new PointD(x1, miny));
+//            pList.add(new PointD(x2, miny));
+//            PolylineShape pls = new PolylineShape();
+//            pls.setPoints(pList);
+//            ebreak = new PolylineBreak();
+//            ebreak.setColor(Color.black);
+//            graphics.add(new Graphic(pls, ebreak));
+//        }
         graphics.setSingleLegend(false);
 
         return graphics;
@@ -1992,7 +1992,7 @@ public class GraphicFactory {
             bot = left.getDouble(0);
         }
         double minx = 0;
-        boolean baseLine = false;
+        //boolean baseLine = false;
         IndexIterator xIter = xdata.getIndexIterator();
         IndexIterator yIter = ydata.getIndexIterator();
         int i = 0;
@@ -2007,9 +2007,9 @@ public class GraphicFactory {
                 minx = bot;
                 x += minx;
             }
-            if (x < minx) {
-                baseLine = true;
-            }
+//            if (x < minx) {
+//                baseLine = true;
+//            }
             if (heights.getSize() > 1 && heights.getSize() > i) {
                 height = heights.getDouble(i);
             }
@@ -2052,20 +2052,20 @@ public class GraphicFactory {
             i++;
         }
 
-        if (baseLine) {
-            List<PointD> pList = new ArrayList<>();
-            double y1 = ydata.getDouble(0);
-            double y2 = ydata.getDouble((int) ydata.getSize() - 1);
-            y1 -= (y2 - y1);
-            y2 += (y2 - y1);
-            pList.add(new PointD(minx, y1));
-            pList.add(new PointD(minx, y2));
-            PolylineShape pls = new PolylineShape();
-            pls.setPoints(pList);
-            ebreak = new PolylineBreak();
-            ebreak.setColor(Color.black);
-            graphics.add(new Graphic(pls, ebreak));
-        }
+//        if (baseLine) {
+//            List<PointD> pList = new ArrayList<>();
+//            double y1 = ydata.getDouble(0);
+//            double y2 = ydata.getDouble((int) ydata.getSize() - 1);
+//            y1 -= (y2 - y1);
+//            y2 += (y2 - y1);
+//            pList.add(new PointD(minx, y1));
+//            pList.add(new PointD(minx, y2));
+//            PolylineShape pls = new PolylineShape();
+//            pls.setPoints(pList);
+//            ebreak = new PolylineBreak();
+//            ebreak.setColor(Color.black);
+//            graphics.add(new Graphic(pls, ebreak));
+//        }
         graphics.setSingleLegend(false);
 
         return graphics;

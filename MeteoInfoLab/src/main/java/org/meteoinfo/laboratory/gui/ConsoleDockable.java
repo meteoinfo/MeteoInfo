@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.SwingWorker;
+import javax.swing.*;
+
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.laboratory.codecomplete.JIntrospect;
 import org.python.core.Py;
@@ -260,14 +260,15 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                 //JTextPane jTextPane_Output = interp.console.getTextPane();
                 //JTextPaneWriter writer = new JTextPaneWriter(jTextPane_Output);
                 //JTextPanePrintStream printStream = new JTextPanePrintStream(System.out, jTextPane_Output);
-                interp.console.setStyle(consoleColors.getCommandColor());
-                interp.console.println("run script...");
-                interp.console.setFocusable(true);
-                interp.console.requestFocusInWindow();
                 //interp.setOut(writer);
                 //interp.setErr(writer);
                 //System.setOut(printStream);
                 //System.setErr(printStream);
+
+                interp.console.setStyle(consoleColors.getCommandColor());
+                interp.console.println("run script...");
+                interp.console.setFocusable(true);
+                interp.console.requestFocusInWindow();
 
                 try {
                     interp.exec("mipylib.plotlib.miplot.isinteractive = False");

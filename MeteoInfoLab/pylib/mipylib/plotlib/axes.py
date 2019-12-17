@@ -1826,6 +1826,10 @@ class Axes(object):
         #histogram
         m, bins = np.histogram(x, bins=bins, density=density)
         width = np.diff(bins)
+        if cumulative:
+            m = np.cumsum(m * width)
+        if not rwidth is None:
+            width = width * rwidth
         barbreaks = self.bar(bins[:-1], m, width, align='center', **kwargs)
 
         return m, bins, barbreaks

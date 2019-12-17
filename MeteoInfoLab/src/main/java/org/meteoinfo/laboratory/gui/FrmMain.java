@@ -316,6 +316,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         control.getContentArea().deploy(grid);
         
         System.out.println("Main form is loaded!");
+
+        System.setOut(this.consoleDock.getConsole().getOut());
     }
 
     /**

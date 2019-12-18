@@ -268,12 +268,15 @@ public class ArrayUtil {
         BufferedWriter sw = new BufferedWriter(new FileWriter(new File(fn)));
         String line = "";
         int j = 0;
+        IndexIterator iter = a.getIndexIterator();
+        Object o;
         for (int i = 0; i < a.getSize(); i++) {
             j += 1;
+            o = iter.getObjectNext();
             if (format == null) {
-                line = line + a.getObject(i).toString();
+                line = line + o.toString();
             } else {
-                line = line + String.format(format, a.getObject(i));
+                line = line + String.format(format, o);
             }
             if (j < colNum && i < a.getSize() - 1) {
                 if (delimiter == null) {
@@ -2382,8 +2385,9 @@ public class ArrayUtil {
         KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
         IndexIterator iter = a.getIndexIterator();
         for (i = 0; i < pNum; i++) {
-            if (!Double.isNaN(a.getDouble(i))) {
-                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, iter.getDoubleNext());
+            v = iter.getDoubleNext();
+            if (!Double.isNaN(v)) {
+                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
             }
         }
 
@@ -2621,9 +2625,11 @@ public class ArrayUtil {
         //Construct K-D tree
         KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
         IndexIterator iter = a.getIndexIterator();
+        double v;
         for (int i = 0; i < pNum; i++) {
-            if (!Double.isNaN(a.getDouble(i))) {
-                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, iter.getDoubleNext());
+            v = iter.getDoubleNext();
+            if (!Double.isNaN(v)) {
+                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
             }
         }
 
@@ -2664,12 +2670,8 @@ public class ArrayUtil {
      * @return Result x and y coordinates
      */
     public static Array[] extendHalfCell(Array x, Array y) {
-        if (!x.getIndexPrivate().isFastIterator()) {
-            x = x.copy();
-        }
-        if (!y.getIndexPrivate().isFastIterator()) {
-            y = y.copy();
-        }
+        x = x.copyIfView();
+        y = y.copyIfView();
         double dX = x.getDouble(1) - x.getDouble(0);
         double dY = y.getDouble(1) - y.getDouble(0);
         int nx = (int) x.getSize() + 1;
@@ -2717,9 +2719,7 @@ public class ArrayUtil {
         int[][] pNums = new int[rowNum][colNum];
         double x, y, v;
 
-        if (!a.getIndexPrivate().isFastIterator()) {
-            a = a.copy();
-        }
+        a = a.copyIfView();
         for (int i = 0; i < rowNum; i++) {
             for (int j = 0; j < colNum; j++) {
                 pNums[i][j] = 0;

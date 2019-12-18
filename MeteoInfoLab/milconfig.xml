@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\interpolation">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\regression"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\turtle"/>
@@ -16,23 +14,21 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\latex"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\adaboost_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\histogram_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\hist_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\hist_3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\griddata_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\adaboost_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\array\histogram_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\hist_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\hist_3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\griddata_1.py"/>
     </RecentFiles>
   </File>
   <Font>

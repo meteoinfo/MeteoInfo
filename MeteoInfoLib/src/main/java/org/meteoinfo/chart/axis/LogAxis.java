@@ -53,6 +53,17 @@ public class LogAxis extends Axis {
                 lab = DataConvert.removeTailingZeros(lab);
                 tls.add(new ChartText(lab));
             }
+
+            List<Double> values = new ArrayList<>();
+            for (ChartText tl : tls){
+                values.add(Double.parseDouble(tl.getText()));
+            }
+            tls.clear();
+            int e;
+            for (Double v : values){
+                e = (int) Math.floor(Math.log10(v));
+                tls.add(new ChartText("$10^{" + String.valueOf(e) + "}$"));
+            }
         } else {
             for (int i = 0; i < this.getTickLocations().size(); i++) {
                 if (i >= this.getTickLabels().size()) {
@@ -63,17 +74,6 @@ public class LogAxis extends Axis {
                     tls.add(this.getTickLabels().get(i));
                 }
             }
-        }
-        
-        List<Double> values = new ArrayList<>();
-        for (ChartText tl : tls){
-            values.add(Double.parseDouble(tl.getText()));
-        }
-        tls.clear();
-        int e;
-        for (Double v : values){
-            e = (int) Math.floor(Math.log10(v));
-            tls.add(new ChartText("$10^{" + String.valueOf(e) + "}$"));
         }
 
         this.setTickLabels(tls);

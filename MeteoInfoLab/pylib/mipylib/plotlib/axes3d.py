@@ -158,6 +158,14 @@ class Axes3D(Axes):
         :param dz: (*boolean*) Draw z axis or not.
         '''
         self.axes.setDisplayZ(dz)
+
+    def set_draw_base(self, is_draw):
+        """
+        Set draw base area or not.
+
+        :param is_draw: (*bool*) Draw base area or not.
+        """
+        self.axes.setDrawBase(is_draw)
         
     def set_draw_box(self, db):
         '''

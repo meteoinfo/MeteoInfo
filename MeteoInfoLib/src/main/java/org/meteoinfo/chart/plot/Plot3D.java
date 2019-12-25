@@ -77,7 +77,7 @@ public class Plot3D extends Plot {
     private Rectangle graphBounds;    //Graphic area bounds
 
     private boolean isBoxed, isMesh, isScaleBox, isDisplayXY, isDisplayZ,
-            isDisplayGrids, drawBoundingBox;
+            isDisplayGrids, drawBoundingBox, drawBase;
     private boolean hideOnDrag;
     private float xmin, xmax, ymin;
     private float ymax, zmin, zmax;
@@ -123,6 +123,7 @@ public class Plot3D extends Plot {
         this.isDisplayXY = true;
         this.isDisplayZ = true;
         this.drawBoundingBox = false;
+        this.drawBase = true;
     }
 
     // </editor-fold>
@@ -484,6 +485,22 @@ public class Plot3D extends Plot {
      */
     public void setDrawBoundingBox(boolean value) {
         this.drawBoundingBox = value;
+    }
+
+    /**
+     * Get if draw base area
+     * @return Draw base area or not
+     */
+    public boolean isDrawBase() {
+        return  this.drawBase;
+    }
+
+    /**
+     * Set if draw base area
+     * @param value Draw base area or not
+     */
+    public void setDrawBase(boolean value) {
+        this.drawBase = value;
     }
 
     /**
@@ -1839,7 +1856,10 @@ public class Plot3D extends Plot {
             x_left = projection.x > x[0];
         }
         setAxesScale();
-        drawBase(g, x, y);
+
+        //Draw base area
+        if (this.drawBase)
+            drawBase(g, x, y);
 
         //Draw box
         if (isBoxed) {
@@ -1878,7 +1898,7 @@ public class Plot3D extends Plot {
 
             g.setColor(this.lineboxColor);
             g.drawPolygon(x, y, 5);
-        } else if (isDisplayZ) {
+        } /*else if (isDisplayZ) {
             projection = projector.project(factor_x * 10, -factor_y * 10, -10);
             x[0] = projection.x;
             y[0] = projection.y;
@@ -1890,7 +1910,7 @@ public class Plot3D extends Plot {
             y[0] = projection.y;
             projection = projector.project(-factor_x * 10, factor_y * 10, 10);
             g.drawLine(x[0], y[0], projection.x, projection.y);
-        }
+        }*/
 
         //Draw axis
         float v, vi;
@@ -1953,16 +1973,19 @@ public class Plot3D extends Plot {
                 if (v < xmin || v > xmax) {
                     continue;
                 }
-                vi = (v - xmin) * xfactor - 10;
-                tickpos = projector.project(vi, factor_y * 10, -10);
+                //vi = (v - xmin) * xfactor - 10;
+                //tickpos = projector.project(vi, factor_y * 10, -10);
+                tickpos = this.project(v, factor_y > 0 ? this.ymax : this.ymin, this.zmin);
                 if (this.isDisplayGrids && (v != xmin && v != xmax)) {
-                    projection = projector.project(vi, -factor_y * 10, -10);
+                    //projection = projector.project(vi, -factor_y * 10, -10);
+                    projection = this.project(v, factor_y < 0 ? this.ymax : this.ymin, this.zmin);
                     g.setColor(this.lineboxColor);
                     g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
                     if (this.isDisplayZ && this.isBoxed) {
                         x[0] = projection.x;
                         y[0] = projection.y;
-                        projection = projector.project(vi, -factor_y * 10, 10);
+                        //projection = projector.project(vi, -factor_y * 10, 10);
+                        projection = this.project(v, factor_y < 0 ? this.ymax : this.ymin, this.zmax);
                         g.drawLine(x[0], y[0], projection.x, projection.y);
                     }
                 }
@@ -2023,21 +2046,27 @@ public class Plot3D extends Plot {
             skip = getLabelGap(g, tlabs, Math.abs(ylen));
             strWidth = 0;
             for (i = 0; i < this.yAxis.getTickValues().length; i += skip) {
+                if (i >= tlabs.size())
+                    break;
+
                 v = (float) this.yAxis.getTickValues()[i];
                 s = tlabs.get(i).getText();
                 if (v < ymin || v > ymax) {
                     continue;
                 }
-                vi = (v - ymin) * yfactor - 10;
-                tickpos = projector.project(factor_x * 10, vi, -10);
+                //vi = (v - ymin) * yfactor - 10;
+                //tickpos = projector.project(factor_x * 10, vi, -10);
+                tickpos = this.project(factor_x > 0 ? this.xmax : this.xmin, v, this.zmin);
                 if (this.isDisplayGrids && (v != ymin && v != ymax)) {
-                    projection = projector.project(-factor_x * 10, vi, -10);
+                    //projection = projector.project(-factor_x * 10, vi, -10);
+                    projection = this.project(factor_x < 0 ? this.xmax : this.xmin, v, this.zmin);
                     g.setColor(this.lineboxColor);
                     g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
                     if (this.isDisplayZ && this.isBoxed) {
                         x[0] = projection.x;
                         y[0] = projection.y;
-                        projection = projector.project(-factor_x * 10, vi, 10);
+                        //projection = projector.project(-factor_x * 10, vi, 10);
+                        projection = this.project(factor_x < 0 ? this.xmax : this.xmin, v, this.zmax);
                         g.drawLine(x[0], y[0], projection.x, projection.y);
                     }
                 }
@@ -2106,15 +2135,21 @@ public class Plot3D extends Plot {
                 if (v < zmin || v > zmax) {
                     continue;
                 }
-                vi = (v - zmin) * zfactor - 10;
-                tickpos = projector.project(factor_x * 10 * lf, -factor_y * 10 * lf, vi);
+                //vi = (v - zmin) * zfactor - 10;
+                //tickpos = projector.project(factor_x * 10 * lf, -factor_y * 10 * lf, vi);
+                tickpos = this.project(factor_x > 0 ? this.xmax : this.xmin,
+                        factor_y < 0 ? this.ymax : this.ymin, v);
                 if (this.isDisplayGrids && this.isBoxed && (v != zmin && v != zmax)) {
-                    projection = projector.project(-factor_x * 10, -factor_y * 10, vi);
+                    //projection = projector.project(-factor_x * 10, -factor_y * 10, vi);
+                    projection = this.project(factor_x < 0 ? this.xmax : this.xmin,
+                            factor_y < 0 ? this.ymax : this.ymin, v);
                     g.setColor(this.lineboxColor);
                     g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
                     x[0] = projection.x;
                     y[0] = projection.y;
-                    projection = projector.project(-factor_x * 10 * lf, factor_y * 10 * lf, vi);
+                    //projection = projector.project(-factor_x * 10 * lf, factor_y * 10 * lf, vi);
+                    projection = this.project(factor_x < 0 ? this.xmax : this.xmin,
+                            factor_y > 0 ? this.ymax : this.ymin, v);
                     g.drawLine(x[0], y[0], projection.x, projection.y);
                 }
                 //projection = projector.project(factor_x * 10.2f * lf, -factor_y * 10.2f * lf, vi);
@@ -2130,15 +2165,15 @@ public class Plot3D extends Plot {
                 }
             }
             String label = this.zAxis.getLabel().getText();
-            if (label != null) {                
-                Dimension dim = Draw.getStringDimension(label, g);
+            if (label != null) {
                 tickpos = projector.project(factor_x * 10 * lf, -factor_y * 10 * lf, 0);
-                tickpos.x = tickpos.x - this.xAxis.getTickLength() - 15 - strWidth - dim.height;
+                tickpos.x = tickpos.x - this.xAxis.getTickLength() - 15 - strWidth;
                 g.setFont(this.zAxis.getLabelFont());
                 g.setColor(this.zAxis.getLabelColor());
                 //Draw.drawLabelPoint_270(tickpos.x, tickpos.y, this.zAxis.getLabelFont(), label,
                 //        this.zAxis.getLabelColor(), g, null, this.zAxis.getLabel().isUseExternalFont());              
-                Draw.drawString(g, tickpos.x, tickpos.y, label, XAlign.LEFT, YAlign.CENTER, 90, this.zAxis.getLabel().isUseExternalFont());
+                Draw.drawString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.BOTTOM, 90,
+                        this.zAxis.getLabel().isUseExternalFont());
             }
         }
     }

@@ -291,7 +291,7 @@ public class FrmMain extends JFrame implements IApplication {
         if (isDebug) {
             this._startupPath = System.getProperty("user.dir");
             if (this._startupPath.endsWith("MeteoInfo")) {
-                this._startupPath += "/MeteoInfoLab";
+                this._startupPath += "/MeteoInfoMap";
             }
             pluginPath = "D:/MyProgram/Java/MeteoInfoDev/plugins";
         } else {

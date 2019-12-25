@@ -28,6 +28,7 @@ import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.LegendPosition;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.chart.axis.Axis;
+import org.meteoinfo.chart.axis.LogAxis;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.data.DataMath;
@@ -67,9 +68,9 @@ public class Plot3D extends Plot {
     private Extent3D extent;
     private ChartText title;
     private List<ChartLegend> legends;
-    private final Axis xAxis;
-    private final Axis yAxis;
-    private final Axis zAxis;
+    private Axis xAxis;
+    private Axis yAxis;
+    private Axis zAxis;
 
     private final Projector projector; // the projector, controls the point of view
     private int prevwidth, prevheight; // canvas size
@@ -231,6 +232,14 @@ public class Plot3D extends Plot {
     }
 
     /**
+     * Set x axis
+     * @param value X axis
+     */
+    public void setXAxis(Axis value) {
+        this.xAxis = value;
+    }
+
+    /**
      * Get y axis
      *
      * @return Y axis
@@ -240,11 +249,25 @@ public class Plot3D extends Plot {
     }
 
     /**
+     * Set y axis
+     * @param value Y axis
+     */
+    public void setYAxis(Axis value) { this.yAxis = value; }
+
+    /**
      * Get z axis
      * @return Z axis
      */
     public Axis getZAxis() {
         return this.zAxis;
+    }
+
+    /**
+     * Set z axis
+     * @param value Z axis
+     */
+    public void setZAxis(Axis value) {
+        this.zAxis = value;
     }
     
     /**
@@ -488,7 +511,10 @@ public class Plot3D extends Plot {
         xAxis.setMinMaxValue(xmin, xmax);
         yAxis.setMinMaxValue(ymin, ymax);
         zAxis.setMinMaxValue(zmin, zmax);
-        this.projector.setZRange(zmin, zmax);
+        if (zAxis instanceof LogAxis)
+            this.projector.setZRange((float)Math.log10(zmin), (float)Math.log10(zmax));
+        else
+            this.projector.setZRange(zmin, zmax);
     }
 
     // </editor-fold>
@@ -629,9 +655,18 @@ public class Plot3D extends Plot {
         }
         projector.setProjectionArea(parea);
 
-        xfactor = 20f / (this.xmax - this.xmin); // 20 aint magic: surface vertex requires a value in [-10 ; 10]
-        yfactor = 20f / (this.ymax - this.ymin);
-        zfactor = 20f / (this.zmax - this.zmin);
+        if (this.xAxis instanceof LogAxis)
+            xfactor = 20f / ((float)Math.log10(xmax) - (float)Math.log10(this.xmin));
+        else
+            xfactor = 20f / (this.xmax - this.xmin); // 20 aint magic: surface vertex requires a value in [-10 ; 10]
+        if (this.yAxis instanceof LogAxis)
+            yfactor = 20f / ((float)Math.log10(this.ymax) - (float)Math.log10(this.ymin));
+        else
+            yfactor = 20f / (this.ymax - this.ymin);
+        if (this.zAxis instanceof LogAxis)
+            zfactor = 20f / ((float)Math.log10(this.zmax) - (float)Math.log10(this.zmin));
+        else
+            zfactor = 20f / (this.zmax - this.zmin);
 
         //Get graph bounds
         this.graphBounds = this.projector.getBounds();
@@ -721,25 +756,33 @@ public class Plot3D extends Plot {
         List<Point> points = new ArrayList<>();
         switch (zdir) {
             case "x":
-                zValue = (zValue - this.xmin) * xfactor - 10;
-                p = projector.project(zValue, -10, -10);
+                /*zValue = (zValue - this.xmin) * xfactor - 10;
+                p = projector.project(zValue, -10, -10);*/
+                p = this.project(zValue, this.ymin, this.zmin);
                 points.add(p);
-                p = projector.project(zValue, -10, 10);
+                //p = projector.project(zValue, -10, 10);
+                p = this.project(zValue, this.ymin, this.zmax);
                 points.add(p);
-                p = projector.project(zValue, 10, 10);
+                //p = projector.project(zValue, 10, 10);
+                p = this.project(zValue, this.ymax, this.zmax);
                 points.add(p);
-                p = projector.project(zValue, 10, -10);
+                //p = projector.project(zValue, 10, -10);
+                p = this.project(zValue, this.ymax, this.zmin);
                 points.add(p);
                 break;
             case "y":
-                zValue = (zValue - this.ymin) * yfactor - 10;
-                p = projector.project(-10, zValue, -10);
+                //zValue = (zValue - this.ymin) * yfactor - 10;
+                //p = projector.project(-10, zValue, -10);
+                p = this.project(this.xmin, zValue, this.zmin);
                 points.add(p);
-                p = projector.project(-10, zValue, 10);
+                //p = projector.project(-10, zValue, 10);
+                p = this.project(this.xmin, zValue, this.zmax);
                 points.add(p);
-                p = projector.project(10, zValue, 10);
+                //p = projector.project(10, zValue, 10);
+                p = this.project(this.xmax, zValue, this.zmax);
                 points.add(p);
-                p = projector.project(10, zValue, -10);
+                //p = projector.project(10, zValue, -10);
+                p = this.project(this.xmax, zValue, this.zmin);
                 points.add(p);
                 break;
             case "xy":
@@ -749,29 +792,37 @@ public class Plot3D extends Plot {
                     float sy = sePoint.get(1).floatValue();
                     float ex = sePoint.get(2).floatValue();
                     float ey = sePoint.get(3).floatValue();
-                    sx = (sx - this.xmin) * xfactor - 10;
+                    /*sx = (sx - this.xmin) * xfactor - 10;
                     ex = (ex - this.xmin) * xfactor - 10;
                     sy = (sy - this.ymin) * yfactor - 10;
                     ey = (ey - this.ymin) * yfactor - 10;
-                    p = projector.project(sx, sy, -10);
+                    p = projector.project(sx, sy, -10);*/
+                    p = this.project(sx, sy, this.zmin);
                     points.add(p);
-                    p = projector.project(sx, sy, 10);
+                    //p = projector.project(sx, sy, 10);
+                    p = this.project(sx, sy, this.zmax);
                     points.add(p);
-                    p = projector.project(ex, ey, 10);
+                    //p = projector.project(ex, ey, 10);
+                    p = this.project(ex, ey, this.zmax);
                     points.add(p);
-                    p = projector.project(ex, ey, -10);
+                    //p = projector.project(ex, ey, -10);
+                    p = this.project(ex, ey, this.zmin);
                     points.add(p);
                 }
                 break;
             case "z":
-                zValue = (zValue - this.zmin) * zfactor - 10;
-                p = projector.project(-10, -10, zValue);
+                //zValue = (zValue - this.zmin) * zfactor - 10;
+                //p = projector.project(-10, -10, zValue);
+                p = this.project(this.xmin, this.ymin, zValue);
                 points.add(p);
-                p = projector.project(-10, 10, zValue);
+                //p = projector.project(-10, 10, zValue);
+                p = this.project(this.xmin, this.ymax, zValue);
                 points.add(p);
-                p = projector.project(10, 10, zValue);
+                //p = projector.project(10, 10, zValue);
+                p = this.project(this.xmax, this.ymax, zValue);
                 points.add(p);
-                p = projector.project(10, -10, zValue);
+                //p = projector.project(10, -10, zValue);
+                p = this.project(this.xmax, this.ymin, zValue);
                 points.add(p);
                 break;
         }
@@ -982,6 +1033,31 @@ public class Plot3D extends Plot {
      * @return Projected 2D point
      */
     public Point project(float x, float y, float z) {
+        float px, py, pz;
+        if (this.xAxis instanceof LogAxis)
+            px = (float)(Math.log10(x) - Math.log10(xmin)) * xfactor - 10;
+        else
+            px = (x - xmin) * xfactor - 10;
+        if (this.yAxis instanceof LogAxis)
+            py = (float)(Math.log10(y) - Math.log10(ymin)) * yfactor - 10;
+        else
+            py = (y - ymin) * yfactor - 10;
+        if (this.zAxis instanceof LogAxis)
+            pz = (float)(Math.log10(z) - Math.log10(zmin)) * zfactor - 10;
+        else
+            pz = (z - zmin) * zfactor - 10;
+        return this.projector.project(px, py, pz);
+    }
+
+    /**
+     * Project 3D point
+     *
+     * @param x X
+     * @param y Y
+     * @param z Z
+     * @return Projected 2D point
+     */
+    public Point project_bak(float x, float y, float z) {
         return this.projector.project((x - xmin) * xfactor - 10,
                 (y - ymin) * yfactor - 10, (z - zmin) * zfactor - 10);
     }
@@ -1036,9 +1112,10 @@ public class Plot3D extends Plot {
             PointZShape shape = (PointZShape) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegend();
             PointZ p = (PointZ) shape.getPoint();
-            PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
+            /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
                     (p.Z - this.zmin) * zfactor - 10);
-            projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);
+            projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);*/
+            projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
             PointF pf = new PointF(projection.x, projection.y);
             Draw.drawPoint(pf, pb, g);
         }
@@ -1118,9 +1195,7 @@ public class Plot3D extends Plot {
                 PointZ p, pp;
                 for (int i = 0; i < ps.size(); i++) {
                     p = ps.get(i);
-                    pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
-                            (p.Z - this.zmin) * zfactor - 10);
-                    projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);
+                    projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
                     points[i] = new PointF(projection.x, projection.y);
                 }
                 if (pb.getBreakType() == BreakTypes.ColorBreakCollection)
@@ -1207,9 +1282,10 @@ public class Plot3D extends Plot {
         List<PointF> rPoints = new ArrayList<>();
         for (int i = 0; i < aPG.getOutLine().size(); i++) {
             p = ((List<PointZ>) aPG.getOutLine()).get(i);
-            pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
-                    (p.Z - this.zmin) * zfactor - 10);
-            projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);
+//            pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
+//                    (p.Z - this.zmin) * zfactor - 10);
+//            projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);
+            projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
             if (i == 0) {
                 path.moveTo(projection.x, projection.y);
             } else {
@@ -1224,9 +1300,10 @@ public class Plot3D extends Plot {
                 newPList = (List<PointZ>) aPG.getHoleLines().get(h);
                 for (int j = 0; j < newPList.size(); j++) {
                     p = newPList.get(j);
-                    pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
-                            (p.Z - this.zmin) * zfactor - 10);
-                    projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);
+//                    pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
+//                            (p.Z - this.zmin) * zfactor - 10);
+//                    projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);
+                    projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
                     if (j == 0) {
                         path.moveTo(projection.x, projection.y);
                     } else {
@@ -1272,7 +1349,7 @@ public class Plot3D extends Plot {
         double angle, xscale, yscale, xtran, ytran;
         switch (zdir) {
             case "x":
-                zValue = (zValue - this.xmin) * xfactor - 10;
+                /*zValue = (zValue - this.xmin) * xfactor - 10;
                 miny = ((float) ext.minY - ymin) * yfactor - 10;
                 maxy = ((float) ext.maxY - ymin) * yfactor - 10;
                 minz = ((float) ext.minZ - zmin) * zfactor - 10;
@@ -1280,7 +1357,11 @@ public class Plot3D extends Plot {
                 p1 = this.projector.project(zValue, miny, maxz);
                 p2 = this.projector.project(zValue, maxy, maxz);
                 p3 = this.projector.project(zValue, maxy, minz);
-                p4 = this.projector.project(zValue, miny, minz);
+                p4 = this.projector.project(zValue, miny, minz);*/
+                p1 = this.project(zValue, (float)ext.minY, (float)ext.maxZ);
+                p2 = this.project(zValue, (float)ext.maxY, (float)ext.maxZ);
+                p3 = this.project(zValue, (float)ext.maxY, (float)ext.minZ);
+                p4 = this.project(zValue, (float)ext.minY, (float)ext.minZ);
                 xscale = (double) Math.abs(p2.x - p1.x) / image.getWidth();
                 yscale = (double) Math.abs(p1.y - p4.y) / image.getHeight();
                 xtran = p1.x;
@@ -1296,7 +1377,7 @@ public class Plot3D extends Plot {
                 transform.scale(xscale / Math.cos(angle), yscale);
                 break;
             case "y":
-                zValue = (zValue - this.ymin) * yfactor - 10;
+                /*zValue = (zValue - this.ymin) * yfactor - 10;
                 minx = ((float) ext.minX - xmin) * xfactor - 10;
                 maxx = ((float) ext.maxX - xmin) * xfactor - 10;
                 minz = ((float) ext.minZ - zmin) * zfactor - 10;
@@ -1304,7 +1385,11 @@ public class Plot3D extends Plot {
                 p1 = this.projector.project(minx, zValue, maxz);
                 p2 = this.projector.project(maxx, zValue, maxz);
                 p3 = this.projector.project(maxx, zValue, minz);
-                p4 = this.projector.project(minx, zValue, minz);
+                p4 = this.projector.project(minx, zValue, minz);*/
+                p1 = this.project((float)ext.minX, zValue, (float)ext.maxZ);
+                p2 = this.project((float)ext.maxX, zValue, (float)ext.maxZ);
+                p3 = this.project((float)ext.maxX, zValue, (float)ext.minZ);
+                p4 = this.project((float)ext.minX, zValue, (float)ext.minZ);
                 xscale = (double) Math.abs(p2.x - p1.x) / image.getWidth();
                 yscale = (double) Math.abs(p1.y - p4.y) / image.getHeight();
                 xtran = p1.x;
@@ -1320,7 +1405,7 @@ public class Plot3D extends Plot {
                 transform.scale(xscale / Math.cos(angle), yscale);
                 break;
             case "xy":
-                miny = ((float) ext.minY - ymin) * yfactor - 10;
+                /*miny = ((float) ext.minY - ymin) * yfactor - 10;
                 maxy = ((float) ext.maxY - ymin) * yfactor - 10;
                 minx = ((float) ext.minX - xmin) * xfactor - 10;
                 maxx = ((float) ext.maxX - xmin) * xfactor - 10;
@@ -1329,7 +1414,11 @@ public class Plot3D extends Plot {
                 p1 = this.projector.project(minx, miny, maxz);
                 p2 = this.projector.project(maxx, maxy, maxz);
                 p3 = this.projector.project(maxx, maxy, minz);
-                p4 = this.projector.project(minx, miny, minz);
+                p4 = this.projector.project(minx, miny, minz);*/
+                p1 = this.project((float)ext.minX, (float)ext.minY, (float)ext.maxZ);
+                p2 = this.project((float)ext.maxX, (float)ext.maxY, (float)ext.maxZ);
+                p3 = this.project((float)ext.maxX, (float)ext.maxY, (float)ext.minZ);
+                p4 = this.project((float)ext.minX, (float)ext.minY, (float)ext.minZ);
                 xscale = (double) Math.abs(p2.x - p1.x) / image.getWidth();
                 yscale = (double) Math.abs(p1.y - p4.y) / image.getHeight();
                 xtran = p1.x;
@@ -1345,7 +1434,7 @@ public class Plot3D extends Plot {
                 transform.scale(xscale / Math.cos(angle), yscale);
                 break;
             case "z":
-                zValue = (zValue - this.zmin) * zfactor - 10;
+                /*zValue = (zValue - this.zmin) * zfactor - 10;
                 minx = ((float) ext.minX - xmin) * xfactor - 10;
                 maxx = ((float) ext.maxX - xmin) * xfactor - 10;
                 miny = ((float) ext.minY - ymin) * yfactor - 10;
@@ -1353,7 +1442,11 @@ public class Plot3D extends Plot {
                 p1 = this.projector.project(minx, maxy, zValue);
                 p2 = this.projector.project(maxx, maxy, zValue);
                 p3 = this.projector.project(maxx, miny, zValue);
-                p4 = this.projector.project(minx, miny, zValue);
+                p4 = this.projector.project(minx, miny, zValue);*/
+                p1 = this.project((float)ext.minX, (float)ext.maxY, zValue);
+                p2 = this.project((float)ext.maxX, (float)ext.maxY, zValue);
+                p3 = this.project((float)ext.maxX, (float)ext.minY, zValue);
+                p4 = this.project((float)ext.minX, (float)ext.minY, zValue);
                 xscale = (double) Math.abs(p2.x - p1.x) / image.getWidth();
                 yscale = (double) Math.abs(p1.y - p4.y) / image.getHeight();
                 xtran = p1.x;
@@ -1380,14 +1473,16 @@ public class Plot3D extends Plot {
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegend();
             PointZ p = (PointZ) shape.getPoint();
-            PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
+            /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
                     (p.Z - this.zmin) * zfactor - 10);
-            projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);
+            projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);*/
+            projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
             PointF pf = new PointF(projection.x, projection.y);
             p = (PointZ)shape.getEndPoint();
-            pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
+            /*pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
                     (p.Z - this.zmin) * zfactor - 10);
-            projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);
+            projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);*/
+            projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
             PointF epf = new PointF(projection.x, projection.y);
             PointF[] points = new PointF[]{pf, epf};
             Draw.drawArrow(points, pb, 4, g);
@@ -1879,11 +1974,14 @@ public class Plot3D extends Plot {
                 value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + 5);
                 tickpos = new Point((int) value[0], (int) value[1]);                
                 if (x_left) {
-                    outString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP);
+                    //outString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP);
+                    Draw.drawString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP, true);
                 } else {
-                    outString(g, tickpos.x, tickpos.y, s, XAlign.RIGHT, YAlign.TOP);
+                    //outString(g, tickpos.x, tickpos.y, s, XAlign.RIGHT, YAlign.TOP);
+                    Draw.drawString(g, tickpos.x, tickpos.y, s, XAlign.RIGHT, YAlign.TOP, true);
                 }
-                w = g.getFontMetrics().stringWidth(s);
+                //w = g.getFontMetrics().stringWidth(s);
+                w = Draw.getStringDimension(s, g).width;
                 if (strWidth < w) {
                     strWidth = w;
                 }
@@ -1902,9 +2000,11 @@ public class Plot3D extends Plot {
                     tickpos.y += g.getFontMetrics().getHeight();
                 }
                 if (x_left) {
-                    outString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, xangle + 90);
+                    //outString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, xangle + 90);
+                    Draw.drawString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, xangle + 90, true);
                 } else {
-                    outString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, xangle + 90);
+                    //outString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, xangle + 90);
+                    Draw.drawString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, xangle + 90, true);
                 }
             }
 
@@ -1947,11 +2047,14 @@ public class Plot3D extends Plot {
                 value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + 5);
                 tickpos = new Point((int) value[0], (int) value[1]);
                 if (y_left) {
-                    outString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP);
+                    //outString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP);
+                    Draw.drawString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP, true);
                 } else {
-                    outString(g, tickpos.x, tickpos.y, s, XAlign.RIGHT, YAlign.TOP);
+                    //outString(g, tickpos.x, tickpos.y, s, XAlign.RIGHT, YAlign.TOP);
+                    Draw.drawString(g, tickpos.x, tickpos.y, s, XAlign.RIGHT, YAlign.TOP, true);
                 }
-                w = g.getFontMetrics().stringWidth(s);
+                //w = g.getFontMetrics().stringWidth(s);
+                w = Draw.getStringDimension(s, g).width;
                 if (strWidth < w) {
                     strWidth = w;
                 }
@@ -1970,9 +2073,11 @@ public class Plot3D extends Plot {
                     tickpos.y += g.getFontMetrics().getHeight();
                 }
                 if (y_left) {
-                    outString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, yangle + 90);
+                    //outString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, yangle + 90);
+                    Draw.drawString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, yangle + 90, true);
                 } else {
-                    outString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, yangle + 90);
+                    //outString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, yangle + 90);
+                    Draw.drawString(g, tickpos.x, tickpos.y, label, XAlign.CENTER, YAlign.TOP, yangle + 90, true);
                 }
             }
         }
@@ -2017,7 +2122,8 @@ public class Plot3D extends Plot {
                 //g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
                 g.drawLine(tickpos.x, tickpos.y, tickpos.x - this.zAxis.getTickLength(), tickpos.y);
                 //tickpos = projector.project(factor_x * 10.5f * lf, -factor_y * 10.5f * lf, vi);
-                outString(g, tickpos.x - this.zAxis.getTickLength() - 5, tickpos.y, s, XAlign.RIGHT, YAlign.CENTER);
+                //outString(g, tickpos.x - this.zAxis.getTickLength() - 5, tickpos.y, s, XAlign.RIGHT, YAlign.CENTER);
+                Draw.drawString(g, tickpos.x - this.zAxis.getTickLength() - 5, tickpos.y, s, XAlign.RIGHT, YAlign.CENTER, true);
                 w = g.getFontMetrics().stringWidth(s);
                 if (strWidth < w) {
                     strWidth = w;

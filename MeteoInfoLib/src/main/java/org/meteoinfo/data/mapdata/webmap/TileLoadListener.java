@@ -10,7 +10,9 @@ import java.beans.PropertyChangeListener;
 
 /**
  *
- * @author Yaqiang Wang a property change listener which forces repaints when
+ * @author Yaqiang Wang
+ * 
+ * a property change listener which forces repaints when
  * tiles finish loading
  */
 public class TileLoadListener implements PropertyChangeListener {

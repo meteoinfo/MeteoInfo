@@ -239,7 +239,8 @@ public class MapView extends JPanel implements IWebMapPanel {
     private Extent _drawExtent = new Extent();
     private double _scaleX = 1.0;
     private double _scaleY = 1.0;
-    private double _webMapScale;
+    private boolean fixMapScale = false;
+    private int zoomLevel = 1;
     private double _XYScaleFactor = 1.0;
     private Color _selectColor = Color.yellow;
     private boolean _isGeoMap = true;
@@ -4432,6 +4433,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 }
             }
         }
+        this.fixMapScale = false;
     }
 
     private void drawImage(Graphics2D g, ImageLayer aILayer, double LonShift, int width, int height) {
@@ -4642,6 +4644,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 }
             }
         }
+        this.fixMapScale = false;
     }
 
     /**
@@ -5628,48 +5631,57 @@ public class MapView extends JPanel implements IWebMapPanel {
     private void drawWebMapLayer(WebMapLayer layer, Graphics2D g, int width, int height) {
         this.drawWebMapLayer(layer, g, width, height, tileLoadListener);
     }
-
+    
     private void drawWebMapLayer(WebMapLayer layer, Graphics2D g, int width, int height, TileLoadListener tll) {
         PointD geoCenter = this.getGeoCenter();
         layer.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X));
-        int zoom = layer.getZoom();
-        if (!MIMath.doubleEquals(_scaleX, _webMapScale)) {
-            int minZoom = layer.getTileFactory().getInfo().getMinimumZoomLevel();
-            int maxZoom = layer.getTileFactory().getInfo().getMaximumZoomLevel();
-            //int totalZoom = layer.getTileFactory().getInfo().getTotalMapZoom();
-            int nzoom = minZoom;
-            double scale;
-            for (int i = maxZoom; i >= minZoom; i--) {
-                //int z = totalZoom - i;
-                //double res = GeoUtil.getResolution(z, geoCenter.Y);
-                //double scale = 1.0 / res;
-                //layer.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X), i);
-                layer.setZoom(i);
-                scale = getWebMapScale(layer, i, width, height);
-                if (_scaleX < scale || MIMath.doubleEquals(_scaleX, scale)) {
-                    this.setScale(scale, width, height);
-                    nzoom = i;
-                    _webMapScale = scale;
-                    break;
+        if (this.fixMapScale) {
+            layer.setWebMapScale(this._scaleX);
+            layer.setZoom(this.zoomLevel);
+        } else {            
+            zoomLevel = layer.getZoom();
+            double webMapScale = layer.getWebMapScale();
+            if (!MIMath.doubleEquals(_scaleX, webMapScale)) {
+                int minZoom = layer.getTileFactory().getInfo().getMinimumZoomLevel();
+                int maxZoom = layer.getTileFactory().getInfo().getMaximumZoomLevel();
+                //int totalZoom = layer.getTileFactory().getInfo().getTotalMapZoom();
+                int nzoom = minZoom;
+                double scale;
+                for (int i = maxZoom; i >= minZoom; i--) {
+                    //int z = totalZoom - i;
+                    //double res = GeoUtil.getResolution(z, geoCenter.Y);
+                    //double scale = 1.0 / res;
+                    //layer.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X), i);
+                    layer.setZoom(i);
+                    scale = getWebMapScale(layer, i, width, height);
+                    if (_scaleX < scale || MIMath.doubleEquals(_scaleX, scale)) {
+                        this.setScale(scale, width, height);
+                        nzoom = i;
+                        webMapScale = scale;
+                        layer.setWebMapScale(webMapScale);
+                        break;
+                    }
                 }
-            }
 
-            boolean addOne = false;
-            if (zoom == minZoom) {
-                addOne = true;
-            } else if (nzoom < maxZoom) {
-                addOne = true;
-            }
-            if (addOne) {
-                zoom = nzoom + 1;
-                _webMapScale = getWebMapScale(layer, zoom, width, height);
-                this.setScale(_webMapScale, width, height);
-                layer.setZoom(zoom);
-            } else {
-                zoom = nzoom;
-            }
+                boolean addOne = false;
+                if (zoomLevel == minZoom) {
+                    addOne = true;
+                } else if (nzoom < maxZoom) {
+                    addOne = true;
+                }
+                if (addOne) {
+                    zoomLevel = nzoom + 1;
+                    webMapScale = getWebMapScale(layer, zoomLevel, width, height);
+                    this.setScale(webMapScale, width, height);
+                    layer.setWebMapScale(webMapScale);
+                    layer.setZoom(zoomLevel);
+                } else {
+                    zoomLevel = nzoom;
+                }
+            }   
+            this.fixMapScale = true;
         }
-
+        
         if (layer.isMaskout()) {
             java.awt.Shape oldRegion = g.getClip();
             setClipRegion(g);
@@ -5677,75 +5689,127 @@ public class MapView extends JPanel implements IWebMapPanel {
                 g.clip(oldRegion);
             }
         }
-
-        //layer.setZoom(zoom);
-        //layer.drawMapTiles(g, zoom, width, height);        
-        Rectangle viewportBounds = layer.calculateViewportBounds(g, width, height);
-        int size = layer.getTileFactory().getTileSize(zoom);
-        Dimension mapSize = layer.getTileFactory().getMapSize(zoom);
-
-        //calculate the "visible" viewport area in tiles
-        int numWide = viewportBounds.width / size + 2;
-        int numHigh = viewportBounds.height / size + 2;
-
-        //TilePoint topLeftTile = getTileFactory().getTileCoordinate(
-        //        new Point2D.Double(viewportBounds.x, viewportBounds.y));
-        TileFactoryInfo info = layer.getTileFactory().getInfo();
-        int tpx = (int) Math.floor(viewportBounds.getX() / info.getTileSize(0));
-        int tpy = (int) Math.floor(viewportBounds.getY() / info.getTileSize(0));
-        //TilePoint topLeftTile = new TilePoint(tpx, tpy);
-
-        //p("top tile = " + topLeftTile);
-        //fetch the tiles from the factory and store them in the tiles cache
-        //attach the TileLoadListener
-        //String language = layer.getTileFactory().getInfo().getLanguage();
-        for (int x = 0; x <= numWide; x++) {
-            for (int y = 0; y <= numHigh; y++) {
-                int itpx = x + tpx;//topLeftTile.getX();
-                int itpy = y + tpy;//topLeftTile.getY();
-                //TilePoint point = new TilePoint(x + topLeftTile.getX(), y + topLeftTile.getY());
-                //only proceed if the specified tile point lies within the area being painted
-                //if (g.getClipBounds().intersects(new Rectangle(itpx * size - viewportBounds.x,
-                //itpy * size - viewportBounds.y, size, size))) {
-                Tile tile = layer.getTileFactory().getTile(itpx, itpy, zoom);
-                tile.addUniquePropertyChangeListener("loaded", tll); //this is a filthy hack
-                int ox = ((itpx * layer.getTileFactory().getTileSize(zoom)) - viewportBounds.x);
-                int oy = ((itpy * layer.getTileFactory().getTileSize(zoom)) - viewportBounds.y);
-
-                //if the tile is off the map to the north/south, then just don't paint anything                    
-                if (layer.isTileOnMap(itpx, itpy, mapSize)) {
-//                        if (isOpaque()) {
-//                            g.setColor(getBackground());
-//                            g.fillRect(ox,oy,size,size);
-//                        }
-                } else if (tile.isLoaded()) {
-                    g.drawImage(tile.getImage(), ox, oy, null);
-                } else {
-                    int imageX = (layer.getTileFactory().getTileSize(zoom) - layer.getLoadingImage().getWidth(null)) / 2;
-                    int imageY = (layer.getTileFactory().getTileSize(zoom) - layer.getLoadingImage().getHeight(null)) / 2;
-                    g.setColor(Color.GRAY);
-                    g.fillRect(ox, oy, size, size);
-                    g.drawImage(layer.getLoadingImage(), ox + imageX, oy + imageY, null);
-                }
-                if (layer.isDrawTileBorders()) {
-
-                    g.setColor(Color.black);
-                    g.drawRect(ox, oy, size, size);
-                    g.drawRect(ox + size / 2 - 5, oy + size / 2 - 5, 10, 10);
-                    g.setColor(Color.white);
-                    g.drawRect(ox + 1, oy + 1, size, size);
-
-                    String text = itpx + ", " + itpy + ", " + layer.getZoom();
-                    g.setColor(Color.BLACK);
-                    g.drawString(text, ox + 10, oy + 30);
-                    g.drawString(text, ox + 10 + 2, oy + 30 + 2);
-                    g.setColor(Color.WHITE);
-                    g.drawString(text, ox + 10 + 1, oy + 30 + 1);
-                }
-                //}
-            }
-        }
+        
+        layer.drawWebMapLayer(g, width, height, tll);
     }
+
+//    private void drawWebMapLayer_bak(WebMapLayer layer, Graphics2D g, int width, int height, TileLoadListener tll) {
+//        PointD geoCenter = this.getGeoCenter();
+//        layer.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X));
+//        int zoom = layer.getZoom();
+//        if (!MIMath.doubleEquals(_scaleX, _webMapScale)) {
+//            int minZoom = layer.getTileFactory().getInfo().getMinimumZoomLevel();
+//            int maxZoom = layer.getTileFactory().getInfo().getMaximumZoomLevel();
+//            //int totalZoom = layer.getTileFactory().getInfo().getTotalMapZoom();
+//            int nzoom = minZoom;
+//            double scale;
+//            for (int i = maxZoom; i >= minZoom; i--) {
+//                //int z = totalZoom - i;
+//                //double res = GeoUtil.getResolution(z, geoCenter.Y);
+//                //double scale = 1.0 / res;
+//                //layer.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X), i);
+//                layer.setZoom(i);
+//                scale = getWebMapScale(layer, i, width, height);
+//                if (_scaleX < scale || MIMath.doubleEquals(_scaleX, scale)) {
+//                    this.setScale(scale, width, height);
+//                    nzoom = i;
+//                    _webMapScale = scale;
+//                    break;
+//                }
+//            }
+//
+//            boolean addOne = false;
+//            if (zoom == minZoom) {
+//                addOne = true;
+//            } else if (nzoom < maxZoom) {
+//                addOne = true;
+//            }
+//            if (addOne) {
+//                zoom = nzoom + 1;
+//                _webMapScale = getWebMapScale(layer, zoom, width, height);
+//                this.setScale(_webMapScale, width, height);
+//                layer.setZoom(zoom);
+//            } else {
+//                zoom = nzoom;
+//            }
+//        }
+//
+//        if (layer.isMaskout()) {
+//            java.awt.Shape oldRegion = g.getClip();
+//            setClipRegion(g);
+//            if (oldRegion != null) {
+//                g.clip(oldRegion);
+//            }
+//        }
+//
+//        //layer.setZoom(zoom);
+//        //layer.drawMapTiles(g, zoom, width, height);        
+//        Rectangle viewportBounds = layer.calculateViewportBounds(g, width, height);
+//        int size = layer.getTileFactory().getTileSize(zoom);
+//        Dimension mapSize = layer.getTileFactory().getMapSize(zoom);
+//
+//        //calculate the "visible" viewport area in tiles
+//        int numWide = viewportBounds.width / size + 2;
+//        int numHigh = viewportBounds.height / size + 2;
+//
+//        //TilePoint topLeftTile = getTileFactory().getTileCoordinate(
+//        //        new Point2D.Double(viewportBounds.x, viewportBounds.y));
+//        TileFactoryInfo info = layer.getTileFactory().getInfo();
+//        int tpx = (int) Math.floor(viewportBounds.getX() / info.getTileSize(0));
+//        int tpy = (int) Math.floor(viewportBounds.getY() / info.getTileSize(0));
+//        //TilePoint topLeftTile = new TilePoint(tpx, tpy);
+//
+//        //p("top tile = " + topLeftTile);
+//        //fetch the tiles from the factory and store them in the tiles cache
+//        //attach the TileLoadListener
+//        //String language = layer.getTileFactory().getInfo().getLanguage();
+//        for (int x = 0; x <= numWide; x++) {
+//            for (int y = 0; y <= numHigh; y++) {
+//                int itpx = x + tpx;//topLeftTile.getX();
+//                int itpy = y + tpy;//topLeftTile.getY();
+//                //TilePoint point = new TilePoint(x + topLeftTile.getX(), y + topLeftTile.getY());
+//                //only proceed if the specified tile point lies within the area being painted
+//                //if (g.getClipBounds().intersects(new Rectangle(itpx * size - viewportBounds.x,
+//                //itpy * size - viewportBounds.y, size, size))) {
+//                Tile tile = layer.getTileFactory().getTile(itpx, itpy, zoom);
+//                tile.addUniquePropertyChangeListener("loaded", tll); //this is a filthy hack
+//                int ox = ((itpx * layer.getTileFactory().getTileSize(zoom)) - viewportBounds.x);
+//                int oy = ((itpy * layer.getTileFactory().getTileSize(zoom)) - viewportBounds.y);
+//
+//                //if the tile is off the map to the north/south, then just don't paint anything                    
+//                if (layer.isTileOnMap(itpx, itpy, mapSize)) {
+////                        if (isOpaque()) {
+////                            g.setColor(getBackground());
+////                            g.fillRect(ox,oy,size,size);
+////                        }
+//                } else if (tile.isLoaded()) {
+//                    g.drawImage(tile.getImage(), ox, oy, null);
+//                } else {
+//                    int imageX = (layer.getTileFactory().getTileSize(zoom) - layer.getLoadingImage().getWidth(null)) / 2;
+//                    int imageY = (layer.getTileFactory().getTileSize(zoom) - layer.getLoadingImage().getHeight(null)) / 2;
+//                    g.setColor(Color.GRAY);
+//                    g.fillRect(ox, oy, size, size);
+//                    g.drawImage(layer.getLoadingImage(), ox + imageX, oy + imageY, null);
+//                }
+//                if (layer.isDrawTileBorders()) {
+//
+//                    g.setColor(Color.black);
+//                    g.drawRect(ox, oy, size, size);
+//                    g.drawRect(ox + size / 2 - 5, oy + size / 2 - 5, 10, 10);
+//                    g.setColor(Color.white);
+//                    g.drawRect(ox + 1, oy + 1, size, size);
+//
+//                    String text = itpx + ", " + itpy + ", " + layer.getZoom();
+//                    g.setColor(Color.BLACK);
+//                    g.drawString(text, ox + 10, oy + 30);
+//                    g.drawString(text, ox + 10 + 2, oy + 30 + 2);
+//                    g.setColor(Color.WHITE);
+//                    g.drawString(text, ox + 10 + 1, oy + 30 + 1);
+//                }
+//                //}
+//            }
+//        }
+//    }
 
     private double getWebMapScale(WebMapLayer layer, int zoom, int width, int height) {
         Point2D center = layer.getCenter();

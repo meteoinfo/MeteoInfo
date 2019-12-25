@@ -21,38 +21,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
-import org.meteoinfo.data.mapdata.webmap.AHybridMapInfo;
-import org.meteoinfo.data.mapdata.webmap.AMapInfo;
-import org.meteoinfo.data.mapdata.webmap.ASatelliteMapInfo;
-import org.meteoinfo.data.mapdata.webmap.ArcGISImageInfo;
-import org.meteoinfo.data.mapdata.webmap.BaiduMapInfo;
-import org.meteoinfo.data.mapdata.webmap.BaiduSatelliteMapInfo;
-import org.meteoinfo.data.mapdata.webmap.BingHybridMapInfo;
-import org.meteoinfo.data.mapdata.webmap.BingMapInfo;
-import org.meteoinfo.data.mapdata.webmap.BingSatelliteMapInfo;
-import org.meteoinfo.data.mapdata.webmap.WebMapProvider;
-import org.meteoinfo.data.mapdata.webmap.DefaultTileFactory;
-import org.meteoinfo.data.mapdata.webmap.GeoPosition;
-import org.meteoinfo.data.mapdata.webmap.GoogleHybridMapInfo;
-import org.meteoinfo.data.mapdata.webmap.GoogleHybridTerrainMapInfo;
-import org.meteoinfo.data.mapdata.webmap.GoogleMapInfo;
-import org.meteoinfo.data.mapdata.webmap.GoogleSatelliteMapInfo;
-import org.meteoinfo.data.mapdata.webmap.GoogleTerrainMapInfo;
-import org.meteoinfo.data.mapdata.webmap.OpenStreetMapInfo;
-import org.meteoinfo.data.mapdata.webmap.OpenStreetMapQuestSatelliteInfo;
-import org.meteoinfo.data.mapdata.webmap.OviHybridMapInfo;
-import org.meteoinfo.data.mapdata.webmap.OviMapInfo;
-import org.meteoinfo.data.mapdata.webmap.OviSatelliteMapInfo;
-import org.meteoinfo.data.mapdata.webmap.OviTerrainMapInfo;
-import org.meteoinfo.data.mapdata.webmap.TencentMapInfo;
-import org.meteoinfo.data.mapdata.webmap.Tile;
-import org.meteoinfo.data.mapdata.webmap.TileFactory;
-import org.meteoinfo.data.mapdata.webmap.TileFactoryInfo;
-import org.meteoinfo.data.mapdata.webmap.YahooHybridMapInfo;
-import org.meteoinfo.data.mapdata.webmap.YahooMapInfo;
-import org.meteoinfo.data.mapdata.webmap.YahooSatelliteMapInfo;
+
+import org.meteoinfo.data.mapdata.webmap.*;
 import org.meteoinfo.data.mapdata.webmap.empty.EmptyTileFactory;
 import org.meteoinfo.global.Extent;
+import org.meteoinfo.global.MIMath;
+import org.meteoinfo.global.PointD;
+import org.meteoinfo.global.util.GeoUtil;
+import org.meteoinfo.projection.KnownCoordinateSystems;
+import org.meteoinfo.projection.Reproject;
 import org.meteoinfo.shape.ShapeTypes;
 
 /**
@@ -121,7 +98,7 @@ public class WebMapLayer extends MapLayer {
      */
     //private Painter overlay;
     private boolean designTime;
-    private float zoomScale = 1;
+    private double webMapScale = 0.;
     private Image loadingImage;
     private boolean restrictOutsidePanning = false;
     private boolean horizontalWrapped = true;
@@ -133,36 +110,36 @@ public class WebMapLayer extends MapLayer {
     // </editor-fold>
     // <editor-fold desc="Event">
     // a property change listener which forces repaints when tiles finish loading
-    private TileLoadListener tileLoadListener = new TileLoadListener();
+    //private TileLoadListener tileLoadListener = new TileLoadListener();
 
-    private final class TileLoadListener implements PropertyChangeListener {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            if ("loaded".equals(evt.getPropertyName())
-                    && Boolean.TRUE.equals(evt.getNewValue())) {
-                Tile t = (Tile) evt.getSource();
-                if (t.getZoom() == getZoom()) {
-                    repaint();
-                    /* this optimization doesn't save much and it doesn't work if you
-                     * wrap around the world
-                     Rectangle viewportBounds = getViewportBounds();
-                     TilePoint tilePoint = t.getLocation();
-                     Point point = new Point(tilePoint.getX() * getTileFactory().getTileSize(), tilePoint.getY() * getTileFactory().getTileSize());
-                     Rectangle tileRect = new Rectangle(point, new Dimension(getTileFactory().getTileSize(), getTileFactory().getTileSize()));
-                     if (viewportBounds.intersects(tileRect)) {
-                     //convert tileRect from world space to viewport space
-                     repaint(new Rectangle(
-                     tileRect.x - viewportBounds.x,
-                     tileRect.y - viewportBounds.y,
-                     tileRect.width,
-                     tileRect.height
-                     ));
-                     }*/
-                }
-            }
-        }
-    }
+//    private final class TileLoadListener implements PropertyChangeListener {
+//
+//        @Override
+//        public void propertyChange(PropertyChangeEvent evt) {
+//            if ("loaded".equals(evt.getPropertyName())
+//                    && Boolean.TRUE.equals(evt.getNewValue())) {
+//                Tile t = (Tile) evt.getSource();
+//                if (t.getZoom() == getZoom()) {
+//                    repaint();
+//                    /* this optimization doesn't save much and it doesn't work if you
+//                     * wrap around the world
+//                     Rectangle viewportBounds = getViewportBounds();
+//                     TilePoint tilePoint = t.getLocation();
+//                     Point point = new Point(tilePoint.getX() * getTileFactory().getTileSize(), tilePoint.getY() * getTileFactory().getTileSize());
+//                     Rectangle tileRect = new Rectangle(point, new Dimension(getTileFactory().getTileSize(), getTileFactory().getTileSize()));
+//                     if (viewportBounds.intersects(tileRect)) {
+//                     //convert tileRect from world space to viewport space
+//                     repaint(new Rectangle(
+//                     tileRect.x - viewportBounds.x,
+//                     tileRect.y - viewportBounds.y,
+//                     tileRect.width,
+//                     tileRect.height
+//                     ));
+//                     }*/
+//                }
+//            }
+//        }
+//    }
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -357,6 +334,22 @@ public class WebMapLayer extends MapLayer {
         this.setZoom(factory.getInfo().getDefaultZoomLevel());
         this.setCenterPosition(new GeoPosition(0, 0));
     }
+    
+    /**
+     * Get web map scale
+     * @return Web map scale
+     */
+    public double getWebMapScale() {
+        return this.webMapScale;
+    }
+    
+    /**
+     * Set web map scale
+     * @param value Web map scale
+     */
+    public void setWebMapScale(double value) {
+        this.webMapScale = value;
+    }
 
     /**
      * A property for an image which will be display when an image is still
@@ -413,7 +406,7 @@ public class WebMapLayer extends MapLayer {
             case OpenStreetMap:
                 info = new OpenStreetMapInfo();
                 break;
-            case OpenStreetMapQuestSattelite:
+            case OpenStreetMapQuestSatellite:
                 info = new OpenStreetMapQuestSatelliteInfo();
                 break;
             case BingMap:
@@ -478,6 +471,15 @@ public class WebMapLayer extends MapLayer {
                 break;
             case TencentMap:
                 info = new TencentMapInfo();
+                break;
+            case CMA_CVA_MAP:
+                info = new CMACvaMapInfo();
+                break;
+            case CMA_VEC_MAP:
+                info = new CMAVecMapInfo();
+                break;
+            case CMA_IMG_MAP:
+                info = new CMAImgMapInfo();
                 break;
 //            case ArcGISImage:
 //                info = new ArcGISImageInfo();
@@ -614,6 +616,106 @@ public class WebMapLayer extends MapLayer {
                 }
                 //}
             }
+        }
+    }
+    
+    /**
+     * Draw layer
+     * @param g The Graphics2D
+     * @param width Canvas width
+     * @param height Canvas height
+     * @param tll TileLoadListener
+     */
+    public void drawWebMapLayer(Graphics2D g, int width, int height, TileLoadListener tll) {        
+        //layer.setZoom(zoom);
+        //layer.drawMapTiles(g, zoom, width, height);        
+        Rectangle viewportBounds = this.calculateViewportBounds(g, width, height);
+        int size = this.getTileFactory().getTileSize(zoom);
+        Dimension mapSize = this.getTileFactory().getMapSize(zoom);
+
+        //calculate the "visible" viewport area in tiles
+        int numWide = viewportBounds.width / size + 2;
+        int numHigh = viewportBounds.height / size + 2;
+
+        //TilePoint topLeftTile = getTileFactory().getTileCoordinate(
+        //        new Point2D.Double(viewportBounds.x, viewportBounds.y));
+        TileFactoryInfo info = this.getTileFactory().getInfo();
+        int tpx = (int) Math.floor(viewportBounds.getX() / info.getTileSize(0));
+        int tpy = (int) Math.floor(viewportBounds.getY() / info.getTileSize(0));
+        //TilePoint topLeftTile = new TilePoint(tpx, tpy);
+
+        //p("top tile = " + topLeftTile);
+        //fetch the tiles from the factory and store them in the tiles cache
+        //attach the TileLoadListener
+        //String language = layer.getTileFactory().getInfo().getLanguage();
+        for (int x = 0; x <= numWide; x++) {
+            for (int y = 0; y <= numHigh; y++) {
+                int itpx = x + tpx;//topLeftTile.getX();
+                int itpy = y + tpy;//topLeftTile.getY();
+                //TilePoint point = new TilePoint(x + topLeftTile.getX(), y + topLeftTile.getY());
+                //only proceed if the specified tile point lies within the area being painted
+                //if (g.getClipBounds().intersects(new Rectangle(itpx * size - viewportBounds.x,
+                //itpy * size - viewportBounds.y, size, size))) {
+                Tile tile = this.getTileFactory().getTile(itpx, itpy, zoom);
+                tile.addUniquePropertyChangeListener("loaded", tll); //this is a filthy hack
+                int ox = ((itpx * this.getTileFactory().getTileSize(zoom)) - viewportBounds.x);
+                int oy = ((itpy * this.getTileFactory().getTileSize(zoom)) - viewportBounds.y);
+
+                //if the tile is off the map to the north/south, then just don't paint anything                    
+                if (this.isTileOnMap(itpx, itpy, mapSize)) {
+//                        if (isOpaque()) {
+//                            g.setColor(getBackground());
+//                            g.fillRect(ox,oy,size,size);
+//                        }
+                } else if (tile.isLoaded()) {
+                    g.drawImage(tile.getImage(), ox, oy, null);
+                } else {
+                    int imageX = (this.getTileFactory().getTileSize(zoom) - this.getLoadingImage().getWidth(null)) / 2;
+                    int imageY = (this.getTileFactory().getTileSize(zoom) - this.getLoadingImage().getHeight(null)) / 2;
+                    g.setColor(Color.GRAY);
+                    g.fillRect(ox, oy, size, size);
+                    g.drawImage(this.getLoadingImage(), ox + imageX, oy + imageY, null);
+                }
+                if (this.isDrawTileBorders()) {
+
+                    g.setColor(Color.black);
+                    g.drawRect(ox, oy, size, size);
+                    g.drawRect(ox + size / 2 - 5, oy + size / 2 - 5, 10, 10);
+                    g.setColor(Color.white);
+                    g.drawRect(ox + 1, oy + 1, size, size);
+
+                    String text = itpx + ", " + itpy + ", " + this.getZoom();
+                    g.setColor(Color.BLACK);
+                    g.drawString(text, ox + 10, oy + 30);
+                    g.drawString(text, ox + 10 + 2, oy + 30 + 2);
+                    g.setColor(Color.WHITE);
+                    g.drawString(text, ox + 10 + 1, oy + 30 + 1);
+                }
+                //}
+            }
+        }
+    }
+    
+    private double getWebMapScale(int zoom, int width, int height) {
+        Point2D center = this.getCenter();
+        double minx = center.getX() - width / 2;
+        double miny = center.getY() - height / 2;
+        double maxx = center.getX() + width / 2;
+        double maxy = center.getY() + height / 2;
+        GeoPosition pos1 = GeoUtil.getPosition(new Point2D.Double(minx, miny), zoom, this.getTileFactory().getInfo());
+        GeoPosition pos2 = GeoUtil.getPosition(new Point2D.Double(maxx, maxy), zoom, this.getTileFactory().getInfo());
+        PointD p1 = Reproject.reprojectPoint(new PointD(pos1.getLongitude(), pos1.getLatitude()),
+                KnownCoordinateSystems.geographic.world.WGS1984, this.getProjInfo());
+        PointD p2 = Reproject.reprojectPoint(new PointD(pos2.getLongitude(), pos2.getLatitude()),
+                KnownCoordinateSystems.geographic.world.WGS1984, this.getProjInfo());
+        if (pos2.getLongitude() - pos1.getLongitude() < 360.0) {
+            double xlen = p2.X - p1.X;
+//        if (pos2.getLongitude() - pos1.getLongitude() > 360)
+//            xlen += 2.0037497210840166E7 * 2;
+            return (double) width / xlen;
+        } else {
+            double ylen = Math.abs(p2.Y - p1.Y);
+            return (double) height / ylen;
         }
     }
 

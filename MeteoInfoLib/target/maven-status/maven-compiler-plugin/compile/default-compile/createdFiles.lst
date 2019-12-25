@@ -55,6 +55,7 @@ org\meteoinfo\ndarray\ArrayFloat$D3.class
 org\meteoinfo\data\XYDataset.class
 org\meteoinfo\chart\plot\PlotOrientation.class
 org\meteoinfo\data\meteodata\micaps\MICAPS120DataInfo$1.class
+org\meteoinfo\data\mapdata\webmap\CMAVecMapInfo.class
 org\meteoinfo\data\meteodata\StationModelData.class
 org\meteoinfo\data\meteodata\netcdf\NCUtil$1.class
 org\meteoinfo\layer\FrmLayerProperty$20.class
@@ -219,6 +220,7 @@ org\meteoinfo\image\filter\FieldWarpFilter$Line.class
 org\meteoinfo\ndarray\Array.class
 org\meteoinfo\console\Popup$2.class
 org\meteoinfo\image\filter\WoodFilter.class
+org\meteoinfo\data\mapdata\webmap\CMACvaMapInfo.class
 org\meteoinfo\ndarray\ArrayDouble$D1.class
 org\meteoinfo\ndarray\ArrayChar$D1.class
 org\meteoinfo\layout\MapLayout$13.class
@@ -383,7 +385,6 @@ org\meteoinfo\layout\LayoutMap$LayoutMapBean.class
 org\meteoinfo\chart\plot\ChartPlotMethod.class
 org\meteoinfo\ndarray\ArrayLong$D7.class
 org\meteoinfo\layout\ScaleBarType.class
-org\meteoinfo\layer\WebMapLayer$TileLoadListener.class
 org\meteoinfo\ndarray\ArrayFloat$D1.class
 org\meteoinfo\ui\calendar\components\JSpinFieldBeanInfo.class
 org\meteoinfo\data\GridArray.class
@@ -697,6 +698,7 @@ org\meteoinfo\math\spatial\KDTree$IntStack.class
 org\meteoinfo\map\MapView$20.class
 org\meteoinfo\image\filter\LightFilter$Light.class
 org\meteoinfo\data\dataframe\Index$1.class
+org\meteoinfo\data\mapdata\webmap\CMAImgMapInfo.class
 org\meteoinfo\legend\FrmLabelSymbolSet$3.class
 org\meteoinfo\data\meteodata\ascii\LonLatStationDataInfo.class
 org\meteoinfo\legend\LayersLegend$11.class

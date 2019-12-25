@@ -261,6 +261,7 @@ D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinf
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\shape\PointZShape.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\filter\TritoneFilter.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\global\util\GeoUtil.java
+D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\mapdata\webmap\CMACvaMapInfo.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\filter\PixelUtils.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\meteodata\grads\ZDEFS.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\filter\CheckFilter.java
@@ -315,6 +316,7 @@ D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinf
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\table\RowHeaderRenderer.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\mapdata\webmap\AMapInfo.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\chart\axis\TimeUnit.java
+D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\mapdata\webmap\CMAImgMapInfo.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\meteodata\grads\TDEFS.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\vecmath\AxisAngle4f.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\meteodata\netcdf\Conventions.java
@@ -636,6 +638,7 @@ D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinf
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\ndarray\ArraySequence.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\filter\GlintFilter.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\projection\ProjectionNames.java
+D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\mapdata\webmap\CMAVecMapInfo.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\table\DataTable.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\filter\PointFilter.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\composite\MultiplyComposite.java

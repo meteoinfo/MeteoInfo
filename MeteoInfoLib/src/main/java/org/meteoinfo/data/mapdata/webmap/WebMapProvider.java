@@ -11,7 +11,7 @@ package org.meteoinfo.data.mapdata.webmap;
 public enum WebMapProvider {
     //SwingLabsBlueMarble,
     OpenStreetMap,
-    OpenStreetMapQuestSattelite,
+    OpenStreetMapQuestSatellite,
     BingMap,
     BingSatelliteMap,
     BingHybridMap,
@@ -32,7 +32,10 @@ public enum WebMapProvider {
     //OviHybridMap,
     YahooMap,
     YahooSatelliteMap,
-    YahooHybridMap,    
+    YahooHybridMap,
+    CMA_CVA_MAP,
+    CMA_VEC_MAP,
+    CMA_IMG_MAP
     //ArcGISImage,
     //Custom
 }

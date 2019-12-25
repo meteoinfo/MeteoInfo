@@ -8,6 +8,7 @@
 
 from org.meteoinfo.chart.plot import Plot3D, GraphicFactory
 from org.meteoinfo.chart import ChartText3D
+from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
 from org.meteoinfo.legend import LegendManage, BreakTypes, PolylineBreak
 from org.meteoinfo.shape import ShapeTypes, Graphic
 from org.meteoinfo.layer import LayerTypes
@@ -299,6 +300,93 @@ class Axes3D(Axes):
         axis.setTickLabelFont(font)
         axis.setTickLabelColor(c)
         axis.setTickLabelAngle(angle)
+
+    def set_xaxis_type(self, axistype, timetickformat=None):
+        '''
+        Set x axis type.
+
+        :param axistype: (*string*) Axis type ['lon' | 'lat' | 'time' | 'log'].
+        :param timetickformat: (*string*) Time tick label format.
+        '''
+        ax = self.axes
+        if axistype == 'lon':
+            axis = LonLatAxis(ax.getXAxis())
+            axis.setLongitude(False)
+            ax.setXAxis(axis)
+        elif axistype == 'lat':
+            axis = LonLatAxis(ax.getXAxis())
+            axis.setLongitude(False)
+            ax.setXAxis(axis)
+        elif axistype == 'time':
+            axis = TimeAxis(ax.getXAxis())
+            ax.setXAxis(axis)
+            if not timetickformat is None:
+                ax.getXAxis().setTimeFormat(timetickformat)
+        elif axistype == 'log':
+            axis = LogAxis(ax.getXAxis())
+            axis.setMinorTickNum(10)
+            ax.setXAxis(axis)
+        else:
+            axis = Axis(ax.getXAxis())
+            ax.setXAxis(axis)
+
+    def set_yaxis_type(self, axistype, timetickformat=None):
+        '''
+        Set y axis type.
+
+        :param axistype: (*string*) Axis type ['lon' | 'lat' | 'time' | 'log'].
+        :param timetickformat: (*string*) Time tick label format.
+        '''
+        ax = self.axes
+        if axistype == 'lon':
+            axis = LonLatAxis(ax.getYAxis())
+            axis.setLongitude(True)
+            ax.setYAxis(axis)
+        elif axistype == 'lat':
+            axis = LonLatAxis(ax.getYAxis())
+            axis.setLongitude(False)
+            ax.setYAxis(axis)
+        elif axistype == 'time':
+            axis = TimeAxis(ax.getYAxis())
+            ax.setYAxis(axis)
+            if not timetickformat is None:
+                ax.getYAxis().setTimeFormat(timetickformat)
+        elif axistype == 'log':
+            axis = LogAxis(ax.getYAxis())
+            axis.setMinorTickNum(10)
+            ax.setYAxis(axis)
+        else:
+            axis = Axis(ax.getYAxis())
+            ax.setYAxis(axis)
+
+    def set_zaxis_type(self, axistype, timetickformat=None):
+        '''
+        Set z axis type.
+
+        :param axistype: (*string*) Axis type ['lon' | 'lat' | 'time' | 'log'].
+        :param timetickformat: (*string*) Time tick label format.
+        '''
+        ax = self.axes
+        if axistype == 'lon':
+            axis = LonLatAxis(ax.getZAxis())
+            axis.setLongitude(True)
+            ax.setZAxis(axis)
+        elif axistype == 'lat':
+            axis = LonLatAxis(ax.getZAxis())
+            axis.setLongitude(False)
+            ax.setZAxis(axis)
+        elif axistype == 'time':
+            axis = TimeAxis(ax.getZAxis())
+            ax.setZAxis(axis)
+            if not timetickformat is None:
+                ax.getZAxis().setTimeFormat(timetickformat)
+        elif axistype == 'log':
+            axis = LogAxis(ax.getZAxis())
+            axis.setMinorTickNum(10)
+            ax.setZAxis(axis)
+        else:
+            axis = Axis(ax.getZAxis())
+            ax.setZAxis(axis)
         
     def zaxis(self, **kwargs):
         """

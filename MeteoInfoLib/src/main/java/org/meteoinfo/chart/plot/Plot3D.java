@@ -2137,8 +2137,8 @@ public class Plot3D extends Plot {
                 }
                 //vi = (v - zmin) * zfactor - 10;
                 //tickpos = projector.project(factor_x * 10 * lf, -factor_y * 10 * lf, vi);
-                tickpos = this.project(factor_x > 0 ? this.xmax : this.xmin,
-                        factor_y < 0 ? this.ymax : this.ymin, v);
+                tickpos = this.project(factor_x * lf > 0 ? this.xmax : this.xmin,
+                        factor_y * lf < 0 ? this.ymax : this.ymin, v);
                 if (this.isDisplayGrids && this.isBoxed && (v != zmin && v != zmax)) {
                     //projection = projector.project(-factor_x * 10, -factor_y * 10, vi);
                     projection = this.project(factor_x < 0 ? this.xmax : this.xmin,
@@ -2148,8 +2148,8 @@ public class Plot3D extends Plot {
                     x[0] = projection.x;
                     y[0] = projection.y;
                     //projection = projector.project(-factor_x * 10 * lf, factor_y * 10 * lf, vi);
-                    projection = this.project(factor_x < 0 ? this.xmax : this.xmin,
-                            factor_y > 0 ? this.ymax : this.ymin, v);
+                    projection = this.project(factor_x * lf < 0 ? this.xmax : this.xmin,
+                            factor_y * lf > 0 ? this.ymax : this.ymin, v);
                     g.drawLine(x[0], y[0], projection.x, projection.y);
                 }
                 //projection = projector.project(factor_x * 10.2f * lf, -factor_y * 10.2f * lf, vi);

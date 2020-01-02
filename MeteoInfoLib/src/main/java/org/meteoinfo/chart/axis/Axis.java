@@ -1545,10 +1545,24 @@ public class Axis implements Cloneable {
                         labx = (float) x;
                         for (String dstr : chartText.getTexts()) {                            
                             if (this.location == Location.BOTTOM) {
-                                Draw.drawString(g, labx, laby, dstr, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                                //Draw.drawString(g, labx, laby, dstr, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                                if (this.tickLabelAngle == 0) {
+                                    Draw.drawString(g, labx, laby, dstr, XAlign.CENTER, YAlign.TOP, true);
+                                } else if (this.tickLabelAngle < 45) {
+                                    Draw.drawString(g, labx, laby, dstr, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                                } else {
+                                    Draw.drawString(g, labx, laby, dstr, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                                }
                                 laby += dim.getHeight() + chartText.getLineSpace();                                
                             } else {
-                                Draw.drawString(g, labx, laby, dstr, XAlign.CENTER, YAlign.BOTTOM, this.tickLabelAngle, true);
+                                //Draw.drawString(g, labx, laby, dstr, XAlign.CENTER, YAlign.BOTTOM, this.tickLabelAngle, true);
+                                if (this.tickLabelAngle == 0) {
+                                    Draw.drawString(g, labx, laby, dstr, XAlign.CENTER, YAlign.BOTTOM, true);
+                                } else if (this.tickLabelAngle < 45) {
+                                    Draw.drawString(g, labx, laby, dstr, XAlign.LEFT, YAlign.BOTTOM, this.tickLabelAngle, true);
+                                } else {
+                                    Draw.drawString(g, labx, laby, dstr, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+                                }
                                 laby -= dim.getHeight() + chartText.getLineSpace();
                             }
                         }                        

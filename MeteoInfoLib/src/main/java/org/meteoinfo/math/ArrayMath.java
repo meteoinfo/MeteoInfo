@@ -5034,8 +5034,8 @@ public class ArrayMath {
      * @param a Array a
      * @return Minimum value
      */
-    public static double min(Array a) {
-        double min = 1.7976931348623157E+308D;
+    public static Number min(Array a) {
+        double min = Double.MAX_VALUE;
         double v;
         IndexIterator ii = a.getIndexIterator();
         while (ii.hasNext()) {
@@ -5046,10 +5046,10 @@ public class ArrayMath {
                 }
             }
         }
-        if (min == 1.7976931348623157E+308D) {
+        if (min == Double.MAX_VALUE) {
             return Double.NaN;
         } else {
-            return min;
+            return doubleToNumber(min, a.getDataType());
         }
     }
 
@@ -5133,8 +5133,8 @@ public class ArrayMath {
      * @param a Array a
      * @return Maximum value
      */
-    public static double max(Array a) {
-        double max = -1.797693134862316E+307D;
+    public static Number max(Array a) {
+        double max = Double.MIN_VALUE;
         double v;
         IndexIterator ii = a.getIndexIterator();
         while (ii.hasNext()) {
@@ -5145,10 +5145,10 @@ public class ArrayMath {
                 }
             }
         }
-        if (max == -1.797693134862316E+307D) {
+        if (max == Double.MIN_VALUE) {
             return Double.NaN;
         } else {
-            return max;
+            return doubleToNumber(max, a.getDataType());
         }
     }
 
@@ -6603,6 +6603,27 @@ public class ArrayMath {
                 break;
         }
         return r;
+    }
+
+    /**
+     * Convert double to number by data type
+     * @param v Double value
+     * @param dt Data type
+     * @return Number
+     */
+    public static Number doubleToNumber(double v, DataType dt) {
+        Number n = new Double(v);
+        switch (dt) {
+            case INT:
+                return n.intValue();
+            case FLOAT:
+                return n.floatValue();
+            case SHORT:
+                return n.shortValue();
+            case BYTE:
+                return n.byteValue();
+        }
+        return n;
     }
 
     // </editor-fold>       

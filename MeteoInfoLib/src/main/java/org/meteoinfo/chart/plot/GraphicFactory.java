@@ -4868,7 +4868,7 @@ public class GraphicFactory {
 
         for (int i = 0; i < n; i++) {
             Array a = xdata.get(i);
-            if (Double.isNaN(ArrayMath.min(a))) {
+            if (Double.isNaN(ArrayMath.min(a).doubleValue())) {
                 continue;
             }
 

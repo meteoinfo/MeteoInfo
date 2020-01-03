@@ -174,7 +174,7 @@ public class Column {
         switch(this.dataType) {
             case DOUBLE:
             case FLOAT:
-                double dmax = ArrayMath.max(data);
+                double dmax = ArrayMath.max(data).doubleValue();
                 DecimalFormat df = new DecimalFormat("0.0");
                 df.setMaximumFractionDigits(6);
                 int nf = 1, ci, nn;

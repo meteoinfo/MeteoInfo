@@ -356,7 +356,7 @@ public class ImageUtil {
                 ranges.add(new Range(si, ei));
             }
             temp = data.section(ranges);
-            min = ArrayMath.min(temp);
+            min = ArrayMath.min(temp).doubleValue();
             riter.setDoubleNext(min);
         }
 
@@ -391,7 +391,7 @@ public class ImageUtil {
                 ranges.add(new Range(si, ei));
             }
             temp = data.section(ranges);
-            max = ArrayMath.max(temp);
+            max = ArrayMath.max(temp).doubleValue();
             riter.setDoubleNext(max);
         }
 

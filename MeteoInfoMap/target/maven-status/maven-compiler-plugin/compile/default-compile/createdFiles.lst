@@ -44,7 +44,6 @@ org\meteoinfo\desktop\forms\FrmMeteoData$31.class
 org\meteoinfo\desktop\forms\FrmSelectByAttributes$12.class
 org\meteoinfo\desktop\forms\FrmSymDifference$2.class
 org\meteoinfo\desktop\forms\FrmInterpolate$4.class
-.netbeans_automatic_build
 org\meteoinfo\desktop\forms\FrmMain$106.class
 org\meteoinfo\desktop\forms\FrmSectionPlot$30.class
 org\meteoinfo\desktop\MeteoInfoMap.class

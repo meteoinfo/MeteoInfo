@@ -1745,7 +1745,7 @@ public class Draw {
                     y += labSize.height;
                     break;
                 case CENTER:
-                    y += labSize.height / 2;
+                    y += labSize.height / 2.0f;
                     break;
             }
             switch (x_align) {
@@ -1753,7 +1753,7 @@ public class Draw {
                     x = x - labSize.width;
                     break;
                 case CENTER:
-                    x = x - labSize.width / 2;
+                    x = x - labSize.width / 2.0f;
                     break;
             }
             Draw.drawString(g, s, x, y, useExternalFont);

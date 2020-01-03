@@ -493,7 +493,13 @@ public class ChartColorBar extends ChartLegend {
                 if (aLS.getLegendType() == LegendType.UniqueValue) {
                     sP.X = aP.X;
                     sP.Y = aP.Y + _hBarHeight / 2 + 5;
-                    Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                    if (this.tickLabelAngle == 0) {
+                        Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                    } else if (this.tickLabelAngle < 45) {
+                        Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                    } else {
+                        Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                    }
                 } else {
                     sP.X = aP.X + _vBarWidth / 2;
                     sP.Y = aP.Y + _hBarHeight / 2;
@@ -501,23 +507,55 @@ public class ChartColorBar extends ChartLegend {
                     if (this.autoTick) {
                         if (i < bNum - 1) {
                             this.drawTickLine(g, sP, tickLen, true, 0);
-                            Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                            if (this.tickLabelAngle == 0) {
+                                Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                            } else if (this.tickLabelAngle < 45) {
+                                Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                            } else {
+                                Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                            }
                             if (this.drawMinLabel && i == 0) {
                                 this.drawTickLine(g, ssP, tickLen, true, -this._vBarWidth);
                                 caption = DataConvert.removeTailingZeros(cb.getStartValue().toString());
-                                Draw.drawString(g, ssP.X - this._vBarWidth, ssP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                                //Draw.drawString(g, ssP.X - this._vBarWidth, ssP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                                if (this.tickLabelAngle == 0) {
+                                    Draw.drawString(g, ssP.X - this._vBarWidth, ssP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                                } else if (this.tickLabelAngle < 45) {
+                                    Draw.drawString(g, ssP.X - this._vBarWidth, ssP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                                } else {
+                                    Draw.drawString(g, ssP.X - this._vBarWidth, ssP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                                }
                             }
                         } else if (this.drawMaxLabel) {
                             this.drawTickLine(g, sP, tickLen, true, 0);
-                            Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                            if (this.tickLabelAngle == 0) {
+                                Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                            } else if (this.tickLabelAngle < 45) {
+                                Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                            } else {
+                                Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                            }
                         }
                     } else {
                         if (i == 0 && this.tickLocations.get(idx) == Double.parseDouble(cb.getStartValue().toString())) {
                             this.drawTickLine(g, sP, tickLen, true, -this._vBarWidth);
-                            Draw.drawString(g, sP.X - this._vBarWidth, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                            //Draw.drawString(g, sP.X - this._vBarWidth, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                            if (this.tickLabelAngle == 0) {
+                                Draw.drawString(g, sP.X - this._vBarWidth, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                            } else if (this.tickLabelAngle < 45) {
+                                Draw.drawString(g, sP.X - this._vBarWidth, sP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                            } else {
+                                Draw.drawString(g, sP.X - this._vBarWidth, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                            }
                         } else {
                             this.drawTickLine(g, sP, tickLen, true, 0);
-                            Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                            if (this.tickLabelAngle == 0) {
+                                Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                            } else if (this.tickLabelAngle < 45) {
+                                Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                            } else {
+                                Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                            }
                         }
                     }
                 }
@@ -799,12 +837,12 @@ public class ChartColorBar extends ChartLegend {
                 case "in":
                     sx = 0;
                     sy = this.legendHeight * 0.5;
-                    Draw.drawString(g, sx, sy, label.getText(), XAlign.LEFT, YAlign.CENTER, 90, label.isUseExternalFont());
+                    Draw.drawString(g, sx, sy, label.getText(), XAlign.CENTER, YAlign.TOP, 90, label.isUseExternalFont());
                     break;
                 default:
                     sx = this.width - dim.height;
                     sy = this.legendHeight * 0.5;
-                    Draw.drawString(g, sx, sy, label.getText(), XAlign.LEFT, YAlign.CENTER, 90, label.isUseExternalFont());
+                    Draw.drawString(g, sx, sy, label.getText(), XAlign.CENTER, YAlign.TOP, 90, label.isUseExternalFont());
                     break;
             }
         }

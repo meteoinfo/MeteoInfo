@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\bar">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\satellite\calipso">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
@@ -22,18 +22,18 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\bar\bar_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\calipso\CALIPSO_aerosol_type-1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\bar\bar_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\calipso\CALIPSO_aerosol_type-1.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
   </Font>
   <LookFeel Name="Darcula"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1414,852"/>
 </MeteoInfo>

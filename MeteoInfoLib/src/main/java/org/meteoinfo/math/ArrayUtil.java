@@ -1484,7 +1484,7 @@ public class ArrayUtil {
         for (Array a : arrays) {
             len += a.getShape()[axis];
             lens[i] = len;
-            indexList.add(Index.factory(a.getShape()));
+            indexList.add(a.getIndex());
             i += 1;
         }
         int[] shape = arrays.get(0).getShape();

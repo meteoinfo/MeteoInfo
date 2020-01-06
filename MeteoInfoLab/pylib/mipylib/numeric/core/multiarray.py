@@ -670,7 +670,10 @@ class NDArray(object):
         else:
             r = ArrayMath.std(self._array, axis)
             return NDArray(r)
-            
+
+    def square(self):
+        return self.__mul__(self)
+
     def sqrt(self):
         return NDArray(ArrayMath.sqrt(self._array))
     

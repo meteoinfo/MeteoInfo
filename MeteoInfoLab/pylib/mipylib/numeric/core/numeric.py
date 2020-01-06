@@ -44,7 +44,7 @@ __all__ = [
     'logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'newaxis','nonzero','ones','ones_like','pol2cart','polyval','power',
     'radians','ravel','reshape','repeat',
-    'rolling_mean','rot90','sin','smooth5','smooth9','sort','squeeze','argsort','sqrt','std','sum','swapaxes','tan',
+    'rolling_mean','rot90','sin','smooth5','smooth9','sort','squeeze','argsort','sqrt','square','std','sum','swapaxes','tan',
     'tile','transpose','trapz','vdot','unique','unravel_index','var','vstack',
     'where','zeros','zeros_like'
     ]
@@ -550,6 +550,21 @@ def absolute(x):
         return x.abs()
     else:
         return abs(x)
+
+def square(x):
+    """
+    Return the element-wise square of the input.
+
+    :param x: (*array_like*) Input data.
+
+    :returns: Element-wise x*x, of the same shape and dtype as x. This is a scalar if x is a scalar.
+    """
+    if isinstance(x, list):
+        return array(x).square()
+    elif isinstance(x, NDArray):
+        return x.square()
+    else:
+        return x * x
     
 def sqrt(x):
     """
@@ -557,7 +572,7 @@ def sqrt(x):
     
     :param x: (*array_like*) The values whose square-roots are required.
     
-    :returns y: (*array_like*) An array of the same shape as *x*, containing the positive
+    :returns: (*array_like*) An array of the same shape as *x*, containing the positive
         square-root of each element in *x*.
         
     Examples::

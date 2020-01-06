@@ -5134,7 +5134,7 @@ public class ArrayMath {
      * @return Maximum value
      */
     public static Number max(Array a) {
-        double max = Double.MIN_VALUE;
+        double max = -Double.MAX_VALUE;
         double v;
         IndexIterator ii = a.getIndexIterator();
         while (ii.hasNext()) {

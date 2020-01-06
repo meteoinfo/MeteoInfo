@@ -505,36 +505,40 @@ public class Dimension {
      * @return Index
      */
     public int getValueIndex(double v) {
-        int idx = this.getLength() - 1;
-        if (getDeltaValue() > 0) {
-            for (int i = 0; i < this.getLength(); i++) {
-                if (v <= this._dimValue.get(i)) {
-                    if (i == 0)
-                        idx = 0;
-                    else {
-                        if (this._dimValue.get(i) - v > v - this._dimValue.get(i - 1))
-                            idx = i - 1;
-                        else
-                            idx = i;
+        int idx = this._dimValue.indexOf(v);
+        if (idx < 0) {
+            idx = this.getLength() - 1;
+            if (getDeltaValue() > 0) {
+                for (int i = 0; i < this.getLength(); i++) {
+                    if (v <= this._dimValue.get(i)) {
+                        if (i == 0)
+                            idx = 0;
+                        else {
+                            if (this._dimValue.get(i) - v > v - this._dimValue.get(i - 1))
+                                idx = i - 1;
+                            else
+                                idx = i;
+                        }
+                        break;
                     }
-                    break;
                 }
-            }
-        } else {
-            for (int i = 0; i < this.getLength(); i++) {
-                if (v >= this._dimValue.get(i)) {
-                    if (i == 0)
-                        idx = 0;
-                    else {
-                        if (this._dimValue.get(i - 1) - v > v - this._dimValue.get(i))
-                            idx = i;
-                        else
-                            idx = i - 1;
+            } else {
+                for (int i = 0; i < this.getLength(); i++) {
+                    if (v >= this._dimValue.get(i)) {
+                        if (i == 0)
+                            idx = 0;
+                        else {
+                            if (this._dimValue.get(i - 1) - v > v - this._dimValue.get(i))
+                                idx = i;
+                            else
+                                idx = i - 1;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
+
         if (this.reverse) {
             idx = this.getLength() - idx - 1;
         }

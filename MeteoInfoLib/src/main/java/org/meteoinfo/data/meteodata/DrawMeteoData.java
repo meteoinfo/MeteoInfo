@@ -2273,8 +2273,6 @@ public class DrawMeteoData {
                 yIter.next();
                 uIter.next();
                 vIter.next();
-                if (vIter != null)
-                    vIter.next();
             }
         }
 

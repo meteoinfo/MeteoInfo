@@ -4770,7 +4770,7 @@ public class ArrayMath {
         Array r = copy(a);
         int n = r.getRank();
         int[] count = new int[n];
-        Index index = Index.factory(count);
+        Index index = r.getIndex();
         Index vIndex = v.getIndex();
         int m = ranges.get(0).size();
         for (int i = 0; i < m; i++) {

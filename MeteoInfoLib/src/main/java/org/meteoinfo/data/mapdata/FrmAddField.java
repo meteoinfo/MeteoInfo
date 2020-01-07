@@ -136,7 +136,7 @@ public class FrmAddField extends javax.swing.JDialog {
     }
     
     public DataType getDataType(){
-        return DataType.valueOf(this.jComboBox_FieldType.getSelectedItem().toString());
+        return DataType.valueOf(this.jComboBox_FieldType.getSelectedItem().toString().toUpperCase());
     }
     
     /**

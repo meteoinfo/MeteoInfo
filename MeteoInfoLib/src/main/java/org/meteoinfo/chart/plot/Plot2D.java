@@ -277,7 +277,9 @@ public class Plot2D extends AbstractPlot2D {
     void plotGraphics(Graphics2D g, Rectangle2D area) {
         AffineTransform oldMatrix = g.getTransform();
         java.awt.Shape oldRegion = g.getClip();
-        g.setClip(area);
+        if (this.clip) {
+            g.setClip(area);
+        }
         g.translate(area.getX(), area.getY());
 
         //Draw background
@@ -372,7 +374,9 @@ public class Plot2D extends AbstractPlot2D {
         }
 
         g.setTransform(oldMatrix);
-        g.setClip(oldRegion);
+        if (this.clip) {
+            g.setClip(oldRegion);
+        }
     }
 
     private void drawPoint(Graphics2D g, PointShape aPS, PointBreak aPB, Rectangle2D area) {

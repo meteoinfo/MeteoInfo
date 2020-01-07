@@ -61,6 +61,7 @@ public abstract class AbstractPlot2D extends Plot {
     private ChartWindArrow windArrow;
     private boolean autoAspect = true;
     private double aspect = 1;
+    protected boolean clip = true;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -660,6 +661,18 @@ public abstract class AbstractPlot2D extends Plot {
         return this.getXAxis().isInverse();
     }
 
+    /**
+     * Get is clip axes or not
+     * @return Boolean
+     */
+    public boolean isClip() {return this.clip;}
+
+    /**
+     * Set is clip axes or not
+     * @param value Boolean
+     */
+    public void setClip(boolean value) {this.clip = value;}
+
     // </editor-fold>
     // <editor-fold desc="Method">
     /**
@@ -1169,14 +1182,16 @@ public abstract class AbstractPlot2D extends Plot {
             case DATA:
                 oldMatrix = g.getTransform();
                 oldRegion = g.getClipBounds();
-                g.setClip(area);
+                if (this.clip)
+                    g.setClip(area);
                 g.translate(area.getX(), area.getY());
                 double[] xy = this.projToScreen(text.getX(), text.getY(), area);
                 x = (float) xy[0];
                 y = (float) xy[1];
                 this.drawText(text, g, x, y);
                 g.setTransform(oldMatrix);
-                g.setClip(oldRegion);
+                if (this.clip)
+                    g.setClip(oldRegion);
                 break;
         }
     }

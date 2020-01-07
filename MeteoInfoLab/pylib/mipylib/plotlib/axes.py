@@ -120,6 +120,9 @@ class Axes(object):
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
         self.axes.setAxisLabelFont(font)
+        clip = kwargs.pop('clip', None)
+        if not clip is None:
+            self.axes.setClip(clip)
     
     def _set_plot(self, plot):
         '''
@@ -321,7 +324,7 @@ class Axes(object):
         '''
         axis = self.axes.getXAxis()
         if isinstance(locs, (NDArray, DimArray)):
-            locs = labels.aslist()
+            locs = locs.aslist()
         axis.setTickLocations(locs)
         
         if self.axestype == '3d':
@@ -1249,10 +1252,11 @@ class Axes(object):
         #pstyle = plotutil.getpointstyle(marker)    
         #pb.setStyle(pstyle)
         isvalue = False
-        if len(c) > 1:
-            if isinstance(c, (NDArray, DimArray)):
-                isvalue = True
-            elif len(x) == len(c) and isinstance(c[0], (int, long, float)):
+
+        if isinstance(c, NDArray):
+            isvalue = True
+        elif isinstance(c, (list, tuple)):
+            if len(x) == len(c) and isinstance(c[0], (int, long, float)):
                 isvalue = True            
         if isvalue:
             ls = kwargs.pop('symbolspec', None)
@@ -2335,7 +2339,7 @@ class Axes(object):
             self.axes.setDrawExtent(graphics.getExtent())
         return graphics
         
-    def text(x, y, s, **kwargs):
+    def text(self, x, y, s, **kwargs):
         """
         Add text to the axes. Add text in string *s* to axis at location *x* , *y* , data
         coordinates.

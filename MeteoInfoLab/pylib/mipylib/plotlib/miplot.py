@@ -2784,7 +2784,7 @@ def geoshow(*args, **kwargs):
     return r
 
 def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., colors=None,
-        **kwargs):
+                   **kwargs):
     '''
     Create Taylor diagram.
 
@@ -2797,111 +2797,21 @@ def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., c
 
     :returns:
     '''
-    #Create axes
-    ax = axes(position=[0.13,0.11,0.775,0.75], aspect='equal', clip=False)
-    ax.xaxis(location='top', visible=False)
-    ax.yaxis(location='right', visible=False)
+    global gca
+    if g_figure is None:
+        figure()
 
-    #plot RMS circle
-    th = np.linspace(0, np.pi, 200)
-    xunit = np.cos(th)
-    yunit = np.sin(th)
-    tickrms = np.arange(0.25, ref_std + 0.2, 0.25)
-    radius = np.sqrt(ref_std**2 + std_max**2 -
-        2 * ref_std * std_max * xunit)
-    for iradius in tickrms:
-        phi = th[np.where(radius >= iradius)]
-        if len(phi) > 0:
-            phi = phi[0]
-            ig = np.where(iradius * np.cos(th) + ref_std <=
-                          std_max * np.cos(phi))
-            ax.plot(xunit[ig] * iradius + ref_std, yunit[ig] * iradius, color='gray')
+    if gca is None:
+        gca = axes()
+    else:
+        if gca.axestype != 'cartesian':
+            gca = axes(position=[0.13,0.11,0.775,0.75])
 
-    #plot stddev circle
-    ax.set_xlim(0, std_max)
-    ax.set_ylim(0, std_max)
-    std_ticks = np.arange(0, 1.51, 0.25)
-    ax.set_xticks(std_ticks)
-    xtick_labels = []
-    for std_tick in std_ticks:
-        if std_tick == 1:
-            xtick_labels.append('REF')
-        else:
-            xtick_labels.append(str(std_tick))
-    ax.set_xticklabels(xtick_labels)
-    ax.set_yticks(std_ticks)
-    th = np.linspace(0, np.pi * 0.5, 200)
-    xunit = np.cos(th)
-    yunit = np.sin(th)
-    xticks = ax.get_xticks()
-    for i in xticks:
-        ax.plot(xunit * i, yunit * i, color='gray', linestyle='--')
-    ax.plot(xunit * std_max, yunit * std_max)
+    r = gca.taylor_diagram(stddev, correlation, std_max, labels, ref_std, colors, **kwargs)
+    if not r is None:
+        draw_if_interactive()
+    return r
 
-    #plot correlation lines
-    values = np.arange(0., 1., 0.1)
-    values = values.join(np.array([0.95,0.99,1.0]), 0)
-    for t in values:
-        theta = np.acos(t)
-        x = np.cos(theta) * std_max
-        y = np.sin(theta) * std_max
-        if 0 < t < 1:
-            if t == 0.6 or t == 0.9:
-                ax.plot([0,x], [0,y], color='gray', linestyle=':')
-            ax.plot([x*0.98,x], [y*0.98,y])
-        x = x * 1.02
-        y = y * 1.02
-        ax.text(x, y, str(t), rotation=np.degrees(theta), yalign='center')
-        if t == 0.7:
-            ax.text(x*1.1, y*1.1, 'Correlation', rotation=np.degrees(theta)-90,
-                    xalign='center', yalign='bottom')
-
-    values = np.arange(0.05, 0.9, 0.1)
-    values = values.join(np.array([0.91,0.92,0.93,0.94,0.96,0.97,0.98]), 0)
-    for t in values:
-        theta = np.acos(t)
-        x = np.cos(theta) * std_max
-        y = np.sin(theta) * std_max
-        ax.plot([x*0.99,x], [y*0.99,y])
-
-    #plot data
-    stddev = np.atleast_2d(stddev)
-    correlation = np.atleast_2d(correlation)
-    ncase = stddev.shape[0]
-    if colors is None:
-        cmap = kwargs.pop('cmap', 'matlab_jet')
-        colors = plotutil.makecolors(ncase, cmap)
-    gg = []
-    for i in range(ncase):
-        rho = stddev[i]
-        theta = np.acos(correlation[i])
-        x = np.cos(theta) * rho
-        y = np.sin(theta) * rho
-        gg.append(ax.scatter(x, y, edge=False, c=colors[i]))
-        if labels is None:
-            lbs = []
-            for j in range(len(rho)):
-                lbs.append(str(j+1))
-        else:
-            lbs = labels[i]
-        for xx, yy, label in zip(x, y, lbs):
-            ax.text(xx, yy, label, color=colors[i], xalign='center', yalign='bottom', yshift=-5)
-
-    ax.set_xlim(0, std_max)
-    ax.set_ylim(0, std_max)
-
-    xl = kwargs.pop('xlabel', None)
-    if not xl is None:
-        ax.set_xlabel(xl)
-    yl = kwargs.pop('ylabel', 'Standard Deviation (Normalized)')
-    ax.set_ylabel(yl)
-    tt = kwargs.pop('title', None)
-    if not tt is None:
-        ax.set_title(tt)
-        ax.set_title(' ', loc='left')
-
-    return ax, gg
-          
 def surf(*args, **kwargs):
     '''
     creates a three-dimensional surface plot

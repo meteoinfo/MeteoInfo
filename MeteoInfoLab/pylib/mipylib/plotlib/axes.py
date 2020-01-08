@@ -200,6 +200,29 @@ class Axes(object):
         :returns: Axis
         '''
         return self.axes.getAxis(loc)
+
+    def set_aspect(self, aspect):
+        '''
+        Set axes aspect
+
+        :param aspect: (*string or number*) Axes aspect ['equal' | 'auto'].
+        '''
+        if aspect == 'equal':
+            self.axes.setAutoAspect(False)
+        else:
+            if isinstance(aspect, (int, float)):
+                self.axes.setAspect(aspect)
+                self.axes.setAutoAspect(False)
+            else:
+                self.axes.setAutoAspect(True)
+
+    def set_clip(self, clip):
+        '''
+        Set axes clip or not
+
+        :param clip: (*bool*) Clip or not
+        '''
+        self.axes.setClip(clip)
         
     def get_title(self, loc='center'):
         '''
@@ -2850,6 +2873,126 @@ class Axes(object):
             graphics.extend(ggs)
         
         return graphics
+
+    def taylor_diagram(self, stddev, correlation, std_max=1.65, labels=None, ref_std=1., colors=None,
+                       **kwargs):
+        '''
+        Create Taylor diagram.
+
+        :param stddev: Standard deviation.
+        :param correlation: Pattern correlations.
+        :param ref_std: Reference standard deviation.
+        :param std_max: Maximum standard deviation.
+        :param labels: Data labels.
+        :param colors: Data points colors.
+
+        :returns:
+        '''
+        #Set axes
+        self.set_aspect('equal')
+        self.set_clip(False)
+        self.xaxis(location='top', visible=False)
+        self.yaxis(location='right', visible=False)
+
+        #plot RMS circle
+        th = np.linspace(0, np.pi, 200)
+        xunit = np.cos(th)
+        yunit = np.sin(th)
+        tickrms = np.arange(0.25, ref_std + 0.2, 0.25)
+        radius = np.sqrt(ref_std**2 + std_max**2 -
+                         2 * ref_std * std_max * xunit)
+        for iradius in tickrms:
+            phi = th[np.where(radius >= iradius)]
+            if len(phi) > 0:
+                phi = phi[0]
+                ig = np.where(iradius * np.cos(th) + ref_std <=
+                              std_max * np.cos(phi))
+                self.plot(xunit[ig] * iradius + ref_std, yunit[ig] * iradius, color='gray')
+
+        #plot stddev circle
+        self.set_xlim(0, std_max)
+        self.set_ylim(0, std_max)
+        std_ticks = np.arange(0, 1.51, 0.25)
+        self.set_xticks(std_ticks)
+        xtick_labels = []
+        for std_tick in std_ticks:
+            if std_tick == 1:
+                xtick_labels.append('REF')
+            else:
+                xtick_labels.append(str(std_tick))
+        self.set_xticklabels(xtick_labels)
+        self.set_yticks(std_ticks)
+        th = np.linspace(0, np.pi * 0.5, 200)
+        xunit = np.cos(th)
+        yunit = np.sin(th)
+        xticks = self.get_xticks()
+        for i in xticks:
+            self.plot(xunit * i, yunit * i, color='gray', linestyle='--')
+        self.plot(xunit * std_max, yunit * std_max)
+
+        #plot correlation lines
+        values = np.arange(0., 1., 0.1)
+        values = values.join(np.array([0.95,0.99,1.0]), 0)
+        for t in values:
+            theta = np.acos(t)
+            x = np.cos(theta) * std_max
+            y = np.sin(theta) * std_max
+            if 0 < t < 1:
+                if t == 0.6 or t == 0.9:
+                    self.plot([0,x], [0,y], color='gray', linestyle=':')
+                self.plot([x*0.98,x], [y*0.98,y])
+            x = x * 1.02
+            y = y * 1.02
+            self.text(x, y, str(t), rotation=np.degrees(theta), yalign='center')
+            if t == 0.7:
+                self.text(x*1.1, y*1.1, 'Correlation', rotation=np.degrees(theta)-90,
+                        xalign='center', yalign='bottom')
+
+        values = np.arange(0.05, 0.9, 0.1)
+        values = values.join(np.array([0.91,0.92,0.93,0.94,0.96,0.97,0.98]), 0)
+        for t in values:
+            theta = np.acos(t)
+            x = np.cos(theta) * std_max
+            y = np.sin(theta) * std_max
+            self.plot([x*0.99,x], [y*0.99,y])
+
+        #plot data
+        stddev = np.atleast_2d(stddev)
+        correlation = np.atleast_2d(correlation)
+        ncase = stddev.shape[0]
+        if colors is None:
+            cmap = kwargs.pop('cmap', 'matlab_jet')
+            colors = plotutil.makecolors(ncase, cmap)
+        gg = []
+        for i in range(ncase):
+            rho = stddev[i]
+            theta = np.acos(correlation[i])
+            x = np.cos(theta) * rho
+            y = np.sin(theta) * rho
+            gg.append(self.scatter(x, y, edge=False, c=colors[i]))
+            if labels is None:
+                lbs = []
+                for j in range(len(rho)):
+                    lbs.append(str(j+1))
+            else:
+                lbs = labels[i]
+            for xx, yy, label in zip(x, y, lbs):
+                self.text(xx, yy, label, color=colors[i], xalign='center', yalign='bottom', yshift=-5)
+
+        self.set_xlim(0, std_max)
+        self.set_ylim(0, std_max)
+
+        xl = kwargs.pop('xlabel', None)
+        if not xl is None:
+            self.set_xlabel(xl)
+        yl = kwargs.pop('ylabel', 'Standard Deviation (Normalized)')
+        self.set_ylabel(yl)
+        tt = kwargs.pop('title', None)
+        if not tt is None:
+            self.set_title(tt)
+            self.set_title(' ', loc='left')
+
+        return self, gg
         
     def barbs(self, *args, **kwargs):
         """

@@ -48,27 +48,11 @@ import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.Extent3D;
-import org.meteoinfo.legend.BreakTypes;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.ColorBreakCollection;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.LegendType;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
+import org.meteoinfo.legend.*;
 import org.meteoinfo.math.meteo.MeteoMath;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.ImageShape;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.PointZShape;
-import org.meteoinfo.shape.PolygonZ;
-import org.meteoinfo.shape.PolygonZShape;
-import org.meteoinfo.shape.Polyline;
-import org.meteoinfo.shape.PolylineZShape;
-import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.shape.*;
+
 import static org.meteoinfo.shape.ShapeTypes.PointZ;
-import org.meteoinfo.shape.WindArrow3D;
 
 /**
  *
@@ -110,6 +94,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     float tickSpace = 5.0f;
     float tickLen = 0.08f;
     private Lighting lighting = new Lighting();
+    private boolean antialias;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -138,6 +123,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.displayXY = true;
         this.displayZ = true;
         this.drawBoundingBox = false;
+        this.antialias = false;
     }
 
     // </editor-fold>
@@ -603,6 +589,18 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.lighting = value;
     }
 
+    /**
+     * Get is antialias or not
+     * @return Antialias or not
+     */
+    public boolean isAntialias() { return this.antialias; }
+
+    /**
+     * Set is antialias or not
+     * @param value Antialias or not
+     */
+    public void setAntialias(boolean value) { this.antialias = value; }
+
     // </editor-fold>
     // <editor-fold desc="methods">
     /**
@@ -726,6 +724,17 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
         gl.glPushMatrix();
+
+        if (this.antialias) {
+            gl.glEnable(GL2.GL_BLEND);
+            gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+            gl.glEnable(GL2.GL_LINE_SMOOTH);
+            gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_NICEST);
+            gl.glEnable(GL2.GL_POINT_SMOOTH);
+            gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
+            gl.glEnable(GL2.GL_POLYGON_SMOOTH);
+            gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
+        }
 
         gl.glRotatef(angleX, 1.0f, 0.0f, 0.0f);
         gl.glRotatef(angleY, 0.0f, 0.0f, 1.0f);
@@ -1431,6 +1440,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
             case WindArraw:
                 this.drawWindArrow(gl, graphic);
                 break;
+            case CUBIC:
+                this.drawCubic(gl, graphic);
+                break;
+            case CYLINDER:
+                this.drawCylinder(gl, graphic);
+                break;
             case Image:
                 this.drawImage(gl, graphic);
                 break;
@@ -1712,7 +1727,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
         int dim2 = surface.getDim2();
         float[] rgba;
         PointZ p;
+
         if (pgb.isDrawFill()) {
+            gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+            gl.glPolygonOffset(1.0f, 1.0f);
             for (int i = 0; i < dim1 - 1; i++) {
                 for (int j = 0; j < dim2 - 1; j++) {
                     gl.glBegin(GL2.GL_QUADS);
@@ -1735,6 +1753,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     gl.glEnd();
                 }
             }
+            gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
         }
 
         if (pgb.isDrawOutline()) {
@@ -2000,6 +2019,69 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
             GLUquadric cone_obj = glu.gluNewQuadric();
             glu.gluCylinder(cone_obj, 0, coneHgt, coneRadius, 8, 1);
+
+            gl.glPopAttrib(); // GL_CULL_FACE
+            gl.glPopMatrix();
+        }
+    }
+
+    void drawCubic(GL2 gl, Graphic graphic) {
+        if (extent.intersects(graphic.getExtent())) {
+            CubicShape cubic = (CubicShape) graphic.getShape();
+            BarBreak bb = (BarBreak) graphic.getLegend();
+            List<PointZ> ps = cubic.getPoints();
+            List<float[]> vertex = new ArrayList<>();
+            for (PointZ p : ps) {
+                vertex.add(new float[]{transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z)});
+            }
+
+            gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+            gl.glPolygonOffset(1.0f, 1.0f);
+            int[][] index = cubic.getIndex();
+            float[] rgba = bb.getColor().getRGBComponents(null);
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glBegin(GL2.GL_QUADS);
+            for (int[] ii : index) {
+                for (int i : ii) {
+                    gl.glVertex3f(vertex.get(i)[0], vertex.get(i)[1], vertex.get(i)[2]);
+                }
+            }
+            gl.glEnd();
+            gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
+
+            rgba = bb.getOutlineColor().getRGBColorComponents(null);
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glLineWidth(bb.getOutlineSize());
+            gl.glBegin(GL2.GL_LINES);
+            for (int[] ii : cubic.getLineIndex()) {
+                for (int i : ii) {
+                    gl.glVertex3f(vertex.get(i)[0], vertex.get(i)[1], vertex.get(i)[2]);
+                }
+            }
+            gl.glEnd();
+        }
+    }
+
+    void drawCylinder(GL2 gl, Graphic graphic) {
+        if (extent.intersects(graphic.getExtent())) {
+            CylinderShape cylinder = (CylinderShape) graphic.getShape();
+            BarBreak bb = (BarBreak) graphic.getLegend();
+            List<PointZ> ps = cylinder.getPoints();
+            List<float[]> vertex = new ArrayList<>();
+            for (PointZ p : ps) {
+                vertex.add(new float[]{transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z)});
+            }
+            double height = vertex.get(1)[2] - vertex.get(0)[2];
+
+            gl.glPushMatrix();
+            gl.glPushAttrib(GL2.GL_POLYGON_BIT); // includes GL_CULL_FACE
+            gl.glDisable(GL2.GL_CULL_FACE); // draw from all sides
+
+            float[] rgba = bb.getColor().getRGBComponents(null);
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glTranslatef(vertex.get(0)[0], vertex.get(0)[1], vertex.get(0)[2]);
+            GLUquadric cone_obj = glu.gluNewQuadric();
+            glu.gluCylinder(cone_obj, cylinder.getRadius(), cylinder.getRadius(), height, 8, 1);
 
             gl.glPopAttrib(); // GL_CULL_FACE
             gl.glPopMatrix();

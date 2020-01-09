@@ -49,29 +49,7 @@ import org.meteoinfo.legend.PolylineBreak;
 import org.meteoinfo.legend.StreamlineBreak;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.ndarray.IndexIterator;
-import org.meteoinfo.shape.ArcShape;
-import org.meteoinfo.shape.BarShape;
-import org.meteoinfo.shape.CapPolylineShape;
-import org.meteoinfo.shape.CurveLineShape;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.GraphicCollection;
-import org.meteoinfo.shape.ImageShape;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.PointZShape;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.PolygonZShape;
-import org.meteoinfo.shape.Polyline;
-import org.meteoinfo.shape.PolylineErrorShape;
-import org.meteoinfo.shape.PolylineShape;
-import org.meteoinfo.shape.PolylineZ;
-import org.meteoinfo.shape.PolylineZShape;
-import org.meteoinfo.shape.RectangleShape;
-import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.ShapeTypes;
-import org.meteoinfo.shape.WindArrow;
-import org.meteoinfo.shape.WindArrow3D;
-import org.meteoinfo.shape.WindBarb;
+import org.meteoinfo.shape.*;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;
@@ -2182,6 +2160,123 @@ public class GraphicFactory {
             ebreak.setColor(Color.black);
             graphics.add(new Graphic(pls, ebreak));
         }
+        graphics.setSingleLegend(false);
+
+        return graphics;
+    }
+
+    /**
+     * Create 3D bar graphics
+     *
+     * @param xdata X data array
+     * @param ydata Y data array
+     * @param zdata Z data array
+     * @param autoWidth Is auto width or not
+     * @param widths Width
+     * @param bottom Bottom
+     * @param bbs Bar breaks
+     * @return Bar graphics
+     */
+    public static GraphicCollection createBars3D(Array xdata, Array ydata, Array zdata, boolean autoWidth,
+            Array widths, Array bottom, List<BarBreak> bbs) {
+        GraphicCollection graphics = new GraphicCollection();
+        int n = (int) xdata.getSize();
+        double x, y, z;
+        BarBreak bb = bbs.get(0);
+        double width = widths.getDouble(0);
+        if (autoWidth && xdata.getSize() > 1) {
+            width = (xdata.getDouble(1) - xdata.getDouble(0)) * width;
+        }
+        double bot = 0;
+        double minz = 0;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
+        int i = 0;
+        double hw = width * 0.5;
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            z = zIter.getDoubleNext();
+            // Add bar
+            if (widths.getSize() > 1 && widths.getSize() > i) {
+                width = widths.getDouble(i);
+                hw = width * 0.5;
+            }
+            List<PointZ> pList = new ArrayList<>();
+            pList.add(new PointZ(x + hw, y + hw, minz));
+            pList.add(new PointZ(x + hw, y - hw, minz));
+            pList.add(new PointZ(x + hw, y + hw, z));
+            pList.add(new PointZ(x + hw, y - hw, z));
+            pList.add(new PointZ(x - hw, y + hw, minz));
+            pList.add(new PointZ(x - hw, y - hw, minz));
+            pList.add(new PointZ(x - hw, y + hw, z));
+            pList.add(new PointZ(x - hw, y - hw, z));
+            CubicShape cs = new CubicShape();
+            cs.setPoints(pList);
+            if (bbs.size() > i) {
+                bb = bbs.get(i);
+            }
+            graphics.add(new Graphic(cs, bb));
+
+            i++;
+        }
+
+        graphics.setSingleLegend(false);
+
+        return graphics;
+    }
+
+    /**
+     * Create 3D cylinder bar graphics
+     *
+     * @param xdata X data array
+     * @param ydata Y data array
+     * @param zdata Z data array
+     * @param autoWidth Is auto width or not
+     * @param widths Width
+     * @param bottom Bottom
+     * @param bbs Bar breaks
+     * @return Bar graphics
+     */
+    public static GraphicCollection createCylinderBars3D(Array xdata, Array ydata, Array zdata, boolean autoWidth,
+                                                 Array widths, Array bottom, List<BarBreak> bbs) {
+        GraphicCollection graphics = new GraphicCollection();
+        int n = (int) xdata.getSize();
+        double x, y, z;
+        BarBreak bb = bbs.get(0);
+        double width = widths.getDouble(0);
+        if (autoWidth && xdata.getSize() > 1) {
+            width = (xdata.getDouble(1) - xdata.getDouble(0)) * width;
+        }
+        double bot = 0;
+        double minz = 0;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
+        int i = 0;
+        double hw = width * 0.5;
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            z = zIter.getDoubleNext();
+            // Add bar
+            if (widths.getSize() > 1 && widths.getSize() > i) {
+                width = widths.getDouble(i);
+                hw = width * 0.5;
+            }
+            List<PointZ> pList = new ArrayList<>();
+            pList.add(new PointZ(x, y, minz));
+            pList.add(new PointZ(x, y, z));
+            CylinderShape cs = new CylinderShape(pList, hw);
+            if (bbs.size() > i) {
+                bb = bbs.get(i);
+            }
+            graphics.add(new Graphic(cs, bb));
+
+            i++;
+        }
+
         graphics.setSingleLegend(false);
 
         return graphics;

@@ -7,7 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.chart.plot import GraphicFactory
-from org.meteoinfo.legend import BreakTypes, LegendManage
+from org.meteoinfo.legend import BreakTypes, LegendManage, BarBreak
 from org.meteoinfo.layer import LayerTypes
 from org.meteoinfo.shape import ShapeTypes
 from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil
@@ -53,6 +53,9 @@ class Axes3DGL(Axes3D):
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
         self.axes.setAxisTickFont(font)
+        antialias = kwargs.pop('antialias', None)
+        if not antialias is None:
+            self.axes.setAntialias(antialias)
         
     def _set_plot(self, plot):
         '''
@@ -100,6 +103,13 @@ class Axes3DGL(Axes3D):
         :param elevation: (*float*) Elevation angle.
         '''
         self.axes.setAngleX(elevation)
+
+    def set_antialias(self, antialias):
+        '''
+        Set antialias
+        :param antialias: (*bool*) Antialias or not.
+        '''
+        self.axes.setAntialias(antialias)
         
     def set_lighting(self, enable, **kwargs):
         '''
@@ -125,6 +135,91 @@ class Axes3DGL(Axes3D):
         specular = kwargs.pop('specular', None)
         if not specular is None:
             lighting.setSpecular(specular)
+
+    def bar(self, x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
+        """
+        Make a 3D bar plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
+
+        :param x: (*array_like*) Input x data.
+        :param y: (*array_like*) Input y data.
+        :param z: (*array_like*) Input z data.
+        :param width: (*float*) Bar width.
+        :param cylinder: (*bool*) Is sylinder bar or rectangle bar.
+        :param bottom: (*bool*) Color of the points. Or z vlaues.
+        :param color: (*Color*) Optional, the color of the bar faces.
+        :param edgecolor: (*Color*) Optional, the color of the bar edge. Default is black color.
+            Edge line will not be plotted if ``edgecolor`` is ``None``.
+        :param linewidth: (*int*) Optional, width of bar edge.
+        :param label: (*string*) Label of the bar series.
+        :param hatch: (*string*) Hatch string.
+        :param hatchsize: (*int*) Hatch size. Default is None (8).
+        :param bgcolor: (*Color*) Background color, only valid with hatch.
+        :param barswidth: (*float*) Bars width (0 - 1), only used for automatic bar with plot
+            (only one argument widthout ``width`` augument). Defaul is 0.8.
+
+        :returns: Points legend break.
+        """
+        #Add data series
+        label = kwargs.pop('label', 'S_0')
+        xdata = plotutil.getplotdata(x)
+        ydata = plotutil.getplotdata(y)
+        zdata = plotutil.getplotdata(z)
+
+        autowidth = False
+        width = np.asarray(width)
+
+        if not bottom is None:
+            bottom = plotutil.getplotdata(bottom)
+
+        #Set plot data styles
+        fcobj = kwargs.pop('color', None)
+        if fcobj is None:
+            fcobj = kwargs.pop('facecolor', 'b')
+        if isinstance(fcobj, (tuple, list)):
+            colors = plotutil.getcolors(fcobj)
+        else:
+            color = plotutil.getcolor(fcobj)
+            colors = [color]
+        ecobj = kwargs.pop('edgecolor', 'k')
+        edgecolor = plotutil.getcolor(ecobj)
+        linewidth = kwargs.pop('linewidth', 1.0)
+        hatch = kwargs.pop('hatch', None)
+        hatch = plotutil.gethatch(hatch)
+        hatchsize = kwargs.pop('hatchsize', None)
+        bgcolor = kwargs.pop('bgcolor', None)
+        bgcolor = plotutil.getcolor(bgcolor)
+        ecolor = kwargs.pop('ecolor', 'k')
+        ecolor = plotutil.getcolor(ecolor)
+        barbreaks = []
+        for color in colors:
+            lb = BarBreak()
+            lb.setCaption(label)
+            lb.setColor(color)
+            if edgecolor is None:
+                lb.setDrawOutline(False)
+            else:
+                lb.setOutlineColor(edgecolor)
+            lb.setOutlineSize(linewidth)
+            if not hatch is None:
+                lb.setStyle(hatch)
+                if not bgcolor is None:
+                    lb.setBackColor(bgcolor)
+                if not hatchsize is None:
+                    lb.setStyleSize(hatchsize)
+            lb.setErrorColor(ecolor)
+            barbreaks.append(lb)
+
+        #Create bar graphics
+        if isinstance(width, NDArray):
+            width = width.asarray()
+        if cylinder:
+            graphics = GraphicFactory.createCylinderBars3D(xdata, ydata, zdata, autowidth, width, bottom, barbreaks)
+        else:
+            graphics = GraphicFactory.createBars3D(xdata, ydata, zdata, autowidth, width, bottom, barbreaks)
+
+        self.add_graphic(graphics)
+
+        return barbreaks
         
     def plot_layer(self, layer, **kwargs):
         '''

@@ -2959,6 +2959,8 @@ class Axes(object):
         #plot data
         stddev = np.atleast_2d(stddev)
         correlation = np.atleast_2d(correlation)
+        if not labels is None:
+            labels = np.atleast_2d(labels)
         ncase = stddev.shape[0]
         if colors is None:
             cmap = kwargs.pop('cmap', 'matlab_jet')

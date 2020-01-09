@@ -44,7 +44,12 @@ public enum ShapeTypes {
     PolylineError(57),
     ARC(58),
     TEXT(59),
-    TEXTURE(60);
+    TEXTURE(60),
+    CUBIC(61),
+    CYLINDER(62),
+    CONE(63),
+    SPHERE(64);
+
     private final int value;
 
     /**

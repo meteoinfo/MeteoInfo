@@ -2025,6 +2025,35 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
     }
 
+    void drawCircle(GL2 gl, float z, float radius, PolygonBreak bb) {
+        int points = 100;
+
+        if (bb.isDrawFill()) {
+            float[] rgba = bb.getColor().getRGBColorComponents(null);
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glBegin(GL2.GL_TRIANGLE_FAN);
+            double angle = 0.0;
+            for(int i =0; i < points;i++){
+                angle = 2 * Math.PI * i / points;
+                gl.glVertex3f((float)Math.cos(angle) * radius, (float)Math.sin(angle) * radius, z);
+            }
+            gl.glEnd();
+        }
+
+        if (bb.isDrawOutline()) {
+            float[] rgba = bb.getOutlineColor().getRGBColorComponents(null);
+            gl.glColor3f(rgba[0], rgba[1], rgba[2]);
+            gl.glLineWidth(bb.getOutlineSize());
+            gl.glBegin(GL2.GL_LINE_LOOP);
+            double angle = 0.0;
+            for (int i = 0; i < points; i++) {
+                angle = 2 * Math.PI * i / points;
+                gl.glVertex3f((float) Math.cos(angle) * radius, (float) Math.sin(angle) * radius, z);
+            }
+            gl.glEnd();
+        }
+    }
+
     void drawCubic(GL2 gl, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
             CubicShape cubic = (CubicShape) graphic.getShape();
@@ -2081,7 +2110,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor3f(rgba[0], rgba[1], rgba[2]);
             gl.glTranslatef(vertex.get(0)[0], vertex.get(0)[1], vertex.get(0)[2]);
             GLUquadric cone_obj = glu.gluNewQuadric();
-            glu.gluCylinder(cone_obj, cylinder.getRadius(), cylinder.getRadius(), height, 8, 1);
+            glu.gluCylinder(cone_obj, cylinder.getRadius(), cylinder.getRadius(), height, 100, 1);
+            bb.setDrawOutline(false);
+            this.drawCircle(gl, (float) height, (float) cylinder.getRadius(), bb);
 
             gl.glPopAttrib(); // GL_CULL_FACE
             gl.glPopMatrix();

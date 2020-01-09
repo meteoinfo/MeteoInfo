@@ -2939,7 +2939,7 @@ public class MapLayout extends JPanel implements IWebMapPanel {
             }
 
             double scaleFactor = dpi / 72.0;
-            BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_RGB);
+            BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = image.createGraphics();
             AffineTransform at = g.getTransform();
             at.scale(scaleFactor, scaleFactor);
@@ -2948,7 +2948,7 @@ public class MapLayout extends JPanel implements IWebMapPanel {
             for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
                 ImageWriter writer = iw.next();
                 ImageWriteParam writeParam = writer.getDefaultWriteParam();
-                ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
+                ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
                 IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
                 if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
                     continue;

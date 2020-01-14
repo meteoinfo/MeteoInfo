@@ -1530,6 +1530,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawPolygon(GL2 gl, PolygonZ aPG, PolygonBreak aPGB) {
         PointZ p;
         if (aPGB.isDrawFill() && aPGB.getColor().getAlpha() > 0) {
+            gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+            gl.glPolygonOffset(1.0f, 1.0f);
+
             float[] rgba = aPGB.getColor().getRGBComponents(null);
             gl.glColor3f(rgba[0], rgba[1], rgba[2]);
 
@@ -1547,12 +1550,23 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 GLU.gluTessBeginPolygon(tobj, null);
                 GLU.gluTessBeginContour(tobj);
                 double[] v;
-                for (int i = 0; i < aPG.getOutLine().size() - 2; i++) {
+                for (int i = 0; i < aPG.getOutLine().size() - 1; i++) {
                     p = ((List<PointZ>) aPG.getOutLine()).get(i);
                     v = transform(p);
                     GLU.gluTessVertex(tobj, v, 0, v);
                 }
                 GLU.gluTessEndContour(tobj);
+                if (aPG.hasHole()) {
+                    for (int i = 0; i < aPG.getHoleLineNumber(); i++) {
+                        GLU.gluTessBeginContour(tobj);
+                        for (int j = 0; j < aPG.getHoleLine(i).size() - 1; j++) {
+                            p = ((List<PointZ>) aPG.getHoleLine(i)).get(j);
+                            v = transform(p);
+                            GLU.gluTessVertex(tobj, v, 0, v);
+                        }
+                        GLU.gluTessEndContour(tobj);
+                    }
+                }
                 GLU.gluTessEndPolygon(tobj);
                 //gl.glEndList();
                 GLU.gluDeleteTess(tobj);
@@ -1585,6 +1599,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 }
                 gl.glEnd();
             }
+            gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
         }
     }
 

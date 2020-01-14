@@ -331,6 +331,7 @@ org\meteoinfo\data\meteodata\MeteoDataInfo$1.class
 org\meteoinfo\image\filter\MirrorFilter.class
 org\meteoinfo\ndarray\ArrayStructureMA.class
 org\meteoinfo\chart\plot\XAlign.class
+org\meteoinfo\shape\CylinderShape.class
 org\meteoinfo\image\composite\ColorDodgeComposite$Context.class
 org\meteoinfo\image\filter\SphereFilter.class
 org\meteoinfo\data\dataframe\impl\Aggregation$Min.class
@@ -1386,6 +1387,7 @@ org\meteoinfo\layer\FrmLayerProperty$18.class
 org\meteoinfo\image\filter\FBMFilter.class
 org\meteoinfo\chart\ChartPanel$4.class
 org\meteoinfo\ndarray\ArrayComplex$D3$IF.class
+org\meteoinfo\shape\CubicShape.class
 org\meteoinfo\image\filter\ApplyMaskFilter.class
 org\meteoinfo\global\Extent.class
 org\meteoinfo\shape\ShapeFactory.class

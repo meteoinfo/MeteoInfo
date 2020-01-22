@@ -12,7 +12,7 @@ from org.meteoinfo.math.stats import StatsUtil
 from ..core import NDArray
 
 __all__ = [
-    'solve','cholesky','det','lu','qr', 'svd','eig','inv','lstsq'
+    'solve','cholesky','det','lu','qr', 'svd','eig','inv','lstsq','solve_triangular'
     ]
 
 def solve(a, b):
@@ -29,6 +29,28 @@ def solve(a, b):
     b : {(M), (M, K)}, array_like
         Ordinate or "dependent variable" values.
         
+    ``Returns``
+
+    x : {(M), (M, K)} ndarray
+        Solution to the system a x = b.  Returned shape is identical to ``b``.
+    '''
+    x = LinalgUtil.solve(a.asarray(), b.asarray())
+    return NDArray(x)
+
+def solve_triangular(a, b, lower=False):
+    '''
+    Solve the equation `a x = b` for `x`, assuming a is a triangular matrix.
+
+    Parameters
+    --------------
+    a : (M, M) array_like
+        A triangular matrix.
+    b : {(M), (M, K)}, array_like
+        Right-hand side matrix in `a x = b`
+    lower : bool, optional
+        Use only data contained in the lower triangle of `a`.
+        Default is to use upper triangle.
+
     ``Returns``
 
     x : {(M), (M, K)} ndarray

@@ -602,6 +602,7 @@ D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinf
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\ndarray\ArrayStructureW.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\filter\LinearColormap.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\meteodata\netcdf\NetCDFDataInfo.java
+D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\math\optimize\ParamUnivariateFunction.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\ndarray\ArrayStructureBak.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\mapdata\webmap\BingHybridMapInfo.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\math\astro\AstroUtil.java
@@ -667,6 +668,7 @@ D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinf
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\ui\calendar\JDayChooserBeanInfo.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\meteodata\arl\ARLDataInfo.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\mapdata\MapDataType.java
+D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\math\optimize\OptimizeUtil.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\console\JavaCharStream.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\legend\Constants.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\math\stats\kde\Helpers.java

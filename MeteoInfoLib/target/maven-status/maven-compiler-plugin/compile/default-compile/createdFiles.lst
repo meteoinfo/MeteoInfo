@@ -7,6 +7,7 @@ org\meteoinfo\chart\jogl\JOGLUtil$1.class
 org\meteoinfo\ui\ButtonTabComponent$TabButton.class
 org\meteoinfo\image\filter\DitherFilter.class
 org\meteoinfo\math\linalg\LinalgUtil.class
+org\meteoinfo\math\optimize\OptimizeUtil.class
 org\meteoinfo\map\FrmIdentifer$3$1.class
 org\meteoinfo\image\filter\QuantizeFilter.class
 org\meteoinfo\ndarray\ArrayObject$D0.class
@@ -1311,6 +1312,7 @@ org\meteoinfo\math\fitting\PowerTrendLine.class
 org\meteoinfo\image\filter\ChromeFilter$1.class
 org\meteoinfo\image\filter\TileImageFilter.class
 org\meteoinfo\table\MyCellEditor.class
+org\meteoinfo\math\optimize\OptimizeUtil$1.class
 org\meteoinfo\data\TimeTableData.class
 org\meteoinfo\ndarray\ArrayLong$D1.class
 org\meteoinfo\data\dataframe\impl\Views$DataFrameMapView$1.class

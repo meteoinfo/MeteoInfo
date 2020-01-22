@@ -2702,6 +2702,52 @@ public class ArrayMath {
     }
 
     /**
+     * Test element-wise for positive or negative infinity.
+     *
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array isInfinite(Array a) {
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                r.setBoolean(i, Double.isInfinite(a.getDouble(i)));
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setBooleanNext(Double.isInfinite(iterA.getDoubleNext()));
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Test element-wise for finiteness (not infinity or not Not a Number).
+     *
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array isFinite(Array a) {
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                r.setBoolean(i, Double.isFinite(a.getDouble(i)));
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setBooleanNext(Double.isFinite(iterA.getDoubleNext()));
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Array less than
      *
      * @param a Array a

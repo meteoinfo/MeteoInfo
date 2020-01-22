@@ -40,11 +40,11 @@ __all__ = [
     'atleast_1d','atleast_2d','atan','atan2','ave_month','average','histogram','broadcast_to','cdiff','concatenate',
     'corrcoef','cos','cumsum','degrees','delete','delnan','diag','diff','dim_array','datatable','dot','empty','exp','eye','fmax','fmin','full',
     'griddata','hcurl','hdivg','hstack','identity','interp2d',
-    'interpn','isarray','isnan','linint2','linregress','linspace','log','log10','logical_not',
+    'interpn','isarray','isfinite','isinf','isnan','linint2','linregress','linspace','log','log10','logical_not',
     'logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'newaxis','nonzero','ones','ones_like','pol2cart','polyval','power',
     'radians','ravel','reshape','repeat',
-    'rolling_mean','rot90','sin','smooth5','smooth9','sort','squeeze','argsort','sqrt','square','std','sum','swapaxes','tan',
+    'rolling_mean','rot90','sin','shape','smooth5','smooth9','sort','squeeze','argsort','sqrt','square','std','sum','swapaxes','tan',
     'tile','transpose','trapz','vdot','unique','unravel_index','var','vstack',
     'where','zeros','zeros_like'
     ]
@@ -1538,7 +1538,39 @@ def isnan(a):
         return a == nan
     else:
         return Double.isNaN(a)
-        
+
+def isinf(x):
+    '''
+    Test element-wise for positive or negative infinity.
+
+    :param a: (*array_like*) Input array.
+
+    :returns: (*array*) True where x is positive or negative infinity, false otherwise. This is a scalar if x
+        is a scalar.
+    '''
+    if isinstance(x, (list, tuple)):
+        x = array(x)
+    if isarray(x):
+        return ArrayMath.isInfinite(x._array)
+    else:
+        return Double.isInfinite(a)
+
+def isfinite(x):
+    '''
+    Test element-wise for finiteness (not infinity or not Not a Number).
+
+    :param a: (*array_like*) Input array.
+
+    :returns: (*array*) True where x is not positive infinity, negative infinity, or NaN; false otherwise. This is a
+        scalar if x is a scalar.
+    '''
+    if isinstance(x, (list, tuple)):
+        x = array(x)
+    if isarray(x):
+        return ArrayMath.isFinite(x._array)
+    else:
+        return Double.isFinite(a)
+
 def delnan(a):
     '''
     Delete NaN values.
@@ -1791,6 +1823,20 @@ def vdot(a, b):
     if b.ndim > 1:
         b = b.flatten()
     return ArrayMath.vdot(a.asarray(), b.asarray())
+
+def shape(a):
+    '''
+    Return the shape of an array.
+
+    :param a: (*array_like*) Input array.
+
+    :return: (*tuple*) The elements of the shape tuple give the lengths of the corresponding array dimensions.
+    '''
+    try:
+        result = a.shape
+    except AttributeError:
+        result = asarray(a).shape
+    return result
         
 def reshape(a, *args):
     """

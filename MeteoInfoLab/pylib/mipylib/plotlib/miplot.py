@@ -1576,7 +1576,11 @@ def clf():
     '''
     if g_figure is None:
         return
-    
+
+    if isinstance(g_figure, GLFigure):
+        delfig()
+        return
+
     if g_figure.getChart() is None:
         return
     

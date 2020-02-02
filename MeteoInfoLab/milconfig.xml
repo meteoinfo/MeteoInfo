@@ -1,43 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\optimize">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axes"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\classification">
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\data_process"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\scatter"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\arrow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\optimize"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\taylor\taylor_3.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar_3.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\finitediff_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\curve_fit_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\grads\imshow_robinson-1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\predict_proba_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\taylor\taylor_3.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar_3.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\finitediff_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\curve_fit_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\grads\imshow_robinson-1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\predict_proba_1.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
   </Font>
   <LookFeel Name="Darcula"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1389,842"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

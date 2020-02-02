@@ -653,6 +653,7 @@ org\meteoinfo\data\meteodata\grads\YDEFS.class
 org\meteoinfo\image\filter\OutlineFilter.class
 org\meteoinfo\data\meteodata\GridDataSetting.class
 org\meteoinfo\legend\LayersLegend$18.class
+org\meteoinfo\math\optimize\ParamUnivariateFunction.class
 org\meteoinfo\chart\jogl\GLChartPanel$4.class
 org\meteoinfo\ui\JCheckBoxTree.class
 org\meteoinfo\data\meteodata\bufr\BufrIndicatorSectionW.class

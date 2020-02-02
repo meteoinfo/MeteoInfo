@@ -41,7 +41,7 @@ gca = None
 __all__ = [
     'g_figure','gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis','axism','bar','barh','barbs','barbsm','bgcolor','box',
     'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
-    'contourfm','contourm','draw','draw_if_interactive','errorbar',
+    'contourfm','contourm','delfig','draw','draw_if_interactive','errorbar',
     'figure','glfigure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow',
     'get_figure','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','legend','left_title','loglog','makecolors',
@@ -1554,8 +1554,8 @@ def cla():
         gca = None
         draw_if_interactive()
 
-# Clear current figure    
-def clf():
+# Delete current figure
+def delfig():
     '''
     Clear current figure.
     '''
@@ -1570,7 +1570,7 @@ def clf():
     #draw_if_interactive()
     
 # Clear current figure    
-def clf_bak():
+def clf():
     '''
     Clear current figure.
     '''

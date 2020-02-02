@@ -129,7 +129,46 @@ public class Reproject {
             CoordinateReferenceSystem toProj, ResampleMethods method) throws InvalidRangeException {
         return reproject(data, xx, yy, ProjectionInfo.factory(fromProj), ProjectionInfo.factory(toProj), method);
     }
-    
+
+    /**
+     * Project grid data
+     *
+     * @param data Data array
+     * @param xx X array
+     * @param yy Y array
+     * @param fromProj From projection
+     * @param toProj To projection
+     * @param method Resample method
+     * @return Porjected grid data
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public static Object[] reprojectGrid(Array data, List<Number> xx, List<Number> yy, ProjectionInfo fromProj,
+                                     ProjectionInfo toProj, ResampleMethods method) throws InvalidRangeException {
+        Extent aExtent;
+        int xnum = xx.size();
+        int ynum = yy.size();
+        aExtent = ProjectionUtil.getProjectionExtent(fromProj, toProj, xx, yy);
+
+        double xDelt = (aExtent.maxX - aExtent.minX) / (xnum - 1);
+        double yDelt = (aExtent.maxY - aExtent.minY) / (ynum - 1);
+        int i;
+        Array rx = Array.factory(DataType.DOUBLE, new int[]{xnum});
+        Array ry = Array.factory(DataType.DOUBLE, new int[]{ynum});
+        for (i = 0; i < xnum; i++) {
+            rx.setDouble(i, aExtent.minX + i * xDelt);
+        }
+
+        for (i = 0; i < ynum; i++) {
+            ry.setDouble(i, aExtent.minY + i * yDelt);
+        }
+
+        Array[] rr = ArrayUtil.meshgrid(rx, ry);
+
+        Array r = reproject(data, xx, yy, rr[0], rr[1], fromProj, toProj, method);
+
+        return new Object[]{r, rx, ry};
+    }
+
     /**
      * Project grid data
      *
@@ -143,7 +182,7 @@ public class Reproject {
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static Object[] reproject(Array data, List<Number> xx, List<Number> yy, ProjectionInfo fromProj,
-            ProjectionInfo toProj, ResampleMethods method) throws InvalidRangeException {
+                                     ProjectionInfo toProj, ResampleMethods method) throws InvalidRangeException {
         Extent aExtent;
         int xnum = xx.size();
         int ynum = yy.size();

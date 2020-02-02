@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\classification">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\projection">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
@@ -20,13 +20,17 @@
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\grads\imshow_robinson-1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\grads\imshow_robinson-3.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\predict_proba_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\grads\imshow_robinson.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\grads\imshow_robinson-1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\grads\imshow_robinson-3.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\predict_proba_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\grads\imshow_robinson.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj.py"/>
     </RecentFiles>
   </File>
   <Font>

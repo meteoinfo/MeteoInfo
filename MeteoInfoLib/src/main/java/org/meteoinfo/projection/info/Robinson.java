@@ -15,7 +15,12 @@ package org.meteoinfo.projection.info;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.meteoinfo.chart.plot.XAlign;
+import org.meteoinfo.chart.plot.YAlign;
+import org.meteoinfo.global.Direction;
 import org.meteoinfo.global.PointD;
+import org.meteoinfo.map.GridLabel;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.ProjectionUtil;
@@ -89,6 +94,73 @@ public class Robinson extends ProjectionInfo {
         PolygonShape ps = new PolygonShape();
         ps.setPoints(points);
         this.boundary = ProjectionUtil.projectPolygonShape(ps, KnownCoordinateSystems.geographic.world.WGS1984, this);
+    }
+
+    @Override
+    public Object[] checkGridLabel(GridLabel gl, float shift) {
+        float angle = gl.getAngle();
+        double v = gl.getValue();
+        float xShift = 0.f;
+        float yShift = 0.f;
+        XAlign xAlign = XAlign.CENTER;
+        YAlign yAlign = YAlign.CENTER;
+        if (gl.isLongitude()) {
+            if (gl.getLabDirection() == Direction.South) {
+                yShift = shift;
+                yAlign = YAlign.TOP;
+            } else {
+                yShift = -shift;
+                yAlign = YAlign.BOTTOM;
+            }
+        } else {
+            if (v == 0) {
+                if (angle == 90) {
+                    xShift = shift;
+                    xAlign = XAlign.LEFT;
+                } else if (angle == 270) {
+                    xShift = -shift;
+                    xAlign = XAlign.RIGHT;
+                } else if (angle < 90) {
+                    xShift = shift;
+                    xAlign = XAlign.LEFT;
+                    yAlign = YAlign.BOTTOM;
+                } else if (angle > 90 && angle <= 180) {
+                    xShift = shift;
+                    xAlign = XAlign.LEFT;
+                    yAlign = YAlign.TOP;
+                } else if (angle > 180 && angle < 270) {
+                    xShift = -shift;
+                    xAlign = XAlign.RIGHT;
+                    yAlign = YAlign.TOP;
+                } else if (angle > 270 && angle <= 360) {
+                    xShift = -shift;
+                    xAlign = XAlign.RIGHT;
+                    yAlign = YAlign.BOTTOM;
+                }
+            } else if (v > 0) {
+                if (gl.getLabDirection() == Direction.East) {
+                    xShift = shift;
+                    xAlign = XAlign.LEFT;
+                    yAlign = YAlign.BOTTOM;
+                } else {
+                    xShift = -shift;
+                    xAlign = XAlign.RIGHT;
+                    yAlign = YAlign.BOTTOM;
+                }
+            } else {
+                if (gl.getLabDirection() == Direction.East) {
+                    xShift = shift;
+                    xAlign = XAlign.LEFT;
+                    yAlign = YAlign.TOP;
+                } else {
+                    xShift = -shift;
+                    xAlign = XAlign.RIGHT;
+                    yAlign = YAlign.TOP;
+                }
+            }
+        }
+
+        return new Object[]{xShift, yShift, xAlign, yAlign};
     }
     // </editor-fold>
 }

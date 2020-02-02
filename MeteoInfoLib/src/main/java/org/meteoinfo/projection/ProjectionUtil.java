@@ -13,6 +13,8 @@
  */
 package org.meteoinfo.projection;
 
+import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,6 +142,24 @@ public class ProjectionUtil {
         for (int i = 0; i < Y.length; i++) {
             Y[i] = y.get(i).doubleValue();
         }
+        return getProjectionExtent(fromProj, toProj, X, Y);
+    }
+
+    /**
+     * Get projected extent
+     *
+     * @param fromProj From projection
+     * @param toProj To projection
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @return Extent
+     */
+    public static Extent getProjectionExtent(ProjectionInfo fromProj, ProjectionInfo toProj,
+                                             Array x, Array y) {
+        x = x.copyIfView();
+        y = y.copyIfView();
+        double[] X = (double[])ArrayUtil.copyToNDJavaArray_Double(x);
+        double[] Y = (double[])ArrayUtil.copyToNDJavaArray_Double(y);
         return getProjectionExtent(fromProj, toProj, X, Y);
     }
 

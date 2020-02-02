@@ -18,6 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.meteoinfo.chart.plot.XAlign;
+import org.meteoinfo.chart.plot.YAlign;
+import org.meteoinfo.drawing.Draw;
+import org.meteoinfo.map.GridLabel;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.projection.ProjectionNames;
@@ -238,6 +243,67 @@ public abstract class ProjectionInfo {
      */
     public List<String> getValidParas() {
         return new ArrayList<>();
+    }
+
+    /**
+     * Check grid label
+     * @param gl The grid label
+     * @param shift Shift
+     * @return Array of x/y shift and align
+     */
+    public Object[] checkGridLabel(GridLabel gl, float shift) {
+        float angle = gl.getAngle();
+        float xShift = 0.f;
+        float yShift = 0.f;
+        XAlign xAlign = XAlign.CENTER;
+        YAlign yAlign = YAlign.CENTER;
+        if (angle == 0) {
+            yShift = -shift;
+            yAlign = YAlign.BOTTOM;
+        } else if (angle == 180) {
+            yShift = shift;
+            yAlign = YAlign.TOP;
+        } else if (angle == 90) {
+            xShift = shift;
+            xAlign = XAlign.LEFT;
+        } else if (angle == 270) {
+            xShift = -shift;
+            xAlign = XAlign.RIGHT;
+        } else if (angle > 0 && angle <= 45) {
+            yShift = -shift;
+            xAlign = XAlign.LEFT;
+            yAlign = YAlign.BOTTOM;
+        } else if (angle > 45 && angle < 90) {
+            yShift = shift;
+            xAlign = XAlign.LEFT;
+            yAlign = YAlign.BOTTOM;
+        } else if (angle > 90 && angle <= 135) {
+            xShift = shift;
+            xAlign = XAlign.LEFT;
+            yAlign = YAlign.TOP;
+        } else if (angle > 135 && angle < 180) {
+            yShift = shift;
+            xAlign = XAlign.LEFT;
+            yAlign = YAlign.TOP;
+        } else if (angle > 180 && angle <= 225) {
+            yShift = shift;
+            xAlign = XAlign.RIGHT;
+            yAlign = YAlign.TOP;
+        } else if (angle > 225 && angle < 270) {
+            xShift = -shift;
+            xAlign = XAlign.RIGHT;
+            yAlign = YAlign.TOP;
+        } else if (angle > 270 && angle <= 315) {
+            xShift = -shift;
+            xAlign = XAlign.RIGHT;
+            yAlign = YAlign.BOTTOM;
+        } else if (angle > 315 && angle < 360) {
+            yShift = -shift;
+            xAlign = XAlign.RIGHT;
+            yAlign = YAlign.BOTTOM;
+        }
+
+        return new Object[]{xShift, yShift, xAlign, yAlign};
     }
     
     void updateBoundary() {}

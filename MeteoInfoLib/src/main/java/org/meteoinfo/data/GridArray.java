@@ -591,16 +591,9 @@ public class GridArray {
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public GridArray project(ProjectionInfo fromProj, ProjectionInfo toProj) throws InvalidRangeException {
-        //return project(fromProj, toProj, ResampleMethods.NearestNeighbor);
-        List<Number> xx = new ArrayList<>();
-        List<Number> yy = new ArrayList<>();
-        for (Double x : this.xArray) {
-            xx.add(x);
-        }
-        for (Double y : this.yArray) {
-            yy.add(y);
-        }
-        Object[] r = Reproject.reproject(data, xx, yy, fromProj, toProj);
+        Array xx = ArrayUtil.array(this.xArray);
+        Array yy = ArrayUtil.array(this.yArray);
+        Object[] r = Reproject.reprojectGrid(data,  xx, yy, fromProj, toProj);
         GridArray rdata = new GridArray((Array) r[0], (Array) r[1], (Array) r[2], missingValue);
         rdata.projInfo = toProj;
 

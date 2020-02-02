@@ -2628,9 +2628,10 @@ public class ArrayUtil {
         double v;
         for (int i = 0; i < pNum; i++) {
             v = iter.getDoubleNext();
-            if (!Double.isNaN(v)) {
-                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
-            }
+//            if (!Double.isNaN(v)) {
+//                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
+//            }
+            kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
         }
 
         //Loop
@@ -2648,6 +2649,66 @@ public class ArrayUtil {
                 gy = Y.get(i).doubleValue();
                 for (int j = 0; j < colNum; j++) {
                     gx = X.get(j).doubleValue();
+                    SearchResult r = kdTree.nearestNeighbours(new double[]{gx, gy}, 1).get(0);
+                    if (Math.sqrt(r.distance) <= radius) {
+                        rdata.setDouble(i * colNum + j, ((double) r.payload));
+                    } else {
+                        rdata.setDouble(i * colNum + j, Double.NaN);
+                    }
+                }
+            }
+        }
+
+        return rdata;
+    }
+
+    /**
+     * Interpolate with nearest method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param radius Radius
+     * @return grid data
+     */
+    public static Array interpolation_Nearest(Array x_s, Array y_s, Array a, Array X, Array Y,
+                                              double radius) {
+        int rowNum, colNum, pNum;
+        colNum = (int)X.getSize();
+        rowNum = (int)Y.getSize();
+        pNum = (int)x_s.getSize();
+        Array rdata = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        double gx, gy;
+
+        //Construct K-D tree
+        KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
+        IndexIterator iter = a.getIndexIterator();
+        double v;
+        for (int i = 0; i < pNum; i++) {
+            v = iter.getDoubleNext();
+//            if (!Double.isNaN(v)) {
+//                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
+//            }
+            kdTree.addPoint(new double[]{x_s.getDouble(i), y_s.getDouble(i)}, v);
+        }
+
+        //Loop
+        if (radius == Double.POSITIVE_INFINITY) {
+            for (int i = 0; i < rowNum; i++) {
+                gy = Y.getDouble(i);
+                for (int j = 0; j < colNum; j++) {
+                    gx = X.getDouble(j);
+                    SearchResult r = kdTree.nearestNeighbours(new double[]{gx, gy}, 1).get(0);
+                    rdata.setDouble(i * colNum + j, ((double) r.payload));
+                }
+            }
+        } else {
+            for (int i = 0; i < rowNum; i++) {
+                gy = Y.getDouble(i);
+                for (int j = 0; j < colNum; j++) {
+                    gx = X.getDouble(j);
                     SearchResult r = kdTree.nearestNeighbours(new double[]{gx, gy}, 1).get(0);
                     if (Math.sqrt(r.distance) <= radius) {
                         rdata.setDouble(i * colNum + j, ((double) r.payload));

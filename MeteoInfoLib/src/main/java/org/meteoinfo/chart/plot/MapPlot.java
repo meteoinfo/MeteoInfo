@@ -980,6 +980,10 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                 space = mapFrame.getGridLabelShift();
             }
 
+            Object[] objs;
+            float xShift, yShift;
+            XAlign xAlign;
+            YAlign yAlign;
             for (int i = 0; i < mapFrame.getMapView().getGridLabels().size(); i++) {
                 GridLabel aGL = mapFrame.getMapView().getGridLabels().get(i);
                 switch (mapFrame.getGridLabelPosition()) {
@@ -1106,90 +1110,12 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                         g.drawString(drawStr, labX, labY);
                     } else {
                         g.setColor(this.getXAxis().getTickLabelColor());
-                        switch (this.getProjInfo().getProjectionName()) {
-                            case Orthographic_Azimuthal:
-                            case Geostationary_Satellite:
-                                float angle = aGL.getAngle();
-                                double v = aGL.getValue();
-                                if (v == 0) {
-                                    if (angle == 90) {
-                                        labX += shift;
-                                        Draw.drawString(g, labX, labY, drawStr, XAlign.LEFT, YAlign.CENTER, false);
-                                    } else if (angle == 270) {
-                                        labX -= shift;
-                                        Draw.drawString(g, labX, labY, drawStr, XAlign.RIGHT, YAlign.CENTER, false);
-                                    } else if (angle < 90) {
-                                        labX += shift;
-                                        Draw.drawString(g, labX, labY, drawStr, XAlign.LEFT, YAlign.BOTTOM, false);
-                                    } else if (angle > 90 && angle <= 180) {
-                                        labX += shift;
-                                        Draw.drawString(g, labX, labY, drawStr, XAlign.LEFT, YAlign.TOP, false);
-                                    } else if (angle > 180 && angle < 270) {
-                                        labX -= shift;
-                                        Draw.drawString(g, labX, labY, drawStr, XAlign.RIGHT, YAlign.TOP, false);
-                                    } else if (angle > 270 && angle <= 360) {
-                                        labX -= shift;
-                                        Draw.drawString(g, labX, labY, drawStr, XAlign.RIGHT, YAlign.BOTTOM, false);
-                                    }
-                                } else if (v > 0) {
-                                    if (aGL.getLabDirection() == Direction.East) {
-                                        labX += shift;
-                                        Draw.drawString(g, labX, labY, drawStr, XAlign.LEFT, YAlign.BOTTOM, false);
-                                    } else {
-                                        labX -= shift;
-                                        Draw.drawString(g, labX, labY, drawStr, XAlign.RIGHT, YAlign.BOTTOM, false);
-                                    }
-                                } else {
-                                    if (aGL.getLabDirection() == Direction.East) {
-                                        labX += shift;
-                                        Draw.drawString(g, labX, labY, drawStr, XAlign.LEFT, YAlign.TOP, false);
-                                    } else {
-                                        labX -= shift;
-                                        Draw.drawString(g, labX, labY, drawStr, XAlign.RIGHT, YAlign.TOP, false);
-                                    }
-                                }                                
-                                break;
-                            default:
-                                angle = aGL.getAngle();
-                                if (angle == 0) {
-                                    labY -= shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.CENTER, YAlign.BOTTOM, false);
-                                } else if (angle == 180) {
-                                    labY += shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.CENTER, YAlign.TOP, false);
-                                } else if (angle == 90) {
-                                    labX += shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.LEFT, YAlign.CENTER, false);
-                                } else if (angle == 270) {
-                                    labX -= shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.RIGHT, YAlign.CENTER, false);
-                                } else if (angle > 0 && angle <= 45) {
-                                    labY -= shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.LEFT, YAlign.BOTTOM, false);
-                                } else if (angle > 45 && angle < 90) {
-                                    labX += shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.LEFT, YAlign.BOTTOM, false);
-                                } else if (angle > 90 && angle <= 135) {
-                                    labX += shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.LEFT, YAlign.TOP, false);
-                                } else if (angle > 135 && angle < 180) {
-                                    labY += shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.LEFT, YAlign.TOP, false);
-                                } else if (angle > 180 && angle <= 225) {
-                                    labY += shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.RIGHT, YAlign.TOP, false);
-                                } else if (angle > 225 && angle < 270) {
-                                    labX -= shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.RIGHT, YAlign.TOP, false);
-                                } else if (angle > 270 && angle <= 315) {
-                                    labX -= shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.RIGHT, YAlign.BOTTOM, false);
-                                } else if (angle > 315 && angle < 360) {
-                                    labY -= shift;
-                                    Draw.drawString(g, labX, labY, drawStr, XAlign.RIGHT, YAlign.BOTTOM, false);
-                                }
-                                break;
-                        }
+                        objs = this.getProjInfo().checkGridLabel(aGL, shift);
+                        xShift = (float)objs[0];
+                        yShift = (float)objs[1];
+                        xAlign = (XAlign)objs[2];
+                        yAlign = (YAlign)objs[3];
+                        Draw.drawString(g, labX+xShift, labY+yShift, drawStr, xAlign, yAlign, false);
                     }
                 }
             }

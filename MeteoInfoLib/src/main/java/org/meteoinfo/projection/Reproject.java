@@ -16,6 +16,8 @@ package org.meteoinfo.projection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.geoprocess.analysis.ResampleMethods;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.projection.info.ProjectionInfo;
@@ -31,6 +33,7 @@ import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.locationtech.proj4j.CoordinateTransform;
 import org.locationtech.proj4j.CoordinateTransformFactory;
 import org.locationtech.proj4j.ProjCoordinate;
+import org.meteoinfo.shape.PolygonShape;
 
 /**
  *
@@ -138,15 +141,15 @@ public class Reproject {
      * @param yy Y array
      * @param fromProj From projection
      * @param toProj To projection
-     * @param method Resample method
      * @return Porjected grid data
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
-    public static Object[] reprojectGrid(Array data, List<Number> xx, List<Number> yy, ProjectionInfo fromProj,
-                                     ProjectionInfo toProj, ResampleMethods method) throws InvalidRangeException {
+    public static Object[] reprojectGrid(Array data, Array xx, Array yy, ProjectionInfo fromProj,
+                                     ProjectionInfo toProj) throws InvalidRangeException {
+        //Get destination projection extent
         Extent aExtent;
-        int xnum = xx.size();
-        int ynum = yy.size();
+        int xnum = (int)xx.getSize();
+        int ynum = (int)yy.getSize();
         aExtent = ProjectionUtil.getProjectionExtent(fromProj, toProj, xx, yy);
 
         double xDelt = (aExtent.maxX - aExtent.minX) / (xnum - 1);
@@ -157,14 +160,25 @@ public class Reproject {
         for (i = 0; i < xnum; i++) {
             rx.setDouble(i, aExtent.minX + i * xDelt);
         }
-
         for (i = 0; i < ynum; i++) {
             ry.setDouble(i, aExtent.minY + i * yDelt);
         }
 
-        Array[] rr = ArrayUtil.meshgrid(rx, ry);
+        //Projection data
+        Array[] gxy = ArrayUtil.meshgrid(xx, yy);
+        Array[] pxy = reproject(gxy[0], gxy[1], fromProj, toProj);
+        Array px = pxy[0];
+        Array py = pxy[1];
 
-        Array r = reproject(data, xx, yy, rr[0], rr[1], fromProj, toProj, method);
+        //Interpolation data
+        Array r = ArrayUtil.interpolation_Nearest(px, py, data, rx, ry, Double.POSITIVE_INFINITY);
+
+        //Convexhull maskout
+        PolygonShape polyshape = GeometryUtil.convexHull(px, py);
+        Array[] rxy = ArrayUtil.meshgrid(rx, ry);
+        List<PolygonShape> pss = new ArrayList<>();
+        pss.add(polyshape);
+        r = GeometryUtil.maskout(r, rxy[0], rxy[1], pss);
 
         return new Object[]{r, rx, ry};
     }

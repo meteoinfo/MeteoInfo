@@ -6,11 +6,12 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.global import PointD
-from org.meteoinfo.global.util import DateUtil
+from org.meteoinfo.global.util import JDateUtil
 from org.meteoinfo.ndarray import Complex
 from org.meteoinfo.shape import PointShape, ShapeUtil
-from java.util import Calendar, Locale
-from java.text import SimpleDateFormat
+from java.util import Locale
+from java.time import LocalDateTime
+from java.time.format import DateTimeFormatter
 from java.awt import Color
 from org.joda.time import DateTime
 import datetime
@@ -31,15 +32,13 @@ def pydate(t):
                     tt.getMinuteOfHour(), tt.getSecondOfMinute(), tt.getMillisOfSecond() * 1000)
                 r.append(dt)            
         else:
-            cal = Calendar.getInstance()
             for tt in t:
-                cal.setTime(tt)
-                year = cal.get(Calendar.YEAR)
-                month = cal.get(Calendar.MONTH) + 1
-                day = cal.get(Calendar.DAY_OF_MONTH)
-                hour = cal.get(Calendar.HOUR_OF_DAY)
-                minute = cal.get(Calendar.MINUTE)
-                second = cal.get(Calendar.SECOND)
+                year = tt.getYear()
+                month = tt.getMonthValue()
+                day = tt.getDayOfMonth()
+                hour = tt.getHour()
+                minute = tt.getMinute()
+                second = tt.getSecond()
                 dt = datetime.datetime(year, month, day, hour, minute, second)
                 r.append(dt)
         return r
@@ -49,14 +48,12 @@ def pydate(t):
                 tt.getHourOfDay(), tt.getMinuteOfHour(), tt.getSecondOfMinute(), tt.getMillisOfSecond())
             return dt
         else:
-            cal = Calendar.getInstance()
-            cal.setTime(t)
-            year = cal.get(Calendar.YEAR)
-            month = cal.get(Calendar.MONTH) + 1
-            day = cal.get(Calendar.DAY_OF_MONTH)
-            hour = cal.get(Calendar.HOUR_OF_DAY)
-            minute = cal.get(Calendar.MINUTE)
-            second = cal.get(Calendar.SECOND)
+            year = t.getYear()
+            month = t.getMonthValue()
+            day = t.getDayOfMonth()
+            hour = t.getHour()
+            minute = t.getMinute()
+            second = t.getSecond()
             dt = datetime.datetime(year, month, day, hour, minute, second)
             return dt
     
@@ -68,18 +65,17 @@ def jdate(t):
     
     :returns: Java date
     """
-    cal = Calendar.getInstance()
     if isinstance(t, list):
         r = []
         for tt in t:
-            cal.set(tt.year, tt.month - 1, tt.day, tt.hour, tt.minute, tt.second)
-            cal.set(Calendar.MILLISECOND, 0)
-            r.append(cal.getTime())
+            t = LocalDateTime.of(tt.year, tt.month, tt.day, tt.hour, tt.minute, tt.second)
+            #cal.set(Calendar.MILLISECOND, 0)
+            r.append(t)
         return r
     else:
-        cal.set(t.year, t.month - 1, t.day, t.hour, t.minute, t.second)
-        cal.set(Calendar.MILLISECOND, 0)
-        return cal.getTime()
+        t = LocalDateTime.of(t.year, t.month, t.day, t.hour, t.minute, t.second)
+        #cal.set(Calendar.MILLISECOND, 0)
+        return t
         
 def jdatetime(t):
     """
@@ -106,7 +102,7 @@ def date2num(t):
     :returns: Numerical value
     """
     tt = jdate(t)
-    v = DateUtil.toOADate(tt)
+    v = JDateUtil.toOADate(tt)
     return v
     
 def dates2nums(dates):
@@ -120,7 +116,7 @@ def dates2nums(dates):
     values = []
     for t in dates:
         tt = jdate(t)
-        values.append(DateUtil.toOADate(tt))
+        values.append(JDateUtil.toOADate(tt))
     return values
     
 def num2date(v):
@@ -131,7 +127,7 @@ def num2date(v):
     
     :returns: Python date
     """
-    t = DateUtil.fromOADate(v)
+    t = JDateUtil.fromOADate(v)
     return pydate(t)
     
 def nums2dates(values):
@@ -144,7 +140,7 @@ def nums2dates(values):
     """
     tt = []
     for v in values:
-        t = DateUtil.fromOADate(v)
+        t = JDateUtil.fromOADate(v)
         tt.append(pydate(t))
     return tt
     
@@ -209,10 +205,10 @@ def dateformat(t, format, language=None):
     """
     jt = jdate(t)
     if language is None:
-        df = SimpleDateFormat(format)
+        df = DateTimeFormatter.ofPattern(format)
     else:
         locale = Locale(language)
-        df = SimpleDateFormat(format, locale)
+        df = DateTimeFormatter.ofPattern(format, locale)
     return df.format(jt)
     
 def jcomplex(v):

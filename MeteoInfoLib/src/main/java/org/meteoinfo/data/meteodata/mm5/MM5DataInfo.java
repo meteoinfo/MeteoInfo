@@ -263,11 +263,10 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
                         br.skipBytes(zn * 4 + 8);
                     }
 
-//                    if (shIdx == 0) {
-//                        ct = format.parse(sh.current_date);
-//                        times.add(ct);
-//                    }
-                    ct = LocalDateTime.parse(sh.current_date, format);
+                    if (sh.current_date.length() == 24)
+                        ct = LocalDateTime.parse(sh.current_date.substring(0, 19), format);
+                    else
+                        ct = LocalDateTime.parse(sh.current_date, format);
                     if (times.contains(ct)) {
                         sh.timeIndex = times.indexOf(ct);
                     } else {

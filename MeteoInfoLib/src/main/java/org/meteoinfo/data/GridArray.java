@@ -21,11 +21,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.MIMath;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -797,8 +797,8 @@ public class GridArray {
      * @param floatFormat Float format
      * @throws IOException 
      */
-    public void saveAsMICAPS4File(String aFile, String description, Date aTime, int hours, int level,
-            float smooth, float boldValue, String floatFormat) throws IOException {
+    public void saveAsMICAPS4File(String aFile, String description, LocalDateTime aTime, int hours, int level,
+                                  float smooth, float boldValue, String floatFormat) throws IOException {
         //Get contour values
         double[] CValues;
         double undef = 9999;
@@ -816,7 +816,7 @@ public class GridArray {
         }
 
         //Write file
-        SimpleDateFormat format = new SimpleDateFormat("yy MM dd HH");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yy MM dd HH");
         BufferedWriter sw = new BufferedWriter(new FileWriter(new File(aFile)));
         sw.write("diamond 4 " + description);
         sw.newLine();
@@ -870,7 +870,7 @@ public class GridArray {
      * @param projInfo Projection info
      * @throws IOException 
      */
-    public void saveAsMICAPS4File(String aFile, String description, Date aTime, int hours, int level,
+    public void saveAsMICAPS4File(String aFile, String description, LocalDateTime aTime, int hours, int level,
             float smooth, float boldValue, String floatFormat, ProjectionInfo projInfo) throws IOException {
         //Get contour values
         double[] CValues;
@@ -888,7 +888,7 @@ public class GridArray {
         }
 
         //Write file
-        SimpleDateFormat format = new SimpleDateFormat("yy MM dd HH");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yy MM dd HH");
         BufferedWriter sw = new BufferedWriter(new FileWriter(new File(aFile)));
         sw.write("diamond 4 " + description);
         String aLine = format.format(aTime) + " " + String.valueOf(hours) + " " + String.valueOf(level);

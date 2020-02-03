@@ -18,18 +18,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
@@ -127,9 +126,8 @@ public class MICAPS11DataInfo extends DataInfo implements IGridDataInfo {
                     year = 1900 + year;
                 }
             }
-            Calendar cal = new GregorianCalendar(year, Integer.parseInt(dataList.get(1)) - 1, Integer.parseInt(dataList.get(2)),
+            LocalDateTime time = LocalDateTime.of(year, Integer.parseInt(dataList.get(1)), Integer.parseInt(dataList.get(2)),
                     Integer.parseInt(dataList.get(3)), 0, 0);
-            Date time = cal.getTime();
 
             _preHours = Integer.parseInt(dataList.get(4));
             _level = Integer.parseInt(dataList.get(5));
@@ -165,7 +163,7 @@ public class MICAPS11DataInfo extends DataInfo implements IGridDataInfo {
             Dimension tdim = new Dimension(DimensionType.T);
             tdim.setShortName("time");
             double[] values = new double[1];
-            values[0] = DateUtil.toOADate(time);
+            values[0] = JDateUtil.toOADate(time);
             tdim.setValues(values);
             this.setTimeDimension(tdim);
             this.addDimension(tdim);
@@ -218,7 +216,7 @@ public class MICAPS11DataInfo extends DataInfo implements IGridDataInfo {
     public String generateInfoText() {
         String dataInfo;
         dataInfo = "Description: " + _description;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
         dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
         dataInfo += System.getProperty("line.separator") + super.generateInfoText();
 

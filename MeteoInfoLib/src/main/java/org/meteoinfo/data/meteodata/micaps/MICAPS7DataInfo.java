@@ -19,15 +19,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.LinkOption;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.MeteoDataType;
@@ -173,13 +174,13 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
                                 year = 1900 + year;
                             }
                         }
-                        Calendar cal = new GregorianCalendar(year, Integer.parseInt(dataArray[1]) - 1,
+                        LocalDateTime tt = LocalDateTime.of(year, Integer.parseInt(dataArray[1]),
                                 Integer.parseInt(dataArray[2]), Integer.parseInt(dataArray[3]), 0, 0);
                         if (times.isEmpty()) {
-                            times.add(DateUtil.toOADate(cal.getTime()));
+                            times.add(JDateUtil.toOADate(tt));
                         }
 
-                        aTrajInfo.startTime = cal.getTime();
+                        aTrajInfo.startTime = tt;
                         aTrajInfo.startLat = Float.parseFloat(dataArray[6]);
                         aTrajInfo.startLon = Float.parseFloat(dataArray[5]);
                         trajInfoList.add(aTrajInfo);
@@ -417,13 +418,13 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
                         TrajIdx += 1;
                     } else if (dataArray.length == 13) {
                         List<Object> dList = new ArrayList<>();
-                        Calendar cal = new GregorianCalendar(Integer.parseInt(dataArray[0]), Integer.parseInt(dataArray[1]) - 1,
+                        LocalDateTime tt = LocalDateTime.of(Integer.parseInt(dataArray[0]), Integer.parseInt(dataArray[1]),
                                 Integer.parseInt(dataArray[2]), Integer.parseInt(dataArray[3]), 0, 0);
                         aPoint = new PointD();
                         aPoint.X = Double.parseDouble(dataArray[5]);
                         aPoint.Y = Double.parseDouble(dataArray[6]);
                         dList.add(aPoint);
-                        dList.add(cal.getTime());
+                        dList.add(tt);
                         dList.add(Integer.parseInt(dataArray[4]));
                         for (int d = 0; d < 5; d++) {
                             dList.add(Double.parseDouble(dataArray[d + 7]));
@@ -613,13 +614,13 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
                         case 13:
                             if (TrajIdx == aTrajIdx) {
                                 List<Object> dList = new ArrayList<>();
-                                Calendar cal = new GregorianCalendar(Integer.parseInt(dataArray[0]), Integer.parseInt(dataArray[1]) - 1,
+                                LocalDateTime tt = LocalDateTime.of(Integer.parseInt(dataArray[0]), Integer.parseInt(dataArray[1]),
                                         Integer.parseInt(dataArray[2]), Integer.parseInt(dataArray[3]), 0, 0);
                                 aPoint = new PointD();
                                 aPoint.X = Double.parseDouble(dataArray[5]);
                                 aPoint.Y = Double.parseDouble(dataArray[6]);
                                 dList.add(aPoint);
-                                dList.add(cal.getTime());
+                                dList.add(tt);
                                 dList.add(Double.parseDouble(dataArray[7]));
 
                                 trajPointsData.add(dList);

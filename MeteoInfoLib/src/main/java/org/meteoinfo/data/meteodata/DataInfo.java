@@ -13,11 +13,13 @@
  */
 package org.meteoinfo.data.meteodata;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import org.meteoinfo.global.util.DateUtil;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.projection.KnownCoordinateSystems;
@@ -150,11 +152,11 @@ public abstract class DataInfo {
      *
      * @return Times
      */
-    public List<Date> getTimes() {
+    public List<LocalDateTime> getTimes() {
         List<Double> values = _tDim.getDimValue();
-        List<Date> times = new ArrayList<>();
+        List<LocalDateTime> times = new ArrayList<>();
         for (Double v : values) {
-            times.add(DateUtil.fromOADate(v));
+            times.add(JDateUtil.fromOADate(v));
         }
 
         return times;
@@ -166,8 +168,8 @@ public abstract class DataInfo {
      * @param timeIdx Time index
      * @return Time
      */
-    public Date getTime(int timeIdx) {
-        return DateUtil.fromOADate(_tDim.getDimValue().get(timeIdx));
+    public LocalDateTime getTime(int timeIdx) {
+        return JDateUtil.fromOADate(_tDim.getDimValue().get(timeIdx));
     }
     
     /**
@@ -186,27 +188,20 @@ public abstract class DataInfo {
      * @param tDelta Delta time
      * @return Time value
      */
-    public static int getTimeValue(Date time, Date baseDate, String tDelta) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(baseDate);
-        long sl = cal.getTimeInMillis();
-        long el, delta;
+    public static int getTimeValue(LocalDateTime time, LocalDateTime baseDate, String tDelta) {
         int value = 0;
-        cal.setTime(time);
-        el = cal.getTimeInMillis();
-        delta = el - sl;
         switch (tDelta.toLowerCase()) {
             case "seconds":
-                value = (int) (delta / (1000));
+                value = (int)Duration.between(baseDate, time).getSeconds();
                 break;
             case "minutes":
-                value = (int) (delta / (60 * 1000));
+                value = (int)Duration.between(baseDate, time).toMinutes();
                 break;
             case "hours":
-                value = (int) (delta / (60 * 60 * 1000));
+                value = (int)Duration.between(baseDate, time).toHours();
                 break;
             case "days":
-                value = (int) (delta / (24 * 60 * 60 * 1000));
+                value = Period.between(baseDate.toLocalDate(), time.toLocalDate()).getDays();
                 break;
         }
 
@@ -220,24 +215,14 @@ public abstract class DataInfo {
      * @param tDelta Time delta type - days/hours/...
      * @return Time values
      */
-    public List<Integer> getTimeValues(Date baseDate, String tDelta) {
-        List<Date> times = this.getTimes();
+    public List<Integer> getTimeValues(LocalDateTime baseDate, String tDelta) {
+        List<LocalDateTime> times = this.getTimes();
         List<Integer> values = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(baseDate);
-        long sl = cal.getTimeInMillis();
-        long el, delta;
-        int value;
-        for (Date time : times) {
-            cal.setTime(time);
-            el = cal.getTimeInMillis();
-            delta = el - sl;
+        for (LocalDateTime time : times) {
             if (tDelta.equalsIgnoreCase("hours")) {
-                value = (int) (delta / (60 * 60 * 1000));
-                values.add(value);
+                values.add((int)Duration.between(baseDate, time).toHours());
             } else if (tDelta.equalsIgnoreCase("days")) {
-                value = (int) (delta / (24 * 60 * 60 * 1000));
-                values.add(value);
+                values.add(Period.between(baseDate.toLocalDate(), time.toLocalDate()).getDays());
             }
         }
 
@@ -249,11 +234,10 @@ public abstract class DataInfo {
      *
      * @param value Times
      */
-    public void setTimes(List<Date> value) {
-        List<Date> times = value;
+    public void setTimes(List<LocalDateTime> value) {
         List<Double> values = new ArrayList<>();
-        for (Date t : times) {
-            values.add(DateUtil.toOADate(t));
+        for (LocalDateTime t : value) {
+            values.add(JDateUtil.toOADate(t));
         }
         _tDim.setValues(values);
     }

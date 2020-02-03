@@ -15,6 +15,7 @@ package org.meteoinfo.data.meteodata.synop;
 
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
@@ -29,11 +30,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +50,7 @@ public class SYNOPDataInfo extends DataInfo implements IStationDataInfo {
 
     // <editor-fold desc="Variables">
     private String stFileName;
-    private Date date;
+    private LocalDateTime date;
     private int stationNum;
     private final List<String> varList;
     private List<List<String>> DataList;
@@ -123,10 +123,8 @@ public class SYNOPDataInfo extends DataInfo implements IStationDataInfo {
             sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
             List<List<String>> disDataList = new ArrayList<>();
             String reportType = "AAXX", str, stID;
-            Date toDay = new Date();
-            Calendar cal_now = Calendar.getInstance();
-            cal_now.setTime(toDay);
-            Calendar cal = Calendar.getInstance();
+            LocalDateTime toDay = LocalDateTime.now();
+            LocalDateTime tt = LocalDateTime.now();
             String windSpeedIndicator = "/";
             int stIdx;
             boolean isSetTime = true;
@@ -158,9 +156,9 @@ public class SYNOPDataInfo extends DataInfo implements IStationDataInfo {
                         reportType = "AAXX";
                         str = aLine.substring(aLine.length() - 5, aLine.length());
                         if (isSetTime) {
-                            cal.set(cal_now.get(Calendar.YEAR), cal_now.get(Calendar.MONTH), Integer.parseInt(str.substring(0, 2)),
+                            tt = LocalDateTime.of(toDay.getYear(), toDay.getMonth(), Integer.parseInt(str.substring(0, 2)),
                                     Integer.parseInt(str.substring(2, 4)), 0, 0);
-                            this.date = cal.getTime();
+                            this.date = tt;
                             isSetTime = false;
                         }
                         windSpeedIndicator = str.substring(str.length() - 1, str.length());
@@ -255,7 +253,7 @@ public class SYNOPDataInfo extends DataInfo implements IStationDataInfo {
 
             Dimension tdim = new Dimension(DimensionType.T);
             double[] values = new double[1];
-            values[0] = DateUtil.toOADate(date);
+            values[0] = JDateUtil.toOADate(date);
             tdim.setValues(values);
             this.setTimeDimension(tdim);
             List<Variable> vars = new ArrayList<>();
@@ -294,7 +292,7 @@ public class SYNOPDataInfo extends DataInfo implements IStationDataInfo {
     public String generateInfoText() {
         String dataInfo;
         dataInfo = "File Name: " + this.getFileName();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
         dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
         dataInfo += System.getProperty("line.separator") + "Station Number: " + String.valueOf(this.stationNum);
         dataInfo += System.getProperty("line.separator") + "Number of Variables = " + String.valueOf(this.getVariableNum());

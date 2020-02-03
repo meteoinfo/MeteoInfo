@@ -15,6 +15,7 @@ package org.meteoinfo.data.meteodata.arl;
 
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
@@ -28,12 +29,10 @@ import java.math.BigDecimal;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -214,7 +213,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             RandomAccessFile br = new RandomAccessFile(fileName, "r");
             DataLabel dl = readDataLabel(br);
             br.close();
-            Date t = dl.getTimeValue();
+            LocalDateTime t = dl.getTimeValue();
             return t != null;
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
@@ -459,7 +458,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             //Reopen            
             byte[] dataBytes = new byte[NXY];
-            Date aTime, oldTime;
+            LocalDateTime aTime, oldTime;
             int recNum, timeNum;
             br.seek(0);
             recNum = 0;
@@ -470,10 +469,9 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             } else {
                 year = 1900 + year;
             }
-            Calendar cal = new GregorianCalendar(year, aDL.getMonth() - 1, aDL.getDay(), aDL.getHour(), 0, 0);
-            oldTime = cal.getTime();
-            List<Date> times = new ArrayList<>();
-            times.add((Date) oldTime.clone());
+            oldTime = LocalDateTime.of(year, aDL.getMonth(), aDL.getDay(), aDL.getHour(), 0, 0);
+            List<LocalDateTime> times = new ArrayList<>();
+            times.add(oldTime);
 
             do {
                 if (br.getFilePointer() >= br.length() - 1) {
@@ -487,11 +485,10 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 br.read(dataBytes);
 
                 if (!aDL.getVarName().equalsIgnoreCase("INDX")) {
-                    cal = new GregorianCalendar(year, aDL.getMonth() - 1, aDL.getDay(), aDL.getHour(), 0, 0);
-                    aTime = cal.getTime();
-                    if (aTime.getTime() != oldTime.getTime()) {
+                    aTime = LocalDateTime.of(year, aDL.getMonth(), aDL.getDay(), aDL.getHour(), 0, 0);
+                    if (!aTime.equals(oldTime)) {
                         times.add(aTime);
-                        oldTime.setTime(aTime.getTime());
+                        oldTime = aTime;
                         timeNum += 1;
                     }
                     if (timeNum == 0) {
@@ -504,8 +501,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             br.close();
 
             List<Double> values = new ArrayList<>();
-            for (Date t : times) {
-                values.add(DateUtil.toOADate(t));
+            for (LocalDateTime t : times) {
+                values.add(JDateUtil.toOADate(t));
             }
             Dimension tDim = new Dimension(DimensionType.T);
             tDim.setValues(values);
@@ -670,44 +667,6 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     @Override
     public List<Attribute> getGlobalAttributes() {
         return new ArrayList<>();
-    }
-
-    //@Override
-    public String generateInfoText_bak() {
-        String dataInfo;
-        dataInfo = "File Name: " + this.getFileName();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
-        dataInfo += System.getProperty("line.separator") + "File Start Time: " + format.format(this.getTimes().get(0));
-        dataInfo += System.getProperty("line.separator") + "File End Time: " + format.format(this.getTimes().get(this.getTimes().size() - 1));
-        dataInfo += System.getProperty("line.separator") + "Record Length Bytes: " + String.valueOf(recLen);
-        dataInfo += System.getProperty("line.separator") + "Meteo Data Model: " + dataHead.MODEL;
-        dataInfo += System.getProperty("line.separator") + "Xsize = " + String.valueOf(dataHead.NX)
-                + "  Ysize = " + String.valueOf(dataHead.NY) + "  Zsize = " + String.valueOf(dataHead.NZ)
-                + "  Tsize = " + String.valueOf(this.getTimes().size());
-        dataInfo += System.getProperty("line.separator") + "Record Per Time: " + String.valueOf(recsPerTime);
-        dataInfo += System.getProperty("line.separator") + "Number of Surface Variables = " + String.valueOf(LevelVarList.get(0).size());
-        for (String v : LevelVarList.get(0)) {
-            dataInfo += System.getProperty("line.separator") + "  " + v;
-        }
-        if (LevelVarList.size() > 1) {
-            dataInfo += System.getProperty("line.separator") + "Number of Upper Variables = " + String.valueOf(LevelVarList.get(1).size());
-            for (String v : LevelVarList.get(1)) {
-                dataInfo += System.getProperty("line.separator") + "  " + v;
-            }
-        }
-        dataInfo += System.getProperty("line.separator") + "Pole pnt lat/lon: "
-                + String.valueOf(dataHead.POLE_LAT) + "  " + String.valueOf(dataHead.POLE_LON);
-        dataInfo += System.getProperty("line.separator") + "Reference pnt lat/lon: "
-                + String.valueOf(dataHead.REF_LAT) + "  " + String.valueOf(dataHead.REF_LON);
-        dataInfo += System.getProperty("line.separator") + "Grid Size: " + String.valueOf(dataHead.SIZE);
-        dataInfo += System.getProperty("line.separator") + "Orientation: " + String.valueOf(dataHead.ORIENT);
-        dataInfo += System.getProperty("line.separator") + "Tan lat/cone: " + String.valueOf(dataHead.TANG_LAT);
-        dataInfo += System.getProperty("line.separator") + "Syn pnt x/y: " + String.valueOf(dataHead.SYNC_XP)
-                + "  " + String.valueOf(dataHead.SYNC_YP);
-        dataInfo += System.getProperty("line.separator") + "Syn pnt lat/lon: " + String.valueOf(dataHead.SYNC_LAT)
-                + "  " + String.valueOf(dataHead.SYNC_LON);
-
-        return dataInfo;
     }
 
     private double[][] unpackARLGridData(byte[] dataBytes, int xNum, int yNum, DataLabel aDL) {
@@ -976,7 +935,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             gridData.xArray = Y;
             gridData.yArray = new double[tNum];
             for (int i = 0; i < tNum; i++) {
-                gridData.yArray[i] = DateUtil.toOADate(this.getTimes().get(i));
+                gridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
             return gridData;
@@ -1035,7 +994,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             gridData.xArray = X;
             gridData.yArray = new double[tNum];
             for (int i = 0; i < tNum; i++) {
-                gridData.yArray[i] = DateUtil.toOADate(this.getTimes().get(i));
+                gridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
             return gridData;
@@ -1209,7 +1168,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             gridData.missingValue = missingValue;
             gridData.xArray = new double[tNum];
             for (int i = 0; i < tNum; i++) {
-                gridData.xArray[i] = DateUtil.toOADate(this.getTimes().get(i));
+                gridData.xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
             gridData.yArray = new double[lNum];
             for (int i = 0; i < lNum; i++) {
@@ -1268,7 +1227,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 gridData = unpackARLGridData(dataBytes, xNum, yNum, aDL);
 
                 aValue = gridData[latIdx][lonIdx];
-                aGridData.xArray[t] = DateUtil.toOADate(this.getTimes().get(t));
+                aGridData.xArray[t] = JDateUtil.toOADate(this.getTimes().get(t));
                 aGridData.data[0][t] = aValue;
             }
 
@@ -1720,8 +1679,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
      * Write standard data label
      * @param time The time
      */
-    private void writeSDL(Date time) throws IOException {
-        SimpleDateFormat format = new SimpleDateFormat("yyMMddHH");
+    private void writeSDL(LocalDateTime time) throws IOException {
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyMMddHH");
         String dateStr = format.format(time);
         _bw.writeBytes(dateStr);
         _bw.writeBytes("00");
@@ -1746,7 +1705,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
      * @param ksums Checksum list
      * @throws java.io.IOException
      */
-    public void writeIndexRecord(Date time, DataHead aDH, List<List<Integer>> ksums) throws IOException {
+    public void writeIndexRecord(LocalDateTime time, DataHead aDH, List<List<Integer>> ksums) throws IOException {
         _bw.seek(this.indexRecPos);
         
         //write the standard label (50) plus the         
@@ -1843,7 +1802,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
         byte[] dataBytes = packARLGridData(gridData, aDL);
 
         //write data label
-        SimpleDateFormat format = new SimpleDateFormat("yyMMddHH");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyMMddHH");
         String dateStr = format.format(aDL.getTime());
         _bw.writeBytes(dateStr);
         _bw.writeBytes(GlobalUtil.padLeft(String.valueOf(aDL.getForecast()), 2, ' '));
@@ -1884,7 +1843,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
         int ksum = (int) r[1];
 
         //write data label
-        SimpleDateFormat format = new SimpleDateFormat("yyMMddHH");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyMMddHH");
         String dateStr = format.format(aDL.getTime());
         _bw.writeBytes(dateStr);
         String fcst = GlobalUtil.padLeft(String.valueOf(aDL.getForecast()), 2, ' ');
@@ -1929,7 +1888,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
      * @param gridData The grid data
      * @throws IOException IOException
      */
-    public void writeGridData(Date time, int levelIdx, String varName, int forecast, int grid, GridData gridData) throws IOException {
+    public void writeGridData(LocalDateTime time, int levelIdx, String varName, int forecast, int grid, GridData gridData) throws IOException {
         DataLabel aDL = new DataLabel(time);
         aDL.setLevel(levelIdx);
         aDL.setVarName(varName);
@@ -1954,7 +1913,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
      * @return Checksum
      * @throws IOException IOException
      */
-    public int writeGridData(Date time, int levelIdx, String varName, int forecast, int grid, Array gridData) throws IOException {
+    public int writeGridData(LocalDateTime time, int levelIdx, String varName, int forecast, int grid, Array gridData) throws IOException {
         DataLabel aDL = new DataLabel(time);
         aDL.setLevel(levelIdx);
         aDL.setVarName(varName);

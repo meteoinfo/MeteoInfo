@@ -18,6 +18,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1105,60 +1107,55 @@ public class FrmMeteoData extends javax.swing.JDialog {
             case MICAPS_7:
             case MICAPS_11:
             case MICAPS_13:
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(_meteoDataInfo.getDataInfo().getTimes().get(0));
-                cal.add(Calendar.HOUR, -3);
-                Date aTime = cal.getTime();
+                LocalDateTime tt = _meteoDataInfo.getDataInfo().getTimes().get(0);
+                tt = tt.minusHours(3);
                 String aFile = _meteoDataInfo.getFileName();
                 String path = new File(aFile).getParent();
-                SimpleDateFormat format = new SimpleDateFormat("yyMMddHH");
+                DateTimeFormatter format = DateTimeFormatter.ofPattern("yyMMddHH");
                 for (int i = 0; i < 100; i++) {
-                    aFile = path + File.separator + format.format(aTime) + ".000";
+                    aFile = path + File.separator + format.format(tt) + ".000";
                     if (new File(aFile).exists()) {
                         break;
                     }
-                    cal.add(Calendar.HOUR, -3);
+                    tt = tt.minusHours(3);
                 }
                 if (new File(aFile).exists()) {
                     _meteoDataInfo.openMICAPSData(aFile);
                     DefaultListModel listModel = (DefaultListModel) this.jList_DataFiles.getModel();
                     listModel.set(this.jList_DataFiles.getSelectedIndex(), new File(aFile).getName());
-                    format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                     this.jComboBox_Time.removeAllItems();
-                    this.jComboBox_Time.addItem(format.format(aTime));
+                    this.jComboBox_Time.addItem(format.format(tt));
                 }
                 break;
             case MICAPS_1:
             case MICAPS_120:
-                cal = Calendar.getInstance();
-                cal.setTime(_meteoDataInfo.getDataInfo().getTimes().get(0));
-                cal.add(Calendar.HOUR, -1);
-                aTime = cal.getTime();
+                tt = _meteoDataInfo.getDataInfo().getTimes().get(0);
+                tt = tt.minusHours(1);
                 aFile = _meteoDataInfo.getFileName();
                 path = new File(aFile).getParent();
                 switch (_meteoDataInfo.getDataType()) {
                     case MICAPS_120:
-                        format = new SimpleDateFormat("yyyyMMddHH");
+                        format = DateTimeFormatter.ofPattern("yyyyMMddHH");
                         break;
                     default:
-                        format = new SimpleDateFormat("yyMMddHH");
+                        format = DateTimeFormatter.ofPattern("yyMMddHH");
                         break;
                 }   
                 for (int i = 0; i < 100; i++) {
-                    aFile = path + File.separator + format.format(aTime) + ".000";
+                    aFile = path + File.separator + format.format(tt) + ".000";
                     if (new File(aFile).exists()) {
                         break;
                     }
-                    cal.add(Calendar.HOUR, -1);
-                    aTime = cal.getTime();
+                    tt = tt.minusHours(1);
                 }
                 if (new File(aFile).exists()) {
                     _meteoDataInfo.openMICAPSData(aFile);
                     DefaultListModel listModel = (DefaultListModel) this.jList_DataFiles.getModel();
                     listModel.set(this.jList_DataFiles.getSelectedIndex(), new File(aFile).getName());
-                    format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                     this.jComboBox_Time.removeAllItems();
-                    this.jComboBox_Time.addItem(format.format(aTime));
+                    this.jComboBox_Time.addItem(format.format(tt));
                 }
                 break;
             case ISH:
@@ -1206,61 +1203,55 @@ public class FrmMeteoData extends javax.swing.JDialog {
             case MICAPS_7:
             case MICAPS_11:
             case MICAPS_13:
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(_meteoDataInfo.getDataInfo().getTimes().get(0));
-                cal.add(Calendar.HOUR, 3);
-                Date aTime = cal.getTime();
+                LocalDateTime tt = _meteoDataInfo.getDataInfo().getTimes().get(0);
+                tt = tt.plusHours(3);
                 String aFile = _meteoDataInfo.getFileName();
                 String path = new File(aFile).getParent();
-                SimpleDateFormat format = new SimpleDateFormat("yyMMddHH");
+                DateTimeFormatter format = DateTimeFormatter.ofPattern("yyMMddHH");
                 for (int i = 0; i < 100; i++) {
-                    aFile = path + File.separator + format.format(aTime) + ".000";
+                    aFile = path + File.separator + format.format(tt) + ".000";
                     if (new File(aFile).exists()) {
                         break;
                     }
-                    cal.add(Calendar.HOUR, 3);
-                    aTime = cal.getTime();
+                    tt = tt.plusHours(3);
                 }
                 if (new File(aFile).exists()) {
                     _meteoDataInfo.openMICAPSData(aFile);
                     DefaultListModel listModel = (DefaultListModel) this.jList_DataFiles.getModel();
                     listModel.set(this.jList_DataFiles.getSelectedIndex(), new File(aFile).getName());
-                    format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                     this.jComboBox_Time.removeAllItems();
-                    this.jComboBox_Time.addItem(format.format(aTime));
+                    this.jComboBox_Time.addItem(format.format(tt));
                 }
                 break;
             case MICAPS_1:
             case MICAPS_120:
-                cal = Calendar.getInstance();
-                cal.setTime(_meteoDataInfo.getDataInfo().getTimes().get(0));
-                cal.add(Calendar.HOUR, 1);
-                aTime = cal.getTime();
+                tt = _meteoDataInfo.getDataInfo().getTimes().get(0);
+                tt = tt.plusHours(1);
                 aFile = _meteoDataInfo.getFileName();
                 path = new File(aFile).getParent();
                 switch (_meteoDataInfo.getDataType()) {
                     case MICAPS_120:
-                        format = new SimpleDateFormat("yyyyMMddHH");
+                        format = DateTimeFormatter.ofPattern("yyyyMMddHH");
                         break;
                     default:
-                        format = new SimpleDateFormat("yyMMddHH");
+                        format = DateTimeFormatter.ofPattern("yyMMddHH");
                         break;
                 }                
                 for (int i = 0; i < 100; i++) {
-                    aFile = path + File.separator + format.format(aTime) + ".000";
+                    aFile = path + File.separator + format.format(tt) + ".000";
                     if (new File(aFile).exists()) {
                         break;
                     }
-                    cal.add(Calendar.HOUR, 1);
-                    aTime = cal.getTime();
+                    tt = tt.plusHours(1);
                 }
                 if (new File(aFile).exists()) {
                     _meteoDataInfo.openMICAPSData(aFile);
                     DefaultListModel listModel = (DefaultListModel) this.jList_DataFiles.getModel();
                     listModel.set(this.jList_DataFiles.getSelectedIndex(), new File(aFile).getName());
-                    format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                     this.jComboBox_Time.removeAllItems();
-                    this.jComboBox_Time.addItem(format.format(aTime));
+                    this.jComboBox_Time.addItem(format.format(tt));
                 }
                 break;
             case ISH:

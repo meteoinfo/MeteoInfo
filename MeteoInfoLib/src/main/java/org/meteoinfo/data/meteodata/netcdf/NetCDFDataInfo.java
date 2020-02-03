@@ -16,6 +16,7 @@ package org.meteoinfo.data.meteodata.netcdf;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
@@ -27,11 +28,10 @@ import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.MIMath;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -917,21 +917,17 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         return attStr;
     }
 
-    private List<Date> getTimes(ucar.nc2.Variable aVar, Array values) {
+    private List<LocalDateTime> getTimes(ucar.nc2.Variable aVar, Array values) {
         //Get start time
         String unitsStr;
         int i;
-        List<Date> times = new ArrayList<>();
+        List<LocalDateTime> times = new ArrayList<>();
         ucar.nc2.Attribute unitAtt = aVar.findAttribute("units");
         if (unitAtt == null) {
-            Calendar cal = Calendar.getInstance();
-            cal.set(1985, 0, 1, 0, 0);
-            Date sTime = cal.getTime();
+            LocalDateTime sTime = LocalDateTime.of(1985, 1, 1, 0, 0);
             IndexIterator ii = values.getIndexIterator();
             while (ii.hasNext()) {
-                cal.add(Calendar.HOUR, ii.getIntNext());
-                times.add(cal.getTime());
-                cal.setTime(sTime);
+                times.add(sTime.plusHours(ii.getIntNext()));
             }
             return times;
         }
@@ -942,32 +938,23 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 return null;
             }
             //Get data time
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
             for (i = 0; i < values.getSize(); i++) {
                 String md = String.valueOf(values.getInt(i));
                 if (md.length() <= 3) {
                     md = "0" + md;
                 }
-                try {
-                    //times.Add(DateTime.ParseExact("2001" + md, "yyyyMMdd", null));
-                    times.add(format.parse(md));
-                } catch (ParseException ex) {
-                    Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                times.add(LocalDateTime.parse(md, format));
             }
         } else {
-            Calendar cal = Calendar.getInstance();
             TimeUnit aTU;
-            Date sTime = new Date();
+            LocalDateTime sTime = LocalDateTime.now();
             if (unitsStr.equalsIgnoreCase("month")) {
+                sTime = LocalDateTime.of(sTime.getYear(), 1, 1, 0, 0, 0);
                 aTU = TimeUnit.Month;
-                cal.setTime(sTime);
-                cal.set(cal.get(Calendar.YEAR), 0, 1, 0, 0, 0);
-                sTime = cal.getTime();
             } else {
                 aTU = this.getTimeUnit(unitsStr);
                 sTime = this.getStartTime(unitsStr);
-                cal.setTime(sTime);
             }
             //getPSDTimeInfo(unitsStr, sTime, aTU);                        
 
@@ -975,43 +962,34 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             for (i = 0; i < values.getSize(); i++) {
                 switch (aTU) {
                     case Year:
-                        cal.add(Calendar.YEAR, values.getInt(i));
-                        times.add(cal.getTime());
+                        times.add(sTime.plusYears(values.getInt(i)));
                         break;
                     case Month:
-                        if (unitsStr.equalsIgnoreCase("month")) {
-                            cal.add(Calendar.MONTH, values.getInt(i) - 1);
-                        } else {
-                            cal.add(Calendar.MONTH, values.getInt(i));
-                        }
-                        times.add(cal.getTime());
+//                        if (unitsStr.equalsIgnoreCase("month")) {
+//                            cal.add(Calendar.MONTH, values.getInt(i) - 1);
+//                        } else {
+//                            cal.add(Calendar.MONTH, values.getInt(i));
+//                        }
+                        times.add(sTime.plusMonths(values.getInt(i)));
                         break;
                     case Day:
-                        //cal.add(Calendar.DAY_OF_YEAR, (int) DTimes[i]);                        
-                        //times.add(cal.getTime());
-                        times.add(DateUtil.addDays(sTime, values.getFloat(i)));
+                        times.add(sTime.plusDays(values.getInt(i)));
                         break;
                     case Hour:
-
-                        if (cal.get(Calendar.YEAR) == 1 && cal.get(Calendar.MONTH) == 1
-                                && cal.get(Calendar.DAY_OF_MONTH) == 1 && values.getInt(i) > 48) {
-                            cal.add(Calendar.HOUR, values.getInt(i) - 48);
-                            times.add(cal.getTime());
+                        if (sTime.getYear() == 1 && sTime.getMonthValue() == 1
+                                && sTime.getDayOfMonth() == 1 && values.getInt(i) > 48) {
+                            times.add(sTime.plusHours(values.getInt(i) - 48));
                         } else {
-                            cal.add(Calendar.HOUR, values.getInt(i));
-                            times.add(cal.getTime());
+                            times.add(sTime.plusHours(values.getInt(i)));
                         }
                         break;
                     case Minute:
-                        cal.add(Calendar.MINUTE, values.getInt(i));
-                        times.add(cal.getTime());
+                        times.add(sTime.plusMinutes(values.getInt(i)));
                         break;
                     case Second:
-                        cal.add(Calendar.SECOND, values.getInt(i));
-                        times.add(cal.getTime());
+                        times.add(sTime.plusSeconds(values.getInt(i)));
                         break;
                 }
-                cal.setTime(sTime);
             }
         }
 
@@ -1066,10 +1044,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             var = this.findNCVariable("Time");
             if (var != null && var.getDimensions().size() == 1) {
                 Array darray = NCUtil.convertArray(var.read());
-                List<Date> times = this.getTimes(var, darray);
+                List<LocalDateTime> times = this.getTimes(var, darray);
                 List<Double> ts = new ArrayList<>();
-                for (Date t : times) {
-                    ts.add(DateUtil.toOADate(t));
+                for (LocalDateTime t : times) {
+                    ts.add(JDateUtil.toOADate(t));
                 }
 
                 Dimension tDim = this.findDimension(var.getDimension(0).getShortName());
@@ -1161,11 +1139,11 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         this.setZDimension(dim);
                         break;
                     case T:
-                        List<Date> times = this.getTimes(var, values);
+                        List<LocalDateTime> times = this.getTimes(var, values);
                         if (times != null) {
                             List<Double> ts = new ArrayList<>();
-                            for (Date t : times) {
-                                ts.add(DateUtil.toOADate(t));
+                            for (LocalDateTime t : times) {
+                                ts.add(JDateUtil.toOADate(t));
                             }
                             dim.setValues(ts);
                         }
@@ -1186,46 +1164,46 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         String sDateStr = getGlobalAttStr("SDATE");
         String sTimeStr = getGlobalAttStr("STIME");
         int len = sTimeStr.length();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime tt = LocalDateTime.now();
         try {
-            cal.set(Integer.parseInt(sDateStr.substring(0, 4)), 0, 1, 0, 0, 0);
+            tt = LocalDateTime.of(Integer.parseInt(sDateStr.substring(0, 4)), 1, 1, 0, 0, 0);
             if (MIMath.isNumeric(sDateStr.substring(4))) {
-                cal.add(Calendar.DAY_OF_YEAR, Integer.parseInt(sDateStr.substring(4)) - 1);
+                tt = tt.plusDays(Integer.parseInt(sDateStr.substring(4)) - 1);
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
         if (sTimeStr.length() <= 2) {
-            cal.add(Calendar.SECOND, Integer.parseInt(sTimeStr));
+            tt = tt.plusSeconds(Integer.parseInt(sTimeStr));
         } else if (sTimeStr.length() <= 4) {
-            cal.add(Calendar.MINUTE, Integer.parseInt(sTimeStr.substring(0, len - 2)));
-            cal.add(Calendar.SECOND, Integer.parseInt(sTimeStr.substring(len - 2)));
+            tt = tt.plusMinutes(Integer.parseInt(sTimeStr.substring(0, len - 2)));
+            tt = tt.plusSeconds(Integer.parseInt(sTimeStr.substring(len - 2)));
         } else {
-            cal.add(Calendar.HOUR, Integer.parseInt(sTimeStr.substring(0, len - 4)));
-            cal.add(Calendar.MINUTE, Integer.parseInt(sTimeStr.substring(len - 4, len - 2)));
-            cal.add(Calendar.SECOND, Integer.parseInt(sTimeStr.substring(len - 2)));
+            tt = tt.plusHours(Integer.parseInt(sTimeStr.substring(0, len - 4)));
+            tt = tt.plusMinutes(Integer.parseInt(sTimeStr.substring(len - 4, len - 2)));
+            tt = tt.plusSeconds(Integer.parseInt(sTimeStr.substring(len - 2)));
         }
         int tNum = getDimensionLength("TSTEP");
         sTimeStr = getGlobalAttStr("TSTEP");
         len = sTimeStr.length();
-        List<Date> times = new ArrayList<>();
-        times.add(cal.getTime());
+        List<LocalDateTime> times = new ArrayList<>();
+        times.add(tt);
         for (i = 1; i < tNum; i++) {
             if (sTimeStr.length() <= 2) {
-                cal.add(Calendar.SECOND, Integer.parseInt(sTimeStr));
+                tt = tt.plusSeconds(Integer.parseInt(sTimeStr));
             } else if (sTimeStr.length() <= 4) {
-                cal.add(Calendar.MINUTE, Integer.parseInt(sTimeStr.substring(0, len - 2)));
-                cal.add(Calendar.SECOND, Integer.parseInt(sTimeStr.substring(len - 2)));
+                tt = tt.plusMinutes(Integer.parseInt(sTimeStr.substring(0, len - 2)));
+                tt = tt.plusSeconds(Integer.parseInt(sTimeStr.substring(len - 2)));
             } else {
-                cal.add(Calendar.HOUR, Integer.parseInt(sTimeStr.substring(0, len - 4)));
-                cal.add(Calendar.MINUTE, Integer.parseInt(sTimeStr.substring(len - 4, len - 2)));
-                cal.add(Calendar.SECOND, Integer.parseInt(sTimeStr.substring(len - 2)));
+                tt = tt.plusHours(Integer.parseInt(sTimeStr.substring(0, len - 4)));
+                tt = tt.plusMinutes(Integer.parseInt(sTimeStr.substring(len - 4, len - 2)));
+                tt = tt.plusSeconds(Integer.parseInt(sTimeStr.substring(len - 2)));
             }
-            times.add(cal.getTime());
+            times.add(tt);
         }
         List<Double> values = new ArrayList<>();
-        for (Date t : times) {
-            values.add(DateUtil.toOADate(t));
+        for (LocalDateTime t : times) {
+            values.add(JDateUtil.toOADate(t));
         }
         Dimension tDim = this.findDimension("TSTEP");
         if (tDim != null) {
@@ -1446,8 +1424,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
 
                 String tStr;
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-                List<Date> times = new ArrayList<>();
+                DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss");
+                List<LocalDateTime> times = new ArrayList<>();
                 for (i = 0; i < tNum; i++) {
                     StringBuilder timeStr = new StringBuilder();
                     for (int j = 0; j < strLen; j++) {
@@ -1457,11 +1435,11 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     if (tStr.contains("0000-00-00")) {
                         tStr = "0001-01-01_00:00:00";
                     }
-                    times.add(format.parse(tStr));
+                    times.add(LocalDateTime.parse(tStr, format));
                 }
                 List<Double> values = new ArrayList<>();
-                for (Date t : times) {
-                    values.add(DateUtil.toOADate(t));
+                for (LocalDateTime t : times) {
+                    values.add(JDateUtil.toOADate(t));
                 }
                 tDim.setDimType(DimensionType.T);
                 //tDim.setDimName("times");
@@ -1743,8 +1721,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         return aTU;
     }
 
-    private Date getStartTime(String tStr) {
-        Date sTime = new Date();
+    private LocalDateTime getStartTime(String tStr) {
+        LocalDateTime sTime = LocalDateTime.now();
         tStr = tStr.trim();
         String[] dataArray;
 
@@ -1807,10 +1785,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             year = 1;
         }
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month - 1, day, hour, min, sec);
-        cal.set(Calendar.MILLISECOND, 0);
-        sTime = cal.getTime();
+        sTime = LocalDateTime.of(year, month, day, hour, min, sec);
 
         return sTime;
     }
@@ -3587,8 +3562,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
         }
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-M-d HH:mm:ss");
-        Date sTime = format.parse("1800-1-1 00:00:00");
+        LocalDateTime sTime = LocalDateTime.of(1800, 1, 1, 0, 0, 0);
 
         //Create netCDF file
         ncfilew.create();
@@ -3787,8 +3761,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
         }
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-M-d HH:mm:ss");
-        Date sTime = format.parse("1800-1-1 00:00:00");
+        LocalDateTime sTime = LocalDateTime.of(1800, 1, 1, 0, 0, 0);
 
         //Create netCDF file
         ncfilew.create();
@@ -4136,7 +4109,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @param outFile Output nc file
      * @param aTime Time
      */
-    public static void addTimeDimension(String inFile, String outFile, Date aTime) {
+    public static void addTimeDimension(String inFile, String outFile, LocalDateTime aTime) {
         try {
             addTimeDimension(inFile, outFile, aTime, "days");
         } catch (ParseException | IOException | ucar.ma2.InvalidRangeException ex) {
@@ -4155,7 +4128,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @throws IOException
      * @throws ucar.ma2.InvalidRangeException
      */
-    public static void addTimeDimension(String inFile, String outFile, Date aTime, String timeUnit) throws ParseException, IOException, ucar.ma2.InvalidRangeException {
+    public static void addTimeDimension(String inFile, String outFile, LocalDateTime aTime, String timeUnit) throws ParseException, IOException, ucar.ma2.InvalidRangeException {
         //Set data info
         NetCDFDataInfo aDataInfo = new NetCDFDataInfo();
         aDataInfo.readDataInfo(inFile);
@@ -4167,8 +4140,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         }
 
         //set start time of the data
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-M-d HH:mm:ss");
-        Date sTime = format.parse("1800-1-1 00:00:00");
+        LocalDateTime sTime = LocalDateTime.of(1800, 1, 1, 0, 0, 0);
         int tvalue = DataInfo.getTimeValue(aTime, sTime, timeUnit.toLowerCase());
 
         NetcdfFileWriter ncfilew = NetcdfFileWriter.createNew(NetcdfFileWriter.Version.netcdf3, outFile);

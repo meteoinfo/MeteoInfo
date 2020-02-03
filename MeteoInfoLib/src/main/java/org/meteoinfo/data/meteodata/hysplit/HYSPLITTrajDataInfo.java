@@ -15,6 +15,7 @@ package org.meteoinfo.data.meteodata.hysplit;
 
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.TrajDataInfo;
@@ -28,11 +29,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -168,14 +168,14 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                         y = 2000 + y;
                     }
                 }
-                Calendar cal = new GregorianCalendar(y, Integer.parseInt(dataArray[1]) - 1,
+                LocalDateTime tt = LocalDateTime.of(y, Integer.parseInt(dataArray[1]),
                         Integer.parseInt(dataArray[2]), Integer.parseInt(dataArray[3]), 0, 0);
 
                 if (times.isEmpty()) {
-                    times.add(DateUtil.toOADate(cal.getTime()));
+                    times.add(JDateUtil.toOADate(tt));
                 }
                 aTrajInfo = new TrajectoryInfo();
-                aTrajInfo.startTime = cal.getTime();
+                aTrajInfo.startTime = tt;
                 aTrajInfo.startLat = Float.parseFloat(dataArray[4]);
                 aTrajInfo.startLon = Float.parseFloat(dataArray[5]);
                 aTrajInfo.startHeight = Float.parseFloat(dataArray[6]);
@@ -287,7 +287,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
             dataInfo += " " + varNames.get(i);
         }
         dataInfo += System.getProperty("line.separator") + System.getProperty("line.separator") + "Trajectories:";
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
         for (TrajectoryInfo aTrajInfo : trajInfos) {
             dataInfo += System.getProperty("line.separator") + "  " + format.format(aTrajInfo.startTime)
                     + "  " + String.valueOf(aTrajInfo.startLat) + "  " + String.valueOf(aTrajInfo.startLon)
@@ -349,7 +349,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                 for (int obsIdx = obsRange.first(); obsIdx <= obsRange.last(); obsIdx += obsRange.stride()){
                     if (colData.size() > obsIdx)
                         if (col.getDataType() == DataType.DATE) {
-                            array.setObject(index, DateUtil.toOADate((Date)colData.getValue(obsIdx)));
+                            array.setObject(index, JDateUtil.toOADate((LocalDateTime) colData.getValue(obsIdx)));
                         } else {
                             array.setObject(index, colData.getValue(obsIdx));
                         }
@@ -381,7 +381,6 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
         aLayer.editAddField("Hour", DataType.INT);
         aLayer.editAddField("Height", DataType.FLOAT);
 
-        Calendar cal = Calendar.getInstance();
         int TrajNum = 0;
         try {
             BufferedReader sr = new BufferedReader(new FileReader(new File(this.getFileName())));
@@ -473,16 +472,14 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
 
                 int shapeNum = aLayer.getShapeNum();
                 if (aLayer.editInsertShape(aPolyline, shapeNum)) {
-                    cal.setTime(trajInfos.get(i).startTime);
+                    LocalDateTime tt = trajInfos.get(i).startTime;
                     aLayer.editCellValue("ID", shapeNum, TrajNum);
-                    aLayer.editCellValue("Date", shapeNum, cal.getTime());
-                    aLayer.editCellValue("Year", shapeNum, cal.get(Calendar.YEAR));
-                    aLayer.editCellValue("Month", shapeNum, cal.get(Calendar.MONTH) + 1);
-                    aLayer.editCellValue("Day", shapeNum, cal.get(Calendar.DAY_OF_MONTH));
-                    aLayer.editCellValue("Hour", shapeNum, cal.get(Calendar.HOUR_OF_DAY));
+                    aLayer.editCellValue("Date", shapeNum, tt);
+                    aLayer.editCellValue("Year", shapeNum, tt.getYear());
+                    aLayer.editCellValue("Month", shapeNum, tt.getMonthValue());
+                    aLayer.editCellValue("Day", shapeNum, tt.getDayOfMonth());
+                    aLayer.editCellValue("Hour", shapeNum, tt.getHour());
                     aLayer.editCellValue("Height", shapeNum, trajInfos.get(i).startHeight);
-                    //aLayer.editCellValue("StartLat", shapeNum, trajInfos.get(i).startLat);
-                    //aLayer.editCellValue("StartLon", shapeNum, trajInfos.get(i).startLon);
                 }
             }
 
@@ -568,7 +565,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
             //Record #6
             int trajIdx;
             int dn = 12 + this.varNum;
-            Calendar cal;
+            LocalDateTime tt;
             while (true) {
                 aLine = sr.readLine();
                 if (aLine == null) {
@@ -599,9 +596,9 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                         y = 2000 + y;
                     }
                 }
-                cal = new GregorianCalendar(y, Integer.parseInt(dataArray[3]) - 1,
+                tt = LocalDateTime.of(y, Integer.parseInt(dataArray[3]),
                         Integer.parseInt(dataArray[4]), Integer.parseInt(dataArray[5]), 0, 0);
-                table.setValue(rowIdx, "time", cal.getTime());
+                table.setValue(rowIdx, "time", tt);
                 table.setValue(rowIdx, "run_hour", Float.parseFloat(dataArray[8]));
                 table.setValue(rowIdx, "lat", Float.parseFloat(dataArray[9]));
                 table.setValue(rowIdx, "lon", Float.parseFloat(dataArray[10]));
@@ -702,7 +699,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                         y = 2000 + y;
                     }
                 }
-                Calendar cal = new GregorianCalendar(y, Integer.parseInt(dataArray[3]) - 1,
+                LocalDateTime tt = LocalDateTime.of(y, Integer.parseInt(dataArray[3]),
                         Integer.parseInt(dataArray[4]), Integer.parseInt(dataArray[5]), 0, 0);
                 aPoint = new PointZ();
                 aPoint.X = Double.parseDouble(dataArray[10]);
@@ -712,7 +709,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                 aPoint.Z = Height;
                 aPoint.M = Press;
                 dList.add(aPoint);
-                dList.add(cal.getTime());
+                dList.add(tt);
                 dList.add(Height);
                 dList.add(Press);
                 if (isMultiVar) {
@@ -723,7 +720,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                 PointList.get(TrajIdx).add(dList);
             }
 
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
             for (i = 0; i < trajNum; i++) {
                 TrajNum += 1;
                 for (int j = 0; j < PointList.get(i).size(); j++) {
@@ -733,7 +730,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                     int shapeNum = aLayer.getShapeNum();
                     if (aLayer.editInsertShape(aPS, shapeNum)) {
                         aLayer.editCellValue("TrajID", shapeNum, TrajNum);
-                        aLayer.editCellValue("Date", shapeNum, format.format((Date) PointList.get(i).get(j).get(1)));
+                        aLayer.editCellValue("Date", shapeNum, format.format((LocalDateTime) PointList.get(i).get(j).get(1)));
                         aLayer.editCellValue("Lat", shapeNum, aPS.getPoint().Y);
                         aLayer.editCellValue("Lon", shapeNum, aPS.getPoint().X);
                         aLayer.editCellValue("Altitude", shapeNum, PointList.get(i).get(j).get(2));
@@ -834,7 +831,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                 }
             }
 
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
             for (i = 0; i < trajNum; i++) {
                 PointZShape aPS = new PointZShape();
                 TrajNum += 1;
@@ -876,7 +873,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
      */
     public XYListDataset getXYDataset(int varIndex) {
         XYListDataset dataset = new XYListDataset();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime tt = LocalDateTime.now();
         try {
             BufferedReader sr = new BufferedReader(new FileReader(new File(this.getFileName())));
             String aLine;
@@ -940,11 +937,11 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                         y = 2000 + y;
                     }
                 }
-                cal.set(y, Integer.parseInt(dataArray[3]) - 1,
+                tt = LocalDateTime.of(y, Integer.parseInt(dataArray[3]),
                         Integer.parseInt(dataArray[4]), Integer.parseInt(dataArray[5]), 0, 0);
 
                 aPoint = new PointD();
-                aPoint.X = DateUtil.toOADate(cal.getTime());
+                aPoint.X = JDateUtil.toOADate(tt);
                 aPoint.Y = Double.parseDouble(dataArray[varIndex]);
                 PointList.get(TrajIdx).add(aPoint);
             }
@@ -977,7 +974,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
      */
     public XYListDataset getXYDataset_HourX(int varIndex) {
         XYListDataset dataset = new XYListDataset();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime tt = LocalDateTime.now();
         try {
             BufferedReader sr = new BufferedReader(new FileReader(new File(this.getFileName())));
             String aLine;
@@ -1040,11 +1037,11 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                         y = 2000 + y;
                     }
                 }
-                cal.set(y, Integer.parseInt(dataArray[3]) - 1,
+                tt = LocalDateTime.of(y, Integer.parseInt(dataArray[3]),
                         Integer.parseInt(dataArray[4]), Integer.parseInt(dataArray[5]), 0, 0);
 
                 aPoint = new PointD();
-                aPoint.X = DateUtil.toOADate(cal.getTime());
+                aPoint.X = JDateUtil.toOADate(tt);
                 aPoint.Y = Double.parseDouble(dataArray[varIndex]);
                 PointList.get(TrajIdx).add(aPoint);
             }
@@ -1054,14 +1051,14 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                 int n = PointList.get(i).size();
                 double[] xvs = new double[n];
                 double[] yvs = new double[n];
-                Date cdate, sdate = new Date();
+                LocalDateTime cdate, sdate = LocalDateTime.now();
                 for (int j = 0; j < n; j++) {
-                    cdate = DateUtil.fromOADate(PointList.get(i).get(j).X);
+                    cdate = JDateUtil.fromOADate(PointList.get(i).get(j).X);
                     if (j == 0) {
                         sdate = cdate;
                         xvs[j] = 0;
                     } else {
-                        xvs[j] = DateUtil.getHours(cdate, sdate);
+                        xvs[j] = Duration.between(sdate, cdate).toHours();
                     }
                     yvs[j] = PointList.get(i).get(j).Y;
                 }

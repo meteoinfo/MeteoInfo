@@ -37,10 +37,9 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteOrder;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -62,6 +61,7 @@ import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.Section;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.global.util.JDateUtil;
 
 /**
  *
@@ -245,7 +245,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
      * @return Times
      */
     @Override
-    public List<Date> getTimes() {
+    public List<LocalDateTime> getTimes() {
         return TDEF.times;
     }
 
@@ -723,12 +723,8 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         String Nmn = mn.substring(0, 1).toUpperCase() + mn.substring(1, 3).toLowerCase();
                         dStr = dStr.replace(mn, Nmn);
                         dStr = dStr.replace("Z", " ");
-                        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm ddMMMyyyy", Locale.ENGLISH);
-                        try {
-                            TDEF.STime = formatter.parse(dStr);
-                        } catch (ParseException ex) {
-                            Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm ddMMMyyyy", Locale.ENGLISH);
+                        TDEF.STime = LocalDateTime.parse(dStr, formatter);
 
                         //Read time interval
                         TDEF.TDelt = dataArray[4];
@@ -746,40 +742,39 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         }
                         int iNum = Integer.parseInt(TDEF.TDelt.substring(0, aPos));
                         TDEF.DeltaValue = iNum;
-                        Calendar cal = Calendar.getInstance();
-                        cal.setTime(TDEF.STime);
                         String tStr = TDEF.TDelt.substring(aPos).toLowerCase();
                         TDEF.unit = tStr;
+                        LocalDateTime sTime = TDEF.STime;
                         switch (tStr) {
                             case "mn":
                                 for (i = 0; i < tnum; i++) {
-                                    TDEF.times.add(cal.getTime());
-                                    cal.add(Calendar.MINUTE, iNum);
+                                    TDEF.times.add(sTime);
+                                    sTime = sTime.plusMinutes(iNum);
                                 }
                                 break;
                             case "hr":
                                 for (i = 0; i < tnum; i++) {
-                                    TDEF.times.add(cal.getTime());
-                                    cal.add(Calendar.HOUR, iNum);
+                                    TDEF.times.add(sTime);
+                                    sTime = sTime.plusHours(iNum);
                                 }
                                 break;
                             case "dy":
                                 for (i = 0; i < tnum; i++) {
-                                    TDEF.times.add(cal.getTime());
-                                    cal.add(Calendar.DAY_OF_YEAR, iNum);
+                                    TDEF.times.add(sTime);
+                                    sTime = sTime.plusDays(iNum);
                                 }
                                 break;
                             case "mo":
                             case "mon":
                                 for (i = 0; i < tnum; i++) {
-                                    TDEF.times.add(cal.getTime());
-                                    cal.add(Calendar.MONTH, iNum);
+                                    TDEF.times.add(sTime);
+                                    sTime = sTime.plusMonths(iNum);
                                 }
                                 break;
                             case "yr":
                                 for (i = 0; i < tnum; i++) {
-                                    TDEF.times.add(cal.getTime());
-                                    cal.add(Calendar.YEAR, iNum);
+                                    TDEF.times.add(sTime);
+                                    sTime = sTime.plusYears(iNum);
 
                                 }
                                 break;
@@ -787,8 +782,8 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                                 break;
                         }
                         values = new ArrayList<>();
-                        for (Date t : TDEF.times) {
-                            values.add(DateUtil.toOADate(t));
+                        for (LocalDateTime t : TDEF.times) {
+                            values.add(JDateUtil.toOADate(t));
                         }
                         Dimension tDim = new Dimension(DimensionType.T);
                         tDim.setShortName("T");
@@ -812,18 +807,14 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             errorStr = "TDEF is wrong! Please check the ctl file!";
                             //goto ERROR;
                         }
-                        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm ddMMMyyyy", Locale.ENGLISH);
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm ddMMMyyyy", Locale.ENGLISH);
                         values = new ArrayList<>();
                         for (i = 0; i < tnum; i++) {
-                            try {
-                                String dStr = dataArray[3 + i];
-                                dStr = dStr.replace("Z", " ");
-                                Date t = formatter.parse(dStr);
-                                TDEF.times.add(t);
-                                values.add(DateUtil.toOADate(t));
-                            } catch (ParseException ex) {
-                                Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                            String dStr = dataArray[3 + i];
+                            dStr = dStr.replace("Z", " ");
+                            LocalDateTime t = LocalDateTime.parse(dStr, formatter);
+                            TDEF.times.add(t);
+                            values.add(JDateUtil.toOADate(t));
                         }
                         Dimension tDim = new Dimension(DimensionType.T);
                         tDim.setShortName("T");
@@ -1186,54 +1177,54 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
         File file = new File(DSET);
         String path = file.getParent();
         String fn = file.getName();
-        Date time = this.getTimes().get(timeIdx);
-        SimpleDateFormat format;
+        LocalDateTime time = this.getTimes().get(timeIdx);
+        DateTimeFormatter format;
         String tStr = "year";
         if (fn.contains("%y4")) {
-            format = new SimpleDateFormat("yyyy");
+            format = DateTimeFormatter.ofPattern("yyyy");
             fn = fn.replace("%y4", format.format(time));
         }
         if (fn.contains("%y2")) {
-            format = new SimpleDateFormat("yy");
+            format = DateTimeFormatter.ofPattern("yy");
             fn = fn.replace("%y2", format.format(time));
         }
         if (fn.contains("%m1")) {
-            format = new SimpleDateFormat("M");
+            format = DateTimeFormatter.ofPattern("M");
             fn = fn.replace("%m1", format.format(time));
             tStr = "month";
         }
         if (fn.contains("%m2")) {
-            format = new SimpleDateFormat("MM");
+            format = DateTimeFormatter.ofPattern("MM");
             fn = fn.replace("%m2", format.format(time));
             tStr = "month";
         }
         if (fn.contains("%mc")) {
-            format = new SimpleDateFormat("MMM", Locale.ENGLISH);
+            format = DateTimeFormatter.ofPattern("MMM", Locale.ENGLISH);
             fn = fn.replace("%mc", format.format(time));
             tStr = "month";
         }
         if (fn.contains("%d1")) {
-            format = new SimpleDateFormat("d");
+            format = DateTimeFormatter.ofPattern("d");
             fn = fn.replace("%d1", format.format(time));
             tStr = "day";
         }
         if (fn.contains("%d2")) {
-            format = new SimpleDateFormat("dd");
+            format = DateTimeFormatter.ofPattern("dd");
             fn = fn.replace("%d2", format.format(time));
             tStr = "day";
         }
         if (fn.contains("%h1")) {
-            format = new SimpleDateFormat("H");
+            format = DateTimeFormatter.ofPattern("H");
             fn = fn.replace("%h1", format.format(time));
             tStr = "hour";
         }
         if (fn.contains("%h2")) {
-            format = new SimpleDateFormat("HH");
+            format = DateTimeFormatter.ofPattern("HH");
             fn = fn.replace("%h2", format.format(time));
             tStr = "hour";
         }
         if (fn.contains("%n2")) {
-            format = new SimpleDateFormat("mm");
+            format = DateTimeFormatter.ofPattern("mm");
             fn = fn.replace("%n2", format.format(time));
             tStr = "minute";
         }
@@ -1241,24 +1232,20 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
         filePath = path + File.separator + fn;
 
         int tIdx = 0;
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(time);
-        //int month = cal.get(Calendar.MONTH);
-        //int day = cal.get(Calendar.DAY_OF_MONTH);
         if (tStr.equalsIgnoreCase("year")) {
             switch (TDEF.unit) {
                 case "mn":
-                    tIdx = ((cal.get(Calendar.DAY_OF_YEAR) - 1) * 24 * 60 + cal.get(Calendar.MINUTE)) / TDEF.DeltaValue;
+                    tIdx = ((time.getDayOfYear() - 1) * 24 * 60 + time.getMinute()) / TDEF.DeltaValue;
                     break;
                 case "hr":
-                    tIdx = ((cal.get(Calendar.DAY_OF_YEAR) - 1) * 24 + cal.get(Calendar.HOUR_OF_DAY)) / TDEF.DeltaValue;
+                    tIdx = ((time.getDayOfYear() - 1) * 24 + time.getHour()) / TDEF.DeltaValue;
                     break;
                 case "dy":
-                    tIdx = cal.get(Calendar.DAY_OF_YEAR) - 1;
+                    tIdx = time.getDayOfYear() - 1;
                     break;
                 case "mo":
                 case "mon":
-                    tIdx = cal.get(Calendar.MONTH) - 1;
+                    tIdx = time.getMonthValue() - 1;
                     break;
                 default:
                     break;
@@ -1266,22 +1253,22 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
         } else if (tStr.equalsIgnoreCase("month")) {
             switch (TDEF.unit) {
                 case "mn":
-                    tIdx = ((cal.get(Calendar.DAY_OF_MONTH) - 1) * 24 * 60 + cal.get(Calendar.MINUTE)) / TDEF.DeltaValue;
+                    tIdx = ((time.getDayOfMonth() - 1) * 24 * 60 + time.getMinute()) / TDEF.DeltaValue;
                     break;
                 case "hr":
-                    tIdx = ((cal.get(Calendar.DAY_OF_MONTH) - 1) * 24 + cal.get(Calendar.HOUR_OF_DAY)) / TDEF.DeltaValue;
+                    tIdx = ((time.getDayOfMonth() - 1) * 24 + time.getHour()) / TDEF.DeltaValue;
                     break;
                 case "dy":
-                    tIdx = cal.get(Calendar.DAY_OF_MONTH) - 1;
+                    tIdx = time.getDayOfMonth() - 1;
                     break;
                 default:
                     break;
             }
         } else if (tStr.equalsIgnoreCase("day")) {
             if (TDEF.unit.equals("mn")) {
-                tIdx = ((cal.get(Calendar.HOUR_OF_DAY) - 1) * 60 + cal.get(Calendar.MINUTE)) / TDEF.DeltaValue;
+                tIdx = ((time.getHour() - 1) * 60 + time.getMinute()) / TDEF.DeltaValue;
             } else if (TDEF.unit.equals("hr")) {
-                tIdx = cal.get(Calendar.HOUR_OF_DAY) - 1;
+                tIdx = time.getHour() - 1;
             }
         }
 
@@ -1692,7 +1679,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             aGridData.xArray = Y;
             aGridData.yArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                aGridData.yArray[i] = DateUtil.toOADate(this.getTimes().get(i));
+                aGridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
             return aGridData;
@@ -1785,7 +1772,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             aGridData.xArray = X;
             aGridData.yArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                aGridData.yArray[i] = DateUtil.toOADate(this.getTimes().get(i));
+                aGridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
             return aGridData;
@@ -2014,7 +2001,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             aGridData.missingValue = this.getMissingValue();
             aGridData.xArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                aGridData.xArray[i] = DateUtil.toOADate(this.getTimes().get(i));
+                aGridData.xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
             double[] levels = new double[VARDEF.getVars().get(varIdx).getLevelNum()];
             for (i = 0; i < levels.length; i++) {
@@ -2073,7 +2060,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
                     br.read(aBytes);
                     aValue = DataConvert.bytes2Float(aBytes, _byteOrder);
-                    aGridData.xArray[t] = DateUtil.toOADate(TDEF.times.get(t));
+                    aGridData.xArray[t] = JDateUtil.toOADate(TDEF.times.get(t));
                     aGridData.data[0][t] = aValue;
 
                     br.close();
@@ -2103,7 +2090,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
                     br.read(aBytes);
                     aValue = DataConvert.bytes2Float(aBytes, _byteOrder);
-                    aGridData.xArray[t] = DateUtil.toOADate(TDEF.times.get(t));
+                    aGridData.xArray[t] = JDateUtil.toOADate(TDEF.times.get(t));
                     aGridData.data[0][t] = aValue;
                 }
 
@@ -2308,7 +2295,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
             gData.xArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                gData.xArray[i] = DateUtil.toOADate(this.getTimes().get(i));
+                gData.xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
             gData.yArray = new double[aVar.getLevelNum()];
@@ -2625,7 +2612,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
      *
      * @param time The time
      */
-    public void addTime(Date time) {
+    public void addTime(LocalDateTime time) {
         this.TDEF.times.add(time);
     }
 
@@ -2696,7 +2683,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             }
 
             aLine = "TDEF " + String.valueOf(TDEF.getTimeNum()) + " " + TDEF.Type;
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm-ddMMMyyyy", Locale.ENGLISH);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm-ddMMMyyyy", Locale.ENGLISH);
             if (TDEF.Type.toUpperCase().equals("LINEAR")) {
                 String tStr = formatter.format(TDEF.STime);
                 tStr = tStr.replace("-", "Z");

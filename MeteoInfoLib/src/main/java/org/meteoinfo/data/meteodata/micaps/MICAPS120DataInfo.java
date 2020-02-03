@@ -15,6 +15,7 @@ package org.meteoinfo.data.meteodata.micaps;
 
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
@@ -28,10 +29,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -91,13 +92,13 @@ public class MICAPS120DataInfo extends DataInfo implements IStationDataInfo {
             _description = aLine;
             String dateStr = this._description.split("\\s+")[2];
             dateStr = dateStr.substring(dateStr.length() - 10);
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
-            Date time = format.parse(dateStr);
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
+            LocalDateTime time = LocalDateTime.parse(dateStr, format);
 
             //Set dimension and variables
             Dimension tdim = new Dimension(DimensionType.T);
             double[] values = new double[1];
-            values[0] = DateUtil.toOADate(time);
+            values[0] = JDateUtil.toOADate(time);
             tdim.setValues(values);
             this.setTimeDimension(tdim);
             
@@ -147,7 +148,7 @@ public class MICAPS120DataInfo extends DataInfo implements IStationDataInfo {
             this.setVariables(variables);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MICAPS120DataInfo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedEncodingException | ParseException ex) {
+        } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(MICAPS120DataInfo.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(MICAPS120DataInfo.class.getName()).log(Level.SEVERE, null, ex);
@@ -174,7 +175,7 @@ public class MICAPS120DataInfo extends DataInfo implements IStationDataInfo {
     public String generateInfoText() {
         String dataInfo;
         dataInfo = "Description: " + _description;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
         dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
         dataInfo += System.getProperty("line.separator") + super.generateInfoText();
 

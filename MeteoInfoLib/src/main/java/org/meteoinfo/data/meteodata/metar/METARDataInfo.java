@@ -15,6 +15,7 @@ package org.meteoinfo.data.meteodata.metar;
 
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
@@ -30,11 +31,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,7 +51,7 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
 
     // <editor-fold desc="Variables">
     private String stFileName;
-    private Date date;
+    private LocalDateTime date;
     private int stationNum;
     private final List<String> varList;
     private List<List<String>> DataList;
@@ -131,13 +131,11 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
                 aLine = sr.readLine();
             }
             aLine = aLine.trim();
-            Calendar cal = Calendar.getInstance();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-            Date ddate = format.parse(aLine);
-            cal.setTime(ddate);
-            cal.add(Calendar.MINUTE, 29);
-            cal.add(Calendar.MINUTE, -cal.get(Calendar.MINUTE));
-            this.date = cal.getTime();
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+            LocalDateTime ddate = LocalDateTime.parse(aLine, format);
+            ddate = ddate.plusMinutes(29);
+            ddate = ddate.minusMinutes(ddate.getMinute());
+            this.date = ddate;
             while (true) {
                 aLine = sr.readLine();
                 if (aLine == null) {
@@ -173,7 +171,7 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
 
             Dimension tdim = new Dimension(DimensionType.T);
             double[] values = new double[1];
-            values[0] = DateUtil.toOADate(date);
+            values[0] = JDateUtil.toOADate(date);
             tdim.setValues(values);
             this.setTimeDimension(tdim);
             List<Variable> vars = new ArrayList<>();
@@ -187,7 +185,7 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
             this.setVariables(vars);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(METARDataInfo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException | ParseException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(METARDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
@@ -213,7 +211,7 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
     public String generateInfoText() {
         String dataInfo;
         dataInfo = "File Name: " + this.getFileName();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
         dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
         dataInfo += System.getProperty("line.separator") + "Station Number: " + String.valueOf(this.stationNum);
         dataInfo += System.getProperty("line.separator") + "Number of Variables = " + String.valueOf(this.getVariableNum());

@@ -13,8 +13,7 @@
  */
 package org.meteoinfo.data.meteodata.arl;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -33,7 +32,7 @@ public class DataLabel {
     private int _exponent;
     private double _precision;
     private double _value;
-    private Date _time = new Date();    
+    private LocalDateTime _time = LocalDateTime.now();
     
     //header record does not support grids of more than 999 
     //therefore in those situations the grid number is
@@ -55,14 +54,12 @@ public class DataLabel {
     /// Constructor
     /// </summary>
     /// <param name="time">Time</param>
-    public DataLabel(Date time) {
+    public DataLabel(LocalDateTime time) {
         _time = time;
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(time);
-        _year = cal.get(Calendar.YEAR);
-        _month = (short) cal.get(Calendar.MONTH);
-        _day = (short) cal.get(Calendar.DAY_OF_MONTH);
-        _hour = (short) cal.get(Calendar.HOUR_OF_DAY);
+        _year = time.getYear();
+        _month = (short) time.getMonthValue();
+        _day = (short) time.getDayOfMonth();
+        _hour = (short) time.getHour();
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -248,7 +245,7 @@ public class DataLabel {
      *
      * @return Time
      */
-    public Date getTime() {
+    public LocalDateTime getTime() {
         return _time;
     }
 
@@ -257,14 +254,12 @@ public class DataLabel {
      *
      * @param value Time
      */
-    public void setTime(Date value) {
+    public void setTime(LocalDateTime value) {
         _time = value;
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(_time);
-        _year = cal.get(Calendar.YEAR);
-        _month = (short) cal.get(Calendar.MONTH);
-        _day = (short) cal.get(Calendar.DAY_OF_MONTH);
-        _hour = (short) cal.get(Calendar.HOUR_OF_DAY);
+        _year = value.getYear();
+        _month = (short) value.getMonthValue();
+        _day = (short) value.getDayOfMonth();
+        _hour = (short) value.getHour();
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -272,10 +267,8 @@ public class DataLabel {
      * Get time value
      * @return Time value
      */
-    public Date getTimeValue(){
-        Calendar cal = Calendar.getInstance();
-        cal.set(_year, _month, _day, _hour, 0);
-        return cal.getTime();
+    public LocalDateTime getTimeValue(){
+        return LocalDateTime.of(_year, _month, _day, _hour, 0);
     }
     // </editor-fold>
 }

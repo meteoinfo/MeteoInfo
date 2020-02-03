@@ -30,8 +30,9 @@ import org.meteoinfo.data.meteodata.micaps.MICAPS4DataInfo;
 import org.meteoinfo.data.meteodata.micaps.MICAPSDataInfo;
 import org.meteoinfo.data.meteodata.netcdf.NetCDFDataInfo;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Date;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import java.util.List;
 import java.util.logging.Level;
@@ -1203,7 +1204,7 @@ public class MeteoDataInfo {
         tData = tData.setValue(tData.missingValue);
         int xnum = gData.getXNum();
         int ynum = gData.getYNum();
-        Date date = this.getDataInfo().getTimes().get(0);
+        LocalDateTime date = this.getDataInfo().getTimes().get(0);
         List<Integer> hours = this.getDataInfo().getTimeValues(date, "hours");
         for (int t = 0; t < tnum; t++) {
             int hour = hours.get(t);
@@ -1235,10 +1236,10 @@ public class MeteoDataInfo {
      * @param t Time coordinate of the station
      * @return Interpolated value
      */
-    public double toStation(String varName, double x, double y, double z, Date t) {
-        List<Date> times = this.getDataInfo().getTimes();
+    public double toStation(String varName, double x, double y, double z, LocalDateTime t) {
+        List<LocalDateTime> times = this.getDataInfo().getTimes();
         int tnum = times.size();
-        if (t.before(times.get(0)) || t.after(times.get(tnum - 1))) {
+        if (t.isBefore(times.get(0)) || t.isAfter(times.get(tnum - 1))) {
             return this.getDataInfo().getMissingValue();
         }
 
@@ -1249,11 +1250,11 @@ public class MeteoDataInfo {
                 ivalue = this.toStation(varName, x, y, z, i);
                 break;
             }
-            if (t.before(times.get(i))) {
+            if (t.isBefore(times.get(i))) {
                 v_t1 = this.toStation(varName, x, y, z, i - 1);
                 v_t2 = this.toStation(varName, x, y, z, i);
-                int h = DateUtil.getTimeDeltaValue(t, times.get(i - 1), "hours");
-                int th = DateUtil.getTimeDeltaValue(times.get(i), times.get(i - 1), "hours");
+                int h = (int)Duration.between(times.get(i - 1), t).toHours();
+                int th = (int)Duration.between(times.get(i - 1), times.get(i)).toHours();
                 ivalue = (v_t2 - v_t1) * h / th + v_t1;
                 break;
             }
@@ -1271,25 +1272,25 @@ public class MeteoDataInfo {
      * @param t Time coordinate of the station
      * @return Interpolated value
      */
-    public double toStation(String varName, double x, double y, Date t) {
-        List<Date> times = this.getDataInfo().getTimes();
+    public double toStation(String varName, double x, double y, LocalDateTime t) {
+        List<LocalDateTime> times = this.getDataInfo().getTimes();
         int tnum = times.size();
-        if (t.before(times.get(0)) || t.after(times.get(tnum - 1))) {
+        if (t.isBefore(times.get(0)) || t.isAfter(times.get(tnum - 1))) {
             return this.getDataInfo().getMissingValue();
         }
 
         double ivalue = this.getDataInfo().getMissingValue();
         double v_t1, v_t2;
         for (int i = 0; i < tnum; i++) {
-            if (DateUtil.equals(t, times.get(i))) {
+            if (t.equals(times.get(i))) {
                 ivalue = this.toStation(varName, x, y, i);
                 break;
             }
-            if (t.before(times.get(i))) {
+            if (t.isBefore(times.get(i))) {
                 v_t1 = this.toStation(varName, x, y, i - 1);
                 v_t2 = this.toStation(varName, x, y, i);
-                int h = DateUtil.getTimeDeltaValue(t, times.get(i - 1), "hours");
-                int th = DateUtil.getTimeDeltaValue(times.get(i), times.get(i - 1), "hours");
+                int h = (int)Duration.between(times.get(i - 1), t).toHours();
+                int th = (int)Duration.between(times.get(i - 1), times.get(i)).toHours();
                 ivalue = (v_t2 - v_t1) * h / th + v_t1;
                 break;
             }
@@ -1308,10 +1309,10 @@ public class MeteoDataInfo {
      * @param t Time coordinate of the station
      * @return Interpolated values
      */
-    public List<Double> toStation(List<String> varNames, double x, double y, double z, Date t) {
-        List<Date> times = this.getDataInfo().getTimes();
+    public List<Double> toStation(List<String> varNames, double x, double y, double z, LocalDateTime t) {
+        List<LocalDateTime> times = this.getDataInfo().getTimes();
         int tnum = times.size();
-        if (t.before(times.get(0)) || t.after(times.get(tnum - 1))) {
+        if (t.isBefore(times.get(0)) || t.isAfter(times.get(tnum - 1))) {
             return null;
         }
 
@@ -1319,15 +1320,15 @@ public class MeteoDataInfo {
         double v_t1, v_t2;
         List<Double> v_t1s, v_t2s;
         for (int i = 0; i < tnum; i++) {
-            if (DateUtil.equals(t, times.get(i))) {
+            if (t.equals(times.get(i))) {
                 ivalues = this.toStation(varNames, x, y, z, i);
                 break;
             }
-            if (t.before(times.get(i))) {
+            if (t.isBefore(times.get(i))) {
                 v_t1s = this.toStation(varNames, x, y, z, i - 1);
                 v_t2s = this.toStation(varNames, x, y, z, i);
-                int h = DateUtil.getTimeDeltaValue(t, times.get(i - 1), "hours");
-                int th = DateUtil.getTimeDeltaValue(times.get(i), times.get(i - 1), "hours");
+                int h = (int)Duration.between(times.get(i - 1), t).toHours();
+                int th = (int)Duration.between(times.get(i - 1), times.get(i)).toHours();
                 for (int j = 0; j < v_t1s.size(); j++) {
                     v_t1 = v_t1s.get(j);
                     v_t2 = v_t2s.get(j);

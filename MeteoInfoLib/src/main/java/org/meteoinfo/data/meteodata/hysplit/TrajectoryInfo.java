@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.data.meteodata.hysplit;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -35,7 +35,7 @@ public class TrajectoryInfo {
         /// <summary>
         /// Start time
         /// </summary>
-        public Date startTime;
+        public LocalDateTime startTime;
         /// <summary>
         /// Start latitude
         /// </summary>

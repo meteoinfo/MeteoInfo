@@ -4,9 +4,8 @@
  */
 package org.meteoinfo.data.meteodata.mm5;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,13 +35,8 @@ public class DataHead {
      * Get date
      * @return Date
      */
-    public Date getDate(){
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        try {
-            return format.parse(hdate);
-        } catch (ParseException ex) {
-            Logger.getLogger(DataHead.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+    public LocalDateTime getDate(){
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss");
+        return LocalDateTime.parse(hdate, format);
     }
 }

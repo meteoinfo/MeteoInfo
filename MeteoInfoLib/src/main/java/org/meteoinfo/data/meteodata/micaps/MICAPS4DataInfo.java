@@ -15,6 +15,7 @@ package org.meteoinfo.data.meteodata.micaps;
 
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
@@ -25,11 +26,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -118,10 +117,9 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
                 }
             }
             _preHours = Integer.parseInt(dataList.get(4));
-            Calendar cal = new GregorianCalendar(year, Integer.parseInt(dataList.get(1)) - 1, Integer.parseInt(dataList.get(2)),
+            LocalDateTime time = LocalDateTime.of(year, Integer.parseInt(dataList.get(1)), Integer.parseInt(dataList.get(2)),
                     Integer.parseInt(dataList.get(3)), 0, 0);
-            cal.add(Calendar.HOUR_OF_DAY, _preHours);
-            Date time = cal.getTime();
+            time = time.plusHours(_preHours);
             
             _level = Integer.parseInt(dataList.get(5));
             float XDelt = Float.parseFloat(dataList.get(6));
@@ -165,7 +163,7 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
 
             Dimension tdim = new Dimension(DimensionType.T);
             double[] values = new double[1];
-            values[0] = DateUtil.toOADate(time);
+            values[0] = JDateUtil.toOADate(time);
             tdim.setValues(values);
             this.setTimeDimension(tdim);
             this.addDimension(tdim);

@@ -15,6 +15,7 @@ package org.meteoinfo.data.meteodata.micaps;
 
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
@@ -28,11 +29,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
+import java.nio.file.LinkOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -108,9 +108,8 @@ public class MICAPS3DataInfo extends DataInfo implements IStationDataInfo {
                     year = 1900 + year;
                 }
             }
-            Calendar cal = new GregorianCalendar(year, Integer.parseInt(dataList.get(1)) - 1, Integer.parseInt(dataList.get(2)),
+            LocalDateTime time = LocalDateTime.of(year, Integer.parseInt(dataList.get(1)), Integer.parseInt(dataList.get(2)),
                     Integer.parseInt(dataList.get(3)), 0, 0);
-            Date time = cal.getTime();
             int level = Integer.parseInt(dataList.get(4));
             int contourNum = Integer.parseInt(dataList.get(5));
             List<Float> contours = new ArrayList<>();
@@ -152,7 +151,7 @@ public class MICAPS3DataInfo extends DataInfo implements IStationDataInfo {
             this.addDimension(stdim);
             Dimension tdim = new Dimension(DimensionType.T);
             values = new double[1];
-            values[0] = DateUtil.toOADate(time);
+            values[0] = JDateUtil.toOADate(time);
             tdim.setValues(values);
             this.setTimeDimension(tdim);
             Dimension zdim = new Dimension(DimensionType.Z);
@@ -200,7 +199,7 @@ public class MICAPS3DataInfo extends DataInfo implements IStationDataInfo {
     public String generateInfoText() {
         String dataInfo;
         dataInfo = "Description: " + _description;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
         dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
         dataInfo += System.getProperty("line.separator") + super.generateInfoText();
 

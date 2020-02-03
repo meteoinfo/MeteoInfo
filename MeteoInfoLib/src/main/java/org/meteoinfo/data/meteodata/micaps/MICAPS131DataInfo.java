@@ -17,17 +17,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
@@ -56,7 +55,7 @@ public class MICAPS131DataInfo extends DataInfo implements IGridDataInfo {
     private String dataName;
     private String flag;
     private String version;
-    private Date time;
+    private LocalDateTime time;
     private int xNum;
     private int yNum;
     private int zNum;
@@ -131,8 +130,7 @@ public class MICAPS131DataInfo extends DataInfo implements IGridDataInfo {
             sidx += len;
             bb = Arrays.copyOfRange(bytes, sidx, sidx + len);
             int minute = DataConvert.bytes2Short(bb, ByteOrder.LITTLE_ENDIAN);
-            Calendar cal = new GregorianCalendar(year, month - 1, day, hour, minute, 0);
-            time = cal.getTime();
+            time = LocalDateTime.of(year, month, day, hour, minute, 0);
             sidx += len;
             bb = Arrays.copyOfRange(bytes, sidx, sidx + len);
             int interval = DataConvert.bytes2Short(bb, ByteOrder.LITTLE_ENDIAN);
@@ -211,7 +209,7 @@ public class MICAPS131DataInfo extends DataInfo implements IGridDataInfo {
             br.close();
 
             Dimension tdim = new Dimension(DimensionType.T);
-            tdim.addValue(DateUtil.toOADate(time));
+            tdim.addValue(JDateUtil.toOADate(time));
             this.setTimeDimension(tdim);
             this.addDimension(tdim);
             Dimension zdim = new Dimension(DimensionType.Z);

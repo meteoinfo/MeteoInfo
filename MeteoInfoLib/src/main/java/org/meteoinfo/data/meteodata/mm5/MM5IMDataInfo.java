@@ -11,14 +11,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
@@ -59,8 +60,8 @@ public class MM5IMDataInfo extends DataInfo implements IGridDataInfo {
         this.setFileName(fileName);
         try {
             RandomAccessFile br = new RandomAccessFile(fileName, "r");
-            List<Variable> variables = new ArrayList<Variable>();
-            List<Date> times = new ArrayList<Date>();
+            List<Variable> variables = new ArrayList<>();
+            List<LocalDateTime> times = new ArrayList<>();
             while (true) {
                 if (br.getFilePointer() >= br.length() - 100) {
                     break;
@@ -113,9 +114,9 @@ public class MM5IMDataInfo extends DataInfo implements IGridDataInfo {
                 }
             }
             
-            List<Double> values = new ArrayList<Double>();
-            for (Date t : times) {
-                values.add(DateUtil.toOADate(t));
+            List<Double> values = new ArrayList<>();
+            for (LocalDateTime t : times) {
+                values.add(JDateUtil.toOADate(t));
             }
             Dimension tDim = new Dimension(DimensionType.T);
             tDim.setValues(values);

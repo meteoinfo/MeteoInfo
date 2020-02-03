@@ -9,10 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -127,11 +126,11 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
     /// <summary>
     /// start observation time
     /// </summary>
-    public Date STime;
+    public LocalDateTime STime;
     /// <summary>
     /// end observation time
     /// </summary>
-    public Date ETime;
+    public LocalDateTime ETime;
     /// <summary>
     /// Image bytes
     /// </summary>
@@ -297,9 +296,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
             _startHour = DataConvert.bytes2Int(tbytes, byteOrder);
             tbytes = Arrays.copyOfRange(bytes, yearIdx + 8, yearIdx + 10);
             _startMinute = DataConvert.bytes2Int(tbytes, byteOrder);
-            Calendar cal = Calendar.getInstance();
-            cal.set(_startYear, _startMonth, _startDay, _startHour, _startMinute, 0);
-            STime = cal.getTime();
+            STime = LocalDateTime.of(_startYear, _startMonth, _startDay, _startHour, _startMinute, 0);
 
             if (_productType == 3 || _productType == 4) //Get end time
             {
@@ -314,8 +311,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                 tbytes = Arrays.copyOfRange(bytes, yearIdx + 18, yearIdx + 20);
                 _endMinute = DataConvert.bytes2Int(tbytes, byteOrder);
                 if (_endYear > 0) {
-                    cal.set(_endYear, _endMonth, _endDay, _endHour, _endMinute, 0);
-                    ETime = cal.getTime();
+                    ETime = LocalDateTime.of(_endYear, _endMonth, _endDay, _endHour, _endMinute, 0);
                 }
             }
 

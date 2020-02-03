@@ -15,6 +15,7 @@ package org.meteoinfo.data.meteodata.hysplit;
 
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
@@ -25,10 +26,8 @@ import org.meteoinfo.global.Extent;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,7 +63,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
             this.setFileName(fileName);
             RandomAccessFile br = new RandomAccessFile(fileName, "r");
             int year, month, day, hour;
-            List<Date> times = new ArrayList<Date>();
+            List<LocalDateTime> times = new ArrayList<>();
             _parameters = new ArrayList<List<Integer>>();
 
             while (br.getFilePointer() < br.length() - 28) {
@@ -82,8 +81,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
                 } else {
                     year = 1900 + year;
                 }
-                Calendar cal = new GregorianCalendar(year, month - 1, day, hour, 0, 0);
-                times.add(cal.getTime());
+                times.add(LocalDateTime.of(year, month, day, hour, 0, 0));
                 List<Integer> data = new ArrayList<Integer>();
                 data.add(particleNum);
                 data.add(pollutantNum);
@@ -98,8 +96,8 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
             br.close();
 
             List<Double> values = new ArrayList<Double>();
-            for (Date t : times) {
-                values.add(DateUtil.toOADate(t));
+            for (LocalDateTime t : times) {
+                values.add(JDateUtil.toOADate(t));
             }
             Dimension tDim = new Dimension(DimensionType.T);
             tDim.setValues(values);
@@ -130,7 +128,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
     public String generateInfoText() {
         String dataInfo;
         dataInfo = "File Name: " + this.getFileName();
-        List<Date> times = this.getTimes();
+        List<LocalDateTime> times = this.getTimes();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
         for (int i = 0; i < this.getTimeNum(); i++) {
             dataInfo += System.getProperty("line.separator") + "Time: " + format.format(times.get(i));

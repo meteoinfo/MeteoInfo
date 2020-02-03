@@ -16,6 +16,7 @@ package org.meteoinfo.data.meteodata.hysplit;
 import org.meteoinfo.data.meteodata.ascii.ASCIIGridDataInfo;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
@@ -25,9 +26,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
@@ -278,9 +278,9 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
             tNum = 0;
             int[] sampleTimes = new int[6];
             String dStr;
-            Date aDateTime;
-            List<Date> sample_start = new ArrayList<>();
-            List<Date> sample_stop = new ArrayList<>();
+            LocalDateTime aDateTime;
+            List<LocalDateTime> sample_start = new ArrayList<>();
+            List<LocalDateTime> sample_stop = new ArrayList<>();
             do {
                 //Record #6
                 br.skipBytes(8);
@@ -299,8 +299,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
                 } else {
                     year = 1900 + year;
                 }
-                Calendar cal = new GregorianCalendar(year, sampleTimes[1] - 1, sampleTimes[2], sampleTimes[3], 0, 0);
-                aDateTime = cal.getTime();
+                aDateTime = LocalDateTime.of(year, sampleTimes[1], sampleTimes[2], sampleTimes[3], 0, 0);
                 sample_start.add(aDateTime);
 
                 //Record #7
@@ -320,8 +319,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
                 } else {
                     year = 1900 + year;
                 }
-                cal = new GregorianCalendar(year, sampleTimes[1] - 1, sampleTimes[2], sampleTimes[3], 0, 0);
-                aDateTime = cal.getTime();
+                aDateTime = LocalDateTime.of(year, sampleTimes[1], sampleTimes[2], sampleTimes[3], 0, 0);
                 sample_stop.add(aDateTime);
 
                 //Record 8;
@@ -374,8 +372,8 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
             } while (true);
 
             List<Double> values = new ArrayList<>();
-            for (Date t : sample_start) {
-                values.add(DateUtil.toOADate(t));
+            for (LocalDateTime t : sample_start) {
+                values.add(JDateUtil.toOADate(t));
             }
             Dimension tDim = new Dimension(DimensionType.T);
             tDim.setShortName("time");

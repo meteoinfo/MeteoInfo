@@ -9,8 +9,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +39,7 @@ import org.meteoinfo.shape.Shape;
  */
 public class FrmOutputMapData extends javax.swing.JDialog {
 
-    private List<VectorLayer> _mapLayers = new ArrayList<VectorLayer>();
+    private List<VectorLayer> _mapLayers = new ArrayList<>();
     private VectorLayer _currentLayer;
     private FrmMain _parent;
 
@@ -194,7 +194,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
 //                    break;
             }
 
-            List<String> items = new ArrayList<String>();
+            List<String> items = new ArrayList<>();
             for (i = 0; i < this.jComboBox_OutputFormat.getItemCount(); i++) {
                 items.add(this.jComboBox_OutputFormat.getItemAt(i).toString());
             }
@@ -529,7 +529,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                 aDataInfo.ZDEF.ZDelt = 1;
                 aDataInfo.TDEF.Type = "LINEAR";
                 //aDataInfo.TDEF.TNum = 1;
-                aDataInfo.TDEF.STime = new Date();
+                aDataInfo.TDEF.STime = LocalDateTime.now();
                 aDataInfo.TDEF.TDelt = "1mo";
                 Variable aVar = new Variable();
                 aVar.setName("mask");

@@ -16,17 +16,16 @@ package org.meteoinfo.data.meteodata.micaps;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
@@ -54,7 +53,7 @@ public class MICAPS13DataInfo extends DataInfo implements IGridDataInfo {
 
     // <editor-fold desc="Variables">
     private String _description;
-    private Date _time;
+    private LocalDateTime _time;
     private int _xNum;
     private int _yNum;
     private double _lon_LB;
@@ -97,9 +96,9 @@ public class MICAPS13DataInfo extends DataInfo implements IGridDataInfo {
                     year = 2000 + year;
                 }
             }
-            Calendar cal = new GregorianCalendar(year, Integer.parseInt(dataArray[4]) - 1, Integer.parseInt(dataArray[5]),
+            LocalDateTime tt = LocalDateTime.of(year, Integer.parseInt(dataArray[4]), Integer.parseInt(dataArray[5]),
                     Integer.parseInt(dataArray[6]), 0, 0);
-            _time = cal.getTime();
+            _time = tt;
             _xNum = Integer.parseInt(dataArray[7]);
             _yNum = Integer.parseInt(dataArray[8]);
             _lon_LB = Double.parseDouble(dataArray[9]);
@@ -133,7 +132,7 @@ public class MICAPS13DataInfo extends DataInfo implements IGridDataInfo {
             br.close();
 
             Dimension tdim = new Dimension(DimensionType.T);
-            tdim.addValue(DateUtil.toOADate(_time));
+            tdim.addValue(JDateUtil.toOADate(_time));
             this.setTimeDimension(tdim);
             this.addDimension(tdim);
             Dimension ydim = new Dimension(DimensionType.Y);
@@ -245,7 +244,7 @@ public class MICAPS13DataInfo extends DataInfo implements IGridDataInfo {
         String dataInfo = "";
         dataInfo += "File Name: " + this.getFileName();
         dataInfo += System.getProperty("line.separator") + "Description: " + _description;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         dataInfo += System.getProperty("line.separator") + "Time: " + format.format(_time);
         dataInfo += System.getProperty("line.separator") + "X number: " + String.valueOf(_xNum);
         dataInfo += System.getProperty("line.separator") + "Y number: " + String.valueOf(_yNum);

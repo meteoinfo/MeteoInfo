@@ -12,16 +12,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
@@ -170,9 +170,9 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
                 this.addDimension(zdim);
             }
 
-            List<Date> times = new ArrayList<>();
-            Date ct;
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+            List<LocalDateTime> times = new ArrayList<>();
+            LocalDateTime ct;
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss");
             //int shIdx = 0;
             while (true) {
                 if (br.getFilePointer() >= br.length() - 100) {
@@ -267,7 +267,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
 //                        ct = format.parse(sh.current_date);
 //                        times.add(ct);
 //                    }
-                    ct = format.parse(sh.current_date);
+                    ct = LocalDateTime.parse(sh.current_date, format);
                     if (times.contains(ct)) {
                         sh.timeIndex = times.indexOf(ct);
                     } else {
@@ -282,8 +282,8 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
             }
 
             List<Double> values = new ArrayList<>();
-            for (Date t : times) {
-                values.add(DateUtil.toOADate(t));
+            for (LocalDateTime t : times) {
+                values.add(JDateUtil.toOADate(t));
             }
             Dimension tDim = new Dimension(DimensionType.T);
             tDim.setShortName("time");
@@ -350,7 +350,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
             br.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MM5DataInfo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException | ParseException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(MM5DataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -919,7 +919,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
             gridData.xArray = ydim.getValues();
             gridData.yArray = new double[tNum];
             for (i = 0; i < tNum; i++) {
-                gridData.yArray[i] = DateUtil.toOADate(this.getTimes().get(i));
+                gridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
             return gridData;
@@ -975,7 +975,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
             gridData.xArray = xdim.getValues();
             gridData.yArray = new double[tNum];
             for (i = 0; i < tNum; i++) {
-                gridData.yArray[i] = DateUtil.toOADate(this.getTimes().get(i));
+                gridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
             return gridData;

@@ -13,8 +13,8 @@
  */
 package org.meteoinfo.data.meteodata.grads;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,7 +36,7 @@ public class TDEFS {
     /// <summary>
     /// Start time
     /// </summary>
-    public Date STime;
+    public LocalDateTime STime;
     /// <summary>
     /// Time delt
     /// </summary>
@@ -46,7 +46,7 @@ public class TDEFS {
     /// <summary>
     /// Time array
     /// </summary>
-    public List<Date> times = new ArrayList<>();
+    public List<LocalDateTime> times = new ArrayList<>();
     // </editor-fold>
     // <editor-fold desc="Constructor">
     // </editor-fold>

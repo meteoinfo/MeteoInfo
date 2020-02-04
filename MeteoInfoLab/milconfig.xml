@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\maskout">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\data_process"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
@@ -16,17 +14,21 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\mm5"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib_sfc.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\grads\imshow_maskout.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\maskout\maskout_aod_test.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_4.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib_sfc.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\grads\imshow_maskout.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\maskout\maskout_aod_test.py"/>
     </RecentFiles>
   </File>
   <Font>

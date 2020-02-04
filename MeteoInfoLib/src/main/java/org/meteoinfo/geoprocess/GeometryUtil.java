@@ -14,6 +14,8 @@ import org.meteoinfo.global.PointD;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.ndarray.IndexIterator;
 import org.meteoinfo.shape.Polygon;
 import org.meteoinfo.shape.PolygonShape;
 
@@ -94,9 +96,13 @@ public class GeometryUtil {
         int n = (int) x.getSize();
         Geometry[] geos = new Geometry[n];
         GeometryFactory factory = new GeometryFactory();
-        for (int i = 0; i < n; i++) {
-            Coordinate c = new Coordinate(x.getDouble(i), y.getDouble(i));
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        int i = 0;
+        while(xIter.hasNext()) {
+            Coordinate c = new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext());
             geos[i] = factory.createPoint(c);
+            i++;
         }
         Geometry gs = factory.createGeometryCollection(geos);
         Geometry ch = gs.convexHull();
@@ -188,11 +194,15 @@ public class GeometryUtil {
      */
     public static Array inPolygon(Array x, Array y, List<PolygonShape> polygons) {
         Array r = Array.factory(DataType.BOOLEAN, x.getShape());
-        for (int i = 0; i < r.getSize(); i++) {
-            if (GeoComputation.pointInPolygons(polygons, new PointD(x.getDouble(i), y.getDouble(i)))) {
-                r.setBoolean(i, true);
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        IndexIterator rIter = r.getIndexIterator();
+        while (rIter.hasNext()){
+            if (GeoComputation.pointInPolygons(polygons, new PointD(xIter.getDoubleNext(),
+                    yIter.getDoubleNext()))) {
+                rIter.setBooleanNext(true);
             } else {
-                r.setBoolean(i, false);
+                rIter.setBooleanNext(false);
             }
         }
 
@@ -235,8 +245,10 @@ public class GeometryUtil {
     public static Array inPolygon(Array x, Array y, Array x_p, Array y_p) {
         PolygonShape ps = new PolygonShape();
         List<PointD> points = new ArrayList<>();
-        for (int i = 0; i < x_p.getSize(); i++) {
-            points.add(new PointD(x_p.getDouble(i), y_p.getDouble(i)));
+        IndexIterator xIter = x_p.getIndexIterator();
+        IndexIterator yIter = y_p.getIndexIterator();
+        while (xIter.hasNext()) {
+            points.add(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
         }
         ps.setPoints(points);
         List<PolygonShape> shapes = new ArrayList<>();
@@ -287,12 +299,19 @@ public class GeometryUtil {
      */
     public static Array maskout(Array a, Array x, Array y, List<PolygonShape> polygons) {
         Array r = Array.factory(a.getDataType(), a.getShape());
-        for (int i = 0; i < a.getSize(); i++) {
-            if (GeoComputation.pointInPolygons(polygons, new PointD(x.getDouble(i), y.getDouble(i)))) {
-                r.setObject(i, a.getObject(i));
+        IndexIterator aIter = a.getIndexIterator();
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        int i = 0;
+        while (aIter.hasNext()){
+            if (GeoComputation.pointInPolygons(polygons, new PointD(xIter.getDoubleNext(),
+                    yIter.getDoubleNext()))) {
+                r.setObject(i, aIter.getObjectNext());
             } else {
                 r.setObject(i, Double.NaN);
+                aIter.next();
             }
+            i++;
         }
         return r;
     }
@@ -308,12 +327,19 @@ public class GeometryUtil {
      */
     public static Array maskin(Array a, Array x, Array y, List<PolygonShape> polygons) {
         Array r = Array.factory(a.getDataType(), a.getShape());
-        for (int i = 0; i < a.getSize(); i++) {
-            if (GeoComputation.pointInPolygons(polygons, new PointD(x.getDouble(i), y.getDouble(i)))) {
+        IndexIterator aIter = a.getIndexIterator();
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        int i = 0;
+        while(aIter.hasNext()) {
+            if (GeoComputation.pointInPolygons(polygons, new PointD(xIter.getDoubleNext(),
+                    yIter.getDoubleNext()))) {
                 r.setObject(i, Double.NaN);
+                aIter.next();
             } else {
-                r.setObject(i, a.getObject(i));
+                r.setObject(i, aIter.getObjectNext());
             }
+            i++;
         }
         return r;
     }
@@ -331,11 +357,18 @@ public class GeometryUtil {
         List<Object> rdata = new ArrayList<>();
         List<Double> rxdata = new ArrayList<>();
         List<Double> rydata = new ArrayList<>();
-        for (int i = 0; i < a.getSize(); i++) {
-            if (GeoComputation.pointInPolygons(polygons, new PointD(x.getDouble(i), y.getDouble(i)))) {
-                rdata.add(a.getObject(i));
-                rxdata.add(x.getDouble(i));
-                rydata.add(y.getDouble(i));
+        IndexIterator aIter = a.getIndexIterator();
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        double va, vx, vy;
+        while(aIter.hasNext()) {
+            va = aIter.getDoubleNext();
+            vx = xIter.getDoubleNext();
+            vy = yIter.getDoubleNext();
+            if (GeoComputation.pointInPolygons(polygons, new PointD(vx, vy))) {
+                rdata.add(va);
+                rxdata.add(vx);
+                rydata.add(vy);
             }
         }
 
@@ -367,11 +400,18 @@ public class GeometryUtil {
         List<Object> rdata = new ArrayList<>();
         List<Double> rxdata = new ArrayList<>();
         List<Double> rydata = new ArrayList<>();
-        for (int i = 0; i < a.getSize(); i++) {
-            if (!GeoComputation.pointInPolygons(polygons, new PointD(x.getDouble(i), y.getDouble(i)))) {
-                rdata.add(a.getObject(i));
-                rxdata.add(x.getDouble(i));
-                rydata.add(y.getDouble(i));
+        IndexIterator aIter = a.getIndexIterator();
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        double va, vx, vy;
+        while(aIter.hasNext()) {
+            va = aIter.getDoubleNext();
+            vx = xIter.getDoubleNext();
+            vy = yIter.getDoubleNext();
+            if (!GeoComputation.pointInPolygons(polygons, new PointD(vx, vy))) {
+                rdata.add(va);
+                rxdata.add(vx);
+                rydata.add(vy);
             }
         }
 
@@ -418,13 +458,17 @@ public class GeometryUtil {
         int yNum = y.size();
 
         Array r = Array.factory(a.getDataType(), a.getShape());
+        IndexIterator iter = a.getIndexIterator();
         if (a.getRank() == 1) {
-            for (int i = 0; i < xNum; i++) {
+            int i = 0;
+            while (iter.hasNext()) {
                 if (GeoComputation.pointInPolygons(polygons, new PointD(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
-                    r.setObject(i, a.getObject(i));
+                    r.setObject(i, iter.getObjectNext());
                 } else {
                     r.setObject(i, missingValue);
+                    iter.next();
                 }
+                i++;
             }
         } else if (a.getRank() == 2) {
             int idx;
@@ -432,9 +476,10 @@ public class GeometryUtil {
                 for (int j = 0; j < xNum; j++) {
                     idx = i * xNum + j;
                     if (GeoComputation.pointInPolygons(polygons, new PointD(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
-                        r.setObject(idx, a.getObject(idx));
+                        r.setObject(idx, iter.getObjectNext());
                     } else {
                         r.setObject(idx, missingValue);
+                        iter.next();
                     }
                 }
             }
@@ -453,13 +498,19 @@ public class GeometryUtil {
      */
     public static Array maskout(Array a, Array m, Number missingValue) {
         Array r = Array.factory(a.getDataType(), a.getShape());
-        int n = (int) a.getSize();
-        for (int i = 0; i < n; i++) {
-            if (m.getDouble(i) < 0) {
+        IndexIterator aIter = a.getIndexIterator();
+        IndexIterator mIter = m.getIndexIterator();
+        double va, vm;
+        int i = 0;
+        while (aIter.hasNext()){
+            va = aIter.getDoubleNext();
+            vm = mIter.getDoubleNext();
+            if (vm < 0) {
                 r.setObject(i, missingValue);
             } else {
-                r.setObject(i, a.getObject(i));
+                r.setObject(i, va);
             }
+            i++;
         }
 
         return r;
@@ -473,17 +524,7 @@ public class GeometryUtil {
      * @return Result array
      */
     public static Array maskout(Array a, Array m) {
-        Array r = Array.factory(a.getDataType(), a.getShape());
-        int n = (int) a.getSize();
-        for (int i = 0; i < n; i++) {
-            if (m.getDouble(i) < 0) {
-                r.setObject(i, Double.NaN);
-            } else {
-                r.setObject(i, a.getObject(i));
-            }
-        }
-
-        return r;
+        return maskout(a, m, Double.NaN);
     }
 
     /**
@@ -495,13 +536,19 @@ public class GeometryUtil {
      */
     public static Array maskin(Array a, Array m) {
         Array r = Array.factory(a.getDataType(), a.getShape());
-        int n = (int) a.getSize();
-        for (int i = 0; i < n; i++) {
-            if (m.getDouble(i) < 0) {
-                r.setObject(i, a.getObject(i));
+        IndexIterator aIter = a.getIndexIterator();
+        IndexIterator mIter = m.getIndexIterator();
+        double va, vm;
+        int i = 0;
+        while(aIter.hasNext()) {
+            va = aIter.getDoubleNext();
+            vm = mIter.getDoubleNext();
+            if (vm < 0) {
+                r.setObject(i, va);
             } else {
                 r.setObject(i, Double.NaN);
             }
+            i++;
         }
 
         return r;

@@ -4388,8 +4388,6 @@ public class GraphicFactory {
                 Graphic graphic = new Graphic(aWB, cb);
                 gc.add(graphic);
             } else {
-                wdIter.next();
-                wsIter.next();
                 xIter.next();
                 yIter.next();
                 if (cIter != null)

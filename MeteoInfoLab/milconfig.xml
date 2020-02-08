@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\mm5"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\wind">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
@@ -16,19 +14,17 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\mywork\emission\MEIC\plot_emis_2017.py"/>
-      <OpenedFile File="D:\Working\MIScript\mywork\micaps\extract_data_micaps-2.py"/>
-      <OpenedFile File="D:\Working\MIScript\mywork\micaps\micaps_1_extract_st_data_dataframe.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\grib2arl.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\barbsm_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\mywork\emission\MEIC\plot_emis_2017.py"/>
-      <RecentFile File="D:\Working\MIScript\mywork\micaps\extract_data_micaps-2.py"/>
-      <RecentFile File="D:\Working\MIScript\mywork\micaps\micaps_1_extract_st_data_dataframe.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\grib2arl.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\barbsm_2.py"/>
     </RecentFiles>
   </File>
   <Font>

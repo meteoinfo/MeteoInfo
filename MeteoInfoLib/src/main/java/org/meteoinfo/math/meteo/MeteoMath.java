@@ -787,11 +787,11 @@ public class MeteoMath {
             while (iterU.hasNext()) {
                 U = iterU.getDoubleNext();
                 V = iterV.getDoubleNext();
+                ws = iterWS.getDoubleNext();
                 if (Double.isNaN(U) || Double.isNaN(V)) {
                     iterWD.setDoubleNext(Double.NaN);
                     continue;
                 }
-                ws = iterWS.getDoubleNext();
                 if (ws == 0) {
                     wd = 0;
                 } else {

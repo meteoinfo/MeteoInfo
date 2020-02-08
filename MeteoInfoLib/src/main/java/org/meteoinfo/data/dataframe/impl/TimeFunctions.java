@@ -5,8 +5,9 @@
  */
 package org.meteoinfo.data.dataframe.impl;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import org.joda.time.DateTime;
 
 /**
  *
@@ -28,17 +29,18 @@ public class TimeFunctions {
         return null;
     }
     
-    public static class MonthOfYear<I, O> implements TimeFunction<DateTime, String> {
+    public static class MonthOfYear<I, O> implements TimeFunction<LocalDateTime, String> {
         @Override
-        public String apply(DateTime value) {
-            return value.toString("MMM", Locale.ENGLISH);
+        public String apply(LocalDateTime value) {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMM").withLocale(Locale.ENGLISH);
+            return dtf.format(value);
         }
     }
     
-    public static class SeasonOfYear<I, O> implements TimeFunction<DateTime, String> {
+    public static class SeasonOfYear<I, O> implements TimeFunction<LocalDateTime, String> {
         @Override
-        public String apply(DateTime value) {
-            int month = value.getMonthOfYear();
+        public String apply(LocalDateTime value) {
+            int month = value.getMonthValue();
             String season;
             switch (month) {
                 case 1:
@@ -69,17 +71,19 @@ public class TimeFunctions {
         }
     }
     
-    public static class DayOfWeek<I, O> implements TimeFunction<DateTime, String> {
+    public static class DayOfWeek<I, O> implements TimeFunction<LocalDateTime, String> {
         @Override
-        public String apply(DateTime value) {
-            return value.toString("EEEE", Locale.ENGLISH);
+        public String apply(LocalDateTime value) {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("EEEE").withLocale(Locale.ENGLISH);
+            return dtf.format(value);
         }
     }
     
-    public static class HourOfDay<I, O> implements TimeFunction<DateTime, String> {
+    public static class HourOfDay<I, O> implements TimeFunction<LocalDateTime, String> {
         @Override
-        public String apply(DateTime value) {
-            return value.toString("HH", Locale.ENGLISH);
+        public String apply(LocalDateTime value) {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH").withLocale(Locale.ENGLISH);
+            return dtf.format(value);
         }
     }
 }

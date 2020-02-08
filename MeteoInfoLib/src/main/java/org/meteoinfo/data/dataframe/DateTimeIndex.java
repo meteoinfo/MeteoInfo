@@ -5,14 +5,17 @@
  */
 package org.meteoinfo.data.dataframe;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.joda.time.DateTime;
-import org.joda.time.ReadablePeriod;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
+
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.util.DateUtil;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 
@@ -20,11 +23,11 @@ import org.meteoinfo.ndarray.DataType;
  *
  * @author Yaqiang Wang
  */
-public class DateTimeIndex extends Index<DateTime> {    
+public class DateTimeIndex extends Index<LocalDateTime> {
     // <editor-fold desc="Variables">
-    ReadablePeriod period;
-    ReadablePeriod resamplePeriod;
-    //DateTimeFormatter dtFormatter;
+    TemporalAmount period;
+    TemporalAmount resamplePeriod;
+    DateTimeFormatter dtFormatter;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -32,6 +35,7 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     public DateTimeIndex(){
         this.format = "yyyy-MM-dd";
+        this.dtFormatter = DateTimeFormatter.ofPattern(this.format);
         this.dataType = DataType.DATE;
     }
     
@@ -62,7 +66,7 @@ public class DateTimeIndex extends Index<DateTime> {
         if (data.get(0) instanceof Date) {
             this.data = new ArrayList<>();
             for (Date d : (List<Date>)data) {
-                this.data.add(new DateTime(d));
+                this.data.add(d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
             }
         } else {
             this.data = data;
@@ -78,11 +82,11 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     public DateTimeIndex(String start, String end, String freq) {
         this();
-        DateTime sdt = DateUtil.getDateTime(start);
-        DateTime edt = DateUtil.getDateTime(end);
-        period = DateUtil.getPeriod(freq);
-        this.setFormat(DateUtil.getDateFormat(period));
-        this.data = DateUtil.getDateTimes(sdt, edt, period);
+        LocalDateTime sdt = JDateUtil.getDateTime(start);
+        LocalDateTime edt = JDateUtil.getDateTime(end);
+        period = JDateUtil.getPeriod(freq);
+        this.setFormat(JDateUtil.getDateFormat(period));
+        this.data = JDateUtil.getDateTimes(sdt, edt, period);
     }
     
     /**
@@ -93,10 +97,10 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     public DateTimeIndex(String start, int tNum, String freq) {
         this();
-        DateTime sdt = DateUtil.getDateTime(start);
-        period = DateUtil.getPeriod(freq);
-        this.setFormat(DateUtil.getDateFormat(period));
-        this.data = DateUtil.getDateTimes(sdt, tNum, period);
+        LocalDateTime sdt = JDateUtil.getDateTime(start);
+        period = JDateUtil.getPeriod(freq);
+        this.setFormat(JDateUtil.getDateFormat(period));
+        this.data = JDateUtil.getDateTimes(sdt, tNum, period);
     }
 
     /**
@@ -107,14 +111,14 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     public DateTimeIndex(int tNum, String end, String freq) {
         this();
-        DateTime edt = DateUtil.getDateTime(end);
-        period = DateUtil.getPeriod(freq);
-        this.setFormat(DateUtil.getDateFormat(period));
-        this.data = DateUtil.getDateTimes(tNum, edt, period);
+        LocalDateTime edt = JDateUtil.getDateTime(end);
+        period = JDateUtil.getPeriod(freq);
+        this.setFormat(JDateUtil.getDateFormat(period));
+        this.data = JDateUtil.getDateTimes(tNum, edt, period);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
-    public ReadablePeriod getPeriod(){
+    public TemporalAmount getPeriod(){
         return this.period;
     }
     
@@ -122,16 +126,16 @@ public class DateTimeIndex extends Index<DateTime> {
      * Set period
      * @param value Period
      */
-    public void setPeriod(ReadablePeriod value) {
+    public void setPeriod(TemporalAmount value) {
         this.period = value;
-        this.setFormat(DateUtil.getDateFormat(value));
+        this.setFormat(JDateUtil.getDateFormat(value));
     }
     
     /**
      * Get resample period
      * @return Resample period
      */
-    public ReadablePeriod getResamplePeriod(){
+    public TemporalAmount getResamplePeriod(){
         return this.resamplePeriod == null ? this.period : this.resamplePeriod;
     }
     
@@ -139,7 +143,7 @@ public class DateTimeIndex extends Index<DateTime> {
      * Set resample period
      * @param value Resample period
      */
-    public void setResamplPeriod(ReadablePeriod value){
+    public void setResamplPeriod(TemporalAmount value){
         this.resamplePeriod = value;
     }
     
@@ -150,7 +154,7 @@ public class DateTimeIndex extends Index<DateTime> {
     @Override
     public void setFormat(String value){
         super.setFormat(value);
-        //this.dtFormatter = DateTimeFormat.forPattern(format);
+        this.dtFormatter = DateTimeFormatter.ofPattern(format);
     }
     
     /**
@@ -159,7 +163,7 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     @Override
     public String getNameFormat() {
-        String str = ((DateTime)this.data.get(0)).toString(this.format);
+        String str = this.dtFormatter.format(this.data.get(0));
         return "%" + String.valueOf(str.length()) + "s";
     }
     
@@ -185,20 +189,20 @@ public class DateTimeIndex extends Index<DateTime> {
      * @param d DateTime
      * @return Index
      */
-    public int indexOf(DateTime d){
+    public int indexOf(LocalDateTime d){
         return this.data.indexOf(d);
     }
     
-    private DateTime toDateTime(Object d){
-        DateTime dt = null;
-        if (d instanceof DateTime) {
-            dt = (DateTime)d;
+    private LocalDateTime toDateTime(Object d){
+        LocalDateTime dt = null;
+        if (d instanceof LocalDateTime) {
+            dt = (LocalDateTime)d;
         } else if (d instanceof Date) {
-            dt = new DateTime(d);
+            dt = ((Date)d).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         } else if (d instanceof java.sql.Timestamp) {
-            dt = new DateTime(d);
+            dt = ((java.sql.Timestamp)d).toLocalDateTime();
         } else if (d instanceof String) {
-            dt = DateUtil.getDateTime((String)d);
+            dt = JDateUtil.getDateTime((String)d);
         }
         
         return dt;
@@ -210,7 +214,7 @@ public class DateTimeIndex extends Index<DateTime> {
      * @return Index
      */
     public int indexOf(Date d){
-        DateTime dt = new DateTime(d);
+        LocalDateTime dt = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         return this.data.indexOf(dt);
     }
     
@@ -220,7 +224,7 @@ public class DateTimeIndex extends Index<DateTime> {
      * @return Index
      */
     public int indexOf(String d){
-        DateTime dt = DateUtil.getDateTime(d);
+        LocalDateTime dt = JDateUtil.getDateTime(d);
         return this.data.indexOf(dt);
     }
     
@@ -236,9 +240,9 @@ public class DateTimeIndex extends Index<DateTime> {
             for (Object d : ds){
                 r.add(indexOf((Date)d));
             }
-        } else if (ds.get(0) instanceof DateTime) {
+        } else if (ds.get(0) instanceof LocalDateTime) {
             for (Object d : ds){
-                r.add(indexOf((DateTime)d));
+                r.add(indexOf((LocalDateTime)d));
             }
         } else if (ds.get(0) instanceof String) {
             for (Object d : ds){
@@ -256,7 +260,7 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     @Override
     public Object[] getIndices(List<Object> labels) {
-        if (labels.get(0) instanceof DateTime){
+        if (labels.get(0) instanceof LocalDateTime){
             return super.getIndices(labels);
         } else {
             List<Object> dts = new ArrayList<>();
@@ -274,10 +278,10 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     @Override
     public Object[] getIndices(Object label) {
-        if (label instanceof DateTime){
+        if (label instanceof LocalDateTime){
             return super.getIndices(label);
         } else {
-            DateTime dt = toDateTime(label);
+            LocalDateTime dt = toDateTime(label);
             return super.getIndices(dt);
         }        
     }
@@ -327,26 +331,14 @@ public class DateTimeIndex extends Index<DateTime> {
         r.format = this.format;
         return r;
     }
-    
-    /**
-     * Get date data
-     * @return Date data
-     */
-    public List<Date> getDateValues(){
-        List<Date> vs = new ArrayList<>();
-        for (DateTime dt : (List<DateTime>)this.data){
-            vs.add(dt.toDate());
-        }
-        return vs;
-    }
-    
+
     /**
      * Get year index
      * @return Year index
      */
     public Index getYear() {
         List<Integer> years = new ArrayList<>();
-        for (DateTime dt : this.data) {
+        for (LocalDateTime dt : this.data) {
             years.add(dt.getYear());
         }
         return Index.factory(years);
@@ -358,8 +350,8 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     public Index getMonth() {
         List<Integer> months = new ArrayList<>();
-        for (DateTime dt : this.data) {
-            months.add(dt.getMonthOfYear());
+        for (LocalDateTime dt : this.data) {
+            months.add(dt.getMonthValue());
         }
         return Index.factory(months);
     }
@@ -370,7 +362,7 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     public Index getDay() {
         List<Integer> days = new ArrayList<>();
-        for (DateTime dt : this.data) {
+        for (LocalDateTime dt : this.data) {
             days.add(dt.getDayOfMonth());
         }
         return Index.factory(days);
@@ -382,8 +374,8 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     public Index getHour() {
         List<Integer> hours = new ArrayList<>();
-        for (DateTime dt : this.data) {
-            hours.add(dt.getHourOfDay());
+        for (LocalDateTime dt : this.data) {
+            hours.add(dt.getHour());
         }
         return Index.factory(hours);
     }
@@ -394,8 +386,8 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     public Index getMinute() {
         List<Integer> minutes = new ArrayList<>();
-        for (DateTime dt : this.data) {
-            minutes.add(dt.getMinuteOfHour());
+        for (LocalDateTime dt : this.data) {
+            minutes.add(dt.getMinute());
         }
         return Index.factory(minutes);
     }
@@ -406,8 +398,8 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     public Index getSecond() {
         List<Integer> seconds = new ArrayList<>();
-        for (DateTime dt : this.data) {
-            seconds.add(dt.getSecondOfMinute());
+        for (LocalDateTime dt : this.data) {
+            seconds.add(dt.getSecond());
         }
         return Index.factory(seconds);
     }
@@ -419,10 +411,11 @@ public class DateTimeIndex extends Index<DateTime> {
     public void updateFormat(){
         int n = Math.min(10, data.size());
         String ff = "yyyyMMddHHmmSS";
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(ff);
         String str;
         int idx = 8;
         for (int i = 0; i < n; i++) {
-            str = ((DateTime) data.get(i)).toString(ff);
+            str = dtf.format(this.data.get(i));
             str = DataConvert.removeTail0(str);
             idx = Math.max(idx, str.length());
         }
@@ -476,7 +469,7 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     @Override
     public String toString(int idx) {
-        return ((DateTime)this.data.get(idx)).toString(this.format);
+        return this.dtFormatter.format(this.data.get(idx));
     }
     
     /**
@@ -487,7 +480,8 @@ public class DateTimeIndex extends Index<DateTime> {
      */
     @Override
     public String toString(int idx, String format) {
-        return ((DateTime)this.data.get(idx)).toString(format);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(format);
+        return dtf.format(this.data.get(idx));
     }
     
     @Override

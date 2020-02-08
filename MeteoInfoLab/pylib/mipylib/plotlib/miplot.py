@@ -1129,7 +1129,7 @@ def get_figure():
     return g_figure
         
 def show(newfig=True):
-    if migl.milapp == None:
+    if migl.milapp is None:
         if not batchmode:            
             form = ChartForm(g_figure)
             g_figure.paintGraphics()

@@ -828,14 +828,15 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
     :param largefile: (*boolean*) Create netCDF as large file or not.
     """
     if dims is None:
-        if isinstance(data, NDArray):
+        if isinstance(data, DimArray):
+            dims = data.dims
+        else:
             dims = []
             for s in data.shape:
                 dimvalue = np.arange(s)
                 dimname = 'dim' + str(len(dims))
                 dims.append(dimension(dimvalue, dimname))
-        else:
-            dims = data.dims
+
     #New netCDF file
     ncfile = addfile(fn, 'c', largefile=largefile)
     #Add dimensions

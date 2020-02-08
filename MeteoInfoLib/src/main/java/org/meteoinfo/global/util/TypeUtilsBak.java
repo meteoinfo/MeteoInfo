@@ -6,18 +6,20 @@
 package org.meteoinfo.global.util;
 
 import com.google.common.collect.ImmutableList;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 
 /**
  *
  * Ported from Tablesaw
  */
-public class TypeUtils {
+public class TypeUtilsBak {
     // These Strings will convert to true booleans
     public static final List<String> TRUE_STRINGS =
             Arrays.asList("T", "t", "Y", "y", "TRUE", "true", "True", "1");
@@ -33,25 +35,25 @@ public class TypeUtils {
 
     // Formats that we accept in parsing dates from strings
     // TODO: Add more types, especially dates with month names spelled-out fully.
-    private static final DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMdd");
-    private static final DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    private static final DateTimeFormatter dtf3 = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-    private static final DateTimeFormatter dtf4 = DateTimeFormatter.ofPattern("MM.dd.yyyy");
-    private static final DateTimeFormatter dtf5 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter dtf6 = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-    private static final DateTimeFormatter dtf7 = DateTimeFormatter.ofPattern("dd/MMM/yyyy");
-    private static final DateTimeFormatter dtf8 = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
-    private static final DateTimeFormatter dtf9 = DateTimeFormatter.ofPattern("M/d/yyyy");
-    private static final DateTimeFormatter dtf10 = DateTimeFormatter.ofPattern("M/d/yy");
-    private static final DateTimeFormatter dtf11 = DateTimeFormatter.ofPattern("MMM/dd/yyyy");
-    private static final DateTimeFormatter dtf12 = DateTimeFormatter.ofPattern("MMM-dd-yyyy");
-    private static final DateTimeFormatter dtf13 = DateTimeFormatter.ofPattern("MMM/dd/yy");
-    private static final DateTimeFormatter dtf14 = DateTimeFormatter.ofPattern("MMM-dd-yy");
-    private static final DateTimeFormatter dtf15 = DateTimeFormatter.ofPattern("MMM/dd/yyyy");
-    private static final DateTimeFormatter dtf16 = DateTimeFormatter.ofPattern("MMM/d/yyyy");
-    private static final DateTimeFormatter dtf17 = DateTimeFormatter.ofPattern("MMM-dd-yy");
-    private static final DateTimeFormatter dtf18 = DateTimeFormatter.ofPattern("MMM dd, yyyy");
-    private static final DateTimeFormatter dtf19 = DateTimeFormatter.ofPattern("MMM d, yyyy");
+    private static final DateTimeFormatter dtf1 = DateTimeFormat.forPattern("yyyyMMdd");
+    private static final DateTimeFormatter dtf2 = DateTimeFormat.forPattern("MM/dd/yyyy");
+    private static final DateTimeFormatter dtf3 = DateTimeFormat.forPattern("MM-dd-yyyy");
+    private static final DateTimeFormatter dtf4 = DateTimeFormat.forPattern("MM.dd.yyyy");
+    private static final DateTimeFormatter dtf5 = DateTimeFormat.forPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter dtf6 = DateTimeFormat.forPattern("yyyy/MM/dd");
+    private static final DateTimeFormatter dtf7 = DateTimeFormat.forPattern("dd/MMM/yyyy");
+    private static final DateTimeFormatter dtf8 = DateTimeFormat.forPattern("dd-MMM-yyyy");
+    private static final DateTimeFormatter dtf9 = DateTimeFormat.forPattern("M/d/yyyy");
+    private static final DateTimeFormatter dtf10 = DateTimeFormat.forPattern("M/d/yy");
+    private static final DateTimeFormatter dtf11 = DateTimeFormat.forPattern("MMM/dd/yyyy");
+    private static final DateTimeFormatter dtf12 = DateTimeFormat.forPattern("MMM-dd-yyyy");
+    private static final DateTimeFormatter dtf13 = DateTimeFormat.forPattern("MMM/dd/yy");
+    private static final DateTimeFormatter dtf14 = DateTimeFormat.forPattern("MMM-dd-yy");
+    private static final DateTimeFormatter dtf15 = DateTimeFormat.forPattern("MMM/dd/yyyy");
+    private static final DateTimeFormatter dtf16 = DateTimeFormat.forPattern("MMM/d/yyyy");
+    private static final DateTimeFormatter dtf17 = DateTimeFormat.forPattern("MMM-dd-yy");
+    private static final DateTimeFormatter dtf18 = DateTimeFormat.forPattern("MMM dd, yyyy");
+    private static final DateTimeFormatter dtf19 = DateTimeFormat.forPattern("MMM d, yyyy");
     // A formatter that handles all the date formats defined above
     public static final DateTimeFormatter DATE_FORMATTER =
             new DateTimeFormatterBuilder()
@@ -76,21 +78,21 @@ public class TypeUtils {
                     .append(dtf19)
                     .toFormatter();
     private static final DateTimeFormatter dtTimef0 =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");     // 2014-07-09 13:03:44
+            DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");     // 2014-07-09 13:03:44
     private static final DateTimeFormatter dtTimef2 =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");   // 2014-07-09 13:03:44.7 (as above, but without leading 0 in millis
+            DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.S");   // 2014-07-09 13:03:44.7 (as above, but without leading 0 in millis
     private static final DateTimeFormatter dtTimef4 =
-            DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");       // 09-Jul-2014 13:03
-    private static final DateTimeFormatter dtTimef5 = DateTimeFormatter.ISO_DATE_TIME;
+            DateTimeFormat.forPattern("dd-MMM-yyyy HH:mm");       // 09-Jul-2014 13:03
+    private static final DateTimeFormatter dtTimef5 = ISODateTimeFormat.dateTime();
     private static final DateTimeFormatter dtTimef6;                // ISO, with millis appended
     private static final DateTimeFormatter dtTimef7 =               //  7/9/14 9:04
-            DateTimeFormatter.ofPattern("M/d/yy H:mm");
+            DateTimeFormat.forPattern("M/d/yy H:mm");
     private static final DateTimeFormatter dtTimef8 =
-            DateTimeFormatter.ofPattern("M/d/yyyy h:mm:ss a");      //  7/9/2014 9:04:55 PM
+            DateTimeFormat.forPattern("M/d/yyyy h:mm:ss a");      //  7/9/2014 9:04:55 PM
 
     static {
         dtTimef6 = new DateTimeFormatterBuilder()
-                .append(DateTimeFormatter.ISO_DATE_TIME)
+                .append(ISODateTimeFormat.dateTime())
                 .appendLiteral('.')
                 .appendPattern("SSS")
                 .toFormatter();
@@ -107,17 +109,17 @@ public class TypeUtils {
                     .append(dtTimef5)
                     .append(dtTimef6)
                     .toFormatter();
-    private static final DateTimeFormatter timef1 = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
-    private static final DateTimeFormatter timef2 = DateTimeFormatter.ofPattern("hh:mm:ss a");
-    private static final DateTimeFormatter timef3 = DateTimeFormatter.ofPattern("h:mm:ss a");
-    private static final DateTimeFormatter timef4 = DateTimeFormatter.ISO_DATE_TIME;
-    private static final DateTimeFormatter timef5 = DateTimeFormatter.ofPattern("hh:mm a");
-    private static final DateTimeFormatter timef6 = DateTimeFormatter.ofPattern("h:mm a");
+    private static final DateTimeFormatter timef1 = DateTimeFormat.forPattern("HH:mm:ss.SSS");
+    private static final DateTimeFormatter timef2 = DateTimeFormat.forPattern("hh:mm:ss a");
+    private static final DateTimeFormatter timef3 = DateTimeFormat.forPattern("h:mm:ss a");
+    private static final DateTimeFormatter timef4 = ISODateTimeFormat.dateTime();
+    private static final DateTimeFormatter timef5 = DateTimeFormat.forPattern("hh:mm a");
+    private static final DateTimeFormatter timef6 = DateTimeFormat.forPattern("h:mm a");
     // A formatter that handles time formats defined above used for type detection.
     // It is more conservative than the converter
     public static final DateTimeFormatter TIME_DETECTION_FORMATTER =
             new DateTimeFormatterBuilder()
-                    .append(timef5)                    
+                    .append(timef5)
                     .append(timef2)
                     .append(timef3)
                     .append(timef1)
@@ -125,7 +127,7 @@ public class TypeUtils {
                     .append(timef6)
                     //  .append(timef7)
                     .toFormatter();
-    private static final DateTimeFormatter timef7 = DateTimeFormatter.ofPattern("HHmm");
+    private static final DateTimeFormatter timef7 = DateTimeFormat.forPattern("HHmm");
     // A formatter that handles time formats defined above
     public static final DateTimeFormatter TIME_FORMATTER =
             new DateTimeFormatterBuilder()
@@ -201,7 +203,7 @@ public class TypeUtils {
     /**
      * Private constructor to prevent instantiation
      */
-    private TypeUtils() {
+    private TypeUtilsBak() {
     }
 
     /**
@@ -215,7 +217,7 @@ public class TypeUtils {
 
         for (DateTimeFormatter formatter : dateFormatters) {
             try {
-                formatter.parse(dateValue);
+                formatter.parseDateTime(dateValue);
                 return formatter;
             } catch (DateTimeParseException e) {
                 // ignore;
@@ -248,7 +250,7 @@ public class TypeUtils {
 
     private static boolean canParse(DateTimeFormatter formatter, String dateTimeValue) {
         try {
-            formatter.parse(dateTimeValue);
+            formatter.parseDateTime(dateTimeValue);
             return true;
         } catch (DateTimeParseException e) {
             return false;
@@ -265,7 +267,7 @@ public class TypeUtils {
     public static DateTimeFormatter getTimeFormatter(String timeValue) {
         for (DateTimeFormatter formatter : timeFormatters) {
             try {
-                formatter.parse(timeValue);
+                formatter.parseDateTime(timeValue);
                 return formatter;
             } catch (DateTimeParseException e) {
                 // ignore;

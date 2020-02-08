@@ -17,6 +17,7 @@
  */
 package org.meteoinfo.data.dataframe.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -25,7 +26,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.joda.time.DateTime;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.data.dataframe.DataFrame;
 import org.meteoinfo.data.dataframe.Series;
@@ -55,11 +55,11 @@ public class Grouping
         }
     }
     
-    public <V> Grouping(final Series series, final TimeFunction<DateTime, String> function) {
+    public <V> Grouping(final Series series, final TimeFunction<LocalDateTime, String> function) {
         final Iterator iter = series.getIndex().iterator();
         for (int r = 0; iter.hasNext(); r++) {
             final Object row = iter.next();
-            final String key = function.apply((DateTime)row);
+            final String key = function.apply((LocalDateTime)row);
             SparseBitSet group = groups.get(key);
             if (group == null) {
                 group = new SparseBitSet();
@@ -81,7 +81,7 @@ public class Grouping
     public <V> Grouping(final Series series, final WindowFunction function) {
         final Iterator iter = series.getIndex().iterator();
         for (int r = 0; iter.hasNext(); r++) {
-            final DateTime row = (DateTime) iter.next();
+            final LocalDateTime row = (LocalDateTime) iter.next();
             final Object key = function.apply(row);
             SparseBitSet group = groups.get(key);
             if (group == null) {
@@ -138,10 +138,11 @@ public class Grouping
     public <V> Grouping(final DataFrame df, final WindowFunction function) {
         final Iterator iter = df.getIndex().iterator();
         for (int r = 0; iter.hasNext(); r++) {
-            final DateTime row = (DateTime) iter.next();
+            final LocalDateTime row = (LocalDateTime) iter.next();
             final Object key = function.apply(row);
             SparseBitSet group = groups.get(key);
             if (group == null) {
+                group = new SparseBitSet();
                 group = new SparseBitSet();
                 groups.put(key, group);
             }

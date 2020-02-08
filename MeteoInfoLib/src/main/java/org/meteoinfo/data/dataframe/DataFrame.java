@@ -13,7 +13,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.joda.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -26,9 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.joda.time.ReadablePeriod;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.ISODateTimeFormat;
+
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.data.dataframe.impl.Aggregation;
@@ -40,7 +41,6 @@ import org.meteoinfo.data.dataframe.impl.Sorting;
 import org.meteoinfo.data.dataframe.impl.Views;
 import org.meteoinfo.data.dataframe.impl.WindowFunction;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.global.util.TypeUtils;
 import org.meteoinfo.ndarray.Array;
@@ -2046,7 +2046,7 @@ public class DataFrame implements Iterable {
         Index index;
         if (indexCol >= 0) {
             DataType idxDT;
-            DateTimeFormatter dtFormatter = ISODateTimeFormat.dateTime();
+            DateTimeFormatter dtFormatter = DateTimeFormatter.ISO_DATE_TIME;
             if (indexFormat != null) {
                 if (indexFormat.substring(0, 1).equals("%")) {
                     indexFormat = indexFormat.substring(1);
@@ -2054,7 +2054,7 @@ public class DataFrame implements Iterable {
                 idxDT = DataConvert.getDataType(indexFormat);
                 if (idxDT == DataType.OBJECT) {
                     indexFormat = DataConvert.getDateFormat(indexFormat);
-                    dtFormatter = DateTimeFormat.forPattern(indexFormat);
+                    dtFormatter = DateTimeFormatter.ofPattern(indexFormat);
                 }
             } else {
                 idxDT = DataConvert.detectDataType(indexValues, 10, null);
@@ -2066,7 +2066,7 @@ public class DataFrame implements Iterable {
             List indexData = new ArrayList<>();
             if (idxDT == DataType.OBJECT) {
                 for (String s : indexValues) {
-                    indexData.add(dtFormatter.parseDateTime(s));
+                    indexData.add(LocalDateTime.parse(s, dtFormatter));
                 }
                 index = new DateTimeIndex(indexData);
                 //((DateTimeIndex) index).setDateTimeFormatter(dtFormatter);
@@ -2322,7 +2322,7 @@ public class DataFrame implements Iterable {
         Index index;
         if (indexCol >= 0) {
             DataType idxDT;
-            DateTimeFormatter dtFormatter = ISODateTimeFormat.dateTime();
+            DateTimeFormatter dtFormatter = DateTimeFormatter.ISO_DATE_TIME;
             if (indexFormat != null) {
                 if (indexFormat.substring(0, 1).equals("%")) {
                     indexFormat = indexFormat.substring(1);
@@ -2330,7 +2330,7 @@ public class DataFrame implements Iterable {
                 idxDT = DataConvert.getDataType(indexFormat);
                 if (idxDT == DataType.OBJECT) {
                     indexFormat = DataConvert.getDateFormat(indexFormat);
-                    dtFormatter = DateTimeFormat.forPattern(indexFormat);
+                    dtFormatter = DateTimeFormatter.ofPattern(indexFormat);
                 }
             } else {
                 idxDT = DataConvert.detectDataType(indexValues, 10, null);
@@ -2342,7 +2342,7 @@ public class DataFrame implements Iterable {
             List indexData = new ArrayList<>();
             if (idxDT == DataType.OBJECT) {
                 for (String s : indexValues) {
-                    indexData.add(dtFormatter.parseDateTime(s));
+                    indexData.add(LocalDateTime.parse(s, dtFormatter));
                 }
                 index = new DateTimeIndex(indexData);
                 //((DateTimeIndex) index).setDateTimeFormatter(dtFormatter);
@@ -2575,7 +2575,7 @@ public class DataFrame implements Iterable {
      * @return the grouping
      */
     public DataFrameGroupBy groupByIndex(final String pStr) {
-        ReadablePeriod period = DateUtil.getPeriod(pStr);
+        TemporalAmount period = JDateUtil.getPeriod(pStr);
         WindowFunction function = new WindowFunction(period);
         return groupByIndex(function);
     }

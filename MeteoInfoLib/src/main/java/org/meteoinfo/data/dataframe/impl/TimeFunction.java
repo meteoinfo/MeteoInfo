@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.data.dataframe.impl;
 
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
 
 /**
  * A function that converts DateTime value to String
@@ -14,5 +14,5 @@ import org.joda.time.DateTime;
  * @param <O> the type of the result
  */
 public interface TimeFunction<I, O> 
-        extends Function<DateTime, String> {    
+        extends Function<LocalDateTime, String> {
 }

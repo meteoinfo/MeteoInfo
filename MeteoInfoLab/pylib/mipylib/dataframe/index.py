@@ -7,7 +7,7 @@
 
 from org.meteoinfo.data.dataframe import Index as MIIndex
 from org.meteoinfo.data.dataframe import DateTimeIndex as MIDateTimeIndex
-from org.joda.time import DateTime
+from java.time import LocalDateTime
 
 import datetime
 import numbers
@@ -23,7 +23,7 @@ class Index(object):
         Factory method
         '''
         if index is None:
-            if isinstance(data[0], (DateTime, datetime.datetime)):
+            if isinstance(data[0], (LocalDateTime, datetime.datetime)):
                 return DateTimeIndex(data, name)
             else:
                 return Index(data, name)
@@ -154,10 +154,10 @@ class DateTimeIndex(Index):
                     self._index = MIDateTimeIndex(start, periods, freq)
                 else:
                     self._index = MIDateTimeIndex(start, end, freq)
-                self.data = miutil.pydate(list(self._index.getDateValues()))
+                self.data = miutil.pydate(list(self._index.getData()))
         else:
             self._index = index
-            self.data = miutil.pydate(list(self._index.getDateValues()))
+            self.data = miutil.pydate(list(self._index.getData()))
             
     def index(self, v):
         '''

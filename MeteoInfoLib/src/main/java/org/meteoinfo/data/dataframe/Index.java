@@ -5,11 +5,11 @@
  */
 package org.meteoinfo.data.dataframe;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.joda.time.DateTime;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.ndarray.Array;
@@ -116,7 +116,7 @@ public class Index<V> implements Iterable<V>{
      * @return Index object
      */
     public static Index factory(List data) {
-        if (data.get(0) instanceof DateTime) {
+        if (data.get(0) instanceof LocalDateTime) {
             return new DateTimeIndex(data);
         } else if (data.get(0) instanceof Integer) {
             return new IntIndex(data);

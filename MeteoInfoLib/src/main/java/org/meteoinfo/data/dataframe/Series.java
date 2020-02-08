@@ -9,12 +9,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import org.joda.time.DateTime;
-import org.joda.time.ReadablePeriod;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.data.dataframe.impl.Grouping;
 import org.meteoinfo.data.dataframe.impl.KeyFunction;
@@ -22,7 +23,6 @@ import org.meteoinfo.data.dataframe.impl.TimeFunction;
 import org.meteoinfo.data.dataframe.impl.TimeFunctions;
 import org.meteoinfo.data.dataframe.impl.Views;
 import org.meteoinfo.data.dataframe.impl.WindowFunction;
-import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.InvalidRangeException;
@@ -189,10 +189,10 @@ public class Series implements Iterable {
                 }
             }
             Index idx;
-            if (this.index instanceof DateTimeIndex && !(idxValue instanceof DateTime)) {
-                List<DateTime> values = new ArrayList<>();
+            if (this.index instanceof DateTimeIndex && !(idxValue instanceof LocalDateTime)) {
+                List<LocalDateTime> values = new ArrayList<>();
                 for (String v : (List<String>) rIndex) {
-                    values.add(DateUtil.getDateTime(v));
+                    values.add(JDateUtil.getDateTime(v));
                 }
                 idx = Index.factory(values);
             } else {
@@ -281,9 +281,9 @@ public class Series implements Iterable {
         }
         Index idx;
         if (this.index instanceof DateTimeIndex && (rIndex.get(0) instanceof String)) {
-            List<DateTime> values = new ArrayList<>();
+            List<LocalDateTime> values = new ArrayList<>();
             for (String v : (List<String>) rIndex) {
-                values.add(DateUtil.getDateTime(v));
+                values.add(JDateUtil.getDateTime(v));
             }
             idx = Index.factory(values);
         } else {
@@ -318,9 +318,9 @@ public class Series implements Iterable {
         }
         Index idx;
         if (this.index instanceof DateTimeIndex && (rIndex.get(0) instanceof String)) {
-            List<DateTime> values = new ArrayList<>();
+            List<LocalDateTime> values = new ArrayList<>();
             for (String v : (List<String>) rIndex) {
-                values.add(DateUtil.getDateTime(v));
+                values.add(JDateUtil.getDateTime(v));
             }
             idx = Index.factory(values);
         } else {
@@ -423,7 +423,7 @@ public class Series implements Iterable {
      * @return the grouping
      */
     public SeriesGroupBy resample(final String pStr) {
-        ReadablePeriod period = DateUtil.getPeriod(pStr);
+        TemporalAmount period = JDateUtil.getPeriod(pStr);
         WindowFunction function = new WindowFunction(period);
         return resample(function);
     }

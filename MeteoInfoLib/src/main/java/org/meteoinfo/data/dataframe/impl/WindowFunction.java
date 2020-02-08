@@ -5,28 +5,26 @@
  */
 package org.meteoinfo.data.dataframe.impl;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.Hours;
-import org.joda.time.Minutes;
-import org.joda.time.Months;
-import org.joda.time.ReadablePeriod;
-import org.joda.time.Seconds;
-import org.joda.time.Years;
+import org.meteoinfo.global.util.JDateUtil;
+
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
 
 /**
  *
  * @author Yaqiang Wang
  */
-public class WindowFunction implements Function<DateTime, Object>{
+public class WindowFunction implements Function<LocalDateTime, Object>{
     
-    ReadablePeriod period;
+    TemporalAmount period;
     
     /**
      * Constructor
      * @param period Period
      */
-    public WindowFunction(ReadablePeriod period){
+    public WindowFunction(TemporalAmount period){
         this.period = period;
     }
     
@@ -34,32 +32,37 @@ public class WindowFunction implements Function<DateTime, Object>{
      * Get period
      * @return Period
      */
-    public ReadablePeriod getPeriod(){
+    public TemporalAmount getPeriod(){
         return this.period;
     }
 
     @Override
-    public Object apply(DateTime value) {
-        DateTime ndt = new DateTime();
-        if (period instanceof Seconds) {
-            ndt = new DateTime(value.getYear(), value.getMonthOfYear(), value.getDayOfMonth(),
-                value.getHourOfDay(), value.getMinuteOfHour(), 0);            
-        } else if (period instanceof Minutes) {
-            ndt = new DateTime(value.getYear(), value.getMonthOfYear(), value.getDayOfMonth(),
-                value.getHourOfDay(), 0, 0); 
-        } else if (period instanceof Hours) {
-            ndt = new DateTime(value.getYear(), value.getMonthOfYear(), value.getDayOfMonth(),
-                0, 0, 0);            
-        } else if (period instanceof Days) {
-            ndt = new DateTime(value.getYear(), value.getMonthOfYear(), 1,
-                0, 0, 0);            
-        } else if (period instanceof Months) {
-            ndt = new DateTime(value.getYear(), 1, 1,
-                0, 0, 0);            
-        } else if (period instanceof Years) {
-            int n = ((Years)period).getYears();
-            ndt = new DateTime(value.getYear() - n, 1, 1,
-                0, 0, 0);            
+    public Object apply(LocalDateTime value) {
+        LocalDateTime ndt = LocalDateTime.now();
+        ChronoUnit cu = JDateUtil.getChronoUnit(this.period);
+        switch (cu) {
+            case SECONDS:
+                ndt = LocalDateTime.of(value.getYear(), value.getMonthValue(), value.getDayOfMonth(),
+                        value.getHour(), value.getMinute(), 0);
+                break;
+            case MINUTES:
+                ndt = LocalDateTime.of(value.getYear(), value.getMonthValue(), value.getDayOfMonth(),
+                        value.getHour(), 0, 0);
+                break;
+            case HOURS:
+                ndt = LocalDateTime.of(value.getYear(), value.getMonthValue(), value.getDayOfMonth(),
+                        0, 0, 0);
+                break;
+            case DAYS:
+                ndt = LocalDateTime.of(value.getYear(), value.getMonthValue(), 1,
+                        0, 0, 0);
+                break;
+            case MONTHS:
+                ndt = LocalDateTime.of(value.getYear(), 1, 1, 0, 0, 0);
+                break;
+            case YEARS:
+                int n = ((Period)period).getYears();
+                ndt = LocalDateTime.of(value.getYear() - n, 1, 1, 0, 0, 0);
         }
         
         while (ndt.isBefore(value)){

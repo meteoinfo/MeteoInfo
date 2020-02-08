@@ -13,7 +13,7 @@ from java.util import Locale
 from java.time import LocalDateTime
 from java.time.format import DateTimeFormatter
 from java.awt import Color
-from org.joda.time import DateTime
+
 import datetime
 
 def pydate(t):    
@@ -26,40 +26,29 @@ def pydate(t):
     """    
     if isinstance(t, list):
         r = []
-        if isinstance(t[0], DateTime):
-            for tt in t:
-                dt = datetime.datetime(tt.getYear(), tt.getMonthOfYear(), tt.getDayOfMonth(), tt.getHourOfDay(), \
-                    tt.getMinuteOfHour(), tt.getSecondOfMinute(), tt.getMillisOfSecond() * 1000)
-                r.append(dt)            
-        else:
-            for tt in t:
-                year = tt.getYear()
-                month = tt.getMonthValue()
-                day = tt.getDayOfMonth()
-                hour = tt.getHour()
-                minute = tt.getMinute()
-                second = tt.getSecond()
-                dt = datetime.datetime(year, month, day, hour, minute, second)
-                r.append(dt)
+        for tt in t:
+            year = tt.getYear()
+            month = tt.getMonthValue()
+            day = tt.getDayOfMonth()
+            hour = tt.getHour()
+            minute = tt.getMinute()
+            second = tt.getSecond()
+            dt = datetime.datetime(year, month, day, hour, minute, second)
+            r.append(dt)
         return r
     else:
-        if isinstance(t, DateTime):
-            dt = datetime.datetime(tt.getYear(), tt.getMonthOfYear(), tt.getDayOfMonth(), \
-                tt.getHourOfDay(), tt.getMinuteOfHour(), tt.getSecondOfMinute(), tt.getMillisOfSecond())
-            return dt
-        else:
-            year = t.getYear()
-            month = t.getMonthValue()
-            day = t.getDayOfMonth()
-            hour = t.getHour()
-            minute = t.getMinute()
-            second = t.getSecond()
-            dt = datetime.datetime(year, month, day, hour, minute, second)
-            return dt
+        year = t.getYear()
+        month = t.getMonthValue()
+        day = t.getDayOfMonth()
+        hour = t.getHour()
+        minute = t.getMinute()
+        second = t.getSecond()
+        dt = datetime.datetime(year, month, day, hour, minute, second)
+        return dt
     
 def jdate(t):
     """
-    Convert python date to java date.
+    Convert python date to java LocalDateTime.
     
     :param t: Python date
     
@@ -88,10 +77,10 @@ def jdatetime(t):
     if isinstance(t, (list, tuple)):
         r = []
         for tt in t:
-            r.append(DateTime(tt.year, tt.month, tt.day, tt.hour, tt.minute, tt.second, tt.microsecond / 1000))
+            r.append(LocalDateTime.of(tt.year, tt.month, tt.day, tt.hour, tt.minute, tt.second, tt.microsecond / 1000))
         return r
     else:
-        return DateTime(t.year, t.month, t.day, t.hour, t.minute, t.second, t.microsecond / 1000)
+        return LocalDateTime.of(t.year, t.month, t.day, t.hour, t.minute, t.second, t.microsecond / 1000)
     
 def date2num(t):
     """

@@ -13,10 +13,10 @@ from mipylib.geolib.milayer import MILayer, MIXYListData
 from mipylib.dataframe.dataframe import DataFrame
 import mipylib.miutil as miutil
 import mipylib.numeric as np
+from mipylib.numeric.core._dtype import DataType
 
 import datetime
 
-from java.util import Calendar
 from java.lang import Float
 import jarray
 
@@ -279,9 +279,7 @@ class DimDataFile(object):
         Interpolate data to a point.
         '''
         if isinstance(t, datetime.datetime):
-            cal = Calendar.getInstance()
-            cal.set(t.year, t.month - 1, t.day, t.hour, t.minute, t.second)
-            t = cal.getTime()
+            t = miutil.jdate(t)
         if z is None:
             return self.dataset.toStation(varname, x, y, t)
         else:
@@ -336,8 +334,8 @@ class DimDataFile(object):
                 dt = NCDataType.STRING
             return dt
         else:
-            if not isinstance(datatype, NCDataType):
-                datatype = NCUtil.convertDataType(datatype)
+            if isinstance(datatype, DataType):
+                datatype = NCUtil.convertDataType(datatype._dtype)
             return datatype
  
     def addvar(self, varname, datatype, dims, group=None):
@@ -459,9 +457,7 @@ class DimDataFile(object):
         :param datahead: (*DataHeader') Data header of the record.
         :param ksums: (*list*) Check sum list.
         '''
-        cal = Calendar.getInstance()
-        cal.set(t.year, t.month - 1, t.day, t.hour, t.minute, t.second)
-        t = cal.getTime()
+        t = miutil.jdate(t)
         self.arldata.writeIndexRecord(t, datahead, ksums)
         
     def writedatarec(self, t, lidx, vname, fhour, grid, data):
@@ -480,9 +476,7 @@ class DimDataFile(object):
         
         :returns: (*int*) Check sum of the record data.
         '''
-        cal = Calendar.getInstance()
-        cal.set(t.year, t.month - 1, t.day, t.hour, t.minute, t.second)
-        t = cal.getTime()
+        t = miutil.jdate(t)
         ksum = self.arldata.writeGridData(t, lidx, vname, fhour, grid, data.asarray())
         return ksum
 

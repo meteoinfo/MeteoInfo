@@ -36,6 +36,8 @@ public class PolarPlot extends Plot2D {
     private double radius;
     private Font xTickFont = new Font("Arial", Font.PLAIN, 12);
     private Font yTickFont = new Font("Aria", Font.PLAIN, 12);
+    private Color xTickColor = Color.black;
+    private Color yTickColor = Color.black;
     private List<Double> xTickLocations;
     private List<String> xTickLabels;
     private boolean yTickAuto = true;
@@ -115,6 +117,30 @@ public class PolarPlot extends Plot2D {
     public void setYTickFont(Font value){
         this.yTickFont = value;
     }
+
+    /**
+     * Get x tick label color
+     * @return X tick label color
+     */
+    public Color getXTickColor() {return this.xTickColor;}
+
+    /**
+     * Set x tick label color
+     * @param value X tick label color
+     */
+    public void setXTickColor(Color value) {this.xTickColor = value;}
+
+    /**
+     * Get y tick label color
+     * @return Y tick label color
+     */
+    public Color getYTickColor() {return this.yTickColor;}
+
+    /**
+     * Set y tick label color
+     * @param value Y tick label color
+     */
+    public void setYTickColor(Color value) {this.yTickColor = value;}
     
     /**
      * Get x tick locations
@@ -391,6 +417,15 @@ public class PolarPlot extends Plot2D {
         if (graphArea.getWidth() < 10 || graphArea.getHeight() < 10) {
             return;
         }
+
+        //Draw background
+        if (this.background != null) {
+            g.setColor(this.getBackground());
+            //g.fill(graphArea);
+            Ellipse2D ellipse=new Ellipse2D.Double();
+            ellipse.setFrame(graphArea);
+            g.fill(ellipse);
+        }
         
         if (this.getGridLine().isTop()){
             //Draw graph        
@@ -663,9 +698,9 @@ public class PolarPlot extends Plot2D {
         double minx = area.getX();     
 
         //Draw x grid line labels
-        g.setColor(Color.black);
         if (gridLine.isDrawXLine()) {
             g.setFont(this.xTickFont);
+            g.setColor(this.xTickColor);
             float shift = 5;
             for (int i = 0; i < this.xTickLocations.size(); i++) {
                 double angle = this.xTickLocations.get(i);
@@ -716,13 +751,13 @@ public class PolarPlot extends Plot2D {
         //Draw y grid lines
         if (gridLine.isDrawYLine()) {
             g.setFont(this.yTickFont);
+            g.setColor(this.yTickColor);
             if (this.yTickAuto)
                 this.yTickLocations = this.getTickValues();
             
             for (int i = 0; i < this.yTickLocations.size(); i++) {
                 double v = this.yTickLocations.get(i);
                 if (v > 0){
-                    g.setColor(Color.black);
                     xy = MIMath.polarToCartesian(Math.toRadians(this.yTickLabelPos), v);
                     xy = this.projToScreen(xy[0], xy[1], area);
                     x = xy[0];
@@ -757,7 +792,10 @@ public class PolarPlot extends Plot2D {
     void drawBorder(Graphics2D g, Rectangle2D area) {
         g.setColor(Color.black);
         g.setStroke(new BasicStroke(1.f));
-        this.drawCircle(g, area, radius);
+        //this.drawCircle(g, area, radius);
+        Ellipse2D ellipse=new Ellipse2D.Double();
+        ellipse.setFrame(area);
+        g.draw(ellipse);
     }
 
     void drawCircle(Graphics2D g, Rectangle2D area, double r) {

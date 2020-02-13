@@ -3751,6 +3751,15 @@ class PolarAxes(Axes):
                 style = Font.PLAIN
         font = Font(name, style, size)
         self.axes.setYTickFont(font)
+
+    def set_rtick_color(self, color):
+        '''
+        Set radial tick label color
+
+        :param color: (*color*) The color.
+        '''
+        color = plotutil.getcolor(color)
+        self.axes.setYTickColor(color)
         
     def set_xtick_font(self, name=None, size=None, style=None):
         '''
@@ -3776,6 +3785,15 @@ class PolarAxes(Axes):
                 style = Font.PLAIN
         font = Font(name, style, size)
         self.axes.setXTickFont(font)
+
+    def set_xtick_color(self, color):
+        '''
+        Set angular tick label color
+
+        :param color: (*color*) The color.
+        '''
+        color = plotutil.getcolor(color)
+        self.axes.setXTickColor(color)
         
     def data2pixel(self, x, y, z=None):
         '''

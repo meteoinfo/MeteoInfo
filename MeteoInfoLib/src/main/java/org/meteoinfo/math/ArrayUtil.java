@@ -1393,7 +1393,7 @@ public class ArrayUtil {
                 }
             } else {
                 while(iterA.hasNext()) {
-                    iterR.setIntNext(Integer.valueOf(iterA.getObjectNext().toString()));
+                    iterR.setIntNext(Integer.valueOf(iterA.getObjectNext().toString().trim()));
                 }
             }
         }

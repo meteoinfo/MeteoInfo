@@ -282,12 +282,6 @@ public class Plot2D extends AbstractPlot2D {
         }
         g.translate(area.getX(), area.getY());
 
-        //Draw background
-        if (this.background != null) {
-            g.setColor(this.getBackground());
-            g.fill(new Rectangle2D.Double(0, 0, area.getWidth(), area.getHeight()));
-        }
-
         int barIdx = 0;
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);

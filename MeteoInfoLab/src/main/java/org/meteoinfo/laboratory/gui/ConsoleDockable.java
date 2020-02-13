@@ -142,6 +142,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             interp.exec("sys.path.append('" + toolboxPath + "')");
             if (isDebug) {
                 interp.exec("sys.path.append('" + toolboxPath + "/miml_dev')");
+                interp.exec("sys.path.append('" + toolboxPath + "/emips_dev')");
             }
             //interp.exec("import toolbox");
             //interp.exec("from toolbox import *");

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\wind">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+  <Path OpenPath="D:\Working\MIScript\mywork\emission\MEIC">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
@@ -16,15 +15,16 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\mywork\emission\MEIC\plot_emis_2017.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\barbsm_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\mywork\emission\test_sector.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\mywork\emission\MEIC\plot_emis_2017.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\barbsm_2.py"/>
+      <RecentFile File="D:\Working\MIScript\mywork\emission\test_sector.py"/>
     </RecentFiles>
   </File>
   <Font>

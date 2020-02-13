@@ -781,6 +781,12 @@ public abstract class AbstractPlot2D extends Plot {
             return;
         }
 
+        //Draw background
+        if (this.background != null) {
+            g.setColor(this.getBackground());
+            g.fill(graphArea);
+        }
+
         if (this.getGridLine().isTop()) {
             //Draw graph        
             this.drawGraph(g, graphArea);

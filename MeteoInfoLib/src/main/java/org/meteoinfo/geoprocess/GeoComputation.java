@@ -18,6 +18,8 @@ import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.map.GridLabel;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.shape.Line;
 import org.meteoinfo.shape.Polygon;
 import org.meteoinfo.shape.PolygonShape;
@@ -47,7 +49,7 @@ import org.meteoinfo.shape.Shape;
  */
 public class GeoComputation {
 
-    private static final double EARTH_RADIUS = 6378.137;
+    private static final double EARTH_RADIUS = 6371.393;
 
     // <editor-fold desc="General">        
     /**
@@ -396,6 +398,69 @@ public class GeoComputation {
     }
 
     /**
+     * Calculate area of grid cells.
+     * @param xOrig X origin
+     * @param xCell X cell spacing
+     * @param xNum X number
+     * @param yOrig Y origin
+     * @param yCell Y cell spacing
+     * @param yNum Y number
+     * @param isLonLat Is lonlat projection or not
+     * @param allCell Calculate each grid or not
+     * @return Grid area array
+     */
+    public static Array getGridArea(double xOrig, double xCell, int xNum, double yOrig,
+                                    double yCell, int yNum, boolean isLonLat, boolean allCell) {
+        return getGridArea(xOrig, xCell, xNum, yOrig, yCell, yNum, isLonLat, allCell, EARTH_RADIUS * 1000);
+    }
+
+    /**
+     * Calculate area of grid cells.
+     * @param xOrig X origin
+     * @param xCell X cell spacing
+     * @param xNum X number
+     * @param yOrig Y origin
+     * @param yCell Y cell spacing
+     * @param yNum Y number
+     * @param isLonLat Is lonlat projection or not
+     * @param allCell Calculate each grid or not
+     * @param earthRadius Earth radius
+     * @return Grid area array
+     */
+    public static Array getGridArea(double xOrig, double xCell, int xNum, double yOrig,
+             double yCell, int yNum, boolean isLonLat, boolean allCell, double earthRadius) {
+        Array r = Array.factory(DataType.DOUBLE, new int[]{yNum, xNum});
+        double[] xx = new double[5];
+        double[] yy = new double[5];
+        double dx = xCell * 0.5;
+        double dy = yCell * 0.5;
+        double x, y, a;
+        if (allCell) {
+            for (int i = 0; i < yNum; i++) {
+                y = yOrig + i * yCell;
+                for (int j = 0; j < xNum; j++) {
+                    x = xOrig + j * xCell;
+                    xx = new double[]{x - dx, x + dx, x + dx, x - dx, x - dx};
+                    yy = new double[]{y - dy, y - dy, y + dy, y + dy, y - dy};
+                    a = getArea(xx, yy, isLonLat, earthRadius);
+                    r.setDouble(i * xNum + j, a);
+                }
+            }
+        } else {
+            x = xOrig;
+            xx = new double[]{x - dx, x + dx, x + dx, x - dx, x - dx};
+            for (int i = 0; i < yNum; i++) {
+                y = yOrig + i * yCell;
+                yy = new double[]{y - dy, y - dy, y + dy, y + dy, y - dy};
+                a = getArea(xx, yy, isLonLat, earthRadius);
+                for (int j = 0; j < xNum; j++)
+                    r.setDouble(i * xNum + j, a);
+            }
+        }
+        return r;
+    }
+
+    /**
      * Get polygon area
      *
      * @param x X coordinates
@@ -404,12 +469,75 @@ public class GeoComputation {
      * @return Area
      */
     public static double getArea(List<Number> x, List<Number> y, boolean isLonLat) {
-        List<PointD> points = new ArrayList<>();
+        double[] xx = new double[x.size()];
+        double[] yy = new double[x.size()];
         for (int i = 0; i < x.size(); i++) {
-            points.add(new PointD(x.get(i).doubleValue(), y.get(i).doubleValue()));
+            xx[i] = x.get(i).doubleValue();
+            yy[i] = y.get(i).doubleValue();
         }
 
-        return getArea(points, isLonLat);
+        return getArea(xx, yy, isLonLat);
+    }
+
+    /**
+     * Get polygon area on earth surface
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @param isLonLat if is lon/lat
+     * @return area
+     */
+    public static double getArea(double[] x, double[] y, boolean isLonLat) {
+        return getArea(x, y, isLonLat, EARTH_RADIUS * 1000);
+    }
+
+    /**
+     * Get polygon area on earth surface
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @param isLonLat if is lon/lat
+     * @param earthRadius Earth radius
+     * @return area
+     */
+    public static double getArea(double[] x, double[] y, boolean isLonLat, double earthRadius) {
+
+        int n = x.length;
+        if (n > 2) {
+            double mtotalArea = 0;
+
+            if (isLonLat) {
+                double[] lon = new double[x.length];
+                double[] lat = new double[y.length];
+                for (int i = 0; i < x.length; i++) {
+                    lon[i] = Math.toRadians(x[i]);
+                    lat[i] = Math.toRadians(y[i]);
+                }
+                return sphericalPolygonArea(lat, lon, earthRadius);
+            } else {
+                int i, j;
+                double p1x, p1y;
+                double p2x, p2y;
+                for (i = n - 1, j = 0; j < n; i = j, j++) {
+
+                    p1x = x[i];
+                    p1y = y[i];
+
+                    p2x = x[j];
+                    p2y = y[j];
+
+                    mtotalArea += p1x * p2y - p2x * p1y;
+                }
+                mtotalArea /= 2.0;
+
+                if (mtotalArea < 0) {
+                    mtotalArea = -mtotalArea;
+                }
+
+                return mtotalArea;
+            }
+        }
+        return 0;
     }
 
     /**

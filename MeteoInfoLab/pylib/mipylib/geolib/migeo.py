@@ -28,7 +28,7 @@ import mipylib.numeric as np
 from java.util import ArrayList
 
 __all__ = [
-    'arrayinpolygon','circle','convert_encoding_dbf','distance','georead','geotiffread',
+    'arrayinpolygon','circle','convert_encoding_dbf','distance','georead','geotiffread','gridarea',
     'maplayer','inpolygon','maskin','maskout','polyarea','polygon','rmaskin','rmaskout','shaperead',
     'projinfo','project','projectxy','reproject'
     ]
@@ -270,6 +270,30 @@ def polyarea(*args, **kwargs):
             y = y.aslist()
         r = GeoComputation.getArea(x, y, islonlat)
     return r
+
+def gridarea(x_orig, x_cell, x_num, y_orig, y_cell, y_num, islonlat=False,
+             allcell=True, earth_radius=None):
+    """
+    Calculate area of grid cells.
+
+    :param x_orig: (*float*) X origin.
+    :param x_cell: (*float*) X cell spacing.
+    :param x_num: (*int*) Cell number in x direction.
+    :param y_orig: (*float*) Y origin.
+    :param y_cell: (*float*) Y cell spacing.
+    :param y_num: (*int*) Cell number in y direction.
+    :param islonlat: (*bool*) Lonlat projection or not.
+    :param allcell: (*bool*) Calculate all grid cells or not.
+    :param earth_radius: (*float*) Earth radius in meters.
+    :return: (*array*) Grid cell areas.
+    """
+    if earth_radius is None:
+        a = GeoComputation.getGridArea(x_orig, x_cell, x_num, y_orig, y_cell, y_num,
+                                       islonlat, allcell)
+    else:
+        a = GeoComputation.getGridArea(x_orig, x_cell, x_num, y_orig, y_cell, y_num,
+                                       islonlat, allcell, earth_radius)
+    return NDArray(a)
     
 def maskout(data, mask, x=None, y=None):
     """

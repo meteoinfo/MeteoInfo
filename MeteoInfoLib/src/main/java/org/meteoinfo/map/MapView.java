@@ -5413,7 +5413,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                 }
 
                 if (isStreamline) {
-                    int len = (int) (aPLS.getValue() * 3);
+                    Draw.drawPolyline(Points, aPLB, g);
+                    /*int len = (int) (aPLS.getValue() * 3);
                     PointF aPoint;
                     for (int i = 0; i < Points.length; i++) {
                         if (i > 0 && i < Points.length - 2 && i % len == 0) {
@@ -5438,7 +5439,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
                             Draw.drawArraw(g, aPoint, angle);
                         }
-                    }
+                    }*/
                 }
 
                 g.draw(path);

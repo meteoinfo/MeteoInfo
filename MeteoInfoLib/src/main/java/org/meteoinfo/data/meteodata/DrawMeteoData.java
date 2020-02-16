@@ -1602,7 +1602,9 @@ public class DrawMeteoData {
 
         aLayer.setLayerName(lName);
         aLS.setFieldName("ID");
-        aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.Polyline));
+        if (aLS.getShapeType() != ShapeTypes.Polyline)
+            aLS = aLS.convertTo(ShapeTypes.Polyline);
+        aLayer.setLegendScheme(aLS);
         aLayer.setLayerDrawType(LayerDrawType.Streamline);
 
         return aLayer;

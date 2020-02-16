@@ -205,20 +205,35 @@ public class ConsoleDockable extends DefaultSingleCDockable {
      * @param command Command line
      */
     public void run(String command) {
-        interp.console.setStyle(this.consoleColors.getCommandColor());
-        interp.console.println("evaluate selection...");
-        interp.console.setStyle(this.consoleColors.getCodeLinesColor());
-        this.interp.console.println(command);
-        interp.console.setStyle(this.consoleColors.getCommandColor());
-        try {
-            this.interp.exec(command);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            interp.console.print(">>> ", this.consoleColors.getPromptColor());
-            interp.console.setStyle(this.consoleColors.getCommandColor());
-            interp.exec("mipylib.plotlib.miplot.isinteractive = True");
-        }
+        myWorker = new SwingWorker<String, String>() {
+
+            @Override
+            protected String doInBackground() throws Exception {
+                interp.console.setStyle(consoleColors.getCommandColor());
+                interp.console.println("evaluate selection...");
+                interp.console.setStyle(consoleColors.getCodeLinesColor());
+                interp.console.println(command);
+                interp.console.setStyle(consoleColors.getCommandColor());
+                interp.console.setFocusable(true);
+                interp.console.requestFocusInWindow();
+                try {
+                    interp.exec(command);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    interp.fireConsoleExecEvent();
+                }
+
+                return "";
+            }
+
+            @Override
+            protected void done() {
+                interp.console.print(">>> ", consoleColors.getPromptColor());
+                interp.console.setStyle(consoleColors.getCommandColor());
+                interp.exec("mipylib.plotlib.miplot.isinteractive = True");
+            }
+        };
+        myWorker.execute();
     }
 
     /**

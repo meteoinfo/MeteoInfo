@@ -88,8 +88,10 @@ class DimVariable(object):
             indices = inds
             
         if len(indices) < self.ndim:
+            indices = list(indices)
             for i in range(self.ndim - len(indices)):
                 indices.append(slice(None))
+            indices = tuple(indices)
         
         if len(indices) != self.ndim:
             print 'indices must be ' + str(self.ndim) + ' dimensions!'

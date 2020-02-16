@@ -1508,11 +1508,7 @@ class MapAxes(Axes):
         
         :returns: (*VectoryLayer*) Created streamline VectoryLayer.
         """
-        cmap = plotutil.getcolormap(**kwargs)
-        fill_value = kwargs.pop('fill_value', -9999.0)
         proj = kwargs.pop('proj', None)
-        cobj = kwargs.pop('color', 'b')
-        color = plotutil.getcolor(cobj)
         isuv = kwargs.pop('isuv', True)
         density = kwargs.pop('density', 4)
         n = len(args)
@@ -1521,15 +1517,21 @@ class MapAxes(Axes):
             v = args[1]
             y = u.dimvalue(0)
             x = u.dimvalue(1)
-            args = args[2:]
         else:
             x = args[0]
             y = args[1]
             u = args[2]
             v = args[3]
-            args = args[4:]  
-        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, color, 1)
-        plotutil.setlegendscheme(ls, **kwargs)
+        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline)
+        #plotutil.setlegendscheme(ls, **kwargs)
+        lb, isunique = plotutil.getlegendbreak('line', **kwargs)
+        if not kwargs.has_key('headwidth'):
+            kwargs['headwidth'] = 8
+        if not kwargs.has_key('overhang'):
+            kwargs['overhang'] = 0.5
+        lb = plotutil.line2stream(lb, **kwargs)
+        ls.setLegendBreak(0, lb)
+
         #layer = __plot_uvgriddata_m(plot, udata, vdata, None, ls, 'streamplot', isuv, proj=proj, density=density)
         layer = DrawMeteoData.createStreamlineLayer(u._array, v._array, x._array, y._array, density, ls, 'layer', isuv)
         if not proj is None:

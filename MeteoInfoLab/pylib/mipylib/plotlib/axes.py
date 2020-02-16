@@ -3281,9 +3281,6 @@ class Axes(object):
         
         :returns: (*VectoryLayer*) Created streamline VectoryLayer.
         """
-        cmap = plotutil.getcolormap(**kwargs)
-        fill_value = kwargs.pop('fill_value', -9999.0)
-        proj = kwargs.pop('proj', None)
         isuv = kwargs.pop('isuv', True)
         density = kwargs.pop('density', 4)
         n = len(args)
@@ -3292,14 +3289,16 @@ class Axes(object):
             v = args[1]
             y = u.dimvalue(0)
             x = u.dimvalue(1)
-            args = args[2:]
         else:
             x = args[0]
             y = args[1]
             u = args[2]
             v = args[3]
-            args = args[4:]  
         alb, isunique = plotutil.getlegendbreak('line', **kwargs)
+        if not kwargs.has_key('headwidth'):
+            kwargs['headwidth'] = 8
+        if not kwargs.has_key('overhang'):
+            kwargs['overhang'] = 0.5
         alb = plotutil.line2stream(alb, **kwargs)
         
         igraphic = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array, 

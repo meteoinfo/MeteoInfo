@@ -472,6 +472,9 @@ class MapAxes(Axes):
                 #LegendScheme
                 ls = kwargs.pop('symbolspec', None)
                 if ls is None:
+                    if layer.getShapeType().isPolygon():
+                        if not kwargs.has_key('edgecolor'):
+                            kwargs['edgecolor'] = 'k'
                     if len(kwargs) > 0 and layer.getLegendScheme().getBreakNum() == 1:
                         lb = layer.getLegendScheme().getLegendBreaks().get(0)
                         btype = lb.getBreakType()

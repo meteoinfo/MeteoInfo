@@ -949,10 +949,14 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         }
 
         if (this.jComboBox_CurrentFolder.getItemCount() > 0) {
-            String path = this.jComboBox_CurrentFolder.getSelectedItem().toString();
+            Object obj = this.jComboBox_CurrentFolder.getSelectedItem();
+            String path = obj.toString();
             if (new File(path).isDirectory()) {
                 this.fileDock.setPath(new File(path));
             }
+            this.jComboBox_CurrentFolder.removeItem(obj);
+            this.jComboBox_CurrentFolder.addItem(obj);
+            this.jComboBox_CurrentFolder.setSelectedItem(obj);
         }
     }//GEN-LAST:event_jComboBox_CurrentFolderActionPerformed
 

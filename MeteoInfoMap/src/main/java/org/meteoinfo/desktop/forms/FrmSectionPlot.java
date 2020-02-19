@@ -785,7 +785,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
                 break;
             case GrADS_Station:
                 _gridData = ((GrADSDataInfo) _meteoDataInfo.getDataInfo()).getGridData_Station(
-                        this.jComboBox_Variable.getSelectedIndex(), this.jList_Stations.getSelectedValues()[0].toString());
+                        this.jComboBox_Variable.getSelectedIndex(), this.jList_Stations.getSelectedValuesList().get(0).toString());
                 drawGrid();
                 break;
         }
@@ -843,7 +843,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
                 break;
             case GrADS_Station:
                 _gridData = ((GrADSDataInfo) _meteoDataInfo.getDataInfo()).getGridData_Station(
-                        this.jComboBox_Variable.getSelectedIndex(), this.jList_Stations.getSelectedValues()[0].toString());
+                        this.jComboBox_Variable.getSelectedIndex(), this.jList_Stations.getSelectedValuesList().get(0).toString());
                 drawGrid();
                 break;
         }

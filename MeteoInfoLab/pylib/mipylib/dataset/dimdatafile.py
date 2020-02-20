@@ -448,6 +448,15 @@ class DimDataFile(object):
         :param mn: (*int*) Minutes associated with data time.
         '''
         return self.arldata.getDataHead(proj, model, vertical, icx, mn)
+
+    def diff_origin_pack(self, data):
+        '''
+        Get difference between the original data and the packed data.
+        :param data: (*array*) The original data.
+        :return: (*array*) Difference.
+        '''
+        r = self.arldata.diffOriginPack(data._array)
+        return np.NDArray(r)
         
     def writeindexrec(self, t, datahead, ksums=None):
         '''
@@ -464,7 +473,7 @@ class DimDataFile(object):
         '''
         Write data record.
         
-        :param t: (*datatime*) The time of the data.
+        :param t: (*datetime*) The time of the data.
         :param lidx: (*int*) Level index.
         :param vname: (*string*) Variable name.
         :param fhour: (*int*) Forecasting hour.

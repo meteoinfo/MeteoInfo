@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.data.meteodata.arl;
 
+import org.meteoinfo.bak.ArrayMath;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.global.util.JDateUtil;
@@ -1827,6 +1828,35 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
         //Write data
         _bw.write(dataBytes);
+    }
+
+    /**
+     * Calculate difference between the original and the packed data array.
+     * @param a The original array.
+     * @return Difference array (original - packed).
+     */
+    public Array diffOriginPack(Array a) {
+        DataLabel dl = new DataLabel();
+        return diffOriginPack(a, dl);
+    }
+
+    /**
+     * Calculate difference between the original and the packed data array.
+     * @param a The original array.
+     * @param dl The data label.
+     * @return Difference array (original - packed).
+     */
+    public Array diffOriginPack(Array a, DataLabel dl) {
+        Object[] p = packARLGridData(a, dl);
+        byte[] dataBytes = (byte[]) p[0];
+        int[] shape = a.getShape();
+        int ny = shape[0];
+        int nx = shape[1];
+        float[] up = this.unpackARLData(dataBytes, nx, ny, dl);
+        Array b = Array.factory(DataType.FLOAT, shape, up);
+
+        Array diff = ArrayMath.sub(a, b);
+        return diff;
     }
 
     /**

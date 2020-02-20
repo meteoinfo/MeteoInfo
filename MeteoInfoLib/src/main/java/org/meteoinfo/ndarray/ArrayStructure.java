@@ -314,4 +314,9 @@ public class ArrayStructure extends Array {
     public void setObject(int arg0, Object arg1) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public String toString() {
+        return this.arrayObject.toString();
+    }
 }

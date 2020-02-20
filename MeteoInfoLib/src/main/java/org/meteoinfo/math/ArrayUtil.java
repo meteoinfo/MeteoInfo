@@ -1208,6 +1208,9 @@ public class ArrayUtil {
      * @return String
      */
     public static String convertToString(Array a) {
+        if (a.getDataType() == DataType.STRUCTURE)
+            return a.toString();
+
         StringBuilder sbuff = new StringBuilder();
         sbuff.append("array(");
         int ndim = a.getRank();

@@ -3730,14 +3730,18 @@ public class ArrayMath {
         int nn = 0;
         IndexIterator iterY = y.getIndexIterator();
         IndexIterator iterX = x.getIndexIterator();
-        iterY.next();
-        iterX.next();
+        double x1, x2, y1, y2;
+        x1 = iterX.getDoubleNext();
+        y1 = iterY.getDoubleNext();
         while (iterY.hasNext()) {
-            v = iterY.getDoubleCurrent();
-            if (Double.isNaN(v)) {
+            x2 = iterX.getDoubleNext();
+            y2 = iterY.getDoubleNext();
+            if (Double.isNaN(y2)) {
                 continue;
             }
-            r += (iterX.getDoubleNext() - iterX.getDoubleCurrent()) * (iterY.getDoubleNext() + v);
+            r += (x2 - x1) * (y2 + y1);
+            x1 = x2;
+            y1 = y2;
             nn += 1;
         }
 

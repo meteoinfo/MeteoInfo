@@ -9,11 +9,12 @@ from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.global import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from ucar.nc2 import Attribute as NCAttribute
+from ucar.ma2 import DataType as NCDataType
+from ucar.ma2 import Array as NCArray
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from org.meteoinfo.ndarray import DataType
 
 import mipylib.numeric as np
-from mipylib.numeric import DimArray
 import mipylib.miutil as miutil
 import datetime
 
@@ -76,12 +77,8 @@ class DimVariable(object):
             indices = tuple(inds)                   
                 
         if isinstance(indices, str):    #metadata
-            if self.variable.getDataType() == DataType.STRUCTURE:
-                rr = self.dataset.read(self.name)
-                m = rr.getArrayObject().findMember(indices)
-                data = rr.getArrayObject().getArray(0, m)
-                data = NCUtil.convertArray(data)
-                return np.array(data)
+            if self.variable.getDataType() in [DataType.STRUCTURE, DataType.SEQUENCE]:
+                return self.member_array(indices)
         
         if not isinstance(indices, tuple):
             inds = []
@@ -296,6 +293,19 @@ class DimVariable(object):
         '''
         return np.array(self.dataset.read(self.name))
 
+    def get_members(self):
+        '''
+        Get structure members. Only valid for Structure data type.
+
+        :return: Structure members.
+        '''
+        a = self.read()
+        if a._array.getDataType() != DataType.STRUCTURE:
+            print 'This method is only valid for structure array!'
+            return None
+        a = a._array.getArrayObject()
+        return a.getMembers()
+
     def member_array(self, member, indices=None):
         '''
         Extract member array. Only valid for Structure data type.
@@ -316,8 +326,11 @@ class DimVariable(object):
             raise KeyError('The member %s not exists!' % member)
 
         a = a.extractMemberArray(m)
+        if a.getDataType() in [NCDataType.SEQUENCE, NCDataType.STRUCTURE]:
+            return StructureArray(a)
+
         a = NCUtil.convertArray(a)
-        r = DimArray(a, self.dims, self.fill_value, self.proj)
+        r = np.array(a)
         if not indices is None:
             r = r.__getitem__(indices)
 
@@ -405,6 +418,68 @@ class DimVariable(object):
         if isinstance(attrvalue, np.NDArray):
             attrvalue = NCUtil.convertArray(attrvalue._array)
         self.ncvariable.addAttribute(NCAttribute(attrname, attrvalue))
+
+class StructureArray(object):
+
+    def __init__(self, array):
+        """
+        Structure array.
+
+        :param array: (*ArrayStructure*) NC ArrayStructure object.
+        """
+        self._array = array
+
+    @property
+    def shape(self):
+        """
+        Get array shape.
+
+        :return: (*tuple of int*) Array shape.
+        """
+        return tuple(self._array.getShape())
+
+    @property
+    def dtype(self):
+        """
+        Get array data type.
+
+        :return: (*DataType*) Array data type.
+        """
+        return NCUtil.convertDataType(self._array.getDataType())
+
+    def get_members(self, rec=0):
+        """
+        Get structure members.
+
+        :param rec: (*int*) Record index.
+        :return: (*Member*) Structure members.
+        """
+        return self._array.getObject(rec).getMembers()
+
+    def member_array(self, member, rec=0, indices=None):
+        '''
+        Extract member array. Only valid for Structure data type.
+
+        :param member: (*string*) Member name.
+        :param rec: (*int*) Record index.
+        :param indices: (*slice*) Indices.
+
+        :returns: (*array*) Extracted member array.
+        '''
+        m = self._array.getObject(rec).findMember(member)
+        if m is None:
+            raise KeyError('The member %s not exists!' % member)
+
+        a = self._array.getObject(rec).extractMemberArray(m)
+        if a.getDataType() in [NCDataType.SEQUENCE, NCDataType.STRUCTURE]:
+            return StructureArray(a)
+
+        a = NCUtil.convertArray(a)
+        r = np.array(a)
+        if not indices is None:
+            r = r.__getitem__(indices)
+
+        return r
 
 # Variable in multiple data files (DimDataFiles) - only time dimension is different.
 class TDimVariable(object):

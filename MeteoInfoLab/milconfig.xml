@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\netcdf">
-    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\ensemble"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\arrow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\polar">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\MeteoInfo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
@@ -14,19 +10,25 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
     <RecentFolder Folder="D:\Run\emips\test\setting"/>
     <RecentFolder Folder="D:\Run\emips\test"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\sunphotometer"/>
+    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\CARSNET"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\polar"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Run\emips\test\test_run-1.py"/>
       <OpenedFile File="D:\Run\emips\test\setting\_emission.py"/>
       <OpenedFile File="D:\Run\emips\test\test_run.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Run\emips\test\test_run-1.py"/>
       <RecentFile File="D:\Run\emips\test\setting\_emission.py"/>
       <RecentFile File="D:\Run\emips\test\test_run.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_1.py"/>
     </RecentFiles>
   </File>
   <Font>

@@ -158,6 +158,14 @@ public class PolarPlot extends Plot2D {
         this.xTickLocations = new ArrayList<>();
         for (Number v : value)
             this.xTickLocations.add(v.doubleValue());
+        if (this.xTickLabels.size() != value.size()) {
+            this.xTickLabels = new ArrayList<>();
+            String label;
+            for (Number v : value) {
+                label = DataConvert.removeTailingZeros(String.valueOf(v.floatValue())) + String.valueOf((char) 186);
+                this.xTickLabels.add(label);
+            }
+        }
     }
     
     /**

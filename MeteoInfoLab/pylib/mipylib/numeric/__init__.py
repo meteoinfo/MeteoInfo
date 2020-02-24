@@ -5,4 +5,4 @@ from . import fitting
 from . import stats
 from . import interpolate
 from . import optimize
-from stats import percentile
+from .stats import percentile

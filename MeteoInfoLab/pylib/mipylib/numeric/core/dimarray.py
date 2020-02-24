@@ -367,12 +367,13 @@ class DimArray(NDArray):
         if self._array.getDataType() != DataType.STRUCTURE:
             print 'This method is only valid for structure array!'
             return None
-        
-        m = self._array.findMember(member)
+
+        a = self._array.getArrayObject()
+        m = a.findMember(member)
         if m is None:
             raise KeyError('The member %s not exists!' % member)
             
-        a = self._array.extractMemberArray(m)
+        a = a.extractMemberArray(m)
         r = DimArray(a, self.dims, self.fill_value, self.proj)
         if not indices is None:
             r = r.__getitem__(indices)

@@ -13,6 +13,7 @@ from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from org.meteoinfo.ndarray import DataType
 
 import mipylib.numeric as np
+from mipylib.numeric import DimArray
 import mipylib.miutil as miutil
 import datetime
 
@@ -289,7 +290,38 @@ class DimVariable(object):
             return data
     
     def read(self):
+        '''
+        Read data array.
+        :return: (*array*) Data array.
+        '''
         return np.array(self.dataset.read(self.name))
+
+    def member_array(self, member, indices=None):
+        '''
+        Extract member array. Only valid for Structure data type.
+
+        :param member: (*string*) Member name.
+        :param indices: (*slice*) Indices.
+
+        :returns: (*array*) Extracted member array.
+        '''
+        a = self.read()
+        if a._array.getDataType() != DataType.STRUCTURE:
+            print 'This method is only valid for structure array!'
+            return None
+
+        a = a._array.getArrayObject()
+        m = a.findMember(member)
+        if m is None:
+            raise KeyError('The member %s not exists!' % member)
+
+        a = a.extractMemberArray(m)
+        a = NCUtil.convertArray(a)
+        r = DimArray(a, self.dims, self.fill_value, self.proj)
+        if not indices is None:
+            r = r.__getitem__(indices)
+
+        return r
     
     # get dimension length
     def dimlen(self, idx):

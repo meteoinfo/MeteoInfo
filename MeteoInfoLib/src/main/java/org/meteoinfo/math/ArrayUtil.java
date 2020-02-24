@@ -28,8 +28,11 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
+import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.MIMath;
+import org.meteoinfo.global.PointD;
 import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.io.EndianDataOutputStream;
@@ -42,6 +45,7 @@ import org.meteoinfo.ndarray.Index2D;
 import org.meteoinfo.ndarray.IndexIterator;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
+import org.meteoinfo.shape.PolygonShape;
 
 /**
  *
@@ -2723,6 +2727,173 @@ public class ArrayUtil {
         }
 
         return rdata;
+    }
+
+    /**
+     * Interpolate with surface method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param unDefData undefine value
+     * @return grid data
+     */
+    public static Array interpolation_Surface_1(Array x_s, Array y_s, Array a, Array X, Array Y,
+                                                double unDefData) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+
+        int rowNum, colNum, xn, yn;
+        int[] shape = x_s.getShape();
+        colNum = shape[1];
+        rowNum = shape[0];
+        xn = (int) X.getSize();
+        yn = (int) Y.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{yn, xn});
+        double x, y;
+
+        PolygonShape[][] polygons = new PolygonShape[rowNum - 1][colNum - 1];
+        PolygonShape ps;
+        for (int i = 0; i < rowNum - 1; i++) {
+            for (int j = 0; j < colNum - 1; j++) {
+                ps = new PolygonShape();
+                List<PointD> points = new ArrayList<>();
+                points.add(new PointD(x_s.getDouble(i * colNum + j), y_s.getDouble(i * colNum + j)));
+                points.add(new PointD(x_s.getDouble((i + 1) * colNum + j), y_s.getDouble((i + 1) * colNum + j)));
+                points.add(new PointD(x_s.getDouble((i + 1) * colNum + j + 1), y_s.getDouble((i + 1) * colNum + j + 1)));
+                points.add(new PointD(x_s.getDouble(i * colNum + j + 1), y_s.getDouble(i * colNum + j + 1)));
+                points.add((PointD) points.get(0).clone());
+                ps.setPoints(points);
+                polygons[i][j] = ps;
+            }
+        }
+
+        for (int i = 0; i < yn; i++) {
+            for (int j = 0; j < xn; j++) {
+                r.setDouble(i * xn + j, unDefData);
+            }
+        }
+
+        double v;
+        for (int i = 0; i < rowNum - 1; i++) {
+            for (int j = 0; j < colNum - 1; j++) {
+                ps = polygons[i][j];
+                v = a.getDouble(i * colNum + j);
+                for (int ii = 0; ii < yn; ii++) {
+                    y = Y.getDouble(ii);
+                    for (int jj = 0; jj < xn; jj++) {
+                        x = X.getDouble(jj);
+                        if (Double.isNaN(r.getDouble(ii * xn + jj)) || r.getDouble(ii * xn + jj) == unDefData) {
+                            if (GeoComputation.pointInPolygon(ps, x, y)) {
+                                r.setDouble(ii * xn + jj, v);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolate with surface method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @return grid data
+     */
+    public static Array interpolation_Surface(Array x_s, Array y_s, Array a, Array X, Array Y) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+
+        int rowNum, colNum, xn, yn;
+        int[] shape = x_s.getShape();
+        colNum = shape[1];
+        rowNum = shape[0];
+        xn = (int) X.getSize();
+        yn = (int) Y.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{yn, xn});
+        for (int i = 0; i < r.getSize(); i++) {
+            r.setDouble(i, Double.NaN);
+        }
+
+        double x, y;
+        double v, xll, xtl, xtr, xlr, yll, ytl, ytr, ylr;
+        double dX = X.getDouble(1) - X.getDouble(0);
+        double dY = Y.getDouble(1) - Y.getDouble(0);
+        int minxi, maxxi, minyi, maxyi;
+        for (int i = 0; i < rowNum - 1; i++) {
+            for (int j = 0; j < colNum - 1; j++) {
+                v = a.getDouble(i * colNum + j);
+                if (Double.isNaN(v)) {
+                    continue;
+                }
+                xll = x_s.getDouble(i * colNum + j);
+                xtl = x_s.getDouble((i + 1) * colNum + j);
+                xtr = x_s.getDouble((i + 1) * colNum + j + 1);
+                xlr = x_s.getDouble(i * colNum + j + 1);
+                yll = y_s.getDouble(i * colNum + j);
+                ytl = y_s.getDouble((i + 1) * colNum + j);
+                ytr = y_s.getDouble((i + 1) * colNum + j + 1);
+                ylr = y_s.getDouble(i * colNum + j + 1);
+                if (Double.isNaN(xll) || Double.isNaN(xtl) || Double.isNaN(xtr) || Double.isNaN(xlr)
+                        || Double.isNaN(yll) || Double.isNaN(ytl) || Double.isNaN(ytr) || Double.isNaN(ylr)) {
+                    continue;
+                }
+                PolygonShape ps = new PolygonShape();
+                List<PointD> points = new ArrayList<>();
+                points.add(new PointD(xll, yll));
+                points.add(new PointD(xtl, ytl));
+                points.add(new PointD(xtr, ytr));
+                points.add(new PointD(xlr, ylr));
+                points.add((PointD) points.get(0).clone());
+                ps.setPoints(points);
+                minxi = (int) ((ps.getExtent().minX - X.getDouble(0)) / dX);
+                maxxi = (int) ((ps.getExtent().maxX - X.getDouble(0)) / dX);
+                minyi = (int) ((ps.getExtent().minY - Y.getDouble(0)) / dY);
+                maxyi = (int) ((ps.getExtent().maxY - Y.getDouble(0)) / dY);
+                maxxi += 1;
+                maxyi += 1;
+                if (maxxi < 0 || minxi >= xn) {
+                    continue;
+                }
+                if (maxyi < 0 || minyi >= yn) {
+                    continue;
+                }
+                if (minxi < 0) {
+                    minxi = 0;
+                }
+                if (maxxi >= xn) {
+                    maxxi = xn - 1;
+                }
+                if (maxyi >= yn) {
+                    maxyi = yn - 1;
+                }
+                for (int m = minyi; m <= maxyi; m++) {
+                    y = Y.getDouble(m);
+                    for (int n = minxi; n <= maxxi; n++) {
+                        x = X.getDouble(n);
+                        if (GeoComputation.pointInPolygon(ps, x, y)) {
+                            r.setDouble(m * xn + n, v);
+                        }
+                    }
+                }
+            }
+        }
+
+        return r;
     }
 
     /**

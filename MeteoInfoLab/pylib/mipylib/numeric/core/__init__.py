@@ -1,6 +1,6 @@
-from multiarray import NDArray
-from dimarray import DimArray
-from mitable import PyTableData
+from .multiarray import NDArray
+from .dimarray import DimArray
+from .mitable import PyTableData
 import _dtype as dtype
 import numeric
 from numeric import *

@@ -544,13 +544,24 @@ public abstract class DataInfo {
      * @return The variable
      */
     public Variable getVariable(String varName) {
+        Variable v = null;
         for (Variable var : _variables) {
             if (var.getName().equalsIgnoreCase(varName)) {
-                return var;
+                v = var;
+                break;
             }
         }
 
-        return null;
+        if (v == null) {
+            for (Variable var : _variables) {
+                if (var.getName().endsWith("/" + varName)) {
+                    v = var;
+                    break;
+                }
+            }
+        }
+
+        return v;
     }
 
     /**

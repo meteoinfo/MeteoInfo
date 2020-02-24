@@ -71,6 +71,7 @@ org\meteoinfo\laboratory\gui\FigureDockable.class
 org\meteoinfo\laboratory\gui\FrmFindReplace$5.class
 org\meteoinfo\laboratory\gui\FigureDockable$7.class
 org\meteoinfo\laboratory\gui\JTextPanePrintStream.class
+org\meteoinfo\laboratory\gui\ConsoleDockable$4.class
 org\meteoinfo\laboratory\gui\FrmMain$3.class
 org\meteoinfo\laboratory\gui\VariableDockable.class
 org\meteoinfo\laboratory\gui\FrmAbout.class

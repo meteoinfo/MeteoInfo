@@ -38,12 +38,12 @@ class DimDataFile(object):
         
     def __getitem__(self, key):
         if isinstance(key, basestring):
-            vnames = self.dataset.getDataInfo().getVariableNames()
-            if key in vnames:
-                return DimVariable(self.dataset.getDataInfo().getVariable(key), self)
-            else:
+            var = self.dataset.getDataInfo().getVariable(key)
+            if var is None:
                 print key + ' is not a variable name'
                 raise ValueError()
+            else:
+                return DimVariable(self.dataset.getDataInfo().getVariable(key), self)
         else:
             print key + ' is not a variable name'
             raise ValueError()

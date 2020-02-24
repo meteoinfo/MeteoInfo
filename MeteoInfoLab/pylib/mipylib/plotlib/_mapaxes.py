@@ -23,7 +23,7 @@ from org.meteoinfo.layout import ScaleBarType
 
 from java.awt import Font, Color
 
-from axes import Axes
+from ._axes import Axes
 import mipylib.numeric as np
 from mipylib.numeric.core import NDArray, DimArray
 from mipylib.geolib.milayer import MILayer
@@ -31,6 +31,8 @@ import mipylib.geolib.migeo as migeo
 import plotutil
 import mipylib.migl as migl
 import mipylib.miutil as miutil
+
+__all__ = ['MapAxes']
 
 ##############################################        
 class MapAxes(Axes):

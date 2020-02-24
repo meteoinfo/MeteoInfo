@@ -24,12 +24,12 @@ from java.awt import Font
 from mipylib.numeric.core import NDArray, DimArray
 import mipylib.numeric as np
 import mipylib.miutil as miutil
-from axes import Axes, PolarAxes
-from mapaxes import MapAxes
-from axes3d import Axes3D
+from ._axes import Axes, PolarAxes
+from ._mapaxes import MapAxes
+from ._axes3d import Axes3D
 import plotutil
-from figure import Figure
-from glfigure import GLFigure
+from ._figure import Figure
+from ._glfigure import GLFigure
 import mipylib.migl as migl
 
 ## Global ##

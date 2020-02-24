@@ -22,18 +22,16 @@
       <OpenedFile File="D:\Run\emips\test\test_run-1.py"/>
       <OpenedFile File="D:\Run\emips\test\setting\_emission.py"/>
       <OpenedFile File="D:\Run\emips\test\test_run.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\netcdf\read_group_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Run\emips\test\test_run-1.py"/>
       <RecentFile File="D:\Run\emips\test\setting\_emission.py"/>
       <RecentFile File="D:\Run\emips\test\test_run.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\netcdf\read_group_1.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
   </Font>
   <LookFeel Name="Darcula"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1400,775"/>
 </MeteoInfo>

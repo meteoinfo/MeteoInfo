@@ -12,6 +12,47 @@ import java.util.Date;
 import java.util.List;
 
 public class JDateUtil {
+
+    /**
+     * Convert LocalDate to Date object.
+     *
+     * @param localDate The LocalDate object.
+     * @return Date object.
+     */
+    public static Date asDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+     * Convert LocalDateTime to Date object.
+     *
+     * @param localDateTime The LocalDateTime object.
+     * @return Date object.
+     */
+    public static Date asDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+     * Convert Date to LocalDate object.
+     *
+     * @param date The Date object.
+     * @return LocalDate object.
+     */
+    public static LocalDate asLocalDate(Date date) {
+        return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    /**
+     * Convert Date to LocalDateTime object.
+     *
+     * @param date The Date object.
+     * @return LocalDateTime object.
+     */
+    public static LocalDateTime asLocalDateTime(Date date) {
+        return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
     /**
      * Convert OA date to date
      *

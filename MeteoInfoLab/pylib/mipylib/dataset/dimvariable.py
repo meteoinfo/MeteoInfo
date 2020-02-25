@@ -69,16 +69,19 @@ class DimVariable(object):
     def __repr__(self):
         return self.__str__()
         
-    def __getitem__(self, indices):                    
+    def __getitem__(self, indices):
+        if self.variable.getDataType() in [DataType.STRUCTURE, DataType.SEQUENCE]:
+            if isinstance(indices, str):    #metadata
+                return self.member_array(indices)
+            else:
+                a = self.dataset.read(self.name)
+                return StructureArray(a.getArrayObject())
+
         if indices is None:
             inds = []
             for i in range(self.ndim):
                 inds.append(slice(None))
-            indices = tuple(inds)                   
-                
-        if isinstance(indices, str):    #metadata
-            if self.variable.getDataType() in [DataType.STRUCTURE, DataType.SEQUENCE]:
-                return self.member_array(indices)
+            indices = tuple(inds)
         
         if not isinstance(indices, tuple):
             inds = []

@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\burf">
-    <RecentFolder Folder="D:\Run\emips\test"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\sunphotometer"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\fitting">
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\CARSNET"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\polar"/>
@@ -13,24 +10,27 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Run\emips\test\test_run-1.py"/>
       <OpenedFile File="D:\Run\emips\test\setting\_emission.py"/>
       <OpenedFile File="D:\Run\emips\test\test_run.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_1-1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_5.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\fitting\poly_fit-2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Run\emips\test\test_run-1.py"/>
       <RecentFile File="D:\Run\emips\test\setting\_emission.py"/>
       <RecentFile File="D:\Run\emips\test\test_run.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_1-1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_5.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\fitting\poly_fit-2.py"/>
     </RecentFiles>
   </File>
   <Font>

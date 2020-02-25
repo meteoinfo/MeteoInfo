@@ -10,7 +10,7 @@ from org.meteoinfo.global import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from ucar.nc2 import Attribute as NCAttribute
 from ucar.ma2 import DataType as NCDataType
-from ucar.ma2 import Array as NCArray
+from ucar.ma2 import ArrayStructure, StructureMembers
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from org.meteoinfo.ndarray import DataType
 
@@ -306,6 +306,20 @@ class DimVariable(object):
         a = a._array.getArrayObject()
         return a.getMembers()
 
+    def get_member(self, member):
+        '''
+        Get structure members. Only valid for Structure data type.
+
+        :param member: (*str*) Member name.
+        :return: Structure members.
+        '''
+        a = self.read()
+        if a._array.getDataType() != DataType.STRUCTURE:
+            print 'This method is only valid for structure array!'
+            return None
+        a = a._array.getArrayObject()
+        return a.findMember(member)
+
     def member_array(self, member, indices=None):
         '''
         Extract member array. Only valid for Structure data type.
@@ -321,11 +335,12 @@ class DimVariable(object):
             return None
 
         a = a._array.getArrayObject()
-        m = a.findMember(member)
-        if m is None:
+        if isinstance(member, basestring):
+            member = a.findMember(member)
+        if member is None:
             raise KeyError('The member %s not exists!' % member)
 
-        a = a.extractMemberArray(m)
+        a = a.extractMemberArray(member)
         if a.getDataType() in [NCDataType.SEQUENCE, NCDataType.STRUCTURE]:
             return StructureArray(a)
 
@@ -454,23 +469,48 @@ class StructureArray(object):
         :param rec: (*int*) Record index.
         :return: (*Member*) Structure members.
         """
-        return self._array.getObject(rec).getMembers()
+        if isinstance(self._array, ArrayStructure):
+            return self._array.getMembers()
+        else:
+            return self._array.getObject(rec).getMembers()
 
-    def member_array(self, member, rec=0, indices=None):
+    def get_member(self, member, rec=0):
+        """
+        Get structure members.
+
+        :param member: (*str*) Member name.
+        :param rec: (*int*) Record index.
+        :return: (*Member*) Structure members.
+        """
+        if isinstance(self._array, ArrayStructure):
+            return self._array.findMember(member)
+        else:
+            return self._array.getObject(rec).findMember(member)
+
+    def member_array(self, member, indices=None, rec=0):
         '''
         Extract member array. Only valid for Structure data type.
 
         :param member: (*string*) Member name.
-        :param rec: (*int*) Record index.
         :param indices: (*slice*) Indices.
+        :param rec: (*int*) Record index.
 
         :returns: (*array*) Extracted member array.
         '''
-        m = self._array.getObject(rec).findMember(member)
-        if m is None:
+        is_structure = isinstance(self._array, ArrayStructure)
+        if isinstance(member, basestring):
+            if is_structure:
+                member = self._array.findMember(member)
+            else:
+                member = self._array.getObject(rec).findMember(member)
+
+        if member is None:
             raise KeyError('The member %s not exists!' % member)
 
-        a = self._array.getObject(rec).extractMemberArray(m)
+        if is_structure:
+            a = self._array.extractMemberArray(member)
+        else:
+            a = self._array.getObject(rec).extractMemberArray(member)
         if a.getDataType() in [NCDataType.SEQUENCE, NCDataType.STRUCTURE]:
             return StructureArray(a)
 

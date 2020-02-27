@@ -16,6 +16,7 @@ from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
 from org.meteoinfo.data import TableUtil
 from org.meteoinfo.math import ArrayUtil
 from ucar.nc2 import NetcdfFileWriter
+from ucar.nc2.iosp.bufr.tables import BufrTables
 
 import mipylib.numeric as np
 import mipylib.miutil as miutil
@@ -27,7 +28,7 @@ import mipylib.migl as migl
 __all__ = [
     'addfile','addfiles','addfile_arl','addfile_ascii_grid','addfile_awx','addfile_geotiff',
     'addfile_grads','addfile_hyconc','addfile_hytraj','addfile_lonlat','addfile_micaps',
-    'addfile_mm5','addfile_nc','addfile_grib','addfile_surfer',
+    'addfile_mm5','addfile_nc','addfile_grib','addfile_surfer','add_bufr_lookup',
     'addtimedim','joinncfile','asciiread','asciiwrite','binread','binwrite',
     'numasciicol','numasciirow','readtable','convert2nc','dimension','grads2nc','ncwrite'
     ]
@@ -899,3 +900,11 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
     ncfile.write(var, data)
     #Close netCDF file
     ncfile.close()
+
+def add_bufr_lookup(lookup):
+    """
+    Add bufr lookup file for reading bufr files with local code tables.
+
+    :param lookup: (*str*) The bufr lookup file path.
+    """
+    BufrTables.addLookupFile(lookup)

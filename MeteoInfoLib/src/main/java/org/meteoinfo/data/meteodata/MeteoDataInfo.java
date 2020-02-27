@@ -438,7 +438,7 @@ public class MeteoDataInfo {
      */
     public void openData(String fileName) {
         try {
-            boolean canOpen = NetcdfFile.canOpen(fileName);
+            boolean canOpen = NetCDFDataInfo.canOpen(fileName);
             if (canOpen) {
                 this.openNetCDFData(fileName);
             } else if (ARLDataInfo.canOpen(fileName)) {
@@ -457,7 +457,7 @@ public class MeteoDataInfo {
      */
     public void openData(String fileName, boolean keepOpen) {
         try {
-            boolean canOpen = NetcdfFile.canOpen(fileName);
+            boolean canOpen = NetCDFDataInfo.canOpen(fileName);
             if (canOpen) {
                 this.openNetCDFData(fileName, keepOpen);
             } else if (ARLDataInfo.canOpen(fileName)) {

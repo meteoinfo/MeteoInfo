@@ -52,6 +52,8 @@ import org.meteoinfo.data.meteodata.Attribute;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.iosp.hdf5.H5header;
+import ucar.unidata.io.RandomAccessFile;
 
 /**
  *
@@ -170,6 +172,23 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     // </editor-fold>
     // <editor-fold desc="Methods">
     // <editor-fold desc="Read Data">
+
+    /**
+     * Test if the file can be opened.
+     *
+     * @param fileName The file name.
+     * @return Can be opened or not.
+     * @throws IOException
+     */
+    public static boolean canOpen(String fileName) throws IOException {
+        boolean r = NetcdfDataset.canOpen(fileName);
+        if (!r) {
+            RandomAccessFile raf = RandomAccessFile.acquire(fileName);
+            r = H5header.isValidFile(raf);
+        }
+        return r;
+    }
+
     @Override
     public void readDataInfo(String fileName) {
         this.setFileName(fileName);

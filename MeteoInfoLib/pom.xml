@@ -10,8 +10,20 @@
     
     <artifactId>MeteoInfoLib</artifactId>
     <packaging>jar</packaging>
-    
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <netcdfJavaVersion>5.1.0</netcdfJavaVersion>
+    </properties>
+
     <repositories>
+        <repository>
+            <id>unidata-all</id>
+            <name>Unidata All</name>
+            <url>https://artifacts.unidata.ucar.edu/repository/unidata-all/</url>
+        </repository>
         <repository>
             <id>freehep</id>
             <name>freehep</name>
@@ -31,66 +43,19 @@
             <id>ebi</id>
             <name>ebiRepo</name>
             <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
-        </repository>
-        <repository>
-            <id>unidata-all</id>
-            <name>Unidata All</name>
-            <url>https://artifacts.unidata.ucar.edu/repository/unidata-all/</url>
-        </repository>
+        </repository>        
     </repositories>
     
     <dependencies>
         <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>netcdfAll</artifactId>
+            <version>${netcdfJavaVersion}</version>
+        </dependency>
+        <dependency>
             <groupId>com.l2fprod</groupId>
             <artifactId>l2fprod-common-all</artifactId>
             <version>0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.ucar</groupId>
-            <artifactId>cdm-core</artifactId>
-            <version>${netcdfJavaVersion}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>edu.ucar</groupId>
-            <artifactId>bufr</artifactId>
-            <version>5.2.0</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucar</groupId>
-            <artifactId>cdm-image</artifactId>
-            <version>${netcdfJavaVersion}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucar</groupId>
-            <artifactId>grib</artifactId>
-            <version>5.2.0</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucar</groupId>
-            <artifactId>netcdf4</artifactId>
-            <version>${netcdfJavaVersion}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucar</groupId>
-            <artifactId>opendap</artifactId>
-            <version>${netcdfJavaVersion}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucar</groupId>
-            <artifactId>cdm-mcidas</artifactId>
-            <version>${netcdfJavaVersion}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.freehep</groupId>
@@ -198,14 +163,7 @@
             <version>1.7.19</version>
         </dependency>
     </dependencies>
-    
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <netcdfJavaVersion>5.2.0</netcdfJavaVersion>
-    </properties>
-    
+
     <build>
         <plugins>
             <plugin>

@@ -8,6 +8,7 @@ package org.meteoinfo.data.meteodata.bufr;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
@@ -53,6 +54,23 @@ public class BufrDataInfo {
         Message m = ms.getFirstDataMessage();
         br.close();
         return m;
+    }
+
+    /**
+     * Read Messages
+     * @param fileName Bufr file name
+     * @return Messages
+     * @throws IOException
+     */
+    public List<Message> readMessages(String fileName) throws IOException {
+        ucar.unidata.io.RandomAccessFile br = new ucar.unidata.io.RandomAccessFile(fileName, "r");
+        MessageScanner ms = new MessageScanner(br);
+        List<Message> messages = new ArrayList<>();
+        while(ms.hasNext()) {
+            messages.add(ms.next());
+        }
+        br.close();
+        return messages;
     }
 
     /**

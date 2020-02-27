@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\grib">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\polar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
@@ -9,33 +8,36 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Run\emips\test\test_run-1.py"/>
       <OpenedFile File="D:\Run\emips\test\setting\_emission.py"/>
       <OpenedFile File="D:\Run\emips\test\test_run.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\add_cma_lookup.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_read_test_cma-1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\thse.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Run\emips\test\test_run-1.py"/>
       <RecentFile File="D:\Run\emips\test\setting\_emission.py"/>
       <RecentFile File="D:\Run\emips\test\test_run.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\add_cma_lookup.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_read_test_cma-1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\thse.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
   </Font>
   <LookFeel Name="Darcula"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1400,777"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1392,824"/>
 </MeteoInfo>

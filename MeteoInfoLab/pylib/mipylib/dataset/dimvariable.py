@@ -349,6 +349,9 @@ class DimVariable(object):
 
         a = NCUtil.convertArray(a)
         r = np.array(a)
+        if r.size == 1:
+            return r[0]
+
         if not indices is None:
             r = r.__getitem__(indices)
 
@@ -519,6 +522,9 @@ class StructureArray(object):
 
         a = NCUtil.convertArray(a)
         r = np.array(a)
+        if r.size == 1:
+            return r[0]
+
         if not indices is None:
             r = r.__getitem__(indices)
 

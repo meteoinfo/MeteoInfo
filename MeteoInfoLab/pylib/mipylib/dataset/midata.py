@@ -907,4 +907,40 @@ def add_bufr_lookup(lookup):
 
     :param lookup: (*str*) The bufr lookup file path.
     """
-    BufrTables.addLookupFile(lookup)
+    lookup_fp = lookup + '.fullpath'
+    is_fullpath = True if os.path.isfile(lookup_fp) else False
+    if is_fullpath:
+        with open(lookup_fp, 'r') as f:
+            for line in f:
+                line = line.lstrip()
+                if line.startswith('#'):
+                    continue
+                paras = line.split(',')
+                tb_fn = paras[6]
+                td_fn = paras[8]
+                if (not os.path.isfile(tb_fn)) or (not os.path.isfile(td_fn)):
+                    is_fullpath = False
+                    break
+
+    if not is_fullpath:
+        apath = os.path.dirname(lookup)
+        os.chdir(apath)
+        data = ''
+        with open(lookup, 'r') as f:
+            for line in f:
+                line = line.lstrip()
+                if line.startswith('#'):
+                    data += line
+                    continue
+                paras = line.split(',')
+                tb_fn = paras[6].strip()
+                td_fn = paras[8].strip()
+                tb_fn = os.path.abspath(tb_fn)
+                td_fn = os.path.abspath(td_fn)
+                line = line.replace(paras[6], tb_fn)
+                line = line.replace(paras[8], td_fn)
+                data += line
+        with open(lookup_fp, 'w') as f:
+            f.write(data)
+
+    BufrTables.addLookupFile(lookup_fp)

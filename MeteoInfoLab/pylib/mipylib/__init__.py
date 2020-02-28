@@ -10,3 +10,13 @@ import plotlib as plt
 import meteolib as meteo
 import imagelib
 from dataframe import *
+
+import os
+mi_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+migl.mifolder = mi_dir
+
+lookup_cma = os.path.join(mi_dir, 'tables', 'bufr', 'tablelookup_cma.csv')
+#print(lookup_cma)
+if os.path.isfile(lookup_cma):
+    dataset.add_bufr_lookup(lookup_cma)
+    print('CMA Bufr lookup file added.')

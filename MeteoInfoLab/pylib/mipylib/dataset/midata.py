@@ -916,8 +916,8 @@ def add_bufr_lookup(lookup):
                 if line.startswith('#'):
                     continue
                 paras = line.split(',')
-                tb_fn = paras[6]
-                td_fn = paras[8]
+                tb_fn = paras[6].strip()
+                td_fn = paras[8].strip()
                 if (not os.path.isfile(tb_fn)) or (not os.path.isfile(td_fn)):
                     is_fullpath = False
                     break

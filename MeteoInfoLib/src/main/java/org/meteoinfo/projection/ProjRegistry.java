@@ -157,7 +157,7 @@ public class ProjRegistry {
      */
     public String getProj4Name(Projection proj) {
         for (Entry entry : projRegistry.entrySet()) {
-            if (((Projection) entry.getValue()).getName().equals(proj.getName())) {
+            if (entry.getValue().equals(proj.getClass())) {
                 return (String) entry.getKey();
             }
         }

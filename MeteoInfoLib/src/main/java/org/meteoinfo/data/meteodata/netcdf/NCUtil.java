@@ -152,6 +152,7 @@ public class NCUtil {
     public static Variable convertVariable(ucar.nc2.Variable ncVar) {
         Variable var = new Variable();
         var.setName(ncVar.getFullName());
+        var.setShortName(ncVar.getShortName());
         var.setDataType(convertDataType(ncVar.getDataType()));
         var.setDescription(ncVar.getDescription());
         var.setDimensions(convertDimensions(ncVar.getDimensions()));

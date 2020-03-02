@@ -554,7 +554,7 @@ public abstract class DataInfo {
 
         if (v == null) {
             for (Variable var : _variables) {
-                if (var.getName().endsWith("/" + varName)) {
+                if (var.getShortName().equalsIgnoreCase(varName)) {
                     v = var;
                     break;
                 }

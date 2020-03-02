@@ -34,6 +34,7 @@ public class Variable {
     /// </summary>
 
     public int Number;
+    private  String name;
     private String shortName;
     private DataType dataType;
     protected int[] shape = new int[0];
@@ -64,7 +65,8 @@ public class Variable {
      * Constructor
      */
     public Variable() {
-        this.shortName = "null";
+        this.name = "null";
+        this.shortName = null;
         this.dataType = DataType.FLOAT;
         _levels = new ArrayList<>();
         units = "null";
@@ -81,7 +83,7 @@ public class Variable {
      */
     public Variable(int aNum, String aName, String aDesc, String aUnit) {
         Number = aNum;
-        this.shortName = aName;
+        this.name = aName;
         this.units = aUnit;
         _description = aDesc;
         _levels = new ArrayList<>();
@@ -95,7 +97,7 @@ public class Variable {
      * @return Name
      */
     public String getName() {
-        return this.getShortName();
+        return this.name;
     }
 
     /**
@@ -104,7 +106,7 @@ public class Variable {
      * @return Short name
      */
     public String getShortName() {
-        return this.shortName;
+        return this.shortName == null ? this.name : this.shortName;
     }
 
     /**
@@ -122,7 +124,7 @@ public class Variable {
      * @param value Name
      */
     public void setName(String value) {
-        this.setShortName(value);
+        this.name = value;
     }
 
     /**
@@ -644,6 +646,7 @@ public class Variable {
     public Object clone() {
         Variable aPar = new Variable();
         aPar.Number = Number;
+        aPar.setName(this.getName());
         aPar.setShortName(this.getShortName());
         aPar.setUnits(units);
         aPar.setDescription(_description);
@@ -666,7 +669,7 @@ public class Variable {
      * @return If equal
      */
     public boolean equals(Variable aVar) {
-        if (!this.getShortName().equals(aVar.getShortName())) {
+        if (!this.getName().equals(aVar.getName())) {
             return false;
         }
         if (Number != aVar.Number) {
@@ -689,7 +692,7 @@ public class Variable {
      * @return If equal
      */
     public boolean tEquals(Variable aVar) {
-        if (!this.getShortName().equals(aVar.getShortName())) {
+        if (!this.getName().equals(aVar.getName())) {
             return false;
         }
         if (Number != aVar.Number) {
@@ -954,10 +957,10 @@ public class Variable {
             if (aDim == null) {
                 return true;
             }
-            if (aDim.getShortName() == null) {
+            if (aDim.getName() == null) {
                 return true;
             }
-            if (aDim.getShortName().equals("null")) {
+            if (aDim.getName().equals("null")) {
                 return true;
             }
         }

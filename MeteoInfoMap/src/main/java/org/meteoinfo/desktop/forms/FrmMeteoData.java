@@ -2334,8 +2334,10 @@ public class FrmMeteoData extends javax.swing.JDialog {
             Variable var = aDataInfo.getVariables().get(i);
             if (_meteoDataInfo.isSWATHData()) {
                 Variable lonvar = _meteoDataInfo.getDataInfo().getVariable("longitude");
-                if (var.dimensionContains(lonvar)) {
-                    this.jComboBox_Variable.addItem(var.getName());
+                if (lonvar != null) {
+                    if (var.dimensionContains(lonvar)) {
+                        this.jComboBox_Variable.addItem(var.getName());
+                    }
                 }
             } else {
                 if (var.isPlottable()) {

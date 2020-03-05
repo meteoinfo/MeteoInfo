@@ -3008,7 +3008,7 @@ public class ArrayUtil {
      * @param center If the grid point is center or border
      * @return grid data
      */
-    public static Array interpolation_Inside(Array x_s, Array y_s, Array a, Array X, Array Y, boolean center) {
+    public static Array interpolation_Inside_Mean(Array x_s, Array y_s, Array a, Array X, Array Y, boolean center) {
         int rowNum, colNum, pNum;
         x_s = x_s.copyIfView();
         y_s = y_s.copyIfView();

@@ -19,11 +19,15 @@ import org.apache.commons.math3.analysis.interpolation.NevilleInterpolator;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.meteoinfo.geoprocess.GeoComputation;
+import org.meteoinfo.global.PointD;
 import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.math.KDTree;
 import org.meteoinfo.math.spatial.KDTree.Euclidean;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.shape.PolygonShape;
 
 /**
  *
@@ -664,6 +668,682 @@ public class InterpUtil {
         }
 
         //Return
+        return r;
+    }
+
+
+    /**
+     * Interpolate with inside method - The grid cell value is the average value
+     * of the inside points or fill value if no inside point.
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param centerPoint If the grid point is center or border
+     * @return grid data
+     */
+    public static Array interpolation_Inside_Mean(Array x_s, Array y_s, Array a, Array X, Array Y,
+                                                  boolean centerPoint) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+
+        int rowNum, colNum, pNum;
+        colNum = (int) X.getSize();
+        rowNum = (int) Y.getSize();
+        pNum = (int) x_s.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        double dX = X.getDouble(1) - X.getDouble(0);
+        double dY = Y.getDouble(1) - Y.getDouble(0);
+        int[][] pNums = new int[rowNum][colNum];
+        double x, y, v, sx, sy, ex, ey;
+        if (centerPoint) {
+            sx = X.getDouble(0) - dX * 0.5;
+            sy = Y.getDouble(0) - dY * 0.5;
+            ex = X.getDouble(colNum - 1) + dX * 0.5;
+            ey = Y.getDouble(rowNum - 1) + dY * 0.5;
+        } else {
+            sx = X.getDouble(0);
+            sy = Y.getDouble(0);
+            ex = X.getDouble(colNum - 1);
+            ey = Y.getDouble(rowNum - 1);
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                pNums[i][j] = 0;
+                r.setDouble(i * colNum + j, 0.0);
+            }
+        }
+
+        for (int p = 0; p < pNum; p++) {
+            v = a.getDouble(p);
+            if (Double.isNaN(v)) {
+                continue;
+            }
+
+            x = x_s.getDouble(p);
+            y = y_s.getDouble(p);
+            if (x < sx || x > ex) {
+                continue;
+            }
+            if (y < sy || y > ey) {
+                continue;
+            }
+
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
+            pNums[i][j] += 1;
+            r.setDouble(i * colNum + j, r.getDouble(i * colNum + j) + v);
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                if (pNums[i][j] == 0) {
+                    r.setDouble(i * colNum + j, Double.NaN);
+                } else {
+                    r.setDouble(i * colNum + j, r.getDouble(i * colNum + j) / pNums[i][j]);
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolate with inside method - The grid cell value is the maximum value
+     * of the inside points or fill value if no inside point.
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param centerPoint points locate at center or border of grid
+     * @return grid data
+     */
+    public static Array interpolation_Inside_Max(List<Number> x_s, List<Number> y_s, Array a,
+                                                 List<Number> X, List<Number> Y, boolean centerPoint) {
+        a = a.copyIfView();
+
+        int rowNum, colNum, pNum;
+        colNum = X.size();
+        rowNum = Y.size();
+        pNum = x_s.size();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        double dX = X.get(1).doubleValue() - X.get(0).doubleValue();
+        double dY = Y.get(1).doubleValue() - Y.get(0).doubleValue();
+        int[][] pNums = new int[rowNum][colNum];
+        double x, y, v, sx, sy, ex, ey;
+        double min = Double.NEGATIVE_INFINITY;
+        if (centerPoint) {
+            sx = X.get(0).doubleValue() - dX * 0.5;
+            sy = Y.get(0).doubleValue() - dY * 0.5;
+            ex = X.get(colNum - 1).doubleValue() + dX * 0.5;
+            ey = Y.get(rowNum - 1).doubleValue() + dY * 0.5;
+        } else {
+            sx = X.get(0).doubleValue();
+            sy = Y.get(0).doubleValue();
+            ex = X.get(colNum - 1).doubleValue();
+            ey = Y.get(rowNum - 1).doubleValue();
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                pNums[i][j] = 0;
+                r.setDouble(i * colNum + j, min);
+            }
+        }
+
+        for (int p = 0; p < pNum; p++) {
+            v = a.getDouble(p);
+            if (Double.isNaN(v)) {
+                continue;
+            }
+
+            x = x_s.get(p).doubleValue();
+            y = y_s.get(p).doubleValue();
+            if (x < sx || x > ex) {
+                continue;
+            }
+            if (y < sy || y > ey) {
+                continue;
+            }
+
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
+            pNums[i][j] += 1;
+            r.setDouble(i * colNum + j, Math.max(r.getDouble(i * colNum + j), v));
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                if (pNums[i][j] == 0 || Double.isInfinite(r.getDouble(i * colNum + j))) {
+                    r.setDouble(i * colNum + j, Double.NaN);
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolate with inside method - The grid cell value is the minimum value
+     * of the inside points or fill value if no inside point.
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param centerPoint points locate at center or border of grid
+     * @return grid data
+     */
+    public static Array interpolation_Inside_Min(List<Number> x_s, List<Number> y_s, Array a,
+                                                 List<Number> X, List<Number> Y, boolean centerPoint) {
+        a = a.copyIfView();
+
+        int rowNum, colNum, pNum;
+        colNum = X.size();
+        rowNum = Y.size();
+        pNum = x_s.size();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        double dX = X.get(1).doubleValue() - X.get(0).doubleValue();
+        double dY = Y.get(1).doubleValue() - Y.get(0).doubleValue();
+        int[][] pNums = new int[rowNum][colNum];
+        double x, y, v, sx, sy, ex, ey;
+        double max = Double.MAX_VALUE;
+        if (centerPoint) {
+            sx = X.get(0).doubleValue() - dX * 0.5;
+            sy = Y.get(0).doubleValue() - dY * 0.5;
+            ex = X.get(colNum - 1).doubleValue() + dX * 0.5;
+            ey = Y.get(rowNum - 1).doubleValue() + dY * 0.5;
+        } else {
+            sx = X.get(0).doubleValue();
+            sy = Y.get(0).doubleValue();
+            ex = X.get(colNum - 1).doubleValue();
+            ey = Y.get(rowNum - 1).doubleValue();
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                pNums[i][j] = 0;
+                r.setDouble(i * colNum + j, max);
+            }
+        }
+
+        for (int p = 0; p < pNum; p++) {
+            v = a.getDouble(p);
+            if (Double.isNaN(v)) {
+                continue;
+            }
+
+            x = x_s.get(p).doubleValue();
+            y = y_s.get(p).doubleValue();
+            if (x < sx || x > ex) {
+                continue;
+            }
+            if (y < sy || y > ey) {
+                continue;
+            }
+
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
+            pNums[i][j] += 1;
+            r.setDouble(i * colNum + j, Math.min(r.getDouble(i * colNum + j), v));
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                if (pNums[i][j] == 0 || r.getDouble(i * colNum + j) == Double.MAX_VALUE) {
+                    r.setDouble(i * colNum + j, Double.NaN);
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolate with inside method - The grid cell value is the count number
+     * of the inside points or fill value if no inside point.
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param pointDensity If return point density value
+     * @param centerPoint points locate at center or border of grid
+     * @return grid data
+     */
+    public static Object interpolation_Inside_Count(List<Number> x_s, List<Number> y_s,
+                                                    List<Number> X, List<Number> Y, boolean pointDensity, boolean centerPoint) {
+        int rowNum, colNum, pNum;
+        colNum = X.size();
+        rowNum = Y.size();
+        pNum = x_s.size();
+        Array r = Array.factory(DataType.INT, new int[]{rowNum, colNum});
+        double dX = X.get(1).doubleValue() - X.get(0).doubleValue();
+        double dY = Y.get(1).doubleValue() - Y.get(0).doubleValue();
+        int[][] pNums = new int[rowNum][colNum];
+        double x, y, sx, sy, ex, ey;
+        if (centerPoint) {
+            sx = X.get(0).doubleValue() - dX * 0.5;
+            sy = Y.get(0).doubleValue() - dY * 0.5;
+            ex = X.get(colNum - 1).doubleValue() + dX * 0.5;
+            ey = Y.get(rowNum - 1).doubleValue() + dY * 0.5;
+        } else {
+            sx = X.get(0).doubleValue();
+            sy = Y.get(0).doubleValue();
+            ex = X.get(colNum - 1).doubleValue();
+            ey = Y.get(rowNum - 1).doubleValue();
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                pNums[i][j] = 0;
+                //r.setInt(i * colNum + j, 0);
+            }
+        }
+
+        for (int p = 0; p < pNum; p++) {
+            x = x_s.get(p).doubleValue();
+            y = y_s.get(p).doubleValue();
+            if (x < sx || x > ex) {
+                continue;
+            }
+            if (y < sy || y > ey) {
+                continue;
+            }
+
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
+            pNums[i][j] += 1;
+            //r.setInt(i * colNum + j, r.getInt(i * colNum + j) + 1);
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                r.setInt(i * colNum + j, pNums[i][j]);
+            }
+        }
+
+        if (pointDensity) {
+            Array pds = Array.factory(DataType.INT, new int[]{pNum});
+            for (int p = 0; p < pNum; p++) {
+                x = x_s.get(p).doubleValue();
+                y = y_s.get(p).doubleValue();
+                if (x < sx || x > ex) {
+                    continue;
+                }
+                if (y < sy || y > ey) {
+                    continue;
+                }
+
+                int j = (int) ((x - sx) / dX);
+                int i = (int) ((y - sy) / dY);
+                pds.setInt(p, pNums[i][j]);
+            }
+            return new Array[]{r, pds};
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolate with nearest method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param radius Radius
+     * @return grid data
+     */
+    public static Array interpolation_Nearest(List<Number> x_s, List<Number> y_s, Array a, List<Number> X, List<Number> Y,
+                                              double radius) {
+        int rowNum, colNum, pNum;
+        colNum = X.size();
+        rowNum = Y.size();
+        pNum = x_s.size();
+        Array rdata = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        double gx, gy;
+
+        //Construct K-D tree
+        KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
+        IndexIterator iter = a.getIndexIterator();
+        double v;
+        for (int i = 0; i < pNum; i++) {
+            v = iter.getDoubleNext();
+//            if (!Double.isNaN(v)) {
+//                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
+//            }
+            kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
+        }
+
+        //Loop
+        if (radius == Double.POSITIVE_INFINITY) {
+            for (int i = 0; i < rowNum; i++) {
+                gy = Y.get(i).doubleValue();
+                for (int j = 0; j < colNum; j++) {
+                    gx = X.get(j).doubleValue();
+                    KDTree.SearchResult r = kdTree.nearestNeighbours(new double[]{gx, gy}, 1).get(0);
+                    rdata.setDouble(i * colNum + j, ((double) r.payload));
+                }
+            }
+        } else {
+            for (int i = 0; i < rowNum; i++) {
+                gy = Y.get(i).doubleValue();
+                for (int j = 0; j < colNum; j++) {
+                    gx = X.get(j).doubleValue();
+                    KDTree.SearchResult r = kdTree.nearestNeighbours(new double[]{gx, gy}, 1).get(0);
+                    if (Math.sqrt(r.distance) <= radius) {
+                        rdata.setDouble(i * colNum + j, ((double) r.payload));
+                    } else {
+                        rdata.setDouble(i * colNum + j, Double.NaN);
+                    }
+                }
+            }
+        }
+
+        return rdata;
+    }
+
+    /**
+     * Interpolate with nearest method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param radius Radius
+     * @return grid data
+     */
+    public static Array interpolation_Nearest(Array x_s, Array y_s, Array a, Array X, Array Y,
+                                              double radius) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+
+        int rowNum, colNum, pNum;
+        colNum = (int)X.getSize();
+        rowNum = (int)Y.getSize();
+        pNum = (int)x_s.getSize();
+        Array rdata = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        double gx, gy;
+
+        //Construct K-D tree
+        KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
+        double v;
+        for (int i = 0; i < pNum; i++) {
+            v = a.getDouble(i);
+//            if (!Double.isNaN(v)) {
+//                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
+//            }
+            kdTree.addPoint(new double[]{x_s.getDouble(i), y_s.getDouble(i)}, v);
+        }
+
+        //Loop
+        if (radius == Double.POSITIVE_INFINITY) {
+            for (int i = 0; i < rowNum; i++) {
+                gy = Y.getDouble(i);
+                for (int j = 0; j < colNum; j++) {
+                    gx = X.getDouble(j);
+                    KDTree.SearchResult r = kdTree.nearestNeighbours(new double[]{gx, gy}, 1).get(0);
+                    rdata.setDouble(i * colNum + j, ((double) r.payload));
+                }
+            }
+        } else {
+            for (int i = 0; i < rowNum; i++) {
+                gy = Y.getDouble(i);
+                for (int j = 0; j < colNum; j++) {
+                    gx = X.getDouble(j);
+                    KDTree.SearchResult r = kdTree.nearestNeighbours(new double[]{gx, gy}, 1).get(0);
+                    if (Math.sqrt(r.distance) <= radius) {
+                        rdata.setDouble(i * colNum + j, ((double) r.payload));
+                    } else {
+                        rdata.setDouble(i * colNum + j, Double.NaN);
+                    }
+                }
+            }
+        }
+
+        return rdata;
+    }
+
+    /**
+     * Interpolate with surface method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @return grid data
+     */
+    public static Array interpolation_Surface(Array x_s, Array y_s, Array a, Array X, Array Y) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+
+        int rowNum, colNum, xn, yn;
+        int[] shape = x_s.getShape();
+        colNum = shape[1];
+        rowNum = shape[0];
+        xn = (int) X.getSize();
+        yn = (int) Y.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{yn, xn});
+        for (int i = 0; i < r.getSize(); i++) {
+            r.setDouble(i, Double.NaN);
+        }
+
+        double x, y;
+        double v, xll, xtl, xtr, xlr, yll, ytl, ytr, ylr;
+        double dX = X.getDouble(1) - X.getDouble(0);
+        double dY = Y.getDouble(1) - Y.getDouble(0);
+        int minxi, maxxi, minyi, maxyi;
+        for (int i = 0; i < rowNum - 1; i++) {
+            for (int j = 0; j < colNum - 1; j++) {
+                v = a.getDouble(i * colNum + j);
+                if (Double.isNaN(v)) {
+                    continue;
+                }
+                xll = x_s.getDouble(i * colNum + j);
+                xtl = x_s.getDouble((i + 1) * colNum + j);
+                xtr = x_s.getDouble((i + 1) * colNum + j + 1);
+                xlr = x_s.getDouble(i * colNum + j + 1);
+                yll = y_s.getDouble(i * colNum + j);
+                ytl = y_s.getDouble((i + 1) * colNum + j);
+                ytr = y_s.getDouble((i + 1) * colNum + j + 1);
+                ylr = y_s.getDouble(i * colNum + j + 1);
+                if (Double.isNaN(xll) || Double.isNaN(xtl) || Double.isNaN(xtr) || Double.isNaN(xlr)
+                        || Double.isNaN(yll) || Double.isNaN(ytl) || Double.isNaN(ytr) || Double.isNaN(ylr)) {
+                    continue;
+                }
+                PolygonShape ps = new PolygonShape();
+                List<PointD> points = new ArrayList<>();
+                points.add(new PointD(xll, yll));
+                points.add(new PointD(xtl, ytl));
+                points.add(new PointD(xtr, ytr));
+                points.add(new PointD(xlr, ylr));
+                points.add((PointD) points.get(0).clone());
+                ps.setPoints(points);
+                minxi = (int) ((ps.getExtent().minX - X.getDouble(0)) / dX);
+                maxxi = (int) ((ps.getExtent().maxX - X.getDouble(0)) / dX);
+                minyi = (int) ((ps.getExtent().minY - Y.getDouble(0)) / dY);
+                maxyi = (int) ((ps.getExtent().maxY - Y.getDouble(0)) / dY);
+                maxxi += 1;
+                maxyi += 1;
+                if (maxxi < 0 || minxi >= xn) {
+                    continue;
+                }
+                if (maxyi < 0 || minyi >= yn) {
+                    continue;
+                }
+                if (minxi < 0) {
+                    minxi = 0;
+                }
+                if (maxxi >= xn) {
+                    maxxi = xn - 1;
+                }
+                if (maxyi >= yn) {
+                    maxyi = yn - 1;
+                }
+                for (int m = minyi; m <= maxyi; m++) {
+                    y = Y.getDouble(m);
+                    for (int n = minxi; n <= maxxi; n++) {
+                        x = X.getDouble(n);
+                        if (GeoComputation.pointInPolygon(ps, x, y)) {
+                            r.setDouble(m * xn + n, v);
+                        }
+                    }
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolation with IDW radius method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X grid X array
+     * @param Y grid Y array
+     * @param neededPointNum needed at least point number
+     * @param radius search radius
+     * @return interpolated grid data
+     */
+    public static Array interpolation_IDW_Radius(List<Number> x_s, List<Number> y_s, Array a,
+                                                 List<Number> X, List<Number> Y, int neededPointNum, double radius) {
+        int rowNum, colNum, pNum;
+        colNum = X.size();
+        rowNum = Y.size();
+        pNum = x_s.size();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        int i, j;
+        double w, gx, gy, v;
+        boolean match;
+
+        //Construct K-D tree
+        KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
+        IndexIterator iter = a.getIndexIterator();
+        for (i = 0; i < pNum; i++) {
+            v = iter.getDoubleNext();
+            if (!Double.isNaN(v)) {
+                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
+            }
+        }
+
+        //---- Do interpolation
+        for (i = 0; i < rowNum; i++) {
+            gy = Y.get(i).doubleValue();
+            for (j = 0; j < colNum; j++) {
+                gx = X.get(j).doubleValue();
+                List<KDTree.SearchResult<Double>> srs = kdTree.ballSearch_distance(new double[]{gx, gy}, radius * radius);
+                if (srs == null || srs.size() < neededPointNum) {
+                    r.setDouble(i * colNum + j, Double.NaN);
+                } else {
+                    double v_sum = 0.0;
+                    double weight_sum = 0.0;
+                    match = false;
+                    for (KDTree.SearchResult sr : srs) {
+                        v = (double) sr.payload;
+                        if (sr.distance == 0) {
+                            r.setDouble(i * colNum + j, v);
+                            match = true;
+                            break;
+                        } else {
+                            w = 1. / sr.distance;
+                            weight_sum += w;
+                            v_sum += v * w;
+                        }
+                    }
+                    if (!match) {
+                        r.setDouble(i * colNum + j, v_sum / weight_sum);
+                    }
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolation with IDW neighbor method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X grid X array
+     * @param Y grid Y array
+     * @param points Number of points used for interpolation
+     * @return interpolated grid data
+     */
+    public static Array interpolation_IDW_Neighbor(List<Number> x_s, List<Number> y_s, Array a,
+                                                   List<Number> X, List<Number> Y, Integer points) {
+        int colNum = X.size();
+        int rowNum = Y.size();
+        int pNum = x_s.size();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        int i, j;
+        double w, v, gx, gy;
+        boolean match;
+
+        //Construct K-D tree
+        int n = 0;
+        IndexIterator iter = a.getIndexIterator();
+        KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
+        for (i = 0; i < pNum; i++) {
+            v = iter.getDoubleNext();
+            if (!Double.isNaN(v)) {
+                kdTree.addPoint(new double[]{x_s.get(i).doubleValue(), y_s.get(i).doubleValue()}, v);
+                n += 1;
+            }
+        }
+        if (points == null) {
+            points = n;
+        }
+
+        //---- Do interpolation with IDW method
+        for (i = 0; i < rowNum; i++) {
+            gy = Y.get(i).doubleValue();
+            for (j = 0; j < colNum; j++) {
+                gx = X.get(j).doubleValue();
+                List<KDTree.SearchResult<Double>> srs = kdTree.nearestNeighbours(new double[]{gx, gy}, points);
+                double v_sum = 0.0;
+                double weight_sum = 0.0;
+                match = false;
+                for (KDTree.SearchResult sr : srs) {
+                    v = (double) sr.payload;
+                    if (sr.distance == 0) {
+                        r.setDouble(i * colNum + j, v);
+                        match = true;
+                        break;
+                    } else {
+                        w = 1. / sr.distance;
+                        weight_sum += w;
+                        v_sum += v * w;
+                    }
+                }
+                if (!match) {
+                    r.setDouble(i * colNum + j, v_sum / weight_sum);
+                }
+            }
+        }
+
         return r;
     }
 }

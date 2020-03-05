@@ -2471,10 +2471,10 @@ def griddata(points, values, xi=None, **kwargs):
         radius = kwargs.pop('radius', None)
         if radius is None:
             pnum = kwargs.pop('pointnum', None)
-            r = ArrayUtil.interpolation_IDW_Neighbor(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), pnum)
+            r = InterpUtil.interpolation_IDW_Neighbor(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), pnum)
         else:
             pnum = kwargs.pop('pointnum', 2)
-            r = ArrayUtil.interpolation_IDW_Radius(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), pnum, radius)
+            r = InterpUtil.interpolation_IDW_Radius(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), pnum, radius)
     elif method == 'cressman':
         radius = kwargs.pop('radius', [10, 7, 4, 2, 1])
         if isinstance(radius, NDArray):
@@ -2492,22 +2492,22 @@ def griddata(points, values, xi=None, **kwargs):
             r = InterpUtil.barnes(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), radius, kappa, gamma)
     elif method == 'nearest':
         radius = kwargs.pop('radius', inf)
-        r = ArrayUtil.interpolation_Nearest(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), radius)
-    elif method == 'inside':
+        r = InterpUtil.interpolation_Nearest(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), radius)
+    elif method == 'inside' or method == 'inside_mean':
         centerpoint = kwargs.pop('centerpoint', True)
-        r = ArrayUtil.interpolation_Inside(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(), centerpoint)
+        r = InterpUtil.interpolation_Inside_Mean(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(), centerpoint)
     elif method == 'inside_max':
         centerpoint = kwargs.pop('centerpoint', True)
-        r = ArrayUtil.interpolation_Inside_Max(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
+        r = InterpUtil.interpolation_Inside_Max(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
     elif method == 'inside_min':
         centerpoint = kwargs.pop('centerpoint', True)
-        r = ArrayUtil.interpolation_Inside_Min(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
+        r = InterpUtil.interpolation_Inside_Min(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
     elif method == 'inside_count':
         centerpoint = kwargs.pop('centerpoint', True)
-        r = ArrayUtil.interpolation_Inside_Count(x_s.aslist(), y_s.aslist(), x_g.aslist(), y_g.aslist(), True, centerpoint)
+        r = InterpUtil.interpolation_Inside_Count(x_s.aslist(), y_s.aslist(), x_g.aslist(), y_g.aslist(), True, centerpoint)
         return NDArray(r[0]), x_g, y_g, NDArray(r[1])
     elif method == 'surface':        
-        r = ArrayUtil.interpolation_Surface(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray())
+        r = InterpUtil.interpolation_Surface(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray())
     else:
         return None
     

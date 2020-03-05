@@ -10,6 +10,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -19,6 +20,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -473,6 +476,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         jMenu_Help = new javax.swing.JMenu();
         jMenuItem_About = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem_Help = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("MeteoInfoLab");
@@ -816,6 +821,16 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             }
         });
         jMenu_Help.add(jMenuItem_About);
+        jMenu_Help.add(jSeparator7);
+
+        jMenuItem_Help.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/help.png"))); // NOI18N
+        jMenuItem_Help.setText("Help");
+        jMenuItem_Help.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_HelpActionPerformed(evt);
+            }
+        });
+        jMenu_Help.add(jMenuItem_Help);
 
         jMenuBar1.add(jMenu_Help);
 
@@ -1144,6 +1159,23 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         this.editorDock.delTab();
     }//GEN-LAST:event_jMenuItem_DeleteTabActionPerformed
 
+    private void jMenuItem_HelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_HelpActionPerformed
+        // TODO add your handling code here:
+        try {
+            URI uri = new URI("http://www.meteothink.org/docs/meteoinfolab/index.html");
+            Desktop desktop = null;
+            if (Desktop.isDesktopSupported()) {
+                desktop = Desktop.getDesktop();
+            }
+            if (desktop != null) {
+                desktop.browse(uri);
+            }
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(FrmAbout.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ioe) {
+        }
+    }//GEN-LAST:event_jMenuItem_HelpActionPerformed
+
     /**
      * Get figure dockable
      *
@@ -1376,6 +1408,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     private javax.swing.JMenuItem jMenuItem_DeleteTab;
     private javax.swing.JMenuItem jMenuItem_Exit;
     private javax.swing.JMenuItem jMenuItem_FindReplace;
+    private javax.swing.JMenuItem jMenuItem_Help;
     private javax.swing.JMenuItem jMenuItem_InsertTab;
     private javax.swing.JMenuItem jMenuItem_NewFile;
     private javax.swing.JMenuItem jMenuItem_OpenFile;
@@ -1396,6 +1429,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
+    private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JToolBar jToolBar_CurrentFolder;
     private javax.swing.JToolBar jToolBar_Editor;
     // End of variables declaration//GEN-END:variables

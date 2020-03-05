@@ -167,17 +167,17 @@ public class AppCollection extends ArrayList<Application> {
             NodeList pluginNodeList =  pluginsElem.getElementsByTagName("Application");
             for (int i = 0; i < pluginNodeList.getLength(); i++){
                 Node pluginNode = pluginNodeList.item(i);
-                Application plugin = new Application();
+                Application application = new Application();
                 NamedNodeMap attrs = pluginNode.getAttributes();
-                plugin.setName(attrs.getNamedItem("Name").getNodeValue());
-                plugin.setAuthor(attrs.getNamedItem("Author").getNodeValue());
-                plugin.setVersion(attrs.getNamedItem("Version").getNodeValue());
-                plugin.setDescription(attrs.getNamedItem("Description").getNodeValue());
+                application.setName(attrs.getNamedItem("Name").getNodeValue());
+                application.setAuthor(attrs.getNamedItem("Author").getNodeValue());
+                application.setVersion(attrs.getNamedItem("Version").getNodeValue());
+                application.setDescription(attrs.getNamedItem("Description").getNodeValue());
                 String path = attrs.getNamedItem("Path").getNodeValue();
-                plugin.setPath(path);
-                plugin.setClassName(attrs.getNamedItem("ClassName").getNodeValue());
-                plugin.setLoad(Boolean.parseBoolean(attrs.getNamedItem("IsLoad").getNodeValue()));
-                this.add(plugin);
+                application.setPath(path);
+                application.setClassName(attrs.getNamedItem("ClassName").getNodeValue());
+                application.setLoad(Boolean.parseBoolean(attrs.getNamedItem("IsLoad").getNodeValue()));
+                this.add(application);
             }
         } catch (Exception e) {
         }

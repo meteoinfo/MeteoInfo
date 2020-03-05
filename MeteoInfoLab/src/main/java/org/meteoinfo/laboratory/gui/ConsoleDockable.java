@@ -119,13 +119,6 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         if (os.contains("windows") && miPath.substring(0, 1).equals("/")) {
             miPath = miPath.substring(1);
         }
-        if (isDebug) {
-            //path = "D:/MyProgram/Java/MeteoInfoDev/MeteoInfoLab/pylib";
-            toolboxPath = "D:/MyProgram/Java/MeteoInfoDev/toolbox";
-            miPath = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo";
-        }
-        //console.println(path);
-        //console.println(toolboxPath);
 
         //this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         new Thread(interp).start();
@@ -134,33 +127,21 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             interp.exec("import sys");
             interp.exec("import os");
             interp.exec("import datetime");
-            //interp.exec("sys.setdefaultencoding('utf-8')");
             interp.exec("sys.path.append('" + path + "')");
-            //interp.exec("from milab import *");
-            interp.exec("import mipylib");
             interp.execfile(path + "/milab.py");
-            interp.exec("sys.path.append('" + toolboxPath + "')");
-            if (isDebug) {
-                interp.exec("sys.path.append('" + toolboxPath + "/miml_dev')");
-                interp.exec("sys.path.append('" + toolboxPath + "/emips_dev')");
-            }
-            //interp.exec("import toolbox");
-            //interp.exec("from toolbox import *");
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            e.printStackTrace();
-        }
-
-        try {
             interp.exec("mipylib.plotlib.miplot.isinteractive = True");
             interp.exec("mipylib.migl.milapp = milapp");
             interp.exec("mipylib.migl.mifolder = '" + miPath + "'");
             currentPath = currentPath.replace("\\", "/");
             interp.exec("mipylib.migl.currentfolder = u'" + currentPath + "'");
+            interp.exec("sys.path.append('" + toolboxPath + "')");
+            if (isDebug) {
+                interp.execfile(path + "/milab_debug.py");
+            }
         } catch (Exception e) {
+            System.out.println(e.toString());
             e.printStackTrace();
         }
-        //this.setCursor(Cursor.getDefaultCursor());
     }
 
     /**

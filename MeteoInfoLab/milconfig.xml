@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\classification">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\onedim"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\random">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\verification"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\random"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Run\emips\test\test_run-1.py"/>
       <OpenedFile File="D:\Run\emips\test\test_run.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\verification\verify.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\random_seed_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\normal_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\RandomState_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Run\emips\test\test_run-1.py"/>
       <RecentFile File="D:\Run\emips\test\test_run.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\verification\verify.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\random_seed_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\normal_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\RandomState_1.py"/>
     </RecentFiles>
   </File>
   <Font>

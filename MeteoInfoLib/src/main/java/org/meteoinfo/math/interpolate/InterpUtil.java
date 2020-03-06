@@ -737,6 +737,10 @@ public class InterpUtil {
 
             int j = (int) ((x - sx) / dX);
             int i = (int) ((y - sy) / dY);
+            if (i >= rowNum)
+                i = rowNum - 1;
+            if (j >= colNum)
+                j = colNum - 1;
             pNums[i][j] += 1;
             r.setDouble(i * colNum + j, r.getDouble(i * colNum + j) + v);
         }
@@ -816,6 +820,10 @@ public class InterpUtil {
 
             int j = (int) ((x - sx) / dX);
             int i = (int) ((y - sy) / dY);
+            if (i >= rowNum)
+                i = rowNum - 1;
+            if (j >= colNum)
+                j = colNum - 1;
             pNums[i][j] += 1;
             r.setDouble(i * colNum + j, Math.max(r.getDouble(i * colNum + j), v));
         }
@@ -893,6 +901,10 @@ public class InterpUtil {
 
             int j = (int) ((x - sx) / dX);
             int i = (int) ((y - sy) / dY);
+            if (i >= rowNum)
+                i = rowNum - 1;
+            if (j >= colNum)
+                j = colNum - 1;
             pNums[i][j] += 1;
             r.setDouble(i * colNum + j, Math.min(r.getDouble(i * colNum + j), v));
         }
@@ -961,9 +973,11 @@ public class InterpUtil {
             }
 
             int j = (int) ((x - sx) / dX);
-            int i = (int) ((y - sy) / dY);
+            int i = (int) ((y - sy) / dY);if (i >= rowNum)
+                i = rowNum - 1;
+            if (j >= colNum)
+                j = colNum - 1;
             pNums[i][j] += 1;
-            //r.setInt(i * colNum + j, r.getInt(i * colNum + j) + 1);
         }
 
         for (int i = 0; i < rowNum; i++) {

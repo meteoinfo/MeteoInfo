@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\random">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\verification"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+  <Path OpenPath="D:\Run\emips\test">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
@@ -16,28 +12,26 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\random"/>
+    <RecentFolder Folder="D:\Run\emips\test\emis"/>
+    <RecentFolder Folder="D:\Run\emips\test\inter_data"/>
+    <RecentFolder Folder="D:\Run\emips\test\setting"/>
+    <RecentFolder Folder="D:\Run\emips\test"/>
   </Path>
   <File>
     <OpenedFiles>
+      <OpenedFile File="D:\Run\emips\test\test_run-NOx.py"/>
+      <OpenedFile File="D:\Run\emips\test\test_read_result_nc.py"/>
       <OpenedFile File="D:\Run\emips\test\test_run-1.py"/>
-      <OpenedFile File="D:\Run\emips\test\test_run.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\verification\verify.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\random_seed_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\normal_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\RandomState_1.py"/>
     </OpenedFiles>
     <RecentFiles>
+      <RecentFile File="D:\Run\emips\test\test_run-NOx.py"/>
+      <RecentFile File="D:\Run\emips\test\test_read_result_nc.py"/>
       <RecentFile File="D:\Run\emips\test\test_run-1.py"/>
-      <RecentFile File="D:\Run\emips\test\test_run.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\verification\verify.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\random_seed_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\normal_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\RandomState_1.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
   </Font>
   <LookFeel Name="Darcula"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-6,1" MainFormSize="1290,684"/>
 </MeteoInfo>

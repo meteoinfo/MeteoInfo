@@ -8,6 +8,7 @@ from org.meteoinfo.ndarray import Dimension, DimensionType, Range, Array, MAMath
 from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.global import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
+from org.meteoinfo.data.meteodata import Attribute
 from ucar.nc2 import Attribute as NCAttribute
 from ucar.ma2 import DataType as NCDataType
 from ucar.ma2 import ArrayStructure, StructureMembers
@@ -29,7 +30,7 @@ class DimVariable(object):
         self.ncvariable = ncvariable
         if not variable is None:
             self.name = variable.getName()
-            self.datatype = variable.getDataType()
+            self.dtype = np.dtype.fromjava(variable.getDataType())
             self.dims = variable.getDimensions()
             self.ndim = variable.getDimNumber()
             self.attributes = variable.getAttributes()
@@ -38,10 +39,17 @@ class DimVariable(object):
             self.add_offset = variable.getAddOffset()
         elif not ncvariable is None:
             self.name = ncvariable.getShortName()
+            self.dtype = ncvariable.getDataType()
             self.dims = ncvariable.getDimensions()
             self.ndim = len(self.dims)
-        if not dataset is None:
-            self.proj = dataset.proj
+            self.attributes = ncvariable.getAttributes()
+        else:
+            self.name = None
+            self.dtype = None
+            self.dims = None
+            self.ndim = 0
+            self.attributes = None
+        self.proj = None if dataset is None else dataset.proj
             
     def __len__(self):
         len = 1;
@@ -436,9 +444,14 @@ class DimVariable(object):
         self.dims[idx].setReverse(reverse)
         
     def addattr(self, attrname, attrvalue):
-        if isinstance(attrvalue, np.NDArray):
-            attrvalue = NCUtil.convertArray(attrvalue._array)
-        self.ncvariable.addAttribute(NCAttribute(attrname, attrvalue))
+        if self.ncvariable is None:
+            if self.attributes is None:
+                self.attributes = []
+            self.attributes.append(Attribute(attrname, attrvalue))
+        else:
+            if isinstance(attrvalue, np.NDArray):
+                attrvalue = NCUtil.convertArray(attrvalue._array)
+            self.ncvariable.addAttribute(NCAttribute(attrname, attrvalue))
 
 class StructureArray(object):
 

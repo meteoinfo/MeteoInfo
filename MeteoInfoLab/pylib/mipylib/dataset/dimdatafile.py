@@ -6,6 +6,7 @@
 #-----------------------------------------------------
 from org.meteoinfo.data.meteodata import MeteoDataType
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
+from org.meteoinfo.ndarray import DimensionType, Dimension
 from ucar.ma2 import DataType as NCDataType
 from ucar.nc2 import Attribute as NCAttribute
 from dimvariable import DimVariable, TDimVariable
@@ -338,17 +339,28 @@ class DimDataFile(object):
                 datatype = NCUtil.convertDataType(datatype._dtype)
             return datatype
  
-    def addvar(self, varname, datatype, dims, group=None):
+    def addvar(self, varname, datatype, dims, attrs=None, group=None):
         '''
         Add a variable.
         
         :param varname: (*string*) Variable name.
         :param datatype: (*string*) Data type [string | int | long | float | double |
             char].
-        :param dims: (*list*) Dimensions.        
+        :param dims: (*list*) Dimensions.
+        :param attrs: (*dict*) Attributes.
         '''
         dt = self.__getdatatype(datatype)
-        return DimVariable(ncvariable=self.ncfile.addVariable(group, varname, dt, dims))
+        if isinstance(dims[0], Dimension):
+            ncdims = []
+            for dim in dims:
+                ncdims.append(self.ncfile.findDimension(dim.getName()))
+            var = DimVariable(ncvariable=self.ncfile.addVariable(group, varname, dt, ncdims))
+        else:
+            var = DimVariable(ncvariable=self.ncfile.addVariable(group, varname, dt, dims))
+        if not attrs is None:
+            for key in attrs:
+                var.addattr(key, attrs[key])
+        return var
         
     def create(self):
         '''
@@ -356,6 +368,76 @@ class DimDataFile(object):
         and variables
         '''
         self.ncfile.create()
+
+    def nc_define(self, dims, gattrs, vars):
+        '''
+        Define dimensions, global attributes, variables of the netcdf file
+        :param dims: (*list of Dimension*) The dimensions
+        :param gattrs: (*list of Attribute*) The global attributes
+        :param vars: (*list of DimVariable*) The variables
+        '''
+        #Add dimensions
+        ncdims = []
+        for dim in dims:
+            ncdims.append(self.adddim(dim.getName(), dim.getLength()))
+
+        #Add global attributes
+        if not gattrs is None:
+            for key in gattrs:
+                self.addgroupattr(key, gattrs[key])
+
+        #Add dimension variables
+        dimvars = []
+        wdims = []
+        for dim,midim in zip(ncdims,dims):
+            dimtype = midim.getDimType()
+            dimname = dim.getShortName()
+            if dimtype == DimensionType.T:
+                var = self.addvar(dimname, 'int', [dim])
+                var.addattr('units', 'hours since 1900-01-01 00:00:0.0')
+                var.addattr('long_name', 'Time')
+                var.addattr('standard_name', 'time')
+                var.addattr('axis', 'T')
+                tvar = var
+            elif dimtype == DimensionType.Z:
+                var = self.addvar(dimname, 'float', [dim])
+                var.addattr('axis', 'Z')
+            elif dimtype == DimensionType.Y:
+                var = self.addvar(dimname, 'float', [dim])
+                var.addattr('axis', 'Y')
+            elif dimtype == DimensionType.X:
+                var = self.addvar(dimname, 'float', [dim])
+                var.addattr('axis', 'X')
+            else:
+                var = None
+            if not var is None:
+                dimvars.append(var)
+                wdims.append(midim)
+
+        #Add variables
+        for v in vars:
+            var = self.addvar(v.name, v.dtype, v.dims)
+            v.ncvariable = var
+            if v.attributes is None:
+                var.addattr('name', v.name)
+            else:
+                for attr in v.attributes:
+                    var.addattr(attr.getName(), attr.getStringValue())
+
+        #Create netCDF file
+        self.ncfile.create()
+
+        #Write dimension variable data
+        for dimvar, dim in zip(dimvars, wdims):
+            if dim.getDimType() == DimensionType.T:
+                sst = datetime.datetime(1900,1,1)
+                tt = miutil.nums2dates(dim.getDimValue())
+                hours = []
+                for t in tt:
+                    hours.append((t - sst).total_seconds() // 3600)
+                self.write(dimvar, np.array(hours))
+            else:
+                self.write(dimvar, np.array(dim.getDimValue()))
         
     def write(self, variable, value, origin=None):
         '''
@@ -367,15 +449,23 @@ class DimDataFile(object):
         '''
         if isinstance(value, np.NDArray):
             value = NCUtil.convertArray(value._array)
-        if self.access == 'c':
-            ncvariable = variable.ncvariable
+        if isinstance(variable, DimVariable):
+            if self.access == 'c':
+                ncvariable = variable.ncvariable
+                if ncvariable is None:
+                    ncvariable = self.ncfile.findVariable(variable.name)
+                if ncvariable is None:
+                    ncvariable = variable.name
+            else:
+                ncvariable = self.dataset.getDataInfo().findNCVariable(variable.name)
         else:
-            ncvariable = self.dataset.getDataInfo().findNCVariable(variable.name)
+            ncvariable = variable
         if origin is None:
             self.ncfile.write(ncvariable, value)
         else:
             origin = jarray.array(origin, 'i')
             self.ncfile.write(ncvariable, origin, value)
+
     def flush(self):
         '''
         Flush the data.

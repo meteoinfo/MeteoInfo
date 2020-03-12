@@ -6,5 +6,6 @@
     <LegendFont FontName="宋体" FontSize="12"/>
   </Font>
   <ScriptLanguage Language="Jython"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693" ShowMeteoDataDlg="true"/>
+  <LookFeel Name="FlatLightLaf"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1277,693" ShowMeteoDataDlg="true"/>
 </MeteoInfo>

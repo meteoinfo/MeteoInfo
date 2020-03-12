@@ -4,6 +4,10 @@
  */
 package org.meteoinfo.desktop.forms;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.l2fprod.common.swing.JFontChooser;
 import java.awt.Font;
 import java.util.logging.Level;
@@ -23,35 +27,35 @@ public class FrmOptions extends javax.swing.JDialog {
     private final FrmMain _parent;
     private Font _legendFont;
     private Font _textFont;
-    
+
     /**
      * Creates new form FrmOptions
+     *
      * @param parent
      * @param modal
      */
     public FrmOptions(JFrame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        
-        _parent = (FrmMain)parent;
+
+        _parent = (FrmMain) parent;
         Options options = _parent.getOptions();
         _legendFont = options.getLegendFont();
         _textFont = options.getTextFont();
         this.jLabel_LegendFont.setText(_legendFont.getFontName() + " " + _legendFont.getSize());
         this.jLabel_TextFont.setText(_textFont.getFontName() + " " + _textFont.getSize());
-        if (options.getScriptLanguage().equals("Groovy")){
-            this.jRadioButton_Groovy.setSelected(true);
-        } else {
-            this.jRadioButton_Jython.setSelected(true);
-        }
-        
+
         //Look and feel
         this.jComboBox_LookAndFeel.removeAllItems();
         UIManager.LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
         for (UIManager.LookAndFeelInfo lnf : lnfs) {
             this.jComboBox_LookAndFeel.addItem(lnf.getName());
         }
-        this.jComboBox_LookAndFeel.setSelectedItem(UIManager.getLookAndFeel().getName());
+        this.jComboBox_LookAndFeel.addItem("FlatLightLaf");
+        this.jComboBox_LookAndFeel.addItem("FlatDarkLaf");
+        this.jComboBox_LookAndFeel.addItem("FlatDarculaLaf");
+        this.jComboBox_LookAndFeel.addItem("FlatIntelliJLaf");
+        this.jComboBox_LookAndFeel.setSelectedItem(this._parent.getOptions().getLookFeel());
     }
 
     /**
@@ -66,9 +70,6 @@ public class FrmOptions extends javax.swing.JDialog {
         buttonGroup1 = new javax.swing.ButtonGroup();
         jTabbedPane_Option = new javax.swing.JTabbedPane();
         jPanel_General = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jRadioButton_Groovy = new javax.swing.JRadioButton();
-        jRadioButton_Jython = new javax.swing.JRadioButton();
         jLabel_LookAndFeel = new javax.swing.JLabel();
         jComboBox_LookAndFeel = new javax.swing.JComboBox();
         jPanel_Font = new javax.swing.JPanel();
@@ -84,46 +85,6 @@ public class FrmOptions extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Options");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Script Language"));
-        jPanel1.setName("Script Language"); // NOI18N
-
-        buttonGroup1.add(jRadioButton_Groovy);
-        jRadioButton_Groovy.setText("Groovy");
-        jRadioButton_Groovy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton_GroovyActionPerformed(evt);
-            }
-        });
-
-        buttonGroup1.add(jRadioButton_Jython);
-        jRadioButton_Jython.setText("Jython");
-        jRadioButton_Jython.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton_JythonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(jRadioButton_Groovy)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
-                .addComponent(jRadioButton_Jython)
-                .addGap(50, 50, 50))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton_Groovy)
-                    .addComponent(jRadioButton_Jython))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         jLabel_LookAndFeel.setText("LookAndFeel:");
 
         jComboBox_LookAndFeel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -132,27 +93,21 @@ public class FrmOptions extends javax.swing.JDialog {
         jPanel_General.setLayout(jPanel_GeneralLayout);
         jPanel_GeneralLayout.setHorizontalGroup(
             jPanel_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_GeneralLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_GeneralLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(jLabel_LookAndFeel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jComboBox_LookAndFeel, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox_LookAndFeel, 0, 221, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel_GeneralLayout.setVerticalGroup(
             jPanel_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_GeneralLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(37, 37, 37)
                 .addGroup(jPanel_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox_LookAndFeel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel_LookAndFeel))
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
 
         jTabbedPane_Option.addTab("General", jPanel_General);
@@ -213,7 +168,7 @@ public class FrmOptions extends javax.swing.JDialog {
                     .addComponent(jLabel2)
                     .addComponent(jLabel_TextFont)
                     .addComponent(jButton_TextFont))
-                .addContainerGap(67, Short.MAX_VALUE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         jTabbedPane_Option.addTab("Font", jPanel_Font);
@@ -236,13 +191,15 @@ public class FrmOptions extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane_Option, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(71, 71, 71)
+                .addGap(49, 49, 49)
                 .addComponent(jButton_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(51, 51, 51)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton_Cancel)
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addGap(56, 56, 56))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane_Option, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -275,53 +232,76 @@ public class FrmOptions extends javax.swing.JDialog {
     private void jButton_OKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_OKActionPerformed
         // TODO add your handling code here:
         //Font
-        if (_legendFont != null)
+        if (_legendFont != null) {
             _parent.setLegendFont(_legendFont);
-        if (_textFont != null)
-            _parent.getOptions().setTextFont(_textFont);
-        
-        //Script language
-        if (this.jRadioButton_Groovy.isSelected()){
-            _parent.getOptions().setScriptLanguage("Groovy");
-        } else {
-            _parent.getOptions().setScriptLanguage("Jython");
         }
-        
+        if (_textFont != null) {
+            _parent.getOptions().setTextFont(_textFont);
+        }
+
         //Look and feel
         String laf = this.jComboBox_LookAndFeel.getSelectedItem().toString();
         String lafName = UIManager.getLookAndFeel().getClass().getName();
-        if (laf.equals("CDE/Motif")){
-            lafName = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";            
-        } else if (laf.equals("Metal")){
-            lafName = "javax.swing.plaf.metal.MetalLookAndFeel";                
-        } else if (laf.equals("Windows")){
-            lafName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";                
-        }  else if (laf.equals("Windows Classic")){
-            lafName = "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";                
-        } else if (laf.equals("Nimbus")){
-            lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";                
-        } else if (laf.equals("Mac")){
-            lafName = "com.sun.java.swing.plaf.mac.MacLookAndFeel";  
-        } else if (laf.equals("GTK")){
-            lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";  
+        switch (laf) {
+            case "CDE/Motif":
+                lafName = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+                break;
+            case "Metal":
+                lafName = "javax.swing.plaf.metal.MetalLookAndFeel";
+                break;
+            case "Windows":
+                lafName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+                break;
+            case "Windows Classic":
+                lafName = "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";
+                break;
+            case "Nimbus":  
+                lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                break;
+            case "Mac":
+                lafName = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
+                break;
+            case "GTK":
+                lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+                break;
+            case "FlatLightLaf":
+            case "FlatDarkLaf":
+            case "FlatDarculaLaf":
+            case "FlatIntelliJLaf":
+                lafName = laf;
+                break;
+            default:
+                lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                break;
         }
-        
+
         try {
-                JFrame.setDefaultLookAndFeelDecorated(true);
-                UIManager.setLookAndFeel(lafName);
-                SwingUtilities.updateComponentTreeUI(this);
-                SwingUtilities.updateComponentTreeUI(this._parent);
-                SwingUtilities.updateComponentTreeUI(this._parent.getMeteoDataset());
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InstantiationException ex) {
-                Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedLookAndFeelException ex) {
-                Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
+            JFrame.setDefaultLookAndFeelDecorated(true);
+            if (lafName.equals("FlatLightLaf")) {
+                    UIManager.setLookAndFeel(new FlatLightLaf());
+                } else if (lafName.equals("FlatIntelliJLaf")) {
+                    UIManager.setLookAndFeel(new FlatIntelliJLaf());
+                } else if (lafName.equals("FlatDarculaLaf")) {
+                    UIManager.setLookAndFeel(new FlatDarculaLaf());
+                } else if (lafName.equals("FlatDarkLaf")) {
+                    UIManager.setLookAndFeel(new FlatDarkLaf());
+                } else {
+                    UIManager.setLookAndFeel(lafName);
+                }
+            SwingUtilities.updateComponentTreeUI(this);
+            SwingUtilities.updateComponentTreeUI(this._parent);
+            SwingUtilities.updateComponentTreeUI(this._parent.getMeteoDataset());
+             this._parent.getOptions().setLookFeel(laf);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         this.dispose();
     }//GEN-LAST:event_jButton_OKActionPerformed
 
@@ -329,14 +309,6 @@ public class FrmOptions extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton_CancelActionPerformed
-
-    private void jRadioButton_GroovyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton_GroovyActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton_GroovyActionPerformed
-
-    private void jRadioButton_JythonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton_JythonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton_JythonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -392,11 +364,8 @@ public class FrmOptions extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel_LegendFont;
     private javax.swing.JLabel jLabel_LookAndFeel;
     private javax.swing.JLabel jLabel_TextFont;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel_Font;
     private javax.swing.JPanel jPanel_General;
-    private javax.swing.JRadioButton jRadioButton_Groovy;
-    private javax.swing.JRadioButton jRadioButton_Jython;
     private javax.swing.JTabbedPane jTabbedPane_Option;
     // End of variables declaration//GEN-END:variables
 }

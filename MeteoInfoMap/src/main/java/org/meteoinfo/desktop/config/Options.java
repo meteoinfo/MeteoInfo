@@ -49,10 +49,11 @@ public class Options {
     private String _fileName;
     private Font _textFont = new Font("Simsun", Font.PLAIN, 15);
     private Font _legendFont;
-    private String _scriptLanguage = "Groovy"; 
+    private String _scriptLanguage = "Jython";
     private boolean showStartMeteoDataDlg = true;
     private Point mainFormLocation = new Point(0, 0);
     private Dimension mainFormSize = new Dimension(1000, 650);
+    private String lookFeel = "Nimbus";
     // </editor-fold>
     // <editor-fold desc="Constructor">
     
@@ -169,6 +170,22 @@ public class Options {
         this.mainFormSize = value;
     }
 
+    /**
+     * Get look and feel
+     * @return Look and feel
+     */
+    public String getLookFeel() {
+        return this.lookFeel;
+    }
+
+    /**
+     * Set look and feel
+     * @param value look and feel
+     */
+    public void setLookFeel(String value) {
+        this.lookFeel = value;
+    }
+
     // </editor-fold>
     // <editor-fold desc="Methods">
 
@@ -226,6 +243,13 @@ public class Options {
         slAttr.setValue(this._scriptLanguage);
         scriptlang.setAttributeNode(slAttr);
         root.appendChild(scriptlang);
+
+        //Look and feel
+        Element lf = doc.createElement("LookFeel");
+        Attr lfAttr = doc.createAttribute("Name");
+        lfAttr.setValue(this.lookFeel);
+        lf.setAttributeNode(lfAttr);
+        root.appendChild(lf);
         
         //Start up form setting
         Element startForm = doc.createElement("Startup");
@@ -304,7 +328,13 @@ public class Options {
             
             //Script language
             Node scriptlang = root.getElementsByTagName("ScriptLanguage").item(0);
-            this._scriptLanguage = scriptlang.getAttributes().getNamedItem("Language").getNodeValue();   
+            this._scriptLanguage = scriptlang.getAttributes().getNamedItem("Language").getNodeValue();
+
+            //Look and feel
+            if (root.getElementsByTagName("LookFeel") != null) {
+                Element lf = (Element) root.getElementsByTagName("LookFeel").item(0);
+                this.lookFeel = lf.getAttributes().getNamedItem("Name").getNodeValue();
+            }
             
             //Start up form setting
             Node startForm = root.getElementsByTagName("Startup").item(0);

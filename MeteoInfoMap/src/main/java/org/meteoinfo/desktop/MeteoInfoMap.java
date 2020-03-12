@@ -4,8 +4,10 @@
  */
 package org.meteoinfo.desktop;
 
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
@@ -16,8 +18,10 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
-import org.codehaus.groovy.control.CompilationFailedException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.meteoinfo.desktop.config.Options;
 import org.meteoinfo.desktop.forms.FrmMain;
 import org.meteoinfo.desktop.forms.FrmTextEditor;
 import org.meteoinfo.global.DataConvert;
@@ -27,6 +31,7 @@ import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.util.InteractiveConsole;
 import org.python.util.PythonInterpreter;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -98,48 +103,33 @@ public class MeteoInfoMap {
     }
 
     private static void runScript(String args[], String fn, int idx) {
-        try {
-            String ext = GlobalUtil.getFileExtension(fn);
-            if (ext.equals("groovy")) {
-                System.out.println("Running Groovy script...");
-                GroovyShell shell = new GroovyShell();
-                //shell.setVariable("miapp", new FrmMainOld());
-                Script script = shell.parse(new File(fn));
-                script.run();
-                System.exit(0);
-            } else if (ext.equals("py")) {
-                System.out.println("Running Jython script...");
-                //PySystemState state = Py.getSystemState();
-                //Py.getSystemState().setdefaultencoding("utf-8");
-                PySystemState state = new PySystemState();
-                //state.setdefaultencoding("utf-8");
-                if (args.length > idx + 1) {
-                    for (int i = idx + 1; i < args.length; i++) {
-                        state.argv.append(new PyString(args[i]));
-                    }
-                }
-
-                PythonInterpreter interp = new PythonInterpreter(null, state);
-                String pluginPath = GlobalUtil.getAppPath(FrmMain.class) + File.separator + "plugins";
-                List<String> jarfns = GlobalUtil.getFiles(pluginPath, ".jar");
-                String path = GlobalUtil.getAppPath(FrmMain.class) + File.separator + "pylib";
-                interp.exec("import sys");
-                //interp.set("mis", mis);
-                interp.exec("sys.path.append('" + path + "')");
-                //interp.exec("import mipylib");
-                //interp.exec("from mipylib.miscript import *");
-                //interp.exec("from meteoinfo.numeric.JNumeric import *");
-                for (String jarfn : jarfns) {
-                    interp.exec("sys.path.append('" + jarfn + "')");
-                }
-                interp.execfile(fn);
-                System.exit(0);
+        String ext = GlobalUtil.getFileExtension(fn);
+        System.out.println("Running Jython script...");
+        //PySystemState state = Py.getSystemState();
+        //Py.getSystemState().setdefaultencoding("utf-8");
+        PySystemState state = new PySystemState();
+        //state.setdefaultencoding("utf-8");
+        if (args.length > idx + 1) {
+            for (int i = idx + 1; i < args.length; i++) {
+                state.argv.append(new PyString(args[i]));
             }
-        } catch (CompilationFailedException ex) {
-            Logger.getLogger(MeteoInfoMap.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(MeteoInfoMap.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        PythonInterpreter interp = new PythonInterpreter(null, state);
+        String pluginPath = GlobalUtil.getAppPath(FrmMain.class) + File.separator + "plugins";
+        List<String> jarfns = GlobalUtil.getFiles(pluginPath, ".jar");
+        String path = GlobalUtil.getAppPath(FrmMain.class) + File.separator + "pylib";
+        interp.exec("import sys");
+        //interp.set("mis", mis);
+        interp.exec("sys.path.append('" + path + "')");
+        //interp.exec("import mipylib");
+        //interp.exec("from mipylib.miscript import *");
+        //interp.exec("from meteoinfo.numeric.JNumeric import *");
+        for (String jarfn : jarfns) {
+            interp.exec("sys.path.append('" + jarfn + "')");
+        }
+        interp.execfile(fn);
+        System.exit(0);
     }
 
     private static void runInteractive() {
@@ -201,6 +191,44 @@ public class MeteoInfoMap {
             }
         });
     }
+    
+    /**
+     * Get startup path.
+     *
+     * @return Startup path.
+     */
+    private static String getStartupPath() {
+        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
+                getInputArguments().toString().contains("jdwp");
+        String startupPath;
+        if (isDebug) {
+            startupPath = System.getProperty("user.dir");
+            if (startupPath.endsWith("MeteoInfo")) {
+                startupPath += "/MeteoInfoMap";
+            }
+        } else {
+            startupPath = GlobalUtil.getAppPath(FrmMain.class);
+        }
+        return startupPath;
+    }
+
+    /**
+     * Load configure file
+     *
+     * @return Configure file
+     */
+    private static Options loadConfigureFile(String startupPath) {
+        String fn = startupPath + File.separator + "config.xml";
+        Options options = new Options();
+        if (new File(fn).exists()) {
+            try {
+                options.loadConfigFile(fn);
+            } catch (SAXException | IOException | ParserConfigurationException ex) {
+                Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return options;
+    }
 
     private static void runApplication() {
         runApplication(null);
@@ -209,43 +237,69 @@ public class MeteoInfoMap {
     private static void runApplication(final String locale) {
         /* Set look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        String startupPath = getStartupPath();
+        Options options = loadConfigureFile(startupPath);
+        String laf = options.getLookFeel();
+        if (laf.equals("FlatLightLaf")) {
+            try {
+                UIManager.setLookAndFeel(new FlatLightLaf());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (laf.equals("FlatDarculaLaf")) {
+            try {
+                UIManager.setLookAndFeel(new FlatDarculaLaf());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (laf.equals("FlatDarkLaf")) {
+            try {
+                UIManager.setLookAndFeel(new FlatDarkLaf());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (laf.equals("FlatIntelliJLaf")) {
+            try {
+                UIManager.setLookAndFeel(new FlatIntelliJLaf());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                String lafName;
+                switch (laf) {
+                    case "CDE/Motif":
+                        lafName = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+                        break;
+                    case "Metal":
+                        lafName = "javax.swing.plaf.metal.MetalLookAndFeel";
+                        break;
+                    case "Windows":
+                        lafName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+                        break;
+                    case "Windows Classic":
+                        lafName = "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";
+                        break;
+                    case "Nimbus":  
+                        lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                        break;
+                    case "Mac":
+                        lafName = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
+                        break;
+                    case "GTK":
+                        lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+                        break;
+                    default:
+                        lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                        break;
+                }
+                
+                UIManager.setLookAndFeel(lafName);
 
-            //WebLookAndFeel.install();
-            //UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
-            //com.jtattoo.plaf.acryl.AcrylLookAndFeel.setTheme("Green", "INSERT YOUR LICENSE KEY HERE", "my company");
-            //UIManager.setLookAndFeel("com.jtattoo.plaf.mcwin.McWinLookAndFeel");
-            //UIManager.setLookAndFeel("com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
-            //UIManager.setLookAndFeel("com.jtattoo.plaf.smart.SmartLookAndFeel");
-            //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            //UIManager.setLookAndFeel("javax.swing.plaf.windows.WindowsLookAndFeel");
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmTextEditor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmTextEditor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmTextEditor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmTextEditor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                Logger.getLogger(MeteoInfoMap.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-
-//        System.setProperty("Quaqua.tabLayoutPolicy", "wrap");
-//        try {
-//            JFrame.setDefaultLookAndFeelDecorated(true);
-//            JDialog.setDefaultLookAndFeelDecorated(true);
-//            UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-//        } catch (Exception e) {
-//        }
         //</editor-fold>
 
         /* Create and display the form */
@@ -303,7 +357,7 @@ public class MeteoInfoMap {
 
                 //registerFonts();
                 org.meteoinfo.global.util.FontUtil.registerWeatherFont();
-                FrmMain frame = new FrmMain();
+                FrmMain frame = new FrmMain(startupPath, options);
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 //frame.setLocationRelativeTo(null);
                 frame.setVisible(true);

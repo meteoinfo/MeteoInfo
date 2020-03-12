@@ -5,8 +5,6 @@
 package org.meteoinfo.desktop.forms;
 
 import com.l2fprod.common.swing.JFontChooser;
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -478,11 +476,7 @@ public class FrmTextEditor extends javax.swing.JFrame {
             editor.saveFile(editor.getFile());
         }
 
-        if (this._scriptLanguage.equals("Groovy")) {
-            runGroovyScript();
-        } else {
-            runPythonScript();
-        }
+        runPythonScript();
     }//GEN-LAST:event_jButton_RunScriptActionPerformed
 
     private void jMenuItem_NewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_NewFileActionPerformed
@@ -678,46 +672,6 @@ public class FrmTextEditor extends javax.swing.JFrame {
 //                } catch (Exception e) {
 //                    e.printStackTrace();
 //                }
-
-                return "";
-            }
-
-            @Override
-            protected void done() {
-                System.setOut(oout);
-                System.setErr(oerr);
-            }
-        };
-        worker.execute();
-    }
-
-    private void runGroovyScript() {
-
-        SwingWorker worker = new SwingWorker<String, String>() {
-            PrintStream oout = System.out;
-            PrintStream oerr = System.err;
-
-            @Override
-            protected String doInBackground() throws Exception {
-                //JTextAreaWriter writer = new JTextAreaWriter(jTextArea_Output);
-                JTextAreaPrintStream printStream = new JTextAreaPrintStream(System.out, jTextArea_Output);
-                jTextArea_Output.setText("");
-
-                // Create an instance of the PythonInterpreter                                
-                //String[] roots = new String[]{"./src"};
-                //GroovyScriptEngine gse = new GroovyScriptEngine(roots);   
-                GroovyShell shell = new GroovyShell();
-                System.setOut(printStream);
-                System.setErr(printStream);
-                shell.setVariable("miapp", _parent);
-
-                TextEditorPane textArea = getActiveTextArea();
-                String code = textArea.getText();
-                try {
-                    Script script = shell.parse(code);
-                    script.run();
-                } catch (Exception e) {
-                }
 
                 return "";
             }

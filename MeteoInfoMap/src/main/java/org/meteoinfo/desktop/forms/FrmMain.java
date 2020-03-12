@@ -163,10 +163,17 @@ public class FrmMain extends JFrame implements IApplication {
     private UndoManager currentUndoManager;
     // </editor-fold>
     // <editor-fold desc="Constructor">
-
+    
     public FrmMain() {
+        initComponents();
+    }
+
+    public FrmMain(String startupPath, Options options) {
         //Locale.setDefault(Locale.ENGLISH);
         initComponents();
+        
+        this._startupPath = startupPath;
+        this._options = options;
 
         currentUndoManager = undoManager;
         _mapDocument.addActiveMapFrameChangedListener(new IActiveMapFrameChangedListener() {
@@ -273,7 +280,7 @@ public class FrmMain extends JFrame implements IApplication {
         this._mapDocument.setMapLayout(_mapLayout);
         //this._mapDocument.setIsLayoutView(false);
         _mapLayout.setLockViewUpdate(true);
-        this._options.setLegendFont(_mapDocument.getFont());
+        //this._options.setLegendFont(_mapDocument.getFont());
 
         BufferedImage image = null;
         try {
@@ -289,13 +296,8 @@ public class FrmMain extends JFrame implements IApplication {
                 getInputArguments().toString().contains("jdwp");
         String pluginPath;
         if (isDebug) {
-            this._startupPath = System.getProperty("user.dir");
-            if (this._startupPath.endsWith("MeteoInfo")) {
-                this._startupPath += "/MeteoInfoMap";
-            }
             pluginPath = "D:/MyProgram/Java/MeteoInfoDev/plugins";
         } else {
-            this._startupPath = GlobalUtil.getAppPath(FrmMain.class);
             pluginPath = this._startupPath + File.separator + "plugins";
         }
         this._plugins.setPluginPath(pluginPath);
@@ -1729,7 +1731,8 @@ public class FrmMain extends JFrame implements IApplication {
         }
 
         this.loadDefaultPojectFile();
-        this.loadConfigureFile();
+        //this.loadConfigureFile();
+        this._mapDocument.setFont(this._options.getLegendFont());
         this.setLocation(this._options.getMainFormLocation());
         this.setSize(this._options.getMainFormSize());
         try {
@@ -3748,7 +3751,7 @@ public class FrmMain extends JFrame implements IApplication {
             @Override
             public void run() {
                 //new frmMain().setVisible(true);
-                FrmMain frame = new FrmMain();
+                FrmMain frame = new FrmMain(null, null);
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);

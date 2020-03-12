@@ -18,7 +18,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import javax.swing.plaf.basic.BasicLookAndFeel;
 import javax.xml.parsers.ParserConfigurationException;
 
 import com.formdev.flatlaf.FlatDarculaLaf;

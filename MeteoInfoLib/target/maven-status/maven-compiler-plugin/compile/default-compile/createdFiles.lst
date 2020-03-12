@@ -17,6 +17,7 @@ org\meteoinfo\ndarray\StructureMembers$Member.class
 org\meteoinfo\ndarray\ArrayObject$D5.class
 org\meteoinfo\layer\FrmChartLabel$1.class
 org\meteoinfo\image\composite\DarkenComposite$Context.class
+org\meteoinfo\ndarray\ArrayDate$D5.class
 org\meteoinfo\layer\FrmLabelSet.class
 org\meteoinfo\chart\plot\PiePlot.class
 org\meteoinfo\data\mapdata\FrmAttriData$2.class
@@ -113,6 +114,7 @@ org\meteoinfo\data\dataframe\impl\Aggregate.class
 org\meteoinfo\data\mapdata\webmap\TileFactoryInfo.class
 org\meteoinfo\chart\jogl\mc\BenchmarkHandler$6.class
 org\meteoinfo\geoprocess\Spline.class
+org\meteoinfo\ndarray\ArrayDate$D0.class
 org\meteoinfo\chart\ChartPanel$8.class
 org\meteoinfo\legend\FrmPointSymbolSet$3.class
 org\meteoinfo\legend\ColorBreak.class
@@ -669,6 +671,7 @@ org\meteoinfo\data\mapdata\FrmAttriData$8.class
 org\meteoinfo\data\meteodata\netcdf\Conventions.class
 org\meteoinfo\image\filter\TransitionFilter.class
 org\meteoinfo\ui\CheckBoxListEntry.class
+org\meteoinfo\ndarray\ArrayDate$D4.class
 org\meteoinfo\ndarray\ArrayShort$D7.class
 org\meteoinfo\ui\calendar\JDayChooser.class
 org\meteoinfo\projection\info\Common.class
@@ -715,6 +718,7 @@ org\meteoinfo\map\MapView$8.class
 org\meteoinfo\math\linalg\LinalgUtil$1.class
 org\meteoinfo\legend\FrmPolygonSymbolSet$9.class
 org\meteoinfo\legend\PolylineBreak.class
+org\meteoinfo\ndarray\ArrayDate$D1.class
 org\meteoinfo\ndarray\ArrayByte$D2.class
 org\meteoinfo\chart\IPointSelectedListener.class
 org\meteoinfo\image\filter\GrayscaleFilter.class
@@ -736,6 +740,7 @@ org\meteoinfo\image\filter\ImageUtils.class
 org\meteoinfo\legend\MapFrame$3.class
 org\meteoinfo\ndarray\ArrayShort$D3.class
 org\meteoinfo\ndarray\ArrayShort.class
+org\meteoinfo\ndarray\ArrayDate$D2.class
 org\meteoinfo\plugin\IApplication.class
 org\meteoinfo\ui\NamedList.class
 org\meteoinfo\projection\ProjRegistry.class
@@ -775,6 +780,7 @@ org\meteoinfo\data\dataframe\impl\Function.class
 org\meteoinfo\map\MapViewBeanInfo.class
 org\meteoinfo\geoprocess\topology\algorithm\CentroidArea.class
 org\meteoinfo\image\filter\ThresholdFilter.class
+org\meteoinfo\ndarray\ArrayDate$D3.class
 org\meteoinfo\image\composite\NegationComposite$Context.class
 org\meteoinfo\legend\FrmLegendBreaks$6.class
 org\meteoinfo\ui\ProgressBarUpdator.class
@@ -793,6 +799,7 @@ org\meteoinfo\image\math\VLNoise.class
 org\meteoinfo\image\vecmath\Tuple4f.class
 org\meteoinfo\data\mapdata\FrmAttriData$6.class
 org\meteoinfo\global\event\IZoomChangedListener.class
+org\meteoinfo\ndarray\ArrayDate$D6.class
 org\meteoinfo\data\mapdata\FrmAttriData$3.class
 org\meteoinfo\data\meteodata\TrajDataInfo.class
 org\meteoinfo\math\distribution\DistributionUtil.class
@@ -825,6 +832,7 @@ org\meteoinfo\chart\plot\GridLine.class
 org\meteoinfo\map\MapViewUndoRedo$RemoveFeaturesEdit.class
 org\meteoinfo\data\mapdata\webmap\BingHybridMapInfo.class
 org\meteoinfo\map\MapViewUndoRedo$RemoveGraphicVerticeEdit.class
+org\meteoinfo\ndarray\ArrayDate$D7.class
 org\meteoinfo\data\dataframe\DataFrameGroupBy.class
 org\meteoinfo\shape\PolygonZ.class
 org\meteoinfo\shape\ShapeTypes.class
@@ -1034,6 +1042,7 @@ org\meteoinfo\global\event\ILocationChangedListener.class
 org\meteoinfo\image\filter\DisplaceFilter.class
 org\meteoinfo\data\meteodata\MeteoUVSet.class
 org\meteoinfo\data\mapdata\webmap\IWebMapPanel.class
+org\meteoinfo\ndarray\ArrayDate$1.class
 org\meteoinfo\data\mapdata\geotiff\GeoKey$TagValue.class
 org\meteoinfo\chart\jogl\mc\BenchmarkHandler$2.class
 org\meteoinfo\data\dataframe\impl\WindowFunction.class
@@ -1164,6 +1173,7 @@ org\meteoinfo\ndarray\ArrayInt$D2.class
 org\meteoinfo\global\FrmMeasurement$4.class
 org\meteoinfo\map\MapView$12.class
 org\meteoinfo\math\KDTree$ContiguousDoubleArrayList.class
+org\meteoinfo\ndarray\ArrayDate.class
 org\meteoinfo\layer\FrmLayerProperty$12.class
 org\meteoinfo\ui\CheckBoxNodeEditor$1.class
 org\meteoinfo\data\meteodata\grads\PDEF_LCC.class
@@ -1266,6 +1276,7 @@ org\meteoinfo\layout\MapLayout$12.class
 org\meteoinfo\layer\FrmLayerProperty$22.class
 org\meteoinfo\image\filter\Curve.class
 org\meteoinfo\layout\MapLayoutBeanInfo.class
+org\meteoinfo\ndarray\ArrayDate$D3$IF.class
 org\meteoinfo\layout\LayoutNorthArrow$LayoutNorthArrowBeanBeanInfo.class
 org\meteoinfo\layout\LayoutChart.class
 org\meteoinfo\data\meteodata\DimensionSet.class

@@ -497,6 +497,9 @@ public abstract class Array {
         if (this instanceof ArrayComplex) {
             return DataType.COMPLEX;
         }
+        if (this instanceof ArrayDate) {
+            return DataType.DATE;
+        }
         if (this instanceof ArrayObject) {
             return DataType.OBJECT;
         }

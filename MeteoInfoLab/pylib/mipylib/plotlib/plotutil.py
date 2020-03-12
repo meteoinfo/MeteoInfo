@@ -16,6 +16,7 @@ from org.meteoinfo.shape import ShapeTypes
 from org.meteoinfo.chart import ChartText
 
 from java.awt import Color, Font
+from java.time import LocalDateTime
 
 from mipylib.numeric.core import NDArray, DimArray
 import mipylib.numeric as np
@@ -23,7 +24,9 @@ import mipylib.miutil as miutil
 import mipylib.migl as migl
 
 def getplotdata(data):
-    if isinstance(data, (NDArray, DimArray)):
+    if isinstance(data, NDArray):
+        if data.dtype == np.dtype.date:
+            return data.astype('double')._array
         return data.asarray()
     elif isinstance(data, (list, tuple)):
         if isinstance(data[0], datetime.datetime):

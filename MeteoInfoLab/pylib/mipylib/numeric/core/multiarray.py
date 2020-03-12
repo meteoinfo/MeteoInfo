@@ -515,7 +515,10 @@ class NDArray(object):
         if dtype.kind == 'i':
             r = NDArray(ArrayUtil.toInteger(self._array))
         elif dtype.kind == 'f':
-            r = NDArray(ArrayUtil.toFloat(self._array))
+            if dtype.name == 'float':
+                r = NDArray(ArrayUtil.toFloat(self._array))
+            else:
+                r = NDArray(ArrayUtil.toDouble(self._array))
         elif dtype.kind == 'b':
             r = NDArray(ArrayUtil.toBoolean(self._array))
         else:

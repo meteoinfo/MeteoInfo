@@ -44,6 +44,9 @@ class DataType(object):
     def __repr__(self):
         return self.name
 
+    def __eq__(self, other):
+        return self.name == other.name
+
     @property
     def kind(self):
         '''

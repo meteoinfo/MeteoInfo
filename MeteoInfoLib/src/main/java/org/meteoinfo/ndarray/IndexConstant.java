@@ -32,6 +32,7 @@
  */
 package org.meteoinfo.ndarray;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -205,6 +206,11 @@ public class IndexConstant extends Index {
     public Complex getComplexNext() { currElement++; return maa.getComplex(0); }
     public void setComplexCurrent(Complex val) { maa.setComplex(currElement, val); }
     public void setComplexNext(Complex val) {currElement++;  maa.setComplex(0, val); }
+
+    public LocalDateTime getDateCurrent() { return maa.getDate(currElement); }
+    public LocalDateTime getDateNext() { currElement++; return maa.getDate(0); }
+    public void setDateCurrent(LocalDateTime val) { maa.setDate(currElement, val); }
+    public void setDateNext(LocalDateTime val) {currElement++;  maa.setDate(0, val); }
 
     public Object getObjectCurrent() { return maa.getObject(currElement); }
     public Object getObjectNext() { currElement++; return maa.getObject(0); }

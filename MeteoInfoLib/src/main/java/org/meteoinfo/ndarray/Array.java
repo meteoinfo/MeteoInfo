@@ -33,6 +33,7 @@
 package org.meteoinfo.ndarray;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -134,6 +135,8 @@ public abstract class Array {
             return ArrayString.factory(index);
         } else if (classType == Complex.class) {
             return ArrayComplex.factory(index);
+        } else if (classType == LocalDateTime.class) {
+            return ArrayDate.factory(index);
         } else {
             return ArrayObject.factory(classType, index);
         }
@@ -203,6 +206,8 @@ public abstract class Array {
             return ArrayString.factory(indexCalc, (Object[]) storage);
         } else if (classType == Complex.class) {
             return ArrayComplex.factory(indexCalc, (Complex[]) storage);
+        } else if (classType == LocalDateTime.class) {
+            return ArrayDate.factory(indexCalc, (LocalDateTime[]) storage);
         } else {
             return ArrayObject.factory(classType, indexCalc, (Object[]) storage);
         }
@@ -236,6 +241,12 @@ public abstract class Array {
             return new ArrayChar(index, (char[]) storage);
         } else if ((classType == boolean.class) || (classType == Boolean.class)) {
             return new ArrayBoolean(index, (boolean[]) storage);
+        } else if (classType == String.class) {
+            return ArrayString.factory(index, (Object[]) storage);
+        } else if (classType == Complex.class) {
+            return ArrayComplex.factory(index, (Complex[]) storage);
+        } else if (classType == LocalDateTime.class) {
+            return ArrayDate.factory(index, (LocalDateTime[]) storage);
         } else {
             return new ArrayObject(classType, index, (Object[]) storage);
         }
@@ -1312,6 +1323,24 @@ public abstract class Array {
     public abstract void setComplex(Index ima, Complex value);
 
     /**
+     * Get the array element at the current element of ima, as a LocalDateTime.
+     *
+     * @param ima Index with current element set
+     * @return value at <code>index</code> cast to boolean if necessary.
+     * @throws ForbiddenConversionException if underlying array not LocalDateTime
+     */
+    public abstract LocalDateTime getDate(Index ima);
+
+    /**
+     * Set the array element at the current element of ima.
+     *
+     * @param ima Index with current element set
+     * @param value the new value; cast to underlying data type if necessary.
+     * @throws ForbiddenConversionException if underlying array not LocalDateTime
+     */
+    public abstract void setDate(Index ima, LocalDateTime value);
+
+    /**
      * Get the array element at index as an Object. The returned value is
      * wrapped in an object, eg Double for double
      *
@@ -1375,6 +1404,10 @@ public abstract class Array {
     abstract public Complex getComplex(int elem);
     
     abstract public void setComplex(int elem, Complex value);
+
+    abstract public LocalDateTime getDate(int elem);
+
+    abstract public void setDate(int elem, LocalDateTime value);
 
     abstract public Object getObject(int elem);
 

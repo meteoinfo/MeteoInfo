@@ -34,6 +34,7 @@ package org.meteoinfo.ndarray;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.time.LocalDateTime;
 
 /**
  * Concrete implementation of Array specialized for floats. Data storage is with
@@ -270,6 +271,10 @@ public class ArrayFloat extends Array {
         throw new ForbiddenConversionException();
     }
 
+    public LocalDateTime getDate(Index i) { throw new ForbiddenConversionException(); }
+
+    public void setDate(Index i, LocalDateTime value) { throw new ForbiddenConversionException(); }
+
     public Object getObject(Index i) {
         return storage[i.currentElement()];
     }
@@ -358,6 +363,10 @@ public class ArrayFloat extends Array {
     public void setComplex(int index, Complex value) {
         throw new ForbiddenConversionException();
     }
+
+    public LocalDateTime getDate(int index) { throw new ForbiddenConversionException(); }
+
+    public void setDate(int index, LocalDateTime value) { throw new ForbiddenConversionException(); }
 
     public Object getObject(int index) {
         return getFloat(index);

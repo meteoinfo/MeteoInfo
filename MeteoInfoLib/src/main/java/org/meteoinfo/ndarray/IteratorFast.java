@@ -33,6 +33,8 @@
 
 package org.meteoinfo.ndarray;
 
+import java.time.LocalDateTime;
+
 /**
  * A "fast" iterator that can be used when the data is in canonical order.
  *
@@ -123,6 +125,11 @@ package org.meteoinfo.ndarray;
     public Complex getComplexNext() { return maa.getComplex(++currElement); }
     public void setComplexCurrent(Complex val) { maa.setComplex(currElement, val); }
     public void setComplexNext(Complex val) { maa.setComplex(++currElement, val); }
+
+    public LocalDateTime getDateCurrent() { return maa.getDate(currElement); }
+    public LocalDateTime getDateNext() { return maa.getDate(++currElement); }
+    public void setDateCurrent(LocalDateTime val) { maa.setDate(currElement, val); }
+    public void setDateNext(LocalDateTime val) { maa.setDate(++currElement, val); }
 
     public Object getObjectCurrent() { return maa.getObject(currElement); }
     public Object getObjectNext() { return maa.getObject(++currElement); }

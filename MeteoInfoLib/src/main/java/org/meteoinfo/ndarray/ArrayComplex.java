@@ -34,6 +34,7 @@ package org.meteoinfo.ndarray;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
+import java.time.LocalDateTime;
 
 /**
  * Concrete implementation of Array specialized for complex. Data storage is
@@ -277,6 +278,10 @@ public class ArrayComplex extends Array {
         storage[i.currentElement()] = value;
     }
 
+    public LocalDateTime getDate(Index i) { throw new ForbiddenConversionException(); }
+
+    public void setDate(Index i, LocalDateTime value) { throw new ForbiddenConversionException(); }
+
     public Object getObject(Index i) {
         return storage[i.currentElement()];
     }
@@ -365,6 +370,10 @@ public class ArrayComplex extends Array {
     public void setComplex(int index, Complex value) {
         storage[index] = value;
     }
+
+    public LocalDateTime getDate(int index) { throw new ForbiddenConversionException(); }
+
+    public void setDate(int index, LocalDateTime value) { throw new ForbiddenConversionException(); }
 
     public Object getObject(int index) {
         return getComplex(index);

@@ -32,6 +32,8 @@
  */
 package org.meteoinfo.ndarray;
 
+import java.time.LocalDateTime;
+
 /**
  * Concrete implementation of Array specialized for booleans. Data storage is
  * with 1D java array of booleans.
@@ -294,6 +296,10 @@ public class ArrayBoolean extends Array {
         throw new ForbiddenConversionException();
     }
 
+    public LocalDateTime getDate(Index i) { throw new ForbiddenConversionException(); }
+
+    public void setDate(Index i, LocalDateTime value) { throw new ForbiddenConversionException(); }
+
     public Object getObject(Index i) {
         return storage[i.currentElement()];
     }
@@ -375,13 +381,15 @@ public class ArrayBoolean extends Array {
         throw new ForbiddenConversionException();
     }
     
-    public Complex getComplex(int index) {
-        throw new ForbiddenConversionException();
-    }
+    public Complex getComplex(int index) { throw new ForbiddenConversionException(); }
 
     public void setComplex(int index, Complex value) {
         throw new ForbiddenConversionException();
     }
+
+    public LocalDateTime getDate(int index) { throw new ForbiddenConversionException(); }
+
+    public void setDate(int index, LocalDateTime value) { throw new ForbiddenConversionException(); }
 
     public Object getObject(int index) {
         return getBoolean(index);

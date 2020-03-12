@@ -34,6 +34,7 @@ package org.meteoinfo.ndarray;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
+import java.time.LocalDateTime;
 
 /**
  * Concrete implementation of Array specialized for doubles. Data storage is
@@ -265,6 +266,10 @@ public class ArrayDouble extends Array {
         throw new ForbiddenConversionException();
     }
 
+    public LocalDateTime getDate(Index i) { throw new ForbiddenConversionException(); }
+
+    public void setDate(Index i, LocalDateTime value) { throw new ForbiddenConversionException(); }
+
     public Object getObject(Index i) {
         return storageD[i.currentElement()];
     }
@@ -353,6 +358,10 @@ public class ArrayDouble extends Array {
     public void setComplex(int index, Complex value) {
         throw new ForbiddenConversionException();
     }
+
+    public LocalDateTime getDate(int index) { throw new ForbiddenConversionException(); }
+
+    public void setDate(int index, LocalDateTime value) { throw new ForbiddenConversionException(); }
 
     public Object getObject(int index) {
         return getDouble(index);

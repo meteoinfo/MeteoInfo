@@ -35,6 +35,7 @@ package org.meteoinfo.ndarray;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
+import java.time.LocalDateTime;
 
 /**
  * Concrete implementation of Array specialized for shorts. Data storage is with
@@ -286,6 +287,10 @@ public class ArrayShort extends Array {
         throw new ForbiddenConversionException();
     }
 
+    public LocalDateTime getDate(Index i) { throw new ForbiddenConversionException(); }
+
+    public void setDate(Index i, LocalDateTime value) { throw new ForbiddenConversionException(); }
+
     public Object getObject(Index i) {
         return storage[i.currentElement()]; // Short
     }
@@ -379,6 +384,10 @@ public class ArrayShort extends Array {
     public void setComplex(int index, Complex value) {
         throw new ForbiddenConversionException();
     }
+
+    public LocalDateTime getDate(int index) { throw new ForbiddenConversionException(); }
+
+    public void setDate(int index, LocalDateTime value) { throw new ForbiddenConversionException(); }
 
     public Object getObject(int index) {
         return getShort(index);

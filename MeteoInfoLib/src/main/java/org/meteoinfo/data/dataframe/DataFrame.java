@@ -1970,7 +1970,7 @@ public class DataFrame implements Iterable {
                 } else if (colFormat.substring(0, 1).equals("{")) {    //Date
                     int eidx = colFormat.indexOf("}");
                     String formatStr = colFormat.substring(1, eidx);
-                    col = new Column(colName, DataType.OBJECT);
+                    col = new Column(colName, DataType.DATE);
                     col.setFormat(formatStr);
                 } else {
                     col = new Column(colName, DataType.STRING);
@@ -2052,19 +2052,19 @@ public class DataFrame implements Iterable {
                     indexFormat = indexFormat.substring(1);
                 }
                 idxDT = DataConvert.getDataType(indexFormat);
-                if (idxDT == DataType.OBJECT) {
+                if (idxDT == DataType.DATE) {
                     indexFormat = DataConvert.getDateFormat(indexFormat);
                     dtFormatter = DateTimeFormatter.ofPattern(indexFormat);
                 }
             } else {
                 idxDT = DataConvert.detectDataType(indexValues, 10, null);
-                if (idxDT == DataType.OBJECT) {
+                if (idxDT == DataType.DATE) {
                     dtFormatter = TypeUtils.getDateTimeFormatter(indexValues.get(0));
                 }
             }
 
             List indexData = new ArrayList<>();
-            if (idxDT == DataType.OBJECT) {
+            if (idxDT == DataType.DATE) {
                 for (String s : indexValues) {
                     indexData.add(LocalDateTime.parse(s, dtFormatter));
                 }
@@ -2246,7 +2246,7 @@ public class DataFrame implements Iterable {
                 } else if (colFormat.substring(0, 1).equals("{")) {    //Date
                     int eidx = colFormat.indexOf("}");
                     String formatStr = colFormat.substring(1, eidx);
-                    col = new Column(colName, DataType.OBJECT);
+                    col = new Column(colName, DataType.DATE);
                     col.setFormat(formatStr);
                 } else {
                     col = new Column(colName, DataType.STRING);
@@ -2328,19 +2328,19 @@ public class DataFrame implements Iterable {
                     indexFormat = indexFormat.substring(1);
                 }
                 idxDT = DataConvert.getDataType(indexFormat);
-                if (idxDT == DataType.OBJECT) {
+                if (idxDT == DataType.DATE) {
                     indexFormat = DataConvert.getDateFormat(indexFormat);
                     dtFormatter = DateTimeFormatter.ofPattern(indexFormat);
                 }
             } else {
                 idxDT = DataConvert.detectDataType(indexValues, 10, null);
-                if (idxDT == DataType.OBJECT) {
+                if (idxDT == DataType.DATE) {
                     dtFormatter = TypeUtils.getDateTimeFormatter(indexValues.get(0));
                 }
             }
 
             List indexData = new ArrayList<>();
-            if (idxDT == DataType.OBJECT) {
+            if (idxDT == DataType.DATE) {
                 for (String s : indexValues) {
                     indexData.add(LocalDateTime.parse(s, dtFormatter));
                 }

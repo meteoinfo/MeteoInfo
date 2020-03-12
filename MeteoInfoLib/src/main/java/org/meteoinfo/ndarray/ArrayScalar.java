@@ -33,6 +33,7 @@
 package org.meteoinfo.ndarray;
 
 import javax.annotation.concurrent.Immutable;
+import java.time.LocalDateTime;
 
 /**
  * Helper class for StructureDataAscii
@@ -159,6 +160,10 @@ public class ArrayScalar extends Array {
     public void setComplex(Index index, Complex value) {
     }
 
+    public LocalDateTime getDate(Index i) { return getDate(0); }
+
+    public void setDate(Index i, LocalDateTime value) { }
+
     @Override
     public Object getObject(Index ima) {
         return value;
@@ -255,6 +260,10 @@ public class ArrayScalar extends Array {
     public void setComplex(int index, Complex value) {
 
     }
+
+    public LocalDateTime getDate(int index) {return (LocalDateTime) value; }
+
+    public void setDate(int index, LocalDateTime value) {}
 
     @Override
     public Object getObject(int elem) {

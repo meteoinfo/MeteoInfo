@@ -32,6 +32,7 @@
  */
 package org.meteoinfo.ndarray;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -1205,6 +1206,30 @@ public class Index implements Cloneable {
             count++;
             currElement = counter.incr();
             maa.setComplex(currElement, val);
+        }
+
+        @Override
+        public LocalDateTime getDateCurrent() {
+            return maa.getDate(currElement);
+        }
+
+        @Override
+        public LocalDateTime getDateNext() {
+            count++;
+            currElement = counter.incr();
+            return maa.getDate(currElement);
+        }
+
+        @Override
+        public void setDateCurrent(LocalDateTime val) {
+            maa.setDate(currElement, val);
+        }
+
+        @Override
+        public void setDateNext(LocalDateTime val) {
+            count++;
+            currElement = counter.incr();
+            maa.setDate(currElement, val);
         }
 
         @Override

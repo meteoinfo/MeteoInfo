@@ -5,6 +5,8 @@
  */
 package org.meteoinfo.ndarray;
 
+import java.time.LocalDateTime;
+
 /**
  *
  * @author Yaqiang Wang
@@ -174,6 +176,10 @@ public class ArrayStructure extends Array {
         throw new ForbiddenConversionException();
     }
 
+    public LocalDateTime getDate(Index i) { throw new ForbiddenConversionException(); }
+
+    public void setDate(Index i, LocalDateTime value) { throw new ForbiddenConversionException(); }
+
     /**
      * DO NOT USE, throw ForbiddenConversionException
      */
@@ -269,6 +275,10 @@ public class ArrayStructure extends Array {
     public void setComplex(int index, Complex value) {
         throw new ForbiddenConversionException();
     }
+
+    public LocalDateTime getDate(int index) { throw new ForbiddenConversionException(); }
+
+    public void setDate(int index, LocalDateTime value) { throw new ForbiddenConversionException(); }
 
     @Override
     public Class getElementType() {

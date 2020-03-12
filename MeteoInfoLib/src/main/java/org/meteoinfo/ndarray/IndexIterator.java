@@ -32,6 +32,8 @@
  */
 package org.meteoinfo.ndarray;
 
+import java.time.LocalDateTime;
+
 /**
  * Iteration through each element of an Array in "canonical order".
  * The user obtains this by calling getIndexIterator() on an Array.
@@ -293,12 +295,36 @@ public interface IndexIterator {
    * @return Current value as a complex
    */
   public Complex getComplexCurrent();
-  
+
   /**
    * Set current value with a complex
    * @param val The current value as a complex
    */
   public void setComplexCurrent(Complex val);
+  
+  /**
+   * Set current value with a LocalDateTime
+   * @param val The current value as a LocalDateTime
+   */
+  public void setDateCurrent(LocalDateTime val);
+
+  /**
+   * Get next value as a LocalDateTime
+   * @return next value as a LocalDateTime
+   */
+  public LocalDateTime getDateNext();
+
+  /**
+   * Set next value with a LocalDateTime
+   * @param val the  next value as a LocalDateTime
+   */
+  public void setDateNext(LocalDateTime val);
+
+  /**
+   * Get current value as a LocalDateTime
+   * @return Current value as a LocalDateTime
+   */
+  public LocalDateTime getDateCurrent();
 
   /**
    * Get next value as an Object

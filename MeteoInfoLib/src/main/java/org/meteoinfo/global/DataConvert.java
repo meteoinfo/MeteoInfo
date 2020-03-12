@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.BitSet;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -464,12 +463,8 @@ public class DataConvert {
                         if (vStr.isEmpty()) {
                             return null;
                         }
-                        SimpleDateFormat dformat = new SimpleDateFormat(dateFormat);
-                        try {
-                            return dformat.parse(vStr);
-                        } catch (ParseException ex) {
-                            Logger.getLogger(DataConvert.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        DateTimeFormatter dformat = DateTimeFormatter.ofPattern(dateFormat);
+                        return LocalDateTime.parse(vStr, dformat);
                     }
                     break;
             }
@@ -542,17 +537,12 @@ public class DataConvert {
                         return false;
                     }
                     return Boolean.valueOf(vStr);
-                case OBJECT:
+                case DATE:
                     if (vStr.isEmpty()) {
                         return null;
                     }
-                    SimpleDateFormat dformat = new SimpleDateFormat(dateFormat);
-                    try {
-                        return dformat.parse(vStr);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(DataConvert.class.getName()).log(Level.SEVERE, null, ex);
-                        return null;
-                    }
+                    DateTimeFormatter dFormat = DateTimeFormatter.ofPattern(dateFormat);
+                    return LocalDateTime.parse(vStr, dFormat);
             }
         }
 
@@ -588,7 +578,7 @@ public class DataConvert {
                 if (format.substring(0, 1).equals("{")) {    //Date
                     int eidx = format.indexOf("}");
                     String formatStr = format.substring(1, eidx);
-                    dt = DataType.OBJECT;
+                    dt = DataType.DATE;
                 }
                 break;
         }
@@ -735,14 +725,14 @@ public class DataConvert {
      * @return Data type
      */
     public static DataType detectDataType(List<String> valuesList, DateTimeFormatter dtFormatter) {
-        List<DataType> dts = new LinkedList<>(Arrays.asList(DataType.OBJECT, DataType.BOOLEAN, DataType.INT, DataType.FLOAT, 
+        List<DataType> dts = new LinkedList<>(Arrays.asList(DataType.DATE, DataType.BOOLEAN, DataType.INT, DataType.FLOAT,
                 DataType.DOUBLE, DataType.STRING));
         if (dtFormatter == null)
-            dts.remove(DataType.OBJECT);
+            dts.remove(DataType.DATE);
         for (String s : valuesList) {
-            if (dts.contains(DataType.OBJECT) ) {
+            if (dts.contains(DataType.DATE) ) {
                 if (dtFormatter != null && !isLocalDateTime(s, dtFormatter))
-                    dts.remove(DataType.OBJECT);
+                    dts.remove(DataType.DATE);
             }
             if (dts.contains(DataType.BOOLEAN) && !isBoolean(s)) {
                 dts.remove(DataType.BOOLEAN);

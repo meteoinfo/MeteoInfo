@@ -32,9 +32,11 @@
  */
 package org.meteoinfo.ndarray;
 
+import org.meteoinfo.data.meteodata.arl.DataLabel;
+
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Type-safe enumeration of data types.
@@ -52,7 +54,7 @@ public enum DataType {
     FLOAT("float", 4, float.class, false),
     DOUBLE("double", 8, double.class, false),
     COMPLEX("complex", 1, Complex.class, false),
-    DATE("date", 1, Date.class, false),
+    DATE("date", 1, LocalDateTime.class, false),
     
     // object types
     SEQUENCE("Sequence", 4, StructureDataIterator.class, false), // 32-bit index
@@ -264,6 +266,9 @@ public enum DataType {
         }
         if (c == Complex.class) {
             return DataType.COMPLEX;
+        }
+        if (c == LocalDateTime.class) {
+            return DataType.DATE;
         }
         if (c == StructureData.class) {
             return DataType.STRUCTURE;

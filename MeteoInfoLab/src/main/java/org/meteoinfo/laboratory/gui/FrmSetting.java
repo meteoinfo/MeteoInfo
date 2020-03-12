@@ -5,7 +5,6 @@
  */
 package org.meteoinfo.laboratory.gui;
 
-import com.bulenkov.darcula.DarculaLaf;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
@@ -44,7 +43,6 @@ public class FrmSetting extends javax.swing.JDialog {
         for (UIManager.LookAndFeelInfo lnf : lnfs) {
             this.jComboBox_LookFeel.addItem(lnf.getName());
         }
-        this.jComboBox_LookFeel.addItem("Darcula");
         this.jComboBox_LookFeel.addItem("FlatLightLaf");
         this.jComboBox_LookFeel.addItem("FlatDarkLaf");
         this.jComboBox_LookFeel.addItem("FlatDarculaLaf");
@@ -187,7 +185,6 @@ public class FrmSetting extends javax.swing.JDialog {
             case "GTK":
                 lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
                 break;
-            case "Darcula":
             case "FlatLightLaf":
             case "FlatDarkLaf":
             case "FlatDarculaLaf":
@@ -201,11 +198,7 @@ public class FrmSetting extends javax.swing.JDialog {
         
         try {
                 JFrame.setDefaultLookAndFeelDecorated(true);
-                if (lafName.equals("Darcula")) {
-                    BasicLookAndFeel darcula = new DarculaLaf();            
-                    UIManager.setLookAndFeel(darcula);
-                    this.changeStyleViaThemeXml("dark");
-                } else if (lafName.equals("FlatLightLaf")) {
+                if (lafName.equals("FlatLightLaf")) {
                     UIManager.setLookAndFeel(new FlatLightLaf());
                     this.changeStyleViaThemeXml("default");
                 } else if (lafName.equals("FlatIntelliJLaf")) {

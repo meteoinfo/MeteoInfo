@@ -63,7 +63,6 @@ public class EditorDockable extends DefaultSingleCDockable {
         String lfName = this.parent.getOptions().getLookFeel();
         String themeName = "default";
         switch (lfName) {
-            case "Darcula":
             case "FlatDarculaLaf":
             case "FlatDarkLaf":
                 themeName = "dark";

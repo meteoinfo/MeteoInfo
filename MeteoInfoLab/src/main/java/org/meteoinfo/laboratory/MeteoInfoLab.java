@@ -5,7 +5,6 @@
  */
 package org.meteoinfo.laboratory;
 
-import com.bulenkov.darcula.DarculaLaf;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
@@ -253,15 +252,7 @@ public class MeteoInfoLab {
         String startupPath = getStartupPath();
         Options options = loadConfigureFile(startupPath);
         String laf = options.getLookFeel();
-        if (laf.equals("Darcula")) {
-            //Darcula look and feel
-            try {
-                BasicLookAndFeel darcula = new DarculaLaf();
-                UIManager.setLookAndFeel(darcula);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (laf.equals("FlatLightLaf")) {
+        if (laf.equals("FlatLightLaf")) {
             try {
                 UIManager.setLookAndFeel(new FlatLightLaf());
             } catch (Exception e) {

@@ -6,6 +6,10 @@
 package org.meteoinfo.laboratory.gui;
 
 import com.bulenkov.darcula.DarculaLaf;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.l2fprod.common.swing.JFontChooser;
 import java.awt.Font;
 import java.io.IOException;
@@ -41,7 +45,11 @@ public class FrmSetting extends javax.swing.JDialog {
             this.jComboBox_LookFeel.addItem(lnf.getName());
         }
         this.jComboBox_LookFeel.addItem("Darcula");
-        this.jComboBox_LookFeel.setSelectedItem(UIManager.getLookAndFeel().getName());
+        this.jComboBox_LookFeel.addItem("FlatLightLaf");
+        this.jComboBox_LookFeel.addItem("FlatDarkLaf");
+        this.jComboBox_LookFeel.addItem("FlatDarculaLaf");
+        this.jComboBox_LookFeel.addItem("FlatIntelliJLaf");
+        this.jComboBox_LookFeel.setSelectedItem(this.parent.getOptions().getLookFeel());
         
         //Editor font
         TextEditor textEditor = this.parent.getEditorDock().getActiveTextEditor();
@@ -180,7 +188,11 @@ public class FrmSetting extends javax.swing.JDialog {
                 lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
                 break;
             case "Darcula":
-                lafName = "Darcula";
+            case "FlatLightLaf":
+            case "FlatDarkLaf":
+            case "FlatDarculaLaf":
+            case "FlatIntelliJLaf":
+                lafName = laf;
                 break;
             default:
                 lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
@@ -192,6 +204,18 @@ public class FrmSetting extends javax.swing.JDialog {
                 if (lafName.equals("Darcula")) {
                     BasicLookAndFeel darcula = new DarculaLaf();            
                     UIManager.setLookAndFeel(darcula);
+                    this.changeStyleViaThemeXml("dark");
+                } else if (lafName.equals("FlatLightLaf")) {
+                    UIManager.setLookAndFeel(new FlatLightLaf());
+                    this.changeStyleViaThemeXml("default");
+                } else if (lafName.equals("FlatIntelliJLaf")) {
+                    UIManager.setLookAndFeel(new FlatIntelliJLaf());
+                    this.changeStyleViaThemeXml("default");
+                } else if (lafName.equals("FlatDarculaLaf")) {
+                    UIManager.setLookAndFeel(new FlatDarculaLaf());
+                    this.changeStyleViaThemeXml("dark");
+                } else if (lafName.equals("FlatDarkLaf")) {
+                    UIManager.setLookAndFeel(new FlatDarkLaf());
                     this.changeStyleViaThemeXml("dark");
                 } else {
                     UIManager.setLookAndFeel(lafName);

@@ -1,37 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Run\emips\test">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\random"/>
-    <RecentFolder Folder="D:\Run\emips\test\emis"/>
-    <RecentFolder Folder="D:\Run\emips\test\inter_data"/>
-    <RecentFolder Folder="D:\Run\emips\test\setting"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataframe">
+    <RecentFolder Folder="D:\Run\emips\run_meic\setting"/>
     <RecentFolder Folder="D:\Run\emips\test"/>
+    <RecentFolder Folder="D:\Run\emips\run_meic"/>
+    <RecentFolder Folder="D:\Run\emips"/>
+    <RecentFolder Folder="D:\Run"/>
+    <RecentFolder Folder="D:\Run\verification"/>
+    <RecentFolder Folder="D:\Run\verification\air_force"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Run\verification\air_force\script"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Run\emips\test\test_run-NOx.py"/>
-      <OpenedFile File="D:\Run\emips\test\test_read_result_nc.py"/>
-      <OpenedFile File="D:\Run\emips\test\test_run-1.py"/>
+      <OpenedFile File="D:\Run\verification\air_force\script\vf_vis_continuous.py"/>
+      <OpenedFile File="D:\Run\verification\air_force\script\plot_result_continuous.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Run\emips\test\test_run-NOx.py"/>
-      <RecentFile File="D:\Run\emips\test\test_read_result_nc.py"/>
-      <RecentFile File="D:\Run\emips\test\test_run-1.py"/>
+      <RecentFile File="D:\Run\verification\air_force\script\vf_vis_continuous.py"/>
+      <RecentFile File="D:\Run\verification\air_force\script\plot_result_continuous.py"/>
     </RecentFiles>
   </File>
   <Font>
     <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
   </Font>
-  <LookFeel Name="Darcula"/>
-  <Startup MainFormLocation="-6,1" MainFormSize="1290,684"/>
+  <LookFeel Name="FlatDarkLaf"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1380,812"/>
 </MeteoInfo>

@@ -60,7 +60,15 @@ public class EditorDockable extends DefaultSingleCDockable {
         super(id, title, actions);
 
         this.parent = parent;
-        String themeName = this.parent.getOptions().getLookFeel().equals("Darcula") ? "dark" : "default";
+        String lfName = this.parent.getOptions().getLookFeel();
+        String themeName = "default";
+        switch (lfName) {
+            case "Darcula":
+            case "FlatDarculaLaf":
+            case "FlatDarkLaf":
+                themeName = "dark";
+                break;
+        }
         try {
             theme = Theme.load(getClass().getResourceAsStream(
                     "/org/fife/ui/rsyntaxtextarea/themes/" + themeName + ".xml"));

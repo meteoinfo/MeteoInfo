@@ -21,6 +21,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import javax.swing.plaf.basic.BasicLookAndFeel;
 import javax.xml.parsers.ParserConfigurationException;
+
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.util.FontUtil;
 import org.meteoinfo.global.util.GlobalUtil;
@@ -247,7 +252,8 @@ public class MeteoInfoLab {
     private static void runApplication(final boolean isEng) {
         String startupPath = getStartupPath();
         Options options = loadConfigureFile(startupPath);
-        if (options.getLookFeel().equals("Darcula")) {
+        String laf = options.getLookFeel();
+        if (laf.equals("Darcula")) {
             //Darcula look and feel
             try {
                 BasicLookAndFeel darcula = new DarculaLaf();
@@ -255,9 +261,32 @@ public class MeteoInfoLab {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if (laf.equals("FlatLightLaf")) {
+            try {
+                UIManager.setLookAndFeel(new FlatLightLaf());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (laf.equals("FlatDarculaLaf")) {
+            try {
+                UIManager.setLookAndFeel(new FlatDarculaLaf());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (laf.equals("FlatDarkLaf")) {
+            try {
+                UIManager.setLookAndFeel(new FlatDarkLaf());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (laf.equals("FlatIntelliJLaf")) {
+            try {
+                UIManager.setLookAndFeel(new FlatIntelliJLaf());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             try {
-                String laf = options.getLookFeel();
                 String lafName;
                 switch (laf) {
                     case "CDE/Motif":

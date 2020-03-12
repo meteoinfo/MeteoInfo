@@ -28,14 +28,19 @@ public class ConsoleColors {
      * @param lookFeel Look and feel
      */
     public ConsoleColors(String lookFeel) {
-        if (lookFeel.equals("Darcula")) {
-            this.promptColor = new Color(255, 100, 100);
-            this.commandColor = Color.WHITE;
-            this.codeLinesColor = new Color(0, 153, 204);
-        } else {
-            this.promptColor = Color.RED;
-            this.commandColor = Color.BLACK;
-            this.codeLinesColor = Color.BLUE;
+        switch (lookFeel) {
+            case "Darcula":
+            case "FlatDarculaLaf":
+            case "FlatDarkLaf":
+                this.promptColor = new Color(255, 100, 100);
+                this.commandColor = Color.WHITE;
+                this.codeLinesColor = new Color(0, 153, 204);
+                break;
+            default:
+                this.promptColor = Color.RED;
+                this.commandColor = Color.BLACK;
+                this.codeLinesColor = Color.BLUE;
+                break;
         }
     }
     

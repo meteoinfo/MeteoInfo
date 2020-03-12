@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +36,7 @@ import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.global.util.GlobalUtil;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.io.EndianDataOutputStream;
 import org.meteoinfo.math.KDTree.SearchResult;
 import org.meteoinfo.ndarray.Complex;
@@ -1445,6 +1447,10 @@ public class ArrayUtil {
             while(iterA.hasNext()) {
                 iterR.setDoubleNext(iterA.getDoubleNext());
             }
+        } else if (a.getDataType() == DataType.DATE) {
+            while (iterA.hasNext()) {
+                iterR.setDoubleNext(JDateUtil.toOADate(iterA.getDateNext()));
+            }
         } else {
             while(iterA.hasNext()) {
                 iterR.setDoubleNext(Double.valueOf(iterA.getObjectNext().toString()));
@@ -1466,6 +1472,22 @@ public class ArrayUtil {
         IndexIterator iterR = r.getIndexIterator();
         while(iterA.hasNext()) {
             iterR.setBooleanNext(iterA.getDoubleNext() != 0);
+        }
+
+        return r;
+    }
+
+    /**
+     * Convert array to date type
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array toDate(Array a) {
+        Array r = Array.factory(DataType.DATE, a.getShape());
+        IndexIterator iterA = a.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        while(iterA.hasNext()) {
+            iterR.setDateNext(JDateUtil.fromOADate(iterA.getDoubleNext()));
         }
 
         return r;

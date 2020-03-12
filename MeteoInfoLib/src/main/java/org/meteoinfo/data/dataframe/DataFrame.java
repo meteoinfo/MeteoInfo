@@ -1443,6 +1443,62 @@ public class DataFrame implements Iterable {
     }
 
     /**
+     * Select by row ranges
+     *
+     * @param rowRange Row range
+     * @return Selected data frame or series
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public Object select(List<Integer> rowRange) throws InvalidRangeException {
+        ColumnIndex cols = new ColumnIndex();
+        for (int i = 0; i < this.size(); i ++) {
+            cols.add(this.columns.get(i));
+        }
+
+        Object r;
+        if (this.array2D) {
+            List ranges = new ArrayList<>();
+            ranges.add(rowRange);
+            ranges.add(new Range(0, cols.size() - 1, 1));
+            r = ArrayMath.take((Array) this.data, ranges);
+        } else {
+            r = new ArrayList<>();
+            int rn = rowRange.size();
+            for (int j = 0; j < cols.size(); j ++) {
+                Array rr = Array.factory(this.columns.get(j).getDataType(), new int[]{rn});
+                Array mr = ((List<Array>) this.data).get(j);
+                int idx = 0;
+                for (int i : rowRange) {
+                    rr.setObject(idx, mr.getObject(i));
+                    idx += 1;
+                }
+                ((ArrayList) r).add(rr);
+            }
+            if (cols.size() == 1) {
+                r = ((ArrayList) r).get(0);
+            }
+        }
+
+        if (r == null) {
+            return null;
+        } else {
+            Index rIndex = this.index.subIndex(rowRange);
+            if (cols.size() == 1 && this.columns.size() > 1) {
+                Series s = new Series((Array) r, rIndex, cols.get(0).getName());
+                return s;
+            } else {
+                DataFrame df;
+                if (r instanceof Array) {
+                    df = new DataFrame((Array) r, rIndex, cols);
+                } else {
+                    df = new DataFrame((ArrayList) r, rIndex, cols);
+                }
+                return df;
+            }
+        }
+    }
+
+    /**
      * Select by row and column ranges
      *
      * @param rowRange Row range
@@ -2071,7 +2127,7 @@ public class DataFrame implements Iterable {
                 index = new DateTimeIndex(indexData);
                 //((DateTimeIndex) index).setDateTimeFormatter(dtFormatter);
                 if (indexFormat != null) {
-                    index.format = indexFormat;
+                    index.setFormat(indexFormat);
                 } else {
                     index.updateFormat();
                 }

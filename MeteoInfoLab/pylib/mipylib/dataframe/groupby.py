@@ -21,6 +21,33 @@ class GroupBy(object):
         :param groupby: MIGroupBy object
         '''
         self._groupby = groupby
+        self.iterator = groupby.iterator()
+
+    def __len__(self):
+        return self._groupby.groupNumber()
+
+    def __iter__(self):
+        self.iterator = self._groupby.iterator()
+        return self
+
+    def next(self):
+        if self.iterator.hasNext():
+            v = self.iterator.next()
+            return v.getKey(), dataframe.DataFrame(dataframe=v.getValue())
+        else:
+            raise StopIteration()
+
+    def get_group(self, name):
+        '''
+        Get a group
+        :param name: The name of the group
+        :return: The group
+        '''
+        r = self._groupby.getGroup(name)
+        if isinstance(r, MIDataFrame):
+            return dataframe.DataFrame(dataframe=r)
+        else:
+            return series.Series(series=r)
         
     def count(self):
         '''

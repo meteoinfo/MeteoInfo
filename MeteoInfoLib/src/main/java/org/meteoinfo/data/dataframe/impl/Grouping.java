@@ -150,6 +150,15 @@ public class Grouping
         }
     }
 
+    /**
+     * Get a group
+     * @param key The group key
+     * @return A group
+     */
+    public SparseBitSet getGroup(Object key) {
+        return this.groups.get(key);
+    }
+
     @SuppressWarnings("unchecked")
     public <V> Series apply(final Series series, final Function<?, ?> function) {
         if (series.isEmpty()) {

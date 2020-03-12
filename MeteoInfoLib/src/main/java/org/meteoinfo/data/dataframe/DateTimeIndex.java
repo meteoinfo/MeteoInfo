@@ -293,7 +293,7 @@ public class DateTimeIndex extends Index<LocalDateTime> {
     @Override
     public DateTimeIndex subIndex(){
         DateTimeIndex r = new DateTimeIndex(this.data);
-        r.format = this.format;
+        r.setFormat(this.format);
         //r.setDateTimeFormatter(dtFormatter);
         return r;
     }
@@ -309,7 +309,7 @@ public class DateTimeIndex extends Index<LocalDateTime> {
         for (int i : idx)
             r.add(this.data.get(i));
         //r.setDateTimeFormatter(dtFormatter);
-        r.format = this.format;
+        r.setFormat(this.format);
         return r;
     }
     
@@ -328,7 +328,7 @@ public class DateTimeIndex extends Index<LocalDateTime> {
         }
         DateTimeIndex r = new DateTimeIndex(rv);
         //r.setDateTimeFormatter(dtFormatter);
-        r.format = this.format;
+        r.setFormat(this.format);
         return r;
     }
 

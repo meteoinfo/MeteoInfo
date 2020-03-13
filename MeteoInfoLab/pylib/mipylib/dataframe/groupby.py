@@ -37,6 +37,17 @@ class GroupBy(object):
         else:
             raise StopIteration()
 
+    @property
+    def groups(self):
+        '''
+        Groups description
+        :return: (*dict*) Groups description
+        '''
+        gs = {}
+        for name, df in self:
+            gs[name] = df.index
+        return gs
+
     def get_group(self, name):
         '''
         Get a group

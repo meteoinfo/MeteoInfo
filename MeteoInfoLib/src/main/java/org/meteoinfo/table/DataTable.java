@@ -18,9 +18,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -221,7 +221,7 @@ public class DataTable {
                     tempRow.setValue(col.getColumnName(), "");
                     break;
                 case DATE:
-                    tempRow.setValue(col.getColumnName(), new Date());
+                    tempRow.setValue(col.getColumnName(), LocalDateTime.now());
                     break;
                 case BOOLEAN:
                     tempRow.setValue(col.getColumnName(), Boolean.TRUE);
@@ -1156,7 +1156,7 @@ public class DataTable {
         }
         sb.append("\n");
 
-        SimpleDateFormat format;
+        DateTimeFormatter format;
         int rn = this.getRowCount();
         if (n > rn) {
             n = rn;
@@ -1171,8 +1171,8 @@ public class DataTable {
                 }
                 switch (col.getDataType()) {
                     case DATE:
-                        format = new SimpleDateFormat(col.getFormat());
-                        sb.append(format.format((Date) row.getValue(col.getColumnName())));
+                        format = DateTimeFormatter.ofPattern(col.getFormat());
+                        sb.append(format.format((LocalDateTime) row.getValue(col.getColumnName())));
                         break;
                     case STRING:
                         sb.append("'").append(row.getValue(col.getColumnName()).toString()).append("'");
@@ -1215,7 +1215,7 @@ public class DataTable {
         }
         sb.append("\n");
 
-        SimpleDateFormat format;
+        DateTimeFormatter format;
         int rn = this.getRowCount();
         if (n > rn) {
             n = rn;
@@ -1230,8 +1230,8 @@ public class DataTable {
                 }
                 switch (col.getDataType()) {
                     case DATE:
-                        format = new SimpleDateFormat(col.getFormat());
-                        sb.append(format.format((Date) row.getValue(col.getColumnName())));
+                        format = DateTimeFormatter.ofPattern(col.getFormat());
+                        sb.append(format.format((LocalDateTime) row.getValue(col.getColumnName())));
                         break;
                     case STRING:
                         sb.append("'").append(row.getValue(col.getColumnName()).toString()).append("'");
@@ -1275,12 +1275,12 @@ public class DataTable {
             str += "," + col.getColumnName();
         }
         str = str.substring(1);
-        SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+        DateTimeFormatter format = DateTimeFormatter.ofPattern(dateFormat);
         for (DataRow row : this.rows) {
             String line = "";
             for (DataColumn col : this.columns) {
                 if (col.getDataType() == DataType.DATE) {
-                    line += "," + format.format((Date) row.getValue(col.getColumnName()));
+                    line += "," + format.format((LocalDateTime) row.getValue(col.getColumnName()));
                 } else {
                     line += "," + row.getValue(col.getColumnName()).toString();
                 }
@@ -1310,7 +1310,7 @@ public class DataTable {
      * @return The string
      */
     public String toString(String dateFormat, int decimalNum) {
-        SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+        DateTimeFormatter format = DateTimeFormatter.ofPattern(dateFormat);
         String dFormat = "%1$." + String.valueOf(decimalNum) + "f";
         String str = "";
         for (DataColumn col : this.columns) {
@@ -1332,7 +1332,7 @@ public class DataTable {
                         }
                         break;
                     case DATE:
-                        line += "," + format.format((Date) row.getValue(col.getColumnName()));
+                        line += "," + format.format((LocalDateTime) row.getValue(col.getColumnName()));
                         break;
                     default:
                         line += "," + vstr;

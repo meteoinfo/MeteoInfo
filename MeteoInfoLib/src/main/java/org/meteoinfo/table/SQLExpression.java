@@ -14,8 +14,8 @@
 package org.meteoinfo.table;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -269,8 +269,8 @@ public class SQLExpression {
         if (field instanceof Number) {
             return Convert.toFloat(field) < Convert.toFloat(value);
         }
-        if (field instanceof Date) {
-            return ((Date)field).before(Convert.toDate(value));
+        if (field instanceof LocalDateTime) {
+            return ((LocalDateTime)field).isBefore(Convert.toDate(value));
         }
         return Convert.toString(field).compareTo(value.substring(1, value.length() - 1)) < 0;
     }
@@ -279,8 +279,8 @@ public class SQLExpression {
         if (field instanceof Number) {
             return Convert.toFloat(field) > Convert.toFloat(value);
         } 
-        if (field instanceof Date) {
-            return ((Date) field).after(Convert.toDate(value));
+        if (field instanceof LocalDateTime) {
+            return ((LocalDateTime) field).isAfter(Convert.toDate(value));
         }
         return Convert.toString(field).compareTo(value.substring(1, value.length() - 1)) > 0;
     }
@@ -296,8 +296,8 @@ public class SQLExpression {
         if (field instanceof Boolean) {
             return Convert.toBool(field) == Convert.toBool(value);
         }
-        if (field instanceof Date) {
-            return ((Date)field).equals(Convert.toDate(value));
+        if (field instanceof LocalDateTime) {
+            return ((LocalDateTime)field).equals(Convert.toDate(value));
         }
 
         //return Convert.toString(field).equals(value.substring(1, value.length() - 1));
@@ -315,8 +315,8 @@ public class SQLExpression {
         if (field instanceof Boolean) {
             return Convert.toBool(field) != Convert.toBool(value);
         }
-        if (field instanceof Date) {
-            return !((Date)field).equals(Convert.toDate(value));
+        if (field instanceof LocalDateTime) {
+            return !((LocalDateTime)field).equals(Convert.toDate(value));
         }
 
         //return !Convert.toString(field).equals(value.substring(1, value.length() - 1));
@@ -327,8 +327,8 @@ public class SQLExpression {
         if (field instanceof Number) {
             return Convert.toFloat(field) <= Convert.toFloat(value);
         }
-        if (field instanceof Date) {
-            return ((Date)field).before(Convert.toDate(value)) || ((Date)field).equals(Convert.toDate(value));
+        if (field instanceof LocalDateTime) {
+            return ((LocalDateTime)field).isBefore(Convert.toDate(value)) || ((LocalDateTime)field).equals(Convert.toDate(value));
         }
         return Convert.toString(field).compareTo(value.substring(1, value.length() - 1)) <= 0;
     }
@@ -337,8 +337,8 @@ public class SQLExpression {
         if (field instanceof Number) {
             return Convert.toFloat(field) >= Convert.toFloat(value);
         }
-        if (field instanceof Date) {
-            return ((Date)field).after(Convert.toDate(value)) || ((Date)field).equals(Convert.toDate(value));
+        if (field instanceof LocalDateTime) {
+            return ((LocalDateTime)field).isAfter(Convert.toDate(value)) || ((LocalDateTime)field).equals(Convert.toDate(value));
         }
         return Convert.toString(field).compareTo(value.substring(1, value.length() - 1)) >= 0;
     }
@@ -422,24 +422,24 @@ class Convert {
         }
     }
 
-    public static Date toDate(Object o) {
-        return toDate(o, new Date(System.currentTimeMillis()));
+    public static LocalDateTime toDate(Object o) {
+        return toDate(o, LocalDateTime.now());
     }
 
-    public static Date toDate(Object o, Date defValue) {
+    public static LocalDateTime toDate(Object o, LocalDateTime defValue) {
         if (o == null) {
             return defValue;
         }
 
-        if (o instanceof java.util.Date) {
-            return (Date) o;
+        if (o instanceof LocalDateTime) {
+            return (LocalDateTime) o;
         }
 
         try {
             if (o.toString().contains(":"))
-                return Timestamp.valueOf(o.toString());
+                return Timestamp.valueOf(o.toString()).toLocalDateTime();
             else
-                return java.sql.Date.valueOf(o.toString());
+                return java.sql.Date.valueOf(o.toString()).toLocalDate().atTime(0, 0);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -15,7 +15,7 @@ package org.meteoinfo.table;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.ndarray.DataType;
@@ -310,7 +310,7 @@ public class DataColumn {
                     }
                     break;
                 case DATE:
-                    if (!(value instanceof Date)) {
+                    if (!(value instanceof LocalDateTime)) {
                         String vStr = value.toString();
                         if (vStr.isEmpty()) {
                             return null;

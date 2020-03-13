@@ -6,10 +6,11 @@
 package org.meteoinfo.table;
 
 import org.meteoinfo.ndarray.DataType;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import org.meteoinfo.global.util.DateUtil;
+import org.meteoinfo.global.util.JDateUtil;
 
 /**
  *
@@ -44,7 +45,7 @@ public class ColumnData {
                 data = new ArrayList<String>();
                 break;
             case DATE:
-                data = new ArrayList<Date>();
+                data = new ArrayList<LocalDateTime>();
                 break;
             case BOOLEAN:
                 data = new ArrayList<Boolean>();
@@ -140,7 +141,7 @@ public class ColumnData {
                 this.addData((String) value);
                 break;
             case DATE:
-                this.addData((Date) value);
+                this.addData((LocalDateTime) value);
                 break;
             case BOOLEAN:
                 this.addData((Boolean) value);
@@ -189,8 +190,8 @@ public class ColumnData {
      *
      * @param value Data value
      */
-    public void addData(Date value) {
-        ((List<Date>) data).add(value);
+    public void addData(LocalDateTime value) {
+        ((List<LocalDateTime>) data).add(value);
     }
 
     /**
@@ -219,7 +220,7 @@ public class ColumnData {
             case STRING:
                 return (String) data.get(idx);
             case DATE:
-                return (Date) data.get(idx);
+                return (LocalDateTime) data.get(idx);
             case BOOLEAN:
                 return (Boolean) data.get(idx);
         }
@@ -274,8 +275,8 @@ public class ColumnData {
                     }
                     break;
                 case DATE:
-                    for (Date v : (List<Date>)data){
-                        values.add(DateUtil.toOADate(v));
+                    for (LocalDateTime v : (List<LocalDateTime>)data){
+                        values.add(JDateUtil.toOADate(v));
                     }
                     break;
             }
@@ -1186,7 +1187,7 @@ public class ColumnData {
             return DataType.BOOLEAN;
         else if (value instanceof String)
             return DataType.STRING;
-        else if (value instanceof Date)
+        else if (value instanceof LocalDateTime)
             return DataType.DATE;
         else
             return null;

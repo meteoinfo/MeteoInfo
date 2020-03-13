@@ -20,11 +20,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 import org.meteoinfo.data.analysis.Statistics;
@@ -131,7 +130,7 @@ public class TableData extends DataTable {
         DataType dataType = TableUtil.toDataTypes(dt);
         switch (dataType) {
             case DATE:
-                if (colData.get(0) instanceof Date) {
+                if (colData.get(0) instanceof LocalDateTime) {
                     this.addColumnData(colName, dataType, colData);
                 } else {
                     String dformat = TableUtil.getDateFormat(dt);
@@ -158,7 +157,7 @@ public class TableData extends DataTable {
         DataType dataType = TableUtil.toDataTypes(dt);
         switch (dataType) {
             case DATE:
-                if (colData.get(0) instanceof Date) {
+                if (colData.get(0) instanceof LocalDateTime) {
                     this.addColumnData(index, colName, dataType, colData);
                 } else {
                     String dformat = TableUtil.getDateFormat(dt);
@@ -855,11 +854,11 @@ public class TableData extends DataTable {
      */
     public List<Integer> getYears(String tColName) {
         List<Integer> years = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         int year;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(tColName));
-            year = cal.get(Calendar.YEAR);
+            ldt = (LocalDateTime) row.getValue(tColName);
+            year = ldt.getYear();
             if (!years.contains(year)) {
                 years.add(year);
             }
@@ -876,10 +875,10 @@ public class TableData extends DataTable {
      */
     public List<String> getYearMonths(String tColName) {
         List<String> yms = new ArrayList<>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
+        DateTimeFormatter format =DateTimeFormatter.ofPattern("yyyyMM");
         String ym;
         for (DataRow row : this.getRows()) {
-            ym = format.format((Date) row.getValue(tColName));
+            ym = format.format((LocalDateTime) row.getValue(tColName));
             if (!yms.contains(ym)) {
                 yms.add(ym);
             }
@@ -897,10 +896,10 @@ public class TableData extends DataTable {
      */
     public List<DataRow> getDataByYear(int year, String tColName) {
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(tColName));
-            if (cal.get(Calendar.YEAR) == year) {
+            ldt = (LocalDateTime) row.getValue(tColName);
+            if (ldt.getYear() == year) {
                 rows.add(row);
             }
         }
@@ -918,11 +917,11 @@ public class TableData extends DataTable {
     public List<DataRow> getDataBySeason(String season, String tColName) {
         List<Integer> months = this.getMonthsBySeason(season);
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         int month;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(tColName));
-            month = cal.get(Calendar.MONTH) + 1;
+            ldt = (LocalDateTime) row.getValue(tColName);
+            month = ldt.getMonthValue();
             if (months.contains(month)) {
                 rows.add(row);
             }
@@ -977,11 +976,11 @@ public class TableData extends DataTable {
      */
     public List<DataRow> getDataByYearMonth(int year, int month, String tColName) {
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(tColName));
-            if (cal.get(Calendar.YEAR) == year) {
-                if (cal.get(Calendar.MONTH) == month - 1) {
+            ldt = (LocalDateTime) row.getValue(tColName);
+            if (ldt.getYear() == year) {
+                if (ldt.getMonthValue() == month) {
                     rows.add(row);
                 }
             }
@@ -999,10 +998,10 @@ public class TableData extends DataTable {
      */
     public List<DataRow> getDataByMonth(int month, String tColName) {
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(tColName));
-            if (cal.get(Calendar.MONTH) == month - 1) {
+            ldt = (LocalDateTime) row.getValue(tColName);
+            if (ldt.getMonthValue() == month) {
                 rows.add(row);
             }
         }
@@ -1024,10 +1023,10 @@ public class TableData extends DataTable {
         }
 
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(tColName));
-            if (cal.get(Calendar.DAY_OF_WEEK) == dow) {
+            ldt = (LocalDateTime) row.getValue(tColName);
+            if (ldt.getDayOfWeek().getValue() == dow) {
                 rows.add(row);
             }
         }
@@ -1044,10 +1043,10 @@ public class TableData extends DataTable {
      */
     public List<DataRow> getDataByHour(int hour, String tColName) {
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(tColName));
-            if (cal.get(Calendar.HOUR_OF_DAY) == hour) {
+            ldt = (LocalDateTime) row.getValue(tColName);
+            if (ldt.getHour() == hour) {
                 rows.add(row);
             }
         }

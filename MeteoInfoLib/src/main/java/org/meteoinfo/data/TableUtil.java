@@ -10,11 +10,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import org.meteoinfo.data.analysis.Statistics;
 import org.meteoinfo.global.util.GlobalUtil;
@@ -465,7 +464,7 @@ public class TableUtil {
      * @return Result data table
      * @throws Exception
      */
-    public static DataTable ave_Month(List<Array> data, List<String> colNames, List<Date> time) throws Exception {
+    public static DataTable ave_Month(List<Array> data, List<String> colNames, List<LocalDateTime> time) throws Exception {
         DataTable rTable = new DataTable();
         rTable.addColumn("YearMonth", DataType.STRING);
         for (String col : colNames) {
@@ -473,7 +472,7 @@ public class TableUtil {
         }
 
         List<String> yms = getYearMonths(time);
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         double v;
         for (String ym : yms) {
             int year = Integer.parseInt(ym.substring(0, 4));
@@ -484,9 +483,9 @@ public class TableUtil {
             for (Array a : data) {
                 List<Double> values = new ArrayList<>();
                 for (int i = 0; i < time.size(); i++) {
-                    cal.setTime(time.get(i));
-                    if (cal.get(Calendar.YEAR) == year) {
-                        if (cal.get(Calendar.MONTH) == month - 1) {
+                    ldt = time.get(i);
+                    if (ldt.getYear() == year) {
+                        if (ldt.getMonthValue() == month) {
                             v = a.getDouble(i);
                             if (!Double.isNaN(v)) {
                                 values.add(v);
@@ -508,11 +507,11 @@ public class TableUtil {
      * @param time Date list
      * @return Year month list
      */
-    public static List<String> getYearMonths(List<Date> time) {
+    public static List<String> getYearMonths(List<LocalDateTime> time) {
         List<String> yms = new ArrayList<>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMM");
         String ym;
-        for (Date t : time) {
+        for (LocalDateTime t : time) {
             ym = format.format(t);
             if (!yms.contains(ym)) {
                 yms.add(ym);

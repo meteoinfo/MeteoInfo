@@ -11,11 +11,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 import org.meteoinfo.data.analysis.Statistics;
@@ -34,7 +33,7 @@ public class TimeTableData extends TableData {
     // <editor-fold desc="Variables">
     //private int timeColIdx = 0;
     private String timeColName;
-    private List<Date> times;
+    private List<LocalDateTime> times;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -109,7 +108,7 @@ public class TimeTableData extends TableData {
             for (DataColumn col : dataColumns) {
                 this.addColumn(col);
             }
-            SimpleDateFormat format = new SimpleDateFormat(formatStr);
+            DateTimeFormatter format = DateTimeFormatter.ofPattern(formatStr);
             List<Integer> dataIdxs = new ArrayList<>();
             String fieldName;
             for (int i = 0; i < titleArray.length; i++) {
@@ -175,7 +174,7 @@ public class TimeTableData extends TableData {
             sr.close();
         } else {
             //Get fields
-            SimpleDateFormat format = new SimpleDateFormat(formatStr);
+            DateTimeFormatter format = DateTimeFormatter.ofPattern(formatStr);
             List<Integer> dataIdxs = new ArrayList<>();
             String fieldName;
             for (int i = 0; i < titleArray.length; i++) {
@@ -223,7 +222,7 @@ public class TimeTableData extends TableData {
      * @param t Time
      * @return Index
      */
-    public int getTimeIndex_Ex(Date t){
+    public int getTimeIndex_Ex(LocalDateTime t){
         return this.times.indexOf(t);
     }
     
@@ -232,16 +231,16 @@ public class TimeTableData extends TableData {
      * @param t Time
      * @return Index
      */
-    public int getTimeIndex(Date t){
-        if (t.before(times.get(0)))
+    public int getTimeIndex(LocalDateTime t){
+        if (t.isBefore(times.get(0)))
             return 0;
         
-        if (t.after(times.get(times.size() - 1)))
+        if (t.isAfter(times.get(times.size() - 1)))
             return times.size() - 1;
         
         int idx = -1;
         for (int i = 0; i < this.times.size(); i++){
-            if (! t.after(times.get(i))) {
+            if (! t.isAfter(times.get(i))) {
                 idx = i;
                 break;
             }
@@ -255,10 +254,10 @@ public class TimeTableData extends TableData {
      * @param ts Times
      * @return Index list
      */
-    public List<Integer> getTimeIndex(List<Date> ts){
+    public List<Integer> getTimeIndex(List<LocalDateTime> ts){
         List<Integer> ii = new ArrayList<>();
         int i;
-        for (Date t : ts){
+        for (LocalDateTime t : ts){
             i = this.times.indexOf(t);
             if (i >= 0)
                 ii.add(i);
@@ -274,7 +273,7 @@ public class TimeTableData extends TableData {
      * @param step Step
      * @return Time index
      */
-    public List<Integer> getTimeIndex(Date st, Date et, int step){
+    public List<Integer> getTimeIndex(LocalDateTime st, LocalDateTime et, int step){
         int sidx = getTimeIndex(st);
         int eidx = getTimeIndex(et);
         List<Integer> ii = new ArrayList<>();
@@ -292,11 +291,11 @@ public class TimeTableData extends TableData {
      */
     public List<Integer> getYears() {
         List<Integer> years = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         int year;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(this.timeColName));
-            year = cal.get(Calendar.YEAR);
+            ldt = (LocalDateTime) row.getValue(this.timeColName);
+            year = ldt.getYear();
             if (!years.contains(year)) {
                 years.add(year);
             }
@@ -312,11 +311,11 @@ public class TimeTableData extends TableData {
      */
     public List<String> getYearMonths() {
         List<String> yms = new ArrayList<>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMM");
         String ym;
-        Date date;
+        LocalDateTime date;
         for (DataRow row : this.getRows()) {
-            date = (Date) row.getValue(this.timeColName);
+            date = (LocalDateTime) row.getValue(this.timeColName);
             if (date == null) {
                 continue;
             }
@@ -334,14 +333,14 @@ public class TimeTableData extends TableData {
      *
      * @return Date list
      */
-    public List<Date> getDates_Day() {
+    public List<LocalDateTime> getDates_Day() {
         List<String> days = new ArrayList<>();
-        List<Date> dates = new ArrayList<>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        List<LocalDateTime> dates = new ArrayList<>();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
         String day;
-        Date date;
+        LocalDateTime date;
         for (DataRow row : this.getRows()) {
-            date = (Date) row.getValue(this.timeColName);
+            date = (LocalDateTime) row.getValue(this.timeColName);
             if (date == null) {
                 continue;
             }
@@ -360,14 +359,14 @@ public class TimeTableData extends TableData {
      *
      * @return Date list
      */
-    public List<Date> getDates_Hour() {
+    public List<LocalDateTime> getDates_Hour() {
         List<String> hours = new ArrayList<>();
-        List<Date> dates = new ArrayList<>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
+        List<LocalDateTime> dates = new ArrayList<>();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
         String hour;
-        Date date;
+        LocalDateTime date;
         for (DataRow row : this.getRows()) {
-            date = (Date) row.getValue(this.timeColName);
+            date = (LocalDateTime) row.getValue(this.timeColName);
             if (date == null) {
                 continue;
             }
@@ -389,10 +388,10 @@ public class TimeTableData extends TableData {
      */
     public List<DataRow> getDataByYear(int year) {
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(this.timeColName));
-            if (cal.get(Calendar.YEAR) == year) {
+            ldt = (LocalDateTime) row.getValue(this.timeColName);
+            if (ldt.getYear() == year) {
                 rows.add(row);
             }
         }
@@ -409,11 +408,11 @@ public class TimeTableData extends TableData {
     public List<DataRow> getDataBySeason(String season) {
         List<Integer> months = this.getMonthsBySeason(season);
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         int month;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(this.timeColName));
-            month = cal.get(Calendar.MONTH) + 1;
+            ldt = (LocalDateTime) row.getValue(this.timeColName);
+            month = ldt.getMonthValue();
             if (months.contains(month)) {
                 rows.add(row);
             }
@@ -466,11 +465,11 @@ public class TimeTableData extends TableData {
      */
     public List<DataRow> getDataByYearMonth(int year, int month) {
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(this.timeColName));
-            if (cal.get(Calendar.YEAR) == year) {
-                if (cal.get(Calendar.MONTH) == month - 1) {
+            ldt = (LocalDateTime) row.getValue(this.timeColName);
+            if (ldt.getYear() == year) {
+                if (ldt.getMonthValue() == month) {
                     rows.add(row);
                 }
             }
@@ -486,12 +485,12 @@ public class TimeTableData extends TableData {
      * @param drs Data rows
      * @return Data row list
      */
-    public List<DataRow> getDataByDate(Date date, List<DataRow> drs) {
+    public List<DataRow> getDataByDate(LocalDateTime date, List<DataRow> drs) {
         List<DataRow> rows = new ArrayList<>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-        Date bdate;
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDateTime bdate;
         for (DataRow row : drs) {
-            bdate = (Date) row.getValue(this.timeColName);
+            bdate = (LocalDateTime) row.getValue(this.timeColName);
             if (format.format(bdate).equals(format.format(date))) {
                 rows.add(row);
             }
@@ -507,12 +506,12 @@ public class TimeTableData extends TableData {
      * @param drs Data rows
      * @return Data row list
      */
-    public List<DataRow> getDataByDate_Hour(Date date, List<DataRow> drs) {
+    public List<DataRow> getDataByDate_Hour(LocalDateTime date, List<DataRow> drs) {
         List<DataRow> rows = new ArrayList<>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
-        Date bdate;
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
+        LocalDateTime bdate;
         for (DataRow row : drs) {
-            bdate = (Date) row.getValue(this.timeColName);
+            bdate = (LocalDateTime) row.getValue(this.timeColName);
             if (format.format(bdate).equals(format.format(date))) {
                 rows.add(row);
             }
@@ -531,12 +530,12 @@ public class TimeTableData extends TableData {
      */
     public List<DataRow> getDataByDate(int year, int month, int day) {
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(this.timeColName));
-            if (cal.get(Calendar.YEAR) == year) {
-                if (cal.get(Calendar.MONTH) == month - 1) {
-                    if (cal.get(Calendar.DAY_OF_MONTH) == day) {
+            ldt = (LocalDateTime) row.getValue(this.timeColName);
+            if (ldt.getYear() == year) {
+                if (ldt.getMonthValue() == month) {
+                    if (ldt.getDayOfMonth() == day) {
                         rows.add(row);
                     }
                 }
@@ -557,13 +556,13 @@ public class TimeTableData extends TableData {
      */
     public List<DataRow> getDataByDate(int year, int month, int day, int hour) {
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(this.timeColName));
-            if (cal.get(Calendar.YEAR) == year) {
-                if (cal.get(Calendar.MONTH) == month - 1) {
-                    if (cal.get(Calendar.DAY_OF_MONTH) == day) {
-                        if (cal.get(Calendar.HOUR_OF_DAY) == hour)
+            ldt = (LocalDateTime) row.getValue(this.timeColName);
+            if (ldt.getYear() == year) {
+                if (ldt.getMonthValue() == month) {
+                    if (ldt.getDayOfMonth() == day) {
+                        if (ldt.getHour() == hour)
                             rows.add(row);
                     }
                 }
@@ -581,10 +580,10 @@ public class TimeTableData extends TableData {
      */
     public List<DataRow> getDataByMonth(int month) {
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(this.timeColName));
-            if (cal.get(Calendar.MONTH) == month - 1) {
+            ldt = (LocalDateTime) row.getValue(this.timeColName);
+            if (ldt.getMonthValue() == month) {
                 rows.add(row);
             }
         }
@@ -605,10 +604,10 @@ public class TimeTableData extends TableData {
         }
 
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(this.timeColName));
-            if (cal.get(Calendar.DAY_OF_WEEK) == dow) {
+            ldt = (LocalDateTime) row.getValue(this.timeColName);
+            if (ldt.getDayOfWeek().getValue() == dow) {
                 rows.add(row);
             }
         }
@@ -624,10 +623,10 @@ public class TimeTableData extends TableData {
      */
     public List<DataRow> getDataByHour(int hour) {
         List<DataRow> rows = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        LocalDateTime ldt;
         for (DataRow row : this.getRows()) {
-            cal.setTime((Date) row.getValue(this.timeColName));
-            if (cal.get(Calendar.HOUR_OF_DAY) == hour) {
+            ldt = (LocalDateTime) row.getValue(this.timeColName);
+            if (ldt.getHour() == hour) {
                 rows.add(row);
             }
         }
@@ -845,9 +844,9 @@ public class TimeTableData extends TableData {
             rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
-        List<Date> days = this.getDates_Day();
+        List<LocalDateTime> days = this.getDates_Day();
         List<DataRow> drs = new ArrayList<>(this.getRows());
-        for (Date day : days) {
+        for (LocalDateTime day : days) {
             DataRow nRow = rTable.addRow();
             nRow.setValue(0, day);
             List<DataRow> rows = this.getDataByDate(day, drs);
@@ -875,9 +874,9 @@ public class TimeTableData extends TableData {
             rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
-        List<Date> days = this.getDates_Day();
+        List<LocalDateTime> days = this.getDates_Day();
         List<DataRow> drs = new ArrayList<>(this.getRows());
-        for (Date day : days) {
+        for (LocalDateTime day : days) {
             DataRow nRow = rTable.addRow();
             nRow.setValue(0, day);
             List<DataRow> rows = this.getDataByDate(day, drs);
@@ -905,9 +904,9 @@ public class TimeTableData extends TableData {
             rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
-        List<Date> hours = this.getDates_Hour();
+        List<LocalDateTime> hours = this.getDates_Hour();
         List<DataRow> drs = new ArrayList<>(this.getRows());
-        for (Date hour : hours) {
+        for (LocalDateTime hour : hours) {
             DataRow nRow = rTable.addRow();
             nRow.setValue(0, hour);
             List<DataRow> rows = this.getDataByDate_Hour(hour, drs);
@@ -935,9 +934,9 @@ public class TimeTableData extends TableData {
             rTable.addColumn(col.getColumnName(), DataType.DOUBLE);
         }
 
-        List<Date> hours = this.getDates_Hour();
+        List<LocalDateTime> hours = this.getDates_Hour();
         List<DataRow> drs = new ArrayList<>(this.getRows());
-        for (Date hour : hours) {
+        for (LocalDateTime hour : hours) {
             DataRow nRow = rTable.addRow();
             nRow.setValue(0, hour);
             List<DataRow> rows = this.getDataByDate_Hour(hour, drs);
@@ -1232,38 +1231,34 @@ public class TimeTableData extends TableData {
      * @throws IOException
      * @throws ParseException 
      */
-    public static List<Date> getDateList(Date stdate, Date enddate, String tdtype, int timeDelt)
+    public static List<LocalDateTime> getDateList(LocalDateTime stdate, LocalDateTime enddate, String tdtype, int timeDelt)
             throws FileNotFoundException, IOException, ParseException {
-        Calendar stCal = Calendar.getInstance();
-        stCal.setTime(stdate);
-        Calendar endCal = Calendar.getInstance();
-        endCal.setTime(enddate);
-        List<Date> dates = new ArrayList<>();        
+        List<LocalDateTime> dates = new ArrayList<>();
 
-        while (stCal.before(endCal)) {
-            dates.add(stCal.getTime());
+        while (stdate.isBefore(enddate)) {
+            dates.add(stdate);
             switch (tdtype.toUpperCase()) {
                 case "YEAR":
-                    stCal.add(Calendar.YEAR, timeDelt);
+                    stdate = stdate.plusYears(timeDelt);
                     break;
                 case "MONTH":
-                    stCal.add(Calendar.MONTH, timeDelt);
+                    stdate = stdate.plusMonths(timeDelt);
                     break;
                 case "DAY":
-                    stCal.add(Calendar.DAY_OF_MONTH, timeDelt);
+                    stdate = stdate.plusDays(timeDelt);
                     break;                
                 case "HOUR":
-                    stCal.add(Calendar.HOUR, timeDelt);
+                    stdate = stdate.plusHours(timeDelt);
                     break;
                 case "MINUTE":
-                    stCal.add(Calendar.MINUTE, timeDelt);
+                    stdate = stdate.plusMinutes(timeDelt);
                     break;
                 default:
-                    stCal.add(Calendar.SECOND, timeDelt);
+                    stdate = stdate.plusSeconds(timeDelt);
                     break;
             }            
         }
-        dates.add(endCal.getTime());
+        dates.add(enddate);
         return dates;
     }
     
@@ -1278,8 +1273,8 @@ public class TimeTableData extends TableData {
      * @throws FileNotFoundException
      * @throws ParseException 
      */
-    public TimeTableData timeOrder(Date stdate, Date enddate, String tdtype, int timeDelt) throws IOException, FileNotFoundException, ParseException, Exception{
-        List<Date> dateList = getDateList(stdate, enddate, tdtype, timeDelt);
+    public TimeTableData timeOrder(LocalDateTime stdate, LocalDateTime enddate, String tdtype, int timeDelt) throws IOException, FileNotFoundException, ParseException, Exception{
+        List<LocalDateTime> dateList = getDateList(stdate, enddate, tdtype, timeDelt);
         int lineNum = this.getRowCount();
         int colNum = this.getColumnCount();
         DataTable outData = new DataTable();
@@ -1293,9 +1288,9 @@ public class TimeTableData extends TableData {
         }
         
         int idx;
-        Date date;
+        LocalDateTime date;
         for (int i = 0; i < lineNum; i++) {
-            date = (Date)this.getValue(i, timeColName);
+            date = (LocalDateTime)this.getValue(i, timeColName);
             idx = dateList.indexOf(date);
             if (idx >= 0) {                
                 for (int j = 0; j < colNum; j++){

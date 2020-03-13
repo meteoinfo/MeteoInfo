@@ -33,11 +33,9 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,7 +50,7 @@ public final class AttributeTable implements Cloneable {
     // <editor-fold desc="Variables">
 
     private int _numRecords;
-    private Date _updateDate;
+    private LocalDateTime _updateDate;
     private int _headerLength;
     private int _recordLength;
     private int _numFields;
@@ -259,9 +257,7 @@ public final class AttributeTable implements Cloneable {
         int year = buffer.get();
         int month = buffer.get();
         int day = buffer.get();
-        Calendar cal = Calendar.getInstance();
-        cal.set(year + 1900, month - 1, day);
-        _updateDate = cal.getTime();
+        _updateDate = LocalDateTime.of(year + 1900, month, day, 0, 0);
 
         // read the number of records.
         _numRecords = buffer.getInt();
@@ -473,8 +469,7 @@ public final class AttributeTable implements Cloneable {
                     dBuffer = Arrays.copyOfRange(cBuffer, 6, 8);
                     tempString = new String(dBuffer);
                     int day = Integer.parseInt(tempString);
-                    Calendar cal = new GregorianCalendar(year, month - 1, day);
-                    tempObject = cal.getTime();
+                    tempObject = LocalDateTime.of(year, month, day, 0, 0);
                     break;
                 case 'F':
                 case 'B':
@@ -578,7 +573,7 @@ public final class AttributeTable implements Cloneable {
         List<Field> tempColumns = new ArrayList<>();
         _recordLength = 1; // delete character
         _numRecords = this._dataTable.getRows().size();
-        _updateDate = new Date();
+        _updateDate = LocalDateTime.now();
         _headerLength = FileDescriptorSize + FileDescriptorSize * _dataTable.getColumns().size() + 1;
         if (_columns == null) {
             _columns = new ArrayList<>();
@@ -641,12 +636,10 @@ public final class AttributeTable implements Cloneable {
     public void writeHeader(EndianDataOutputStream writer) throws IOException {
         // write the output file type.
         writer.writeByteLE(_fileType);
-        Calendar calendar = new GregorianCalendar();
-        Date trialTime = new Date();
-        calendar.setTime(trialTime);
-        writer.writeByteLE(calendar.get(Calendar.YEAR) - 1900);
-        writer.writeByteLE(calendar.get(Calendar.MONTH) + 1); // month is 0-indexed
-        writer.writeByteLE(calendar.get(Calendar.DAY_OF_MONTH));
+        LocalDateTime trialTime = LocalDateTime.now();
+        writer.writeByteLE(trialTime.getYear() - 1900);
+        writer.writeByteLE(trialTime.getMonthValue());
+        writer.writeByteLE(trialTime.getDayOfMonth());
 
         // write the number of records in the datafile.
         writer.writeIntLE(_numRecords);

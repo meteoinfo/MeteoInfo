@@ -37,7 +37,7 @@ Get in touch
 License
 -------
 
-Copyright 2010-2019, MeteoInfo Developers
+Copyright 2010-2020, MeteoInfo Developers
 
 Licensed under the LGPL License, Version 3.0 (the "License");
 you may not use this file except in compliance with the License.

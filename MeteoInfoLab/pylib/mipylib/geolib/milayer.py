@@ -9,7 +9,7 @@ from org.meteoinfo.layer import LayerTypes, VectorLayer, ChartSet
 from org.meteoinfo.projection import ProjectionUtil, KnownCoordinateSystems
 from org.meteoinfo.shape import PolygonShape, ShapeTypes
 from org.meteoinfo.legend import LegendType
-from java.util import Date, Calendar
+from java.time import LocalDateTime
 from java.awt import Font
 from datetime import datetime
 import mipylib.miutil as miutil
@@ -79,16 +79,8 @@ class MILayer(object):
         :returns: The value in attribute table identified by field name and shape index.
         '''
         v = self.layer.getCellValue(fieldname, shapeindex)
-        if isinstance(v, Date):
-            cal = Calendar.getInstance()
-            cal.setTime(v)
-            year = cal.get(Calendar.YEAR)
-            month = cal.get(Calendar.MONTH) + 1
-            day = cal.get(Calendar.DAY_OF_MONTH)
-            hour = cal.get(Calendar.HOUR_OF_DAY)
-            minute = cal.get(Calendar.MINUTE)
-            second = cal.get(Calendar.SECOND)
-            dt = datetime(year, month, day, hour, minute, second)
+        if isinstance(v, LocalDateTime):
+            dt = miutil.pydate(v)
             return dt
         else:
             return v

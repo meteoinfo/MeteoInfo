@@ -14,7 +14,6 @@ from org.meteoinfo.ndarray import Range, DataType
 from multiarray import NDArray
 import mipylib.miutil as miutil
 
-from java.util import Calendar, Date
 
 ###############################################################        
 #  The encapsulate class of TableData
@@ -36,16 +35,8 @@ class PyTableData(object):
             elif coldata.getDataType() == DataType.DATE:
                 vv = coldata.getData()
                 r = []
-                cal = Calendar.getInstance()
                 for v in vv:
-                    cal.setTime(v)
-                    year = cal.get(Calendar.YEAR)
-                    month = cal.get(Calendar.MONTH) + 1
-                    day = cal.get(Calendar.DAY_OF_MONTH)
-                    hour = cal.get(Calendar.HOUR_OF_DAY)
-                    minute = cal.get(Calendar.MINUTE)
-                    second = cal.get(Calendar.SECOND)
-                    dt = datetime.datetime(year, month, day, hour, minute, second)
+                    dt = miutil.pydate(v)
                     r.append(dt)
                 return r
             else:

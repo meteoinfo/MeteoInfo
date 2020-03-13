@@ -24,7 +24,7 @@ import org.meteoinfo.shape.PolygonShape;
  * @author wyq
  */
 public class GeometryUtil {
-    // <editor-fold desc="Ellipse">
+
     /**
      * Get ellipse coordinate
      * @param x0 Center x
@@ -592,5 +592,5 @@ public class GeometryUtil {
     public static boolean isConvex(Polygon polygon) {
         return isConvex(polygon.getOutLine());
     }
-    // </editor-fold>
+
 }

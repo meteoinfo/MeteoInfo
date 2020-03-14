@@ -175,7 +175,7 @@ class NDArray(object):
                     sidx = eidx + 2
                     eidx = tempidx
             if sidx >= self.shape[i]:
-                raise IndexError()
+                isempty = True
             if eidx < sidx:
                 isempty = True
             else:
@@ -184,7 +184,7 @@ class NDArray(object):
             nshape.append(eidx - sidx + 1 if eidx - sidx >= 0 else 0)
 
         if isempty:
-            r = ArrayUtil.zeros(nshape, 'int')
+            r = ArrayUtil.empty([0], self.dtype._dtype)
             return NDArray(r)
             
         if onlyrange:

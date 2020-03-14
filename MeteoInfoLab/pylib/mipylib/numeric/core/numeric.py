@@ -36,17 +36,17 @@ newaxis = None
 
 __all__ = [
     'pi','e','inf','nan','int','float','float64','acos','absolute','all','any','arange','arange1',
-    'argmin','argmax','array','asanyarray','asarray','asgridarray','asgriddata','asin','asmiarray','asstationdata',
-    'atleast_1d','atleast_2d','atan','atan2','ave_month','average','histogram','broadcast_to','cdiff','concatenate',
-    'corrcoef','cos','cumsum','degrees','delete','delnan','diag','diff','dim_array','datatable','dot','empty','exp','eye','fmax','fmin','full',
+    'argmin','argmax','array','array_split','asanyarray','asarray','asgridarray','asgriddata','asin',
+    'asmiarray','asstationdata','atleast_1d','atleast_2d','atan','atan2','ave_month','average','histogram',
+    'broadcast_to','cdiff','concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag',
+    'diff','dim_array','datatable','dot','empty','exp','eye','fmax','fmin','full',
     'griddata','hcurl','hdivg','hstack','identity','interp2d',
-    'interpn','isarray','isfinite','isinf','isnan','linint2','linregress','linspace','log','log10','logical_not',
-    'logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
-    'newaxis','nonzero','ones','ones_like','pol2cart','polyval','power',
-    'radians','ravel','reshape','repeat',
-    'rolling_mean','rot90','sin','shape','smooth5','smooth9','sort','squeeze','argsort','sqrt','square','std','sum','swapaxes','tan',
-    'tile','transpose','trapz','vdot','unique','unravel_index','var','vstack',
-    'where','zeros','zeros_like'
+    'interpn','isarray','isfinite','isinf','isnan','linint2','linregress','linspace','log','log10',
+    'logical_not','logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum',
+    'monthname','newaxis','nonzero','ones','ones_like','pol2cart','polyval','power','radians','ravel',
+    'reshape','repeat','rolling_mean','rot90','sin','shape','smooth5','smooth9','sort','squeeze','argsort',
+    'split','sqrt','square','std','sum','swapaxes','tan','tile','transpose','trapz','vdot','unique',
+    'unravel_index','var','vstack','where','zeros','zeros_like'
     ]
 
 def isgriddata(gdata):
@@ -90,13 +90,14 @@ def array(object, dtype=None):
         return NDArray(JythonUtil.toComplexArray(object))
 
     if isinstance(object, (list, tuple)):
-        if isinstance(object[0], datetime.datetime):
-            object = miutil.dates2nums(object)
-        elif isinstance(object[0], PyComplex):
-            return NDArray(JythonUtil.toComplexArray(object))
-        elif isinstance(object[0], (list, tuple)):
-            if isinstance(object[0][0], PyComplex):
+        if len(object) > 0:
+            if isinstance(object[0], datetime.datetime):
+                object = miutil.dates2nums(object)
+            elif isinstance(object[0], PyComplex):
                 return NDArray(JythonUtil.toComplexArray(object))
+            elif isinstance(object[0], (list, tuple)):
+                if isinstance(object[0][0], PyComplex):
+                    return NDArray(JythonUtil.toComplexArray(object))
 
     if isinstance(dtype, basestring):
         dtype = _dtype.DataType(dtype)
@@ -1686,6 +1687,64 @@ def concatenate(arrays, axis=0):
         ars.append(a.asarray())
     r = ArrayUtil.concatenate(ars, axis)
     return NDArray(r)
+
+def array_split(ary, indices_or_sections, axis=0):
+    '''
+    Split an array into multiple sub-arrays.
+
+    :param ary: (*array*) Array to be divided into sub-arrays.
+    :param indices_or_sections: (*int or 1-D array*) If indices_or_sections is an integer, N, the array
+        will be divided into N equal arrays along axis. If indices_or_sections is a 1-D array of sorted
+        integers, the entries indicate where along axis the array is split.
+    :param axis: (*int*) Array to be divided into sub-arrays.
+    :return:
+    '''
+    if axis < 0:
+        axis = ary.ndim + axis
+    n = ary.shape[axis]
+    key = [slice(None)] * ary.ndim
+    si = 0
+    r = []
+    if isinstance(indices_or_sections, int):
+        sn = int(n / indices_or_sections)
+        sns = [sn] * indices_or_sections
+        m = n % indices_or_sections
+        if m > 0:
+            for i in range(m):
+                sns[i] = sn + 1
+        for sn in sns:
+            key[axis] = slice(si, si + sn, 1)
+            r.append(ary[tuple(key)])
+            si += sn
+    else:
+        for idx in indices_or_sections:
+            if idx > n:
+                idx = n
+            key[axis] = slice(si, idx, 1)
+            r.append(ary[tuple(key)])
+            si = idx
+        key[axis] = slice(si, n, 1)
+        r.append(ary[tuple(key)])
+    return r
+
+def split(ary, indices_or_sections, axis=0):
+    '''
+    Split an array into multiple sub-arrays.
+
+    :param ary: (*array*) Array to be divided into sub-arrays.
+    :param indices_or_sections: (*int or 1-D array*) If indices_or_sections is an integer, N, the array
+        will be divided into N equal arrays along axis. If indices_or_sections is a 1-D array of sorted
+        integers, the entries indicate where along axis the array is split.
+    :param axis: (*int*) Array to be divided into sub-arrays.
+    :return:
+    '''
+    if axis < 0:
+        axis = ary.ndim + axis
+    n = ary.shape[axis]
+    if isinstance(indices_or_sections, int):
+        if n % indices_or_sections:
+            raise ValueError('array split does not result in an equal division')
+    return array_split(ary, indices_or_sections, axis)
 
 def atleast_1d(*args):
     '''

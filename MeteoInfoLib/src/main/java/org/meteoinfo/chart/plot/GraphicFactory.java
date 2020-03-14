@@ -218,17 +218,13 @@ public class GraphicFactory {
         double x, y;
         IndexIterator xIter = xdata.getIndexIterator();
         IndexIterator yIter = ydata.getIndexIterator();
-        ColorBreak cb = cbs.get(0);
+        ColorBreak cb;
         if (xdata.getRank() == 1) {
             points = new ArrayList<>();
-            ColorBreakCollection cbc = new ColorBreakCollection();
             int i = 0;
             while (xIter.hasNext()) {
                 x = xIter.getDoubleNext();
                 y = yIter.getDoubleNext();
-                if (cbs.size() > i) {
-                    cb = cbs.get(i);
-                }
                 if (Double.isNaN(y) || Double.isNaN(x)) {
                     if (points.isEmpty()) {
                         continue;
@@ -242,14 +238,13 @@ public class GraphicFactory {
                         pls = new PolylineShape();
                     }
                     pls.setPoints(points);
-                    gc.add(new Graphic(pls, cbc));
+                    cb = cbs.get(i);
+                    gc.add(new Graphic(pls, cb));
                     points = new ArrayList<>();
-                    cbc = new ColorBreakCollection();
+                    i += 1;
                 } else {
                     points.add(new PointD(x, y));
-                    cbc.add(cb);
                 }
-                i++;
             }
             if (points.size() > 1) {
                 if (iscurve) {
@@ -258,7 +253,8 @@ public class GraphicFactory {
                     pls = new PolylineShape();
                 }
                 pls.setPoints(points);
-                gc.add(new Graphic(pls, cbc));
+                cb = cbs.get(i);
+                gc.add(new Graphic(pls, cb));
             }
         } else {    //Two dimensions
             int[] shape = xdata.getShape();
@@ -301,8 +297,8 @@ public class GraphicFactory {
                     gc.add(new Graphic(pls, cb));
                 }
             }
-            gc.setSingleLegend(false);
         }
+        gc.setSingleLegend(false);
 
         return gc;
     }

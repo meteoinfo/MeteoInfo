@@ -459,6 +459,12 @@ public class ArrayUtil {
      * @return Array
      */
     public static Array array_list(List data, DataType dt) {
+        if (data.isEmpty()) {
+            if (dt == null) {
+                dt = DataType.DOUBLE;
+            }
+            return Array.factory(dt, new int[]{0});
+        }
         Object d0 = data.get(0);
         if (d0 instanceof Number) {
             if (dt == null)
@@ -727,6 +733,23 @@ public class ArrayUtil {
      * @return Array Result array
      */
     public static Array zeros(List<Integer> shape, DataType dtype) {
+        int[] ashape = new int[shape.size()];
+        for (int i = 0; i < shape.size(); i++) {
+            ashape[i] = shape.get(i);
+        }
+        Array a = Array.factory(dtype, ashape);
+
+        return a;
+    }
+
+    /**
+     * Get zero array
+     *
+     * @param shape Shape
+     * @param dtype Data type
+     * @return Array Result array
+     */
+    public static Array empty(List<Integer> shape, DataType dtype) {
         int[] ashape = new int[shape.size()];
         for (int i = 0; i < shape.size(); i++) {
             ashape[i] = shape.get(i);
@@ -1587,6 +1610,19 @@ public class ArrayUtil {
         }
 
         return r;
+    }
+
+    public static List<Array> arraySplit(Array a, int sections, int axis) {
+        int[] shape = a.getShape();
+        if (axis == -1) {
+            axis = a.getRank() - 1;
+        }
+        int n = shape[axis];
+        int sn = n / sections;
+        List<Array> arrays = new ArrayList<>();
+
+
+        return arrays;
     }
 
     /**

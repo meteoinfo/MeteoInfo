@@ -4697,6 +4697,32 @@ public class ArrayMath {
      * Set section
      *
      * @param a Array a
+     * @param origin Origin
+     * @param shape Shape
+     * @param v Array value
+     * @return Result array
+     * @throws InvalidRangeException
+     */
+    public static Array setSection(Array a, int[] origin, int[] shape, Array v) throws InvalidRangeException {
+        Array r = a.section(origin, shape);
+        IndexIterator iter = r.getIndexIterator();
+        //int[] current;
+        Index index = v.getIndex();
+        while (iter.hasNext()) {
+            iter.next();
+            //current = iter.getCurrentCounter();
+            //index.set(current);
+            iter.setObjectCurrent(v.getObject(index));
+            index.incr();
+        }
+        r = Array.factory(a.getDataType(), a.getShape(), r.getStorage());
+        return r;
+    }
+
+    /**
+     * Set section
+     *
+     * @param a Array a
      * @param ranges Ranges
      * @param v Number value
      * @return Result array

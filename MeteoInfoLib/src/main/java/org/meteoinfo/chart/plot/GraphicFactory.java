@@ -561,7 +561,7 @@ public class GraphicFactory {
         }
         ColorBreak cb;
         if (xdata.getRank() == 1) {
-            cb = cbs.get(0);
+            int i = 0;
             while (xIter.hasNext()) {
                 x = xIter.getDoubleNext();
                 y = yIter.getDoubleNext();
@@ -577,8 +577,10 @@ public class GraphicFactory {
                     }
                     pls = new PolylineZShape();
                     pls.setPoints(points);
+                    cb = cbs.get(i);
                     gc.add(new Graphic(pls, cb));
                     points = new ArrayList<>();
+                    i += 1;
                 } else {
                     points.add(new PointZ(x, y, z));
                 }
@@ -586,6 +588,7 @@ public class GraphicFactory {
             if (points.size() > 1) {
                 pls = new PolylineZShape();
                 pls.setPoints(points);
+                cb = cbs.get(i);
                 gc.add(new Graphic(pls, cb));
             }
         } else {    //two dimensions

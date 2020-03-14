@@ -12,12 +12,9 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.Index;
-import org.meteoinfo.ndarray.IndexIterator;
-import org.meteoinfo.shape.Polygon;
-import org.meteoinfo.shape.PolygonShape;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.ndarray.*;
+import org.meteoinfo.shape.*;
 
 /**
  *
@@ -591,6 +588,209 @@ public class GeometryUtil {
      */
     public static boolean isConvex(Polygon polygon) {
         return isConvex(polygon.getOutLine());
+    }
+
+    /**
+     * Get polygon shape coordinate arrays
+     * @param pgs The polygon shape
+     * @return Coordinate arrays
+     */
+    public static Array[] getCoordinates(PolygonShape pgs) {
+        int n = pgs.getPointNum() + pgs.getPartNum() - 1;
+        int[] shape = new int[]{n};
+        Array xArray = Array.factory(DataType.DOUBLE, shape);
+        Array yArray = Array.factory(DataType.DOUBLE, shape);
+        Array zArray = null;
+        boolean isZ = pgs instanceof PolygonZShape ? true : false;
+        if (isZ) {
+            zArray = Array.factory(DataType.DOUBLE, shape);
+        }
+        int i = 0;
+        for (Polygon polygon : pgs.getPolygons()) {
+            for (List points : polygon.getRings()) {
+                if (isZ) {
+                    for (PointZ p : (List<PointZ>) points) {
+                        xArray.setDouble(i, p.X);
+                        yArray.setDouble(i, p.Y);
+                        zArray.setDouble(i, p.Z);
+                        i += 1;
+                    }
+                    if (i < n) {
+                        xArray.setDouble(i, Double.NaN);
+                        yArray.setDouble(i, Double.NaN);
+                        zArray.setDouble(i, Double.NaN);
+                    }
+                } else {
+                    for (PointD p : (List<PointD>) points) {
+                        xArray.setDouble(i, p.X);
+                        yArray.setDouble(i, p.Y);
+                        i += 1;
+                    }
+                    if (i < n) {
+                        xArray.setDouble(i, Double.NaN);
+                        yArray.setDouble(i, Double.NaN);
+                    }
+                }
+                i += 1;
+            }
+        }
+
+        if (isZ) {
+            return new Array[]{xArray, yArray, zArray};
+        } else {
+            return new Array[]{xArray, yArray};
+        }
+    }
+
+    /**
+     * Get polyline shape coordinate arrays
+     * @param pls The polygon shape
+     * @return Coordinate arrays
+     */
+    public static Array[] getCoordinates(PolylineShape pls) {
+        int n = pls.getPointNum() + pls.getPartNum() - 1;
+        int[] shape = new int[]{n};
+        Array xArray = Array.factory(DataType.DOUBLE, shape);
+        Array yArray = Array.factory(DataType.DOUBLE, shape);
+        Array zArray = null;
+        boolean isZ = pls instanceof PolylineZShape ? true : false;
+        if (isZ) {
+            zArray = Array.factory(DataType.DOUBLE, shape);
+        }
+        int i = 0;
+        for (Polyline polyline : pls.getPolylines()) {
+            if (isZ) {
+                for (PointZ p : (List<PointZ>) polyline.getPointList()) {
+                    xArray.setDouble(i, p.X);
+                    yArray.setDouble(i, p.Y);
+                    zArray.setDouble(i, p.Z);
+                    i += 1;
+                }
+                if (i < n) {
+                    xArray.setDouble(i, Double.NaN);
+                    yArray.setDouble(i, Double.NaN);
+                    zArray.setDouble(i, Double.NaN);
+                }
+            } else {
+                for (PointD p : (List<PointD>) polyline.getPointList()) {
+                    xArray.setDouble(i, p.X);
+                    yArray.setDouble(i, p.Y);
+                    i += 1;
+                }
+                if (i < n) {
+                    xArray.setDouble(i, Double.NaN);
+                    yArray.setDouble(i, Double.NaN);
+                }
+            }
+            i += 1;
+        }
+
+        if (isZ) {
+            return new Array[]{xArray, yArray, zArray};
+        } else {
+            return new Array[]{xArray, yArray};
+        }
+    }
+
+    /**
+     * Get coordinate arrays of a vector layer
+     * @param layer The vector layer
+     * @return Coordinate arrays
+     */
+    public static Array[] getCoordinates(VectorLayer layer) {
+        boolean isZ = layer.getShapeType().isZ();
+        if (layer.getShapeType().isPoint()) {
+            int n = layer.getShapeNum();
+            Array xArray = Array.factory(DataType.DOUBLE, new int[]{n});
+            Array yArray = Array.factory(DataType.DOUBLE, new int[]{n});
+            Array zArray = null;
+            if (isZ) {
+                zArray = Array.factory(DataType.DOUBLE, new int[]{n});
+                int i = 0;
+                PointZ p;
+                for (PointShape shape : (List<PointShape>) layer.getShapes()) {
+                    p = (PointZ) shape.getPoint();
+                    xArray.setDouble(i, p.X);
+                    yArray.setDouble(i, p.Y);
+                    zArray.setDouble(i, p.Z);
+                }
+                return new Array[]{xArray, yArray, zArray};
+            } else {
+                int i = 0;
+                PointD p;
+                for (PointShape shape : (List<PointShape>) layer.getShapes()) {
+                    p = (PointD) shape.getPoint();
+                    xArray.setDouble(i, p.X);
+                    yArray.setDouble(i, p.Y);
+                }
+                return new Array[]{xArray, yArray};
+            }
+        } else {
+            int n = 0;
+            for (Shape shape : layer.getShapes()) {
+                n += shape.getPointNum() + shape.getPartNum();
+            }
+            n -= 1;
+            Array xArray = Array.factory(DataType.DOUBLE, new int[]{n});
+            Array yArray = Array.factory(DataType.DOUBLE, new int[]{n});
+            Array zArray = null;
+            if (isZ) {
+                zArray = Array.factory(DataType.DOUBLE, new int[]{n});
+            }
+            int i = 0;
+            int[] origin = new int[1];
+            int[] shape = new int[1];
+            if (layer.getShapeType().isLine()) {
+                for (PolylineShape pls : (List<PolylineShape>) layer.getShapes()) {
+                    Array[] arrays = getCoordinates(pls);
+                    origin[0] = i;
+                    shape[0] = (int) arrays[0].getSize();
+                    try {
+                        ArrayMath.setSection(xArray, origin, shape, arrays[0]);
+                        ArrayMath.setSection(yArray, origin, shape, arrays[1]);
+                        if (isZ)
+                            ArrayMath.setSection(zArray, origin, shape, arrays[2]);
+                        i += shape[0];
+                        if (i < n) {
+                            xArray.setDouble(i, Double.NaN);
+                            yArray.setDouble(i, Double.NaN);
+                            if (isZ)
+                                zArray.setDouble(i, Double.NaN);
+                        }
+                        i += 1;
+                    } catch (InvalidRangeException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                for (PolygonShape pgs : (List<PolygonShape>) layer.getShapes()) {
+                    Array[] arrays = getCoordinates(pgs);
+                    origin[0] = i;
+                    shape[0] = (int) arrays[0].getSize();
+                    try {
+                        ArrayMath.setSection(xArray, origin, shape, arrays[0]);
+                        ArrayMath.setSection(yArray, origin, shape, arrays[1]);
+                        if (isZ)
+                            ArrayMath.setSection(zArray, origin, shape, arrays[2]);
+                        i += shape[0];
+                        if (i < n) {
+                            xArray.setDouble(i, Double.NaN);
+                            yArray.setDouble(i, Double.NaN);
+                            if (isZ)
+                                zArray.setDouble(i, Double.NaN);
+                        }
+                        i += 1;
+                    } catch (InvalidRangeException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if (isZ) {
+                return new Array[]{xArray, yArray, zArray};
+            } else {
+                return new Array[]{xArray, yArray};
+            }
+        }
     }
 
 }

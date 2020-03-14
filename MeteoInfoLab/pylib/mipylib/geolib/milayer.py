@@ -4,17 +4,19 @@
 # Purpose: MeteoInfoLab layer module
 # Note: Jython
 #-----------------------------------------------------
-from org.meteoinfo.data import TableUtil, XYListDataset
-from org.meteoinfo.layer import LayerTypes, VectorLayer, ChartSet
-from org.meteoinfo.projection import ProjectionUtil, KnownCoordinateSystems
-from org.meteoinfo.shape import PolygonShape, ShapeTypes
-from org.meteoinfo.legend import LegendType
-from java.time import LocalDateTime
-from java.awt import Font
-from datetime import datetime
+import geoutil
 import mipylib.miutil as miutil
 import mipylib.numeric as np
-import geoutil
+from java.awt import Font
+from java.time import LocalDateTime
+
+from org.meteoinfo.data import TableUtil, XYListDataset
+from org.meteoinfo.layer import LayerTypes, VectorLayer
+from org.meteoinfo.legend import LegendType
+from org.meteoinfo.projection import ProjectionUtil, KnownCoordinateSystems
+from org.meteoinfo.shape import PolygonShape, ShapeTypes
+from org.meteoinfo.geoprocess import GeometryUtil
+
 
 class MILayer(object):
     '''
@@ -40,9 +42,49 @@ class MILayer(object):
             self.layer = layer
             self.shapetype = layer.getShapeType()
             self.proj = layer.getProjInfo()
+        self._coord_array = None
     
     def __repr__(self):
-        return self.layer.getLayerInfo()            
+        return self.layer.getLayerInfo()
+
+    @property
+    def x_coord(self):
+        '''
+        Get X coordinate array.
+        :return: X coordinate array
+        '''
+        if self.isvectorlayer():
+            if self._coord_array is None:
+                self._coord_array = GeometryUtil.getCoordinates(self.layer)
+            return np.array(self._coord_array[0])
+        else:
+            return None
+
+    @property
+    def y_coord(self):
+        '''
+        Get Y coordinate array.
+        :return: Y coordinate array
+        '''
+        if self.isvectorlayer():
+            if self._coord_array is None:
+                self._coord_array = GeometryUtil.getCoordinates(self.layer)
+            return np.array(self._coord_array[1])
+        else:
+            return None
+
+    @property
+    def z_coord(self):
+        '''
+        Get Z coordinate array.
+        :return: Z coordinate array
+        '''
+        if self.isvectorlayer():
+            if self._coord_array is None:
+                self._coord_array = GeometryUtil.getCoordinates(self.layer)
+            return np.array(self._coord_array[2])
+        else:
+            return None
     
     def isvectorlayer(self):
         '''

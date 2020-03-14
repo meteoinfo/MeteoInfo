@@ -187,6 +187,22 @@ public abstract class Shape implements Cloneable{
     }
 
     /**
+     * Get point number
+     * @return Point number
+     */
+    public int getPointNum() {
+        return 1;
+    }
+
+    /**
+     * Get part number
+     * @return Part number
+     */
+    public int getPartNum() {
+        return 1;
+    }
+
+    /**
      * Set points
      *
      * @param points point list

@@ -1133,10 +1133,15 @@ class Axes(object):
                         lines.append(line)
                 else:
                     snum = len(xdatalist)
+                    colors = kwargs.pop('colors', None)
+                    if not colors is None:
+                        snum = len(colors) if len(colors) > snum else snum
                     for i in range(0, snum):
                         label = kwargs.pop('label', 'S_' + str(i + 1))
                         line = plotutil.getlegendbreak('line', **kwargs)[0]
                         line.setCaption(label)
+                        if not colors is None and i < len(colors):
+                            line.setColor(plotutil.getcolor(colors[i]))
                         lines.append(line) 
         else:
             ls = kwargs.pop('symbolspec', None)

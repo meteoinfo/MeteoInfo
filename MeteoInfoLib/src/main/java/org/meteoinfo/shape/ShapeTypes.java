@@ -188,4 +188,18 @@ public enum ShapeTypes {
                 return false;
         }
     }
+
+    /**
+     * Get if the shape has z coordinate
+     * @return Boolean
+     */
+    public boolean isZ() {
+        switch (this) {
+            case PointZ:
+            case PolylineZ:
+            case PolygonZ:
+                return true;
+        }
+        return false;
+    }
 }

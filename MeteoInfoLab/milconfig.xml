@@ -19,14 +19,12 @@
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Run\verification\air_force\script\vf_vis_continuous.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_groupby_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\traj_relief_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\plot_cluster_color.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Run\verification\air_force\script\vf_vis_continuous.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_groupby_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\traj_relief_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\plot_cluster_color.py"/>
     </RecentFiles>
   </File>
   <Font>

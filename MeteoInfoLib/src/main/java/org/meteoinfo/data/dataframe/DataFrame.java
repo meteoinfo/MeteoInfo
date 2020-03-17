@@ -2122,7 +2122,7 @@ public class DataFrame implements Iterable {
             List indexData = new ArrayList<>();
             if (idxDT == DataType.DATE) {
                 for (String s : indexValues) {
-                    indexData.add(LocalDateTime.parse(s, dtFormatter));
+                    indexData.add(JDateUtil.parseDateTime(s, dtFormatter));
                 }
                 index = new DateTimeIndex(indexData);
                 //((DateTimeIndex) index).setDateTimeFormatter(dtFormatter);
@@ -2398,7 +2398,7 @@ public class DataFrame implements Iterable {
             List indexData = new ArrayList<>();
             if (idxDT == DataType.DATE) {
                 for (String s : indexValues) {
-                    indexData.add(LocalDateTime.parse(s, dtFormatter));
+                    indexData.add(JDateUtil.parseDateTime(s, dtFormatter));
                 }
                 index = new DateTimeIndex(indexData);
                 //((DateTimeIndex) index).setDateTimeFormatter(dtFormatter);

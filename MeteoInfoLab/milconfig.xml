@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
-    <RecentFolder Folder="D:\Run\emips\run_meic"/>
-    <RecentFolder Folder="D:\Run\emips"/>
-    <RecentFolder Folder="D:\Run"/>
-    <RecentFolder Folder="D:\Run\verification"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
-    <RecentFolder Folder="D:\Run\verification\air_force"/>
-    <RecentFolder Folder="D:\Run\verification\air_force\script"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataframe">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
+    <RecentFolder Folder="D:\Run\emips"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\data_process"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
+    <RecentFolder Folder="D:\Run\emips\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Run\emips\run_meic"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\traj_relief_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\array_split-1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\Traj_multi_color_plot_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\test_layer_coord-1.py"/>
+      <OpenedFile File="D:\Run\emips\run_meic\run-VOC.py"/>
+      <OpenedFile File="D:\Run\emips\run_meic\lump-VOC.py"/>
+      <OpenedFile File="D:\Run\emips\run_meic\run_batch.py"/>
+      <OpenedFile File="D:\Run\emips\run_meic\merge_sector.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\traj_relief_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\array\array_split-1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\Traj_multi_color_plot_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\test_layer_coord-1.py"/>
+      <RecentFile File="D:\Run\emips\run_meic\run-VOC.py"/>
+      <RecentFile File="D:\Run\emips\run_meic\lump-VOC.py"/>
+      <RecentFile File="D:\Run\emips\run_meic\run_batch.py"/>
+      <RecentFile File="D:\Run\emips\run_meic\merge_sector.py"/>
     </RecentFiles>
   </File>
   <Font>

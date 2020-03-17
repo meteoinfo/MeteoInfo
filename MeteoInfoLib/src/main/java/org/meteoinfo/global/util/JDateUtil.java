@@ -3,9 +3,7 @@ package org.meteoinfo.global.util;
 import java.time.*;
 import java.time.chrono.ChronoPeriod;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
-import java.time.temporal.TemporalUnit;
+import java.time.temporal.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -452,5 +450,19 @@ public class JDateUtil {
         }
 
         return dts;
+    }
+
+    /**
+     * Parse string to LocalDateTime
+     * @param dtStr The string
+     * @param formatter DateTimeFormatter
+     * @return LocalDateTime
+     */
+    public static LocalDateTime parseDateTime(String dtStr, DateTimeFormatter formatter) {
+        TemporalAccessor ta = formatter.parse(dtStr);
+        if (ta.isSupported(ChronoField.HOUR_OF_DAY))
+            return LocalDateTime.from(ta);
+        else
+            return (LocalDate.from(ta)).atStartOfDay();
     }
 }

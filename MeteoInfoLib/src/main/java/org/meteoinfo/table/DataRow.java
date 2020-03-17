@@ -13,8 +13,8 @@
  */
 package org.meteoinfo.table;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.meteoinfo.ndarray.DataType;
@@ -222,7 +222,7 @@ public class DataRow {
             return this.getValue(columnName).toString();
         } else {
             if (dc.getDataType() == DataType.DATE) {
-                SimpleDateFormat format = new SimpleDateFormat(dc.getFormat());
+                DateTimeFormatter format = DateTimeFormatter.ofPattern(dc.getFormat());
                 return format.format((LocalDateTime) this.getValue(columnName));
             } else {
                 return String.format(dc.getFormat(), this.getValue(columnName));
@@ -244,7 +244,7 @@ public class DataRow {
 
         DataColumn dc = this.columns.get(columnName);
         if (dc.getDataType() == DataType.DATE) {
-            SimpleDateFormat dformat = new SimpleDateFormat(formatStr);
+            DateTimeFormatter dformat = DateTimeFormatter.ofPattern(formatStr);
             return dformat.format((LocalDateTime) this.getValue(columnName));
         } else {
             return String.format(formatStr, this.getValue(columnName));

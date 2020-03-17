@@ -10,6 +10,7 @@ import datetime
 from org.meteoinfo.data import TableData, TimeTableData, TableUtil
 from org.meteoinfo.math import ArrayUtil
 from org.meteoinfo.ndarray import Range, DataType
+from java.time import LocalDateTime
 
 from multiarray import NDArray
 import mipylib.miutil as miutil
@@ -249,7 +250,7 @@ class PyTableData(object):
         :returns: The value at the row and column.
         '''
         r = self.data.getValue(row, col)
-        if isinstance(r, Date):
+        if isinstance(r, LocalDateTime):
             r = miutil.pydate(r)
         return r
 

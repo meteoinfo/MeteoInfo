@@ -14,10 +14,16 @@
 package org.meteoinfo.table;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalField;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.DataType;
 
 /**
@@ -315,12 +321,8 @@ public class DataColumn {
                         if (vStr.isEmpty()) {
                             return null;
                         }
-                        SimpleDateFormat dformat = new SimpleDateFormat(this.format);
-                        try {
-                            return dformat.parse(vStr);
-                        } catch (ParseException ex) {
-                            Logger.getLogger(DataColumn.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(this.format);
+                        return JDateUtil.parseDateTime(vStr, formatter);
                     }
                     break;
             }

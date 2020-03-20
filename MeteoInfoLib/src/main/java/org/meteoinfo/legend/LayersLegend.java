@@ -128,6 +128,7 @@ public class LayersLegend extends JPanel {
     public LayersLegend() {
         super();
         this.setLayout(new BorderLayout());
+        this.setDoubleBuffered(true);
         initComponents();
 
         this.addMouseListener(new MouseAdapter() {
@@ -1398,17 +1399,20 @@ public class LayersLegend extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        //this.setBackground(Color.white);
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
         g2.setColor(this.getBackground());
         g2.clearRect(0, 0, this.getWidth(), this.getHeight());
-        g2.fillRect(0, 0, this.getWidth(), this.getHeight());        
-        AffineTransform mx = new AffineTransform();
-        AffineTransformOp aop = new AffineTransformOp(mx, AffineTransformOp.TYPE_BICUBIC);
-        //g2.drawImage(_paintImage, 0, 0, this.getBackground(), this);
-        g2.drawImage(_paintImage, aop, 0, 0);
+        g2.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+//        AffineTransform mx = new AffineTransform();
+//        AffineTransformOp aop = new AffineTransformOp(mx, AffineTransformOp.TYPE_BICUBIC);
+//        //g2.drawImage(_paintImage, 0, 0, this.getBackground(), this);
+//        g2.drawImage(_paintImage, aop, 0, 0);
+
+        this.paintGraphics(g2);
+
         if (_dragMode) {
             //Draw drag line                                                
             g2.setColor(Color.black);
@@ -1458,6 +1462,41 @@ public class LayersLegend extends JPanel {
         }
 
         this.repaint();
+    }
+
+    /**
+     * Paint graphics
+     */
+    public void paintGraphics(Graphics2D g) {
+        if (this.getWidth() < 10 || this.getHeight() < 10) {
+            return;
+        }
+
+        int totalHeight = calcTotalDrawHeight();
+        Rectangle rect;
+        if (totalHeight > this.getHeight()) {
+            int sHeight = totalHeight - this.getHeight() + 20;
+            _vScrollBar.setMinimum(0);
+            _vScrollBar.setMaximum(totalHeight);
+            _vScrollBar.setVisibleAmount(totalHeight - sHeight);
+            _vScrollBar.setUnitIncrement(totalHeight / 10);
+            _vScrollBar.setBlockIncrement(totalHeight / 5);
+            if (_vScrollBar.isVisible() == false) {
+                _vScrollBar.setValue(0);
+                _vScrollBar.setVisible(true);
+            }
+            rect = new Rectangle(0, -_vScrollBar.getValue(), this.getWidth() - _vScrollBar.getWidth(), totalHeight);
+        } else {
+            _vScrollBar.setVisible(false);
+            rect = new Rectangle(0, 0, this.getWidth(), this.getHeight());
+        }
+        rect.y += Constants.ITEM_PAD;
+
+        //Draw map frame
+        for (MapFrame mapFrame : _mapFrames) {
+            drawMapFrame(g, mapFrame, new Point(Constants.MAPFRAME_LEFT_PAD, rect.y));
+            rect.y += mapFrame.getDrawHeight() + Constants.ITEM_PAD * 2;
+        }
     }
 
     private int calcTotalDrawHeight() {

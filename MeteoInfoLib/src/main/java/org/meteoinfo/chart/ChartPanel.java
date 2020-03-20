@@ -11,16 +11,8 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -116,6 +108,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
     private final EventListenerList listeners = new EventListenerList();
     private BufferedImage mapBitmap = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     private BufferedImage tempImage = null;
+    private boolean newPaint = true;
     private Chart chart;
     private Plot currentPlot;
     private Dimension chartSize;
@@ -189,7 +182,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                     xShift = 0;
                     yShift = 0;
                     paintScale = 1.0;
-                    paintGraphics();
+                    //paintGraphics();
+                    repaintNew();
                     mouseWheelDetctionTimer.stop();
                 }
             }
@@ -430,9 +424,14 @@ public class ChartPanel extends JPanel implements IChartPanel{
 
         //this.setBackground(Color.white);
         Graphics2D g2 = (Graphics2D) g;
-        AffineTransform mx = new AffineTransform();
-        AffineTransformOp aop = new AffineTransformOp(mx, AffineTransformOp.TYPE_BICUBIC);
-        g2.drawImage(mapBitmap, aop, 0, 0);
+
+        if (this.newPaint) {
+            this.paintGraphics(g2);
+        } else {
+            AffineTransform mx = new AffineTransform();
+            AffineTransformOp aop = new AffineTransformOp(mx, AffineTransformOp.TYPE_BICUBIC);
+            g2.drawImage(mapBitmap, aop, 0, 0);
+        }
 
         //Draw dynamic graphics
         if (this.dragMode) {
@@ -472,6 +471,38 @@ public class ChartPanel extends JPanel implements IChartPanel{
         g2.dispose();
     }
 
+    private void repaintNew() {
+        this.newPaint = true;
+        this.repaint();
+        this.updateViewImage();
+    }
+
+    private void repaintOld() {
+        this.newPaint = false;
+        this.repaint();
+        this.newPaint = true;
+    }
+
+    private void updateViewImage() {
+        if (this.getWidth() < 5 || this.getHeight() < 5) {
+            return;
+        }
+
+        int width, height;
+        if (this.chartSize != null) {
+            height = this.chartSize.height;
+            width = this.chartSize.width;
+        } else {
+            width = this.getWidth();
+            height = this.getHeight();
+        }
+
+        this.mapBitmap = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = this.mapBitmap.createGraphics();
+        this.print(g);
+        g.dispose();
+    }
+
     /**
      * Paint graphics
      */
@@ -509,7 +540,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
         if (this.chart != null) {
             Rectangle2D chartArea;
             if (this.chartSize == null) {
-                chartArea = new Rectangle2D.Double(0.0, 0.0, this.mapBitmap.getWidth(), this.mapBitmap.getHeight());
+                chartArea = new Rectangle2D.Double(0.0, 0.0, this.getWidth(), this.getHeight());
             } else {
                 chartArea = new Rectangle2D.Double(0.0, 0.0, this.chartSize.width, this.chartSize.height);
             }
@@ -528,7 +559,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
     void onComponentResized(ComponentEvent e) {
         if (this.getWidth() > 0 && this.getHeight() > 0) {
             if (this.chart != null) {
-                this.paintGraphics();
+                //this.paintGraphics();
+                this.repaintNew();
             }
         }
     }
@@ -596,7 +628,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                         extent.minY = Math.min(xy1[1], xy2[1]);
                         extent.maxY = Math.max(xy1[1], xy2[1]);
                         plot.setDrawExtent(extent);
-                        this.paintGraphics();
+                        //this.paintGraphics();
+                        this.repaintNew();
                     } else {
                         Rectangle2D graphArea = xyplot.getGraphArea();
                         double[] xy1 = xyplot.screenToProj(mouseDownPoint.x - graphArea.getX(), mouseDownPoint.y - graphArea.getY(), graphArea);
@@ -623,7 +656,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                             extent.maxY = maxy;
                         }
                         xyplot.setDrawExtent(extent);
-                        this.paintGraphics();
+                        //this.paintGraphics();
+                        this.repaintNew();
                     }
                 }
                 break;
@@ -642,7 +676,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                     extent.minY += yshift;
                     extent.maxY -= yshift;
                     xyplot.setDrawExtent(extent);
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                 }
                 break;
             case SELECT:
@@ -660,7 +695,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                             extent.maxY = Math.max(xy1[1], xy2[1]);
                             this.selectedPoints = plot.getDataset().selectPoints(extent);
                             this.firePointSelectedEvent();
-                            this.paintGraphics();
+                            //this.paintGraphics();
+                            this.repaintNew();
                         }
                     }
                 }
@@ -674,7 +710,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                     double maxX = xyplot.getGraphArea().getWidth() - deltaX;
                     double maxY = xyplot.getGraphArea().getHeight() - deltaY;
                     xyplot.zoomToExtentScreen(minX, maxX, minY, maxY);
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                 }
                 break;
         }
@@ -687,7 +724,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
         switch (this.mouseMode) {
             case ZOOM_IN:
             case SELECT:
-                this.repaint();
+                this.repaintOld();
                 break;
             case PAN:
                 Plot plot = selPlot(e.getX(), e.getY());
@@ -763,8 +800,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                         }
                         projector.setElevationAngle(new_value);
                     }
-                    //repaint();
-                    this.paintGraphics();
+                    repaintOld();
+                    //this.paintGraphics();
 //                    if (!model.isExpectDelay()) {
 //                        repaint();
 //                    } else {
@@ -820,7 +857,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                         @Override
                                         public void windowClosed(WindowEvent e) {
                                             mapView.setDrawIdentiferShape(false);
-                                            ChartPanel.this.repaint();
+                                            ChartPanel.this.repaintOld();
                                         }
                                     });
                                 }
@@ -868,7 +905,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                 }
 
                                 mapView.setDrawIdentiferShape(true);
-                                this.repaint();
+                                this.repaintOld();
                             }
                         } else if (aMLayer.getLayerType() == LayerTypes.RasterLayer) {
                             RasterLayer aRLayer = (RasterLayer) aMLayer;
@@ -961,7 +998,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                     mplt.setDrawExtent(new Extent(minX, maxX, minY, maxY));
                 } else {
                     ((AbstractPlot2D) plt).setDrawExtent(new Extent(minX, maxX, minY, maxY));
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintOld();
                 }
                 break;
         }
@@ -985,7 +1023,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
 //        } else {
 //            xyplot.setAutoExtent();
 //        }
-        this.paintGraphics();
+        //this.paintGraphics();
+        this.repaintNew();
     }
 
     private void onSaveFigureClick(ActionEvent e) {

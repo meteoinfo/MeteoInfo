@@ -306,6 +306,7 @@ public class MapView extends JPanel implements IWebMapPanel {
     public MapView() {
         super();
         this.setSize(200, 200);
+        this.setDoubleBuffered(true);
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -3848,18 +3849,18 @@ public class MapView extends JPanel implements IWebMapPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        //this.setBackground(Color.white);
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(this.getBackground());
         g2.clearRect(0, 0, this.getWidth(), this.getHeight());
         g2.fillRect(0, 0, this.getWidth(), this.getHeight());
-        //g2.drawImage(_mapBitmap, _xShift, _yShift, this.getBackground(), this);
 
         AffineTransform mx = new AffineTransform();
         mx.translate((float) _xShift, (float) _yShift);
         mx.scale(_paintScale, _paintScale);
         AffineTransformOp aop = new AffineTransformOp(mx, AffineTransformOp.TYPE_BILINEAR);
         g2.drawImage(_mapBitmap, aop, 0, 0);
+
+        //this.paintGraphics(g2);
 
         if (this._dragMode) {
             switch (this._mouseTool) {
@@ -4070,6 +4071,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 g.setColor(this.getBackground());
                 g.fillRect(0, 0, this.getWidth(), this.getHeight());
             }
+            //g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             if (_antiAlias) {
                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

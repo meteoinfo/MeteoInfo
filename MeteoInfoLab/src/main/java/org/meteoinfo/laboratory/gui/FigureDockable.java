@@ -24,6 +24,7 @@ import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
 import org.meteoinfo.chart.jogl.GLChartPanel;
 import org.meteoinfo.ui.ButtonTabComponent;
+import org.scilab.forge.jlatexmath.Char;
 
 /**
  *
@@ -33,11 +34,13 @@ public class FigureDockable extends DefaultSingleCDockable {
 
     private final JTabbedPane tabbedPanel;
     private FrmMain parent;
+    private boolean doubleBuffer;
 
     public FigureDockable(final FrmMain parent, String id, String title, CAction... actions) {
         super(id, title, actions);
 
         this.parent = parent;
+        this.doubleBuffer = true;
         tabbedPanel = new JTabbedPane();
         tabbedPanel.addChangeListener(new ChangeListener() {
             @Override
@@ -179,6 +182,9 @@ public class FigureDockable extends DefaultSingleCDockable {
      * @return Figure chart panel
      */
     public final IChartPanel addNewFigure(String title, final JPanel cp) {
+        if (cp instanceof ChartPanel) {
+            ((ChartPanel)cp).setDoubleBuffer(this.doubleBuffer);
+        }
         final JScrollPane sp = new JScrollPane(cp);
         this.tabbedPanel.add(sp, title);
         this.tabbedPanel.setSelectedComponent(sp);
@@ -202,6 +208,9 @@ public class FigureDockable extends DefaultSingleCDockable {
      * @return Figure chart panel
      */
     public final IChartPanel addFigure(final JPanel ncp) {
+        if (ncp instanceof ChartPanel) {
+            ((ChartPanel) ncp).setDoubleBuffer(this.doubleBuffer);
+        }
         int idx = 1;
         if (this.tabbedPanel.getTabCount() > 0) {
             List<Integer> idxes = new ArrayList<>();
@@ -298,11 +307,31 @@ public class FigureDockable extends DefaultSingleCDockable {
      */
     public ChartPanel getFigure(int idx) {
         if (this.tabbedPanel.getTabCount() > idx) {
-            JScrollPane sp = (JScrollPane) this.tabbedPanel.getTabComponentAt(idx);
+            JScrollPane sp = (JScrollPane) this.tabbedPanel.getComponentAt(idx);
             return (ChartPanel) sp.getViewport().getView();
         } else {
             return null;
         }
+    }
+
+    /**
+     * Get figure number
+     * @return Figure number
+     */
+    public int getFigureNumber() {
+        return this.tabbedPanel.getTabCount();
+    }
+
+    /**
+     * Get figures
+     * @return Figures
+     */
+    public List<ChartPanel> getFigures() {
+        List<ChartPanel> figures = new ArrayList<>();
+        for (int i = 0; i < this.tabbedPanel.getTabCount(); i++) {
+            figures.add(this.getFigure(i));
+        }
+        return figures;
     }
 
     /**
@@ -314,6 +343,19 @@ public class FigureDockable extends DefaultSingleCDockable {
         if (this.tabbedPanel.getTabCount() > 0) {
             JScrollPane sp = new JScrollPane(cp);
             this.tabbedPanel.setComponentAt(this.tabbedPanel.getSelectedIndex(), sp);
+        }
+    }
+
+    /**
+     * Set double buffering
+     * @param doubleBuffer Double buffering or not
+     */
+    public void setDoubleBuffer(boolean doubleBuffer) {
+        this.doubleBuffer = doubleBuffer;
+        List<ChartPanel> figures = this.getFigures();
+        for (ChartPanel figure : figures) {
+            figure.setDoubleBuffer(this.doubleBuffer);
+            figure.repaintNew();
         }
     }
 }

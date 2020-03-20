@@ -217,6 +217,7 @@ public class MapView extends JPanel implements IWebMapPanel {
     private BufferedImage _mapBitmap = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     //private BufferedImage _tempImage = null;
     private boolean newPaint = false;
+    private boolean doubleBuffer = true;
     private boolean _antiAlias = false;
     private boolean _pointAntiAlias = true;
     private boolean _highSpeedWheelZoom = true;
@@ -407,6 +408,25 @@ public class MapView extends JPanel implements IWebMapPanel {
     // </editor-fold>
 
     // <editor-fold desc="Get Set Methods">
+    /**
+     * Get if using off screen image double buffering.
+     * Using double buffering will be faster but lower view quality in
+     * high dpi screen computer.
+     *
+     * @return Boolean
+     */
+    public boolean isDoubleBuffer() {
+        return this.doubleBuffer;
+    }
+
+    /**
+     * Set using off screen image double buffering or not.
+     * @param value Boolean
+     */
+    public void setDoubleBuffer(boolean value) {
+        this.doubleBuffer = value;
+    }
+
     /**
      * Set TileLoadListner for web map plot
      *
@@ -4093,17 +4113,27 @@ public class MapView extends JPanel implements IWebMapPanel {
         this.repaintNew();
     }
 
-    private void repaintNew() {
-        /*this.newPaint = true;
-        this.repaint();
-        this.updateViewImage();*/
-
-        this.paintLayers();
+    /**
+     * New paint
+     */
+    public void repaintNew() {
+        if (this.doubleBuffer) {
+            this.newPaint = false;
+            this.paintLayers();
+        } else {
+            this.newPaint = true;
+            this.repaint();
+            this.updateViewImage();
+        }
     }
 
     private void repaintOld() {
-        //this.newPaint = false;
-        this.repaint();
+        if (this.doubleBuffer) {
+            this.repaint();
+        } else {
+            this.newPaint = false;
+            this.repaint();
+        }
     }
 
     private void updateViewImage() {

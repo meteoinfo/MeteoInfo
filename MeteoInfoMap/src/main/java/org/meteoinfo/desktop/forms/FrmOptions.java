@@ -56,6 +56,9 @@ public class FrmOptions extends javax.swing.JDialog {
         this.jComboBox_LookAndFeel.addItem("FlatDarculaLaf");
         this.jComboBox_LookAndFeel.addItem("FlatIntelliJLaf");
         this.jComboBox_LookAndFeel.setSelectedItem(this._parent.getOptions().getLookFeel());
+
+        //Double buffering
+        this.jCheckBox_DoubleBuffering.setSelected(this._parent.getOptions().isDoubleBuffer());
     }
 
     /**
@@ -72,6 +75,7 @@ public class FrmOptions extends javax.swing.JDialog {
         jPanel_General = new javax.swing.JPanel();
         jLabel_LookAndFeel = new javax.swing.JLabel();
         jComboBox_LookAndFeel = new javax.swing.JComboBox();
+        jCheckBox_DoubleBuffering = new javax.swing.JCheckBox();
         jPanel_Font = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel_LegendFont = new javax.swing.JLabel();
@@ -89,25 +93,34 @@ public class FrmOptions extends javax.swing.JDialog {
 
         jComboBox_LookAndFeel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jCheckBox_DoubleBuffering.setText("Double Buffering");
+
         javax.swing.GroupLayout jPanel_GeneralLayout = new javax.swing.GroupLayout(jPanel_General);
         jPanel_General.setLayout(jPanel_GeneralLayout);
         jPanel_GeneralLayout.setHorizontalGroup(
             jPanel_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_GeneralLayout.createSequentialGroup()
+            .addGroup(jPanel_GeneralLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel_LookAndFeel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox_LookAndFeel, 0, 221, Short.MAX_VALUE)
+                .addGroup(jPanel_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel_GeneralLayout.createSequentialGroup()
+                        .addComponent(jCheckBox_DoubleBuffering, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel_GeneralLayout.createSequentialGroup()
+                        .addComponent(jLabel_LookAndFeel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox_LookAndFeel, 0, 224, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel_GeneralLayout.setVerticalGroup(
             jPanel_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_GeneralLayout.createSequentialGroup()
-                .addGap(37, 37, 37)
+                .addGap(25, 25, 25)
                 .addGroup(jPanel_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox_LookAndFeel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel_LookAndFeel))
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(jCheckBox_DoubleBuffering)
+                .addGap(35, 35, 35))
         );
 
         jTabbedPane_Option.addTab("General", jPanel_General);
@@ -238,68 +251,80 @@ public class FrmOptions extends javax.swing.JDialog {
         if (_textFont != null) {
             _parent.getOptions().setTextFont(_textFont);
         }
+        
+        //Double buffering
+        boolean doubleBuffer = this.jCheckBox_DoubleBuffering.isSelected();
+        if (doubleBuffer != this._parent.getOptions().isDoubleBuffer()) {
+            this._parent.getOptions().setDoubleBuffer(doubleBuffer);
+            this._parent.getMapView().setDoubleBuffer(doubleBuffer);
+            this._parent.getMapView().repaintNew();
+            this._parent.getMapLyout().setDoubleBuffer(doubleBuffer);
+            this._parent.getMapLyout().repaintNew();
+        }
 
         //Look and feel
         String laf = this.jComboBox_LookAndFeel.getSelectedItem().toString();
-        String lafName = UIManager.getLookAndFeel().getClass().getName();
-        switch (laf) {
-            case "CDE/Motif":
-                lafName = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
-                break;
-            case "Metal":
-                lafName = "javax.swing.plaf.metal.MetalLookAndFeel";
-                break;
-            case "Windows":
-                lafName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-                break;
-            case "Windows Classic":
-                lafName = "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";
-                break;
-            case "Nimbus":  
-                lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
-                break;
-            case "Mac":
-                lafName = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
-                break;
-            case "GTK":
-                lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
-                break;
-            case "FlatLightLaf":
-            case "FlatDarkLaf":
-            case "FlatDarculaLaf":
-            case "FlatIntelliJLaf":
-                lafName = laf;
-                break;
-            default:
-                lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
-                break;
-        }
+        if (!laf.equals(this._parent.getOptions().getLookFeel())) {
+            String lafName = UIManager.getLookAndFeel().getClass().getName();
+            switch (laf) {
+                case "CDE/Motif":
+                    lafName = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+                    break;
+                case "Metal":
+                    lafName = "javax.swing.plaf.metal.MetalLookAndFeel";
+                    break;
+                case "Windows":
+                    lafName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+                    break;
+                case "Windows Classic":
+                    lafName = "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";
+                    break;
+                case "Nimbus":  
+                    lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                    break;
+                case "Mac":
+                    lafName = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
+                    break;
+                case "GTK":
+                    lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+                    break;
+                case "FlatLightLaf":
+                case "FlatDarkLaf":
+                case "FlatDarculaLaf":
+                case "FlatIntelliJLaf":
+                    lafName = laf;
+                    break;
+                default:
+                    lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                    break;
+            }
 
-        try {
-            JFrame.setDefaultLookAndFeelDecorated(true);
-            if (lafName.equals("FlatLightLaf")) {
-                    UIManager.setLookAndFeel(new FlatLightLaf());
-                } else if (lafName.equals("FlatIntelliJLaf")) {
-                    UIManager.setLookAndFeel(new FlatIntelliJLaf());
-                } else if (lafName.equals("FlatDarculaLaf")) {
-                    UIManager.setLookAndFeel(new FlatDarculaLaf());
-                } else if (lafName.equals("FlatDarkLaf")) {
-                    UIManager.setLookAndFeel(new FlatDarkLaf());
-                } else {
-                    UIManager.setLookAndFeel(lafName);
-                }
-            SwingUtilities.updateComponentTreeUI(this);
-            SwingUtilities.updateComponentTreeUI(this._parent);
-            SwingUtilities.updateComponentTreeUI(this._parent.getMeteoDataset());
-             this._parent.getOptions().setLookFeel(laf);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                JFrame.setDefaultLookAndFeelDecorated(true);
+                if (lafName.equals("FlatLightLaf")) {
+                        UIManager.setLookAndFeel(new FlatLightLaf());
+                    } else if (lafName.equals("FlatIntelliJLaf")) {
+                        UIManager.setLookAndFeel(new FlatIntelliJLaf());
+                    } else if (lafName.equals("FlatDarculaLaf")) {
+                        UIManager.setLookAndFeel(new FlatDarculaLaf());
+                    } else if (lafName.equals("FlatDarkLaf")) {
+                        UIManager.setLookAndFeel(new FlatDarkLaf());
+                    } else {
+                        UIManager.setLookAndFeel(lafName);
+                    }
+                SwingUtilities.updateComponentTreeUI(this);
+                SwingUtilities.updateComponentTreeUI(this._parent);
+                SwingUtilities.updateComponentTreeUI(this._parent.getMeteoDataset());
+                 this._parent.getOptions().setLookFeel(laf);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InstantiationException ex) {
+                Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedLookAndFeelException ex) {
+                Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         this.dispose();
@@ -358,6 +383,7 @@ public class FrmOptions extends javax.swing.JDialog {
     private javax.swing.JButton jButton_LegendFont;
     private javax.swing.JButton jButton_OK;
     private javax.swing.JButton jButton_TextFont;
+    private javax.swing.JCheckBox jCheckBox_DoubleBuffering;
     private javax.swing.JComboBox jComboBox_LookAndFeel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

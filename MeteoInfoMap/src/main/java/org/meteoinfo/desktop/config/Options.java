@@ -54,6 +54,7 @@ public class Options {
     private Point mainFormLocation = new Point(0, 0);
     private Dimension mainFormSize = new Dimension(1000, 650);
     private String lookFeel = "Nimbus";
+    private boolean doubleBuffer = true;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     
@@ -185,6 +186,25 @@ public class Options {
     public void setLookFeel(String value) {
         this.lookFeel = value;
     }
+    
+    /**
+     * Get if using off screen image double buffering.
+     * Using double buffering will be faster but lower view quality in
+     * high dpi screen computer.
+     *
+     * @return Boolean
+     */
+    public boolean isDoubleBuffer() {
+        return this.doubleBuffer;
+    }
+
+    /**
+     * Set using off screen image double buffering or not.
+     * @param value Boolean
+     */
+    public void setDoubleBuffer(boolean value) {
+        this.doubleBuffer = value;
+    }
 
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -250,6 +270,13 @@ public class Options {
         lfAttr.setValue(this.lookFeel);
         lf.setAttributeNode(lfAttr);
         root.appendChild(lf);
+        
+        //Figure element
+        Element eFigure = doc.createElement("Figure");
+        Attr dbAttr = doc.createAttribute("DoubleBuffering");
+        dbAttr.setValue(String.valueOf(this.doubleBuffer));
+        eFigure.setAttributeNode(dbAttr);
+        root.appendChild(eFigure);
         
         //Start up form setting
         Element startForm = doc.createElement("Startup");
@@ -334,6 +361,12 @@ public class Options {
             if (root.getElementsByTagName("LookFeel") != null) {
                 Element lf = (Element) root.getElementsByTagName("LookFeel").item(0);
                 this.lookFeel = lf.getAttributes().getNamedItem("Name").getNodeValue();
+            }
+            
+            //Figure element
+            if (root.getElementsByTagName("Figure").item(0) != null) {
+                Element eFigure = (Element) root.getElementsByTagName("Figure").item(0);
+                this.doubleBuffer = Boolean.valueOf(eFigure.getAttributes().getNamedItem("DoubleBuffering").getNodeValue());
             }
             
             //Start up form setting

@@ -170,6 +170,7 @@ public class MapLayout extends JPanel implements IWebMapPanel {
     private BufferedImage _layoutBitmap = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     private BufferedImage _tempImage = null;
     private boolean newPaint = false;
+    private boolean doubleBuffer = true;
     private boolean _antiAlias = false;
     private FrmLabelSymbolSet _frmLabelSymbolSet = null;
     private FrmPointSymbolSet _frmPointSymbolSet = null;
@@ -2016,6 +2017,25 @@ public class MapLayout extends JPanel implements IWebMapPanel {
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
     /**
+     * Get if using off screen image double buffering.
+     * Using double buffering will be faster but lower view quality in
+     * high dpi screen computer.
+     *
+     * @return Boolean
+     */
+    public boolean isDoubleBuffer() {
+        return this.doubleBuffer;
+    }
+
+    /**
+     * Set using off screen image double buffering or not.
+     * @param value Boolean
+     */
+    public void setDoubleBuffer(boolean value) {
+        this.doubleBuffer = value;
+    }
+
+    /**
      * Get if lock view update
      *
      * @return If lock view update
@@ -2639,17 +2659,27 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         }
     }
 
-    private void repaintNew() {
-        /*this.newPaint = true;
-        this.repaint();
-        this.updateViewImage();*/
-
-        this.paintGraphics();
+    /**
+     * New paint
+     */
+    public void repaintNew() {
+        if (this.doubleBuffer) {
+            this.newPaint = false;
+            this.paintGraphics();
+        } else {
+            this.newPaint = true;
+            this.repaint();
+            this.updateViewImage();
+        }
     }
 
     private void repaintOld() {
-        //this.newPaint = false;
-        this.repaint();
+        if (this.doubleBuffer) {
+            this.repaint();
+        } else {
+            this.newPaint = false;
+            this.repaint();
+        }
     }
 
     private void updateViewImage() {

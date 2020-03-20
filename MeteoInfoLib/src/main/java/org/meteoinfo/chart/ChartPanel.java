@@ -108,7 +108,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
     private final EventListenerList listeners = new EventListenerList();
     private BufferedImage mapBitmap = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     private BufferedImage tempImage = null;
-    private boolean newPaint = true;
+    private boolean newPaint = false;
+    private boolean doubleBuffer = true;
     private Chart chart;
     private Plot currentPlot;
     private Dimension chartSize;
@@ -261,6 +262,25 @@ public class ChartPanel extends JPanel implements IChartPanel{
         if (this.chart != null) {
             chart.setParent(this);
         }
+    }
+
+    /**
+     * Get if using off screen image double buffering.
+     * Using double buffering will be faster but lower view quality in
+     * high dpi screen computer.
+     *
+     * @return Boolean
+     */
+    public boolean isDoubleBuffer() {
+        return this.doubleBuffer;
+    }
+
+    /**
+     * Set using off screen image double buffering or not.
+     * @param value Boolean
+     */
+    public void setDoubleBuffer(boolean value) {
+        this.doubleBuffer = value;
     }
 
     /**
@@ -471,16 +491,26 @@ public class ChartPanel extends JPanel implements IChartPanel{
         g2.dispose();
     }
 
-    private void repaintNew() {
-        this.newPaint = true;
-        this.repaint();
-        this.updateViewImage();
+    /**
+     * New paint
+     */
+    public void repaintNew() {
+        if (this.doubleBuffer) {
+            this.paintGraphics();
+        } else {
+            this.newPaint = true;
+            this.repaint();
+            this.updateViewImage();
+        }
     }
 
     private void repaintOld() {
-        this.newPaint = false;
-        this.repaint();
-        //this.newPaint = true;
+        if (this.doubleBuffer) {
+            this.repaint();
+        } else {
+            this.newPaint = false;
+            this.repaint();
+        }
     }
 
     private void updateViewImage() {

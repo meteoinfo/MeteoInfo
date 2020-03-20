@@ -52,6 +52,9 @@ public class FrmSetting extends javax.swing.JDialog {
         TextEditor textEditor = this.parent.getEditorDock().getActiveTextEditor();
         Font font = textEditor.getTextArea().getFont();
         this.jTextField_Font.setText(font.getFontName() + "  " + String.valueOf(font.getSize()));
+        
+        //Double buffering
+        this.jCheckBox_DoubleBuffering.setSelected(this.parent.getOptions().isDoubleBuffer());
     }
 
     /**
@@ -71,6 +74,7 @@ public class FrmSetting extends javax.swing.JDialog {
         jLabel_Font = new javax.swing.JLabel();
         jTextField_Font = new javax.swing.JTextField();
         jButton_Font = new javax.swing.JButton();
+        jCheckBox_DoubleBuffering = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Setting");
@@ -101,27 +105,34 @@ public class FrmSetting extends javax.swing.JDialog {
             }
         });
 
+        jCheckBox_DoubleBuffering.setText("Double Buffering");
+
         javax.swing.GroupLayout jPanel_AppearanceLayout = new javax.swing.GroupLayout(jPanel_Appearance);
         jPanel_Appearance.setLayout(jPanel_AppearanceLayout);
         jPanel_AppearanceLayout.setHorizontalGroup(
             jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_AppearanceLayout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(jButton_Apply, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
-            .addGroup(jPanel_AppearanceLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel_LookFeel)
-                    .addComponent(jLabel_Font))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                .addGroup(jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_AppearanceLayout.createSequentialGroup()
-                        .addComponent(jTextField_Font)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton_Font, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jComboBox_LookFeel, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel_AppearanceLayout.createSequentialGroup()
+                        .addComponent(jCheckBox_DoubleBuffering, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel_AppearanceLayout.createSequentialGroup()
+                        .addGroup(jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel_LookFeel)
+                            .addComponent(jLabel_Font))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                        .addGroup(jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_AppearanceLayout.createSequentialGroup()
+                                .addComponent(jTextField_Font)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton_Font, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jComboBox_LookFeel, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_AppearanceLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton_Apply, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29))
         );
         jPanel_AppearanceLayout.setVerticalGroup(
             jPanel_AppearanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,9 +146,11 @@ public class FrmSetting extends javax.swing.JDialog {
                     .addComponent(jLabel_Font)
                     .addComponent(jTextField_Font, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton_Font))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox_DoubleBuffering)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton_Apply)
-                .addGap(17, 17, 17))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Appearance", jPanel_Appearance);
@@ -159,43 +172,51 @@ public class FrmSetting extends javax.swing.JDialog {
     private void jButton_ApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ApplyActionPerformed
         // TODO add your handling code here:
         
-        //Look and feel
-        String laf = this.jComboBox_LookFeel.getSelectedItem().toString();
-        String lafName = UIManager.getLookAndFeel().getClass().getName();
-        switch (laf) {
-            case "CDE/Motif":
-                lafName = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
-                break;
-            case "Metal":
-                lafName = "javax.swing.plaf.metal.MetalLookAndFeel";
-                break;
-            case "Windows":
-                lafName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-                break;
-            case "Windows Classic":
-                lafName = "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";
-                break;
-            case "Nimbus":  
-                lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
-                break;
-            case "Mac":
-                lafName = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
-                break;
-            case "GTK":
-                lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
-                break;
-            case "FlatLightLaf":
-            case "FlatDarkLaf":
-            case "FlatDarculaLaf":
-            case "FlatIntelliJLaf":
-                lafName = laf;
-                break;
-            default:
-                lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
-                break;
+        //Double buffering
+        boolean doubleBuffer = this.jCheckBox_DoubleBuffering.isSelected();
+        if (doubleBuffer != this.parent.getOptions().isDoubleBuffer()) {
+            this.parent.getOptions().setDoubleBuffer(doubleBuffer);
+            this.parent.getFigureDock().setDoubleBuffer(doubleBuffer);
         }
         
-        try {
+        //Look and feel
+        String laf = this.jComboBox_LookFeel.getSelectedItem().toString();
+        if (!laf.equals(this.parent.getOptions().getLookFeel())) {
+            String lafName = UIManager.getLookAndFeel().getClass().getName();
+            switch (laf) {
+                case "CDE/Motif":
+                    lafName = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+                    break;
+                case "Metal":
+                    lafName = "javax.swing.plaf.metal.MetalLookAndFeel";
+                    break;
+                case "Windows":
+                    lafName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+                    break;
+                case "Windows Classic":
+                    lafName = "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";
+                    break;
+                case "Nimbus":
+                    lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                    break;
+                case "Mac":
+                    lafName = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
+                    break;
+                case "GTK":
+                    lafName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+                    break;
+                case "FlatLightLaf":
+                case "FlatDarkLaf":
+                case "FlatDarculaLaf":
+                case "FlatIntelliJLaf":
+                    lafName = laf;
+                    break;
+                default:
+                    lafName = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+                    break;
+            }
+
+            try {
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 if (lafName.equals("FlatLightLaf")) {
                     UIManager.setLookAndFeel(new FlatLightLaf());
@@ -226,6 +247,7 @@ public class FrmSetting extends javax.swing.JDialog {
             } catch (UnsupportedLookAndFeelException ex) {
                 Logger.getLogger(FrmSetting.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
     }//GEN-LAST:event_jButton_ApplyActionPerformed
 
     private void jComboBox_LookFeelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_LookFeelActionPerformed
@@ -305,6 +327,7 @@ public class FrmSetting extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_Apply;
     private javax.swing.JButton jButton_Font;
+    private javax.swing.JCheckBox jCheckBox_DoubleBuffering;
     private javax.swing.JComboBox<String> jComboBox_LookFeel;
     private javax.swing.JLabel jLabel_Font;
     private javax.swing.JLabel jLabel_LookFeel;

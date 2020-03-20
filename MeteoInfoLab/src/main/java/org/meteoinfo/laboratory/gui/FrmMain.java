@@ -270,6 +270,9 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         //Add figure panel
         System.out.println("Add figure panel...");
         figuresDock = new FigureDockable(this, "Figures", "Figures");
+        figuresDock.setDoubleBuffer(this.options.isDoubleBuffer());
+
+        //Add variable panel
         this.variableDock = new VariableDockable("Variables", "Variable explorer");
         
         //Add file panel

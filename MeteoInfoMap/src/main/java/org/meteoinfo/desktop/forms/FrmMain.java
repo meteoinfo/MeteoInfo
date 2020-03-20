@@ -2163,6 +2163,10 @@ public class FrmMain extends JFrame implements IApplication {
         if (new File(pFile).exists()) {
             try {
                 _projectFile.loadProjFile(pFile);
+                for (MapFrame mapFrame : this._mapDocument.getMapFrames()) {
+                    mapFrame.getMapView().setDoubleBuffer(this._options.isDoubleBuffer());
+                }
+                this._mapDocument.getMapLayout().setDoubleBuffer(this._options.isDoubleBuffer());
             } catch (ParserConfigurationException | SAXException | IOException ex) {
                 Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -2777,6 +2781,7 @@ public class FrmMain extends JFrame implements IApplication {
         // TODO add your handling code here:
         MapFrame aMF = new MapFrame();
         aMF.setText(_mapDocument.getNewMapFrameName());
+        aMF.getMapView().setDoubleBuffer(this._options.isDoubleBuffer());
         _mapDocument.addMapFrame(aMF);
         _mapDocument.paintGraphics();
     }

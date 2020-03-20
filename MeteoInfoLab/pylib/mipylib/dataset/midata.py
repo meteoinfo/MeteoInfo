@@ -909,6 +909,8 @@ def add_bufr_lookup(lookup):
     """
     lookup_fp = lookup + '.fullpath'
     is_fullpath = True if os.path.isfile(lookup_fp) else False
+    tb_fn = ""
+    td_fn = ""
     if is_fullpath:
         with open(lookup_fp, 'r') as f:
             for line in f:
@@ -943,4 +945,8 @@ def add_bufr_lookup(lookup):
         with open(lookup_fp, 'w') as f:
             f.write(data)
 
-    BufrTables.addLookupFile(lookup_fp)
+    if os.path.isfile(tb_fn) and os.path.isfile(td_fn):
+        BufrTables.addLookupFile(lookup_fp)
+        return True
+    else:
+        return False

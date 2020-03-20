@@ -16,7 +16,7 @@ mi_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file_
 migl.mifolder = mi_dir
 
 lookup_cma = os.path.join(mi_dir, 'tables', 'bufr', 'tablelookup_cma.csv')
-#print(lookup_cma)
 if os.path.isfile(lookup_cma):
-    dataset.add_bufr_lookup(lookup_cma)
-    print('CMA Bufr lookup file added.')
+    is_ok = dataset.add_bufr_lookup(lookup_cma)
+    if is_ok:
+        print('CMA Bufr lookup file added.')

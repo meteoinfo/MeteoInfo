@@ -480,7 +480,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
     private void repaintOld() {
         this.newPaint = false;
         this.repaint();
-        this.newPaint = true;
+        //this.newPaint = true;
     }
 
     private void updateViewImage() {
@@ -800,7 +800,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                         }
                         projector.setElevationAngle(new_value);
                     }
-                    repaintOld();
+                    this.repaintNew();
                     //this.paintGraphics();
 //                    if (!model.isExpectDelay()) {
 //                        repaint();
@@ -999,7 +999,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                 } else {
                     ((AbstractPlot2D) plt).setDrawExtent(new Extent(minX, maxX, minY, maxY));
                     //this.paintGraphics();
-                    this.repaintOld();
+                    this.repaintNew();
                 }
                 break;
         }

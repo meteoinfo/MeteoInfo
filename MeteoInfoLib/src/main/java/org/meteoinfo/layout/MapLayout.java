@@ -65,18 +65,8 @@ import org.meteoinfo.shape.PolylineShape;
 import org.meteoinfo.shape.RectangleShape;
 import org.meteoinfo.shape.ShapeTypes;
 import org.meteoinfo.shape.WindArrow;
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -179,6 +169,7 @@ public class MapLayout extends JPanel implements IWebMapPanel {
     private LayoutMap _currentLayoutMap;
     private BufferedImage _layoutBitmap = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     private BufferedImage _tempImage = null;
+    private boolean newPaint = true;
     private boolean _antiAlias = false;
     private FrmLabelSymbolSet _frmLabelSymbolSet = null;
     private FrmPointSymbolSet _frmPointSymbolSet = null;
@@ -478,7 +469,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
             }
             this._pageLocation.X = x;
         }
-        this.paintGraphics();
+        //this.paintGraphics();
+        this.repaintNew();
         //this.repaint();
     }
 
@@ -498,7 +490,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                 this._hScrollBar.setSize(this.getWidth(), this._hScrollBar.getHeight());
             }
 
-            this.paintGraphics();
+            //this.paintGraphics();
+            this.repaintNew();
         }
     }
 
@@ -545,7 +538,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                     Graphic aGraphic = new Graphic(aPS, (PointBreak) _defPointBreak.clone());
                     LayoutGraphic aLayoutGraphic = new LayoutGraphic(aGraphic, this);
                     addElement(aLayoutGraphic);
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                     UndoableEdit edit = (new MapLayoutUndoRedo()).new AddElementEdit(this, aLayoutGraphic);
                     this.fireUndoEditEvent(edit);
                     break;
@@ -555,7 +549,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                     aGraphic = new Graphic(aPS, (LabelBreak) _defLabelBreak.clone());
                     aLayoutGraphic = new LayoutGraphic(aGraphic, this);
                     addElement(aLayoutGraphic);
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                     edit = (new MapLayoutUndoRedo()).new AddElementEdit(this, aLayoutGraphic);
                     this.fireUndoEditEvent(edit);
                     break;
@@ -610,7 +605,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                                                 org.meteoinfo.shape.Shape aShape = aLayer.getShapes().get(shapeIdx);
                                                 aLayer.setIdentiferShape(shapeIdx);
                                                 _currentLayoutMap.getMapFrame().getMapView().setDrawIdentiferShape(true);
-                                                this.repaint();
+                                                //this.repaint();
+                                                this.repaintOld();
                                                 //_currentLayoutMap.getMapFrame().getMapView().drawIdShape((Graphics2D) this.getGraphics(), aLayer.getShapes().get(shapeIdx), rect);
                                                 double value = 0.0;
                                                 switch (aShape.getShapeType()) {
@@ -691,7 +687,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                     this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
                             getImage(this.getClass().getResource("/images/zoom_in_32x32x32.png")), new Point(8, 8), "Zoom In"));
 
-                    this.repaint();
+                    //this.repaint();
+                    this.repaintOld();
                 }
                 break;
             case Map_Pan:
@@ -746,11 +743,13 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                 }
                 break;
             case Map_SelectFeatures_Rectangle:
-                this.repaint();
+                //this.repaint();
+                this.repaintOld();
                 break;
             case MoveSelection:
                 this.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-                this.repaint();
+                //this.repaint();
+                this.repaintOld();
                 break;
             case ResizeSelected:
                 LayoutElement oElement = _selectedElements.get(0);
@@ -818,7 +817,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                         }
                         break;
                 }
-                this.repaint();
+                //this.repaint();
+                this.repaintOld();
                 break;
             case New_Rectangle:
             case New_Ellipse:
@@ -827,10 +827,12 @@ public class MapLayout extends JPanel implements IWebMapPanel {
             case Map_SelectFeatures_Polygon:
             case Map_SelectFeatures_Lasso:
             case Map_SelectFeatures_Circle:
-                this.repaint();
+                //this.repaint();
+                this.repaintOld();
                 break;
             case InEditingVertices:
-                this.repaint();
+                //this.repaint();
+                this.repaintOld();
                 break;
         }
     }
@@ -952,16 +954,21 @@ public class MapLayout extends JPanel implements IWebMapPanel {
             case New_CurvePolygon:
             case Map_SelectFeatures_Polygon:
                 if (!_startNewGraphic) {
-                    this.repaint();
+                    //this.repaint();
+                    this.repaintOld();
                 }
                 break;
             case EditVertices:
                 if (_selectedElements.size() > 0) {
                     _editingVerticeIndex = selectEditVertices(pageP, ((LayoutGraphic) _selectedElements.get(0)).getGraphic().getShape(),
                             _editingVertices);
+                    Toolkit toolkit = Toolkit.getDefaultToolkit();
                     if (_editingVerticeIndex >= 0) {
                         this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
                                 getImage(this.getClass().getResource("/images/VertexEdit_32x32x32.png")), new Point(8, 8), "Vertices edit"));
+                    } else {
+                        Image image = toolkit.getImage(this.getClass().getResource("/images/Edit_tool.png"));
+                        this.setCursor(toolkit.createCustomCursor(image, new Point(2, 2), "Edit Tool"));
                     }
                 }
                 break;
@@ -980,7 +987,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                             if (!_startNewGraphic) {
                                 //Draw graphic                                    
                                 //g.SmoothingMode = SmoothingMode.AntiAlias;
-                                this.repaint();
+                                //this.repaint();
+                                this.repaintOld();
                                 PointF[] fpoints = (PointF[]) _graphicPoints.toArray(new PointF[_graphicPoints.size()]);
                                 PointF[] points = new PointF[fpoints.length + 1];
                                 System.arraycopy(fpoints, 0, points, 0, fpoints.length);
@@ -1137,7 +1145,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                         }
                         _currentLayoutMap.getMapFrame().getMapView().fireShapeSelectedEvent();
                     }
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                     break;
                 case CreateSelection:
                     //Remove selected graphics
@@ -1148,7 +1157,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
 
                     //Select elements
                     if (Math.abs(e.getX() - _mouseDownPoint.x) > 2 || Math.abs(e.getY() - _mouseDownPoint.y) > 2) {
-                        this.paintGraphics();
+                        //this.paintGraphics();
+                        this.repaintNew();
                         return;
                     }
 
@@ -1166,7 +1176,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                     this.fireElementSelectedEvent();
 
                     _mouseMode = MouseMode.Select;
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                     break;
                 case MoveSelection:
                     //Select elements
@@ -1206,7 +1217,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                     }
 
                     _mouseMode = MouseMode.Select;
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                     break;
                 case ResizeSelected:
                     _mouseMode = MouseMode.Select;
@@ -1227,7 +1239,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                     oElement.setWidth((int) (maxP.X - minP.X));
                     oElement.setHeight((int) (maxP.Y - minP.Y));
                     oElement.resizeUpdate();
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                     break;
                 case New_Rectangle:
                 case New_Ellipse:
@@ -1266,11 +1279,13 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                         if (aGraphic != null) {
                             LayoutGraphic lg = new LayoutGraphic(aGraphic, this);
                             addElement(lg);
-                            this.paintGraphics();
+                            //this.paintGraphics();
+                            this.repaintNew();
                             edit = (new MapLayoutUndoRedo()).new AddElementEdit(this, lg);
                             this.fireUndoEditEvent(edit);
                         } else {
-                            this.repaint();
+                            //this.repaint();
+                            this.repaintOld();
                         }
                     }
                     break;
@@ -1292,7 +1307,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                         Graphic aGraphic = new Graphic(aPLS, (PolylineBreak) _defPolylineBreak.clone());
                         LayoutGraphic lg = new LayoutGraphic(aGraphic, this);
                         addElement(lg);
-                        this.paintGraphics();
+                        //this.paintGraphics();
+                        this.repaintNew();
                         edit = (new MapLayoutUndoRedo()).new AddElementEdit(this, lg);
                         this.fireUndoEditEvent(edit);
                     }
@@ -1322,7 +1338,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                         Graphic aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                         LayoutGraphic lg = new LayoutGraphic(aGraphic, this);
                         addElement(lg);
-                        this.paintGraphics();
+                        //this.paintGraphics();
+                        this.repaintNew();
                         edit = (new MapLayoutUndoRedo()).new AddElementEdit(this, lg);
                         this.fireUndoEditEvent(edit);
                     }
@@ -1334,7 +1351,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                     this.fireUndoEditEvent(edit);
                     lg.verticeEditUpdate(_editingVerticeIndex, pageP.x, pageP.y);
                     _mouseMode = MouseMode.EditVertices;
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                     break;
             }
         }
@@ -1367,7 +1385,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                                         @Override
                                         public void windowClosed(WindowEvent e) {
                                             _currentLayoutMap.getMapFrame().getMapView().setDrawIdentiferShape(false);
-                                            repaint();
+                                            //repaint();
+                                            repaintOld();
                                         }
                                     });
                                 }
@@ -1405,7 +1424,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                                     this._frmIdentifer.setVisible(true);
                                 }
 
-                                this.repaint();
+                                //this.repaint();
+                                this.repaintOld();
                                 //Rectangle rect = getElementViewExtent(_currentLayoutMap);
                                 //_currentLayoutMap.getMapFrame().getMapView().drawIdShape(this.createGraphics(), aLayer.getShapes().get(shapeIdx), rect);
                             }
@@ -1602,7 +1622,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                         _selectedElements.add(aElement);
                         _selectedElements.get(0).setSelected(true);
                     }
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
 
                     if (aElement.getElementType() == ElementType.LayoutGraphic) {
                         Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
@@ -1709,7 +1730,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                             if (aGraphic != null) {
                                 LayoutGraphic lg = new LayoutGraphic(aGraphic, this);
                                 addElement(lg);
-                                this.paintGraphics();
+                                //this.paintGraphics();
+                                this.repaintNew();
                                 UndoableEdit edit = (new MapLayoutUndoRedo()).new AddElementEdit(this, lg);
                                 this.fireUndoEditEvent(edit);
                             } else {
@@ -1732,7 +1754,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         if (idx < _layoutElements.size() - 1) {
             _layoutElements.remove(aLE);
             _layoutElements.add(aLE);
-            this.paintGraphics();
+            //this.paintGraphics();
+            this.repaintNew();
         }
     }
 
@@ -1742,7 +1765,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         if (idx > 0) {
             _layoutElements.remove(aLE);
             _layoutElements.add(0, aLE);
-            this.paintGraphics();
+            //this.paintGraphics();
+            this.repaintNew();
         }
     }
 
@@ -1752,7 +1776,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         if (idx < _layoutElements.size() - 1) {
             _layoutElements.remove(aLE);
             _layoutElements.add(idx + 1, aLE);
-            this.paintGraphics();
+            //this.paintGraphics();
+            this.repaintNew();
         }
     }
 
@@ -1762,7 +1787,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         if (idx > 0) {
             _layoutElements.remove(aLE);
             _layoutElements.add(idx - 1, aLE);
-            this.paintGraphics();
+            //this.paintGraphics();
+            this.repaintNew();
         }
     }
 
@@ -1773,7 +1799,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         Collections.reverse(points);
         aGraphic.getShape().setPoints(points);
 
-        this.paintGraphics();
+        //this.paintGraphics();
+        this.repaintNew();
     }
 
     private void onGraphicSmoothClick(ActionEvent e) {
@@ -1796,7 +1823,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         }
         aGraphic.getShape().setPoints(newPoints);
         ((LayoutGraphic) aElement).updateControlSize();
-        this.paintGraphics();
+        //this.paintGraphics();
+        this.repaintNew();
     }
     
     private void onGraphicAngleClick(ActionEvent e) {
@@ -1806,7 +1834,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         String angleStr = JOptionPane.showInputDialog(this, "Ellipse angle:", es.getAngle());
         if (angleStr != null){
             es.setAngle(Float.parseFloat(angleStr));
-            this.paintGraphics();
+            //this.paintGraphics();
+            this.repaintNew();
         }       
     }
 
@@ -1915,7 +1944,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                         "Select wind speed:", "Selection", JOptionPane.PLAIN_MESSAGE, null, lens, (int) wa.length);
                 if (lenObj != null) {
                     wa.length = Integer.parseInt(lenObj.toString());
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                 }
                 break;
         }
@@ -1963,7 +1993,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                             aElement.moveUpdate();
                         }
                     }
-                    this.paintGraphics();
+                    //this.paintGraphics();
+                    this.repaintNew();
                     break;
             }
         }
@@ -1978,7 +2009,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
 
         _selectedElements.clear();
         _startNewGraphic = true;
-        paintGraphics();
+        //paintGraphics();
+        this.repaintNew();
     }
 
     // </editor-fold>
@@ -2439,7 +2471,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
     
     @Override
     public void reDraw(){
-        this.paintGraphics();
+        //this.paintGraphics();
+        this.repaintNew();
     }
     
     @Override
@@ -2450,11 +2483,16 @@ public class MapLayout extends JPanel implements IWebMapPanel {
         g2.setColor(this.getBackground());
         g2.clearRect(0, 0, this.getWidth(), this.getHeight());
         g2.fillRect(0, 0, this.getWidth(), this.getHeight());
-        //g2.drawImage(this._layoutBitmap, _xShift, _yShift, this.getBackground(), this);
-        AffineTransform mx = new AffineTransform();
-        mx.translate((float) _xShift, (float) _yShift);
-        AffineTransformOp aop = new AffineTransformOp(mx, AffineTransformOp.TYPE_BILINEAR);
-        g2.drawImage(this._layoutBitmap, aop, 0, 0);
+
+        if (this.newPaint) {
+            this.paintGraphicsAll(g2);
+        } else {
+            //g2.drawImage(this._layoutBitmap, _xShift, _yShift, this.getBackground(), this);
+            AffineTransform mx = new AffineTransform();
+            mx.translate((float) _xShift, (float) _yShift);
+            AffineTransformOp aop = new AffineTransformOp(mx, AffineTransformOp.TYPE_BILINEAR);
+            g2.drawImage(this._layoutBitmap, aop, 0, 0);
+        }
 
         if (this._dragMode) {
             Rectangle rect = new Rectangle();
@@ -2599,6 +2637,101 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                 }
             }
         }
+    }
+
+    private void repaintNew() {
+        this.newPaint = true;
+        this.repaint();
+        this.updateViewImage();
+    }
+
+    private void repaintOld() {
+        this.newPaint = false;
+        this.repaint();
+        //this.newPaint = true;
+    }
+
+    private void updateViewImage() {
+        if (this.getWidth() < 5 || this.getHeight() < 5) {
+            return;
+        }
+
+        int width = this.getWidth();
+        int height = this.getHeight();
+
+        this._layoutBitmap = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = this._layoutBitmap.createGraphics();
+        this.print(g);
+        g.dispose();
+    }
+
+    public void paintGraphicsAll(Graphics2D g) {
+        if (this._lockViewUpdate) {
+            return;
+        }
+
+        if (this.getWidth() < 10 || this.getHeight() < 10) {
+            return;
+        }
+
+        if ((this._pageBounds.width < 2) || (this._pageBounds.height < 2)) {
+            return;
+        }
+
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        //Judge if show scroll bar
+        int pageHeight = (int) (_pageBounds.height * _zoom);
+        int pageWidth = (int) (_pageBounds.width * _zoom);
+        if (pageHeight > this.getHeight()) {
+            int sHeight = pageHeight - this.getHeight() + 40;
+            _vScrollBar.setMinimum(0);
+            _vScrollBar.setMaximum(pageHeight);
+            _vScrollBar.setVisibleAmount(pageHeight - sHeight);
+            _vScrollBar.setUnitIncrement(pageHeight / 10);
+            _vScrollBar.setBlockIncrement(pageHeight / 5);
+            if (_vScrollBar.getWidth() == 0) {
+                _vScrollBar.setSize(21, this._vScrollBar.getHeight());
+            }
+
+            if (_vScrollBar.isVisible() == false) {
+                _vScrollBar.setValue(0);
+                _vScrollBar.setVisible(true);
+            }
+        } else {
+            _pageBounds.y = 0;
+            this._pageLocation.Y = 0;
+            _vScrollBar.setVisible(false);
+        }
+
+        if (pageWidth > this.getWidth()) {
+            int sWidth = pageWidth - this.getWidth() + 40;
+            _hScrollBar.setMinimum(0);
+            _hScrollBar.setMaximum(pageWidth);
+            _hScrollBar.setVisibleAmount(pageWidth - sWidth);
+            _hScrollBar.setUnitIncrement(pageWidth / 10);
+            _hScrollBar.setBlockIncrement(pageWidth / 5);
+            if (this._hScrollBar.getHeight() == 0) {
+                this._hScrollBar.setSize(this._hScrollBar.getWidth(), 21);
+            }
+
+            if (_hScrollBar.isVisible() == false) {
+                _hScrollBar.setValue(0);
+                _hScrollBar.setVisible(true);
+            }
+        } else {
+            _pageBounds.x = 0;
+            this._pageLocation.X = 0;
+            _hScrollBar.setVisible(false);
+        }
+
+        //Draw bound rectangle
+        Rectangle.Float aRect = pageToScreen(_pageBounds.x, _pageBounds.y, _pageBounds.width, _pageBounds.height);
+        g.setColor(_pageBackColor);
+        g.fill(aRect);
+
+        //Draw layout elements
+        paintGraphicsOnLayout(g);
     }
 
     public void paintGraphics() {
@@ -3157,7 +3290,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                 @Override
                 public void mapViewUpdatedEvent(MapViewUpdatedEvent event) {
                     //if (aLM.getMapFrame().isFireMapViewUpdate()) {
-                    paintGraphics();
+                    //paintGraphics();
+                    repaintNew();
                     //}
                 }
             });
@@ -3653,7 +3787,8 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                 @Override
                 public void windowClosed(WindowEvent e) {
                     _currentLayoutMap.getMapFrame().getMapView().setDrawIdentiferShape(false);
-                    repaint();
+                    //repaint();
+                    repaintOld();
                 }
             });
             _frmMeasure.setLocationRelativeTo(this);

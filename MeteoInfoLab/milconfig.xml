@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\contour">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
@@ -14,8 +14,8 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\weather"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,14 +23,16 @@
       <OpenedFile File="D:\Run\emips\run_meic\run_batch.py"/>
       <OpenedFile File="D:\Run\emips\run_meic\merge_sector.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\modis\MCD19_A2_4.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\modis\MCD19_A2_3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\contourf_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contour_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Run\emips\run_meic\lump-VOC.py"/>
       <RecentFile File="D:\Run\emips\run_meic\run_batch.py"/>
       <RecentFile File="D:\Run\emips\run_meic\merge_sector.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\modis\MCD19_A2_4.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\modis\MCD19_A2_3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\contourf_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contour_2.py"/>
     </RecentFiles>
   </File>
   <Font>

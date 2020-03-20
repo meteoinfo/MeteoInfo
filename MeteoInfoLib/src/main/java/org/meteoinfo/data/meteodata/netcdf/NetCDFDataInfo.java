@@ -543,7 +543,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     Array params = NCUtil.convertArray(paraAtt.getValues());
                     if (proj.contains("GCTP_SNSOID")) {
                         projStr = "+proj=sinu"
-                                + "+lon_0=" + params.getObject(4).toString();
+                                + "+lon_0=" + params.getObject(4).toString()
+                                + "+a=" + params.getObject(0).toString()
+                                + "+b=" + params.getObject(0).toString();
                     } else if (proj.contains("GCTP_CEA")) {
                         projStr = "+proj=cea"
                                 + "+lon_0=" + params.getObject(4).toString()
@@ -582,9 +584,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 Dimension yDim = this.findDimension("YDim");
                 int xnum = xDim.getLength();
                 int ynum = yDim.getLength();
-                double xdelt = (xmax - xmin) / (xnum - 1);
-                double ydelt = (ymax - ymin) / (ynum - 1);
+                double xdelt = (xmax - xmin) / xnum;
+                double ydelt = (ymax - ymin) / ynum;
                 double[] X = new double[xnum];
+                xmin = xmin + xdelt * 0.5;
                 for (int i = 0; i < xnum; i++) {
                     X[i] = xmin + xdelt * i;
                 }
@@ -592,6 +595,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 xDim.setValues(X);
                 this.setXDimension(xDim);
                 double[] Y = new double[ynum];
+                ymin = ymin + ydelt * 0.5;
                 for (int i = 0; i < ynum; i++) {
                     Y[i] = ymin + ydelt * i;
                 }
@@ -1844,7 +1848,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         dataInfo += System.getProperty("line.separator") + "Variations: " + _variables.size();
         for (i = 0; i < _variables.size(); i++) {
             dataInfo += System.getProperty("line.separator") + "\t" + _variables.get(i).getDataType().toString()
-                    + " " + _variables.get(i).getShortName() + "(";
+                    + " " + _variables.get(i).getFullName() + "(";
             List<ucar.nc2.Dimension> dims = _variables.get(i).getDimensions();
             for (j = 0; j < dims.size(); j++) {
                 dataInfo += dims.get(j).getShortName() + ",";

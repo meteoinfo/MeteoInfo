@@ -535,24 +535,31 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
     
     :returns: (*NDArray*) Projected array
     """
-    if isinstance(a, DimArray):
-        y = a.dimvalue(a.ndim - 2)
-        x = a.dimvalue(a.ndim - 1)
-        if fromproj is None:
+    if x is None or y is None:
+        if isinstance(a, DimArray):
+            y = a.dimvalue(a.ndim - 2)
+            x = a.dimvalue(a.ndim - 1)
+        else:
+            raise ValueError('Input x/y coordinates are None')
+
+    if fromproj is None:
+        if isinstance(a, DimArray):
             fromproj = a.proj
+        else:
+            fromproj = KnownCoordinateSystems.geographic.world.WGS1984
             
     if toproj is None:
         toproj = KnownCoordinateSystems.geographic.world.WGS1984
-    
-    if xp is None or yp is None:
-        pr = Reproject.reproject(a.asarray(), x.aslist(), y.aslist(), fromproj, toproj)
-        r = pr[0]        
-        return NDArray(r)
-    
+
     if method == 'bilinear':
         method = ResampleMethods.Bilinear
     else:
         method = ResampleMethods.NearestNeighbor
+
+    if xp is None or yp is None:
+        pr = Reproject.reproject(a.asarray(), x.aslist(), y.aslist(), fromproj, toproj, method)
+        return NDArray(pr[0]), NDArray(pr[1]), NDArray(pr[2])
+
     if isinstance(xp, (list, tuple)):
         xp = NDArray(xp)
     if isinstance(yp, (list, tuple)):

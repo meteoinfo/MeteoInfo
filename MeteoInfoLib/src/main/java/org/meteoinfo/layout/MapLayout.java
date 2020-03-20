@@ -169,7 +169,7 @@ public class MapLayout extends JPanel implements IWebMapPanel {
     private LayoutMap _currentLayoutMap;
     private BufferedImage _layoutBitmap = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     private BufferedImage _tempImage = null;
-    private boolean newPaint = true;
+    private boolean newPaint = false;
     private boolean _antiAlias = false;
     private FrmLabelSymbolSet _frmLabelSymbolSet = null;
     private FrmPointSymbolSet _frmPointSymbolSet = null;
@@ -2640,15 +2640,16 @@ public class MapLayout extends JPanel implements IWebMapPanel {
     }
 
     private void repaintNew() {
-        this.newPaint = true;
+        /*this.newPaint = true;
         this.repaint();
-        this.updateViewImage();
+        this.updateViewImage();*/
+
+        this.paintGraphics();
     }
 
     private void repaintOld() {
-        this.newPaint = false;
+        //this.newPaint = false;
         this.repaint();
-        //this.newPaint = true;
     }
 
     private void updateViewImage() {

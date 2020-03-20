@@ -84,20 +84,8 @@ import org.meteoinfo.shape.PolylineShape;
 import org.meteoinfo.shape.RectangleShape;
 import org.meteoinfo.shape.Shape;
 import org.meteoinfo.shape.ShapeTypes;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.TexturePaint;
-import java.awt.Toolkit;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -228,7 +216,7 @@ public class MapView extends JPanel implements IWebMapPanel {
     private FrmMeasurement _frmMeasure = null;
     private BufferedImage _mapBitmap = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     //private BufferedImage _tempImage = null;
-    private boolean newPaint = true;
+    private boolean newPaint = false;
     private boolean _antiAlias = false;
     private boolean _pointAntiAlias = true;
     private boolean _highSpeedWheelZoom = true;
@@ -4106,15 +4094,16 @@ public class MapView extends JPanel implements IWebMapPanel {
     }
 
     private void repaintNew() {
-        this.newPaint = true;
+        /*this.newPaint = true;
         this.repaint();
-        this.updateViewImage();
+        this.updateViewImage();*/
+
+        this.paintLayers();
     }
 
     private void repaintOld() {
-        this.newPaint = false;
+        //this.newPaint = false;
         this.repaint();
-        //this.newPaint = true;
     }
 
     private void updateViewImage() {
@@ -4141,7 +4130,6 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         if (!this._lockViewUpdate) {
             this._mapBitmap = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            //this._mapBitmap = (BufferedImage)this.createImage(this.getWidth(), this.getHeight());
             Graphics2D g = this._mapBitmap.createGraphics();
             if (this.getBackground() != null) {
                 g.setColor(this.getBackground());

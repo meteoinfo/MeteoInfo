@@ -1,7 +1,8 @@
 from org.apache.commons.math3.analysis import UnivariateFunction
 from org.meteoinfo.math.optimize import OptimizeUtil
 from org.apache.commons.math3.fitting.leastsquares import LeastSquaresBuilder, LevenbergMarquardtOptimizer
-import mipylib.numeric as np
+#import mipylib.numeric as np
+from ...core import numeric as np
 from .common import in_bounds
 
 def prepare_bounds(bounds, n):

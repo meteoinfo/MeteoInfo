@@ -52,7 +52,7 @@ class DimVariable(object):
         self.proj = None if dataset is None else dataset.proj
             
     def __len__(self):
-        len = 1;
+        len = 1
         if not self.variable is None:
             for dim in self.variable.getDimensions():
                 len = len * dim.getLength()            
@@ -62,7 +62,7 @@ class DimVariable(object):
         if self.variable is None:
             return 'None'
             
-        r = self.datatype.toString() + ' ' + self.name + '('
+        r = str(self.dtype) + ' ' + self.name + '('
         for dim in self.dims:
             dimname = dim.getShortName()
             if dimname is None:

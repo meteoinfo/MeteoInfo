@@ -186,6 +186,87 @@ public class ArrayUtil {
     }
 
     /**
+     * Create a binary file
+     * @param fn The file path
+     * @return EndianDataOutputStream
+     */
+    public static EndianDataOutputStream createBinFile(String fn) throws IOException {
+        DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(fn)));
+        EndianDataOutputStream outs = new EndianDataOutputStream(out);
+        return outs;
+    }
+
+    /**
+     * Save an array data to a binary file
+     *
+     * @param outs EndianDataOutputStream
+     * @param a Array
+     * @param byteOrder Byte order
+     * @param sequential If write as sequential binary file - Fortran
+     */
+    public static void writeBinFile(EndianDataOutputStream outs, Array a, String byteOrder,
+                                   boolean sequential) {
+        try {
+            ByteBuffer bb = a.getDataAsByteBuffer();
+            int n = (int) a.getSize();
+            ByteOrder bOrder = ByteOrder.LITTLE_ENDIAN;
+            if (byteOrder.equalsIgnoreCase("big_endian")) {
+                bOrder = ByteOrder.BIG_ENDIAN;
+            }
+
+            if (sequential) {
+                if (bOrder == ByteOrder.BIG_ENDIAN) {
+                    outs.writeIntBE(n * 4);
+                } else {
+                    outs.writeIntLE(n * 4);
+                }
+            }
+
+            if (bOrder == ByteOrder.BIG_ENDIAN) {
+                outs.write(bb.array());
+            } else if (a.getDataType() == DataType.BYTE) {
+                outs.write(bb.array());
+            } else {
+                ByteBuffer nbb = ByteBuffer.allocate(bb.array().length);
+                nbb.order(bOrder);
+                switch (a.getDataType()) {
+                    case INT:
+                        for (int i = 0; i < a.getSize(); i++) {
+                            nbb.putInt(i * 4, bb.getInt());
+                            //nbb.putInt(a.getInt(i));
+                        }
+                        break;
+                    case FLOAT:
+                        for (int i = 0; i < a.getSize(); i++) {
+                            nbb.putFloat(i * 4, bb.getFloat());
+                        }
+                        break;
+                    case DOUBLE:
+                        for (int i = 0; i < a.getSize(); i++) {
+                            nbb.putDouble(i * 8, bb.getDouble());
+                        }
+                        break;
+                    default:
+                        nbb.put(bb);
+                }
+                outs.write(nbb.array());
+            }
+
+            if (sequential) {
+                if (bOrder == ByteOrder.BIG_ENDIAN) {
+                    outs.writeIntBE(n * 4);
+                } else {
+                    outs.writeIntLE(n * 4);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ArrayUtil.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ArrayUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
      * Save an array data to a binary file
      *
      * @param fn File path

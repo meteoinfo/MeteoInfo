@@ -29,7 +29,7 @@ __all__ = [
     'addfile','addfiles','addfile_arl','addfile_ascii_grid','addfile_awx','addfile_geotiff',
     'addfile_grads','addfile_hyconc','addfile_hytraj','addfile_lonlat','addfile_micaps',
     'addfile_mm5','addfile_nc','addfile_grib','addfile_surfer','add_bufr_lookup',
-    'addtimedim','joinncfile','asciiread','asciiwrite','binread','binwrite',
+    'addtimedim','joinncfile','asciiread','asciiwrite','bincreate','binread','binwrite',
     'numasciicol','numasciirow','readtable','convert2nc','dimension','grads2nc','ncwrite'
     ]
 
@@ -549,18 +549,35 @@ def binread(fn, dim, datatype=None, skip=0, byteorder='little_endian'):
         raise IOError('No such file: ' + fn)
     r = ArrayUtil.readBinFile(fn, dim, datatype, skip, byteorder);
     return NDArray(r)
+
+def bincreate(fn):
+    """
+    Create a binary data file.
+
+    :param fn: (*str*) The file path.
+    :return: (*EndianDataOutputStream*) File data stream.
+    """
+    r = ArrayUtil.createBinFile(fn)
+    if r is None:
+        raise IOError(fn)
+    else:
+        return r
         
-def binwrite(fn, data, byteorder='little_endian', append=False, sequential=False):
+def binwrite(out, data, byteorder='little_endian', append=False, sequential=False):
     """
     Create a binary data file from an array variable.
     
-    :param fn: (*string*) Path needed to locate binary file.
+    :param out: (*string or EndianDataOutputStream*) File path or data output stream.
     :param data: (*array_like*) A numeric array variable of any dimensionality.
     :param byteorder: (*string*) Byte order. ``little_endian`` or ``big_endian``.
-    :param append: (*boolean*) Append to an existing file or not.
+    :param append: (*boolean*) Append to an existing file or not. Only valid when ``out``
+        is file path.
     :param sequential: (*boolean*) If write binary data as sequential - Fortran
     """
-    ArrayUtil.saveBinFile(fn, data.asarray(), byteorder, append, sequential)  
+    if isinstance(out, basestring):
+        ArrayUtil.saveBinFile(out, data.asarray(), byteorder, append, sequential)
+    else:
+        ArrayUtil.writeBinFile(out, data.asarray(), byteorder, sequential)
     
 def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=False):
     """

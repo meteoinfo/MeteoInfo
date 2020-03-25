@@ -364,6 +364,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             DSET = aDir + File.separator + DSET.substring(2);
                         } else {
                             errorStr = "The data file is not exist!" + System.getProperty("line.separator") + DSET;
+                            System.out.println(errorStr);
                         }
                         //goto ERROR;
                     }

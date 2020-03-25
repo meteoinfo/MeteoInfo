@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Run\emips\run_meic">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+  <Path OpenPath="D:\Run\emips\test">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\weather"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
@@ -13,22 +8,27 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Run\emips\test"/>
-    <RecentFolder Folder="D:\Run\emips"/>
+    <RecentFolder Folder="D:\Run\emips\run_htap\setting"/>
+    <RecentFolder Folder="D:\Run"/>
+    <RecentFolder Folder="D:\Run\emips\run_meic\setting"/>
     <RecentFolder Folder="D:\Run\emips\run_meic"/>
+    <RecentFolder Folder="D:\Run\emips\run_htap"/>
+    <RecentFolder Folder="D:\Run\emips\run_merge"/>
+    <RecentFolder Folder="D:\Run\emips"/>
+    <RecentFolder Folder="D:\Run\emips\test"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Run\emips\run_meic\lump-VOC.py"/>
-      <OpenedFile File="D:\Run\emips\run_meic\run_batch.py"/>
-      <OpenedFile File="D:\Run\emips\run_meic\merge_sector.py"/>
-      <OpenedFile File="D:\Run\emips\run_meic\test_read_nc.py"/>
+      <OpenedFile File="D:\Run\emips\run_merge\merge_meic-htap.py"/>
+      <OpenedFile File="D:\Run\emips\run_merge\convert_grads.py"/>
+      <OpenedFile File="D:\Run\emips\run_merge\test_read_ctl.py"/>
+      <OpenedFile File="D:\Run\emips\test\test_plot_old_emis.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Run\emips\run_meic\lump-VOC.py"/>
-      <RecentFile File="D:\Run\emips\run_meic\run_batch.py"/>
-      <RecentFile File="D:\Run\emips\run_meic\merge_sector.py"/>
-      <RecentFile File="D:\Run\emips\run_meic\test_read_nc.py"/>
+      <RecentFile File="D:\Run\emips\run_merge\merge_meic-htap.py"/>
+      <RecentFile File="D:\Run\emips\run_merge\convert_grads.py"/>
+      <RecentFile File="D:\Run\emips\run_merge\test_read_ctl.py"/>
+      <RecentFile File="D:\Run\emips\test\test_plot_old_emis.py"/>
     </RecentFiles>
   </File>
   <Font>

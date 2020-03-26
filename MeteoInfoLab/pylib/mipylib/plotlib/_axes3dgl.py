@@ -121,7 +121,9 @@ class Axes3DGL(Axes3D):
         :param position: (*list of float*) Lighting position.
         :param ambient: (*list of float*) Ambient light.
         :param diffuse: (*list of float*) Diffuse light.
-        :param specular: (*list of float*) Specular light.        
+        :param specular: (*list of float*) Specular light.
+        :param mat_specular: (*list of float*) Material specular light.
+        :param mat_shininess: (*float*) Material shininess (0 - 128).
         '''
         lighting = self.axes.getLighting()
         lighting.setEnable(enable)
@@ -137,6 +139,12 @@ class Axes3DGL(Axes3D):
         specular = kwargs.pop('specular', None)
         if not specular is None:
             lighting.setSpecular(specular)
+        mat_specular = kwargs.pop('mat_specular', None)
+        if not mat_specular is None:
+            lighting.setMat_Specular(mat_specular)
+        mat_shininess = kwargs.pop('mat_shininess', None)
+        if not mat_shininess is None:
+            lighting.setMat_Shininess(mat_shininess)
 
     def bar(self, x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
         """

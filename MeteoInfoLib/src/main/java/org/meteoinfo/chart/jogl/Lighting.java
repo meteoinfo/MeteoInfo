@@ -283,18 +283,22 @@ public class Lighting {
      * @param gl GL2
      */
     public void start(GL2 gl) {
+        //gl.glShadeModel(GL2.GL_SMOOTH);
+
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(this.light);
         gl.glEnable(GL2.GL_DEPTH_TEST);
-        gl.glLightfv(this.light, GL2.GL_AMBIENT, ambient, 0);
+
+        gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, ambient, 0);
+        //gl.glLightfv(this.light, GL2.GL_AMBIENT, ambient, 0);
         gl.glLightfv(this.light, GL2.GL_SPECULAR, specular, 0);
         gl.glLightfv(this.light, GL2.GL_DIFFUSE, diffuse, 0);
         gl.glLightfv(this.light, GL2.GL_POSITION, position, 0);
         
         //Material
         //gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, mat_ambient, 0);
-        //gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, mat_specular, 0);
-        //gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, mat_shininess);
+        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, mat_specular, 0);
+        gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, mat_shininess);
     }
     
     /**

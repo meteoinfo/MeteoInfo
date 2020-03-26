@@ -24,7 +24,7 @@
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-greek:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-cyrillic:1.0.7" level="project" />
-    <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.1" level="project" />
+    <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.2" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-emf:2.4" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-pdf:2.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-imaging:1.0-alpha1" level="project" />

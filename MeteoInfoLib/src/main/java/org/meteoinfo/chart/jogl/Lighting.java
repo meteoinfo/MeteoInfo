@@ -22,6 +22,7 @@ public class Lighting {
     float[] specular;
     float[] position;
     float[] mat_ambient;
+    float[] mat_diffuse;
     float[] mat_specular;
     float mat_shininess;
     
@@ -47,8 +48,9 @@ public class Lighting {
             this.position = new float[]{0.f, 0.f, 1.f, 0.f};
         else
             this.position = new float[]{-1.f, -1.f, 1.f, 1.f};
-        this.mat_ambient = new float[]{0.f, 0.f, 0.f, 0.f};
-        this.mat_specular = new float[]{ 1.0f, 1.0f, 1.0f, 1.0f };
+        this.mat_ambient = new float[]{0.2f, 0.2f, 0.2f, 1.f};
+        this.mat_diffuse = new float[]{0.8f, 0.8f, 0.8f, 1.f};
+        this.mat_specular = new float[]{ 0.0f, 0.0f, 0.0f, 1.0f };
         this.mat_shininess = 50.0f;
     }
 
@@ -246,6 +248,28 @@ public class Lighting {
         this.mat_ambient = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
             (float) value.get(3)};
     }
+
+    /**
+     * Set material diffuse light
+     * @param value Material diffuse light
+     */
+    public void setMat_Diffuse(float[] value) {
+        this.mat_diffuse = value;
+    }
+
+    /**
+     * Set material diffuse light
+     *
+     * @param value Material diffuse light
+     */
+    public void setMat_Diffuse(List value) {
+        if (value.size() < 4) {
+            return;
+        }
+
+        this.mat_diffuse = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
+                (float) value.get(3)};
+    }
     
     /**
      * Set material specular light
@@ -296,7 +320,8 @@ public class Lighting {
         gl.glLightfv(this.light, GL2.GL_POSITION, position, 0);
         
         //Material
-        //gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, mat_ambient, 0);
+        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, mat_ambient, 0);
+        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, mat_diffuse, 0);
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, mat_specular, 0);
         gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, mat_shininess);
     }

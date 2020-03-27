@@ -122,6 +122,8 @@ class Axes3DGL(Axes3D):
         :param ambient: (*list of float*) Ambient light.
         :param diffuse: (*list of float*) Diffuse light.
         :param specular: (*list of float*) Specular light.
+        :param mat_ambient: (*list of float*) Material ambient light.
+        :param mat_diffuse: (*list of float*) Material diffuse light.
         :param mat_specular: (*list of float*) Material specular light.
         :param mat_shininess: (*float*) Material shininess (0 - 128).
         '''
@@ -139,6 +141,12 @@ class Axes3DGL(Axes3D):
         specular = kwargs.pop('specular', None)
         if not specular is None:
             lighting.setSpecular(specular)
+        mat_ambient = kwargs.pop('mat_ambient', None)
+        if not mat_ambient is None:
+            lighting.setMat_Ambient(mat_ambient)
+        mat_diffuse = kwargs.pop('mat_diffuse', None)
+        if not mat_diffuse is None:
+            lighting.setMat_Diffuse(mat_diffuse)
         mat_specular = kwargs.pop('mat_specular', None)
         if not mat_specular is None:
             lighting.setMat_Specular(mat_specular)

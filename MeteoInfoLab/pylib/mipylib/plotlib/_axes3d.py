@@ -557,8 +557,7 @@ class Axes3D(Axes):
             self.add_graphic(graphics)
         return graphics
         
-    def scatter(self, x, y, z, s=8, c='b', marker='o', alpha=None, linewidth=None, 
-                verts=None, **kwargs):
+    def scatter(self, x, y, z, s=8, c='b', marker='o', **kwargs):
         """
         Make a 3D scatter plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
         
@@ -570,7 +569,7 @@ class Axes3D(Axes):
         :param alpha: (*int*) The alpha blending value, between 0 (transparent) and 1 (opaque).
         :param marker: (*string*) Marker of the points.
         :param label: (*string*) Label of the points series.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level
             points to draw, in increasing order.
         
         :returns: Points legend break.
@@ -619,6 +618,7 @@ class Axes3D(Axes):
             #Create graphics
             graphics = GraphicFactory.createPoints3D(xdata, ydata, zdata, c.asarray(), ls)
         else:
+            alpha = kwargs.pop('alpha', None)
             colors = plotutil.getcolors(c, alpha)   
             pbs = []
             if isinstance(s, int):   

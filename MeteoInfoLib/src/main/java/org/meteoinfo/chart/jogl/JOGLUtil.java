@@ -6,9 +6,13 @@
 package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.GL2;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
 import org.meteoinfo.chart.jogl.mc.MarchingCubes;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
@@ -19,6 +23,7 @@ import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.GraphicCollection;
 import org.meteoinfo.shape.ImageShape;
@@ -88,6 +93,10 @@ public class JOGLUtil {
      * @return Surface graphics
      */
     public static SurfaceGraphics surface(Array xa, Array ya, Array za, LegendScheme ls) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
         SurfaceGraphics graphics = new SurfaceGraphics();
         int[] shape = xa.getShape();
         int colNum = shape[1];
@@ -118,6 +127,11 @@ public class JOGLUtil {
      */
     public static GraphicCollection isosurface(Array data, Array x, Array y, Array z,
             float isoLevel, PolygonBreak pb) {
+        x = x.copyIfView();
+        y = y.copyIfView();
+        z = z.copyIfView();
+        data = data.copyIfView();
+
         List<float[]> vertices = MarchingCubes.marchingCubes(data, x, y, z, isoLevel);
         IsosurfaceGraphics graphics = new IsosurfaceGraphics();
         graphics.setLegendBreak(pb);
@@ -222,4 +236,83 @@ public class JOGLUtil {
         return graphics;
     }
 
+    /**
+     * Create particle graphics
+     * @param data 3d data array
+     * @param xa X coordinates
+     * @param ya Y coordinates
+     * @param za Z coordinates
+     * @param ls LegendScheme
+     * @param alphaMin Min alpha
+     * @param alphaMax Max alpha
+     * @param density Point density
+     * @return Particles
+     */
+    public static GraphicCollection particles(Array data, Array xa, Array ya, Array za, LegendScheme ls,
+                                              float alphaMin, float alphaMax, int density) {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        ParticleGraphics graphics = new ParticleGraphics();
+        ParticleGraphics.Particle particle;
+        Random random = new Random();
+        float dx = xa.getFloat(1) - xa.getFloat(0);
+        float dy = ya.getFloat(1) - ya.getFloat(0);
+        float dz = za.getFloat(1) - za.getFloat(0);
+        int n = ls.getBreakNum();
+        float[] alphas = new float[n];
+        float dd = (alphaMax - alphaMin) / (n - 1);
+        for (int i = 0; i < n; i++) {
+            alphas[i] = alphaMin + i * dd;
+        }
+        double v;
+        ColorBreak cb;
+        float[] rgba;
+        int level;
+        double vMin = ls.getMinValue();
+        double vMax = ls.getMaxValue();
+        Index index = data.getIndex();
+        for (int i = 0; i < za.getSize(); i++) {
+            for (int j = 0; j < ya.getSize(); j++) {
+                for (int k = 0; k < xa.getSize(); k++) {
+                    index.set(i, j, k);
+                    v = data.getDouble(index);
+                    if (Double.isNaN(v)) {
+                        continue;
+                    }
+                    if (v < vMin || v > vMax) {
+                        continue;
+                    }
+                    level = ls.legendBreakIndex(v);
+                    if (level >= 0) {
+                        cb = ls.getLegendBreak(level);
+                        rgba = cb.getColor().getRGBComponents(null);
+                        rgba[3] = alphas[level];
+                        for (int l = 0; l <= level * density; l++) {
+                            particle = new ParticleGraphics.Particle();
+                            particle.x = xa.getFloat(k) + (random.nextFloat() - 0.5f) * dx * 2;
+                            particle.y = ya.getFloat(j) + (random.nextFloat() - 0.5f) * dy * 2;
+                            particle.z = za.getFloat(i) + (random.nextFloat() - 0.5f) * dz * 2;
+                            particle.rgba = rgba;
+                            graphics.addParticle(level, particle);
+                        }
+                    }
+                }
+            }
+        }
+
+        Extent3D extent3D = new Extent3D();
+        extent3D.minX = xa.getDouble(0);
+        extent3D.maxX = xa.getDouble((int)xa.getSize() - 1);
+        extent3D.minY = ya.getDouble(0);
+        extent3D.maxY = ya.getDouble((int)ya.getSize() - 1);
+        extent3D.minZ = za.getDouble(0);
+        extent3D.maxZ = za.getDouble((int)za.getSize() - 1);
+        graphics.setExtent(extent3D);
+        graphics.setLegendScheme(ls);
+
+        return graphics;
+    }
 }

@@ -1647,12 +1647,9 @@ public class GraphicFactory {
         double z1, z2, z3, z4, z;
         int idx1, idx2, idx3, idx4;
         PolygonBreak pb;
-        if (!xa.getIndexPrivate().isFastIterator())
-            xa = xa.copy();
-        if (!ya.getIndexPrivate().isFastIterator())
-            ya = ya.copy();
-        if (!za.getIndexPrivate().isFastIterator())
-            za = za.copy();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
         for (int i = 0; i < rowNum - 1; i++) {
             for (int j = 0; j < colNum - 1; j++) {
                 idx1 = i * colNum + j;

@@ -331,21 +331,21 @@ class Axes3DGL(Axes3D):
     def plot_isosurface(self, *args, **kwargs):
         '''
         creates a three-dimensional isosurface plot
-        
+
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) Optional. Z coordinate array.
         :param data: (*array_like*) 3D data array.
         :param cmap: (*string*) Color map string.
         :param nthread: (*int*) Thread number.
-        
+
         :returns: Legend
-        '''        
+        '''
         if len(args) <= 3:
             x = args[0].dimvalue(2)
             y = args[0].dimvalue(1)
             z = args[0].dimvalue(0)
-            data = args[0]   
+            data = args[0]
             isovalue = args[1]
             args = args[2:]
         else:
@@ -367,7 +367,7 @@ class Axes3DGL(Axes3D):
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
                     ls = LegendManage.createLegendScheme(data.min(), data.max(), level_arg, cmap)
-            else:    
+            else:
                 ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
             ls = ls.convertTo(ShapeTypes.Polygon)
             edge = kwargs.pop('edge', True)
@@ -379,7 +379,68 @@ class Axes3DGL(Axes3D):
         if nthread is None:
             graphics = JOGLUtil.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls)
         else:
-            graphics = JOGLUtil.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls, nthread)
+            data = data.asarray().copyIfView()
+            x = x.asarray().copyIfView()
+            y = y.asarray().copyIfView()
+            z = z.asarray().copyIfView()
+            graphics = JOGLUtil.isosurface(data, x, y, z, isovalue, ls, nthread)
+        visible = kwargs.pop('visible', True)
+        if visible:
+            self.add_graphic(graphics)
+        return graphics
+
+    def plot_particles(self, *args, **kwargs):
+        '''
+        creates a three-dimensional particles plot
+
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param z: (*array_like*) Optional. Z coordinate array.
+        :param data: (*array_like*) 3D data array.
+        :param cmap: (*string*) Color map string.
+
+        :returns: Legend
+        '''
+        if len(args) <= 3:
+            x = args[0].dimvalue(2)
+            y = args[0].dimvalue(1)
+            z = args[0].dimvalue(0)
+            data = args[0]
+            args = args[1:]
+        else:
+            x = args[0]
+            y = args[1]
+            z = args[2]
+            data = args[3]
+            args = args[4:]
+        cmap = plotutil.getcolormap(**kwargs)
+        vmin = kwargs.pop('vmin', data.min())
+        vmax = kwargs.pop('vmax', data.max())
+        if vmin >= vmax:
+            raise ValueError("Minimum value larger than maximum value")
+
+        if len(args) > 0:
+            level_arg = args[0]
+            if isinstance(level_arg, int):
+                cn = level_arg
+                ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap)
+            else:
+                if isinstance(level_arg, NDArray):
+                    level_arg = level_arg.aslist()
+                ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
+        else:
+            ls = LegendManage.createLegendScheme(vmin, vmax, cmap)
+        plotutil.setlegendscheme(ls, **kwargs)
+        alpha_min = kwargs.pop('alpha_min', 0.1)
+        alpha_max = kwargs.pop('alpha_max', 0.6)
+        density = kwargs.pop('density', 2)
+        graphics = JOGLUtil.particles(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
+                                      alpha_min, alpha_max, density)
+        s = kwargs.pop('s', None)
+        if s is None:
+            s = kwargs.pop('size', None)
+        if not s is None:
+            graphics.setPointSize(s)
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

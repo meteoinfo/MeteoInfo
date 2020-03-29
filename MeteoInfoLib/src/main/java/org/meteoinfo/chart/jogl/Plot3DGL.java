@@ -5,11 +5,7 @@
  */
 package org.meteoinfo.chart.jogl;
 
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLEventListener;
-import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.glu.GLUtessellator;
@@ -17,6 +13,7 @@ import com.jogamp.opengl.glu.GLUtessellatorCallback;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureCoords;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import com.jogamp.opengl.math.VectorUtil;
 import java.awt.Color;
@@ -28,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -725,8 +723,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glLoadIdentity();
         gl.glPushMatrix();
 
+        gl.glShadeModel(GL2.GL_SMOOTH);
+
         gl.glEnable(GL2.GL_BLEND);
         gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+        //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE);
 
         if (this.antialias) {
             gl.glEnable(GL2.GL_LINE_SMOOTH);
@@ -1398,6 +1399,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 this.drawSurface(gl, (SurfaceGraphics) graphic);
             } else if (graphic instanceof IsosurfaceGraphics) {
                 this.drawIsosurface(gl, (IsosurfaceGraphics) graphic);
+            } else if (graphic instanceof ParticleGraphics) {
+                this.drawParticles(gl, (ParticleGraphics) graphic);
             } else {
                 boolean isDraw = true;
                 if (graphic instanceof GraphicCollection3D) {
@@ -1411,9 +1414,16 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     }
                 }
                 if (isDraw) {
-                    for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                        Graphic gg = graphic.getGraphicN(i);
-                        this.drawGraphic(gl, gg);
+                    switch (graphic.getGraphicN(0).getShape().getShapeType()) {
+                        case PointZ:
+                            this.drawPoints(gl, graphic);
+                            break;
+                        default:
+                            for (int i = 0; i < graphic.getNumGraphics(); i++) {
+                                Graphic gg = graphic.getGraphicN(i);
+                                this.drawGraphic(gl, gg);
+                            }
+                            break;
                     }
                 }
             }
@@ -1473,6 +1483,34 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_POINTS);
             PointZ p = (PointZ) shape.getPoint();
             gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+            gl.glEnd();
+        }
+    }
+
+    private void drawPoints(GL2 gl, Graphic graphic) {
+        PointBreak pb = (PointBreak) graphic.getGraphicN(0).getLegend();
+        gl.glPointSize(pb.getSize());
+        gl.glBegin(GL2.GL_POINTS);
+        for (Graphic gg : graphic.getGraphics()) {
+            PointZShape shape = (PointZShape) gg.getShape();
+            pb = (PointBreak) gg.getLegend();
+            float[] rgba = pb.getColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            PointZ p = (PointZ) shape.getPoint();
+            gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+        }
+        gl.glEnd();
+    }
+
+    private void drawParticles(GL2 gl, ParticleGraphics particles) {
+        for (Map.Entry<Integer, List> map : particles.getParticleList()) {
+            gl.glPointSize(particles.getPointSize());
+            gl.glBegin(GL2.GL_POINTS);
+            for (ParticleGraphics.Particle p : (List<ParticleGraphics.Particle>)map.getValue()) {
+                float[] rgba = p.rgba;
+                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                gl.glVertex3f(transform_xf((float) p.x), transform_yf((float) p.y), transform_zf((float) p.z));
+            }
             gl.glEnd();
         }
     }

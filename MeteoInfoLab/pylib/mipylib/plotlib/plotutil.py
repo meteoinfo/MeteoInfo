@@ -771,47 +771,57 @@ def setlegendscheme_polygon(ls, **kwargs):
                 lb.setStyleSize(hatchsize)
     return ls
     
-def setpointlegendbreak(lb, **kwargs):       
-    marker = kwargs.pop('marker', 'o')
-    if marker == 'image':
-        imagepath = kwargs.pop('imagepath', None)
-        if not imagepath is None:
-            lb.setMarkerType(MarkerType.Image)
-            lb.setImagePath(imagepath)
-    elif marker == 'font':
-        fontname = kwargs.pop('fontname', 'Weather')
-        lb.setMarkerType(MarkerType.Character)
-        lb.setFontName(fontname)
-        charindex = kwargs.pop('charindex', 0)
-        lb.setCharIndex(charindex)
-    else:
-        pstyle = getpointstyle(marker)
-        lb.setStyle(pstyle)
-    color = kwargs.pop('color', None)
+def setpointlegendbreak(lb, **kwargs):
+    if kwargs.has_key('marker'):
+        marker = kwargs['marker']
+        if marker == 'image':
+            if kwargs.has_key('imagepath'):
+                lb.setMarkerType(MarkerType.Image)
+                lb.setImagePath(kwargs['imagepath'])
+        elif marker == 'font':
+            fontname = 'Weather'
+            if kwargs.has_key('fontname'):
+                fontname = kwargs['fontname']
+            lb.setMarkerType(MarkerType.Character)
+            lb.setFontName(fontname)
+            charindex = 0
+            if kwargs.has_key('charindex'):
+                charindex = kwargs['charindex']
+            lb.setCharIndex(charindex)
+        else:
+            pstyle = getpointstyle(marker)
+            lb.setStyle(pstyle)
+    color = None
+    if kwargs.has_key('color'):
+        color = kwargs['color']
+    elif kwargs.has_key('facecolor'):
+        color = kwargs['facecolor']
+    alpha = None
+    if kwargs.has_key('alpha'):
+        alpha = kwargs['alpha']
     if color is None:
-        color = kwargs.pop('facecolor', None)
-    if not color is None:
-        color = getcolor(color)
+        if not alpha is None:
+            color = getcolor(lb.getColor(), alpha)
+            lb.setColor(color)
+    else:
+        color = getcolor(color, alpha)
         lb.setColor(color)
-    size = kwargs.pop('size', None)
-    if not size is None:        
+    if kwargs.has_key('size'):
+        size = kwargs['size']
         lb.setSize(size)
     if kwargs.has_key('edgecolor'):
-        ecobj = kwargs.pop('edgecolor')
+        ecobj = kwargs['edgecolor']
         if ecobj is None:
             lb.setDrawOutline(False)
         else:
             edgecolor = getcolor(ecobj)
             lb.setOutlineColor(edgecolor)
-    fill = kwargs.pop('fill', None)
-    if not fill is None:
-        lb.setDrawFill(fill)
-    edge = kwargs.pop('edge', None)
-    if not edge is None:
-        lb.setDrawOutline(edge)
-    edgesize = kwargs.pop('edgesize', None)
-    if not edgesize is None:
-        lb.setOutlineSize(edgesize)
+    if kwargs.has_key('fill'):
+        lb.setDrawFill(kwargs['fill'])
+    if kwargs.has_key('edge'):
+        lb.setDrawOutline(kwargs['edge'])
+    if kwargs.has_key('edgesize'):
+        lb.setOutlineSize(kwargs['edgesize'])
         
 def text(x, y, s, **kwargs):
     """

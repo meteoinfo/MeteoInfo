@@ -1813,12 +1813,12 @@ public class DrawMeteoData {
             aPoint = new PointD();
             aPoint.X = xIter.getDoubleNext();
             aPoint.Y = yIter.getDoubleNext();
-            if (Double.isNaN(aPoint.X)) {
+            v = iter.getDoubleNext();
+            if (Double.isNaN(aPoint.X) || Double.isNaN(aPoint.Y)) {
                 continue;
             }
             PointShape aPointShape = new PointShape();
             aPointShape.setPoint(aPoint);
-            v = iter.getDoubleNext();
             aPointShape.setValue(v);
 
             int shapeNum = aLayer.getShapeNum();

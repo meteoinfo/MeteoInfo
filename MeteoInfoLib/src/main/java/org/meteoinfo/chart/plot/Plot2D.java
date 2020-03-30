@@ -100,6 +100,14 @@ public class Plot2D extends AbstractPlot2D {
     }
 
     /**
+     * Get the number of graphics
+     * @return The number of graphics
+     */
+    public int getGraphicNumber() {
+        return this.graphics.size();
+    }
+
+    /**
      * Set graphics
      *
      * @param value Graphics

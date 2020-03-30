@@ -126,6 +126,23 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     // </editor-fold>
     // <editor-fold desc="GetSet">
+
+    /**
+     * Get graphics
+     * @return The graphics
+     */
+    public GraphicCollection3D getGraphics() {
+        return this.graphics;
+    }
+
+    /**
+     * Get the number of graphics
+     * @return The number of graphics
+     */
+    public int getGraphicNumber() {
+        return this.graphics.size();
+    }
+
     /**
      * Get GLAutoDrawable
      *

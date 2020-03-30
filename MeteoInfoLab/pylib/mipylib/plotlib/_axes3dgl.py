@@ -397,7 +397,13 @@ class Axes3DGL(Axes3D):
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) Optional. Z coordinate array.
         :param data: (*array_like*) 3D data array.
+        :param s: (*float*) Point size.
         :param cmap: (*string*) Color map string.
+        :param vmin: (*float*) Minimum value for particle plotting.
+        :param vmax: (*float*) Maximum value for particle plotting.
+        :param alpha_min: (*float*) Minimum alpha value.
+        :param alpha_max: (*float*) Maximum alpha value.
+        :param density: (*int*) Particle density value.
 
         :returns: Legend
         '''

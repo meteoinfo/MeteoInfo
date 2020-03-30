@@ -919,7 +919,32 @@ class Axes(object):
         :param graphic: (*Graphic*) The graphic to be added.
         '''
         self.axes.addGraphic(graphic)
-        
+
+    def get_graphics(self):
+        '''
+        Get graphics
+        :return: (*list*) The graphics
+        '''
+        return self.axes.getGraphics()
+
+    def num_graphics(self):
+        '''
+        Get the number of graphics
+        :return: (*int*) The number of graphics
+        '''
+        return self.axes.getGraphicNumber()
+
+    def remove_graphic(self, graphic):
+        '''
+        Remove a graphic
+        :param graphic: (*int or Grahpic*) The graphic
+        :return:
+        '''
+        if isinstance(graphic, int):
+            if graphic < 0:
+                graphic = self.axes.getGraphicNumber() + graphic
+        self.axes.getGraphics().remove(graphic)
+
     def remove(self):
         '''
         Remove all graphics.

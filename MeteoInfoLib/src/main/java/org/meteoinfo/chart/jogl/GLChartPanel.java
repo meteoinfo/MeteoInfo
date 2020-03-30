@@ -53,6 +53,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      */
     public GLChartPanel() {
         super();
+        this.setDoubleBuffered(true);
     }
 
     /**
@@ -61,7 +62,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @param pltGL Plot3DGL
      */
     public GLChartPanel(Plot3DGL pltGL) {
-        super();
+        this();
 
         init(pltGL);
     }

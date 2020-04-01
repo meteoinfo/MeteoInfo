@@ -447,6 +447,8 @@ class DimDataFile(object):
         :param value: (*array_like*) Data array to be write.
         :param origin: (*list*) Dimensions origin indices. None means all from 0.
         '''
+        if isinstance(value, (list, tuple)):
+            value = np.array(value)
         if isinstance(value, np.NDArray):
             value = NCUtil.convertArray(value._array)
         if isinstance(variable, DimVariable):

@@ -1218,6 +1218,7 @@ org\meteoinfo\ndarray\ArrayBoolean$D1.class
 org\meteoinfo\legend\LayersLegend$23.class
 org\meteoinfo\legend\FrmLegendSet$4.class
 org\meteoinfo\chart\plot\Plot3D.class
+org\meteoinfo\chart\jogl\ParticleGraphics.class
 org\meteoinfo\image\filter\CompoundFilter.class
 org\meteoinfo\ndarray\Index2D.class
 org\meteoinfo\chart\jogl\JOGLUtil.class
@@ -1240,6 +1241,7 @@ org\meteoinfo\table\ColumnData.class
 org\meteoinfo\image\filter\Gradient.class
 org\meteoinfo\data\mapdata\webmap\GeoPosition.class
 org\meteoinfo\plugin\IPlugin.class
+org\meteoinfo\chart\jogl\ParticleGraphics$Particle.class
 org\meteoinfo\data\dataframe\impl\Views$FillNaFunction.class
 org\meteoinfo\ndarray\ArrayInt$D6.class
 org\meteoinfo\data\meteodata\MeteoDataInfo.class
@@ -1398,6 +1400,7 @@ org\meteoinfo\legend\ArrowBreak.class
 org\meteoinfo\data\GridData$Double.class
 org\meteoinfo\chart\ChartPanel$1.class
 org\meteoinfo\image\filter\OpacityFilter.class
+org\meteoinfo\chart\jogl\ParticleGraphics$1.class
 org\meteoinfo\image\composite\DarkenComposite.class
 org\meteoinfo\projection\ProjectionUtil$1.class
 org\meteoinfo\layer\FrmLayerProperty$18.class

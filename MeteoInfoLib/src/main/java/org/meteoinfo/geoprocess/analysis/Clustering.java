@@ -11,10 +11,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.shape.PointZ;
@@ -122,20 +121,18 @@ public class Clustering {
         int row;
         int col;
         List<String> flags = new ArrayList<>();    //Date time and height
-        Date aDate;
+        LocalDateTime aDate;
 
         row = 0;
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
         for (VectorLayer layer : trajLayers) {
             PointZ aPoint;
             int sNum = layer.getShapeNum();
             for (i = 0; i < sNum; i++) {
-                aDate = (Date) layer.getCellValue("Date", i);
-                cal.setTime(aDate);
+                aDate = (LocalDateTime) layer.getCellValue("Date", i);
                 int hour = Integer.parseInt(layer.getCellValue("Hour", i).toString());
-                cal.set(Calendar.HOUR_OF_DAY, hour);
-                aLine = format.format(cal.getTime());
+                aDate = aDate.withHour(hour);
+                aLine = format.format(aDate);
                 String height = layer.getCellValue("Height", i).toString();
                 flags.add(aLine + "," + height);
                 PolylineZShape aPLZ = (PolylineZShape) layer.getShapes().get(i);

@@ -27,13 +27,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -729,8 +726,8 @@ public final class AttributeTable implements Cloneable {
                         break;
                     case 'D':
                         //Date
-                        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-                        String ds = format.format(columnValue);
+                        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
+                        String ds = format.format((LocalDateTime) columnValue);
                         _writer.write(ds.getBytes(), 0, ds.length());
                         break;
                     case 'N':

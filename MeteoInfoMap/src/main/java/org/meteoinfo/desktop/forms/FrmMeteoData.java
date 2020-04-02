@@ -17,7 +17,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -933,8 +932,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
             //Lab_Time.Text = Resources.GlobalResource.ResourceManager.GetString("Time_Text");
             this.jComboBox_Time.removeAllItems();
             if (var.getTDimension() != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                List<Date> times = var.getTimes();
+                DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                List<LocalDateTime> times = var.getTimes();
                 for (i = 0; i < times.size(); i++) {
                     this.jComboBox_Time.addItem(sdf.format(times.get(i)));
                 }

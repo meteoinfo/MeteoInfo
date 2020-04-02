@@ -23,11 +23,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1512,7 +1513,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
 
         //Set time
         this.jComboBox_Time1.removeAllItems();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         for (i = 0; i < _meteoDataInfo.getDataInfo().getTimeNum(); i++) {
             this.jComboBox_Time1.addItem(sdf.format(_meteoDataInfo.getDataInfo().getTimes().get(i)));
         }
@@ -1902,32 +1903,28 @@ public class FrmSectionPlot extends javax.swing.JFrame {
     private List<String> getTimeGridStr() {
         List<String> GStrList = new ArrayList<>();
         int i;
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        List<Date> DTList = new ArrayList<>();
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        List<LocalDateTime> DTList = new ArrayList<>();
         for (i = 0; i < this.jComboBox_Time1.getItemCount(); i++) {
-            try {
-                DTList.add(dateFormat.parse(this.jComboBox_Time1.getItemAt(i).toString()));
-            } catch (ParseException ex) {
-                Logger.getLogger(FrmSectionPlot.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            DTList.add(LocalDateTime.parse(this.jComboBox_Time1.getItemAt(i).toString(), dateFormat));
         }
 
         String timeFormat;
-        if ((DTList.get(1).getTime() - DTList.get(0).getTime()) / (24 * 60 * 60 * 1000) >= 1) {
-            timeFormat = "yyyy-MM-dd";
-        } else if ((DTList.get(1).getTime() - DTList.get(0).getTime()) / (60 * 60 * 1000) >= 1) {
+        Duration duration = Duration.between(DTList.get(0), DTList.get(1));
+        if (duration.getSeconds() < 3600) {
+            timeFormat = "yyyy-MM-dd HH:mm";
+        } else if (duration.toHours() < 24) {
             timeFormat = "yyyy-MM-dd HH";
         } else {
-            timeFormat = "yyyy-MM-dd HH:mm";
+            timeFormat = "yyyy-MM-dd";
         }
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(DTList.get(0));
-        int sYear = cal.get(Calendar.YEAR);
-        int sMonth = cal.get(Calendar.MONTH);
-        cal.setTime(DTList.get(DTList.size() - 1));
-        int eYear = cal.get(Calendar.YEAR);
-        int eMonth = cal.get(Calendar.YEAR);
+        LocalDateTime ldt = DTList.get(0);
+        int sYear = ldt.getYear();
+        int sMonth = ldt.getDayOfMonth();
+        ldt = DTList.get(DTList.size() - 1);
+        int eYear = ldt.getYear();
+        int eMonth = ldt.getDayOfMonth();
         if (sYear == eYear) {
             timeFormat = timeFormat.substring(5);
             if (sMonth == eMonth) {
@@ -1935,7 +1932,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
             }
         }
 
-        SimpleDateFormat dataFormat = new SimpleDateFormat(timeFormat);
+        DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern(timeFormat);
         for (i = 0; i < DTList.size(); i++) {
             GStrList.add(dataFormat.format(DTList.get(i)));
         }

@@ -52,6 +52,16 @@ public class JDateUtil {
     }
 
     /**
+     * Convert milli seconds to LocalDateTime object.
+     *
+     * @param ms The milli seconds.
+     * @return LocalDateTime object.
+     */
+    public static LocalDateTime asLocalDateTime(long ms) {
+        return Instant.ofEpochMilli(ms).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    /**
      * Convert OA date to date
      *
      * @param oaDate OA date
@@ -64,7 +74,16 @@ public class JDateUtil {
     }
 
     /**
-     * Convert date to OA date
+     * Convert LocalDateTime to milli seconds
+     * @param ldt Local date time
+     * @return Milli seconds
+     */
+    public static long asMilliSeconds(LocalDateTime ldt) {
+        return ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
+    /**
+     * Convert LocalDateTime to OA date
      *
      * @param ldt Local date time
      * @return OA date

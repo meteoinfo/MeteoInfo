@@ -43,9 +43,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -2955,14 +2955,14 @@ public class VectorLayer extends MapLayer {
                 }
 
                 List<String> captions = new ArrayList<>();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy/M/d");
+                DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy/M/d");
 
                 for (int i = 0; i < this.getAttributeTable().getTable().getRows().size(); i++) {
                     Object value = this.getAttributeTable().getTable().getRows().get(i).getValue(fieldName);
                     if (!valueList.contains(value.toString())) {
                         valueList.add(value.toString());
                         if (isDateField) {
-                            captions.add(format.format((Date) value));
+                            captions.add(format.format((LocalDateTime) value));
                         }
                     }
                 }

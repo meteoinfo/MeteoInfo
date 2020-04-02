@@ -34,8 +34,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -80,6 +81,7 @@ import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.plot.Plot3D;
 import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.chart.plot3d.Projector;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.global.Extent;
@@ -122,7 +124,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
     private int xShift = 0;
     private int yShift = 0;
     private double paintScale = 1.0;
-    private Date lastMouseWheelTime;
+    private LocalDateTime lastMouseWheelTime;
     private Timer mouseWheelDetctionTimer;
     // </editor-fold>
 
@@ -178,8 +180,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
         this.mouseWheelDetctionTimer = new Timer(100, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Date now = new Date();
-                if (now.getTime() - lastMouseWheelTime.getTime() > 200) {
+                LocalDateTime now = LocalDateTime.now();
+                if (Duration.between(now, lastMouseWheelTime).toMillis() > 200) {
                     xShift = 0;
                     yShift = 0;
                     paintScale = 1.0;
@@ -911,8 +913,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                         if (value == null) {
                                             valueStr = "";
                                         } else if (field.getDataType() == DataType.DATE) {
-                                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                                            valueStr = format.format((Date) value);
+                                            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                                            valueStr = format.format((LocalDateTime) value);
                                         } else {
                                             valueStr = value.toString();
                                         }
@@ -993,7 +995,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                     Graphics2D g = (Graphics2D) this.getGraphics();
                     Rectangle2D mapRect = mplt.getGraphArea();
                     
-                    this.lastMouseWheelTime = new Date();
+                    this.lastMouseWheelTime = LocalDateTime.now();
                     if (!this.mouseWheelDetctionTimer.isRunning()) {
                         this.mouseWheelDetctionTimer.start();
                         tempImage = new BufferedImage((int) mapRect.getWidth() - 2,

@@ -15,10 +15,11 @@ package org.meteoinfo.data.meteodata;
 
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.ndarray.Dimension;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import org.meteoinfo.global.util.DateUtil;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.Section;
@@ -1060,16 +1061,16 @@ public class Variable {
      *
      * @return Times
      */
-    public List<Date> getTimes() {
+    public List<LocalDateTime> getTimes() {
         Dimension tDim = this.getTDimension();
         if (tDim == null) {
             return null;
         }
 
         List<Double> values = tDim.getDimValue();
-        List<Date> times = new ArrayList<>();
+        List<LocalDateTime> times = new ArrayList<>();
         for (Double v : values) {
-            times.add(DateUtil.fromOADate(v));
+            times.add(JDateUtil.fromOADate(v));
         }
 
         return times;

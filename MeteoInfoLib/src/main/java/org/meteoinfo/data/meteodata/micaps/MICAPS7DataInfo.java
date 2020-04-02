@@ -20,8 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.LinkOption;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -225,7 +225,7 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
             dataInfo += "File Name: " + FileNames.get(t);
             dataInfo += System.getProperty("line.separator") + "Typhoon number = " + String.valueOf(TrajeoryNums.get(t));
             dataInfo += System.getProperty("line.separator") + System.getProperty("line.separator") + "Typhoons:";
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
             for (TrajectoryInfo aTrajInfo : TrajInfos.get(t)) {
                 dataInfo += System.getProperty("line.separator") + "  " + aTrajInfo.trajName + " "
                         + aTrajInfo.trajID + " " + aTrajInfo.trajCenter + " " + format.format(aTrajInfo.startTime)
@@ -328,7 +328,7 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
 
                     aLine = sr.readLine();
                 }
-                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
+                DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
                 for (i = 0; i < TrajeoryNums.get(t); i++) {
                     PolylineShape aPolyline = new PolylineShape();
                     //aPolyline.value = aDataInfo.TrajInfos[i].StartTime.ToBinary();
@@ -434,7 +434,7 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
 
                     aLine = sr.readLine();
                 }
-                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
+                DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
                 for (i = 0; i < TrajeoryNums.get(t); i++) {
                     TrajNum += 1;
                     for (int j = 0; j < PointList.get(i).size(); j++) {
@@ -444,7 +444,7 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
                         int shapeNum = aLayer.getShapeNum();
                         if (aLayer.editInsertShape(aPS, shapeNum)) {
                             aLayer.editCellValue("TrajID", shapeNum, TrajNum);
-                            aLayer.editCellValue("Date", shapeNum, format.format(PointList.get(i).get(j).get(1)));
+                            aLayer.editCellValue("Date", shapeNum, format.format((LocalDateTime)PointList.get(i).get(j).get(1)));
                             aLayer.editCellValue("PreHour", shapeNum, Integer.parseInt(PointList.get(i).get(j).get(2).toString()));
                             aLayer.editCellValue("Lat", shapeNum, aPS.getPoint().Y);
                             aLayer.editCellValue("Lon", shapeNum, aPS.getPoint().X);
@@ -533,7 +533,7 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
 
                     aLine = sr.readLine();
                 }
-                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
+                DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
                 for (i = 0; i < TrajeoryNums.get(t); i++) {
                     PointShape aPS = new PointShape();
                     TrajNum += 1;

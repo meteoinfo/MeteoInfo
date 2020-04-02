@@ -115,11 +115,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -285,7 +286,7 @@ public class MapView extends JPanel implements IWebMapPanel {
     private float _gridYOrigin = 0;
     private boolean _gridDeltChanged = false;
     private List<GridLabel> _gridLabels = new ArrayList<>();
-    private Date _lastMouseWheelTime;
+    private LocalDateTime _lastMouseWheelTime;
     private Timer _mouseWheelDetctionTimer;
     // </editor-fold>
 
@@ -356,8 +357,8 @@ public class MapView extends JPanel implements IWebMapPanel {
         this._mouseWheelDetctionTimer = new Timer(100, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Date now = new Date();
-                if (now.getTime() - _lastMouseWheelTime.getTime() > 200) {
+                LocalDateTime now = LocalDateTime.now();
+                if (Duration.between(now, _lastMouseWheelTime).toMillis() > 200) {
                     _xShift = 0;
                     _yShift = 0;
                     _paintScale = 1.0;
@@ -2598,8 +2599,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                                         if (value == null) {
                                             valueStr = "";
                                         } else if (field.getDataType() == DataType.DATE) {
-                                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                                            valueStr = format.format((Date) value);
+                                            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                                            valueStr = format.format((LocalDateTime) value);
                                         } else {
                                             valueStr = value.toString();
                                         }
@@ -3356,7 +3357,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             _viewExtent = new Extent(MinX, MaxX, MinY, MaxY);
             refreshXYScale();
 
-            this._lastMouseWheelTime = new Date();
+            this._lastMouseWheelTime = LocalDateTime.now();
             if (!this._mouseWheelDetctionTimer.isRunning()) {
                 this._mouseWheelDetctionTimer.start();
             }

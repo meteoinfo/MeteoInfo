@@ -14,9 +14,9 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.Location;
@@ -28,6 +28,7 @@ import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.global.util.DateUtil;
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.legend.LineStyles;
 
 /**
@@ -1635,27 +1636,27 @@ public class Axis implements Cloneable {
             }
             //Time label - left
             if (this.drawTickLabel) {
-                SimpleDateFormat format;
+                DateTimeFormatter format;
                 if (this instanceof TimeAxis) {
                     TimeAxis tAxis = (TimeAxis) this;
                     if (tAxis.isVarFormat()) {
                         drawStr = null;
                         switch (tAxis.getTimeUnit()) {
                             case MONTH:
-                                format = new SimpleDateFormat("yyyy");
-                                Date cdate = DateUtil.fromOADate(this.getTickValues()[0]);
+                                format = DateTimeFormatter.ofPattern("yyyy");
+                                LocalDateTime cdate = JDateUtil.fromOADate(this.getTickValues()[0]);
                                 drawStr = format.format(cdate);
                                 break;
                             case DAY:
-                                format = new SimpleDateFormat("yyyy-MM");
-                                cdate = DateUtil.fromOADate(this.getTickValues()[0]);
+                                format = DateTimeFormatter.ofPattern("yyyy-MM");
+                                cdate = JDateUtil.fromOADate(this.getTickValues()[0]);
                                 drawStr = format.format(cdate);
                                 break;
                             case HOUR:
                             case MINUTE:
                             case SECOND:
-                                format = new SimpleDateFormat("yyyy-MM-dd");
-                                cdate = DateUtil.fromOADate(this.getTickValues()[0]);
+                                format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                                cdate = JDateUtil.fromOADate(this.getTickValues()[0]);
                                 drawStr = format.format(cdate);
                                 break;
                         }

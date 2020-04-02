@@ -186,7 +186,7 @@ def str2jdatetime(dstr):
     
 def dateformat(t, format, language=None):
     """
-    Format python date to string using Java SimpleDateFormat.
+    Format python date to string using Java date time formatter.
     
     :param t: Python date.
     

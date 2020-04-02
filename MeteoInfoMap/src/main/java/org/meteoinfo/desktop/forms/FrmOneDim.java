@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -1086,7 +1086,7 @@ public class FrmOneDim extends javax.swing.JFrame {
 
         //Set time
         this.jComboBox_Time1.removeAllItems();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         for (i = 0; i < _meteoDataInfo.getDataInfo().getTimeNum(); i++) {
             this.jComboBox_Time1.addItem(sdf.format(_meteoDataInfo.getDataInfo().getTimes().get(i)));
         }

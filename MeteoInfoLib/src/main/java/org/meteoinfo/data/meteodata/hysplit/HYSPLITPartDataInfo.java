@@ -25,8 +25,8 @@ import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.global.Extent;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -129,7 +129,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
         String dataInfo;
         dataInfo = "File Name: " + this.getFileName();
         List<LocalDateTime> times = this.getTimes();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
         for (int i = 0; i < this.getTimeNum(); i++) {
             dataInfo += System.getProperty("line.separator") + "Time: " + format.format(times.get(i));
             dataInfo += System.getProperty("line.separator") + "\tParticle Number: " + _parameters.get(i).get(0);

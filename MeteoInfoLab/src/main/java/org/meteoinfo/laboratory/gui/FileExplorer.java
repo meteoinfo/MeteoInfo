@@ -12,9 +12,9 @@ import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -23,6 +23,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.DefaultTableModel;
+
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.laboratory.event.CurrentPathChangedEvent;
 import org.meteoinfo.laboratory.event.ICurrentPathChangedListener;
 import org.meteoinfo.table.IconRenderer;
@@ -206,13 +208,14 @@ public class FileExplorer extends JPanel implements MouseListener{
                 dtmFile.addRow(new Object[]{new IconText(folderIcon, name), "", "Folder", ""});
             } 
         }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/M/d hh:mm");
         for (File file : files) {
             String name = file.getName();
             if (file.isFile()) {                              
                 if (name.lastIndexOf(".") != -1) {
-                    dtmFile.addRow(new Object[]{new IconText(fileIcon, name), sizeFormat(file.length()), name.substring(name.lastIndexOf(".") + 1), new SimpleDateFormat("yyyy/M/d hh:mm").format(new Date(file.lastModified()))});
+                    dtmFile.addRow(new Object[]{new IconText(fileIcon, name), sizeFormat(file.length()), name.substring(name.lastIndexOf(".") + 1), formatter.format(JDateUtil.asLocalDateTime(file.lastModified()))});
                 } else {
-                    dtmFile.addRow(new Object[]{new IconText(fileIcon, name), sizeFormat(file.length()), "", new SimpleDateFormat("yyyy/M/d hh:mm").format(new Date(file.lastModified()))});
+                    dtmFile.addRow(new Object[]{new IconText(fileIcon, name), sizeFormat(file.length()), "", formatter.format(JDateUtil.asLocalDateTime(file.lastModified()))});
                 }
             }
         }

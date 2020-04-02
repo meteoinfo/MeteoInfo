@@ -608,9 +608,6 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                     + "  YSize = " + String.valueOf(ydim.getValues()[1] - ydim.getValues()[0]);
         }
         dataInfo += System.getProperty("line.separator") + "Product Type = " + String.valueOf(this._productType);
-        //SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        //dataInfo += System.getProperty("line.separator") + "Start Time = " + format.format(STime);
-        //dataInfo += System.getProperty("line.separator") + "End Time = " + format.format(ETime);
         dataInfo += System.getProperty("line.separator") + "Number of Variables = " + String.valueOf(this.getVariableNum());
         for (int i = 0; i < this.getVariableNum(); i++) {
             dataInfo += System.getProperty("line.separator") + "\t" + this.getVariableNames().get(i);

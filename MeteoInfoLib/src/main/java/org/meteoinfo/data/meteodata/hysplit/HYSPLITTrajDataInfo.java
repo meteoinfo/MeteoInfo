@@ -462,7 +462,6 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                 PointList.get(TrajIdx).add(aPoint);
             }
 
-            //SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
             for (i = 0; i < this.trajNum; i++) {
                 PolylineZShape aPolyline = new PolylineZShape();
                 TrajNum += 1;
@@ -946,7 +945,6 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                 PointList.get(TrajIdx).add(aPoint);
             }
 
-            //SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
             for (i = 0; i < trajNum; i++) {
                 int n = PointList.get(i).size();
                 double[] xvs = new double[n];
@@ -1046,7 +1044,6 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                 PointList.get(TrajIdx).add(aPoint);
             }
 
-            //SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
             for (i = 0; i < trajNum; i++) {
                 int n = PointList.get(i).size();
                 double[] xvs = new double[n];

@@ -204,21 +204,6 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
         return new ArrayList<>();
     }
 
-//    @Override
-//    public String generateInfoText() {
-//        String dataInfo;
-//        dataInfo = "File Name: " + this.getFileName();
-//        dataInfo += System.getProperty("line.separator") + "Description: " + _description;
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
-//        dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
-//        dataInfo += System.getProperty("line.separator") + "Forecast Hours = " + String.valueOf(_preHours)
-//                + "  Level = " + String.valueOf(_level);
-//        dataInfo += System.getProperty("line.separator") + "Xsize = " + String.valueOf(this.getXDimension().getLength())
-//                + "  Ysize = " + String.valueOf(this.getYDimension().getLength());
-//
-//        return dataInfo;
-//    }
-    
     /**
      * Read array data of a variable
      * 

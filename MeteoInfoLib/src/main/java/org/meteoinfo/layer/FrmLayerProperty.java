@@ -1034,15 +1034,17 @@ public class FrmLayerProperty extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton_ChartLabelActionPerformed
 
     private void setFieldByLegendType(LegendType aLT) {
+        this.setFieldByLegendType(aLT, !this._isLoading);
+    }
+
+    private void setFieldByLegendType(LegendType aLT, boolean createLegend) {
         if (_mapLayer.getLayerType() == LayerTypes.VectorLayer) {
             VectorLayer aLayer = (VectorLayer) _mapLayer;
             switch (aLT) {
                 case SingleSymbol:
                     this.jComboBox_Field.setEnabled(false);
                     this.jComboBox_Field.removeAllItems();
-                    if (!this._isLoading) {
-                        this._ifCreateLegendScheme = true;
-                    }
+                    this._ifCreateLegendScheme = createLegend;
                     createLegendScheme(aLT, "");
                     this._ifCreateLegendScheme = false;
                     break;
@@ -1272,6 +1274,9 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         update();
         this._ifCreateLegendScheme = true;
         this._isLoading = false;
+
+        if (this.jComboBox_LegendType.isEnabled() && this._legendScheme != null)
+            this.setFieldByLegendType((LegendType)this.jComboBox_LegendType.getSelectedItem(), false);
     }
 
     /**

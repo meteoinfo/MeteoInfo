@@ -1075,7 +1075,7 @@ public class FrmMain extends JFrame implements IApplication {
         jPanel_MainToolBar.add(jToolBar_Edit);
 
         //Split panel
-        jSplitPane1.setBackground(new java.awt.Color(255, 255, 255));
+        //jSplitPane1.setBackground(new java.awt.Color(255, 255, 255));
         jSplitPane1.setDividerLocation(180);
 
         jTabbedPane_Main.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -1732,7 +1732,7 @@ public class FrmMain extends JFrame implements IApplication {
 
         this.loadDefaultPojectFile();
         //this.loadConfigureFile();
-        this._mapDocument.setFont(this._options.getLegendFont());
+        //this._mapDocument.setFont(this._options.getLegendFont());
         this.setLocation(this._options.getMainFormLocation());
         this.setSize(this._options.getMainFormSize());
         try {

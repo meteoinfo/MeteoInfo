@@ -245,9 +245,9 @@ public class FrmOptions extends javax.swing.JDialog {
     private void jButton_OKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_OKActionPerformed
         // TODO add your handling code here:
         //Font
-        if (_legendFont != null) {
+        /*if (_legendFont != null) {
             _parent.setLegendFont(_legendFont);
-        }
+        }*/
         if (_textFont != null) {
             _parent.getOptions().setTextFont(_textFont);
         }

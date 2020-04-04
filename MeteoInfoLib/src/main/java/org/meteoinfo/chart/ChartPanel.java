@@ -181,7 +181,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 LocalDateTime now = LocalDateTime.now();
-                if (Duration.between(now, lastMouseWheelTime).toMillis() > 200) {
+                if (Duration.between(lastMouseWheelTime, now).toMillis() > 200) {
                     xShift = 0;
                     yShift = 0;
                     paintScale = 1.0;

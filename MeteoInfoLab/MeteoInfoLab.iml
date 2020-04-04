@@ -146,6 +146,6 @@
     <orderEntry type="library" name="Maven: de.sciss:docking-frames-core:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.0.4" level="project" />
-    <orderEntry type="library" name="Maven: com.formdev:flatlaf:0.27" level="project" />
+    <orderEntry type="library" name="Maven: com.formdev:flatlaf:0.29" level="project" />
   </component>
 </module>

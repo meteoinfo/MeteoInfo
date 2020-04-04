@@ -113,7 +113,7 @@ public class LayersLegend extends JPanel {
     private JScrollBar _vScrollBar;
     private MapLayout _mapLayout;
     private ItemNode _selectedNode;
-    private Color _selectedBackColor = new Color(230, 230, 230);
+    private Color _selectedBackColor = new Color(75,110,175);
     private Color _selectedForeColor = Color.white;
     private Point _mouseDownPos = new Point(0, 0);
     private ItemNode _dragNode = null;
@@ -158,16 +158,16 @@ public class LayersLegend extends JPanel {
             }
         });
 
-        this.setBackground(Color.white);
-        this.setFont(new Font("宋体", Font.PLAIN, 12));
+        //this.setBackground(Color.white);
+        //this.setFont(new Font("宋体", Font.PLAIN, 12));
         MapFrame mf = new MapFrame();
         mf.setActive(true);
         this.addMapFrame(mf);
 
         _mapLayout = null;
         frmLayerProp = null;
-        this.setBackground(Color.white);
-        this.setForeground(Color.black);
+        //this.setBackground(Color.white);
+        //this.setForeground(Color.black);
     }
 
     private void initComponents() {
@@ -1512,11 +1512,11 @@ public class LayersLegend extends JPanel {
 
     private void drawMapFrame(Graphics2D g, MapFrame aMapFrame, Point sP) {
         if (aMapFrame.isSelected()) {
-            Rectangle rect = new Rectangle(3, sP.y, this.getWidth() - 10, aMapFrame.getHeight());
+            Rectangle rect = new Rectangle(0, sP.y, this.getWidth(), aMapFrame.getHeight());
             g.setColor(_selectedBackColor);
             g.fill(rect);
-            g.setColor(Color.lightGray);
-            g.draw(rect);
+            //g.setColor(Color.lightGray);
+            //g.draw(rect);
         }
 
         g.setColor(this.getForeground());
@@ -1574,11 +1574,11 @@ public class LayersLegend extends JPanel {
     private void drawGroupNode(Graphics2D g, GroupNode groupNode, Point sP) {
         //Draw group
         if (groupNode.isSelected()) {
-            Rectangle rect = new Rectangle(3, sP.y, this.getWidth() - 10, groupNode.getHeight());
+            Rectangle rect = new Rectangle(0, sP.y, this.getWidth(), groupNode.getHeight());
             g.setColor(_selectedBackColor);
             g.fill(rect);
-            g.setColor(Color.lightGray);
-            g.draw(rect);
+            //g.setColor(Color.lightGray);
+            //g.draw(rect);
         }
 
         g.setColor(this.getForeground());
@@ -1611,19 +1611,20 @@ public class LayersLegend extends JPanel {
         //Draw Layer
         g.setColor(this.getForeground());
         if (layerNode.isSelected()) {
-            Rectangle rect = new Rectangle(3, sP.y, this.getWidth() - 10, layerNode.getHeight());
+            Rectangle rect = new Rectangle(0, sP.y, this.getWidth(), layerNode.getHeight());
             g.setColor(_selectedBackColor);
             g.fill(rect);
-            g.setColor(Color.lightGray);
-            g.draw(rect);
+            //g.setColor(Color.lightGray);
+            //g.draw(rect);
         }
 
         if (layerNode.isEditing()) {
-            Rectangle rect = new Rectangle(3, sP.y, this.getWidth() - 10, layerNode.getHeight());
+            Rectangle rect = new Rectangle(0, sP.y, this.getWidth(), layerNode.getHeight());
             g.setColor(Color.red);
             g.draw(rect);
         }
 
+        g.setColor(this.getForeground());
         if (layerNode.getLegendNodes().size() > 0) {
             drawExpansionBox(g, new Point(sP.x, sP.y + Constants.EXPAND_BOX_TOP_PAD), layerNode.isExpanded());
         }
@@ -1727,7 +1728,7 @@ public class LayersLegend extends JPanel {
         int y = rect.y + rect.height * 3 / 4;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         g.setFont(this.getFont());
-        g.setColor(Color.black);
+        g.setColor(this.getForeground());
         g.drawString(caption, x, y);
     }
 
@@ -1735,7 +1736,7 @@ public class LayersLegend extends JPanel {
         int size = 8;
         int gap = 2;
         Rectangle rect = new Rectangle(sP.x, sP.y, size, size);
-        g.setColor(Color.gray);
+        //g.setColor(Color.gray);
         g.draw(rect);
 
         GeneralPath path = new GeneralPath();
@@ -1746,19 +1747,20 @@ public class LayersLegend extends JPanel {
             path.lineTo(sP.x + size / 2, sP.y + size - gap);
         }
 
-        g.setColor(Color.black);
+        //g.setColor(Color.black);
         g.draw(path);
     }
 
     private void drawCheckBox(Graphics2D g, Point sP, int checkStatus) {
         int size = 10;
         Rectangle rect = new Rectangle(sP.x, sP.y, size, size);
-        g.setColor(Color.gray);
+        //g.setColor(Color.gray);
         g.draw(rect);
 
         if (checkStatus == 2) {
             g.setColor(Color.lightGray);
             g.fill(rect);
+            g.setColor(this.getForeground());
         }
 
         switch (checkStatus) {
@@ -1769,7 +1771,7 @@ public class LayersLegend extends JPanel {
                 path.lineTo(sP.x + 5, sP.y + 8);
                 path.moveTo(sP.x + 5, sP.y + 8);
                 path.lineTo(sP.x + 8, sP.y + 2);
-                g.setColor(Color.black);
+                //g.setColor(Color.black);
                 g.draw(path);
                 break;
         }

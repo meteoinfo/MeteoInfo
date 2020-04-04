@@ -358,7 +358,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 LocalDateTime now = LocalDateTime.now();
-                if (Duration.between(now, _lastMouseWheelTime).toMillis() > 200) {
+                if (Duration.between(_lastMouseWheelTime, now).toMillis() > 200) {
                     _xShift = 0;
                     _yShift = 0;
                     _paintScale = 1.0;

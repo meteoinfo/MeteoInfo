@@ -60,7 +60,7 @@ public class ArrayRagged extends Array {
         throw new UnsupportedOperationException();
     }
 
-    public Object getStorage() {
+    public Object[] getStorage() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }// used to create Array from java array
 

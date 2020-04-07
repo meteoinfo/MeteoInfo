@@ -1380,7 +1380,3 @@ class Axes3D(Axes):
         sy = r[1] + rect.getY()
         sy = self.figure.get_size()[1] - sy
         return sx, sy
-
-##################################33
-def test():
-    print 'Test!'

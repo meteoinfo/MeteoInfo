@@ -12,7 +12,9 @@ from org.meteoinfo.layer import LayerTypes
 from org.meteoinfo.shape import ShapeTypes
 from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil
 from javax.swing import WindowConstants
-from java.awt import Font, Color, BasicStroke
+from java.awt import Font
+
+import numbers
 
 import plotutil
 from ._axes3d import Axes3D
@@ -276,6 +278,72 @@ class Axes3DGL(Axes3D):
         if visible:
             self.add_graphic(graphics)
         return graphics
+
+    def plot_slice(self, *args, **kwargs):
+        '''
+        Volume slice planes
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param z: (*array_like*) Optional. Z coordinate array.
+        :param data: (*array_like*) 3D data array.
+        :param xslice: (*list*) X slice locations.
+        :param yslice: (*list*) Y slice locations.
+        :param zslice: (*list*) Z slice locations.
+        :param cmap: (*string*) Color map string.
+        :return:
+        '''
+        if len(args) <= 3:
+            x = args[0].dimvalue(2)
+            y = args[0].dimvalue(1)
+            z = args[0].dimvalue(0)
+            data = args[0]
+            args = args[1:]
+        else:
+            x = args[0]
+            y = args[1]
+            z = args[2]
+            data = args[3]
+            args = args[4:]
+        if x.ndim == 3:
+            x = x[0,0]
+        if y.ndim == 3:
+            y = y[0,:,0]
+        if z.ndim == 3:
+            z = z[:,0,0]
+
+        cmap = plotutil.getcolormap(**kwargs)
+        if len(args) > 0:
+            level_arg = args[0]
+            if isinstance(level_arg, int):
+                cn = level_arg
+                ls = LegendManage.createLegendScheme(data.min(), data.max(), cn, cmap)
+            else:
+                if isinstance(level_arg, NDArray):
+                    level_arg = level_arg.aslist()
+                ls = LegendManage.createLegendScheme(data.min(), data.max(), level_arg, cmap)
+        else:
+            ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
+        ls = ls.convertTo(ShapeTypes.Polygon)
+        edge = kwargs.pop('edge', True)
+        kwargs['edge'] = edge
+        plotutil.setlegendscheme(ls, **kwargs)
+
+        xslice = kwargs.pop('xslice', [])
+        if isinstance(xslice, numbers.Number):
+            xslice = [xslice]
+        yslice = kwargs.pop('yslice', [])
+        if isinstance(yslice, numbers.Number):
+            yslice = [yslice]
+        zslice = kwargs.pop('zslice', [])
+        if isinstance(zslice, numbers.Number):
+            zslice = [zslice]
+        graphics = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
+                                  yslice, zslice, ls)
+        visible = kwargs.pop('visible', True)
+        if visible:
+            for gg in graphics:
+                self.add_graphic(gg)
+        return graphics
         
     def plot_surface(self, *args, **kwargs):
         '''
@@ -299,6 +367,7 @@ class Axes3DGL(Axes3D):
             y = args[1]
             z = args[2]
             args = args[3:]
+
         if kwargs.has_key('colors'):
             cn = len(kwargs['colors'])
         else:

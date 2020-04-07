@@ -22,12 +22,15 @@ import org.meteoinfo.layer.ImageLayer;
 import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.legend.PolygonBreak;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.GraphicCollection;
 import org.meteoinfo.shape.ImageShape;
 import org.meteoinfo.shape.PointZ;
+import org.python.antlr.ast.Num;
 
 /**
  *
@@ -112,6 +115,103 @@ public class JOGLUtil {
         graphics.setVertices(vertices);
         graphics.setLegendScheme(ls);
         return graphics;
+    }
+
+    /**
+     * Create slice graphics
+     *
+     * @param data Data array - 3D
+     * @param xa X coordinate array - 1D
+     * @param ya Y coordinate array - 1D
+     * @param za Z coordinate array - 1D
+     * @param xSlice X slice list
+     * @param ySlice Y slice list
+     * @param zSlice Z slice list
+     * @param ls Legend scheme
+     * @return Surface graphics
+     */
+    public static List<SurfaceGraphics> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+                                        List<Number> ySlice, List<Number> zSlice, LegendScheme ls) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        List<SurfaceGraphics> sgs = new ArrayList<>();
+
+        int dim1, dim2;
+        double x, y, z;
+
+        //X slices
+        dim1 = (int)za.getSize();
+        dim2 = (int)ya.getSize();
+        for (int s = 0; s < xSlice.size(); s++) {
+            x = xSlice.get(s).doubleValue();
+            Array r = ArrayUtil.slice(data, 2, xa, x);
+            if (r != null) {
+                Index index = r.getIndex();
+                SurfaceGraphics graphics = new SurfaceGraphics();
+                PointZ[][] vertices = new PointZ[dim1][dim2];
+                for (int i = 0; i < dim1; i++) {
+                    z = za.getDouble(i);
+                    for (int j = 0; j < dim2; j++) {
+                        y = ya.getDouble(j);
+                        vertices[i][j] = new PointZ(x, y, z, r.getDouble(index.set(i, j)));
+                    }
+                }
+                graphics.setVertices(vertices);
+                graphics.setLegendScheme(ls);
+                sgs.add(graphics);
+            }
+        }
+
+        //Y slices
+        dim1 = (int)za.getSize();
+        dim2 = (int)xa.getSize();
+        for (int s = 0; s < ySlice.size(); s++) {
+            y = ySlice.get(s).doubleValue();
+            Array r = ArrayUtil.slice(data, 1, ya, y);
+            if (r != null) {
+                Index index = r.getIndex();
+                SurfaceGraphics graphics = new SurfaceGraphics();
+                PointZ[][] vertices = new PointZ[dim1][dim2];
+                for (int i = 0; i < dim1; i++) {
+                    z = za.getDouble(i);
+                    for (int j = 0; j < dim2; j++) {
+                        x = xa.getDouble(j);
+                        vertices[i][j] = new PointZ(x, y, z, data.getDouble(index.set(i, j)));
+                    }
+                }
+                graphics.setVertices(vertices);
+                graphics.setLegendScheme(ls);
+                sgs.add(graphics);
+            }
+        }
+
+        //Z slices
+        dim1 = (int)ya.getSize();
+        dim2 = (int)xa.getSize();
+        for (int s = 0; s < zSlice.size(); s++) {
+            z = zSlice.get(s).doubleValue();
+            Array r = ArrayUtil.slice(data, 0, za, z);
+            if (r != null) {
+                Index index = r.getIndex();
+                SurfaceGraphics graphics = new SurfaceGraphics();
+                PointZ[][] vertices = new PointZ[dim1][dim2];
+                for (int i = 0; i < dim1; i++) {
+                    y = ya.getDouble(i);
+                    for (int j = 0; j < dim2; j++) {
+                        x = xa.getDouble(j);
+                        vertices[i][j] = new PointZ(x, y, z, data.getDouble(index.set(i, j)));
+                    }
+                }
+                graphics.setVertices(vertices);
+                graphics.setLegendScheme(ls);
+                sgs.add(graphics);
+            }
+        }
+
+        return sgs;
     }
 
     /**

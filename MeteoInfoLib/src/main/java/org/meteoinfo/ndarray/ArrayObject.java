@@ -138,8 +138,9 @@ public class ArrayObject extends Array {
     /**
      * Get underlying primitive array storage. CAUTION! You may invalidate your
      * warrentee!
+     * @return
      */
-    public Object getStorage() {
+    public Object[] getStorage() {
         return storage;
     }
 

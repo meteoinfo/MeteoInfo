@@ -107,10 +107,15 @@ def plot(*args, **kwargs):
       '<'         triangle_left marker
       '>'         triangle_right marker
       's'         square marker
+      'S'         star marker
       'p'         pentagon marker
-      '*'         star marker
-      'x'         x marker
+      '*'         star line marker
+      'x'         x cross marker
       'D'         diamond marker
+      'm'         minus marker
+      '+'         plus marker
+      'os'        circle star marker
+      'do'        double circle
       =========  ===========
       
     The following color abbreviations are supported:

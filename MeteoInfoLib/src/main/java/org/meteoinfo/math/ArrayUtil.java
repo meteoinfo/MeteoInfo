@@ -3915,6 +3915,72 @@ public class ArrayUtil {
     }
 
     /**
+     * Get slice array along an axis
+     * @param a The original array
+     * @param axis The axis
+     * @param dim axis dimension array
+     * @param v axis value of slice
+     * @return Slice array
+     * @throws InvalidRangeException
+     */
+    public static Array slice(Array a, int axis, Array dim, double v) throws InvalidRangeException {
+        a = a.copyIfView();
+        dim = dim.copyIfView();
+
+        int ndim = a.getRank();
+        int[] dShape = a.getShape();
+        int n = (int) dim.getSize();
+        int idx = getDimIndex(dim, v);
+        if (idx == -1 || idx == -(n+1)) {
+            return null;
+        } else if (idx >= 0) {
+            int[] origin = new int[ndim];
+            int[] shape = new int[ndim];
+            for (int i = 0; i < ndim; i++) {
+                if (i == axis) {
+                    origin[i] = idx;
+                    shape[i] = 1;
+                } else {
+                    origin[i] = 0;
+                    shape[i] = dShape[i];
+                }
+            }
+            Array r = a.section(origin, shape);
+            return r;
+        } else {
+            int[] origin = new int[ndim];
+            int[] shape = new int[ndim];
+            int si = -idx - 2;
+            int ei = si + 1;
+            for (int i = 0; i < ndim; i++) {
+                if (i == axis) {
+                    origin[i] = si;
+                    shape[i] = 1;
+                } else {
+                    origin[i] = 0;
+                    shape[i] = dShape[i];
+                }
+            }
+            Array rs = a.section(origin, shape);
+            origin[axis] = ei;
+            Array re = a.section(origin, shape);
+            double sv = dim.getDouble(si);
+            double ev = dim.getDouble(ei);
+            double ratio = (v - sv) / (ev - sv);
+            Array r = Array.factory(a.getDataType(), rs.getShape());
+            IndexIterator rIter = r.getIndexIterator();
+            IndexIterator sIter = rs.getIndexIterator();
+            IndexIterator eIter = re.getIndexIterator();
+            while (rIter.hasNext()) {
+                sv = sIter.getDoubleNext();
+                ev = eIter.getDoubleNext();
+                rIter.setDoubleNext(sv + (ev - sv) * ratio);
+            }
+            return r;
+        }
+    }
+
+    /**
      * Resample grid array with bilinear method
      *
      * @param a The sample array
@@ -4662,16 +4728,32 @@ public class ArrayUtil {
      * @param v The value
      * @return value index
      */
-    public static int getDimIndex(Array dim, double v) {
+    public static int getDimIndex(Array dim, Number v) {
         dim = dim.copyIfView();
+        int idx;
+        switch (dim.getDataType()) {
+            case BYTE:
+                return Arrays.binarySearch((byte[]) dim.getStorage(), v.byteValue());
+            case INT:
+                return Arrays.binarySearch((int[]) dim.getStorage(), v.intValue());
+            case SHORT:
+                return Arrays.binarySearch((short[]) dim.getStorage(), v.shortValue());
+            case LONG:
+                return Arrays.binarySearch((long[]) dim.getStorage(), v.longValue());
+            case FLOAT:
+                return Arrays.binarySearch((float[]) dim.getStorage(), v.floatValue());
+            case DOUBLE:
+                return Arrays.binarySearch((double[]) dim.getStorage(), v.doubleValue());
+        }
+
         int n = (int) dim.getSize();
-        if (v < dim.getDouble(0) || v > dim.getDouble(n - 1)) {
+        if (v.doubleValue() < dim.getDouble(0) || v.doubleValue() > dim.getDouble(n - 1)) {
             return -1;
         }
 
-        int idx = n - 1;
+        idx = n - 1;
         for (int i = 1; i < n; i++) {
-            if (v < dim.getDouble(i)) {
+            if (v.doubleValue() < dim.getDouble(i)) {
                 idx = i - 1;
                 break;
             }

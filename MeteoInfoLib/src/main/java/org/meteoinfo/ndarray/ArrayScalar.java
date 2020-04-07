@@ -59,7 +59,7 @@ public class ArrayScalar extends Array {
     }
 
     @Override
-    public Object getStorage() {
+    public Object[] getStorage() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

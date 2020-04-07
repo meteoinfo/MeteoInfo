@@ -154,7 +154,7 @@ public class ArrayString extends Array {
     }
 
     /* Get underlying primitive array storage. CAUTION! You may invalidate your warranty! */
-    public Object getStorage() {
+    public Object[] getStorage() {
         return storage;
     }
 

@@ -242,7 +242,7 @@ public abstract class ArrayStructureBak extends Array {
         return sdata[index];
     }
 
-    public Object getStorage() {
+    public Object[] getStorage() {
         // this fills the sdata array
         for (int i = 0; i < nelems; i++)
             getStructureData(i);

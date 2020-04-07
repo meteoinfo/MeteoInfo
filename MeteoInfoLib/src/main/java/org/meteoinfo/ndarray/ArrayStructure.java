@@ -286,7 +286,7 @@ public class ArrayStructure extends Array {
     }
 
     @Override
-    public Object getStorage() {
+    public Object[] getStorage() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -16,7 +16,6 @@ from org.meteoinfo.shape import ShapeTypes
 from org.meteoinfo.chart import ChartText
 
 from java.awt import Color, Font
-from java.time import LocalDateTime
 
 from mipylib.numeric.core import NDArray, DimArray
 import mipylib.numeric as np
@@ -263,6 +262,8 @@ def getpointstyle(style):
         pointStyle = PointStyle.UpTriangle
     elif 'x' in style:
         pointStyle = PointStyle.XCross
+    elif 'p' in style:
+        pointStyle = PointStyle.Pentagon
     
     return pointStyle
     

@@ -1720,13 +1720,13 @@ public class LegendManage {
             cDelt = Math.pow(10, aE);
             cNum = aD;
             //newMin = Convert.ToInt32((min + cDelt) / Math.Pow(10, aE)) * Math.Pow(10, aE);
-            newMin = (int) (min / cDelt + 1) * cDelt;
+            newMin = BigDecimalUtil.mul((int) (min / cDelt + 1), cDelt);
         } else if (aD == 5) {
             cDelt = BigDecimalUtil.mul(aD, Math.pow(10, aE - 1));
             //cDelt = aD * Math.pow(10, aE - 1);
             cNum = 10;
             //newMin = Convert.ToInt32((min + cDelt) / Math.Pow(10, aE)) * Math.Pow(10, aE);
-            newMin = (int) (min / cDelt + 1) * cDelt;
+            newMin = BigDecimalUtil.mul((int) (min / cDelt + 1), cDelt);
             cNum++;
         } else {
             //cDelt = aD * Math.pow(10, aE - 1);

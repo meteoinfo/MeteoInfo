@@ -6952,9 +6952,9 @@ public class ArrayMath {
         double xv, yv;
         while (xIter.hasNext()) {
             xv = xIter.getDoubleNext();
+            yv = yIter.getDoubleNext();
             if (Double.isNaN(xv))
                 continue;
-            yv = yIter.getDoubleNext();
             if (Double.isNaN(yv))
                 continue;
             xi.add(xv);

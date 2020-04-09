@@ -282,8 +282,8 @@ public class MapView extends JPanel implements IWebMapPanel {
     private boolean _drawGridLine = false;
     private double _gridXDelt = 10;
     private double _gridYDelt = 10;
-    private float _gridXOrigin = 0;
-    private float _gridYOrigin = 0;
+    private float _gridXOrigin = -180;
+    private float _gridYOrigin = -90;
     private boolean _gridDeltChanged = false;
     private List<GridLabel> _gridLabels = new ArrayList<>();
     private LocalDateTime _lastMouseWheelTime;
@@ -6774,15 +6774,15 @@ public class MapView extends JPanel implements IWebMapPanel {
         Extent extent = new Extent();
         boolean isLabelLon = false;
         lon = origin_Lon;
-        while (true) {
-            if (lon >= origin_Lon && lineNum > 0 && lon - Delt_Lon < origin_Lon) {
+        while (lon <= 180) {
+            /*if (lon >= origin_Lon && lineNum > 0 && lon - Delt_Lon < origin_Lon) {
                 break;
             }
 
             if (lon > 180) {
                 lon = BigDecimalUtil.sub(lon, 360);
                 //lon = lon - 360;
-            }
+            }*/
 
             if (!_projection.isLonLatMap()) {
                 if (refLon == 180 || refLon == -180) {

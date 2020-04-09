@@ -33,6 +33,14 @@ class GLFigure(GLChartPanel):
         '''
         self.axes.append(ax)
         self.getChart().addPlot(ax.axes)
-        
-        
-############################################
+
+    def set_antialias(self, b=None, symbol=None):
+        """
+        Set figure antialias or not.
+
+        :param b: (*boolean*) Antialias or not.
+        :param symbol: (*boolean*) Set symbol antialias or not.
+        """
+        if b is None:
+            b = not self.axes.get_antialias()
+        self.axes.set_antialias(b)

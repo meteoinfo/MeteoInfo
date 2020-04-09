@@ -108,6 +108,13 @@ class Axes3DGL(Axes3D):
         '''
         self.axes.setAngleX(elevation)
 
+    def get_antialias(self):
+        '''
+        Get antialias
+        :return: (*bool*) Antialias or not.
+        '''
+        return self.axes.isAntialias()
+
     def set_antialias(self, antialias):
         '''
         Set antialias

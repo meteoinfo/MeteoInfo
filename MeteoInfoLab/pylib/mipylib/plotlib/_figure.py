@@ -719,8 +719,3 @@ class Figure(ChartPanel):
         
         if not symbol is None:
             self.getChart().setSymbolAntialias(symbol)
-        
-########################################################3
-class Test():
-    def test():
-        print 'Test...'

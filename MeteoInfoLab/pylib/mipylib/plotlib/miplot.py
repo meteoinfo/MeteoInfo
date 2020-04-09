@@ -1485,8 +1485,7 @@ def antialias(b=None, symbol=None):
     if g_figure is None:
         figure()
     
-    if isinstance(g_figure, Figure):
-        g_figure.set_antialias(b, symbol)
+    g_figure.set_antialias(b, symbol)
     draw_if_interactive()
     
 def savefig(fname, width=None, height=None, dpi=None, sleep=None):

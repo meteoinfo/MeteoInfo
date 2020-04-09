@@ -411,6 +411,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 if (aDH.POLE_LAT == 90 || aDH.POLE_LAT == -90) {
                     if (aDH.TANG_LAT == 90 || aDH.TANG_LAT == -90) {
                         ProjStr = "+proj=stere"
+                                + "+lat_ts=" + String.valueOf(aDH.REF_LAT)
                                 + "+lat_0=" + String.valueOf(aDH.TANG_LAT)
                                 + "+lon_0=" + String.valueOf(aDH.REF_LON + aDH.ORIENT);
                     } else if (aDH.TANG_LAT == 0) {
@@ -428,9 +429,6 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                             + "+lat_0=" + String.valueOf(aDH.POLE_LAT)
                             + "+lon_0=" + String.valueOf(aDH.REF_LON + aDH.ORIENT);
                 } else {
-//                    ProjStr = "+proj=stere"
-//                            + "+lat_0=" + String.valueOf(aDH.POLE_LAT)
-//                            + "+lon_0=" + String.valueOf(aDH.REF_LON + aDH.ORIENT);
                     ProjStr = "+proj=lcc"
                             + "+lat_0=" + String.valueOf(aDH.REF_LAT)
                             + "+lat_1=" + String.valueOf(aDH.TANG_LAT)

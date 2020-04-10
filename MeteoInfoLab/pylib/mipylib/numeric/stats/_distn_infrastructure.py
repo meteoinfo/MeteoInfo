@@ -185,3 +185,26 @@ class rv_continuous(object):
         '''
         dist = self._create_distribution(*args)
         return dist.getNumericalVariance()
+
+    def interval(self, alpha, *args, **kwargs):
+        '''
+        Confidence interval with equal areas around the median.
+
+        :param alpha: (*float*) Probability that an rv will be drawn from the returned range.
+            Each value should be in the range [0, 1].
+        :param loc: (*float*) location parameter (default=0).
+        :param scale: (*float*) scale parameter (default=1).
+
+        :return: end-points of range that contain ``100 * alpha %`` of the rv's
+            possible values.
+        '''
+        loc = kwargs.pop('loc', 0)
+        scale = kwargs.pop('scale', 1)
+        dist = self._create_distribution(*args)
+        significance = 1 - alpha
+        n = kwargs.pop('n', 1)
+        a = dist.inverseCumulativeProbability(1.0 - significance / 2)
+        r = a * scale / np.sqrt(n)
+        lower = loc - r
+        upper = loc + r
+        return lower, upper

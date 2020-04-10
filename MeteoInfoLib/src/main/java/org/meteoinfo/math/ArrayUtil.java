@@ -4765,13 +4765,17 @@ public class ArrayUtil {
         int xn = (int) xdim.getSize();
         int yn = (int) ydim.getSize();
         int xIdx = getDimIndex(xdim, x);
-        if (xIdx < 0) {
+        if (xIdx == -1 || xIdx == - (xn + 1)) {
             return null;
+        } else if (xIdx < 0) {
+            xIdx = - xIdx - 2;
         }
 
         int yIdx = getDimIndex(ydim, y);
-        if (yIdx < 0) {
+        if (yIdx == -1 || yIdx == -(yn + 1)) {
             return null;
+        } else if (yIdx < 0) {
+            yIdx = - yIdx - 2;
         }
 
         if (xIdx == xn - 1) {

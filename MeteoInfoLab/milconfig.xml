@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\stats">
-    <RecentFolder Folder="D:\Run\emips\test"/>
+  <Path OpenPath="D:\Temp\test">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
@@ -16,6 +15,7 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Temp\test"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,12 +23,14 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\norm_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\norm_interval_1.py"/>
+      <OpenedFile File="D:\Temp\test\wrfout2arl.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\norm_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\norm_interval_1.py"/>
+      <RecentFile File="D:\Temp\test\wrfout2arl.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +38,5 @@
   </Font>
   <LookFeel Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1439,829"/>
 </MeteoInfo>

@@ -1476,25 +1476,17 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
         } else {
             float sync_x, sync_y;                     
             double sync_lon, sync_lat;
-            if (Double.isNaN(projInfo.getCenterLon())) {
-                sync_x = 1;
-                sync_y = 1;
-                //double x = MIMath.getValue(X, sync_x);
-                //double y = MIMath.getValue(Y, sync_y);
-                double x = X[0];
-                double y = Y[0];
-                double[][] points = new double[1][];
-                points[0] = new double[]{x, y};
-                ProjectionInfo toProj = KnownCoordinateSystems.geographic.world.WGS1984;
-                Reproject.reprojectPoints(points, projInfo, toProj, 0, 1);
-                sync_lon = points[0][0];
-                sync_lat = points[0][1];
-            } else {
-                sync_x = 0.5f * (X.length + 1);
-                sync_y = 0.5f * (Y.length + 1);   
-                sync_lon = projInfo.getCenterLon();
-                sync_lat = projInfo.getCenterLat();
-            }
+            sync_x = 1;
+            sync_y = 1;
+            double x = X[0];
+            double y = Y[0];
+            double[][] points = new double[1][];
+            points[0] = new double[]{x, y};
+            ProjectionInfo toProj = KnownCoordinateSystems.geographic.world.WGS1984;
+            Reproject.reprojectPoints(points, projInfo, toProj, 0, 1);
+            sync_lon = points[0][0];
+            sync_lat = points[0][1];
+
             Projection aProj = projInfo.getCoordinateReferenceSystem().getProjection();
             double tanLat = this.eqvlat(aProj.getProjectionLatitude1Degrees(),
                     aProj.getProjectionLatitude2Degrees());

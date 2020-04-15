@@ -40,7 +40,10 @@ public class ChartColorBar extends ChartLegend {
     private List<ChartText> tickLabels;
     private boolean autoTick;
     private boolean insideTick;
-    private int tickLength;
+    private float tickLength;
+    private boolean tickVisible;
+    private float tickWidth;
+    private Color tickColor;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -57,6 +60,9 @@ public class ChartColorBar extends ChartLegend {
         this.autoTick = true;
         this.insideTick = true;
         this.tickLength = 5;
+        this.tickVisible = true;
+        this.tickWidth = 1;
+        this.tickColor = Color.black;
     }
 
     // </editor-fold>
@@ -181,7 +187,7 @@ public class ChartColorBar extends ChartLegend {
      *
      * @return Tick length
      */
-    public int getTickLength() {
+    public float getTickLength() {
         return this.tickLength;
     }
 
@@ -210,6 +216,54 @@ public class ChartColorBar extends ChartLegend {
      */
     public void setInsideTick(boolean value) {
         this.insideTick = value;
+    }
+
+    /**
+     * Get if is tick visible
+     * @return Boolean
+     */
+    public boolean isTickVisible() {
+        return this.tickVisible;
+    }
+
+    /**
+     * Set if is tick visible
+     * @param value Boolean
+     */
+    public void setTickVisible(boolean value) {
+        this.tickVisible = value;
+    }
+
+    /**
+     * Get tick line width
+     * @return Tick line width
+     */
+    public float getTickWidth() {
+        return this.tickWidth;
+    }
+
+    /**
+     * Set tick line width
+     * @param value Tick line width
+     */
+    public void setTickWidth(float value) {
+        this.tickWidth = value;
+    }
+
+    /**
+     * Get tick color
+     * @return Tick color
+     */
+    public Color getTickColor() {
+        return this.tickColor;
+    }
+
+    /**
+     * Set tick color
+     * @param value Tick color
+     */
+    public void setTickColor(Color value) {
+        this.tickColor = value;
     }
     
     // </editor-fold>
@@ -254,7 +308,7 @@ public class ChartColorBar extends ChartLegend {
         g.setTransform(oldMatrix);
     }
 
-    private void drawTickLine(Graphics2D g, PointF sP, int tickLen, boolean vertical, float shift) {
+    private void drawTickLine(Graphics2D g, PointF sP, float tickLen, boolean vertical, float shift) {
         if (vertical) {
             if (this.insideTick) {
                 g.draw(new Line2D.Float(sP.X + shift, sP.Y, sP.X + shift, sP.Y - tickLen));
@@ -274,7 +328,7 @@ public class ChartColorBar extends ChartLegend {
         }
     }
     
-    private void drawTickLine(Graphics2D g, PointD sP, int tickLen, boolean vertical, double shift) {
+    private void drawTickLine(Graphics2D g, PointD sP, float tickLen, boolean vertical, double shift) {
         if (vertical) {
             if (this.insideTick) {
                 g.draw(new Line2D.Double(sP.X + shift, sP.Y, sP.X + shift, sP.Y - tickLen));
@@ -446,7 +500,8 @@ public class ChartColorBar extends ChartLegend {
             aP.X += _vBarWidth;  
         }
         //Draw neatline
-        g.setColor(Color.black);
+        g.setStroke(new BasicStroke(this.neatLineSize));
+        g.setColor(this.neatLineColor);
         if (this.extendRect) {
             g.draw(new Rectangle.Double(0, y_shift, this._vBarWidth * bNum, this._hBarHeight));
         } else {
@@ -466,14 +521,15 @@ public class ChartColorBar extends ChartLegend {
         }
         //Draw tick and label
         aP.X = -_vBarWidth / 2;
-        int tickLen = this.tickLength;
+        float tickLen = this.tickLength;
         if (this.insideTick) {
             if (this._hBarHeight < tickLen) {
                 tickLen = (int) this._hBarHeight;
             }
         }
+        g.setStroke(new BasicStroke(this.tickWidth));
         g.setFont(tickLabelFont);
-        g.setColor(Color.black);
+        g.setColor(this.tickColor);
         idx = 0;
         for (int i = 0; i < bNum; i++) {
             aP.X += _vBarWidth;
@@ -493,6 +549,7 @@ public class ChartColorBar extends ChartLegend {
                 if (aLS.getLegendType() == LegendType.UniqueValue) {
                     sP.X = aP.X;
                     sP.Y = aP.Y + _hBarHeight / 2 + 5;
+                    g.setColor(this.tickLabelColor);
                     if (this.tickLabelAngle == 0) {
                         Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
                     } else if (this.tickLabelAngle < 45) {
@@ -506,7 +563,9 @@ public class ChartColorBar extends ChartLegend {
                     PointD ssP = (PointD)sP.clone();
                     if (this.autoTick) {
                         if (i < bNum - 1) {
+                            g.setColor(this.tickColor);
                             this.drawTickLine(g, sP, tickLen, true, 0);
+                            g.setColor(this.tickLabelColor);
                             if (this.tickLabelAngle == 0) {
                                 Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
                             } else if (this.tickLabelAngle < 45) {
@@ -515,8 +574,10 @@ public class ChartColorBar extends ChartLegend {
                                 Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
                             }
                             if (this.drawMinLabel && i == 0) {
+                                g.setColor(this.tickColor);
                                 this.drawTickLine(g, ssP, tickLen, true, -this._vBarWidth);
                                 caption = DataConvert.removeTailingZeros(cb.getStartValue().toString());
+                                g.setColor(this.tickLabelColor);
                                 //Draw.drawString(g, ssP.X - this._vBarWidth, ssP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
                                 if (this.tickLabelAngle == 0) {
                                     Draw.drawString(g, ssP.X - this._vBarWidth, ssP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
@@ -527,7 +588,9 @@ public class ChartColorBar extends ChartLegend {
                                 }
                             }
                         } else if (this.drawMaxLabel) {
+                            g.setColor(this.tickColor);
                             this.drawTickLine(g, sP, tickLen, true, 0);
+                            g.setColor(this.tickLabelColor);
                             if (this.tickLabelAngle == 0) {
                                 Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
                             } else if (this.tickLabelAngle < 45) {
@@ -538,7 +601,9 @@ public class ChartColorBar extends ChartLegend {
                         }
                     } else {
                         if (i == 0 && this.tickLocations.get(idx) == Double.parseDouble(cb.getStartValue().toString())) {
+                            g.setColor(this.tickColor);
                             this.drawTickLine(g, sP, tickLen, true, -this._vBarWidth);
+                            g.setColor(this.tickLabelColor);
                             //Draw.drawString(g, sP.X - this._vBarWidth, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
                             if (this.tickLabelAngle == 0) {
                                 Draw.drawString(g, sP.X - this._vBarWidth, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
@@ -548,7 +613,9 @@ public class ChartColorBar extends ChartLegend {
                                 Draw.drawString(g, sP.X - this._vBarWidth, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
                             }
                         } else {
+                            g.setColor(this.tickColor);
                             this.drawTickLine(g, sP, tickLen, true, 0);
+                            g.setColor(this.tickLabelColor);
                             if (this.tickLabelAngle == 0) {
                                 Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
                             } else if (this.tickLabelAngle < 45) {
@@ -742,7 +809,8 @@ public class ChartColorBar extends ChartLegend {
             }
         }
         //Draw neatline
-        g.setColor(Color.black);
+        g.setStroke(new BasicStroke(this.neatLineSize));
+        g.setColor(this.neatLineColor);
         if (this.extendRect) {
             g.draw(new Rectangle.Double(x_shift, 0, this._vBarWidth, this._hBarHeight * bNum));
         } else {
@@ -757,8 +825,9 @@ public class ChartColorBar extends ChartLegend {
             g.draw(p);
         }
         //Draw ticks
+        g.setStroke(new BasicStroke(this.tickWidth));
         aP.Y = this.legendHeight + _hBarHeight / 2;
-        int tickLen = this.tickLength;
+        float tickLen = this.tickLength;
         if (this.insideTick) {
             if (this._vBarWidth < tickLen) {
                 tickLen = (int) this._vBarWidth;
@@ -784,7 +853,7 @@ public class ChartColorBar extends ChartLegend {
                 if (aLS.getLegendType() == LegendType.UniqueValue) {
                     sP.X = aP.X + _vBarWidth / 2 + 5;
                     sP.Y = aP.Y;
-                    g.setColor(Color.black);
+                    g.setColor(this.tickLabelColor);
                     Draw.drawString(g, sP.X, sP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
                 } else {
                     sP.X = aP.X + _vBarWidth / 2;
@@ -792,23 +861,33 @@ public class ChartColorBar extends ChartLegend {
                     PointD ssP = (PointD)sP.clone();
                     if (this.autoTick) {
                         if (i < bNum - 1) {
+                            g.setColor(this.tickColor);
                             this.drawTickLine(g, sP, tickLen, false, 0);
+                            g.setColor(this.tickLabelColor);
                             Draw.drawString(g, sP.X, sP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
-                            if (this.drawMinLabel && i == 0) {                                
+                            if (this.drawMinLabel && i == 0) {
+                                g.setColor(this.tickColor);
                                 this.drawTickLine(g, ssP, tickLen, false, this._hBarHeight);
                                 caption = DataConvert.removeTailingZeros(cb.getStartValue().toString());
+                                g.setColor(this.tickLabelColor);
                                 Draw.drawString(g, ssP.X, ssP.Y + this._hBarHeight, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
                             }
                         } else if (this.drawMaxLabel) {
+                            g.setColor(this.tickColor);
                             this.drawTickLine(g, sP, tickLen, false, 0);
+                            g.setColor(this.tickLabelColor);
                             Draw.drawString(g, sP.X, sP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
                         }
                     } else {
                         if (i == 0 && this.tickLocations.get(idx) == Double.parseDouble(cb.getStartValue().toString())) {
+                            g.setColor(this.tickColor);
                             this.drawTickLine(g, sP, tickLen, false, this._hBarHeight);
+                            g.setColor(this.tickLabelColor);
                             Draw.drawString(g, sP.X, sP.Y + this._hBarHeight, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
                         } else {
+                            g.setColor(this.tickColor);
                             this.drawTickLine(g, sP, tickLen, false, 0);
+                            g.setColor(this.tickLabelColor);
                             Draw.drawString(g, sP.X, sP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
                         }
                     }

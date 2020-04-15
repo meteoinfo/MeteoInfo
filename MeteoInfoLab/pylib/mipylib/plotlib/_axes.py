@@ -3635,12 +3635,22 @@ class Axes(object):
         extendfrac = kwargs.pop('extendfrac', None)
         if extendfrac == 'auto':
             legend.setAutoExtendFrac(True)
+        tickvisible = kwargs.pop('tickvisible', None)
+        if not tickvisible is None:
+            legend.setTickVisible(tickvisible)
         tickin = kwargs.pop('tickin', None)
         if not tickin is None:
             legend.setInsideTick(tickin)
         ticklen = kwargs.pop('ticklen', None)
         if not ticklen is None:
             legend.setTickLength(ticklen)
+        if kwargs.has_key('tickwidth'):
+            tickwidth = kwargs.pop('tickwidth')
+            legend.setTickWidth(tickwidth)
+        if kwargs.has_key('tickcolor'):
+            tickcolor = kwargs.pop('tickcolor')
+            tickcolor = plotutil.getcolor(tickcolor)
+            legend.setTickColor(tickcolor)
         ticks = kwargs.pop('ticks', None)
         if not ticks is None:
             if isinstance(ticks, NDArray):
@@ -3670,6 +3680,13 @@ class Axes(object):
         vmaxtick = kwargs.pop('vmaxtick', False)
         legend.setDrawMinLabel(vmintick)
         legend.setDrawMaxLabel(vmaxtick)
+        if kwargs.has_key('edgecolor'):
+            edgecolor = kwargs.pop('edgecolor')
+            edgecolor = plotutil.getcolor(edgecolor)
+            legend.setNeatLineColor(edgecolor)
+        if kwargs.has_key('edgesize'):
+            edgesize = kwargs.pop('edgesize')
+            legend.setNeatLineSize(edgesize)
 
 
 ###############################################

@@ -431,7 +431,7 @@ public class Axis implements Cloneable {
      * @return Line stroke
      */
     public Stroke getLineStroke() {
-        return new BasicStroke(this.lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+        return new BasicStroke(this.lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
                 10.0f, Draw.getDashPattern(lineStyle), 0.0f);
     }
 

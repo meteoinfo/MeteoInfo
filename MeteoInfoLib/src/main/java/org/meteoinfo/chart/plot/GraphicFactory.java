@@ -5101,6 +5101,28 @@ public class GraphicFactory {
         graphics.updateExtent();
     }
 
+    /**
+     * Convert graphics from polar to cartesian coordinate
+     *
+     * @param graphics Graphics
+     */
+    public static void polarToCartesian(GraphicCollection graphics, double bottom) {
+        for (int m = 0; m < graphics.getNumGraphics(); m++) {
+            Graphic graphic = graphics.get(m);
+            for (int i = 0; i < graphic.getNumGraphics(); i++) {
+                Graphic gg = graphic.getGraphicN(i);
+                Shape shape = gg.getShape();
+                List<PointD> points = new ArrayList<>();
+                for (PointD p : shape.getPoints()) {
+                    double[] xy = MIMath.polarToCartesian(p.X, p.Y + bottom);
+                    points.add(new PointD(xy[0], xy[1]));
+                }
+                shape.setPoints(points);
+            }
+        }
+        graphics.updateExtent();
+    }
+
     private static int findIndex(double[] values, double v) {
         int idx = -1;
         for (int i = 0; i < values.length; i++) {

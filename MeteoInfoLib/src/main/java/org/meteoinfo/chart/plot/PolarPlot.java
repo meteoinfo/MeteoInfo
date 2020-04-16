@@ -34,6 +34,7 @@ public class PolarPlot extends Plot2D {
 
     // <editor-fold desc="Variables">
     private double radius;
+    private double bottom = 0;
     private Font xTickFont = new Font("Arial", Font.PLAIN, 12);
     private Font yTickFont = new Font("Aria", Font.PLAIN, 12);
     private Color xTickColor = Color.black;
@@ -82,8 +83,24 @@ public class PolarPlot extends Plot2D {
      * @param value Max radius
      */
     public void setRadius(double value){
-        this.radius = value;
+        this.radius = value + this.bottom;
         super.setDrawExtent(new Extent(-this.radius, this.radius, -this.radius, this.radius));
+    }
+
+    /**
+     * Get radius bottom - calm wind in center circle
+     * @return Radius bottom
+     */
+    public double getBottom() {
+        return this.bottom;
+    }
+
+    /**
+     * Set radius bottom
+     * @param value Radius bottom
+     */
+    public void setBottom(double value) {
+        this.bottom = value;
     }
     
     /**
@@ -256,11 +273,11 @@ public class PolarPlot extends Plot2D {
     /**
      * Add a graphic
      *
-     * @param g Grahic
+     * @param g Graphic
      */
     @Override
     public void addGraphic(Graphic g) {
-        GraphicFactory.polarToCartesian((GraphicCollection) g);
+        GraphicFactory.polarToCartesian((GraphicCollection) g, this.bottom);
         super.addGraphic(g);
     }
 
@@ -272,7 +289,7 @@ public class PolarPlot extends Plot2D {
      */
     @Override
     public void addGraphic(int idx, Graphic g) {
-        GraphicFactory.polarToCartesian((GraphicCollection) g);
+        GraphicFactory.polarToCartesian((GraphicCollection) g, this.bottom);
         super.addGraphic(idx, g);
     }
 
@@ -303,7 +320,7 @@ public class PolarPlot extends Plot2D {
         max = Math.max(max, Math.abs(extent.minY));
         max = Math.max(max, Math.abs(extent.maxY));
         double[] values = (double[]) MIMath.getIntervalValues(0, max, true).get(0);
-        this.radius = values[values.length - 1];
+        this.radius = values[values.length - 1] + this.bottom;
         super.setDrawExtent(new Extent(-this.radius, this.radius, -this.radius, this.radius));
     }
     
@@ -507,12 +524,16 @@ public class PolarPlot extends Plot2D {
             float shift = 5;
             for (int i = 0; i < this.xTickLocations.size(); i++) {
                 double angle = this.xTickLocations.get(i);
+                if (bottom != 0) {
+                    xy = MIMath.polarToCartesian(Math.toRadians(angle), bottom);
+                    xy = this.projToScreen(xy[0], xy[1], area);
+                    x0 = xy[0] + minx;
+                    y0 = xy[1] + miny;
+                }
                 xy = MIMath.polarToCartesian(Math.toRadians(angle), this.radius);
                 xy = this.projToScreen(xy[0], xy[1], area);
-                x = xy[0];
-                y = xy[1];
-                x += minx;
-                y += miny;
+                x = xy[0] + minx;
+                y = xy[1] + miny;
                 g.setColor(gridLine.getColor());
                 g.draw(new Line2D.Double(x0, y0, x, y));
 //                //Draw x tick label
@@ -570,7 +591,7 @@ public class PolarPlot extends Plot2D {
                 double v = this.yTickLocations.get(i);
                 if (v > 0 && v < this.radius) {
                     g.setColor(gridLine.getColor());
-                    this.drawCircle(g, area, v);                    
+                    this.drawCircle(g, area, v + bottom);
                 }
 //                if (v > 0){
 //                    g.setColor(Color.black);
@@ -766,7 +787,7 @@ public class PolarPlot extends Plot2D {
             for (int i = 0; i < this.yTickLocations.size(); i++) {
                 double v = this.yTickLocations.get(i);
                 if (v > 0){
-                    xy = MIMath.polarToCartesian(Math.toRadians(this.yTickLabelPos), v);
+                    xy = MIMath.polarToCartesian(Math.toRadians(this.yTickLabelPos), v + bottom);
                     xy = this.projToScreen(xy[0], xy[1], area);
                     x = xy[0];
                     y = xy[1];

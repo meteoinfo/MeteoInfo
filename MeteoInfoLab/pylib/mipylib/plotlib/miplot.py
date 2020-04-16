@@ -1040,13 +1040,14 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
     wd = wd + 360./wdN/2
     wd[wd>360] = wd - 360
     rwd = np.radians(wd)    
-    
+
+    bottom = kwargs.pop('bottom', None)
     global gca
     if gca is None:
-        gca = axes(polar=True)
+        gca = axes(polar=True, bottom=bottom)
     else:
         if not isinstance(gca, PolarAxes):
-            gca = axes(polar=True)
+            gca = axes(polar=True, bottom=bottom)
     
     width = kwargs.pop('width', 0.5)
     if width > 1:

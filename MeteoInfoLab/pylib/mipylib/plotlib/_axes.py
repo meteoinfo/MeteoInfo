@@ -3697,6 +3697,10 @@ class PolarAxes(Axes):
     
     def __init__(self, *args, **kwargs):
         super(PolarAxes, self).__init__(*args, **kwargs)
+
+        bottom = kwargs.pop('bottom', None)
+        if not bottom is None:
+            self.axes.setBottom(bottom)
         
     def _set_plot(self, plot):
         '''

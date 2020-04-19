@@ -5,8 +5,7 @@
  */
 package org.meteoinfo.chart.jogl;
 
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
 import java.awt.Cursor;
@@ -22,12 +21,17 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
+import javax.imageio.*;
+import javax.imageio.metadata.IIOInvalidTreeException;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JPopupMenu;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
+import org.meteoinfo.image.ImageUtil;
 
 /**
  *
@@ -77,6 +81,35 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         super(cap);
 
         init(pltGL);
+    }
+
+    /**
+     * Factory
+     * @param pltGL Plot3DGL
+     * @return GLChartPanel
+     */
+    public static GLChartPanel factory(Plot3DGL pltGL) {
+        final GLProfile profile = GLProfile.get(GLProfile.GL2);
+        GLCapabilities cap = new GLCapabilities(profile);
+        cap.setDoubleBuffered(true);
+        cap.setSampleBuffers(true);
+        cap.setNumSamples(4);
+
+        return new GLChartPanel(cap, pltGL);
+    }
+
+    /**
+     * Factory
+     * @return GLChartPanel
+     */
+    public static GLChartPanel factory() {
+        final GLProfile profile = GLProfile.get(GLProfile.GL2);
+        GLCapabilities cap = new GLCapabilities(profile);
+        cap.setDoubleBuffered(true);
+        cap.setSampleBuffers(true);
+        cap.setNumSamples(4);
+
+        return new GLChartPanel(cap, new Plot3DGL());
     }
 
     private void init(Plot3DGL pltGL) {
@@ -260,8 +293,57 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @return View image
      */
     public BufferedImage paintViewImage() {
-        this.plot3DGL.getDrawable().display();
+        this.plot3DGL.setDoScreenShot(true);
+        this.display();
         return this.plot3DGL.getScreenImage();
+    }
+
+    /**
+     * Paint view image
+     *
+     * @param width Image width
+     * @param height Image height
+     * @return View image
+     */
+    public BufferedImage paintViewImage(int width, int height) {
+        final GLProfile glp = GLProfile.get(GLProfile.GL2);
+        GLCapabilities caps = new GLCapabilities(glp);
+        caps.setHardwareAccelerated(true);
+        caps.setDoubleBuffered(false);
+        caps.setAlphaBits(8);
+        caps.setRedBits(8);
+        caps.setBlueBits(8);
+        caps.setGreenBits(8);
+        caps.setOnscreen(false);
+        GLDrawableFactory factory = GLDrawableFactory.getFactory(glp);
+        GLOffscreenAutoDrawable drawable = factory.createOffscreenAutoDrawable(null, caps, null,
+                width, height);
+        drawable.addGLEventListener(this.plot3DGL);
+        this.plot3DGL.setDoScreenShot(true);
+        drawable.display();
+
+        BufferedImage image = this.plot3DGL.getScreenImage();
+        drawable.destroy();
+
+        return image;
+    }
+
+    /**
+     * Paint view image
+     *
+     * @param width Image width
+     * @param height Image height
+     * @param dpi Image dpi
+     * @return View image
+     */
+    public BufferedImage paintViewImage(int width, int height, int dpi) {
+        double scaleFactor = dpi / 72.0;
+        width = (int)(width * scaleFactor);
+        height = (int)(height * scaleFactor);
+        this.plot3DGL.setScale((float)scaleFactor);
+        BufferedImage image = paintViewImage(width, height);
+        this.plot3DGL.setScale(1);
+        return image;
     }
 
     @Override
@@ -273,13 +355,14 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         }
     }
 
+    /**
+     * Save image file
+     * @param fn File path
+     * @param sleep Sleep seconds
+     * @throws InterruptedException
+     */
     public void saveImage(String fn, Integer sleep) throws InterruptedException {
-        //this.repaint();
-        this.plot3DGL.getDrawable().display();
-        if (sleep != null) {
-            Thread.sleep(sleep * 1000);
-        }
-        BufferedImage image = this.plot3DGL.getScreenImage();
+        BufferedImage image = this.paintViewImage();
         if (image != null) {
             String extension = fn.substring(fn.lastIndexOf('.') + 1);
             try {
@@ -290,15 +373,16 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         }
     }
 
+    /**
+     * Save image file
+     * @param fn File path
+     * @param width Image width
+     * @param height Image height
+     * @param sleep Sleep seconds
+     * @throws InterruptedException
+     */
     public void saveImage(String fn, int width, int height, Integer sleep) throws InterruptedException {
-        int oWidth = this.getWidth();
-        int oHeight = this.getHeight();
-        this.setSize(width, height);
-        this.plot3DGL.getDrawable().display();
-        if (sleep != null) {
-            Thread.sleep(sleep * 1000);
-        }
-        BufferedImage image = this.plot3DGL.getScreenImage();
+        BufferedImage image = this.paintViewImage(width, height);
         if (image != null) {
             String extension = fn.substring(fn.lastIndexOf('.') + 1);
             try {
@@ -307,7 +391,55 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                 Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        this.setSize(oWidth, oHeight);
+
+        this.plot3DGL.reshape(this, 0, 0, this.getWidth(), this.getHeight());
+    }
+
+    /**
+     * Save image file
+     * @param fn File path
+     * @param dpi Image dpi
+     * @param width Image width
+     * @param height Image height
+     * @param sleep Sleep seconds
+     * @throws InterruptedException
+     */
+    public void saveImage(String fn, int dpi, int width, int height, Integer sleep) throws InterruptedException, IOException {
+        BufferedImage image = this.paintViewImage(width, height, dpi);
+
+        if (image != null) {
+            File output = new File(fn);
+            output.delete();
+            String formatName = fn.substring(fn.lastIndexOf('.') + 1);
+            for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
+                ImageWriter writer = iw.next();
+                ImageWriteParam writeParam = writer.getDefaultWriteParam();
+                ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
+                IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+                if (metadata == null) {
+                    metadata = writer.getDefaultImageMetadata(typeSpecifier, null);
+                }
+                if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+                    continue;
+                }
+
+                ImageUtil.setDPI(metadata, dpi);
+
+                if (sleep != null) {
+                    Thread.sleep(sleep * 1000);
+                }
+                final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
+                try {
+                    writer.setOutput(stream);
+                    writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
+                } finally {
+                    stream.close();
+                }
+                break;
+            }
+        }
+
+        this.plot3DGL.reshape(this, 0, 0, this.getWidth(), this.getHeight());
     }
 
     /**

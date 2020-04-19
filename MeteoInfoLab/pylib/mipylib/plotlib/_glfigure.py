@@ -7,6 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.chart.jogl import GLChartPanel
+from com.jogamp.opengl import GLProfile, GLCapabilities
 
 from ._axes3dgl import Axes3DGL
 
@@ -23,7 +24,14 @@ class GLFigure(GLChartPanel):
         if ax is None:
             ax = Axes3DGL(figure=self)
         self.axes = ax
-        super(GLFigure, self).__init__(ax.axes)           
+        #super(GLFigure, self).__init__(ax.axes)
+        profile = GLProfile.get(GLProfile.GL2)
+        cap = GLCapabilities(profile)
+        cap.setDoubleBuffered(True)
+        cap.setSampleBuffers(True)
+        cap.setNumSamples(4)
+
+        super(GLFigure, self).__init__(cap, ax.axes)
         
     def _add_axes(self, ax):
         '''

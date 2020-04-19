@@ -1609,7 +1609,6 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @return View image
      */
     public BufferedImage paintViewImage() {
-        BufferedImage aImage;
         int w, h;
         if (this.chartSize == null) {
             w = this.getWidth();
@@ -1618,11 +1617,22 @@ public class ChartPanel extends JPanel implements IChartPanel{
             w = this.chartSize.width;
             h = this.chartSize.height;
         }
-        aImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = aImage.createGraphics();
+        return paintViewImage(w, h);
+    }
+
+    /**
+     * Paint view image
+     *
+     * @param width Image width
+     * @param height Image height
+     * @return View image
+     */
+    public BufferedImage paintViewImage(int width, int height) {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = image.createGraphics();
         paintGraphics(g);
 
-        return aImage;
+        return image;
     }
     
     /**
@@ -1640,13 +1650,26 @@ public class ChartPanel extends JPanel implements IChartPanel{
             w = this.chartSize.width;
             h = this.chartSize.height;
         }
+        return paintViewImage(w, h, dpi);
+    }
+
+    /**
+     * Paint view image
+     *
+     * @param width Image width
+     * @param height Image height
+     * @param dpi Image resolution
+     * @return View image
+     */
+    public BufferedImage paintViewImage(int width, int height, int dpi) {
         double scaleFactor = dpi / 72.0;
-        BufferedImage image = new BufferedImage((int)(w * scaleFactor), (int)(h * scaleFactor), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor),
+                BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
         AffineTransform at = g.getTransform();
         at.scale(scaleFactor, scaleFactor);
         g.setTransform(at);
-        paintGraphics(g, w, h);
+        paintGraphics(g, width, height);
 
         return image;
     }

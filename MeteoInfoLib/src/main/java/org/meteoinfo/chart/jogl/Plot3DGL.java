@@ -46,6 +46,7 @@ import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.Extent3D;
+import org.meteoinfo.global.util.FontUtil;
 import org.meteoinfo.legend.*;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.shape.*;
@@ -59,7 +60,7 @@ import static org.meteoinfo.shape.ShapeTypes.PointZ;
 public class Plot3DGL extends Plot implements GLEventListener {
 
     // <editor-fold desc="Variables">
-    private GLAutoDrawable drawable;
+    private boolean doScreenShot;
     private BufferedImage screenImage;
     private final GLU glu = new GLU();
     private final GraphicCollection3D graphics;
@@ -93,6 +94,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     float tickLen = 0.08f;
     private Lighting lighting = new Lighting();
     private boolean antialias;
+    private float scale;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -100,6 +102,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * Constructor
      */
     public Plot3DGL() {
+        this.doScreenShot = false;
         this.legends = new ArrayList<>();
         //this.legends.add(new ChartColorBar(new LegendScheme(ShapeTypes.Polygon, 5)));
         this.xAxis = new Axis();
@@ -122,6 +125,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.displayZ = true;
         this.drawBoundingBox = false;
         this.antialias = false;
+        this.scale = 1;
     }
 
     // </editor-fold>
@@ -144,12 +148,19 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     /**
-     * Get GLAutoDrawable
-     *
-     * @return GLAutoDrawable
+     * Get if do screenshot
+     * @return Boolean
      */
-    public GLAutoDrawable getDrawable() {
-        return this.drawable;
+    public boolean isDoScreenShot() {
+        return this.doScreenShot;
+    }
+
+    /**
+     * Set if do screenshot
+     * @param value Boolean
+     */
+    public void setDoScreenShot(boolean value) {
+        this.doScreenShot = value;
     }
 
     /**
@@ -616,6 +627,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
      */
     public void setAntialias(boolean value) { this.antialias = value; }
 
+    /**
+     * Get scale
+     * @return Scale
+     */
+    public float getScale() {
+        return this.scale;
+    }
+
+    /**
+     * Set scale
+     * @param value Scale
+     */
+    public void setScale(float value) {
+        this.scale = value;
+    }
+
     // </editor-fold>
     // <editor-fold desc="methods">
     /**
@@ -843,9 +870,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         gl.glFlush();
 
-        //Draw screen image
-        AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
-        this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
+        //Do screen shot
+        if (this.doScreenShot) {
+            AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
+            this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
+            this.doScreenShot = false;
+        }
     }
 
     /**
@@ -921,7 +951,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
             return 1;
         }
 
-        TextRenderer textRenderer = new TextRenderer(legend.getTickLabelFont());
+        Font font = legend.getTickLabelFont();
+        if (this.scale != 1) {
+            font = new Font(font.getFontName(), font.getStyle(), (int)(font.getSize() * this.scale));
+        }
+        TextRenderer textRenderer = new TextRenderer(font);
         int n = legend.getLegendScheme().getBreakNum();
         int nn;
         Rectangle2D rect = textRenderer.getBounds("Text".subSequence(0, 4));
@@ -1311,7 +1345,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
         float y = coord[1];
 
         //Rendering text string
-        TextRenderer textRenderer = new TextRenderer(font, true);
+        TextRenderer textRenderer;
+        if (this.scale == 1) {
+            textRenderer = new TextRenderer(font, true, true);
+        } else {
+            textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
+                    (int)(font.getSize() * this.scale)), true, true);
+        }
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
         textRenderer.setSmoothing(true);
@@ -1362,7 +1402,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
         float y = coord[1];
 
         //Rendering text string
-        TextRenderer textRenderer = new TextRenderer(font, true);
+        TextRenderer textRenderer;
+        if (this.scale == 1) {
+            textRenderer = new TextRenderer(font, true, true);
+        } else {
+            textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
+                    (int)(font.getSize() * this.scale)), true, true);
+        }
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
         textRenderer.setSmoothing(true);
@@ -1402,7 +1448,15 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     void drawTitle() {
         if (title != null) {
-            TextRenderer textRenderer = new TextRenderer(title.getFont(), true);
+            //Rendering text string
+            Font font = title.getFont();
+            TextRenderer textRenderer;
+            if (this.scale == 1) {
+                textRenderer = new TextRenderer(font, true, true);
+            } else {
+                textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
+                        (int)(font.getSize() * this.scale)), true, true);
+            }
             textRenderer.beginRendering(this.width, this.height);
             textRenderer.setColor(title.getColor());
             textRenderer.setSmoothing(true);
@@ -2347,7 +2401,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     @Override
     public void init(GLAutoDrawable drawable) {
-        this.drawable = drawable;
         GL2 gl = drawable.getGL().getGL2();
         //White background
         gl.glClearColor(1f, 1f, 1f, 1.0f);

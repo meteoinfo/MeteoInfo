@@ -333,14 +333,14 @@ def dewpoint_rh(temperature, rh):
     r"""Calculate the ambient dewpoint given air temperature and relative humidity.
     Parameters
     ----------
-    temperature : `pint.Quantity`
-        Air temperature
-    rh : `pint.Quantity`
+    temperature : `float`
+        Air temperature (celsius)
+    rh : `float`
         Relative humidity expressed as a ratio in the range 0 < rh <= 1
     Returns
     -------
-    `pint.Quantity`
-        The dew point temperature
+    `float`
+        The dew point temperature (celsius)
     See Also
     --------
     dewpoint, saturation_vapor_pressure
@@ -481,9 +481,9 @@ def saturation_mixing_ratio(tot_press, temperature):
     Parameters
     ----------
     tot_press: array_like
-        Total atmospheric pressure
+        Total atmospheric pressure (hPa)
     temperature: array_like
-        The temperature
+        The temperature (celsius)
     Returns
     -------
     array_like
@@ -502,13 +502,13 @@ def vapor_pressure(pressure, mixing):
     partial pressure of water vapor.
     Parameters
     ----------
-    pressure : `pint.Quantity`
-        total atmospheric pressure
-    mixing : `pint.Quantity`
+    pressure : `float`
+        total atmospheric pressure (hPa)
+    mixing : `float`
         dimensionless mass mixing ratio
     Returns
     -------
-    `pint.Quantity`
+    `float`
         The ambient water vapor (partial) pressure in the same units as
         `pressure`.
     Notes
@@ -526,11 +526,11 @@ def saturation_vapor_pressure(temperature):
     r"""Calculate the saturation water vapor (partial) pressure.
     Parameters
     ----------
-    temperature : `pint.Quantity`
-        The temperature
+    temperature : `float`
+        The temperature (celsius)
     Returns
     -------
-    `pint.Quantity`
+    `float`
         The saturation water vapor (partial) pressure
     See Also
     --------
@@ -544,8 +544,8 @@ def saturation_vapor_pressure(temperature):
     """
     # Converted from original in terms of C to use kelvin. Using raw absolute values of C in
     # a formula plays havoc with units support.
-    return constants.sat_pressure_0c * np.exp(17.67 * (temperature - 273.15)
-                                    / (temperature - 29.65))
+    return constants.sat_pressure_0c * np.exp(17.67 * temperature
+                                    / (temperature + 243.5))
                                     
 def exner_function(pressure, reference_pressure=constants.P0):
     r"""Calculate the Exner function.
@@ -584,16 +584,16 @@ def equivalent_potential_temperature(pressure, temperature, dewpoint):
                                               -1.78\right)*r(1+.448r)\right]
     Parameters
     ----------
-    pressure: `pint.Quantity`
-        Total atmospheric pressure
-    temperature: `pint.Quantity`
-        Temperature of parcel
-    dewpoint: `pint.Quantity`
-        Dewpoint of parcel
+    pressure: `float`
+        Total atmospheric pressure (hPa)
+    temperature: `float`
+        Temperature of parcel (celsius)
+    dewpoint: `float`
+        Dewpoint of parcel (celsius)
     Returns
     -------
-    `pint.Quantity`
-        The equivalent potential temperature of the parcel
+    `float`
+        The equivalent potential temperature of the parcel (celsius)
     Notes
     -----
     [Bolton1980]_ formula for Theta-e is used, since according to

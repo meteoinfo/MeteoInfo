@@ -481,7 +481,15 @@ public class JDateUtil {
         TemporalAccessor ta = formatter.parse(dtStr);
         if (ta.isSupported(ChronoField.HOUR_OF_DAY))
             return LocalDateTime.from(ta);
-        else
-            return (LocalDate.from(ta)).atStartOfDay();
+        else {
+            if (ta.isSupported(ChronoField.DAY_OF_MONTH))
+                return (LocalDate.from(ta)).atStartOfDay();
+            else if (ta.isSupported(ChronoField.MONTH_OF_YEAR)) {
+                return (LocalDate.of(ta.get(ChronoField.YEAR), ta.get(ChronoField.MONTH_OF_YEAR),
+                        1).atStartOfDay());
+            } else {
+                return (LocalDate.of(ta.get(ChronoField.YEAR), 1, 1).atStartOfDay());
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@ __all__ = ['GLFigure']
 
 class GLFigure(GLChartPanel):
 
-    def __init__(self, ax=None):
+    def __init__(self, ax=None, **kwargs):
         '''
         Constructor
         
@@ -25,22 +25,27 @@ class GLFigure(GLChartPanel):
             ax = Axes3DGL(figure=self)
         self.axes = ax
         #super(GLFigure, self).__init__(ax.axes)
+        double_buffered = kwargs.pop('double_buffered', None)
+        sample_buffers = kwargs.pop('sample_buffers', True)
         profile = GLProfile.get(GLProfile.GL2)
         cap = GLCapabilities(profile)
-        cap.setDoubleBuffered(True)
-        cap.setSampleBuffers(True)
-        cap.setNumSamples(4)
+        if not double_buffered is None:
+            cap.setDoubleBuffered(True)
+        if not sample_buffers is None:
+            cap.setSampleBuffers(sample_buffers)
+            nsamples = kwargs.pop('nsamples', 4)
+            cap.setNumSamples(nsamples)
 
         super(GLFigure, self).__init__(cap, ax.axes)
         
-    def _add_axes(self, ax):
+    def set_axes(self, ax):
         '''
-        Add a axes.
+        Set axes.
         
         :param ax: (*Axes*) The axes.
         '''
-        self.axes.append(ax)
-        self.getChart().addPlot(ax.axes)
+        ax.figure = self
+        self.axes = ax
 
     def set_antialias(self, b=None, symbol=None):
         """

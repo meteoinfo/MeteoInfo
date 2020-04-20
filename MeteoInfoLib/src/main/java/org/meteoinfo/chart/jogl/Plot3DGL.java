@@ -774,19 +774,21 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE);
 
         if (this.antialias) {
-            gl.glEnable(GL2.GL_LINE_SMOOTH);
+            gl.glEnable(GL2.GL_MULTISAMPLE);
+            /*gl.glEnable(GL2.GL_LINE_SMOOTH);
             gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_NICEST);
             gl.glEnable(GL2.GL_POINT_SMOOTH);
             gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
             gl.glEnable(GL2.GL_POLYGON_SMOOTH);
-            gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_NICEST);
+            gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_NICEST);*/
         } else {
-            gl.glDisable(GL2.GL_LINE_SMOOTH);
+            gl.glDisable(GL2.GL_MULTISAMPLE);
+            /*gl.glDisable(GL2.GL_LINE_SMOOTH);
             gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_FASTEST);
             gl.glDisable(GL2.GL_POINT_SMOOTH);
             gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_FASTEST);
             gl.glDisable(GL2.GL_POLYGON_SMOOTH);
-            gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_FASTEST);
+            gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_FASTEST);*/
         }
 
         gl.glRotatef(angleX, 1.0f, 0.0f, 0.0f);

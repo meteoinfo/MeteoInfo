@@ -1112,7 +1112,7 @@ def figure(bgcolor='w', figsize=None, newfig=True):
         
     return g_figure
     
-def glfigure(bgcolor='w', newfig=True):
+def glfigure(bgcolor='w', newfig=True, **kwargs):
     """
     Creates a figure.
     
@@ -1120,7 +1120,7 @@ def glfigure(bgcolor='w', newfig=True):
     :param newfig: (*boolean*) Optional, if creates a new figure. Default is ``True`` .
     """
     global g_figure
-    g_figure = GLFigure()
+    g_figure = GLFigure(**kwargs)
     if not batchmode:
         show(newfig)
         
@@ -1345,7 +1345,7 @@ def axes3dgl(*args, **kwargs):
     global gca    
                
     if g_figure is None or isinstance(g_figure, Figure):
-        glfigure()
+        glfigure(**kwargs)
         
     ax = g_figure.axes
     gca = ax

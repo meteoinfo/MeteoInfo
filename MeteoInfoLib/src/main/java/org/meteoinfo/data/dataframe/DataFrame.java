@@ -821,6 +821,15 @@ public class DataFrame implements Iterable {
     }
 
     /**
+     * Set column name
+     * @param idx Column index
+     * @param colName Column name
+     */
+    public void setColumnName(int idx, String colName) {
+        this.columns.get(idx).setName(colName);
+    }
+
+    /**
      * Set column data
      *
      * @param colName Column name

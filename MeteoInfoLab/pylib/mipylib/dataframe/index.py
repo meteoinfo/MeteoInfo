@@ -45,11 +45,19 @@ class Index(object):
                 data = data.aslist()
             self.data = data
             self._index = MIIndex.factory(data)        
-            self.name = name
+            self._name = name
         else:
             self._index = index
             self.data = list(self._index.getData())
-            self.name = self._index.getName()
+            self._name = self._index.getName()
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._index.setName(value)
         
     def __len__(self):
         return self._index.size()

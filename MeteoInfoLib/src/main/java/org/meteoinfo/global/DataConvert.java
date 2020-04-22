@@ -31,6 +31,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.global.util.TypeUtils;
 import org.meteoinfo.ndarray.DataType;
 
@@ -541,8 +543,8 @@ public class DataConvert {
                     if (vStr.isEmpty()) {
                         return null;
                     }
-                    DateTimeFormatter dFormat = DateTimeFormatter.ofPattern(dateFormat);
-                    return LocalDateTime.parse(vStr, dFormat);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+                    return JDateUtil.parseDateTime(vStr, formatter);
             }
         }
 

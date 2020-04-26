@@ -1122,13 +1122,16 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 switch (dimType) {
                     case X:
                         double[] X = (double[]) ArrayUtil.copyToNDJavaArray_Double(values);
-                        double XDelt = X[1] - X[0];
-                        if (this.getProjectionInfo().isLonLat()) {
-                            if (X[X.length - 1] + XDelt
-                                    - X[0] == 360) {
-                                this.setGlobal(true);
+                        if (X.length > 1) {
+                            double XDelt = X[1] - X[0];
+                            if (this.getProjectionInfo().isLonLat()) {
+                                if (X[X.length - 1] + XDelt
+                                        - X[0] == 360) {
+                                    this.setGlobal(true);
+                                }
                             }
-                        } else {
+                        }
+                        if (!this.getProjectionInfo().isLonLat()) {
                             ucar.nc2.Attribute unitAtt = var.findAttribute("units");
                             if (unitAtt != null) {
                                 if (unitAtt.getStringValue().trim().toLowerCase().equals("km")) {

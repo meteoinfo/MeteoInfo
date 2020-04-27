@@ -782,7 +782,7 @@ public class LegendManage {
             if (max <= CValues[CValues.length - 1]) {
                 max = CValues[CValues.length - 1];
             }
-            max += CValues[1] - CValues[0];
+            //max += CValues[1] - CValues[0];
         }
 
         LegendScheme legendScheme = new LegendScheme(aST);

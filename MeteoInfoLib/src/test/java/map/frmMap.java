@@ -3,18 +3,26 @@ package map;
 import org.meteoinfo.data.mapdata.MapDataManage;
 import org.meteoinfo.data.mapdata.ShapeFileManage;
 import org.meteoinfo.global.GenericFileFilter;
+import org.meteoinfo.global.event.*;
 import org.meteoinfo.global.util.GlobalUtil;
+import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;
+import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.layout.MapLayout;
 import org.meteoinfo.legend.LayersLegend;
+import org.meteoinfo.map.FeatureUndoableEdit;
 import org.meteoinfo.map.MapView;
+import org.meteoinfo.map.MapViewUndoRedo;
 import org.meteoinfo.map.MouseTools;
 import org.meteoinfo.projection.info.ProjectionInfo;
 
 import javax.swing.*;
+import javax.swing.undo.UndoableEdit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -29,6 +37,7 @@ public class frmMap extends JFrame {
     private JSplitPane splitPane;
     private LayersLegend mapDocument;
     private JTabbedPane tabbedPane;
+    private JPanel jPanel_MapTab;
     private MapView mapView;
     private MapLayout mapLayout;
 
@@ -36,9 +45,9 @@ public class frmMap extends JFrame {
         initComponents();
 
         mapDocument.getActiveMapFrame().setMapView(mapView);
-        //mapDocument.setMapLayout(mapLayout);
+        mapDocument.setMapLayout(mapLayout);
+        mapLayout.setLockViewUpdate(true);
         this.mapView.setMouseTool(MouseTools.Pan);
-        //this.mapView.zoomToExtent(mapView.getViewExtent());
 
         this.addLayers();
     }
@@ -76,11 +85,53 @@ public class frmMap extends JFrame {
 
         //Add map view and layer
         tabbedPane = new JTabbedPane();
+        tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            @Override
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                tabbedPane_MainStateChanged(evt);
+            }
+        });
         splitPane.setRightComponent(tabbedPane);
         mapView = new MapView();
         mapLayout = new MapLayout();
-        tabbedPane.addTab("Map", mapView);
+        jPanel_MapTab = new JPanel();
+        jPanel_MapTab.setLayout(new BorderLayout());
+        tabbedPane.addTab("Map", jPanel_MapTab);
+        jPanel_MapTab.add(mapView, BorderLayout.CENTER);
         tabbedPane.addTab("Layout", mapLayout);
+    }
+
+    private void tabbedPane_MainStateChanged(javax.swing.event.ChangeEvent evt) {
+        // TODO add your handling code here:
+        int selIndex = this.tabbedPane.getSelectedIndex();
+        switch (selIndex) {
+            case 0:    //MapView
+                this.mapLayout.setLockViewUpdate(true);
+                mapView.zoomToExtent(mapView.getViewExtent());
+                break;
+            case 1:    //MapLayout
+                this.mapLayout.setLockViewUpdate(false);
+                this.mapLayout.paintGraphics();
+                break;
+        }
+    }
+
+    private void setMapView() {
+        //Add map view
+        mapView.setLockViewUpdate(true);
+        this.jPanel_MapTab.removeAll();
+        this.jPanel_MapTab.add(mapView, BorderLayout.CENTER);
+        mapView.setLockViewUpdate(false);
+
+        mapView.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                //mapView_MouseMoved(e);
+            }
+        });
+
+        mapView.setFocusable(true);
+        mapView.requestFocusInWindow();
     }
 
     void addLayerClick(ActionEvent e) {

@@ -78,8 +78,6 @@ public class ChartLegend {
     private Dimension symbolDimension;
     protected boolean extendRect;
     protected boolean autoExtendFrac;
-    protected boolean drawMinLabel;
-    protected boolean drawMaxLabel;
     protected float xshift;
     protected float yshift;
     // </editor-fold>
@@ -115,8 +113,6 @@ public class ChartLegend {
         this.symbolDimension = new Dimension(16, 10);
         this.extendRect = true;
         this.autoExtendFrac = false;
-        this.drawMinLabel = false;
-        this.drawMaxLabel = false;
         this.xshift = 0;
         this.yshift = 0;
     }
@@ -707,42 +703,6 @@ public class ChartLegend {
                 break;
             }
         }
-    }
-
-    /**
-     * Get if draw minimum value label
-     *
-     * @return Boolean
-     */
-    public boolean isDrawMinLabel() {
-        return this.drawMinLabel;
-    }
-
-    /**
-     * Set if draw minimum value label
-     *
-     * @param value Boolean
-     */
-    public void setDrawMinLabel(boolean value) {
-        this.drawMinLabel = value;
-    }
-
-    /**
-     * Get if draw maximum value label
-     *
-     * @return Boolean
-     */
-    public boolean isDrawMaxLabel() {
-        return this.drawMaxLabel;
-    }
-
-    /**
-     * Set if draw maximum value label
-     *
-     * @param value Boolean
-     */
-    public void setDrawMaxLabel(boolean value) {
-        this.drawMaxLabel = value;
     }
 
     /**

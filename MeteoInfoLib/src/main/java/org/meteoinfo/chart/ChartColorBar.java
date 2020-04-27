@@ -44,6 +44,8 @@ public class ChartColorBar extends ChartLegend {
     private boolean tickVisible;
     private float tickWidth;
     private Color tickColor;
+    private boolean drawMinLabel;
+    private boolean drawMaxLabel;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -63,6 +65,8 @@ public class ChartColorBar extends ChartLegend {
         this.tickVisible = true;
         this.tickWidth = 1;
         this.tickColor = Color.black;
+        this.drawMinLabel = false;
+        this.drawMaxLabel = false;
     }
 
     // </editor-fold>
@@ -265,7 +269,43 @@ public class ChartColorBar extends ChartLegend {
     public void setTickColor(Color value) {
         this.tickColor = value;
     }
-    
+
+    /**
+     * Get if draw minimum value label
+     *
+     * @return Boolean
+     */
+    public boolean isDrawMinLabel() {
+        return this.drawMinLabel;
+    }
+
+    /**
+     * Set if draw minimum value label
+     *
+     * @param value Boolean
+     */
+    public void setDrawMinLabel(boolean value) {
+        this.drawMinLabel = value;
+    }
+
+    /**
+     * Get if draw maximum value label
+     *
+     * @return Boolean
+     */
+    public boolean isDrawMaxLabel() {
+        return this.drawMaxLabel;
+    }
+
+    /**
+     * Set if draw maximum value label
+     *
+     * @param value Boolean
+     */
+    public void setDrawMaxLabel(boolean value) {
+        this.drawMaxLabel = value;
+    }
+
     // </editor-fold>
     // <editor-fold desc="Method">
     /**
@@ -698,6 +738,14 @@ public class ChartColorBar extends ChartLegend {
                     labelIdxs.add(i);
                     tickIdx = this.tickLocations.indexOf(v);
                     tLabels.add(this.tickLabels.get(tickIdx).getText());
+                }
+                if (i == 0) {
+                    v = Double.parseDouble(cb.getStartValue().toString());
+                    if (this.tickLocations.contains(v)) {
+                        labelIdxs.add(i);
+                        tickIdx = this.tickLocations.indexOf(v);
+                        tLabels.add(this.tickLabels.get(tickIdx).getText());
+                    }
                 }
             }
         }

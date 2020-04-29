@@ -4162,6 +4162,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         if (!this._lockViewUpdate) {
             this._mapBitmap = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            //this._mapBitmap = ImageUtil.toCompatibleImage(this._mapBitmap);
             Graphics2D g = this._mapBitmap.createGraphics();
             if (this.getBackground() != null) {
                 g.setColor(this.getBackground());

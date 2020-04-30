@@ -22,13 +22,13 @@
       <OpenedFile File="D:\Working\MIScript\mywork\cawdata\bc_cal_abs.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\adaboost_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\xor_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\test_emnist.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\mywork\cawdata\bc_cal_abs.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\adaboost_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\xor_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\test_emnist.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1418,787"/>
 </MeteoInfo>

@@ -55,7 +55,7 @@ import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
 import org.meteoinfo.data.meteodata.micaps.MICAPS7DataInfo;
 import org.meteoinfo.data.meteodata.netcdf.NetCDFDataInfo;
-import org.meteoinfo.legend.PointStyle;
+import org.meteoinfo.legend.*;
 import org.meteoinfo.geoprocess.analysis.InterpolationMethods;
 import org.meteoinfo.geoprocess.analysis.InterpolationSetting;
 import org.meteoinfo.global.Extent;
@@ -66,12 +66,6 @@ import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layer.RasterLayer;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.FrmLegendSet;
-import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.LegendType;
-import org.meteoinfo.legend.PointBreak;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.shape.ShapeTypes;
 
@@ -2648,6 +2642,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 break;
             case Streamline:
                 _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, Color.blue, 1);
+                _legendScheme.setLegendBreak(0, new StreamlineBreak((PolylineBreak)_legendScheme.getLegendBreak(0)));
                 break;
             case Raster:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData, LegendType.GraduatedColor,
@@ -2698,6 +2693,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 break;
             case Streamline:
                 _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, Color.blue, 1);
+                _legendScheme.setLegendBreak(0, new StreamlineBreak((PolylineBreak)_legendScheme.getLegendBreak(0)));
                 break;
             case Weather_Symbol:
                 _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.blue, 12);

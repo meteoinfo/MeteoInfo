@@ -8,11 +8,9 @@
       <MaskOut MaskLayer="china.shp" SetMaskLayer="false"/>
       <Projection IsLonLatMap="true" ProjStr="+title=long/lat:WGS84 +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees "/>
       <GroupLayer>
-        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\bou2_4p.shp" Handle="1" IsMaskout="false" LayerDrawType="Map" LayerName="bou2_4p.shp" LayerType="VectorLayer" ShapeType="Polygon" TransparencyPerc="0" Visible="true">
-          <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="Polygon" UNDEF="-9999.0">
-            <Breaks>
-              <Break BackColor="0x00ffffff" Caption="" Color="0xfffffbc3" DrawFill="false" DrawOutline="true" DrawShape="true" EndValue="0" OutlineColor="0xff808080" OutlineSize="1.0" StartValue="0" Style="NONE" StyleSize="8" Tag=""/>
-            </Breaks>
+        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\Distribution\Java\MeteoInfo\MeteoInfo\map\cn_province.shp" Handle="1" IsMaskout="false" LayerDrawType="Map" LayerName="cn_province.shp" LayerType="VectorLayer" ShapeType="PolygonZ" TransparencyPerc="0" Visible="true">
+          <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="PolygonZ" UNDEF="-9999.0">
+            <Breaks/>
           </LegendScheme>
           <LabelSet AlignType="Center" AutoDecimal="true" AvoidCollision="true" DecimalDigits="2" DrawLabels="false" DrawShadow="false" FieldName="" FontName="宋体" FontSize="12" LabelColor="0xff000000" Offset="0" ShadowColor="0xffffffff"/>
           <Graphics/>
@@ -24,7 +22,7 @@
           <ChartGraphics/>
           <VisibleScale EnableMaxVisScale="false" EnableMinVisScale="false" MaxVisScale="0.0" MinVisScale="0.0"/>
         </Layer>
-        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\country1.shp" Handle="2" IsMaskout="false" LayerDrawType="Map" LayerName="country1.shp" LayerType="VectorLayer" ShapeType="Polygon" TransparencyPerc="0" Visible="true">
+        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\country1.shp" Handle="3" IsMaskout="false" LayerDrawType="Map" LayerName="country1.shp" LayerType="VectorLayer" ShapeType="Polygon" TransparencyPerc="0" Visible="true">
           <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="Polygon" UNDEF="-9999.0">
             <Breaks>
               <Break BackColor="0x00ffffff" Caption="" Color="0xfffffbc3" DrawFill="false" DrawOutline="true" DrawShape="true" EndValue="0" OutlineColor="0xff000000" OutlineSize="1.0" StartValue="0" Style="NONE" StyleSize="8" Tag=""/>
@@ -40,7 +38,7 @@
           <ChartGraphics/>
           <VisibleScale EnableMaxVisScale="false" EnableMinVisScale="false" MaxVisScale="0.0" MinVisScale="0.0"/>
         </Layer>
-        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\CITIES.SHP" Handle="3" IsMaskout="false" LayerDrawType="Map" LayerName="CITIES.SHP" LayerType="VectorLayer" ShapeType="Point" TransparencyPerc="0" Visible="false">
+        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\CITIES.SHP" Handle="4" IsMaskout="false" LayerDrawType="Map" LayerName="CITIES.SHP" LayerType="VectorLayer" ShapeType="Point" TransparencyPerc="0" Visible="false">
           <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="Point" UNDEF="-9999.0">
             <Breaks>
               <Break Angle="0.0" Caption="" CharIndex="0" Color="0xff000000" DrawFill="true" DrawOutline="true" DrawShape="true" EndValue="0" FontName="Arial" ImagePath="" IsNoData="false" MarkerType="Simple" OutlineColor="0xff000000" OutlineSize="1.0" Size="5.0" StartValue="0" Style="Circle" Tag=""/>
@@ -89,7 +87,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Perm'" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="60.610130310058594" Y="56.84654235839844"/>
                 </Points>
@@ -97,7 +95,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Yekaterinburg" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="43.940670013427734" Y="56.289676666259766"/>
                 </Points>
@@ -145,7 +143,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Novosibirsk" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="56.096126556396484" Y="54.82173538208008"/>
                 </Points>
@@ -529,7 +527,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Munchen" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="37.73705291748047" Y="48.04014587402344"/>
                 </Points>
@@ -569,7 +567,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Innsbruck" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="39.68803787231445" Y="47.23209762573242"/>
                 </Points>
@@ -617,7 +615,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Odessa" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="126.62263488769531" Y="45.755218505859375"/>
                 </Points>
@@ -921,7 +919,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Madrid" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="49.81623840332031" Y="40.32429885864258"/>
                 </Points>
@@ -929,7 +927,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Baku" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="44.53266906738281" Y="40.20802307128906"/>
                 </Points>
@@ -1033,7 +1031,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Tianjin" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="125.75751495361328" Y="39.02851486206055"/>
                 </Points>
@@ -1089,7 +1087,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Shijiazhuang" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="58.390132904052734" Y="37.95042037963867"/>
                 </Points>
@@ -1153,7 +1151,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Zibo" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="116.96705627441406" Y="36.65553665161133"/>
                 </Points>
@@ -1161,7 +1159,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Jinan" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="43.13712692260742" Y="36.335567474365234"/>
                 </Points>
@@ -1177,7 +1175,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Mashhad" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="37.15928268432617" Y="36.215545654296875"/>
                 </Points>
@@ -1193,7 +1191,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Lanzhou" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="128.5913848876953" Y="35.8635368347168"/>
                 </Points>
@@ -1201,7 +1199,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Taegu" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="51.44765090942383" Y="35.77447509765625"/>
                 </Points>
@@ -1249,7 +1247,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Charlotte" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="true">
+              <Shape Selected="false" ShapeType="Point" Visible="false">
                 <Points>
                   <Point X="129.0546875" Y="35.157867431640625"/>
                 </Points>
@@ -1281,7 +1279,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Kyoto" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="113.64177703857422" Y="34.75768280029297"/>
                 </Points>
@@ -1321,7 +1319,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Kabul" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="132.4447784423828" Y="34.37755584716797"/>
                 </Points>
@@ -1329,7 +1327,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Hiroshima" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="true">
+              <Shape Selected="false" ShapeType="Point" Visible="false">
                 <Points>
                   <Point X="108.88336181640625" Y="34.26569747924805"/>
                 </Points>
@@ -1369,7 +1367,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Rawalpindi" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="36.313453674316406" Y="33.51930236816406"/>
                 </Points>
@@ -1401,7 +1399,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Dallas" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="51.6791877746582" Y="32.651390075683594"/>
                 </Points>
@@ -1465,7 +1463,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Chengdu" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="114.27922058105469" Y="30.572498321533203"/>
                 </Points>
@@ -1481,7 +1479,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Al Basra" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="true">
+              <Shape Selected="false" ShapeType="Point" Visible="false">
                 <Points>
                   <Point X="120.16507720947266" Y="30.25262451171875"/>
                 </Points>
@@ -1537,7 +1535,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="San Antonio" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="115.88941192626953" Y="28.671239852905273"/>
                 </Points>
@@ -1561,7 +1559,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Delhi" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="true">
+              <Shape Selected="false" ShapeType="Point" Visible="false">
                 <Points>
                   <Point X="112.9684829711914" Y="28.197641372680664"/>
                 </Points>
@@ -1585,7 +1583,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Thimbu" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="75.80127716064453" Y="26.905113220214844"/>
                 </Points>
@@ -1601,7 +1599,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Lucknow" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="106.70030212402344" Y="26.571941375732422"/>
                 </Points>
@@ -1609,7 +1607,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Guiyang" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="true">
+              <Shape Selected="false" ShapeType="Point" Visible="false">
                 <Points>
                   <Point X="80.31786346435547" Y="26.45783042907715"/>
                 </Points>
@@ -1641,7 +1639,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Monterrey" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="85.13534545898438" Y="25.6138973236084"/>
                 </Points>
@@ -1745,7 +1743,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Tampico" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="96.08415222167969" Y="21.97594451904297"/>
                 </Points>
@@ -1801,7 +1799,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Guadalajara" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="37.219688415527344" Y="19.615713119506836"/>
                 </Points>
@@ -2465,7 +2463,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Kobe" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="35.2252197265625" Y="31.773746490478516"/>
                 </Points>
@@ -2513,7 +2511,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Trieste" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="true">
+              <Shape Selected="false" ShapeType="Point" Visible="false">
                 <Points>
                   <Point X="130.3171844482422" Y="33.309906005859375"/>
                 </Points>
@@ -2921,7 +2919,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Chatanga" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="113.58000183105469" Y="52.04999923706055"/>
                 </Points>
@@ -2945,7 +2943,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Yakutsk" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="143.25" Y="59.33000183105469"/>
                 </Points>
@@ -2953,7 +2951,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Okhotsk" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="45.529998779296875" Y="50.08000183105469"/>
                 </Points>
@@ -3297,7 +3295,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Algiers" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="36.20831298828125" Y="49.98967361450195"/>
                 </Points>
@@ -3305,7 +3303,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Kharkov" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="35.13789367675781" Y="48.422889709472656"/>
                 </Points>
@@ -3321,7 +3319,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Tallinn" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="97.0" Y="47.810001373291016"/>
                 </Points>
@@ -3497,7 +3495,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Fremantle" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="100.5471420288086" Y="5.349999904632568"/>
                 </Points>
@@ -3617,7 +3615,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Mbabne" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="129.8574676513672" Y="32.882747650146484"/>
                 </Points>
@@ -3665,7 +3663,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Nouadnibou" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="87.16999816894531" Y="53.70000076293945"/>
                 </Points>
@@ -3769,7 +3767,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Salekhard" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="36.369998931884766" Y="41.31999969482422"/>
                 </Points>
@@ -3865,7 +3863,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Trujillo" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="83.33000183105469" Y="17.75"/>
                 </Points>
@@ -3881,7 +3879,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Vorkuta" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="54.45000076293945" Y="31.969999313354492"/>
                 </Points>
@@ -3897,7 +3895,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Zahedan" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="45.18000030517578" Y="12.861159324645996"/>
                 </Points>
@@ -3913,7 +3911,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Adis Abeba" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="48.002777099609375" Y="29.194990158081055"/>
                 </Points>
@@ -3929,7 +3927,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Antananarivo" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="46.77000045776367" Y="24.649999618530273"/>
                 </Points>
@@ -3937,7 +3935,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Ar Riyad" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="38.970001220703125" Y="15.329999923706055"/>
                 </Points>
@@ -3961,7 +3959,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Athinai" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="109.9800033569336" Y="40.650001525878906"/>
                 </Points>
@@ -3993,7 +3991,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Beira" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="35.65794372558594" Y="33.779998779296875"/>
                 </Points>
@@ -4177,7 +4175,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Havana" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="39.37330627441406" Y="21.6200008392334"/>
                 </Points>
@@ -4201,7 +4199,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Kano" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="120.34148406982422" Y="22.673416137695312"/>
                 </Points>
@@ -4217,7 +4215,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Karachi" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="135.07000732421875" Y="48.529998779296875"/>
                 </Points>
@@ -4409,7 +4407,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Montevideo" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="37.70000076293945" Y="55.75"/>
                 </Points>
@@ -4545,7 +4543,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Porto" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="65.5" Y="31.600000381469727"/>
                 </Points>
@@ -4601,7 +4599,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Salvador" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="52.56999969482422" Y="29.6299991607666"/>
                 </Points>
@@ -4657,7 +4655,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Thessaloniki" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="69.34986877441406" Y="41.24793243408203"/>
                 </Points>
@@ -4665,7 +4663,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Toshkent" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="36.0070686340332" Y="34.34375762939453"/>
                 </Points>
@@ -4745,7 +4743,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Iquique" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="false">
+              <Shape Selected="false" ShapeType="Point" Visible="true">
                 <Points>
                   <Point X="54.61927032470703" Y="24.236007690429688"/>
                 </Points>
@@ -4881,7 +4879,7 @@
               <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Courier New" FontSize="18" LegendType="LabelBreak" Text="Hong Kong" YShift="0.0"/>
             </Graphic>
             <Graphic>
-              <Shape Selected="false" ShapeType="Point" Visible="true">
+              <Shape Selected="false" ShapeType="Point" Visible="false">
                 <Points>
                   <Point X="114.23011779785156" Y="22.37989616394043"/>
                 </Points>

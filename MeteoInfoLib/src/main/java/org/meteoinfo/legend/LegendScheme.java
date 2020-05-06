@@ -1036,6 +1036,8 @@ public class LegendScheme {
                     }
                     break;
                 case Polygon:
+                case PolygonM:
+                case PolygonZ:
                     for (int i = 0; i < breaks.getLength(); i++) {
                         Node brk = breaks.item(i);
                         PolygonBreak aPGB = new PolygonBreak();

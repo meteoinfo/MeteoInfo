@@ -192,13 +192,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     @Override
     public void readDataInfo(String fileName) {
         this.setFileName(fileName);
-        try {
-            //ncfile = NetcdfFile.open(fileName);
-            ncfile = NetcdfDataset.openFile(fileName, null);
-            readDataInfo(false);
-        } catch (IOException ex) {
-            Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //ncfile = NetcdfFile.open(fileName);
+        ncfile = NetcdfDataset.builder().setLocation(fileName).build();
+        readDataInfo(false);
     }
 
     /**

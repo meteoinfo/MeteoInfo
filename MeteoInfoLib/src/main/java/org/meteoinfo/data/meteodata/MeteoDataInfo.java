@@ -59,6 +59,7 @@ import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.NetcdfFiles;
 
 /**
  *
@@ -438,7 +439,7 @@ public class MeteoDataInfo {
      */
     public void openData(String fileName) {
         try {
-            boolean canOpen = NetcdfFile.canOpen(fileName);
+            boolean canOpen = NetcdfFiles.canOpen(fileName);
             if (canOpen) {
                 this.openNetCDFData(fileName);
             } else if (ARLDataInfo.canOpen(fileName)) {
@@ -457,7 +458,7 @@ public class MeteoDataInfo {
      */
     public void openData(String fileName, boolean keepOpen) {
         try {
-            boolean canOpen = NetcdfFile.canOpen(fileName);
+            boolean canOpen = NetcdfFiles.canOpen(fileName);
             if (canOpen) {
                 this.openNetCDFData(fileName, keepOpen);
             } else if (ARLDataInfo.canOpen(fileName)) {

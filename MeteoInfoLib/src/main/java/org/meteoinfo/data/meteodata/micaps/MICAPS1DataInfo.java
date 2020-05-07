@@ -131,6 +131,9 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
                 _stNum = Integer.parseInt(dataArray[4]);
             else {
                 aLine = sr.readLine().trim();
+                if (aLine.isEmpty()) {
+                    aLine = sr.readLine();
+                }
                 dataArray = aLine.split("\\s+");
                 if (dataArray.length == 1) {
                     _stNum = Integer.parseInt(dataArray[0]);

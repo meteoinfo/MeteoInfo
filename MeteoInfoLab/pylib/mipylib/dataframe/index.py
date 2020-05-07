@@ -44,16 +44,15 @@ class Index(object):
             if isinstance(data, NDArray):
                 data = data.aslist()
             self.data = data
-            self._index = MIIndex.factory(data)        
-            self._name = name
+            self._index = MIIndex.factory(data)
         else:
             self._index = index
             self.data = list(self._index.getData())
-            self._name = self._index.getName()
+        self._index.setName(name)
 
     @property
     def name(self):
-        return self._name
+        return self._index.getName()
 
     @name.setter
     def name(self, value):
@@ -145,7 +144,7 @@ class Index(object):
 ############################################
 class DateTimeIndex(Index):
     
-    def __init__(self, data=None, start=None, end=None, periods=None, freq='D', index=None):
+    def __init__(self, data=None, name='Index', start=None, end=None, periods=None, freq='D', index=None):
         if index is None:
             if not data is None:
                 if isinstance(data, NDArray):
@@ -166,6 +165,7 @@ class DateTimeIndex(Index):
         else:
             self._index = index
             self.data = miutil.pydate(list(self._index.getData()))
+        self._index.setName(name)
             
     def index(self, v):
         '''

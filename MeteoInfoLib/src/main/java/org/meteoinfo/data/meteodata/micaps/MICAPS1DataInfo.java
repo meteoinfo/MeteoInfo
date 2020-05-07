@@ -127,7 +127,15 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
             tdim.setValues(values);
             this.setTimeDimension(tdim);
 
-            _stNum = Integer.parseInt(dataArray[4]);
+            if (dataArray.length >= 5)
+                _stNum = Integer.parseInt(dataArray[4]);
+            else {
+                aLine = sr.readLine().trim();
+                dataArray = aLine.split("\\s+");
+                if (dataArray.length == 1) {
+                    _stNum = Integer.parseInt(dataArray[0]);
+                }
+            }
             Dimension stdim = new Dimension(DimensionType.Other);
             stdim.setShortName("station");
             values = new double[_stNum];

@@ -1254,7 +1254,6 @@ org\meteoinfo\image\filter\SolarizeFilter.class
 org\meteoinfo\data\StationTableData.class
 org\meteoinfo\legend\LegendScheme.class
 org\meteoinfo\global\event\IShapeSelectedListener.class
-org\meteoinfo\data\meteodata\netcdf\NetcdfFileE.class
 org\meteoinfo\legend\LegendManage$1.class
 org\meteoinfo\data\meteodata\netcdf\NCUtil.class
 org\meteoinfo\data\mapdata\webmap\OpenStreetMapInfo.class

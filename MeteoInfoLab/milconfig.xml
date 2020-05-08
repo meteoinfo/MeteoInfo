@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataframe">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+  <Path OpenPath="D:\Working\MIScript\mywork\aqi_data">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
@@ -14,8 +10,12 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython"/>
+    <RecentFolder Folder="D:\Working\MIScript"/>
+    <RecentFolder Folder="D:\Working\MIScript\mywork"/>
+    <RecentFolder Folder="D:\Working\MIScript\mywork\aqi_data"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,12 +23,14 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\adaboost_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\axis\axis_chinese.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\mywork\aqi_data\read_aqi_dataframe-1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\mywork\cawdata\bc_cal_abs.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\adaboost_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\chart\axis\axis_chinese.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_2.py"/>
+      <RecentFile File="D:\Working\MIScript\mywork\aqi_data\read_aqi_dataframe-1.py"/>
     </RecentFiles>
   </File>
   <Font>

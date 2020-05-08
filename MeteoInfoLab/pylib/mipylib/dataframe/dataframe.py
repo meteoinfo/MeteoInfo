@@ -455,7 +455,10 @@ class DataFrame(object):
             else:
                 ncol = len(colkey)
             if len(rowkey) == 1 and ncol == 1:
-                return self._dataframe.getValue(rowkey[0], colkey[0])
+                if isinstance(colkey, Range):
+                    return self._dataframe.getValue(rowkey[0], colkey.first())
+                else:
+                    return self._dataframe.getValue(rowkey[0], colkey[0])
             if rkeys is None:
                 r = self._dataframe.select(rowkey, colkey)
             else:

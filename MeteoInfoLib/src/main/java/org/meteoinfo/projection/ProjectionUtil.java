@@ -767,6 +767,7 @@ public class ProjectionUtil {
                 break;
             case Polygon:
             case PolygonM:
+            case PolygonZ:
                 List<Shape> newPolygons = new ArrayList<>();
                 for (s = 0; s < oLayer.getShapeNum(); s++) {
                     DataRow aDR = oLayer.getAttributeTable().getTable().getRows().get(s);

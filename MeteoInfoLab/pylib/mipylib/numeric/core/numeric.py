@@ -2551,7 +2551,7 @@ def griddata(points, values, xi=None, **kwargs):
             r = InterpUtil.barnes(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), radius, kappa, gamma)
     elif method == 'nearest':
         radius = kwargs.pop('radius', inf)
-        r = InterpUtil.interpolation_Nearest(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), radius)
+        r = InterpUtil.interpolation_Nearest(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(), radius)
     elif method == 'inside' or method == 'inside_mean':
         centerpoint = kwargs.pop('centerpoint', True)
         r = InterpUtil.interpolation_Inside_Mean(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(), centerpoint)

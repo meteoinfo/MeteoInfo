@@ -91,17 +91,20 @@ public class GeometryUtil {
      */
     public static PolygonShape convexHull(Array x, Array y) {
         int n = (int) x.getSize();
-        Geometry[] geos = new Geometry[n];
+        List<Geometry> geos = new ArrayList<>();
         GeometryFactory factory = new GeometryFactory();
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator yIter = y.getIndexIterator();
-        int i = 0;
+        double xx, yy;
         while(xIter.hasNext()) {
-            Coordinate c = new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext());
-            geos[i] = factory.createPoint(c);
-            i++;
+            xx = xIter.getDoubleNext();
+            yy = yIter.getDoubleNext();
+            if (!Double.isNaN(xx) && !Double.isNaN(yy)) {
+                Coordinate c = new Coordinate(xx, yy);
+                geos.add(factory.createPoint(c));
+            }
         }
-        Geometry gs = factory.createGeometryCollection(geos);
+        Geometry gs = factory.createGeometryCollection(geos.toArray(new Geometry[geos.size()]));
         Geometry ch = gs.convexHull();
         return new PolygonShape(ch);
     }

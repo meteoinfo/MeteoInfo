@@ -51,6 +51,7 @@ import org.meteoinfo.ndarray.MAMath;
 import org.meteoinfo.data.meteodata.Attribute;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
+import ucar.nc2.NetcdfFiles;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.iosp.hdf5.H5header;
 import ucar.unidata.io.RandomAccessFile;
@@ -181,7 +182,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @throws IOException
      */
     public static boolean canOpen(String fileName) throws IOException {
-        boolean r = NetcdfDataset.canOpen(fileName);
+        boolean r = NetcdfFiles.canOpen(fileName);
         if (!r) {
             RandomAccessFile raf = RandomAccessFile.acquire(fileName);
             r = H5header.isValidFile(raf);

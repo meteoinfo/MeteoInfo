@@ -77,6 +77,13 @@
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-amd64:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-i586:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.19" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.19" level="project" />
+    <orderEntry type="library" name="Maven: de.sciss:docking-frames-common:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: de.sciss:docking-frames-core:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:2.6.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.0.4" level="project" />
+    <orderEntry type="library" name="Maven: com.formdev:flatlaf:0.33" level="project" />
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-native-platform:1.0.0-beta5" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas-platform:0.3.6-1.5.1" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:0.3.6-1.5.1" level="project" />
@@ -140,12 +147,5 @@
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-native:windows-x86_64:1.0.0-beta5" level="project" />
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-native:linux-ppc64le:1.0.0-beta5" level="project" />
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-native:linux-armhf:1.0.0-beta5" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.19" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.19" level="project" />
-    <orderEntry type="library" name="Maven: de.sciss:docking-frames-common:2.0.0" level="project" />
-    <orderEntry type="library" name="Maven: de.sciss:docking-frames-core:2.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:2.6.0" level="project" />
-    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.0.4" level="project" />
-    <orderEntry type="library" name="Maven: com.formdev:flatlaf:0.33" level="project" />
   </component>
 </module>

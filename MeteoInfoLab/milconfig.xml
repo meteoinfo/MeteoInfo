@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\classification">
-    <RecentFolder Folder="D:\Working\MIScript\mywork\aqi_data"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\data_process"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axes"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
+  <Path OpenPath="D:\Working\MIScript\cuace_dust\py\mm5">
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\datasets"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\metrics"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\neural_network"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\preprocessing"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\regression"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython"/>
+    <RecentFolder Folder="D:\Working\MIScript"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\mywork\cawdata\bc_cal_abs.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\adaboost_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\test_smile_dataframe.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\fld_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib\grib_large.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\mywork\cawdata\bc_cal_abs.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\adaboost_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\test_smile_dataframe.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\fld_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib\grib_large.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +34,5 @@
   </Font>
   <LookFeel Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1441,812"/>
 </MeteoInfo>

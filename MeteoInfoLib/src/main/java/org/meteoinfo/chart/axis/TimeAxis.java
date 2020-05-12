@@ -274,11 +274,11 @@ public class TimeAxis extends Axis implements Cloneable {
         if (sdate.isBefore(edate)) {
             this.timeFormat = "yyyy";
             this.timeUnit = TimeUnit.YEAR;
-            sdate = sdate.withMonth(1);
-            sdate = sdate.withDayOfMonth(1);
-            sdate = sdate.withHour(0);
-            sdate = sdate.withMinute(0);
-            sdate = sdate.withSecond(0);
+            sdate = ssdate.withMonth(1);
+            sdate = ssdate.withDayOfMonth(1);
+            sdate = ssdate.withHour(0);
+            sdate = ssdate.withMinute(0);
+            sdate = ssdate.withSecond(0);
             if (!sdate.isBefore(ssdate)) {
                 dates.add(sdate);
             }
@@ -286,14 +286,14 @@ public class TimeAxis extends Axis implements Cloneable {
                 sdate = sdate.plusYears(1);
             }
         } else {
-            sdate = sdate.plusMonths(5);
+            sdate = ssdate.plusMonths(5);
             if (sdate.isBefore(edate)) {
                 this.timeFormat = "M";
                 this.timeUnit = TimeUnit.MONTH;
-                sdate = sdate.withDayOfMonth(1);
-                sdate = sdate.withHour(0);
-                sdate = sdate.withMinute(0);
-                sdate = sdate.withSecond(0);
+                sdate = ssdate.withDayOfMonth(1);
+                sdate = ssdate.withHour(0);
+                sdate = ssdate.withMinute(0);
+                sdate = ssdate.withSecond(0);
                 if (!sdate.isBefore(ssdate)) {
                     dates.add(sdate);
                 }
@@ -303,13 +303,13 @@ public class TimeAxis extends Axis implements Cloneable {
                         dates.add(sdate);
                 }
             } else {
-                sdate = sdate.plusDays(5);
+                sdate = ssdate.plusDays(5);
                 if (sdate.isBefore(edate)) {
                     this.timeFormat = "d";
                     this.timeUnit = TimeUnit.DAY;
-                    sdate = sdate.withHour(0);
-                    sdate = sdate.withMinute(0);
-                    sdate = sdate.withSecond(0);
+                    sdate = ssdate.withHour(0);
+                    sdate = ssdate.withMinute(0);
+                    sdate = ssdate.withSecond(0);
                     if (!sdate.isBefore(ssdate)) {
                         dates.add(sdate);
                     }
@@ -323,8 +323,8 @@ public class TimeAxis extends Axis implements Cloneable {
                     if (sdate.isBefore(edate)) {
                         this.timeFormat = "H";
                         this.timeUnit = TimeUnit.HOUR;
-                        sdate = sdate.withMinute(0);
-                        sdate = sdate.withSecond(0);
+                        sdate = ssdate.withMinute(0);
+                        sdate = ssdate.withSecond(0);
                         if (!sdate.isBefore(ssdate)) {
                             dates.add(sdate);
                         }
@@ -334,11 +334,11 @@ public class TimeAxis extends Axis implements Cloneable {
                                 dates.add(sdate);
                         }
                     } else {
-                        sdate = sdate.plusMinutes(5);
+                        sdate = ssdate.plusMinutes(5);
                         if (sdate.isBefore(edate)) {
                             this.timeFormat = "HH:mm";
                             this.timeUnit = TimeUnit.MINUTE;
-                            sdate = sdate.withSecond(0);
+                            sdate = ssdate.withSecond(0);
                             if (!sdate.isBefore(ssdate)) {
                                 dates.add(sdate);
                             }

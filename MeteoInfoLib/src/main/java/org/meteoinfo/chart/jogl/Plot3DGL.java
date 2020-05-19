@@ -796,10 +796,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         this.updateMatrix(gl);
 
-        //keep material colors
+        //Set lighting
         if (this.lighting.isEnable()) {
             this.lighting.start(gl);
+            //keep material colors
             gl.glColorMaterial(GL2.GL_FRONT, GL2.GL_DIFFUSE);
+            //gl.glColorMaterial(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE);
             gl.glEnable(GL2.GL_COLOR_MATERIAL);
         }
 

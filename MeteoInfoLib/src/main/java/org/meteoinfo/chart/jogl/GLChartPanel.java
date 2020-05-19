@@ -404,6 +404,19 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @param sleep Sleep seconds
      * @throws InterruptedException
      */
+    public void saveImage(String fn, int dpi, Integer sleep) throws InterruptedException, IOException {
+        saveImage(fn, dpi, this.getWidth(), this.getHeight(), sleep);
+    }
+
+    /**
+     * Save image file
+     * @param fn File path
+     * @param dpi Image dpi
+     * @param width Image width
+     * @param height Image height
+     * @param sleep Sleep seconds
+     * @throws InterruptedException
+     */
     public void saveImage(String fn, int dpi, int width, int height, Integer sleep) throws InterruptedException, IOException {
         BufferedImage image = this.paintViewImage(width, height, dpi);
 

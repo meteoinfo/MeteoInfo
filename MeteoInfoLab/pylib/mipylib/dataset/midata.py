@@ -648,23 +648,11 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
         #print 'Variable: ' + var.name
         if var.variable.hasNullDimension():
             continue
-        if var.datatype == DataType.STRUCTURE:
+        if var.dtype == DataType.STRUCTURE:
             continue
-        vdims = []
-        missdim = False
-        for vdim in var.dims:
-            isvalid = False
-            for dim in dims:
-                if dim.getShortName() == vdim.getShortName():
-                    vdims.append(dim)
-                    isvalid = True
-                    break
-            if not isvalid:
-                missdim = True
-                break
-        if missdim:
+        if len(var.dims) == 0:
             continue
-        nvar = ncfile.addvar(var.name, var.datatype, vdims)
+        nvar = ncfile.addvar(var.name, var.dtype, var.dims)
         for attr in var.attributes:
             nvar.addattr(attr.getName(), var.attrvalue(attr))
         variables.append(nvar)

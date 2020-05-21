@@ -26,6 +26,12 @@ __all__ = ['Axes3DGL']
 class Axes3DGL(Axes3D):
     
     def __init__(self, *args, **kwargs):
+        """
+        Axes 3d with openGL support.
+        :param position: (*list of float*) Axes position specified by *position=* [left, bottom, width
+            height] in normalized (0, 1) units. Default is [0.13, 0.11, 0.775, 0.815].
+        :param antialias: (*bool*) Antialias or not. Default is `None`.
+        """
         axes = kwargs.pop('axes', None)
         self._set_plot(axes)
         

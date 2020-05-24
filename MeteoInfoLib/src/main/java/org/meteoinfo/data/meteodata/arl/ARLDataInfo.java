@@ -144,7 +144,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
         missingValue = -9999;
         isGlobal = false;
         //projInfo = KnownCoordinateSystems.geographic.world.WGS1984;
-        this.setDataType(MeteoDataType.ARL_Grid);
+        this.meteoDataType = MeteoDataType.ARL_Grid;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -836,7 +836,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_LonLat(int timeIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_LonLat(int timeIdx, String varName, int levelIdx) {
         try {
             int xNum, yNum;
             xNum = dataHead.NX;
@@ -847,12 +847,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             DataLabel aDL;
 
             //Update level and variable index
-            Variable aVar = this.getVariables().get(varIdx);
+            Variable aVar = this.getVariable(varName);
             if (aVar.getLevelNum() > 1) {
                 levelIdx += 1;
             }
 
-            varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
+            int varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
 
             br.seek(timeIdx * recsPerTime * recLen);
             br.seek(br.getFilePointer() + indexLen);
@@ -886,7 +886,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_TimeLat(int lonIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_TimeLat(int lonIdx, String varName, int levelIdx) {
         try {
             int xNum, yNum, tNum, t;
             xNum = dataHead.NX;
@@ -899,12 +899,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             double[][] newGridData = new double[tNum][yNum];
 
             //Update level and variable index
-            Variable aVar = this.getVariables().get(varIdx);
+            Variable aVar = this.getVariable(varName);
             if (aVar.getLevelNum() > 1) {
                 levelIdx += 1;
             }
 
-            varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
+            int varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
 
             for (t = 0; t < tNum; t++) {
                 br.seek(t * recsPerTime * recLen);
@@ -945,7 +945,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_TimeLon(int latIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_TimeLon(int latIdx, String varName, int levelIdx) {
         try {
             int xNum, yNum, tNum, t;
             xNum = dataHead.NX;
@@ -958,12 +958,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             double[][] newGridData = new double[tNum][xNum];
 
             //Update level and variable index
-            Variable aVar = this.getVariables().get(varIdx);
+            Variable aVar = this.getVariable(varName);
             if (aVar.getLevelNum() > 1) {
                 levelIdx += 1;
             }
 
-            varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
+            int varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
 
             for (t = 0; t < tNum; t++) {
                 br.seek(t * recsPerTime * recLen);
@@ -1004,12 +1004,13 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_LevelLat(int lonIdx, int varIdx, int timeIdx) {
+    public GridData getGridData_LevelLat(int lonIdx, String varName, int timeIdx) {
         try {
             int xNum, yNum, lNum, nvarIdx, levIdx;
             xNum = dataHead.NX;
             yNum = dataHead.NY;
-            lNum = this.getVariables().get(varIdx).getLevelNum();
+            Variable var = this.getVariable(varName);
+            lNum = var.getLevelNum();
             double[][] theData;
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             byte[] dataBytes;
@@ -1022,8 +1023,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             aLevPosition = br.getFilePointer();
             //levIdx = this.getVariables().get(varIdx).getLevelIdxs().get(0);
             for (int i = 0; i < lNum; i++) {
-                nvarIdx = this.getVariables().get(varIdx).getVarInLevelIdxs().get(i);
-                levIdx = this.getVariables().get(varIdx).getLevelIdxs().get(i);
+                nvarIdx = var.getVarInLevelIdxs().get(i);
+                levIdx = var.getLevelIdxs().get(i);
                 br.seek(aLevPosition);
                 for (int j = 0; j < levIdx; j++) {
                     br.seek(br.getFilePointer() + LevelVarList.get(j).size() * recLen);
@@ -1050,7 +1051,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             gridData.xArray = Y;
             gridData.yArray = new double[lNum];
             for (int i = 0; i < lNum; i++) {
-                gridData.yArray[i] = this.getVariables().get(varIdx).getLevels().get(i);
+                gridData.yArray[i] = var.getLevels().get(i);
             }
 
             return gridData;
@@ -1061,12 +1062,13 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_LevelLon(int latIdx, int varIdx, int timeIdx) {
+    public GridData getGridData_LevelLon(int latIdx, String varName, int timeIdx) {
         try {
             int xNum, yNum, lNum, nvarIdx, levIdx;
             xNum = dataHead.NX;
             yNum = dataHead.NY;
-            lNum = this.getVariables().get(varIdx).getLevelNum();
+            Variable var = this.getVariable(varName);
+            lNum = var.getLevelNum();
             double[][] theData;
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             byte[] dataBytes;
@@ -1079,8 +1081,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             aLevPosition = br.getFilePointer();
             //levIdx = Variables[cvarIdx].LevelIdxs[0];
             for (int i = 0; i < lNum; i++) {
-                nvarIdx = this.getVariables().get(varIdx).getVarInLevelIdxs().get(i);
-                levIdx = this.getVariables().get(varIdx).getLevelIdxs().get(i);
+                nvarIdx = var.getVarInLevelIdxs().get(i);
+                levIdx = var.getLevelIdxs().get(i);
                 br.seek(aLevPosition);
                 for (int j = 0; j < levIdx; j++) {
                     br.seek(br.getFilePointer() + LevelVarList.get(j).size() * recLen);
@@ -1107,7 +1109,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             gridData.xArray = X;
             gridData.yArray = new double[lNum];
             for (int i = 0; i < lNum; i++) {
-                gridData.yArray[i] = this.getVariables().get(varIdx).getLevels().get(i);
+                gridData.yArray[i] = var.getLevels().get(i);
             }
 
             return gridData;
@@ -1119,12 +1121,13 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_LevelTime(int latIdx, int varIdx, int lonIdx) {
+    public GridData getGridData_LevelTime(int latIdx, String varName, int lonIdx) {
         try {
             int xNum, yNum, lNum, nvarIdx, levIdx, t, tNum;
             xNum = dataHead.NX;
             yNum = dataHead.NY;
-            lNum = this.getVariables().get(varIdx).getLevelNum();
+            Variable var = this.getVariable(varName);
+            lNum = var.getLevelNum();
             tNum = this.getTimeNum();
             double[][] theData;
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
@@ -1139,8 +1142,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 aLevPosition = br.getFilePointer();
                 //levIdx = this.getVariables().get(varIdx).getLevelIdxs().get(0);
                 for (int i = 0; i < lNum; i++) {
-                    nvarIdx = this.getVariables().get(varIdx).getVarInLevelIdxs().get(i);
-                    levIdx = this.getVariables().get(varIdx).getLevelIdxs().get(i);
+                    nvarIdx = var.getVarInLevelIdxs().get(i);
+                    levIdx = var.getLevelIdxs().get(i);
                     br.seek(aLevPosition);
                     for (int j = 0; j < levIdx; j++) {
                         br.seek(br.getFilePointer() + LevelVarList.get(j).size() * recLen);
@@ -1171,7 +1174,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             }
             gridData.yArray = new double[lNum];
             for (int i = 0; i < lNum; i++) {
-                gridData.yArray[i] = this.getVariables().get(varIdx).getLevels().get(i);
+                gridData.yArray[i] = var.getLevels().get(i);
             }
 
             return gridData;
@@ -1183,7 +1186,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_Time(int lonIdx, int latIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_Time(int lonIdx, int latIdx, String varName, int levelIdx) {
         try {
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             byte[] dataBytes;
@@ -1202,12 +1205,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             aGridData.data = new double[1][this.getTimeNum()];
 
             //Update level and variable index
-            Variable aVar = this.getVariables().get(varIdx);
+            Variable aVar = this.getVariable(varName);
             if (aVar.getLevelNum() > 1) {
                 levelIdx += 1;
             }
 
-            varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
+            int varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
 
             for (t = 0; t < this.getTimeNum(); t++) {
                 br.seek(t * recsPerTime * recLen);
@@ -1240,7 +1243,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_Level(int lonIdx, int latIdx, int varIdx, int timeIdx) {
+    public GridData getGridData_Level(int lonIdx, int latIdx, String varName, int timeIdx) {
         try {
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             byte[] dataBytes;
@@ -1248,7 +1251,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             int xNum, yNum, nvarIdx, levIdx, lNum;
             xNum = dataHead.NX;
             yNum = dataHead.NY;
-            lNum = this.getVariables().get(varIdx).getLevelNum();
+            Variable var = this.getVariable(varName);
+            lNum = var.getLevelNum();
             double[][] gridData;
             double aValue;
 
@@ -1264,8 +1268,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             long aLevPosition = br.getFilePointer();
             //levIdx = this.getVariables().get(varIdx).getLevelIdxs().get(0);
             for (int i = 0; i < lNum; i++) {
-                nvarIdx = this.getVariables().get(varIdx).getVarInLevelIdxs().get(i);
-                levIdx = this.getVariables().get(varIdx).getLevelIdxs().get(i);
+                nvarIdx = var.getVarInLevelIdxs().get(i);
+                levIdx = var.getLevelIdxs().get(i);
                 br.seek(aLevPosition);
                 for (int j = 0; j < levIdx; j++) {
                     br.seek(br.getFilePointer() + LevelVarList.get(j).size() * recLen);
@@ -1294,7 +1298,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_Lon(int timeIdx, int latIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_Lon(int timeIdx, int latIdx, String varName, int levelIdx) {
         try {
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             byte[] dataBytes;
@@ -1313,12 +1317,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             aGridData.data = new double[1][X.length];
 
             //Update level and variable index
-            Variable aVar = this.getVariables().get(varIdx);
+            Variable aVar = this.getVariable(varName);
             if (aVar.getLevelNum() > 1) {
                 levelIdx += 1;
             }
 
-            varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
+            int varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
 
             br.seek(timeIdx * recsPerTime * recLen);
             br.seek(br.getFilePointer() + indexLen);
@@ -1350,7 +1354,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_Lat(int timeIdx, int lonIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_Lat(int timeIdx, int lonIdx, String varName, int levelIdx) {
         try {
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             byte[] dataBytes;
@@ -1369,12 +1373,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             aGridData.data = new double[1][Y.length];
 
             //Update level and variable index
-            Variable aVar = this.getVariables().get(varIdx);
+            Variable aVar = this.getVariable(varName);
             if (aVar.getLevelNum() > 1) {
                 levelIdx += 1;
             }
 
-            varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
+            int varIdx = LevelVarList.get(levelIdx).indexOf(aVar.getName());
 
             br.seek(timeIdx * recsPerTime * recLen);
             br.seek(br.getFilePointer() + indexLen);

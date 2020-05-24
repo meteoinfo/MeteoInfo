@@ -373,7 +373,7 @@ public class MICAPS131DataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_LonLat(int timeIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_LonLat(int timeIdx, String varName, int levelIdx) {
         try {
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             int n = yNum * xNum * dataByteNum;
@@ -411,47 +411,47 @@ public class MICAPS131DataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public GridData getGridData_TimeLat(int lonIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_TimeLat(int lonIdx, String varName, int levelIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public GridData getGridData_TimeLon(int latIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_TimeLon(int latIdx, String varName, int levelIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public GridData getGridData_LevelLat(int lonIdx, int varIdx, int timeIdx) {
+    public GridData getGridData_LevelLat(int lonIdx, String varName, int timeIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public GridData getGridData_LevelLon(int latIdx, int varIdx, int timeIdx) {
+    public GridData getGridData_LevelLon(int latIdx, String varName, int timeIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public GridData getGridData_LevelTime(int latIdx, int varIdx, int lonIdx) {
+    public GridData getGridData_LevelTime(int latIdx, String varName, int lonIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public GridData getGridData_Time(int lonIdx, int latIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_Time(int lonIdx, int latIdx, String varName, int levelIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public GridData getGridData_Level(int lonIdx, int latIdx, int varIdx, int timeIdx) {
+    public GridData getGridData_Level(int lonIdx, int latIdx, String varName, int timeIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public GridData getGridData_Lon(int timeIdx, int latIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_Lon(int timeIdx, int latIdx, String varName, int levelIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public GridData getGridData_Lat(int timeIdx, int lonIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_Lat(int timeIdx, int lonIdx, String varName, int levelIdx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     // </editor-fold>   

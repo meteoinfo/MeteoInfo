@@ -1507,9 +1507,10 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
      * @return Grid data
      */
     @Override
-    public GridData getGridData_LonLat(int timeIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_LonLat(int timeIdx, String varName, int levelIdx) {
         GridData gridData = new GridData();
         try {
+            int varIdx = this.getVariableIndex(varName);
             gridData.data = readGrADSData_Grid_LonLat(timeIdx, varIdx, levelIdx);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
@@ -1592,8 +1593,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     }
 
     @Override
-    public GridData getGridData_TimeLat(int lonIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_TimeLat(int lonIdx, String varName, int levelIdx) {
         try {
+            int varIdx = this.getVariableIndex(varName);
             int xNum, yNum;
             xNum = YNum;
             yNum = TDEF.getTimeNum();
@@ -1692,8 +1694,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     }
 
     @Override
-    public GridData getGridData_TimeLon(int latIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_TimeLon(int latIdx, String varName, int levelIdx) {
         try {
+            int varIdx = this.getVariableIndex(varName);
             int xNum, yNum;
             xNum = XNum;
             yNum = TDEF.getTimeNum();
@@ -1785,8 +1788,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     }
 
     @Override
-    public GridData getGridData_LevelLat(int lonIdx, int varIdx, int timeIdx) {
+    public GridData getGridData_LevelLat(int lonIdx, String varName, int timeIdx) {
         try {
+            int varIdx = this.getVariableIndex(varName);
             int xNum, yNum;
             xNum = YNum;
             yNum = VARDEF.getVars().get(varIdx).getLevelNum();
@@ -1852,8 +1856,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     }
 
     @Override
-    public GridData getGridData_LevelLon(int latIdx, int varIdx, int timeIdx) {
+    public GridData getGridData_LevelLon(int latIdx, String varName, int timeIdx) {
         try {
+            int varIdx = this.getVariableIndex(varName);
             int xNum, yNum;
             xNum = XNum;
             yNum = VARDEF.getVars().get(varIdx).getLevelNum();
@@ -1919,8 +1924,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     }
 
     @Override
-    public GridData getGridData_LevelTime(int latIdx, int varIdx, int lonIdx) {
+    public GridData getGridData_LevelTime(int latIdx, String varName, int lonIdx) {
         try {
+            int varIdx = this.getVariableIndex(varName);
             int xNum, yNum;
             xNum = TDEF.getTimeNum();
             yNum = VARDEF.getVars().get(varIdx).getLevelNum();
@@ -2019,8 +2025,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     }
 
     @Override
-    public GridData getGridData_Time(int lonIdx, int latIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_Time(int lonIdx, int latIdx, String varName, int levelIdx) {
         try {
+            int varIdx = this.getVariableIndex(varName);
             int i, lNum, t;
             byte[] aBytes = new byte[4];
             float aValue;
@@ -2107,8 +2114,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     }
 
     @Override
-    public GridData getGridData_Level(int lonIdx, int latIdx, int varIdx, int timeIdx) {
+    public GridData getGridData_Level(int lonIdx, int latIdx, String varName, int timeIdx) {
         try {
+            int varIdx = this.getVariableIndex(varName);
             String filePath = DSET;
             int tIdx = timeIdx;
             if (OPTIONS.template) {
@@ -2165,8 +2173,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     }
 
     @Override
-    public GridData getGridData_Lon(int timeIdx, int latIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_Lon(int timeIdx, int latIdx, String varName, int levelIdx) {
         try {
+            int varIdx = this.getVariableIndex(varName);
             String filePath = DSET;
             int tIdx = timeIdx;
             if (OPTIONS.template) {
@@ -2217,8 +2226,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     }
 
     @Override
-    public GridData getGridData_Lat(int timeIdx, int lonIdx, int varIdx, int levelIdx) {
+    public GridData getGridData_Lat(int timeIdx, int lonIdx, String varName, int levelIdx) {
         try {
+            int varIdx = this.getVariableIndex(varName);
             String filePath = DSET;
             int tIdx = timeIdx;
             if (OPTIONS.template) {
@@ -2576,10 +2586,11 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     }
 
     @Override
-    public StationData getStationData(int timeIdx, int varIdx, int levelIdx) {
+    public StationData getStationData(int timeIdx, String varName, int levelIdx) {
         if (levelIdx == 0) {
             try {
                 List<STData> stationData = readGrADSData_Station(timeIdx);
+                int varIdx = this.getVariableIndex(varName);
                 return getGroundStationData(stationData, varIdx);
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);

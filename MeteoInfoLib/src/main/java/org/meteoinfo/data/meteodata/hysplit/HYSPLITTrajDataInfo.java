@@ -108,7 +108,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
      * Constructor
      */
     public HYSPLITTrajDataInfo() {
-        this.dataType = MeteoDataType.HYSPLIT_Traj;
+        this.meteoDataType = MeteoDataType.HYSPLIT_Traj;
         initVariables();
     }
 

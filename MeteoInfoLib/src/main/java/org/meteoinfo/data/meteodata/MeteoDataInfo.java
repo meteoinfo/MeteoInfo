@@ -69,7 +69,7 @@ public class MeteoDataInfo {
     // <editor-fold desc="Variables">
 
     private PlotDimension _dimensionSet = PlotDimension.Lat_Lon;
-    private int _varIdx;
+    private String varName;
     private int _timeIdx;
     private int _levelIdx;
     private int _latIdx;
@@ -218,21 +218,24 @@ public class MeteoDataInfo {
     }
 
     /**
-     * Get variable index
+     * Get variable name
      *
-     * @return Variable index
+     * @return Variable name
      */
-    public int getVariableIndex() {
-        return _varIdx;
+    public String getVariableName() {
+        if (this.varName == null && this.getDataInfo() != null) {
+            return this.getDataInfo().getVariableNames().get(0);
+        } else
+            return varName;
     }
 
     /**
-     * Set variable index
+     * Set variable name
      *
-     * @param value Variable index
+     * @param value Variable name
      */
-    public void setVariableIndex(int value) {
-        _varIdx = value;
+    public void setVariableName(String value) {
+        varName = value;
     }
 
     /**
@@ -1036,8 +1039,9 @@ public class MeteoDataInfo {
      * @return Grid data
      */
     public GridData getGridData(String varName) {
-        _varIdx = getVariableIndex(varName);
-        if (_varIdx < 0) {
+        this.varName = varName;
+        int varIdx = getVariableIndex(varName);
+        if (varIdx < 0) {
             MathParser mathParser = new MathParser(this);
             try {
                 GridData gridData = (GridData) mathParser.evaluate(varName);
@@ -1061,41 +1065,37 @@ public class MeteoDataInfo {
      * @return Grid data
      */
     public GridData getGridData() {
-        if (_varIdx < 0) {
-            return null;
-        }
-
         GridData gdata = null;
         switch (_dimensionSet) {
             case Lat_Lon:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_LonLat(_timeIdx, _varIdx, _levelIdx);
+                gdata = ((IGridDataInfo) _dataInfo).getGridData_LonLat(_timeIdx, varName, _levelIdx);
                 break;
             case Time_Lon:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_TimeLon(_latIdx, _varIdx, _levelIdx);
+                gdata = ((IGridDataInfo) _dataInfo).getGridData_TimeLon(_latIdx, varName, _levelIdx);
                 break;
             case Time_Lat:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_TimeLat(_lonIdx, _varIdx, _levelIdx);
+                gdata = ((IGridDataInfo) _dataInfo).getGridData_TimeLat(_lonIdx, varName, _levelIdx);
                 break;
             case Level_Lon:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_LevelLon(_latIdx, _varIdx, _timeIdx);
+                gdata = ((IGridDataInfo) _dataInfo).getGridData_LevelLon(_latIdx, varName, _timeIdx);
                 break;
             case Level_Lat:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_LevelLat(_lonIdx, _varIdx, _timeIdx);
+                gdata = ((IGridDataInfo) _dataInfo).getGridData_LevelLat(_lonIdx, varName, _timeIdx);
                 break;
             case Level_Time:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_LevelTime(_latIdx, _varIdx, _lonIdx);
+                gdata = ((IGridDataInfo) _dataInfo).getGridData_LevelTime(_latIdx, varName, _lonIdx);
                 break;
             case Lat:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_Lat(_timeIdx, _lonIdx, _varIdx, _levelIdx);
+                gdata = ((IGridDataInfo) _dataInfo).getGridData_Lat(_timeIdx, _lonIdx, varName, _levelIdx);
                 break;
             case Level:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_Level(_lonIdx, _latIdx, _varIdx, _timeIdx);
+                gdata = ((IGridDataInfo) _dataInfo).getGridData_Level(_lonIdx, _latIdx, varName, _timeIdx);
                 break;
             case Lon:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_Lon(_timeIdx, _latIdx, _varIdx, _levelIdx);
+                gdata = ((IGridDataInfo) _dataInfo).getGridData_Lon(_timeIdx, _latIdx, varName, _levelIdx);
                 break;
             case Time:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_Time(_lonIdx, _latIdx, _varIdx, _levelIdx);
+                gdata = ((IGridDataInfo) _dataInfo).getGridData_Time(_lonIdx, _latIdx, varName, _levelIdx);
                 break;
         }
 
@@ -1113,8 +1113,9 @@ public class MeteoDataInfo {
      * @return Station data
      */
     public StationData getStationData(String varName) {
-        _varIdx = getVariableIndex(varName);
-        if (_varIdx >= 0) {
+        this.varName = varName;
+        int varIdx = getVariableIndex(varName);
+        if (varIdx >= 0) {
             return this.getStationData();
         } else {
             MathParser mathParser = new MathParser(this);
@@ -1138,13 +1139,9 @@ public class MeteoDataInfo {
      * @return Station data
      */
     public StationData getStationData() {
-        if (_varIdx >= 0) {
-            StationData stData = ((IStationDataInfo) _dataInfo).getStationData(_timeIdx, _varIdx, _levelIdx);
-            stData.projInfo = this.getProjectionInfo();
-            return stData;
-        } else {
-            return null;
-        }
+        StationData stData = ((IStationDataInfo) _dataInfo).getStationData(_timeIdx, varName, _levelIdx);
+        stData.projInfo = this.getProjectionInfo();
+        return stData;
     }
 
     /**

@@ -342,9 +342,10 @@ public class SYNOPDataInfo extends DataInfo implements IStationDataInfo {
     }
 
     @Override
-    public StationData getStationData(int timeIdx, int varIdx, int levelIdx) {
+    public StationData getStationData(int timeIdx, String varName, int levelIdx) {
         StationData stationData = new StationData();
         List<String> stations = new ArrayList<>();
+        int varIdx = this.getVariableIndex(varName);
         String aStid;
         int i;
         float lon, lat;

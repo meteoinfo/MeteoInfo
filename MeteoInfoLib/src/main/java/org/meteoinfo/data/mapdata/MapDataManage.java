@@ -446,7 +446,7 @@ public class MapDataManage {
     public static RasterLayer readSurfer_ASCII_GRID(String fileName) {
         SurferGridDataInfo dataInfo = new SurferGridDataInfo();
         dataInfo.readDataInfo(fileName);
-        GridData gData = dataInfo.getGridData_LonLat(0, 0, 0);
+        GridData gData = dataInfo.getGridData_LonLat(0, "var", 0);
         LegendScheme aLS = LegendManage.createLegendSchemeFromGridData(gData, LegendType.GraduatedColor,
                 ShapeTypes.Image);
         RasterLayer aLayer = DrawMeteoData.createRasterLayer(gData, new File(fileName).getName(), aLS);

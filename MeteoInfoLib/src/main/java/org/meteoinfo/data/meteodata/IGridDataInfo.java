@@ -37,104 +37,104 @@ public interface IGridDataInfo {
      * Read grid data - lon/lat
      *
      * @param timeIdx Time index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param levelIdx Level index
      * @return Grid data
      */
-    public abstract GridData getGridData_LonLat(int timeIdx, int varIdx, int levelIdx);
+    public abstract GridData getGridData_LonLat(int timeIdx, String varName, int levelIdx);
     
     /**
      * Read grid data - time/lat
      *
      * @param lonIdx Longitude index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param levelIdx Level index
      * @return Grid data
      */
-    public abstract GridData getGridData_TimeLat(int lonIdx, int varIdx, int levelIdx);
+    public abstract GridData getGridData_TimeLat(int lonIdx, String varName, int levelIdx);
     
     /**
      * Read grid data - time/lon
      *
      * @param latIdx Latitude index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param levelIdx Level index
      * @return Grid data
      */
-    public abstract GridData getGridData_TimeLon(int latIdx, int varIdx, int levelIdx);
+    public abstract GridData getGridData_TimeLon(int latIdx, String varName, int levelIdx);
     
     /**
      * Read grid data - level/lat
      *
      * @param lonIdx Longitude index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param timeIdx Time index
      * @return Grid data
      */
-    public abstract GridData getGridData_LevelLat(int lonIdx, int varIdx, int timeIdx);
+    public abstract GridData getGridData_LevelLat(int lonIdx, String varName, int timeIdx);
     
     /**
      * Read grid data - Level/lon
      *
      * @param latIdx Latitude index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param timeIdx Time index
      * @return Grid data
      */
-    public abstract GridData getGridData_LevelLon(int latIdx, int varIdx, int timeIdx);
+    public abstract GridData getGridData_LevelLon(int latIdx, String varName, int timeIdx);
     
     /**
      * Read grid data - Level/time
      *
      * @param latIdx Latitude index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param lonIdx Longitude index
      * @return Grid data
      */
-    public abstract GridData getGridData_LevelTime(int latIdx, int varIdx, int lonIdx);
+    public abstract GridData getGridData_LevelTime(int latIdx, String varName, int lonIdx);
     
     /**
      * Read grid data - time
      *
      * @param lonIdx Lontitude index
      * @param latIdx Latitude index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param levelIdx Level index
      * @return Grid data
      */
-    public abstract GridData getGridData_Time(int lonIdx, int latIdx, int varIdx, int levelIdx);
+    public abstract GridData getGridData_Time(int lonIdx, int latIdx, String varName, int levelIdx);
     
     /**
      * Read grid data - level
      *
      * @param lonIdx Lontitude index
      * @param latIdx Latitude index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param timeIdx Time index
      * @return Grid data
      */
-    public abstract GridData getGridData_Level(int lonIdx, int latIdx, int varIdx, int timeIdx);
+    public abstract GridData getGridData_Level(int lonIdx, int latIdx, String varName, int timeIdx);
     
     /**
      * Read grid data - longitude
      *
      * @param timeIdx Time index
      * @param latIdx Latitude index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param levelIdx Level index
      * @return Grid data
      */
-    public abstract GridData getGridData_Lon(int timeIdx, int latIdx, int varIdx, int levelIdx);
+    public abstract GridData getGridData_Lon(int timeIdx, int latIdx, String varName, int levelIdx);
     
     /**
      * Read grid data - latitude
      *
      * @param timeIdx Time index
      * @param lonIdx Lontitude index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param levelIdx Level index
      * @return Grid data
      */
-    public abstract GridData getGridData_Lat(int timeIdx, int lonIdx, int varIdx, int levelIdx);
+    public abstract GridData getGridData_Lat(int timeIdx, int lonIdx, String varName, int levelIdx);
     // </editor-fold>
 }

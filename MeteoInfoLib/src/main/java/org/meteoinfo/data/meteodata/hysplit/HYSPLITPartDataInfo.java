@@ -165,7 +165,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
     }
 
     @Override
-    public StationData getStationData(int timeIdx, int varIdx, int levelIdx) {
+    public StationData getStationData(int timeIdx, String varName, int levelIdx) {
         try {
             StationData stationData = new StationData();
             List<String> stations = new ArrayList<String>();

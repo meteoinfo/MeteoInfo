@@ -28,11 +28,11 @@ public interface IStationDataInfo {
      * Read station data
      *
      * @param timeIdx Time index
-     * @param varIdx Variable index
+     * @param varName Variable name
      * @param levelIdx Level index
      * @return Station data
      */
-    public abstract StationData getStationData(int timeIdx, int varIdx, int levelIdx);
+    public abstract StationData getStationData(int timeIdx, String varName, int levelIdx);
     
     /**
      * Read station info data

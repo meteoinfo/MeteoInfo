@@ -261,7 +261,8 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
     }
 
     @Override
-    public StationData getStationData(int timeIdx, int varIdx, int levelIdx) {
+    public StationData getStationData(int timeIdx, String varName, int levelIdx) {
+        int varIdx = this.getVariableIndex(varName);
         StationData stationData = new StationData();
         List<String> stations = new ArrayList<>();
         String aStid;

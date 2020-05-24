@@ -283,13 +283,7 @@ public class FrmUVSet extends javax.swing.JDialog {
                 }
             }
         }
-        if (mdi.getVariableIndex() < this.jComboBox_UDir.getItemCount()) {
-            this.jComboBox_UDir.setSelectedIndex(mdi.getVariableIndex());
-        } else {
-            if (this.jComboBox_UDir.getItemCount() > 0) {
-                this.jComboBox_UDir.setSelectedIndex(0);
-            }
-        }
+        this.jComboBox_UDir.setSelectedItem(mdi.getVariableName());
     }
     
     private void jComboBox_VDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_VDataActionPerformed
@@ -314,13 +308,7 @@ public class FrmUVSet extends javax.swing.JDialog {
                 }
             }
         }
-        if (mdi.getVariableIndex() < this.jComboBox_VSpeed.getItemCount()) {
-            this.jComboBox_VSpeed.setSelectedIndex(mdi.getVariableIndex());
-        } else {
-            if (this.jComboBox_VSpeed.getItemCount() > 0) {
-                this.jComboBox_VSpeed.setSelectedIndex(0);
-            }
-        }
+        this.jComboBox_VSpeed.setSelectedItem(mdi.getVariableName());
     }
     
     /**

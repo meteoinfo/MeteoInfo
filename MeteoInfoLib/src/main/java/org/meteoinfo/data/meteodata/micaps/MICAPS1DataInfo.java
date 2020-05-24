@@ -560,8 +560,8 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
     }
 
     @Override
-    public StationData getStationData(int timeIdx, int varIdx, int levelIdx) {
-        //varIdx += 3;
+    public StationData getStationData(int timeIdx, String varName, int levelIdx) {
+        int varIdx = this.getVariableIndex(varName);
 
         List<List<String>> allDataList = this.readData();
         String aStid;

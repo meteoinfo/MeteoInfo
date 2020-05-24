@@ -157,7 +157,7 @@ public class LonLatStationDataInfo extends DataInfo implements IStationDataInfo 
     }
 
     @Override
-    public StationData getStationData(int timeIdx, int varIdx, int levelIdx) {
+    public StationData getStationData(int timeIdx, String varName, int levelIdx) {
         try {
             List<String[]> dataList = new ArrayList<>();
             FileCharsetDetector chardet = new FileCharsetDetector();
@@ -191,7 +191,7 @@ public class LonLatStationDataInfo extends DataInfo implements IStationDataInfo 
             maxY = 0;
 
             //Get real variable index
-            int vIdx = _fields.indexOf(this.getVariables().get(varIdx).getName());
+            int vIdx = _fields.indexOf(this.getVariable(varName));
             for (i = 0; i < dataList.size(); i++) {
                 dataArray = dataList.get(i);
                 stName = dataArray[0];

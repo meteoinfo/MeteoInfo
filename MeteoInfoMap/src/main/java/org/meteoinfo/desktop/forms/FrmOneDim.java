@@ -839,7 +839,7 @@ public class FrmOneDim extends javax.swing.JFrame {
             return;
         }
 
-        _meteoDataInfo.setVariableIndex(this.jComboBox_Variable.getSelectedIndex());
+        _meteoDataInfo.setVariableName(this.jComboBox_Variable.getSelectedItem().toString());
         this.setVariableParas(var);
         updateEndDimSetS(this.jComboBox_Level1, this.jComboBox_Level2);
 

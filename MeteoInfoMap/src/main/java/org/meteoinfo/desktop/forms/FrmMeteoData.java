@@ -2323,6 +2323,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         _isLoading = true;
         this.jComboBox_Variable.setEnabled(true);
         this.jComboBox_Variable.removeAllItems();
+        List<String> varNames = new ArrayList<>();
         for (i = 0; i < aDataInfo.getVariables().size(); i++) {
             Variable var = aDataInfo.getVariables().get(i);
             if (_meteoDataInfo.isSWATHData()) {
@@ -2330,21 +2331,24 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 if (lonvar != null) {
                     if (var.dimensionContains(lonvar)) {
                         this.jComboBox_Variable.addItem(var.getName());
+                        varNames.add(var.getName());
                     }
                 }
             } else {
                 if (var.isPlottable()) {
                     this.jComboBox_Variable.addItem(var.getName());
+                    varNames.add(var.getName());
                 }
             }
         }
         _isLoading = false;
-        if (_meteoDataInfo.getVariableIndex() < this.jComboBox_Variable.getItemCount()) {
-            this.jComboBox_Variable.setSelectedIndex(_meteoDataInfo.getVariableIndex());
+        if (_meteoDataInfo.getVariableName() == null) {
+            this.jComboBox_Variable.setSelectedIndex(0);
         } else {
-            if (this.jComboBox_Variable.getItemCount() > 0) {
+            if (varNames.contains(_meteoDataInfo.getVariableName()))
+                this.jComboBox_Variable.setSelectedItem(_meteoDataInfo.getVariableName());
+            else
                 this.jComboBox_Variable.setSelectedIndex(0);
-            }
         }
     }
 

@@ -1302,7 +1302,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
             return;
         }
 
-        _meteoDataInfo.setVariableIndex(this.jComboBox_Variable.getSelectedIndex());
+        _meteoDataInfo.setVariableName((String) this.jComboBox_Variable.getSelectedItem());
         this.setVariableParas(var);
         updateEndDimSetS(this.jComboBox_Level1, this.jComboBox_Level2);
 

@@ -261,7 +261,8 @@ public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo{
     }
 
     @Override
-    public StationData getStationData(int timeIdx, int varIdx, int levelIdx) {
+    public StationData getStationData(int timeIdx, String varName, int levelIdx) {
+        int varIdx = this.getVariableIndex(varName);
         String stName;
         int i;
         double lon, lat;

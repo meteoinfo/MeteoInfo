@@ -34,20 +34,20 @@ public abstract class DataInfo {
 
     // <editor-fold desc="Variables">
 
-    private String _fileName;
-    private List<Variable> _variables = new ArrayList<>();
-    private List<Dimension> _dimensions = new ArrayList<>();
-    private List<Attribute> attributes = new ArrayList<>();
-    private Dimension _tDim = null;
-    private Dimension _xDim = null;
-    private Dimension _yDim = null;
-    private Dimension _zDim = null;
-    private boolean _xReverse = false;
-    private boolean _yReverse = false;
-    private boolean _isGlobal = false;
-    private double _missingValue = -9999.0;
-    private ProjectionInfo _projInfo = KnownCoordinateSystems.geographic.world.WGS1984;
-    protected MeteoDataType dataType;
+    protected String fileName;
+    protected List<Variable> variables = new ArrayList<>();
+    protected List<Dimension> dimensions = new ArrayList<>();
+    protected List<Attribute> attributes = new ArrayList<>();
+    protected Dimension tDim = null;
+    protected Dimension xDim = null;
+    protected Dimension yDim = null;
+    protected Dimension zDim = null;
+    protected boolean xReverse = false;
+    protected boolean yReverse = false;
+    protected boolean isGlobal = false;
+    protected double missingValue = -9999.0;
+    protected ProjectionInfo projInfo = KnownCoordinateSystems.geographic.world.WGS1984;
+    protected MeteoDataType meteoDataType;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -60,7 +60,7 @@ public abstract class DataInfo {
      * @return File name
      */
     public String getFileName() {
-        return _fileName;
+        return fileName;
     }
 
     /**
@@ -69,7 +69,7 @@ public abstract class DataInfo {
      * @param name File name
      */
     public void setFileName(String name) {
-        _fileName = name;
+        fileName = name;
     }
 
     /**
@@ -78,7 +78,7 @@ public abstract class DataInfo {
      * @return Variables
      */
     public List<Variable> getVariables() {
-        return _variables;
+        return variables;
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class DataInfo {
      * @param value Variables
      */
     public void setVariables(List<Variable> value) {
-        _variables = value;
+        variables = value;
     }
 
     /**
@@ -97,7 +97,7 @@ public abstract class DataInfo {
      */
     public List<Variable> getPlottableVariables() {
         List<Variable> vars = new ArrayList<>();
-        for (Variable var : _variables) {
+        for (Variable var : variables) {
             if (var.isPlottable()) {
                 vars.add(var);
             }
@@ -112,7 +112,7 @@ public abstract class DataInfo {
      * @return Dimensions
      */
     public List<Dimension> getDimensions() {
-        return this._dimensions;
+        return this.dimensions;
     }
 
     /**
@@ -121,7 +121,7 @@ public abstract class DataInfo {
      * @param dims Dimensions
      */
     public void setDimensions(List<Dimension> dims) {
-        this._dimensions = dims;
+        this.dimensions = dims;
     }
 
     /**
@@ -130,7 +130,7 @@ public abstract class DataInfo {
      * @return Variable number
      */
     public int getVariableNum() {
-        return _variables.size();
+        return variables.size();
     }
 
     /**
@@ -140,7 +140,7 @@ public abstract class DataInfo {
      */
     public List<String> getVariableNames() {
         List<String> names = new ArrayList<>();
-        for (Variable var : _variables) {
+        for (Variable var : variables) {
             names.add(var.getName());
         }
 
@@ -153,7 +153,7 @@ public abstract class DataInfo {
      * @return Times
      */
     public List<LocalDateTime> getTimes() {
-        List<Double> values = _tDim.getDimValue();
+        List<Double> values = tDim.getDimValue();
         List<LocalDateTime> times = new ArrayList<>();
         for (Double v : values) {
             times.add(JDateUtil.fromOADate(v));
@@ -169,7 +169,7 @@ public abstract class DataInfo {
      * @return Time
      */
     public LocalDateTime getTime(int timeIdx) {
-        return JDateUtil.fromOADate(_tDim.getDimValue().get(timeIdx));
+        return JDateUtil.fromOADate(tDim.getDimValue().get(timeIdx));
     }
     
     /**
@@ -178,7 +178,7 @@ public abstract class DataInfo {
      * @return Time double value
      */
     public double getTimeValue(int timeIdx) {
-        return _tDim.getDimValue().get(timeIdx);
+        return tDim.getDimValue().get(timeIdx);
     }
 
     /**
@@ -239,7 +239,7 @@ public abstract class DataInfo {
         for (LocalDateTime t : value) {
             values.add(JDateUtil.toOADate(t));
         }
-        _tDim.setValues(values);
+        tDim.setValues(values);
     }
 
     /**
@@ -248,7 +248,7 @@ public abstract class DataInfo {
      * @return Time number
      */
     public int getTimeNum() {
-        return _tDim.getLength();
+        return tDim.getLength();
     }
 
     /**
@@ -257,7 +257,7 @@ public abstract class DataInfo {
      * @return Time dimension
      */
     public Dimension getTimeDimension() {
-        return _tDim;
+        return tDim;
     }
 
     /**
@@ -266,7 +266,7 @@ public abstract class DataInfo {
      * @param tDim Time dimension
      */
     public void setTimeDimension(Dimension tDim) {
-        _tDim = tDim;
+        this.tDim = tDim;
     }
 
     /**
@@ -275,7 +275,7 @@ public abstract class DataInfo {
      * @return X dimension
      */
     public Dimension getXDimension() {
-        return _xDim;
+        return xDim;
     }
 
     /**
@@ -284,7 +284,7 @@ public abstract class DataInfo {
      * @param xDim X dimension
      */
     public void setXDimension(Dimension xDim) {
-        _xDim = xDim;
+        this.xDim = xDim;
     }
 
     /**
@@ -293,7 +293,7 @@ public abstract class DataInfo {
      * @return Y dimension
      */
     public Dimension getYDimension() {
-        return _yDim;
+        return yDim;
     }
 
     /**
@@ -302,7 +302,7 @@ public abstract class DataInfo {
      * @param yDim Y dimension
      */
     public void setYDimension(Dimension yDim) {
-        _yDim = yDim;
+        this.yDim = yDim;
     }
 
     /**
@@ -311,7 +311,7 @@ public abstract class DataInfo {
      * @return Z dimension
      */
     public Dimension getZDimension() {
-        return _zDim;
+        return zDim;
     }
 
     /**
@@ -320,7 +320,7 @@ public abstract class DataInfo {
      * @param zDim Z dimension
      */
     public void setZDimension(Dimension zDim) {
-        _zDim = zDim;
+        this.zDim = zDim;
     }
 
     /**
@@ -329,7 +329,7 @@ public abstract class DataInfo {
      * @return Boolean
      */
     public boolean isXReverse() {
-        return _xReverse;
+        return xReverse;
     }
 
     /**
@@ -338,7 +338,7 @@ public abstract class DataInfo {
      * @param value Boolean
      */
     public void setXReverse(boolean value) {
-        _xReverse = value;
+        xReverse = value;
     }
 
     /**
@@ -347,7 +347,7 @@ public abstract class DataInfo {
      * @return Boolean
      */
     public boolean isYReverse() {
-        return _yReverse;
+        return yReverse;
     }
 
     /**
@@ -356,7 +356,7 @@ public abstract class DataInfo {
      * @param value Boolean
      */
     public void setYReverse(boolean value) {
-        _yReverse = value;
+        yReverse = value;
     }
 
     /**
@@ -365,7 +365,7 @@ public abstract class DataInfo {
      * @return Boolean
      */
     public boolean isGlobal() {
-        return _isGlobal;
+        return isGlobal;
     }
 
     /**
@@ -374,7 +374,7 @@ public abstract class DataInfo {
      * @param value
      */
     public void setGlobal(boolean value) {
-        _isGlobal = value;
+        isGlobal = value;
     }
 
     /**
@@ -383,7 +383,7 @@ public abstract class DataInfo {
      * @return Missing data
      */
     public double getMissingValue() {
-        return _missingValue;
+        return missingValue;
     }
 
     /**
@@ -392,7 +392,7 @@ public abstract class DataInfo {
      * @param value Missing data
      */
     public void setMissingValue(double value) {
-        _missingValue = value;
+        missingValue = value;
     }
 
     /**
@@ -401,7 +401,7 @@ public abstract class DataInfo {
      * @return Projection info
      */
     public ProjectionInfo getProjectionInfo() {
-        return _projInfo;
+        return projInfo;
     }
 
     /**
@@ -410,7 +410,7 @@ public abstract class DataInfo {
      * @param projInfo Projection info
      */
     public void setProjectionInfo(ProjectionInfo projInfo) {
-        _projInfo = projInfo;
+        projInfo = projInfo;
     }
 
     /**
@@ -419,7 +419,7 @@ public abstract class DataInfo {
      * @return The data type
      */
     public MeteoDataType getDataType() {
-        return dataType;
+        return meteoDataType;
     }
 
     /**
@@ -428,7 +428,7 @@ public abstract class DataInfo {
      * @param value The data type
      */
     public void setDataType(MeteoDataType value) {
-        dataType = value;
+        meteoDataType = value;
     }
 
     // </editor-fold>
@@ -460,10 +460,10 @@ public abstract class DataInfo {
         Attribute aAttS;
         dataInfo = "File Name: " + this.getFileName();
         //dataInfo += System.getProperty("line.separator") + "File type: " + _fileTypeStr + " (" + _fileTypeId + ")";
-        dataInfo += System.getProperty("line.separator") + "Dimensions: " + _dimensions.size();
-        for (i = 0; i < _dimensions.size(); i++) {
-            dataInfo += System.getProperty("line.separator") + "\t" + _dimensions.get(i).getShortName() + " = "
-                    + String.valueOf(_dimensions.get(i).getLength()) + ";";
+        dataInfo += System.getProperty("line.separator") + "Dimensions: " + dimensions.size();
+        for (i = 0; i < dimensions.size(); i++) {
+            dataInfo += System.getProperty("line.separator") + "\t" + dimensions.get(i).getShortName() + " = "
+                    + String.valueOf(dimensions.get(i).getLength()) + ";";
         }
 
         Dimension xdim = this.getXDimension();
@@ -485,25 +485,25 @@ public abstract class DataInfo {
             dataInfo += System.getProperty("line.separator") + "\t: " + aAttS.toString();
         }
 
-        dataInfo += System.getProperty("line.separator") + "Variations: " + _variables.size();
-        for (i = 0; i < _variables.size(); i++) {
-            dataInfo += System.getProperty("line.separator") + "\t" + _variables.get(i).getDataType().toString()
-                    + " " + _variables.get(i).getShortName() + "(";
-            List<Dimension> dims = _variables.get(i).getDimensions();
+        dataInfo += System.getProperty("line.separator") + "Variations: " + variables.size();
+        for (i = 0; i < variables.size(); i++) {
+            dataInfo += System.getProperty("line.separator") + "\t" + variables.get(i).getDataType().toString()
+                    + " " + variables.get(i).getShortName() + "(";
+            List<Dimension> dims = variables.get(i).getDimensions();
             for (j = 0; j < dims.size(); j++) {
                 dataInfo += dims.get(j).getShortName() + ",";
             }
             dataInfo = dataInfo.substring(0, dataInfo.length() - 1);
             dataInfo += ");";
-            List<Attribute> atts = _variables.get(i).getAttributes();
+            List<Attribute> atts = variables.get(i).getAttributes();
             for (j = 0; j < atts.size(); j++) {
                 aAttS = atts.get(j);
-                dataInfo += System.getProperty("line.separator") + "\t" + "\t" + _variables.get(i).getShortName()
+                dataInfo += System.getProperty("line.separator") + "\t" + "\t" + variables.get(i).getShortName()
                         + ": " + aAttS.toString();
             }
         }
 
-        for (Dimension dim : _dimensions) {
+        for (Dimension dim : dimensions) {
             if (dim.isUnlimited()) {
                 dataInfo += System.getProperty("line.separator") + "Unlimited dimension: " + dim.getShortName();
             }
@@ -545,7 +545,7 @@ public abstract class DataInfo {
      */
     public Variable getVariable(String varName) {
         Variable v = null;
-        for (Variable var : _variables) {
+        for (Variable var : variables) {
             if (var.getName().equalsIgnoreCase(varName)) {
                 v = var;
                 break;
@@ -553,7 +553,7 @@ public abstract class DataInfo {
         }
 
         if (v == null) {
-            for (Variable var : _variables) {
+            for (Variable var : variables) {
                 if (var.getShortName().equalsIgnoreCase(varName)) {
                     v = var;
                     break;
@@ -565,12 +565,42 @@ public abstract class DataInfo {
     }
 
     /**
+     * Get variable index
+     * @param varName Variable name
+     * @return Variable index
+     */
+    public int getVariableIndex(String varName) {
+        int varIdx = -1;
+        int i = 0;
+        for (Variable var : variables) {
+            if (var.getName().equalsIgnoreCase(varName)) {
+                varIdx = i;
+                break;
+            }
+            i ++;
+        }
+
+        if (varIdx < 0) {
+            i = 0;
+            for (Variable var : variables) {
+                if (var.getShortName().equalsIgnoreCase(varName)) {
+                    varIdx = i;
+                    break;
+                }
+                i ++;
+            }
+        }
+
+        return varIdx;
+    }
+
+    /**
      * Add a variable
      *
      * @param var Variable
      */
     public void addVariable(Variable var) {
-        this._variables.add(var);
+        this.variables.add(var);
     }
 
     /**
@@ -579,7 +609,7 @@ public abstract class DataInfo {
      * @param dim Dimension
      */
     public void addDimension(Dimension dim) {
-        this._dimensions.add(dim);
+        this.dimensions.add(dim);
     }
     
     /**

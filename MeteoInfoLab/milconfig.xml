@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\contour">
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Run\emips\run_cams"/>
-    <RecentFolder Folder="D:\Run\emips\run_merge"/>
-    <RecentFolder Folder="D:\Run\emips\run_meic"/>
-    <RecentFolder Folder="D:\Run\emips"/>
     <RecentFolder Folder="D:\Run\emips\run_htap"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\dataconvert"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\awx"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\binary"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\mm5"/>
+    <RecentFolder Folder="D:\Run\emips"/>
+    <RecentFolder Folder="D:\Run\emips\run_cams"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\legend"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Run\emips\run_htap\emission_htap_2010.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\press2height.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg_vint.py"/>
+      <OpenedFile File="D:\Run\emips\run_cams\emission_cams.py"/>
+      <OpenedFile File="D:\Run\emips\run_cams\test_emis_bc.py"/>
+      <OpenedFile File="D:\Run\emips\run_cams\total_run.py"/>
+      <OpenedFile File="D:\Run\emips\run_cams\run_pollutants.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Run\emips\run_htap\emission_htap_2010.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\press2height.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg_vint.py"/>
+      <RecentFile File="D:\Run\emips\run_cams\emission_cams.py"/>
+      <RecentFile File="D:\Run\emips\run_cams\test_emis_bc.py"/>
+      <RecentFile File="D:\Run\emips\run_cams\total_run.py"/>
+      <RecentFile File="D:\Run\emips\run_cams\run_pollutants.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +36,5 @@
   </Font>
   <LookFeel Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1389,808"/>
 </MeteoInfo>

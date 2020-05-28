@@ -14,8 +14,15 @@
 package org.meteoinfo.data.meteodata.hysplit;
 
 import org.meteoinfo.data.StationData;
+import org.meteoinfo.data.dataframe.Column;
+import org.meteoinfo.data.dataframe.ColumnIndex;
+import org.meteoinfo.data.dataframe.DataFrame;
+import org.meteoinfo.data.dataframe.Index;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.util.JDateUtil;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
@@ -23,6 +30,8 @@ import org.meteoinfo.data.meteodata.StationInfoData;
 import org.meteoinfo.data.meteodata.StationModelData;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.global.Extent;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDateTime;
@@ -65,7 +74,12 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
             int year, month, day, hour;
             List<LocalDateTime> times = new ArrayList<>();
             _parameters = new ArrayList<List<Integer>>();
+            List<Variable> variables = new ArrayList<>();
 
+            this.addAttribute(new Attribute("data_format", "HYSPLIT Particles"));
+
+            int i = 0;
+            String[] varNames = new String[]{"lat", "lon", "height"};
             while (br.getFilePointer() < br.length() - 28) {
                 //Read head
                 int pos = (int) br.getFilePointer();
@@ -88,9 +102,32 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
                 data.add(pos);
                 _parameters.add(data);
 
+                Dimension dim = new Dimension();
+                dim.setName(String.format("pnum_t%d", i));
+                dim.setValues(new float[particleNum]);
+                this.addDimension(dim);
+
+                for (String varName : varNames) {
+                    Variable var = new Variable();
+                    var.setStation(true);
+                    var.setName(String.format("%s_t%d", varName, i));
+                    var.setDimension(dim);
+                    var.setDataType(DataType.FLOAT);
+                    var.addAttribute(new Attribute("time_index", i));
+                    if (varName == "lon")
+                        var.addAttribute("long_name", "longitude");
+                    else if (varName == "lat")
+                        var.addAttribute("long_name", "latitude");
+                    else
+                        var.addAttribute("long_name", "height");
+                    variables.add(var);
+                }
+
                 //Skip data
                 int len = (8 + pollutantNum * 4 + 60) * particleNum + 4;
                 br.skipBytes(len);
+
+                i ++;
             }
 
             br.close();
@@ -102,12 +139,8 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
             Dimension tDim = new Dimension(DimensionType.T);
             tDim.setValues(values);
             this.setTimeDimension(tDim);
-            
-            Variable var = new Variable();
-            var.setStation(true);
-            var.setName("Particle");
-            List<Variable> variables = new ArrayList<>();
-            variables.add(var);
+            this.addDimension(tDim);
+
             this.setVariables(variables);
             
         } catch (IOException ex) {
@@ -124,7 +157,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
         return new ArrayList<>();
     }
 
-    @Override
+    /*@Override
     public String generateInfoText() {
         String dataInfo;
         dataInfo = "File Name: " + this.getFileName();
@@ -137,7 +170,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
         }
 
         return dataInfo;
-    }
+    }*/
     
     /**
      * Read array data of a variable
@@ -147,7 +180,20 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
      */
     @Override
     public Array read(String varName){
-        return null;
+        Variable var = this.getVariable(varName);
+        int n = var.getDimNumber();
+        int[] origin = new int[n];
+        int[] size = new int[n];
+        int[] stride = new int[n];
+        for (int i = 0; i < n; i++) {
+            origin[i] = 0;
+            size[i] = var.getDimLength(i);
+            stride[i] = 1;
+        }
+
+        Array r = read(varName, origin, size, stride);
+
+        return r;
     }
     
     /**
@@ -161,7 +207,95 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
      */
     @Override
     public Array read(String varName, int[] origin, int[] size, int[] stride) {
-        return null;
+        try {
+            Variable var = this.getVariable(varName);
+            int timeIdx = (int)var.findAttribute("time_index").getNumericValue();
+            int particleNum = _parameters.get(timeIdx).get(0);
+            int pollutantNum = _parameters.get(timeIdx).get(1);
+            int pos = _parameters.get(timeIdx).get(2);
+            Array r = Array.factory(var.getDataType(), new int[]{particleNum});
+
+            RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
+            int i, j;
+            float lon, lat, alt;
+
+            br.seek(pos);
+            br.skipBytes(28);
+            for (i = 0; i < particleNum; i++) {
+                br.skipBytes(8);
+                for (j = 0; j < pollutantNum; j++) {
+                    br.skipBytes(4);
+                }
+                br.skipBytes(8);
+                lat = br.readFloat();
+                lon = br.readFloat();
+                alt = br.readFloat();
+
+                if (varName.startsWith("lon"))
+                    r.setFloat(i, lon);
+                else if (varName.startsWith("lat"))
+                    r.setFloat(i, lat);
+                else
+                    r.setFloat(i, alt);
+
+                br.skipBytes(40);
+            }
+
+            return r;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Read data frame
+     *
+     * @param timeIdx Time index
+     * @return Data frame
+     */
+    public DataFrame readDataFrame(int timeIdx) {
+        try {
+            int particleNum = _parameters.get(timeIdx).get(0);
+            int pollutantNum = _parameters.get(timeIdx).get(1);
+            int pos = _parameters.get(timeIdx).get(2);
+            List<Array> data = new ArrayList<>();
+            ColumnIndex columns = new ColumnIndex();
+            for (Variable var : this.variables) {
+                if ((int)var.findAttribute("time_index").getNumericValue() == timeIdx) {
+                    columns.add(new Column(var.getName(), var.getDataType()));
+                    data.add(Array.factory(var.getDataType(), new int[]{particleNum}));
+                }
+            }
+
+            RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
+            int i, j;
+            float lon, lat, alt;
+
+            br.seek(pos);
+            br.skipBytes(28);
+            for (i = 0; i < particleNum; i++) {
+                br.skipBytes(8);
+                for (j = 0; j < pollutantNum; j++) {
+                    br.skipBytes(4);
+                }
+                br.skipBytes(8);
+                lat = br.readFloat();
+                lon = br.readFloat();
+                alt = br.readFloat();
+
+                data.get(0).setFloat(i, lat);
+                data.get(1).setFloat(i, lon);
+                data.get(2).setFloat(i, alt);
+
+                br.skipBytes(40);
+            }
+
+            Index index = Index.factory(particleNum);
+            DataFrame df = new DataFrame(data, index, columns);
+            return df;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     @Override

@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\contour">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Run\emips\run_htap"/>
     <RecentFolder Folder="D:\Run\emips"/>
     <RecentFolder Folder="D:\Run\emips\run_cams"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\legend"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Run\emips\run_cams\emission_cams.py"/>
       <OpenedFile File="D:\Run\emips\run_cams\test_emis_bc.py"/>
-      <OpenedFile File="D:\Run\emips\run_cams\total_run.py"/>
-      <OpenedFile File="D:\Run\emips\run_cams\run_pollutants.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\hy_part_dataframe.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter_3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\hy_part_dataframe_3d.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Run\emips\run_cams\emission_cams.py"/>
       <RecentFile File="D:\Run\emips\run_cams\test_emis_bc.py"/>
-      <RecentFile File="D:\Run\emips\run_cams\total_run.py"/>
-      <RecentFile File="D:\Run\emips\run_cams\run_pollutants.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\hy_part_dataframe.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter_3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\hy_part_dataframe_3d.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +38,5 @@
   </Font>
   <LookFeel Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1389,808"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

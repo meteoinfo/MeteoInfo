@@ -160,6 +160,18 @@ public class Index<V> implements Iterable<V>{
         index.name = name;
         return index;
     }
+
+    /**
+     * Factory method to create a new index object
+     * @param n Values number
+     * @return Index object
+     */
+    public static Index factory(int n) {
+        List<Integer> data = new ArrayList<>();
+        for (int i = 0; i < n; i++)
+            data.add(i + 1);
+        return factory(data);
+    }
     
     /**
      * Update format

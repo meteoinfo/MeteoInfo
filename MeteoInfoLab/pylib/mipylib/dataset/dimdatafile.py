@@ -142,11 +142,16 @@ class DimDataFile(object):
         '''
         print self.dataset.getInfoText()
         
-    def read_dataframe(self):
+    def read_dataframe(self, tidx=None):
         '''
         Read data frame from dataset.
+        :param tidx: (*int*) Time index. Default is ``None``.
+        :returns: (*DataFrame*) The DataFrame.
         '''
-        df = self.dataset.getDataInfo().readDataFrame()
+        if tidx is None:
+            df = self.dataset.getDataInfo().readDataFrame()
+        else:
+            df = self.dataset.getDataInfo().readDataFrame(tidx)
         return DataFrame(dataframe=df)
         
     def read_table(self):

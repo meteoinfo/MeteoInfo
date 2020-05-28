@@ -27,7 +27,7 @@ import mipylib.migl as migl
 
 __all__ = [
     'addfile','addfiles','addfile_arl','addfile_ascii_grid','addfile_awx','addfile_geotiff',
-    'addfile_grads','addfile_hyconc','addfile_hytraj','addfile_lonlat','addfile_micaps',
+    'addfile_grads','addfile_hyconc','addfile_hytraj','addfile_hypart','addfile_lonlat','addfile_micaps',
     'addfile_mm5','addfile_nc','addfile_grib','addfile_surfer','add_bufr_lookup',
     'addtimedim','joinncfile','asciiread','asciiwrite','bincreate','binread','binwrite',
     'numasciicol','numasciirow','readtable','convert2nc','dimension','grads2nc','ncwrite'
@@ -328,6 +328,23 @@ def addfile_hyconc(fname, getfn=True, big_endian=True):
         raise IOError('No such file: ' + fname)
     meteodata = MeteoDataInfo()
     meteodata.openHYSPLITConcData(fname, big_endian)
+    datafile = DimDataFile(meteodata)
+    return datafile
+
+def addfile_hypart(fname, getfn=True):
+    '''
+    Add a HYSPLIT concentration data file.
+
+    :param fname: (*string*) The HYSPLIT concentration file name.
+    :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
+    :returns: (*DimDataFile*) Opened file object.
+    '''
+    if getfn:
+        fname, isweb = __getfilename(fname)
+    if not os.path.exists(fname):
+        raise IOError('No such file: ' + fname)
+    meteodata = MeteoDataInfo()
+    meteodata.openHYSPLITPartData(fname)
     datafile = DimDataFile(meteodata)
     return datafile
     

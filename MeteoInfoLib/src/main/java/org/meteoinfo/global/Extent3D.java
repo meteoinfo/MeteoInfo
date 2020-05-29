@@ -80,6 +80,18 @@ public class Extent3D extends Extent{
 
         return cET;
     }
+
+    /**
+     * Shift extent
+     *
+     * @param dx X shift value
+     * @param dy Y shift value
+     * @param dz Z shift value
+     * @return Shifted extent
+     */
+    public Extent3D shift(double dx, double dy, double dz) {
+        return new Extent3D(minX + dx, maxX + dx, minY + dy, maxY + dy, minZ + dz, maxZ + dz);
+    }
     
     /**
      * Extends extent by ratio

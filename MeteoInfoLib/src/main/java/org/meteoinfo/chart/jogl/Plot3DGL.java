@@ -85,6 +85,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     private float angleX = -45.0f;
     private float angleY = 45.0f;
+    private float scaleX = 1.0f;
+    private float scaleY = 1.0f;
+    private float scaleZ = 1.0f;
     private float distanceX = 0.0f;
     private float distanceY = 0.0f;
     tessellCallBack tessCallback;
@@ -324,6 +327,42 @@ public class Plot3DGL extends Plot implements GLEventListener {
     public void setAngleY(float value) {
         this.angleY = value;
     }
+
+    /**
+     * Get scale x
+     * @return Scale x
+     */
+    public float getScaleX() { return this.scaleX; }
+
+    /**
+     * Set scale x
+     * @param value Scale x
+     */
+    public void setScaleX(float value) { this.scaleX = value; }
+
+    /**
+     * Get scale y
+     * @return Scale y
+     */
+    public float getScaleY() { return this.scaleY; }
+
+    /**
+     * Set scale y
+     * @param value Scale y
+     */
+    public void setScaleY(float value) { this.scaleY = value; }
+
+    /**
+     * Get scale z
+     * @return Scale z
+     */
+    public float getScaleZ() { return this.scaleZ; }
+
+    /**
+     * Set scale z
+     * @param value Scale z
+     */
+    public void setScaleZ(float value) { this.scaleZ = value; }
 
     /**
      * Get title
@@ -790,6 +829,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glDisable(GL2.GL_POLYGON_SMOOTH);
             gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_FASTEST);*/
         }
+
+        gl.glScalef(scaleX, scaleY, scaleZ);
 
         gl.glRotatef(angleX, 1.0f, 0.0f, 0.0f);
         gl.glRotatef(angleY, 0.0f, 0.0f, 1.0f);

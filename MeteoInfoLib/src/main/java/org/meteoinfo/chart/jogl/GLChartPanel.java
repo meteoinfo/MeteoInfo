@@ -28,9 +28,11 @@ import javax.imageio.*;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
+
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
+import org.meteoinfo.global.Extent3D;
 import org.meteoinfo.image.ImageUtil;
 
 /**
@@ -148,7 +150,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         this.addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                //onMouseWheelMoved(e);
+                onMouseWheelMoved(e);
             }
         });
     }
@@ -240,11 +242,17 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                 break;
             case ROTATE:
                 if (e.isShiftDown()) {
-                    float diffX = (float) (x - this.mouseLastPos.x) / 10.0f;
-                    float diffY = (float) (this.mouseLastPos.y - y) / 10.0f;
-
-                    distanceX += diffX;
-                    distanceY += diffY;
+                    Dimension size = e.getComponent().getSize();
+                    float dx = (float) (x - this.mouseLastPos.x) / size.width;
+                    float dy = (float) (this.mouseLastPos.y - y) / size.height;
+                    Extent3D extent = this.plot3DGL.getExtent();
+                    float rotation = this.plot3DGL.getAngleY();
+                    if (rotation <90 || rotation > 270) {
+                        dx = -dx;
+                        dy = -dy;
+                    }
+                    extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
+                    this.plot3DGL.setExtent(extent);
                 } else {
                     Dimension size = e.getComponent().getSize();
 
@@ -274,6 +282,20 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         }
         mouseLastPos.x = x;
         mouseLastPos.y = y;
+    }
+
+    void onMouseWheelMoved(MouseWheelEvent e) {
+        Extent3D extent = this.plot3DGL.getExtent();
+        //float zoomF = 1 + e.getWheelRotation() / 10.0f;
+        float zoomF = e.getWheelRotation() / 10.0f;
+        double dx = extent.getWidth() * zoomF;
+        double dy = extent.getHeight() * zoomF;
+        extent = extent.extend(dx, dy, 0);
+        this.plot3DGL.setExtent(extent);
+        /*this.plot3DGL.setScaleX(zoomF);
+        this.plot3DGL.setScaleY(zoomF);
+        this.plot3DGL.setScaleZ(zoomF);*/
+        this.repaint();
     }
 
     // </editor-fold>

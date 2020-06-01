@@ -240,13 +240,27 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
             case SELECT:
                 this.repaint();
                 break;
+            case PAN:
+                Dimension size = e.getComponent().getSize();
+                float dx = (float) (x - this.mouseLastPos.x) / size.width;
+                float dy = (float) (this.mouseLastPos.y - y) / size.height;
+                Extent3D extent = this.plot3DGL.getExtent();
+                float rotation = this.plot3DGL.getAngleY();
+                if (rotation <90 || rotation > 270) {
+                    dx = -dx;
+                    dy = -dy;
+                }
+                extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
+                this.plot3DGL.setExtent(extent);
+                this.repaint();
+                break;
             case ROTATE:
                 if (e.isShiftDown()) {
-                    Dimension size = e.getComponent().getSize();
-                    float dx = (float) (x - this.mouseLastPos.x) / size.width;
-                    float dy = (float) (this.mouseLastPos.y - y) / size.height;
-                    Extent3D extent = this.plot3DGL.getExtent();
-                    float rotation = this.plot3DGL.getAngleY();
+                    size = e.getComponent().getSize();
+                    dx = (float) (x - this.mouseLastPos.x) / size.width;
+                    dy = (float) (this.mouseLastPos.y - y) / size.height;
+                    extent = this.plot3DGL.getExtent();
+                    rotation = this.plot3DGL.getAngleY();
                     if (rotation <90 || rotation > 270) {
                         dx = -dx;
                         dy = -dy;
@@ -254,7 +268,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                     extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
                     this.plot3DGL.setExtent(extent);
                 } else {
-                    Dimension size = e.getComponent().getSize();
+                    size = e.getComponent().getSize();
 
                     float thetaY = 360.0f * ((float) (x - this.mouseLastPos.x) / size.width);
                     float thetaX = 360.0f * ((float) (this.mouseLastPos.y - y) / size.height);
@@ -268,7 +282,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                     }
                     this.plot3DGL.setAngleX(elevation);
 
-                    float rotation = this.plot3DGL.getAngleY() + thetaY;
+                    rotation = this.plot3DGL.getAngleY() + thetaY;
                     if (rotation >= 360) {
                         rotation -= 360;
                     }

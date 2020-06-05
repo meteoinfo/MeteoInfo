@@ -1853,7 +1853,7 @@ public class DrawMeteoData {
         PointD aPoint;
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        aLayer.editAddField("Stid", DataType.STRING);
+        aLayer.editAddField("Station", DataType.STRING);
         aLayer.editAddField(fieldName, DataType.DOUBLE);
 
         for (i = 0; i < stationData.data.length; i++) {
@@ -1870,7 +1870,7 @@ public class DrawMeteoData {
             int shapeNum = aLayer.getShapeNum();
             try {
                 if (aLayer.editInsertShape(aPointShape, shapeNum)) {
-                    aLayer.editCellValue("Stid", shapeNum, stationData.stations.get(i));
+                    aLayer.editCellValue("Station", shapeNum, stationData.stations.get(i));
                     aLayer.editCellValue(fieldName, shapeNum, stationData.data[i][2]);
                 }
             } catch (Exception ex) {

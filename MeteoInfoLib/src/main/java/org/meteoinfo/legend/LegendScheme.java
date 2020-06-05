@@ -811,6 +811,8 @@ public class LegendScheme {
                 }
                 break;
             case Polygon:
+            case PolygonM:
+            case PolygonZ:
                 for (ColorBreak aCB : this.legendBreaks) {
                     PolygonBreak aPGB = (PolygonBreak) aCB;
                     brk = doc.createElement("Break");

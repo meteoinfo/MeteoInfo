@@ -5872,10 +5872,11 @@ public class ArrayMath {
      *
      * @param a Array a
      * @param axis Axis
+     * @param ddof Means delta degree of freedom
      * @return Standard deviation value array
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
-    public static Array std(Array a, int axis) throws InvalidRangeException {
+    public static Array std(Array a, int axis, int ddof) throws InvalidRangeException {
         int[] dataShape = a.getShape();
         int[] shape = new int[dataShape.length - 1];
         int idx;
@@ -5906,7 +5907,7 @@ public class ArrayMath {
                     ranges.add(new Range(current[idx], current[idx], 1));
                 }
             }
-            mean = std(a, ranges);
+            mean = std(a, ranges, ddof);
             r.setDouble(i, mean);
             indexr.incr();
         }
@@ -5919,10 +5920,11 @@ public class ArrayMath {
      *
      * @param a Array a
      * @param ranges Range list
+     * @param ddof Means delta degree of freedom
      * @return Standard deviation value
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
-    public static double std(Array a, List<Range> ranges) throws InvalidRangeException {
+    public static double std(Array a, List<Range> ranges, int ddof) throws InvalidRangeException {
         double mean = 0.0, v;
         int n = 0;
         IndexIterator ii = a.getRangeIterator(ranges);
@@ -5951,7 +5953,7 @@ public class ArrayMath {
                 sum += Math.pow((v - mean), 2);
             }
         }
-        sum = Math.sqrt(sum / n);
+        sum = Math.sqrt(sum / (n - ddof));
 
         return sum;
     }
@@ -5964,6 +5966,18 @@ public class ArrayMath {
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public static double std(Array a) throws InvalidRangeException {
+        return std(a, 0);
+    }
+
+    /**
+     * Compute standard deviation value of an array
+     *
+     * @param a Array a
+     * @param ddof Means delta degree of freedom
+     * @return Standard deviation value
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public static double std(Array a, int ddof) throws InvalidRangeException {
         double mean = 0.0, v;
         int n = 0;
         IndexIterator ii = a.getIndexIterator();
@@ -5989,7 +6003,46 @@ public class ArrayMath {
                 sum += Math.pow((v - mean), 2);
             }
         }
-        sum = Math.sqrt(sum / n);
+        sum = Math.sqrt(sum / (n - ddof));
+
+        return sum;
+    }
+
+    /**
+     * Compute variance value of an array
+     *
+     * @param a Array a
+     * @param ddof Means delta degree of freedom
+     * @return Variance value
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public static double var(Array a, int ddof) throws InvalidRangeException {
+        double mean = 0.0, v;
+        int n = 0;
+        IndexIterator ii = a.getIndexIterator();
+        while (ii.hasNext()) {
+            v = ii.getDoubleNext();
+            if (!Double.isNaN(v)) {
+                mean += v;
+                n += 1;
+            }
+        }
+        if (n > 0) {
+            mean = mean / n;
+        } else {
+            mean = Double.NaN;
+            return mean;
+        }
+
+        double sum = 0;
+        ii = a.getIndexIterator();
+        while (ii.hasNext()) {
+            v = ii.getDoubleNext();
+            if (!Double.isNaN(v)) {
+                sum += Math.pow((v - mean), 2);
+            }
+        }
+        sum = sum / (n - ddof);
 
         return sum;
     }
@@ -5999,10 +6052,11 @@ public class ArrayMath {
      *
      * @param a Array a
      * @param axis Axis
+     * @param ddof Means delta degree of freedom
      * @return Variance value array
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
-    public static Array var(Array a, int axis) throws InvalidRangeException {
+    public static Array var(Array a, int axis, int ddof) throws InvalidRangeException {
         int[] dataShape = a.getShape();
         int[] shape = new int[dataShape.length - 1];
         int idx;
@@ -6033,7 +6087,7 @@ public class ArrayMath {
                     ranges.add(new Range(current[idx], current[idx], 1));
                 }
             }
-            mean = std(a, ranges);
+            mean = var(a, ranges, ddof);
             r.setDouble(i, mean);
             indexr.incr();
         }
@@ -6046,10 +6100,11 @@ public class ArrayMath {
      *
      * @param a Array a
      * @param ranges Range list
+     * @param ddof Means delta degree of freedom
      * @return Variance value
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
-    public static double var(Array a, List<Range> ranges) throws InvalidRangeException {
+    public static double var(Array a, List<Range> ranges, int ddof) throws InvalidRangeException {
         double mean = 0.0, v;
         int n = 0;
         IndexIterator ii = a.getRangeIterator(ranges);
@@ -6078,7 +6133,7 @@ public class ArrayMath {
                 sum += Math.pow((v - mean), 2);
             }
         }
-        sum = sum / n;
+        sum = sum / (n - ddof);
 
         return sum;
     }

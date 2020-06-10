@@ -1101,57 +1101,39 @@ def average(a, axis=None, weights=None):
                     dims.append(a.dims[i])
             return DimArray(avg, dims, x.fill_value, x.proj)
             
-def std(x, axis=None):
+def std(x, axis=None, ddof=0):
     '''
     Compute the standard deviation along the specified axis.
     
     :param x: (*array_like or list*) Input values.
     :param axis: (*int*) Axis along which the standard deviation is computed. 
         The default is to compute the standard deviation of the flattened array.
+    :param ddof: (*int*) Delta Degrees of Freedom: the divisor used in the calculation is
+        N - ddof, where N represents the number of elements. By default ddof is zero.
     
     returns: (*array_like*) Standart deviation result.
     '''
     if isinstance(x, (list, tuple)):
         x = array(x)
-    if axis is None:
-        r = sqrt(mean((x - mean(x))**2))
-        return r
-    else:
-        r = ArrayMath.std(x.asarray(), axis)
-        if type(x) is NDArray:
-            return NDArray(r)
-        else:
-            dims = []
-            for i in range(0, x.ndim):
-                if i != axis:
-                    dims.append(x.dims[i])
-            return DimArray(NDArray(r), dims, x.fill_value, x.proj)
+    r = x.std(axis, ddof)
+    return r
             
-def var(x, axis=None):
+def var(x, axis=None, ddof=0):
     '''
     Compute variance along the specified axis.
     
     :param x: (*array_like or list*) Input values.
     :param axis: (*int*) Axis along which the variance is computed. 
         The default is to compute the variance of the flattened array.
+    :param ddof: (*int*) Delta Degrees of Freedom: the divisor used in the calculation is
+        N - ddof, where N represents the number of elements. By default ddof is zero.
     
     returns: (*array_like*) Variance result.
     '''
     if isinstance(x, (list, tuple)):
         x = array(x)
-    if axis is None:
-        r = mean((x - mean(x))**2)
-        return r
-    else:
-        r = ArrayMath.var(x.asarray(), axis)
-        if type(x) is NDArray:
-            return NDArray(r)
-        else:
-            dims = []
-            for i in range(0, x.ndim):
-                if i != axis:
-                    dims.append(x.dims[i])
-            return DimArray(NDArray(r), dims, x.fill_value, x.proj)
+    r = x.var(axis, ddof)
+    return r
                 
 def median(x, axis=None):
     """

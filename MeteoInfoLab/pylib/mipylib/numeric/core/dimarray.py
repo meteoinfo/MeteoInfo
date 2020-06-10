@@ -730,17 +730,39 @@ class DimArray(NDArray):
                     dims.append(self.dims[i])
             return DimArray(r, dims, self.fill_value, self.proj)
             
-    def std(self, axis=None):
+    def std(self, axis=None, ddof=0):
         '''
         Compute the standard deviation along the specified axis.
-    
-        :param x: (*array_like or list*) Input values.
+
         :param axis: (*int*) Axis along which the standard deviation is computed. 
             The default is to compute the standard deviation of the flattened array.
+        :param ddof: (*int*) Delta Degrees of Freedom: the divisor used in the calculation is
+            N - ddof, where N represents the number of elements. By default ddof is zero.
         
         returns: (*array_like*) Standart deviation result.
         '''
-        r = super(DimArray, self).std(axis)
+        r = super(DimArray, self).std(axis, ddof)
+        if axis is None:
+            return r
+        else:
+            dims = []
+            for i in range(0, self.ndim):
+                if i != axis:
+                    dims.append(self.dims[i])
+            return DimArray(r, dims, self.fill_value, self.proj)
+
+    def var(self, axis=None, ddof=0):
+        '''
+        Compute the variance along the specified axis.
+
+        :param axis: (*int*) Axis along which the standard deviation is computed.
+            The default is to compute the standard deviation of the flattened array.
+        :param ddof: (*int*) Delta Degrees of Freedom: the divisor used in the calculation is
+            N - ddof, where N represents the number of elements. By default ddof is zero.
+
+        returns: (*array_like*) Variance result.
+        '''
+        r = super(DimArray, self).std(axis, ddof)
         if axis is None:
             return r
         else:

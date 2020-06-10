@@ -652,21 +652,40 @@ class NDArray(object):
         else:
             return NDArray(ArrayMath.median(self._array, axis))
             
-    def std(self, axis=None):
+    def std(self, axis=None, ddof=0):
         '''
         Compute the standard deviation along the specified axis.
-    
-        :param x: (*array_like or list*) Input values.
+
         :param axis: (*int*) Axis along which the standard deviation is computed. 
             The default is to compute the standard deviation of the flattened array.
+        :param ddof: (*int*) Delta Degrees of Freedom: the divisor used in the calculation is
+            N - ddof, where N represents the number of elements. By default ddof is zero.
         
         returns: (*array_like*) Standart deviation result.
         '''
         if axis is None:
-            r = ArrayMath.std(self._array)
+            r = ArrayMath.std(self._array, ddof)
             return r
         else:
-            r = ArrayMath.std(self._array, axis)
+            r = ArrayMath.std(self._array, axis, ddof)
+            return NDArray(r)
+
+    def var(self, axis=None, ddof=0):
+        '''
+        Compute variance along the specified axis.
+
+        :param axis: (*int*) Axis along which the variance is computed.
+            The default is to compute the variance of the flattened array.
+        :param ddof: (*int*) Delta Degrees of Freedom: the divisor used in the calculation is
+            N - ddof, where N represents the number of elements. By default ddof is zero.
+
+        returns: (*array_like*) Variance result.
+        '''
+        if axis is None:
+            r = ArrayMath.var(self._array, ddof)
+            return r
+        else:
+            r = ArrayMath.var(self._array, axis, ddof)
             return NDArray(r)
 
     def square(self):

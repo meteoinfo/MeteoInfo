@@ -14,6 +14,7 @@ from org.meteoinfo.ndarray import Array, Range, MAMath, DataType, Dimension, Dim
 from multiarray import NDArray
 import math
 import datetime
+import numbers
 import mipylib.miutil as miutil
 from java.lang import Double
 from java.util import ArrayList
@@ -708,7 +709,7 @@ class DimArray(NDArray):
         returns: (*array_like*) Mean result
         '''
         r = super(DimArray, self).mean(axis)
-        if axis is None:
+        if isinstance(r, numbers.Number):
             return r
         else:
             dims = []
@@ -727,7 +728,7 @@ class DimArray(NDArray):
         returns: (*array_like*) Median result
         '''
         r = super(DimArray, self).median(axis)
-        if axis is None:
+        if isinstance(r, numbers.Number):
             return r
         else:
             dims = []
@@ -748,7 +749,7 @@ class DimArray(NDArray):
         returns: (*array_like*) Standart deviation result.
         '''
         r = super(DimArray, self).std(axis, ddof)
-        if axis is None:
+        if isinstance(r, numbers.Number):
             return r
         else:
             dims = []
@@ -769,7 +770,7 @@ class DimArray(NDArray):
         returns: (*array_like*) Variance result.
         '''
         r = super(DimArray, self).std(axis, ddof)
-        if axis is None:
+        if isinstance(r, numbers.Number):
             return r
         else:
             dims = []

@@ -1040,19 +1040,8 @@ def mean(x, axis=None):
             return PyStationData(r)
         else:
             x = array(x)
-    if axis is None:
-        r = ArrayMath.mean(x.asarray())
-        return r
-    else:
-        r = ArrayMath.mean(x.asarray(), axis)
-        if type(x) is NDArray:
-            return NDArray(r)
-        else:
-            dims = []
-            for i in range(0, x.ndim):
-                if i != axis:
-                    dims.append(x.dims[i])
-            return DimArray(NDArray(r), dims, x.fill_value, x.proj)
+    r = x.mean(axis)
+    return r
 
 def average(a, axis=None, weights=None):
     """
@@ -1163,22 +1152,8 @@ def median(x, axis=None):
             return PyStationData(r)
         else:
             x = array(x)
-            r = ArrayMath.median(x.asarray())
-            return r
-    else:
-        if axis is None:
-            r = ArrayMath.median(x.asarray())
-            return r
-        else:
-            r = ArrayMath.median(x.asarray(), axis)
-            if type(x) is NDArray:
-                return NDArray(r)
-            else:
-                dims = []
-                for i in range(0, x.ndim):
-                    if i != axis:
-                        dims.append(x.dims[i])
-                return DimArray(NDArray(r), dims, x.fill_value, x.proj)
+    r = x.median(axis)
+    return r
                 
 def maximum(x1, x2):
     """

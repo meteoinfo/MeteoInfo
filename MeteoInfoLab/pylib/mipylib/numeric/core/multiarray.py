@@ -633,7 +633,7 @@ class NDArray(object):
         
         returns: (*array_like*) Mean result
         '''
-        if axis is None:
+        if self.ndim == 1 or axis is None:
             return ArrayMath.mean(self._array)
         else:
             return NDArray(ArrayMath.mean(self._array, axis))
@@ -647,7 +647,7 @@ class NDArray(object):
         
         returns: (*array_like*) Median result
         '''
-        if axis is None:
+        if self.ndim == 1 or axis is None:
             return ArrayMath.median(self._array)
         else:
             return NDArray(ArrayMath.median(self._array, axis))
@@ -663,7 +663,7 @@ class NDArray(object):
         
         returns: (*array_like*) Standart deviation result.
         '''
-        if axis is None:
+        if self.ndim == 1 or axis is None:
             r = ArrayMath.std(self._array, ddof)
             return r
         else:
@@ -681,7 +681,7 @@ class NDArray(object):
 
         returns: (*array_like*) Variance result.
         '''
-        if axis is None:
+        if self.ndim == 1 or axis is None:
             r = ArrayMath.var(self._array, ddof)
             return r
         else:

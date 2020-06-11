@@ -737,6 +737,7 @@ public class ShapeFileManage {
             case Polyline:
             case PolylineZ:
             case Polygon:
+            case PolygonZ:
                 writeShxFile(shxfilepath, aLayer);
                 writeShpFile(shpfilepath, aLayer);
                 writeDbfFile(dbffilepath, aLayer);
@@ -766,6 +767,7 @@ public class ShapeFileManage {
             case Polyline:
             case PolylineZ:
             case Polygon:
+            case PolygonZ:
                 writeShxFile(shxfilepath, aLayer);
                 writeShpFile(shpfilepath, aLayer);
                 writeDbfFile(dbffilepath, aLayer, encoding);
@@ -816,6 +818,9 @@ public class ShapeFileManage {
             case Point:
                 contentLength = 2 + 4 * 2;
                 break;
+            case PointZ:
+                contentLength = 2 + 4 * 4;
+                break;
             case Polyline:
                 PolylineShape aPLS = (PolylineShape) aShape;
                 contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPLS.getPartNum() + 4 * 2 * aPLS.getPointNum();
@@ -828,6 +833,11 @@ public class ShapeFileManage {
             case Polygon:
                 PolygonShape aPGS = (PolygonShape) aShape;
                 contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPGS.getPartNum() + 4 * 2 * aPGS.getPointNum();
+                break;
+            case PolygonZ:
+                PolygonZShape aPGZS = (PolygonZShape) aShape;
+                contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPGZS.getPartNum() + 4 * 2 * aPGZS.getPointNum()
+                        + 4 + 4 + 4 * aPGZS.getPointNum() + 4 + 4 + 4 * aPGZS.getPointNum();
                 break;
         }
 
@@ -888,7 +898,6 @@ public class ShapeFileManage {
                 for (i = 0; i < aPLZS.getPointNum(); i++) {
                     bw.writeDoubleLE(aPLZS.getMArray()[i]);
                 }
-
                 break;
             case Polygon:
                 PolygonShape aPGS = (PolygonShape) aShape;
@@ -904,6 +913,32 @@ public class ShapeFileManage {
                 for (i = 0; i < aPGS.getPointNum(); i++) {
                     bw.writeDoubleLE((aPGS.getPoints().get(i)).X);
                     bw.writeDoubleLE((aPGS.getPoints().get(i)).Y);
+                }
+                break;
+            case PolygonZ:
+                PolygonZShape aPGZS = (PolygonZShape) aShape;
+                bw.writeDoubleLE(aPGZS.getExtent().minX);
+                bw.writeDoubleLE(aPGZS.getExtent().minY);
+                bw.writeDoubleLE(aPGZS.getExtent().maxX);
+                bw.writeDoubleLE(aPGZS.getExtent().maxY);
+                bw.writeIntLE(aPGZS.getPartNum());
+                bw.writeIntLE(aPGZS.getPointNum());
+                for (i = 0; i < aPGZS.getPartNum(); i++) {
+                    bw.writeIntLE(aPGZS.parts[i]);
+                }
+                for (i = 0; i < aPGZS.getPointNum(); i++) {
+                    bw.writeDoubleLE((aPGZS.getPoints().get(i)).X);
+                    bw.writeDoubleLE((aPGZS.getPoints().get(i)).Y);
+                }
+                bw.writeDoubleLE(aPGZS.getZRange()[0]);
+                bw.writeDoubleLE(aPGZS.getZRange()[1]);
+                for (i = 0; i < aPGZS.getPointNum(); i++) {
+                    bw.writeDoubleLE(aPGZS.getZArray()[i]);
+                }
+                bw.writeDoubleLE(aPGZS.getMRange()[0]);
+                bw.writeDoubleLE(aPGZS.getMRange()[1]);
+                for (i = 0; i < aPGZS.getPointNum(); i++) {
+                    bw.writeDoubleLE(aPGZS.getMArray()[i]);
                 }
                 break;
         }

@@ -552,7 +552,7 @@ class TDimVariable(object):
         self.variable = variable
         self.dataset = dataset
         self.name = variable.getName()
-        self.datatype = variable.getDataType()        
+        self.dtype = np.dtype.fromjava(variable.getDataType())
         self.ndim = variable.getDimNumber()
         self.fill_value = variable.getFillValue()
         self.scale_factor = variable.getScaleFactor()
@@ -566,6 +566,25 @@ class TDimVariable(object):
         dims[0] = tdim
         self.dims = dims
         self.tnum = len(times)
+
+    def __str__(self):
+        if self.variable is None:
+            return 'None'
+
+        r = str(self.dtype) + ' ' + self.name + '('
+        for dim in self.dims:
+            dimname = dim.getShortName()
+            if dimname is None:
+                dimname = 'null'
+            r = r + dimname + ','
+        r = r[:-1] + '):'
+        attrs = self.variable.getAttributes()
+        for attr in attrs:
+            r = r + '\n\t' + self.name + ': ' + attr.toString()
+        return r
+
+    def __repr__(self):
+        return self.__str__()
         
     def __getitem__(self, indices):
         if len(indices) != self.ndim:
@@ -621,7 +640,12 @@ class TDimVariable(object):
                 nindices = tuple(nindices)
                 aa = var.__getitem__(nindices)
                 if si == ei:
-                    aa.addtdim(self.dataset.gettime(si))
+                    if isinstance(aa, np.DimArray):
+                        aa.addtdim(self.dataset.gettime(si))
+                    else:
+                        aa = np.array([aa])
+                        aa = np.DimArray(aa)
+                        aa.addtdim(self.dataset.gettime(si))
                 if isfirst:
                     data = aa
                     isfirst = False
@@ -642,7 +666,12 @@ class TDimVariable(object):
             nindices = tuple(nindices)
             aa = var.__getitem__(nindices)
             if si == ei and eidx != sidx:
-                aa.addtdim(self.dataset.gettime(si))
+                if isinstance(aa, np.DimArray):
+                    aa.addtdim(self.dataset.gettime(si))
+                else:
+                    aa = np.array([aa])
+                    aa = np.DimArray(aa)
+                    aa.addtdim(self.dataset.gettime(si))
             if isfirst:
                 data = aa
                 isfirst = False

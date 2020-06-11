@@ -573,7 +573,10 @@ class DimArray(NDArray):
             dim = Dimension(DimensionType.T)
             t = miutil.date2num(t)
             dim.setDimValues([t])
-            self.dims.insert(0, dim)
+            if self.dims is None:
+                self.dims = [dim]
+            else:
+                self.dims.insert(0, dim)
             self.ndim = len(self.dims)
             ss = list(self.shape)
             ss.insert(0, 1)
@@ -612,6 +615,9 @@ class DimArray(NDArray):
         '''
         Get time dimension.
         '''
+        if self.dims is None:
+            return None
+
         for dim in self.dims:
             if dim.getDimType() == DimensionType.T:
                 return dim        

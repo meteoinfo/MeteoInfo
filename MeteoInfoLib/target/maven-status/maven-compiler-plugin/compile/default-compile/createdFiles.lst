@@ -482,6 +482,7 @@ org\meteoinfo\image\filter\InterpolateFilter.class
 org\meteoinfo\chart\jogl\mc\TablesMC.class
 org\meteoinfo\legend\ArrowPolygonBreak.class
 org\meteoinfo\image\composite\AverageComposite$Context.class
+org\meteoinfo\chart\jogl\GLChartPanel$5.class
 org\meteoinfo\global\event\ISizeChangedListener.class
 org\meteoinfo\image\filter\MapColorsFilter.class
 org\meteoinfo\ui\calendar\JMonthChooserBeanInfo.class

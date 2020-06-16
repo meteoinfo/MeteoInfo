@@ -20,11 +20,8 @@ import org.meteoinfo.global.PointD;
 import org.meteoinfo.map.GridLabel;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.shape.Line;
-import org.meteoinfo.shape.Polygon;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.Polyline;
-import org.meteoinfo.shape.PolylineShape;
+import org.meteoinfo.shape.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,10 +34,6 @@ import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.shape.CircleShape;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.Shape;
 
 /**
  * GeoComputation class
@@ -1390,7 +1383,7 @@ public class GeoComputation {
         //Prepare border point list
         List<BorderPoint> borderList = new ArrayList<>();
         BorderPoint aBP = new BorderPoint();
-        List<PointD> clipPList = getClipPointList(clipObj);
+        List<PointD> clipPList = getClipPointList(clipObj, inPolygon instanceof PolygonZ);
         for (PointD aP : clipPList) {
             aBP = new BorderPoint();
             aBP.Point = (PointD) aP.clone();
@@ -2109,6 +2102,55 @@ public class GeoComputation {
         return clipPList;
     }
 
+    private static List<PointD> getClipPointList(Object clipObj, boolean z) {
+        List<PointD> clipPList = new ArrayList<>();
+        if (clipObj instanceof List) {
+            clipPList = (List<PointD>) clipObj;
+        }
+        if (clipObj.getClass() == ClipLine.class) {
+            ClipLine clipLine = (ClipLine) clipObj;
+            if (z) {
+                if (clipLine.isLongitude()) {
+                    for (int i = -100; i <= 100; i++) {
+                        clipPList.add(new PointZ(clipLine.getValue(), i, 0));
+                    }
+                } else {
+                    for (int i = -370; i <= 370; i++) {
+                        clipPList.add(new PointZ(i, clipLine.getValue(), 0));
+                    }
+                }
+            } else {
+                if (clipLine.isLongitude()) {
+                    for (int i = -100; i <= 100; i++) {
+                        clipPList.add(new PointD(clipLine.getValue(), i));
+                    }
+                } else {
+                    for (int i = -370; i <= 370; i++) {
+                        clipPList.add(new PointD(i, clipLine.getValue()));
+                    }
+                }
+            }
+        }
+        if (clipObj instanceof Extent) {
+            Extent aExtent = (Extent) clipObj;
+            if (z) {
+                clipPList.add(new PointZ(aExtent.minX, aExtent.minY, 0));
+                clipPList.add(new PointZ(aExtent.minX, aExtent.maxY, 0));
+                clipPList.add(new PointZ(aExtent.maxX, aExtent.maxY, 0));
+                clipPList.add(new PointZ(aExtent.maxX, aExtent.minY, 0));
+                clipPList.add((PointZ) clipPList.get(0).clone());
+            } else {
+                clipPList.add(new PointD(aExtent.minX, aExtent.minY));
+                clipPList.add(new PointD(aExtent.minX, aExtent.maxY));
+                clipPList.add(new PointD(aExtent.maxX, aExtent.maxY));
+                clipPList.add(new PointD(aExtent.maxX, aExtent.minY));
+                clipPList.add((PointD) clipPList.get(0).clone());
+            }
+        }
+
+        return clipPList;
+    }
+
     private static boolean isLineSegmentCross_old(Line lineA, Line lineB) {
         Extent boundA, boundB;
         List<PointD> PListA = new ArrayList<>(), PListB = new ArrayList<>();
@@ -2141,8 +2183,12 @@ public class GeoComputation {
         PListA.add(lineA.P2);
         PListB.add(lineB.P1);
         PListB.add(lineB.P2);
-        boundA = MIMath.getPointsExtent(PListA);
-        boundB = MIMath.getPointsExtent(PListB);
+        //boundA = MIMath.getPointsExtent(PListA);
+        //boundB = MIMath.getPointsExtent(PListB);
+        boundA = new Extent(Math.min(lineA.P1.X, lineA.P2.X), Math.max(lineA.P1.X, lineA.P2.X),
+            Math.min(lineA.P1.Y, lineA.P2.Y), Math.max(lineA.P1.Y, lineA.P2.Y));
+        boundB = new Extent(Math.min(lineB.P1.X, lineB.P2.X), Math.max(lineB.P1.X, lineB.P2.X),
+                Math.min(lineB.P1.Y, lineB.P2.Y), Math.max(lineB.P1.Y, lineB.P2.Y));
 
         if (!MIMath.isExtentCross(boundA, boundB)) {
             return false;

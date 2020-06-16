@@ -407,10 +407,10 @@ public abstract class DataInfo {
     /**
      * Set projection info
      *
-     * @param projInfo Projection info
+     * @param value Projection info
      */
-    public void setProjectionInfo(ProjectionInfo projInfo) {
-        projInfo = projInfo;
+    public void setProjectionInfo(ProjectionInfo value) {
+        this.projInfo = value;
     }
 
     /**

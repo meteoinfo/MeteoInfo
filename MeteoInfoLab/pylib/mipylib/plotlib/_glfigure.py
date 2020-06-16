@@ -26,15 +26,16 @@ class GLFigure(GLChartPanel):
         self.axes = ax
         #super(GLFigure, self).__init__(ax.axes)
         double_buffered = kwargs.pop('double_buffered', None)
-        sample_buffers = kwargs.pop('sample_buffers', True)
+        sample_buffers = kwargs.pop('sample_buffers', None)
         profile = GLProfile.get(GLProfile.GL2)
         cap = GLCapabilities(profile)
         if not double_buffered is None:
-            cap.setDoubleBuffered(True)
+            cap.setDoubleBuffered(double_buffered)
         if not sample_buffers is None:
             cap.setSampleBuffers(sample_buffers)
-            nsamples = kwargs.pop('nsamples', 4)
-            cap.setNumSamples(nsamples)
+            if sample_buffers:
+                nsamples = kwargs.pop('nsamples', 4)
+                cap.setNumSamples(nsamples)
 
         super(GLFigure, self).__init__(cap, ax.axes)
         

@@ -13,11 +13,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -87,17 +83,30 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
 
     /**
      * Factory
+     * @param doubleBuffered Double buffered
+     * @param sampleBuffers Sample buffers
+     * @param numSamples Number samples
+     * @param pltGL Plot3DGL
+     * @return GLChartPanel
+     */
+    public static GLChartPanel factor(boolean doubleBuffered, boolean sampleBuffers,
+                                      int numSamples, Plot3DGL pltGL) {
+        final GLProfile profile = GLProfile.get(GLProfile.GL2);
+        GLCapabilities cap = new GLCapabilities(profile);
+        cap.setDoubleBuffered(doubleBuffered);
+        cap.setSampleBuffers(sampleBuffers);
+        cap.setNumSamples(numSamples);
+
+        return new GLChartPanel(cap, pltGL);
+    }
+
+    /**
+     * Factory
      * @param pltGL Plot3DGL
      * @return GLChartPanel
      */
     public static GLChartPanel factory(Plot3DGL pltGL) {
-        final GLProfile profile = GLProfile.get(GLProfile.GL2);
-        GLCapabilities cap = new GLCapabilities(profile);
-        cap.setDoubleBuffered(true);
-        cap.setSampleBuffers(true);
-        cap.setNumSamples(4);
-
-        return new GLChartPanel(cap, pltGL);
+        return factor(true, true, 4, pltGL);
     }
 
     /**
@@ -105,13 +114,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @return GLChartPanel
      */
     public static GLChartPanel factory() {
-        final GLProfile profile = GLProfile.get(GLProfile.GL2);
-        GLCapabilities cap = new GLCapabilities(profile);
-        cap.setDoubleBuffered(true);
-        cap.setSampleBuffers(true);
-        cap.setNumSamples(4);
-
-        return new GLChartPanel(cap, new Plot3DGL());
+        return factor(true, true, 4, new Plot3DGL());
     }
 
     private void init(Plot3DGL pltGL) {
@@ -119,6 +122,13 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         this.addGLEventListener(pltGL);
 
         this.setMouseMode(MouseMode.ROTATE);
+
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                onComponentResized(e);
+            }
+        });
 
         this.addMouseListener(new MouseAdapter() {
             @Override
@@ -225,6 +235,10 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
 
     // </editor-fold>
     // <editor-fold desc="Events">
+    void onComponentResized(ComponentEvent e) {
+        //this.repaint();
+    }
+
     void onMousePressed(MouseEvent e) {
         mouseDownPoint.x = e.getX();
         mouseDownPoint.y = e.getY();

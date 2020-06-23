@@ -191,7 +191,7 @@ public class LonLatStationDataInfo extends DataInfo implements IStationDataInfo 
             maxY = 0;
 
             //Get real variable index
-            int vIdx = _fields.indexOf(this.getVariable(varName));
+            int vIdx = _fields.indexOf(varName);
             for (i = 0; i < dataList.size(); i++) {
                 dataArray = dataList.get(i);
                 stName = dataArray[0];

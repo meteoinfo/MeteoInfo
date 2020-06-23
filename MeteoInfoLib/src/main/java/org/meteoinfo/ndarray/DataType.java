@@ -69,8 +69,10 @@ public enum DataType {
 
     OBJECT("object", 1, Object.class, false), // added for use with Array
     
-    UBYTE("ubyte", 1, byte.class, true), USHORT("ushort", 2, short.class, true), UINT("uint", 4, int.class,
-      true), ULONG("ulong", 8, long.class, true);
+    UBYTE("ubyte", 1, byte.class, true),
+    USHORT("ushort", 2, short.class, true),
+    UINT("uint", 4, int.class, true),
+    ULONG("ulong", 8, long.class, true);
       
     /**
     * A property of {@link #isIntegral() integral} data types that determines whether they can represent both

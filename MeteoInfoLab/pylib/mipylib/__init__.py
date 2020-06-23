@@ -17,6 +17,9 @@ migl.mifolder = mi_dir
 
 lookup_cma = os.path.join(mi_dir, 'tables', 'bufr', 'tablelookup_cma.csv')
 if os.path.isfile(lookup_cma):
-    is_ok = dataset.add_bufr_lookup(lookup_cma)
+    try:
+        is_ok = dataset.add_bufr_lookup(lookup_cma)
+    except:
+        is_ok = False
     if is_ok:
         print('CMA Bufr lookup file added.')

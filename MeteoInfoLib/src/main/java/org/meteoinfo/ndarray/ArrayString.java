@@ -123,7 +123,7 @@ public class ArrayString extends Array {
      * @param dimensions the shape of the Array.
      */
     public ArrayString(int[] dimensions) {
-        super(dimensions);
+        super(DataType.STRING, dimensions);
         storage = new String[(int) indexCalc.getSize()];
     }
 
@@ -135,7 +135,7 @@ public class ArrayString extends Array {
      * @param data use this as the backing store
      */
     ArrayString(Index ima, String[] data) {
-        super(ima);
+        super(DataType.STRING, ima);
         /* replace by something better
     if (ima.getSize() != data.length)
       throw new IllegalArgumentException("bad data length"); */

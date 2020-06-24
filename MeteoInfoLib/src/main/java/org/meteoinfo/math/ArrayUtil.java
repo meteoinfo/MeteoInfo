@@ -1338,7 +1338,6 @@ public class ArrayUtil {
         }
 
         int len = a.getShape()[shapeIdx];
-        Object data;
         String dstr;
         while (ii.hasNext()) {
             if (i == 0) {
@@ -1347,8 +1346,7 @@ public class ArrayUtil {
                 }
                 sbuff.append("[");
             }
-            data = ii.getObjectNext();
-            dstr = data.toString();            
+            dstr = ii.getStringNext();
             if (a.getDataType().isBoolean()) {
                 dstr = GlobalUtil.capitalize(dstr);
             } 

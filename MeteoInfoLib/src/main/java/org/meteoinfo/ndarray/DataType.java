@@ -285,6 +285,40 @@ public enum DataType {
     }
 
     /**
+     * Find the DataType that matches this class.
+     *
+     * @param c primitive or object class, eg float.class or Float.class
+     * @return DataType or null if no match.
+     */
+    public static DataType getType(Class c, boolean isUnsigned) {
+        if ((c == float.class) || (c == Float.class))
+            return DataType.FLOAT;
+        if ((c == double.class) || (c == Double.class))
+            return DataType.DOUBLE;
+        if ((c == short.class) || (c == Short.class))
+            return isUnsigned ? DataType.USHORT : DataType.SHORT;
+        if ((c == int.class) || (c == Integer.class))
+            return isUnsigned ? DataType.UINT : DataType.INT;
+        if ((c == byte.class) || (c == Byte.class))
+            return isUnsigned ? DataType.UBYTE : DataType.BYTE;
+        if ((c == char.class) || (c == Character.class))
+            return DataType.CHAR;
+        if ((c == boolean.class) || (c == Boolean.class))
+            return DataType.BOOLEAN;
+        if ((c == long.class) || (c == Long.class))
+            return isUnsigned ? DataType.ULONG : DataType.LONG;
+        if (c == String.class)
+            return DataType.STRING;
+        if (c == StructureData.class)
+            return DataType.STRUCTURE;
+        if (c == StructureDataIterator.class)
+            return DataType.SEQUENCE;
+        if (c == ByteBuffer.class)
+            return DataType.OPAQUE;
+        return DataType.OBJECT;
+    }
+
+    /**
      * convert an unsigned long to a String
      *
      * @param li unsigned int

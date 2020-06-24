@@ -91,7 +91,7 @@ public class ArrayDouble extends Array {
      * @param shape the shape of the Array.
      */
     public ArrayDouble(int[] shape) {
-        super(shape);
+        super(DataType.DOUBLE, shape);
         storageD = new double[(int) indexCalc.getSize()];
     }
 
@@ -110,7 +110,7 @@ public class ArrayDouble extends Array {
      * @param data use this as the backing store. if null, allocate
      */
     ArrayDouble(Index ima, double[] data) {
-        super(ima);
+        super(DataType.DOUBLE, ima);
 
         if (data != null) {
             storageD = data;

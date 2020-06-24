@@ -91,7 +91,7 @@ public class ArrayDate extends Array {
      * @param shape the shape of the Array.
      */
     public ArrayDate(int[] shape) {
-        super(shape);
+        super(DataType.DATE, shape);
         storage = new LocalDateTime[(int) indexCalc.getSize()];
     }
 
@@ -112,7 +112,7 @@ public class ArrayDate extends Array {
      * @param data use this as the backing store. if null, allocate
      */
     ArrayDate(Index ima, LocalDateTime[] data) {
-        super(ima);
+        super(DataType.DATE, ima);
 
         if (data != null) {
             storage = data;
@@ -254,7 +254,7 @@ public class ArrayDate extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public String getString(Index i) {
-        throw new ForbiddenConversionException();
+        return this.storage[i.currentElement()].toString();
     }
 
     /**
@@ -352,7 +352,7 @@ public class ArrayDate extends Array {
     }
     
     public String getString(int index) {
-        throw new ForbiddenConversionException();
+        return this.storage[index].toString();
     }
 
     public void setString(int index, String value) {

@@ -94,7 +94,7 @@ public class ArrayFloat extends Array {
      * @param dimensions the shape of the Array.
      */
     public ArrayFloat(int[] dimensions) {
-        super(dimensions);
+        super(DataType.FLOAT, dimensions);
         storage = new float[(int) indexCalc.getSize()];
     }
 
@@ -106,7 +106,7 @@ public class ArrayFloat extends Array {
      * @param data use this as the backing store
      */
     ArrayFloat(Index ima, float[] data) {
-        super(ima);
+        super(DataType.FLOAT, ima);
         /* replace by something better
     if (ima.getSize() != data.length)
       throw new IllegalArgumentException("bad data length");  */

@@ -86,9 +86,6 @@ import java.nio.*;
  */
 public abstract class Array {
 
-    /* implementation notes.
-  Could create interface for Ranges, ScatterIndex and pass array of that (?)
-     */
     /**
      * Generate new Array with given type and shape and zeroed storage.
      *
@@ -97,8 +94,7 @@ public abstract class Array {
      * @return new Array<type> or Array<type>.D<rank> if 0 <= rank <= 7.
      */
     static public Array factory(DataType dataType, int[] shape) {
-        Index index = Index.factory(shape);
-        return factory(dataType.getPrimitiveClassType(), index);
+        return factory(dataType, Index.factory(shape), null);
     }
 
     /**
@@ -138,7 +134,7 @@ public abstract class Array {
         } else if (classType == LocalDateTime.class) {
             return ArrayDate.factory(index);
         } else {
-            return ArrayObject.factory(classType, index);
+            return ArrayObject.factory(DataType.OBJECT, classType, false, index);
         }
     }
 
@@ -151,7 +147,58 @@ public abstract class Array {
      * @return new Array<type> or Array<type>.D<rank> if 0 <= rank <= 7.
      */
     static public Array factory(DataType dataType, int[] shape, Object storage) {
-        return factory(dataType.getPrimitiveClassType(), shape, storage);
+        return factory(dataType, Index.factory(shape), storage);
+    }
+
+    /* generate new Array with given type, index and storage */
+    public static Array factory(DataType dtype, Index index, Object storage) {
+        switch (dtype) {
+            case DOUBLE:
+                return ArrayDouble.factory(index, (double[]) storage);
+            case FLOAT:
+                return ArrayFloat.factory(index, (float[]) storage);
+            case CHAR:
+                return ArrayChar.factory(index, (char[]) storage);
+            case BOOLEAN:
+                return ArrayBoolean.factory(index, (boolean[]) storage);
+
+            case ENUM4:
+            case UINT:
+            case INT:
+                return ArrayInt.factory(index, dtype.isUnsigned(), (int[]) storage);
+            case ENUM2:
+            case USHORT:
+            case SHORT:
+                return ArrayShort.factory(index, dtype.isUnsigned(), (short[]) storage);
+            case ENUM1:
+            case UBYTE:
+            case BYTE:
+                return ArrayByte.factory(index, dtype.isUnsigned(), (byte[]) storage);
+            case ULONG:
+            case LONG:
+                return ArrayLong.factory(index, dtype.isUnsigned(), (long[]) storage);
+
+            case STRING:
+                return ArrayString.factory(index, (Object[]) storage);
+            case COMPLEX:
+                return ArrayComplex.factory(index, (Complex[]) storage);
+            case DATE:
+                return ArrayDate.factory(index, (LocalDateTime[]) storage);
+            case STRUCTURE:
+                return ArrayObject.factory(dtype, StructureData.class, false, index, (Object[]) storage);
+            case SEQUENCE:
+                return ArrayObject.factory(dtype, StructureDataIterator.class, false, index, (Object[]) storage);
+            case OPAQUE:
+                return ArrayObject.factory(dtype, ByteBuffer.class, false, index, (Object[]) storage);
+        }
+
+        throw new RuntimeException("Cant use this method for datatype " + dtype);
+
+        // used for VLEN ??
+        // default:
+        // return ArrayObject.factory(DataType.OBJECT, Object.class, index, (Object[]) storage); // LOOK dont know the
+        // object class
+        // }
     }
 
     /**
@@ -191,13 +238,13 @@ public abstract class Array {
         } else if ((classType == float.class) || (classType == Float.class)) {
             return ArrayFloat.factory(indexCalc, (float[]) storage);
         } else if ((classType == long.class) || (classType == Long.class)) {
-            return ArrayLong.factory(indexCalc, (long[]) storage);
+            return ArrayLong.factory(indexCalc, false, (long[]) storage);
         } else if ((classType == int.class) || (classType == Integer.class)) {
-            return ArrayInt.factory(indexCalc, (int[]) storage);
+            return ArrayInt.factory(indexCalc, false, (int[]) storage);
         } else if ((classType == short.class) || (classType == Short.class)) {
-            return ArrayShort.factory(indexCalc, (short[]) storage);
+            return ArrayShort.factory(indexCalc, false, (short[]) storage);
         } else if ((classType == byte.class) || (classType == Byte.class)) {
-            return ArrayByte.factory(indexCalc, (byte[]) storage);
+            return ArrayByte.factory(indexCalc, false, (byte[]) storage);
         } else if ((classType == char.class) || (classType == Character.class)) {
             return ArrayChar.factory(indexCalc, (char[]) storage);
         } else if ((classType == boolean.class) || (classType == Boolean.class)) {
@@ -230,13 +277,13 @@ public abstract class Array {
         } else if ((classType == float.class) || (classType == Float.class)) {
             return new ArrayFloat(index, (float[]) storage);
         } else if ((classType == long.class) || (classType == Long.class)) {
-            return new ArrayLong(index, (long[]) storage);
+            return new ArrayLong(index, false, (long[]) storage);
         } else if ((classType == int.class) || (classType == Integer.class)) {
-            return new ArrayInt(index, (int[]) storage);
+            return new ArrayInt(index, false, (int[]) storage);
         } else if ((classType == short.class) || (classType == Short.class)) {
-            return new ArrayShort(index, (short[]) storage);
+            return new ArrayShort(index, false, (short[]) storage);
         } else if ((classType == byte.class) || (classType == Byte.class)) {
-            return new ArrayByte(index, (byte[]) storage);
+            return new ArrayByte(index, false, (byte[]) storage);
         } else if ((classType == char.class) || (classType == Character.class)) {
             return new ArrayChar(index, (char[]) storage);
         } else if ((classType == boolean.class) || (classType == Boolean.class)) {
@@ -248,7 +295,7 @@ public abstract class Array {
         } else if (classType == LocalDateTime.class) {
             return ArrayDate.factory(index, (LocalDateTime[]) storage);
         } else {
-            return new ArrayObject(classType, index, (Object[]) storage);
+            return new ArrayObject(DataType.OBJECT, classType, false, index, (Object[]) storage);
         }
     }
 
@@ -446,21 +493,20 @@ public abstract class Array {
     /////////////////////////////////////////////////////
     protected final Index indexCalc;
     protected final int rank;
-    protected boolean unsigned;
     private IndexIterator ii; // local iterator
-    protected DataType datatype;
+    protected DataType dataType;
 
     // for subclasses only
-    protected Array(int[] shape) {
-        rank = shape.length;
-        indexCalc = Index.factory(shape);
-        this.datatype = computesort();
+    protected Array(DataType dataType, int[] shape) {
+        this.dataType = dataType;
+        this.rank = shape.length;
+        this.indexCalc = Index.factory(shape);
     }
 
-    protected Array(Index index) {
-        rank = index.getRank();
-        indexCalc = index;
-        this.datatype = computesort();
+    protected Array(DataType dataType, Index index) {
+        this.dataType = dataType;
+        this.rank = index.getRank();
+        this.indexCalc = index;
     }
 
     /**
@@ -518,7 +564,7 @@ public abstract class Array {
      * @return the data type
      */
     public DataType getDataType() {
-        return this.datatype;
+        return this.dataType;
     }
 
     /**
@@ -794,9 +840,8 @@ public abstract class Array {
      * @return the new Array
      */
     public Array copy() {
-        Array newA = factory(getElementType(), getShape());
+        Array newA = factory(getDataType(), getShape());
         MAMath.copy(newA, this);
-        newA.setUnsigned(isUnsigned());
         return newA;
     }
 
@@ -1042,12 +1087,11 @@ public abstract class Array {
      * @throws IllegalArgumentException new shape is not conformable
      */
     public Array reshape(int[] shape) {
-        Array result = factory(this.getElementType(), shape);
+        Array result = factory(this.getDataType(), shape);
         if (result.getSize() != getSize()) {
             throw new IllegalArgumentException("reshape arrays must have same total size");
         }
 
-        result.setUnsigned(isUnsigned());
         Array.arraycopy(this, 0, result, 0, (int) getSize());
         return result;
     }
@@ -1060,7 +1104,7 @@ public abstract class Array {
      * @throws IllegalArgumentException new shape is not conformable
      */
     public Array reshapeNoCopy(int[] shape) {
-        Array result = factory(this.getElementType(), shape, getStorage());
+        Array result = factory(this.getDataType(), shape, getStorage());
         if (result.getSize() != getSize()) {
             throw new IllegalArgumentException("reshape arrays must have same total size");
         }
@@ -1074,9 +1118,8 @@ public abstract class Array {
      * @return the new Array
      */
     public Array reshapeVLen(int[] shape) {
-        Array result = factory(this.getElementType(), shape);
+        Array result = factory(this.getDataType(), shape);
         long len = Math.min(this.getSize(), result.getSize());
-        result.setUnsigned(isUnsigned());
         Array.arraycopy(this, 0, result, 0, (int) len);
         return result;
     }
@@ -1116,7 +1159,7 @@ public abstract class Array {
      * @return true if the data is unsigned integer type.
      */
     public boolean isUnsigned() {
-        return unsigned;
+        return this.dataType.isUnsigned();
     }
 
     /**
@@ -1126,17 +1169,6 @@ public abstract class Array {
      */
     public boolean isConstant() {
         return indexCalc instanceof IndexConstant;
-    }
-
-    /**
-     * Set whether the data should be interpreted as unsigned. Only valid for
-     * byte, short, int, and long. When true, conversions to wider types are
-     * handled correctly.
-     *
-     * @param unsigned true if unsigned
-     */
-    public void setUnsigned(boolean unsigned) {
-        this.unsigned = unsigned;
     }
 
     /*

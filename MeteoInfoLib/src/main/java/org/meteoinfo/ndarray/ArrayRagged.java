@@ -43,7 +43,7 @@ import java.time.LocalDateTime;
 public class ArrayRagged extends Array {
 
     protected ArrayRagged(int[] shape) {
-        super(shape);
+        super(DataType.OBJECT, shape);
     }
 
     public Class getElementType() {

@@ -43,8 +43,8 @@ public class ArrayScalar extends Array {
 
     private final Object value;
 
-    public ArrayScalar(Object value) {
-        super(new int[]{});
+    public ArrayScalar(Object value, boolean isUnsigned) {
+        super(DataType.getType(value.getClass(), isUnsigned), new int[] {});
         this.value = value;
     }
 

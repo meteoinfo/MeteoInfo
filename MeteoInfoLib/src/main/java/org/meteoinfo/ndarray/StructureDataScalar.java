@@ -50,19 +50,23 @@ public class StructureDataScalar extends StructureDataW {
     Array data = null;
     switch (dtype) {
       case BYTE:
-        data = new ArrayByte.D0();
+      case UBYTE:
+        data = new ArrayByte.D0(dtype.isUnsigned());
         data.setByte(0, val.byteValue());
         break;
       case SHORT:
-        data = new ArrayShort.D0();
+      case USHORT:
+        data = new ArrayShort.D0(dtype.isUnsigned());
         data.setShort(0, val.shortValue());
         break;
       case INT:
-        data = new ArrayInt.D0();
+      case UINT:
+        data = new ArrayInt.D0(dtype.isUnsigned());
         data.setInt(0, val.intValue());
         break;
       case LONG:
-        data = new ArrayLong.D0();
+      case ULONG:
+        data = new ArrayLong.D0(dtype.isUnsigned());
         data.setDouble(0, val.longValue());
         break;
       case FLOAT:

@@ -16,13 +16,11 @@ public class ArrayStructure extends Array {
     private Object arrayObject;
     
     public ArrayStructure(int[] shape) {
-        super(shape);
-        this.datatype = DataType.STRUCTURE;
+        super(DataType.STRUCTURE, shape);
     }
 
     protected ArrayStructure(Index index) {
-        super(index);
-        this.datatype = DataType.STRUCTURE;
+        super(DataType.STRUCTURE, index);
     }
 
     /**

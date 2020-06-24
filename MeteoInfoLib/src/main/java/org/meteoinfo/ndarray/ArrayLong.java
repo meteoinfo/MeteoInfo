@@ -32,6 +32,7 @@
  */
 package org.meteoinfo.ndarray;
 
+import javax.xml.crypto.Data;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.LongBuffer;
@@ -52,36 +53,36 @@ public class ArrayLong extends Array {
     /**
      * package private. use Array.factory()
      */
-    static ArrayLong factory(Index index) {
-        return ArrayLong.factory(index, null);
+    static ArrayLong factory(Index index, boolean isUnsigned) {
+        return ArrayLong.factory(index, isUnsigned, null);
     }
 
     /* create new ArrayLong with given indexImpl and backing store.
    * Should be private.
    * @param index use this Index
-   * @param stor. use this storage. if null, allocate.
+   * @param storage use this storage. if null, allocate.
    * @return. new ArrayLong.D<rank> or ArrayLong object.
      */
-    static ArrayLong factory(Index index, long[] storage) {
+    static ArrayLong factory(Index index, boolean isUnsigned, long[] storage) {
         switch (index.getRank()) {
             case 0:
-                return new ArrayLong.D0(index, storage);
+                return new ArrayLong.D0(index, isUnsigned, storage);
             case 1:
-                return new ArrayLong.D1(index, storage);
+                return new ArrayLong.D1(index, isUnsigned, storage);
             case 2:
-                return new ArrayLong.D2(index, storage);
+                return new ArrayLong.D2(index, isUnsigned, storage);
             case 3:
-                return new ArrayLong.D3(index, storage);
+                return new ArrayLong.D3(index, isUnsigned, storage);
             case 4:
-                return new ArrayLong.D4(index, storage);
+                return new ArrayLong.D4(index, isUnsigned, storage);
             case 5:
-                return new ArrayLong.D5(index, storage);
+                return new ArrayLong.D5(index, isUnsigned, storage);
             case 6:
-                return new ArrayLong.D6(index, storage);
+                return new ArrayLong.D6(index, isUnsigned, storage);
             case 7:
-                return new ArrayLong.D7(index, storage);
+                return new ArrayLong.D7(index, isUnsigned, storage);
             default:
-                return new ArrayLong(index, storage);
+                return new ArrayLong(index, isUnsigned, storage);
         }
     }
 
@@ -94,8 +95,8 @@ public class ArrayLong extends Array {
      *
      * @param dimensions the shape of the Array.
      */
-    public ArrayLong(int[] dimensions) {
-        super(dimensions);
+    public ArrayLong(int[] dimensions, boolean isUnsigned) {
+        super(isUnsigned? DataType.ULONG : DataType.LONG, dimensions);
         storage = new long[(int) indexCalc.getSize()];
     }
 
@@ -106,8 +107,8 @@ public class ArrayLong extends Array {
      * @param ima use this IndexArray as the index
      * @param data use this as the backing store
      */
-    ArrayLong(Index ima, long[] data) {
-        super(ima);
+    ArrayLong(Index ima, boolean isUnsigned, long[] data) {
+        super(isUnsigned ? DataType.ULONG : DataType.LONG, ima);
         /* replace by something better
     if (ima.getSize() != data.length)
       throw new IllegalArgumentException("bad data length"); */
@@ -122,7 +123,7 @@ public class ArrayLong extends Array {
      * create new Array with given indexImpl and same backing store
      */
     protected Array createView(Index index) {
-        return ArrayLong.factory(index, storage);
+        return ArrayLong.factory(index, isUnsigned(), storage);
     }
 
     /* Get underlying primitive array storage. CAUTION! You may invalidate your warrentee! */
@@ -252,7 +253,9 @@ public class ArrayLong extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public String getString(Index i) {
-        return String.valueOf(this.storage[i.currentElement()]);
+        long v = this.storage[i.currentElement()];
+        return isUnsigned() ? DataType.unsignedLongToString(v) :
+                String.valueOf(v);
     }
 
     /**
@@ -354,7 +357,9 @@ public class ArrayLong extends Array {
     }
     
     public String getString(int index) {
-        return String.valueOf(this.storage[index]);
+        long v = this.storage[index];
+        return isUnsigned() ? DataType.unsignedLongToString(v) :
+                String.valueOf(v);
     }
 
     public void setString(int index, String value) {
@@ -391,13 +396,13 @@ public class ArrayLong extends Array {
         /**
          * Constructor.
          */
-        public D0() {
-            super(new int[]{});
+        public D0(boolean isUnsigned) {
+            super(new int[]{}, isUnsigned);
             ix = (Index0D) indexCalc;
         }
 
-        private D0(Index i, long[] store) {
-            super(i, store);
+        private D0(Index i, boolean isUnsigned, long[] store) {
+            super(i, isUnsigned, store);
             ix = (Index0D) indexCalc;
         }
 
@@ -426,13 +431,13 @@ public class ArrayLong extends Array {
         /**
          * Constructor for array of shape {len0}.
          */
-        public D1(int len0) {
-            super(new int[]{len0});
+        public D1(int len0, boolean isUnsigned) {
+            super(new int[]{len0}, isUnsigned);
             ix = (Index1D) indexCalc;
         }
 
-        private D1(Index i, long[] store) {
-            super(i, store);
+        private D1(Index i, boolean isUnsigned, long[] store) {
+            super(i, isUnsigned, store);
             ix = (Index1D) indexCalc;
         }
 
@@ -461,13 +466,13 @@ public class ArrayLong extends Array {
         /**
          * Constructor for array of shape {len0,len1}.
          */
-        public D2(int len0, int len1) {
-            super(new int[]{len0, len1});
+        public D2(int len0, int len1, boolean isUnsigned) {
+            super(new int[]{len0, len1}, isUnsigned);
             ix = (Index2D) indexCalc;
         }
 
-        private D2(Index i, long[] store) {
-            super(i, store);
+        private D2(Index i, boolean isUnsigned, long[] store) {
+            super(i, isUnsigned, store);
             ix = (Index2D) indexCalc;
         }
 
@@ -496,13 +501,13 @@ public class ArrayLong extends Array {
         /**
          * Constructor for array of shape {len0,len1,len2}.
          */
-        public D3(int len0, int len1, int len2) {
-            super(new int[]{len0, len1, len2});
+        public D3(int len0, int len1, int len2, boolean isUnsigned) {
+            super(new int[]{len0, len1, len2}, isUnsigned);
             ix = (Index3D) indexCalc;
         }
 
-        private D3(Index i, long[] store) {
-            super(i, store);
+        private D3(Index i, boolean isUnsigned, long[] store) {
+            super(i, isUnsigned, store);
             ix = (Index3D) indexCalc;
         }
 
@@ -531,13 +536,13 @@ public class ArrayLong extends Array {
         /**
          * Constructor for array of shape {len0,len1,len2,len3}.
          */
-        public D4(int len0, int len1, int len2, int len3) {
-            super(new int[]{len0, len1, len2, len3});
+        public D4(int len0, int len1, int len2, int len3, boolean isUnsigned) {
+            super(new int[]{len0, len1, len2, len3}, isUnsigned);
             ix = (Index4D) indexCalc;
         }
 
-        private D4(Index i, long[] store) {
-            super(i, store);
+        private D4(Index i, boolean isUnsigned, long[] store) {
+            super(i, isUnsigned, store);
             ix = (Index4D) indexCalc;
         }
 
@@ -566,13 +571,13 @@ public class ArrayLong extends Array {
         /**
          * Constructor for array of shape {len0,len1,len2,len3,len4}.
          */
-        public D5(int len0, int len1, int len2, int len3, int len4) {
-            super(new int[]{len0, len1, len2, len3, len4});
+        public D5(int len0, int len1, int len2, int len3, int len4, boolean isUnsigned) {
+            super(new int[]{len0, len1, len2, len3, len4}, isUnsigned);
             ix = (Index5D) indexCalc;
         }
 
-        private D5(Index i, long[] store) {
-            super(i, store);
+        private D5(Index i, boolean isUnsigned, long[] store) {
+            super(i, isUnsigned, store);
             ix = (Index5D) indexCalc;
         }
 
@@ -601,13 +606,13 @@ public class ArrayLong extends Array {
         /**
          * Constructor for array of shape {len0,len1,len2,len3,len4,len5,}.
          */
-        public D6(int len0, int len1, int len2, int len3, int len4, int len5) {
-            super(new int[]{len0, len1, len2, len3, len4, len5});
+        public D6(int len0, int len1, int len2, int len3, int len4, int len5, boolean isUnsigned) {
+            super(new int[]{len0, len1, len2, len3, len4, len5}, isUnsigned);
             ix = (Index6D) indexCalc;
         }
 
-        private D6(Index i, long[] store) {
-            super(i, store);
+        private D6(Index i, boolean isUnsigned, long[] store) {
+            super(i, isUnsigned, store);
             ix = (Index6D) indexCalc;
         }
 
@@ -636,13 +641,13 @@ public class ArrayLong extends Array {
         /**
          * Constructor for array of shape {len0,len1,len2,len3,len4,len5,len6}.
          */
-        public D7(int len0, int len1, int len2, int len3, int len4, int len5, int len6) {
-            super(new int[]{len0, len1, len2, len3, len4, len5, len6});
+        public D7(int len0, int len1, int len2, int len3, int len4, int len5, int len6, boolean isUnsigned) {
+            super(new int[]{len0, len1, len2, len3, len4, len5, len6}, isUnsigned);
             ix = (Index7D) indexCalc;
         }
 
-        private D7(Index i, long[] store) {
-            super(i, store);
+        private D7(Index i, boolean isUnsigned, long[] store) {
+            super(i, isUnsigned, store);
             ix = (Index7D) indexCalc;
         }
 

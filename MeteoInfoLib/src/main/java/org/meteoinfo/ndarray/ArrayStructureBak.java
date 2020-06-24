@@ -102,14 +102,14 @@ public abstract class ArrayStructureBak extends Array {
      * @param shape   the shape of the Array.
      */
     protected ArrayStructureBak(StructureMembers members, int[] shape) {
-        super(shape);
+        super(DataType.STRUCTURE, shape);
         this.members = members;
         this.nelems = (int) indexCalc.getSize();
     }
 
     // for subclasses to create views
     protected ArrayStructureBak(StructureMembers members, Index ima) {
-        super(ima);
+        super(DataType.STRUCTURE, ima);
         this.members = members;
         this.nelems = (int) indexCalc.getSize();
     }
@@ -418,7 +418,7 @@ public abstract class ArrayStructureBak extends Array {
             result = new ArrayStructureW(membersw, rshape);
 
         } else if (dataType == DataType.OPAQUE) {
-            result = new ArrayObject(ByteBuffer.class, rshape);
+            result = new ArrayObject(dataType, ByteBuffer.class, false, rshape);
 
         } else {
             result = Array.factory(dataType.getPrimitiveClassType(), rshape);

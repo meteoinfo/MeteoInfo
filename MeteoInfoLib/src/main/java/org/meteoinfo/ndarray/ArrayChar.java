@@ -93,7 +93,7 @@ public class ArrayChar extends Array {
      * @param dimensions the shape of the Array.
      */
     public ArrayChar(int[] dimensions) {
-        super(dimensions);
+        super(DataType.CHAR, dimensions);
         storage = new char[(int) indexCalc.getSize()];
     }
 
@@ -105,7 +105,7 @@ public class ArrayChar extends Array {
      * @param data use this as the backing store
      */
     ArrayChar(Index ima, char[] data) {
-        super(ima);
+        super(DataType.CHAR, ima);
         /* replace by something better
     if (ima.getSize() != data.length)
       throw new IllegalArgumentException("bad data length"); */
@@ -117,7 +117,7 @@ public class ArrayChar extends Array {
     }
 
     public ArrayChar(String s) {
-        super(new int[]{s.length()});
+        super(DataType.CHAR, new int[]{s.length()});
         storage = new char[s.length()];
         for (int i = 0; i < s.length(); i++) {
             storage[i] = s.charAt(i);

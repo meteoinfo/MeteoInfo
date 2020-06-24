@@ -43,58 +43,62 @@ import java.time.LocalDateTime;
  */
 public class ArrayObject extends Array {
 
-    /**
-     * package private. use Array.factory()
-     */
-    static ArrayObject factory(Class classType, Index index) {
-        return ArrayObject.factory(classType, index, null);
+    /** package private. use Array.factory() */
+    static ArrayObject factory(DataType dtype, Class elemType, boolean isVlen, Index index) {
+        return ArrayObject.factory(dtype, elemType, isVlen, index, null);
     }
 
-    /* Create new ArrayObject with given indexImpl and backing store.
-   * Should be private.
-   * @param index use this Index
-   * @param stor. use this storage. if null, allocate.
-   * @return. new ArrayObject.D<rank> or ArrayObject object.
+    /*
+     * Create new ArrayObject with given indexImpl and backing store.
+     * Should be private.
+     *
+     * @param index use this Index
+     *
+     * @param stor. use this storage. if null, allocate.
+     *
+     * @return. new ArrayObject.D<rank> or ArrayObject object.
      */
-    static ArrayObject factory(Class classType, Index index, Object[] storage) {
-        switch (index.getRank()) {
-            case 0:
-                return new ArrayObject.D0(classType, index, storage);
-            case 1:
-                return new ArrayObject.D1(classType, index, storage);
-            case 2:
-                return new ArrayObject.D2(classType, index, storage);
-            case 3:
-                return new ArrayObject.D3(classType, index, storage);
-            case 4:
-                return new ArrayObject.D4(classType, index, storage);
-            case 5:
-                return new ArrayObject.D5(classType, index, storage);
-            case 6:
-                return new ArrayObject.D6(classType, index, storage);
-            case 7:
-                return new ArrayObject.D7(classType, index, storage);
-            default:
-                return new ArrayObject(classType, index, storage);
+    static ArrayObject factory(DataType dtype, Class elemType, boolean isVlen, Index index, Object[] storage) {
+        if (index instanceof Index0D) {
+            return new ArrayObject.D0(dtype, elemType, isVlen, index, storage);
+        } else if (index instanceof Index1D) {
+            return new ArrayObject.D1(dtype, elemType, isVlen, index, storage);
+        } else if (index instanceof Index2D) {
+            return new ArrayObject.D2(dtype, elemType, isVlen, index, storage);
+        } else if (index instanceof Index3D) {
+            return new ArrayObject.D3(dtype, elemType, isVlen, index, storage);
+        } else if (index instanceof Index4D) {
+            return new ArrayObject.D4(dtype, elemType, isVlen, index, storage);
+        } else if (index instanceof Index5D) {
+            return new ArrayObject.D5(dtype, elemType, isVlen, index, storage);
+        } else if (index instanceof Index6D) {
+            return new ArrayObject.D6(dtype, elemType, isVlen, index, storage);
+        } else if (index instanceof Index7D) {
+            return new ArrayObject.D7(dtype, elemType, isVlen, index, storage);
+        } else {
+            return new ArrayObject(dtype, elemType, isVlen, index, storage);
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    protected Class elementType;
-    protected Object[] storage;
+    protected final boolean isVlen;
+    protected final Class elementType;
+    protected final Object[] storage;
 
     /**
-     * Create a new Array of type Object and the given shape. dimensions.length
-     * determines the rank of the new Array.
+     * Create a new Array of type Object and the given shape.
+     * dimensions.length determines the rank of the new Array.
      *
      * @param elementType the type of element, eg String
      * @param shape the shape of the Array.
      */
-    public ArrayObject(Class elementType, int[] shape) {
-        super(shape);
+    public ArrayObject(DataType dtype, Class elementType, boolean isVlen, int[] shape) {
+        super(dtype, shape);
         this.elementType = elementType;
         storage = new Object[(int) indexCalc.getSize()];
+        this.isVlen = isVlen;
     }
+
 
     /**
      * Create a new Array of type Object and the given shape and storage.
@@ -103,10 +107,31 @@ public class ArrayObject extends Array {
      * @param elementType the type of element, eg String
      * @param shape the shape of the Array.
      */
-    public ArrayObject(Class elementType, int[] shape, Object[] storage) {
-        super(shape);
+    public ArrayObject(DataType dtype, Class elementType, boolean isVlen, int[] shape, Object[] storage) {
+        super(dtype, shape);
         this.elementType = elementType;
         this.storage = storage;
+        this.isVlen = isVlen;
+    }
+
+    /**
+     * Create a new Array using the given IndexArray and backing store.
+     * used for sections, and factory. Trusted package private.
+     *
+     * @param elementType the type of element, eg String
+     * @param ima use this IndexArray as the index
+     * @param data use this as the backing store. if null, allocate
+     */
+    ArrayObject(DataType dtype, Class elementType, boolean isVlen, Index ima, Object[] data) {
+        super(dtype, ima);
+        this.elementType = elementType;
+        this.isVlen = isVlen;
+
+        if (data != null) {
+            storage = data;
+        } else {
+            storage = new Object[(int) indexCalc.getSize()];
+        }
     }
 
     /**
@@ -114,25 +139,6 @@ public class ArrayObject extends Array {
      */
     protected Array createView(Index index) {
         return ArrayObject.factory(elementType, index, storage);
-    }
-
-    /**
-     * Create a new Array using the given IndexArray and backing store. used for
-     * sections, and factory. Trusted package private.
-     *
-     * @param elementType the type of element, eg String
-     * @param ima use this IndexArray as the index
-     * @param data use this as the backing store. if null, allocate
-     */
-    ArrayObject(Class elementType, Index ima, Object[] data) {
-        super(ima);
-        this.elementType = elementType;
-
-        if (data != null) {
-            storage = data;
-        } else {
-            storage = new Object[(int) indexCalc.getSize()];
-        }
     }
 
     /**
@@ -434,13 +440,13 @@ public class ArrayObject extends Array {
         /**
          * Constructor.
          */
-        public D0(Class classType) {
-            super(classType, new int[]{});
+        public D0(DataType dtype, Class classType, boolean isVLen) {
+            super(dtype, classType, isVLen, new int[]{});
             ix = (Index0D) indexCalc;
         }
 
-        private D0(Class classType, Index i, Object[] store) {
-            super(classType, i, store);
+        private D0(DataType dtype, Class classType, boolean isVLen, Index i, Object[] store) {
+            super(dtype, classType, isVLen, i, store);
             ix = (Index0D) indexCalc;
         }
 
@@ -469,13 +475,13 @@ public class ArrayObject extends Array {
         /**
          * Constructor for array of shape {len0}.
          */
-        public D1(Class classType, int len0) {
-            super(classType, new int[]{len0});
+        public D1(DataType dtype, Class classType, boolean isVLen, int len0) {
+            super(dtype, classType, isVLen, new int[]{len0});
             ix = (Index1D) indexCalc;
         }
 
-        private D1(Class classType, Index i, Object[] store) {
-            super(classType, i, store);
+        private D1(DataType dtype, Class classType, boolean isVLen, Index i, Object[] store) {
+            super(dtype, classType, isVLen, i, store);
             ix = (Index1D) indexCalc;
         }
 
@@ -504,13 +510,13 @@ public class ArrayObject extends Array {
         /**
          * Constructor for array of shape {len0,len1}.
          */
-        public D2(Class classType, int len0, int len1) {
-            super(classType, new int[]{len0, len1});
+        public D2(DataType dtype, Class classType, boolean isVLen, int len0, int len1) {
+            super(dtype, classType, isVLen, new int[]{len0, len1});
             ix = (Index2D) indexCalc;
         }
 
-        private D2(Class classType, Index i, Object[] store) {
-            super(classType, i, store);
+        private D2(DataType dtype, Class classType, boolean isVLen, Index i, Object[] store) {
+            super(dtype, classType, isVLen, i, store);
             ix = (Index2D) indexCalc;
         }
 
@@ -539,13 +545,13 @@ public class ArrayObject extends Array {
         /**
          * Constructor for array of shape {len0,len1,len2}.
          */
-        public D3(Class classType, int len0, int len1, int len2) {
-            super(classType, new int[]{len0, len1, len2});
+        public D3(DataType dtype, Class classType, boolean isVLen, int len0, int len1, int len2) {
+            super(dtype, classType, isVLen, new int[]{len0, len1, len2});
             ix = (Index3D) indexCalc;
         }
 
-        private D3(Class classType, Index i, Object[] store) {
-            super(classType, i, store);
+        private D3(DataType dtype, Class classType, boolean isVLen, Index i, Object[] store) {
+            super(dtype, classType, isVLen, i, store);
             ix = (Index3D) indexCalc;
         }
 
@@ -574,13 +580,13 @@ public class ArrayObject extends Array {
         /**
          * Constructor for array of shape {len0,len1,len2,len3}.
          */
-        public D4(Class classType, int len0, int len1, int len2, int len3) {
-            super(classType, new int[]{len0, len1, len2, len3});
+        public D4(DataType dtype, Class classType, boolean isVLen, int len0, int len1, int len2, int len3) {
+            super(dtype, classType, isVLen, new int[]{len0, len1, len2, len3});
             ix = (Index4D) indexCalc;
         }
 
-        private D4(Class classType, Index i, Object[] store) {
-            super(classType, i, store);
+        private D4(DataType dtype, Class classType, boolean isVLen, Index i, Object[] store) {
+            super(dtype, classType, isVLen, i, store);
             ix = (Index4D) indexCalc;
         }
 
@@ -609,13 +615,13 @@ public class ArrayObject extends Array {
         /**
          * Constructor for array of shape {len0,len1,len2,len3,len4}.
          */
-        public D5(Class classType, int len0, int len1, int len2, int len3, int len4) {
-            super(classType, new int[]{len0, len1, len2, len3, len4});
+        public D5(DataType dtype, Class classType, boolean isVLen, int len0, int len1, int len2, int len3, int len4) {
+            super(dtype, classType, isVLen, new int[]{len0, len1, len2, len3, len4});
             ix = (Index5D) indexCalc;
         }
 
-        private D5(Class classType, Index i, Object[] store) {
-            super(classType, i, store);
+        private D5(DataType dtype, Class classType, boolean isVLen, Index i, Object[] store) {
+            super(dtype, classType, isVLen, i, store);
             ix = (Index5D) indexCalc;
         }
 
@@ -644,13 +650,13 @@ public class ArrayObject extends Array {
         /**
          * Constructor for array of shape {len0,len1,len2,len3,len4,len5,}.
          */
-        public D6(Class classType, int len0, int len1, int len2, int len3, int len4, int len5) {
-            super(classType, new int[]{len0, len1, len2, len3, len4, len5});
+        public D6(DataType dtype, Class classType, boolean isVLen, int len0, int len1, int len2, int len3, int len4, int len5) {
+            super(dtype, classType, isVLen, new int[]{len0, len1, len2, len3, len4, len5});
             ix = (Index6D) indexCalc;
         }
 
-        private D6(Class classType, Index i, Object[] store) {
-            super(classType, i, store);
+        private D6(DataType dtype, Class classType, boolean isVLen, Index i, Object[] store) {
+            super(dtype, classType, isVLen, i, store);
             ix = (Index6D) indexCalc;
         }
 
@@ -679,13 +685,13 @@ public class ArrayObject extends Array {
         /**
          * Constructor for array of shape {len0,len1,len2,len3,len4,len5,len6}.
          */
-        public D7(Class classType, int len0, int len1, int len2, int len3, int len4, int len5, int len6) {
-            super(classType, new int[]{len0, len1, len2, len3, len4, len5, len6});
+        public D7(DataType dtype, Class classType, boolean isVLen, int len0, int len1, int len2, int len3, int len4, int len5, int len6) {
+            super(dtype, classType, isVLen, new int[]{len0, len1, len2, len3, len4, len5, len6});
             ix = (Index7D) indexCalc;
         }
 
-        private D7(Class classType, Index i, Object[] store) {
-            super(classType, i, store);
+        private D7(DataType dtype, Class classType, boolean isVLen, Index i, Object[] store) {
+            super(dtype, classType, isVLen, i, store);
             ix = (Index7D) indexCalc;
         }
 

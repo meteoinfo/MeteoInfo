@@ -50,36 +50,36 @@ import java.time.LocalDateTime;
 public class ArrayShort extends Array {
 
     // package private. use Array.factory()
-    static ArrayShort factory(Index index) {
-        return ArrayShort.factory(index, null);
+    static ArrayShort factory(Index index, boolean isUnsigned) {
+        return ArrayShort.factory(index, isUnsigned, null);
     }
 
     /* create new ArrayShort with given indexImpl and backing store.
    * Should be private.
    * @param index use this Index
-   * @param stor. use this storage. if null, allocate.
+   * @param storage use this storage. if null, allocate.
    * @return. new ArrayShort.D<rank> or ArrayShort object.
      */
-    static ArrayShort factory(Index index, short[] storage) {
+    static ArrayShort factory(Index index, boolean isUnsigned, short[] storage) {
         switch (index.getRank()) {
             case 0:
-                return new ArrayShort.D0(index, storage);
+                return new ArrayShort.D0(index, isUnsigned, storage);
             case 1:
-                return new ArrayShort.D1(index, storage);
+                return new ArrayShort.D1(index, isUnsigned, storage);
             case 2:
-                return new ArrayShort.D2(index, storage);
+                return new ArrayShort.D2(index, isUnsigned, storage);
             case 3:
-                return new ArrayShort.D3(index, storage);
+                return new ArrayShort.D3(index, isUnsigned, storage);
             case 4:
-                return new ArrayShort.D4(index, storage);
+                return new ArrayShort.D4(index, isUnsigned, storage);
             case 5:
-                return new ArrayShort.D5(index, storage);
+                return new ArrayShort.D5(index, isUnsigned, storage);
             case 6:
-                return new ArrayShort.D6(index, storage);
+                return new ArrayShort.D6(index, isUnsigned, storage);
             case 7:
-                return new ArrayShort.D7(index, storage);
+                return new ArrayShort.D7(index, isUnsigned, storage);
             default:
-                return new ArrayShort(index, storage);
+                return new ArrayShort(index, isUnsigned, storage);
         }
     }
 
@@ -92,8 +92,8 @@ public class ArrayShort extends Array {
      *
      * @param dimensions the shape of the Array.
      */
-    public ArrayShort(int[] dimensions) {
-        super(dimensions);
+    public ArrayShort(int[] dimensions, boolean isUnsigned) {
+        super(isUnsigned ? DataType.USHORT : DataType.SHORT, dimensions);
         storage = new short[(int) indexCalc.getSize()];
     }
 
@@ -104,8 +104,8 @@ public class ArrayShort extends Array {
      * @param ima use this IndexArray as the index
      * @param data use this as the backing store
      */
-    ArrayShort(Index ima, short[] data) {
-        super(ima);
+    ArrayShort(Index ima, boolean isUnsigned, short[] data) {
+        super(isUnsigned ? DataType.USHORT : DataType.SHORT, ima);
         /* replace by something better
     if (ima.getSize() != data.length)
       throw new IllegalArgumentException("bad data length"); */
@@ -120,9 +120,7 @@ public class ArrayShort extends Array {
      * create new Array with given indexImpl and same backing store
      */
     protected Array createView(Index index) {
-        Array result = ArrayShort.factory(index, storage);
-        result.setUnsigned(isUnsigned());
-        return result;
+        return ArrayShort.factory(index, isUnsigned(), storage);
     }
 
     /* Get underlying primitive array storage. CAUTION! You may invalidate your warrentee! */
@@ -186,7 +184,7 @@ public class ArrayShort extends Array {
 
     public double getDouble(Index i) {
         short val = storage[i.currentElement()];
-        return (double) (unsigned ? DataType.unsignedShortToInt(val) : val);
+        return (double) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
     }
 
     public void setDouble(Index i, double value) {
@@ -195,7 +193,7 @@ public class ArrayShort extends Array {
 
     public float getFloat(Index i) {
         short val = storage[i.currentElement()];
-        return (float) (unsigned ? DataType.unsignedShortToInt(val) : val);
+        return (float) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
     }
 
     public void setFloat(Index i, float value) {
@@ -204,7 +202,7 @@ public class ArrayShort extends Array {
 
     public long getLong(Index i) {
         short val = storage[i.currentElement()];
-        return (long) (unsigned ? DataType.unsignedShortToInt(val) : val);
+        return (long) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
     }
 
     public void setLong(Index i, long value) {
@@ -213,7 +211,7 @@ public class ArrayShort extends Array {
 
     public int getInt(Index i) {
         short val = storage[i.currentElement()];
-        return (unsigned ? DataType.unsignedShortToInt(val) : val);
+        return (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
     }
 
     public void setInt(Index i, int value) {
@@ -238,7 +236,7 @@ public class ArrayShort extends Array {
 
     public char getChar(Index i) {
         short val = storage[i.currentElement()];
-        return (char) (unsigned ? DataType.unsignedShortToInt(val) : val);
+        return (char) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
     }
 
     public void setChar(Index i, char value) {
@@ -263,7 +261,9 @@ public class ArrayShort extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public String getString(Index i) {
-        return String.valueOf(this.storage[i.currentElement()]);
+        short v = this.storage[i.currentElement()];
+        return isUnsigned() ? String.valueOf(DataType.unsignedShortToInt(v)) :
+                String.valueOf(v);
     }
 
     /**
@@ -302,7 +302,7 @@ public class ArrayShort extends Array {
     // package private : mostly for iterators
     public double getDouble(int index) {
         short val = storage[index];
-        return (double) (unsigned ? DataType.unsignedShortToInt(val) : val);
+        return (double) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
     }
 
     public void setDouble(int index, double value) {
@@ -311,7 +311,7 @@ public class ArrayShort extends Array {
 
     public float getFloat(int index) {
         short val = storage[index];
-        return (float) (unsigned ? DataType.unsignedShortToInt(val) : val);
+        return (float) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
     }
 
     public void setFloat(int index, float value) {
@@ -320,7 +320,7 @@ public class ArrayShort extends Array {
 
     public long getLong(int index) {
         short val = storage[index];
-        return (long) (unsigned ? DataType.unsignedShortToInt(val) : val);
+        return (long) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
     }
 
     public void setLong(int index, long value) {
@@ -329,7 +329,7 @@ public class ArrayShort extends Array {
 
     public int getInt(int index) {
         short val = storage[index];
-        return (unsigned ? DataType.unsignedShortToInt(val) : val);
+        return (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
     }
 
     public void setInt(int index, int value) {
@@ -354,7 +354,7 @@ public class ArrayShort extends Array {
 
     public char getChar(int index) {
         short val = storage[index];
-        return (char) (unsigned ? DataType.unsignedShortToInt(val) : val);
+        return (char) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
     }
 
     public void setChar(int index, char value) {
@@ -370,7 +370,9 @@ public class ArrayShort extends Array {
     }
     
     public String getString(int index) {
-        return String.valueOf(this.storage[index]);
+        short v = this.storage[index];
+        return isUnsigned() ? String.valueOf(DataType.unsignedShortToInt(v)) :
+                String.valueOf(v);
     }
 
     public void setString(int index, String value) {
@@ -404,13 +406,13 @@ public class ArrayShort extends Array {
 
         private Index0D ix;
 
-        public D0() {
-            super(new int[]{});
+        public D0(boolean isUnsigned) {
+            super(new int[]{}, isUnsigned);
             ix = (Index0D) indexCalc;
         }
 
-        private D0(Index i, short[] store) {
-            super(i, store);
+        private D0(Index i, boolean isUnsigned, short[] store) {
+            super(i, isUnsigned, store);
             ix = (Index0D) indexCalc;
         }
 
@@ -430,13 +432,13 @@ public class ArrayShort extends Array {
 
         private Index1D ix;
 
-        public D1(int len0) {
-            super(new int[]{len0});
+        public D1(int len0, boolean isUnsigned) {
+            super(new int[]{len0}, isUnsigned);
             ix = (Index1D) indexCalc;
         }
 
-        private D1(Index i, short[] store) {
-            super(i, store);
+        private D1(Index i, boolean isUnsigned, short[] store) {
+            super(i, isUnsigned, store);
             ix = (Index1D) indexCalc;
         }
 
@@ -456,13 +458,13 @@ public class ArrayShort extends Array {
 
         private Index2D ix;
 
-        public D2(int len0, int len1) {
-            super(new int[]{len0, len1});
+        public D2(int len0, int len1, boolean isUnsigned) {
+            super(new int[]{len0, len1}, isUnsigned);
             ix = (Index2D) indexCalc;
         }
 
-        private D2(Index i, short[] store) {
-            super(i, store);
+        private D2(Index i, boolean isUnsigned, short[] store) {
+            super(i, isUnsigned, store);
             ix = (Index2D) indexCalc;
         }
 
@@ -482,13 +484,13 @@ public class ArrayShort extends Array {
 
         private Index3D ix;
 
-        public D3(int len0, int len1, int len2) {
-            super(new int[]{len0, len1, len2});
+        public D3(int len0, int len1, int len2, boolean isUnsigned) {
+            super(new int[]{len0, len1, len2}, isUnsigned);
             ix = (Index3D) indexCalc;
         }
 
-        private D3(Index i, short[] store) {
-            super(i, store);
+        private D3(Index i, boolean isUnsigned, short[] store) {
+            super(i, isUnsigned, store);
             ix = (Index3D) indexCalc;
         }
 
@@ -508,13 +510,13 @@ public class ArrayShort extends Array {
 
         private Index4D ix;
 
-        public D4(int len0, int len1, int len2, int len3) {
-            super(new int[]{len0, len1, len2, len3});
+        public D4(int len0, int len1, int len2, int len3, boolean isUnsigned) {
+            super(new int[]{len0, len1, len2, len3}, isUnsigned);
             ix = (Index4D) indexCalc;
         }
 
-        private D4(Index i, short[] store) {
-            super(i, store);
+        private D4(Index i, boolean isUnsigned, short[] store) {
+            super(i, isUnsigned, store);
             ix = (Index4D) indexCalc;
         }
 
@@ -534,13 +536,13 @@ public class ArrayShort extends Array {
 
         private Index5D ix;
 
-        public D5(int len0, int len1, int len2, int len3, int len4) {
-            super(new int[]{len0, len1, len2, len3, len4});
+        public D5(int len0, int len1, int len2, int len3, int len4, boolean isUnsigned) {
+            super(new int[]{len0, len1, len2, len3, len4}, isUnsigned);
             ix = (Index5D) indexCalc;
         }
 
-        private D5(Index i, short[] store) {
-            super(i, store);
+        private D5(Index i, boolean isUnsigned, short[] store) {
+            super(i, isUnsigned, store);
             ix = (Index5D) indexCalc;
         }
 
@@ -560,13 +562,13 @@ public class ArrayShort extends Array {
 
         private Index6D ix;
 
-        public D6(int len0, int len1, int len2, int len3, int len4, int len5) {
-            super(new int[]{len0, len1, len2, len3, len4, len5});
+        public D6(int len0, int len1, int len2, int len3, int len4, int len5, boolean isUnsigned) {
+            super(new int[]{len0, len1, len2, len3, len4, len5}, isUnsigned);
             ix = (Index6D) indexCalc;
         }
 
-        private D6(Index i, short[] store) {
-            super(i, store);
+        private D6(Index i, boolean isUnsigned, short[] store) {
+            super(i, isUnsigned, store);
             ix = (Index6D) indexCalc;
         }
 
@@ -586,13 +588,13 @@ public class ArrayShort extends Array {
 
         private Index7D ix;
 
-        public D7(int len0, int len1, int len2, int len3, int len4, int len5, int len6) {
-            super(new int[]{len0, len1, len2, len3, len4, len5, len6});
+        public D7(int len0, int len1, int len2, int len3, int len4, int len5, int len6, boolean isUnsigned) {
+            super(new int[]{len0, len1, len2, len3, len4, len5, len6}, isUnsigned);
             ix = (Index7D) indexCalc;
         }
 
-        private D7(Index i, short[] store) {
-            super(i, store);
+        private D7(Index i, boolean isUnsigned, short[] store) {
+            super(i, isUnsigned, store);
             ix = (Index7D) indexCalc;
         }
 

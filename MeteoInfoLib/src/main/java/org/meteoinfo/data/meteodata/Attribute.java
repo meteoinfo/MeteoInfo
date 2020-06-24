@@ -134,14 +134,11 @@ public class Attribute {
         int[] shape = new int[1];
         shape[0] = 1;
         DataType dt = DataType.getType(val.getClass());
-        Array vala = Array.factory(dt.getPrimitiveClassType(), shape);
+        Array vala = Array.factory(dt, shape);
         Index ima = vala.getIndex();
         vala.setObject(ima.set0(0), val);
         setValues(vala);
         this.isUnsigned = isUnsigned;
-        if (isUnsigned) {
-            vala.setUnsigned(true);
-        }
     }
 
     /**

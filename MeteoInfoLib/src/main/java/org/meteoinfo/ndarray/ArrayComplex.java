@@ -91,7 +91,7 @@ public class ArrayComplex extends Array {
      * @param shape the shape of the Array.
      */
     public ArrayComplex(int[] shape) {
-        super(shape);
+        super(DataType.COMPLEX, shape);
         storage = new Complex[(int) indexCalc.getSize()];
     }
 
@@ -112,7 +112,7 @@ public class ArrayComplex extends Array {
      * @param data use this as the backing store. if null, allocate
      */
     ArrayComplex(Index ima, Complex[] data) {
-        super(ima);
+        super(DataType.COMPLEX, ima);
 
         if (data != null) {
             storage = data;
@@ -254,7 +254,7 @@ public class ArrayComplex extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public String getString(Index i) {
-        throw new ForbiddenConversionException();
+        return this.storage[i.currentElement()].toString();
     }
 
     /**
@@ -356,7 +356,7 @@ public class ArrayComplex extends Array {
     }
     
     public String getString(int index) {
-        throw new ForbiddenConversionException();
+        return this.storage[index].toString();
     }
 
     public void setString(int index, String value) {

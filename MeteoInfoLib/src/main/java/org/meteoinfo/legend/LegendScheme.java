@@ -23,9 +23,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
@@ -70,6 +68,7 @@ public class LegendScheme {
     private double minValue;
     private double maxValue;
     private double undef;
+    private Map<Object, ColorBreak> uniqueValueMap;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -194,6 +193,8 @@ public class LegendScheme {
      */
     public void setLegendType(LegendType lt) {
         legendType = lt;
+        if (lt == LegendType.UniqueValue)
+            this.updateUniqueValueMap();
     }
 
     /**
@@ -275,6 +276,8 @@ public class LegendScheme {
      */
     public void setLegendBreaks(List<ColorBreak> breaks) {
         legendBreaks = breaks;
+        if (this.legendType == LegendType.UniqueValue)
+            this.updateUniqueValueMap();
     }
     
     /**
@@ -406,6 +409,8 @@ public class LegendScheme {
      */
     public void addLegendBreak(ColorBreak lb){
         this.legendBreaks.add(lb);
+        if (this.legendType == LegendType.UniqueValue)
+            this.updateUniqueValueMap();
     }
     
     /**
@@ -414,6 +419,8 @@ public class LegendScheme {
      */
     public void addLegendBreak(List<ColorBreak> lb){
         this.legendBreaks.addAll(lb);
+        if (this.legendType == LegendType.UniqueValue)
+            this.updateUniqueValueMap();
     }
     
     /**
@@ -435,24 +442,37 @@ public class LegendScheme {
      * @param v Value
      * @return Legend break
      */
-    public ColorBreak findLegendBreak(double v){
-        double sv, ev;
-        for (ColorBreak cb : this.legendBreaks){
-            sv = Double.parseDouble(cb.getStartValue().toString());
-            ev = Double.parseDouble(cb.getEndValue().toString());
-            if (sv == ev){
-                if (v == sv)
-                    return cb;
-            } else {
-                if (v >= sv && v < ev){
-                    return cb;
+    public ColorBreak findLegendBreak(Number v){
+        switch (this.legendType) {
+            case SingleSymbol:
+                return this.legendBreaks.get(0);
+            case UniqueValue:
+                if (this.uniqueValueMap == null || this.uniqueValueMap.size() != this.legendBreaks.size())
+                    this.updateUniqueValueMap();
+                if (this.uniqueValueMap.containsKey(v)) {
+                    return this.uniqueValueMap.get(v);
+                } else {
+                    return this.legendBreaks.get(0);
                 }
-            }
+            default:
+                double sv, ev;
+                for (ColorBreak cb : this.legendBreaks){
+                    sv = Double.parseDouble(cb.getStartValue().toString());
+                    ev = Double.parseDouble(cb.getEndValue().toString());
+                    if (sv == ev){
+                        if (v.doubleValue() == sv)
+                            return cb;
+                    } else {
+                        if (v.doubleValue() >= sv && v.doubleValue() < ev){
+                            return cb;
+                        }
+                    }
+                }
+                if (v.doubleValue() >= this.getMaxValue())
+                    return this.legendBreaks.get(this.getBreakNum() - 1);
+                else
+                    return this.legendBreaks.get(0);
         }
-        if (v >= this.getMaxValue())
-            return this.legendBreaks.get(this.getBreakNum() - 1);
-        else
-            return this.legendBreaks.get(0);
     }
     
     /**
@@ -494,6 +514,13 @@ public class LegendScheme {
         }
 
         return colors;
+    }
+
+    private void updateUniqueValueMap() {
+        this.uniqueValueMap = new HashMap<Object, ColorBreak>();
+        for (ColorBreak cb : this.legendBreaks) {
+            this.uniqueValueMap.put(Double.parseDouble(cb.getStartValue().toString()), cb);
+        }
     }
 
     /**

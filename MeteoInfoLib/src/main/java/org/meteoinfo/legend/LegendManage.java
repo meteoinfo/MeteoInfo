@@ -558,7 +558,7 @@ public class LegendManage {
                     aPB.setDrawShape(true);
                     aPB.setCaption(String.valueOf(values.get(i)));
 
-                    legendScheme.getLegendBreaks().add(aPB);
+                    legendScheme.addLegendBreak(aPB);
                 }
                 legendScheme.setHasNoData(false);
                 break;
@@ -582,7 +582,7 @@ public class LegendManage {
                         ii = 0;
                     }
 
-                    legendScheme.getLegendBreaks().add(aPLB);
+                    legendScheme.addLegendBreak(aPLB);
                 }
                 legendScheme.setHasNoData(false);
                 break;
@@ -600,7 +600,7 @@ public class LegendManage {
                     aPGB.setCaption(String.valueOf(values.get(i)));
                     //aPGB.Style = (HatchStyle)idxList[i];
 
-                    legendScheme.getLegendBreaks().add(aPGB);
+                    legendScheme.addLegendBreak(aPGB);
                 }
                 legendScheme.setHasNoData(false);
                 break;
@@ -614,7 +614,7 @@ public class LegendManage {
                     aPGB.setCaption(String.valueOf(values.get(i)));
                     //aPGB.Style = (HatchStyle)idxList[i];
 
-                    legendScheme.getLegendBreaks().add(aPGB);
+                    legendScheme.addLegendBreak(aPGB);
                 }
                 legendScheme.setHasNoData(false);
                 break;
@@ -826,7 +826,7 @@ public class LegendManage {
                                 + " - " + DataConvert.removeTailingZeros(aPB.getEndValue().toString()));
                     }
 
-                    legendScheme.getLegendBreaks().add(aPB);
+                    legendScheme.addLegendBreak(aPB);
                 }
                 legendScheme.setHasNoData(false);
                 if (hasNodata) {
@@ -841,7 +841,7 @@ public class LegendManage {
                     aPB.setNoData(true);
                     aPB.setDrawShape(true);
                     aPB.setDrawOutline(true);
-                    legendScheme.getLegendBreaks().add(aPB);
+                    legendScheme.addLegendBreak(aPB);
                     legendScheme.setHasNoData(true);
                 }
                 break;
@@ -878,7 +878,7 @@ public class LegendManage {
                         aPLB.setSymbolStyle(PointStyle.values()[i]);
                     }
 
-                    legendScheme.getLegendBreaks().add(aPLB);
+                    legendScheme.addLegendBreak(aPLB);
                 }
                 legendScheme.setHasNoData(false);
                 break;
@@ -914,7 +914,7 @@ public class LegendManage {
 //                        if (Enum.IsDefined(typeof(HatchStyle), i))
 //                            aPGB.Style = (HatchStyle)i;
 
-                    legendScheme.getLegendBreaks().add(aPGB);
+                    legendScheme.addLegendBreak(aPGB);
                 }
                 legendScheme.setHasNoData(false);
                 break;
@@ -944,7 +944,7 @@ public class LegendManage {
                                 + " - " + DataConvert.removeTailingZeros(aCB.getEndValue().toString()));
                     }
 
-                    legendScheme.getLegendBreaks().add(aCB);
+                    legendScheme.addLegendBreak(aCB);
                 }
                 legendScheme.setHasNoData(false);
                 if (hasNodata) {
@@ -954,7 +954,7 @@ public class LegendManage {
                     aCB.setEndValue(aCB.getStartValue());
                     aCB.setCaption("NoData");
                     aCB.setNoData(true);
-                    legendScheme.getLegendBreaks().add(aCB);
+                    legendScheme.addLegendBreak(aCB);
                     legendScheme.setHasNoData(true);
                 }
                 break;

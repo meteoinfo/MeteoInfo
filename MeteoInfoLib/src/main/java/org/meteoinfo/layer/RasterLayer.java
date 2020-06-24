@@ -215,23 +215,7 @@ public class RasterLayer extends ImageLayer {
                 if (Double.isNaN(oneValue) || MIMath.doubleEquals(oneValue, gdata.missingValue)) {
                     oneColor = undefColor;
                 } else {
-                    oneColor = defaultColor;
-                    if (als.getLegendType() == LegendType.GraduatedColor) {
-                        //循环只到breakNum-1 是因为最后一个LegendBreaks的EndValue和StartValue是一样的
-                        for (int k = 0; k < breakNum - 1; k++) {
-                            if (oneValue < breakValue[k]) {
-                                oneColor = breakColor[k];
-                                break;
-                            }
-                        }
-                    } else {
-                        for (int k = 0; k < breakNum - 1; k++) {
-                            if (oneValue == breakValue[k]) {
-                                oneColor = breakColor[k];
-                                break;
-                            }
-                        }
-                    }
+                    oneColor = als.findLegendBreak(oneValue).getColor();
                 }
                 aImage.setRGB(j, height - i - 1, oneColor.getRGB());
             }

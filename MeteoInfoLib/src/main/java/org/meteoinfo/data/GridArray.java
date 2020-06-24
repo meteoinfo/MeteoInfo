@@ -300,7 +300,16 @@ public class GridArray {
      * @return Value
      */
     public Number getValue(int i, int j) {
-        return (Number) data.getObject(this.index2D.set(i, j));
+        switch (this.data.getDataType()) {
+            case UBYTE:
+                return data.getInt(this.index2D.set(i, j));
+            case USHORT:
+                return data.getInt(this.index2D.set(i, j));
+            case UINT:
+                return data.getLong(this.index2D.set(i, j));
+            default:
+                return (Number) data.getObject(this.index2D.set(i, j));
+        }
     }
 
     /**

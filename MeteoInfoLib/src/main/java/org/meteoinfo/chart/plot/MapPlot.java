@@ -1027,7 +1027,8 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                 drawStr = aGL.getLabString();
                 //if (this.drawDegreeSymbol) {
                 if (drawStr.endsWith("E") || drawStr.endsWith("W") || drawStr.endsWith("N") || drawStr.endsWith("S")) {
-                    drawStr = drawStr.substring(0, drawStr.length() - 1) + String.valueOf((char) 186) + drawStr.substring(drawStr.length() - 1);
+                    drawStr = drawStr.substring(0, drawStr.length() - 1) + String.valueOf((char) 186) +
+                            " " + drawStr.substring(drawStr.length() - 1);
                 } else {
                     drawStr = drawStr + String.valueOf((char) 186);
                 }

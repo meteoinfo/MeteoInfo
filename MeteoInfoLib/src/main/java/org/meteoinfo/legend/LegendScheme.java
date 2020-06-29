@@ -14,7 +14,9 @@
 package org.meteoinfo.legend;
 
 import org.meteoinfo.data.meteodata.DrawType2D;
+import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.shape.ShapeTypes;
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -518,8 +520,21 @@ public class LegendScheme {
 
     private void updateUniqueValueMap() {
         this.uniqueValueMap = new HashMap<Object, ColorBreak>();
+        boolean isDouble = true;
         for (ColorBreak cb : this.legendBreaks) {
-            this.uniqueValueMap.put(Double.parseDouble(cb.getStartValue().toString()), cb);
+            if (!DataConvert.isDouble(cb.getStartValue().toString())) {
+                isDouble = false;
+                break;
+            }
+        }
+        if (isDouble) {
+            for (ColorBreak cb : this.legendBreaks) {
+                this.uniqueValueMap.put(Double.parseDouble(cb.getStartValue().toString()), cb);
+            }
+        } else {
+            for (ColorBreak cb : this.legendBreaks) {
+                this.uniqueValueMap.put(cb.getStartValue(), cb);
+            }
         }
     }
 

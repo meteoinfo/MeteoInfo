@@ -140,7 +140,8 @@ public class LonLatAxis extends Axis implements Cloneable {
             }
             if (drawDegreeSymbol) {
                 if (lab.endsWith("E") || lab.endsWith("W") || lab.endsWith("N") || lab.endsWith("S")) {
-                    lab = lab.substring(0, lab.length() - 1) + String.valueOf((char) 186) + lab.substring(lab.length() - 1);
+                    lab = lab.substring(0, lab.length() - 1) + String.valueOf((char) 186) + " " +
+                            lab.substring(lab.length() - 1);
                 } else {
                     lab = lab + String.valueOf((char) 186);
                 }

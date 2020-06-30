@@ -116,13 +116,13 @@ public abstract class Array {
         } else if ((classType == float.class) || (classType == Float.class)) {
             return ArrayFloat.factory(index);
         } else if ((classType == long.class) || (classType == Long.class)) {
-            return ArrayLong.factory(index);
+            return ArrayLong.factory(index, false);
         } else if ((classType == int.class) || (classType == Integer.class)) {
-            return ArrayInt.factory(index);
+            return ArrayInt.factory(index, false);
         } else if ((classType == short.class) || (classType == Short.class)) {
-            return ArrayShort.factory(index);
+            return ArrayShort.factory(index, false);
         } else if ((classType == byte.class) || (classType == Byte.class)) {
-            return ArrayByte.factory(index);
+            return ArrayByte.factory(index, false);
         } else if ((classType == char.class) || (classType == Character.class)) {
             return ArrayChar.factory(index);
         } else if ((classType == boolean.class) || (classType == Boolean.class)) {

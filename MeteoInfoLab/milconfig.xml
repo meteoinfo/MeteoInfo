@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\neural_network">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
@@ -14,21 +8,27 @@
     <RecentFolder Folder="D:\KeyData\BC_New\script"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\neural_network"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\datasets"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\preprocessing"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\metrics"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\add_curveline.py"/>
-      <OpenedFile File="D:\KeyData\BC_New\script\plot_emis_bc_2010-2008.py"/>
-      <OpenedFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\neural_network\xor.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\datasets\load_mnist.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection\train_test_split_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\mnist_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\add_curveline.py"/>
-      <RecentFile File="D:\KeyData\BC_New\script\plot_emis_bc_2010-2008.py"/>
-      <RecentFile File="D:\KeyData\BC_New\script\plot_bc_ave_map.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\neural_network\xor.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\datasets\load_mnist.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection\train_test_split_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\mnist_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classifer_linear_1.py"/>
     </RecentFiles>
   </File>
   <Font>

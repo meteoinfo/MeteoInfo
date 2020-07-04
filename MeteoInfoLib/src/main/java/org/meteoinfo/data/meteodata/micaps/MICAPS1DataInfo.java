@@ -417,18 +417,22 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
                     r.setInt(i, vi);
                     break;
                 case FLOAT:
-                    v = Float.parseFloat(dataList.get(varIdx));
-                    if (varIdx == 8) //Pressure
-                    {
-                        if (!MIMath.doubleEquals(v, this.getMissingValue())) {
-                            if (v > 800) {
-                                v = v / 10 + 900;
-                            } else {
-                                v = v / 10 + 1000;
+                    try {
+                        v = Float.parseFloat(dataList.get(varIdx));
+                        if (varIdx == 8) //Pressure
+                        {
+                            if (!MIMath.doubleEquals(v, this.getMissingValue())) {
+                                if (v > 800) {
+                                    v = v / 10 + 900;
+                                } else {
+                                    v = v / 10 + 1000;
+                                }
                             }
                         }
+                        r.setFloat(i, v);
+                    } catch (Exception e) {
+                        r.setFloat(i, Float.NaN);
                     }
-                    r.setFloat(i, v);
                     break;
             }
         }
@@ -481,21 +485,25 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
                 dd = (Array) data.get(j);
                 switch (dd.getDataType()) {
                     case INT:
-                        dd.setObject(i, Integer.parseInt(dataList.get(j + 1)));
+                        dd.setInt(i, Integer.parseInt(dataList.get(j + 1)));
                         break;
                     case FLOAT:
-                        v = Float.parseFloat(dataList.get(j + 1));
-                        if (j + 1 == 8) //Pressure
-                        {
-                            if (!MIMath.doubleEquals(v, this.getMissingValue())) {
-                                if (v > 800) {
-                                    v = v / 10 + 900;
-                                } else {
-                                    v = v / 10 + 1000;
+                        try {
+                            v = Float.parseFloat(dataList.get(j + 1));
+                            if (j + 1 == 8) //Pressure
+                            {
+                                if (!MIMath.doubleEquals(v, this.getMissingValue())) {
+                                    if (v > 800) {
+                                        v = v / 10 + 900;
+                                    } else {
+                                        v = v / 10 + 1000;
+                                    }
                                 }
                             }
+                            dd.setFloat(i, v);
+                        } catch (Exception e) {
+                            dd.setFloat(i, Float.NaN);
                         }
-                        dd.setObject(i, v);
                         break;
                 }
             }
@@ -581,17 +589,21 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
             aStid = dataList.get(0);
             lon = Float.parseFloat(dataList.get(1));
             lat = Float.parseFloat(dataList.get(2));
-            t = Float.parseFloat(dataList.get(varIdx));
+            try {
+                t = Float.parseFloat(dataList.get(varIdx));
 
-            if (varIdx == 8) //Pressure
-            {
-                if (!MIMath.doubleEquals(t, this.getMissingValue())) {
-                    if (t > 800) {
-                        t = t / 10 + 900;
-                    } else {
-                        t = t / 10 + 1000;
+                if (varIdx == 8) //Pressure
+                {
+                    if (!MIMath.doubleEquals(t, this.getMissingValue())) {
+                        if (t > 800) {
+                            t = t / 10 + 900;
+                        } else {
+                            t = t / 10 + 1000;
+                        }
                     }
                 }
+            } catch (Exception e) {
+                t = Float.NaN;
             }
 
             stations.add(aStid);

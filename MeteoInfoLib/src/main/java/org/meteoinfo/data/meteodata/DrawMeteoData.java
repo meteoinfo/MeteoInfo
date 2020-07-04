@@ -2041,12 +2041,16 @@ public class DrawMeteoData {
                     for (j = 0; j < stInfoData.getFields().size(); j++) {
                         if (stInfoData.getVariables().contains(stInfoData.getFields().get(j))) {
                             if (dataList.size() <= j) {
-                                v = -9999.0;
+                                v = 9999.0;
                             } else {
                                 if (dataList.get(j).isEmpty()) {
-                                    v = -9999.0;
+                                    v = 9999.0;
                                 } else {
-                                    v = Double.parseDouble(dataList.get(j));
+                                    try {
+                                        v = Double.parseDouble(dataList.get(j));
+                                    } catch (Exception e) {
+                                        v = 9999.0;
+                                    }
                                 }
                             }
                             aLayer.editCellValue(stInfoData.getFields().get(j), shapeNum, v);

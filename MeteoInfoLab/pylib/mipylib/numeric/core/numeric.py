@@ -35,7 +35,7 @@ nan = Double.NaN
 newaxis = None
 
 __all__ = [
-    'pi','e','inf','nan','int','float','float64','acos','absolute','all','any','arange','arange1',
+    'pi','e','inf','nan','acos','absolute','all','any','arange','arange1',
     'argmin','argmax','array','array_split','asanyarray','asarray','asgridarray','asgriddata','asin',
     'asmiarray','asstationdata','atleast_1d','atleast_2d','atan','atan2','ave_month','average','histogram',
     'broadcast_to','cdiff','concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag',

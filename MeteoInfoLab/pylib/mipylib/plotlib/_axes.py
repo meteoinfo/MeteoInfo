@@ -3152,17 +3152,21 @@ class Axes(object):
         cdata = None
         xaxistype = None
         if n < 4 or (n == 4 and isinstance(args[3], int)):
-            x = args[0].dimvalue(1)
-            y = args[0].dimvalue(0)
-            x, y = np.meshgrid(x, y)
             u = args[0]
             v = args[1]
-            if args[0].islondim(1):
-                xaxistype = 'lon'
-            elif args[0].islatdim(1):
-                xaxistype = 'lat'
-            elif args[0].istimedim(1):
-                xaxistype = 'time'
+            if isinstance(u, DimArray):
+                x = u.dimvalue(1)
+                y = u.dimvalue(0)
+                if args[0].islondim(1):
+                    xaxistype = 'lon'
+                elif args[0].islatdim(1):
+                    xaxistype = 'lat'
+                elif args[0].istimedim(1):
+                    xaxistype = 'time'
+            else:
+                x = np.arange(u.shape[1])
+                y = np.arange(u.shape[0])
+            x, y = np.meshgrid(x, y)
             args = args[2:]
             if len(args) > 0:
                 cdata = args[0]

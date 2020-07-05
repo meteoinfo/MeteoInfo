@@ -14,9 +14,12 @@ from mipylib.numeric.core import NDArray, DimArray
 import constants as constants
 
 __all__ = [
-    'dewpoint','dewpoint2rh','dewpoint_rh','dry_lapse','ds2uv','equivalent_potential_temperature','exner_function','h2p',
-    'interpolate_1d','log_interpolate_1d','mixing_ratio','mixing_ratio_from_specific_humidity','moist_lapse','p2h','potential_temperature','qair2rh','rh2dewpoint','relative_humidity_from_specific_humidity',
-    'saturation_mixing_ratio','saturation_vapor_pressure','sigma_to_pressure','tc2tf','temperature_from_potential_temperature','tf2tc','uv2ds','pressure_to_height_std',
+    'cumsimp','dewpoint','dewpoint2rh','dewpoint_rh','dry_lapse','ds2uv','equivalent_potential_temperature',
+    'exner_function','flowfun','h2p',
+    'interpolate_1d','log_interpolate_1d','mixing_ratio','mixing_ratio_from_specific_humidity',
+    'moist_lapse','p2h','potential_temperature','qair2rh','rh2dewpoint','relative_humidity_from_specific_humidity',
+    'saturation_mixing_ratio','saturation_vapor_pressure','sigma_to_pressure','tc2tf',
+    'temperature_from_potential_temperature','tf2tc','uv2ds','pressure_to_height_std',
     'height_to_pressure_std','eof','vapor_pressure','varimax'
     ]
 
@@ -710,6 +713,119 @@ def log_interpolate_1d(x, xp, *args, **kwargs):
     log_x = np.log(x)
     log_xp = np.log(xp)
     return interpolate_1d(log_x, log_xp, *args, **kwargs)
+
+def cumsimp(y):
+    """
+    Simpson-rule column-wise cumulative summation.
+    Numerical approximation of a function F(x) such that
+    Y(X) = dF/dX.  Each column of the input matrix Y represents
+    the value of the integrand  Y(X)  at equally spaced points
+    X = 0,1,...size(Y,1).
+    The output is a matrix  F of the same size as Y.
+    The first row of F is equal to zero and each following row
+    is the approximation of the integral of each column of matrix
+    Y up to the givem row.
+    CUMSIMP assumes continuity of each column of the function Y(X)
+    and uses Simpson rule summation.
+    Similar to the command F = CUMSUM(Y), exept for zero first
+    row and more accurate summation (under the assumption of
+    continuous integrand Y(X)).
+
+    Transferred from MATLAT code by Kirill K. Pankratov, March 7, 1994.
+
+    :param y: (*array*) Input 2-D array.
+
+    :returns: (*array*) Summation result.
+    """
+    # 3-points interpolation coefficients to midpoints.
+    # Second-order polynomial (parabolic) interpolation coefficients
+    # from  Xbasis = [0 1 2]  to  Xint = [.5 1.5]
+    c1 = 3./8; c2 = 6./8; c3 = -1./8
+
+    # Determine the size of the input and make column if vector
+    ist = 0         # If to be transposed
+    lv = y.shape[0]
+    if lv == 1:
+        ist = 1
+        y = y.T
+        lv = len(y)
+    f = np.zeros(y.shape)
+
+    # If only 2 elements in columns - simple sum divided by 2
+    if lv == 2:
+        f[1,:] = (y[0,:] + y[1]) / 2
+        if ist:
+            f = f.T   # Transpose output if necessary
+        return f
+
+    # If more than two elements in columns - Simpson summation
+    num = np.arange(0, lv-2)
+    # Interpolate values of Y to all midpoints
+    f[num+1,:] = c1*y[num,:]+c2*y[num+1,:]+c3*y[num+2,:]
+    f[num+2,:] = f[num+2,:]+c3*y[num,:]+c2*y[num+1,:]+c1*y[num+2,:]
+    f[1,:] = f[1,:]*2; f[lv-1,:] = f[lv-1,:]*2
+    # Now Simpson (1,4,1) rule
+    f[1:lv,:] = 2*f[1:lv,:]+y[0:lv-1,:]+y[1:lv,:]
+    f = np.cumsum(f, axis=0) / 6  # Cumulative sum, 6 - denom. from the Simpson rule
+
+    if ist:
+        f = f.T     # Transpose output if necessary
+
+    return f
+
+def flowfun(u, v):
+    """
+    Computes the potential PHI and the streamfunction PSI
+     of a 2-dimensional flow defined by the matrices of velocity
+     components U and V, so that
+
+           d(PHI)    d(PSI)          d(PHI)    d(PSI)
+      u =  -----  -  ----- ,    v =  -----  +  -----
+            dx        dy              dx        dy
+
+     For a potential (irrotational) flow  PSI = 0, and the laplacian
+     of PSI is equal to the divergence of the velocity field.
+     A non-divergent flow can be described by the streamfunction
+     alone, and the laplacian of the streamfunction is equal to
+     vorticity (curl) of the velocity field.
+     The stepsizes dx and dy are assumed to equal unity.
+    [PHI,PSI] = FLOWFUN(U,V), or in a complex form
+    [PHI,PSI] = FLOWFUN(U+iV)
+     returns matrices PHI and PSI of the same sizes as U and V,
+     containing potential and streamfunction given by velocity
+     components U, V.
+     Because these potentials are defined up to the integration
+     constant their absolute values are such that
+     PHI(1,1) = PSI(1,1) = 0.
+
+    Uses command CUMSIMP (Simpson rule summation).
+
+    transferred from MATLAB code by Kirill K. Pankratov, March 7, 1994.
+
+    :param u: (*array*) U component of the wind. 2-D array.
+    :param v: (*array*) V component of the wind, 2-D array.
+
+    :returns: (*array*) Stream function and potential velocity.
+    """
+    ly, lx = u.shape  # Size of the velocity matrices
+
+    # Now the main computations .........................................
+    # Integrate velocity fields to get potential and streamfunction
+    # Use Simpson rule summation (function CUMSIMP)
+
+    # Compute potential PHI (potential, non-rotating part)
+    cx = cumsimp(u[0,:][np.newaxis,:])  # Compute x-integration constant
+    cy = cumsimp(v[:,0][:,np.newaxis])  # Compute y-integration constant
+    phi = cumsimp(v) + np.tile(cx, [ly,1])
+    phi = (phi+cumsimp(u.T).T + np.tile(cy, [1,lx]))/2
+
+    # Compute streamfunction PSI (solenoidal part)
+    cx = cumsimp(v[0,:][np.newaxis,:])  # Compute x-integration constant
+    cy = cumsimp(u[:,0][:,np.newaxis])  # Compute y-integration constant
+    psi = -cumsimp(u) + np.tile(cx, [ly,1])
+    psi = (psi+cumsimp(v.T).T - np.tile(cy, [1,lx]))/2
+
+    return psi, phi
     
 def eof(x, svd=False, transform=False):
     '''

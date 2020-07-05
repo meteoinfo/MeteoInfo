@@ -105,18 +105,18 @@ class NDArray(object):
             
         if self.ndim == 0:
             return self
-        
-        newaxisn = 0
-        newaxis = False
+
+        newaxis = []
         if len(indices) > self.ndim:
-            newaxisn = len(indices) - self.ndim
-            newaxis = True
-            for i in range(newaxisn):
-                if not indices[-i - 1] is None:
-                    newaxis = False
-            if newaxis:
-                indices = list(indices)
-                indices = indices[:-newaxisn]
+            nindices = []
+            i = 0
+            for ii in indices:
+                if ii is None:
+                    newaxis.append(i)
+                else:
+                    nindices.append(ii)
+                i += 1
+            indices = nindices
         
         if len(indices) != self.ndim:
             print 'indices must be ' + str(self.ndim) + ' dimensions!'
@@ -197,8 +197,8 @@ class NDArray(object):
             MAMath.copy(rr, r)
             rr = NDArray(rr)
             newshape = list(rr.shape)
-            for i in range(newaxisn):
-                newshape.append(1)
+            for i in newaxis:
+                newshape.insert(i, 1)
             return rr.reshape(newshape)
                 
         if r.getSize() == 1:

@@ -82,6 +82,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     private Graphic boundary;
     private ChartScaleBar scaleBar;
     private ChartNorthArrow northArrow;
+    private boolean degreeSpace = false;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -418,6 +419,21 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         this.northArrow = value;
     }
 
+    /**
+     * Get if using space between degree and E/W/S/N
+     * @return Boolean
+     */
+    public boolean isDegreeSpace() {
+        return this.degreeSpace;
+    }
+
+    /**
+     * Set if using space between degree and E/W/S/N
+     * @param value Boolean
+     */
+    public void setDegreeSpace(boolean value) {
+        this.degreeSpace = value;
+    }
     // </editor-fold>
     // <editor-fold desc="Methods">
     /**
@@ -1027,8 +1043,13 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                 drawStr = aGL.getLabString();
                 //if (this.drawDegreeSymbol) {
                 if (drawStr.endsWith("E") || drawStr.endsWith("W") || drawStr.endsWith("N") || drawStr.endsWith("S")) {
-                    drawStr = drawStr.substring(0, drawStr.length() - 1) + String.valueOf((char) 186) +
-                            " " + drawStr.substring(drawStr.length() - 1);
+                    if (this.degreeSpace) {
+                        drawStr = drawStr.substring(0, drawStr.length() - 1) + String.valueOf((char) 186) +
+                                " " + drawStr.substring(drawStr.length() - 1);
+                    } else {
+                        drawStr = drawStr.substring(0, drawStr.length() - 1) + String.valueOf((char) 186) +
+                                drawStr.substring(drawStr.length() - 1);
+                    }
                 } else {
                     drawStr = drawStr + String.valueOf((char) 186);
                 }

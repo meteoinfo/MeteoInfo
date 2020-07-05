@@ -18,6 +18,7 @@ public class LonLatAxis extends Axis implements Cloneable {
 
     private boolean drawDegreeSymbol;
     private boolean longitude;
+    private boolean degreeSpace;
     
     /**
      * Constructor
@@ -30,6 +31,7 @@ public class LonLatAxis extends Axis implements Cloneable {
         
         this.drawDegreeSymbol = true;
         this.longitude = longitude;
+        this.degreeSpace = false;
     }
     
     /**
@@ -103,6 +105,22 @@ public class LonLatAxis extends Axis implements Cloneable {
     public void setLongitude(boolean value){
         this.longitude = value;
     }
+
+    /**
+     * Get if using space between degree and E/W/S/N
+     * @return Boolean
+     */
+    public boolean isDegreeSpace() {
+        return this.degreeSpace;
+    }
+
+    /**
+     * Set if using space between degree and E/W/S/N
+     * @param value Boolean
+     */
+    public void setDegreeSpace(boolean value) {
+        this.degreeSpace = value;
+    }
     
     /**
      * Get tick labels
@@ -140,8 +158,13 @@ public class LonLatAxis extends Axis implements Cloneable {
             }
             if (drawDegreeSymbol) {
                 if (lab.endsWith("E") || lab.endsWith("W") || lab.endsWith("N") || lab.endsWith("S")) {
-                    lab = lab.substring(0, lab.length() - 1) + String.valueOf((char) 186) + " " +
-                            lab.substring(lab.length() - 1);
+                    if (degreeSpace) {
+                        lab = lab.substring(0, lab.length() - 1) + String.valueOf((char) 186) + " " +
+                                lab.substring(lab.length() - 1);
+                    } else {
+                        lab = lab.substring(0, lab.length() - 1) + String.valueOf((char) 186) +
+                                lab.substring(lab.length() - 1);
+                    }
                 } else {
                     lab = lab + String.valueOf((char) 186);
                 }

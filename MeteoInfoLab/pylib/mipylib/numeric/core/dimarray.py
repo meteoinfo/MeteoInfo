@@ -63,6 +63,18 @@ class DimArray(NDArray):
             i += 1
         if allint:
             return self._array.getObject(aindex)
+
+        newaxis = []
+        if len(indices) > self.ndim:
+            nindices = []
+            i = 0
+            for ii in indices:
+                if ii is None:
+                    newaxis.append(i)
+                else:
+                    nindices.append(ii)
+                i += 1
+            indices = nindices
         
         if len(indices) != self.ndim:
             print 'indices must be ' + str(self.ndim) + ' dimensions!'
@@ -162,10 +174,12 @@ class DimArray(NDArray):
                 else:
                     step = 1 if k.step is None else k.step
                 alllist = False
-            elif isinstance(k, list):
+            elif isinstance(k, (list, tuple, NDArray)):
                 onlyrange = False
                 isrange = False
-                if not isinstance(k[0], datetime.datetime):                    
+                if not isinstance(k[0], datetime.datetime):
+                    if isinstance(k, NDArray):
+                        k = k.aslist()
                     ranges.append(k)
                 else:
                     tlist = []
@@ -237,6 +251,21 @@ class DimArray(NDArray):
                 return NDArray(r)
             else:
                 r = ArrayMath.take(self._array, ranges)
+
+        if newaxis:
+            for i in flips:
+                r = r.flip(i)
+            rr = Array.factory(r.getDataType(), r.getShape())
+            MAMath.copy(rr, r)
+            rr = NDArray(rr)
+            newshape = list(rr.shape)
+            for i in newaxis:
+                newshape.insert(i, 1)
+            rr = rr.reshape(newshape)
+            if onlyrange:
+                rr.base = self.get_base()
+            return rr
+
         if r.getSize() == 1:
             iter = r.getIndexIterator()
             return iter.getObjectNext()

@@ -162,6 +162,7 @@ class NDArray(object):
             else:
                 print k
                 return None
+
             if step < 0:
                 step = abs(step)
                 flips.append(i)
@@ -199,7 +200,10 @@ class NDArray(object):
             newshape = list(rr.shape)
             for i in newaxis:
                 newshape.insert(i, 1)
-            return rr.reshape(newshape)
+            rr = rr.reshape(newshape)
+            if onlyrange:
+                rr.base = self.get_base()
+            return rr
                 
         if r.getSize() == 1:
             iter = r.getIndexIterator()

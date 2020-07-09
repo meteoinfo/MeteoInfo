@@ -420,6 +420,10 @@ public class ChartColorBar extends ChartLegend {
             int tickIdx;
             for (int i = 0; i < bNum; i++) {
                 ColorBreak cb = aLS.getLegendBreaks().get(i);
+                if (i == bNum - 1) {
+                    if (cb.getStartValue().equals(cb.getEndValue()))
+                        continue;
+                }
                 double v = Double.parseDouble(cb.getEndValue().toString());
                 if (this.tickLocations.contains(v)) {
                     labelIdxs.add(i);
@@ -733,6 +737,10 @@ public class ChartColorBar extends ChartLegend {
             int tickIdx;
             for (int i = 0; i < bNum; i++) {
                 ColorBreak cb = aLS.getLegendBreaks().get(i);
+                if (i == bNum - 1) {
+                    if (cb.getStartValue().equals(cb.getEndValue()))
+                        continue;
+                }
                 double v = Double.parseDouble(cb.getEndValue().toString());
                 if (this.tickLocations.contains(v)) {
                     labelIdxs.add(i);

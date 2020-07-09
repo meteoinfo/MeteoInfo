@@ -2279,6 +2279,9 @@ public class DrawMeteoData {
                 yIter.next();
                 uIter.next();
                 vIter.next();
+                if (stData != null) {
+                    cIter.next();
+                }
             }
         }
 
@@ -2350,34 +2353,34 @@ public class DrawMeteoData {
             windDir = wdIter.getFloatNext();
             windSpeed = wsIter.getFloatNext();
             if (!Double.isNaN(windDir) && !Double.isNaN(windSpeed)) {
-                    aPoint = new PointD();
-                    aPoint.X = xIter.getDoubleNext();
-                    aPoint.Y = yIter.getDoubleNext();
-                    aWB = Draw.calWindBarb((float) windDir, (float) windSpeed, 0, 10, aPoint);
-                    if (stData != null) {
-                        v = cIter.getDoubleNext();
-                        aWB.setValue(v);
-                    }
+                aPoint = new PointD();
+                aPoint.X = xIter.getDoubleNext();
+                aPoint.Y = yIter.getDoubleNext();
+                aWB = Draw.calWindBarb((float) windDir, (float) windSpeed, 0, 10, aPoint);
+                if (stData != null) {
+                    v = cIter.getDoubleNext();
+                    aWB.setValue(v);
+                }
 
-                    int shapeNum = aLayer.getShapeNum();
-                    try {
-                        if (aLayer.editInsertShape(aWB, shapeNum)) {
-                            if (isUV) {
-                                aLayer.editCellValue("U", shapeNum, uIter.getDoubleNext());
-                                aLayer.editCellValue("V", shapeNum, vIter.getDoubleNext());
-                            }
-                            aLayer.editCellValue("WindDirection", shapeNum, aWB.angle);
-                            aLayer.editCellValue("WindSpeed", shapeNum, aWB.windSpeed);
-                            if (ifAdd) {
-                                if (stData != null) {
-                                    aLayer.editCellValue(columnName, shapeNum, v);
-                                }
+                int shapeNum = aLayer.getShapeNum();
+                try {
+                    if (aLayer.editInsertShape(aWB, shapeNum)) {
+                        if (isUV) {
+                            aLayer.editCellValue("U", shapeNum, uIter.getDoubleNext());
+                            aLayer.editCellValue("V", shapeNum, vIter.getDoubleNext());
+                        }
+                        aLayer.editCellValue("WindDirection", shapeNum, aWB.angle);
+                        aLayer.editCellValue("WindSpeed", shapeNum, aWB.windSpeed);
+                        if (ifAdd) {
+                            if (stData != null) {
+                                aLayer.editCellValue(columnName, shapeNum, v);
                             }
                         }
-                    } catch (Exception ex) {
-                        Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } else {
+                } catch (Exception ex) {
+                    Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
                 xIter.next();
                 yIter.next();
                 uIter.next();

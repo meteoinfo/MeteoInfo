@@ -64,12 +64,14 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                 switch (ke.getKeyCode()) {
                     // Control-C
                     case (KeyEvent.VK_C):
-                        if (myWorker != null && !myWorker.isCancelled() && !myWorker.isDone()) {
-                            myWorker.cancel(true);
-                            myWorker = null;
-                            //myWorker = new SmallWorker();
-                            //myWorker.execute();
-                            //enter();
+                        if (ke.isControlDown()) {
+                            if (myWorker != null && !myWorker.isCancelled() && !myWorker.isDone()) {
+                                myWorker.cancel(true);
+                                myWorker = null;
+                                //myWorker = new SmallWorker();
+                                //myWorker.execute();
+                                //enter();
+                            }
                         }
                         break;
                 }

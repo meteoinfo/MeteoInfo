@@ -579,16 +579,40 @@ public class ArrayUtil {
             }
             return a;
         } else if (d0 instanceof List) {
-            int ndim = data.size();
-            int len = ((List) d0).size();
-            if (dt == null)
-                dt = ArrayUtil.objectsToType((List<Object>) d0);
-            Array a = Array.factory(dt, new int[]{ndim, len});
-            for (int i = 0; i < ndim; i++) {
-                List<Object> d = (List) data.get(i);
-                for (int j = 0; j < len; j++) {
-                    a.setObject(i * len + j, d.get(j));
+            List<Integer> dims = new ArrayList<>();
+            dims.add(data.size());
+            dims.add(((List) d0).size());
+            Object v = ((List) d0).get(0);
+            if (v instanceof List) {
+                d0 = v;
+            }
+            while (v instanceof List) {
+                dims.add(((List) v).size());
+                v = ((List) v).get(0);
+                if (v instanceof List) {
+                    d0 = v;
+                } else {
+                    break;
                 }
+            }
+            if (dt == null)
+                dt = ArrayUtil.objectsToType((List) d0);
+            int ndim = dims.size();
+            int[] shape = dims.stream().mapToInt(Integer::valueOf).toArray();
+            Array a = Array.factory(dt, shape);
+            Index index = a.getIndex();
+            int[] counter;
+            List vList;
+            for (int i = 0; i < a.getSize(); i++) {
+                counter = index.getCurrentCounter();
+                vList = (List) data.get(counter[0]);
+                if (ndim > 2) {
+                    for (int j = 1; j < ndim - 1; j++) {
+                        vList = (List) vList.get(counter[j]);
+                    }
+                }
+                a.setObject(index, vList.get(counter[ndim - 1]));
+                index.incr();
             }
             return a;
         } else {

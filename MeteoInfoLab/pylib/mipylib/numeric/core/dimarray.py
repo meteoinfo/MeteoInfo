@@ -817,6 +817,24 @@ class DimArray(NDArray):
         '''
         r = super(DimArray, self).abs()
         return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def ceil(self):
+        '''
+        Return the ceiling of the input, element-wise.
+
+        :return: The ceiling of each element.
+        '''
+        r = super(DimArray, self).ceil()
+        return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def floor(self):
+        '''
+        Return the floor of the input, element-wise.
+
+        :return: The floor of each element.
+        '''
+        r = super(DimArray, self).floor()
+        return DimArray(r, self.dims, self.fill_value, self.proj)
         
     def sqrt(self):
         '''

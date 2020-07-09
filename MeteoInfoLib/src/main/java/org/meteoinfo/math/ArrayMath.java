@@ -2614,6 +2614,54 @@ public class ArrayMath {
     }
 
     /**
+     * Return the ceiling of the input, element-wise.
+     *
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array ceil(Array a) {
+        Array r;
+        IndexIterator iterA = a.getIndexIterator();
+        r = Array.factory(a.getDataType(), a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setDouble(i, Math.ceil(a.getDouble(i)));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setDoubleNext(Math.ceil(iterA.getDoubleNext()));
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Return the ceiling of the input, element-wise.
+     *
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array floor(Array a) {
+        Array r;
+        IndexIterator iterA = a.getIndexIterator();
+        r = Array.factory(a.getDataType(), a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setDouble(i, Math.floor(a.getDouble(i)));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setDoubleNext(Math.floor(iterA.getDoubleNext()));
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Array equal
      *
      * @param a Array a

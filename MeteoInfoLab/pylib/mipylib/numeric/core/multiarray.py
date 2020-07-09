@@ -621,6 +621,22 @@ class NDArray(object):
             For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
         '''
         return NDArray(ArrayMath.abs(self._array))
+
+    def ceil(self):
+        '''
+        Return the ceiling of the input, element-wise.
+
+        :return: The ceiling of each element.
+        '''
+        return NDArray(ArrayMath.ceil(self._array))
+
+    def floor(self):
+        '''
+        Return the floor of the input, element-wise.
+
+        :return: The floor of each element.
+        '''
+        return NDArray(ArrayMath.floor(self._array))
             
     def ave(self, fill_value=None):
         if fill_value == None:

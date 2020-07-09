@@ -38,8 +38,8 @@ __all__ = [
     'pi','e','inf','nan','acos','absolute','all','any','arange','arange1',
     'argmin','argmax','array','array_split','asanyarray','asarray','asgridarray','asgriddata','asin',
     'asmiarray','asstationdata','atleast_1d','atleast_2d','atan','atan2','ave_month','average','histogram',
-    'broadcast_to','cdiff','concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag',
-    'diff','dim_array','datatable','dot','empty','exp','eye','fmax','fmin','full',
+    'broadcast_to','cdiff','ceil','concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag',
+    'diff','dim_array','datatable','dot','empty','exp','eye','floor','fmax','fmin','full',
     'griddata','hcurl','hdivg','hstack','identity','interp2d',
     'interpn','isarray','isfinite','isinf','isnan','linint2','linregress','linspace','log','log10',
     'logical_not','logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum',
@@ -551,6 +551,36 @@ def absolute(x):
         return x.abs()
     else:
         return abs(x)
+
+def ceil(x):
+    '''
+    Return the ceiling of the input, element-wise.
+
+    :param x: (*array_like*) Input array.
+
+    :return: The ceiling of each element.
+    '''
+    if isinstance(x, list):
+        x = array(x)
+    if isinstance(x, NDArray):
+        return x.ceil()
+    else:
+        return math.ceil(x)
+
+def floor(x):
+    '''
+    Return the floor of the input, element-wise.
+
+    :param x: (*array_like*) Input array.
+
+    :return: The floor of each element.
+    '''
+    if isinstance(x, list):
+        x = array(x)
+    if isinstance(x, NDArray):
+        return x.floor()
+    else:
+        return math.floor(x)
 
 def square(x):
     """

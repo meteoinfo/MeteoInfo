@@ -6785,18 +6785,24 @@ public class MapView extends JPanel implements IWebMapPanel {
                 //lon = lon - 360;
             }*/
 
-            if (!_projection.isLonLatMap()) {
-                if (refLon == 180 || refLon == -180) {
-                    if (lon == 180 || lon == -180) {
+            switch (_projection.getProjInfo().getProjectionName()) {
+                case LongLat:
+                case North_Polar_Stereographic_Azimuthal:
+                case South_Polar_Stereographic_Azimuthal:
+                case Stereographic_Azimuthal:
+                    break;
+                default:
+                    if (refLon == 180 || refLon == -180) {
+                        if (lon == 180 || lon == -180) {
+                            isLabelLon = true;
+                            lon = BigDecimalUtil.add(lon, Delt_Lon);
+                            continue;
+                        }
+                    } else if (MIMath.doubleEquals(lon, refLon)) {
                         isLabelLon = true;
                         lon = BigDecimalUtil.add(lon, Delt_Lon);
                         continue;
                     }
-                } else if (MIMath.doubleEquals(lon, refLon)) {
-                    isLabelLon = true;
-                    lon = BigDecimalUtil.add(lon, Delt_Lon);
-                    continue;
-                }
             }
 
             aPLS = new PolylineShape();

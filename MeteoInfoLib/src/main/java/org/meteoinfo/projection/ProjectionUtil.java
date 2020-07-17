@@ -806,7 +806,15 @@ public class ProjectionUtil {
                         }
 
                         if (aPGS.getExtent().minX <= refLon && aPGS.getExtent().maxX >= refLon) {
-                            pgsList.add(GeoComputation.clipPolygonShape_Lon(aPGS, refLon));
+                            switch (toProj.getProjectionName()) {
+                                case North_Polar_Stereographic_Azimuthal:
+                                case South_Polar_Stereographic_Azimuthal:
+                                    pgsList.add(aPGS);
+                                    break;
+                                default:
+                                    pgsList.add(GeoComputation.clipPolygonShape_Lon(aPGS, refLon));
+                                    break;
+                            }
                         } else {
                             pgsList.add(aPGS);
                         }

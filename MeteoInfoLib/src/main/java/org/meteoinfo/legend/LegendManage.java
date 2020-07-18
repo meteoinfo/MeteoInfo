@@ -35,6 +35,7 @@ import org.meteoinfo.shape.PointShape;
 import org.meteoinfo.shape.PolygonShape;
 import org.meteoinfo.shape.PolylineShape;
 import org.meteoinfo.shape.Shape;
+import wcontour.Legend;
 
 /**
  * Legend manage class
@@ -961,6 +962,28 @@ public class LegendManage {
         }
 
         return legendScheme;
+    }
+
+    /**
+     * Create legend scheme
+     * @param values Value list
+     * @param colors Color list
+     * @return Legend scheme
+     */
+    public static LegendScheme createLegendScheme(List<Number> values, List<Color> colors) {
+        if (values.size() == colors.size()) {
+            return createUniqValueLegendScheme(values, colors, ShapeTypes.Image);
+        } else {
+            double[] vs = new double[values.size()];
+            for (int i = 0; i < vs.length; i++) {
+                vs[i] = values.get(i).doubleValue();
+            }
+            Color[] cs = new Color[values.size()];
+            for (int i = 0; i < cs.length; i++) {
+                cs[i] = colors.get(i);
+            }
+            return createGraduatedLegendScheme(vs, cs, ShapeTypes.Image, -Double.MAX_VALUE, Double.MIN_VALUE);
+        }
     }
 
     /**

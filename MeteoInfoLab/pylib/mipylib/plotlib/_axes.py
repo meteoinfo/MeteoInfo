@@ -1340,33 +1340,34 @@ class Axes(object):
             #Create graphics
             graphics = GraphicFactory.createPoints(xdata, ydata, c.asarray(), ls)
         else:
-            colors = plotutil.getcolors(c, alpha)   
+            colors = plotutil.getcolors(c, alpha)
+            edgecolors = kwargs.pop('edgecolors', pb.getOutlineColor())
             pbs = []
-            if isinstance(s, int):   
-                pb.setSize(s)
-                if len(colors) == 1:
-                    pb.setColor(colors[0])
-                    pbs.append(pb)
-                else:
-                    n = len(colors)
-                    for i in range(0, n):
-                        npb = pb.clone()
-                        npb.setColor(colors[i])
-                        pbs.append(npb)
+            if isinstance(s, int):
+                s = [s]
+            n = max(len(s), len(colors))
+            if isinstance(edgecolors, Color):
+                edgecolors = [edgecolors]
+            if n == 1:
+                n = len(edgecolors)
+            if n == 1:
+                pb.setSize(s[0])
+                pb.setColor(colors[0])
+                pb.setOutlineColor(edgecolors[0])
             else:
-                n = len(s)
+                if len(s) == 1:
+                    s = s * n
                 if len(colors) == 1:
-                    pb.setColor(colors[0])
-                    for i in range(0, n):
-                        npb = pb.clone()
-                        npb.setSize(s[i])
-                        pbs.append(npb)
-                else:
-                    for i in range(0, n):
-                        npb = pb.clone()
-                        npb.setSize(s[i])
-                        npb.setColor(colors[i])
-                        pbs.append(npb)
+                    colors = colors * n
+                if len(edgecolors) == 1:
+                    edgecolors = edgecolors * n
+                for i in range(n):
+                    kwargs['size'] = s[i]
+                    kwargs['color'] = colors[i]
+                    kwargs['edgecolor'] = edgecolors[i]
+                    npb = pb.clone()
+                    plotutil.setpointlegendbreak(npb, **kwargs)
+                    pbs.append(npb)
             #Create graphics
             graphics = GraphicFactory.createPoints(xdata, ydata, pbs)
 
@@ -3595,6 +3596,7 @@ class Axes(object):
                 labelfont = Font(labfontname, Font.PLAIN, labfontsize)    
         else:
             labelfont = plotutil.getfont(labelfontdic)
+
         if isinstance(mappable, MILayer):
             ls = mappable.legend()
         elif isinstance(mappable, LegendScheme):
@@ -3602,7 +3604,7 @@ class Axes(object):
         elif isinstance(mappable, GraphicCollection):
             ls = mappable.getLegendScheme()
         else:
-            ls = plotutil.makelegend(mappable)
+            ls = plotutil.makelegend(mappable, **kwargs)
         
         newlegend = kwargs.pop('newlegend', True)
         if newlegend:

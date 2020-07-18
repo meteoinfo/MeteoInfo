@@ -548,6 +548,7 @@ def setlegendscheme_point(ls, **kwargs):
     ls = ls.convertTo(ShapeTypes.Point)  
     sizes = kwargs.get('size', None)
     colors = kwargs.get('colors', None)
+    edgecolors = kwargs.get('edgecolors', None)
     marker = kwargs.get('marker', None)
     i = 0
     for lb in ls.getLegendBreaks():
@@ -555,6 +556,8 @@ def setlegendscheme_point(ls, **kwargs):
             kwargs['size'] = sizes[i]
         if isinstance(colors, (list, tuple, NDArray)):
             kwargs['color'] = colors[i]
+        if isinstance(edgecolors, (list, tuple, NDArray)):
+            kwargs['edgecolor'] = edgecolors[i]
         if isinstance(marker, (list, tuple, NDArray)):
             kwargs['marker'] = marker[i]
         setpointlegendbreak(lb, **kwargs)
@@ -998,7 +1001,20 @@ def makelegend(source, **kwargs):
             source = getcolormap(source)
     else:
         if isinstance(source, list):
-            ls = LegendScheme(source)
+            if isinstance(source[0], ColorBreak):
+                ls = LegendScheme(source)
+            else:
+                colors = getcolors(source)
+                values = kwargs.pop('values', None)
+                if values is None:
+                    cbs = []
+                    for c in colors:
+                        cb = ColorBreak()
+                        cb.setColor(c)
+                        cbs.append(cb)
+                    ls = LegendScheme(cbs)
+                else:
+                    ls = LegendManage.createLegendScheme(values, colors)
         else:
             values = kwargs.pop('values', None)
             if values is None:

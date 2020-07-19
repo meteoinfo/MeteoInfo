@@ -1354,6 +1354,7 @@ class Axes(object):
                 pb.setSize(s[0])
                 pb.setColor(colors[0])
                 pb.setOutlineColor(edgecolors[0])
+                pbs.append(pb)
             else:
                 if len(s) == 1:
                     s = s * n

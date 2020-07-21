@@ -1342,6 +1342,8 @@ class Axes(object):
         else:
             colors = plotutil.getcolors(c, alpha)
             edgecolors = kwargs.pop('edgecolors', pb.getOutlineColor())
+            if edgecolors is None:
+                edgecolors = [Color.black]
             pbs = []
             if isinstance(s, int):
                 s = [s]

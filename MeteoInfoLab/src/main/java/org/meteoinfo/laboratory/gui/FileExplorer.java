@@ -200,6 +200,8 @@ public class FileExplorer extends JPanel implements MouseListener{
         ImageIcon folderIcon = new ImageIcon(folderURL);
         java.net.URL fileURL = this.getClass().getResource("/images/TSB_NewFile.Image.png");
         ImageIcon fileIcon = new ImageIcon(fileURL);
+        java.net.URL pyFileURL = this.getClass().getResource("/images/python_16px.png");
+        ImageIcon pyFileIcon = new ImageIcon(pyFileURL);
         File[] files = path.listFiles();
         Arrays.sort(files);
         for (File file : files){
@@ -211,12 +213,15 @@ public class FileExplorer extends JPanel implements MouseListener{
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/M/d hh:mm");
         for (File file : files) {
             String name = file.getName();
-            if (file.isFile()) {                              
+            if (file.isFile()) {
+                String suffix = "";
+                IconText iconText = new IconText(fileIcon, name);
                 if (name.lastIndexOf(".") != -1) {
-                    dtmFile.addRow(new Object[]{new IconText(fileIcon, name), sizeFormat(file.length()), name.substring(name.lastIndexOf(".") + 1), formatter.format(JDateUtil.asLocalDateTime(file.lastModified()))});
-                } else {
-                    dtmFile.addRow(new Object[]{new IconText(fileIcon, name), sizeFormat(file.length()), "", formatter.format(JDateUtil.asLocalDateTime(file.lastModified()))});
+                    suffix = name.substring(name.lastIndexOf(".") + 1);
+                    if (suffix.equalsIgnoreCase("py"))
+                        iconText = new IconText(pyFileIcon, name);
                 }
+                dtmFile.addRow(new Object[]{iconText, sizeFormat(file.length()), suffix, formatter.format(JDateUtil.asLocalDateTime(file.lastModified()))});
             }
         }
 

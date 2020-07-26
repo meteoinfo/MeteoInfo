@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>0.36</version>
+            <version>0.38</version>
         </dependency>
     </dependencies>
     <properties>

@@ -5,32 +5,32 @@
  */
 package org.meteoinfo.table;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 /**
  *
  * @author yaqiang
  */
 public class IconText {
-    private final ImageIcon imageIcon;
+    private final Icon icon;
     private final String text;
     
     /**
      * Constructor
-     * @param icon ImageIcon
+     * @param icon Icon
      * @param text Text
      */
-    public IconText(ImageIcon icon, String text){
-        this.imageIcon = icon;
+    public IconText(Icon icon, String text){
+        this.icon = icon;
         this.text = text;
     }
     
     /**
-     * Get image icon
-     * @return Image icon
+     * Get icon
+     * @return Icon
      */
-    public ImageIcon getImageIcon(){
-        return this.imageIcon;
+    public Icon getImageIcon(){
+        return this.icon;
     }
     
     /**

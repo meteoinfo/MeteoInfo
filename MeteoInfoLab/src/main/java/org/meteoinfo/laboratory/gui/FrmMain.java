@@ -43,6 +43,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.WindowConstants;
 import javax.xml.parsers.ParserConfigurationException;
+
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.global.colors.ColorMap;
 import org.meteoinfo.global.colors.ColorUtil;
 import org.meteoinfo.laboratory.Options;
@@ -488,6 +490,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jToolBar_Editor.setPreferredSize(new java.awt.Dimension(250, 25));
 
         jButton_NewFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewFile.Image.png"))); // NOI18N
+        //jButton_NewFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-text.svg"));
         jButton_NewFile.setToolTipText("New File");
         jButton_NewFile.setFocusable(false);
         jButton_NewFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -537,6 +540,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jToolBar_Editor.add(jSeparator1);
 
         jButton_Undo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Undo.Image.png"))); // NOI18N
+        //jButton_Undo.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/undo.svg"));
         jButton_Undo.setToolTipText("Undo");
         jButton_Undo.setFocusable(false);
         jButton_Undo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);

@@ -48,7 +48,6 @@
     <orderEntry type="library" name="Maven: org.freehep:freehep-util:2.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.netbeans:openide-lookup:1.9-patched-1.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math3:3.6.1" level="project" />
-    <orderEntry type="library" name="Maven: org.locationtech.jts:jts-core:1.16.1" level="project" />
     <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.7" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-main:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:2.3.2" level="project" />
@@ -76,7 +75,8 @@
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-solaris-i586:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-amd64:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-i586:2.3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.locationtech.jts:jts-core:1.17.0" level="project" />
+    <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.19" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.19" level="project" />
     <orderEntry type="library" name="Maven: de.sciss:docking-frames-common:2.0.0" level="project" />

@@ -15,6 +15,22 @@ __all__ = [
     'solve','cholesky','det','lu','qr', 'svd','eig','inv','lstsq','solve_triangular'
     ]
 
+class LinAlgError(Exception):
+    """
+    Generic Python-exception-derived object raised by linalg functions.
+    General purpose exception class, derived from Python's exception.Exception
+    class, programmatically raised in linalg functions when a Linear
+    Algebra-related condition would prevent further correct execution of the
+    function.
+    """
+    pass
+
+def _assert_2d(*arrays):
+    for a in arrays:
+        if a.ndim != 2:
+            raise LinAlgError('%d-dimensional array given. Array must be '
+                              'two-dimensional' % a.ndim)
+
 def solve(a, b):
     '''
     Solve a linear matrix equation, or system of linear scalar equations.
@@ -34,8 +50,16 @@ def solve(a, b):
     x : {(M), (M, K)} ndarray
         Solution to the system a x = b.  Returned shape is identical to ``b``.
     '''
+    _assert_2d(a)
+    r_2d = False
+    if b.ndim == 2:
+        b = b.flatten()
+        r_2d = True
     x = LinalgUtil.solve(a.asarray(), b.asarray())
-    return NDArray(x)
+    r = NDArray(x)
+    if r_2d:
+        r = r.reshape((len(r),1))
+    return r
 
 def solve_triangular(a, b, lower=False):
     '''

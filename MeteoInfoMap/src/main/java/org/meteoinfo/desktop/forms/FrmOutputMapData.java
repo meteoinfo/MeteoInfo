@@ -184,6 +184,8 @@ public class FrmOutputMapData extends javax.swing.JDialog {
             this.jComboBox_OutputFormat.addItem("KML File");
             switch (_currentLayer.getShapeType()) {
                 case Polygon:
+                case PolygonM:
+                case PolygonZ:
                     //this.jComboBox_OutputFormat.addItem("GrADS Map File");
                     this.jComboBox_OutputFormat.addItem("GrADS Maskout File");
                     //this.jComboBox_OutputFormat.addItem("Surfer BLN File");

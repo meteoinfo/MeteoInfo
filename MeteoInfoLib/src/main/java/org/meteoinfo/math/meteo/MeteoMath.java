@@ -6,10 +6,14 @@
 package org.meteoinfo.math.meteo;
 
 import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -914,5 +918,188 @@ public class MeteoMath {
         double v = windSpeed * Math.cos(dir);
 
         return new double[]{u, v};
+    }
+
+    /**
+     * Performs a centered difference operation on a grid data along one
+     * dimension direction
+     *
+     * @param data The grid data
+     * @param dimIdx Direction dimension index
+     * @return Result grid data
+     */
+    public static Array cdiff(Array data, int dimIdx) {
+        Array r = Array.factory(DataType.DOUBLE, data.getShape());
+        Index index = data.getIndex();
+        Index indexr = r.getIndex();
+        int[] shape = data.getShape();
+        int[] current, cc;
+        double a, b;
+        for (int i = 0; i < r.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            if (current[dimIdx] == 0 || current[dimIdx] == shape[dimIdx] - 1) {
+                r.setDouble(indexr, Double.NaN);
+            } else {
+                cc = Arrays.copyOf(current, current.length);
+                cc[dimIdx] = cc[dimIdx] - 1;
+                index.set(cc);
+                a = data.getDouble(index);
+                cc[dimIdx] = cc[dimIdx] + 2;
+                index.set(cc);
+                b = data.getDouble(index);
+                if (Double.isNaN(a) || Double.isNaN(b)) {
+                    r.setDouble(indexr, Double.NaN);
+                } else {
+                    r.setDouble(indexr, a - b);
+                }
+            }
+            indexr.incr();
+        }
+
+        return r;
+    }
+
+    /**
+     * Performs a centered difference operation on a grid data in the x or y
+     * direction
+     *
+     * @param data The grid data
+     * @param isX If is x direction
+     * @return Result grid data
+     */
+    public static Array cdiff_bak(Array data, boolean isX) {
+        if (data.getRank() == 2) {
+            int xnum = data.getShape()[1];
+            int ynum = data.getShape()[0];
+            Array r = Array.factory(DataType.DOUBLE, data.getShape());
+            for (int i = 0; i < ynum; i++) {
+                for (int j = 0; j < xnum; j++) {
+                    if (i == 0 || i == ynum - 1 || j == 0 || j == xnum - 1) {
+                        r.setDouble(i * xnum + j, Double.NaN);
+                    } else {
+                        double a, b;
+                        if (isX) {
+                            a = data.getDouble(i * xnum + j + 1);
+                            b = data.getDouble(i * xnum + j - 1);
+                        } else {
+                            a = data.getDouble((i + 1) * xnum + j);
+                            b = data.getDouble((i - 1) * xnum + j);
+                        }
+                        if (Double.isNaN(a) || Double.isNaN(b)) {
+                            r.setDouble(i * xnum + j, Double.NaN);
+                        } else {
+                            r.setDouble(i * xnum + j, a - b);
+                        }
+                    }
+                }
+            }
+
+            return r;
+        } else if (data.getRank() == 1) {
+            int n = data.getShape()[0];
+            Array r = Array.factory(DataType.DOUBLE, data.getShape());
+            for (int i = 0; i < n; i++) {
+                if (i == 0 || i == n - 1) {
+                    r.setDouble(i, Double.NaN);
+                } else {
+                    double a, b;
+                    a = data.getDouble(i + 1);
+                    b = data.getDouble(i - 1);
+                    if (Double.isNaN(a) || Double.isNaN(b)) {
+                        r.setDouble(i, Double.NaN);
+                    } else {
+                        r.setDouble(i, a - b);
+                    }
+                }
+            }
+
+            return r;
+        } else {
+            System.out.println("Data dimension number must be 1 or 2!");
+            return null;
+        }
+    }
+
+    /**
+     * Calculates the vertical component of the curl (ie, vorticity)
+     *
+     * @param uData U component
+     * @param vData V component
+     * @param xx X dimension value
+     * @param yy Y dimension value
+     * @return Curl
+     */
+    public static Array hcurl(Array uData, Array vData, Array xx, Array yy) {
+        int rank = uData.getRank();
+        int[] shape = uData.getShape();
+        Array[] llData = ArrayUtil.meshgrid(xx, yy);
+        Array lonData = llData[0];
+        Array latData = llData[1];
+        Array dv = cdiff(vData, rank - 1);
+        Array dx = ArrayMath.mul(cdiff(lonData, rank - 1), Math.PI / 180);
+        Array du = cdiff(ArrayMath.mul(uData, ArrayMath.cos(ArrayMath.mul(latData, Math.PI / 180))), rank - 2);
+        Array dy = ArrayMath.mul(cdiff(latData, rank - 2), Math.PI / 180);
+        Array gData = ArrayMath.div(ArrayMath.sub(ArrayMath.div(dv, dx), ArrayMath.div(du, dy)), ArrayMath.mul(ArrayMath.cos(ArrayMath.mul(latData, Math.PI / 180)), 6.37e6));
+
+        return gData;
+    }
+
+    /**
+     * Calculates the horizontal divergence using finite differencing
+     *
+     * @param uData U component
+     * @param vData V component
+     * @param xx X dimension value
+     * @param yy Y dimension value
+     * @return Divergence
+     */
+    public static Array hdivg(Array uData, Array vData, List<Number> xx, List<Number> yy) {
+        int rank = uData.getRank();
+        int[] shape = uData.getShape();
+        Array lonData = Array.factory(DataType.DOUBLE, shape);
+        Array latData = Array.factory(DataType.DOUBLE, shape);
+        Index index = lonData.getIndex();
+        int[] current;
+        for (int i = 0; i < lonData.getSize(); i++) {
+            current = index.getCurrentCounter();
+            lonData.setDouble(index, xx.get(current[rank - 1]).doubleValue());
+            latData.setDouble(index, yy.get(current[rank - 2]).doubleValue());
+            index.incr();
+        }
+
+        Array du = cdiff(uData, rank - 1);
+        Array dx = ArrayMath.mul(cdiff(lonData, rank - 1), Math.PI / 180);
+        Array dv = cdiff(ArrayMath.mul(vData, ArrayMath.cos(ArrayMath.mul(latData, Math.PI / 180))), rank - 2);
+        Array dy = ArrayMath.mul(cdiff(latData, rank - 2), Math.PI / 180);
+        Array gData = ArrayMath.div(ArrayMath.add(ArrayMath.div(du, dx), ArrayMath.div(dv, dy)), ArrayMath.mul(ArrayMath.cos(ArrayMath.mul(latData, Math.PI / 180)), 6.37e6));
+
+        return gData;
+    }
+
+    /**
+     * Take magnitude value from U/V grid data
+     *
+     * @param uData U grid data
+     * @param vData V grid data
+     * @return Magnitude grid data
+     */
+    public static Array magnitude(Array uData, Array vData) {
+        int[] shape = uData.getShape();
+        Array r = Array.factory(DataType.DOUBLE, shape);
+        IndexIterator iterU = uData.getIndexIterator();
+        IndexIterator iterV = vData.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        double u, v;
+        while (iterU.hasNext()) {
+            u = iterU.getDoubleNext();
+            v = iterV.getDoubleNext();
+            if (Double.isNaN(u) || Double.isNaN(v)) {
+                iterR.setDoubleNext(Double.NaN);
+            } else {
+                iterR.setDoubleNext(Math.sqrt(Math.pow(u, 2) + Math.pow(v, 2)));
+            }
+        }
+
+        return r;
     }
 }

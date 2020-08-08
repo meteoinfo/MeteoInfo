@@ -300,22 +300,6 @@
         <value />
       </option>
     </inspection_tool>
-    <inspection_tool class="PyInterpreterInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PyStatementEffectInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoredIdentifiers">
-        <list>
-          <option value="pylib.mipylib.numeric.core.multiarray.*" />
-          <option value="numbers" />
-          <option value="jarray" />
-          <option value="datetime" />
-          <option value="pylib.mipylib.numeric.core._dtype.*" />
-          <option value="pylib.mipylib.numeric.core.numeric.*" />
-          <option value="math" />
-          <option value="cmath" />
-        </list>
-      </option>
-    </inspection_tool>
     <inspection_tool class="RawTypeCanBeGeneric" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="RawUseOfParameterizedType" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ReadWriteStringCanBeUsed" enabled="false" level="WARNING" enabled_by_default="false" />

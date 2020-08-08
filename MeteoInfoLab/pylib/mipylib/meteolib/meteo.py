@@ -16,11 +16,10 @@ import constants as constants
 __all__ = [
     'cumsimp','dewpoint','dewpoint2rh','dewpoint_rh','dry_lapse','ds2uv','equivalent_potential_temperature',
     'exner_function','flowfun','h2p',
-    'interpolate_1d','log_interpolate_1d','mixing_ratio','mixing_ratio_from_specific_humidity',
-    'moist_lapse','p2h','potential_temperature','qair2rh','rh2dewpoint','relative_humidity_from_specific_humidity',
-    'saturation_mixing_ratio','saturation_vapor_pressure','sigma_to_pressure','tc2tf',
+    'moist_lapse','p2h','potential_temperature','qair2rh','rh2dewpoint',
+    'sigma_to_pressure','tc2tf',
     'temperature_from_potential_temperature','tf2tc','uv2ds','pressure_to_height_std',
-    'height_to_pressure_std','eof','vapor_pressure','varimax'
+    'height_to_pressure_std','eof','vapor_pressure','varimax','virtual_temperature'
     ]
 
 def uv2ds(u, v):
@@ -239,56 +238,6 @@ def dewpoint2rh(dewpoint, temp):
     else:
         return MeteoMath.dewpoint2rh(temp, dewpoint)  
 
-def mixing_ratio_from_specific_humidity(specific_humidity):
-    r"""Calculate the mixing ratio from specific humidity.
-    Parameters
-    ----------
-    specific_humidity: `pint.Quantity`
-        Specific humidity of air
-    Returns
-    -------
-    `pint.Quantity`
-        Mixing ratio
-    Notes
-    -----
-    Formula from [Salby1996]_ pg. 118.
-    .. math:: w = \frac{q}{1-q}
-    * :math:`w` is mixing ratio
-    * :math:`q` is the specific humidity
-    See Also
-    --------
-    mixing_ratio, specific_humidity_from_mixing_ratio
-    """
-    return specific_humidity / (1 - specific_humidity)        
-
-def relative_humidity_from_specific_humidity(specific_humidity, temperature, pressure):
-    r"""Calculate the relative humidity from specific humidity, temperature, and pressure.
-    Parameters
-    ----------
-    specific_humidity: `pint.Quantity`
-        Specific humidity of air
-    temperature: `pint.Quantity`
-        Air temperature
-    pressure: `pint.Quantity`
-        Total atmospheric pressure
-    Returns
-    -------
-    `pint.Quantity`
-        Relative humidity
-    Notes
-    -----
-    Formula based on that from [Hobbs1977]_ pg. 74. and [Salby1996]_ pg. 118.
-    .. math:: RH = \frac{q}{(1-q)w_s}
-    * :math:`RH` is relative humidity as a unitless ratio
-    * :math:`q` is specific humidity
-    * :math:`w_s` is the saturation mixing ratio
-    See Also
-    --------
-    relative_humidity_from_mixing_ratio
-    """
-    return (mixing_ratio_from_specific_humidity(specific_humidity)
-            / saturation_mixing_ratio(pressure, temperature))        
-        
 def rh2dewpoint(rh, temp):    
     """
     Calculate dewpoint from relative humidity and temperature
@@ -452,53 +401,7 @@ def moist_lapse(pressure, temperature):
                 (constants.Cp_d + (constants.Lv * constants.Lv * rs * constants.epsilon / (constants.Rd * t * t)))).to('kelvin')
         return frac / p
     return dt
-                                    
-def mixing_ratio(part_press, tot_press):
-    """
-    Calculates the mixing ratio of gas given its partial pressure
-    and the total pressure of the air.
-    There are no required units for the input arrays, other than that
-    they have the same units.
-    Parameters
-    ----------
-    part_press : array_like
-        Partial pressure of the constituent gas
-    tot_press : array_like
-        Total air pressure
-    Returns
-    -------
-    array_like
-        The (mass) mixing ratio, dimensionless (e.g. Kg/Kg or g/g)
-    See Also
-    --------
-    vapor_pressure
-    """
 
-    return constants.epsilon * part_press / (tot_press - part_press)
-
-def saturation_mixing_ratio(tot_press, temperature):
-    """
-    Calculates the saturation mixing ratio given total pressure
-    and the temperature.
-    The implementation uses the formula outlined in [4]
-    Parameters
-    ----------
-    tot_press: array_like
-        Total atmospheric pressure (hPa)
-    temperature: array_like
-        The temperature (celsius)
-    Returns
-    -------
-    array_like
-        The saturation mixing ratio, dimensionless
-    References
-    ----------
-    .. [4] Hobbs, Peter V. and Wallace, John M., 1977: Atmospheric Science, an Introductory
-            Survey. 73.
-    """
-
-    return mixing_ratio(saturation_vapor_pressure(temperature), tot_press)
-    
 def vapor_pressure(pressure, mixing):
     r"""Calculate water vapor (partial) pressure.
     Given total `pressure` and water vapor `mixing` ratio, calculates the
@@ -524,32 +427,7 @@ def vapor_pressure(pressure, mixing):
     saturation_vapor_pressure, dewpoint
     """
     return pressure * mixing / (constants.epsilon + mixing)
-    
-def saturation_vapor_pressure(temperature):
-    r"""Calculate the saturation water vapor (partial) pressure.
-    Parameters
-    ----------
-    temperature : `float`
-        The temperature (celsius)
-    Returns
-    -------
-    `float`
-        The saturation water vapor (partial) pressure
-    See Also
-    --------
-    vapor_pressure, dewpoint
-    Notes
-    -----
-    Instead of temperature, dewpoint may be used in order to calculate
-    the actual (ambient) water vapor (partial) pressure.
-    The formula used is that from [Bolton1980]_ for T in degrees Celsius:
-    .. math:: 6.112 e^\frac{17.67T}{T + 243.5}
-    """
-    # Converted from original in terms of C to use kelvin. Using raw absolute values of C in
-    # a formula plays havoc with units support.
-    return constants.sat_pressure_0c * np.exp(17.67 * temperature
-                                    / (temperature + 243.5))
-                                    
+
 def exner_function(pressure, reference_pressure=constants.P0):
     r"""Calculate the Exner function.
     .. math:: \Pi = \left( \frac{p}{p_0} \right)^\kappa
@@ -647,72 +525,36 @@ def temperature_from_potential_temperature(pressure, theta):
     >>> T = temperature_from_potential_temperature(p,theta)
     """
     return theta * exner_function(pressure)
-    
-def interpolate_1d(x, xp, *args, **kwargs):
-    '''
-    Interpolation over a specified axis for arrays of any shape.
-    
+
+def virtual_temperature(temperature, mixing, molecular_weight_ratio=constants.epsilon):
+    r"""Calculate virtual temperature.
+
+    This calculation must be given an air parcel's temperature and mixing ratio.
+    The implementation uses the formula outlined in [Hobbs2006]_ pg.80.
+
     Parameters
     ----------
-    x : array-like
-        1-D array of desired interpolated values.
-    xp : array-like
-        The x-coordinates of the data points.
-    args : array-like
-        The data to be interpolated. Can be multiple arguments, all must be the same shape as
-        xp.
-    axis : int, optional
-        The axis to interpolate over. Defaults to 0.
+    temperature: `array`
+        air temperature
+    mixing : `array`
+        dimensionless mass mixing ratio
+    molecular_weight_ratio : float, optional
+        The ratio of the molecular weight of the constituent gas to that assumed
+        for air. Defaults to the ratio for water vapor to dry air.
+        (:math:`\epsilon\approx0.622`).
 
     Returns
     -------
-    array-like
-        Interpolated values for each point with coordinates sorted in ascending order.
-    '''
-    axis = kwargs.pop('axis', 0)
-    if isinstance(x, (list, tuple)):
-        x = np.array(x)
-        
-    if isinstance(x, NDArray):
-        x = x._array
-    
-    vars = args
-    
-    ret = []
-    for a in vars:
-        r = ArrayUtil.interpolate_1d(x, xp._array, a._array, axis)
-        ret.append(NDArray(r))
-        
-    if len(ret) == 1:
-        return ret[0]
-    else:
-        return ret
-    
-def log_interpolate_1d(x, xp, *args, **kwargs):
-    '''
-    Interpolation on a logarithmic x-scale for interpolation values in pressure coordintates.
-    
-    Parameters
-    ----------
-    x : array-like
-        1-D array of desired interpolated values.
-    xp : array-like
-        The x-coordinates of the data points.
-    args : array-like
-        The data to be interpolated. Can be multiple arguments, all must be the same shape as
-        xp.
-    axis : int, optional
-        The axis to interpolate over. Defaults to 0.
+    `array`
+        The corresponding virtual temperature of the parcel
 
-    Returns
-    -------
-    array-like
-        Interpolated values for each point with coordinates sorted in ascending order.
-    '''
-    # Log x and xp
-    log_x = np.log(x)
-    log_xp = np.log(xp)
-    return interpolate_1d(log_x, log_xp, *args, **kwargs)
+    Notes
+    -----
+    .. math:: T_v = T \frac{\text{w} + \epsilon}{\epsilon\,(1 + \text{w})}
+
+    """
+    return temperature * ((mixing + molecular_weight_ratio)
+                          / (molecular_weight_ratio * (1 + mixing)))
 
 def cumsimp(y):
     """

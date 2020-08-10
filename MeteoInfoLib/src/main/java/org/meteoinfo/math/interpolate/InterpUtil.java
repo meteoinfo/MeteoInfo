@@ -22,8 +22,7 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.global.PointD;
 import org.meteoinfo.math.ArrayUtil;
-import org.meteoinfo.math.KDTree;
-import org.meteoinfo.math.spatial.KDTree.Euclidean;
+import org.meteoinfo.math.spatial.KDTree;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
@@ -210,7 +209,7 @@ public class InterpUtil {
         }
 
         //Construct K-D tree
-        Euclidean<double[]> kdTree = new Euclidean<>(2);
+        KDTree.Euclidean<double[]> kdTree = new KDTree.Euclidean<>(2);
         for (i = 0; i < pNum; i++) {
             if (!Double.isNaN(stationData[i][2]))
                 kdTree.addPoint(new double[]{stationData[i][0], stationData[i][1]}, stationData[i]);
@@ -391,7 +390,7 @@ public class InterpUtil {
         }
 
         //Construct K-D tree
-        Euclidean<double[]> kdTree = new Euclidean<>(2);
+        KDTree.Euclidean<double[]> kdTree = new KDTree.Euclidean<>(2);
         for (i = 0; i < pNum; i++) {
             if (!Double.isNaN(stationData[i][2]))
                 kdTree.addPoint(new double[]{stationData[i][0], stationData[i][1]}, stationData[i]);
@@ -1134,6 +1133,83 @@ public class InterpUtil {
     }
 
     /**
+     * Interpolate with nearest method
+     *
+     * @param x_s Scatter X coordinate
+     * @param y_s Scatter Y coordinate
+     * @param z_s Scatter Z coordinate
+     * @param a scatter value array
+     * @param X Grid x coordinate
+     * @param Y Grid y coordinate
+     * @param Z Grid z coordinate
+     * @param radius Radius
+     * @return Grid data array
+     */
+    public static Array interpolation_Nearest(Array x_s, Array y_s, Array z_s, Array a, Array X, Array Y,
+                                              Array Z, double radius) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        z_s = z_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+        Z = Z.copyIfView();
+
+        int xNum, yNum, zNum, pNum;
+        xNum = (int)X.getSize();
+        yNum = (int)Y.getSize();
+        zNum = (int)Z.getSize();
+        pNum = (int)x_s.getSize();
+        Array rdata = Array.factory(DataType.DOUBLE, new int[]{zNum, yNum, xNum});
+        double gx, gy, gz;
+
+        //Construct K-D tree
+        KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(3);
+        double v;
+        for (int i = 0; i < pNum; i++) {
+            v = a.getDouble(i);
+            kdTree.addPoint(new double[]{x_s.getDouble(i), y_s.getDouble(i), z_s.getDouble(i)}, v);
+        }
+
+        //Loop
+        if (radius == Double.POSITIVE_INFINITY) {
+            int ii = 0;
+            for (int k = 0; k < zNum; k++) {
+                gz = Z.getDouble(k);
+                for (int i = 0; i < yNum; i++) {
+                    gy = Y.getDouble(i);
+                    for (int j = 0; j < xNum; j++) {
+                        gx = X.getDouble(j);
+                        KDTree.SearchResult r = kdTree.nearestNeighbours(new double[]{gx, gy, gz}, 1).get(0);
+                        rdata.setDouble(ii, ((double) r.payload));
+                        ii += 1;
+                    }
+                }
+            }
+        } else {
+            int ii = 0;
+            for (int k = 0; k < zNum; k++) {
+                gz = Z.getDouble(k);
+                for (int i = 0; i < yNum; i++) {
+                    gy = Y.getDouble(i);
+                    for (int j = 0; j < xNum; j++) {
+                        gx = X.getDouble(j);
+                        KDTree.SearchResult r = kdTree.nearestNeighbours(new double[]{gx, gy, gz}, 1).get(0);
+                        if (Math.sqrt(r.distance) <= radius) {
+                            rdata.setDouble(ii, ((double) r.payload));
+                        } else {
+                            rdata.setDouble(ii, Double.NaN);
+                        }
+                        ii += 1;
+                    }
+                }
+            }
+        }
+
+        return rdata;
+    }
+
+    /**
      * Interpolate with surface method
      *
      * @param x_s scatter X array
@@ -1296,6 +1372,160 @@ public class InterpUtil {
     }
 
     /**
+     * Interpolation with IDW radius method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X grid X array
+     * @param Y grid Y array
+     * @param neededPointNum needed at least point number
+     * @param radius search radius
+     * @return interpolated grid data
+     */
+    public static Array interpolation_IDW_Radius(Array x_s, Array y_s, Array a,
+                                                 Array X, Array Y, int neededPointNum, double radius) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+
+        int rowNum, colNum, pNum;
+        colNum = (int)X.getSize();
+        rowNum = (int)Y.getSize();
+        pNum = (int)x_s.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        int i, j;
+        double w, gx, gy, v;
+        boolean match;
+
+        //Construct K-D tree
+        KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
+        for (i = 0; i < pNum; i++) {
+            v = a.getDouble(i);
+            if (!Double.isNaN(v)) {
+                kdTree.addPoint(new double[]{x_s.getDouble(i), y_s.getDouble(i)}, v);
+            }
+        }
+
+        //---- Do interpolation
+        for (i = 0; i < rowNum; i++) {
+            gy = Y.getDouble(i);
+            for (j = 0; j < colNum; j++) {
+                gx = X.getDouble(j);
+                List<KDTree.SearchResult<Double>> srs = kdTree.ballSearch_distance(new double[]{gx, gy}, radius * radius);
+                if (srs == null || srs.size() < neededPointNum) {
+                    r.setDouble(i * colNum + j, Double.NaN);
+                } else {
+                    double v_sum = 0.0;
+                    double weight_sum = 0.0;
+                    match = false;
+                    for (KDTree.SearchResult sr : srs) {
+                        v = (double) sr.payload;
+                        if (sr.distance == 0) {
+                            r.setDouble(i * colNum + j, v);
+                            match = true;
+                            break;
+                        } else {
+                            w = 1. / sr.distance;
+                            weight_sum += w;
+                            v_sum += v * w;
+                        }
+                    }
+                    if (!match) {
+                        r.setDouble(i * colNum + j, v_sum / weight_sum);
+                    }
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolation with IDW radius method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param z_s Scatter Z coordinate
+     * @param a scatter value array
+     * @param X grid X array
+     * @param Y grid Y array
+     * @param Z Grid Z coordinate
+     * @param neededPointNum needed at least point number
+     * @param radius search radius
+     * @return interpolated grid data
+     */
+    public static Array interpolation_IDW_Radius(Array x_s, Array y_s, Array z_s, Array a,
+                                                 Array X, Array Y, Array Z, int neededPointNum, double radius) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        z_s = z_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+        Z = Z.copyIfView();
+
+        int xNum, yNum, zNum, pNum;
+        xNum = (int)X.getSize();
+        yNum = (int)Y.getSize();
+        zNum = (int)Z.getSize();
+        pNum = (int)x_s.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{zNum, yNum, xNum});
+        int i, j;
+        double w, gx, gy, gz, v;
+        boolean match;
+
+        //Construct K-D tree
+        KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
+        for (i = 0; i < pNum; i++) {
+            v = a.getDouble(i);
+            if (!Double.isNaN(v)) {
+                kdTree.addPoint(new double[]{x_s.getDouble(i), y_s.getDouble(i), z_s.getDouble(i)}, v);
+            }
+        }
+
+        //---- Do interpolation
+        int ii = 0;
+        for (int k = 0; k < zNum; k++) {
+            gz = Z.getDouble(k);
+            for (i = 0; i < yNum; i++) {
+                gy = Y.getDouble(i);
+                for (j = 0; j < xNum; j++) {
+                    gx = X.getDouble(j);
+                    List<KDTree.SearchResult<Double>> srs = kdTree.ballSearch_distance(new double[]{gx, gy, gz}, radius * radius);
+                    if (srs == null || srs.size() < neededPointNum) {
+                        r.setDouble(ii, Double.NaN);
+                    } else {
+                        double v_sum = 0.0;
+                        double weight_sum = 0.0;
+                        match = false;
+                        for (KDTree.SearchResult sr : srs) {
+                            v = (double) sr.payload;
+                            if (sr.distance == 0) {
+                                r.setDouble(ii, v);
+                                match = true;
+                                break;
+                            } else {
+                                w = 1. / sr.distance;
+                                weight_sum += w;
+                                v_sum += v * w;
+                            }
+                        }
+                        if (!match) {
+                            r.setDouble(ii, v_sum / weight_sum);
+                        }
+                    }
+                    ii += 1;
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Interpolation with IDW neighbor method
      *
      * @param x_s scatter X array
@@ -1354,6 +1584,156 @@ public class InterpUtil {
                 }
                 if (!match) {
                     r.setDouble(i * colNum + j, v_sum / weight_sum);
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolation with IDW neighbor method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X grid X array
+     * @param Y grid Y array
+     * @param points Number of points used for interpolation
+     * @return interpolated grid data
+     */
+    public static Array interpolation_IDW_Neighbor(Array x_s, Array y_s, Array a,
+                                                   Array X, Array Y, Integer points) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+        int colNum = (int)X.getSize();
+        int rowNum = (int)Y.getSize();
+        int pNum = (int)x_s.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        int i, j;
+        double w, v, gx, gy;
+        boolean match;
+
+        //Construct K-D tree
+        int n = 0;
+        KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(2);
+        for (i = 0; i < pNum; i++) {
+            v = a.getDouble(i);
+            if (!Double.isNaN(v)) {
+                kdTree.addPoint(new double[]{x_s.getDouble(i), y_s.getDouble(i)}, v);
+                n += 1;
+            }
+        }
+        if (points == null) {
+            points = n;
+        }
+
+        //---- Do interpolation with IDW method
+        for (i = 0; i < rowNum; i++) {
+            gy = Y.getDouble(i);
+            for (j = 0; j < colNum; j++) {
+                gx = X.getDouble(j);
+                List<KDTree.SearchResult<Double>> srs = kdTree.nearestNeighbours(new double[]{gx, gy}, points);
+                double v_sum = 0.0;
+                double weight_sum = 0.0;
+                match = false;
+                for (KDTree.SearchResult sr : srs) {
+                    v = (double) sr.payload;
+                    if (sr.distance == 0) {
+                        r.setDouble(i * colNum + j, v);
+                        match = true;
+                        break;
+                    } else {
+                        w = 1. / sr.distance;
+                        weight_sum += w;
+                        v_sum += v * w;
+                    }
+                }
+                if (!match) {
+                    r.setDouble(i * colNum + j, v_sum / weight_sum);
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolation with IDW neighbor method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param z_s Scatter Z coordinate
+     * @param a scatter value array
+     * @param X grid X array
+     * @param Y grid Y array
+     * @param Z Grid Z coordinate
+     * @param points Number of points used for interpolation
+     * @return interpolated grid data
+     */
+    public static Array interpolation_IDW_Neighbor(Array x_s, Array y_s, Array z_s, Array a,
+                                                   Array X, Array Y, Array Z, Integer points) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        z_s = z_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+        Z = Z.copyIfView();
+        int xNum = (int)X.getSize();
+        int yNum = (int)Y.getSize();
+        int zNum = (int)Z.getSize();
+        int pNum = (int)x_s.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{zNum, yNum, xNum});
+        int i, j;
+        double w, v, gx, gy, gz;
+        boolean match;
+
+        //Construct K-D tree
+        int n = 0;
+        KDTree.Euclidean<Double> kdTree = new KDTree.Euclidean<>(3);
+        for (i = 0; i < pNum; i++) {
+            v = a.getDouble(i);
+            if (!Double.isNaN(v)) {
+                kdTree.addPoint(new double[]{x_s.getDouble(i), y_s.getDouble(i), z_s.getDouble(i)}, v);
+                n += 1;
+            }
+        }
+        if (points == null) {
+            points = n;
+        }
+
+        //---- Do interpolation with IDW method
+        int ii = 0;
+        for (int k = 0; k < zNum; k++) {
+            gz = Z.getDouble(k);
+            for (i = 0; i < yNum; i++) {
+                gy = Y.getDouble(i);
+                for (j = 0; j < xNum; j++) {
+                    gx = X.getDouble(j);
+                    List<KDTree.SearchResult<Double>> srs = kdTree.nearestNeighbours(new double[]{gx, gy, gz}, points);
+                    double v_sum = 0.0;
+                    double weight_sum = 0.0;
+                    match = false;
+                    for (KDTree.SearchResult sr : srs) {
+                        v = (double) sr.payload;
+                        if (sr.distance == 0) {
+                            r.setDouble(ii, v);
+                            match = true;
+                            break;
+                        } else {
+                            w = 1. / sr.distance;
+                            weight_sum += w;
+                            v_sum += v * w;
+                        }
+                    }
+                    if (!match) {
+                        r.setDouble(ii, v_sum / weight_sum);
+                    }
+                    ii += 1;
                 }
             }
         }

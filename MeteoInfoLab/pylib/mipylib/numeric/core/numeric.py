@@ -2503,24 +2503,50 @@ def griddata(points, values, xi=None, **kwargs):
     method = kwargs.pop('method', 'idw')
     x_s = points[0]
     y_s = points[1]
+    is_3d = False
+    if len(points) == 3:
+        z_s = points[2]
+        is_3d = True
+
     if xi is None:
         xn = 500
         yn = 500
+        if is_3d:
+            xn = 50
+            yn = 50
+            zn = 50
+            z_g = linspace(z_s.min(), z_s.max(), zn)
         x_g = linspace(x_s.min(), x_s.max(), xn)
-        y_g = linspace(y_s.min(), y_s.max(), yn)        
+        y_g = linspace(y_s.min(), y_s.max(), yn)
     else:
         x_g = xi[0]
         y_g = xi[1]
+        if is_3d:
+            z_g = xi[2]
+
     if isinstance(values, NDArray):
-        values = values.asarray()    
+        values = values.asarray()
+
     if method == 'idw':        
         radius = kwargs.pop('radius', None)
         if radius is None:
             pnum = kwargs.pop('pointnum', None)
-            r = InterpUtil.interpolation_IDW_Neighbor(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), pnum)
+            if is_3d:
+                r = InterpUtil.interpolation_IDW_Neighbor(x_s.asarray(), y_s.asarray(), z_s.asarray(), values,
+                                                          x_g.asarray(), y_g.asarray(), z_g.asarray(), pnum)
+                return NDArray(r), x_g, y_g, z_g
+            else:
+                r = InterpUtil.interpolation_IDW_Neighbor(x_s.asarray(), y_s.asarray(), values,
+                                                          x_g.asarray(), y_g.asarray(), pnum)
         else:
             pnum = kwargs.pop('pointnum', 2)
-            r = InterpUtil.interpolation_IDW_Radius(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), pnum, radius)
+            if is_3d:
+                r = InterpUtil.interpolation_IDW_Radius(x_s.asarray(), y_s.asarray(), z_s.asarray(), values,
+                                                        x_g.asarray(), y_g.asarray(), z_g.asarray(), pnum, radius)
+                return NDArray(r), x_g, y_g, z_g
+            else:
+                r = InterpUtil.interpolation_IDW_Radius(x_s.asarray(), y_s.asarray(), values,
+                                                        x_g.asarray(), y_g.asarray(), pnum, radius)
     elif method == 'cressman':
         radius = kwargs.pop('radius', [10, 7, 4, 2, 1])
         if isinstance(radius, NDArray):
@@ -2538,7 +2564,13 @@ def griddata(points, values, xi=None, **kwargs):
             r = InterpUtil.barnes(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), radius, kappa, gamma)
     elif method == 'nearest':
         radius = kwargs.pop('radius', inf)
-        r = InterpUtil.interpolation_Nearest(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(), radius)
+        if is_3d:
+            r = InterpUtil.interpolation_Nearest(x_s.asarray(), y_s.asarray(), z_s.asarray(), values,
+                                                 x_g.asarray(), y_g.asarray(), z_g.asarray(), radius)
+            return NDArray(r), x_g, y_g, z_g
+        else:
+            r = InterpUtil.interpolation_Nearest(x_s.asarray(), y_s.asarray(), values, x_g.asarray(),
+                                                 y_g.asarray(), radius)
     elif method == 'inside' or method == 'inside_mean':
         centerpoint = kwargs.pop('centerpoint', True)
         r = InterpUtil.interpolation_Inside_Mean(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(), centerpoint)

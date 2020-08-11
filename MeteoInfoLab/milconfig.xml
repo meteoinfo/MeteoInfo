@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\interpolation">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
+  <Path OpenPath="D:\Temp\wrf-cfd\script">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
@@ -16,17 +15,22 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
+    <RecentFolder Folder="D:\Temp\wrf-cfd\script"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection\train_test_split_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\mnist_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\griddata_3d_idw_neighour.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\nearest_3d.py"/>
+      <OpenedFile File="D:\Temp\wrf-cfd\script\griddata-3d.py"/>
+      <OpenedFile File="D:\Temp\wrf-cfd\script\read_csv-3d.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection\train_test_split_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\mnist_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\griddata_3d_idw_neighour.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\nearest_3d.py"/>
+      <RecentFile File="D:\Temp\wrf-cfd\script\griddata-3d.py"/>
+      <RecentFile File="D:\Temp\wrf-cfd\script\read_csv-3d.py"/>
     </RecentFiles>
   </File>
   <Font>

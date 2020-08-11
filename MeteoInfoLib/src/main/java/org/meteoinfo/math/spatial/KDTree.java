@@ -42,6 +42,8 @@ public abstract class KDTree<T> {
         root = new Node();
     }
 
+    public int dimensions() { return _dimensions; }
+
     public int nodes() {
         return _nodes;
     }

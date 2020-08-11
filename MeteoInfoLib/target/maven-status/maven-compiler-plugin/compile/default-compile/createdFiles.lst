@@ -254,7 +254,6 @@ org\meteoinfo\layout\LayoutMap$1.class
 org\meteoinfo\shape\PolygonShape.class
 org\meteoinfo\legend\FrmPolylineSymbolSet$11.class
 org\meteoinfo\chart\ChartPanel$6.class
-org\meteoinfo\math\KDTree$IntStack.class
 org\meteoinfo\ndarray\MAMath$ScaleOffset.class
 org\meteoinfo\data\mathparser\FunctionExpression.class
 org\meteoinfo\data\meteodata\micaps\MICAPSDataInfo.class
@@ -306,7 +305,6 @@ org\meteoinfo\legend\FrmLegendSet$8.class
 org\meteoinfo\layout\LayoutLegend$LayerNameEditor.class
 org\meteoinfo\map\MapView$16.class
 org\meteoinfo\ndarray\Index$IteratorImpl.class
-org\meteoinfo\math\KDTree$PrioQueue.class
 org\meteoinfo\ndarray\ArrayInt$D0.class
 org\meteoinfo\image\filter\MotionBlurOp.class
 org\meteoinfo\global\event\SizeChangedEvent.class
@@ -314,7 +312,6 @@ org\meteoinfo\data\TableData.class
 org\meteoinfo\ndarray\ArrayLong$D2.class
 org\meteoinfo\legend\FrmLegendSet$5.class
 org\meteoinfo\legend\FrmLabelSymbolSet$6$1.class
-org\meteoinfo\math\KDTree.class
 org\meteoinfo\ndarray\ArrayChar$D4.class
 org\meteoinfo\global\colors\WebColor.class
 org\meteoinfo\chart\plot\MapPlot.class
@@ -448,7 +445,6 @@ org\meteoinfo\data\mathparser\ValueTypes.class
 org\meteoinfo\global\event\ProjectionChangedEvent.class
 org\meteoinfo\shape\Line.class
 org\meteoinfo\data\meteodata\micaps\MICAPS131DataInfo.class
-org\meteoinfo\math\KDTree$Manhattan.class
 org\meteoinfo\ndarray\ArrayString.class
 org\meteoinfo\legend\FrmPolygonSymbolSet$12.class
 org\meteoinfo\data\dataframe\impl\Transforms$CumulativeProduct.class
@@ -764,7 +760,6 @@ org\meteoinfo\ndarray\ArrayChar$1.class
 org\meteoinfo\legend\FrmLegendBreaks$5.class
 org\meteoinfo\ndarray\ArrayString$1.class
 org\meteoinfo\image\composite\MultiplyComposite$Context.class
-org\meteoinfo\math\KDTree$SearchResult.class
 org\meteoinfo\data\mapdata\FormatedString.class
 org\meteoinfo\chart\plot\AxesUnits.class
 org\meteoinfo\ndarray\ArrayByte$D6.class
@@ -1158,7 +1153,6 @@ org\meteoinfo\image\composite\OverlayComposite$Context.class
 org\meteoinfo\layout\ElementType.class
 org\meteoinfo\chart\ChartLegend$LayoutLegendBeanBeanInfo.class
 org\meteoinfo\table\RowHeaderRenderer1.class
-org\meteoinfo\math\KDTree$WeightedManhattan.class
 org\meteoinfo\ndarray\ArrayFloat$D4.class
 org\meteoinfo\image\math\CompoundFunction2D.class
 org\meteoinfo\image\filter\DilateFilter.class
@@ -1173,7 +1167,6 @@ org\meteoinfo\ndarray\ArrayBoolean$D0.class
 org\meteoinfo\ndarray\ArrayInt$D2.class
 org\meteoinfo\global\FrmMeasurement$4.class
 org\meteoinfo\map\MapView$12.class
-org\meteoinfo\math\KDTree$ContiguousDoubleArrayList.class
 org\meteoinfo\ndarray\ArrayDate.class
 org\meteoinfo\layer\FrmLayerProperty$12.class
 org\meteoinfo\ui\CheckBoxNodeEditor$1.class
@@ -1236,7 +1229,6 @@ org\meteoinfo\map\FeatureUndoableEdit.class
 org\meteoinfo\image\filter\GammaFilter.class
 org\meteoinfo\shape\ShapeTypes$1.class
 org\meteoinfo\ndarray\ArrayBoolean$D3.class
-org\meteoinfo\math\KDTree$Node.class
 org\meteoinfo\image\filter\LinearColormap.class
 org\meteoinfo\table\ColumnData.class
 org\meteoinfo\image\filter\Gradient.class
@@ -1471,7 +1463,6 @@ org\meteoinfo\global\event\NodeSelectedEvent.class
 org\meteoinfo\io\UnclosableOutputStream.class
 org\meteoinfo\chart\LegendPosition$1.class
 org\meteoinfo\chart\plot\AbstractPlot2D$1.class
-org\meteoinfo\math\KDTree$1.class
 org\meteoinfo\script\MeteoInfoMap.class
 org\meteoinfo\global\event\MapFramesUpdatedEvent.class
 org\meteoinfo\image\filter\CellularFilter.class
@@ -1556,7 +1547,6 @@ org\meteoinfo\ndarray\Range$Iterator.class
 org\meteoinfo\global\DataConvert$1.class
 org\meteoinfo\layout\MapLayout$9.class
 org\meteoinfo\data\mapdata\geotiff\compression\DeflateCompression.class
-org\meteoinfo\math\KDTree$Euclidean.class
 org\meteoinfo\ndarray\ArrayComplex$D4.class
 org\meteoinfo\layout\MapLayout$3.class
 org\meteoinfo\ndarray\ArrayString$D4.class

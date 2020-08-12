@@ -4,6 +4,7 @@ import org.meteoinfo.math.spatial.KDTree;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.InvalidRangeException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IDWNDInterpolator extends NearestNDInterpolator{
@@ -56,26 +57,43 @@ public class IDWNDInterpolator extends NearestNDInterpolator{
         this.weightPower = value;
     }
 
-    /**
-     * Interpolate to location
-     * @param location The location
-     * @return Interpolated value
-     */
-    public Array Interpolate(List<Array> location) {
-        for (Array a : location) {
-            a = a.copyIfView();
-        }
+    private void interpolateNeighbours(Array r, List<Array> location, int offset, int endSeg) {
         int n = location.size();
-        int pNum = (int)location.get(0).getSize();
-        Array r = Array.factory(this.dataType, location.get(0).getShape());
-        boolean match;
         double v, w;
-        if (Double.isNaN(this.radius)) {
-            for (int i = 0; i < pNum; i++) {
-                List<KDTree.SearchResult<Double>> srs = kdTree.nearestNeighbours(getCoordinate(location, n, i), pointNum);
+        for (int i = offset; i < endSeg; i++) {
+            List<KDTree.SearchResult<Double>> srs = kdTree.nearestNeighbours(getCoordinate(location, n, i), pointNum);
+            double v_sum = 0.0;
+            double weight_sum = 0.0;
+            boolean match = false;
+            for (KDTree.SearchResult sr : srs) {
+                v = (double) sr.payload;
+                if (sr.distance == 0) {
+                    r.setDouble(i, v);
+                    match = true;
+                    break;
+                } else {
+                    w = 1. / Math.pow(sr.distance, this.weightPower);
+                    weight_sum += w;
+                    v_sum += v * w;
+                }
+            }
+            if (!match) {
+                r.setDouble(i, v_sum / weight_sum);
+            }
+        }
+    }
+
+    private void interpolateRadius(Array r, List<Array> location, int offset, int endSeg) {
+        int n = location.size();
+        double v, w;
+        for (int i = offset; i < endSeg; i++) {
+            List<KDTree.SearchResult<Double>> srs = kdTree.ballSearch_distance(getCoordinate(location, n, i), radius * radius);
+            if (srs == null || srs.size() < this.pointNum) {
+                r.setDouble(i, Double.NaN);
+            } else {
                 double v_sum = 0.0;
                 double weight_sum = 0.0;
-                match = false;
+                boolean match = false;
                 for (KDTree.SearchResult sr : srs) {
                     v = (double) sr.payload;
                     if (sr.distance == 0) {
@@ -92,36 +110,80 @@ public class IDWNDInterpolator extends NearestNDInterpolator{
                     r.setDouble(i, v_sum / weight_sum);
                 }
             }
+        }
+    }
 
-            return r;
+    /**
+     * Interpolate to location
+     * @param location The location
+     * @return Interpolated value
+     */
+    public Array interpolate(List<Array> location) {
+        for (Array a : location) {
+            a = a.copyIfView();
+        }
+        int pNum = (int)location.get(0).getSize();
+        Array r = Array.factory(this.dataType, location.get(0).getShape());
+        if (Double.isNaN(this.radius)) {
+            interpolateNeighbours(r, location, 0, pNum);
         } else {
-            for (int i = 0; i < pNum; i++) {
-                List<KDTree.SearchResult<Double>> srs = kdTree.ballSearch_distance(getCoordinate(location, n, i), radius * radius);
-                if (srs == null || srs.size() < this.pointNum) {
-                    r.setDouble(i, Double.NaN);
-                } else {
-                    double v_sum = 0.0;
-                    double weight_sum = 0.0;
-                    match = false;
-                    for (KDTree.SearchResult sr : srs) {
-                        v = (double) sr.payload;
-                        if (sr.distance == 0) {
-                            r.setDouble(i, v);
-                            match = true;
-                            break;
-                        } else {
-                            w = 1. / Math.pow(sr.distance, this.weightPower);
-                            weight_sum += w;
-                            v_sum += v * w;
-                        }
-                    }
-                    if (!match) {
-                        r.setDouble(i, v_sum / weight_sum);
+            interpolateRadius(r, location, 0, pNum);
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolate to location
+     * @param location The location
+     * @param nThreads Number of threads
+     * @return Interpolated value
+     */
+    public Array interpolate(List<Array> location, int nThreads) {
+        for (Array a : location) {
+            a = a.copyIfView();
+        }
+        int pNum = (int)location.get(0).getSize();
+        Array r = Array.factory(this.dataType, location.get(0).getShape());
+        int segment = pNum / nThreads;
+        int remainder = pNum % nThreads;
+        int offset = 0;
+        int segEnd;
+        ArrayList<Thread> threads = new ArrayList<>();
+        for (int ti = 0; ti < nThreads; ti++) {
+            // Distribute remainder among first (remainder) threads
+            int segmentSize = (remainder-- > 0) ? segment + 1 : segment;
+            segEnd = offset + segmentSize;
+
+            //Start the thread
+            int finalSegEnd = segEnd;
+            int finalOffset = offset;
+            Thread t = new Thread() {
+                public void run() {
+                    if (Double.isNaN(radius)) {
+                        interpolateNeighbours(r, location, finalOffset, finalSegEnd);
+                    } else {
+                        interpolateRadius(r, location, finalOffset, finalSegEnd);
                     }
                 }
+            };
+
+            threads.add(t);
+            t.start();
+
+            offset += segmentSize;
+        }
+
+        // Join the threads
+        for (int i = 0; i < threads.size(); i++) {
+            try {
+                threads.get(i).join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        return null;
+
+        return r;
     }
 
 }

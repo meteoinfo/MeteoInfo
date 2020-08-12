@@ -20,6 +20,7 @@ import plotutil
 import mipylib.miutil as miutil
 
 import datetime
+import numbers
 
 from java.awt import Font, Color, BasicStroke
 
@@ -586,11 +587,12 @@ class Axes3D(Axes):
         pstyle = plotutil.getpointstyle(marker)    
         pb.setStyle(pstyle)
         isvalue = False
-        if len(c) > 1:
-            if isinstance(c, (NDArray, DimArray)):
+        if isinstance(c, (NDArray, DimArray)):
+            isvalue = True
+        elif isinstance(c, (list, tuple)):
+            if isinstance(c[0], numbers.Number):
                 isvalue = True
-            elif isinstance(c[0], (int, long, float)):
-                isvalue = True            
+
         if isvalue:
             ls = kwargs.pop('symbolspec', None)
             if ls is None:        

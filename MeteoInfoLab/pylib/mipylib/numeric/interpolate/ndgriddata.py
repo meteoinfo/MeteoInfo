@@ -31,7 +31,7 @@ class NearestNDInterpolator(object):
             x = x.asarray()
         self._interp = JInterp(x, y.asarray())
 
-    def __call__(self, points):
+    def __call__(self, points, **kwargs):
         """
         Evaluate interpolator at given points.
         Parameters
@@ -42,5 +42,9 @@ class NearestNDInterpolator(object):
         xi = []
         for p in points:
             xi.append(p.asarray())
-        r = self._interp.nearest(xi)
+        nthread = kwargs.pop('nthread', None)
+        if nthread is None:
+            r = self._interp.nearest(xi)
+        else:
+            r = self._interp.nearest(xi, nthread)
         return NDArray(r)

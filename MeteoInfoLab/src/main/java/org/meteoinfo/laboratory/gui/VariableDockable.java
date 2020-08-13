@@ -7,6 +7,7 @@ package org.meteoinfo.laboratory.gui;
 
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.action.CAction;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 /**
  *
@@ -28,6 +29,8 @@ public class VariableDockable extends DefaultSingleCDockable {
         this.variableExplorer = new VariableExplorer(); 
         this.getContentPane().add(this.variableExplorer);
         //this.setCloseable(false);
+
+        this.setTitleIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/variable.svg"));
     }
     
     /**

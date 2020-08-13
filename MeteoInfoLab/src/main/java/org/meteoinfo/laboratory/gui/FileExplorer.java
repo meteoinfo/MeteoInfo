@@ -23,6 +23,7 @@ import javax.swing.JTable;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.DefaultTableModel;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.laboratory.event.CurrentPathChangedEvent;
 import org.meteoinfo.laboratory.event.ICurrentPathChangedListener;
@@ -189,18 +190,22 @@ public class FileExplorer extends JPanel implements MouseListener{
         //Add "To Parent" line if the path is not root path
         if (path.getParent() != null)
         {
-            java.net.URL imgURL = this.getClass().getResource("/images/previous.png");
-            ImageIcon icon = new ImageIcon(imgURL);
+            //java.net.URL imgURL = this.getClass().getResource("/images/previous.png");
+            //ImageIcon icon = new ImageIcon(imgURL);
+            FlatSVGIcon icon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/folder-up.svg");
             dtmFile.addRow(new Object[]{new IconText(icon, ""), "", "", ""});
         }
 
         //List all files
-        java.net.URL folderURL = this.getClass().getResource("/images/folder.png");
-        ImageIcon folderIcon = new ImageIcon(folderURL);
-        java.net.URL fileURL = this.getClass().getResource("/images/TSB_NewFile.Image.png");
-        ImageIcon fileIcon = new ImageIcon(fileURL);
-        java.net.URL pyFileURL = this.getClass().getResource("/images/python_16px.png");
-        ImageIcon pyFileIcon = new ImageIcon(pyFileURL);
+        //java.net.URL folderURL = this.getClass().getResource("/images/folder.png");
+        //ImageIcon folderIcon = new ImageIcon(folderURL);
+        FlatSVGIcon folderIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/folder.svg");
+        //java.net.URL fileURL = this.getClass().getResource("/images/TSB_NewFile.Image.png");
+        //ImageIcon fileIcon = new ImageIcon(fileURL);
+        FlatSVGIcon fileIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-new.svg");
+        //java.net.URL pyFileURL = this.getClass().getResource("/images/python_16px.png");
+        //ImageIcon pyFileIcon = new ImageIcon(pyFileURL);
+        FlatSVGIcon pyFileIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/python_16.svg");
         File[] files = path.listFiles();
         Arrays.sort(files);
         for (File file : files){

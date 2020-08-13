@@ -19,6 +19,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.chart.ChartPanel;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
@@ -41,6 +43,7 @@ public class FigureDockable extends DefaultSingleCDockable {
 
         this.parent = parent;
         this.doubleBuffer = true;
+        this.setTitleIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/figure.svg"));
         tabbedPanel = new JTabbedPane();
         tabbedPanel.addChangeListener(new ChangeListener() {
             @Override
@@ -67,7 +70,8 @@ public class FigureDockable extends DefaultSingleCDockable {
         //Select action
         CButton button = new CButton();
         button.setText("Select");
-        button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Arrow.png")));
+        //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Arrow.png")));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/select_16.svg"));
         button.setTooltip("Select");
         button.addActionListener(new ActionListener() {
             @Override
@@ -83,7 +87,8 @@ public class FigureDockable extends DefaultSingleCDockable {
         //Zoom in action
         button = new CButton();
         button.setText("Zoom In");
-        button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomIn.Image.png")));
+        //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomIn.Image.png")));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/zoom-in.svg"));
         button.setTooltip("Zoom In");
         button.addActionListener(new ActionListener() {
             @Override
@@ -98,7 +103,8 @@ public class FigureDockable extends DefaultSingleCDockable {
         //Zoom out action
         button = new CButton();
         button.setText("Zoom Out");
-        button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomOut.Image.png")));
+        //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomOut.Image.png")));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/zoom-out.svg"));
         button.setTooltip("Zoom Out");
         button.addActionListener(new ActionListener() {
             @Override
@@ -113,7 +119,8 @@ public class FigureDockable extends DefaultSingleCDockable {
         //Pan action
         button = new CButton();
         button.setText("Pan");
-        button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Pan.Image.png")));
+        //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Pan.Image.png")));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/pan_16.svg"));
         button.setTooltip("Pan");
         button.addActionListener(new ActionListener() {
             @Override
@@ -128,7 +135,8 @@ public class FigureDockable extends DefaultSingleCDockable {
         //Rotate action
         button = new CButton();
         button.setText("Rotate");
-        button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/rotate_16.png")));
+        //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/rotate_16.png")));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/rotate_16.svg"));
         button.setTooltip("Rotate");
         button.addActionListener(new ActionListener() {
             @Override
@@ -143,7 +151,8 @@ public class FigureDockable extends DefaultSingleCDockable {
         //Full extent action
         button = new CButton();
         button.setText("Full Extent");
-        button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_FullExtent.Image.png")));
+        //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_FullExtent.Image.png")));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/full-extent.svg"));
         button.setTooltip("Full Extent");
         button.addActionListener(new ActionListener() {
             @Override
@@ -159,7 +168,8 @@ public class FigureDockable extends DefaultSingleCDockable {
         //Identifer action
         button = new CButton();
         button.setText("Identifer");
-        button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png")));
+        //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png")));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/information.svg"));
         button.setTooltip("Identifer");
         button.addActionListener(new ActionListener() {
             @Override

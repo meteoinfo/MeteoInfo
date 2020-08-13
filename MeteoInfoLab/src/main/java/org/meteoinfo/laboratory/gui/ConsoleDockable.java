@@ -7,6 +7,7 @@ package org.meteoinfo.laboratory.gui;
 
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.action.CAction;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.console.JConsole;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -52,6 +53,8 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         this.initializeConsole(console, parent.getCurrentFolder());
         JIntrospect nameComplete = new JIntrospect(this.interp);
         console.setNameCompletion(nameComplete);
+
+        this.setTitleIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/console.svg"));
 
         this.getContentPane().add(console, BorderLayout.CENTER);
         console.addKeyListener(new KeyListener() {

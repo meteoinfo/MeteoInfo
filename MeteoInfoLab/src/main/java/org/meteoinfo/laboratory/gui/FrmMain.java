@@ -489,8 +489,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jToolBar_Editor.setRollover(true);
         jToolBar_Editor.setPreferredSize(new java.awt.Dimension(250, 25));
 
-        jButton_NewFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewFile.Image.png"))); // NOI18N
-        //jButton_NewFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-text.svg"));
+        //jButton_NewFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewFile.Image.png"))); // NOI18N
+        jButton_NewFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-new.svg"));
         jButton_NewFile.setToolTipText("New File");
         jButton_NewFile.setFocusable(false);
         jButton_NewFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -502,7 +502,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jToolBar_Editor.add(jButton_NewFile);
 
-        jButton_OpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
+        //jButton_OpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
+        jButton_OpenFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-open.svg"));
         jButton_OpenFile.setToolTipText("Open File");
         jButton_OpenFile.setFocusable(false);
         jButton_OpenFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -514,7 +515,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jToolBar_Editor.add(jButton_OpenFile);
 
-        jButton_SaveFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
+        //jButton_SaveFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
+        jButton_SaveFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-save.svg"));
         jButton_SaveFile.setToolTipText("Save File");
         jButton_SaveFile.setFocusable(false);
         jButton_SaveFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -526,7 +528,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jToolBar_Editor.add(jButton_SaveFile);
 
-        jButton_SaveAs.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_16.png"))); // NOI18N
+        //jButton_SaveAs.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_16.png"))); // NOI18N
+        jButton_SaveAs.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-save-as.svg"));
         jButton_SaveAs.setToolTipText("Save As");
         jButton_SaveAs.setFocusable(false);
         jButton_SaveAs.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -539,8 +542,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jToolBar_Editor.add(jButton_SaveAs);
         jToolBar_Editor.add(jSeparator1);
 
-        jButton_Undo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Undo.Image.png"))); // NOI18N
-        //jButton_Undo.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/undo.svg"));
+        //jButton_Undo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Undo.Image.png"))); // NOI18N
+        jButton_Undo.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/undo.svg"));
         jButton_Undo.setToolTipText("Undo");
         jButton_Undo.setFocusable(false);
         jButton_Undo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -552,7 +555,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jToolBar_Editor.add(jButton_Undo);
 
-        jButton_Redo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Redo.Image.png"))); // NOI18N
+        //jButton_Redo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Redo.Image.png"))); // NOI18N
+        jButton_Redo.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/redo.svg"));
         jButton_Redo.setToolTipText("Redo");
         jButton_Redo.setFocusable(false);
         jButton_Redo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -565,7 +569,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jToolBar_Editor.add(jButton_Redo);
         jToolBar_Editor.add(jSeparator2);
 
-        jButton_RunScript.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_RunScript.Image.png"))); // NOI18N
+        //jButton_RunScript.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_RunScript.Image.png"))); // NOI18N
+        jButton_RunScript.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/execute.svg"));
         jButton_RunScript.setToolTipText("Run Script");
         jButton_RunScript.setFocusable(false);
         jButton_RunScript.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -581,7 +586,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         jToolBar_CurrentFolder.setRollover(true);
 
-        jLabel1.setText("Current Folder:");
+        jLabel1.setText("Current Folder: ");
         jToolBar_CurrentFolder.add(jLabel1);
 
         jComboBox_CurrentFolder.setEditable(true);
@@ -594,7 +599,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jToolBar_CurrentFolder.add(jComboBox_CurrentFolder);
 
-        jButton_CurrentFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/folder.png"))); // NOI18N
+        //jButton_CurrentFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/folder.png"))); // NOI18N
+        jButton_CurrentFolder.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-open.svg"));
         jButton_CurrentFolder.setFocusable(false);
         jButton_CurrentFolder.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton_CurrentFolder.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -627,7 +633,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_File.setText("File");
 
         jMenuItem_NewFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem_NewFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewFile.Image.png"))); // NOI18N
+        //jMenuItem_NewFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewFile.Image.png"))); // NOI18N
+        jMenuItem_NewFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-new.svg"));
         jMenuItem_NewFile.setText("New");
         jMenuItem_NewFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -637,7 +644,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_File.add(jMenuItem_NewFile);
 
         jMenuItem_OpenFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem_OpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
+        //jMenuItem_OpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
+        jMenuItem_OpenFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-open.svg"));
         jMenuItem_OpenFile.setText("Open ...");
         jMenuItem_OpenFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -648,6 +656,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         jMenuItem_SaveFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem_SaveFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
+        jMenuItem_SaveFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-save.svg"));
         jMenuItem_SaveFile.setText("Save");
         jMenuItem_SaveFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -656,7 +665,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jMenu_File.add(jMenuItem_SaveFile);
 
-        jMenuItem_SaveAs.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_16.png"))); // NOI18N
+        //jMenuItem_SaveAs.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_16.png"))); // NOI18N
+        jMenuItem_SaveAs.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-save-as.svg"));
         jMenuItem_SaveAs.setText("Save As ...");
         jMenuItem_SaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -665,7 +675,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jMenu_File.add(jMenuItem_SaveAs);
 
-        jMenuItem_CloseAllFiles.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/closefile.png"))); // NOI18N
+        //jMenuItem_CloseAllFiles.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/closefile.png"))); // NOI18N
+        jMenuItem_CloseAllFiles.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-close-all.svg"));
         jMenuItem_CloseAllFiles.setText("Close All Files");
         jMenuItem_CloseAllFiles.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -694,7 +705,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
 
         jMenuItem_Cut.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem_Cut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSMI_EditCut.Image.png"))); // NOI18N
+        //jMenuItem_Cut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSMI_EditCut.Image.png"))); // NOI18N
+        jMenuItem_Cut.setIcon(new FlatSVGIcon( "org/meteoinfo/laboratory/icons/menu-cut.svg" ));
         jMenuItem_Cut.setText("Cut");
         jMenuItem_Cut.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -704,7 +716,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Editor.add(jMenuItem_Cut);
 
         jMenuItem_Copy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem_Copy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/menuEditCopy.Image.png"))); // NOI18N
+        //jMenuItem_Copy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/menuEditCopy.Image.png"))); // NOI18N
+        jMenuItem_Copy.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/copy.svg"));
         jMenuItem_Copy.setText("Copy");
         jMenuItem_Copy.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -714,7 +727,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Editor.add(jMenuItem_Copy);
 
         jMenuItem_Paste.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem_Paste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pasteToolStripButton.Image.png"))); // NOI18N
+        //jMenuItem_Paste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pasteToolStripButton.Image.png"))); // NOI18N
+        jMenuItem_Paste.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/menu-paste.svg"));
         jMenuItem_Paste.setText("Paste");
         jMenuItem_Paste.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -725,7 +739,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Editor.add(jSeparator6);
 
         jMenuItem_FindReplace.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem_FindReplace.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/find.png"))); // NOI18N
+        //jMenuItem_FindReplace.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/find.png"))); // NOI18N
+        jMenuItem_FindReplace.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/find_16.svg"));
         jMenuItem_FindReplace.setText("Find & Replace");
         jMenuItem_FindReplace.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -766,7 +781,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Options.setMnemonic('O');
         jMenu_Options.setText("Options");
 
-        jMenuItem_Setting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/setting.png"))); // NOI18N
+        //jMenuItem_Setting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/setting.png"))); // NOI18N
+        jMenuItem_Setting.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/setting.svg"));
         jMenuItem_Setting.setText("Setting");
         jMenuItem_Setting.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -776,7 +792,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Options.add(jMenuItem_Setting);
         jMenu_Options.add(jSeparator4);
 
-        jMenuItem_ColorMaps.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/colors.png"))); // NOI18N
+        //jMenuItem_ColorMaps.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/colors.png"))); // NOI18N
+        jMenuItem_ColorMaps.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/color-wheel.svg"));
         jMenuItem_ColorMaps.setText("Color Maps");
         jMenuItem_ColorMaps.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -785,7 +802,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         });
         jMenu_Options.add(jMenuItem_ColorMaps);
 
-        jMenuItem_ColorDialog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Color_Wheel.png"))); // NOI18N
+        //jMenuItem_ColorDialog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Color_Wheel.png"))); // NOI18N
+        jMenuItem_ColorDialog.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/colors.svg"));
         jMenuItem_ColorDialog.setText("Color Dialog");
         jMenuItem_ColorDialog.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -813,6 +831,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Help.setText("Help");
 
         jMenuItem_About.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png"))); // NOI18N
+        jMenuItem_About.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/information.svg"));
         jMenuItem_About.setText("About");
         jMenuItem_About.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -822,7 +841,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Help.add(jMenuItem_About);
         jMenu_Help.add(jSeparator7);
 
-        jMenuItem_Help.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/help.png"))); // NOI18N
+        //jMenuItem_Help.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/help.png"))); // NOI18N
+        jMenuItem_Help.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/help.svg"));
         jMenuItem_Help.setText("Help");
         jMenuItem_Help.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

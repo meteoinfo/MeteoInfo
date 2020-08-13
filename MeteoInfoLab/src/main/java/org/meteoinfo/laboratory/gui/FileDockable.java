@@ -8,6 +8,8 @@ package org.meteoinfo.laboratory.gui;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.action.CButton;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -26,12 +28,15 @@ public class FileDockable extends DefaultSingleCDockable {
         fileExplorer = new FileExplorer(null);
         this.getContentPane().add(fileExplorer);
         //this.setCloseable(false);
+
+        this.setTitleIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-explorer.svg"));
         
         //Add actions     
         //Up action
         CButton button = new CButton();        
         button.setText("Up");
-        button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/up_arrow.png")));
+        //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/up_arrow.png")));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/folder-up.svg"));
         button.setTooltip("Up folder");
         button.addActionListener( new ActionListener(){
             @Override
@@ -48,7 +53,8 @@ public class FileDockable extends DefaultSingleCDockable {
         //Update action        
         button = new CButton();
         button.setText("Update");
-        button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/update.png")));
+        //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/update.png")));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/refresh.svg"));
         button.setTooltip("Update");
         button.addActionListener( new ActionListener(){
             @Override

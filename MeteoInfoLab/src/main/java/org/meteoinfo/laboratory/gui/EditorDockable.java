@@ -35,6 +35,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.text.BadLocationException;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.TextEditorPane;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -60,6 +61,7 @@ public class EditorDockable extends DefaultSingleCDockable {
         super(id, title, actions);
 
         this.parent = parent;
+        this.setTitleIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/editor.svg"));
         String lfName = this.parent.getOptions().getLookFeel();
         String themeName = "default";
         switch (lfName) {

@@ -816,7 +816,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         jMenu_Apps.setText("Apps");
 
-        jMenuItem_AppsManager.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/plugin_edit_green.png"))); // NOI18N
+        //jMenuItem_AppsManager.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/plugin_edit_green.png"))); // NOI18N
+        jMenuItem_AppsManager.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/toolbox.svg"));
         jMenuItem_AppsManager.setText("Application Manager");
         jMenuItem_AppsManager.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

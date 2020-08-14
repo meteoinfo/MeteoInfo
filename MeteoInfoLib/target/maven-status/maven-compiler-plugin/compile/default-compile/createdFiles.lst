@@ -631,6 +631,7 @@ org\meteoinfo\ndarray\StructureDataScalar.class
 org\meteoinfo\layout\FrmPageSet$8.class
 org\meteoinfo\data\meteodata\grads\GrADSDataInfo.class
 org\meteoinfo\image\filter\ScaleFilter.class
+org\meteoinfo\math\interpolate\NearestNDInterpolator.class
 org\meteoinfo\chart\CoordinateType.class
 org\meteoinfo\data\mapdata\AttributeTable.class
 org\meteoinfo\data\dataframe\impl\Views$FlatView.class
@@ -657,6 +658,7 @@ org\meteoinfo\chart\jogl\GLChartPanel$4.class
 org\meteoinfo\ui\JCheckBoxTree.class
 org\meteoinfo\data\meteodata\bufr\BufrIndicatorSectionW.class
 org\meteoinfo\legend\FrmPolygonSymbolSet$7.class
+org\meteoinfo\math\interpolate\NearestNDInterpolator$1.class
 org\meteoinfo\data\mapdata\FrmAttriData$1.class
 org\meteoinfo\chart\jogl\GLForm.class
 org\meteoinfo\data\meteodata\micaps\MICAPS3DataInfo.class
@@ -1043,6 +1045,7 @@ org\meteoinfo\data\mapdata\geotiff\GeoKey$TagValue.class
 org\meteoinfo\chart\jogl\mc\BenchmarkHandler$2.class
 org\meteoinfo\data\dataframe\impl\WindowFunction.class
 org\meteoinfo\layer\VectorLayer.class
+org\meteoinfo\math\interpolate\IDWNDInterpolator.class
 org\meteoinfo\ndarray\ArrayFloat$D7.class
 org\meteoinfo\layer\FrmLabelSet$6.class
 org\meteoinfo\global\util\JDateUtil.class
@@ -1473,6 +1476,7 @@ org\meteoinfo\table\RowHeaderTableModel.class
 org\meteoinfo\image\filter\ChannelMixFilter.class
 org\meteoinfo\data\Dataset.class
 org\meteoinfo\global\event\IActiveMapFrameChangedListener.class
+org\meteoinfo\math\interpolate\IDWNDInterpolator$1.class
 org\meteoinfo\ndarry\constants\CDM.class
 org\meteoinfo\data\dataframe\impl\BlockManager.class
 org\meteoinfo\data\dataframe\impl\TimeFunctions.class

@@ -40,7 +40,7 @@ class RandomState(object):
         else:
             return NDArray(self._mtrand.rand(args))
 
-    def shuffle(self, x):
+    def shuffle(self, x, axis=0):
         '''
         Modify a sequence in-place by shuffling its contents.
 
@@ -49,17 +49,22 @@ class RandomState(object):
         their contents remains the same.
 
         :param x: (*array*) Input array
+        :param axis: (*int*) The axis which x is shuffled along. Default is 0. It is only supported
+            on ndarray objects.
+
         :return: None
         '''
-        self._mtrand.shuffle(x._array)
+        self._mtrand.shuffle(x._array, axis)
 
-    def permutation(self, x):
+    def permutation(self, x, axis=0):
         '''
         MRandomly permute a sequence, or return a permuted range.
 
         If x is a multi-dimensional array, it is only shuffled along its first index.
 
         :param x: (*array*) Input array
+        :param axis: (*int*) The axis which x is shuffled along. Default is 0. It is only supported
+            on ndarray objects.
 
         :return: Permutation array
         '''
@@ -68,7 +73,14 @@ class RandomState(object):
         else:
             x = np.asanyarray(x)
             arr = x.copy()
-        self._mtrand.shuffle(arr._array)
+        self._mtrand.shuffle(arr._array, axis)
         return arr
 
 _rand = RandomState()
+
+shuffle = _rand.shuffle
+permutation = _rand.permutation
+
+__all__ = [
+    'shuffle','permutation'
+    ]

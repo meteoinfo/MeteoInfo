@@ -74,7 +74,7 @@ public class IndexConstant extends Index {
   }
 
   @Override
-  Index section(List<Range> ranges) throws InvalidRangeException {
+  public Index section(List<Range> ranges) throws InvalidRangeException {
     Section curr = new Section(shape);
     Section want = curr.compose(new Section(ranges)).reduce();
     return new IndexConstant( want.getShape());

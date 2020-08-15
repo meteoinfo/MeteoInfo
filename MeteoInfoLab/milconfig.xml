@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\random">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
@@ -9,26 +8,27 @@
     <RecentFolder Folder="D:\Temp\wrf-cfd\script"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\random"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\nearest_3d-1.py"/>
-      <OpenedFile File="D:\Temp\wrf-cfd\script\griddata-3d.py"/>
-      <OpenedFile File="D:\Temp\wrf-cfd\script\read_csv-3d.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\shuffle_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\permutation_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\nearest_3d-1.py"/>
-      <RecentFile File="D:\Temp\wrf-cfd\script\griddata-3d.py"/>
-      <RecentFile File="D:\Temp\wrf-cfd\script\read_csv-3d.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\shuffle_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\permutation_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1359,784"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

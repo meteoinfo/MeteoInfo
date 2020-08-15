@@ -245,7 +245,7 @@ public class Index implements Cloneable {
      * @return new Index, with same or smaller rank as original.
      * @throws InvalidRangeException if ranges dont match current shape
      */
-    Index section(List<Range> ranges) throws InvalidRangeException {
+    public Index section(List<Range> ranges) throws InvalidRangeException {
 
         // check ranges are valid
         if (ranges.size() != rank) {

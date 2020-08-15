@@ -1,9 +1,9 @@
 package org.meteoinfo.math.random;
 
 import org.apache.commons.math3.random.MersenneTwister;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -152,14 +152,55 @@ public class MTRandom extends MersenneTwister {
      * Permutes the given array
      *
      * @param x array to be shuffled
+     * @param axis The axis which x is shuffled along
      */
-    public void shuffle(Array x) {
-        for (int i = (int)x.getSize() - 1; i > 0; i--) {
-            int index = this.nextInt(i);
-            // swap
-            Object tmp = x.getObject(index);
-            x.setObject(index, x.getObject(i));
-            x.setObject(i, tmp);
+    public void shuffle(Array x, int axis) throws InvalidRangeException {
+        x = x.copyIfView();
+        int nDim = x.getRank();
+        int ii;
+        if (nDim == 1) {
+            Object tmp;
+            for (int i = (int) x.getSize() - 1; i > 0; i--) {
+                ii = this.nextInt(i);
+                if (ii != i) {
+                    // swap
+                    tmp = x.getObject(ii);
+                    x.setObject(ii, x.getObject(i));
+                    x.setObject(i, tmp);
+                }
+            }
+        } else {
+            int n = x.getShape()[axis];
+            Array tmp1, tmp2;
+            int[] shape = x.getShape();
+            shape[axis] = 1;
+            List<Range> ranges = new ArrayList<>();
+            for (int i = 0; i < nDim; i++) {
+                ranges.add(new Range(0, shape[i] - 1, 1));
+            }
+            Index index = x.getIndex();
+            for (int i = n - 1; i > 0; i--) {
+                ii = this.nextInt(i);
+                if (ii != i) {
+                    // swap
+                    ranges.set(axis, new Range(ii, ii, 1));
+                    tmp1 = x.section(ranges).copy();
+                    Index iIndex1 = index.section(ranges);
+                    ranges.set(axis, new Range(i, i, 1));
+                    tmp2 = x.section(ranges);
+                    Index iIndex2 = index.section(ranges);
+                    IndexIterator iter1 = tmp1.getIndexIterator();
+                    IndexIterator iter2 = tmp2.getIndexIterator();
+                    while (iter2.hasNext()) {
+                        x.setObject(iIndex1, iter2.getObjectNext());
+                        iIndex1.incr();
+                    }
+                    while (iter1.hasNext()) {
+                        x.setObject(iIndex2, iter1.getObjectNext());
+                        iIndex2.incr();
+                    }
+                }
+            }
         }
     }
 }

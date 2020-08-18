@@ -15,15 +15,15 @@ package org.meteoinfo.data.mapdata;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.JTableHeader;
+
+import com.kitfox.svg.app.beans.SVGIcon;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.table.DataTableModel;
 import org.meteoinfo.ndarray.DataType;
@@ -48,10 +48,14 @@ public class FrmAttriData extends javax.swing.JFrame {
         initComponents();
         
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        BufferedImage image = null;
+        //BufferedImage image = null;
         try {
-            image = ImageIO.read(this.getClass().getResource("/images/AttributeTable.png"));
-            this.setIconImage(image);
+            //image = ImageIO.read(this.getClass().getResource("/images/AttributeTable.png"));
+            SVGIcon icon = new SVGIcon();
+            icon.setAntiAlias(true);
+            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/table.svg").toURI());
+            //icon.setAutosize(SVGIcon.AUTOSIZE_BESTFIT);
+            this.setIconImage(icon.getImage());
         } catch (Exception e) {
         }    
 

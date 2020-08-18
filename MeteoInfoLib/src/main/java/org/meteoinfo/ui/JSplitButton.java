@@ -201,6 +201,18 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
     }
 
     /**
+     * Get split rectangle
+     * @return Split rectangle
+     */
+    public Rectangle getSplitRectangle() { return this.splitRectangle; }
+
+    /**
+     * Get if the mouse point on split rectangle
+     * @return Boolean
+     */
+    public boolean isOnSplit() { return this.onSplit; }
+
+    /**
      * gets the size of the arrow.
      *
      * @return size of the arrow

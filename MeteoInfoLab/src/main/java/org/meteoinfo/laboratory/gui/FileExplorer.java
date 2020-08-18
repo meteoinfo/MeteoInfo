@@ -205,7 +205,8 @@ public class FileExplorer extends JPanel implements MouseListener{
         FlatSVGIcon fileIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-new.svg");
         //java.net.URL pyFileURL = this.getClass().getResource("/images/python_16px.png");
         //ImageIcon pyFileIcon = new ImageIcon(pyFileURL);
-        FlatSVGIcon pyFileIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/python_16.svg");
+        //FlatSVGIcon pyFileIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/python_16.svg");
+        FlatSVGIcon pyFileIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/jython.svg");
         File[] files = path.listFiles();
         Arrays.sort(files);
         for (File file : files){

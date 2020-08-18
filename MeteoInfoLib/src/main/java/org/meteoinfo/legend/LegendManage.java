@@ -255,68 +255,61 @@ public class LegendManage {
         legendScheme.setUndefValue(unDef);
         int i;
         //List<Integer> idxList = new ArrayList<Integer>();
-        switch (aST) {
-            case Point:
-            case PointZ:
-                for (i = 1; i < colors.length; i++) {
-                    PointBreak aPB = new PointBreak();
-                    aPB.setColor(colors[i]);
-                    aPB.setStartValue(CValues.get(i - 1));
-                    aPB.setEndValue(aPB.getStartValue());
-                    if (colors.length <= 13) {
-                        aPB.setSize((float) i / 2 + 2);
-                    } else {
-                        aPB.setSize(5);
-                    }
-                    aPB.setStyle(PointStyle.Circle);
-                    aPB.setOutlineColor(Color.black);
-                    aPB.setNoData(false);
-                    aPB.setDrawOutline(true);
-                    aPB.setDrawFill(true);
-                    aPB.setDrawShape(true);
-                    aPB.setCaption(captions.get(i - 1));
-
-                    legendScheme.getLegendBreaks().add(aPB);
+        if (aST.isPoint()) {
+            for (i = 1; i < colors.length; i++) {
+                PointBreak aPB = new PointBreak();
+                aPB.setColor(colors[i]);
+                aPB.setStartValue(CValues.get(i - 1));
+                aPB.setEndValue(aPB.getStartValue());
+                if (colors.length <= 13) {
+                    aPB.setSize((float) i / 2 + 2);
+                } else {
+                    aPB.setSize(5);
                 }
-                legendScheme.setHasNoData(false);
-                break;
-            case Polyline:
-            case PolylineM:
-            case PolylineZ:
-                for (i = 1; i < colors.length; i++) {
-                    PolylineBreak aPLB = new PolylineBreak();
-                    aPLB.setColor(colors[i]);
-                    aPLB.setStartValue(CValues.get(i - 1));
-                    aPLB.setEndValue(aPLB.getStartValue());
-                    aPLB.setWidth(1.0F);
-                    aPLB.setStyle(LineStyles.SOLID);
-                    aPLB.setDrawPolyline(true);
-                    aPLB.setCaption(captions.get(i - 1));
-                    aPLB.setSymbolColor(aPLB.getColor());
-                    aPLB.setSymbolStyle(PointStyle.Circle);
+                aPB.setStyle(PointStyle.Circle);
+                aPB.setOutlineColor(Color.black);
+                aPB.setNoData(false);
+                aPB.setDrawOutline(true);
+                aPB.setDrawFill(true);
+                aPB.setDrawShape(true);
+                aPB.setCaption(captions.get(i - 1));
 
-                    legendScheme.getLegendBreaks().add(aPLB);
-                }
-                legendScheme.setHasNoData(false);
-                break;
-            case Polygon:
-                for (i = 1; i < colors.length; i++) {
-                    PolygonBreak aPGB = new PolygonBreak();
-                    aPGB.setColor(colors[i]);
-                    aPGB.setOutlineColor(Color.gray);
-                    aPGB.setOutlineSize(1.0F);
-                    aPGB.setDrawFill(true);
-                    aPGB.setDrawOutline(true);
-                    aPGB.setDrawShape(true);
-                    aPGB.setStartValue(CValues.get(i - 1));
-                    aPGB.setEndValue(aPGB.getStartValue());
-                    aPGB.setCaption(captions.get(i - 1));
-                    //aPGB.Style = (HatchStyle)idxList[i];
+                legendScheme.getLegendBreaks().add(aPB);
+            }
+            legendScheme.setHasNoData(false);
+        } else if (aST.isLine()) {
+            for (i = 1; i < colors.length; i++) {
+                PolylineBreak aPLB = new PolylineBreak();
+                aPLB.setColor(colors[i]);
+                aPLB.setStartValue(CValues.get(i - 1));
+                aPLB.setEndValue(aPLB.getStartValue());
+                aPLB.setWidth(1.0F);
+                aPLB.setStyle(LineStyles.SOLID);
+                aPLB.setDrawPolyline(true);
+                aPLB.setCaption(captions.get(i - 1));
+                aPLB.setSymbolColor(aPLB.getColor());
+                aPLB.setSymbolStyle(PointStyle.Circle);
 
-                    legendScheme.getLegendBreaks().add(aPGB);
-                }
-                legendScheme.setHasNoData(false);
-                break;
+                legendScheme.getLegendBreaks().add(aPLB);
+            }
+            legendScheme.setHasNoData(false);
+        } else if (aST.isPolygon()) {
+            for (i = 1; i < colors.length; i++) {
+                PolygonBreak aPGB = new PolygonBreak();
+                aPGB.setColor(colors[i]);
+                aPGB.setOutlineColor(Color.gray);
+                aPGB.setOutlineSize(1.0F);
+                aPGB.setDrawFill(true);
+                aPGB.setDrawOutline(true);
+                aPGB.setDrawShape(true);
+                aPGB.setStartValue(CValues.get(i - 1));
+                aPGB.setEndValue(aPGB.getStartValue());
+                aPGB.setCaption(captions.get(i - 1));
+                //aPGB.Style = (HatchStyle)idxList[i];
+
+                legendScheme.getLegendBreaks().add(aPGB);
+            }
+            legendScheme.setHasNoData(false);
         }
 
         return legendScheme;
@@ -341,68 +334,61 @@ public class LegendManage {
         legendScheme.setMinValue(min);
         legendScheme.setMaxValue(max);
         int i;
-        switch (aST) {
-            case Point:
-            case PointZ:
-                for (i = 1; i < colors.length; i++) {
-                    PointBreak aPB = new PointBreak();
-                    aPB.setColor(colors[i]);
-                    aPB.setStartValue(CValues.get(i - 1));
-                    aPB.setEndValue(aPB.getStartValue());
-                    if (colors.length <= 13) {
-                        aPB.setSize((float) i / 2 + 2);
-                    } else {
-                        aPB.setSize(5);
-                    }
-                    aPB.setStyle(PointStyle.Circle);
-                    aPB.setOutlineColor(Color.black);
-                    aPB.setNoData(false);
-                    aPB.setDrawOutline(true);
-                    aPB.setDrawFill(true);
-                    aPB.setDrawShape(true);
-                    aPB.setCaption(captions.get(i - 1));
-
-                    legendScheme.getLegendBreaks().add(aPB);
+        if (aST.isPoint()) {
+            for (i = 1; i < colors.length; i++) {
+                PointBreak aPB = new PointBreak();
+                aPB.setColor(colors[i]);
+                aPB.setStartValue(CValues.get(i - 1));
+                aPB.setEndValue(aPB.getStartValue());
+                if (colors.length <= 13) {
+                    aPB.setSize((float) i / 2 + 2);
+                } else {
+                    aPB.setSize(5);
                 }
-                legendScheme.setHasNoData(false);
-                break;
-            case Polyline:
-            case PolylineM:
-            case PolylineZ:
-                for (i = 1; i < colors.length; i++) {
-                    PolylineBreak aPLB = new PolylineBreak();
-                    aPLB.setColor(colors[i]);
-                    aPLB.setStartValue(CValues.get(i - 1));
-                    aPLB.setEndValue(aPLB.getStartValue());
-                    aPLB.setWidth(1.0F);
-                    aPLB.setStyle(LineStyles.SOLID);
-                    aPLB.setDrawPolyline(true);
-                    aPLB.setCaption(captions.get(i - 1));
-                    aPLB.setSymbolColor(aPLB.getColor());
-                    aPLB.setSymbolStyle(PointStyle.Circle);
+                aPB.setStyle(PointStyle.Circle);
+                aPB.setOutlineColor(Color.black);
+                aPB.setNoData(false);
+                aPB.setDrawOutline(true);
+                aPB.setDrawFill(true);
+                aPB.setDrawShape(true);
+                aPB.setCaption(captions.get(i - 1));
 
-                    legendScheme.getLegendBreaks().add(aPLB);
-                }
-                legendScheme.setHasNoData(false);
-                break;
-            case Polygon:
-                for (i = 1; i < colors.length; i++) {
-                    PolygonBreak aPGB = new PolygonBreak();
-                    aPGB.setColor(colors[i]);
-                    aPGB.setOutlineColor(Color.gray);
-                    aPGB.setOutlineSize(1.0F);
-                    aPGB.setDrawFill(true);
-                    aPGB.setDrawOutline(true);
-                    aPGB.setDrawShape(true);
-                    aPGB.setStartValue(CValues.get(i - 1));
-                    aPGB.setEndValue(aPGB.getStartValue());
-                    aPGB.setCaption(captions.get(i - 1));
-                    //aPGB.Style = (HatchStyle)idxList[i];
+                legendScheme.getLegendBreaks().add(aPB);
+            }
+            legendScheme.setHasNoData(false);
+        } else if (aST.isLine()) {
+            for (i = 1; i < colors.length; i++) {
+                PolylineBreak aPLB = new PolylineBreak();
+                aPLB.setColor(colors[i]);
+                aPLB.setStartValue(CValues.get(i - 1));
+                aPLB.setEndValue(aPLB.getStartValue());
+                aPLB.setWidth(1.0F);
+                aPLB.setStyle(LineStyles.SOLID);
+                aPLB.setDrawPolyline(true);
+                aPLB.setCaption(captions.get(i - 1));
+                aPLB.setSymbolColor(aPLB.getColor());
+                aPLB.setSymbolStyle(PointStyle.Circle);
 
-                    legendScheme.getLegendBreaks().add(aPGB);
-                }
-                legendScheme.setHasNoData(false);
-                break;
+                legendScheme.getLegendBreaks().add(aPLB);
+            }
+            legendScheme.setHasNoData(false);
+        } else if (aST.isPolygon()) {
+            for (i = 1; i < colors.length; i++) {
+                PolygonBreak aPGB = new PolygonBreak();
+                aPGB.setColor(colors[i]);
+                aPGB.setOutlineColor(Color.gray);
+                aPGB.setOutlineSize(1.0F);
+                aPGB.setDrawFill(true);
+                aPGB.setDrawOutline(true);
+                aPGB.setDrawShape(true);
+                aPGB.setStartValue(CValues.get(i - 1));
+                aPGB.setEndValue(aPGB.getStartValue());
+                aPGB.setCaption(captions.get(i - 1));
+                //aPGB.Style = (HatchStyle)idxList[i];
+
+                legendScheme.getLegendBreaks().add(aPGB);
+            }
+            legendScheme.setHasNoData(false);
         }
 
         return legendScheme;
@@ -428,69 +414,62 @@ public class LegendManage {
         }
 
         int i;
-        switch (aST) {
-            case Point:
-            case PointZ:
-                for (i = 0; i < colors.length; i++) {
-                    PointBreak aPB = new PointBreak();
-                    aPB.setColor(colors[i]);
-                    aPB.setStartValue(i);
-                    aPB.setEndValue(i);
-                    aPB.setSize(6);
-                    aPB.setStyle(PointStyle.Circle);
-                    aPB.setOutlineColor(Color.black);
-                    aPB.setNoData(false);
-                    aPB.setDrawOutline(true);
-                    aPB.setDrawFill(true);
-                    aPB.setDrawShape(true);
-                    aPB.setCaption(String.valueOf(i));
+        if (aST.isPoint()) {
+            for (i = 0; i < colors.length; i++) {
+                PointBreak aPB = new PointBreak();
+                aPB.setColor(colors[i]);
+                aPB.setStartValue(i);
+                aPB.setEndValue(i);
+                aPB.setSize(6);
+                aPB.setStyle(PointStyle.Circle);
+                aPB.setOutlineColor(Color.black);
+                aPB.setNoData(false);
+                aPB.setDrawOutline(true);
+                aPB.setDrawFill(true);
+                aPB.setDrawShape(true);
+                aPB.setCaption(String.valueOf(i));
 
-                    legendScheme.getLegendBreaks().add(aPB);
+                legendScheme.getLegendBreaks().add(aPB);
+            }
+            legendScheme.setHasNoData(false);
+        } else if (aST.isLine()) {
+            int ii = 0;
+            for (i = 0; i < colors.length; i++) {
+                PolylineBreak aPLB = new PolylineBreak();
+                aPLB.setColor(colors[i]);
+                aPLB.setStartValue(i);
+                aPLB.setEndValue(i);
+                aPLB.setWidth(1.0F);
+                aPLB.setStyle(LineStyles.SOLID);
+                aPLB.setDrawPolyline(true);
+                aPLB.setCaption(String.valueOf(i));
+                aPLB.setSymbolColor(aPLB.getColor());
+                aPLB.setSymbolStyle(PointStyle.values()[ii]);
+                ii += 1;
+                if (ii == PointStyle.values().length) {
+                    ii = 0;
                 }
-                legendScheme.setHasNoData(false);
-                break;
-            case Polyline:
-            case PolylineM:
-            case PolylineZ:
-                int ii = 0;
-                for (i = 0; i < colors.length; i++) {
-                    PolylineBreak aPLB = new PolylineBreak();
-                    aPLB.setColor(colors[i]);
-                    aPLB.setStartValue(i);
-                    aPLB.setEndValue(i);
-                    aPLB.setWidth(1.0F);
-                    aPLB.setStyle(LineStyles.SOLID);
-                    aPLB.setDrawPolyline(true);
-                    aPLB.setCaption(String.valueOf(i));
-                    aPLB.setSymbolColor(aPLB.getColor());
-                    aPLB.setSymbolStyle(PointStyle.values()[ii]);
-                    ii += 1;
-                    if (ii == PointStyle.values().length) {
-                        ii = 0;
-                    }
 
-                    legendScheme.getLegendBreaks().add(aPLB);
-                }
-                legendScheme.setHasNoData(false);
-                break;
-            case Polygon:
-                for (i = 0; i < colors.length; i++) {
-                    PolygonBreak aPGB = new PolygonBreak();
-                    aPGB.setColor(colors[i]);
-                    aPGB.setOutlineColor(Color.gray);
-                    aPGB.setOutlineSize(1.0F);
-                    aPGB.setDrawFill(true);
-                    aPGB.setDrawOutline(true);
-                    aPGB.setDrawShape(true);
-                    aPGB.setStartValue(i);
-                    aPGB.setEndValue(i);
-                    aPGB.setCaption(String.valueOf(i));
-                    //aPGB.Style = (HatchStyle)idxList[i];
+                legendScheme.getLegendBreaks().add(aPLB);
+            }
+            legendScheme.setHasNoData(false);
+        } else if (aST.isPolygon()) {
+            for (i = 0; i < colors.length; i++) {
+                PolygonBreak aPGB = new PolygonBreak();
+                aPGB.setColor(colors[i]);
+                aPGB.setOutlineColor(Color.gray);
+                aPGB.setOutlineSize(1.0F);
+                aPGB.setDrawFill(true);
+                aPGB.setDrawOutline(true);
+                aPGB.setDrawShape(true);
+                aPGB.setStartValue(i);
+                aPGB.setEndValue(i);
+                aPGB.setCaption(String.valueOf(i));
+                //aPGB.Style = (HatchStyle)idxList[i];
 
-                    legendScheme.getLegendBreaks().add(aPGB);
-                }
-                legendScheme.setHasNoData(false);
-                break;
+                legendScheme.getLegendBreaks().add(aPGB);
+            }
+            legendScheme.setHasNoData(false);
         }
 
         return legendScheme;
@@ -542,83 +521,75 @@ public class LegendManage {
         legendScheme.setShapeType(aST);
 
         int i;
-        switch (aST) {
-            case Point:
-            case PointZ:
-                for (i = 0; i < colors.length; i++) {
-                    PointBreak aPB = new PointBreak();
-                    aPB.setColor(colors[i]);
-                    aPB.setStartValue(values.get(i));
-                    aPB.setEndValue(values.get(i));
-                    aPB.setSize(6);
-                    aPB.setStyle(PointStyle.Circle);
-                    aPB.setOutlineColor(Color.black);
-                    aPB.setNoData(false);
-                    aPB.setDrawOutline(true);
-                    aPB.setDrawFill(true);
-                    aPB.setDrawShape(true);
-                    aPB.setCaption(String.valueOf(values.get(i)));
+        if (aST.isPoint()) {
+            for (i = 0; i < colors.length; i++) {
+                PointBreak aPB = new PointBreak();
+                aPB.setColor(colors[i]);
+                aPB.setStartValue(values.get(i));
+                aPB.setEndValue(values.get(i));
+                aPB.setSize(6);
+                aPB.setStyle(PointStyle.Circle);
+                aPB.setOutlineColor(Color.black);
+                aPB.setNoData(false);
+                aPB.setDrawOutline(true);
+                aPB.setDrawFill(true);
+                aPB.setDrawShape(true);
+                aPB.setCaption(String.valueOf(values.get(i)));
 
-                    legendScheme.addLegendBreak(aPB);
+                legendScheme.addLegendBreak(aPB);
+            }
+            legendScheme.setHasNoData(false);
+        } else if (aST.isLine()) {
+            int ii = 0;
+            for (i = 0; i < colors.length; i++) {
+                PolylineBreak aPLB = new PolylineBreak();
+                aPLB.setColor(colors[i]);
+                aPLB.setStartValue(values.get(i));
+                aPLB.setEndValue(values.get(i));
+                aPLB.setWidth(1.0F);
+                aPLB.setStyle(LineStyles.SOLID);
+                aPLB.setDrawPolyline(true);
+                aPLB.setCaption(String.valueOf(values.get(i)));
+                aPLB.setSymbolColor(aPLB.getColor());
+                aPLB.setSymbolStyle(PointStyle.values()[ii]);
+                ii += 1;
+                if (ii == PointStyle.values().length) {
+                    ii = 0;
                 }
-                legendScheme.setHasNoData(false);
-                break;
-            case Polyline:
-            case PolylineM:
-            case PolylineZ:
-                int ii = 0;
-                for (i = 0; i < colors.length; i++) {
-                    PolylineBreak aPLB = new PolylineBreak();
-                    aPLB.setColor(colors[i]);
-                    aPLB.setStartValue(values.get(i));
-                    aPLB.setEndValue(values.get(i));
-                    aPLB.setWidth(1.0F);
-                    aPLB.setStyle(LineStyles.SOLID);
-                    aPLB.setDrawPolyline(true);
-                    aPLB.setCaption(String.valueOf(values.get(i)));
-                    aPLB.setSymbolColor(aPLB.getColor());
-                    aPLB.setSymbolStyle(PointStyle.values()[ii]);
-                    ii += 1;
-                    if (ii == PointStyle.values().length) {
-                        ii = 0;
-                    }
 
-                    legendScheme.addLegendBreak(aPLB);
-                }
-                legendScheme.setHasNoData(false);
-                break;
-            case Polygon:
-                for (i = 0; i < colors.length; i++) {
-                    PolygonBreak aPGB = new PolygonBreak();
-                    aPGB.setColor(colors[i]);
-                    aPGB.setOutlineColor(Color.gray);
-                    aPGB.setOutlineSize(1.0F);
-                    aPGB.setDrawFill(true);
-                    aPGB.setDrawOutline(true);
-                    aPGB.setDrawShape(true);
-                    aPGB.setStartValue(values.get(i));
-                    aPGB.setEndValue(values.get(i));
-                    aPGB.setCaption(String.valueOf(values.get(i)));
-                    //aPGB.Style = (HatchStyle)idxList[i];
+                legendScheme.addLegendBreak(aPLB);
+            }
+            legendScheme.setHasNoData(false);
+        } else if (aST.isPolygon()) {
+            for (i = 0; i < colors.length; i++) {
+                PolygonBreak aPGB = new PolygonBreak();
+                aPGB.setColor(colors[i]);
+                aPGB.setOutlineColor(Color.gray);
+                aPGB.setOutlineSize(1.0F);
+                aPGB.setDrawFill(true);
+                aPGB.setDrawOutline(true);
+                aPGB.setDrawShape(true);
+                aPGB.setStartValue(values.get(i));
+                aPGB.setEndValue(values.get(i));
+                aPGB.setCaption(String.valueOf(values.get(i)));
+                //aPGB.Style = (HatchStyle)idxList[i];
 
-                    legendScheme.addLegendBreak(aPGB);
-                }
-                legendScheme.setHasNoData(false);
-                break;
-            default:
-                for (i = 0; i < colors.length; i++) {
-                    ColorBreak aPGB = new ColorBreak();
-                    aPGB.setColor(colors[i]);
-                    aPGB.setDrawShape(true);
-                    aPGB.setStartValue(values.get(i));
-                    aPGB.setEndValue(values.get(i));
-                    aPGB.setCaption(String.valueOf(values.get(i)));
-                    //aPGB.Style = (HatchStyle)idxList[i];
+                legendScheme.addLegendBreak(aPGB);
+            }
+            legendScheme.setHasNoData(false);
+        } else {
+            for (i = 0; i < colors.length; i++) {
+                ColorBreak aPGB = new ColorBreak();
+                aPGB.setColor(colors[i]);
+                aPGB.setDrawShape(true);
+                aPGB.setStartValue(values.get(i));
+                aPGB.setEndValue(values.get(i));
+                aPGB.setCaption(String.valueOf(values.get(i)));
+                //aPGB.Style = (HatchStyle)idxList[i];
 
-                    legendScheme.addLegendBreak(aPGB);
-                }
-                legendScheme.setHasNoData(false);
-                break;
+                legendScheme.addLegendBreak(aPGB);
+            }
+            legendScheme.setHasNoData(false);
         }
 
         return legendScheme;
@@ -793,172 +764,166 @@ public class LegendManage {
         legendScheme.setMaxValue(max);
         legendScheme.setUndefValue(unDef);        
         int i;
-        switch (aST) {
-            case Point:
-                for (i = 0; i < colors.length; i++) {
-                    PointBreak aPB = new PointBreak();
-                    aPB.setColor(colors[i]);
-                    aPB.setOutlineColor(Color.black);
-                    aPB.setNoData(false);
-                    aPB.setDrawOutline(true);
-                    aPB.setDrawFill(true);
-                    aPB.setDrawShape(true);
-                    if (i == 0) {
-                        aPB.setStartValue(min);
-                    } else {
-                        aPB.setStartValue(CValues[i - 1]);
-                    }
-                    if (i == colors.length - 1) {
-                        aPB.setEndValue(max);
-                    } else {
-                        aPB.setEndValue(CValues[i]);
-                    }
-                    //aPB.setSize((float) i / 2 + 2);
-                    aPB.setSize(8);
-                    aPB.setStyle(PointStyle.Circle);
-                    if (aPB.getStartValue() == aPB.getEndValue()) {
-                        aPB.setCaption(DataConvert.removeTailingZeros(aPB.getStartValue().toString()));
-                    } else if (i == 0) {
-                        aPB.setCaption("< " + DataConvert.removeTailingZeros(aPB.getEndValue().toString()));
-                    } else if (i == colors.length - 1) {
-                        aPB.setCaption("> " + DataConvert.removeTailingZeros(aPB.getStartValue().toString()));
-                    } else {
-                        aPB.setCaption(DataConvert.removeTailingZeros(aPB.getStartValue().toString())
-                                + " - " + DataConvert.removeTailingZeros(aPB.getEndValue().toString()));
-                    }
+        if (aST.isPoint()) {
+            for (i = 0; i < colors.length; i++) {
+                PointBreak aPB = new PointBreak();
+                aPB.setColor(colors[i]);
+                aPB.setOutlineColor(Color.black);
+                aPB.setNoData(false);
+                aPB.setDrawOutline(true);
+                aPB.setDrawFill(true);
+                aPB.setDrawShape(true);
+                if (i == 0) {
+                    aPB.setStartValue(min);
+                } else {
+                    aPB.setStartValue(CValues[i - 1]);
+                }
+                if (i == colors.length - 1) {
+                    aPB.setEndValue(max);
+                } else {
+                    aPB.setEndValue(CValues[i]);
+                }
+                //aPB.setSize((float) i / 2 + 2);
+                aPB.setSize(8);
+                aPB.setStyle(PointStyle.Circle);
+                if (aPB.getStartValue() == aPB.getEndValue()) {
+                    aPB.setCaption(DataConvert.removeTailingZeros(aPB.getStartValue().toString()));
+                } else if (i == 0) {
+                    aPB.setCaption("< " + DataConvert.removeTailingZeros(aPB.getEndValue().toString()));
+                } else if (i == colors.length - 1) {
+                    aPB.setCaption("> " + DataConvert.removeTailingZeros(aPB.getStartValue().toString()));
+                } else {
+                    aPB.setCaption(DataConvert.removeTailingZeros(aPB.getStartValue().toString())
+                            + " - " + DataConvert.removeTailingZeros(aPB.getEndValue().toString()));
+                }
 
-                    legendScheme.addLegendBreak(aPB);
+                legendScheme.addLegendBreak(aPB);
+            }
+            legendScheme.setHasNoData(false);
+            if (hasNodata) {
+                PointBreak aPB = new PointBreak();
+                aPB.setColor(Color.gray);
+                aPB.setOutlineColor(Color.black);
+                aPB.setStartValue(unDef);
+                aPB.setEndValue(aPB.getStartValue());
+                aPB.setSize(1);
+                aPB.setStyle(PointStyle.Circle);
+                aPB.setCaption("NoData");
+                aPB.setNoData(true);
+                aPB.setDrawShape(true);
+                aPB.setDrawOutline(true);
+                legendScheme.addLegendBreak(aPB);
+                legendScheme.setHasNoData(true);
+            }
+        } else if (aST.isLine()) {
+            for (i = 0; i < colors.length; i++) {
+                PolylineBreak aPLB = new PolylineBreak();
+                aPLB.setColor(colors[i]);
+                aPLB.setWidth(1.0F);
+                aPLB.setStyle(LineStyles.SOLID);
+                aPLB.setDrawPolyline(true);
+                if (i == 0) {
+                    aPLB.setStartValue(min);
+                } else {
+                    aPLB.setStartValue(CValues[i - 1]);
                 }
-                legendScheme.setHasNoData(false);
-                if (hasNodata) {
-                    PointBreak aPB = new PointBreak();
-                    aPB.setColor(Color.gray);
-                    aPB.setOutlineColor(Color.black);
-                    aPB.setStartValue(unDef);
-                    aPB.setEndValue(aPB.getStartValue());
-                    aPB.setSize(1);
-                    aPB.setStyle(PointStyle.Circle);
-                    aPB.setCaption("NoData");
-                    aPB.setNoData(true);
-                    aPB.setDrawShape(true);
-                    aPB.setDrawOutline(true);
-                    legendScheme.addLegendBreak(aPB);
-                    legendScheme.setHasNoData(true);
+                if (i == colors.length - 1) {
+                    aPLB.setEndValue(max);
+                } else {
+                    aPLB.setEndValue(CValues[i]);
                 }
-                break;
-            case Polyline:
-            case PolylineZ:
-                for (i = 0; i < colors.length; i++) {
-                    PolylineBreak aPLB = new PolylineBreak();
-                    aPLB.setColor(colors[i]);
-                    aPLB.setWidth(1.0F);
-                    aPLB.setStyle(LineStyles.SOLID);
-                    aPLB.setDrawPolyline(true);
-                    if (i == 0) {
-                        aPLB.setStartValue(min);
-                    } else {
-                        aPLB.setStartValue(CValues[i - 1]);
-                    }
-                    if (i == colors.length - 1) {
-                        aPLB.setEndValue(max);
-                    } else {
-                        aPLB.setEndValue(CValues[i]);
-                    }
-                    if (aPLB.getStartValue() == aPLB.getEndValue()) {
-                        aPLB.setCaption(DataConvert.removeTailingZeros(aPLB.getStartValue().toString()));
-                    } else if (i == 0) {
-                        aPLB.setCaption("< " + DataConvert.removeTailingZeros(aPLB.getEndValue().toString()));
-                    } else if (i == colors.length - 1) {
-                        aPLB.setCaption("> " + DataConvert.removeTailingZeros(aPLB.getStartValue().toString()));
-                    } else {
-                        aPLB.setCaption(DataConvert.removeTailingZeros(aPLB.getStartValue().toString())
-                                + " - " + DataConvert.removeTailingZeros(aPLB.getEndValue().toString()));
-                    }
-                    aPLB.setSymbolColor(aPLB.getColor());
-                    if (i < PointStyle.values().length) {
-                        aPLB.setSymbolStyle(PointStyle.values()[i]);
-                    }
+                if (aPLB.getStartValue() == aPLB.getEndValue()) {
+                    aPLB.setCaption(DataConvert.removeTailingZeros(aPLB.getStartValue().toString()));
+                } else if (i == 0) {
+                    aPLB.setCaption("< " + DataConvert.removeTailingZeros(aPLB.getEndValue().toString()));
+                } else if (i == colors.length - 1) {
+                    aPLB.setCaption("> " + DataConvert.removeTailingZeros(aPLB.getStartValue().toString()));
+                } else {
+                    aPLB.setCaption(DataConvert.removeTailingZeros(aPLB.getStartValue().toString())
+                            + " - " + DataConvert.removeTailingZeros(aPLB.getEndValue().toString()));
+                }
+                aPLB.setSymbolColor(aPLB.getColor());
+                if (i < PointStyle.values().length) {
+                    aPLB.setSymbolStyle(PointStyle.values()[i]);
+                }
 
-                    legendScheme.addLegendBreak(aPLB);
+                legendScheme.addLegendBreak(aPLB);
+            }
+            legendScheme.setHasNoData(false);
+        } else if (aST.isPolygon()) {
+            for (i = 0; i < colors.length; i++) {
+                PolygonBreak aPGB = new PolygonBreak();
+                aPGB.setColor(colors[i]);
+                aPGB.setOutlineColor(Color.gray);
+                aPGB.setOutlineSize(1.0F);
+                aPGB.setDrawFill(true);
+                aPGB.setDrawOutline(false);
+                aPGB.setDrawShape(true);
+                if (i == 0) {
+                    aPGB.setStartValue(min);
+                } else {
+                    aPGB.setStartValue(CValues[i - 1]);
                 }
-                legendScheme.setHasNoData(false);
-                break;
-            case Polygon:
-                for (i = 0; i < colors.length; i++) {
-                    PolygonBreak aPGB = new PolygonBreak();
-                    aPGB.setColor(colors[i]);
-                    aPGB.setOutlineColor(Color.gray);
-                    aPGB.setOutlineSize(1.0F);
-                    aPGB.setDrawFill(true);
-                    aPGB.setDrawOutline(false);
-                    aPGB.setDrawShape(true);
-                    if (i == 0) {
-                        aPGB.setStartValue(min);
-                    } else {
-                        aPGB.setStartValue(CValues[i - 1]);
-                    }
-                    if (i == colors.length - 1) {
-                        aPGB.setEndValue(max);
-                    } else {
-                        aPGB.setEndValue(CValues[i]);
-                    }
-                    if (aPGB.getStartValue() == aPGB.getEndValue()) {
-                        aPGB.setCaption(DataConvert.removeTailingZeros(aPGB.getStartValue().toString()));
-                    } else if (i == 0) {
-                        aPGB.setCaption("< " + DataConvert.removeTailingZeros(aPGB.getEndValue().toString()));
-                    } else if (i == colors.length - 1) {
-                        aPGB.setCaption("> " + DataConvert.removeTailingZeros(aPGB.getStartValue().toString()));
-                    } else {
-                        aPGB.setCaption(DataConvert.removeTailingZeros(aPGB.getStartValue().toString())
-                                + " - " + DataConvert.removeTailingZeros(aPGB.getEndValue().toString()));
-                    }
+                if (i == colors.length - 1) {
+                    aPGB.setEndValue(max);
+                } else {
+                    aPGB.setEndValue(CValues[i]);
+                }
+                if (aPGB.getStartValue() == aPGB.getEndValue()) {
+                    aPGB.setCaption(DataConvert.removeTailingZeros(aPGB.getStartValue().toString()));
+                } else if (i == 0) {
+                    aPGB.setCaption("< " + DataConvert.removeTailingZeros(aPGB.getEndValue().toString()));
+                } else if (i == colors.length - 1) {
+                    aPGB.setCaption("> " + DataConvert.removeTailingZeros(aPGB.getStartValue().toString()));
+                } else {
+                    aPGB.setCaption(DataConvert.removeTailingZeros(aPGB.getStartValue().toString())
+                            + " - " + DataConvert.removeTailingZeros(aPGB.getEndValue().toString()));
+                }
 //                        if (Enum.IsDefined(typeof(HatchStyle), i))
 //                            aPGB.Style = (HatchStyle)i;
 
-                    legendScheme.addLegendBreak(aPGB);
+                legendScheme.addLegendBreak(aPGB);
+            }
+            legendScheme.setHasNoData(false);
+        } else {
+            for (i = 0; i < colors.length; i++) {
+                ColorBreak aCB = new ColorBreak();
+                aCB.setColor(colors[i]);
+                //System.out.println(aCB.getColor().getAlpha());
+                if (i == 0) {
+                    aCB.setStartValue(min);
+                } else {
+                    aCB.setStartValue(CValues[i - 1]);
                 }
-                legendScheme.setHasNoData(false);
-                break;
-            case Image:
-                for (i = 0; i < colors.length; i++) {
-                    ColorBreak aCB = new ColorBreak();
-                    aCB.setColor(colors[i]);
-                    //System.out.println(aCB.getColor().getAlpha());
-                    if (i == 0) {
-                        aCB.setStartValue(min);
-                    } else {
-                        aCB.setStartValue(CValues[i - 1]);
-                    }
-                    if (i == colors.length - 1) {
-                        aCB.setEndValue(max);
-                    } else {
-                        aCB.setEndValue(CValues[i]);
-                    }
-                    if (aCB.getStartValue() == aCB.getEndValue()) {
-                        aCB.setCaption(DataConvert.removeTailingZeros(aCB.getStartValue().toString()));
-                    } else if (i == 0) {
-                        aCB.setCaption("< " + DataConvert.removeTailingZeros(aCB.getEndValue().toString()));
-                    } else if (i == colors.length - 1) {
-                        aCB.setCaption("> " + DataConvert.removeTailingZeros(aCB.getStartValue().toString()));
-                    } else {
-                        aCB.setCaption(DataConvert.removeTailingZeros(aCB.getStartValue().toString())
-                                + " - " + DataConvert.removeTailingZeros(aCB.getEndValue().toString()));
-                    }
+                if (i == colors.length - 1) {
+                    aCB.setEndValue(max);
+                } else {
+                    aCB.setEndValue(CValues[i]);
+                }
+                if (aCB.getStartValue() == aCB.getEndValue()) {
+                    aCB.setCaption(DataConvert.removeTailingZeros(aCB.getStartValue().toString()));
+                } else if (i == 0) {
+                    aCB.setCaption("< " + DataConvert.removeTailingZeros(aCB.getEndValue().toString()));
+                } else if (i == colors.length - 1) {
+                    aCB.setCaption("> " + DataConvert.removeTailingZeros(aCB.getStartValue().toString()));
+                } else {
+                    aCB.setCaption(DataConvert.removeTailingZeros(aCB.getStartValue().toString())
+                            + " - " + DataConvert.removeTailingZeros(aCB.getEndValue().toString()));
+                }
 
-                    legendScheme.addLegendBreak(aCB);
-                }
-                legendScheme.setHasNoData(false);
-                if (hasNodata) {
-                    ColorBreak aCB = new ColorBreak();
-                    aCB.setColor(new Color(230, 230, 230, 0));
-                    aCB.setStartValue(unDef);
-                    aCB.setEndValue(aCB.getStartValue());
-                    aCB.setCaption("NoData");
-                    aCB.setNoData(true);
-                    legendScheme.addLegendBreak(aCB);
-                    legendScheme.setHasNoData(true);
-                }
-                break;
+                legendScheme.addLegendBreak(aCB);
+            }
+            legendScheme.setHasNoData(false);
+            if (hasNodata) {
+                ColorBreak aCB = new ColorBreak();
+                aCB.setColor(new Color(230, 230, 230, 0));
+                aCB.setStartValue(unDef);
+                aCB.setEndValue(aCB.getStartValue());
+                aCB.setCaption("NoData");
+                aCB.setNoData(true);
+                legendScheme.addLegendBreak(aCB);
+                legendScheme.setHasNoData(true);
+            }
         }
 
         return legendScheme;
@@ -1790,47 +1755,44 @@ public class LegendManage {
             cValues = new double[aLS.getBreakNum() - 1];
             colors = new Color[aLS.getBreakNum()];
         }
-        switch (aLS.getShapeType()) {
-            case Polygon:
-                for (i = 0; i < aLS.getBreakNum(); i++) {
-                    PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i);
-                    colors[i] = aPGB.getColor();
+        ShapeTypes st = aLS.getShapeType();
+        if (st.isPoint()) {
+            for (i = 0; i < aLS.getBreakNum(); i++) {
+                PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(i);
+                if (!aPB.isNoData()) {
+                    colors[i] = aPB.getColor();
                     if (i > 0) {
-                        cValues[i - 1] = Double.parseDouble(aPGB.getStartValue().toString());
+                        cValues[i - 1] = Double.parseDouble(aPB.getStartValue().toString());
                     }
                 }
-                break;
-            case Polyline:
-                if (aLS.getLegendType() == LegendType.UniqueValue) {
-                    cValues = new double[aLS.getBreakNum()];
-                    colors = new Color[aLS.getBreakNum() + 1];
-                    colors[0] = Color.white;
-                    for (i = 0; i < aLS.getBreakNum(); i++) {
-                        PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
-                        colors[i + 1] = aPLB.getColor();
-                        cValues[i] = Double.parseDouble(aPLB.getStartValue().toString());
-                    }
-                } else {
-                    for (i = 0; i < aLS.getBreakNum(); i++) {
-                        PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
-                        colors[i] = aPLB.getColor();
-                        if (i > 0) {
-                            cValues[i - 1] = Double.parseDouble(aPLB.getStartValue().toString());
-                        }
-                    }
-                }
-                break;
-            case Point:
+            }
+        } else if (st.isLine()) {
+            if (aLS.getLegendType() == LegendType.UniqueValue) {
+                cValues = new double[aLS.getBreakNum()];
+                colors = new Color[aLS.getBreakNum() + 1];
+                colors[0] = Color.white;
                 for (i = 0; i < aLS.getBreakNum(); i++) {
-                    PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(i);
-                    if (!aPB.isNoData()) {
-                        colors[i] = aPB.getColor();
-                        if (i > 0) {
-                            cValues[i - 1] = Double.parseDouble(aPB.getStartValue().toString());
-                        }
+                    PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
+                    colors[i + 1] = aPLB.getColor();
+                    cValues[i] = Double.parseDouble(aPLB.getStartValue().toString());
+                }
+            } else {
+                for (i = 0; i < aLS.getBreakNum(); i++) {
+                    PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
+                    colors[i] = aPLB.getColor();
+                    if (i > 0) {
+                        cValues[i - 1] = Double.parseDouble(aPLB.getStartValue().toString());
                     }
                 }
-                break;
+            }
+        } else if (st.isPolygon()) {
+            for (i = 0; i < aLS.getBreakNum(); i++) {
+                PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i);
+                colors[i] = aPGB.getColor();
+                if (i > 0) {
+                    cValues[i - 1] = Double.parseDouble(aPGB.getStartValue().toString());
+                }
+            }
         }
 
         return new Object[]{cValues, colors};
@@ -1852,47 +1814,44 @@ public class LegendManage {
             cValues = new double[aLS.getBreakNum() - 1];
             colors = new Color[aLS.getBreakNum()];
         }
-        switch (aLS.getShapeType()) {
-            case Polygon:
-                for (i = 0; i < aLS.getBreakNum(); i++) {
-                    PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i);
-                    colors[i] = aPGB.getColor();
+        ShapeTypes st = aLS.getShapeType();
+        if (st.isPoint()) {
+            for (i = 0; i < aLS.getBreakNum(); i++) {
+                PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(i);
+                if (!aPB.isNoData()) {
+                    colors[i] = aPB.getColor();
                     if (i > 0) {
-                        cValues[i - 1] = Double.parseDouble(aPGB.getStartValue().toString());
+                        cValues[i - 1] = Double.parseDouble(aPB.getStartValue().toString());
                     }
                 }
-                break;
-            case Polyline:
-                if (aLS.getLegendType() == LegendType.UniqueValue) {
-                    cValues = new double[aLS.getBreakNum()];
-                    colors = new Color[aLS.getBreakNum() + 1];
-                    colors[0] = Color.white;
-                    for (i = 0; i < aLS.getBreakNum(); i++) {
-                        PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
-                        colors[i + 1] = aPLB.getColor();
-                        cValues[i] = Double.parseDouble(aPLB.getStartValue().toString());
-                    }
-                } else {
-                    for (i = 0; i < aLS.getBreakNum(); i++) {
-                        PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
-                        colors[i] = aPLB.getColor();
-                        if (i > 0) {
-                            cValues[i - 1] = Double.parseDouble(aPLB.getStartValue().toString());
-                        }
-                    }
-                }
-                break;
-            case Point:
+            }
+        } else if (st.isLine()) {
+            if (aLS.getLegendType() == LegendType.UniqueValue) {
+                cValues = new double[aLS.getBreakNum()];
+                colors = new Color[aLS.getBreakNum() + 1];
+                colors[0] = Color.white;
                 for (i = 0; i < aLS.getBreakNum(); i++) {
-                    PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(i);
-                    if (!aPB.isNoData()) {
-                        colors[i] = aPB.getColor();
-                        if (i > 0) {
-                            cValues[i - 1] = Double.parseDouble(aPB.getStartValue().toString());
-                        }
+                    PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
+                    colors[i + 1] = aPLB.getColor();
+                    cValues[i] = Double.parseDouble(aPLB.getStartValue().toString());
+                }
+            } else {
+                for (i = 0; i < aLS.getBreakNum(); i++) {
+                    PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
+                    colors[i] = aPLB.getColor();
+                    if (i > 0) {
+                        cValues[i - 1] = Double.parseDouble(aPLB.getStartValue().toString());
                     }
                 }
-                break;
+            }
+        } else if (st.isPolygon()) {
+            for (i = 0; i < aLS.getBreakNum(); i++) {
+                PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i);
+                colors[i] = aPGB.getColor();
+                if (i > 0) {
+                    cValues[i - 1] = Double.parseDouble(aPGB.getStartValue().toString());
+                }
+            }
         }
     }
 }

@@ -43,7 +43,7 @@
             <id>ebi</id>
             <name>ebiRepo</name>
             <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
-        </repository>        
+        </repository>
     </repositories>
     
     <dependencies>
@@ -156,6 +156,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.19</version>
+        </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>svgSalamander</artifactId>
+            <version>1.1.2.1</version>
         </dependency>
     </dependencies>
 

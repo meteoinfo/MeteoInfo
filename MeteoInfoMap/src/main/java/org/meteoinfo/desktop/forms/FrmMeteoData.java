@@ -35,6 +35,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.kitfox.svg.app.beans.SVGIcon;
 import org.meteoinfo.desktop.config.GenericFileFilter;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.GridData;
@@ -55,6 +58,7 @@ import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
 import org.meteoinfo.data.meteodata.micaps.MICAPS7DataInfo;
 import org.meteoinfo.data.meteodata.netcdf.NetCDFDataInfo;
+import org.meteoinfo.global.colors.ColorUtil;
 import org.meteoinfo.legend.*;
 import org.meteoinfo.geoprocess.analysis.InterpolationMethods;
 import org.meteoinfo.geoprocess.analysis.InterpolationSetting;
@@ -115,6 +119,16 @@ public class FrmMeteoData extends javax.swing.JDialog {
         super(parent, modal);
 
         _parent = (FrmMain) parent;
+
+        try {
+            SVGIcon icon = new SVGIcon();
+            icon.setAntiAlias(true);
+            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/desktop/icons/meteo-data.svg").toURI());
+            this.setIconImage(icon.getImage());
+        } catch (Exception e) {
+
+        }
+
         initComponents();
 
         this._dataInfoList = new ArrayList<>();
@@ -394,10 +408,12 @@ public class FrmMeteoData extends javax.swing.JDialog {
 //            }
 //        });
 //        jToolBar1.add(jButton_OpenData);
-        jSplitButton_OpenData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
+        //jSplitButton_OpenData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
+        jSplitButton_OpenData.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/file-open.svg"));
         jSplitButton_OpenData.setText("  ");
         jSplitButton_OpenData.setToolTipText(bundle.getString("FrmMeteoData.jButton_OpenData.toolTipText"));
         jSplitButton_OpenData.setFocusable(false);
+        jSplitButton_OpenData.setArrowColor(ColorUtil.parseToColor("#6E6E6E"));
 //        jSplitButton_OpenData.addSplitButtonActionListener(new SplitButtonActionListener() {
 //            @Override
 //            public void buttonClicked(java.awt.event.ActionEvent evt) {
@@ -559,7 +575,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         jSplitButton_OpenData.setPopupMenu(jPopupMenu_OpenData);
         jToolBar1.add(jSplitButton_OpenData);
 
-        jButton_DataInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png"))); // NOI18N
+        //jButton_DataInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png"))); // NOI18N
+        jButton_DataInfo.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/information.svg"));
         jButton_DataInfo.setToolTipText(bundle.getString("FrmMeteoData.jButton_DataInfo.toolTipText")); // NOI18N
         jButton_DataInfo.setFocusable(false);
         jButton_DataInfo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -573,7 +590,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         jToolBar1.add(jButton_DataInfo);
         jToolBar1.add(jSeparator1);
 
-        jButton_Draw.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Draw.Image.png"))); // NOI18N
+        //jButton_Draw.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Draw.Image.png"))); // NOI18N
+        jButton_Draw.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/draw-layer.svg"));
         jButton_Draw.setToolTipText(bundle.getString("FrmMeteoData.jButton_Draw.toolTipText")); // NOI18N
         jButton_Draw.setFocusable(false);
         jButton_Draw.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -586,7 +604,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         });
         jToolBar1.add(jButton_Draw);
 
-        jButton_ViewData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ViewData.Image.png"))); // NOI18N
+        //jButton_ViewData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ViewData.Image.png"))); // NOI18N
+        jButton_ViewData.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/table.svg"));
         jButton_ViewData.setToolTipText(bundle.getString("FrmMeteoData.jButton_ViewData.toolTipText")); // NOI18N
         jButton_ViewData.setFocusable(false);
         jButton_ViewData.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -599,7 +618,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         });
         jToolBar1.add(jButton_ViewData);
 
-        jButton_ClearDraw.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ClearDrawing.Image.png"))); // NOI18N
+        //jButton_ClearDraw.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ClearDrawing.Image.png"))); // NOI18N
+        jButton_ClearDraw.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/delete.svg"));
         jButton_ClearDraw.setToolTipText(bundle.getString("FrmMeteoData.jButton_ClearDraw.toolTipText")); // NOI18N
         jButton_ClearDraw.setFocusable(false);
         jButton_ClearDraw.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -613,7 +633,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         jToolBar1.add(jButton_ClearDraw);
         jToolBar1.add(jSeparator2);
 
-        jButton_PreTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_PreTime.Image.png"))); // NOI18N
+        //jButton_PreTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_PreTime.Image.png"))); // NOI18N
+        jButton_PreTime.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/left-arrow.svg"));
         jButton_PreTime.setToolTipText(bundle.getString("FrmMeteoData.jButton_PreTime.toolTipText")); // NOI18N
         jButton_PreTime.setFocusable(false);
         jButton_PreTime.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -626,7 +647,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         });
         jToolBar1.add(jButton_PreTime);
 
-        jButton_NexTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NextTime.Image.png"))); // NOI18N
+        //jButton_NexTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NextTime.Image.png"))); // NOI18N
+        jButton_NexTime.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/right-arrow.svg"));
         jButton_NexTime.setToolTipText(bundle.getString("FrmMeteoData.jButton_NexTime.toolTipText")); // NOI18N
         jButton_NexTime.setFocusable(false);
         jButton_NexTime.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -639,7 +661,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         });
         jToolBar1.add(jButton_NexTime);
 
-        jButton_Animator.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/animation-1.png"))); // NOI18N
+        //jButton_Animator.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/animation-1.png"))); // NOI18N
+        jButton_Animator.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/animator.svg"));
         jButton_Animator.setToolTipText(bundle.getString("FrmMeteoData.jButton_Animator.toolTipText")); // NOI18N
         jButton_Animator.setFocusable(false);
         jButton_Animator.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -652,7 +675,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         });
         jToolBar1.add(jButton_Animator);
 
-        jButton_CreateAnimatorFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Animation-2.png"))); // NOI18N
+        //jButton_CreateAnimatorFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Animation-2.png"))); // NOI18N
+        jButton_CreateAnimatorFile.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/animator-file.svg"));
         jButton_CreateAnimatorFile.setToolTipText(bundle.getString("FrmMeteoData.jButton_CreateAnimatorFile.toolTipText")); // NOI18N
         jButton_CreateAnimatorFile.setFocusable(false);
         jButton_CreateAnimatorFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -666,7 +690,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         jToolBar1.add(jButton_CreateAnimatorFile);
         jToolBar1.add(jSeparator3);
 
-        jButton_DrawSetting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_DrawSetting.Image.png"))); // NOI18N
+        //jButton_DrawSetting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_DrawSetting.Image.png"))); // NOI18N
+        jButton_DrawSetting.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/legend-setting.svg"));
         jButton_DrawSetting.setToolTipText(bundle.getString("FrmMeteoData.jButton_DrawSetting.toolTipText")); // NOI18N
         jButton_DrawSetting.setFocusable(false);
         jButton_DrawSetting.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -679,7 +704,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         });
         jToolBar1.add(jButton_DrawSetting);
 
-        jButton_Setting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Setting-1.png"))); // NOI18N
+        //jButton_Setting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Setting-1.png"))); // NOI18N
+        jButton_Setting.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/tools.svg"));
         jButton_Setting.setToolTipText(bundle.getString("FrmMeteoData.jButton_Setting.toolTipText")); // NOI18N
         jButton_Setting.setFocusable(false);
         jButton_Setting.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -693,7 +719,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         jToolBar1.add(jButton_Setting);
         jToolBar1.add(jSeparator4);
 
-        jButton_SectionPlot.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/chart-5.png"))); // NOI18N
+        //jButton_SectionPlot.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/chart-5.png"))); // NOI18N
+        jButton_SectionPlot.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/section-chart.svg"));
         jButton_SectionPlot.setToolTipText(bundle.getString("FrmMeteoData.jButton_SectionPlot.toolTipText")); // NOI18N
         jButton_SectionPlot.setFocusable(false);
         jButton_SectionPlot.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -706,7 +733,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         });
         jToolBar1.add(jButton_SectionPlot);
 
-        jButton_1DPlot.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/chart.png"))); // NOI18N
+        //jButton_1DPlot.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/chart.png"))); // NOI18N
+        jButton_1DPlot.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/chart-line-bar.svg"));
         jButton_1DPlot.setToolTipText(bundle.getString("FrmMeteoData.jButton_1DPlot.toolTipText")); // NOI18N
         jButton_1DPlot.setFocusable(false);
         jButton_1DPlot.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -718,7 +746,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
             }
         });
         jToolBar1.add(jButton_1DPlot);
-        jToolBar1.add(jSeparator5);
+        /*jToolBar1.add(jSeparator5);
 
         jSplitButton_Stat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Statictics.png"))); // NOI18N
         jSplitButton_Stat.setText("  ");
@@ -733,7 +761,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         });
         jPopupMenu_Stat.add(jMenuItem_ArrivalTime);
         jSplitButton_Stat.setPopupMenu(jPopupMenu_Stat);
-        jToolBar1.add(jSplitButton_Stat);
+        jToolBar1.add(jSplitButton_Stat);*/
 
         getContentPane().add(jToolBar1, java.awt.BorderLayout.PAGE_START);
 
@@ -1388,7 +1416,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     SwingWorker worker = new SwingWorker<String, String>() {
                         @Override
                         protected String doInBackground() throws Exception {
-                            jButton_Animator.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/stop.png")));
+                            //jButton_Animator.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/stop.png")));
+                            jButton_Animator.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/stop.svg"));
                             _isRunning = true;
                             _useSameLegendScheme = true;
                             _useSameGridInterSet = true;
@@ -1396,7 +1425,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
                                 if (!_enableAnimation) {
                                     _enableAnimation = true;
                                     _isRunning = false;
-                                    jButton_Animator.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/animation-1.png")));
+                                    //jButton_Animator.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/animation-1.png")));
+                                    jButton_Animator.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/animator.svg"));
                                     return "";
                                 }
 
@@ -1424,7 +1454,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
                             _enableAnimation = true;
                             _isRunning = false;
-                            jButton_Animator.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/animation-1.png")));
+                            //jButton_Animator.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/animation-1.png")));
+                            jButton_Animator.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/animator.svg"));
                             encoder.finish();
                             return "";
                         }

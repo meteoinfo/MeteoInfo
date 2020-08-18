@@ -71,7 +71,7 @@ public class FigureDockable extends DefaultSingleCDockable {
         CButton button = new CButton();
         button.setText("Select");
         //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Arrow.png")));
-        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/select_16.svg"));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/select.svg"));
         button.setTooltip("Select");
         button.addActionListener(new ActionListener() {
             @Override
@@ -120,7 +120,7 @@ public class FigureDockable extends DefaultSingleCDockable {
         button = new CButton();
         button.setText("Pan");
         //button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Pan.Image.png")));
-        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/pan_16.svg"));
+        button.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/hand.svg"));
         button.setTooltip("Pan");
         button.addActionListener(new ActionListener() {
             @Override

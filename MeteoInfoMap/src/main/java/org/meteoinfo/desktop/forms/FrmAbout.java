@@ -67,31 +67,31 @@ public class FrmAbout extends javax.swing.JDialog {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("宋体", 1, 18)); // NOI18N
+        //jLabel2.setFont(new java.awt.Font("Courier", 1, 18)); // NOI18N
         jLabel2.setText("MeteoInfoMap");
 
-        jLabel3.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
+        //jLabel3.setFont(new java.awt.Font("Courier", 0, 14)); // NOI18N
         jLabel3.setText("GIS software for meteorological data");
 
-        jLabel4.setFont(new java.awt.Font("宋体", 1, 15)); // NOI18N
+        //jLabel4.setFont(new java.awt.Font("Courier", 1, 15)); // NOI18N
         jLabel4.setText("Version:");
 
-        jLabel5.setFont(new java.awt.Font("宋体", 1, 15)); // NOI18N
+        //jLabel5.setFont(new java.awt.Font("Courier", 1, 15)); // NOI18N
         jLabel5.setText("Author:");
 
         jLabel6.setText("Yaqiang Wang");
 
         jLabel_version.setText("...");
 
-        jLabel8.setFont(new java.awt.Font("宋体", 1, 15)); // NOI18N
+        //jLabel8.setFont(new java.awt.Font("Courier", 1, 15)); // NOI18N
         jLabel8.setText("Email:");
 
         jLabel9.setText("yaqiang.wang@gmail.com");
 
-        jLabel10.setFont(new java.awt.Font("宋体", 1, 15)); // NOI18N
+        //jLabel10.setFont(new java.awt.Font("Courier", 1, 15)); // NOI18N
         jLabel10.setText("Homepage:");
 
-        jLabel_web.setForeground(new java.awt.Color(0, 0, 255));
+        jLabel_web.setForeground(new java.awt.Color(0, 153, 204));
         jLabel_web.setText("http://www.meteothink.org");
         jLabel_web.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel_web.addMouseListener(new java.awt.event.MouseAdapter() {

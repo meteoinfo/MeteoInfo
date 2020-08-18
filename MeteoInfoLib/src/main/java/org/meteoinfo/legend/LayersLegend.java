@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.legend;
 
+import com.kitfox.svg.app.beans.SVGIcon;
 import org.meteoinfo.data.mapdata.MapDataManage;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.global.event.ActiveMapFrameChangedEvent;
@@ -34,7 +35,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -47,29 +47,17 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
-import javax.swing.JSeparator;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import javax.swing.undo.UndoableEdit;
 import javax.xml.parsers.DocumentBuilder;
@@ -122,11 +110,18 @@ public class LayersLegend extends JPanel {
     //private boolean _isLayoutView = false;
     private boolean _dragMode = false;
     private int _dragPosY;
+    private LookAndFeel laf;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
     public LayersLegend() {
         super();
+
+        laf = UIManager.getLookAndFeel();
+        this.setBackground(laf.getDefaults().getColor("List.background"));
+        this._selectedBackColor = laf.getDefaults().getColor("List.selectionBackground");
+        this._selectedForeColor = laf.getDefaults().getColor("List.selectionForeground");
+
         this.setLayout(new BorderLayout());
         this.setDoubleBuffered(true);
         initComponents();
@@ -712,6 +707,13 @@ public class LayersLegend extends JPanel {
 
             //Remove/save layer
             JMenuItem removeLayerMI = new JMenuItem("Remove Layer");
+            try {
+                SVGIcon icon = new SVGIcon();
+                icon.setAntiAlias(true);
+                icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/delete.svg").toURI());
+                removeLayerMI.setIcon(icon);
+            } catch (Exception ex) {
+            }
             removeLayerMI.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -740,7 +742,10 @@ public class LayersLegend extends JPanel {
             if (aLayerObj.getLayerType() == LayerTypes.VectorLayer) {
                 JMenuItem attrTableMI = new JMenuItem("Attribute Table");
                 try {
-                    ImageIcon icon = new ImageIcon(this.getClass().getResource("/images/AttributeTable.png"));
+                    //ImageIcon icon = new ImageIcon(this.getClass().getResource("/images/AttributeTable.png"));
+                    SVGIcon icon = new SVGIcon();
+                    icon.setAntiAlias(true);
+                    icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/table.svg").toURI());
                     attrTableMI.setIcon(icon);
                 } catch (Exception ex) {
                 }
@@ -756,9 +761,12 @@ public class LayersLegend extends JPanel {
 
             //Zoom to layer and Visible scale
             JMenuItem zoomToLayerMI = new JMenuItem("Zoom To Layer");
-            ImageIcon icon = null;
+            //ImageIcon icon = null;
             try {
-                icon = new ImageIcon(this.getClass().getResource("/images/ZoomToLayer.png"));
+                //icon = new ImageIcon(this.getClass().getResource("/images/ZoomToLayer.png"));
+                SVGIcon icon = new SVGIcon();
+                icon.setAntiAlias(true);
+                icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/find.svg").toURI());
                 zoomToLayerMI.setIcon(icon);
             } catch (Exception ex) {
             }
@@ -806,7 +814,10 @@ public class LayersLegend extends JPanel {
             if (aLayerObj.getLayerType() == LayerTypes.VectorLayer) {
                 JMenuItem labelMI = new JMenuItem("Label");
                 try {
-                    icon = new ImageIcon(this.getClass().getResource("/images/Label.png"));
+                    //icon = new ImageIcon(this.getClass().getResource("/images/Label.png"));
+                    SVGIcon icon = new SVGIcon();
+                    icon.setAntiAlias(true);
+                    icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/label.svg").toURI());
                     labelMI.setIcon(icon);
                 } catch (Exception ex) {
                 }
@@ -835,7 +846,10 @@ public class LayersLegend extends JPanel {
             //Properties
             JMenuItem propMI = new JMenuItem("Properties");
             try {
-                icon = new ImageIcon(this.getClass().getResource("/images/Properties.png"));
+                //icon = new ImageIcon(this.getClass().getResource("/images/Properties.png"));
+                SVGIcon icon = new SVGIcon();
+                icon.setAntiAlias(true);
+                icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/properties.svg").toURI());
                 propMI.setIcon(icon);
             } catch (Exception ex) {
             }
@@ -1524,11 +1538,16 @@ public class LayersLegend extends JPanel {
             drawExpansionBox(g, new Point(sP.x, sP.y + Constants.EXPAND_BOX_TOP_PAD), aMapFrame.isExpanded());
         }
 
-        Image icon;
+        //Image icon;
+        SVGIcon icon;
         try {
-            icon = ImageIO.read(this.getClass().getResource("/images/Layers.png"));
-            g.drawImage(icon, sP.x + Constants.EXPAND_BOX_SIZE + Constants.CHECK_LEFT_PAD, sP.y, this);
-        } catch (IOException ex) {
+            //icon = ImageIO.read(this.getClass().getResource("/images/Layers.png"));
+            //g.drawImage(icon, sP.x + Constants.EXPAND_BOX_SIZE + Constants.CHECK_LEFT_PAD, sP.y, this);
+            icon = new SVGIcon();
+            icon.setAntiAlias(true);
+            icon.setSvgURI(LayersLegend.class.getResource("/org/meteoinfo/icons/layers.svg").toURI());
+            icon.paintIcon(this, g, sP.x + Constants.EXPAND_BOX_SIZE + Constants.CHECK_LEFT_PAD, sP.y);
+        } catch (URISyntaxException ex) {
             Logger.getLogger(LayersLegend.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -1624,7 +1643,11 @@ public class LayersLegend extends JPanel {
             g.draw(rect);
         }
 
-        g.setColor(this.getForeground());
+        if (layerNode.isSelected()) {
+            g.setColor(this._selectedForeColor);
+        } else {
+            g.setColor(this.getForeground());
+        }
         if (layerNode.getLegendNodes().size() > 0) {
             drawExpansionBox(g, new Point(sP.x, sP.y + Constants.EXPAND_BOX_TOP_PAD), layerNode.isExpanded());
         }

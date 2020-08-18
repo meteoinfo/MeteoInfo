@@ -68,6 +68,9 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 import javax.xml.parsers.ParserConfigurationException;
+
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+import org.meteoinfo.data.mapdata.webmap.WebMapProvider;
 import org.meteoinfo.desktop.config.GenericFileFilter;
 import org.meteoinfo.desktop.config.Options;
 import org.meteoinfo.desktop.config.Plugin;
@@ -77,6 +80,7 @@ import org.meteoinfo.data.mapdata.FrmAttriData;
 import org.meteoinfo.data.mapdata.MapDataManage;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.FrmProperty;
+import org.meteoinfo.global.colors.ColorUtil;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointF;
@@ -95,11 +99,8 @@ import org.meteoinfo.global.event.ShapeSelectedEvent;
 import org.meteoinfo.global.event.UndoEditEvent;
 import org.meteoinfo.global.event.ZoomChangedEvent;
 //import org.meteoinfo.help.Help;
+import org.meteoinfo.layer.*;
 import org.meteoinfo.ui.WrappingLayout;
-import org.meteoinfo.layer.FrmLabelSet;
-import org.meteoinfo.layer.LayerTypes;
-import org.meteoinfo.layer.MapLayer;
-import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.layout.ElementType;
 import org.meteoinfo.layout.FrmPageSet;
 import org.meteoinfo.layout.LayoutGraphic;
@@ -127,10 +128,6 @@ import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.Reproject;
 import org.meteoinfo.shape.Shape;
 import org.meteoinfo.shape.ShapeTypes;
-import static org.meteoinfo.shape.ShapeTypes.CurveLine;
-import static org.meteoinfo.shape.ShapeTypes.CurvePolygon;
-import static org.meteoinfo.shape.ShapeTypes.Polygon;
-import static org.meteoinfo.shape.ShapeTypes.Polyline;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.data.mapdata.ShapeFileManage;
 import org.locationtech.jts.geom.Geometry;
@@ -156,8 +153,8 @@ public class FrmMain extends JFrame implements IApplication {
     private FrmMeteoData _frmMeteoData;
     //private String _currentDataFolder = "";
     private PluginCollection _plugins = new PluginCollection();
-    private ImageIcon _loadedPluginIcon;
-    private ImageIcon _unloadedPluginIcon;
+    private FlatSVGIcon _loadedPluginIcon;
+    private FlatSVGIcon _unloadedPluginIcon;
     private final UndoManager undoManager = new UndoManager();
     private UndoManager zoomUndoManager = new UndoManager();
     private UndoManager currentUndoManager;
@@ -316,7 +313,10 @@ public class FrmMain extends JFrame implements IApplication {
     private void initComponents() {
         jPanel_MainToolBar = new javax.swing.JPanel();
         jToolBar_Base = new javax.swing.JToolBar();
-        jButton_AddLayer = new javax.swing.JButton();
+        jSplitButton_AddLayer = new org.meteoinfo.ui.JSplitButton();
+        jPopupMenu_AddLayer = new javax.swing.JPopupMenu();
+        jMenuItem_AddLayer = new javax.swing.JMenuItem();
+        jMenuItem_AddWebLayer = new javax.swing.JMenuItem();
         jButton_OpenData = new javax.swing.JButton();
         jButton_RemoveDataLayers = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
@@ -469,21 +469,53 @@ public class FrmMain extends JFrame implements IApplication {
         jToolBar_Base.setRollover(true);
         jToolBar_Base.setName(""); // NOI18N
 
-        jButton_AddLayer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Add_Layer.png"))); // NOI18N
-        final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("bundle/Bundle_FrmMain"); // NOI18N
-        jButton_AddLayer.setToolTipText(bundle.getString("FrmMain.jButton_AddLayer.toolTipText")); // NOI18N
-        jButton_AddLayer.setFocusable(false);
-        jButton_AddLayer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton_AddLayer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton_AddLayer.addActionListener(new java.awt.event.ActionListener() {
+        final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("bundle/Bundle_FrmMain");
+
+        //Split button
+        //jSplitButton_AddLayer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Add_Layer.png")));
+        jSplitButton_AddLayer.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/add-layer-plus.svg"));
+        jSplitButton_AddLayer.setText("  ");
+        jSplitButton_AddLayer.setToolTipText(bundle.getString("FrmMain.jMenuItem_AddLayer.toolTipText"));
+        jSplitButton_AddLayer.setArrowColor(ColorUtil.parseToColor("#6E6E6E"));
+        jSplitButton_AddLayer.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_AddLayerActionPerformed(evt);
+                if (!jSplitButton_AddLayer.isOnSplit()) {
+                    jButton_AddLayerActionPerformed(evt);
+                }
+
+                setCurrentTool((JButton) evt.getSource());
             }
         });
-        jToolBar_Base.add(jButton_AddLayer);
+        //jMenuItem_AddLayer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_rectangle.png")));
+        jMenuItem_AddLayer.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/add-layer-plus.svg"));
+        jMenuItem_AddLayer.setText(bundle.getString("FrmMain.jMenuItem_AddLayer.text"));
+        jMenuItem_AddLayer.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jSplitButton_AddLayer.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/add-layer-plus.svg"));
+                jSplitButton_AddLayer.setText("  ");
+                jSplitButton_AddLayer.setToolTipText(bundle.getString("FrmMain.jMenuItem_AddLayer.toolTipText"));
+                jButton_AddLayerActionPerformed(e);
+                setCurrentTool(jSplitButton_AddLayer);
+            }
+        });
+        jPopupMenu_AddLayer.add(jMenuItem_AddLayer);
+        jMenuItem_AddWebLayer.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/add-web-layer.svg"));
+        jMenuItem_AddWebLayer.setText(bundle.getString("FrmMain.jMenuItem_AddWebLayer.text"));
+        jMenuItem_AddWebLayer.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jButton_AddWebLayerActionPerformed(e);
+                setCurrentTool(jSplitButton_AddLayer);
+            }
+        });
+        jPopupMenu_AddLayer.add(jMenuItem_AddWebLayer);
+        jSplitButton_AddLayer.setPopupMenu(jPopupMenu_AddLayer);
+        jToolBar_Base.add(jSplitButton_AddLayer);
 
-        jButton_OpenData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
+        //jButton_OpenData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
+        jButton_OpenData.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/file-open.svg"));
         jButton_OpenData.setToolTipText(bundle.getString("FrmMain.jButton_OpenData.toolTipText")); // NOI18N
         jButton_OpenData.setFocusable(false);
         jButton_OpenData.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -496,7 +528,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Base.add(jButton_OpenData);
 
-        jButton_RemoveDataLayers.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_RemoveDataLayes.Image.png"))); // NOI18N
+        //jButton_RemoveDataLayers.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_RemoveDataLayes.Image.png"))); // NOI18N
+        jButton_RemoveDataLayers.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/delete.svg"));
         jButton_RemoveDataLayers.setToolTipText(bundle.getString("FrmMain.jButton_RemoveDataLayers.toolTipText")); // NOI18N
         jButton_RemoveDataLayers.setFocusable(false);
         jButton_RemoveDataLayers.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -510,7 +543,8 @@ public class FrmMain extends JFrame implements IApplication {
         jToolBar_Base.add(jButton_RemoveDataLayers);
         jToolBar_Base.add(jSeparator1);
 
-        jButton_SelectElement.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Arrow.png"))); // NOI18N
+        //jButton_SelectElement.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Arrow.png"))); // NOI18N
+        jButton_SelectElement.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select.svg"));
         jButton_SelectElement.setToolTipText(bundle.getString("FrmMain.jButton_SelectElement.toolTipText")); // NOI18N
         jButton_SelectElement.setFocusable(false);
         jButton_SelectElement.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -523,7 +557,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Base.add(jButton_SelectElement);
 
-        jButton_ZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomIn.Image.png"))); // NOI18N
+        //jButton_ZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomIn.Image.png"))); // NOI18N
+        jButton_ZoomIn.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/zoom-in.svg"));
         jButton_ZoomIn.setToolTipText(bundle.getString("FrmMain.jButton_ZoomIn.toolTipText")); // NOI18N
         jButton_ZoomIn.setFocusable(false);
         jButton_ZoomIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -536,7 +571,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Base.add(jButton_ZoomIn);
 
-        jButton_ZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomOut.Image.png"))); // NOI18N
+        //jButton_ZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomOut.Image.png"))); // NOI18N
+        jButton_ZoomOut.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/zoom-out.svg"));
         jButton_ZoomOut.setToolTipText(bundle.getString("FrmMain.jButton_ZoomOut.toolTipText")); // NOI18N
         jButton_ZoomOut.setFocusable(false);
         jButton_ZoomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -549,7 +585,9 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Base.add(jButton_ZoomOut);
 
-        jButton_Pan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Pan.Image.png"))); // NOI18N
+        //jButton_Pan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Pan.Image.png"))); // NOI18N
+        //jButton_Pan.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/pan.svg"));
+        jButton_Pan.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/hand.svg"));
         jButton_Pan.setToolTipText(bundle.getString("FrmMain.jButton_Pan.toolTipText")); // NOI18N
         jButton_Pan.setFocusable(false);
         jButton_Pan.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -562,7 +600,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Base.add(jButton_Pan);
 
-        jButton_FullExtent.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_FullExent.Image.png"))); // NOI18N
+        //jButton_FullExtent.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_FullExent.Image.png"))); // NOI18N
+        jButton_FullExtent.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/full-extent.svg"));
         jButton_FullExtent.setToolTipText(bundle.getString("FrmMain.jButton_FullExtent.toolTipText")); // NOI18N
         jButton_FullExtent.setFocusable(false);
         jButton_FullExtent.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -575,7 +614,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Base.add(jButton_FullExtent);
 
-        jButton_ZoomToLayer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomToLayer.Image.png"))); // NOI18N
+        //jButton_ZoomToLayer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomToLayer.Image.png"))); // NOI18N
+        jButton_ZoomToLayer.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/zoom-layer.svg"));
         jButton_ZoomToLayer.setToolTipText(bundle.getString("FrmMain.jButton_ZoomToLayer.toolTipText")); // NOI18N
         jButton_ZoomToLayer.setFocusable(false);
         jButton_ZoomToLayer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -588,7 +628,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Base.add(jButton_ZoomToLayer);
 
-        jButton_ZoomToExtent.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomToExtent.Image.png"))); // NOI18N
+        //jButton_ZoomToExtent.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_ZoomToExtent.Image.png"))); // NOI18N
+        jButton_ZoomToExtent.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/zoom-extent.svg"));
         jButton_ZoomToExtent.setToolTipText(bundle.getString("FrmMain.jButton_ZoomToExtent.toolTipText")); // NOI18N
         jButton_ZoomToExtent.setFocusable(false);
         jButton_ZoomToExtent.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -601,7 +642,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Base.add(jButton_ZoomToExtent);
 
-        jButton_ZoomUndo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_PreTime.Image.png"))); // NOI18N
+        //jButton_ZoomUndo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_PreTime.Image.png"))); // NOI18N
+        jButton_ZoomUndo.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/undo.svg"));
         jButton_ZoomUndo.setToolTipText(bundle.getString("FrmMain.jButton_ZoomUndo.toolTipText")); // NOI18N
         jButton_ZoomUndo.setFocusable(false);
         jButton_ZoomUndo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -615,7 +657,8 @@ public class FrmMain extends JFrame implements IApplication {
         jButton_ZoomUndo.setEnabled(false);
         jToolBar_Base.add(jButton_ZoomUndo);
 
-        jButton_ZoomRedo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NextTime.Image.png"))); // NOI18N
+        //jButton_ZoomRedo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NextTime.Image.png"))); // NOI18N
+        jButton_ZoomRedo.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/redo.svg"));
         jButton_ZoomRedo.setToolTipText(bundle.getString("FrmMain.jButton_ZoomRedo.toolTipText")); // NOI18N
         jButton_ZoomRedo.setFocusable(false);
         jButton_ZoomRedo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -630,7 +673,8 @@ public class FrmMain extends JFrame implements IApplication {
         jToolBar_Base.add(jButton_ZoomRedo);
         jToolBar_Base.add(new JSeparator());
 
-        jButton_Identifer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png"))); // NOI18N
+        //jButton_Identifer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png"))); // NOI18N
+        jButton_Identifer.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/information.svg"));
         jButton_Identifer.setToolTipText(bundle.getString("FrmMain.jButton_Identifer.toolTipText")); // NOI18N
         jButton_Identifer.setFocusable(false);
         jButton_Identifer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -645,9 +689,11 @@ public class FrmMain extends JFrame implements IApplication {
         jToolBar_Base.add(jSeparator2);
 
         //Split button
-        jSplitButton_SelectFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_rectangle.png")));
+        //jSplitButton_SelectFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_rectangle.png")));
+        jSplitButton_SelectFeature.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-rectangle.svg"));
         jSplitButton_SelectFeature.setText("  ");
         jSplitButton_SelectFeature.setToolTipText(bundle.getString("FrmMain.jButton_SelectFeature.toolTipText_Rectangle"));
+        jSplitButton_SelectFeature.setArrowColor(ColorUtil.parseToColor("#6E6E6E"));
         jSplitButton_SelectFeature.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -665,12 +711,14 @@ public class FrmMain extends JFrame implements IApplication {
                 setCurrentTool((JButton) evt.getSource());
             }
         });
-        jMenuItem_SelByRectangle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_rectangle.png")));
+        //jMenuItem_SelByRectangle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_rectangle.png")));
+        jMenuItem_SelByRectangle.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-rectangle.svg"));
         jMenuItem_SelByRectangle.setText(bundle.getString("FrmMain.jMenuItem_SelByRectangle.text"));
         jMenuItem_SelByRectangle.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jSplitButton_SelectFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_rectangle.png")));
+                //jSplitButton_SelectFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_rectangle.png")));
+                jSplitButton_SelectFeature.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-rectangle.svg"));
                 jSplitButton_SelectFeature.setText("  ");
                 jSplitButton_SelectFeature.setToolTipText(bundle.getString("FrmMain.jButton_SelectFeature.toolTipText_Rectangle"));
                 jButton_SelByRectangleActionPerformed(e);
@@ -678,12 +726,14 @@ public class FrmMain extends JFrame implements IApplication {
             }
         });
         jPopupMenu_SelectFeature.add(jMenuItem_SelByRectangle);
-        jMenuItem_SelByPolygon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_polygon.png")));
+        //jMenuItem_SelByPolygon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_polygon.png")));
+        jMenuItem_SelByPolygon.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-polygon.svg"));
         jMenuItem_SelByPolygon.setText(bundle.getString("FrmMain.jMenuItem_SelByPolygon.text"));
         jMenuItem_SelByPolygon.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jSplitButton_SelectFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_polygon.png")));
+                //jSplitButton_SelectFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_polygon.png")));
+                jSplitButton_SelectFeature.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-polygon.svg"));
                 jSplitButton_SelectFeature.setText("  ");
                 jSplitButton_SelectFeature.setToolTipText(bundle.getString("FrmMain.jButton_SelectFeature.toolTipText_Polygon"));
                 jButton_SelByPolygonActionPerformed(e);
@@ -691,12 +741,14 @@ public class FrmMain extends JFrame implements IApplication {
             }
         });
         jPopupMenu_SelectFeature.add(jMenuItem_SelByPolygon);
-        jMenuItem_SelByLasso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_lasso.png")));
+        //jMenuItem_SelByLasso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_lasso.png")));
+        jMenuItem_SelByLasso.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-lasso.svg"));
         jMenuItem_SelByLasso.setText(bundle.getString("FrmMain.jMenuItem_SelByLasso.text"));
         jMenuItem_SelByLasso.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jSplitButton_SelectFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_lasso.png")));
+                //jSplitButton_SelectFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_lasso.png")));
+                jSplitButton_SelectFeature.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-lasso.svg"));
                 jSplitButton_SelectFeature.setText("  ");
                 jSplitButton_SelectFeature.setToolTipText(bundle.getString("FrmMain.jButton_SelectFeature.toolTipText_Lasso"));
                 jButton_SelByLassoActionPerformed(e);
@@ -704,12 +756,14 @@ public class FrmMain extends JFrame implements IApplication {
             }
         });
         jPopupMenu_SelectFeature.add(jMenuItem_SelByLasso);
-        jMenuItem_SelByCircle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_circle.png")));
+        //jMenuItem_SelByCircle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_circle.png")));
+        jMenuItem_SelByCircle.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-circle.svg"));
         jMenuItem_SelByCircle.setText(bundle.getString("FrmMain.jMenuItem_SelByCircle.text"));
         jMenuItem_SelByCircle.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jSplitButton_SelectFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_circle.png")));
+                //jSplitButton_SelectFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_circle.png")));
+                jSplitButton_SelectFeature.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-circle.svg"));
                 jSplitButton_SelectFeature.setText("  ");
                 jSplitButton_SelectFeature.setToolTipText(bundle.getString("FrmMain.jButton_SelectFeature.toolTipText_Circle"));
                 jButton_SelByCircleActionPerformed(e);
@@ -725,7 +779,8 @@ public class FrmMain extends JFrame implements IApplication {
         //jSplitButton_SelectFeature.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar_Base.add(jSplitButton_SelectFeature);
 
-        jButton_Measurement.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Measurement.Image.png"))); // NOI18N
+        //jButton_Measurement.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Measurement.Image.png"))); // NOI18N
+        jButton_Measurement.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/measurement.svg"));
         jButton_Measurement.setToolTipText(bundle.getString("FrmMain.jButton_Measurement.toolTipText")); // NOI18N
         jButton_Measurement.setFocusable(false);
         jButton_Measurement.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -738,7 +793,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Base.add(jButton_Measurement);
 
-        jButton_LabelSet.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_LabelSet.Image.png"))); // NOI18N
+        //jButton_LabelSet.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_LabelSet.Image.png"))); // NOI18N
+        jButton_LabelSet.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/label.svg"));
         jButton_LabelSet.setToolTipText(bundle.getString("FrmMain.jButton_LabelSet.toolTipText")); // NOI18N
         jButton_LabelSet.setFocusable(false);
         jButton_LabelSet.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -752,7 +808,8 @@ public class FrmMain extends JFrame implements IApplication {
         jToolBar_Base.add(jButton_LabelSet);
         jToolBar_Base.add(jSeparator3);
 
-        jButton_SavePicture.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Save_Image.png"))); // NOI18N
+        //jButton_SavePicture.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Save_Image.png"))); // NOI18N
+        jButton_SavePicture.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/figure-output.svg"));
         jButton_SavePicture.setToolTipText(bundle.getString("FrmMain.jButton_SavePicture.toolTipText")); // NOI18N
         jButton_SavePicture.setFocusable(false);
         jButton_SavePicture.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -770,7 +827,8 @@ public class FrmMain extends JFrame implements IApplication {
         jToolBar_Graphic.setRollover(true);
         //jToolBar_Graphic.add(jSeparator4);
 
-        jButton_NewLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewLabel.Image.png"))); // NOI18N
+        //jButton_NewLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewLabel.Image.png"))); // NOI18N
+        jButton_NewLabel.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-text.svg"));
         jButton_NewLabel.setToolTipText(bundle.getString("FrmMain.jButton_NewLabel.toolTipText")); // NOI18N
         jButton_NewLabel.setFocusable(false);
         jButton_NewLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -783,7 +841,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Graphic.add(jButton_NewLabel);
 
-        jButton_NewPoint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewPoint.Image.png"))); // NOI18N
+        //jButton_NewPoint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewPoint.Image.png"))); // NOI18N
+        jButton_NewPoint.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-point.svg"));
         jButton_NewPoint.setToolTipText(bundle.getString("FrmMain.jButton_NewPoint.toolTipText")); // NOI18N
         jButton_NewPoint.setFocusable(false);
         jButton_NewPoint.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -796,7 +855,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Graphic.add(jButton_NewPoint);
 
-        jButton_NewPolyline.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewPolyline.Image.png"))); // NOI18N
+        //jButton_NewPolyline.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewPolyline.Image.png"))); // NOI18N
+        jButton_NewPolyline.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-line.svg"));
         jButton_NewPolyline.setToolTipText(bundle.getString("FrmMain.jButton_NewPolyline.toolTipText")); // NOI18N
         jButton_NewPolyline.setFocusable(false);
         jButton_NewPolyline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -809,7 +869,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Graphic.add(jButton_NewPolyline);
 
-        jButton_NewFreehand.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewFreehand.Image.png"))); // NOI18N
+        //jButton_NewFreehand.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewFreehand.Image.png"))); // NOI18N
+        jButton_NewFreehand.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-line-hand.svg"));
         jButton_NewFreehand.setToolTipText(bundle.getString("FrmMain.jButton_NewFreehand.toolTipText")); // NOI18N
         jButton_NewFreehand.setFocusable(false);
         jButton_NewFreehand.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -822,7 +883,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Graphic.add(jButton_NewFreehand);
 
-        jButton_NewCurve.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewCurve.Image.png"))); // NOI18N
+        //jButton_NewCurve.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewCurve.Image.png"))); // NOI18N
+        jButton_NewCurve.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-curve.svg"));
         jButton_NewCurve.setToolTipText(bundle.getString("FrmMain.jButton_NewCurve.toolTipText")); // NOI18N
         jButton_NewCurve.setFocusable(false);
         jButton_NewCurve.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -835,7 +897,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Graphic.add(jButton_NewCurve);
 
-        jButton_NewPolygon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewPolygon.Image.png"))); // NOI18N
+        //jButton_NewPolygon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewPolygon.Image.png"))); // NOI18N
+        jButton_NewPolygon.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-polygon.svg"));
         jButton_NewPolygon.setToolTipText(bundle.getString("FrmMain.jButton_NewPolygon.toolTipText")); // NOI18N
         jButton_NewPolygon.setFocusable(false);
         jButton_NewPolygon.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -848,7 +911,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Graphic.add(jButton_NewPolygon);
 
-        jButton_NewCurvePolygon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewCurvePolygon.Image.png"))); // NOI18N
+        //jButton_NewCurvePolygon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewCurvePolygon.Image.png"))); // NOI18N
+        jButton_NewCurvePolygon.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-polygon-curve.svg"));
         jButton_NewCurvePolygon.setToolTipText(bundle.getString("FrmMain.jButton_NewCurvePolygon.toolTipText")); // NOI18N
         jButton_NewCurvePolygon.setFocusable(false);
         jButton_NewCurvePolygon.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -861,7 +925,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Graphic.add(jButton_NewCurvePolygon);
 
-        jButton_NewRectangle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewRectangle.Image.png"))); // NOI18N
+        //jButton_NewRectangle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewRectangle.Image.png"))); // NOI18N
+        jButton_NewRectangle.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-rectangle.svg"));
         jButton_NewRectangle.setToolTipText(bundle.getString("FrmMain.jButton_NewRectangle.toolTipText")); // NOI18N
         jButton_NewRectangle.setFocusable(false);
         jButton_NewRectangle.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -874,7 +939,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Graphic.add(jButton_NewRectangle);
 
-        jButton_NewCircle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewCircle.Image.png"))); // NOI18N
+        //jButton_NewCircle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewCircle.Image.png"))); // NOI18N
+        jButton_NewCircle.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-circle.svg"));
         jButton_NewCircle.setToolTipText(bundle.getString("FrmMain.jButton_NewCircle.toolTipText")); // NOI18N
         jButton_NewCircle.setFocusable(false);
         jButton_NewCircle.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -887,7 +953,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Graphic.add(jButton_NewCircle);
 
-        jButton_NewEllipse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewEllipse.Image.png"))); // NOI18N
+        //jButton_NewEllipse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewEllipse.Image.png"))); // NOI18N
+        jButton_NewEllipse.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-ellipse.svg"));
         jButton_NewEllipse.setToolTipText(bundle.getString("FrmMain.jButton_NewEllipse.toolTipText")); // NOI18N
         jButton_NewEllipse.setFocusable(false);
         jButton_NewEllipse.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -900,7 +967,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Graphic.add(jButton_NewEllipse);
 
-        jButton_EditVertices.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_EditVertices.Image.png"))); // NOI18N
+        //jButton_EditVertices.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_EditVertices.Image.png"))); // NOI18N
+        jButton_EditVertices.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/edit-vertices.svg"));
         jButton_EditVertices.setToolTipText(bundle.getString("FrmMain.jButton_EditVertices.toolTipText")); // NOI18N
         jButton_EditVertices.setFocusable(false);
         jButton_EditVertices.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -918,7 +986,8 @@ public class FrmMain extends JFrame implements IApplication {
         jToolBar_Layout.setRollover(true);
         //jToolBar_Layout.add(jSeparator15);
 
-        jButton_PageSet.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/page_portrait.png"))); // NOI18N
+        //jButton_PageSet.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/page_portrait.png"))); // NOI18N
+        jButton_PageSet.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/page-setting.svg"));
         jButton_PageSet.setToolTipText(bundle.getString("FrmMain.jButton_PageSet.toolTipText")); // NOI18N
         jButton_PageSet.setFocusable(false);
         jButton_PageSet.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -931,7 +1000,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Layout.add(jButton_PageSet);
 
-        jButton_PageZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_PageZoomIn.Image.png"))); // NOI18N
+        //jButton_PageZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_PageZoomIn.Image.png"))); // NOI18N
+        jButton_PageZoomIn.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/page-zoom-in.svg"));
         jButton_PageZoomIn.setToolTipText(bundle.getString("FrmMain.jButton_PageZoomIn.toolTipText")); // NOI18N
         jButton_PageZoomIn.setFocusable(false);
         jButton_PageZoomIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -944,7 +1014,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Layout.add(jButton_PageZoomIn);
 
-        jButton_PageZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_PageZoomOut.Image.png"))); // NOI18N
+        //jButton_PageZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_PageZoomOut.Image.png"))); // NOI18N
+        jButton_PageZoomOut.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/page-zoom-out.svg"));
         jButton_PageZoomOut.setToolTipText(bundle.getString("FrmMain.jButton_PageZoomOut.toolTipText")); // NOI18N
         jButton_PageZoomOut.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -954,7 +1025,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Layout.add(jButton_PageZoomOut);
 
-        jButton_FitToScreen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ZoomFullMap.png"))); // NOI18N
+        //jButton_FitToScreen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ZoomFullMap.png"))); // NOI18N
+        jButton_FitToScreen.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/page-zoom-window.svg"));
         jButton_FitToScreen.setToolTipText(bundle.getString("FrmMain.jButton_FitToScreen.toolTipText")); // NOI18N
         jButton_FitToScreen.setFocusable(false);
         jButton_FitToScreen.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -983,7 +1055,8 @@ public class FrmMain extends JFrame implements IApplication {
         jToolBar_Edit.setFloatable(true);
         jToolBar_Edit.setRollover(true);
 
-        jButton_EditStartOrEnd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit_16.png"))); // NOI18N
+        //jButton_EditStartOrEnd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit_16.png"))); // NOI18N
+        jButton_EditStartOrEnd.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/edit-status.svg"));
         jButton_EditStartOrEnd.setToolTipText(bundle.getString("FrmMain.jButton_EditStartOrEnd.toolTipText")); // NOI18N
         jButton_EditStartOrEnd.setFocusable(false);
         jButton_EditStartOrEnd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -996,7 +1069,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jToolBar_Edit.add(jButton_EditStartOrEnd);
 
-        jButton_EditSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_16.png"))); // NOI18N
+        //jButton_EditSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_16.png"))); // NOI18N
+        jButton_EditSave.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/file-save.svg"));
         jButton_EditSave.setToolTipText(bundle.getString("FrmMain.jButton_EditSave.toolTipText")); // NOI18N
         jButton_EditSave.setFocusable(false);
         jButton_EditSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1011,7 +1085,8 @@ public class FrmMain extends JFrame implements IApplication {
         jToolBar_Edit.add(jButton_EditSave);
         jToolBar_Edit.add(new javax.swing.JToolBar.Separator());
 
-        jButton_EditTool.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/location_arrow.png"))); // NOI18N
+        //jButton_EditTool.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/location_arrow.png"))); // NOI18N
+        jButton_EditTool.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/edit-tool.svg"));
         jButton_EditTool.setToolTipText(bundle.getString("FrmMain.jButton_EditTool.toolTipText")); // NOI18N
         jButton_EditTool.setFocusable(false);
         jButton_EditTool.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1025,7 +1100,8 @@ public class FrmMain extends JFrame implements IApplication {
         jButton_EditTool.setEnabled(false);
         jToolBar_Edit.add(jButton_EditTool);
 
-        jButton_EditNewFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/new_document_16.png"))); // NOI18N
+        //jButton_EditNewFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/new_document_16.png"))); // NOI18N
+        jButton_EditNewFeature.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/edit-add-feature.svg"));
         jButton_EditNewFeature.setToolTipText(bundle.getString("FrmMain.jButton_EditNewFeature.toolTipText")); // NOI18N
         jButton_EditNewFeature.setFocusable(false);
         jButton_EditNewFeature.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1039,7 +1115,8 @@ public class FrmMain extends JFrame implements IApplication {
         jButton_EditNewFeature.setEnabled(false);
         jToolBar_Edit.add(jButton_EditNewFeature);
 
-        jButton_EditRemoveFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_RemoveDataLayes.Image.png"))); // NOI18N
+        //jButton_EditRemoveFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_RemoveDataLayes.Image.png"))); // NOI18N
+        jButton_EditRemoveFeature.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/delete.svg"));
         jButton_EditRemoveFeature.setToolTipText(bundle.getString("FrmMain.jButton_EditRemoveFeature.toolTipText")); // NOI18N
         jButton_EditRemoveFeature.setFocusable(false);
         jButton_EditRemoveFeature.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1053,7 +1130,8 @@ public class FrmMain extends JFrame implements IApplication {
         jButton_EditRemoveFeature.setEnabled(false);
         jToolBar_Edit.add(jButton_EditRemoveFeature);
 
-        jButton_EditFeatureVertices.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_EditVertices.Image.png"))); // NOI18N
+        //jButton_EditFeatureVertices.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_EditVertices.Image.png"))); // NOI18N
+        jButton_EditFeatureVertices.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/edit-vertices.svg"));
         jButton_EditFeatureVertices.setToolTipText(bundle.getString("FrmMain.jButton_EditFeatureVertices.toolTipText")); // NOI18N
         jButton_EditFeatureVertices.setFocusable(false);
         jButton_EditFeatureVertices.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1172,14 +1250,15 @@ public class FrmMain extends JFrame implements IApplication {
                         .addComponent(jLabel_ProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)));
 
         //Main menu bar
-        jMenuBar_Main.setFont(new java.awt.Font("微软雅黑", 0, 14)); // NOI18N
+        //jMenuBar_Main.setFont(new java.awt.Font("微软雅黑", 0, 14)); // NOI18N
 
         //Project menu
         jMenu_Project.setText(bundle.getString("FrmMain.jMenu_Project.text")); // NOI18N
         jMenu_Project.setMnemonic(KeyEvent.VK_P);
 
         jMenuItem_Open.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem_Open.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
+        //jMenuItem_Open.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
+        jMenuItem_Open.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/file-open.svg"));
         jMenuItem_Open.setText(bundle.getString("FrmMain.jMenuItem_Open.text")); // NOI18N
         jMenuItem_Open.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1190,7 +1269,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Project.add(jMenuItem_Open);
 
         jMenuItem_Save.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK));
-        jMenuItem_Save.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
+        //jMenuItem_Save.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
+        jMenuItem_Save.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/file-save.svg"));
         jMenuItem_Save.setText(bundle.getString("FrmMain.jMenuItem_Save.text")); // NOI18N
         jMenuItem_Save.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1215,7 +1295,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Edit.setText(bundle.getString("FrmMain.jMenu_Edit.text")); // NOI18N
         jMenu_Edit.setMnemonic(KeyEvent.VK_E);
 
-        jMenuItem_Undo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Undo.Image.png"))); // NOI18N
+        //jMenuItem_Undo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Undo.Image.png"))); // NOI18N
+        jMenuItem_Undo.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/undo.svg"));
         jMenuItem_Undo.setText(bundle.getString("FrmMain.jMenuItem_Undo.text")); // NOI18N
         jMenuItem_Undo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem_Undo.addActionListener(new java.awt.event.ActionListener() {
@@ -1227,7 +1308,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenuItem_Undo.setEnabled(false);
         jMenu_Edit.add(jMenuItem_Undo);
 
-        jMenuItem_Redo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Redo.Image.png"))); // NOI18N
+        //jMenuItem_Redo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Redo.Image.png"))); // NOI18N
+        jMenuItem_Redo.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/redo.svg"));
         jMenuItem_Redo.setText(bundle.getString("FrmMain.jMenuItem_Redo.text")); // NOI18N
         jMenuItem_Redo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem_Redo.addActionListener(new java.awt.event.ActionListener() {
@@ -1243,7 +1325,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Edit.setText(bundle.getString("FrmMain.jMenu_Edit.text")); // NOI18N
         jMenu_Edit.setMnemonic(KeyEvent.VK_E);
 
-        jMenuItem_Cut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSMI_EditCut.Image.png"))); // NOI18N
+        //jMenuItem_Cut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSMI_EditCut.Image.png"))); // NOI18N
+        jMenuItem_Cut.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/menu-cut.svg"));
         jMenuItem_Cut.setText(bundle.getString("FrmMain.jMenuItem_Cut.text")); // NOI18N
         jMenuItem_Cut.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem_Cut.addActionListener(new java.awt.event.ActionListener() {
@@ -1255,7 +1338,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenuItem_Cut.setEnabled(false);
         jMenu_Edit.add(jMenuItem_Cut);
 
-        jMenuItem_Copy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/menuEditCopy.Image.png"))); // NOI18N
+        //jMenuItem_Copy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/menuEditCopy.Image.png"))); // NOI18N
+        jMenuItem_Copy.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/copy.svg"));
         jMenuItem_Copy.setText(bundle.getString("FrmMain.jMenuItem_Copy.text")); // NOI18N
         jMenuItem_Copy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem_Copy.addActionListener(new java.awt.event.ActionListener() {
@@ -1267,7 +1351,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenuItem_Copy.setEnabled(false);
         jMenu_Edit.add(jMenuItem_Copy);
 
-        jMenuItem_Paste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pasteToolStripButton.Image.png"))); // NOI18N
+        //jMenuItem_Paste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pasteToolStripButton.Image.png"))); // NOI18N
+        jMenuItem_Paste.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/menu-paste.svg"));
         jMenuItem_Paste.setText(bundle.getString("FrmMain.jMenuItem_Paste.text")); // NOI18N
         jMenuItem_Paste.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem_Paste.addActionListener(new java.awt.event.ActionListener() {
@@ -1280,7 +1365,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Edit.add(jMenuItem_Paste);
         jMenu_Edit.add(new javax.swing.JPopupMenu.Separator());
 
-        jMenuItem_NewLayer.setText(bundle.getString("FrmMain.jMenuItem_NewLayer.text")); // NOI18N        
+        jMenuItem_NewLayer.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-layer.svg"));
+        jMenuItem_NewLayer.setText(bundle.getString("FrmMain.jMenuItem_NewLayer.text")); // NOI18N
         jMenuItem_NewLayer.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1290,8 +1376,9 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Edit.add(jMenuItem_NewLayer);
         jMenu_Edit.add(new javax.swing.JPopupMenu.Separator());
 
-        jMenuItem_AddRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ring_add.png"))); // NOI18N
-        jMenuItem_AddRing.setText(bundle.getString("FrmMain.jMenuItem_AddRing.text")); // NOI18N        
+        //jMenuItem_AddRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ring_add.png"))); // NOI18N
+        jMenuItem_AddRing.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/add-ring.svg"));
+        jMenuItem_AddRing.setText(bundle.getString("FrmMain.jMenuItem_AddRing.text")); // NOI18N
         jMenuItem_AddRing.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1301,8 +1388,9 @@ public class FrmMain extends JFrame implements IApplication {
         jMenuItem_AddRing.setEnabled(false);
         jMenu_Edit.add(jMenuItem_AddRing);
 
-        jMenuItem_FillRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ring.png"))); // NOI18N
-        jMenuItem_FillRing.setText(bundle.getString("FrmMain.jMenuItem_FillRing.text")); // NOI18N        
+        //jMenuItem_FillRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ring.png"))); // NOI18N
+        jMenuItem_FillRing.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/fill-ring.svg"));
+        jMenuItem_FillRing.setText(bundle.getString("FrmMain.jMenuItem_FillRing.text")); // NOI18N
         jMenuItem_FillRing.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1312,8 +1400,9 @@ public class FrmMain extends JFrame implements IApplication {
         jMenuItem_FillRing.setEnabled(false);
         jMenu_Edit.add(jMenuItem_FillRing);
 
-        jMenuItem_DeleteRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ring_delete.png"))); // NOI18N
-        jMenuItem_DeleteRing.setText(bundle.getString("FrmMain.jMenuItem_DeleteRing.text")); // NOI18N        
+        //jMenuItem_DeleteRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ring_delete.png"))); // NOI18N
+        jMenuItem_DeleteRing.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/delete-ring.svg"));
+        jMenuItem_DeleteRing.setText(bundle.getString("FrmMain.jMenuItem_DeleteRing.text")); // NOI18N
         jMenuItem_DeleteRing.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1323,8 +1412,9 @@ public class FrmMain extends JFrame implements IApplication {
         jMenuItem_DeleteRing.setEnabled(false);
         jMenu_Edit.add(jMenuItem_DeleteRing);
         
-        jMenuItem_ReformFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/reform_edit.png"))); // NOI18N
-        jMenuItem_ReformFeature.setText(bundle.getString("FrmMain.jMenuItem_ReformFeature.text")); // NOI18N        
+        //jMenuItem_ReformFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/reform_edit.png"))); // NOI18N
+        jMenuItem_ReformFeature.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/reshape-feature.svg"));
+        jMenuItem_ReformFeature.setText(bundle.getString("FrmMain.jMenuItem_ReformFeature.text")); // NOI18N
         jMenuItem_ReformFeature.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1334,8 +1424,9 @@ public class FrmMain extends JFrame implements IApplication {
         jMenuItem_ReformFeature.setEnabled(false);
         jMenu_Edit.add(jMenuItem_ReformFeature);
 
-        jMenuItem_SplitFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/split.png"))); // NOI18N
-        jMenuItem_SplitFeature.setText(bundle.getString("FrmMain.jMenuItem_SplitFeature.text")); // NOI18N        
+        //jMenuItem_SplitFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/split.png"))); // NOI18N
+        jMenuItem_SplitFeature.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/split-feature.svg"));
+        jMenuItem_SplitFeature.setText(bundle.getString("FrmMain.jMenuItem_SplitFeature.text")); // NOI18N
         jMenuItem_SplitFeature.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1345,8 +1436,9 @@ public class FrmMain extends JFrame implements IApplication {
         jMenuItem_SplitFeature.setEnabled(false);
         jMenu_Edit.add(jMenuItem_SplitFeature);
 
-        jMenuItem_MergeFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/merge.png"))); // NOI18N
-        jMenuItem_MergeFeature.setText(bundle.getString("FrmMain.jMenuItem_MergeFeature.text")); // NOI18N        
+        //jMenuItem_MergeFeature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/merge.png"))); // NOI18N
+        jMenuItem_MergeFeature.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/merge-feature.svg"));
+        jMenuItem_MergeFeature.setText(bundle.getString("FrmMain.jMenuItem_MergeFeature.text")); // NOI18N
         jMenuItem_MergeFeature.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1362,7 +1454,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_View.setText(bundle.getString("FrmMain.jMenu_View.text")); // NOI18N
         jMenu_View.setMnemonic(KeyEvent.VK_V);
 
-        jMenuItem_Layers.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Layers.png"))); // NOI18N
+        //jMenuItem_Layers.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Layers.png"))); // NOI18N
+        jMenuItem_Layers.setIcon(new FlatSVGIcon("org/meteoinfo/icons/layers.svg"));
         jMenuItem_Layers.setText(bundle.getString("FrmMain.jMenuItem_Layers.text")); // NOI18N
         jMenuItem_Layers.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1372,7 +1465,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_View.add(jMenuItem_Layers);
 
-        jMenuItem_AttributeData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSMI_AttriData.Image.png"))); // NOI18N
+        //jMenuItem_AttributeData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSMI_AttriData.Image.png"))); // NOI18N
+        jMenuItem_AttributeData.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/table.svg"));
         jMenuItem_AttributeData.setText(bundle.getString("FrmMain.jMenuItem_AttributeData.text")); // NOI18N
         jMenuItem_AttributeData.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1383,6 +1477,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_View.add(jMenuItem_AttributeData);
         jMenu_View.add(jSeparator5);
 
+        jMenuItem_LayoutProperty.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/layout-setting.svg"));
         jMenuItem_LayoutProperty.setText(bundle.getString("FrmMain.jMenuItem_LayoutProperty.text")); // NOI18N
         jMenuItem_LayoutProperty.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1393,6 +1488,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_View.add(jMenuItem_LayoutProperty);
         jMenu_View.add(jSeparator6);
 
+        jMenuItem_MapProperty.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/map-setting.svg"));
         jMenuItem_MapProperty.setText(bundle.getString("FrmMain.jMenuItem_MapProperty.text")); // NOI18N
         jMenuItem_MapProperty.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1412,6 +1508,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_View.add(jMenuItem_MaskOut);
         jMenu_View.add(jSeparator7);
 
+        jMenuItem_Projection.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/lon-lat.svg"));
         jMenuItem_Projection.setText(bundle.getString("FrmMain.jMenuItem_Projection.text")); // NOI18N
         jMenuItem_Projection.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1426,6 +1523,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Insert.setText(bundle.getString("FrmMain.jMenu_Insert.text")); // NOI18N
         jMenu_Insert.setMnemonic(KeyEvent.VK_V);
 
+        jMenuItem_InsertMapFrame.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/add-layer.svg"));
         jMenuItem_InsertMapFrame.setText(bundle.getString("FrmMain.jMenuItem_InsertMapFrame.text")); // NOI18N
         jMenuItem_InsertMapFrame.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1436,6 +1534,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Insert.add(jMenuItem_InsertMapFrame);
         jMenu_Insert.add(jSeparator10);
 
+        jMenuItem_InsertTitle.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/title.svg"));
         jMenuItem_InsertTitle.setText(bundle.getString("FrmMain.jMenuItem_InsertTitle.text")); // NOI18N
         jMenuItem_InsertTitle.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1445,6 +1544,7 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_Insert.add(jMenuItem_InsertTitle);
 
+        jMenuItem_InsertText.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/text.svg"));
         jMenuItem_InsertText.setText(bundle.getString("FrmMain.jMenuItem_InsertText.text")); // NOI18N
         jMenuItem_InsertText.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1455,7 +1555,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Insert.add(jMenuItem_InsertText);
         jMenu_Insert.add(jSeparator8);
 
-        jMenuItem_InsertLegend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSMI_InsertLegend.Image.png"))); // NOI18N
+        jMenuItem_InsertLegend.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/legend.svg"));
+        //jMenuItem_InsertLegend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSMI_InsertLegend.Image.png"))); // NOI18N
         jMenuItem_InsertLegend.setText(bundle.getString("FrmMain.jMenuItem_InsertLegend.text")); // NOI18N
         jMenuItem_InsertLegend.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1465,6 +1566,7 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_Insert.add(jMenuItem_InsertLegend);
 
+        jMenuItem_InsertScaleBar.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/scale-bar.svg"));
         jMenuItem_InsertScaleBar.setText(bundle.getString("FrmMain.jMenuItem_InsertScaleBar.text")); // NOI18N
         jMenuItem_InsertScaleBar.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1474,6 +1576,7 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_Insert.add(jMenuItem_InsertScaleBar);
 
+        jMenuItem_InsertNorthArrow.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/north-arrow.svg"));
         jMenuItem_InsertNorthArrow.setText(bundle.getString("FrmMain.jMenuItem_InsertNorthArrow.text")); // NOI18N
         jMenuItem_InsertNorthArrow.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1484,6 +1587,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Insert.add(jMenuItem_InsertNorthArrow);
         jMenu_Insert.add(jSeparator9);
 
+        jMenuItem_InsertWindArrow.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/wind-arrow.svg"));
         jMenuItem_InsertWindArrow.setText(bundle.getString("FrmMain.jMenuItem_InsertWindArrow.text")); // NOI18N
         jMenuItem_InsertWindArrow.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1498,6 +1602,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Selection.setText(bundle.getString("FrmMain.jMenu_Selection.text")); // NOI18N
         jMenu_Selection.setMnemonic(KeyEvent.VK_S);
 
+        jMenuItem_SelByAttr.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-attr.svg"));
         jMenuItem_SelByAttr.setText(bundle.getString("FrmMain.jMenuItem_SelByAttr.text")); // NOI18N
         jMenuItem_SelByAttr.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1507,6 +1612,7 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_Selection.add(jMenuItem_SelByAttr);
 
+        jMenuItem_SelByLocation.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/select-location.svg"));
         jMenuItem_SelByLocation.setText(bundle.getString("FrmMain.jMenuItem_SelByLocation.text")); // NOI18N
         jMenuItem_SelByLocation.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1517,6 +1623,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Selection.add(jMenuItem_SelByLocation);
         jMenu_Selection.add(jSeparator11);
 
+        jMenuItem_ClearSelection.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/cancel.svg"));
         jMenuItem_ClearSelection.setText(bundle.getString("FrmMain.jMenuItem_ClearSelection.text")); // NOI18N
         jMenuItem_ClearSelection.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1532,6 +1639,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_GeoProcessing.setText(bundle.getString("FrmMain.jMenu_GeoProcessing.text"));
         jMenu_GeoProcessing.setMnemonic(KeyEvent.VK_G);
         
+        jMenuItem_Buffer.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/buffer.svg"));
         jMenuItem_Buffer.setText(bundle.getString("FrmMain.jMenuItem_Buffer.text")); // NOI18N
         jMenuItem_Buffer.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1540,7 +1648,8 @@ public class FrmMain extends JFrame implements IApplication {
             }
         });
         jMenu_GeoProcessing.add(jMenuItem_Buffer);
-        
+
+        jMenuItem_Clipping.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/clip.svg"));
         jMenuItem_Clipping.setText(bundle.getString("FrmMain.jMenuItem_Clipping.text")); // NOI18N
         jMenuItem_Clipping.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1550,6 +1659,7 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_GeoProcessing.add(jMenuItem_Clipping);
         
+        jMenuItem_Convexhull.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/convexhull.svg"));
         jMenuItem_Convexhull.setText(bundle.getString("FrmMain.jMenuItem_Convexhull.text")); // NOI18N
         jMenuItem_Convexhull.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1559,6 +1669,7 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_GeoProcessing.add(jMenuItem_Convexhull);
         
+        jMenuItem_Intersection.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/intersection.svg"));
         jMenuItem_Intersection.setText(bundle.getString("FrmMain.jMenuItem_Intersection.text")); // NOI18N
         jMenuItem_Intersection.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1567,7 +1678,8 @@ public class FrmMain extends JFrame implements IApplication {
             }
         });
         jMenu_GeoProcessing.add(jMenuItem_Intersection);
-        
+
+        jMenuItem_Difference.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/difference.svg"));
         jMenuItem_Difference.setText(bundle.getString("FrmMain.jMenuItem_Difference.text")); // NOI18N
         jMenuItem_Difference.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1576,7 +1688,8 @@ public class FrmMain extends JFrame implements IApplication {
             }
         });
         jMenu_GeoProcessing.add(jMenuItem_Difference);
-        
+
+        jMenuItem_SymDifference.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/system-difference.svg"));
         jMenuItem_SymDifference.setText(bundle.getString("FrmMain.jMenuItem_SymDifference.text")); // NOI18N
         jMenuItem_SymDifference.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1592,7 +1705,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Tools.setText(bundle.getString("FrmMain.jMenu_Tools.text")); // NOI18N
         jMenu_Tools.setMnemonic(KeyEvent.VK_T);
 
-        jMenuItem_Script.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/snake.png"))); // NOI18N
+        //jMenuItem_Script.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/snake.png"))); // NOI18N
+        jMenuItem_Script.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/editor.svg"));
         jMenuItem_Script.setText(bundle.getString("FrmMain.jMenuItem_Script.text")); // NOI18N
         jMenuItem_Script.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1602,7 +1716,8 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_Tools.add(jMenuItem_Script);
 
-        jMenuItem_ScriptConsole.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/console.png"))); // NOI18N
+        //jMenuItem_ScriptConsole.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/console.png"))); // NOI18N
+        jMenuItem_ScriptConsole.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/console.svg"));
         jMenuItem_ScriptConsole.setText(bundle.getString("FrmMain.jMenuItem_ScriptConsole.text")); // NOI18N
         jMenuItem_ScriptConsole.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1613,6 +1728,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Tools.add(jMenuItem_ScriptConsole);
         jMenu_Tools.add(jSeparator16);
 
+        jMenuItem_Options.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/tools.svg"));
         jMenuItem_Options.setText(bundle.getString("FrmMain.jMenuItem_Options.text")); // NOI18N
         jMenuItem_Options.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1623,6 +1739,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Tools.add(jMenuItem_Options);
         jMenu_Tools.add(jSeparator17);
 
+        jMenuItem_OutputMapData.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/map-out.svg"));
         jMenuItem_OutputMapData.setText(bundle.getString("FrmMain.jMenuItem_OutputMapData.text")); // NOI18N
         jMenuItem_OutputMapData.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1632,6 +1749,7 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_Tools.add(jMenuItem_OutputMapData);
 
+        jMenuItem_AddXYData.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/chart-points.svg"));
         jMenuItem_AddXYData.setText(bundle.getString("FrmMain.jMenuItem_AddXYData.text")); // NOI18N
         jMenuItem_AddXYData.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1641,6 +1759,7 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_Tools.add(jMenuItem_AddXYData);        
 
+        jMenuItem_Animator.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/gif.svg"));
         jMenuItem_Animator.setText(bundle.getString("FrmMain.jMenuItem_Animator.text")); // NOI18N
         jMenuItem_Animator.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1666,7 +1785,8 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Plugin.setText(bundle.getString("FrmMain.jMenu_Plugin.text")); // NOI18N
         jMenu_Plugin.setMnemonic(KeyEvent.VK_L);
 
-        jMenuItem_PluginManager.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/plugin_edit_green.png"))); // NOI18N
+        jMenuItem_PluginManager.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/plugin-setting.svg"));
+        //jMenuItem_PluginManager.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/plugin_edit_green.png"))); // NOI18N
         jMenuItem_PluginManager.setText(bundle.getString("FrmMain.jMenuItem_PluginManager.text")); // NOI18N
         jMenuItem_PluginManager.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1682,6 +1802,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Help.setText(bundle.getString("FrmMain.jMenu_Help.text")); // NOI18N
         jMenu_Help.setMnemonic(KeyEvent.VK_H);
 
+        jMenuItem_About.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/information.svg"));
         jMenuItem_About.setText(bundle.getString("FrmMain.jMenuItem_About.text")); // NOI18N
         jMenuItem_About.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -1692,8 +1813,9 @@ public class FrmMain extends JFrame implements IApplication {
         jMenu_Help.add(jMenuItem_About);
         jMenu_Help.add(jSeparator12);
 
+        jMenuItem_Help.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/help.svg"));
         jMenuItem_Help.setText(bundle.getString("FrmMain.jMenuItem_Help.text")); // NOI18N
-        jMenuItem_Help.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/help.png")));
+        //jMenuItem_Help.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/help.png")));
         jMenuItem_Help.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1723,12 +1845,10 @@ public class FrmMain extends JFrame implements IApplication {
             this.jComboBox_PageZoom.addItem(zoom);
         }
         this.jComboBox_PageZoom.setSelectedItem(String.valueOf((int) (_mapDocument.getMapLayout().getZoom() * 100)) + "%");
-        try {
-            this._loadedPluginIcon = new ImageIcon(ImageIO.read(this.getClass().getResource("/images/plugin_green.png")));
-            this._unloadedPluginIcon = new ImageIcon(ImageIO.read(this.getClass().getResource("/images/plugin_unsel.png")));
-        } catch (IOException ex) {
-            Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //this._loadedPluginIcon = new ImageIcon(ImageIO.read(this.getClass().getResource("/images/plugin_green.png")));
+        //this._unloadedPluginIcon = new ImageIcon(ImageIO.read(this.getClass().getResource("/images/plugin_unsel.png")));
+        this._loadedPluginIcon = new FlatSVGIcon("org/meteoinfo/desktop/icons/plugin-loaded.svg");
+        this._unloadedPluginIcon = new FlatSVGIcon("org/meteoinfo/desktop/icons/plugin.svg");
 
         this.loadDefaultPojectFile();
         //this.loadConfigureFile();
@@ -3436,6 +3556,22 @@ public class FrmMain extends JFrame implements IApplication {
         }
     }
 
+    private void jButton_AddWebLayerActionPerformed(java.awt.event.ActionEvent evt) {
+        WebMapLayer layer = new WebMapLayer();
+        layer.setWebMapProvider(WebMapProvider.OpenStreetMap);
+        //layer.setDefaultProvider(DefaultProviders.OpenStreetMapQuestSattelite);
+        //layer.setDefaultProvider(DefaultProviders.ArcGISImage);
+        ProjectionInfo proj = this.getMapView().getProjection().getProjInfo();
+        if (proj.getProjectionName() != ProjectionNames.Mercator) {
+            if (JOptionPane.showConfirmDialog(null, "Not mercator projection! If project?", "Conform", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                ProjectionInfo toProj = ProjectionInfo.factory("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0");
+                this.getMapView().projectLayers(toProj);
+            }
+        }
+
+        this._mapDocument.getActiveMapFrame().addLayer(0, layer);
+    }
+
     private void jButton_EditStartOrEndActionPerformed(ActionEvent evt) {
         ItemNode selNode = this._mapDocument.getSelectedNode();
         if (selNode.getNodeType() != NodeTypes.LayerNode) {
@@ -3766,7 +3902,10 @@ public class FrmMain extends JFrame implements IApplication {
     private org.meteoinfo.legend.LayersLegend _mapDocument;
     private org.meteoinfo.layout.MapLayout _mapLayout;
     private org.meteoinfo.map.MapView _mapView;
-    private javax.swing.JButton jButton_AddLayer;
+    private org.meteoinfo.ui.JSplitButton jSplitButton_AddLayer;
+    private javax.swing.JPopupMenu jPopupMenu_AddLayer;
+    private javax.swing.JMenuItem jMenuItem_AddLayer;
+    private javax.swing.JMenuItem jMenuItem_AddWebLayer;
     private javax.swing.JButton jButton_EditVertices;
     private javax.swing.JButton jButton_FitToScreen;
     private javax.swing.JButton jButton_FullExtent;

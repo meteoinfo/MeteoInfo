@@ -36,16 +36,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
-/**
- *
- * @author Yaqiang Wang
- */
+ /**
+  *
+  * @author Yaqiang Wang
+  */
 public class LegendView extends JPanel {
     // <editor-fold desc="Variables">
 
@@ -63,11 +59,18 @@ public class LegendView extends JPanel {
     private ColorBreak _curBreak = null;
     private JScrollBar _vScrollBar;
     private JTextField _textField;
+    private LookAndFeel laf;
+    private Color borderColor;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
     public LegendView() {
         super();
+
+        laf = UIManager.getLookAndFeel();
+        this.setBackground(laf.getDefaults().getColor("List.background"));
+        this.borderColor = laf.getDefaults().getColor("List.dropLineColor");
+
         initComponents();
 
         this.addComponentListener(new ComponentAdapter() {
@@ -97,7 +100,7 @@ public class LegendView extends JPanel {
     private void initComponents() {
         this.setPreferredSize(new Dimension(100, 200));
         this.setLayout(new BorderLayout());
-        this.setBackground(Color.white);
+        //this.setBackground(Color.white);
 
         _vScrollBar = new JScrollBar(JScrollBar.VERTICAL);        
         _vScrollBar.addAdjustmentListener(new AdjustmentListener() {
@@ -946,6 +949,10 @@ public class LegendView extends JPanel {
 
         Graphics2D g2 = (Graphics2D) g;
         if (_legendScheme != null) {
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
             paintLegendScheme(g2);
         }
     }
@@ -987,19 +994,21 @@ public class LegendView extends JPanel {
     private void drawTitle(Graphics2D g) {
         //Symbol
         int sX = 0;
-        Font aFont = new Font("Arial", Font.PLAIN, 12);
-        Color bColor = new Color(240, 240, 240);
+        //Font aFont = new Font("Arial", Font.PLAIN, 12);
+        Font font = this.getFont();
+        Color bColor = this.getBackground();
         g.setColor(bColor);
         g.fill(new Rectangle(sX, 0, _symbolWidth, _breakHeight));
-        g.setColor(Color.black);
+        g.setColor(this.borderColor);
         g.draw(new Rectangle(0, 0, _symbolWidth, _breakHeight));
         String str = "Symbol";
-        FontMetrics metrics = g.getFontMetrics(aFont);
+        FontMetrics metrics = g.getFontMetrics(font);
         Dimension size = new Dimension(metrics.stringWidth(str), metrics.getHeight());
         int cx = _symbolWidth / 2;
         int cy = _breakHeight / 2;
-        PointF aPoint = new PointF(cx - size.width / 2, cy + size.height / 2);
-        g.setFont(aFont);
+        PointF aPoint = new PointF(cx - size.width / 2, cy + size.height / 3);
+        g.setFont(font);
+        g.setColor(this.getForeground());
         g.drawString(str, aPoint.X, aPoint.Y);
 
         if (_legendScheme.getLegendType() != LegendType.SingleSymbol) {
@@ -1007,13 +1016,13 @@ public class LegendView extends JPanel {
             sX = _symbolWidth;
             g.setColor(bColor);
             g.fill(new Rectangle(sX, 0, _valueWidth, _breakHeight));
-            g.setColor(Color.black);
+            g.setColor(this.borderColor);
             g.draw(new Rectangle(sX, 0, _valueWidth, _breakHeight));
             str = "Value";
             size = new Dimension(metrics.stringWidth(str), metrics.getHeight());
             cx = sX + _valueWidth / 2;
-            aPoint = new PointF(cx - size.width / 2, cy + size.height / 2);
-            g.setColor(Color.black);
+            aPoint = new PointF(cx - size.width / 2, cy + size.height / 3);
+            g.setColor(this.getForeground());
             g.drawString(str, aPoint.X, aPoint.Y);
 
             //Label
@@ -1025,13 +1034,13 @@ public class LegendView extends JPanel {
         //Label   
         g.setColor(bColor);
         g.fill(new Rectangle(sX, 0, _labelWidth, _breakHeight));
-        g.setColor(Color.black);
+        g.setColor(this.borderColor);
         g.draw(new Rectangle(sX, 0, _labelWidth, _breakHeight));
         str = "Label";
         size = new Dimension(metrics.stringWidth(str), metrics.getHeight());
         cx = sX + _labelWidth / 2;
-        aPoint = new PointF(cx - size.width / 2, cy + size.height / 2);
-        g.setColor(Color.black);
+        aPoint = new PointF(cx - size.width / 2, cy + size.height / 3);
+        g.setColor(this.getForeground());
         g.drawString(str, aPoint.X, aPoint.Y);
     }
 
@@ -1053,7 +1062,7 @@ public class LegendView extends JPanel {
     }
 
     private void drawBreakSymbol(ColorBreak aCB, Rectangle rect, boolean selected, Graphics2D g) {
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        //g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         float aSize;
         PointF aP = new PointF(0, 0);
         float width, height;
@@ -1102,19 +1111,20 @@ public class LegendView extends JPanel {
                 break;
         }
         
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        //g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
         //Draw value and label
         int sX = _symbolWidth;
-        Font aFont = new Font("Simsun", Font.PLAIN, 13);
+        //Font aFont = new Font("Simsun", Font.PLAIN, 13);
+        Font font = this.getFont();
         String str = aCB.getCaption();
-        FontMetrics metrics = g.getFontMetrics(aFont);
+        FontMetrics metrics = g.getFontMetrics(font);
         Dimension size = new Dimension(metrics.stringWidth(str), metrics.getHeight());
         aP.X = sX;
         aP.Y = rect.y + rect.height * 3 / 4;
 
-        g.setFont(aFont);
-        g.setColor(Color.black);
+        g.setFont(font);
+        g.setColor(this.getForeground());
         if (_legendScheme.getLegendType() == LegendType.SingleSymbol) {
             g.drawString(str, aP.X, aP.Y);
         } else {

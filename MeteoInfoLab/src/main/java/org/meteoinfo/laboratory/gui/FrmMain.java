@@ -503,7 +503,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jToolBar_Editor.add(jButton_NewFile);
 
         //jButton_OpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
-        jButton_OpenFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-open.svg"));
+        jButton_OpenFile.setIcon(new FlatSVGIcon("org/meteoinfo/icons/file-open.svg"));
         jButton_OpenFile.setToolTipText("Open File");
         jButton_OpenFile.setFocusable(false);
         jButton_OpenFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -516,7 +516,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jToolBar_Editor.add(jButton_OpenFile);
 
         //jButton_SaveFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
-        jButton_SaveFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-save.svg"));
+        jButton_SaveFile.setIcon(new FlatSVGIcon("org/meteoinfo/icons/file-save.svg"));
         jButton_SaveFile.setToolTipText("Save File");
         jButton_SaveFile.setFocusable(false);
         jButton_SaveFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -600,7 +600,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jToolBar_CurrentFolder.add(jComboBox_CurrentFolder);
 
         //jButton_CurrentFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/folder.png"))); // NOI18N
-        jButton_CurrentFolder.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-open.svg"));
+        jButton_CurrentFolder.setIcon(new FlatSVGIcon("org/meteoinfo/icons/file-open.svg"));
         jButton_CurrentFolder.setFocusable(false);
         jButton_CurrentFolder.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton_CurrentFolder.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -645,7 +645,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         jMenuItem_OpenFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         //jMenuItem_OpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Folder_1_16x16x8.png"))); // NOI18N
-        jMenuItem_OpenFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-open.svg"));
+        jMenuItem_OpenFile.setIcon(new FlatSVGIcon("org/meteoinfo/icons/file-open.svg"));
         jMenuItem_OpenFile.setText("Open ...");
         jMenuItem_OpenFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -656,7 +656,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         jMenuItem_SaveFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem_SaveFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
-        jMenuItem_SaveFile.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-save.svg"));
+        jMenuItem_SaveFile.setIcon(new FlatSVGIcon("org/meteoinfo/icons/file-save.svg"));
         jMenuItem_SaveFile.setText("Save");
         jMenuItem_SaveFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -803,7 +803,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Options.add(jMenuItem_ColorMaps);
 
         //jMenuItem_ColorDialog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Color_Wheel.png"))); // NOI18N
-        jMenuItem_ColorDialog.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/colors.svg"));
+        jMenuItem_ColorDialog.setIcon(new FlatSVGIcon("org/meteoinfo/icons/colors.svg"));
         jMenuItem_ColorDialog.setText("Color Dialog");
         jMenuItem_ColorDialog.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

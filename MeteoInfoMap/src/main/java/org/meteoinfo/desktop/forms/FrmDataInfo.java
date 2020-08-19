@@ -24,6 +24,8 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.desktop.config.GenericFileFilter;
 
 /**
@@ -67,7 +69,8 @@ public class FrmDataInfo extends javax.swing.JFrame {
 
         jToolBar1.setRollover(true);
 
-        jButton_Save.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
+        //jButton_Save.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
+        jButton_Save.setIcon(new FlatSVGIcon("org/meteoinfo/icons/file-save.svg"));
         jButton_Save.setFocusable(false);
         jButton_Save.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton_Save.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

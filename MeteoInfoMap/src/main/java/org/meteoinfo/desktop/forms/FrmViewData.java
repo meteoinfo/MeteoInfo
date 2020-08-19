@@ -16,6 +16,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.XYListDataset;
@@ -200,7 +202,8 @@ public class FrmViewData extends javax.swing.JFrame {
 
         jToolBar1.setRollover(true);
 
-        jButton_Save.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
+        //jButton_Save.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Disk_1_16x16x8.png"))); // NOI18N
+        jButton_Save.setIcon(new FlatSVGIcon("org/meteoinfo/icons/file-save.svg"));
         jButton_Save.setToolTipText("Save File");
         jButton_Save.setFocusable(false);
         jButton_Save.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -213,7 +216,8 @@ public class FrmViewData extends javax.swing.JFrame {
         jToolBar1.add(jButton_Save);
         jToolBar1.add(jSeparator1);
 
-        jButton_ToStation.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewPoint.Image.png"))); // NOI18N
+        //jButton_ToStation.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewPoint.Image.png"))); // NOI18N
+        jButton_ToStation.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/new-point.svg"));
         jButton_ToStation.setToolTipText("To Station Data");
         jButton_ToStation.setFocusable(false);
         jButton_ToStation.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -225,14 +229,16 @@ public class FrmViewData extends javax.swing.JFrame {
         });
         jToolBar1.add(jButton_ToStation);
 
-        jButton_Stat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Statictics.png"))); // NOI18N
+        //jButton_Stat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Statictics.png"))); // NOI18N
+        jButton_Stat.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/statistics.svg"));
         jButton_Stat.setToolTipText("Statistics");
         jButton_Stat.setFocusable(false);
         jButton_Stat.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton_Stat.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(jButton_Stat);
 
-        jButton_Chart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/chart.png"))); // NOI18N
+        //jButton_Chart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/chart.png"))); // NOI18N
+        jButton_Chart.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/chart-line.svg"));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("bundle/Bundle_FrmMeteoData"); // NOI18N
         jButton_Chart.setToolTipText(bundle.getString("FrmMeteoData.jButton_1DPlot.toolTipText")); // NOI18N
         jButton_Chart.setFocusable(false);

@@ -3074,7 +3074,7 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
         // TODO add your handling code here:
-        int result = JOptionPane.showConfirmDialog(null, "If save the project?", "Confirm", JOptionPane.YES_NO_CANCEL_OPTION);
+        int result = JOptionPane.showConfirmDialog(this, "If save the project?", "Confirm", JOptionPane.YES_NO_CANCEL_OPTION);
         switch (result) {
             case JOptionPane.YES_OPTION:
                 String aFile = _projectFile.getFileName();

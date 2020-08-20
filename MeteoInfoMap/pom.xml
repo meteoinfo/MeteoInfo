@@ -56,8 +56,7 @@
                     </archive>
                 </configuration>
             </plugin>
-            <!--
-            <plugin>  
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>  
                 <artifactId>maven-dependency-plugin</artifactId>  
                 <version>3.1.1</version>  
@@ -73,9 +72,8 @@
                         </configuration>  
                     </execution>  
                 </executions>  
-            </plugin>  
-            -->
-            
+            </plugin>-->
+
 <!--            <plugin>
                 <inherited>true</inherited>
                 <artifactId>maven-javadoc-plugin</artifactId>

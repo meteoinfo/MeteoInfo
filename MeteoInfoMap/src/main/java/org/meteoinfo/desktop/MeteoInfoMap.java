@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import org.meteoinfo.desktop.config.Options;
 import org.meteoinfo.desktop.forms.FrmMain;
@@ -301,6 +299,10 @@ public class MeteoInfoMap {
             }
         }
         //</editor-fold>
+
+        //Enable window decorations
+        JFrame.setDefaultLookAndFeelDecorated( true );
+        JDialog.setDefaultLookAndFeelDecorated( true );
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {

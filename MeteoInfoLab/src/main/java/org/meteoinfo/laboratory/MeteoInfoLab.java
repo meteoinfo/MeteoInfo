@@ -12,10 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import javax.xml.parsers.ParserConfigurationException;
@@ -311,6 +308,10 @@ public class MeteoInfoLab {
                 Logger.getLogger(MeteoInfoLab.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
+        //Enable window decorations
+        JFrame.setDefaultLookAndFeelDecorated( true );
+        JDialog.setDefaultLookAndFeelDecorated( true );
         
         //</editor-fold>
         //System.setProperty("-Dsun.java2d.dpiaware", "false");

@@ -118,7 +118,7 @@ public class ButtonTabComponent extends JPanel {
                 g2.translate(1, 1);
             }
             g2.setStroke(new BasicStroke(1));
-            g2.setColor(Color.BLACK);
+            g2.setColor(this.getForeground());
             if (getModel().isRollover()) {
                 g2.setColor(Color.MAGENTA);
             }

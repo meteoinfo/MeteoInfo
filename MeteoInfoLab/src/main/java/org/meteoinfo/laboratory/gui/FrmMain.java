@@ -44,6 +44,7 @@ import javax.swing.JTable;
 import javax.swing.WindowConstants;
 import javax.xml.parsers.ParserConfigurationException;
 
+import bibliothek.gui.dock.common.theme.ThemeMap;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.global.colors.ColorMap;
 import org.meteoinfo.global.colors.ColorUtil;
@@ -137,16 +138,22 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         System.out.println("Add dockable panels...");
         CControl control = new CControl(this);
         this.add(control.getContentArea());
-
-        control.putProperty(ScreenDockStation.WINDOW_FACTORY, new CustomWindowFactory());
+        //control.putProperty(ScreenDockStation.WINDOW_FACTORY, new CustomWindowFactory());
+        control.setTheme(ThemeMap.KEY_FLAT_THEME);
+        control.getIcons().setIconClient("locationmanager.minimize", new FlatSVGIcon("org/meteoinfo/laboratory/icons/minimize.svg"));
+        control.getIcons().setIconClient("locationmanager.maximize", new FlatSVGIcon("org/meteoinfo/laboratory/icons/maximize.svg"));
+        control.getIcons().setIconClient("locationmanager.externalize", new FlatSVGIcon("org/meteoinfo/laboratory/icons/outgoing.svg"));
+        control.getIcons().setIconClient("locationmanager.unexternalize", new FlatSVGIcon("org/meteoinfo/laboratory/icons/incoming.svg"));
+        control.getIcons().setIconClient("locationmanager.normalize", new FlatSVGIcon("org/meteoinfo/laboratory/icons/restore.svg"));
+        control.getIcons().setIconClient("locationmanager.unmaximize_externalized", new FlatSVGIcon("org/meteoinfo/laboratory/icons/restore.svg"));
 
         System.out.println("Editor and Console panels...");
         CGrid grid = new CGrid(control);
-        editorDock = new EditorDockable(this, "Editor", "Editor");
 
         consoleDock = new ConsoleDockable(this, this.startupPath, "Console", "Console");
         consoleDock.getConsole().setFont(this.options.getTextFont());
 
+        this.editorDock = new EditorDockable(this, "Editor", "Editor");
         this.editorDock.setInterp(this.consoleDock.getInterpreter());
         this.editorDock.addNewTextEditor("New file");
         this.editorDock.openFiles(this.options.getOpenedFiles());
@@ -529,7 +536,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jToolBar_Editor.add(jButton_SaveFile);
 
         //jButton_SaveAs.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_16.png"))); // NOI18N
-        jButton_SaveAs.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-save-as.svg"));
+        jButton_SaveAs.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/save-as.svg"));
         jButton_SaveAs.setToolTipText("Save As");
         jButton_SaveAs.setFocusable(false);
         jButton_SaveAs.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -666,7 +673,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_File.add(jMenuItem_SaveFile);
 
         //jMenuItem_SaveAs.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_16.png"))); // NOI18N
-        jMenuItem_SaveAs.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-save-as.svg"));
+        jMenuItem_SaveAs.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/save-as.svg"));
         jMenuItem_SaveAs.setText("Save As ...");
         jMenuItem_SaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -782,7 +789,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Options.setText("Options");
 
         //jMenuItem_Setting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/setting.png"))); // NOI18N
-        jMenuItem_Setting.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/setting.svg"));
+        jMenuItem_Setting.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/gear.svg"));
         jMenuItem_Setting.setText("Setting");
         jMenuItem_Setting.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

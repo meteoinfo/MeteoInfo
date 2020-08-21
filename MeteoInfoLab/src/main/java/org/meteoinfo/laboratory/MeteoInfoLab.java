@@ -310,8 +310,10 @@ public class MeteoInfoLab {
         }
 
         //Enable window decorations
-        JFrame.setDefaultLookAndFeelDecorated( true );
-        JDialog.setDefaultLookAndFeelDecorated( true );
+        if (laf.startsWith("Flat")) {
+            JFrame.setDefaultLookAndFeelDecorated(true);
+            JDialog.setDefaultLookAndFeelDecorated(true);
+        }
         
         //</editor-fold>
         //System.setProperty("-Dsun.java2d.dpiaware", "false");

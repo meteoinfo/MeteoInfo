@@ -301,8 +301,10 @@ public class MeteoInfoMap {
         //</editor-fold>
 
         //Enable window decorations
-        JFrame.setDefaultLookAndFeelDecorated( true );
-        JDialog.setDefaultLookAndFeelDecorated( true );
+        if (laf.startsWith("Flat")) {
+            JFrame.setDefaultLookAndFeelDecorated(true);
+            JDialog.setDefaultLookAndFeelDecorated(true);
+        }
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {

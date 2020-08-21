@@ -1464,27 +1464,35 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             if (aVarS.getShortName().toLowerCase().equals("times") && aVarS.getRank() == 2) {
                 Dimension tDim = this.findDimension("Time");
                 int tNum = tDim.getLength();
+                List<LocalDateTime> times = new ArrayList<>();
                 ucar.nc2.Dimension tsDim = ncfile.findDimension("DateStrLen");
                 int strLen = tsDim.getLength();
                 char[] charData = new char[tNum * strLen];
-                Array tarray = NCUtil.convertArray(aVarS.read());
-                for (i = 0; i < tNum * strLen; i++) {
-                    charData[i] = tarray.getChar(i);
-                }
+                Array tArray = NCUtil.convertArray(aVarS.read());
+                if (tArray.getSize() == 0) {
+                    times.add(LocalDateTime.now());
+                } else {
+                    for (i = 0; i < tNum * strLen; i++) {
+                        charData[i] = tArray.getChar(i);
+                    }
 
-                String tStr;
-                DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss");
-                List<LocalDateTime> times = new ArrayList<>();
-                for (i = 0; i < tNum; i++) {
-                    StringBuilder timeStr = new StringBuilder();
-                    for (int j = 0; j < strLen; j++) {
-                        timeStr.append(charData[i * strLen + j]);
+                    String tStr;
+                    DateTimeFormatter format;
+                    if (strLen == 19)
+                        format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss");
+                    else
+                        format = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+                    for (i = 0; i < tNum; i++) {
+                        StringBuilder timeStr = new StringBuilder();
+                        for (int j = 0; j < strLen; j++) {
+                            timeStr.append(charData[i * strLen + j]);
+                        }
+                        tStr = timeStr.toString();
+                        if (tStr.contains("0000-00-00")) {
+                            tStr = "0001-01-01_00:00:00";
+                        }
+                        times.add(LocalDateTime.parse(tStr, format));
                     }
-                    tStr = timeStr.toString();
-                    if (tStr.contains("0000-00-00")) {
-                        tStr = "0001-01-01_00:00:00";
-                    }
-                    times.add(LocalDateTime.parse(tStr, format));
                 }
                 List<Double> values = new ArrayList<>();
                 for (LocalDateTime t : times) {

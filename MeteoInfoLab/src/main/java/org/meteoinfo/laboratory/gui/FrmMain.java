@@ -637,7 +637,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             .addGap(0, 25, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel_Status, java.awt.BorderLayout.PAGE_END);
+        //getContentPane().add(jPanel_Status, java.awt.BorderLayout.PAGE_END);
 
         jMenu_File.setText("File");
         jMenu_File.setMnemonic(KeyEvent.VK_F);
@@ -788,7 +788,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         jMenuBar1.add(jMenu_Editor);
 
-        jMenu_Options.setMnemonic(KeyEvent.VK_E);
+        jMenu_Options.setMnemonic(KeyEvent.VK_O);
         jMenu_Options.setText("Options");
 
         //jMenuItem_Setting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/setting.png"))); // NOI18N
@@ -843,7 +843,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenu_Help.setText("Help");
         jMenu_Help.setMnemonic(KeyEvent.VK_H);
 
-        jMenuItem_About.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png"))); // NOI18N
+        //jMenuItem_About.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png"))); // NOI18N
         jMenuItem_About.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/information.svg"));
         jMenuItem_About.setText("About");
         jMenuItem_About.addActionListener(new java.awt.event.ActionListener() {

@@ -302,8 +302,10 @@ public class MeteoInfoMap {
 
         //Enable window decorations
         if (laf.startsWith("Flat")) {
-            JFrame.setDefaultLookAndFeelDecorated(true);
-            JDialog.setDefaultLookAndFeelDecorated(true);
+            if (options.isLafDecorated()) {
+                JFrame.setDefaultLookAndFeelDecorated(true);
+                JDialog.setDefaultLookAndFeelDecorated(true);
+            }
         }
 
         /* Create and display the form */

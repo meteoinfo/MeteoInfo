@@ -56,6 +56,9 @@ public class FrmOptions extends javax.swing.JDialog {
         this.jComboBox_LookAndFeel.addItem("FlatDarculaLaf");
         this.jComboBox_LookAndFeel.addItem("FlatIntelliJLaf");
         this.jComboBox_LookAndFeel.setSelectedItem(this._parent.getOptions().getLookFeel());
+        
+        //Laf decorated
+        this.jCheckBox_LafDecorated.setSelected(this._parent.getOptions().isLafDecorated());
 
         //Double buffering
         this.jCheckBox_DoubleBuffering.setSelected(this._parent.getOptions().isDoubleBuffer());
@@ -75,7 +78,8 @@ public class FrmOptions extends javax.swing.JDialog {
         jPanel_General = new javax.swing.JPanel();
         jLabel_LookAndFeel = new javax.swing.JLabel();
         jComboBox_LookAndFeel = new javax.swing.JComboBox();
-        jCheckBox_DoubleBuffering = new javax.swing.JCheckBox();
+        jCheckBox_LafDecorated = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
         jPanel_Font = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel_LegendFont = new javax.swing.JLabel();
@@ -83,6 +87,8 @@ public class FrmOptions extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jLabel_TextFont = new javax.swing.JLabel();
         jButton_TextFont = new javax.swing.JButton();
+        jPanel_Plot = new javax.swing.JPanel();
+        jCheckBox_DoubleBuffering = new javax.swing.JCheckBox();
         jButton_OK = new javax.swing.JButton();
         jButton_Cancel = new javax.swing.JButton();
 
@@ -93,7 +99,9 @@ public class FrmOptions extends javax.swing.JDialog {
 
         jComboBox_LookAndFeel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jCheckBox_DoubleBuffering.setText("Double Buffering");
+        jCheckBox_LafDecorated.setText("Laf decorated");
+
+        jLabel3.setText("(Needs restart)");
 
         javax.swing.GroupLayout jPanel_GeneralLayout = new javax.swing.GroupLayout(jPanel_General);
         jPanel_General.setLayout(jPanel_GeneralLayout);
@@ -103,12 +111,13 @@ public class FrmOptions extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel_GeneralLayout.createSequentialGroup()
-                        .addComponent(jCheckBox_DoubleBuffering, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel_GeneralLayout.createSequentialGroup()
                         .addComponent(jLabel_LookAndFeel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox_LookAndFeel, 0, 224, Short.MAX_VALUE)))
+                        .addComponent(jComboBox_LookAndFeel, 0, 224, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_GeneralLayout.createSequentialGroup()
+                        .addComponent(jCheckBox_LafDecorated, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3)))
                 .addContainerGap())
         );
         jPanel_GeneralLayout.setVerticalGroup(
@@ -118,9 +127,11 @@ public class FrmOptions extends javax.swing.JDialog {
                 .addGroup(jPanel_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox_LookAndFeel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel_LookAndFeel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(jCheckBox_DoubleBuffering)
-                .addGap(35, 35, 35))
+                .addGap(24, 24, 24)
+                .addGroup(jPanel_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCheckBox_LafDecorated, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         jTabbedPane_Option.addTab("General", jPanel_General);
@@ -185,6 +196,31 @@ public class FrmOptions extends javax.swing.JDialog {
         );
 
         jTabbedPane_Option.addTab("Font", jPanel_Font);
+
+        jCheckBox_DoubleBuffering.setText("Double Buffering");
+
+        javax.swing.GroupLayout jPanel_PlotLayout = new javax.swing.GroupLayout(jPanel_Plot);
+        jPanel_Plot.setLayout(jPanel_PlotLayout);
+        jPanel_PlotLayout.setHorizontalGroup(
+            jPanel_PlotLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 320, Short.MAX_VALUE)
+            .addGroup(jPanel_PlotLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_PlotLayout.createSequentialGroup()
+                    .addGap(93, 93, 93)
+                    .addComponent(jCheckBox_DoubleBuffering, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(93, Short.MAX_VALUE)))
+        );
+        jPanel_PlotLayout.setVerticalGroup(
+            jPanel_PlotLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 130, Short.MAX_VALUE)
+            .addGroup(jPanel_PlotLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_PlotLayout.createSequentialGroup()
+                    .addGap(54, 54, 54)
+                    .addComponent(jCheckBox_DoubleBuffering)
+                    .addContainerGap(55, Short.MAX_VALUE)))
+        );
+
+        jTabbedPane_Option.addTab("Plot", jPanel_Plot);
 
         jButton_OK.setText("OK");
         jButton_OK.addActionListener(new java.awt.event.ActionListener() {
@@ -326,6 +362,9 @@ public class FrmOptions extends javax.swing.JDialog {
                 Logger.getLogger(FrmOptions.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        //Laf decorated
+        this._parent.getOptions().setLafDecorated(this.jCheckBox_LafDecorated.isSelected());
 
         this.dispose();
     }//GEN-LAST:event_jButton_OKActionPerformed
@@ -384,14 +423,17 @@ public class FrmOptions extends javax.swing.JDialog {
     private javax.swing.JButton jButton_OK;
     private javax.swing.JButton jButton_TextFont;
     private javax.swing.JCheckBox jCheckBox_DoubleBuffering;
+    private javax.swing.JCheckBox jCheckBox_LafDecorated;
     private javax.swing.JComboBox jComboBox_LookAndFeel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel_LegendFont;
     private javax.swing.JLabel jLabel_LookAndFeel;
     private javax.swing.JLabel jLabel_TextFont;
     private javax.swing.JPanel jPanel_Font;
     private javax.swing.JPanel jPanel_General;
+    private javax.swing.JPanel jPanel_Plot;
     private javax.swing.JTabbedPane jTabbedPane_Option;
     // End of variables declaration//GEN-END:variables
 }

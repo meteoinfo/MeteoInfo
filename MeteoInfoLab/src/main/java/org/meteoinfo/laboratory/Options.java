@@ -60,6 +60,8 @@ public class Options {
     private List<String> recentFiels = new ArrayList<>();
     private String lookFeel = "Nimbus";
     private boolean doubleBuffer = true;
+    private boolean lafDecorated = false;
+    private boolean dockWindowDocorated = true;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     
@@ -224,6 +226,38 @@ public class Options {
         this.doubleBuffer = value;
     }
     
+    /**
+     * Get if enable look and feel decorated
+     * @return Boolean
+     */
+    public boolean isLafDecorated() {
+        return this.lafDecorated;
+    }
+    
+    /**
+     * Set enable or not of look and feel decorated
+     * @param value Boolean
+     */
+    public void setLafDecorated(boolean value) {
+        this.lafDecorated = value;
+    }    
+    
+    /**
+     * Get dock window decorated or not
+     * @return Boolean
+     */
+    public boolean isDockWindowDecorated() {
+        return this.dockWindowDocorated;
+    }
+    
+    /**
+     * Set dock window decorated or not
+     * @param value Boolean
+     */
+    public void setDowckWindowDecorated(boolean value) {
+        this.dockWindowDocorated = value;
+    }
+    
     // </editor-fold>
     // <editor-fold desc="Methods">
 
@@ -313,8 +347,14 @@ public class Options {
         //Look and feel
         Element lf = doc.createElement("LookFeel");
         Attr lfAttr = doc.createAttribute("Name");
+        Attr lafDecoratedAttr = doc.createAttribute("LafDecorated");
+        Attr dockWinDecoratedAttr = doc.createAttribute("DockWindowDecorated");
         lfAttr.setValue(this.lookFeel);
+        lafDecoratedAttr.setValue(String.valueOf(this.lafDecorated));
+        dockWinDecoratedAttr.setValue(String.valueOf(this.dockWindowDocorated));
         lf.setAttributeNode(lfAttr);
+        lf.setAttributeNode(lafDecoratedAttr);
+        lf.setAttributeNode(dockWinDecoratedAttr);
         root.appendChild(lf);
         
         //Figure element
@@ -429,6 +469,8 @@ public class Options {
             if (root.getElementsByTagName("LookFeel") != null) {
                 Element lf = (Element) root.getElementsByTagName("LookFeel").item(0);
                 this.lookFeel = lf.getAttributes().getNamedItem("Name").getNodeValue();
+                this.lafDecorated = Boolean.valueOf(lf.getAttributes().getNamedItem("LafDecorated").getNodeValue());
+                this.dockWindowDocorated = Boolean.valueOf(lf.getAttributes().getNamedItem("DockWindowDecorated").getNodeValue());
             }
             
             //Figure element

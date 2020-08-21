@@ -34,7 +34,7 @@
   <Font>
     <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
   </Font>
-  <LookFeel Name="FlatDarkLaf"/>
+  <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="0,-3" MainFormSize="1383,746"/>
+  <Startup MainFormLocation="-1,-2" MainFormSize="1280,680"/>
 </MeteoInfo>

@@ -138,7 +138,9 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         System.out.println("Add dockable panels...");
         CControl control = new CControl(this);
         this.add(control.getContentArea());
-        //control.putProperty(ScreenDockStation.WINDOW_FACTORY, new CustomWindowFactory());
+        if (this.options.isDockWindowDecorated()) {
+            control.putProperty(ScreenDockStation.WINDOW_FACTORY, new CustomWindowFactory());
+        }
         control.setTheme(ThemeMap.KEY_FLAT_THEME);
         control.getIcons().setIconClient("locationmanager.minimize", new FlatSVGIcon("org/meteoinfo/laboratory/icons/minimize.svg"));
         control.getIcons().setIconClient("locationmanager.maximize", new FlatSVGIcon("org/meteoinfo/laboratory/icons/maximize.svg"));
@@ -638,6 +640,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         getContentPane().add(jPanel_Status, java.awt.BorderLayout.PAGE_END);
 
         jMenu_File.setText("File");
+        jMenu_File.setMnemonic(KeyEvent.VK_F);
 
         jMenuItem_NewFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         //jMenuItem_NewFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_NewFile.Image.png"))); // NOI18N
@@ -785,7 +788,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         jMenuBar1.add(jMenu_Editor);
 
-        jMenu_Options.setMnemonic('O');
+        jMenu_Options.setMnemonic(KeyEvent.VK_E);
         jMenu_Options.setText("Options");
 
         //jMenuItem_Setting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/setting.png"))); // NOI18N
@@ -822,6 +825,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenuBar1.add(jMenu_Options);
 
         jMenu_Apps.setText("Apps");
+        jMenu_Apps.setMnemonic(KeyEvent.VK_A);
 
         //jMenuItem_AppsManager.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/plugin_edit_green.png"))); // NOI18N
         jMenuItem_AppsManager.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/toolbox.svg"));
@@ -837,6 +841,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenuBar1.add(jMenu_Apps);
 
         jMenu_Help.setText("Help");
+        jMenu_Help.setMnemonic(KeyEvent.VK_H);
 
         jMenuItem_About.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/information.png"))); // NOI18N
         jMenuItem_About.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/information.svg"));

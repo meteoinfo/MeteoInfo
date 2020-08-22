@@ -48,21 +48,7 @@ import java.util.logging.Logger;
 import javax.help.HelpSet;
 import javax.imageio.ImageIO;
 import javax.print.PrintException;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
@@ -145,7 +131,7 @@ public class FrmMain extends JFrame implements IApplication {
 
     private String _startupPath;
     private Options _options = new Options();
-    private JButton _currentTool = null;
+    private AbstractButton _currentTool = null;
     ResourceBundle bundle;
     ProjectFile _projectFile;
     //private boolean _isEditingVertices = false;
@@ -320,16 +306,16 @@ public class FrmMain extends JFrame implements IApplication {
         jButton_OpenData = new javax.swing.JButton();
         jButton_RemoveDataLayers = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
-        jButton_SelectElement = new javax.swing.JButton();
-        jButton_ZoomIn = new javax.swing.JButton();
-        jButton_ZoomOut = new javax.swing.JButton();
-        jButton_Pan = new javax.swing.JButton();
+        jButton_SelectElement = new javax.swing.JToggleButton();
+        jButton_ZoomIn = new javax.swing.JToggleButton();
+        jButton_ZoomOut = new javax.swing.JToggleButton();
+        jButton_Pan = new javax.swing.JToggleButton();
         jButton_FullExtent = new javax.swing.JButton();
         jButton_ZoomToLayer = new javax.swing.JButton();
         jButton_ZoomToExtent = new javax.swing.JButton();
         jButton_ZoomUndo = new javax.swing.JButton();
         jButton_ZoomRedo = new javax.swing.JButton();
-        jButton_Identifer = new javax.swing.JButton();
+        jButton_Identifer = new javax.swing.JToggleButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         jSplitButton_SelectFeature = new org.meteoinfo.ui.JSplitButton();
         jPopupMenu_SelectFeature = new javax.swing.JPopupMenu();
@@ -342,17 +328,17 @@ public class FrmMain extends JFrame implements IApplication {
         jSeparator3 = new javax.swing.JToolBar.Separator();
         jButton_SavePicture = new javax.swing.JButton();
         jToolBar_Graphic = new javax.swing.JToolBar();
-        jButton_NewLabel = new javax.swing.JButton();
-        jButton_NewPoint = new javax.swing.JButton();
-        jButton_NewPolyline = new javax.swing.JButton();
-        jButton_NewFreehand = new javax.swing.JButton();
-        jButton_NewCurve = new javax.swing.JButton();
-        jButton_NewPolygon = new javax.swing.JButton();
-        jButton_NewCurvePolygon = new javax.swing.JButton();
-        jButton_NewRectangle = new javax.swing.JButton();
-        jButton_NewCircle = new javax.swing.JButton();
-        jButton_NewEllipse = new javax.swing.JButton();
-        jButton_EditVertices = new javax.swing.JButton();
+        jButton_NewLabel = new javax.swing.JToggleButton();
+        jButton_NewPoint = new javax.swing.JToggleButton();
+        jButton_NewPolyline = new javax.swing.JToggleButton();
+        jButton_NewFreehand = new javax.swing.JToggleButton();
+        jButton_NewCurve = new javax.swing.JToggleButton();
+        jButton_NewPolygon = new javax.swing.JToggleButton();
+        jButton_NewCurvePolygon = new javax.swing.JToggleButton();
+        jButton_NewRectangle = new javax.swing.JToggleButton();
+        jButton_NewCircle = new javax.swing.JToggleButton();
+        jButton_NewEllipse = new javax.swing.JToggleButton();
+        jButton_EditVertices = new javax.swing.JToggleButton();
         jToolBar_Layout = new javax.swing.JToolBar();
         jButton_PageSet = new javax.swing.JButton();
         jButton_PageZoomIn = new javax.swing.JButton();
@@ -360,14 +346,14 @@ public class FrmMain extends JFrame implements IApplication {
         jButton_FitToScreen = new javax.swing.JButton();
         jComboBox_PageZoom = new javax.swing.JComboBox();
         jToolBar_Edit = new javax.swing.JToolBar();
-        jButton_EditStartOrEnd = new javax.swing.JButton();
+        jButton_EditStartOrEnd = new javax.swing.JToggleButton();
         jButton_EditSave = new javax.swing.JButton();
         //jSeparator19 = new javax.swing.JToolBar.Separator();
-        jButton_EditTool = new javax.swing.JButton();
+        jButton_EditTool = new javax.swing.JToggleButton();
         //jSeparator20 = new javax.swing.JToolBar.Separator();
-        jButton_EditNewFeature = new javax.swing.JButton();
+        jButton_EditNewFeature = new javax.swing.JToggleButton();
         jButton_EditRemoveFeature = new javax.swing.JButton();
-        jButton_EditFeatureVertices = new javax.swing.JButton();
+        jButton_EditFeatureVertices = new javax.swing.JToggleButton();
         jPanel4 = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jTabbedPane_Main = new javax.swing.JTabbedPane();
@@ -483,8 +469,6 @@ public class FrmMain extends JFrame implements IApplication {
                 if (!jSplitButton_AddLayer.isOnSplit()) {
                     jButton_AddLayerActionPerformed(evt);
                 }
-
-                setCurrentTool((JButton) evt.getSource());
             }
         });
         //jMenuItem_AddLayer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_rectangle.png")));
@@ -497,7 +481,6 @@ public class FrmMain extends JFrame implements IApplication {
                 jSplitButton_AddLayer.setText("  ");
                 jSplitButton_AddLayer.setToolTipText(bundle.getString("FrmMain.jMenuItem_AddLayer.toolTipText"));
                 jButton_AddLayerActionPerformed(e);
-                setCurrentTool(jSplitButton_AddLayer);
             }
         });
         jPopupMenu_AddLayer.add(jMenuItem_AddLayer);
@@ -507,7 +490,6 @@ public class FrmMain extends JFrame implements IApplication {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jButton_AddWebLayerActionPerformed(e);
-                setCurrentTool(jSplitButton_AddLayer);
             }
         });
         jPopupMenu_AddLayer.add(jMenuItem_AddWebLayer);
@@ -708,7 +690,7 @@ public class FrmMain extends JFrame implements IApplication {
                     jButton_SelByRectangleActionPerformed(evt);
                 }
 
-                setCurrentTool((JButton) evt.getSource());
+                setCurrentTool((JToggleButton) evt.getSource());
             }
         });
         //jMenuItem_SelByRectangle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/select_rectangle.png")));
@@ -2206,7 +2188,7 @@ public class FrmMain extends JFrame implements IApplication {
      * @return The current tool
      */
     @Override
-    public JButton getCurrentTool() {
+    public AbstractButton getCurrentTool() {
         return _currentTool;
     }
 
@@ -2548,7 +2530,7 @@ public class FrmMain extends JFrame implements IApplication {
     // <editor-fold desc="Menu">
 
     @Override
-    public void setCurrentTool(JButton currentTool) {
+    public void setCurrentTool(AbstractButton currentTool) {
         if (_currentTool != null) {
             _currentTool.setSelected(false);
         }
@@ -3153,18 +3135,13 @@ public class FrmMain extends JFrame implements IApplication {
     }
 
     private void jButton_EditVerticesActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        jButton_EditVertices.setSelected(!jButton_EditVertices.isSelected());
         if (jButton_EditVertices.isSelected()) {
             _mapView.setMouseTool(MouseTools.EditVertices);
             _mapDocument.getMapLayout().setMouseMode(MouseMode.EditVertices);
-            //_isEditingVertices = true;
         } else {
             this.jButton_SelectElement.doClick();
-            //_isEditingVertices = false;
         }
 
-        //setCurrentTool((JButton) evt.getSource());
         if (this.jTabbedPane_Main.getSelectedIndex() == 0) {
             _mapView.paintLayers();
         } else {
@@ -3177,7 +3154,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.New_Ellipse);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Ellipse);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewCircleActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3185,7 +3162,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.New_Circle);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Circle);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewRectangleActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3193,7 +3170,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.New_Rectangle);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Rectangle);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewCurvePolygonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3201,7 +3178,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.New_CurvePolygon);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.New_CurvePolygon);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewPolygonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3209,7 +3186,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.New_Polygon);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Polygon);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewCurveActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3217,7 +3194,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.New_Curve);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Curve);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewFreehandActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3225,7 +3202,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.New_Freehand);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Freehand);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewPolylineActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3233,7 +3210,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.New_Polyline);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Polyline);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewPointActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3241,7 +3218,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.New_Point);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Point);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewLabelActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3249,7 +3226,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.New_Label);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Label);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_SavePictureActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3360,8 +3337,6 @@ public class FrmMain extends JFrame implements IApplication {
         } else if (this.jTabbedPane_Main.getSelectedIndex() == 1) {
             _mapDocument.getMapLayout().showMeasurementForm();
         }
-
-        setCurrentTool((JButton) evt.getSource());
     }
 
     private void jButton_SelByRectangleActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3393,7 +3368,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.Identifer);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Identifer);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_ZoomToExtentActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3451,7 +3426,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.Pan);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Pan);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_ZoomOutActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3459,7 +3434,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.Zoom_Out);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_ZoomOut);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_ZoomInActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3467,7 +3442,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.Zoom_In);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_ZoomIn);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_SelectElementActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3475,7 +3450,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.SelectElements);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.Select);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_RemoveDataLayersActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3672,7 +3647,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.Edit_Tool);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_Tool);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_EditNewFeatureActionPerformed(ActionEvent evt) {
@@ -3680,7 +3655,7 @@ public class FrmMain extends JFrame implements IApplication {
         _mapView.setMouseTool(MouseTools.Edit_NewFeature);
         _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_NewFeature);
 
-        setCurrentTool((JButton) evt.getSource());
+        setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_EditRemoveFeatureActionPerformed(ActionEvent evt) {
@@ -3706,7 +3681,6 @@ public class FrmMain extends JFrame implements IApplication {
             return;
         }
 
-        jButton_EditFeatureVertices.setSelected(!jButton_EditFeatureVertices.isSelected());
         if (jButton_EditFeatureVertices.isSelected()) {
             layer.setEditingShape(layer.getSelectedShapes().get(0));
             _mapView.setMouseTool(MouseTools.Edit_FeatureVertices);
@@ -3717,8 +3691,6 @@ public class FrmMain extends JFrame implements IApplication {
             _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_Tool);
         }
 
-        //setCurrentTool((JButton) evt.getSource());        
-        //_isEditingVertices = true;
         if (this.jTabbedPane_Main.getSelectedIndex() == 0) {
             _mapView.paintLayers();
         } else {
@@ -3906,42 +3878,42 @@ public class FrmMain extends JFrame implements IApplication {
     private javax.swing.JPopupMenu jPopupMenu_AddLayer;
     private javax.swing.JMenuItem jMenuItem_AddLayer;
     private javax.swing.JMenuItem jMenuItem_AddWebLayer;
-    private javax.swing.JButton jButton_EditVertices;
+    private javax.swing.JToggleButton jButton_EditVertices;
     private javax.swing.JButton jButton_FitToScreen;
     private javax.swing.JButton jButton_FullExtent;
-    private javax.swing.JButton jButton_Identifer;
+    private javax.swing.JToggleButton jButton_Identifer;
     private javax.swing.JButton jButton_LabelSet;
     private javax.swing.JButton jButton_Measurement;
-    private javax.swing.JButton jButton_NewCircle;
-    private javax.swing.JButton jButton_NewCurve;
-    private javax.swing.JButton jButton_NewCurvePolygon;
-    private javax.swing.JButton jButton_NewEllipse;
-    private javax.swing.JButton jButton_NewFreehand;
-    private javax.swing.JButton jButton_NewLabel;
-    private javax.swing.JButton jButton_NewPoint;
-    private javax.swing.JButton jButton_NewPolygon;
-    private javax.swing.JButton jButton_NewPolyline;
-    private javax.swing.JButton jButton_NewRectangle;
+    private javax.swing.JToggleButton jButton_NewCircle;
+    private javax.swing.JToggleButton jButton_NewCurve;
+    private javax.swing.JToggleButton jButton_NewCurvePolygon;
+    private javax.swing.JToggleButton jButton_NewEllipse;
+    private javax.swing.JToggleButton jButton_NewFreehand;
+    private javax.swing.JToggleButton jButton_NewLabel;
+    private javax.swing.JToggleButton jButton_NewPoint;
+    private javax.swing.JToggleButton jButton_NewPolygon;
+    private javax.swing.JToggleButton jButton_NewPolyline;
+    private javax.swing.JToggleButton jButton_NewRectangle;
     private javax.swing.JButton jButton_OpenData;
     private javax.swing.JButton jButton_PageSet;
     private javax.swing.JButton jButton_PageZoomIn;
     private javax.swing.JButton jButton_PageZoomOut;
-    private javax.swing.JButton jButton_Pan;
+    private javax.swing.JToggleButton jButton_Pan;
     private javax.swing.JButton jButton_RemoveDataLayers;
     private javax.swing.JButton jButton_SavePicture;
-    private javax.swing.JButton jButton_SelectElement;
-    private javax.swing.JButton jButton_ZoomIn;
-    private javax.swing.JButton jButton_ZoomOut;
+    private javax.swing.JToggleButton jButton_SelectElement;
+    private javax.swing.JToggleButton jButton_ZoomIn;
+    private javax.swing.JToggleButton jButton_ZoomOut;
     private javax.swing.JButton jButton_ZoomToExtent;
     private javax.swing.JButton jButton_ZoomToLayer;
     private javax.swing.JButton jButton_ZoomUndo;
     private javax.swing.JButton jButton_ZoomRedo;
-    private javax.swing.JButton jButton_EditStartOrEnd;
+    private javax.swing.JToggleButton jButton_EditStartOrEnd;
     private javax.swing.JButton jButton_EditSave;
-    private javax.swing.JButton jButton_EditTool;
-    private javax.swing.JButton jButton_EditNewFeature;
+    private javax.swing.JToggleButton jButton_EditTool;
+    private javax.swing.JToggleButton jButton_EditNewFeature;
     private javax.swing.JButton jButton_EditRemoveFeature;
-    private javax.swing.JButton jButton_EditFeatureVertices;
+    private javax.swing.JToggleButton jButton_EditFeatureVertices;
     private org.meteoinfo.ui.JSplitButton jSplitButton_SelectFeature;
     private javax.swing.JPopupMenu jPopupMenu_SelectFeature;
     private javax.swing.JMenuItem jMenuItem_SelByRectangle;

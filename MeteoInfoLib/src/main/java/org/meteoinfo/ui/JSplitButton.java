@@ -30,7 +30,7 @@ import javax.swing.*;
  *
  * @author Naveed Quadri
  */
-public class JSplitButton extends JButton implements MouseMotionListener, MouseListener, ActionListener, Serializable {
+public class JSplitButton extends JToggleButton implements MouseMotionListener, MouseListener, ActionListener, Serializable {
 
     private int separatorSpacing = 4;
     private int splitWidth = 22;

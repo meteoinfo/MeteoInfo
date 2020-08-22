@@ -28,20 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 
 import bibliothek.gui.dock.common.theme.ThemeMap;
@@ -1340,7 +1327,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     }
 
     @Override
-    public void setCurrentTool(JButton value) {
+    public void setCurrentTool(AbstractButton value) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

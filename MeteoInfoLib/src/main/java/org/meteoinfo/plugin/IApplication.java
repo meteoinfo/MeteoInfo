@@ -13,12 +13,8 @@
  */
 package org.meteoinfo.plugin;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
+import javax.swing.*;
+
 import org.meteoinfo.legend.LayersLegend;
 import org.meteoinfo.map.MapView;
 
@@ -61,13 +57,13 @@ public interface IApplication {
      * Get current tool
      * @return Current tool
      */
-    public JButton getCurrentTool();
+    public AbstractButton getCurrentTool();
     
     /**
      * Set current tool
      * @param value Current tool
      */
-    public void setCurrentTool(JButton value);
+    public void setCurrentTool(AbstractButton value);
     
     /**
      * Get progress bar

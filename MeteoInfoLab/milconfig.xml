@@ -19,16 +19,12 @@
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\nearest_3d-1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\netcdf\test_read_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\netcdf\test_read_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\netcdf\add_polygon.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\nearest_3d-1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\netcdf\test_read_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\netcdf\test_read_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\netcdf\add_polygon.py"/>
     </RecentFiles>
   </File>
   <Font>

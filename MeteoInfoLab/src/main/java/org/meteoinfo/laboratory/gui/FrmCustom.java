@@ -11,7 +11,7 @@ import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.screen.window.ScreenDockFrame;
 import bibliothek.gui.dock.station.screen.window.WindowConfiguration;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.kitfox.svg.app.beans.SVGIcon;
+import com.formdev.flatlaf.extras.SVGUtils;
 
 import java.awt.BorderLayout;
 import javax.swing.JButton;
@@ -34,12 +34,7 @@ public class FrmCustom extends ScreenDockFrame implements ScreenDockWindow {
     public void setDockable(Dockable dockable){                
         //init(dockable);
         super.setDockable(dockable);
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/laboratory/icons/move.svg").toURI());
-            this.getFrame().setIconImage(icon.getImage());
-        } catch (Exception e) {}
+        this.getFrame().setIconImages(SVGUtils.createWindowIconImages("/org/meteoinfo/laboratory/icons/move.svg"));
         this.getFrame().setTitle("");
     }
     

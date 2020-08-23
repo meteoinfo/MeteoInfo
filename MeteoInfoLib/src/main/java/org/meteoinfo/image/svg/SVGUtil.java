@@ -34,7 +34,6 @@ public class SVGUtil {
             URL url = icon.getIconURL();
             if (url != null) {
                 button.setIcon(icon);
-                System.out.println("SVG icon: " + url.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();

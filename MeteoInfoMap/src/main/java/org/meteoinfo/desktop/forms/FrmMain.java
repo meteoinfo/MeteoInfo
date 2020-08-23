@@ -2286,10 +2286,8 @@ public class FrmMain extends JFrame implements IApplication {
             } else {
                 plugin.setClassName(className);
                 URL url = new URL("file:" + plugin.getJarFileName());
-                //URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url});
-                //Class<?> clazz = urlClassLoader.loadClass(plugin.getClassName());
-                ClassLoader classLoader = FrmMain.class.getClassLoader();
-                Class<?> clazz = classLoader.loadClass(plugin.getClassName());
+                URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url});
+                Class<?> clazz = urlClassLoader.loadClass(plugin.getClassName());
                 IPlugin instance = (IPlugin) clazz.newInstance();
                 plugin.setPluginObject(instance);
                 return plugin;

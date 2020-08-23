@@ -81,7 +81,7 @@ public class FrmAddXYData extends javax.swing.JDialog {
         jScrollPane1.setWheelScrollingEnabled(false);
 
         jTextArea1.setEditable(false);
-        jTextArea1.setBackground(java.awt.SystemColor.info);
+        //jTextArea1.setBackground(java.awt.SystemColor.info);
         jTextArea1.setColumns(20);
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(4);

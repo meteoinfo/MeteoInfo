@@ -13,7 +13,9 @@
  */
 package org.meteoinfo.global;
 
-/**
+ import com.formdev.flatlaf.extras.FlatSVGIcon;
+
+ /**
  *
  * @author yaqiang
  */
@@ -86,7 +88,8 @@ public class FrmMeasurement extends javax.swing.JDialog {
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
-        jButton_Feature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Feature.Image.png"))); // NOI18N
+        //jButton_Feature.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Feature.Image.png"))); // NOI18N
+        jButton_Feature.setIcon(new FlatSVGIcon("org/meteoinfo/icons/measurement.svg"));
         jButton_Feature.setToolTipText("Feature");
         jButton_Feature.setFocusable(false);
         jButton_Feature.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -98,7 +101,8 @@ public class FrmMeasurement extends javax.swing.JDialog {
         });
         jToolBar1.add(jButton_Feature);
 
-        jButton_Distance.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Distance.Image.png"))); // NOI18N
+        //jButton_Distance.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Distance.Image.png"))); // NOI18N
+        jButton_Distance.setIcon(new FlatSVGIcon("org/meteoinfo/icons/new-line.svg"));
         jButton_Distance.setToolTipText("Distance");
         jButton_Distance.setFocusable(false);
         jButton_Distance.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -110,7 +114,8 @@ public class FrmMeasurement extends javax.swing.JDialog {
         });
         jToolBar1.add(jButton_Distance);
 
-        jButton_Area.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Area.Image.png"))); // NOI18N
+        //jButton_Area.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Area.Image.png"))); // NOI18N
+        jButton_Area.setIcon(new FlatSVGIcon("org/meteoinfo/icons/area.svg"));
         jButton_Area.setToolTipText("Area");
         jButton_Area.setFocusable(false);
         jButton_Area.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);

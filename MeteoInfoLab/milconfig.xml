@@ -32,5 +32,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-1,-2" MainFormSize="1280,680"/>
+  <Startup MainFormLocation="-2,-2" MainFormSize="1280,680"/>
 </MeteoInfo>

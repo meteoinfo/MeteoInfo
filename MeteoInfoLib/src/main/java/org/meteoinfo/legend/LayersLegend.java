@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.legend;
 
-import com.kitfox.svg.app.beans.SVGIcon;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.data.mapdata.MapDataManage;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.global.event.ActiveMapFrameChangedEvent;
@@ -707,13 +707,7 @@ public class LayersLegend extends JPanel {
 
             //Remove/save layer
             JMenuItem removeLayerMI = new JMenuItem("Remove Layer");
-            try {
-                SVGIcon icon = new SVGIcon();
-                icon.setAntiAlias(true);
-                icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/delete.svg").toURI());
-                removeLayerMI.setIcon(icon);
-            } catch (Exception ex) {
-            }
+            removeLayerMI.setIcon(new FlatSVGIcon("org/meteoinfo/icons/delete.svg"));
             removeLayerMI.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -741,14 +735,7 @@ public class LayersLegend extends JPanel {
             //Attribute table
             if (aLayerObj.getLayerType() == LayerTypes.VectorLayer) {
                 JMenuItem attrTableMI = new JMenuItem("Attribute Table");
-                try {
-                    //ImageIcon icon = new ImageIcon(this.getClass().getResource("/images/AttributeTable.png"));
-                    SVGIcon icon = new SVGIcon();
-                    icon.setAntiAlias(true);
-                    icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/table.svg").toURI());
-                    attrTableMI.setIcon(icon);
-                } catch (Exception ex) {
-                }
+                attrTableMI.setIcon(new FlatSVGIcon("org/meteoinfo/icons/table.svg"));
                 attrTableMI.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -761,15 +748,7 @@ public class LayersLegend extends JPanel {
 
             //Zoom to layer and Visible scale
             JMenuItem zoomToLayerMI = new JMenuItem("Zoom To Layer");
-            //ImageIcon icon = null;
-            try {
-                //icon = new ImageIcon(this.getClass().getResource("/images/ZoomToLayer.png"));
-                SVGIcon icon = new SVGIcon();
-                icon.setAntiAlias(true);
-                icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/find.svg").toURI());
-                zoomToLayerMI.setIcon(icon);
-            } catch (Exception ex) {
-            }
+            zoomToLayerMI.setIcon(new FlatSVGIcon("org/meteoinfo/icons/find.svg"));
             zoomToLayerMI.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -813,14 +792,7 @@ public class LayersLegend extends JPanel {
             //Label
             if (aLayerObj.getLayerType() == LayerTypes.VectorLayer) {
                 JMenuItem labelMI = new JMenuItem("Label");
-                try {
-                    //icon = new ImageIcon(this.getClass().getResource("/images/Label.png"));
-                    SVGIcon icon = new SVGIcon();
-                    icon.setAntiAlias(true);
-                    icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/label.svg").toURI());
-                    labelMI.setIcon(icon);
-                } catch (Exception ex) {
-                }
+                labelMI.setIcon(new FlatSVGIcon("org/meteoinfo/icons/label.svg"));
                 labelMI.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -845,14 +817,7 @@ public class LayersLegend extends JPanel {
 
             //Properties
             JMenuItem propMI = new JMenuItem("Properties");
-            try {
-                //icon = new ImageIcon(this.getClass().getResource("/images/Properties.png"));
-                SVGIcon icon = new SVGIcon();
-                icon.setAntiAlias(true);
-                icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/properties.svg").toURI());
-                propMI.setIcon(icon);
-            } catch (Exception ex) {
-            }
+            propMI.setIcon(new FlatSVGIcon("org/meteoinfo/icons/properties.svg"));
             propMI.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -1539,17 +1504,8 @@ public class LayersLegend extends JPanel {
         }
 
         //Image icon;
-        SVGIcon icon;
-        try {
-            //icon = ImageIO.read(this.getClass().getResource("/images/Layers.png"));
-            //g.drawImage(icon, sP.x + Constants.EXPAND_BOX_SIZE + Constants.CHECK_LEFT_PAD, sP.y, this);
-            icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(LayersLegend.class.getResource("/org/meteoinfo/icons/layers.svg").toURI());
-            icon.paintIcon(this, g, sP.x + Constants.EXPAND_BOX_SIZE + Constants.CHECK_LEFT_PAD, sP.y);
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(LayersLegend.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        FlatSVGIcon icon = new FlatSVGIcon("org/meteoinfo/icons/layers.svg");
+        icon.paintIcon(this, g, sP.x + Constants.EXPAND_BOX_SIZE + Constants.CHECK_LEFT_PAD, sP.y);
 
         Font newFont = this.getFont();
         if (aMapFrame.isActive()) {

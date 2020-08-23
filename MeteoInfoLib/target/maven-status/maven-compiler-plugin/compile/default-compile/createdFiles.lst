@@ -250,6 +250,7 @@ org\meteoinfo\ndarray\Index7D.class
 org\meteoinfo\layout\MapLayout$18.class
 org\meteoinfo\shape\GraphicCollection.class
 org\meteoinfo\chart\jogl\mc\BenchmarkHandler$10.class
+org\meteoinfo\image\svg\FlatSVGIcon$GraphicsFilter.class
 org\meteoinfo\layout\LayoutMap$1.class
 org\meteoinfo\shape\PolygonShape.class
 org\meteoinfo\legend\FrmPolylineSymbolSet$11.class
@@ -1089,6 +1090,7 @@ org\meteoinfo\global\event\LayoutBoundsChangedEvent.class
 org\meteoinfo\chart\plot\GraphicFactory$1.class
 org\meteoinfo\image\filter\CellularFilter$Point.class
 org\meteoinfo\chart\plot\SeriesLegend.class
+org\meteoinfo\image\svg\FlatSVGIcon.class
 org\meteoinfo\global\colors\ColorMap.class
 org\meteoinfo\gui\MainToolBar$5.class
 org\meteoinfo\projection\info\LambertEqualAreaConic.class
@@ -1149,6 +1151,7 @@ org\meteoinfo\global\util\GraphicsUtilities.class
 org\meteoinfo\ndarray\ArrayShort$1.class
 org\meteoinfo\shape\Shape.class
 org\meteoinfo\chart\ChartElement.class
+org\meteoinfo\image\svg\FlatSVGIcon$ColorFilter.class
 org\meteoinfo\chart\axis\ProjLonLatAxis.class
 org\meteoinfo\image\math\FractalSumFunction.class
 org\meteoinfo\legend\MarkerType.class
@@ -1536,6 +1539,7 @@ org\meteoinfo\global\FontChooser$2.class
 org\meteoinfo\data\dataframe\impl\SortDirection.class
 org\meteoinfo\image\filter\BumpFilter.class
 org\meteoinfo\data\mapdata\FrmAttriData$12.class
+org\meteoinfo\image\svg\SVGUtil.class
 org\meteoinfo\legend\HatchStyle.class
 org\meteoinfo\legend\StreamlineBreak.class
 org\meteoinfo\projection\World.class

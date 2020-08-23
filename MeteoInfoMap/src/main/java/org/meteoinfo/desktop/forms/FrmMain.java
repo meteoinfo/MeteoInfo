@@ -762,7 +762,7 @@ public class FrmMain extends JFrame implements IApplication {
         jToolBar_Base.add(jSplitButton_SelectFeature);
 
         //jButton_Measurement.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Measurement.Image.png"))); // NOI18N
-        jButton_Measurement.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/measurement.svg"));
+        jButton_Measurement.setIcon(new FlatSVGIcon("org/meteoinfo/icons/measurement.svg"));
         jButton_Measurement.setToolTipText(bundle.getString("FrmMain.jButton_Measurement.toolTipText")); // NOI18N
         jButton_Measurement.setFocusable(false);
         jButton_Measurement.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -2286,8 +2286,10 @@ public class FrmMain extends JFrame implements IApplication {
             } else {
                 plugin.setClassName(className);
                 URL url = new URL("file:" + plugin.getJarFileName());
-                URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url});
-                Class<?> clazz = urlClassLoader.loadClass(plugin.getClassName());
+                //URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url});
+                //Class<?> clazz = urlClassLoader.loadClass(plugin.getClassName());
+                ClassLoader classLoader = FrmMain.class.getClassLoader();
+                Class<?> clazz = classLoader.loadClass(plugin.getClassName());
                 IPlugin instance = (IPlugin) clazz.newInstance();
                 plugin.setPluginObject(instance);
                 return plugin;

@@ -4,7 +4,7 @@
  */
 package org.meteoinfo.legend;
 
-import com.kitfox.svg.app.beans.SVGIcon;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.global.GenericFileFilter;
 import org.meteoinfo.shape.ShapeTypes;
 import java.awt.Color;
@@ -78,12 +78,7 @@ public class FrmLegendSet extends javax.swing.JDialog {
         jToolBar1.setRollover(true);
 
         //jButton_ImportLegend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Open.Image.png"))); // NOI18N
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/file-open.svg").toURI());
-            jButton_ImportLegend.setIcon(icon);
-        } catch (Exception e) {}
+        jButton_ImportLegend.setIcon(new FlatSVGIcon("org/meteoinfo/icons/file-open.svg"));
         jButton_ImportLegend.setToolTipText("Import Legend");
         jButton_ImportLegend.setFocusable(false);
         jButton_ImportLegend.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -96,12 +91,7 @@ public class FrmLegendSet extends javax.swing.JDialog {
         jToolBar1.add(jButton_ImportLegend);
 
         //jButton_ExportLegend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Save.Image.png"))); // NOI18N
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/file-save.svg").toURI());
-            jButton_ExportLegend.setIcon(icon);
-        } catch (Exception e) {}
+        jButton_ExportLegend.setIcon(new FlatSVGIcon("org/meteoinfo/icons/file-save.svg"));
         jButton_ExportLegend.setToolTipText("Export Legend");
         jButton_ExportLegend.setFocusable(false);
         jButton_ExportLegend.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -115,12 +105,7 @@ public class FrmLegendSet extends javax.swing.JDialog {
         jToolBar1.add(jSeparator1);
 
         //jButton_AddBreak.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Add.Image.png"))); // NOI18N
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/add.svg").toURI());
-            jButton_AddBreak.setIcon(icon);
-        } catch (Exception e) {}
+        jButton_AddBreak.setIcon(new FlatSVGIcon("org/meteoinfo/icons/add.svg"));
         jButton_AddBreak.setToolTipText("Add Break");
         jButton_AddBreak.setFocusable(false);
         jButton_AddBreak.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -133,12 +118,7 @@ public class FrmLegendSet extends javax.swing.JDialog {
         jToolBar1.add(jButton_AddBreak);
 
         //jButton_RemoveBreak.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Del.Image.png"))); // NOI18N
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/remove.svg").toURI());
-            jButton_RemoveBreak.setIcon(icon);
-        } catch (Exception e) {}
+        jButton_RemoveBreak.setIcon(new FlatSVGIcon("org/meteoinfo/icons/remove.svg"));
         jButton_RemoveBreak.setToolTipText("Remove Break");
         jButton_RemoveBreak.setFocusable(false);
         jButton_RemoveBreak.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -151,12 +131,7 @@ public class FrmLegendSet extends javax.swing.JDialog {
         jToolBar1.add(jButton_RemoveBreak);
 
         //jButton_RemoveAllBreaks.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_DelAll.Image.png"))); // NOI18N
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/delete.svg").toURI());
-            jButton_RemoveAllBreaks.setIcon(icon);
-        } catch (Exception e) {}
+        jButton_RemoveAllBreaks.setIcon(new FlatSVGIcon("org/meteoinfo/icons/delete.svg"));
         jButton_RemoveAllBreaks.setToolTipText("Remove All Breaks");
         jButton_RemoveAllBreaks.setFocusable(false);
         jButton_RemoveAllBreaks.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -170,12 +145,7 @@ public class FrmLegendSet extends javax.swing.JDialog {
         jToolBar1.add(jSeparator2);
 
         //jButton_MoveBreakUp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Up.Image.png"))); // NOI18N
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/up-arrow.svg").toURI());
-            jButton_MoveBreakUp.setIcon(icon);
-        } catch (Exception e) {}
+        jButton_MoveBreakUp.setIcon(new FlatSVGIcon("org/meteoinfo/icons/up-arrow.svg"));
         jButton_MoveBreakUp.setToolTipText("Move Break Up");
         jButton_MoveBreakUp.setFocusable(false);
         jButton_MoveBreakUp.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -188,12 +158,7 @@ public class FrmLegendSet extends javax.swing.JDialog {
         jToolBar1.add(jButton_MoveBreakUp);
 
         //jButton_MoveBreakDown.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Down.Image.png"))); // NOI18N
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/down-arrow.svg").toURI());
-            jButton_MoveBreakDown.setIcon(icon);
-        } catch (Exception e) {}
+        jButton_MoveBreakDown.setIcon(new FlatSVGIcon("org/meteoinfo/icons/down-arrow.svg"));
         jButton_MoveBreakDown.setToolTipText("Move Break Down");
         jButton_MoveBreakDown.setFocusable(false);
         jButton_MoveBreakDown.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -206,12 +171,7 @@ public class FrmLegendSet extends javax.swing.JDialog {
         jToolBar1.add(jButton_MoveBreakDown);
 
         //jButton_ReverseBreaks.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_Reverse.Image.png"))); // NOI18N
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/up-down.svg").toURI());
-            jButton_ReverseBreaks.setIcon(icon);
-        } catch (Exception e) {}
+        jButton_ReverseBreaks.setIcon(new FlatSVGIcon("org/meteoinfo/icons/up-down.svg"));
         jButton_ReverseBreaks.setToolTipText("Reverse Breaks");
         jButton_ReverseBreaks.setFocusable(false);
         jButton_ReverseBreaks.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -225,12 +185,7 @@ public class FrmLegendSet extends javax.swing.JDialog {
         jToolBar1.add(jSeparator3);
 
         //jButton_MakeBreaks.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_MakeBreaks.Image.png"))); // NOI18N
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/icons/colors.svg").toURI());
-            jButton_MakeBreaks.setIcon(icon);
-        } catch (Exception e) {}
+        jButton_MakeBreaks.setIcon(new FlatSVGIcon("org/meteoinfo/icons/colors.svg"));
         jButton_MakeBreaks.setFocusable(false);
         jButton_MakeBreaks.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton_MakeBreaks.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

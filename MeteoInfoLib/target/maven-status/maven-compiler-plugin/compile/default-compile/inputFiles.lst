@@ -436,6 +436,7 @@ D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinf
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\layer\LabelSet.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\composite\DodgeComposite.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\Dataset.java
+D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\svg\FlatSVGIcon.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\layer\VisibleScale.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\filter\RenderTextFilter.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\projection\ProjectionUtil.java
@@ -536,6 +537,7 @@ D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinf
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\mathparser\MathOperators.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\filter\ChannelMixFilter.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\ndarray\ArrayDouble.java
+D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\svg\SVGUtil.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\legend\ArrowBreak.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\mapdata\geotiff\GeoKey.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\data\dataframe\Series.java

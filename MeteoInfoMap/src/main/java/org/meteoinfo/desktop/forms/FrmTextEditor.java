@@ -5,7 +5,7 @@
 package org.meteoinfo.desktop.forms;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.kitfox.svg.app.beans.SVGIcon;
+import com.formdev.flatlaf.extras.SVGUtils;
 import com.l2fprod.common.swing.JFontChooser;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -110,19 +110,7 @@ public class FrmTextEditor extends javax.swing.JFrame {
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        try {
-            SVGIcon icon = new SVGIcon();
-            icon.setAntiAlias(true);
-            icon.setSvgURI(this.getClass().getResource("/org/meteoinfo/desktop/icons/jython.svg").toURI());
-            this.setIconImage(icon.getImage());
-        } catch (Exception e) {
-        }
-        /*BufferedImage image = null;
-        try {
-            image = ImageIO.read(this.getClass().getResource("/images/snake.png"));
-            this.setIconImage(image);
-        } catch (Exception e) {
-        }*/
+        this.setIconImages(SVGUtils.createWindowIconImages("/org/meteoinfo/desktop/icons/jython.svg"));
         this.setScriptLanguage(_scriptLanguage);
         addNewTextEditor("New file");
         this._splitPanelSize = this.jSplitPane1.getBounds().getSize();

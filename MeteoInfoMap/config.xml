@@ -8,5 +8,5 @@
   <ScriptLanguage Language="Jython"/>
   <LookFeel LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="36,5" MainFormSize="1183,605" ShowMeteoDataDlg="false"/>
+  <Startup MainFormLocation="36,5" MainFormSize="1183,605" ShowMeteoDataDlg="true"/>
 </MeteoInfo>

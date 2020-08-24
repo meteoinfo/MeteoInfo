@@ -133,7 +133,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             interp.exec("import os");
             interp.exec("import datetime");
             interp.exec("sys.path.append('" + path + "')");
-            interp.execfile(path + "/milab.py");
+            interp.execfile_(path + "/milab.py");
             interp.exec("mipylib.plotlib.miplot.isinteractive = True");
             interp.exec("mipylib.migl.milapp = milapp");
             interp.exec("mipylib.migl.mifolder = '" + miPath + "'");
@@ -141,7 +141,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             interp.exec("mipylib.migl.currentfolder = u'" + currentPath + "'");
             interp.exec("sys.path.append('" + toolboxPath + "')");
             if (isDebug) {
-                interp.execfile(path + "/milab_debug.py");
+                interp.execfile_(path + "/milab_debug.py");
             }
         } catch (Exception e) {
             System.out.println(e.toString());

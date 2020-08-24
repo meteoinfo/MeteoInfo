@@ -187,6 +187,12 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
         this.fireConsoleExecEvent();
     }
 
+    public void execfile_(String fn) {
+        this.cflags.source_is_utf8 = false;
+        super.execfile(fn);
+        this.cflags.source_is_utf8 = true;
+    }
+
     public void addConsoleExecListener(IConsoleExecListener listener) {
         this.listeners.add(IConsoleExecListener.class, listener);
     }

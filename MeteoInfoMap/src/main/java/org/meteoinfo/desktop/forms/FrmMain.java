@@ -317,7 +317,7 @@ public class FrmMain extends JFrame implements IApplication {
         jButton_ZoomRedo = new javax.swing.JButton();
         jButton_Identifer = new javax.swing.JToggleButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
-        jSplitButton_SelectFeature = new org.meteoinfo.ui.JSplitButton();
+        jSplitButton_SelectFeature = new org.meteoinfo.ui.JSplitToggleButton();
         jPopupMenu_SelectFeature = new javax.swing.JPopupMenu();
         jMenuItem_SelByRectangle = new javax.swing.JMenuItem();
         jMenuItem_SelByPolygon = new javax.swing.JMenuItem();
@@ -3914,7 +3914,7 @@ public class FrmMain extends JFrame implements IApplication {
     private javax.swing.JToggleButton jButton_EditNewFeature;
     private javax.swing.JButton jButton_EditRemoveFeature;
     private javax.swing.JToggleButton jButton_EditFeatureVertices;
-    private org.meteoinfo.ui.JSplitButton jSplitButton_SelectFeature;
+    private org.meteoinfo.ui.JSplitToggleButton jSplitButton_SelectFeature;
     private javax.swing.JPopupMenu jPopupMenu_SelectFeature;
     private javax.swing.JMenuItem jMenuItem_SelByRectangle;
     private javax.swing.JMenuItem jMenuItem_SelByPolygon;

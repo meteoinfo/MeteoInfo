@@ -1,10 +1,10 @@
 package org.meteoinfo.ui;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
-import javax.swing.*;
 
 /**
  * An implementation of a "split" button.The left side acts like a normal
@@ -30,7 +30,7 @@ import javax.swing.*;
  *
  * @author Naveed Quadri
  */
-public class JSplitButton extends JButton implements MouseMotionListener, MouseListener, ActionListener, Serializable {
+public class JSplitToggleButton extends JToggleButton implements MouseMotionListener, MouseListener, ActionListener, Serializable {
 
     private int separatorSpacing = 4;
     private int splitWidth = 22;
@@ -50,7 +50,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
      * @param text the text of the button
      * @param icon the Icon image to display on the button
      */
-    public JSplitButton(String text, Icon icon) {
+    public JSplitToggleButton(String text, Icon icon) {
         super(text, icon);
         addMouseMotionListener(this);
         addMouseListener(this);
@@ -62,7 +62,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
      *
      * @param text the text of the button
      */
-    public JSplitButton(String text) {
+    public JSplitToggleButton(String text) {
         this(text, null);
     }
 
@@ -71,14 +71,14 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
      *
      * @param icon the Icon image to display on the button
      */
-    public JSplitButton(Icon icon) {
+    public JSplitToggleButton(Icon icon) {
         this(null, icon);
     }
 
     /**
      * Creates a button with no set text or icon.
      */
-    public JSplitButton() {
+    public JSplitToggleButton() {
         this(null, null);
     }
 
@@ -426,7 +426,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
                     if (actionCommand == null) {
                         actionCommand = getActionCommand();
                     }
-                    e = new ActionEvent(JSplitButton.this,
+                    e = new ActionEvent(JSplitToggleButton.this,
                             ActionEvent.ACTION_PERFORMED,
                             actionCommand,
                             event.getWhen(),
@@ -459,7 +459,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
                     if (actionCommand == null) {
                         actionCommand = getActionCommand();
                     }
-                    e = new ActionEvent(JSplitButton.this,
+                    e = new ActionEvent(JSplitToggleButton.this,
                             ActionEvent.ACTION_PERFORMED,
                             actionCommand,
                             event.getWhen(),

@@ -1,0 +1,54 @@
+Index: MeteoInfoLab/milconfig.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n<MeteoInfo File=\"milconfig.xml\" Type=\"configurefile\">\r\n  <Path OpenPath=\"D:\\Working\\MIScript\\Jython\\mis\\meteo\">\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\plot_types\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\plot_types\\contour\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\traj\"/>\r\n    <RecentFolder Folder=\"D:\\Run\\emips\\run_cams\"/>\r\n    <RecentFolder Folder=\"D:\\Run\\emips\"/>\r\n    <RecentFolder Folder=\"D:\\Run\\emips\\run_meic\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\plot_types\\3d\\jogl\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\io\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\toolbox\\miml\\cluster\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\toolbox\\miml\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\toolbox\\miml\\classification\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\io\\dataconvert\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\dataframe\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\"/>\r\n    <RecentFolder Folder=\"D:\\Working\\MIScript\\Jython\\mis\\meteo\"/>\r\n  </Path>\r\n  <File>\r\n    <OpenedFiles>\r\n      <OpenedFile File=\"D:\\Run\\emips\\run_meic\\total_run.py\"/>\r\n      <OpenedFile File=\"D:\\Working\\MIScript\\Jython\\mis\\toolbox\\miml\\classification\\fld_1.py\"/>\r\n      <OpenedFile File=\"D:\\Working\\MIScript\\Jython\\mis\\meteo\\anomalies.py\"/>\r\n    </OpenedFiles>\r\n    <RecentFiles>\r\n      <RecentFile File=\"D:\\Run\\emips\\run_meic\\total_run.py\"/>\r\n      <RecentFile File=\"D:\\Working\\MIScript\\Jython\\mis\\toolbox\\miml\\classification\\fld_1.py\"/>\r\n      <RecentFile File=\"D:\\Working\\MIScript\\Jython\\mis\\meteo\\anomalies.py\"/>\r\n    </RecentFiles>\r\n  </File>\r\n  <Font>\r\n    <TextFont FontName=\"YaHei Consolas Hybrid\" FontSize=\"14\"/>\r\n  </Font>\r\n  <LookFeel Name=\"FlatDarkLaf\"/>\r\n  <Figure DoubleBuffering=\"true\"/>\r\n  <Startup MainFormLocation=\"-7,-7\" MainFormSize=\"1293,693\"/>\r\n</MeteoInfo>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- MeteoInfoLab/milconfig.xml	(revision f108d48832d1a6507b13f0d208cf026292582fa1)
++++ MeteoInfoLab/milconfig.xml	(date 1594351648435)
+@@ -1,14 +1,12 @@
+ <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+ <MeteoInfo File="milconfig.xml" Type="configurefile">
+-  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
+-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
++  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\grib">
+     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
+     <RecentFolder Folder="D:\Run\emips\run_cams"/>
+     <RecentFolder Folder="D:\Run\emips"/>
+     <RecentFolder Folder="D:\Run\emips\run_meic"/>
+     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
+     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+@@ -16,17 +14,19 @@
+     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
+     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
++    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
++    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
+   </Path>
+   <File>
+     <OpenedFiles>
+       <OpenedFile File="D:\Run\emips\run_meic\total_run.py"/>
+       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\fld_1.py"/>
+-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\anomalies.py"/>
++      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib\grib1_ecmwf_1.py"/>
+     </OpenedFiles>
+     <RecentFiles>
+       <RecentFile File="D:\Run\emips\run_meic\total_run.py"/>
+       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\fld_1.py"/>
+-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\anomalies.py"/>
++      <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib\grib1_ecmwf_1.py"/>
+     </RecentFiles>
+   </File>
+   <Font>
+@@ -34,5 +34,5 @@
+   </Font>
+   <LookFeel Name="FlatDarkLaf"/>
+   <Figure DoubleBuffering="true"/>
+-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
++  <Startup MainFormLocation="-7,0" MainFormSize="1372,783"/>
+ </MeteoInfo>

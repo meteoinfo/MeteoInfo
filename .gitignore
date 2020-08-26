@@ -1,2 +1,4 @@
-/target/
+target/
 /MeteoInfoLab/target/
+/MeteoInfoLib/target/
+/MeteoInfoMap/target/

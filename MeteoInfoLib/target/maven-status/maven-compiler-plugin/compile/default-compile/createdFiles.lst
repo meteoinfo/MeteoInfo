@@ -446,6 +446,7 @@ org\meteoinfo\data\mathparser\ValueTypes.class
 org\meteoinfo\global\event\ProjectionChangedEvent.class
 org\meteoinfo\shape\Line.class
 org\meteoinfo\data\meteodata\micaps\MICAPS131DataInfo.class
+org\meteoinfo\ui\JSplitToggleButton.class
 org\meteoinfo\ndarray\ArrayString.class
 org\meteoinfo\legend\FrmPolygonSymbolSet$12.class
 org\meteoinfo\data\dataframe\impl\Transforms$CumulativeProduct.class

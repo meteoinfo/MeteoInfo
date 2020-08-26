@@ -14,6 +14,7 @@ import javax.swing.*;
 public class IconText {
     private final Icon icon;
     private final String text;
+    private int sortIdx = 1;
     
     /**
      * Constructor
@@ -23,6 +24,17 @@ public class IconText {
     public IconText(Icon icon, String text){
         this.icon = icon;
         this.text = text;
+    }
+
+    /**
+     * Constructor
+     * @param icon Icon
+     * @param text Text
+     * @param sortIdx Sort index
+     */
+    public IconText(Icon icon, String text, int sortIdx ) {
+        this(icon, text);
+        this.sortIdx = sortIdx;
     }
     
     /**
@@ -39,6 +51,14 @@ public class IconText {
      */
     public String getText(){
         return this.text;
+    }
+
+    /**
+     * Get text with sort index ahead for sort comparing
+     * @return Sort text
+     */
+    public String getSortText() {
+        return String.valueOf(this.sortIdx) + this.text;
     }
     
     @Override

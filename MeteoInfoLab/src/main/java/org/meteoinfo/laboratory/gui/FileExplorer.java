@@ -14,14 +14,12 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.Arrays;
 import java.time.format.DateTimeFormatter;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import java.util.Comparator;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.global.util.JDateUtil;
@@ -65,6 +63,16 @@ public class FileExplorer extends JPanel implements MouseListener{
         jtFile.getColumnModel().getColumn(0).setCellRenderer(new IconRenderer());
         jtFile.setShowGrid(false);
         jtFile.addMouseListener(this);
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(dtmFile);
+        sorter.setComparator(0, new Comparator<IconText>() {
+            @Override
+            public int compare(IconText arg0, IconText arg1) {
+                return arg0.getSortText().compareTo(arg1.getSortText());
+            }
+        });
+        jtFile.setRowSorter(sorter);
+        sorter.setRowFilter(RowFilter.regexFilter("", 1));
 
         add(new JScrollPane(jtFile), "Center");
 
@@ -187,32 +195,23 @@ public class FileExplorer extends JPanel implements MouseListener{
         //Clear
         dtmFile.setRowCount(0);
 
-        //Add "To Parent" line if the path is not root path
+        /*//Add "To Parent" line if the path is not root path
         if (path.getParent() != null)
         {
-            //java.net.URL imgURL = this.getClass().getResource("/images/previous.png");
-            //ImageIcon icon = new ImageIcon(imgURL);
             FlatSVGIcon icon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/folder-up.svg");
             dtmFile.addRow(new Object[]{new IconText(icon, ""), "", "", ""});
-        }
+        }*/
 
         //List all files
-        //java.net.URL folderURL = this.getClass().getResource("/images/folder.png");
-        //ImageIcon folderIcon = new ImageIcon(folderURL);
         FlatSVGIcon folderIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/folder.svg");
-        //java.net.URL fileURL = this.getClass().getResource("/images/TSB_NewFile.Image.png");
-        //ImageIcon fileIcon = new ImageIcon(fileURL);
         FlatSVGIcon fileIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/file-new.svg");
-        //java.net.URL pyFileURL = this.getClass().getResource("/images/python_16px.png");
-        //ImageIcon pyFileIcon = new ImageIcon(pyFileURL);
-        //FlatSVGIcon pyFileIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/python_16.svg");
         FlatSVGIcon pyFileIcon = new FlatSVGIcon("org/meteoinfo/laboratory/icons/jython.svg");
         File[] files = path.listFiles();
         Arrays.sort(files);
         for (File file : files){
             String name = file.getName();
             if (file.isDirectory()) {
-                dtmFile.addRow(new Object[]{new IconText(folderIcon, name), "", "Folder", ""});
+                dtmFile.addRow(new Object[]{new IconText(folderIcon, name, 0), "", "Folder", ""});
             } 
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/M/d hh:mm");

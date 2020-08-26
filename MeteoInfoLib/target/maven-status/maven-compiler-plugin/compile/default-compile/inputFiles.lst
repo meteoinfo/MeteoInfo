@@ -799,6 +799,7 @@ D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinf
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\chart\plot\CategoryPlot.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\layout\ScaleBarUnits.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\ui\calendar\JDayChooser.java
+D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\ui\JSplitToggleButton.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\global\FrmMeasurement.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\image\composite\DarkenComposite.java
 D:\MyProgram\java\MeteoInfoDev\MeteoInfo\MeteoInfoLib\src\main\java\org\meteoinfo\global\event\ViewExtentChangedEvent.java

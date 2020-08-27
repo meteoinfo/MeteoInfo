@@ -203,7 +203,7 @@ public class FrmSelectByLocation extends javax.swing.JDialog {
         boolean onlySel = this.jCheckBox_SelFeaturesOnly.isSelected();
         switch (selType) {
             case Within:
-                if (relatedLayer.getShapeType() != ShapeTypes.Polygon) {
+                if (!relatedLayer.getShapeType().isPolygon()) {
                     JOptionPane.showMessageDialog(null, "The second layer must be polygon layer for 'Within' case!");
                     this.setCursor(Cursor.getDefaultCursor());
                     return;

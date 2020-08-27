@@ -47,13 +47,9 @@ public class FrmSymDifference extends javax.swing.JDialog {
             if (layer.getLayerType() == LayerTypes.VectorLayer) {
                 this._vLayers.add((VectorLayer) layer);
                 this.jComboBox_SubjectLayer.addItem(layer.getLayerName());
-                switch (layer.getShapeType()) {
-                    case Polygon:
-                    case PolygonZ:
-                    case PolygonM:
-                        this._polygonLayers.add((VectorLayer) layer);
-                        this.jComboBox_SymDifferenceLayer.addItem(layer.getLayerName());
-                        break;
+                if (layer.getShapeType().isPolygon()) {
+                    this._polygonLayers.add((VectorLayer) layer);
+                    this.jComboBox_SymDifferenceLayer.addItem(layer.getLayerName());
                 }
             }
         }

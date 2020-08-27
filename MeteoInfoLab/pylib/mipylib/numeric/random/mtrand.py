@@ -82,5 +82,5 @@ shuffle = _rand.shuffle
 permutation = _rand.permutation
 
 __all__ = [
-    'shuffle','permutation'
+    'shuffle','permutation','RandomState'
     ]

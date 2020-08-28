@@ -8,12 +8,10 @@ package org.meteoinfo.chart.jogl;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Toolkit;
+
+import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +21,7 @@ import java.util.logging.Logger;
 import javax.imageio.*;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 
@@ -30,6 +29,7 @@ import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
 import org.meteoinfo.global.Extent3D;
 import org.meteoinfo.image.ImageUtil;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -468,12 +468,18 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @throws InterruptedException
      */
     public void saveImage(String fn, int dpi, int width, int height, Integer sleep) throws InterruptedException, IOException {
+        String formatName = fn.substring(fn.lastIndexOf('.') + 1);
+        if (formatName.equals("jpg")) {
+            formatName = "jpeg";
+            saveImage_Jpeg(fn, width, height, dpi);
+            return;
+        }
+
         BufferedImage image = this.paintViewImage(width, height, dpi);
 
         if (image != null) {
             File output = new File(fn);
             output.delete();
-            String formatName = fn.substring(fn.lastIndexOf('.') + 1);
             for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
                 ImageWriter writer = iw.next();
                 ImageWriteParam writeParam = writer.getDefaultWriteParam();
@@ -502,6 +508,41 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
             }
         }
 
+        this.plot3DGL.reshape(this, 0, 0, this.getWidth(), this.getHeight());
+    }
+
+    private void saveImage_Jpeg(String file, int width, int height, int dpi) {
+        BufferedImage bufferedImage = this.paintViewImage(width, height, dpi);
+
+        if (bufferedImage != null) {
+            try {
+                // Image writer
+                ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
+                ImageOutputStream ios = ImageIO.createImageOutputStream(new File(file));
+                imageWriter.setOutput(ios);
+
+                // Compression
+                JPEGImageWriteParam jpegParams = (JPEGImageWriteParam) imageWriter.getDefaultWriteParam();
+                jpegParams.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+                jpegParams.setCompressionQuality(0.85f);
+
+                // Metadata (dpi)
+                IIOMetadata data = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(bufferedImage), jpegParams);
+                Element tree = (Element) data.getAsTree("javax_imageio_jpeg_image_1.0");
+                Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
+                jfif.setAttribute("Xdensity", Integer.toString(dpi));
+                jfif.setAttribute("Ydensity", Integer.toString(dpi));
+                jfif.setAttribute("resUnits", "1"); // density is dots per inch
+                data.setFromTree("javax_imageio_jpeg_image_1.0", tree);
+
+                // Write and clean up
+                imageWriter.write(null, new IIOImage(bufferedImage, null, data), jpegParams);
+                ios.close();
+                imageWriter.dispose();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         this.plot3DGL.reshape(this, 0, 0, this.getWidth(), this.getHeight());
     }
 

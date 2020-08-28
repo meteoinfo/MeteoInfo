@@ -198,7 +198,7 @@
                     </execution>  
                 </executions>  
             </plugin>-->
-            <!--<plugin>
+            <plugin>
                 <inherited>true</inherited>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.0.1</version>
@@ -214,7 +214,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
             
         </plugins>
     </build>        

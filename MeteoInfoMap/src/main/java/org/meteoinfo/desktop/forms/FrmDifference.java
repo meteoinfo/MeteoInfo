@@ -171,7 +171,7 @@ public class FrmDifference extends javax.swing.JDialog {
             clipShapes = (List<PolygonShape>)clipLayer.getShapes();
         }
         VectorLayer newLayer = fromLayer.difference(clipShapes, onlySel);
-        newLayer.setLayerName("Intersection_" + newLayer.getLayerName());
+        newLayer.setLayerName("Difference_" + newLayer.getLayerName());
         _parent.getMapDocument().getActiveMapFrame().addLayer(newLayer);
 
         //---- Hide progressbar                      

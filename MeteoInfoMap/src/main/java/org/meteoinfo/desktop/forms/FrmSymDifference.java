@@ -171,7 +171,7 @@ public class FrmSymDifference extends javax.swing.JDialog {
             clipShapes = (List<PolygonShape>)clipLayer.getShapes();
         }
         VectorLayer newLayer = fromLayer.symDifference(clipShapes, onlySel);
-        newLayer.setLayerName("Intersection_" + newLayer.getLayerName());
+        newLayer.setLayerName("SymDifference_" + newLayer.getLayerName());
         _parent.getMapDocument().getActiveMapFrame().addLayer(newLayer);
 
         //---- Hide progressbar                      

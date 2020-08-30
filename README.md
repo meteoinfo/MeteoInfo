@@ -9,12 +9,12 @@ MeteoInfo: GIS and scientific computation environment for meteorological communi
 **MeteoInfoMap** is a GIS application which enables the user to visualize and analyze
 the spatial and meteorological data with multiple data formats.
 
-![MeteoInfoMap GUI](images/MeteoInfoMap.png)
+![MeteoInfoMap GUI](images/MeteoInfoMap.PNG)
   
 **MeteoInfoLab** is a scientific computation and visualization environment using Jython scripting with the 
 ability of multiple dimensional array calculation and 2D/3D plotting.
 
-![MeteoInfoLab GUI](images/MeteoInfoLab.png)
+![MeteoInfoLab GUI](images/MeteoInfoLab.PNG)
 
 **MeteoInfoLib** is a Java library providing main functions of MeteoInfoMap and MeteoInfoLab.
 

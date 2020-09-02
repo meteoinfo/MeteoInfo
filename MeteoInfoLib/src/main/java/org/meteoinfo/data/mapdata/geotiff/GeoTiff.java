@@ -1157,9 +1157,9 @@ public class GeoTiff {
                             for (int j = 0; j < width * rowNum; j++) {
                                 for (int k = 0; k < samplesPerPixel; k++) {
                                     if (dataType == DataType.FLOAT) {
-                                        r.setFloat(idx, buffer.getFloat());
+                                        r.setFloat(idx, buffer.getShort());
                                     } else {
-                                        r.setInt(idx, buffer.getInt());
+                                        r.setInt(idx, buffer.getShort());
                                     }
                                     idx += 1;
                                 }

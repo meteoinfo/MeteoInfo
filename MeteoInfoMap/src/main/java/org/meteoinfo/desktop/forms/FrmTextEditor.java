@@ -146,7 +146,7 @@ public class FrmTextEditor extends javax.swing.JFrame {
         try {
             interp.exec("import sys");
             interp.exec("sys.path.append('" + path + "')");
-            interp.exec("import mipylib");
+            //interp.exec("import mipylib");
             for (String jarfn : jarfns) {
                 interp.exec("sys.path.append('" + jarfn + "')");
             }

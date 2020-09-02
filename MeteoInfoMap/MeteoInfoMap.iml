@@ -78,6 +78,8 @@
     <orderEntry type="library" name="Maven: com.formdev:flatlaf:0.40" level="project" />
     <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:0.40" level="project" />
     <orderEntry type="library" name="Maven: com.formdev:svgSalamander:1.1.2.1" level="project" />
+    <orderEntry type="module" module-name="meteoinfo-console" />
+    <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.0.4" level="project" />
   </component>
 </module>

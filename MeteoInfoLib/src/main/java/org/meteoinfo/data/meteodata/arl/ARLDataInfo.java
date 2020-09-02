@@ -41,7 +41,6 @@ import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.util.BigDecimalUtil;
-import org.meteoinfo.global.util.DateUtil;
 import org.locationtech.proj4j.proj.Projection;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;

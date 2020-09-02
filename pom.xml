@@ -16,6 +16,7 @@
         <module>MeteoInfoLib</module>
         <module>MeteoInfoMap</module>
         <module>MeteoInfoLab</module>
+        <module>meteoinfo-console</module>
     </modules>
     
     <properties>

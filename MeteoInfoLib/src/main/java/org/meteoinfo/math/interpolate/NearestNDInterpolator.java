@@ -1,10 +1,8 @@
 package org.meteoinfo.math.interpolate;
 
-import org.checkerframework.checker.units.qual.A;
 import org.meteoinfo.math.spatial.KDTree;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.InvalidRangeException;
 
 import java.util.ArrayList;
 import java.util.List;

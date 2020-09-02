@@ -32,7 +32,6 @@
  */
 package org.meteoinfo.ndarray;
 
-import javax.xml.crypto.Data;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.LongBuffer;

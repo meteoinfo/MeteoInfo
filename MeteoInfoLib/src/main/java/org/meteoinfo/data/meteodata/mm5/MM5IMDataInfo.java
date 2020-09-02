@@ -26,7 +26,6 @@ import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.meteodata.Attribute;

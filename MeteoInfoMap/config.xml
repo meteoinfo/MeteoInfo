@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="config.xml" Type="configurefile">
-  <Path OpenPath="D:\Temp\grads"/>
+  <Path OpenPath="D:\Working\MIScript\Jython"/>
   <Font>
-    <TextFont FontName="Arial" FontSize="14"/>
+    <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
     <LegendFont FontName="宋体" FontSize="12"/>
   </Font>
   <ScriptLanguage Language="Jython"/>
-  <LookFeel LafDecorated="true" Name="FlatDarkLaf"/>
+  <LookFeel LafDecorated="true" Name="FlatLightLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="36,5" MainFormSize="1183,605" ShowMeteoDataDlg="true"/>
+  <Startup MainFormLocation="34,10" MainFormSize="1183,605" ShowMeteoDataDlg="true"/>
 </MeteoInfo>

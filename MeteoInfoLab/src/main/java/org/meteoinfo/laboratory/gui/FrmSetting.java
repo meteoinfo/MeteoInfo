@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.fife.ui.rsyntaxtextarea.Theme;
+import org.meteoinfo.console.editor.TextEditor;
 
 /**
  *

@@ -9,7 +9,6 @@ import org.meteoinfo.data.dataframe.impl.Aggregation;
 import org.meteoinfo.data.dataframe.impl.Function;
 import org.meteoinfo.data.dataframe.impl.Grouping;
 import org.meteoinfo.data.dataframe.impl.SparseBitSet;
-import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.InvalidRangeException;
 
 import java.util.*;

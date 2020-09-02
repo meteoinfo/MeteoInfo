@@ -8,10 +8,7 @@
       <MaskOut MaskLayer="china.shp" SetMaskLayer="false"/>
       <Projection IsLonLatMap="true" ProjStr="+title=long/lat:WGS84 +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees "/>
       <GroupLayer>
-        <Layer FileName="..\..\..\..\..\Temp\Map\GLOBALeb3colshade.jpg" Handle="3" Interpolation="nearest" IsMaskout="true" LayerDrawType="Image" LayerName="GLOBALeb3colshade.jpg" LayerType="ImageLayer" SetTransColor="false" TransparencyColor="0xff565688" TransparencyPerc="0" Visible="true">
-          <VisibleScale EnableMaxVisScale="false" EnableMinVisScale="false" MaxVisScale="0.0" MinVisScale="0.0"/>
-        </Layer>
-        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\Distribution\Java\MeteoInfo\MeteoInfo\map\cn_province.shp" Handle="1" IsMaskout="false" LayerDrawType="Map" LayerName="cn_province.shp" LayerType="VectorLayer" ShapeType="PolygonZ" TransparencyPerc="0" Visible="true">
+        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\Distribution\Java\MeteoInfo\MeteoInfo\map\cn_province.shp" Handle="2" IsMaskout="false" LayerDrawType="Map" LayerName="cn_province.shp" LayerType="VectorLayer" ShapeType="PolygonZ" TransparencyPerc="0" Visible="true">
           <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="PolygonZ" UNDEF="-9999.0">
             <Breaks>
               <Break BackColor="0x00ffffff" Caption="" Color="0xfffffbc3" DrawFill="false" DrawOutline="true" DrawShape="true" EndValue="0" OutlineColor="0xff808080" OutlineSize="1.0" StartValue="0" Style="NONE" StyleSize="8" Tag=""/>
@@ -27,7 +24,7 @@
           <ChartGraphics/>
           <VisibleScale EnableMaxVisScale="false" EnableMinVisScale="false" MaxVisScale="0.0" MinVisScale="0.0"/>
         </Layer>
-        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\country1.shp" Handle="2" IsMaskout="false" LayerDrawType="Map" LayerName="country1.shp" LayerType="VectorLayer" ShapeType="Polygon" TransparencyPerc="0" Visible="true">
+        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\country1.shp" Handle="3" IsMaskout="false" LayerDrawType="Map" LayerName="country1.shp" LayerType="VectorLayer" ShapeType="Polygon" TransparencyPerc="0" Visible="true">
           <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="Polygon" UNDEF="-9999.0">
             <Breaks>
               <Break BackColor="0x00ffffff" Caption="" Color="0xfffffbc3" DrawFill="false" DrawOutline="true" DrawShape="true" EndValue="0" OutlineColor="0xff000000" OutlineSize="1.0" StartValue="0" Style="NONE" StyleSize="8" Tag=""/>

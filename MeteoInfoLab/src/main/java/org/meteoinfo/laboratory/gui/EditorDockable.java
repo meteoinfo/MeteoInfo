@@ -39,8 +39,12 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.TextEditorPane;
 import org.fife.ui.rsyntaxtextarea.Theme;
+import org.meteoinfo.console.editor.JTextAreaPrintStream;
+import org.meteoinfo.console.editor.JTextAreaWriter;
+import org.meteoinfo.console.editor.MITextEditorPane;
+import org.meteoinfo.console.editor.TextEditor;
 import org.meteoinfo.global.GenericFileFilter;
-import org.meteoinfo.laboratory.codecomplete.JIntrospect;
+import org.meteoinfo.console.jython.JIntrospect;
 import org.meteoinfo.ui.ButtonTabComponent;
 import org.python.util.PythonInterpreter;
 
@@ -147,7 +151,7 @@ public class EditorDockable extends DefaultSingleCDockable {
         final TextEditor tab = new TextEditor(tabbedPanel, title);
         tabbedPanel.add(tab, title);
         tabbedPanel.setSelectedComponent(tab);
-        final MITextEditorPane textArea = (MITextEditorPane) tab.getTextArea();        
+        final MITextEditorPane textArea = (MITextEditorPane) tab.getTextArea();
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
         textArea.discardAllEdits();
         this.theme.apply(textArea);

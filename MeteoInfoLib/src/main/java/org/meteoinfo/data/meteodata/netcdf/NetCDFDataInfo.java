@@ -40,7 +40,6 @@ import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.meteodata.MeteoDataType;
-import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.Reproject;

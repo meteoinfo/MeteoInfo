@@ -36,7 +36,6 @@ import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.arl.ARLDataInfo;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.util.BigDecimalUtil;
-import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;

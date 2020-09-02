@@ -9,10 +9,13 @@
         <module name="MeteoInfoLab" />
         <module name="MeteoInfoLib" />
         <module name="MeteoInfoMap" />
+        <module name="meteoinfo-console" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="MeteoInfo" target="1.8" />
+      <module name="meteoinfo-console" target="1.8" />
+      <module name="meteoinfo-numeric" target="1.8" />
       <module name="MeteoInfoLab" target="1.8" />
       <module name="MeteoInfoLib" target="1.8" />
       <module name="MeteoInfoMap" target="1.8" />

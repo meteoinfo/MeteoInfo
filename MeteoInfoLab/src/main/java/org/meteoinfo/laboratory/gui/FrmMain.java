@@ -33,14 +33,16 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import bibliothek.gui.dock.common.theme.ThemeMap;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import org.meteoinfo.console.ConsoleExecEvent;
+import org.meteoinfo.console.IConsoleExecListener;
+import org.meteoinfo.console.editor.TextEditor;
+import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
 import org.meteoinfo.global.colors.ColorMap;
 import org.meteoinfo.global.colors.ColorUtil;
 import org.meteoinfo.laboratory.Options;
 import org.meteoinfo.laboratory.application.AppCollection;
 import org.meteoinfo.laboratory.application.Application;
-import org.meteoinfo.laboratory.event.ConsoleExecEvent;
 import org.meteoinfo.laboratory.event.CurrentPathChangedEvent;
-import org.meteoinfo.laboratory.event.IConsoleExecListener;
 import org.meteoinfo.laboratory.event.ICurrentPathChangedListener;
 import org.meteoinfo.legend.LayersLegend;
 import org.meteoinfo.map.MapView;

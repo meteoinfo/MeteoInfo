@@ -33,7 +33,6 @@ import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.mapdata.MapDataManage;
 import org.meteoinfo.global.GenericFileFilter;
 import org.meteoinfo.global.util.GlobalUtil;
-import org.meteoinfo.legend.LegendType;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.ndarray.Index;
 

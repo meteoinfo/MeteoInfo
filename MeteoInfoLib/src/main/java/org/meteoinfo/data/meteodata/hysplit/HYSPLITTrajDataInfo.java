@@ -22,7 +22,7 @@ import org.meteoinfo.data.meteodata.TrajDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
-import org.meteoinfo.ndarray.DataType;
+
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,7 +40,6 @@ import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.legend.PointStyle;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.ColorBreak;

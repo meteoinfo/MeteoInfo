@@ -60,7 +60,6 @@ import org.meteoinfo.shape.PointZ;
 import org.meteoinfo.shape.PolylineZShape;
 import org.meteoinfo.shape.StationModelShape;
 import org.meteoinfo.ndarray.Array;
-import org.python.indexer.IndexingException;
 import wcontour.global.PolyLine;
 import wcontour.global.Polygon;
 

@@ -5,11 +5,12 @@
  */
 package org.meteoinfo.desktop;
 
+import org.meteoinfo.console.editor.JTextAreaPrintStream;
+
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import org.meteoinfo.desktop.config.JTextAreaPrintStream;
 
 /**
  *

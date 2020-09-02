@@ -418,7 +418,7 @@ public class FrmMain extends JFrame implements IApplication {
         jMenuItem_SymDifference = new javax.swing.JMenuItem();
         jMenu_Tools = new javax.swing.JMenu();
         jMenuItem_Script = new javax.swing.JMenuItem();
-        jMenuItem_ScriptConsole = new javax.swing.JMenuItem();
+        //jMenuItem_ScriptConsole = new javax.swing.JMenuItem();
         jSeparator16 = new javax.swing.JPopupMenu.Separator();
         jMenuItem_Options = new javax.swing.JMenuItem();
         jSeparator17 = new javax.swing.JPopupMenu.Separator();
@@ -1698,7 +1698,7 @@ public class FrmMain extends JFrame implements IApplication {
         });
         jMenu_Tools.add(jMenuItem_Script);
 
-        //jMenuItem_ScriptConsole.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/console.png"))); // NOI18N
+        /*//jMenuItem_ScriptConsole.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/console.png"))); // NOI18N
         jMenuItem_ScriptConsole.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/console.svg"));
         jMenuItem_ScriptConsole.setText(bundle.getString("FrmMain.jMenuItem_ScriptConsole.text")); // NOI18N
         jMenuItem_ScriptConsole.addActionListener(new java.awt.event.ActionListener() {
@@ -1707,7 +1707,7 @@ public class FrmMain extends JFrame implements IApplication {
                 jMenuItem_ScriptConsoleActionPerformed(evt);
             }
         });
-        jMenu_Tools.add(jMenuItem_ScriptConsole);
+        jMenu_Tools.add(jMenuItem_ScriptConsole);*/
         jMenu_Tools.add(jSeparator16);
 
         jMenuItem_Options.setIcon(new FlatSVGIcon("org/meteoinfo/desktop/icons/tools.svg"));
@@ -3950,7 +3950,7 @@ public class FrmMain extends JFrame implements IApplication {
     private javax.swing.JMenuItem jMenuItem_Save;
     private javax.swing.JMenuItem jMenuItem_SaveAs;
     private javax.swing.JMenuItem jMenuItem_Script;
-    private javax.swing.JMenuItem jMenuItem_ScriptConsole;
+    //private javax.swing.JMenuItem jMenuItem_ScriptConsole;
     private javax.swing.JMenu jMenu_NetCDFData;
     private javax.swing.JMenuItem jMenuItem_JoinNCFiles;
     private javax.swing.JMenuItem jMenuItem_SelByAttr;

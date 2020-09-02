@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Maven: org.meteothink:meteoinfo-numeric:2.3.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/meteothink/meteoinfo-numeric/2.3.1/meteoinfo-numeric-2.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/meteoinfo-numeric/meteoinfo-numeric-2.3.1-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/meteothink/meteoinfo-numeric/2.3.1/meteoinfo-numeric-2.3.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/meteoinfo-numeric/meteoinfo-numeric-2.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/meteothink/meteoinfo-numeric/2.3.1/meteoinfo-numeric-2.3.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

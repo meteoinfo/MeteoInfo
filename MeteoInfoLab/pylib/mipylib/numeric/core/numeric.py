@@ -15,7 +15,7 @@ from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
 from org.meteoinfo.math.interpolate import InterpUtil
 from org.meteoinfo.ndarray import Array, Dimension
 from org.meteoinfo.geoprocess import GeometryUtil
-from org.meteoinfo.laboratory.util import JythonUtil
+from org.meteoinfo.util import JythonUtil
 from org.python.core import PyComplex
 
 from dimarray import PyGridData, DimArray, PyStationData

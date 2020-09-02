@@ -9,7 +9,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import org.meteoinfo.laboratory.gui.JTextAreaPrintStream;
+import org.meteoinfo.console.editor.JTextAreaPrintStream;
 
 /**
  *

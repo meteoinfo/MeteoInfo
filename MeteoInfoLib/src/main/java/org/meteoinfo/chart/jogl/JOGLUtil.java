@@ -7,7 +7,6 @@ package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.GL2;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,6 @@ import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.GraphicCollection;
 import org.meteoinfo.shape.ImageShape;
 import org.meteoinfo.shape.PointZ;
-import org.python.antlr.ast.Num;
 
 /**
  *

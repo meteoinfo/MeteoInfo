@@ -13,10 +13,11 @@ import java.util.List;
 import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import org.meteoinfo.desktop.config.PythonInteractiveInterpreter;
+
+import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.console.JConsole;
-import org.meteoinfo.desktop.codecomplete.JIntrospect;
+import org.meteoinfo.console.jython.JIntrospect;
 import org.python.core.Py;
 
 /**

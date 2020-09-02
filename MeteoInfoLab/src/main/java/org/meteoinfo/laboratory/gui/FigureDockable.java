@@ -26,6 +26,7 @@ import org.meteoinfo.chart.ChartPanel;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
 import org.meteoinfo.chart.jogl.GLChartPanel;
+import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
 import org.meteoinfo.ui.ButtonTabComponent;
 import org.scilab.forge.jlatexmath.Char;
 

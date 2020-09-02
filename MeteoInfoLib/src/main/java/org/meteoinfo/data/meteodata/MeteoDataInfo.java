@@ -44,7 +44,6 @@ import org.meteoinfo.data.meteodata.micaps.MICAPS13DataInfo;
 import org.meteoinfo.data.meteodata.micaps.MICAPS7DataInfo;
 import org.meteoinfo.data.meteodata.mm5.MM5DataInfo;
 import org.meteoinfo.data.meteodata.mm5.MM5IMDataInfo;
-import org.meteoinfo.global.util.DateUtil;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.data.mathparser.MathParser;
 import org.meteoinfo.data.mathparser.ParseException;

@@ -25,7 +25,7 @@ import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.util.FontUtil;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.laboratory.gui.FrmMain;
-import org.meteoinfo.laboratory.gui.MyPythonInterpreter;
+import org.meteoinfo.console.jython.MyPythonInterpreter;
 import org.python.core.Py;
 import org.python.core.PySystemState;
 import org.python.util.InteractiveConsole;

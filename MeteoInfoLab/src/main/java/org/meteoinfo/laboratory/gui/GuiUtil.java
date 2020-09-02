@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.meteoinfo.console.editor.TextEditor;
 import org.meteoinfo.ui.ButtonTabComponent;
 
 /**

@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.meteoinfo.chart.plot.XAlign;
 import org.meteoinfo.chart.plot.YAlign;
-import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.map.GridLabel;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.global.PointD;

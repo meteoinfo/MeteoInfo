@@ -62,9 +62,6 @@ import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.shape.PointShape;
 import org.meteoinfo.shape.PolygonShape;
 import org.meteoinfo.shape.Shape;
-import static org.meteoinfo.shape.ShapeTypes.Point;
-import static org.meteoinfo.shape.ShapeTypes.Polygon;
-import static org.meteoinfo.shape.ShapeTypes.Polyline;
 import org.meteoinfo.ndarray.Array;
 
 /**

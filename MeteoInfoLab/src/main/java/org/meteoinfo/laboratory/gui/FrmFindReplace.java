@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
+import org.meteoinfo.console.editor.TextEditor;
 
 /**
  *

@@ -12,24 +12,24 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.List;
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
+import java.util.Locale;
+import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+
+import org.meteoinfo.console.JConsole;
+import org.meteoinfo.console.editor.JTextAreaPrintStream;
+import org.meteoinfo.console.editor.JTextAreaWriter;
+import org.meteoinfo.console.jython.JIntrospect;
+import org.meteoinfo.console.editor.MITextEditorPane;
+import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
 import org.meteoinfo.desktop.config.EncodingUtil;
 import org.meteoinfo.desktop.config.GenericFileFilter;
-import org.meteoinfo.desktop.config.JTextAreaPrintStream;
-import org.meteoinfo.desktop.config.JTextAreaWriter;
-import org.meteoinfo.desktop.config.TextEditor;
+import org.meteoinfo.console.editor.TextEditor;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.TextEditorPane;
 
@@ -47,6 +47,8 @@ public class FrmTextEditor extends javax.swing.JFrame {
     private Font _font = new Font("Simsun", Font.PLAIN, 15);
     private String _scriptLanguage = "Jython";
     private Dimension _splitPanelSize;
+    private JConsole console;
+    private PythonInteractiveInterpreter interp;
 
     /**
      * Get font
@@ -70,7 +72,7 @@ public class FrmTextEditor extends javax.swing.JFrame {
             }
         }
 
-        this.jTextArea_Output.setFont(_font);
+        this.console.setFont(_font);
     }
 
     /**
@@ -90,11 +92,11 @@ public class FrmTextEditor extends javax.swing.JFrame {
     public void setScriptLanguage(String value) {
         this._scriptLanguage = value;
         if (_scriptLanguage.equals("Groovy")) {
-            this.setTitle("MeteoInfo Script - Groovy");
+            this.setTitle("MeteoInfoMap Script - Groovy");
             this.jRadioButtonMenuItem_Groovy.setSelected(true);
             this.jRadioButtonMenuItem_Jython.setSelected(false);
         } else {
-            this.setTitle("MeteoInfo Script - Jython");
+            this.setTitle("MeteoInfoMap Script - Jython");
             this.jRadioButtonMenuItem_Groovy.setSelected(false);
             this.jRadioButtonMenuItem_Jython.setSelected(true);
         }
@@ -106,17 +108,19 @@ public class FrmTextEditor extends javax.swing.JFrame {
     public FrmTextEditor() {
         initComponents();
 
-        DefaultCaret caret = (DefaultCaret) this.jTextArea_Output.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        //DefaultCaret caret = (DefaultCaret) this.jTextArea_Output.getCaret();
+        //caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.initializeConsole();
+
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setIconImages(SVGUtils.createWindowIconImages("/org/meteoinfo/desktop/icons/jython.svg"));
         this.setScriptLanguage(_scriptLanguage);
         addNewTextEditor("New file");
         this._splitPanelSize = this.jSplitPane1.getBounds().getSize();
         this.setSize(600, 600);
         //this.jSplitPane1.setDividerLocation(0.6);
-        this.jSplitPane1.setDividerLocation(5);
+        this.jSplitPane1.setDividerLocation(300);
         //this.jScrollPane1.invalidate();
     }
 
@@ -129,6 +133,43 @@ public class FrmTextEditor extends javax.swing.JFrame {
         this();
         _parent = (FrmMain) parent;
         this.setScriptLanguage(_parent.getOptions().getScriptLanguage());
+
+        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
+                getInputArguments().toString().contains("jdwp");
+        String pluginPath = _parent.getStartupPath() + File.separator + "plugins";
+        List<String> jarfns = GlobalUtil.getFiles(pluginPath, ".jar");
+        String path = _parent.getStartupPath() + File.separator + "pylib";
+        if (isDebug) {
+            path = "D:\\MyProgram\\java\\MeteoInfoDev\\MeteoInfo\\MeteoInfoLab\\pylib";
+        }
+
+        try {
+            interp.exec("import sys");
+            interp.exec("sys.path.append('" + path + "')");
+            interp.exec("import mipylib");
+            for (String jarfn : jarfns) {
+                interp.exec("sys.path.append('" + jarfn + "')");
+            }
+            interp.set("miapp", _parent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void initializeConsole() {
+        console = new JConsole();
+        console.setLocale(Locale.getDefault());
+        console.setPreferredSize(new Dimension(600, 400));
+        console.println(new ImageIcon(this.getClass().getResource("/images/jython_small_c.png")));
+
+        this.interp = new PythonInteractiveInterpreter(console);
+        new Thread(interp).start();
+
+        JIntrospect nameComplete = new JIntrospect(this.interp);
+        console.setNameCompletion(nameComplete);
+
+        this.jSplitPane1.setRightComponent(console);
     }
 
     /**
@@ -151,8 +192,6 @@ public class FrmTextEditor extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JToolBar.Separator();
         jButton_RunScript = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea_Output = new javax.swing.JTextArea();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu_File = new javax.swing.JMenu();
@@ -279,7 +318,7 @@ public class FrmTextEditor extends javax.swing.JFrame {
 
         getContentPane().add(jToolBar1, java.awt.BorderLayout.NORTH);
 
-        jSplitPane1.setDividerLocation(300);
+        //jSplitPane1.setDividerLocation(0.6);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane1.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -287,11 +326,6 @@ public class FrmTextEditor extends javax.swing.JFrame {
             }
         });
 
-        jTextArea_Output.setColumns(20);
-        jTextArea_Output.setRows(5);
-        jScrollPane1.setViewportView(jTextArea_Output);
-
-        jSplitPane1.setRightComponent(jScrollPane1);
         jSplitPane1.setLeftComponent(jTabbedPane1);
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
@@ -412,7 +446,7 @@ public class FrmTextEditor extends javax.swing.JFrame {
             }
         });
         jMenu_Options.add(jMenuItem_SetFont);
-        jMenu_Options.add(jSeparator5);
+        //jMenu_Options.add(jSeparator5);
 
         jMenu_ScriptLanguage.setText("Script Language");
 
@@ -434,7 +468,7 @@ public class FrmTextEditor extends javax.swing.JFrame {
         });
         jMenu_ScriptLanguage.add(jRadioButtonMenuItem_Jython);
 
-        jMenu_Options.add(jMenu_ScriptLanguage);
+        //jMenu_Options.add(jMenu_ScriptLanguage);
 
         jMenuBar1.add(jMenu_Options);
 
@@ -572,10 +606,10 @@ public class FrmTextEditor extends javax.swing.JFrame {
 
     private void jSplitPane1ComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jSplitPane1ComponentResized
         // TODO add your handling code here:
-        Dimension size = this.jSplitPane1.getBounds().getSize();
+        /*Dimension size = this.jSplitPane1.getBounds().getSize();
         int heightdelta = size.height - this._splitPanelSize.height;
         this.jSplitPane1.setDividerLocation(this.jSplitPane1.getDividerLocation() + heightdelta);
-        this._splitPanelSize = this.jSplitPane1.getBounds().getSize();
+        this._splitPanelSize = this.jSplitPane1.getBounds().getSize();*/
     }//GEN-LAST:event_jSplitPane1ComponentResized
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -618,45 +652,9 @@ public class FrmTextEditor extends javax.swing.JFrame {
 
             @Override
             protected String doInBackground() throws Exception {
-                JTextAreaWriter writer = new JTextAreaWriter(jTextArea_Output);
-                JTextAreaPrintStream printStream = new JTextAreaPrintStream(System.out, jTextArea_Output);
-                jTextArea_Output.setText("");
-
-                // Create an instance of the PythonInterpreter        
-                //Py.getSystemState().setdefaultencoding("utf-8");
-                //UPythonInterpreter interp = new UPythonInterpreter();
-                PythonInterpreter interp = new PythonInterpreter();
-                interp.setOut(writer);
-                interp.setErr(writer);
-                System.setOut(printStream);
-                System.setErr(printStream);
-                //System.out.println("Out test!");
-                //System.err.println("Error test!");
-
-//                boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
-//                        getInputArguments().toString().contains("jdwp");
-                String pluginPath = _parent.getStartupPath() + File.separator + "plugins";
-                List<String> jarfns = GlobalUtil.getFiles(pluginPath, ".jar");
-                String path = _parent.getStartupPath() + File.separator + "pylib";
-//                if (isDebug) {
-//                    path = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo/pylib";
-//                }
-
-                try {
-                    interp.exec("import sys");
-                    //interp.set("mis", mis);
-                    interp.exec("sys.path.append('" + path + "')");
-                    //interp.exec("import mipylib");
-                    //interp.exec("from mipylib.miscript import *");                    
-                    //interp.exec("from meteoinfo.numeric.JNumeric import *");
-                    //interp.exec("mis = MeteoInfoScript()");
-                    interp.set("miapp", _parent);
-                    for (String jarfn : jarfns) {
-                        interp.exec("sys.path.append('" + jarfn + "')");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                interp.console.println("run script...");
+                interp.console.setFocusable(true);
+                interp.console.requestFocusInWindow();
 
                 TextEditorPane textArea = getActiveTextArea();
                 //textArea.setEncoding(fn);
@@ -702,6 +700,7 @@ public class FrmTextEditor extends javax.swing.JFrame {
         this.jTabbedPane1.add(tab, title);
         this.jTabbedPane1.setSelectedComponent(tab);
         tab.setTextFont(_font);
+        final MITextEditorPane textArea = (MITextEditorPane) tab.getTextArea();
         if (this._scriptLanguage.equals("Groovy")) {
             tab.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_GROOVY);
         } else {
@@ -710,6 +709,11 @@ public class FrmTextEditor extends javax.swing.JFrame {
         tab.getTextArea().discardAllEdits();
         tab.getTextArea().setDirty(false);
         tab.setTitle(title);
+
+        //Set name completion
+        JIntrospect nameComplete = new JIntrospect(this.interp);
+        textArea.setNameCompletion(nameComplete);
+
         ButtonTabComponent btc = new ButtonTabComponent(this.jTabbedPane1);
         JButton button = btc.getTabButton();
         button.addActionListener(new ActionListener() {
@@ -971,14 +975,13 @@ public class FrmTextEditor extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu_ScriptLanguage;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem_Groovy;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem_Jython;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextArea jTextArea_Output;
+    //private javax.swing.JTextArea jTextArea_Output;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 }

@@ -8,6 +8,7 @@ package org.meteoinfo.laboratory.gui;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.action.CAction;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import org.meteoinfo.console.ConsoleColors;
 import org.meteoinfo.console.JConsole;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -22,7 +23,8 @@ import java.util.logging.Logger;
 import javax.swing.*;
 
 import org.meteoinfo.chart.IChartPanel;
-import org.meteoinfo.laboratory.codecomplete.JIntrospect;
+import org.meteoinfo.console.jython.JIntrospect;
+import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
 import org.python.core.Py;
 
 /**

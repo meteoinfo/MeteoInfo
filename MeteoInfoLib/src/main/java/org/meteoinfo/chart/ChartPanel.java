@@ -81,7 +81,6 @@ import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.plot.Plot3D;
 import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.chart.plot3d.Projector;
-import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.global.Extent;

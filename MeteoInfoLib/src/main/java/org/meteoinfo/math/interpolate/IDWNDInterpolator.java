@@ -2,7 +2,6 @@ package org.meteoinfo.math.interpolate;
 
 import org.meteoinfo.math.spatial.KDTree;
 import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.InvalidRangeException;
 
 import java.util.ArrayList;
 import java.util.List;

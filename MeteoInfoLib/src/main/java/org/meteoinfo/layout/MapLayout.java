@@ -156,16 +156,16 @@ import org.xml.sax.SAXException;
 public class MapLayout extends JPanel implements IWebMapPanel {
 
     // <editor-fold desc="Variables">
-    private EventListenerList _listeners = new EventListenerList();
+    private final EventListenerList _listeners = new EventListenerList();
     private final TileLoadListener tileLoadListener = new TileLoadListener(this);
-    private FrmIdentifer _frmIdentifer = null;
-    private FrmIdentiferGrid _frmIdentiferGrid = null;
+    private FrmIdentifer frmIdentifier = null;
+    private FrmIdentiferGrid frmIdentifierGrid = null;
     private FrmMeasurement _frmMeasure = null;
     private JScrollBar _vScrollBar;
     private JScrollBar _hScrollBar;
     private boolean _lockViewUpdate = false;
     private List<MapFrame> _mapFrames = new ArrayList<>();
-    private List<LayoutElement> _layoutElements = new ArrayList<>();
+    private final List<LayoutElement> _layoutElements = new ArrayList<>();
     private LayoutMap _currentLayoutMap;
     private BufferedImage _layoutBitmap = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     private BufferedImage _tempImage = null;
@@ -180,7 +180,7 @@ public class MapLayout extends JPanel implements IWebMapPanel {
     private Color _pageForeColor = Color.black;
     private Color _pageBackColor = Color.white;
     private PaperSize _paperSize = new PaperSize();
-    private List<PaperSize> _paperSizeList = new ArrayList<>();
+    private final List<PaperSize> _paperSizeList = new ArrayList<>();
     private boolean _isLandscape;
     private float _zoom = 1.0f;
     private PointF _pageLocation = new PointF(0, 0);
@@ -188,18 +188,18 @@ public class MapLayout extends JPanel implements IWebMapPanel {
     private LabelBreak _defLabelBreak = new LabelBreak();
     private PolylineBreak _defPolylineBreak = new PolylineBreak();
     private PolygonBreak _defPolygonBreak = new PolygonBreak();
-    private int _xShift = 0;
-    private int _yShift = 0;
+    private final int _xShift = 0;
+    private final int _yShift = 0;
     private MouseMode _mouseMode = MouseMode.Default;
     private List<LayoutElement> _selectedElements = new ArrayList<>();
     private Rectangle _selectedRectangle = new Rectangle();
-    private Point _mouseDownPos = new Point(0, 0);
+    private final Point _mouseDownPos = new Point(0, 0);
     private Point _mouseLastPos = new Point(0, 0);
-    private Point _mouseDownPoint = new Point(0, 0);
+    private final Point _mouseDownPoint = new Point(0, 0);
     private Edge _resizeSelectedEdge = Edge.None;
     private boolean _startNewGraphic = true;
     private List<PointF> _graphicPoints = new ArrayList<>();
-    private List<PointD> _editingVertices = new ArrayList<>();
+    private final List<PointD> _editingVertices = new ArrayList<>();
     private int _editingVerticeIndex;
     private boolean _dragMode = false;
     // </editor-fold>
@@ -1380,9 +1380,9 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                             VectorLayer aLayer = (VectorLayer) aMLayer;
                             List<Integer> selectedShapes = _currentLayoutMap.getMapFrame().getMapView().selectShapes(aLayer, aPoint);
                             if (selectedShapes.size() > 0) {
-                                if (_frmIdentifer == null) {
-                                    _frmIdentifer = new FrmIdentifer((JFrame) SwingUtilities.getWindowAncestor(this), false, _currentLayoutMap.getMapFrame().getMapView());
-                                    _frmIdentifer.addWindowListener(new WindowAdapter() {
+                                if (frmIdentifier == null) {
+                                    frmIdentifier = new FrmIdentifer((JFrame) SwingUtilities.getWindowAncestor(this), false, _currentLayoutMap.getMapFrame().getMapView());
+                                    frmIdentifier.addWindowListener(new WindowAdapter() {
                                         @Override
                                         public void windowClosed(WindowEvent e) {
                                             _currentLayoutMap.getMapFrame().getMapView().setDrawIdentiferShape(false);
@@ -1391,7 +1391,7 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                                         }
                                     });
                                 }
-                                _frmIdentifer.setMapView(_currentLayoutMap.getMapFrame().getMapView());
+                                frmIdentifier.setMapView(_currentLayoutMap.getMapFrame().getMapView());
 
                                 String[] colNames = {"Field", "Value"};
                                 String fieldStr, valueStr;
@@ -1418,11 +1418,11 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                                         return false;
                                     }
                                 };
-                                this._frmIdentifer.getTable().setModel(dtm);
-                                this._frmIdentifer.repaint();
-                                if (!this._frmIdentifer.isVisible()) {
-                                    this._frmIdentifer.setLocation(e.getX(), e.getY());
-                                    this._frmIdentifer.setVisible(true);
+                                this.frmIdentifier.getTable().setModel(dtm);
+                                this.frmIdentifier.repaint();
+                                if (!this.frmIdentifier.isVisible()) {
+                                    this.frmIdentifier.setLocation(e.getX(), e.getY());
+                                    this.frmIdentifier.setVisible(true);
                                 }
 
                                 //this.repaint();
@@ -1437,17 +1437,17 @@ public class MapLayout extends JPanel implements IWebMapPanel {
                                 int iIdx = ijIdx[0];
                                 int jIdx = ijIdx[1];
                                 double aValue = aRLayer.getCellValue(iIdx, jIdx);
-                                if (_frmIdentiferGrid == null) {
-                                    _frmIdentiferGrid = new FrmIdentiferGrid((JFrame) SwingUtilities.getWindowAncestor(this), false);
+                                if (frmIdentifierGrid == null) {
+                                    frmIdentifierGrid = new FrmIdentiferGrid((JFrame) SwingUtilities.getWindowAncestor(this), false);
                                 }
 
-                                _frmIdentiferGrid.setIIndex(iIdx);
-                                _frmIdentiferGrid.setJIndex(jIdx);
-                                _frmIdentiferGrid.setCellValue(aValue);
-                                if (!this._frmIdentiferGrid.isVisible()) {
+                                frmIdentifierGrid.setIIndex(iIdx);
+                                frmIdentifierGrid.setJIndex(jIdx);
+                                frmIdentifierGrid.setCellValue(aValue);
+                                if (!this.frmIdentifierGrid.isVisible()) {
                                     //this._frmIdentiferGrid.setLocation(e.getX(), e.getY());
-                                    this._frmIdentiferGrid.setLocationRelativeTo(this);
-                                    this._frmIdentiferGrid.setVisible(true);
+                                    this.frmIdentifierGrid.setLocationRelativeTo(this);
+                                    this.frmIdentifierGrid.setVisible(true);
                                 }
                             }
                         }

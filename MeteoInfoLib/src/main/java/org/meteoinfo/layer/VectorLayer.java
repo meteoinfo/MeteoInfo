@@ -2877,22 +2877,29 @@ public class VectorLayer extends MapLayer {
             case GraduatedColor:
                 if (!ls.isGeometry()) {
                     shapeIdx = 0;
+                    int idx = 0;
                     for (Shape aShape : this.getShapes()) {
-                        aShape.setLegendIndex(-1);
                         String vStr = this.getCellValue(ls.getFieldName(), shapeIdx).toString();
                         double v = Double.parseDouble(vStr);
-                        int blNum = 0;
-                        for (int i = 0; i < ls.getBreakNum(); i++) {
-                            ColorBreak cb = ls.getLegendBreaks().get(i);
-                            blNum += 1;
-                            if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))
-                                    || (v > Double.parseDouble(cb.getStartValue().toString())
-                                    && v < Double.parseDouble(cb.getEndValue().toString()))
-                                    || (blNum == ls.getBreakNum() && v == Double.parseDouble(cb.getEndValue().toString()))) {
-                                aShape.setLegendIndex(i);
-                                break;
+                        if (v <= ls.getMinValue())
+                            idx = 0;
+                        else if (v >= ls.getMaxValue())
+                            idx = ls.getBreakNum() - 1;
+                        else {
+                            int blNum = 0;
+                            for (int i = 0; i < ls.getBreakNum(); i++) {
+                                ColorBreak cb = ls.getLegendBreaks().get(i);
+                                blNum += 1;
+                                if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))
+                                        || (v > Double.parseDouble(cb.getStartValue().toString())
+                                        && v < Double.parseDouble(cb.getEndValue().toString()))
+                                        || (blNum == ls.getBreakNum() && v == Double.parseDouble(cb.getEndValue().toString()))) {
+                                    idx = i;
+                                    break;
+                                }
                             }
                         }
+                        aShape.setLegendIndex(idx);
                         shapeIdx += 1;
                     }
                 }

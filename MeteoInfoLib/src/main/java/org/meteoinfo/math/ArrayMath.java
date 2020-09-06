@@ -3784,10 +3784,12 @@ public class ArrayMath {
         while (iterY.hasNext()) {
             x2 = iterX.getDoubleNext();
             y2 = iterY.getDoubleNext();
-            if (Double.isNaN(y2)) {
+            if (Double.isNaN(x2) || Double.isNaN(y2)) {
                 continue;
             }
             r += (x2 - x1) * (y2 + y1);
+            if (Double.isNaN(r))
+                r = 0;
             x1 = x2;
             y1 = y2;
             nn += 1;

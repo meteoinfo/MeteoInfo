@@ -94,7 +94,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private int width;
     private int height;
     float tickSpace = 5.0f;
-    float tickLen = 0.08f;
+    final private float lenScale = 0.01f;
     private Lighting lighting = new Lighting();
     private boolean antialias;
     private float scale;
@@ -1089,6 +1089,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glEnd();
 
             //x axis ticks
+            float tickLen = this.xAxis.getTickLength() * this.lenScale;
             this.xAxis.updateTickLabels();
             List<ChartText> tlabs = this.xAxis.getTickLabels();
             float axisLen = this.toScreenLength(-1.0f, y, -1.0f, 1.0f, y, -1.0f);
@@ -1185,6 +1186,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             tlabs = this.yAxis.getTickLabels();
             axisLen = this.toScreenLength(x, -1.0f, -1.0f, x, 1.0f, -1.0f);
             skip = getLabelGap(this.yAxis.getTickLabelFont(), tlabs, axisLen);
+            tickLen = this.yAxis.getTickLength() * this.lenScale;
             float x1 = x > 0 ? x + tickLen : x - tickLen;
             if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
                 xAlign = XAlign.RIGHT;
@@ -1289,6 +1291,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
             float x1 = x;
             float y1 = y;
+            float tickLen = this.zAxis.getTickLength() * this.lenScale;
             if (x < 0) {
                 if (y > 0) {
                     y1 += tickLen;
@@ -2306,6 +2309,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             }
 
             float x = 1.6f;
+            x += legend.getXShift() * this.lenScale;
             float y = -1.0f;
             float lHeight = 2.0f;
             float lWidth = lHeight / legend.getAspect();
@@ -2373,6 +2377,16 @@ public class Plot3DGL extends Plot implements GLEventListener {
             int idx = 0;
             yy = y;
             String caption;
+            float tickLen = legend.getTickLength() * this.lenScale;
+            float labelX = x + lWidth;
+            if (legend.isInsideTick()) {
+                if (tickLen > lWidth)
+                    tickLen = lWidth;
+            } else {
+                labelX += tickLen;
+            }
+            float strWidth = 0;
+            Rectangle2D rect;
             for (int i = 0; i < bNum; i++) {
                 if (labelIdxs.contains(i)) {
                     ColorBreak cb = ls.getLegendBreaks().get(i);
@@ -2386,23 +2400,61 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         caption = tLabels.get(idx);
                     }
                     if (ls.getLegendType() == LegendType.UniqueValue) {
-                        this.drawString(gl, caption, legend.getTickLabelFont(), Color.black,
+                        rect = this.drawString(gl, caption, legend.getTickLabelFont(), legend.getTickLabelColor(),
                                 x + lWidth, yy + barHeight * 0.5f, 0, XAlign.LEFT, YAlign.CENTER, 5, 0);
                     } else {
                         rgba = Color.black.getRGBComponents(null);
                         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                        gl.glLineWidth(1.0f);
+                        gl.glLineWidth(legend.getTickWidth());
                         gl.glBegin(GL2.GL_LINES);
-                        gl.glVertex2f(x + lWidth * 0.5f, yy + barHeight);
+                        if (legend.isInsideTick())
+                            gl.glVertex2f(x + lWidth - tickLen, yy + barHeight);
+                        else
+                            gl.glVertex2f(x + lWidth + tickLen, yy + barHeight);
                         gl.glVertex2f(x + lWidth, yy + barHeight);
                         gl.glEnd();
-                        this.drawString(gl, caption, legend.getTickLabelFont(), Color.black,
-                                x + lWidth, yy + barHeight, 0, XAlign.LEFT, YAlign.CENTER, 5, 0);
+                        rect = this.drawString(gl, caption, legend.getTickLabelFont(), legend.getTickLabelColor(),
+                                labelX, yy + barHeight, 0, XAlign.LEFT, YAlign.CENTER, 5, 0);
                     }
+                    if (strWidth < rect.getWidth())
+                        strWidth = (float) rect.getWidth();
 
                     idx += 1;
                 }
                 yy += barHeight;
+            }
+
+            //Draw label
+            ChartText label = legend.getLabel();
+            if (label != null) {
+                float sx, sy, yShift;
+                switch (legend.getLabelLocation()) {
+                    case "top":
+                        sx = x + lWidth * 0.5f;
+                        sy = y + lHeight;
+                        yShift = this.tickSpace;
+                        drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 0, 0, yShift);
+                        break;
+                    case "bottom":
+                        sx = x + lWidth * 0.5f;
+                        sy = y;
+                        yShift = -this.tickSpace;
+                        drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.TOP, 0, 0, yShift);
+                        break;
+                    case "left":
+                    case "in":
+                        sx = x;
+                        sy = y + lHeight * 0.5f;
+                        yShift = this.tickSpace;
+                        drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+                        break;
+                    default:
+                        sx = labelX;
+                        sy = y + lHeight * 0.5f;
+                        yShift = -strWidth - this.tickSpace;
+                        drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.TOP, 90.f, 0, yShift);
+                        break;
+                }
             }
         }
     }

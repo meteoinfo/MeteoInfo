@@ -51,7 +51,7 @@ public class Axis implements Cloneable {
     //private Stroke lineStroke;
     protected Color tickColor;
     protected Stroke tickStroke;
-    protected int tickLength;
+    protected float tickLength;
     protected boolean insideTick;
     protected Font tickLabelFont;
     protected Color tickLabelColor;
@@ -484,7 +484,7 @@ public class Axis implements Cloneable {
      *
      * @return Tick length
      */
-    public int getTickLength() {
+    public float getTickLength() {
         return this.tickLength;
     }
 
@@ -493,7 +493,7 @@ public class Axis implements Cloneable {
      *
      * @param value Tick length
      */
-    public void setTickLength(int value) {
+    public void setTickLength(float value) {
         this.tickLength = value;
     }
 
@@ -1220,15 +1220,18 @@ public class Axis implements Cloneable {
                 this.tickLocations.add(value);
                 lab = String.valueOf(value);
                 lab = DataConvert.removeTailingZeros(lab);
-                tls.add(new ChartText(lab));
+                tls.add(new ChartText(lab, this.tickLabelFont));
             }
         } else {
+            ChartText ct;
             for (int i = 0; i < this.tickLocations.size(); i++) {
                 if (i >= this.tickLabels.size()) {
                     break;
                 }
                 double v = this.tickLocations.get(i);
                 if (v >= this.minValue && v <= this.maxValue) {
+                    ct = tickLabels.get(i);
+                    ct.setFont(this.tickLabelFont);
                     tls.add(this.tickLabels.get(i));
                 }
             }
@@ -1492,7 +1495,7 @@ public class Axis implements Cloneable {
         g.draw(new Line2D.Double(minx, sy, maxx, sy));
 
         //Draw tick lines   
-        int len = 0;
+        float len = 0;
         if (this.drawTickLine) {
             g.setColor(this.tickColor);
             g.setStroke(this.tickStroke);
@@ -1573,7 +1576,7 @@ public class Axis implements Cloneable {
 
                 //Draw minor tick lines
                 if (this.isMinorTickVisible()) {
-                    int minorLen = len - 2;
+                    float minorLen = len - 2;
                     double sp;
                     sp = this.tickDeltaValue * this.getTickLabelGap() / this.minorTickNum;
                     if (this instanceof LogAxis) {
@@ -1720,7 +1723,7 @@ public class Axis implements Cloneable {
         g.draw(new Line2D.Double(sx, maxy, sx, miny));
         
         //Draw tick lines   
-        int len = 0;
+        float len = 0;
         if (this.drawTickLine) {
             g.setColor(this.getTickColor());
             g.setStroke(this.getTickStroke());
@@ -1771,7 +1774,7 @@ public class Axis implements Cloneable {
 
                 //Draw minor tick lines
                 if (this.isMinorTickVisible()) {
-                    int minorLen = len - 2;
+                    float minorLen = len - 2;
                     double sp;
                     sp = this.tickDeltaValue * this.getTickLabelGap() / this.minorTickNum;
                     if (this instanceof LogAxis) {

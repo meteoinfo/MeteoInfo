@@ -2171,7 +2171,7 @@ public class Plot3D extends Plot {
                 //projection = projector.project(factor_x * 10.2f * lf, -factor_y * 10.2f * lf, vi);
                 g.setColor(this.zAxis.getLineColor());
                 //g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
-                g.drawLine(tickpos.x, tickpos.y, tickpos.x - this.zAxis.getTickLength(), tickpos.y);
+                g.drawLine(tickpos.x, tickpos.y, tickpos.x - (int)this.zAxis.getTickLength(), tickpos.y);
                 //tickpos = projector.project(factor_x * 10.5f * lf, -factor_y * 10.5f * lf, vi);
                 //outString(g, tickpos.x - this.zAxis.getTickLength() - 5, tickpos.y, s, XAlign.RIGHT, YAlign.CENTER);
                 Draw.drawString(g, tickpos.x - this.zAxis.getTickLength() - 5, tickpos.y, s, XAlign.RIGHT, YAlign.CENTER, true);
@@ -2183,7 +2183,7 @@ public class Plot3D extends Plot {
             String label = this.zAxis.getLabel().getText();
             if (label != null) {
                 tickpos = projector.project(factor_x * 10 * lf, -factor_y * 10 * lf, 0);
-                tickpos.x = tickpos.x - this.xAxis.getTickLength() - 15 - strWidth;
+                tickpos.x = tickpos.x - (int)this.xAxis.getTickLength() - 15 - strWidth;
                 g.setFont(this.zAxis.getLabelFont());
                 g.setColor(this.zAxis.getLabelColor());
                 //Draw.drawLabelPoint_270(tickpos.x, tickpos.y, this.zAxis.getLabelFont(), label,

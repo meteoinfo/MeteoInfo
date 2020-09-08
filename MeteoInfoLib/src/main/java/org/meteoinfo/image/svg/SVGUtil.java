@@ -1,5 +1,7 @@
 package org.meteoinfo.image.svg;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+
 import javax.swing.*;
 import java.net.URL;
 
@@ -13,8 +15,7 @@ public class SVGUtil {
     public static void setSVGIcon(AbstractButton button, String iconPath) {
         try {
             FlatSVGIcon icon = new FlatSVGIcon(iconPath);
-            URL url = FlatSVGIcon.class.getClassLoader().getResource(iconPath);
-            if (url != null) {
+            if (icon.hasFound()) {
                 button.setIcon(icon);
             }
         } catch (Exception e) {
@@ -31,8 +32,7 @@ public class SVGUtil {
     public static void setSVGIcon(AbstractButton button, String iconPath, ClassLoader classLoader) {
         try {
             FlatSVGIcon icon = new FlatSVGIcon(iconPath, classLoader);
-            URL url = icon.getIconURL();
-            if (url != null) {
+            if (icon.hasFound()) {
                 button.setIcon(icon);
             }
         } catch (Exception e) {

@@ -1398,7 +1398,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             textRenderer = new TextRenderer(font, true, true);
         } else {
             textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
-                    (int)(font.getSize() * this.scale)), true, true);
+                    (int)(font.getSize() * (1 + (this.scale - 1) * 0.8))), true, true);
         }
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
@@ -1414,7 +1414,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
         switch (yAlign) {
             case CENTER:
-                y -= rect.getHeight() * 0.5;
+                y -= rect.getHeight() * 0.3;
                 break;
             case TOP:
                 y -= rect.getHeight();
@@ -1455,7 +1455,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             textRenderer = new TextRenderer(font, true, true);
         } else {
             textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
-                    (int)(font.getSize() * this.scale)), true, true);
+                    (int)(font.getSize() * (1 + (this.scale - 1) * 0.8))), true, true);
         }
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);

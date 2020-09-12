@@ -11,7 +11,6 @@ import com.jogamp.opengl.util.FPSAnimator;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +18,6 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.*;
-import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
@@ -89,8 +87,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @param pltGL Plot3DGL
      * @return GLChartPanel
      */
-    public static GLChartPanel factor(boolean doubleBuffered, boolean sampleBuffers,
-                                      int numSamples, Plot3DGL pltGL) {
+    public static GLChartPanel factory(boolean doubleBuffered, boolean sampleBuffers,
+                                       int numSamples, Plot3DGL pltGL) {
         final GLProfile profile = GLProfile.get(GLProfile.GL2);
         GLCapabilities cap = new GLCapabilities(profile);
         cap.setDoubleBuffered(doubleBuffered);
@@ -106,7 +104,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @return GLChartPanel
      */
     public static GLChartPanel factory(Plot3DGL pltGL) {
-        return factor(true, true, 4, pltGL);
+        return factory(true, true, 4, pltGL);
     }
 
     /**
@@ -114,7 +112,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @return GLChartPanel
      */
     public static GLChartPanel factory() {
-        return factor(true, true, 4, new Plot3DGL());
+        return factory(true, true, 4, new Plot3DGL());
     }
 
     private void init(Plot3DGL pltGL) {

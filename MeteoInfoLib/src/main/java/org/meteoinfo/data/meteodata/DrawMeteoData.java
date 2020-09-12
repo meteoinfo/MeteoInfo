@@ -1911,22 +1911,27 @@ public class DrawMeteoData {
         aLayer.editAddField("ID", DataType.INT);
         aLayer.editAddField(fieldName, DataType.DOUBLE);
 
-        for (i = 0; i < data.getSize(); i++) {
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        IndexIterator iter = data.getIndexIterator();
+        double v;
+        while(iter.hasNext()) {
             aPoint = new PointD();
-            aPoint.X = x.getDouble(i);
-            aPoint.Y = y.getDouble(i);
-            if (Double.isNaN(aPoint.X)) {
+            aPoint.X = xIter.getDoubleNext();
+            aPoint.Y = yIter.getDoubleNext();
+            v = iter.getDoubleNext();
+            if (Double.isNaN(aPoint.X) || Double.isNaN(aPoint.Y)) {
                 continue;
             }
             PointShape aPointShape = new PointShape();
             aPointShape.setPoint(aPoint);
-            aPointShape.setValue(data.getDouble(i));
+            aPointShape.setValue(v);
 
             int shapeNum = aLayer.getShapeNum();
             try {
                 if (aLayer.editInsertShape(aPointShape, shapeNum)) {
-                    aLayer.editCellValue("ID", shapeNum, i);
-                    aLayer.editCellValue(fieldName, shapeNum, data.getDouble(i));
+                    aLayer.editCellValue("ID", shapeNum, shapeNum);
+                    aLayer.editCellValue(fieldName, shapeNum, v);
                 }
             } catch (Exception ex) {
                 Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);

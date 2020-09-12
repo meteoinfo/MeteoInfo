@@ -2877,11 +2877,13 @@ public class VectorLayer extends MapLayer {
             case GraduatedColor:
                 if (!ls.isGeometry()) {
                     shapeIdx = 0;
-                    int idx = 0;
+                    int idx = -1;
                     for (Shape aShape : this.getShapes()) {
                         String vStr = this.getCellValue(ls.getFieldName(), shapeIdx).toString();
                         double v = Double.parseDouble(vStr);
-                        if (v <= ls.getMinValue())
+                        if (Double.isNaN(v))
+                            idx = -1;
+                        else if (v <= ls.getMinValue())
                             idx = 0;
                         else if (v >= ls.getMaxValue())
                             idx = ls.getBreakNum() - 1;

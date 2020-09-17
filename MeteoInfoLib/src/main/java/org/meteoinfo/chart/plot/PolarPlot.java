@@ -786,7 +786,7 @@ public class PolarPlot extends Plot2D {
             
             for (int i = 0; i < this.yTickLocations.size(); i++) {
                 double v = this.yTickLocations.get(i);
-                if (v > 0){
+                if (v > 0  && v < this.radius){
                     xy = MIMath.polarToCartesian(Math.toRadians(this.yTickLabelPos), v + bottom);
                     xy = this.projToScreen(xy[0], xy[1], area);
                     x = xy[0];

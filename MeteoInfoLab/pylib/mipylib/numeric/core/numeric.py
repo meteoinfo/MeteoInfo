@@ -45,7 +45,7 @@ __all__ = [
     'griddata','hcurl','hdivg','hstack','identity','interp2d',
     'interpn','isarray','isfinite','isinf','isnan','linint2','linregress','linspace','log','log10',
     'logical_not','logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum',
-    'monthname','newaxis','nonzero','normalize_axis_tuple','ones','ones_like','pol2cart','polyval','power','radians','ravel',
+    'monthname','moveaxis','newaxis','nonzero','ones','ones_like','pol2cart','polyval','power','radians','ravel',
     'reshape','repeat','roll','rolling_mean','rot90','sin','shape','smooth5','smooth9','sort','squeeze','argsort',
     'split','sqrt','square','std','sum','swapaxes','tan','tile','transpose','trapz','vdot','unique',
     'unravel_index','var','vstack','where','zeros','zeros_like'
@@ -2086,6 +2086,8 @@ def transpose(a, axes=None):
     
     :returns: Transposed array.
     '''
+    if isinstance(a, (list, tuple)):
+        a = array(a)
     return a.transpose(axes)
 
 def swapaxes(a, axis1, axis2):
@@ -2098,6 +2100,66 @@ def swapaxes(a, axis1, axis2):
     :returns: Axes swapped array.
     '''
     return a.swapaxes(axis1, axis2)
+
+def moveaxis(a, source, destination):
+    """
+    Move axes of an array to new positions.
+    Other axes remain in their original order.
+    .. versionadded:: 1.11.0
+    Parameters
+    ----------
+    a : np.ndarray
+        The array whose axes should be reordered.
+    source : int or sequence of int
+        Original positions of the axes to move. These must be unique.
+    destination : int or sequence of int
+        Destination positions for each of the original axes. These must also be
+        unique.
+    Returns
+    -------
+    result : np.ndarray
+        Array with moved axes. This array is a view of the input array.
+    See Also
+    --------
+    transpose: Permute the dimensions of an array.
+    swapaxes: Interchange two axes of an array.
+    Examples
+    --------
+    >>> x = np.zeros((3, 4, 5))
+    >>> np.moveaxis(x, 0, -1).shape
+    (4, 5, 3)
+    >>> np.moveaxis(x, -1, 0).shape
+    (5, 3, 4)
+    These all achieve the same result:
+    >>> np.transpose(x).shape
+    (5, 4, 3)
+    >>> np.swapaxes(x, 0, -1).shape
+    (5, 4, 3)
+    >>> np.moveaxis(x, [0, 1], [-1, -2]).shape
+    (5, 4, 3)
+    >>> np.moveaxis(x, [0, 1, 2], [-1, -2, -3]).shape
+    (5, 4, 3)
+    """
+    try:
+        # allow duck-array types if they define transpose
+        transpose = a.transpose
+    except AttributeError:
+        a = asarray(a)
+        transpose = a.transpose
+
+    source = normalize_axis_tuple(source, a.ndim, 'source')
+    destination = normalize_axis_tuple(destination, a.ndim, 'destination')
+    if len(source) != len(destination):
+        raise ValueError('`source` and `destination` arguments must have '
+                         'the same number of elements')
+
+    order = [n for n in range(a.ndim) if n not in source]
+
+    for dest, src in sorted(zip(destination, source)):
+        order.insert(dest, src)
+
+    result = transpose(order)
+    return result
 
 def rot90(a, k=1):
     """

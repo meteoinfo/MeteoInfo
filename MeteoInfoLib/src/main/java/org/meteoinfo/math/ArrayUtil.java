@@ -1335,6 +1335,7 @@ public class ArrayUtil {
 
     // </editor-fold>
     // <editor-fold desc="Output">
+
     /**
      * Array to string
      *
@@ -1349,9 +1350,10 @@ public class ArrayUtil {
         sbuff.append("array(");
         int ndim = a.getRank();
         if (ndim > 1) {
-            sbuff.append("[");
+            for (int i = 0; i < ndim - 1; i++)
+                sbuff.append("[");
         }
-        int i = 0, n = 0;
+
         IndexIterator ii = a.getIndexIterator();
         int shapeIdx = ndim - 1;
         if (shapeIdx < 0) {
@@ -1361,14 +1363,28 @@ public class ArrayUtil {
             return sbuff.toString();
         }
 
+        int[] shape = a.getShape();
+        int[] dims = new int[shape.length];
+        for (int i = dims.length - 1; i >= 0; i--) {
+            if (i == dims.length - 1)
+                dims[i] = shape[i];
+            else
+                dims[i] = dims[i + 1] * shape[i];
+        }
+
         int len = a.getShape()[shapeIdx];
         String dstr;
+        int i = 0, n = 1, nn = 0;
         while (ii.hasNext()) {
             if (i == 0) {
-                if (n > 0) {
+                if (n > 1) {
                     sbuff.append("\n      ");
                 }
                 sbuff.append("[");
+                if (nn > 0) {
+                    for (int j = 0; j < nn; j++)
+                        sbuff.append("[");
+                }
             }
             dstr = ii.getStringNext();
             if (a.getDataType().isBoolean()) {
@@ -1383,8 +1399,18 @@ public class ArrayUtil {
             i += 1;
             if (i == len) {
                 sbuff.append("]");
-                len = a.getShape()[shapeIdx];
                 i = 0;
+                if (ndim > 1 && n < a.getSize()) {
+                    nn = 0;
+                    for (int j = ndim - 2; j >= 0; j--) {
+                        if (n % dims[j] == 0) {
+                            sbuff.append("]");
+                            nn += 1;
+                        }
+                    }
+                    for (int j = 0; j < nn; j++)
+                        sbuff.append("\n");
+                }
             } else {
                 sbuff.append(", ");
             }
@@ -1395,7 +1421,8 @@ public class ArrayUtil {
             }
         }
         if (ndim > 1) {
-            sbuff.append("]");
+            for (i = 0; i < ndim - 1; i++)
+                sbuff.append("]");
         }
         sbuff.append(")");
         return sbuff.toString();

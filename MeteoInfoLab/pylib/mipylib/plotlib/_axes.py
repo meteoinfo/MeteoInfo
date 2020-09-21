@@ -2514,6 +2514,25 @@ class Axes(object):
         self.axes.setAutoExtent()
         
         return ctext, graphic
+
+    def axhline(self, y=0, xmin=0, xmax=1, **kwargs):
+        """
+        Add a horizontal line across the axis.
+        Parameters
+        ----------
+        y : float, default: 0
+            y position in data coordinates of the horizontal line.
+        xmin : float, default: 0
+            Should be between 0 and 1, 0 being the far left of the plot, 1 the
+            far right of the plot.
+        xmax : float, default: 1
+            Should be between 0 and 1, 0 being the far left of the plot, 1 the
+            far right of the plot.
+        Returns
+        -------
+        `~matplotlib.lines.Line2D`
+        """
+        pass
     
     def patch(self, x, y=None, **kwargs):
         '''

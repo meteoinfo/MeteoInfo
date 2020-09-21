@@ -1223,6 +1223,9 @@ public class LayersLegend extends JPanel {
      * @param mapFrame The map frame
      */
     public void setActiveMapFrame(MapFrame mapFrame) {
+        if (mapFrame == null)
+            return;
+
         for (MapFrame mf : _mapFrames) {
             mf.setActive(false);
         }

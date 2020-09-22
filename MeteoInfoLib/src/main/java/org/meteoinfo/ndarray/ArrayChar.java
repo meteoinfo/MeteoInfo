@@ -326,7 +326,8 @@ public class ArrayChar extends Array {
      */
     public String getString(int index) {
         Index ima = getIndex();
-        return getString(ima.set(index));
+        ima.setCurrentCounter(index);
+        return getString(ima);
     }
 
     /**

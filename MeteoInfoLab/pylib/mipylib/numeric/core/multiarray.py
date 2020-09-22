@@ -101,7 +101,14 @@ class NDArray(object):
                 break
             i += 1
         if allint:
-            return self._array.getObject(aindex)
+            if self.dtype == _dtype.char:
+                return self._array.getString(aindex)
+            else:
+                r = self._array.getObject(aindex)
+                if isinstance(r, Complex):
+                    return complex(r.getReal(), r.getImaginary())
+                else:
+                    return r
             
         if self.ndim == 0:
             return self
@@ -207,11 +214,14 @@ class NDArray(object):
                 
         if r.getSize() == 1:
             iter = r.getIndexIterator()
-            r = iter.getObjectNext()
-            if isinstance(r, Complex):
-                return complex(r.getReal(), r.getImaginary())
+            if self.dtype == _dtype.char:
+                return iter.getStringNext()
             else:
-                return r
+                r = iter.getObjectNext()
+                if isinstance(r, Complex):
+                    return complex(r.getReal(), r.getImaginary())
+                else:
+                    return r
         else:
             for i in flips:
                 r = r.flip(i)

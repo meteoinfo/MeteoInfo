@@ -493,6 +493,19 @@ class NDArray(object):
             return NDArray(ArrayUtil.convertEncoding(self._array, encoding))
         else:
             return None
+
+    def get_string(self, encoding='UTF-8'):
+        '''
+        Get string from a char array.
+
+        :param encoding: (*string*) Encoding string.
+
+        :returns: (*string*) String.
+        '''
+        if self.dtype == _dtype.char:
+            return ArrayUtil.getString(self._array, encoding)
+        else:
+            return None
     
     def in_values(self, other):
         '''

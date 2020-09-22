@@ -1666,6 +1666,31 @@ public class ArrayUtil {
     }
 
     /**
+     * Get string from a char array
+     * @param a Char array
+     * @param encoding The encoding convert to
+     * @return The string
+     */
+    public static String getString(ArrayChar a, String encoding) {
+        a = (ArrayChar) a.copyIfView();
+
+        char[] data = (char[]) a.getStorage();
+        if (!encoding.toUpperCase().equals("UTF-8")) {
+            Charset cs = Charset.forName("UTF-8");
+            CharBuffer cb = CharBuffer.allocate(data.length);
+            cb.put(data);
+            cb.flip();
+            ByteBuffer bb = cs.encode(cb);
+            cs = Charset.forName(encoding);
+            cb = cs.decode(bb);
+            data = cb.array();
+        }
+
+
+        return new String(data);
+    }
+
+    /**
      * Concatenate arrays to one array along a axis
      *
      * @param arrays Array list

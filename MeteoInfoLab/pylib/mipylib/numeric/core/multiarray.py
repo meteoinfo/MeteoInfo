@@ -480,6 +480,19 @@ class NDArray(object):
         '''
         r = ArrayUtil.copyToNDJavaArray(self._array, dtype)
         return r
+
+    def to_encoding(self, encoding):
+        '''
+        Convert char array to encoding from UTF-8
+
+        :param encoding: (*string*) Encoding string.
+
+        :returns: (*array*) Converted array.
+        '''
+        if self.dtype == _dtype.char:
+            return NDArray(ArrayUtil.convertEncoding(self._array, encoding))
+        else:
+            return None
     
     def in_values(self, other):
         '''

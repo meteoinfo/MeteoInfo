@@ -19,6 +19,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,16 +39,10 @@ import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.io.EndianDataOutputStream;
+import org.meteoinfo.layer.ChartSet;
 import org.meteoinfo.math.spatial.KDTree;
 import org.meteoinfo.math.spatial.KDTree.SearchResult;
-import org.meteoinfo.ndarray.Complex;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.Index;
-import org.meteoinfo.ndarray.Index2D;
-import org.meteoinfo.ndarray.IndexIterator;
-import org.meteoinfo.ndarray.InvalidRangeException;
-import org.meteoinfo.ndarray.Range;
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.shape.PolygonShape;
 
 /**
@@ -1642,6 +1638,29 @@ public class ArrayUtil {
         while(iterA.hasNext()) {
             iterR.setDateNext(JDateUtil.fromOADate(iterA.getDoubleNext()));
         }
+
+        return r;
+    }
+
+    /**
+     * Convert char array encoding from UTF-8
+     * @param a Char array
+     * @param encoding The encoding convert to
+     * @return Converted array
+     */
+    public static Array convertEncoding(ArrayChar a, String encoding) {
+        if (encoding.toUpperCase().equals("UTF-8"))
+            return a.copy();
+
+        char[] data = (char[]) a.getStorage();
+        Charset cs = Charset.forName("UTF-8");
+        CharBuffer cb = CharBuffer.allocate(data.length);
+        cb.put(data);
+        cb.flip();
+        ByteBuffer bb = cs.encode(cb);
+        cs = Charset.forName(encoding);
+        cb = cs.decode(bb);
+        Array r = Array.factory(DataType.CHAR, a.getIndex(), cb.array());
 
         return r;
     }

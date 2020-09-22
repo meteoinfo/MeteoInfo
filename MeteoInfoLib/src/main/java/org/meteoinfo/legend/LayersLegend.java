@@ -1240,7 +1240,7 @@ public class LayersLegend extends JPanel {
      * @return New map frame name
      */
     public String getNewMapFrameName() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         for (MapFrame mf : _mapFrames) {
             if (mf.getText().contains("New Map Frame")) {
                 names.add(mf.getText());

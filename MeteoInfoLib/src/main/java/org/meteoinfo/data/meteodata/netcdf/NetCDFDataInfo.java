@@ -2041,7 +2041,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             aGridData.data = gridData;
             aGridData.xArray = nvar.getXDimension().getValues();
             aGridData.yArray = nvar.getYDimension().getValues();
-            aGridData.missingValue = missingValue;
+            aGridData.setMissingValue(missingValue);
 
             if (this.isYReverse()) {
                 aGridData.yReverse();

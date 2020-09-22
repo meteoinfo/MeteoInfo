@@ -2193,7 +2193,27 @@ public class GridData {
         }
         return hasNaN;
     }
-    
+
+    /**
+     * Set missing value
+     * @param value Missing value
+     */
+    public void setMissingValue(double value) {
+        if (java.lang.Double.isNaN(value)) {
+            value = -9999.;
+            int yn = this.getYNum();
+            int xn = this.getXNum();
+            for (int i = 0; i < yn; i++) {
+                for (int j = 0; j < xn; j++) {
+                    if (java.lang.Double.isNaN(this.data[i][j]))
+                        this.data[i][j] = value;
+                }
+            }
+        }
+        this.missingValue = value;
+    }
+
+
     /**
      * Get if has NaN value
      *

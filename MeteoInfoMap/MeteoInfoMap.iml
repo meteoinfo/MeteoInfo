@@ -11,7 +11,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.sun.woodstock.dependlibs:jhall:2.0" level="project" />
     <orderEntry type="module" module-name="MeteoInfoLib" />
     <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.3.3" level="project" />
     <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:0.1" level="project" />
@@ -79,7 +78,7 @@
     <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:0.42" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.formdev:svgSalamander:1.1.2.3" level="project" />
     <orderEntry type="module" module-name="meteoinfo-console" />
-    <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:2.6.0" level="project" />
-    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.0.4" level="project" />
+    <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:3.1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.1.0" level="project" />
   </component>
 </module>

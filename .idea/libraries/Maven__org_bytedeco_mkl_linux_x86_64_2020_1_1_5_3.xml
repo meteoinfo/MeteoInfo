@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.bytedeco:mkl:linux-x86_64:2020.1-1.5.3">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/mkl/2020.1-1.5.3/mkl-2020.1-1.5.3-linux-x86_64.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/mkl/2020.1-1.5.3/mkl-2020.1-1.5.3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/mkl/2020.1-1.5.3/mkl-2020.1-1.5.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

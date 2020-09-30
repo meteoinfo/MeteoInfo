@@ -1,9 +1,45 @@
 package org.meteoinfo.util;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
 
 public class SystemUtils {
+
+    /**
+     * Add path to Classpath with reflection since the URLClassLoader.addURL(URL url) method is protected
+     * @param path The path
+     * @throws Exception
+     */
+    public static void addPath(String path) throws Exception {
+        File f = new File(path);
+        URL url = f.toURL();
+
+        ClassLoader prevCl = Thread.currentThread().getContextClassLoader();
+
+        // Create class loader using given codebase
+        // Use prevCl as parent to maintain current visibility
+        ClassLoader urlCl = URLClassLoader.newInstance(new URL[]{url}, prevCl);
+
+        try {
+            // Save class loader so that we can restore later
+            Thread.currentThread().setContextClassLoader(urlCl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Restore
+            Thread.currentThread().setContextClassLoader(prevCl);
+        }
+    }
+
     /**
      * Sets the java library path to the specified path
      *

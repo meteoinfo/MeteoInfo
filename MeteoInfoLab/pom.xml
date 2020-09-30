@@ -31,18 +31,13 @@
         </dependency>
         <dependency>
             <groupId>com.fifesoft</groupId>
-            <artifactId>autocomplete</artifactId>
-            <version>2.6.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fifesoft</groupId>
             <artifactId>rsyntaxtextarea</artifactId>
-            <version>3.0.4</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native-platform</artifactId>
-            <version>1.0.0-beta5</version>
+            <version>1.0.0-beta7</version>
         </dependency>
     </dependencies>
     <properties>
@@ -66,7 +61,7 @@
                     </archive>
                 </configuration>
             </plugin>
-            <!--<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>  
                 <artifactId>maven-dependency-plugin</artifactId>  
                 <version>3.1.1</version>  
@@ -78,11 +73,13 @@
                             <goal>copy-dependencies</goal>  
                         </goals>  
                         <configuration>  
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>  
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <excludeArtifactIds>MeteoInfoLib,meteoinfo-console</excludeArtifactIds>
+                            <excludeTransitive>true</excludeTransitive>
                         </configuration>  
                     </execution>  
                 </executions>  
-            </plugin>-->
+            </plugin>
 
             <!--<plugin>
                 <inherited>true</inherited>

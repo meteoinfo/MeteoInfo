@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.help.HelpSet;
+//import javax.help.HelpSet;
 import javax.imageio.ImageIO;
 import javax.print.PrintException;
 import javax.swing.*;
@@ -3028,9 +3028,9 @@ public class FrmMain extends JFrame implements IApplication {
         }
     }
 
-    /**
+/*    *//**
      * find the helpset file and create a HelpSet object
-     */
+     *//*
     private HelpSet getHelpSet(String helpsetfile) {
         HelpSet hs = null;
         ClassLoader cl = this.getClass().getClassLoader();
@@ -3045,7 +3045,7 @@ public class FrmMain extends JFrame implements IApplication {
             System.out.println("HelpSet: " + helpsetfile + " not found");
         }
         return hs;
-    }
+    }*/
 
     private void jMenuItem_AboutActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:

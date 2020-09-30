@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.bytedeco:openblas:android-arm:0.3.9-1-1.5.3">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/openblas/0.3.9-1-1.5.3/openblas-0.3.9-1-1.5.3-android-arm.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/openblas/0.3.9-1-1.5.3/openblas-0.3.9-1-1.5.3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/openblas/0.3.9-1-1.5.3/openblas-0.3.9-1-1.5.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

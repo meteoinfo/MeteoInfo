@@ -4750,7 +4750,7 @@ public class GraphicFactory {
         GraphicCollection gc = new GraphicCollection();
         GraphicCollection lgc = new GraphicCollection();
         GraphicCollection pgc = new GraphicCollection();
-        double sum = ArrayMath.sum(xdata);
+        double sum = ArrayMath.sum(xdata).doubleValue();
         double v;
         float sweepAngle, angle;
         float ex;

@@ -1048,18 +1048,14 @@ def cumsum(x, axis=None):
     :returns: (*array_like*) Cumulative sum result.
     """
     x = asarray(x)
-    if axis is None:
-        x = x.flatten()
-        axis = 0
-    
-    r = ArrayMath.cumsum(x.asarray(), axis)
+    r = x.cumsum(axis)
     if type(x) is NDArray:
-        return NDArray(r)
+        return r
     else:
         dims = []
         for i in range(0, x.ndim):
             dims.append(x.dims[i])
-        return DimArray(NDArray(r), dims, x.fill_value, x.proj)
+        return DimArray(r, dims, x.fill_value, x.proj)
             
 def mean(x, axis=None):
     """

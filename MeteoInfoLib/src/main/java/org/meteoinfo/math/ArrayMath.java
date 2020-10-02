@@ -5200,7 +5200,7 @@ public class ArrayMath {
             }
             shape[idx] = dataShape[i];
         }
-        Array r = Array.factory(DataType.DOUBLE, shape);
+        Array r = Array.factory(a.getDataType(), shape);
         double s;
         Index indexr = r.getIndex();
         int[] current;
@@ -5299,7 +5299,7 @@ public class ArrayMath {
             }
             shape[idx] = dataShape[i];
         }
-        Array r = Array.factory(DataType.DOUBLE, shape);
+        Array r = Array.factory(a.getDataType(), shape);
         double s;
         Index indexr = r.getIndex();
         int[] current;
@@ -5373,7 +5373,7 @@ public class ArrayMath {
             }
             shape[idx] = dataShape[i];
         }
-        Array r = Array.factory(DataType.DOUBLE, shape);
+        Array r = Array.factory(a.getDataType(), shape);
         double s;
         Index indexr = r.getIndex();
         int[] current;
@@ -5463,7 +5463,7 @@ public class ArrayMath {
      * @param a Array a
      * @return Summarize value
      */
-    public static double sum(Array a) {
+    public static Number sum(Array a) {
         double sum = 0.0D;
         double v;
         int n = 0;
@@ -5478,7 +5478,7 @@ public class ArrayMath {
         if (n == 0) {
             return Double.NaN;
         } else {
-            return sum;
+            return doubleToNumber(sum, a.getDataType());
         }
     }
 

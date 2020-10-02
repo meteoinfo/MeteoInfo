@@ -640,6 +640,21 @@ class NDArray(object):
         else:
             r = ArrayMath.sum(self._array, axis)
             return NDArray(r)
+
+    def cumsum(self, axis=None):
+        '''
+        Return the cumulative sum of the elements along a given axis.
+
+        :param axis: (*int*) Axis along which the standard deviation is computed.
+            The default is to compute the standard deviation of the flattened array.
+
+        returns: (*array_like*) Sum result
+        '''
+        if axis is None:
+            return ArrayMath.cumsum(self.flatten()._array, 0)
+        else:
+            r = ArrayMath.cumsum(self._array, axis)
+            return NDArray(r)
             
     def prod(self):
         '''

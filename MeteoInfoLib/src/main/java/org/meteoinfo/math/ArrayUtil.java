@@ -1676,18 +1676,16 @@ public class ArrayUtil {
 
         char[] data = (char[]) a.getStorage();
         if (!encoding.toUpperCase().equals("UTF-8")) {
-            Charset cs = Charset.forName("UTF-8");
-            CharBuffer cb = CharBuffer.allocate(data.length);
-            cb.put(data);
-            cb.flip();
-            ByteBuffer bb = cs.encode(cb);
-            cs = Charset.forName(encoding);
-            cb = cs.decode(bb);
-            data = cb.array();
+            try {
+                byte[] bytes = String.valueOf(data).getBytes("UTF-8");
+                return new String(bytes, encoding);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
 
 
-        return new String(data);
+        return String.valueOf(data);
     }
 
     /**

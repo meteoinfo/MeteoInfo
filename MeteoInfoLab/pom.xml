@@ -75,7 +75,7 @@
                         <configuration>  
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                             <excludeArtifactIds>MeteoInfoLib,meteoinfo-console</excludeArtifactIds>
-                            <excludeTransitive>true</excludeTransitive>
+                            <!--<excludeTransitive>true</excludeTransitive>-->
                         </configuration>  
                     </execution>  
                 </executions>  

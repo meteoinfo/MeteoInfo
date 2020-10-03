@@ -18,7 +18,7 @@ from ..core import NDArray
 
 __all__ = [
     'beta','binomial','chisquare','exponential','f','gamma','gumbel','laplace','logistic',
-    'lognormal','normal','rand','randn','randint','pareto','poisson','seed','standard_t',
+    'lognormal','normal','rand','randn','randint','random','pareto','poisson','seed','standard_t',
     'triangular','uniform','weibull'
     ]
 
@@ -33,7 +33,24 @@ def seed(seed=None):
     else:
         RandomUtil.useSeed = True
         RandomUtil.seed = seed
-    
+
+def random(size=None):
+    """
+    Random values in a given shape.
+
+    Create an array of the given shape and propagate it with random samples from a uniform
+        distribution over [0, 1).
+
+    :param size: (*int or tuple*) Output shape. If the given shape is, e.g., (m, n, k), then m * n * k samples
+        are drawn. Default is None, in which case a single value is returned.
+
+    :returns: Random values array.
+    """
+    if size is None:
+        return RandomUtil.rand()
+    else:
+        return NDArray(RandomUtil.rand(size))
+
 def rand(*args):
     """
     Random values in a given shape.

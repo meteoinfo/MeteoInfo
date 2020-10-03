@@ -20,7 +20,7 @@ public class DistributionUtil {
      * Random variates of given type.
      * @param dis Distribution.
      * @param n Size.
-     * @return Rsult array.
+     * @return Result array.
      */
     public static Array rvs(RealDistribution dis, int n){
         double[] samples = dis.sample(n);

@@ -21,6 +21,14 @@ class RandomState(object):
         else:
             self._mtrand = MTRandom(seed)
 
+    def seed(self, seed=None):
+        """
+        Set seed.
+
+        :param seed: The seed.
+        """
+        self._mtrand.setSeed(seed)
+
     def rand(self, *args):
         """
         Random values in a given shape.

@@ -7,13 +7,13 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.interpolate import InterpUtil
-from org.meteoinfo.math import ArrayMath, ArrayUtil
-from org.meteoinfo.ndarray import Array
+from org.meteoinfo.math import ArrayUtil
 
-from ..core import NDArray, DimArray
+from ..core import NDArray
+from ..core import numeric as np
 
 __all__ = [
-    'interp1d','RectBivariateSpline'
+    'interp1d','interp2d','linint2','RectBivariateSpline'
     ]
 
 class interp1d(object):
@@ -27,9 +27,9 @@ class interp1d(object):
     '''
     def __init__(self, x, y, kind='linear'):        
         if isinstance(x, list):
-            x = NDArray(ArrayUtil.array(x))
+            x = np.array(x)
         if isinstance(y, list):
-            y = NDArray(ArrayUtil.array(y))
+            y = np.array(y)
         self._func = InterpUtil.getInterpFunc(x.asarray(), y.asarray(), kind)
 
     def __call__(self, x):
@@ -39,8 +39,8 @@ class interp1d(object):
         :param x: (*array_like*) Points to evaluate the interpolant at.
         '''
         if isinstance(x, list):
-            x = NDArray(ArrayUtil.array(x))
-        if isinstance(x, (NDArray, DimArray)):
+            x = np.array(x)
+        if isinstance(x, NDArray):
             x = x.asarray()
         r = InterpUtil.evaluate(self._func, x)
         if isinstance(r, float):
@@ -66,12 +66,12 @@ class interp2d(object):
     '''
     def __init__(self, x, y, z, kind='linear'):
         if isinstance(x, list):
-            x = NDArray(ArrayUtil.array(x))
+            x = np.array(x)
         if isinstance(y, list):
-            y = NDArray(ArrayUtil.array(y))
+            y = np.array(y)
         if isinstance(z, list):
-            z = NDArray(ArrayUtil.array(z))
-        self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.asarray())
+            z = np.array(z)
+        self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.T.asarray(), kind)
         
     def __call__(self, x, y):
         '''
@@ -81,12 +81,12 @@ class interp2d(object):
         :param y: (*array_like*) Y to evaluate the interpolant at.
         '''
         if isinstance(x, list):
-            x = NDArray(ArrayUtil.array(x))
-        if isinstance(x, (NDArray, DimArray)):
+            x = np.array(x)
+        if isinstance(x, NDArray):
             x = x.asarray()
         if isinstance(y, list):
-            y = NDArray(ArrayUtil.array(y))
-        if isinstance(y, (NDArray, DimArray)):
+            y = np.array(y)
+        if isinstance(y, NDArray):
             y = y.asarray()
         r = InterpUtil.evaluate(self._func, x, y)
         if isinstance(r, float):
@@ -106,12 +106,12 @@ class RectBivariateSpline(object):
     '''
     def __init__(self, x, y, z):        
         if isinstance(x, list):
-            x = NDArray(ArrayUtil.array(x))
+            x = np.array(x)
         if isinstance(y, list):
-            y = NDArray(ArrayUtil.array(y))
+            y = np.array(y)
         if isinstance(z, list):
-            z = NDArray(ArrayUtil.array(z))
-        self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.asarray())
+            z = np.array(z)
+        self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.asarray(), 'linear')
 
     def __call__(self, x, y):
         '''
@@ -121,17 +121,47 @@ class RectBivariateSpline(object):
         :param y: (*array_like*) Y to evaluate the interpolant at.
         '''
         if isinstance(x, list):
-            x = NDArray(ArrayUtil.array(x))
-        if isinstance(x, (NDArray, DimArray)):
+            x = np.array(x)
+        if isinstance(x, NDArray):
             x = x.asarray()
         if isinstance(y, list):
-            y = NDArray(ArrayUtil.array(y))
-        if isinstance(y, (NDArray, DimArray)):
+            y = np.array(y)
+        if isinstance(y, NDArray):
             y = y.asarray()
         r = InterpUtil.evaluate(self._func, x, y)
         if isinstance(r, float):
             return r
         else:
             return NDArray(r)
-            
-############################################################
+
+def linint2(*args, **kwargs):
+    """
+    Interpolates from a rectilinear grid to another rectilinear grid using bilinear interpolation.
+
+    :param x: (*array_like*) X coordinate array of the sample data (one dimension).
+    :param y: (*array_like*) Y coordinate array of the sample data (one dimension).
+    :param z: (*array_like*) Value array of the sample data (muti-dimension, last two dimensions are y and x).
+    :param xq: (*array_like*) X coordinate array of the query data (one dimension).
+    :param yq: (*array_like*) Y coordinate array of the query data (one dimension).
+
+    :returns: (*array_like*) Interpolated array.
+    """
+    if len(args) == 3:
+        z = args[0]
+        x = z.dimvalue(z.ndim - 1)
+        y = z.dimvalue(z.ndim - 2)
+        xq = args[1]
+        yq = args[2]
+    else:
+        x = args[0]
+        y = args[1]
+        z = args[2]
+        xq = args[3]
+        yq = args[4]
+    x = np.array(x)._array
+    y = np.array(y)._array
+    z = np.array(z)._array
+    xq = np.array(xq)._array
+    yq = np.array(yq)._array
+    r = ArrayUtil.linint2(z, x, y, xq, yq)
+    return NDArray(r)

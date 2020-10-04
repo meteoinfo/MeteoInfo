@@ -9,15 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.analysis.BivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.interpolation.AkimaSplineInterpolator;
-import org.apache.commons.math3.analysis.interpolation.BicubicInterpolator;
-import org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator;
-import org.apache.commons.math3.analysis.interpolation.DividedDifferenceInterpolator;
-import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
-import org.apache.commons.math3.analysis.interpolation.LoessInterpolator;
-import org.apache.commons.math3.analysis.interpolation.NevilleInterpolator;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
-import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
+import org.apache.commons.math3.analysis.interpolation.*;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.global.PointD;
@@ -95,13 +87,22 @@ public class InterpUtil {
      * @param x X data
      * @param y Y data
      * @param z Z data
+     * @param kind Specifies the kind of interpolation as a string.
      * @return Interpolation function
      */
-    public static BivariateFunction getBiInterpFunc(Array x, Array y, Array z) {
+    public static BivariateFunction getBiInterpFunc(Array x, Array y, Array z, String kind) {
         double[] xd = (double[]) ArrayUtil.copyToNDJavaArray_Double(x);
         double[] yd = (double[]) ArrayUtil.copyToNDJavaArray_Double(y);
         double[][] zd = (double[][]) ArrayUtil.copyToNDJavaArray_Double(z);
-        BivariateGridInterpolator li = new BicubicInterpolator();
+        BivariateGridInterpolator li;
+        switch (kind) {
+            case "spline":
+                li = new PiecewiseBicubicSplineInterpolator();
+                break;
+            default:
+                li = new BicubicInterpolator();
+                break;
+        }
         BivariateFunction func = li.interpolate(xd, yd, zd);
 
         return func;

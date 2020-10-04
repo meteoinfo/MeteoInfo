@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\random">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\interpolate">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
@@ -14,19 +13,28 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\random"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\mnist_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\specc_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\random_seed_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\interp1d_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\interp2d_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\nearest_3d.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\linint2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\interp2d_3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\interp2d_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\mnist_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\specc_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\random_seed_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\interp1d_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\interp2d_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\nearest_3d.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\linint2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\interp2d_3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\interp2d_2.py"/>
     </RecentFiles>
   </File>
   <Font>

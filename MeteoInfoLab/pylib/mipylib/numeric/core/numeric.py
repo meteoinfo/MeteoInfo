@@ -43,9 +43,9 @@ __all__ = [
     'broadcast_to','cdiff','ceil','concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag',
     'diff','dim_array','datatable','dot','empty','empty_like','exp','eye','floor','fmax','fmin','full',
     'griddata','hcurl','hdivg','hstack','identity','interp2d',
-    'interpn','isarray','isfinite','isinf','isnan','linint2','linregress','linspace','log','log10',
+    'interpn','isarray','isfinite','isinf','isnan','linspace','log','log10',
     'logical_not','logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum',
-    'monthname','moveaxis','newaxis','nonzero','ones','ones_like','pol2cart','polyval','power','radians','ravel',
+    'monthname','moveaxis','newaxis','nonzero','ones','ones_like','pol2cart','power','radians','ravel',
     'reshape','repeat','roll','rolling_mean','rot90','sin','shape','smooth5','smooth9','sort','squeeze','argsort',
     'split','sqrt','square','std','sum','swapaxes','tan','tile','transpose','trapz','vdot','unique',
     'unravel_index','var','vstack','where','zeros','zeros_like'
@@ -2034,44 +2034,7 @@ def corrcoef(x, y):
     b = ArrayMath.getR(y.asarray(), x.asarray())
     r = array([[1, a], [b, 1]])
     return r
-        
-def linregress(x, y):
-    '''
-    Calculate a linear least-squares regression for two sets of measurements.
-    
-    :param x, y: (*array_like*) Two sets of measurements. Both arrays should have the same length.
-    
-    :returns: Result slope, intercept, relative coefficient, two-sided p-value for a hypothesis test 
-        whose null hypothesis is that the slope is zero, standard error of the estimated gradient, 
-        validate data number (remove NaN values).
-    '''
-    if isinstance(x, list):
-        x = array(x)
-    if isinstance(y, list):
-        y = array(y)
-    r = ArrayMath.lineRegress(x.asarray(), y.asarray())
-    return r[0], r[1], r[2], r[3], r[4], r[5]
-    
-def polyval(p, x):
-    """
-    Evaluate a polynomial at specific values.
-    
-    If p is of length N, this function returns the value:
-    
-    p[0]*x**(N-1) + p[1]*x**(N-2) + ... + p[N-2]*x + p[N-1]
-    
-    If x is a sequence, then p(x) is returned for each element of x. If x is another polynomial then the 
-    composite polynomial p(x(t)) is returned.
-    
-    :param p: (*array_like*) 1D array of polynomial coefficients (including coefficients equal to zero) 
-        from highest degree to the constant term.
-    :param x: (*array_like*) A number, an array of numbers, or an instance of poly1d, at which to evaluate 
-        p.
-        
-    :returns: Polynomial value
-    """
-    return NDArray(ArrayMath.polyVal(p, x.asarray()))
-    
+
 def transpose(a, axes=None):
     '''
     Transpose 2-D array.
@@ -2611,38 +2574,6 @@ def asgridarray(data, x=None, y=None, fill_value=-9999.0):
 def asstationdata(data, x, y, fill_value=-9999.0):
     stdata = StationData(data.asarray(), x.asarray(), y.asarray(), fill_value)
     return PyStationData(stdata)
-
-def linint2(*args, **kwargs):
-    """
-    Interpolates from a rectilinear grid to another rectilinear grid using bilinear interpolation.
-    
-    :param x: (*array_like*) X coordinate array of the sample data (one dimension).
-    :param y: (*array_like*) Y coordinate array of the sample data (one dimension).
-    :param z: (*array_like*) Value array of the sample data (muti-dimension, last two dimensions are y and x).
-    :param xq: (*array_like*) X coordinate array of the query data (one dimension).
-    :param yq: (*array_like*) Y coordinate array of the query data (one dimension).
-    
-    :returns: (*array_like*) Interpolated array.
-    """
-    if len(args) == 3:
-        z = args[0]
-        x = z.dimvalue(z.ndim - 1)
-        y = z.dimvalue(z.ndim - 2)
-        xq = args[1]
-        yq = args[2]
-    else:
-        x = args[0]
-        y = args[1]
-        z = args[2]
-        xq = args[3]
-        yq = args[4]
-    x = array(x)._array
-    y = array(y)._array
-    z = array(z)._array
-    xq = array(xq)._array
-    yq = array(yq)._array
-    r = ArrayUtil.linint2(z, x, y, xq, yq)
-    return NDArray(r)
     
 def interp2d(*args, **kwargs):
     """

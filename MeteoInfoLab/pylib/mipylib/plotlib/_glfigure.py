@@ -6,10 +6,9 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.chart.jogl import GLChartPanel
 from com.jogamp.opengl import GLProfile, GLCapabilities
 
-from ._axes3dgl import Axes3DGL
+from org.meteoinfo.chart.jogl import GLChartPanel
 
 __all__ = ['GLFigure']
 
@@ -21,12 +20,9 @@ class GLFigure(GLChartPanel):
         
         :param ax: (*Axes3DGL*) 3D axes with JOGL
         '''
-        if ax is None:
-            ax = Axes3DGL(figure=self)
-        self.axes = ax
-        #super(GLFigure, self).__init__(ax.axes)
+        self.axes = None
         double_buffered = kwargs.pop('double_buffered', None)
-        sample_buffers = kwargs.pop('sample_buffers', None)
+        sample_buffers = kwargs.pop('sample_buffers', True)
         profile = GLProfile.get(GLProfile.GL2)
         cap = GLCapabilities(profile)
         if not double_buffered is None:
@@ -37,7 +33,7 @@ class GLFigure(GLChartPanel):
                 nsamples = kwargs.pop('nsamples', 4)
                 cap.setNumSamples(nsamples)
 
-        super(GLFigure, self).__init__(cap, ax.axes)
+        super(GLFigure, self).__init__(cap)
         
     def set_axes(self, ax):
         '''
@@ -47,6 +43,7 @@ class GLFigure(GLChartPanel):
         '''
         ax.figure = self
         self.axes = ax
+        self.setPlot(ax.axes)
 
     def set_antialias(self, b=None, symbol=None):
         """

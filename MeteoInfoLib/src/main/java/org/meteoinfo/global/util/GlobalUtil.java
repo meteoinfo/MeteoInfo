@@ -63,7 +63,8 @@ public class GlobalUtil {
      * @return Software version
      */
     public static String getVersion(){
-        return "2.3.2";
+        String version = GlobalUtil.class.getPackage().getImplementationVersion();
+        return version;
     }
 
     /**

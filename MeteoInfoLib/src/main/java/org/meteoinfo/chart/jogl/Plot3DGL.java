@@ -60,6 +60,7 @@ import static org.meteoinfo.shape.ShapeTypes.PointZ;
 public class Plot3DGL extends Plot implements GLEventListener {
 
     // <editor-fold desc="Variables">
+    private boolean sampleBuffers = false;
     private boolean doScreenShot;
     private BufferedImage screenImage;
     private final GLU glu = new GLU();
@@ -133,6 +134,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     // </editor-fold>
     // <editor-fold desc="GetSet">
+
+    /**
+     * Get is sample buffers or not
+     * @return Boolean
+     */
+    public boolean isSampleBuffers() {
+        return this.sampleBuffers;
+    }
+
+    /**
+     * Set sample buffers or not
+     * @param value Boolean
+     */
+    public void setSampleBuffers(boolean value) {
+        this.sampleBuffers = value;
+    }
 
     /**
      * Get graphics
@@ -813,21 +830,27 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE);
 
         if (this.antialias) {
-            gl.glEnable(GL2.GL_MULTISAMPLE);
-            /*gl.glEnable(GL2.GL_LINE_SMOOTH);
-            gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_NICEST);
-            gl.glEnable(GL2.GL_POINT_SMOOTH);
-            gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
-            gl.glEnable(GL2.GL_POLYGON_SMOOTH);
-            gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_NICEST);*/
+            if (this.sampleBuffers)
+                gl.glEnable(GL2.GL_MULTISAMPLE);
+            else {
+                gl.glEnable(GL.GL_LINE_SMOOTH);
+                gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
+                gl.glEnable(GL2.GL_POINT_SMOOTH);
+                gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
+                //gl.glEnable(GL2.GL_POLYGON_SMOOTH);
+                //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_NICEST);
+            }
         } else {
-            gl.glDisable(GL2.GL_MULTISAMPLE);
-            /*gl.glDisable(GL2.GL_LINE_SMOOTH);
-            gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_FASTEST);
-            gl.glDisable(GL2.GL_POINT_SMOOTH);
-            gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_FASTEST);
-            gl.glDisable(GL2.GL_POLYGON_SMOOTH);
-            gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_FASTEST);*/
+            if (this.sampleBuffers)
+                gl.glDisable(GL2.GL_MULTISAMPLE);
+            else {
+                gl.glDisable(GL2.GL_LINE_SMOOTH);
+                gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_FASTEST);
+                gl.glDisable(GL2.GL_POINT_SMOOTH);
+                gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_FASTEST);
+                //gl.glDisable(GL2.GL_POLYGON_SMOOTH);
+                //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_FASTEST);
+            }
         }
 
         gl.glScalef(scaleX, scaleY, scaleZ);

@@ -27,6 +27,7 @@ import mipylib.miutil as miutil
 from ._axes import Axes, PolarAxes
 from ._mapaxes import MapAxes
 from ._axes3d import Axes3D
+from ._axes3dgl import Axes3DGL
 import plotutil
 from ._figure import Figure
 from ._glfigure import GLFigure
@@ -138,9 +139,9 @@ def plot(*args, **kwargs):
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-            gca = axes()
+    # else:
+    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
+    #         gca = axes()
             
     r = gca.plot(*args, **kwargs)
     if not r is None:
@@ -621,8 +622,7 @@ def stem(self, *args, **kwargs):
         draw_if_interactive()
     return r
     
-def scatter(x, y, s=8, c='b', norm=None, vmin=None, vmax=None,
-            alpha=None, linewidth=None, verts=None, hold=None, **kwargs):
+def scatter(*args, **kwargs):
     """
     Make a scatter plot of x vs y, where x and y are sequence like objects of the same lengths.
     
@@ -644,12 +644,11 @@ def scatter(x, y, s=8, c='b', norm=None, vmin=None, vmax=None,
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+    # else:
+    #     if gca.axestype != 'cartesian':
+    #         gca = axes()
             
-    r = gca.scatter(x, y, s, c, norm, vmin, vmax,
-            alpha, linewidth, verts, hold, **kwargs)
+    r = gca.scatter(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -1347,7 +1346,8 @@ def axes3dgl(*args, **kwargs):
     if g_figure is None or isinstance(g_figure, Figure):
         glfigure(**kwargs)
         
-    ax = g_figure.axes
+    ax = Axes3DGL(**kwargs)
+    g_figure.set_axes(ax)
     gca = ax
     draw_if_interactive()
     return ax
@@ -2074,9 +2074,9 @@ def imshow(*args, **kwargs):
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+    # else:
+    #     if gca.axestype != 'cartesian':
+    #         gca = axes()
             
     r = gca.imshow(*args, **kwargs)
     if not r is None:
@@ -2107,9 +2107,9 @@ def pcolor(*args, **kwargs):
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+    # else:
+    #     if gca.axestype != 'cartesian':
+    #         gca = axes()
             
     r = gca.pcolor(*args, **kwargs)
     if not r is None:
@@ -2140,9 +2140,9 @@ def gridshow(*args, **kwargs):
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+    # else:
+    #     if gca.axestype != 'cartesian':
+    #         gca = axes()
             
     r = gca.gridshow(*args, **kwargs)
     if not r is None:
@@ -2173,9 +2173,9 @@ def contour(*args, **kwargs):
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-            gca = axes()
+    # else:
+    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
+    #         gca = axes()
             
     r = gca.contour(*args, **kwargs)
     if not r is None:
@@ -2206,9 +2206,9 @@ def contourf(*args, **kwargs):
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-            gca = axes()
+    # else:
+    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
+    #         gca = axes()
             
     r = gca.contourf(*args, **kwargs)
     if not r is None:
@@ -2240,9 +2240,9 @@ def quiver(*args, **kwargs):
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-            gca = axes()
+    # else:
+    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
+    #         gca = axes()
             
     r = gca.quiver(*args, **kwargs)
     if not r is None:
@@ -2274,9 +2274,9 @@ def barbs(*args, **kwargs):
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-            gca = axes()
+    # else:
+    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
+    #         gca = axes()
             
     r = gca.barbs(*args, **kwargs)
     if not r is None:
@@ -2306,9 +2306,9 @@ def streamplot(*args, **kwargs):
 
     if gca is None:    
         gca = axes()
-    else:
-        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-            gca = axes()
+    # else:
+    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
+    #         gca = axes()
             
     r = gca.streamplot(*args, **kwargs)
     if not r is None:

@@ -37,6 +37,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
 
     // <editor-fold desc="Variables">
     private Plot3DGL plot3DGL;
+    private boolean sampleBuffers = false;
     private final Point mouseDownPoint = new Point(0, 0);
     private Point mouseLastPos = new Point(0, 0);
     private boolean dragMode = false;
@@ -69,6 +70,16 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
 
     /**
      * Constructor
+     * @param cap GLCapabilities
+     */
+    public GLChartPanel(GLCapabilities cap) {
+        super(cap);
+
+        this.sampleBuffers = cap.getSampleBuffers();
+    }
+
+    /**
+     * Constructor
      *
      * @param cap GLCapabilities
      * @param pltGL Plot3DGL
@@ -76,6 +87,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     public GLChartPanel(GLCapabilities cap, Plot3DGL pltGL) {
         super(cap);
 
+        this.sampleBuffers = cap.getSampleBuffers();
         init(pltGL);
     }
 
@@ -118,6 +130,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     private void init(Plot3DGL pltGL) {
         this.plot3DGL = pltGL;
         this.addGLEventListener(pltGL);
+        this.plot3DGL.setSampleBuffers(this.sampleBuffers);
 
         this.setMouseMode(MouseMode.ROTATE);
 
@@ -234,7 +247,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     // </editor-fold>
     // <editor-fold desc="Events">
     void onComponentResized(ComponentEvent e) {
-        //this.repaint();
+        this.display();
     }
 
     void onMousePressed(MouseEvent e) {

@@ -1279,8 +1279,7 @@ class Axes(object):
         self.axes.setAutoExtent()
         return graphics 
             
-    def scatter(self, x, y, s=8, c='b', norm=None, vmin=None, vmax=None,
-                alpha=None, linewidth=None, verts=None, hold=None, **kwargs):
+    def scatter(self, *args, **kwargs):
         """
         Make a scatter plot of x vs y, where x and y are sequence like objects of the same lengths.
         
@@ -1296,6 +1295,18 @@ class Axes(object):
         
         :returns: Points legend break.
         """
+        n = len(args)
+        if n == 1:
+            a = args[0]
+            y = a.dimvalue(0)
+            x = a.dimvalue(1)
+        else:
+            x = args[0]
+            y = args[1]
+
+        s = kwargs.pop('s', 8)
+        c = kwargs.pop('c', 'b')
+
         #Add data series
         label = kwargs.pop('label', 'S_0')
         xdata = plotutil.getplotdata(x)
@@ -1340,6 +1351,7 @@ class Axes(object):
             #Create graphics
             graphics = GraphicFactory.createPoints(xdata, ydata, c.asarray(), ls)
         else:
+            alpha = kwargs.pop('alpha', None)
             colors = plotutil.getcolors(c, alpha)
             edgecolors = kwargs.pop('edgecolors', pb.getOutlineColor())
             if edgecolors is None:

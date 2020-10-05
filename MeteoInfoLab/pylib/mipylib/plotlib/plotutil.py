@@ -740,12 +740,11 @@ def setlegendscheme_polygon(ls, **kwargs):
         facecolor = None
     else:
         facecolor = getcolor(fcobj)
-    edgecolor = kwargs.pop('edgecolor', None)
+    edgecolor = kwargs.pop('edgecolor', 'k')
     if not edgecolor is None:
         edgecolor = getcolor(edgecolor)
     edgesize = kwargs.pop('edgesize', None)
     fill = kwargs.pop('fill', None)
-    edge = kwargs.pop('edge', None)
     alpha = kwargs.pop('alpha', None)
     hatch = kwargs.pop('hatch', None)
     hatch = gethatch(hatch) 
@@ -760,13 +759,14 @@ def setlegendscheme_polygon(ls, **kwargs):
             c = getcolor(c, alpha)
             lb.setColor(c)
         if not edgesize is None:
-            lb.setOutlineSize(edgesize)   
-        if not edgecolor is None:
+            lb.setOutlineSize(edgesize)
+        if edgecolor is None:
+            lb.setDrawOutline(False)
+        else:
+            lb.setDrawOutline(True)
             lb.setOutlineColor(edgecolor)   
         if not fill is None:
-            lb.setDrawFill(fill)  
-        if not edge is None:
-            lb.setDrawOutline(edge)
+            lb.setDrawFill(fill)
         if not hatch is None:
             lb.setStyle(hatch)
             if not bgcolor is None:

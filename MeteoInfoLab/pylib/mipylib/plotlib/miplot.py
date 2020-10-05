@@ -46,7 +46,7 @@ __all__ = [
     'figure','glfigure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow',
     'get_figure','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','legend','left_title','loglog','makecolors',
-    'makelegend','makesymbolspec','masklayer','pcolor','pcolorm','pie','plot','plot3','plotm','quiver',
+    'makelegend','makesymbolspec','masklayer','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
     'semilogx','semilogy','set','show','stationmodel','stem','step','streamplot','streamplotm','subplot','subplots','suptitle',
     'surf','taylor_diagram','text','title','twinx','twiny','violinplot','weatherspec','xaxis',
@@ -653,8 +653,7 @@ def scatter(*args, **kwargs):
         draw_if_interactive()
     return r
     
-def scatter3(x, y, z, s=8, c='b', marker='o', alpha=None, linewidth=None, 
-            verts=None, **kwargs):
+def scatter3(x, y, z, s=8, c='b', marker='o', **kwargs):
     """
     Make a 3D scatter plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
     
@@ -681,7 +680,7 @@ def scatter3(x, y, z, s=8, c='b', marker='o', alpha=None, linewidth=None,
         if not isinstance(gca, Axes3D):
             gca = axes3d()   
     
-    return gca.scatter(x, y, z, s, c, marker, alpha, linewidth, verts, **kwargs)
+    return gca.scatter(x, y, z, s, c, marker, **kwargs)
 
 def arrow(x, y, dx, dy, **kwargs):
     '''
@@ -2248,7 +2247,39 @@ def quiver(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r    
- 
+
+def quiver3(*args, **kwargs):
+    """
+    Plot a 3-D field of arrows.
+
+    :param x: (*array_like*) X coordinate array.
+    :param y: (*array_like*) Y coordinate array.
+    :param z: (*array_like*) Z coordinate array.
+    :param u: (*array_like*) U component of the arrow vectors (wind field).
+    :param v: (*array_like*) V component of the arrow vectors (wind field).
+    :param w: (*array_like*) W component of the arrow vectors (wind field).
+    :param z: (*array_like*) Optional, 2-D z value array.
+    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level
+        vectors to draw, in increasing order.
+    :param cmap: (*string*) Color map string.
+    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
+    :param length: (*float*) The length of each quiver, default to 1.0, the unit is
+        the same with the axes.
+
+    :returns: (*Graphic list*) Created quiver graphics.
+    """
+    global gca
+    if g_figure is None:
+        figure()
+
+    if gca is None:
+        gca = axes3d()
+    else:
+        if not isinstance(gca, Axes3D):
+            gca = axes3d()
+
+    return gca.quiver(*args, **kwargs)
+
 def barbs(*args, **kwargs):
     """
     Plot a 2-D field of barbs.

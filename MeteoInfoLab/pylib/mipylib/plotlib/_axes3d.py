@@ -868,8 +868,8 @@ class Axes3D(Axes):
         else:    
             ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
         ls = ls.convertTo(ShapeTypes.Polygon)
-        edge = kwargs.pop('edge', True)
-        kwargs['edge'] = edge
+        #edge = kwargs.pop('edge', True)
+        #kwargs['edge'] = edge
         plotutil.setlegendscheme(ls, **kwargs)
         graphics = GraphicFactory.createMeshPolygons(x.asarray(), y.asarray(), z.asarray(), ls)
         visible = kwargs.pop('visible', True)
@@ -1121,7 +1121,7 @@ class Axes3D(Axes):
         
     def quiver(self, *args, **kwargs):
         """
-        Plot a 2-D field of arrows.
+        Plot a 3-D field of arrows.
         
         :param x: (*array_like*) X coordinate array.
         :param y: (*array_like*) Y coordinate array.

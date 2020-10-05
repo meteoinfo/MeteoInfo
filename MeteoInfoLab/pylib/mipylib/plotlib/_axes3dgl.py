@@ -401,10 +401,17 @@ class Axes3DGL(Axes3D):
             else:
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
         ls = ls.convertTo(ShapeTypes.Polygon)
-        edge = kwargs.pop('edge', True)
-        kwargs['edge'] = edge
+        facecolor = kwargs.pop('facecolor', None)
+        interp = None
+        if not facecolor is None:
+            interp = (facecolor == 'interp')
+            if not interp:
+                if not facecolor in ['flat','texturemap','none']:
+                    kwargs['facecolor'] = facecolor
         plotutil.setlegendscheme(ls, **kwargs)
         graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), ls)
+        if interp:
+            graphics.setInterp(interp)
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

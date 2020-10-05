@@ -1934,26 +1934,45 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (pgb.isDrawFill()) {
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
             gl.glPolygonOffset(1.0f, 1.0f);
-            for (int i = 0; i < dim1 - 1; i++) {
-                for (int j = 0; j < dim2 - 1; j++) {
-                    gl.glBegin(GL2.GL_QUADS);
-                    p = surface.getVertex(i, j);
-                    rgba = surface.getRGBA(i, j);
-                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
-                    p = surface.getVertex(i + 1, j);
-                    rgba = surface.getRGBA(i + 1, j);
-                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
-                    p = surface.getVertex(i + 1, j + 1);
-                    rgba = surface.getRGBA(i + 1, j + 1);
-                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
-                    p = surface.getVertex(i, j + 1);
-                    rgba = surface.getRGBA(i, j + 1);
-                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
-                    gl.glEnd();
+            if (surface.isInterp()) {
+                for (int i = 0; i < dim1 - 1; i++) {
+                    for (int j = 0; j < dim2 - 1; j++) {
+                        gl.glBegin(GL2.GL_QUADS);
+                        p = surface.getVertex(i, j);
+                        rgba = surface.getRGBA(i, j);
+                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        p = surface.getVertex(i + 1, j);
+                        rgba = surface.getRGBA(i + 1, j);
+                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        p = surface.getVertex(i + 1, j + 1);
+                        rgba = surface.getRGBA(i + 1, j + 1);
+                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        p = surface.getVertex(i, j + 1);
+                        rgba = surface.getRGBA(i, j + 1);
+                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        gl.glEnd();
+                    }
+                }
+            } else {
+                for (int i = 0; i < dim1 - 1; i++) {
+                    for (int j = 0; j < dim2 - 1; j++) {
+                        gl.glBegin(GL2.GL_QUADS);
+                        p = surface.getVertex(i, j);
+                        rgba = surface.getRGBA(i, j);
+                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        p = surface.getVertex(i + 1, j);
+                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        p = surface.getVertex(i + 1, j + 1);
+                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        p = surface.getVertex(i, j + 1);
+                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        gl.glEnd();
+                    }
                 }
             }
             gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);

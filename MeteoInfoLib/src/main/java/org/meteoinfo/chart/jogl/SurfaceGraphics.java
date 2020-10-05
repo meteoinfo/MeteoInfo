@@ -19,6 +19,7 @@ import org.meteoinfo.shape.PointZ;
 public class SurfaceGraphics extends GraphicCollection3D {
     private PointZ[][] vertices;
     private int[][] legendIndex;
+    private boolean interp;
     
     /**
      * Constructor
@@ -27,6 +28,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
         super();        
         this.allQuads = true;
         this.singleLegend = false;
+        this.interp = false;
     }
     
     /**
@@ -70,6 +72,22 @@ public class SurfaceGraphics extends GraphicCollection3D {
      */
     public PointZ getVertex(int i, int j) {
         return this.vertices[i][j];
+    }
+
+    /**
+     * get if user interpolated coloring for each face
+     * @return Boolean
+     */
+    public boolean isInterp() {
+        return this.interp;
+    }
+
+    /**
+     * Set if use interpolated coloring for each face
+     * @param value Boolean
+     */
+    public void setInterp(boolean value) {
+        this.interp = value;
     }
     
     /**

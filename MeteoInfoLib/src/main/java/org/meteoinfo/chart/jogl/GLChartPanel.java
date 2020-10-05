@@ -574,6 +574,15 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     }
 
     /**
+     * Override repaint method
+     */
+    @Override
+    public void repaint() {
+        super.repaint();
+        this.display();
+    }
+
+    /**
      * Start animator
      */
     public void animator_start() {

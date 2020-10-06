@@ -36,7 +36,8 @@ g_figure = None
 gca = None
 
 __all__ = [
-    'g_figure','gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis','axism','bar','barh','barbs','barbsm','bgcolor','box',
+    'g_figure','gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis',
+    'axism','bar','bar3','barh','barbs','barbsm','bgcolor','box',
     'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
     'contourfm','contourm','delfig','draw','draw_if_interactive','errorbar',
     'figure','glfigure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow',
@@ -229,7 +230,9 @@ def plot3(x, y, z, *args, **kwargs):
         if not isinstance(gca, Axes3D):
             gca = axes3d()
     
-    return gca.plot(x, y, z, *args, **kwargs)
+    r = gca.plot(x, y, z, *args, **kwargs)
+    draw_if_interactive()
+    return r
         
 def semilogy(*args, **kwargs):
     """
@@ -501,7 +504,41 @@ def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
     r = gca.bar(x, height, width, bottom, align, data, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r    
+    return r
+
+def bar3(x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
+    """
+    Make a 3D bar plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
+
+    :param x: (*array_like*) Input x data.
+    :param y: (*array_like*) Input y data.
+    :param z: (*array_like*) Input z data.
+    :param width: (*float*) Bar width.
+    :param cylinder: (*bool*) Is sylinder bar or rectangle bar.
+    :param bottom: (*bool*) Color of the points. Or z vlaues.
+    :param color: (*Color*) Optional, the color of the bar faces.
+    :param edgecolor: (*Color*) Optional, the color of the bar edge. Default is black color.
+        Edge line will not be plotted if ``edgecolor`` is ``None``.
+    :param linewidth: (*int*) Optional, width of bar edge.
+    :param label: (*string*) Label of the bar series.
+    :param hatch: (*string*) Hatch string.
+    :param hatchsize: (*int*) Hatch size. Default is None (8).
+    :param bgcolor: (*Color*) Background color, only valid with hatch.
+    :param barswidth: (*float*) Bars width (0 - 1), only used for automatic bar with plot
+        (only one argument widthout ``width`` augument). Defaul is 0.8.
+
+    :returns: Points legend break.
+    """
+    global gca
+    if gca is None:
+        gca = axes3d()
+    else:
+        if not isinstance(gca, Axes3D):
+            gca = axes3d()
+
+    r = gca.bar(x, y, z, width, bottom, cylinder, **kwargs)
+    draw_if_interactive()
+    return r
 
 def barh(*args, **kwargs):
     """

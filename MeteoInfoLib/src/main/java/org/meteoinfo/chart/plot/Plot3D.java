@@ -2341,6 +2341,7 @@ public class Plot3D extends Plot {
             Graphic g = this.graphics.getGraphicN(i);
             if (g instanceof GraphicCollection) {
                 ls = ((GraphicCollection)g).getLegendScheme();
+                break;
             }
         }
 

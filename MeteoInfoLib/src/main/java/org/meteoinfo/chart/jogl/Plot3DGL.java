@@ -75,7 +75,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private float ymax = 1.0f, zmin, zmax = 1.0f;
 
     private Color boxColor = Color.getHSBColor(0f, 0f, 0.95f);
-    private Color lineboxColor = Color.getHSBColor(0f, 0f, 0.8f);
+    private Color lineBoxColor = new Color(220, 220, 220);
 
     private boolean boxed, mesh, scaleBox, displayXY, displayZ,
             displayGrids, drawBoundingBox, hideOnDrag;
@@ -243,7 +243,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @return Box line color
      */
     public Color getLineBoxColor() {
-        return this.lineboxColor;
+        return this.lineBoxColor;
     }
 
     /**
@@ -252,7 +252,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param value Box line color
      */
     public void setLineBoxColor(Color value) {
-        this.lineboxColor = value;
+        this.lineBoxColor = value;
     }
 
     /**
@@ -868,6 +868,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         this.updateMatrix(gl);
 
+        gl.glColor3f(0.0f, 0.0f, 0.0f);
+
+        //Draw box
+        drawBoxGridsTicksLabels(gl);
+
+        //Draw title
+        this.drawTitle();
+
         //Set lighting
         if (this.lighting.isEnable()) {
             this.lighting.start(gl);
@@ -876,14 +884,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
             //gl.glColorMaterial(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE);
             gl.glEnable(GL2.GL_COLOR_MATERIAL);
         }
-
-        gl.glColor3f(0.0f, 0.0f, 0.0f);
-
-        //Draw box
-        drawBoxGridsTicksLabels(gl);
-
-        //Draw title
-        this.drawTitle();
 
         //Draw graphics
         float s = 1.01f;
@@ -962,7 +962,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param y used to retrieve y coordinates of drawn plane from this method.
      */
     private void drawBase(GL2 gl) {
-        float[] rgba = this.lineboxColor.getRGBComponents(null);
+        float[] rgba = this.lineBoxColor.getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(1.0f);
         gl.glBegin(GL2.GL_LINE_STRIP);
@@ -1049,7 +1049,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //Draw box
         if (boxed) {
             if (this.angleY >= 180 && this.angleY < 360) {
-                rgba = this.lineboxColor.getRGBComponents(null);
+                rgba = this.lineBoxColor.getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(1.0f);
                 gl.glBegin(GL2.GL_LINE_STRIP);
@@ -1060,7 +1060,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glVertex3f(-1.0f, 1.0f, -1.0f);
                 gl.glEnd();
             } else {
-                rgba = this.lineboxColor.getRGBComponents(null);
+                rgba = this.lineBoxColor.getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(1.0f);
                 gl.glBegin(GL2.GL_LINE_STRIP);
@@ -1072,7 +1072,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glEnd();
             }
             if (this.angleY >= 90 && this.angleY < 270) {
-                rgba = this.lineboxColor.getRGBComponents(null);
+                rgba = this.lineBoxColor.getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(1.0f);
                 gl.glBegin(GL2.GL_LINE_STRIP);
@@ -1083,7 +1083,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glVertex3f(-1.0f, -1.0f, -1.0f);
                 gl.glEnd();
             } else {
-                rgba = this.lineboxColor.getRGBComponents(null);
+                rgba = this.lineBoxColor.getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(1.0f);
                 gl.glBegin(GL2.GL_LINE_STRIP);
@@ -1150,7 +1150,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
                 //Draw grid line
                 if (this.displayGrids && (v != -1.0f && v != 1.0f)) {
-                    rgba = this.getLineBoxColor().getRGBComponents(null);
+                    rgba = this.lineBoxColor.getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(1.0f);
                     gl.glBegin(GL2.GL_LINES);
@@ -1243,7 +1243,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
                 //Draw grid line
                 if (this.displayGrids && (v != -1.0f && v != 1.0f)) {
-                    rgba = this.getLineBoxColor().getRGBComponents(null);
+                    rgba = this.lineBoxColor.getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(1.0f);
                     gl.glBegin(GL2.GL_LINES);
@@ -1351,7 +1351,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
                 //Draw grid line
                 if (this.displayGrids && this.boxed && (v != -1.0f && v != 1.0f)) {
-                    rgba = this.getLineBoxColor().getRGBComponents(null);
+                    rgba = this.lineBoxColor.getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(1.0f);
                     gl.glBegin(GL2.GL_LINE_STRIP);
@@ -2557,6 +2557,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             Graphic g = this.graphics.getGraphicN(i);
             if (g instanceof GraphicCollection) {
                 ls = ((GraphicCollection)g).getLegendScheme();
+                break;
             }
         }
 

@@ -508,15 +508,15 @@ class Axes3DGL(Axes3D):
             else:
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
         ls = ls.convertTo(ShapeTypes.Polygon, True)
-        facecolor = kwargs.pop('facecolor', None)
         face_interp = None
-        if facecolor is None:
-            kwargs['facecolor'] = 'w'
-        else:
+        if kwargs.has_key('facecolor'):
+            facecolor = kwargs.pop('facecolor', None)
             face_interp = (facecolor == 'interp')
             if not face_interp:
                 if not facecolor in ['flat','texturemap','none']:
                     kwargs['facecolor'] = facecolor
+        else:
+            kwargs['facecolor'] = 'w'
         edgecolor = kwargs.pop('edgecolor', None)
         edge_interp = None
         if not edgecolor is None:

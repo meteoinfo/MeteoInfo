@@ -485,6 +485,10 @@ class Axes3D(Axes):
         """
         if b is None:
             b = not self.axes.isDisplayGrids()
+        color = kwargs.pop('color', None)
+        if not color is None:
+            color = plotutil.getcolor(color)
+            self.axes.setLineBoxColor(color)
         self.set_draw_grid(b)
 
     def plot(self, x, y, z, *args, **kwargs):

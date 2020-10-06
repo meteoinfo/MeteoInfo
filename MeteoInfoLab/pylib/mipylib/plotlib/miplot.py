@@ -223,10 +223,7 @@ def plot3(x, y, z, *args, **kwargs):
       =========  =====
     """
     global gca
-    if g_figure is None:
-        figure()
-
-    if gca is None:    
+    if gca is None:
         gca = axes3d()
     else:
         if not isinstance(gca, Axes3D):
@@ -667,10 +664,7 @@ def scatter3(x, y, z, s=8, c='b', marker='o', **kwargs):
     :returns: Points legend break.
     """
     global gca
-    if g_figure is None:
-        figure()
-
-    if gca is None:    
+    if gca is None:
         gca = axes3d()
     else:
         if not isinstance(gca, Axes3D):
@@ -1327,8 +1321,12 @@ def axes3d(*args, **kwargs):
     
     :returns: The axes.
     """
-    kwargs['axestype'] = '3d'
-    return axes(*args, **kwargs)
+    opengl = kwargs.pop('opengl', True)
+    if opengl:
+        return axes3dgl(*args, **kwargs)
+    else:
+        kwargs['axestype'] = '3d'
+        return axes(*args, **kwargs)
     
 def axes3dgl(*args, **kwargs):
     """
@@ -2249,9 +2247,6 @@ def quiver3(*args, **kwargs):
     :returns: (*Graphic list*) Created quiver graphics.
     """
     global gca
-    if g_figure is None:
-        figure()
-
     if gca is None:
         gca = axes3d()
     else:
@@ -2847,9 +2842,6 @@ def lighting(enable, **kwargs):
     :param mat_shininess: (*float*) Material shininess (0 - 128).
     '''
     global gca
-    if g_figure is None:
-        figure()
-
     if gca is None:
         gca = axes3d()
     else:
@@ -2871,9 +2863,6 @@ def mesh(*args, **kwargs):
     :returns: Legend
     '''
     global gca
-    if g_figure is None:
-        figure()
-
     if gca is None:
         gca = axes3d()
     else:
@@ -2901,10 +2890,7 @@ def surf(*args, **kwargs):
     :returns: Legend
     '''
     global gca
-    if g_figure is None:
-        figure()
-
-    if gca is None:    
+    if gca is None:
         gca = axes3d()
     else:
         if not isinstance(gca, Axes3D):
@@ -2928,9 +2914,6 @@ def slice(*args, **kwargs):
     :return:
     '''
     global gca
-    if g_figure is None:
-        figure()
-
     if gca is None:
         gca = axes3d()
     else:
@@ -2955,9 +2938,6 @@ def isosurface(*args, **kwargs):
     :returns: Legend
     '''
     global gca
-    if g_figure is None:
-        figure()
-
     if gca is None:
         gca = axes3d()
     else:
@@ -2987,9 +2967,6 @@ def particles(*args, **kwargs):
     :returns: Legend
     '''
     global gca
-    if g_figure is None:
-        figure()
-
     if gca is None:
         gca = axes3d()
     else:

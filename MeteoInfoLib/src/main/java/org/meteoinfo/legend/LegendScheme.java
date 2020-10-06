@@ -664,6 +664,93 @@ public class LegendScheme {
         
         return ls;
     }
+
+    /**
+     * Convert to other shape type
+     * @param shapeType The shape type
+     * @param edgeColor Colors to edge colors
+     * @return Result legend scheme
+     */
+    public LegendScheme convertTo(ShapeTypes shapeType, boolean edgeColor){
+        if (this.shapeType == shapeType){
+            return this;
+        }
+
+        LegendScheme ls = new LegendScheme(shapeType);
+        ls.fieldName = this.fieldName;
+        ls.hasNoData = this.hasNoData;
+        ls.legendType = this.legendType;
+        ls.minValue = this.minValue;
+        ls.maxValue = this.maxValue;
+        ls.undef = this.undef;
+        for (ColorBreak cb : this.legendBreaks){
+            switch(shapeType){
+                case Point:
+                    PointBreak pb = new PointBreak();
+                    if (edgeColor)
+                        pb.setOutlineColor(cb.getColor());
+                    else
+                        pb.setColor(cb.getColor());
+                    pb.setStartValue(cb.getStartValue());
+                    pb.setEndValue(cb.getEndValue());
+                    pb.setCaption(cb.getCaption());
+                    pb.setNoData(cb.isNoData());
+                    pb.setDrawShape(cb.isDrawShape());
+                    pb.setTag(cb.getTag());
+                    ls.legendBreaks.add(pb);
+                    break;
+                case Polyline:
+                    PolylineBreak plb = new PolylineBreak();
+                    plb.setColor(cb.getColor());
+                    plb.setStartValue(cb.getStartValue());
+                    plb.setEndValue(cb.getEndValue());
+                    plb.setCaption(cb.getCaption());
+                    plb.setNoData(cb.isNoData());
+                    plb.setDrawShape(cb.isDrawShape());
+                    plb.setTag(cb.getTag());
+                    ls.legendBreaks.add(plb);
+                    break;
+                case Polygon:
+                    PolygonBreak pgb = new PolygonBreak();
+                    if (edgeColor)
+                        pgb.setOutlineColor(cb.getColor());
+                    else
+                        pgb.setColor(cb.getColor());
+                    pgb.setStartValue(cb.getStartValue());
+                    pgb.setEndValue(cb.getEndValue());
+                    pgb.setCaption(cb.getCaption());
+                    pgb.setNoData(cb.isNoData());
+                    pgb.setDrawShape(cb.isDrawShape());
+                    pgb.setDrawOutline(true);
+                    pgb.setTag(cb.getTag());
+                    ls.legendBreaks.add(pgb);
+                    break;
+                case Image:
+                    ColorBreak ncb = new ColorBreak();
+                    ncb.setColor(cb.getColor());
+                    switch (this.shapeType) {
+                        case Point:
+                            if (edgeColor)
+                                ncb.setColor(((PointBreak)cb).getOutlineColor());
+                            break;
+                        case Polygon:
+                            if (edgeColor)
+                                ncb.setColor(((PolygonBreak)cb).getOutlineColor());
+                            break;
+                    }
+                    ncb.setStartValue(cb.getStartValue());
+                    ncb.setEndValue(cb.getEndValue());
+                    ncb.setCaption(cb.getCaption());
+                    ncb.setNoData(cb.isNoData());
+                    ncb.setDrawShape(cb.isDrawShape());
+                    ncb.setTag(cb.getTag());
+                    ls.legendBreaks.add(ncb);
+                    break;
+            }
+        }
+
+        return ls;
+    }
     
     /**
      * Convert point legend to arrow legend

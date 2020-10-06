@@ -21,6 +21,7 @@ import mipylib.miutil as miutil
 
 import datetime
 import numbers
+import warnings
 
 from java.awt import Font, Color, BasicStroke
 
@@ -255,7 +256,28 @@ class Axes3D(Axes):
             zmin = miutil.date2num(zmin)
         if isinstance(zmax, datetime.datetime):
             zmax = miutil.date2num(zmax)    
-        self.axes.setZMinMax(zmin, zmax) 
+        self.axes.setZMinMax(zmin, zmax)
+
+    def set_zlabel(self, label, **kwargs):
+        """
+        Set the z axis label of the current axes.
+
+        :param label: (*string*) Label string.
+        :param fontname: (*string*) Font name. Default is ``Arial`` .
+        :param fontsize: (*int*) Font size. Default is ``14`` .
+        :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
+        :param color: (*color*) Label string color. Default is ``black`` .
+        """
+        if not kwargs.has_key('xalign'):
+            kwargs['xalign'] = 'center'
+        if not kwargs.has_key('yalign'):
+            kwargs['yalign'] = 'bottom'
+        if not kwargs.has_key('rotation'):
+            kwargs['rotation'] = 90
+        ctext = plotutil.text(0, 0, label, **kwargs)
+        axis = self.axes.getZAxis()
+        axis.setLabel(ctext)
+        axis.setDrawLabel(True)
     
     def get_zticks(self):
         '''
@@ -452,7 +474,19 @@ class Axes3D(Axes):
             axis.setMinorTickNum(minorticknum)
             axis.setInsideTick(tickin)
             axis.setTickLabelFont(font)
-    
+
+    def grid(self, b, **kwargs):
+        """
+        Turn the aexs grids on or off.
+
+        :param b: If b is *None* and *len(kwargs)==0* , toggle the grid state. If *kwargs*
+            are supplied, it is assumed that you want a grid and *b* is thus set to *True* .
+        :param kwargs: *kwargs* are used to set the grid line properties.
+        """
+        if b is None:
+            b = not self.axes.isDisplayGrids()
+        self.set_draw_grid(b)
+
     def plot(self, x, y, z, *args, **kwargs):
         """
         Plot 3D lines and/or markers to the axes. *args* is a variable length argument, allowing
@@ -773,6 +807,60 @@ class Axes3D(Axes):
             self.add_graphic(graphics[0])
             self.add_graphic(graphics[1])
         return graphics[0], graphics[1]
+
+    def mesh(self, *args, **kwargs):
+        '''
+        creates a three-dimensional wireframe plot
+
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param z: (*array_like*) 2-D z value array.
+        :param cmap: (*string*) Color map string.
+        :param xyaxis: (*boolean*) Draw x and y axis or not.
+        :param zaxis: (*boolean*) Draw z axis or not.
+        :param grid: (*boolean*) Draw grid or not.
+        :param boxed: (*boolean*) Draw boxed or not.
+        :param mesh: (*boolean*) Draw mesh line or not.
+
+        :returns: Legend
+        '''
+        if len(args) == 1:
+            x = args[0].dimvalue(1)
+            y = args[0].dimvalue(0)
+            x, y = np.meshgrid(x, y)
+            z = args[0]
+            args = args[1:]
+        else:
+            x = args[0]
+            y = args[1]
+            z = args[2]
+            args = args[3:]
+
+        zcolors = kwargs.pop('zcolors', False)
+        if not zcolors:
+            line = plotutil.getlegendbreak('line', **kwargs)[0]
+            graphics = GraphicFactory.createWireframe(x.asarray(), y.asarray(), z.asarray(), line)
+        else:
+            cmap = plotutil.getcolormap(**kwargs)
+            if len(args) > 0:
+                level_arg = args[0]
+                if isinstance(level_arg, int):
+                    cn = level_arg
+                    ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
+                else:
+                    if isinstance(level_arg, NDArray):
+                        level_arg = level_arg.aslist()
+                    ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
+            else:
+                ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
+            ls = ls.convertTo(ShapeTypes.Polyline)
+            plotutil.setlegendscheme(ls, **kwargs)
+            graphics = GraphicFactory.createWireframe(x.asarray(), y.asarray(), z.asarray(), ls)
+
+        visible = kwargs.pop('visible', True)
+        if visible:
+            self.add_graphic(graphics)
+        return graphics
         
     def plot_wireframe(self, *args, **kwargs):
         '''
@@ -789,7 +877,8 @@ class Axes3D(Axes):
         :param mesh: (*boolean*) Draw mesh line or not.
         
         :returns: Legend
-        '''        
+        '''
+        warnings.warn("plot_wireframe is deprecated", DeprecationWarning)
         if len(args) == 1:
             x = args[0].dimvalue(1)
             y = args[0].dimvalue(0)
@@ -827,6 +916,55 @@ class Axes3D(Axes):
         if visible:
             self.add_graphic(graphics)
         return graphics
+
+    def surf(self, *args, **kwargs):
+        '''
+        creates a three-dimensional surface plot
+
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param z: (*array_like*) 2-D z value array.
+        :param cmap: (*string*) Color map string.
+        :param xyaxis: (*boolean*) Draw x and y axis or not.
+        :param zaxis: (*boolean*) Draw z axis or not.
+        :param grid: (*boolean*) Draw grid or not.
+        :param boxed: (*boolean*) Draw boxed or not.
+        :param mesh: (*boolean*) Draw mesh line or not.
+
+        :returns: Legend
+        '''
+        if len(args) <= 2:
+            x = args[0].dimvalue(1)
+            y = args[0].dimvalue(0)
+            x, y = np.meshgrid(x, y)
+            z = args[0]
+            args = args[1:]
+        else:
+            x = args[0]
+            y = args[1]
+            z = args[2]
+            args = args[3:]
+        cmap = plotutil.getcolormap(**kwargs)
+        if len(args) > 0:
+            level_arg = args[0]
+            if isinstance(level_arg, int):
+                cn = level_arg
+                ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
+            else:
+                if isinstance(level_arg, NDArray):
+                    level_arg = level_arg.aslist()
+                ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
+        else:
+            ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
+        ls = ls.convertTo(ShapeTypes.Polygon)
+        edge = kwargs.pop('edge', True)
+        kwargs['edge'] = edge
+        plotutil.setlegendscheme(ls, **kwargs)
+        graphics = GraphicFactory.createMeshPolygons(x.asarray(), y.asarray(), z.asarray(), ls)
+        visible = kwargs.pop('visible', True)
+        if visible:
+            self.add_graphic(graphics)
+        return graphics
         
     def plot_surface(self, *args, **kwargs):
         '''
@@ -843,7 +981,8 @@ class Axes3D(Axes):
         :param mesh: (*boolean*) Draw mesh line or not.
         
         :returns: Legend
-        '''        
+        '''
+        warnings.warn("plot_surface is deprecated", DeprecationWarning)
         if len(args) <= 2:
             x = args[0].dimvalue(1)
             y = args[0].dimvalue(0)
@@ -868,8 +1007,8 @@ class Axes3D(Axes):
         else:    
             ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
         ls = ls.convertTo(ShapeTypes.Polygon)
-        #edge = kwargs.pop('edge', True)
-        #kwargs['edge'] = edge
+        edge = kwargs.pop('edge', True)
+        kwargs['edge'] = edge
         plotutil.setlegendscheme(ls, **kwargs)
         graphics = GraphicFactory.createMeshPolygons(x.asarray(), y.asarray(), z.asarray(), ls)
         visible = kwargs.pop('visible', True)
@@ -994,11 +1133,8 @@ class Axes3D(Axes):
         else:    
             ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cmap)
         ls = ls.convertTo(ShapeTypes.Polygon)
-        edge = kwargs.pop('edge', None)
-        if edge is None:
-            kwargs['edge'] = False
-        else:
-            kwargs['edge'] = edge
+        if not kwargs.has_key('edgecolor'):
+            kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
         
         smooth = kwargs.pop('smooth', True)
@@ -1194,6 +1330,44 @@ class Axes3D(Axes):
         if visible:
             self.add_graphic(igraphic)
         return igraphic
+
+    def geoshow(self, layer, **kwargs):
+        '''
+        Plot a layer in 3D axes.
+
+        :param layer: (*MILayer*) The layer to be plotted.
+
+        :returns: Graphics.
+        '''
+        ls = kwargs.pop('symbolspec', None)
+        offset = kwargs.pop('offset', 0)
+        xshift = kwargs.pop('xshift', 0)
+        layer = layer.layer
+        if layer.getLayerType() == LayerTypes.VectorLayer:
+            if ls is None:
+                ls = layer.getLegendScheme()
+                if len(kwargs) > 0 and layer.getLegendScheme().getBreakNum() == 1:
+                    lb = layer.getLegendScheme().getLegendBreaks().get(0)
+                    btype = lb.getBreakType()
+                    geometry = 'point'
+                    if btype == BreakTypes.PolylineBreak:
+                        geometry = 'line'
+                    elif btype == BreakTypes.PolygonBreak:
+                        geometry = 'polygon'
+                    lb, isunique = plotutil.getlegendbreak(geometry, **kwargs)
+                    ls.getLegendBreaks().set(0, lb)
+
+            plotutil.setlegendscheme(ls, **kwargs)
+            layer.setLegendScheme(ls)
+            graphics = GraphicFactory.createGraphicsFromLayer(layer, offset, xshift)
+        else:
+            interpolation = kwargs.pop('interpolation', None)
+            graphics = GraphicFactory.createImage(layer, offset, xshift, interpolation)
+
+        visible = kwargs.pop('visible', True)
+        if visible:
+            self.add_graphic(graphics)
+        return graphics
         
     def plot_layer(self, layer, **kwargs):
         '''
@@ -1203,6 +1377,7 @@ class Axes3D(Axes):
         
         :returns: Graphics.
         '''
+        warnings.warn("plot_layer is deprecated", DeprecationWarning)
         ls = kwargs.pop('symbolspec', None)
         offset = kwargs.pop('offset', 0)
         xshift = kwargs.pop('xshift', 0)

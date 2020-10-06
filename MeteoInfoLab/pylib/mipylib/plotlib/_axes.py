@@ -966,7 +966,7 @@ class Axes(object):
         sy = self.figure.get_size()[1] - sy
         return sx, sy
         
-    def grid(self, b=None, which='major', axis='both', **kwargs):
+    def grid(self, b=None, **kwargs):
         """
         Turn the aexs grids on or off.
         
@@ -979,20 +979,21 @@ class Axes(object):
         :param kwargs: *kwargs* are used to set the grid line properties.
         """
         gridline = self.axes.getGridLine()
-        isDraw = gridline.isDrawXLine()
+        is_draw = gridline.isDrawXLine()
         if b is None:
-            isDraw = not gridline.isDrawXLine()
+            is_draw = not gridline.isDrawXLine()
         elif b == True or b == 'on':
-            isDraw = True
+            is_draw = True
         elif b == False or b == 'on':
-            isDraw = False
+            is_draw = False
+        axis = kwargs.pop('axis', 'both')
         if axis == 'both':
-            gridline.setDrawXLine(isDraw)
-            gridline.setDrawYLine(isDraw)
+            gridline.setDrawXLine(is_draw)
+            gridline.setDrawYLine(is_draw)
         elif axis == 'x':
-            gridline.setDrawXLine(isDraw)
+            gridline.setDrawXLine(is_draw)
         elif axis == 'y':
-            gridline.setDrawYLine(isDraw)
+            gridline.setDrawYLine(is_draw)
         color = kwargs.pop('color', None)
         if not color is None:
             c = plotutil.getcolor(color)
@@ -3572,7 +3573,7 @@ class Axes(object):
 
         return clegend
         
-    def colorbar(self, mappable, **kwargs):
+    def colorbar(self, mappable=None, **kwargs):
         """
         Add a colorbar to a plot.
         
@@ -3631,14 +3632,17 @@ class Axes(object):
         else:
             labelfont = plotutil.getfont(labelfontdic)
 
-        if isinstance(mappable, MILayer):
-            ls = mappable.legend()
-        elif isinstance(mappable, LegendScheme):
-            ls = mappable
-        elif isinstance(mappable, GraphicCollection):
-            ls = mappable.getLegendScheme()
+        if mappable is None:
+            ls = self.get_legend()
         else:
-            ls = plotutil.makelegend(mappable, **kwargs)
+            if isinstance(mappable, MILayer):
+                ls = mappable.legend()
+            elif isinstance(mappable, LegendScheme):
+                ls = mappable
+            elif isinstance(mappable, GraphicCollection):
+                ls = mappable.getLegendScheme()
+            else:
+                ls = plotutil.makelegend(mappable, **kwargs)
         
         newlegend = kwargs.pop('newlegend', True)
         if newlegend:

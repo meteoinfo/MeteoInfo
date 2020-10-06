@@ -5,33 +5,29 @@
 # Purpose: MeteoInfoLab plot module
 # Note: Jython
 #-----------------------------------------------------
-import os
 import datetime
 import math
+import mipylib.migl as migl
+import mipylib.miutil as miutil
+import mipylib.numeric as np
+import os
+import plotutil
+from javax.swing import WindowConstants
+from mipylib.numeric.core import NDArray, DimArray
 
 from org.meteoinfo.chart import Location
-from org.meteoinfo.data.meteodata import DrawMeteoData
 from org.meteoinfo.chart.plot import Plot2D, MapPlot, Plot3D
-from org.meteoinfo.chart import ChartText
-from org.meteoinfo.script import ChartForm
-from org.meteoinfo.legend import LegendManage, LegendScheme, LegendType
+from org.meteoinfo.data.meteodata import DrawMeteoData
 from org.meteoinfo.image import AnimatedGifEncoder
+from org.meteoinfo.legend import LegendManage, LegendScheme, LegendType
+from org.meteoinfo.script import ChartForm
 from org.meteoinfo.shape import ShapeTypes
-
-from javax.swing import WindowConstants
-from java.awt import Font
-
-from mipylib.numeric.core import NDArray, DimArray
-import mipylib.numeric as np
-import mipylib.miutil as miutil
 from ._axes import Axes, PolarAxes
-from ._mapaxes import MapAxes
 from ._axes3d import Axes3D
 from ._axes3dgl import Axes3DGL
-import plotutil
 from ._figure import Figure
 from ._glfigure import GLFigure
-import mipylib.migl as migl
+from ._mapaxes import MapAxes
 
 ## Global ##
 batchmode = False
@@ -45,10 +41,10 @@ __all__ = [
     'contourfm','contourm','delfig','draw','draw_if_interactive','errorbar',
     'figure','glfigure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow',
     'get_figure','gifaddframe','gifanimation','giffinish',
-    'grid','gridshow','gridshowm','hist','imshow','imshowm','legend','left_title','loglog','makecolors',
-    'makelegend','makesymbolspec','masklayer','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
+    'grid','gridshow','gridshowm','hist','imshow','imshowm','isosurface','legend','left_title','lighting','loglog','makecolors',
+    'makelegend','makesymbolspec','masklayer','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
-    'semilogx','semilogy','set','show','stationmodel','stem','step','streamplot','streamplotm','subplot','subplots','suptitle',
+    'semilogx','semilogy','set','show','slice','stationmodel','stem','step','streamplot','streamplotm','subplot','subplots','suptitle',
     'surf','taylor_diagram','text','title','twinx','twiny','violinplot','weatherspec','xaxis',
     'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
     'isinteractive'
@@ -1700,11 +1696,11 @@ def ylabel(label, **kwargs):
     """
     gca.set_ylabel(label, **kwargs)
     draw_if_interactive()
-    
-def zlabel(label, fontname=None, fontsize=14, bold=False, color='black'):
+
+def zlabel(label, **kwargs):
     """
     Set the z axis label of the current axes.
-    
+
     :param label: (*string*) Label string.
     :param fontname: (*string*) Font name. Default is ``Arial`` .
     :param fontsize: (*int*) Font size. Default is ``14`` .
@@ -1714,26 +1710,10 @@ def zlabel(label, fontname=None, fontsize=14, bold=False, color='black'):
     global gca
     if not isinstance(gca, Axes3D):
         return
-    
-    exfont = False
-    if fontname is None:
-        fontname = 'Arial'
-    else:
-        exfont = True
-    
-    if bold:
-        font = Font(fontname, Font.BOLD, fontsize)
-    else:
-        font = Font(fontname, Font.PLAIN, fontsize)
-    c = plotutil.getcolor(color)    
-    axis = gca.axes.getZAxis()
-    text = ChartText(label, font)
-    text.setUseExternalFont(exfont)
-    text.setColor(c)
-    axis.setLabel(text)
-    axis.setDrawLabel(True)
+
+    gca.set_zlabel(label, **kwargs)
     draw_if_interactive()
-    
+
 def xticks(*args, **kwargs):
     """
     Set the x-limits of the current tick locations and labels.
@@ -1879,7 +1859,7 @@ def axism(limits=None, lonlat=True):
     if not r is None:
         draw_if_interactive()
 
-def grid(b=None, which='major', axis='both', **kwargs):
+def grid(b=None, **kwargs):
     """
     Turn the aexs grids on or off.
     
@@ -1891,7 +1871,7 @@ def grid(b=None, which='major', axis='both', **kwargs):
         gridlines are drawn.
     :param kwargs: *kwargs* are used to set the grid line properties.
     """
-    gca.grid(b, which, axis, **kwargs)
+    gca.grid(b, **kwargs)
     draw_if_interactive()
     
 def xlim(xmin, xmax):
@@ -1991,7 +1971,7 @@ def readlegend(fn):
         print 'File not exists: ' + fn
         return None
         
-def colorbar(mappable, **kwargs):
+def colorbar(mappable=None, **kwargs):
     """
     Add a colorbar to a plot.
     
@@ -2814,7 +2794,7 @@ def geoshow(*args, **kwargs):
     if gca is None:    
         gca = axesm()
     else:
-        if gca.axestype != 'map':
+        if not isinstance(gca, (MapAxes, Axes3D)):
             gca = axesm()
             
     r = gca.geoshow(*args, **kwargs)
@@ -2852,6 +2832,58 @@ def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., c
         draw_if_interactive()
     return r
 
+def lighting(enable, **kwargs):
+    '''
+    Set lighting.
+
+    :param enable: (*boolean*) Set lighting enable or not.
+    :param position: (*list of float*) Lighting position.
+    :param ambient: (*list of float*) Ambient light.
+    :param diffuse: (*list of float*) Diffuse light.
+    :param specular: (*list of float*) Specular light.
+    :param mat_ambient: (*list of float*) Material ambient light.
+    :param mat_diffuse: (*list of float*) Material diffuse light.
+    :param mat_specular: (*list of float*) Material specular light.
+    :param mat_shininess: (*float*) Material shininess (0 - 128).
+    '''
+    global gca
+    if g_figure is None:
+        figure()
+
+    if gca is None:
+        gca = axes3d()
+    else:
+        if not isinstance(gca, Axes3DGL):
+            gca = axes3dgl()
+
+    gca.set_lighting(enable, **kwargs)
+    draw_if_interactive()
+
+def mesh(*args, **kwargs):
+    '''
+    creates a three-dimensional surface mesh plot
+
+    :param x: (*array_like*) Optional. X coordinate array.
+    :param y: (*array_like*) Optional. Y coordinate array.
+    :param z: (*array_like*) 2-D z value array.
+    :param cmap: (*string*) Color map string.
+
+    :returns: Legend
+    '''
+    global gca
+    if g_figure is None:
+        figure()
+
+    if gca is None:
+        gca = axes3d()
+    else:
+        if not isinstance(gca, Axes3D):
+            gca = axes3d()
+
+    r = gca.mesh(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
 def surf(*args, **kwargs):
     '''
     creates a three-dimensional surface plot
@@ -2878,7 +2910,95 @@ def surf(*args, **kwargs):
         if not isinstance(gca, Axes3D):
             gca = axes3d()
 
-    return gca.plot_surface(*args, **kwargs)
+    r = gca.surf(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+def slice(*args, **kwargs):
+    '''
+    Volume slice planes
+    :param x: (*array_like*) Optional. X coordinate array.
+    :param y: (*array_like*) Optional. Y coordinate array.
+    :param z: (*array_like*) Optional. Z coordinate array.
+    :param data: (*array_like*) 3D data array.
+    :param xslice: (*list*) X slice locations.
+    :param yslice: (*list*) Y slice locations.
+    :param zslice: (*list*) Z slice locations.
+    :param cmap: (*string*) Color map string.
+    :return:
+    '''
+    global gca
+    if g_figure is None:
+        figure()
+
+    if gca is None:
+        gca = axes3d()
+    else:
+        if not isinstance(gca, Axes3DGL):
+            gca = axes3dgl()
+
+    r = gca.slice(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+def isosurface(*args, **kwargs):
+    '''
+    creates a three-dimensional isosurface plot
+
+    :param x: (*array_like*) Optional. X coordinate array.
+    :param y: (*array_like*) Optional. Y coordinate array.
+    :param z: (*array_like*) Optional. Z coordinate array.
+    :param data: (*array_like*) 3D data array.
+    :param cmap: (*string*) Color map string.
+    :param nthread: (*int*) Thread number.
+
+    :returns: Legend
+    '''
+    global gca
+    if g_figure is None:
+        figure()
+
+    if gca is None:
+        gca = axes3d()
+    else:
+        if not isinstance(gca, Axes3DGL):
+            gca = axes3dgl()
+
+    r = gca.isosurface(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+def particles(*args, **kwargs):
+    '''
+    creates a three-dimensional particles plot
+
+    :param x: (*array_like*) Optional. X coordinate array.
+    :param y: (*array_like*) Optional. Y coordinate array.
+    :param z: (*array_like*) Optional. Z coordinate array.
+    :param data: (*array_like*) 3D data array.
+    :param s: (*float*) Point size.
+    :param cmap: (*string*) Color map string.
+    :param vmin: (*float*) Minimum value for particle plotting.
+    :param vmax: (*float*) Maximum value for particle plotting.
+    :param alpha_min: (*float*) Minimum alpha value.
+    :param alpha_max: (*float*) Maximum alpha value.
+    :param density: (*int*) Particle density value.
+
+    :returns: Legend
+    '''
+    global gca
+    if g_figure is None:
+        figure()
+
+    if gca is None:
+        gca = axes3d()
+    else:
+        if not isinstance(gca, Axes3DGL):
+            gca = axes3dgl()
+
+    r = gca.isosurface(*args, **kwargs)
+    draw_if_interactive()
+    return r
     
 def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None):
     '''

@@ -113,7 +113,12 @@ def getcolor(style, alpha=None):
         elif style == 'pink' or style == 'p':
             c = Color.pink
         else:
-            c = Color.decode(style)
+            try:
+                c = Color.decode(style)
+            except:
+                c = None
+                print('Not a valid color: {}'.format(style))
+                return c
     elif isinstance(style, (tuple, list)):
         if len(style) == 3:
             c = Color(style[0], style[1], style[2])
@@ -403,14 +408,17 @@ def getlegendbreak(geometry, **kwargs):
             lb.setColor(color)
         size = kwargs.pop('size', 6)
         lb.setSize(size)
-        ecobj = kwargs.pop('edgecolor', 'k')
-        edgecolor = getcolor(ecobj)
-        lb.setOutlineColor(edgecolor)
-        edgesize = kwargs.pop('edgesize', 1)
-        lb.setOutlineSize(edgesize)
+        edgecolor = kwargs.pop('edgecolor', None)
+        if not edgecolor is None:
+            edgecolor = getcolor(edgecolor)
+            lb.setOutlineColor(edgecolor)
+        linewith = kwargs.pop('linewidth', None)
+        edgesize = kwargs.pop('edgesize', linewith)
+        if not edgesize is None:
+            lb.setOutlineSize(edgesize)
         fill = kwargs.pop('fill', True)
         lb.setDrawFill(fill)
-        edge = kwargs.pop('edge', True)
+        edge = kwargs.pop('edge', not edgecolor is None)
         lb.setDrawOutline(edge)
     elif geometry == 'line':
         lb = PolylineBreak()
@@ -444,9 +452,10 @@ def getlegendbreak(geometry, **kwargs):
             lb.setSymbolInterval(interval)
     elif geometry == 'polygon':
         lb = PolygonBreak()
-        ecobj = kwargs.pop('edgecolor', 'k')
-        edgecolor = getcolor(ecobj)
-        lb.setOutlineColor(edgecolor)
+        edgecolor = kwargs.pop('edgecolor', None)
+        if not edgecolor is None:
+            edgecolor = getcolor(edgecolor)
+            lb.setOutlineColor(edgecolor)
         fill = kwargs.pop('fill', None)
         if fill is None:
             if color is None:
@@ -455,7 +464,7 @@ def getlegendbreak(geometry, **kwargs):
                 lb.setDrawFill(True)
         else:
             lb.setDrawFill(fill)
-        edge = kwargs.pop('edge', True)
+        edge = kwargs.pop('edge', not edgecolor is None)
         lb.setDrawOutline(edge)
         size = kwargs.pop('size', None)
         size = kwargs.pop('linewidth', size)
@@ -735,14 +744,19 @@ def setlegendscheme_line(ls, **kwargs):
     
 def setlegendscheme_polygon(ls, **kwargs):
     ls = ls.convertTo(ShapeTypes.Polygon)
-    fcobj = kwargs.pop('facecolor', None)
-    if fcobj is None:
-        facecolor = None
+    facecolor = kwargs.pop('facecolor', None)
+    if not facecolor is None:
+        facecolor = getcolor(facecolor)
+    edge = True
+    if kwargs.has_key('edgecolor'):
+        edgecolor = kwargs['edgecolor']
+        if edgecolor is None:
+            edge = False
+        else:
+            edgecolor = getcolor(edgecolor)
     else:
-        facecolor = getcolor(fcobj)
-    edgecolor = kwargs.pop('edgecolor', 'k')
-    if not edgecolor is None:
-        edgecolor = getcolor(edgecolor)
+        edgecolor = None
+    edge = kwargs.pop('edge', edge)
     edgesize = kwargs.pop('edgesize', None)
     fill = kwargs.pop('fill', None)
     alpha = kwargs.pop('alpha', None)
@@ -760,10 +774,8 @@ def setlegendscheme_polygon(ls, **kwargs):
             lb.setColor(c)
         if not edgesize is None:
             lb.setOutlineSize(edgesize)
-        if edgecolor is None:
-            lb.setDrawOutline(False)
-        else:
-            lb.setDrawOutline(True)
+        lb.setDrawOutline(edge)
+        if not edgecolor is None:
             lb.setOutlineColor(edgecolor)   
         if not fill is None:
             lb.setDrawFill(fill)

@@ -1240,10 +1240,21 @@ public class Plot2D extends AbstractPlot2D {
      * @return Legend scheme
      */
     public LegendScheme getLegendScheme() {
-        ShapeTypes stype = ShapeTypes.Polyline;
-        LegendScheme ls = new LegendScheme(stype);
-        for (Graphic g : this.graphics.getGraphics()) {
-            ls.getLegendBreaks().add(g.getLegend());
+        LegendScheme ls = null;
+        int n = this.graphics.getNumGraphics();
+        for (int i = n - 1; i >= 0; i--) {
+            Graphic g = this.graphics.getGraphicN(i);
+            if (g instanceof GraphicCollection) {
+                ls = ((GraphicCollection)g).getLegendScheme();
+            }
+        }
+
+        if (ls == null) {
+            ShapeTypes stype = ShapeTypes.Polyline;
+            ls = new LegendScheme(stype);
+            for (Graphic g : this.graphics.getGraphics()) {
+                ls.getLegendBreaks().add(g.getLegend());
+            }
         }
         return ls;
     }

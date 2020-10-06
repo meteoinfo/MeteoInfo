@@ -38,24 +38,9 @@ import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.Extent3D;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointF;
-import org.meteoinfo.legend.BreakTypes;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.ColorBreakCollection;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
+import org.meteoinfo.legend.*;
 import org.meteoinfo.math.sort.QuickSort;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.ImageShape;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.PointZShape;
-import org.meteoinfo.shape.PolygonZ;
-import org.meteoinfo.shape.PolygonZShape;
-import org.meteoinfo.shape.Polyline;
-import org.meteoinfo.shape.PolylineZShape;
-import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.ShapeTypes;
-import org.meteoinfo.shape.WindArrow3D;
+import org.meteoinfo.shape.*;
 
 /**
  *
@@ -77,7 +62,7 @@ public class Plot3D extends Plot {
     private Rectangle graphBounds;    //Graphic area bounds
 
     private boolean isBoxed, isMesh, isScaleBox, isDisplayXY, isDisplayZ,
-            isDisplayGrids, drawBoundingBox, drawBase;
+            displayGrids, drawBoundingBox, drawBase;
     private boolean hideOnDrag;
     private float xmin, xmax, ymin;
     private float ymax, zmin, zmax;
@@ -119,7 +104,7 @@ public class Plot3D extends Plot {
         this.graphics = new GraphicCollection3D();
         this.hideOnDrag = false;
         this.isBoxed = true;
-        this.isDisplayGrids = true;
+        this.displayGrids = true;
         this.isDisplayXY = true;
         this.isDisplayZ = true;
         this.drawBoundingBox = false;
@@ -459,12 +444,20 @@ public class Plot3D extends Plot {
     }
 
     /**
+     * Get display grids or not
+     * @return Boolean
+     */
+    public boolean isDisplayGrids() {
+        return this.displayGrids;
+    }
+
+    /**
      * Set display grids or not
      *
      * @param value Boolean
      */
     public void setDisplayGrids(boolean value) {
-        this.isDisplayGrids = value;
+        this.displayGrids = value;
     }
 
     /**
@@ -1992,7 +1985,7 @@ public class Plot3D extends Plot {
                 //vi = (v - xmin) * xfactor - 10;
                 //tickpos = projector.project(vi, factor_y * 10, -10);
                 tickpos = this.project(v, factor_y > 0 ? this.ymax : this.ymin, this.zmin);
-                if (this.isDisplayGrids && (v != xmin && v != xmax)) {
+                if (this.displayGrids && (v != xmin && v != xmax)) {
                     //projection = projector.project(vi, -factor_y * 10, -10);
                     projection = this.project(v, factor_y < 0 ? this.ymax : this.ymin, this.zmin);
                     g.setColor(this.lineboxColor);
@@ -2073,7 +2066,7 @@ public class Plot3D extends Plot {
                 //vi = (v - ymin) * yfactor - 10;
                 //tickpos = projector.project(factor_x * 10, vi, -10);
                 tickpos = this.project(factor_x > 0 ? this.xmax : this.xmin, v, this.zmin);
-                if (this.isDisplayGrids && (v != ymin && v != ymax)) {
+                if (this.displayGrids && (v != ymin && v != ymax)) {
                     //projection = projector.project(-factor_x * 10, vi, -10);
                     projection = this.project(factor_x < 0 ? this.xmax : this.xmin, v, this.zmin);
                     g.setColor(this.lineboxColor);
@@ -2155,7 +2148,7 @@ public class Plot3D extends Plot {
                 //tickpos = projector.project(factor_x * 10 * lf, -factor_y * 10 * lf, vi);
                 tickpos = this.project(factor_x * lf > 0 ? this.xmax : this.xmin,
                         factor_y * lf < 0 ? this.ymax : this.ymin, v);
-                if (this.isDisplayGrids && this.isBoxed && (v != zmin && v != zmax)) {
+                if (this.displayGrids && this.isBoxed && (v != zmin && v != zmax)) {
                     //projection = projector.project(-factor_x * 10, -factor_y * 10, vi);
                     projection = this.project(factor_x < 0 ? this.xmax : this.xmin,
                             factor_y < 0 ? this.ymax : this.ymin, v);
@@ -2334,6 +2327,31 @@ public class Plot3D extends Plot {
                 break;
         }
         legend.draw(g, new PointF(x, y));
+    }
+
+    /**
+     * Get legend scheme
+     *
+     * @return Legend scheme
+     */
+    public LegendScheme getLegendScheme() {
+        LegendScheme ls = null;
+        int n = this.graphics.getNumGraphics();
+        for (int i = n - 1; i >= 0; i--) {
+            Graphic g = this.graphics.getGraphicN(i);
+            if (g instanceof GraphicCollection) {
+                ls = ((GraphicCollection)g).getLegendScheme();
+            }
+        }
+
+        if (ls == null) {
+            ShapeTypes stype = ShapeTypes.Polyline;
+            ls = new LegendScheme(stype);
+            for (Graphic g : this.graphics.getGraphics()) {
+                ls.getLegendBreaks().add(g.getLegend());
+            }
+        }
+        return ls;
     }
 
     // </editor-fold>

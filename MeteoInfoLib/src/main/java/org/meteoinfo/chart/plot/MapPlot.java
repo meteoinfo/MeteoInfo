@@ -1232,7 +1232,8 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      * @return Legend scheme
      */
     public LegendScheme getLegendScheme() {
-        return null;
+        MapLayer layer = this.mapView.getLastAddedLayer();
+        return layer == null ? null : layer.getLegendScheme();
     }
 
     /**

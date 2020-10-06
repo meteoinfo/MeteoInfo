@@ -380,13 +380,23 @@ def getplotstyle(style, caption, **kwargs):
             plb.setStyle(lineStyle)
         return plb
         
-def getlegendbreak(geometry, **kwargs): 
-    cobj = kwargs.pop('color', None)
-    if cobj is None:
-        cobj = kwargs.pop('facecolor', None)
+def getlegendbreak(geometry, **kwargs):
+    fill = True
     color = None
-    if not cobj is None:
-        color = getcolor(cobj)
+    if kwargs.has_key('color'):
+        color = kwargs.pop('color')
+        if color is None:
+            fill = False
+        else:
+            color = getcolor(color)
+    else:
+        if kwargs.has_key('facecolor'):
+            color = kwargs.pop('facecolor')
+            if color is None:
+                fill = False
+            else:
+                color = getcolor(color)
+
     if geometry == 'point':
         lb = PointBreak()        
         marker = kwargs.pop('marker', 'o')
@@ -408,17 +418,23 @@ def getlegendbreak(geometry, **kwargs):
             lb.setColor(color)
         size = kwargs.pop('size', 6)
         lb.setSize(size)
-        edgecolor = kwargs.pop('edgecolor', None)
+        edge = True
+        edgecolor = None
+        if kwargs.has_key('edgecolor'):
+            edgecolor = kwargs.pop('edgecolor')
+            if edgecolor is None:
+                edge = False
+            else:
+                edgecolor = getcolor(edgecolor)
         if not edgecolor is None:
-            edgecolor = getcolor(edgecolor)
             lb.setOutlineColor(edgecolor)
         linewith = kwargs.pop('linewidth', None)
         edgesize = kwargs.pop('edgesize', linewith)
         if not edgesize is None:
             lb.setOutlineSize(edgesize)
-        fill = kwargs.pop('fill', True)
+        fill = kwargs.pop('fill', fill)
         lb.setDrawFill(fill)
-        edge = kwargs.pop('edge', not edgecolor is None)
+        edge = kwargs.pop('edge', edge)
         lb.setDrawOutline(edge)
     elif geometry == 'line':
         lb = PolylineBreak()
@@ -452,19 +468,19 @@ def getlegendbreak(geometry, **kwargs):
             lb.setSymbolInterval(interval)
     elif geometry == 'polygon':
         lb = PolygonBreak()
-        edgecolor = kwargs.pop('edgecolor', None)
-        if not edgecolor is None:
-            edgecolor = getcolor(edgecolor)
-            lb.setOutlineColor(edgecolor)
-        fill = kwargs.pop('fill', None)
-        if fill is None:
-            if color is None:
-                lb.setDrawFill(False)
+        edge = True
+        edgecolor = None
+        if kwargs.has_key('edgecolor'):
+            edgecolor = kwargs.pop('edgecolor')
+            if edgecolor is None:
+                edge = False
             else:
-                lb.setDrawFill(True)
-        else:
-            lb.setDrawFill(fill)
-        edge = kwargs.pop('edge', not edgecolor is None)
+                edgecolor = getcolor(edgecolor)
+        if not edgecolor is None:
+            lb.setOutlineColor(edgecolor)
+        fill = kwargs.pop('fill', fill)
+        lb.setDrawFill(fill)
+        edge = kwargs.pop('edge', edge)
         lb.setDrawOutline(edge)
         size = kwargs.pop('size', None)
         size = kwargs.pop('linewidth', size)

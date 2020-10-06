@@ -33,10 +33,10 @@ from ._mapaxes import MapAxes
 batchmode = False
 isinteractive = False
 g_figure = None
-gca = None
+g_axes = None
 
 __all__ = [
-    'g_figure','gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis',
+    'gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis',
     'axism','bar','bar3','barh','barbs','barbsm','bgcolor','box',
     'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
     'contourfm','contourm','delfig','draw','draw_if_interactive','errorbar',
@@ -46,10 +46,17 @@ __all__ = [
     'makelegend','makesymbolspec','masklayer','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
     'semilogx','semilogy','set','show','slice','stationmodel','stem','step','streamplot','streamplotm','subplot','subplots','suptitle',
-    'surf','taylor_diagram','text','title','twinx','twiny','violinplot','weatherspec','xaxis',
+    'surf','taylor_diagram','text','text3','title','twinx','twiny','violinplot','weatherspec','xaxis',
     'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
     'isinteractive'
     ]
+
+def gca():
+    '''
+    Get current axes
+    :return: Current axes
+    '''
+    return g_axes
         
 def figsize():
     '''
@@ -130,17 +137,17 @@ def plot(*args, **kwargs):
       'k'        black
       =========  =====
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-    #         gca = axes()
+    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+    #         g_axes = axes()
             
-    r = gca.plot(*args, **kwargs)
+    r = g_axes.plot(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r    
@@ -159,17 +166,17 @@ def step(x, y, *args, **kwargs):
     
     :returns: Step lines
     '''    
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-            gca = axes()
+        if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+            g_axes = axes()
             
-    r = gca.step(x, y, *args, **kwargs)
+    r = g_axes.step(x, y, *args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r 
@@ -223,14 +230,14 @@ def plot3(x, y, z, *args, **kwargs):
       'k'        black
       =========  =====
     """
-    global gca
-    if gca is None:
-        gca = axes3d()
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
     else:
-        if not isinstance(gca, Axes3D):
-            gca = axes3d()
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
     
-    r = gca.plot(x, y, z, *args, **kwargs)
+    r = g_axes.plot(x, y, z, *args, **kwargs)
     draw_if_interactive()
     return r
         
@@ -281,17 +288,17 @@ def semilogy(*args, **kwargs):
       'k'        black
       =========  =====
     """       
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.semilogy(*args, **kwargs)
+    r = g_axes.semilogy(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r 
@@ -343,17 +350,17 @@ def semilogx(*args, **kwargs):
       'k'        black
       =========  =====
     """       
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.semilogx(*args, **kwargs)
+    r = g_axes.semilogx(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r 
@@ -405,17 +412,17 @@ def loglog(*args, **kwargs):
       'k'        black
       =========  =====
     """       
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.loglog(*args, **kwargs)
+    r = g_axes.loglog(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r    
@@ -436,17 +443,17 @@ def errorbar(x, y, yerr=None, xerr=None, fmt='', ecolor=None, elinewidth=None, c
 
     :returns: Error bar lines.
     '''
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-            gca = axes()
+        if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+            g_axes = axes()
             
-    r = gca.errorbar(x, y, yerr, xerr, fmt, ecolor, elinewidth, capsize, **kwargs)
+    r = g_axes.errorbar(x, y, yerr, xerr, fmt, ecolor, elinewidth, capsize, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r    
@@ -491,17 +498,17 @@ def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
       =========  ===========
       
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-            gca = axes()
+        if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+            g_axes = axes()
             
-    r = gca.bar(x, height, width, bottom, align, data, **kwargs)
+    r = g_axes.bar(x, height, width, bottom, align, data, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -529,14 +536,14 @@ def bar3(x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
 
     :returns: Points legend break.
     """
-    global gca
-    if gca is None:
-        gca = axes3d()
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
     else:
-        if not isinstance(gca, Axes3D):
-            gca = axes3d()
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
 
-    r = gca.bar(x, y, z, width, bottom, cylinder, **kwargs)
+    r = g_axes.bar(x, y, z, width, bottom, cylinder, **kwargs)
     draw_if_interactive()
     return r
 
@@ -580,17 +587,17 @@ def barh(*args, **kwargs):
       =========  ===========
       
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-            gca = axes()
+        if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+            g_axes = axes()
             
-    r = gca.barh(*args, **kwargs)
+    r = g_axes.barh(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -605,17 +612,17 @@ def hist(x, bins=10, range=None, density=False, cumulative=False,
         which are not required to be of the same length.
     :param bins: (*int*) If an integer is given, bins + 1 bin edges are returned.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.hist(x, bins, range, density, cumulative,
+    r = g_axes.hist(x, bins, range, density, cumulative,
         bottom, histtype, align, orientation, rwidth, log, **kwargs)
     if not r is None:
         draw_if_interactive()
@@ -637,17 +644,17 @@ def stem(self, *args, **kwargs):
     
     :returns: Stem line legend break.                  
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.stem(*args, **kwargs)
+    r = g_axes.stem(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -668,17 +675,17 @@ def scatter(*args, **kwargs):
     
     :returns: Points legend break.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-    #     if gca.axestype != 'cartesian':
-    #         gca = axes()
+    #     if g_axes.axestype != 'cartesian':
+    #         g_axes = axes()
             
-    r = gca.scatter(*args, **kwargs)
+    r = g_axes.scatter(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -700,14 +707,14 @@ def scatter3(x, y, z, s=8, c='b', marker='o', **kwargs):
     
     :returns: Points legend break.
     """
-    global gca
-    if gca is None:
-        gca = axes3d()
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
     else:
-        if not isinstance(gca, Axes3D):
-            gca = axes3d()   
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
     
-    return gca.scatter(x, y, z, s, c, marker, **kwargs)
+    return g_axes.scatter(x, y, z, s, c, marker, **kwargs)
 
 def arrow(x, y, dx, dy, **kwargs):
     '''
@@ -720,17 +727,17 @@ def arrow(x, y, dx, dy, **kwargs):
     
     :returns: Arrow graphic.
     '''
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.arrow(x, y, dx, dy, **kwargs)
+    r = g_axes.arrow(x, y, dx, dy, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -746,17 +753,17 @@ def arrowline(x, y, dx=0, dy=0, **kwargs):
     
     :returns: Arrow line graphic.
     '''
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.arrowline(x, y, dx, dy, **kwargs)
+    r = g_axes.arrowline(x, y, dx, dy, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -772,17 +779,17 @@ def annotate(s, xy, *args, **kwargs):
         
     :returns: Annotation.
     '''
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.annotate(s, xy, *args, **kwargs)
+    r = g_axes.annotate(s, xy, *args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -795,17 +802,17 @@ def patch(x, y=None, **kwargs):
         is None.
     :param y: (*array_like*) Y coordinates for each vertex.
     '''
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-        # if gca.axestype != 'cartesian':
-            # gca = axes()
+        # if g_axes.axestype != 'cartesian':
+            # g_axes = axes()
             
-    r = gca.patch(x, y, **kwargs)
+    r = g_axes.patch(x, y, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -817,17 +824,17 @@ def rectangle(position, curvature=None, **kwargs):
     :param position: (*list*) Position of the rectangle [x, y, width, height].
     :param curvature: (*list*) Curvature of the rectangle [x, y]. Default is None.
     '''
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.rectangle(position, curvature, **kwargs)
+    r = g_axes.rectangle(position, curvature, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -842,17 +849,17 @@ def fill_between(x, y1, y2=0, where=None, **kwargs):
     :param where: (*array_like*) If None, default to fill between everywhere. If not None, it is an 
         N-length boolean array and the fill will only happen over the regions where ``where==True``.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.fill_between(x, y1, y2, where, **kwargs)
+    r = g_axes.fill_between(x, y1, y2, where, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -867,17 +874,17 @@ def fill_betweenx(y, x1, x2=0, where=None, **kwargs):
     :param where: (*array_like*) If None, default to fill between everywhere. If not None, it is an 
         N-length boolean array and the fill will only happen over the regions where ``where==True``.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.fill_betweenx(y, x1, x2, where, **kwargs)
+    r = g_axes.fill_betweenx(y, x1, x2, where, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -913,17 +920,17 @@ def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6
     
     :returns: (*tuple*) Patches and texts.
     """        
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.pie(x, explode, labels, colors, autopct, pctdistance, shadow, 
+    r = g_axes.pie(x, explode, labels, colors, autopct, pctdistance, shadow,
         labeldistance, startangle, radius, wedgeprops, **kwargs)
     if not r is None:
         draw_if_interactive()
@@ -962,17 +969,17 @@ def boxplot(x, sym=None, positions=None, widths=None, color=None, showcaps=True,
     :param capprops: (*dict*) Specifies the style of the caps.
     :param flierprops: (*dict*) Specifies the style of the fliers.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.boxplot(x, sym, positions, widths, color, showcaps, showfliers, showmeans, \
+    r = g_axes.boxplot(x, sym, positions, widths, color, showcaps, showfliers, showmeans, \
         showmedians, meanline, medianline, boxprops, medianprops, meanprops, whiskerprops, capprops, flierprops)
     if not r is None:
         draw_if_interactive()
@@ -994,17 +1001,17 @@ def violinplot(dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None
     
     :returns: Violin graphics.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes()
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes()
             
-    r = gca.violinplot(dataset, positions, widths, boxwidth, boxprops, whiskerprops, **kwargs)
+    r = g_axes.violinplot(dataset, positions, widths, boxwidth, boxprops, whiskerprops, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -1067,12 +1074,12 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
     rwd = np.radians(wd)    
 
     bottom = kwargs.pop('bottom', None)
-    global gca
-    if gca is None:
-        gca = axes(polar=True, bottom=bottom)
+    global g_axes
+    if g_axes is None:
+        g_axes = axes(polar=True, bottom=bottom)
     else:
-        if not isinstance(gca, PolarAxes):
-            gca = axes(polar=True, bottom=bottom)
+        if not isinstance(g_axes, PolarAxes):
+            g_axes = axes(polar=True, bottom=bottom)
     
     width = kwargs.pop('width', 0.5)
     if width > 1:
@@ -1104,22 +1111,22 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
     
     if rmax is None:
         rmax = math.ceil(rrmax)
-    gca.set_rmax(rmax)
+    g_axes.set_rmax(rmax)
     if not rtickloc is None:
-        gca.set_rtick_locations(rtickloc)
+        g_axes.set_rtick_locations(rtickloc)
     if not rticks is None:
-        gca.set_rticks(rticks)
-    gca.set_rtick_format('%')
-    gca.set_rlabel_position(rlabelpos)
-    gca.set_xtick_locations(np.arange(0., 360., 360./wdN))
+        g_axes.set_rticks(rticks)
+    g_axes.set_rtick_format('%')
+    g_axes.set_rlabel_position(rlabelpos)
+    g_axes.set_xtick_locations(np.arange(0., 360., 360./wdN))
     step = 16 / nwdbins
     if xticks is None:
         xticks = ['E','ENE','NE','NNE','N','NNW','NW','WNW','W','WSW',\
             'SW','SSW','S','SSE','SE','ESE']
         xticks = xticks[::step]
-    gca.set_xticks(xticks)       
+    g_axes.set_xticks(xticks)
     draw_if_interactive()
-    return gca, bars
+    return g_axes, bars
  
 def figure(bgcolor='w', figsize=None, newfig=True):
     """
@@ -1196,18 +1203,18 @@ def caxes(ax=None):
     :param ax: (*Axes or int*) The axes to be set as current axes. Is None, get current
         axes.
     '''
-    global gca
+    global g_axes
     chart = g_figure.getChart()    
     if isinstance(ax, int):
         if g_figure is None:
             figure()
                         
-        gca = __get_axes(chart, ax)
+        g_axes = __get_axes(chart, ax)
         chart.setCurrentPlot(ax - 1)
     elif not ax is None:
-        gca = ax
+        g_axes = ax
         chart.setCurrentPlot(chart.getPlotIndex(ax.axes))
-    return gca
+    return g_axes
 
 def subplot(nrows, ncols, plot_number, **kwargs):
     """
@@ -1224,10 +1231,10 @@ def subplot(nrows, ncols, plot_number, **kwargs):
     if g_figure is None:
         figure()
         
-    global gca
-    gca = g_figure.subplot(nrows, ncols, plot_number, **kwargs)
+    global g_axes
+    g_axes = g_figure.subplot(nrows, ncols, plot_number, **kwargs)
     
-    return gca
+    return g_axes
     
 def subplots(nrows=1, ncols=1, position=None, sharex=False, sharey=False, \
     wspace=None, hspace=None, axestype='Axes', **kwargs):
@@ -1256,20 +1263,20 @@ def subplots(nrows=1, ncols=1, position=None, sharex=False, sharey=False, \
     axs = g_figure.subplots(nrows, ncols, position, sharex, sharey, \
         wspace, hspace, axestype, **kwargs)
         
-    global gca
+    global g_axes
     if isinstance(axs[0], tuple):
-        gca = axs[0][0]
+        g_axes = axs[0][0]
     else:
-        gca = axs[0]
+        g_axes = axs[0]
     return g_figure, axs
 
 def currentplot(plot_number):
     if g_figure is None:
         figure()
         
-    global gca
+    global g_axes
     chart = g_figure.getChart()
-    gca = __get_axes(chart, plot_number)
+    g_axes = __get_axes(chart, plot_number)
     chart.setCurrentPlot(plot_number - 1)
     
     return plot
@@ -1307,14 +1314,14 @@ def axes(*args, **kwargs):
     
     :returns: The axes.
     """
-    global gca    
+    global g_axes
                
     if g_figure is None or isinstance(g_figure, GLFigure):
         figure()
         
     ax = g_figure.add_axes(*args, **kwargs) 
 
-    gca = ax
+    g_axes = ax
     draw_if_interactive()
     return ax
 
@@ -1371,14 +1378,14 @@ def axes3dgl(*args, **kwargs):
     
     :returns: The axes.
     """
-    global gca    
+    global g_axes
                
     if g_figure is None or isinstance(g_figure, Figure):
         glfigure(**kwargs)
         
     ax = Axes3DGL(**kwargs)
     g_figure.set_axes(ax)
-    gca = ax
+    g_axes = ax
     draw_if_interactive()
     return ax
     
@@ -1393,8 +1400,8 @@ def twinx(ax):
     """
     ax2 = ax.twinx()
     g_figure._add_axes(ax2)
-    global gca
-    gca = ax2
+    global g_axes
+    g_axes = ax2
     return ax2
     
 def twiny(ax):
@@ -1408,8 +1415,8 @@ def twiny(ax):
     """
     ax2 = ax.twiny()
     g_figure._add_axes(ax2)
-    global gca
-    gca = ax2
+    global g_axes
+    g_axes = ax2
     return ax2
 
 def xaxis(ax=None, **kwargs):
@@ -1437,7 +1444,7 @@ def xaxis(ax=None, **kwargs):
     :param location: (*string*) Locations of the axis ['both' | 'top' | 'bottom'].
     """
     if ax is None:
-        ax = gca
+        ax = g_axes
     ax.xaxis(**kwargs)
     draw_if_interactive()
     
@@ -1466,7 +1473,7 @@ def yaxis(ax=None, **kwargs):
     :param location: (*string*) Locations of the axis ['both' | 'left' | 'right'].
     """
     if ax is None:
-        ax = gca
+        ax = g_axes
     ax.yaxis(**kwargs)
     draw_if_interactive()
     
@@ -1479,7 +1486,7 @@ def zaxis(ax=None, **kwargs):
     :param shift: (*int) z axis shif along horizontal direction. Units is pixel. Default is 0.
     """
     if ax is None:
-        ax = gca
+        ax = g_axes
     ax.zaxis(**kwargs)
     draw_if_interactive()
     
@@ -1491,7 +1498,7 @@ def box(ax=None, on=None):
     :param on: (*boolean*) Box on or off. If on is None, toggle state.
     """
     if ax is None:
-        ax = gca
+        ax = g_axes
     locs_all = [Location.LEFT, Location.BOTTOM, Location.TOP, Location.RIGHT]
     locs = []
     for loc in locs_all:
@@ -1580,13 +1587,13 @@ def cla():
     '''
     Clear current axes.
     '''
-    global gca
-    if not gca is None:
+    global g_axes
+    if not g_axes is None:
         if not g_figure is None:
             chart = g_figure.getChart()
             if not chart is None:
-                g_figure.getChart().removePlot(gca.axes)
-        gca = None
+                g_figure.getChart().removePlot(g_axes.axes)
+        g_axes = None
         draw_if_interactive()
 
 # Delete current figure
@@ -1600,8 +1607,8 @@ def delfig():
     figureDock = migl.milapp.getFigureDock()
     figureDock.removeFigure(g_figure)
     
-    global gca
-    gca = None
+    global g_axes
+    g_axes = None
     #draw_if_interactive()
     
 # Clear current figure    
@@ -1622,8 +1629,8 @@ def clf():
     g_figure.getChart().setTitle(None)
     g_figure.getChart().clearPlots()
     g_figure.getChart().clearTexts()
-    global gca
-    gca = None
+    global g_axes
+    g_axes = None
     draw_if_interactive()
 
 # Clear last layer    
@@ -1631,12 +1638,12 @@ def cll():
     '''
     Clear last added layer or plot object.
     '''
-    if not gca is None:
-        if isinstance(gca, MapAxes):
-            gca.axes.removeLastLayer()
+    if not g_axes is None:
+        if isinstance(g_axes, MapAxes):
+            g_axes.axes.removeLastLayer()
         else:
-            gca.axes.removeLastGraphic()
-            gca.axes.setAutoExtent()
+            g_axes.axes.removeLastGraphic()
+            g_axes.axes.setAutoExtent()
         draw_if_interactive()
         
 def clc():
@@ -1660,7 +1667,7 @@ def title(label, loc='center', fontname=None, fontsize=14, bold=True, color='bla
     :param color: (*color*) Title string color. Default is ``black`` .  
     :param linespace: (*int*) Line space of multiple line title.
     """
-    r = gca.set_title(label, loc, fontname, fontsize, bold, color, **kwargs)
+    r = g_axes.set_title(label, loc, fontname, fontsize, bold, color, **kwargs)
     draw_if_interactive()
     return r
     
@@ -1688,7 +1695,7 @@ def left_title(label, fontname=None, fontsize=14, bold=False, color='black', **k
     :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
     :param color: (*color*) Title string color. Default is ``black`` .    
     """
-    r = gca.set_title(label, 'left', fontname, fontsize, bold, color, **kwargs)
+    r = g_axes.set_title(label, 'left', fontname, fontsize, bold, color, **kwargs)
     draw_if_interactive()
     return r
     
@@ -1702,7 +1709,7 @@ def right_title(label, fontname=None, fontsize=14, bold=False, color='black', **
     :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
     :param color: (*color*) Title string color. Default is ``black`` .    
     """
-    r = gca.set_title(label, 'right', fontname, fontsize, bold, color, **kwargs)
+    r = g_axes.set_title(label, 'right', fontname, fontsize, bold, color, **kwargs)
     draw_if_interactive()
     return r
 
@@ -1716,7 +1723,7 @@ def xlabel(label, **kwargs):
     :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
     :param color: (*color*) Label string color. Default is ``black`` .
     """
-    gca.set_xlabel(label, **kwargs)
+    g_axes.set_xlabel(label, **kwargs)
     draw_if_interactive()
     
 def ylabel(label, **kwargs):
@@ -1729,7 +1736,7 @@ def ylabel(label, **kwargs):
     :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
     :param color: (*color*) Label string color. Default is ``black`` .
     """
-    gca.set_ylabel(label, **kwargs)
+    g_axes.set_ylabel(label, **kwargs)
     draw_if_interactive()
 
 def zlabel(label, **kwargs):
@@ -1742,11 +1749,11 @@ def zlabel(label, **kwargs):
     :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
     :param color: (*color*) Label string color. Default is ``black`` .
     """
-    global gca
-    if not isinstance(gca, Axes3D):
+    global g_axes
+    if not isinstance(g_axes, Axes3D):
         return
 
-    gca.set_zlabel(label, **kwargs)
+    g_axes.set_zlabel(label, **kwargs)
     draw_if_interactive()
 
 def xticks(*args, **kwargs):
@@ -1769,7 +1776,7 @@ def xticks(*args, **kwargs):
             if isinstance(locs[0], datetime.datetime):
                 for i in range(len(locs)):
                     locs[i] = miutil.date2num(locs[i])
-        gca.set_xticks(locs)
+        g_axes.set_xticks(locs)
         args = args[1:]
     if len(args) > 0:
         labels = args[0]
@@ -1777,7 +1784,7 @@ def xticks(*args, **kwargs):
             labels = labels.aslist()
     else:
         labels = None
-    gca.set_xticklabels(labels, **kwargs)
+    g_axes.set_xticklabels(labels, **kwargs)
     
     draw_if_interactive()
     
@@ -1801,7 +1808,7 @@ def yticks(*args, **kwargs):
             if isinstance(locs[0], datetime.datetime):
                 for i in range(len(locs)):
                     locs[i] = miutil.date2num(locs[i])
-        gca.set_yticks(locs)
+        g_axes.set_yticks(locs)
         args = args[1:]
     if len(args) > 0:
         labels = args[0]
@@ -1809,7 +1816,7 @@ def yticks(*args, **kwargs):
             labels = labels.aslist()
     else:
         labels = None
-    gca.set_yticklabels(labels, **kwargs)
+    g_axes.set_yticklabels(labels, **kwargs)
     
     draw_if_interactive()
     
@@ -1825,7 +1832,7 @@ def zticks(*args, **kwargs):
     :param color: (*color*) Tick label string color. Default is ``black`` .
     :param rotation: (*float*) Tick label rotation angle. Default is 0.
     """
-    if not isinstance(gca, Axes3D):
+    if not isinstance(g_axes, Axes3D):
         return
         
     if len(args) > 0:
@@ -1835,7 +1842,7 @@ def zticks(*args, **kwargs):
         if isinstance(locs[0], datetime.datetime):
             for i in range(len(locs)):
                 locs[i] = miutil.date2num(locs[i])
-        gca.set_zticks(locs)
+        g_axes.set_zticks(locs)
         args = args[1:]
     if len(args) > 0:
         labels = args[0]
@@ -1843,7 +1850,7 @@ def zticks(*args, **kwargs):
             labels = labels.aslist()
     else:
         labels = None
-    gca.set_zticklabels(labels, **kwargs)
+    g_axes.set_zticklabels(labels, **kwargs)
     
     draw_if_interactive()
     
@@ -1869,9 +1876,31 @@ def text(x, y, s, **kwargs):
     if coordinates == 'figure':
         g_figure.getChart().addText(ctext)
     else:
-        gca.axes.addText(ctext)
+        g_axes.axes.addText(ctext)
     draw_if_interactive()
     return ctext
+
+def text3(x, y, z, s, zdir=None, **kwargs):
+    '''
+    Add text to the plot. kwargs will be passed on to text, except for the zdir
+    keyword, which sets the direction to be used as the z direction.
+
+    :param x: (*float*) X coordinate.
+    :param y: (*float*) Y coordinate.
+    :param z: (*float*) Z coordinate.
+    :param s: (*string*) Text string.
+    :param zdir: Z direction.
+    '''
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
+
+    r = g_axes.text(x, y, z, s, zdir, **kwargs)
+    draw_if_interactive()
+    return r
     
 def axis(limits):
     """
@@ -1879,7 +1908,7 @@ def axis(limits):
     
     :param limits: (*list*) Min and max of the x and y axes.
     """
-    r = gca.axis(limits)
+    r = g_axes.axis(limits)
     if not r is None:
         draw_if_interactive()
             
@@ -1890,7 +1919,7 @@ def axism(limits=None, lonlat=True):
     :param limits: (*list*) Min and max of the x and y map axes.
     :param lonlat: (*boolean*) Is longitude/latitude or not.
     """
-    r = gca.axis(limits, lonlat)
+    r = g_axes.axis(limits, lonlat)
     if not r is None:
         draw_if_interactive()
 
@@ -1906,7 +1935,7 @@ def grid(b=None, **kwargs):
         gridlines are drawn.
     :param kwargs: *kwargs* are used to set the grid line properties.
     """
-    gca.grid(b, **kwargs)
+    g_axes.grid(b, **kwargs)
     draw_if_interactive()
     
 def xlim(xmin, xmax):
@@ -1916,7 +1945,7 @@ def xlim(xmin, xmax):
     :param xmin: (*float*) Minimum limit of the x axis.
     :param xmax: (*float*) Maximum limit of the x axis.
     """
-    gca.set_xlim(xmin, xmax)
+    g_axes.set_xlim(xmin, xmax)
     draw_if_interactive()
             
 def ylim(ymin, ymax):
@@ -1926,7 +1955,7 @@ def ylim(ymin, ymax):
     :param ymin: (*float*) Minimum limit of the y axis.
     :param ymax: (*float*) Maximum limit of the y axis.
     """
-    gca.set_ylim(ymin, ymax)
+    g_axes.set_ylim(ymin, ymax)
     draw_if_interactive()   
     
 def zlim(zmin, zmax):
@@ -1936,21 +1965,21 @@ def zlim(zmin, zmax):
     :param zmin: (*float*) Minimum limit of the z axis.
     :param zmax: (*float*) Maximum limit of the z axis.
     """
-    gca.set_zlim(zmin, zmax)
+    g_axes.set_zlim(zmin, zmax)
     draw_if_interactive()   
 
 def xreverse():
     '''
     Reverse x axis.
     '''
-    gca.xreverse()
+    g_axes.xreverse()
     draw_if_interactive()
     
 def yreverse():
     '''
     Reverse y axis.
     '''
-    gca.yreverse()
+    g_axes.yreverse()
     draw_if_interactive()
             
 def legend(*args, **kwargs):
@@ -1985,7 +2014,7 @@ def legend(*args, **kwargs):
     
     :returns: (*ChartLegend*) The chart legend.
     """
-    r = gca.legend(*args, **kwargs)
+    r = g_axes.legend(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -2040,7 +2069,7 @@ def colorbar(mappable=None, **kwargs):
     """
     cax = kwargs.pop('cax', None)
     if cax is None:
-        cax = gca
+        cax = g_axes
     cax.colorbar(mappable, **kwargs)
     draw_if_interactive()
 
@@ -2082,17 +2111,17 @@ def imshow(*args, **kwargs):
     
     :returns: (*Image graphic*) Image graphic created from array data.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-    #     if gca.axestype != 'cartesian':
-    #         gca = axes()
+    #     if g_axes.axestype != 'cartesian':
+    #         g_axes = axes()
             
-    r = gca.imshow(*args, **kwargs)
+    r = g_axes.imshow(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -2115,17 +2144,17 @@ def pcolor(*args, **kwargs):
     
     :returns: (*GraphicCollection*) Polygon graphic collection.
     '''    
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-    #     if gca.axestype != 'cartesian':
-    #         gca = axes()
+    #     if g_axes.axestype != 'cartesian':
+    #         g_axes = axes()
             
-    r = gca.pcolor(*args, **kwargs)
+    r = g_axes.pcolor(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -2148,17 +2177,17 @@ def gridshow(*args, **kwargs):
     
     :returns: (*GraphicCollection*) Polygon graphic collection.
     '''
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-    #     if gca.axestype != 'cartesian':
-    #         gca = axes()
+    #     if g_axes.axestype != 'cartesian':
+    #         g_axes = axes()
             
-    r = gca.gridshow(*args, **kwargs)
+    r = g_axes.gridshow(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -2181,17 +2210,17 @@ def contour(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Contour VectoryLayer created from array data.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-    #         gca = axes()
+    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+    #         g_axes = axes()
             
-    r = gca.contour(*args, **kwargs)
+    r = g_axes.contour(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -2214,17 +2243,17 @@ def contourf(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Contour filled VectoryLayer created from array data.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-    #         gca = axes()
+    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+    #         g_axes = axes()
             
-    r = gca.contourf(*args, **kwargs)
+    r = g_axes.contourf(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -2248,17 +2277,17 @@ def quiver(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Created quiver VectoryLayer.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-    #         gca = axes()
+    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+    #         g_axes = axes()
             
-    r = gca.quiver(*args, **kwargs)
+    r = g_axes.quiver(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r    
@@ -2283,14 +2312,14 @@ def quiver3(*args, **kwargs):
 
     :returns: (*Graphic list*) Created quiver graphics.
     """
-    global gca
-    if gca is None:
-        gca = axes3d()
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
     else:
-        if not isinstance(gca, Axes3D):
-            gca = axes3d()
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
 
-    return gca.quiver(*args, **kwargs)
+    return g_axes.quiver(*args, **kwargs)
 
 def barbs(*args, **kwargs):
     """
@@ -2311,17 +2340,17 @@ def barbs(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Created barbs VectoryLayer.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-    #         gca = axes()
+    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+    #         g_axes = axes()
             
-    r = gca.barbs(*args, **kwargs)
+    r = g_axes.barbs(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r  
@@ -2343,17 +2372,17 @@ def streamplot(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Created streamline VectoryLayer.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     # else:
-    #     if gca.axestype != 'cartesian' and gca.axestype != 'polar':
-    #         gca = axes()
+    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+    #         g_axes = axes()
             
-    r = gca.streamplot(*args, **kwargs)
+    r = g_axes.streamplot(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r      
@@ -2383,17 +2412,17 @@ def scatterm(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Point VectoryLayer.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.scatter(*args, **kwargs)
+    r = g_axes.scatter(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r  
@@ -2410,17 +2439,17 @@ def plotm(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Line VectoryLayer.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.plot(*args, **kwargs)
+    r = g_axes.plot(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r  
@@ -2437,17 +2466,17 @@ def stationmodel(smdata, **kwargs):
     
     :returns: (*VectoryLayer*) Station model VectoryLayer.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.stationmodel(smdata, **kwargs)
+    r = g_axes.stationmodel(smdata, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r  
@@ -2474,17 +2503,17 @@ def imshowm(*args, **kwargs):
     
     :returns: (*RasterLayer*) RasterLayer created from array data.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
         
-    if gca is None:    
-        gca = axesm()
+    if g_axes is None:
+        g_axes = axesm()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.imshow(*args, **kwargs)
+    r = g_axes.imshow(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     
@@ -2513,17 +2542,17 @@ def contourm(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Contour VectoryLayer created from array data.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
         
-    if gca is None:    
-        gca = axesm()
+    if g_axes is None:
+        g_axes = axesm()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.contour(*args, **kwargs)
+    r = g_axes.contour(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     
@@ -2552,17 +2581,17 @@ def contourfm(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Contour filled VectoryLayer created from array data.
     """    
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
         
-    if gca is None:    
-        gca = axesm()
+    if g_axes is None:
+        g_axes = axesm()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.contourf(*args, **kwargs)
+    r = g_axes.contourf(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     
@@ -2590,17 +2619,17 @@ def pcolorm(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Polygon VectoryLayer created from array data.
     """    
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
         
-    if gca is None:    
-        gca = axesm()
+    if g_axes is None:
+        g_axes = axesm()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.pcolor(*args, **kwargs)
+    r = g_axes.pcolor(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     
@@ -2628,17 +2657,17 @@ def gridshowm(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Polygon VectoryLayer created from array data.
     """    
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
         
-    if gca is None:    
-        gca = axesm()
+    if g_axes is None:
+        g_axes = axesm()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.gridshow(*args, **kwargs)
+    r = g_axes.gridshow(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     
@@ -2665,17 +2694,17 @@ def quiverm(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Created quiver VectoryLayer.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
         
-    if gca is None:    
-        gca = axesm()
+    if g_axes is None:
+        g_axes = axesm()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.quiver(*args, **kwargs)
+    r = g_axes.quiver(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     
@@ -2703,7 +2732,7 @@ def quiverkey(*args, **kwargs):
     :param fontproperties: (*dict*) A dictionary with keyword arguments accepted by the FontProperties
         initializer: *family, style, variant, size, weight*.
     """
-    gca.quiverkey(*args, **kwargs)
+    g_axes.quiverkey(*args, **kwargs)
     draw_if_interactive()
  
 def barbsm(*args, **kwargs):
@@ -2727,17 +2756,17 @@ def barbsm(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Created barbs VectoryLayer.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axesm()
+    if g_axes is None:
+        g_axes = axesm()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.barbs(*args, **kwargs)
+    r = g_axes.barbs(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r   
@@ -2761,17 +2790,17 @@ def streamplotm(*args, **kwargs):
     
     :returns: (*VectoryLayer*) Created streamline VectoryLayer.
     """
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:    
-        gca = axesm()
+    if g_axes is None:
+        g_axes = axesm()
     else:
-        if gca.axestype != 'map':
-            gca = axesm()
+        if g_axes.axestype != 'map':
+            g_axes = axesm()
             
-    r = gca.streamplot(*args, **kwargs)
+    r = g_axes.streamplot(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r   
@@ -2791,7 +2820,7 @@ def clabel(layer, **kwargs):
     :param yoffset: (int*) Y offset of the labels.
     :param avoidcoll: (*boolean*) Avoid labels collision or not.
     '''    
-    gca.clabel(layer, **kwargs)
+    g_axes.clabel(layer, **kwargs)
     draw_if_interactive()
 
 def webmap(provider='OpenStreetMap', zorder=0):
@@ -2803,7 +2832,7 @@ def webmap(provider='OpenStreetMap', zorder=0):
     
     :returns: Web map layer
     '''
-    layer = gca.webmap(provider, zorder)
+    layer = g_axes.webmap(provider, zorder)
     draw_if_interactive()
     return layer
         
@@ -2819,17 +2848,17 @@ def geoshow(*args, **kwargs):
           polygons.
         geoshow(lat, lon) - Displays the latitude and longitude vectors.
     '''
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
         
-    if gca is None:    
-        gca = axesm()
+    if g_axes is None:
+        g_axes = axesm()
     else:
-        if not isinstance(gca, (MapAxes, Axes3D)):
-            gca = axesm()
+        if not isinstance(g_axes, (MapAxes, Axes3D)):
+            g_axes = axesm()
             
-    r = gca.geoshow(*args, **kwargs)
+    r = g_axes.geoshow(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     
@@ -2849,17 +2878,17 @@ def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., c
 
     :returns:
     '''
-    global gca
+    global g_axes
     if g_figure is None:
         figure()
 
-    if gca is None:
-        gca = axes()
+    if g_axes is None:
+        g_axes = axes()
     else:
-        if gca.axestype != 'cartesian':
-            gca = axes(position=[0.13,0.11,0.775,0.75])
+        if g_axes.axestype != 'cartesian':
+            g_axes = axes(position=[0.13,0.11,0.775,0.75])
 
-    r = gca.taylor_diagram(stddev, correlation, std_max, labels, ref_std, colors, **kwargs)
+    r = g_axes.taylor_diagram(stddev, correlation, std_max, labels, ref_std, colors, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
@@ -2878,14 +2907,14 @@ def lighting(enable, **kwargs):
     :param mat_specular: (*list of float*) Material specular light.
     :param mat_shininess: (*float*) Material shininess (0 - 128).
     '''
-    global gca
-    if gca is None:
-        gca = axes3d()
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
     else:
-        if not isinstance(gca, Axes3DGL):
-            gca = axes3dgl()
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
 
-    gca.set_lighting(enable, **kwargs)
+    g_axes.set_lighting(enable, **kwargs)
     draw_if_interactive()
 
 def mesh(*args, **kwargs):
@@ -2899,14 +2928,14 @@ def mesh(*args, **kwargs):
 
     :returns: Legend
     '''
-    global gca
-    if gca is None:
-        gca = axes3d()
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
     else:
-        if not isinstance(gca, Axes3D):
-            gca = axes3d()
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
 
-    r = gca.mesh(*args, **kwargs)
+    r = g_axes.mesh(*args, **kwargs)
     draw_if_interactive()
     return r
 
@@ -2926,14 +2955,14 @@ def surf(*args, **kwargs):
     
     :returns: Legend
     '''
-    global gca
-    if gca is None:
-        gca = axes3d()
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
     else:
-        if not isinstance(gca, Axes3D):
-            gca = axes3d()
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
 
-    r = gca.surf(*args, **kwargs)
+    r = g_axes.surf(*args, **kwargs)
     draw_if_interactive()
     return r
 
@@ -2950,14 +2979,14 @@ def slice(*args, **kwargs):
     :param cmap: (*string*) Color map string.
     :return:
     '''
-    global gca
-    if gca is None:
-        gca = axes3d()
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
     else:
-        if not isinstance(gca, Axes3DGL):
-            gca = axes3dgl()
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
 
-    r = gca.slice(*args, **kwargs)
+    r = g_axes.slice(*args, **kwargs)
     draw_if_interactive()
     return r
 
@@ -2974,14 +3003,14 @@ def isosurface(*args, **kwargs):
 
     :returns: Legend
     '''
-    global gca
-    if gca is None:
-        gca = axes3d()
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
     else:
-        if not isinstance(gca, Axes3DGL):
-            gca = axes3dgl()
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
 
-    r = gca.isosurface(*args, **kwargs)
+    r = g_axes.isosurface(*args, **kwargs)
     draw_if_interactive()
     return r
 
@@ -3003,14 +3032,14 @@ def particles(*args, **kwargs):
 
     :returns: Legend
     '''
-    global gca
-    if gca is None:
-        gca = axes3d()
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
     else:
-        if not isinstance(gca, Axes3DGL):
-            gca = axes3dgl()
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
 
-    r = gca.isosurface(*args, **kwargs)
+    r = g_axes.isosurface(*args, **kwargs)
     draw_if_interactive()
     return r
     
@@ -3148,7 +3177,7 @@ def masklayer(mobj, layers):
     :param mobj: (*layer or polgyons*) Mask object.
     :param layers: (*list*) The layers will be masked.       
     '''
-    gca.masklayer(mobj, layers)
+    g_axes.masklayer(mobj, layers)
     draw_if_interactive()
         
 def gifanimation(filename, repeat=0, delay=1000):

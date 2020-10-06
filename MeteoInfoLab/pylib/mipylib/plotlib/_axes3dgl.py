@@ -278,6 +278,8 @@ class Axes3DGL(Axes3D):
                         geometry = 'line'
                     elif btype == BreakTypes.PolygonBreak:
                         geometry = 'polygon'
+                        if not kwargs.has_key('facecolor'):
+                            kwargs['facecolor'] = None
                     lb, isunique = plotutil.getlegendbreak(geometry, **kwargs)
                     ls.getLegendBreaks().set(0, lb)
 

@@ -489,6 +489,8 @@ class MapAxes(Axes):
                             geometry = 'line'
                         elif btype == BreakTypes.PolygonBreak:
                             geometry = 'polygon'
+                            if not kwargs.has_key('facecolor'):
+                                kwargs['facecolor'] = None
                         lb, isunique = plotutil.getlegendbreak(geometry, **kwargs)
                         layer.getLegendScheme().getLegendBreaks().set(0, lb)
                 else:
@@ -1065,6 +1067,8 @@ class MapAxes(Axes):
             args = args[3:]
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
         ls = ls.convertTo(ShapeTypes.Polygon)
+        if not kwargs.has_key('edgecolor'):
+            kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
         isadd = kwargs.pop('isadd', True)
         smooth = kwargs.pop('smooth', True)
@@ -1627,8 +1631,3 @@ class MapAxes(Axes):
         '''
         mapview = self.axes.getMapView()
         mapview.moveGraphic(graphic, x, y, coordinates == 'screen')
-
-########################################################3
-class Test():
-    def test():
-        print 'Test...'        

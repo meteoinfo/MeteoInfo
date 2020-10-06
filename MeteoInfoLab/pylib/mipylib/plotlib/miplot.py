@@ -45,7 +45,7 @@ __all__ = [
     'grid','gridshow','gridshowm','hist','imshow','imshowm','isosurface','legend','left_title','lighting','loglog','makecolors',
     'makelegend','makesymbolspec','masklayer','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
-    'semilogx','semilogy','set','show','slice','stationmodel','stem','step','streamplot','streamplotm','subplot','subplots','suptitle',
+    'semilogx','semilogy','set','show','slice','stationmodel','stem','stem3','step','streamplot','streamplotm','subplot','subplots','suptitle',
     'surf','taylor_diagram','text','text3','title','twinx','twiny','violinplot','weatherspec','xaxis',
     'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
     'isinteractive'
@@ -628,7 +628,7 @@ def hist(x, bins=10, range=None, density=False, cumulative=False,
         draw_if_interactive()
     return r
     
-def stem(self, *args, **kwargs):
+def stem(*args, **kwargs):
     """
     Make a stem plot.
     
@@ -658,7 +658,36 @@ def stem(self, *args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-    
+
+def stem3(x, y, z, s=8, c='b', marker='o', alpha=None, linewidth=None,
+         verts=None, **kwargs):
+    """
+    Make a 3D scatter plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
+
+    :param x: (*array_like*) Input x data.
+    :param y: (*array_like*) Input y data.
+    :param z: (*array_like*) Input z data.
+    :param s: (*int*) Size of points.
+    :param c: (*Color*) Color of the points. Or z vlaues.
+    :param alpha: (*int*) The alpha blending value, between 0 (transparent) and 1 (opaque).
+    :param marker: (*string*) Marker of the points.
+    :param label: (*string*) Label of the points series.
+    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level
+        points to draw, in increasing order.
+
+    :returns: Points legend break.
+    """
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
+
+    r = g_axes.stem(x, y, z, s, c, marker, alpha, linewidth, verts, **kwargs)
+    draw_if_interactive()
+    return r
+
 def scatter(*args, **kwargs):
     """
     Make a scatter plot of x vs y, where x and y are sequence like objects of the same lengths.

@@ -1132,14 +1132,14 @@ class Axes(object):
                         styles.append(arg)
                         c = 'x'
                     else:
-                        styles.append('-')
+                        styles.append(None)
                         xdatalist.append(arg)
                         c = 'y'
         if len(styles) == 0:
             styles = None
         else:
             while len(styles) < len(xdatalist):
-                styles.append('-')
+                styles.append(None)
         
         #Set plot data styles
         zvalues = kwargs.pop('zvalues', None)
@@ -1152,21 +1152,29 @@ class Axes(object):
                 else:
                     lines = legend.getLegendBreaks()
             else:
-                if styles != None:
+                if not styles is None:
+                    colors = plotutil.makecolors(len(styles))
                     for i in range(0, len(styles)):
                         label = kwargs.pop('label', 'S_' + str(i + 1))
-                        line = plotutil.getplotstyle(styles[i], label, **kwargs)
+                        if styles[i] is None:
+                            line = plotutil.getlegendbreak('line', **kwargs)[0]
+                            line.setCaption(label)
+                            line.setColor(colors[i])
+                        else:
+                            line = plotutil.getplotstyle(styles[i], label, **kwargs)
                         lines.append(line)
                 else:
                     snum = len(xdatalist)
                     colors = kwargs.pop('colors', None)
-                    if not colors is None:
+                    if colors is None:
+                        colors = plotutil.makecolors(snum)
+                    else:
                         snum = len(colors) if len(colors) > snum else snum
                     for i in range(0, snum):
                         label = kwargs.pop('label', 'S_' + str(i + 1))
                         line = plotutil.getlegendbreak('line', **kwargs)[0]
                         line.setCaption(label)
-                        if not colors is None and i < len(colors):
+                        if i < len(colors):
                             line.setColor(plotutil.getcolor(colors[i]))
                         lines.append(line) 
         else:
@@ -3908,9 +3916,3 @@ class PolarAxes(Axes):
         sy = r[1] + rect.getY()
         sy = self.figure.get_size()[1] - sy
         return sx, sy
-                
-        
-########################################################3
-class Test():
-    def test():
-        print 'Test...'

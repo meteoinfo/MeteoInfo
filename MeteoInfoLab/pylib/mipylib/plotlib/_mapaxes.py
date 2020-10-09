@@ -338,7 +338,7 @@ class MapAxes(Axes):
                 cna.setDrawNeatline(True)
         self.axes.setNorthArrow(cna)
         
-    def grid(self, b=None, which='major', axis='both', **kwargs):
+    def grid(self, b=None, **kwargs):
         """
         Turn the aexs grids on or off.
         
@@ -350,8 +350,9 @@ class MapAxes(Axes):
             gridlines are drawn.
         :param kwargs: *kwargs* are used to set the grid line properties.
         """
+
         if self.islonlat():
-            super(MapAxes, self).grid(b, which, axis, **kwargs)
+            super(MapAxes, self).grid(b, **kwargs)
         else:
             mapframe = self.axes.getMapFrame()
             gridline = mapframe.isDrawGridLine()

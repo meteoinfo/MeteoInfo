@@ -363,10 +363,10 @@ def getplotstyle(style, caption, **kwargs):
             markersize = kwargs.pop('markersize', None)
             if not markersize is None:
                 plb.setSymbolSize(markersize)
-            markercolor = kwargs.pop('markercolor', plb.getColor())
+            markercolor = kwargs.pop('markeredgecolor', plb.getColor())
             markercolor = getcolor(markercolor)
             plb.setSymbolColor(markercolor)
-            markerfillcolor = kwargs.pop('markerfillcolor', markercolor)
+            markerfillcolor = kwargs.pop('markerfacecolor', markercolor)
             markerfillcolor = getcolor(markerfillcolor)
             plb.setSymbolFillColor(markerfillcolor)
             return plb

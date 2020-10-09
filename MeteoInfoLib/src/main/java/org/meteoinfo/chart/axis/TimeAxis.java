@@ -284,6 +284,8 @@ public class TimeAxis extends Axis implements Cloneable {
             }
             while (!sdate.isAfter(edate)) {
                 sdate = sdate.plusYears(1);
+                if (sdate.isBefore(edate))
+                    dates.add(sdate);
             }
         } else {
             sdate = ssdate.plusMonths(5);

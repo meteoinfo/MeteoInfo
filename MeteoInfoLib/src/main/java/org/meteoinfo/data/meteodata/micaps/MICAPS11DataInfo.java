@@ -103,8 +103,10 @@ public class MICAPS11DataInfo extends DataInfo implements IGridDataInfo {
             for (n = 0; n <= 10; n++) {
                 if (dataList.size() < 14) {
                     aLine = sr.readLine().trim();
-                    if (aLine.isEmpty())
+                    if (aLine.isEmpty()) {
                         aLine = sr.readLine().trim();
+                        _headLineNum += 1;
+                    }
                     dataArray = aLine.split("\\s+");
                     for (i = 0; i < dataArray.length; i++) {
                         if (!dataArray[i].isEmpty())

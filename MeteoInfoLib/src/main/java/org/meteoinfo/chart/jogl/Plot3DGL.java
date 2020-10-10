@@ -6,6 +6,7 @@
 package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.glu.GLUtessellator;
@@ -61,6 +62,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     // <editor-fold desc="Variables">
     private boolean sampleBuffers = false;
+    private Color background = Color.white;
     private boolean doScreenShot;
     private BufferedImage screenImage;
     private final GLU glu = new GLU();
@@ -149,6 +151,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
      */
     public void setSampleBuffers(boolean value) {
         this.sampleBuffers = value;
+    }
+
+    /**
+     * Get background color
+     * @return Background color
+     */
+    public Color getBackground() {
+        return this.background;
+    }
+
+    /**
+     * Set background color
+     * @param value Background color
+     */
+    public void setBackground(Color value) {
+        this.background = value;
     }
 
     /**
@@ -827,6 +845,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
     @Override
     public void display(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
+        float[] rgba = this.background.getRGBComponents(null);
+        if (this.background == Color.black)
+            rgba[3] = 0.f;
+        gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
         gl.glPushMatrix();
@@ -2611,12 +2633,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
     @Override
     public void init(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
-        //White background
-        gl.glClearColor(1f, 1f, 1f, 1.0f);
+        //Background
+        //gl.glClearColor(1f, 1f, 1f, 1.0f);
         gl.glEnable(GL2.GL_POINT_SMOOTH);
         gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glShadeModel(GL2.GL_SMOOTH);
+        //gl.glShadeModel(GL2.GL_FLAT);
         gl.glDepthFunc(GL2.GL_LEQUAL);
+        //gl.glDepthFunc(GL2.GL_LESS);
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
         gl.glEnable(GL2.GL_TEXTURE_2D);
 

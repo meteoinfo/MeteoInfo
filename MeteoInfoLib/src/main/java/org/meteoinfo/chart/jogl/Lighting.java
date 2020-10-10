@@ -47,7 +47,7 @@ public class Lighting {
         if (far)
             this.position = new float[]{0.f, 0.f, 1.f, 0.f};
         else
-            this.position = new float[]{-1.f, -1.f, 1.f, 1.f};
+            this.position = new float[]{1.f, 1.f, 2.f, 1.f};
         this.mat_ambient = new float[]{0.2f, 0.2f, 0.2f, 1.f};
         this.mat_diffuse = new float[]{0.8f, 0.8f, 0.8f, 1.f};
         this.mat_specular = new float[]{ 0.0f, 0.0f, 0.0f, 1.0f };
@@ -312,6 +312,7 @@ public class Lighting {
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(this.light);
         gl.glEnable(GL2.GL_DEPTH_TEST);
+        gl.glEnable(GL2.GL_NORMALIZE);
 
         gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, ambient, 0);
         //gl.glLightfv(this.light, GL2.GL_AMBIENT, ambient, 0);
@@ -332,6 +333,7 @@ public class Lighting {
      */
     public void stop(GL2 gl) {
         gl.glDisable(GL2.GL_LIGHTING);
-        gl.glDisable(GL2.GL_LIGHT0);
+        gl.glDisable(this.light);
+        gl.glDisable(GL2.GL_NORMALIZE);
     }
 }

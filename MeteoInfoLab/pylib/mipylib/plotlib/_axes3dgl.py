@@ -53,6 +53,10 @@ class Axes3DGL(Axes3D):
         if not outerposition is None:
             self.set_outerposition(outerposition)
             self.active_outerposition(True)
+        bgcolor = kwargs.pop('bgcolor', None)
+        if not bgcolor is None:
+            bgcolor = plotutil.getcolor(bgcolor)
+            self.axes.setBackground(bgcolor)
         units = kwargs.pop('units', None)
         if not units is None:
             self.axes.setUnits(units)
@@ -114,6 +118,15 @@ class Axes3DGL(Axes3D):
         :param elevation: (*float*) Elevation angle.
         '''
         self.axes.setAngleX(elevation)
+
+    def set_background(self, color):
+        '''
+        Set background color.
+
+        :param color: (*color*) Background color.
+        '''
+        color = plotutil.getcolor(color)
+        self.axes.setBackground(color)
 
     def get_antialias(self):
         '''

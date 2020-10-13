@@ -2922,7 +2922,7 @@ def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., c
         draw_if_interactive()
     return r
 
-def lighting(enable, **kwargs):
+def lighting(enable=True, **kwargs):
     '''
     Set lighting.
 
@@ -2934,6 +2934,7 @@ def lighting(enable, **kwargs):
     :param mat_ambient: (*list of float*) Material ambient light.
     :param mat_diffuse: (*list of float*) Material diffuse light.
     :param mat_specular: (*list of float*) Material specular light.
+    :param mat_emission: (*list of float*) Material emission light.
     :param mat_shininess: (*float*) Material shininess (0 - 128).
     '''
     global g_axes

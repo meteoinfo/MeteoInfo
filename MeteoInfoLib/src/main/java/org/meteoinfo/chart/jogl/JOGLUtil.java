@@ -36,6 +36,107 @@ import org.meteoinfo.shape.PointZ;
  */
 public class JOGLUtil {
 
+    public static void diff3(final float[] a, final float[] b, final float[] c) {
+        c[0] = a[0] - b[0];
+        c[1] = a[1] - b[1];
+        c[2] = a[2] - b[2];
+    }
+
+    public static void crossprod(final float[] v1, final float[] v2, final float[] prod) {
+        final float[] p = new float[3];         /* in case prod == v1 or v2 */
+
+        p[0] = v1[1] * v2[2] - v2[1] * v1[2];
+        p[1] = v1[2] * v2[0] - v2[2] * v1[0];
+        p[2] = v1[0] * v2[1] - v2[0] * v1[1];
+        prod[0] = p[0];
+        prod[1] = p[1];
+        prod[2] = p[2];
+    }
+
+    public static void normalize(final float[] v) {
+        float d;
+
+        d = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        if (d == 0.0) {
+            v[0] = d = 1.0f;
+        }
+        d = 1 / d;
+        v[0] *= d;
+        v[1] *= d;
+        v[2] *= d;
+    }
+
+    public static float[] normalize(final float[] n1, final float[] n2, final float[] n3) {
+        final float[] q0 = new float[3];
+        final float[] q1 = new float[3];
+
+        diff3(n1, n2, q0);
+        diff3(n2, n3, q1);
+        crossprod(q0, q1, q1);
+        normalize(q1);
+
+        return q1;
+    }
+
+    private static void recordItem(final GL2 gl, final float[] n1, final float[] n2, final float[] n3, final int shadeType) {
+        final float[] q0 = new float[3];
+        final float[] q1 = new float[3];
+
+        diff3(n1, n2, q0);
+        diff3(n2, n3, q1);
+        crossprod(q0, q1, q1);
+        normalize(q1);
+
+        gl.glBegin(shadeType);
+        gl.glNormal3fv(q1, 0);
+        gl.glVertex3fv(n1, 0);
+        gl.glVertex3fv(n2, 0);
+        gl.glVertex3fv(n3, 0);
+        gl.glEnd();
+    }
+
+    private static void subdivide(final GL2 gl, final float[] v0, final float[] v1, final float[] v2, final int shadeType) {
+        int depth;
+        final float[] w0 = new float[3];
+        final float[] w1 = new float[3];
+        final float[] w2 = new float[3];
+        float l;
+        int i, j, k, n;
+
+        depth = 1;
+        for (i = 0; i < depth; i++) {
+            for (j = 0; i + j < depth; j++) {
+                k = depth - i - j;
+                for (n = 0; n < 3; n++) {
+                    w0[n] = (i * v0[n] + j * v1[n] + k * v2[n]) / depth;
+                    w1[n] = ((i + 1) * v0[n] + j * v1[n] + (k - 1) * v2[n])
+                            / depth;
+                    w2[n] = (i * v0[n] + (j + 1) * v1[n] + (k - 1) * v2[n])
+                            / depth;
+                }
+                l = (float) Math.sqrt(w0[0] * w0[0] + w0[1] * w0[1] + w0[2] * w0[2]);
+                w0[0] /= l;
+                w0[1] /= l;
+                w0[2] /= l;
+                l = (float) Math.sqrt(w1[0] * w1[0] + w1[1] * w1[1] + w1[2] * w1[2]);
+                w1[0] /= l;
+                w1[1] /= l;
+                w1[2] /= l;
+                l = (float) Math.sqrt(w2[0] * w2[0] + w2[1] * w2[1] + w2[2] * w2[2]);
+                w2[0] /= l;
+                w2[1] /= l;
+                w2[2] /= l;
+                recordItem(gl, w1, w0, w2, shadeType);
+            }
+        }
+    }
+
+    public static void drawTriangle(final GL2 gl, final float[]x0, final float[] x1,
+                                    final float[] x2) {
+        //subdivide(gl, x0, x1, x2, GL2.GL_TRIANGLES);
+        recordItem(gl, x0, x1, x2, GL2.GL_TRIANGLES);
+    }
+
     /**
      * Get RGBA components from a legend break
      *

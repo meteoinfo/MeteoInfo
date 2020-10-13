@@ -142,7 +142,7 @@ class Axes3DGL(Axes3D):
         '''
         self.axes.setAntialias(antialias)
         
-    def set_lighting(self, enable, **kwargs):
+    def set_lighting(self, enable=True, **kwargs):
         '''
         Set lighting.
         
@@ -154,6 +154,7 @@ class Axes3DGL(Axes3D):
         :param mat_ambient: (*list of float*) Material ambient light.
         :param mat_diffuse: (*list of float*) Material diffuse light.
         :param mat_specular: (*list of float*) Material specular light.
+        :param mat_emission: (*list of float*) Material emission light.
         :param mat_shininess: (*float*) Material shininess (0 - 128).
         '''
         lighting = self.axes.getLighting()
@@ -179,6 +180,9 @@ class Axes3DGL(Axes3D):
         mat_specular = kwargs.pop('mat_specular', None)
         if not mat_specular is None:
             lighting.setMat_Specular(mat_specular)
+        mat_emission = kwargs.pop('mat_emission', None)
+        if not mat_emission is None:
+            lighting.setMat_Emission(mat_emission)
         mat_shininess = kwargs.pop('mat_shininess', None)
         if not mat_shininess is None:
             lighting.setMat_Shininess(mat_shininess)
@@ -559,6 +563,7 @@ class Axes3DGL(Axes3D):
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) 2-D z value array.
         :param cmap: (*string*) Color map string.
+        :param lighting: (*bool*) Using light or not.
 
         :returns: Legend
         '''
@@ -600,11 +605,15 @@ class Axes3DGL(Axes3D):
             face_interp = (facecolor == 'interp')
             if not face_interp:
                 if not facecolor in ['flat','texturemap','none']:
-                    kwargs['facecolor'] = facecolor
+                    facecolor = plotutil.getcolor(facecolor)
+                    ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polygon, facecolor, 1)
         plotutil.setlegendscheme(ls, **kwargs)
         graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), ls)
         if face_interp:
             graphics.setFaceInterp(face_interp)
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            graphics.setUsingLight(lighting)
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

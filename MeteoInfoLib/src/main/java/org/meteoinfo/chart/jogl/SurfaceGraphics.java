@@ -23,6 +23,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
     private boolean faceInterp;
     private boolean edgeInterp;
     private boolean mesh;
+    private boolean usingLight;
     
     /**
      * Constructor
@@ -34,6 +35,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
         this.faceInterp = false;
         this.edgeInterp = false;
         this.mesh = false;
+        this.usingLight = true;
     }
     
     /**
@@ -126,6 +128,22 @@ public class SurfaceGraphics extends GraphicCollection3D {
     public void setMesh(boolean value) {
         this.mesh = value;
     }
+
+    /**
+     * Get using light or not
+     * @return Boolean
+     */
+    public boolean isUsingLight() {
+        return this.usingLight;
+    }
+
+    /**
+     * Set using light or not
+     * @param value Boolean
+     */
+    public void setUsingLight(boolean value) {
+        this.usingLight = value;
+    }
     
     /**
      * Get dimension 1
@@ -153,6 +171,15 @@ public class SurfaceGraphics extends GraphicCollection3D {
         this.legendScheme = value;
         this.updateLegendIndex();
     }
+
+    /**
+     * Check if the legend has multiple colors
+     *
+     * @return Multiple colors or not
+     */
+    public boolean isMultiColors() {
+        return this.getLegendScheme().getBreakNum() > 1;
+    }
     
     /**
      * Update legend index
@@ -161,9 +188,11 @@ public class SurfaceGraphics extends GraphicCollection3D {
         int dim1 = this.getDim1();
         int dim2 = this.getDim2();
         this.legendIndex = new int[dim1][dim2];
-        for (int i = 0; i < dim1; i++) {
-            for (int j = 0; j < dim2; j++) {
-                this.legendIndex[i][j] = this.legendScheme.legendBreakIndex(this.vertices[i][j].M);
+        if (this.legendScheme.getBreakNum() > 1) {
+            for (int i = 0; i < dim1; i++) {
+                for (int j = 0; j < dim2; j++) {
+                    this.legendIndex[i][j] = this.legendScheme.legendBreakIndex(this.vertices[i][j].M);
+                }
             }
         }
     }

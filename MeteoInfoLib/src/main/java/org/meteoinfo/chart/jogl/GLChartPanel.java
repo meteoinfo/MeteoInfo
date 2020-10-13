@@ -579,7 +579,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     @Override
     public void repaint() {
         super.repaint();
-        this.display();
+        //this.display();
     }
 
     /**

@@ -6,6 +6,8 @@
 package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.fixedfunc.GLLightingFunc;
+
 import java.awt.Color;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class Lighting {
     float[] mat_ambient;
     float[] mat_diffuse;
     float[] mat_specular;
+    float[] mat_emission;
     float mat_shininess;
     
     /**
@@ -39,7 +42,7 @@ public class Lighting {
      */
     public Lighting(boolean far) {        
         this.enable = false;
-        this.light = GL2.GL_LIGHT0;
+        this.light = GL2.GL_LIGHT1;
         //this.ambient = new float[]{0.f, 0.f, 0.f, 1.f};
         this.ambient = new float[]{0.2f, 0.2f, 0.2f, 1.f};
         this.diffuse = new float[]{1.f, 1.f, 1.f, 1.f};
@@ -51,6 +54,7 @@ public class Lighting {
         this.mat_ambient = new float[]{0.2f, 0.2f, 0.2f, 1.f};
         this.mat_diffuse = new float[]{0.8f, 0.8f, 0.8f, 1.f};
         this.mat_specular = new float[]{ 0.0f, 0.0f, 0.0f, 1.0f };
+        this.mat_emission = new float[]{ 0.0f, 0.0f, 0.0f, 1.0f };
         this.mat_shininess = 50.0f;
     }
 
@@ -292,6 +296,28 @@ public class Lighting {
         this.mat_specular = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
             (float) value.get(3)};
     }
+
+    /**
+     * Set material emission light
+     * @param value Material emission light
+     */
+    public void setMat_Emission(float[] value) {
+        this.mat_emission = value;
+    }
+
+    /**
+     * Set material emission light
+     *
+     * @param value Material emission light
+     */
+    public void setMat_Emission(List value) {
+        if (value.size() < 4) {
+            return;
+        }
+
+        this.mat_emission = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
+                (float) value.get(3)};
+    }
     
     /**
      * Set material shininess
@@ -299,7 +325,15 @@ public class Lighting {
      */
     public void setMat_Shininess(float value) {
         this.mat_shininess = value;
-    } 
+    }
+
+    /**
+     * Set light position
+     * @param gl GL2
+     */
+    public void setPosition(GL2 gl) {
+        gl.glLightfv(this.light, GL2.GL_POSITION, position, 0);
+    }
 
     /**
      * Start the lighting
@@ -307,24 +341,25 @@ public class Lighting {
      * @param gl GL2
      */
     public void start(GL2 gl) {
-        //gl.glShadeModel(GL2.GL_SMOOTH);
+        gl.glShadeModel(GL2.GL_SMOOTH);
 
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(this.light);
         gl.glEnable(GL2.GL_DEPTH_TEST);
-        gl.glEnable(GL2.GL_NORMALIZE);
+        gl.glEnable(GL2.GL_AUTO_NORMAL);
+        gl.glEnable(GLLightingFunc.GL_NORMALIZE);
 
         gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, ambient, 0);
         //gl.glLightfv(this.light, GL2.GL_AMBIENT, ambient, 0);
         gl.glLightfv(this.light, GL2.GL_SPECULAR, specular, 0);
         gl.glLightfv(this.light, GL2.GL_DIFFUSE, diffuse, 0);
-        gl.glLightfv(this.light, GL2.GL_POSITION, position, 0);
+        //gl.glLightfv(this.light, GL2.GL_POSITION, position, 0);
         
         //Material
-        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, mat_ambient, 0);
-        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, mat_diffuse, 0);
-        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, mat_specular, 0);
-        gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, mat_shininess);
+        gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, mat_ambient, 0);
+        gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, mat_diffuse, 0);
+        gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, mat_specular, 0);
+        gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, mat_shininess);
     }
     
     /**
@@ -334,6 +369,8 @@ public class Lighting {
     public void stop(GL2 gl) {
         gl.glDisable(GL2.GL_LIGHTING);
         gl.glDisable(this.light);
-        gl.glDisable(GL2.GL_NORMALIZE);
+        gl.glDisable(GL2.GL_AUTO_NORMAL);
+        gl.glDisable(GLLightingFunc.GL_NORMALIZE);
+        //gl.glPopAttrib();
     }
 }

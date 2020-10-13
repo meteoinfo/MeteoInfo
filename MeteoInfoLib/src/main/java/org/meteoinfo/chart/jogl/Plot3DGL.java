@@ -16,6 +16,7 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureCoords;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.math.VectorUtil;
 import java.awt.Color;
 import java.awt.Font;
@@ -66,6 +67,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private boolean doScreenShot;
     private BufferedImage screenImage;
     private final GLU glu = new GLU();
+    private final GLUT glut = new GLUT();
     private final GraphicCollection3D graphics;
     private Extent3D extent;
     private ChartText title;
@@ -851,6 +853,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
+
+        this.lighting.setPosition(gl);
+
         gl.glPushMatrix();
 
         gl.glShadeModel(GL2.GL_SMOOTH);
@@ -898,14 +903,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //Draw title
         this.drawTitle();
 
-        //Set lighting
-        if (this.lighting.isEnable()) {
-            this.lighting.start(gl);
-            //keep material colors
-            gl.glColorMaterial(GL2.GL_FRONT, GL2.GL_DIFFUSE);
-            //gl.glColorMaterial(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE);
-            gl.glEnable(GL2.GL_COLOR_MATERIAL);
-        }
+        this.setLight(gl);
 
         //Draw graphics
         float s = 1.01f;
@@ -974,6 +972,39 @@ public class Plot3DGL extends Plot implements GLEventListener {
             this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
             this.doScreenShot = false;
         }
+    }
+
+    private void setLight(GL2 gl) {
+        //Set lighting
+        if (this.lighting.isEnable()) {
+
+            this.lighting.start(gl);
+            //keep material colors
+            gl.glColorMaterial(GL2.GL_FRONT, GL2.GL_DIFFUSE);
+            //gl.glColorMaterial(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE);
+            gl.glEnable(GL2.GL_COLOR_MATERIAL);
+        }
+    }
+
+    /**
+     * @param gl The GL context.
+     * @param glu The GL unit.
+     * @param distance The distance from the screen.
+     */
+    private void setCamera(GL2 gl, GLU glu, float distance) {
+        // Change to projection matrix.
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glLoadIdentity();
+
+        // Perspective.
+        float widthHeightRatio = (float) this.viewport[2] / (float) this.viewport[3];
+        glu.gluPerspective(45, widthHeightRatio, 1, 1000);
+        glu.gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
+        //glu.gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
+
+        // Change back to model view matrix.
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glLoadIdentity();
     }
 
     /**
@@ -1934,11 +1965,17 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
             gl.glPolygonOffset(1.0f, 1.0f);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            float[] x0 = transformf(points[0]);
+            float[] x1 = transformf(points[1]);
+            float[] x2 = transformf(points[2]);
             gl.glBegin(GL2.GL_TRIANGLES);
-            for (int i = 0; i < 3; i++) {
-                p = points[i];
-                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+            if (this.lighting.isEnable()) {
+                float[] normal = JOGLUtil.normalize(x0, x1, x2);
+                gl.glNormal3fv(normal, 0);
             }
+            gl.glVertex3fv(x0, 0);
+            gl.glVertex3fv(x1, 0);
+            gl.glVertex3fv(x2, 0);
             gl.glEnd();
         }
 
@@ -1961,6 +1998,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
         int dim2 = surface.getDim2();
         float[] rgba;
         PointZ p;
+        boolean lightEnabled = this.lighting.isEnable();
+        boolean usingLight = lightEnabled && surface.isUsingLight();
+        if (lightEnabled && !surface.isUsingLight()) {
+            this.lighting.stop(gl);
+        }
 
         if (pgb.isDrawOutline()) {
             gl.glLineWidth(pgb.getOutlineSize());
@@ -1970,7 +2012,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     for (int j = 0; j < dim2; j++) {
                         p = surface.getVertex(i, j);
                         rgba = surface.getEdgeRGBA(i, j);
-                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                        gl.glColor4fv(rgba, 0);
                         gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
                     }
                     gl.glEnd();
@@ -2022,48 +2064,61 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (pgb.isDrawFill()) {
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
             gl.glPolygonOffset(1.0f, 1.0f);
+            float[] p1, p2, p3, p4;
             if (surface.isFaceInterp()) {
                 for (int i = 0; i < dim1 - 1; i++) {
                     for (int j = 0; j < dim2 - 1; j++) {
+                        p1 = transformf(surface.getVertex(i, j));
+                        p2 = transformf(surface.getVertex(i + 1, j));
+                        p3 = transformf(surface.getVertex(i + 1, j + 1));
+                        p4 = transformf(surface.getVertex(i, j + 1));
                         gl.glBegin(GL2.GL_QUADS);
-                        p = surface.getVertex(i, j);
+                        if (usingLight) {
+                            float[] normal = JOGLUtil.normalize(p3, p2, p1);
+                            gl.glNormal3fv(normal, 0);
+                        }
                         rgba = surface.getRGBA(i, j);
-                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
-                        p = surface.getVertex(i + 1, j);
+                        gl.glColor4fv(rgba, 0);
+                        gl.glVertex3fv(p1, 0);
                         rgba = surface.getRGBA(i + 1, j);
-                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
-                        p = surface.getVertex(i + 1, j + 1);
+                        gl.glColor4fv(rgba, 0);
+                        gl.glVertex3fv(p2, 0);
                         rgba = surface.getRGBA(i + 1, j + 1);
-                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
-                        p = surface.getVertex(i, j + 1);
+                        gl.glColor4fv(rgba, 0);
+                        gl.glVertex3fv(p3, 0);
                         rgba = surface.getRGBA(i, j + 1);
-                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        gl.glColor4fv(rgba, 0);
+                        gl.glVertex3fv(p4, 0);
                         gl.glEnd();
                     }
                 }
             } else {
                 for (int i = 0; i < dim1 - 1; i++) {
                     for (int j = 0; j < dim2 - 1; j++) {
+                        p1 = transformf(surface.getVertex(i, j));
+                        p2 = transformf(surface.getVertex(i + 1, j));
+                        p3 = transformf(surface.getVertex(i + 1, j + 1));
+                        p4 = transformf(surface.getVertex(i, j + 1));
                         gl.glBegin(GL2.GL_QUADS);
-                        p = surface.getVertex(i, j);
+                        if (usingLight) {
+                            float[] normal = JOGLUtil.normalize(p3, p2, p1);
+                            gl.glNormal3fv(normal, 0);
+                        }
                         rgba = surface.getRGBA(i, j);
-                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
-                        p = surface.getVertex(i + 1, j);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
-                        p = surface.getVertex(i + 1, j + 1);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
-                        p = surface.getVertex(i, j + 1);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        gl.glColor4fv(rgba, 0);
+                        gl.glVertex3fv(p1, 0);
+                        gl.glVertex3fv(p2, 0);
+                        gl.glVertex3fv(p3, 0);
+                        gl.glVertex3fv(p4, 0);
                         gl.glEnd();
                     }
                 }
             }
             gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
+        }
+
+        if (lightEnabled && !surface.isUsingLight()) {
+            this.lighting.start(gl);
         }
     }
 

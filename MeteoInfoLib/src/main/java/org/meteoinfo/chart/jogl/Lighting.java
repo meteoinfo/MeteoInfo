@@ -346,8 +346,8 @@ public class Lighting {
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(this.light);
         gl.glEnable(GL2.GL_DEPTH_TEST);
-        gl.glEnable(GL2.GL_AUTO_NORMAL);
-        gl.glEnable(GLLightingFunc.GL_NORMALIZE);
+        //gl.glEnable(GL2.GL_AUTO_NORMAL);
+        //gl.glEnable(GLLightingFunc.GL_NORMALIZE);
 
         gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, ambient, 0);
         //gl.glLightfv(this.light, GL2.GL_AMBIENT, ambient, 0);
@@ -369,8 +369,8 @@ public class Lighting {
     public void stop(GL2 gl) {
         gl.glDisable(GL2.GL_LIGHTING);
         gl.glDisable(this.light);
-        gl.glDisable(GL2.GL_AUTO_NORMAL);
-        gl.glDisable(GLLightingFunc.GL_NORMALIZE);
+        //gl.glDisable(GL2.GL_AUTO_NORMAL);
+        //gl.glDisable(GLLightingFunc.GL_NORMALIZE);
         //gl.glPopAttrib();
     }
 }

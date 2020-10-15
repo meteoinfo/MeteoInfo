@@ -20,17 +20,19 @@
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\mesh_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\heart.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\layer_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_isosurface_relief.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\mesh_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\heart.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\layer_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_isosurface_relief.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -38,5 +40,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="0,0" MainFormSize="1280,680"/>
+  <Startup MainFormLocation="0,0" MainFormSize="1311,718"/>
 </MeteoInfo>

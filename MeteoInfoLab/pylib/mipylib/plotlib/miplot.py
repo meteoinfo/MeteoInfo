@@ -3069,7 +3069,7 @@ def particles(*args, **kwargs):
         if not isinstance(g_axes, Axes3DGL):
             g_axes = axes3dgl()
 
-    r = g_axes.isosurface(*args, **kwargs)
+    r = g_axes.particles(*args, **kwargs)
     draw_if_interactive()
     return r
     

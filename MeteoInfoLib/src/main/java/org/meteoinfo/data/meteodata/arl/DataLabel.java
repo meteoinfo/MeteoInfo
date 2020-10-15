@@ -46,6 +46,7 @@ public class DataLabel {
 
     /**
      * Constructor
+     * consisting of 50 ASCII bytes of time, variable, and level information for record
      */
     public DataLabel() {
     }

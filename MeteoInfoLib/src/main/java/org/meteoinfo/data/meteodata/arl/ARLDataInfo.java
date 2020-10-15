@@ -303,6 +303,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             recLen = LEN;
             int indexRecNum = 1;
             indexLen = recLen;
+            int recNum = 0;
 
             if (aDH.LENH > NXY) {
                 bytes = new byte[NXY - 108];
@@ -350,6 +351,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                         idx += n;
                         vName = new String(nbytes).trim();
                         vList.add(vName);
+                        recNum += 1;
                         idx += 4;
                     }
                     LevelVarList.add(new ArrayList<>(vList));
@@ -369,6 +371,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                         br.read(bytes);
                         vName = new String(bytes).trim();
                         vList.add(vName);
+                        recNum += 1;
                         br.read(bytes);
                     }
                     LevelVarList.add(new ArrayList<>(vList));
@@ -376,6 +379,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 }
             }
             levelNum = aDH.NZ;
+            recsPerTime = recNum + indexRecNum;
 
 //            if (!aDL.Variable.equals("INDX")) {
 //                //ErrorStr = "WARNING Old format meteo data grid!" + Environment.NewLine + aDL.Variable;
@@ -454,13 +458,10 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             this.setYDimension(yDim);
             this.addDimension(yDim);
 
-            //Reopen            
-            byte[] dataBytes = new byte[NXY];
+            //Reopen
             LocalDateTime aTime, oldTime;
-            int recNum, timeNum;
+            int timeNum = 0;
             br.seek(0);
-            recNum = 0;
-            timeNum = 0;
             int year = aDL.getYear();
             if (year < 50) {
                 year = 2000 + year;
@@ -470,34 +471,52 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             oldTime = LocalDateTime.of(year, aDL.getMonth(), aDL.getDay(), aDL.getHour(), 0, 0);
             List<LocalDateTime> times = new ArrayList<>();
             times.add(oldTime);
+            int sameTimeNum = 1;
 
             do {
-                if (br.getFilePointer() >= br.length() - 1) {
+                if (br.getFilePointer() >= br.length() - recsPerTime * recLen) {
                     break;
                 }
+
+                //Seek to next time
+                br.seek(br.getFilePointer() + recsPerTime * recLen);
 
                 //Read label
                 aDL = readDataLabel(br);
 
-                //Read Data
-                br.read(dataBytes);
+                //Seek back
+                br.seek(br.getFilePointer() - 50);
 
-                if (!aDL.getVarName().equalsIgnoreCase("INDX")) {
-                    aTime = LocalDateTime.of(year, aDL.getMonth(), aDL.getDay(), aDL.getHour(), 0, 0);
-                    if (!aTime.equals(oldTime)) {
-                        times.add(aTime);
-                        oldTime = aTime;
-                        timeNum += 1;
-                    }
-                    if (timeNum == 0) {
-                        recNum += 1;
-                    }
+                aTime = LocalDateTime.of(year, aDL.getMonth(), aDL.getDay(), aDL.getHour(), 0, 0);
+                if (aTime.equals(oldTime)) {
+                    sameTimeNum += 1;
                 }
-
+                times.add(aTime);
+                timeNum += 1;
             } while (true);
 
             br.close();
 
+            //Update times
+            if (sameTimeNum > 1) {
+                int minutes = 60 / sameTimeNum;
+                int idx = 1;
+                List<LocalDateTime> newTimes = new ArrayList<>();
+                LocalDateTime baseTime = times.get(0);
+                for (LocalDateTime time : times) {
+                    if (time.equals(baseTime)) {
+                        time = baseTime.plusMinutes(minutes * idx);
+                        idx += 1;
+                    } else {
+                        baseTime = time;
+                        idx = 1;
+                    }
+                    newTimes.add(time);
+                }
+                times = newTimes;
+            }
+
+            //Set dimensions
             List<Double> values = new ArrayList<>();
             for (LocalDateTime t : times) {
                 values.add(JDateUtil.toOADate(t));
@@ -507,7 +526,6 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             this.setTimeDimension(tDim);
             this.addDimension(tDim);
 
-            recsPerTime = recNum + indexRecNum;
             Variable aVar;
             vList.clear();
             int varIdx;

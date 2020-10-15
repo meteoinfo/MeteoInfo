@@ -33,7 +33,7 @@ public class Lighting {
      * Constructor
      */
     public Lighting() {
-        this(false);
+        this(true);
     }
 
     /**

@@ -500,12 +500,13 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             //Update times
             if (sameTimeNum > 1) {
                 int minutes = 60 / sameTimeNum;
-                int idx = 1;
+                int idx = 0;
                 List<LocalDateTime> newTimes = new ArrayList<>();
                 LocalDateTime baseTime = times.get(0);
                 for (LocalDateTime time : times) {
                     if (time.equals(baseTime)) {
-                        time = baseTime.plusMinutes(minutes * idx);
+                        if (idx > 0)
+                            time = baseTime.plusMinutes(minutes * idx);
                         idx += 1;
                     } else {
                         baseTime = time;

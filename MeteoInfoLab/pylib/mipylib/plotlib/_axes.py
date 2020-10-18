@@ -2223,6 +2223,8 @@ class Axes(object):
             else:    
                 ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cmap)
         ls = ls.convertTo(ShapeTypes.Polygon)
+        if not kwargs.has_key('edgecolor'):
+            kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
         smooth = kwargs.pop('smooth', True)
         igraphic = GraphicFactory.createContourPolygons(gdata.data, ls, smooth)

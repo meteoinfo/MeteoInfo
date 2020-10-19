@@ -52,24 +52,7 @@ import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.legend.PointBreak;
 import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.shape.ArcShape;
-import org.meteoinfo.shape.BarShape;
-import org.meteoinfo.shape.CapPolylineShape;
-import org.meteoinfo.shape.CurveLineShape;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.GraphicCollection;
-import org.meteoinfo.shape.ImageShape;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.Polygon;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.Polyline;
-import org.meteoinfo.shape.PolylineErrorShape;
-import org.meteoinfo.shape.PolylineShape;
-import org.meteoinfo.shape.RectangleShape;
-import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.ShapeTypes;
-import org.meteoinfo.shape.WindArrow;
-import org.meteoinfo.shape.WindBarb;
+import org.meteoinfo.shape.*;
 
 /**
  *
@@ -1244,7 +1227,9 @@ public class Plot2D extends AbstractPlot2D {
         int n = this.graphics.getNumGraphics();
         for (int i = n - 1; i >= 0; i--) {
             Graphic g = this.graphics.getGraphicN(i);
-            if (g instanceof GraphicCollection) {
+            if (g instanceof ImageGraphic) {
+                ls = ((ImageGraphic)g).getLegendScheme();
+            } else if (g instanceof GraphicCollection) {
                 ls = ((GraphicCollection)g).getLegendScheme();
             }
         }

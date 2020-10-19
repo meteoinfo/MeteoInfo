@@ -2832,7 +2832,7 @@ public class GraphicFactory {
         ishape.setPoint(new PointD(xmin, ymin));
         ishape.setImage(aImage);
         ishape.setExtent(new Extent(xmin, xmax, ymin, ymax));
-        return new Graphic(ishape, new ColorBreak());
+        return new ImageGraphic(ishape, ls);
     }
 
     /**
@@ -2907,7 +2907,7 @@ public class GraphicFactory {
         ishape.setPoint(new PointD(xmin, ymin));
         ishape.setImage(aImage);
         ishape.setExtent(new Extent(xmin, xmax, ymin, ymax));
-        return new Graphic(ishape, new ColorBreak());
+        return new ImageGraphic(ishape, ls);
     }
 
     /**

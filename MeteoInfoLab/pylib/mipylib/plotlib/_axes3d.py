@@ -98,6 +98,13 @@ class Axes3D(Axes):
     @property
     def axestype(self):
         return '3d'
+
+    @property
+    def ndim(self):
+        """
+        Dimension number property
+        """
+        return 3
     
     def get_distance(self):
         '''

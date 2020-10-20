@@ -140,6 +140,13 @@ class Axes(object):
     @property
     def axestype(self):
         return 'cartesian'
+
+    @property
+    def ndim(self):
+        """
+        Dimension number property
+        """
+        return 2
     
     def get_type(self):
         '''
@@ -1167,7 +1174,12 @@ class Axes(object):
                     snum = len(xdatalist)
                     colors = kwargs.pop('colors', None)
                     if colors is None:
-                        colors = plotutil.makecolors(snum)
+                        color = kwargs.pop('color', None)
+                        if color is None:
+                            colors = plotutil.makecolors(snum)
+                        else:
+                            color = plotutil.getcolor(color)
+                            colors = [color] * snum
                     else:
                         snum = len(colors) if len(colors) > snum else snum
                     for i in range(0, snum):

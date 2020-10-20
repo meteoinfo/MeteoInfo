@@ -143,9 +143,9 @@ def plot(*args, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
-    # else:
-    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
-    #         g_axes = axes()
+    else:
+        if g_axes.ndim == 3:
+            g_axes = axes()
             
     r = g_axes.plot(*args, **kwargs)
     if not r is None:

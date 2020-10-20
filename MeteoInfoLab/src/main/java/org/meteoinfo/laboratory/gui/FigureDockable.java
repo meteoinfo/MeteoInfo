@@ -286,15 +286,15 @@ public class FigureDockable extends DefaultSingleCDockable {
         PythonInteractiveInterpreter interp = parent.getConsoleDockable().getInterpreter();
         if (tabbedPanel.getTabCount() == 0) {
             try {
-                interp.exec("mipylib.plotlib.miplot.chartpanel = None");
-                interp.exec("mipylib.plotlib.miplot.c_plot = None");
+                interp.exec("mipylib.plotlib.miplot.g_figure = None");
+                interp.exec("mipylib.plotlib.miplot.g_axes = None");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else {
             interp.set("cp", getCurrentFigure());
-            interp.exec("mipylib.plotlib.miplot.chartpanel = cp");
-            interp.exec("mipylib.plotlib.miplot.c_plot = None");
+            interp.exec("mipylib.plotlib.miplot.g_figure = cp");
+            interp.exec("mipylib.plotlib.miplot.g_axes = None");
         }
     }
 

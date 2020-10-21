@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\plot">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\grib">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\heart.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib\grib_gefs.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib\record_read_data-2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\heart.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib\grib_gefs.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib\record_read_data-2.py"/>
     </RecentFiles>
   </File>
   <Font>

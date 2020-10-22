@@ -535,13 +535,13 @@ def getlegendscheme(args, min, max, **kwargs):
                 ls = LegendManage.createLegendScheme(min, max, level_arg, cmap)
         else:    
             ls = LegendManage.createLegendScheme(min, max, cmap)
-        ecobj = kwargs.pop('edgecolor', None)
-        if not ecobj is None:
-            edgecolor = getcolor(ecobj)
-            ls = ls.convertTo(ShapeTypes.Polygon)
-            for lb in ls.getLegendBreaks():
-                lb.setDrawOutline(True)
-                lb.setOutlineColor(edgecolor)
+        # ecobj = kwargs.pop('edgecolor', None)
+        # if not ecobj is None:
+        #     edgecolor = getcolor(ecobj)
+        #     ls = ls.convertTo(ShapeTypes.Polygon)
+        #     for lb in ls.getLegendBreaks():
+        #         lb.setDrawOutline(True)
+        #         lb.setOutlineColor(edgecolor)
     return ls
     
 def setlegendscheme(ls, **kwargs):

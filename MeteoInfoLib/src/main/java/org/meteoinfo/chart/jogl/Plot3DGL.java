@@ -38,10 +38,7 @@ import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.chart.axis.Axis;
-import org.meteoinfo.chart.plot.Plot;
-import org.meteoinfo.chart.plot.PlotType;
-import org.meteoinfo.chart.plot.XAlign;
-import org.meteoinfo.chart.plot.YAlign;
+import org.meteoinfo.chart.plot.*;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.data.Dataset;
 import org.meteoinfo.geoprocess.GeometryUtil;
@@ -71,6 +68,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private final GraphicCollection3D graphics;
     private Extent3D extent;
     private ChartText title;
+    private GridLine gridLine;
     private List<ChartLegend> legends;
     private final Axis xAxis;
     private final Axis yAxis;
@@ -79,10 +77,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private float ymax = 1.0f, zmin, zmax = 1.0f;
 
     private Color boxColor = Color.getHSBColor(0f, 0f, 0.95f);
-    private Color lineBoxColor = new Color(220, 220, 220);
+    //private Color lineBoxColor = new Color(220, 220, 220);
 
     private boolean boxed, mesh, scaleBox, displayXY, displayZ,
-            displayGrids, drawBoundingBox, hideOnDrag;
+            drawBoundingBox, hideOnDrag;
 
     int viewport[] = new int[4];
     float mvmatrix[] = new float[16];
@@ -128,7 +126,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.graphics = new GraphicCollection3D();
         this.hideOnDrag = false;
         this.boxed = true;
-        this.displayGrids = true;
+        this.gridLine = new GridLine(true);
+        //this.displayGrids = true;
         this.displayXY = true;
         this.displayZ = true;
         this.drawBoundingBox = false;
@@ -261,19 +260,19 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * Get box line color
      *
      * @return Box line color
-     */
+     *//*
     public Color getLineBoxColor() {
         return this.lineBoxColor;
     }
 
-    /**
+    *//**
      * Set box line color
      *
      * @param value Box line color
-     */
+     *//*
     public void setLineBoxColor(Color value) {
         this.lineBoxColor = value;
-    }
+    }*/
 
     /**
      * Get if draw bounding box or not
@@ -312,21 +311,30 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     /**
-     * Get display grids or not
-     * @return Boolean
+     * Get grid line
+     *
+     * @return Grid line
      */
-    public boolean isDisplayGrids() {
-        return this.displayGrids;
+    public GridLine getGridLine() {
+        return this.gridLine;
     }
 
-    /**
-     * Set display grids or not
-     *
-     * @param value Boolean
-     */
-    public void setDisplayGrids(boolean value) {
-        this.displayGrids = value;
-    }
+//    /**
+//     * Get display grids or not
+//     * @return Boolean
+//     */
+//    public boolean isDisplayGrids() {
+//        return this.displayGrids;
+//    }
+//
+//    /**
+//     * Set display grids or not
+//     *
+//     * @param value Boolean
+//     */
+//    public void setDisplayGrids(boolean value) {
+//        this.displayGrids = value;
+//    }
 
     /**
      * Set display box or not
@@ -1015,9 +1023,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param y used to retrieve y coordinates of drawn plane from this method.
      */
     private void drawBase(GL2 gl) {
-        float[] rgba = this.lineBoxColor.getRGBComponents(null);
+        float[] rgba = this.gridLine.getColor().getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-        gl.glLineWidth(1.0f);
+        gl.glLineWidth(this.gridLine.getSize());
         gl.glBegin(GL2.GL_LINE_STRIP);
         gl.glVertex3f(-1.0f, 1.0f, -1.0f);
         gl.glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -1102,9 +1110,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //Draw box
         if (boxed) {
             if (this.angleY >= 180 && this.angleY < 360) {
-                rgba = this.lineBoxColor.getRGBComponents(null);
+                rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(1.0f);
+                gl.glLineWidth(this.gridLine.getSize());
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 gl.glVertex3f(-1.0f, 1.0f, -1.0f);
                 gl.glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -1113,9 +1121,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glVertex3f(-1.0f, 1.0f, -1.0f);
                 gl.glEnd();
             } else {
-                rgba = this.lineBoxColor.getRGBComponents(null);
+                rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(1.0f);
+                gl.glLineWidth(this.gridLine.getSize());
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 gl.glVertex3f(1.0f, 1.0f, -1.0f);
                 gl.glVertex3f(1.0f, -1.0f, -1.0f);
@@ -1125,9 +1133,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glEnd();
             }
             if (this.angleY >= 90 && this.angleY < 270) {
-                rgba = this.lineBoxColor.getRGBComponents(null);
+                rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(1.0f);
+                gl.glLineWidth(this.gridLine.getSize());
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 gl.glVertex3f(-1.0f, -1.0f, -1.0f);
                 gl.glVertex3f(1.0f, -1.0f, -1.0f);
@@ -1136,9 +1144,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glVertex3f(-1.0f, -1.0f, -1.0f);
                 gl.glEnd();
             } else {
-                rgba = this.lineBoxColor.getRGBComponents(null);
+                rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(1.0f);
+                gl.glLineWidth(this.gridLine.getSize());
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 gl.glVertex3f(-1.0f, 1.0f, -1.0f);
                 gl.glVertex3f(1.0f, 1.0f, -1.0f);
@@ -1202,10 +1210,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 }
 
                 //Draw grid line
-                if (this.displayGrids && (v != -1.0f && v != 1.0f)) {
-                    rgba = this.lineBoxColor.getRGBComponents(null);
+                if (this.gridLine.isDrawXLine() && (v != -1.0f && v != 1.0f)) {
+                    rgba = this.gridLine.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(1.0f);
+                    gl.glLineWidth(this.gridLine.getSize());
                     gl.glBegin(GL2.GL_LINES);
                     gl.glVertex3f(v, y, -1.0f);
                     gl.glVertex3f(v, -y, -1.0f);
@@ -1295,10 +1303,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 }
 
                 //Draw grid line
-                if (this.displayGrids && (v != -1.0f && v != 1.0f)) {
-                    rgba = this.lineBoxColor.getRGBComponents(null);
+                if (this.gridLine.isDrawYLine() && (v != -1.0f && v != 1.0f)) {
+                    rgba = this.gridLine.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(1.0f);
+                    gl.glLineWidth(this.gridLine.getSize());
                     gl.glBegin(GL2.GL_LINES);
                     gl.glVertex3f(x, v, -1.0f);
                     gl.glVertex3f(-x, v, -1.0f);
@@ -1403,10 +1411,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 }
 
                 //Draw grid line
-                if (this.displayGrids && this.boxed && (v != -1.0f && v != 1.0f)) {
-                    rgba = this.lineBoxColor.getRGBComponents(null);
+                if (this.gridLine.isDrawZLine() && this.boxed && (v != -1.0f && v != 1.0f)) {
+                    rgba = this.gridLine.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(1.0f);
+                    gl.glLineWidth(this.gridLine.getSize());
                     gl.glBegin(GL2.GL_LINE_STRIP);
                     gl.glVertex3f(x, y, v);
                     if (x < 0) {
@@ -2527,7 +2535,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             //Draw neatline
             rgba = Color.black.getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(1.0f);
+            gl.glLineWidth(legend.getNeatLineSize());
             gl.glBegin(GL2.GL_LINE_STRIP);
             gl.glVertex2f(x, y);
             gl.glVertex2f(x, y + lHeight);

@@ -194,14 +194,6 @@ class Axes3D(Axes):
         '''
         self.axes.setDrawBoundingBox(bbox)
         
-    def set_draw_grid(self, grid):
-        '''
-        Set draw grid lines or not.
-        
-        :param grid: (*boolean*) Draw grid line or not.
-        '''
-        self.axes.setDisplayGrids(grid)
-        
     def get_xlim(self):
         """
         Get the *x* limits of the current axes.
@@ -490,13 +482,31 @@ class Axes3D(Axes):
             are supplied, it is assumed that you want a grid and *b* is thus set to *True* .
         :param kwargs: *kwargs* are used to set the grid line properties.
         """
+        gridline = self.axes.getGridLine()
         if b is None:
-            b = not self.axes.isDisplayGrids()
+            b = not gridline.isDrawZLine()
+        axis = kwargs.pop('axis', 'all')
+        if axis == 'all':
+            gridline.setDrawXLine(b)
+            gridline.setDrawYLine(b)
+            gridline.setDrawZLine(b)
+        elif axis == 'x':
+            gridline.setDrawXLine(b)
+        elif axis == 'y':
+            gridline.setDrawYLine(b)
+        elif axis == 'z':
+            gridline.setDrawZLine(b)
         color = kwargs.pop('color', None)
         if not color is None:
-            color = plotutil.getcolor(color)
-            self.axes.setLineBoxColor(color)
-        self.set_draw_grid(b)
+            c = plotutil.getcolor(color)
+            gridline.setColor(c)
+        linewidth = kwargs.pop('linewidth', None)
+        if not linewidth is None:
+            gridline.setSize(linewidth)
+        linestyle = kwargs.pop('linestyle', None)
+        if not linestyle is None:
+            linestyle = plotutil.getlinestyle(linestyle)
+            gridline.setStyle(linestyle)
 
     def plot(self, x, y, z, *args, **kwargs):
         """

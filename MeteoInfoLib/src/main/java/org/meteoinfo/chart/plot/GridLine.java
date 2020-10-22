@@ -6,6 +6,8 @@
 package org.meteoinfo.chart.plot;
 
 import java.awt.Color;
+
+import org.locationtech.proj4j.datum.Grid;
 import org.meteoinfo.legend.LineStyles;
 
 /**
@@ -19,6 +21,7 @@ public class GridLine {
     private LineStyles style;
     private boolean drawXLine;
     private boolean drawYLine;
+    private boolean drawZLine;
     private boolean top;
     // </editor-fold>    
     // <editor-fold desc="Constructor">
@@ -31,7 +34,19 @@ public class GridLine {
         this.style = LineStyles.DASH;
         this.drawXLine = false;
         this.drawYLine = false;
+        this.drawZLine = false;
         this.top = false;
+    }
+
+    /**
+     * Constructor
+     * @param visible
+     */
+    public GridLine(boolean visible) {
+        this();
+        this.drawXLine = visible;
+        this.drawYLine = visible;
+        this.drawZLine = visible;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -113,6 +128,22 @@ public class GridLine {
      */
     public void setDrawYLine(boolean value){
         this.drawYLine = value;
+    }
+
+    /**
+     * Get if draw z grid lines
+     * @return Boolean
+     */
+    public boolean isDrawZLine(){
+        return this.drawZLine;
+    }
+
+    /**
+     * Set if draw z grid lines
+     * @param value Boolean
+     */
+    public void setDrawZLine(boolean value){
+        this.drawZLine = value;
     }
     
     /**

@@ -8,7 +8,7 @@ import ucar.unidata.io.RandomAccessFile;
 
 import java.io.IOException;
 
-public class GRIB2RecordUtils {
+public class GRIB2RecordReader {
 
     private RandomAccessFile raf;
     private Grib2RecordScanner scanner;
@@ -16,7 +16,7 @@ public class GRIB2RecordUtils {
     /**
      * Constructor
      */
-    public GRIB2RecordUtils() {
+    public GRIB2RecordReader() {
 
     }
 
@@ -24,7 +24,7 @@ public class GRIB2RecordUtils {
      * Constructor
      * @param fileName Grib2 file name
      */
-    public GRIB2RecordUtils(String fileName) {
+    public GRIB2RecordReader(String fileName) {
         this.open(fileName);
     }
 

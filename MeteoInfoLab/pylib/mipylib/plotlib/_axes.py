@@ -3020,7 +3020,7 @@ class Axes(object):
         xticks = self.get_xticks()
         for i in xticks:
             self.plot(xunit * i, yunit * i, color='gray', linestyle='--')
-        self.plot(xunit * std_max, yunit * std_max)
+        self.plot(xunit * std_max, yunit * std_max, color='k')
 
         #plot correlation lines
         values = np.arange(0., 1., 0.1)
@@ -3032,7 +3032,7 @@ class Axes(object):
             if 0 < t < 1:
                 if t == 0.6 or t == 0.9:
                     self.plot([0,x], [0,y], color='gray', linestyle=':')
-                self.plot([x*0.98,x], [y*0.98,y])
+                self.plot([x*0.98,x], [y*0.98,y], color='k')
             x = x * 1.02
             y = y * 1.02
             self.text(x, y, str(t), rotation=np.degrees(theta), yalign='center')
@@ -3046,7 +3046,7 @@ class Axes(object):
             theta = np.acos(t)
             x = np.cos(theta) * std_max
             y = np.sin(theta) * std_max
-            self.plot([x*0.99,x], [y*0.99,y])
+            self.plot([x*0.99,x], [y*0.99,y], color='k')
 
         #plot data
         stddev = np.atleast_2d(stddev)

@@ -12,7 +12,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.2" level="project" />
+    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:3.1.0" level="project" />
-    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.1.0" level="project" />
   </component>
 </module>

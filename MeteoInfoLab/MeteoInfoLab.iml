@@ -83,10 +83,10 @@
     <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:0.43" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.formdev:svgSalamander:1.1.2.3" level="project" />
     <orderEntry type="module" module-name="meteoinfo-console" />
+    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: de.sciss:docking-frames-common:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: de.sciss:docking-frames-core:2.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-native-platform:1.0.0-beta7" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas-platform:0.3.9-1-1.5.3" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp-platform:1.5.3" level="project" />

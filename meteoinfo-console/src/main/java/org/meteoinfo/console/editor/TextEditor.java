@@ -86,6 +86,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
          _textArea.setEncoding("utf-8");
          _textArea.setTabSize(4);
          _textArea.setTabsEmulated(true);
+         _textArea.setMarkOccurrences(true);
 
          RTextScrollPane sp = new RTextScrollPane(_textArea);
          sp.setFoldIndicatorEnabled(true);

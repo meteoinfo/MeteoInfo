@@ -1577,7 +1577,9 @@ class MapAxes(Axes):
         proj = kwargs.pop('proj', None)
         size = kwargs.pop('size', 12)
         surface = kwargs.pop('surface', True)
-        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.blue, size)
+        color = kwargs.pop('color', 'b')
+        color = plotutil.getcolor(color)
+        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, color, size)
         layer = DrawMeteoData.createStationModelLayer(smdata, ls, 'stationmodel', surface)
         if (proj != None):
             layer.setProjInfo(proj)

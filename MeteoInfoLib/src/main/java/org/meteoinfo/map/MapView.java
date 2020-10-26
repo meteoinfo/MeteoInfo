@@ -5285,10 +5285,10 @@ public class MapView extends JPanel implements IWebMapPanel {
                     if (aPS.isSelected()) {
                         PointBreak newPB = (PointBreak) aPB.clone();
                         newPB.setColor(_selectColor);
-                        Draw.drawStationModel(_selectColor, this.getForeground(), aPoint, aPS,
+                        Draw.drawStationModel(_selectColor, aPB.getOutlineColor(), aPoint, aPS,
                                 g, aPB.getSize(), aPB.getSize() / 8 * 3);
                     } else {
-                        Draw.drawStationModel(aPB.getColor(), this.getForeground(), aPoint, aPS,
+                        Draw.drawStationModel(aPB.getColor(), aPB.getOutlineColor(), aPoint, aPS,
                                 g, aPB.getSize(), aPB.getSize() / 8 * 3);
                     }
                 }

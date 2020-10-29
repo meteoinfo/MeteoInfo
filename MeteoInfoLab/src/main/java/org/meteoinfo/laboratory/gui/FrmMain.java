@@ -569,7 +569,12 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         //jButton_RunScript.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_RunScript.Image.png"))); // NOI18N
         jButton_RunScript.setIcon(new FlatSVGIcon("org/meteoinfo/laboratory/icons/execute.svg"));
-        jButton_RunScript.setToolTipText("Run Script");
+        jButton_RunScript.setToolTipText("Run Script (F5)");
+        jButton_RunScript.registerKeyboardAction(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_RunScriptActionPerformed(evt);
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
         jButton_RunScript.setFocusable(false);
         jButton_RunScript.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton_RunScript.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

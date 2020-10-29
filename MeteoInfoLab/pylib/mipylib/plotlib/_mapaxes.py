@@ -1581,7 +1581,7 @@ class MapAxes(Axes):
         color = plotutil.getcolor(color)
         ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, color, size)
         layer = DrawMeteoData.createStationModelLayer(smdata, ls, 'stationmodel', surface)
-        if (proj != None):
+        if not proj is None:
             layer.setProjInfo(proj)
      
         # Add layer

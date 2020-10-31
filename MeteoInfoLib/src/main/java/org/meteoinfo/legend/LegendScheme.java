@@ -15,6 +15,7 @@ package org.meteoinfo.legend;
 
 import org.meteoinfo.data.meteodata.DrawType2D;
 import org.meteoinfo.global.DataConvert;
+import org.meteoinfo.global.colors.ColorMap;
 import org.meteoinfo.global.colors.ColorUtil;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.shape.ShapeTypes;
@@ -534,6 +535,27 @@ public class LegendScheme {
         } else {
             for (ColorBreak cb : this.legendBreaks) {
                 this.uniqueValueMap.put(cb.getStartValue(), cb);
+            }
+        }
+    }
+
+    /**
+     * Update legend colors by color map
+     * @param colorMap The color map
+     */
+    public void updateColors(ColorMap colorMap) {
+        int n = this.legendBreaks.size();
+        for (ColorBreak lb : this.legendBreaks) {
+            if (lb.isNoData()) {
+                n -= 1;
+            }
+        }
+        Color[] colors = colorMap.getColors(n);
+        int i = 0;
+        for (ColorBreak lb : this.legendBreaks) {
+            if (!lb.isNoData()) {
+                lb.setColor(colors[i]);
+                i += 1;
             }
         }
     }

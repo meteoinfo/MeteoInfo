@@ -561,6 +561,18 @@ public class LegendScheme {
     }
 
     /**
+     * Set fill value color
+     * @param color The fill value color
+     */
+    public void setFillColor(Color color) {
+        for (ColorBreak lb : this.legendBreaks) {
+            if (lb.isNoData()) {
+                lb.setColor(color);
+            }
+        }
+    }
+
+    /**
      * Judge if shape type is consistent with draw type
      *
      * @param drawTyp Draw type

@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -567,11 +568,19 @@ public class ArrayUtil {
             }
             return a;
         } else if (d0 instanceof Complex) {
-            Array a = Array.factory(DataType.OBJECT, new int[]{data.size()});
+            Array a = Array.factory(DataType.COMPLEX, new int[]{data.size()});
             Complex d;
             for (int i = 0; i < data.size(); i++) {
                 d = (Complex) data.get(i);
                 a.setObject(i, d);
+            }
+            return a;
+        } else if (d0 instanceof LocalDateTime) {
+            Array a = Array.factory(DataType.DATE, new int[]{data.size()});
+            LocalDateTime d;
+            for (int i = 0; i < data.size(); i++) {
+                d = (LocalDateTime) data.get(i);
+                a.setDate(i, d);
             }
             return a;
         } else if (d0 instanceof List) {

@@ -5,6 +5,7 @@
  */
 package org.meteoinfo.math;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,6 +43,10 @@ public class ArrayMath {
             return DataType.DOUBLE;
         } else if (o instanceof Boolean) {
             return DataType.BOOLEAN;
+        } else if (o instanceof LocalDateTime) {
+            return DataType.DATE;
+        } else if (o instanceof Complex) {
+            return DataType.COMPLEX;
         } else {
             return DataType.OBJECT;
         }

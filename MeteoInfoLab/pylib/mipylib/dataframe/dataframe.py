@@ -661,6 +661,12 @@ class DataFrame(object):
             if isinstance(value[0], datetime.datetime):
                 value = miutil.jdatetime(value)
             value = np.array(value)
+        if isinstance(value, Index):
+            if isinstance(value[0], datetime.datetime):
+                value = miutil.jdatetime(value.data)
+            else:
+                value = value.data
+            value = np.array(value)
         if isinstance(value, np.NDArray):
             value = value._array 
         self._dataframe.addColumn(loc, column, value)

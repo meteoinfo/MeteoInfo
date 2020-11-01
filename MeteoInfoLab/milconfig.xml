@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataframe">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
@@ -14,21 +13,24 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\weather"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\polar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_bar.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\kmeans_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_insert.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_bar.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\kmeans_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_insert.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_1.py"/>
     </RecentFiles>
   </File>
   <Font>

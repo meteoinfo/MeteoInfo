@@ -161,7 +161,6 @@ public abstract class Array {
                 return ArrayChar.factory(index, (char[]) storage);
             case BOOLEAN:
                 return ArrayBoolean.factory(index, (boolean[]) storage);
-
             case ENUM4:
             case UINT:
             case INT:
@@ -177,7 +176,6 @@ public abstract class Array {
             case ULONG:
             case LONG:
                 return ArrayLong.factory(index, dtype.isUnsigned(), (long[]) storage);
-
             case STRING:
                 return ArrayString.factory(index, (Object[]) storage);
             case COMPLEX:

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataframe">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
@@ -14,23 +11,24 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\polar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_bar.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_insert.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\topology\intersection.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_bar.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_insert.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\topology\intersection.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -38,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="0,0" MainFormSize="1280,680"/>
+  <Startup MainFormLocation="0,0" MainFormSize="1400,798"/>
 </MeteoInfo>

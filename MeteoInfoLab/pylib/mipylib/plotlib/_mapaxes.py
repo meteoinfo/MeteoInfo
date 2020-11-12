@@ -7,10 +7,10 @@
 #-----------------------------------------------------
 
 import os
+import numbers
 
 from org.meteoinfo.chart import ChartScaleBar, ChartNorthArrow
 from org.meteoinfo.chart.plot import MapPlot, GraphicFactory
-from org.meteoinfo.math import ArrayUtil
 from org.meteoinfo.data.meteodata import DrawMeteoData
 from org.meteoinfo.map import MapView
 from org.meteoinfo.legend import BreakTypes, LegendManage, LegendScheme, LegendType
@@ -464,10 +464,10 @@ class MapAxes(Axes):
         elif isinstance(args[0], MILayer):
             layer = args[0]
             islayer = True
-        
+
+        visible = kwargs.pop('visible', True)
         if islayer:    
-            layer = layer.layer   
-            visible = kwargs.pop('visible', True)
+            layer = layer.layer
             layer.setVisible(visible)
             order = kwargs.pop('order', None)
             if layer.getLayerType() == LayerTypes.ImageLayer:
@@ -557,25 +557,46 @@ class MapAxes(Axes):
                 lat = args[0]
                 lon = args[1]
                 displaytype = kwargs.pop('displaytype', 'line')
-                if isinstance(lat, (int, float)):
+                if isinstance(lat, numbers.Number):
                     displaytype = 'point'
                 else:
                     if len(lat) == 1:
                         displaytype = 'point'
-                    else:
-                        if isinstance(lon, (NDArray, DimArray)):
-                            lon = lon.aslist()
-                        if isinstance(lat, (NDArray, DimArray)):
-                            lat = lat.aslist()
+                    if isinstance(lon, (list, tuple)):
+                        lon = np.array(lon)
+                    if isinstance(lat, (list, tuple)):
+                        lat = np.array(lat)
 
                 lbreak, isunique = plotutil.getlegendbreak(displaytype, **kwargs)
                 iscurve = kwargs.pop('iscurve', False)
                 if displaytype == 'point':
-                    graphic = self.axes.addPoint(lat, lon, lbreak)
+                    #graphic = self.axes.addPoint(lat, lon, lbreak)
+                    if isinstance(lon, NDArray):
+                        graphic = GraphicFactory.createPoints(lon._array, lat._array, lbreak)
+                    else:
+                        graphic = GraphicFactory.createPoint(lon, lat, lbreak)
                 elif displaytype == 'polyline' or displaytype == 'line':
-                    graphic = self.axes.addPolyline(lat, lon, lbreak, iscurve)
+                    #graphic = self.axes.addPolyline(lat, lon, lbreak, iscurve)
+                    graphic = GraphicFactory.createLineString(lon._array, lat._array, lbreak, iscurve)
                 elif displaytype == 'polygon':
-                    graphic = self.axes.addPolygon(lat, lon, lbreak)
+                    #graphic = self.axes.addPolygon(lat, lon, lbreak)
+                    graphic = GraphicFactory.createPolygons(lon._array, lat._array, lbreak)
+
+                if graphic.getNumGraphics() == 1:
+                    graphic = graphic.getGraphicN(0)
+
+                if visible:
+                    if graphic.isCollection():
+                        if self.islonlat():
+                            self.axes.addGraphics(graphic)
+                        else:
+                            graphic = self.axes.addGraphics(graphic, migeo.projinfo())
+                    else:
+                        if self.islonlat():
+                            self.axes.addGraphic(graphic)
+                        else:
+                            graphic = self.axes.addGraphic(graphic, migeo.projinfo())
+
             return graphic
             
     def plot(self, *args, **kwargs):

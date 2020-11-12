@@ -1095,12 +1095,46 @@ public class GraphicFactory {
     }
 
     /**
+     * Create a point graphic
+     * @param x X
+     * @param y Y
+     * @param pb Point legend break
+     * @return Point graphic
+     */
+    public static Graphic createPoint(float x, float y, PointBreak pb) {
+        PointShape ps = new PointShape();
+        ps.setPoint(new PointD(x, y));
+        return new Graphic(ps, pb);
+    }
+
+    /**
+     * Create graphics
+     *
+     * @param xdata X data array
+     * @param ydata Y data array
+     * @param pb Point legend break
+     * @return Point graphics
+     */
+    public static GraphicCollection createPoints(Array xdata, Array ydata, PointBreak pb) {
+        GraphicCollection graphics = new GraphicCollection();
+        PointShape ps;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        while (xIter.hasNext()) {
+            ps = new PointShape();
+            ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
+            graphics.add(new Graphic(ps, pb));
+        }
+        return graphics;
+    }
+
+    /**
      * Create graphics
      *
      * @param xdata X data array
      * @param ydata Y data array
      * @param cbs Color breaks
-     * @return LineString graphic
+     * @return Point graphics
      */
     public static GraphicCollection createPoints(Array xdata, Array ydata, List<ColorBreak> cbs) {
         GraphicCollection graphics = new GraphicCollection();

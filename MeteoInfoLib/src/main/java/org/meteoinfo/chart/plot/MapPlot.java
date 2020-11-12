@@ -51,13 +51,7 @@ import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;
 import org.meteoinfo.projection.Reproject;
-import org.meteoinfo.shape.CircleShape;
-import org.meteoinfo.shape.CurveLineShape;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.PolylineShape;
-import org.meteoinfo.shape.ShapeUtil;
+import org.meteoinfo.shape.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -535,13 +529,23 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     }
 
     /**
+     * Add graphics
+     * @param graphics The graphics
+     */
+    public void addGraphics(GraphicCollection graphics) {
+        for (int i = 0; i < graphics.getNumGraphics(); i++) {
+            this.getMapView().addGraphic(graphics.getGraphicN(i));
+        }
+    }
+
+    /**
      * Add a graphic
      *
      * @param graphic The graphic
      * @param proj The graphic projection
      * @return Added graphic
      */
-    public Graphic addGrahic(Graphic graphic, ProjectionInfo proj) {
+    public Graphic addGraphic(Graphic graphic, ProjectionInfo proj) {
         ProjectionInfo toProj = this.getMapView().getProjection().getProjInfo();
         if (proj.equals(toProj)) {
             this.getMapView().addGraphic(graphic);
@@ -550,6 +554,31 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, toProj);
             this.getMapView().addGraphic(nGraphic);
             return nGraphic;
+        }
+    }
+
+    /**
+     * Add graphics
+     *
+     * @param graphics The graphics
+     * @param proj The graphic projection
+     * @return Added graphics
+     */
+    public GraphicCollection addGraphics(GraphicCollection graphics, ProjectionInfo proj) {
+
+        ProjectionInfo toProj = this.getMapView().getProjection().getProjInfo();
+        if (proj.equals(toProj)) {
+            for (int i = 0; i < graphics.getNumGraphics(); i++)
+                this.getMapView().addGraphic(graphics.getGraphicN(i));
+            return graphics;
+        } else {
+            GraphicCollection nGraphics = new GraphicCollection();
+            for (int i = 0; i < graphics.getNumGraphics(); i++) {
+                Graphic nGraphic = ProjectionUtil.projectGraphic(graphics.getGraphicN(i), proj, toProj);
+                nGraphics.add(nGraphic);
+                this.getMapView().addGraphic(nGraphic);
+            }
+            return nGraphics;
         }
     }
 

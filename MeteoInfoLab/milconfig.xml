@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Temp\test\QItest">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\taylor"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\weather"/>
@@ -13,24 +13,22 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
     <RecentFolder Folder="D:\Temp\test\QItest"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_bar.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_resample_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_1.py"/>
-      <OpenedFile File="D:\Temp\test\QItest\getu.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\addfiles_arl.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\polar\polar_bar.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_resample_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_1.py"/>
-      <RecentFile File="D:\Temp\test\QItest\getu.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\addfiles_arl.py"/>
     </RecentFiles>
   </File>
   <Font>

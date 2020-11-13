@@ -6,11 +6,11 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.data.dataframe import DataFrame as MIDataFrame
-from org.meteoinfo.data.dataframe import Series as MISeries
-
 import dataframe
 import series
+
+from org.meteoinfo.data.dataframe import DataFrame as MIDataFrame
+
 
 class GroupBy(object):
     

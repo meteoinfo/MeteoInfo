@@ -209,6 +209,8 @@ class MapAxes(Axes):
         '''
         Add a circle patch
         '''
+        if not kwargs.has_key('facecolor'):
+            kwargs['facecolor'] = None
         lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         circle = self.axes.addCircle(xy[0], xy[1], radius, lbreak)
         return circle
@@ -1264,6 +1266,8 @@ class MapAxes(Axes):
             
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
         ls = ls.convertTo(ShapeTypes.Polygon)
+        if not kwargs.has_key('edgecolor'):
+            kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
             
         if proj is None or proj.isLonLat():

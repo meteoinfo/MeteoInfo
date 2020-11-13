@@ -2362,11 +2362,9 @@ class Axes(object):
             string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
             color args (string, float, rgb, etc), different levels will be plotted in different colors in 
             the order specified.
-        :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
         
         :returns: (*GraphicCollection*) Polygon graphic collection.
         '''
-        fill_value = kwargs.pop('fill_value', -9999.0)
         n = len(args) 
         if n <= 2:
             a = args[0]

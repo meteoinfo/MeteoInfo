@@ -1743,6 +1743,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 List<PointZ> ps = (List<PointZ>) line.getPointList();
                 float[] rgba;
                 PointZ p;
+                gl.glLineWidth(((PolylineBreak) cbc.get(0)).getWidth());
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 for (int i = 0; i < ps.size(); i++) {
                     PolylineBreak plb = (PolylineBreak) cbc.get(i);

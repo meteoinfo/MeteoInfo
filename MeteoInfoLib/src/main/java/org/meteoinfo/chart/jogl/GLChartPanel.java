@@ -403,9 +403,9 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         double scaleFactor = dpi / 72.0;
         width = (int)(width * scaleFactor);
         height = (int)(height * scaleFactor);
-        this.plot3DGL.setScale((float)scaleFactor);
+        this.plot3DGL.setDpiScale((float)scaleFactor);
         BufferedImage image = paintViewImage(width, height);
-        this.plot3DGL.setScale(1);
+        this.plot3DGL.setDpiScale(1);
         return image;
     }
 

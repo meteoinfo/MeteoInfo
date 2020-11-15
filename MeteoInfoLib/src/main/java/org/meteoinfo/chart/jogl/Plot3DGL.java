@@ -100,7 +100,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     final private float lenScale = 0.01f;
     private Lighting lighting = new Lighting();
     private boolean antialias;
-    private float scale;
+    private float dpiScale;   //DPI scale factor
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -132,7 +132,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.displayZ = true;
         this.drawBoundingBox = false;
         this.antialias = false;
-        this.scale = 1;
+        this.dpiScale = 1;
     }
 
     // </editor-fold>
@@ -720,19 +720,19 @@ public class Plot3DGL extends Plot implements GLEventListener {
     public void setAntialias(boolean value) { this.antialias = value; }
 
     /**
-     * Get scale
-     * @return Scale
+     * Get DPI scale
+     * @return DPI scale
      */
-    public float getScale() {
-        return this.scale;
+    public float getDpiScale() {
+        return this.dpiScale;
     }
 
     /**
-     * Set scale
-     * @param value Scale
+     * Set DPI scale
+     * @param value DPI scale
      */
-    public void setScale(float value) {
-        this.scale = value;
+    public void setDpiScale(float value) {
+        this.dpiScale = value;
     }
 
     // </editor-fold>
@@ -1025,7 +1025,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawBase(GL2 gl) {
         float[] rgba = this.gridLine.getColor().getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-        gl.glLineWidth(this.gridLine.getSize());
+        gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
         gl.glBegin(GL2.GL_LINE_STRIP);
         gl.glVertex3f(-1.0f, 1.0f, -1.0f);
         gl.glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -1089,8 +1089,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
 
         Font font = legend.getTickLabelFont();
-        if (this.scale != 1) {
-            font = new Font(font.getFontName(), font.getStyle(), (int)(font.getSize() * this.scale));
+        if (this.dpiScale != 1) {
+            font = new Font(font.getFontName(), font.getStyle(), (int)(font.getSize() * this.dpiScale));
         }
         TextRenderer textRenderer = new TextRenderer(font);
         int n = legend.getLegendScheme().getBreakNum();
@@ -1112,7 +1112,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             if (this.angleY >= 180 && this.angleY < 360) {
                 rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.gridLine.getSize());
+                gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 gl.glVertex3f(-1.0f, 1.0f, -1.0f);
                 gl.glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -1123,7 +1123,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             } else {
                 rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.gridLine.getSize());
+                gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 gl.glVertex3f(1.0f, 1.0f, -1.0f);
                 gl.glVertex3f(1.0f, -1.0f, -1.0f);
@@ -1135,7 +1135,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             if (this.angleY >= 90 && this.angleY < 270) {
                 rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.gridLine.getSize());
+                gl.glLineWidth(this.gridLine.getSize() * dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 gl.glVertex3f(-1.0f, -1.0f, -1.0f);
                 gl.glVertex3f(1.0f, -1.0f, -1.0f);
@@ -1146,7 +1146,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             } else {
                 rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.gridLine.getSize());
+                gl.glLineWidth(this.gridLine.getSize() * dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 gl.glVertex3f(-1.0f, 1.0f, -1.0f);
                 gl.glVertex3f(1.0f, 1.0f, -1.0f);
@@ -1174,7 +1174,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             }
             rgba = this.xAxis.getLineColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(this.xAxis.getLineWidth());
+            gl.glLineWidth(this.xAxis.getLineWidth() * this.dpiScale);
             gl.glBegin(GL2.GL_LINES);
             gl.glVertex3f(-1.0f, y, -1.0f);
             gl.glVertex3f(1.0f, y, -1.0f);
@@ -1213,7 +1213,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 if (this.gridLine.isDrawXLine() && (v != -1.0f && v != 1.0f)) {
                     rgba = this.gridLine.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(this.gridLine.getSize());
+                    gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
                     gl.glBegin(GL2.GL_LINES);
                     gl.glVertex3f(v, y, -1.0f);
                     gl.glVertex3f(v, -y, -1.0f);
@@ -1229,7 +1229,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 //Draw tick line
                 rgba = this.xAxis.getLineColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.xAxis.getLineWidth());
+                gl.glLineWidth(this.xAxis.getLineWidth() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINES);
                 gl.glVertex3f(v, y, -1.0f);
                 gl.glVertex3f(v, y1, -1.0f);
@@ -1267,7 +1267,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             }
             rgba = this.yAxis.getLineColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(this.yAxis.getLineWidth());
+            gl.glLineWidth(this.yAxis.getLineWidth() * this.dpiScale);
             gl.glBegin(GL2.GL_LINES);
             gl.glVertex3f(x, -1.0f, -1.0f);
             gl.glVertex3f(x, 1.0f, -1.0f);
@@ -1306,7 +1306,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 if (this.gridLine.isDrawYLine() && (v != -1.0f && v != 1.0f)) {
                     rgba = this.gridLine.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(this.gridLine.getSize());
+                    gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
                     gl.glBegin(GL2.GL_LINES);
                     gl.glVertex3f(x, v, -1.0f);
                     gl.glVertex3f(-x, v, -1.0f);
@@ -1322,7 +1322,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 //Draw tick line
                 rgba = this.yAxis.getLineColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.yAxis.getLineWidth());
+                gl.glLineWidth(this.yAxis.getLineWidth() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINES);
                 gl.glVertex3f(x, v, -1.0f);
                 gl.glVertex3f(x1, v, -1.0f);
@@ -1370,7 +1370,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             }
             rgba = this.zAxis.getLineColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(this.zAxis.getLineWidth());
+            gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
             gl.glBegin(GL2.GL_LINES);
             gl.glVertex3f(x, y, -1.0f);
             gl.glVertex3f(x, y, 1.0f);
@@ -1414,7 +1414,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 if (this.gridLine.isDrawZLine() && this.boxed && (v != -1.0f && v != 1.0f)) {
                     rgba = this.gridLine.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(this.gridLine.getSize());
+                    gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
                     gl.glBegin(GL2.GL_LINE_STRIP);
                     gl.glVertex3f(x, y, v);
                     if (x < 0) {
@@ -1440,7 +1440,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 //Draw tick line
                 rgba = this.zAxis.getLineColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.zAxis.getLineWidth());
+                gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINES);
                 gl.glVertex3f(x, y, v);
                 gl.glVertex3f(x1, y1, v);
@@ -1486,11 +1486,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         //Rendering text string
         TextRenderer textRenderer;
-        if (this.scale == 1) {
+        if (this.dpiScale == 1) {
             textRenderer = new TextRenderer(font, true, true);
         } else {
             textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
-                    (int)(font.getSize() * (1 + (this.scale - 1) * 0.8))), true, true);
+                    (int)(font.getSize() * (1 + (this.dpiScale - 1) * 0.8))), true, true);
+            xShift *= this.dpiScale;
         }
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
@@ -1543,11 +1544,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         //Rendering text string
         TextRenderer textRenderer;
-        if (this.scale == 1) {
+        if (this.dpiScale == 1) {
             textRenderer = new TextRenderer(font, true, true);
         } else {
             textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
-                    (int)(font.getSize() * (1 + (this.scale - 1) * 0.8))), true, true);
+                    (int)(font.getSize() * (1 + (this.dpiScale - 1) * 0.8))), true, true);
         }
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
@@ -1591,11 +1592,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
             //Rendering text string
             Font font = title.getFont();
             TextRenderer textRenderer;
-            if (this.scale == 1) {
+            if (this.dpiScale == 1) {
                 textRenderer = new TextRenderer(font, true, true);
             } else {
                 textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
-                        (int)(font.getSize() * this.scale)), true, true);
+                        (int)(font.getSize() * this.dpiScale)), true, true);
             }
             textRenderer.beginRendering(this.width, this.height);
             textRenderer.setColor(title.getColor());
@@ -1697,7 +1698,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             PointBreak pb = (PointBreak) graphic.getLegend();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glPointSize(pb.getSize());
+            gl.glPointSize(pb.getSize() * this.dpiScale);
             gl.glBegin(GL2.GL_POINTS);
             PointZ p = (PointZ) shape.getPoint();
             gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
@@ -1707,7 +1708,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     private void drawPoints(GL2 gl, Graphic graphic) {
         PointBreak pb = (PointBreak) graphic.getGraphicN(0).getLegend();
-        gl.glPointSize(pb.getSize());
+        gl.glPointSize(pb.getSize() * this.dpiScale);
         gl.glBegin(GL2.GL_POINTS);
         for (Graphic gg : graphic.getGraphics()) {
             PointZShape shape = (PointZShape) gg.getShape();
@@ -1722,7 +1723,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     private void drawParticles(GL2 gl, ParticleGraphics particles) {
         for (Map.Entry<Integer, List> map : particles.getParticleList()) {
-            gl.glPointSize(particles.getPointSize());
+            gl.glPointSize(particles.getPointSize() * this.dpiScale);
             gl.glBegin(GL2.GL_POINTS);
             for (ParticleGraphics.Particle p : (List<ParticleGraphics.Particle>)map.getValue()) {
                 float[] rgba = p.rgba;
@@ -1743,13 +1744,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 List<PointZ> ps = (List<PointZ>) line.getPointList();
                 float[] rgba;
                 PointZ p;
-                gl.glLineWidth(((PolylineBreak) cbc.get(0)).getWidth());
+                gl.glLineWidth(((PolylineBreak) cbc.get(0)).getWidth() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 for (int i = 0; i < ps.size(); i++) {
                     PolylineBreak plb = (PolylineBreak) cbc.get(i);
                     rgba = plb.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(plb.getWidth());
+                    gl.glLineWidth(plb.getWidth() * this.dpiScale);
                     p = ps.get(i);
                     gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
                 }
@@ -1758,7 +1759,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 PolylineBreak pb = (PolylineBreak) cb;
                 float[] rgba = pb.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(pb.getWidth());
+                gl.glLineWidth(pb.getWidth() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 for (Polyline line : shape.getPolylines()) {
                     List<PointZ> ps = (List<PointZ>) line.getPointList();
@@ -1836,7 +1837,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
         if (aPGB.isDrawOutline()) {
             float[] rgba = aPGB.getOutlineColor().getRGBComponents(null);
-            gl.glLineWidth(aPGB.getOutlineSize());
+            gl.glLineWidth(aPGB.getOutlineSize() * this.dpiScale);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
@@ -1876,7 +1877,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         if (aPGB.isDrawOutline()) {
             float[] rgba = aPGB.getOutlineColor().getRGBComponents(null);
-            gl.glLineWidth(aPGB.getOutlineSize());
+            gl.glLineWidth(aPGB.getOutlineSize() * this.dpiScale);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
@@ -1916,7 +1917,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         if (aPGB.isDrawOutline()) {
             rgba = aPGB.getOutlineColor().getRGBComponents(null);
-            gl.glLineWidth(aPGB.getOutlineSize());
+            gl.glLineWidth(aPGB.getOutlineSize() * this.dpiScale);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
@@ -1956,7 +1957,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         if (aPGB.isDrawOutline()) {
             rgba = aPGB.getOutlineColor().getRGBComponents(null);
-            gl.glLineWidth(aPGB.getOutlineSize());
+            gl.glLineWidth(aPGB.getOutlineSize() * this.dpiScale);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
@@ -1990,7 +1991,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         if (aPGB.isDrawOutline()) {
             rgba = aPGB.getOutlineColor().getRGBComponents(null);
-            gl.glLineWidth(aPGB.getOutlineSize());
+            gl.glLineWidth(aPGB.getOutlineSize() * this.dpiScale);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < 3; i++) {
@@ -2014,7 +2015,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
 
         if (pgb.isDrawOutline()) {
-            gl.glLineWidth(pgb.getOutlineSize());
+            gl.glLineWidth(pgb.getOutlineSize() * this.dpiScale);
             if (surface.isEdgeInterp()) {
                 for (int i = 0; i < dim1; i++) {
                     gl.glBegin(GL2.GL_LINE_STRIP);
@@ -2272,7 +2273,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(pb.getOutlineSize());
+            gl.glLineWidth(pb.getOutlineSize() * this.dpiScale);
             gl.glBegin(GL2.GL_LINES);
             gl.glVertex3f(x1, y1, z1);
             gl.glVertex3f(x2, y2, z2);
@@ -2395,7 +2396,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (bb.isDrawOutline()) {
             float[] rgba = bb.getOutlineColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(bb.getOutlineSize());
+            gl.glLineWidth(bb.getOutlineSize() * this.dpiScale);
             gl.glBegin(GL2.GL_LINE_LOOP);
             double angle = 0.0;
             for (int i = 0; i < points; i++) {
@@ -2432,7 +2433,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
             rgba = bb.getOutlineColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(bb.getOutlineSize());
+            gl.glLineWidth(bb.getOutlineSize() * this.dpiScale);
             gl.glBegin(GL2.GL_LINES);
             for (int[] ii : cubic.getLineIndex()) {
                 for (int i : ii) {
@@ -2536,7 +2537,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             //Draw neatline
             rgba = Color.black.getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(legend.getNeatLineSize());
+            gl.glLineWidth(legend.getNeatLineSize() * this.dpiScale);
             gl.glBegin(GL2.GL_LINE_STRIP);
             gl.glVertex2f(x, y);
             gl.glVertex2f(x, y + lHeight);
@@ -2577,7 +2578,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     } else {
                         rgba = Color.black.getRGBComponents(null);
                         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                        gl.glLineWidth(legend.getTickWidth());
+                        gl.glLineWidth(legend.getTickWidth() * this.dpiScale);
                         gl.glBegin(GL2.GL_LINES);
                         if (legend.isInsideTick())
                             gl.glVertex2f(x + lWidth - tickLen, yy + barHeight);

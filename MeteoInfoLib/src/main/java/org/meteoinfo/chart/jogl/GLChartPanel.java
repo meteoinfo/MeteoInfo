@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.*;
+import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
@@ -376,6 +377,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         caps.setBlueBits(8);
         caps.setGreenBits(8);
         caps.setOnscreen(false);
+        caps.setPBuffer(true);
         GLDrawableFactory factory = GLDrawableFactory.getFactory(glp);
         GLOffscreenAutoDrawable drawable = factory.createOffscreenAutoDrawable(null, caps, null,
                 width, height);
@@ -423,15 +425,20 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @throws InterruptedException
      */
     public void saveImage(String fn, Integer sleep) throws InterruptedException {
-        BufferedImage image = this.paintViewImage();
-        if (image != null) {
-            String extension = fn.substring(fn.lastIndexOf('.') + 1);
-            try {
-                ImageIO.write(image, extension, new File(fn));
-            } catch (IOException ex) {
-                Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                BufferedImage image = GLChartPanel.this.paintViewImage();
+                if (image != null) {
+                    String extension = fn.substring(fn.lastIndexOf('.') + 1);
+                    try {
+                        ImageIO.write(image, extension, new File(fn));
+                    } catch (IOException ex) {
+                        Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
-        }
+        });
     }
 
     /**
@@ -443,17 +450,23 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @throws InterruptedException
      */
     public void saveImage(String fn, int width, int height, Integer sleep) throws InterruptedException {
-        BufferedImage image = this.paintViewImage(width, height);
-        if (image != null) {
-            String extension = fn.substring(fn.lastIndexOf('.') + 1);
-            try {
-                ImageIO.write(image, extension, new File(fn));
-            } catch (IOException ex) {
-                Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                BufferedImage image = GLChartPanel.this.paintViewImage(width, height);
+                if (image != null) {
+                    String extension = fn.substring(fn.lastIndexOf('.') + 1);
+                    try {
+                        ImageIO.write(image, extension, new File(fn));
+                    } catch (IOException ex) {
+                        Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
 
-        this.plot3DGL.reshape(this, 0, 0, this.getWidth(), this.getHeight());
+                GLChartPanel.this.plot3DGL.reshape(GLChartPanel.this, 0, 0, GLChartPanel.this.getWidth(),
+                        GLChartPanel.this.getHeight());
+            }
+        });
     }
 
     /**
@@ -479,47 +492,57 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @throws InterruptedException
      */
     public void saveImage(String fn, int dpi, int width, int height, Integer sleep) throws InterruptedException, IOException {
-        String formatName = fn.substring(fn.lastIndexOf('.') + 1);
-        if (formatName.equals("jpg")) {
-            formatName = "jpeg";
-            saveImage_Jpeg(fn, width, height, dpi);
-            return;
-        }
-
-        BufferedImage image = this.paintViewImage(width, height, dpi);
-
-        if (image != null) {
-            File output = new File(fn);
-            output.delete();
-            for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
-                ImageWriter writer = iw.next();
-                ImageWriteParam writeParam = writer.getDefaultWriteParam();
-                ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
-                IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
-                if (metadata == null) {
-                    metadata = writer.getDefaultImageMetadata(typeSpecifier, null);
-                }
-                if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
-                    continue;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                String formatName = fn.substring(fn.lastIndexOf('.') + 1);
+                if (formatName.equals("jpg")) {
+                    formatName = "jpeg";
+                    saveImage_Jpeg(fn, width, height, dpi);
+                    return;
                 }
 
-                ImageUtil.setDPI(metadata, dpi);
+                BufferedImage image = GLChartPanel.this.paintViewImage(width, height, dpi);
 
-                if (sleep != null) {
-                    Thread.sleep(sleep * 1000);
+                if (image != null) {
+                    try {
+                        File output = new File(fn);
+                        output.delete();
+                        for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext(); ) {
+                            ImageWriter writer = iw.next();
+                            ImageWriteParam writeParam = writer.getDefaultWriteParam();
+                            ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
+                            IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+                            if (metadata == null) {
+                                metadata = writer.getDefaultImageMetadata(typeSpecifier, null);
+                            }
+                            if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+                                continue;
+                            }
+
+                            ImageUtil.setDPI(metadata, dpi);
+
+                            if (sleep != null) {
+                                Thread.sleep(sleep * 1000);
+                            }
+                            final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
+                            try {
+                                writer.setOutput(stream);
+                                writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
+                            } finally {
+                                stream.close();
+                            }
+                            break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-                final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
-                try {
-                    writer.setOutput(stream);
-                    writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
-                } finally {
-                    stream.close();
-                }
-                break;
+
+                GLChartPanel.this.plot3DGL.reshape(GLChartPanel.this, 0, 0,
+                        GLChartPanel.this.getWidth(), GLChartPanel.this.getHeight());
             }
-        }
-
-        this.plot3DGL.reshape(this, 0, 0, this.getWidth(), this.getHeight());
+        });
     }
 
     private void saveImage_Jpeg(String file, int width, int height, int dpi) {

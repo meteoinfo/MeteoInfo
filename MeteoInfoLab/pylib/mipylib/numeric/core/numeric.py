@@ -41,7 +41,8 @@ __all__ = [
     'argmin','argmax','array','array_split','asanyarray','asarray','asgridarray','asgriddata','asin',
     'asmiarray','asstationdata','atleast_1d','atleast_2d','atan','atan2','ave_month','average','histogram',
     'broadcast_to','cdiff','ceil','concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag',
-    'diff','dim_array','datatable','dot','empty','empty_like','exp','eye','floor','fmax','fmin','full',
+    'diff','dim_array','datatable','dot','empty','empty_like','exp','eye','flatnonzero',
+    'floor','fmax','fmin','full',
     'griddata','hcurl','hdivg','hstack','identity','interp2d',
     'interpn','isarray','isfinite','isinf','isnan','linspace','log','log10',
     'logical_not','logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum',
@@ -1618,6 +1619,20 @@ def nonzero(a):
     for aa in ra:
         r.append(NDArray(aa))
     return tuple(r)
+
+def flatnonzero(a):
+    '''
+    Return indices that are non-zero in the flattened version of a.
+
+    :param a: (*array_like*) Input array.
+
+    :returns: (*array*) Indices of elements that are non-zero.
+    '''
+    if isinstance(a, list):
+        a = array(a)
+    r = ArrayMath.flatNonZero(a.asarray())
+
+    return NDArray(r)
     
 def where(condition):
     '''

@@ -482,6 +482,18 @@ public class Series implements Iterable {
     }
 
     /**
+     * Equal
+     *
+     * @param v Value
+     * @return Result series
+     */
+    public Series equal(String v) {
+        Array rdata = ArrayMath.equal(data, v);
+        Series r = new Series(rdata, index, name);
+        return r;
+    }
+
+    /**
      * Less then
      *
      * @param v Value

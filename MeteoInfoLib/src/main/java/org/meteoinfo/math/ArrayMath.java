@@ -3376,6 +3376,29 @@ public class ArrayMath {
     }
 
     /**
+     * Return the flat indices of the elements that are non-zero.
+     *
+     * @param a Input array
+     * @return Flat indices
+     */
+    public static Array flatNonZero(Array a) {
+        List<Integer> r = new ArrayList<>();
+        IndexIterator iterA = a.getIndexIterator();
+        int[] counter;
+        double v;
+        int i = 0;
+        while (iterA.hasNext()) {
+            v = iterA.getDoubleNext();
+            if (!Double.isNaN(v) && v != 0) {
+                r.add(i);
+            }
+            i += 1;
+        }
+
+        return ArrayUtil.array(r, DataType.INT);
+    }
+
+    /**
      * Bit and operation
      *
      * @param a Array a

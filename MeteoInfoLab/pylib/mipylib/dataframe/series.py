@@ -318,6 +318,14 @@ class Series(object):
         :returns: Bottom rows
         '''
         print self._series.tail(n)
+
+    def asarray(self):
+        '''
+        Return MI Java Array object
+
+        :returns: MI Java Array object
+        '''
+        return self.values.asarray()
         
     def mean(self):
         '''

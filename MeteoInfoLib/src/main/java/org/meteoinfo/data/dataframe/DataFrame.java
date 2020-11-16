@@ -1566,6 +1566,78 @@ public class DataFrame implements Iterable {
     /**
      * Select by row and column ranges
      *
+     * @param rowRangeArray Row range array
+     * @param colRange Column range
+     * @return Selected data frame or series
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public Object select(Array rowRangeArray, Range colRange) throws InvalidRangeException {
+        rowRangeArray = rowRangeArray.copyIfView();
+
+        ColumnIndex cols = new ColumnIndex();
+        for (int i = colRange.first(); i <= colRange.last(); i += colRange.stride()) {
+            cols.add(this.columns.get(i));
+        }
+
+        List<Integer> rowRange = new ArrayList<>();
+        if (rowRangeArray.getDataType() == DataType.BOOLEAN) {
+            for (int i = 0; i < rowRangeArray.getSize(); i++) {
+                if (rowRangeArray.getBoolean(i)) {
+                    rowRange.add(i);
+                }
+            }
+        } else {
+            for (int i = 0; i < rowRangeArray.getSize(); i++) {
+                rowRange.add(rowRangeArray.getInt(i));
+            }
+        }
+
+        Object r;
+        if (this.array2D) {
+            List ranges = new ArrayList<>();
+            ranges.add(rowRange);
+            ranges.add(new Range(colRange.first(), colRange.last(), colRange.stride()));
+            r = ArrayMath.take((Array) this.data, ranges);
+        } else {
+            r = new ArrayList<>();
+            int rn = rowRange.size();
+            for (int j = colRange.first(); j <= colRange.last(); j += colRange.stride()) {
+                Array rr = Array.factory(this.columns.get(j).getDataType(), new int[]{rn});
+                Array mr = ((List<Array>) this.data).get(j);
+                int idx = 0;
+                for (int i : rowRange) {
+                    rr.setObject(idx, mr.getObject(i));
+                    idx += 1;
+                }
+                ((ArrayList) r).add(rr);
+            }
+            if (cols.size() == 1) {
+                r = ((ArrayList) r).get(0);
+            }
+        }
+
+        if (r == null) {
+            return null;
+        } else {
+            Index rIndex = this.index.subIndex(rowRange);
+            if (cols.size() == 1 && this.columns.size() > 1) {
+                Series s = new Series((Array) r, rIndex, cols.get(0).getName());
+                return s;
+            } else {
+                DataFrame df;
+                if (r instanceof Array) {
+                    df = new DataFrame((Array) r, rIndex, cols);
+                } else {
+                    df = new DataFrame((ArrayList) r, rIndex, cols);
+                }
+                return df;
+            }
+        }
+    }
+
+    /**
+     * Select by row and column ranges
+     *
      * @param rowKeys Row keys
      * @param rowRange Row range
      * @param colRange Column range

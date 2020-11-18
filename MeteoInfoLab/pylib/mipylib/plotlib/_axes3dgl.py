@@ -14,6 +14,7 @@ from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil
 from javax.swing import WindowConstants
 from java.awt import Font
 
+import os
 import numbers
 import warnings
 
@@ -21,6 +22,8 @@ import plotutil
 from ._axes3d import Axes3D
 from mipylib.numeric.core import NDArray
 import mipylib.numeric as np
+from mipylib import migl
+from mipylib.geolib import migeo
 
 __all__ = ['Axes3DGL']
 
@@ -283,11 +286,24 @@ class Axes3DGL(Axes3D):
         ls = kwargs.pop('symbolspec', None)
         offset = kwargs.pop('offset', 0)
         xshift = kwargs.pop('xshift', 0)
+
+        if isinstance(layer, basestring):
+            fn = layer
+            if not fn.endswith('.shp'):
+                fn = fn + '.shp'
+            if not os.path.exists(fn):
+                fn = os.path.join(migl.get_map_folder(), fn)
+            if os.path.exists(fn):
+                encoding = kwargs.pop('encoding', None)
+                layer = migeo.shaperead(fn, encoding)
+            else:
+                raise IOError('File not exists: ' + fn)
+
         layer = layer.layer
         if layer.getLayerType() == LayerTypes.VectorLayer:
             if ls is None:
                 ls = layer.getLegendScheme()
-                if len(kwargs) > 0 and layer.getLegendScheme().getBreakNum() == 1:
+                if layer.getLegendScheme().getBreakNum() == 1:
                     lb = layer.getLegendScheme().getLegendBreaks().get(0)
                     btype = lb.getBreakType()
                     geometry = 'point'
@@ -297,10 +313,12 @@ class Axes3DGL(Axes3D):
                         geometry = 'polygon'
                         if not kwargs.has_key('facecolor'):
                             kwargs['facecolor'] = None
+                        if not kwargs.has_key('edgecolor'):
+                            kwargs['edgecolor'] = 'k'
                     lb, isunique = plotutil.getlegendbreak(geometry, **kwargs)
                     ls.getLegendBreaks().set(0, lb)
-
-            plotutil.setlegendscheme(ls, **kwargs)
+            else:
+                plotutil.setlegendscheme(ls, **kwargs)
             layer.setLegendScheme(ls)
             graphics = GraphicFactory.createGraphicsFromLayer(layer, offset, xshift)
         else:

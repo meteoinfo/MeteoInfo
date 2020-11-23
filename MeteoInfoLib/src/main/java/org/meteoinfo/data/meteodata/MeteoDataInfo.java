@@ -487,12 +487,10 @@ public class MeteoDataInfo {
     public void close() {
         if (this._dataInfo.getDataType() == MeteoDataType.NetCDF) {
             NetCDFDataInfo dinfo = (NetCDFDataInfo) this._dataInfo;
-            if (dinfo.getFile() != null) {
-                try {
-                    dinfo.getFile().close();
-                } catch (IOException ex) {
-                    Logger.getLogger(MeteoDataInfo.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            try {
+                dinfo.close();
+            } catch (IOException ex) {
+                Logger.getLogger(MeteoDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

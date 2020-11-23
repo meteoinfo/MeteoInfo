@@ -188,6 +188,38 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         return r;
     }
 
+    /**
+     * Check if the file is opened or closed.
+     * @return Boolean
+     */
+    public boolean isOpened() {
+        return this.ncfile != null;
+    }
+
+    /**
+     * Reopen data file.
+     */
+    public void reOpen() {
+        if (ncfile == null) {
+            try {
+                ncfile = NetcdfFile.open(this.getFileName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Close file
+     * @throws IOException
+     */
+    public void close() throws IOException {
+        if (this.ncfile != null) {
+            this.ncfile.close();
+            this.ncfile = null;
+        }
+    }
+
     @Override
     public void readDataInfo(String fileName) {
         this.setFileName(fileName);

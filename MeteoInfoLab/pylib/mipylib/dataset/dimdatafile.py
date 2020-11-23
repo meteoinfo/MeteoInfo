@@ -71,6 +71,12 @@ class DimDataFile(object):
             self.arldata.closeDataFile()
         elif not self.bufrdata is None:
             self.bufrdata.closeDataFile()
+
+    def reopen(self):
+        """
+        Reopen the data file
+        """
+        self.dataset.getDataInfo().reOpen()
     
     def dimensions(self):
         '''

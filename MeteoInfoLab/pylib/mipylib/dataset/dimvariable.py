@@ -351,6 +351,7 @@ class DimVariable(object):
         if member is None:
             raise KeyError('The member %s not exists!' % member)
 
+        self.dataset.reopen()
         a = a.extractMemberArray(member)
         if a.getDataType() in [NCDataType.SEQUENCE, NCDataType.STRUCTURE]:
             return StructureArray(a)

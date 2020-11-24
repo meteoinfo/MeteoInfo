@@ -7357,6 +7357,41 @@ public class ArrayMath {
     }
 
     /**
+     * Calculates the vertical component of the curl (ie, vorticity)
+     *
+     * @param uData U component
+     * @param vData V component
+     * @param xx X dimension value
+     * @param yy Y dimension value
+     * @return Curl
+     */
+    public static Array hcurl(Array uData, Array vData, Array xx, Array yy) {
+        xx = xx.copyIfView();
+        yy = yy.copyIfView();
+
+        int rank = uData.getRank();
+        int[] shape = uData.getShape();
+        Array lonData = Array.factory(DataType.DOUBLE, shape);
+        Array latData = Array.factory(DataType.DOUBLE, shape);
+        Index index = lonData.getIndex();
+        int[] current;
+        for (int i = 0; i < lonData.getSize(); i++) {
+            current = index.getCurrentCounter();
+            lonData.setDouble(index, xx.getDouble(current[rank - 1]));
+            latData.setDouble(index, yy.getDouble(current[rank - 2]));
+            index.incr();
+        }
+
+        Array dv = cdiff(vData, rank - 1);
+        Array dx = mul(cdiff(lonData, rank - 1), Math.PI / 180);
+        Array du = cdiff(mul(uData, cos(mul(latData, Math.PI / 180))), rank - 2);
+        Array dy = mul(cdiff(latData, rank - 2), Math.PI / 180);
+        Array gData = div(sub(div(dv, dx), div(du, dy)), mul(cos(mul(latData, Math.PI / 180)), 6.37e6));
+
+        return gData;
+    }
+
+    /**
      * Calculates the horizontal divergence using finite differencing
      *
      * @param uData U component
@@ -7376,6 +7411,41 @@ public class ArrayMath {
             current = index.getCurrentCounter();
             lonData.setDouble(index, xx.get(current[rank - 1]).doubleValue());
             latData.setDouble(index, yy.get(current[rank - 2]).doubleValue());
+            index.incr();
+        }
+
+        Array du = cdiff(uData, rank - 1);
+        Array dx = mul(cdiff(lonData, rank - 1), Math.PI / 180);
+        Array dv = cdiff(mul(vData, cos(mul(latData, Math.PI / 180))), rank - 2);
+        Array dy = mul(cdiff(latData, rank - 2), Math.PI / 180);
+        Array gData = div(add(div(du, dx), div(dv, dy)), mul(cos(mul(latData, Math.PI / 180)), 6.37e6));
+
+        return gData;
+    }
+
+    /**
+     * Calculates the horizontal divergence using finite differencing
+     *
+     * @param uData U component
+     * @param vData V component
+     * @param xx X dimension value
+     * @param yy Y dimension value
+     * @return Divergence
+     */
+    public static Array hdivg(Array uData, Array vData, Array xx, Array yy) {
+        xx = xx.copyIfView();
+        yy = yy.copyIfView();
+
+        int rank = uData.getRank();
+        int[] shape = uData.getShape();
+        Array lonData = Array.factory(DataType.DOUBLE, shape);
+        Array latData = Array.factory(DataType.DOUBLE, shape);
+        Index index = lonData.getIndex();
+        int[] current;
+        for (int i = 0; i < lonData.getSize(); i++) {
+            current = index.getCurrentCounter();
+            lonData.setDouble(index, xx.getDouble(current[rank - 1]));
+            latData.setDouble(index, yy.getDouble(current[rank - 2]));
             index.incr();
         }
 

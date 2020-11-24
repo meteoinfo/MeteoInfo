@@ -5,7 +5,7 @@
 # Note: Jython, some functions code revised from MetPy
 #-----------------------------------------------------
 
-from org.meteoinfo.math import ArrayUtil
+from org.meteoinfo.math import ArrayMath
 from org.meteoinfo.math.meteo import MeteoMath
 
 import mipylib.numeric as np
@@ -15,7 +15,7 @@ import constants as constants
 
 __all__ = [
     'cumsimp','dewpoint','dewpoint2rh','dewpoint_rh','dry_lapse','ds2uv','equivalent_potential_temperature',
-    'exner_function','flowfun','h2p',
+    'exner_function','flowfun','h2p','hcurl','hdivg',
     'moist_lapse','p2h','potential_temperature','qair2rh','rh2dewpoint',
     'sigma_to_pressure','tc2tf',
     'temperature_from_potential_temperature','tf2tc','uv2ds','pressure_to_height_std',
@@ -63,6 +63,74 @@ def ds2uv(d, s):
     else:
         r = MeteoMath.ds2uv(d, s)
         return r[0], r[1]
+
+def hcurl(u, v, x=None, y=None):
+    '''
+    Calculates the vertical component of the curl (ie, vorticity). The data should be lon/lat projection.
+
+    :param u: (*array*) U component 2D array.
+    :param v: (*array*) V component 2D array.
+    :param x: (*array*) X coordinate.
+    :param y: (*array*) Y coordinate.
+
+    :returns: Array of the vertical component of the curl.
+    '''
+    ny, nx = u.shape
+    if x is None:
+        if isinstance(u, DimArray):
+            x = u.dimvalue(1)
+        else:
+            x = np.arange(nx)
+    elif isinstance(x, (list, tuple)):
+        x = np.array(x)
+
+    if y is None:
+        if isinstance(v, DimArray):
+            y = u.dimvalue(0)
+        else:
+            y = np.arange(ny)
+    elif isinstance(y, (list, tuple)):
+        y = np.array(y)
+
+    r = ArrayMath.hcurl(u.asarray(), v.asarray(), x.asarray(), y.asarray())
+    if isinstance(u, DimArray):
+        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
+    else:
+        return NDArray(r)
+
+def hdivg(u, v, x=None, y=None):
+    '''
+    Calculates the horizontal divergence using finite differencing. The data should be lon/lat projection.
+
+    :param u: (*array*) U component array.
+    :param v: (*array*) V component array.
+    :param x: (*array*) X coordinate.
+    :param y: (*array*) Y coordinate.
+
+    :returns: Array of the horizontal divergence.
+    '''
+    ny, nx = u.shape
+    if x is None:
+        if isinstance(u, DimArray):
+            x = u.dimvalue(1)
+        else:
+            x = np.arange(nx)
+    elif isinstance(x, (list, tuple)):
+        x = np.array(x)
+
+    if y is None:
+        if isinstance(v, DimArray):
+            y = u.dimvalue(0)
+        else:
+            y = np.arange(ny)
+    elif isinstance(y, (list, tuple)):
+        y = np.array(y)
+
+    r = ArrayMath.hdivg(u.asarray(), v.asarray(), x.asarray(), y.asarray())
+    if isinstance(u, DimArray):
+        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
+    else:
+        return NDArray(r)
         
 def p2h(press):
     """

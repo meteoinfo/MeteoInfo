@@ -1029,12 +1029,20 @@ public class MeteoMath {
      * @param yy Y dimension value
      * @return Curl
      */
-    public static Array hcurl(Array uData, Array vData, Array xx, Array yy) {
+    public static Array vorticity(Array uData, Array vData, Array xx, Array yy) {
         int rank = uData.getRank();
         int[] shape = uData.getShape();
-        Array[] llData = ArrayUtil.meshgrid(xx, yy);
-        Array lonData = llData[0];
-        Array latData = llData[1];
+        Array lonData = Array.factory(DataType.DOUBLE, shape);
+        Array latData = Array.factory(DataType.DOUBLE, shape);
+        Index index = lonData.getIndex();
+        int[] current;
+        for (int i = 0; i < lonData.getSize(); i++) {
+            current = index.getCurrentCounter();
+            lonData.setDouble(index, xx.getDouble(current[rank - 1]));
+            latData.setDouble(index, yy.getDouble(current[rank - 2]));
+            index.incr();
+        }
+
         Array dv = cdiff(vData, rank - 1);
         Array dx = ArrayMath.mul(cdiff(lonData, rank - 1), Math.PI / 180);
         Array du = cdiff(ArrayMath.mul(uData, ArrayMath.cos(ArrayMath.mul(latData, Math.PI / 180))), rank - 2);
@@ -1053,7 +1061,7 @@ public class MeteoMath {
      * @param yy Y dimension value
      * @return Divergence
      */
-    public static Array hdivg(Array uData, Array vData, List<Number> xx, List<Number> yy) {
+    public static Array divergence(Array uData, Array vData, Array xx, Array yy) {
         int rank = uData.getRank();
         int[] shape = uData.getShape();
         Array lonData = Array.factory(DataType.DOUBLE, shape);
@@ -1062,8 +1070,8 @@ public class MeteoMath {
         int[] current;
         for (int i = 0; i < lonData.getSize(); i++) {
             current = index.getCurrentCounter();
-            lonData.setDouble(index, xx.get(current[rank - 1]).doubleValue());
-            latData.setDouble(index, yy.get(current[rank - 2]).doubleValue());
+            lonData.setDouble(index, xx.getDouble(current[rank - 1]));
+            latData.setDouble(index, yy.getDouble(current[rank - 2]));
             index.incr();
         }
 

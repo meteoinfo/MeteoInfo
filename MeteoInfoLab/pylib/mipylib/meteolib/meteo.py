@@ -5,17 +5,17 @@
 # Note: Jython, some functions code revised from MetPy
 #-----------------------------------------------------
 
-from org.meteoinfo.math import ArrayMath
 from org.meteoinfo.math.meteo import MeteoMath
 
 import mipylib.numeric as np
 from mipylib.numeric.core import NDArray, DimArray
 
 import constants as constants
+from .calc.thermo import saturation_vapor_pressure, saturation_mixing_ratio
 
 __all__ = [
-    'cumsimp','dewpoint','dewpoint2rh','dewpoint_rh','dry_lapse','ds2uv','equivalent_potential_temperature',
-    'exner_function','flowfun','h2p','hcurl','hdivg',
+    'cumsimp','dewpoint','dewpoint2rh','dewpoint_from_relative_humidity','dewpoint_rh','dry_lapse','ds2uv','equivalent_potential_temperature',
+    'exner_function','flowfun','h2p',
     'moist_lapse','p2h','potential_temperature','qair2rh','rh2dewpoint',
     'sigma_to_pressure','tc2tf',
     'temperature_from_potential_temperature','tf2tc','uv2ds','pressure_to_height_std',
@@ -64,74 +64,6 @@ def ds2uv(d, s):
         r = MeteoMath.ds2uv(d, s)
         return r[0], r[1]
 
-def hcurl(u, v, x=None, y=None):
-    '''
-    Calculates the vertical component of the curl (ie, vorticity). The data should be lon/lat projection.
-
-    :param u: (*array*) U component 2D array.
-    :param v: (*array*) V component 2D array.
-    :param x: (*array*) X coordinate.
-    :param y: (*array*) Y coordinate.
-
-    :returns: Array of the vertical component of the curl.
-    '''
-    ny, nx = u.shape
-    if x is None:
-        if isinstance(u, DimArray):
-            x = u.dimvalue(1)
-        else:
-            x = np.arange(nx)
-    elif isinstance(x, (list, tuple)):
-        x = np.array(x)
-
-    if y is None:
-        if isinstance(v, DimArray):
-            y = u.dimvalue(0)
-        else:
-            y = np.arange(ny)
-    elif isinstance(y, (list, tuple)):
-        y = np.array(y)
-
-    r = ArrayMath.hcurl(u.asarray(), v.asarray(), x.asarray(), y.asarray())
-    if isinstance(u, DimArray):
-        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
-    else:
-        return NDArray(r)
-
-def hdivg(u, v, x=None, y=None):
-    '''
-    Calculates the horizontal divergence using finite differencing. The data should be lon/lat projection.
-
-    :param u: (*array*) U component array.
-    :param v: (*array*) V component array.
-    :param x: (*array*) X coordinate.
-    :param y: (*array*) Y coordinate.
-
-    :returns: Array of the horizontal divergence.
-    '''
-    ny, nx = u.shape
-    if x is None:
-        if isinstance(u, DimArray):
-            x = u.dimvalue(1)
-        else:
-            x = np.arange(nx)
-    elif isinstance(x, (list, tuple)):
-        x = np.array(x)
-
-    if y is None:
-        if isinstance(v, DimArray):
-            y = u.dimvalue(0)
-        else:
-            y = np.arange(ny)
-    elif isinstance(y, (list, tuple)):
-        y = np.array(y)
-
-    r = ArrayMath.hdivg(u.asarray(), v.asarray(), x.asarray(), y.asarray())
-    if isinstance(u, DimArray):
-        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
-    else:
-        return NDArray(r)
-        
 def p2h(press):
     """
     Pressure to height
@@ -348,9 +280,32 @@ def dewpoint(e):
     """
     val = np.log(e / constants.sat_pressure_0c)
     return 243.5 * val / (17.67 - val)
-        
+
+def dewpoint_from_relative_humidity(temperature, rh):
+    r"""Calculate the ambient dewpoint given air temperature and relative humidity.
+    Parameters
+    ----------
+    temperature : `float`
+        Air temperature (celsius)
+    rh : `float`
+        Relative humidity expressed as a ratio in the range 0 < rh <= 1
+    Returns
+    -------
+    `float`
+        The dew point temperature (celsius)
+    See Also
+    --------
+    dewpoint, saturation_vapor_pressure
+    """
+    #if np.any(rh > 1.2):
+    #    warnings.warn('Relative humidity >120%, ensure proper units.')
+    return dewpoint(rh * saturation_vapor_pressure(temperature))
+
 def dewpoint_rh(temperature, rh):
     r"""Calculate the ambient dewpoint given air temperature and relative humidity.
+
+    deprecated - replaced by dewpoint_from_relative_humidity.
+
     Parameters
     ----------
     temperature : `float`
@@ -549,8 +504,8 @@ def equivalent_potential_temperature(pressure, temperature, dewpoint):
     [DaviesJones2009]_ it is the most accurate non-iterative formulation
     available.
     """
-    t = temperature
-    td = dewpoint
+    t = temperature + 273.15
+    td = dewpoint + 273.15
     p = pressure
     e = saturation_vapor_pressure(dewpoint)
     r = saturation_mixing_ratio(pressure, dewpoint)
@@ -559,7 +514,7 @@ def equivalent_potential_temperature(pressure, temperature, dewpoint):
     th_l = t * (1000 / (p - e)) ** constants.kappa * (t / t_l) ** (0.28 * r)
     th_e = th_l * np.exp((3036. / t_l - 1.78) * r * (1 + 0.448 * r))
 
-    return th_e
+    return th_e - 273.15
     
 def temperature_from_potential_temperature(pressure, theta):
     r"""Calculate the temperature from a given potential temperature.

@@ -5,8 +5,23 @@ import mipylib.numeric as np
 from mipylib.numeric.core import NDArray, DimArray
 
 __all__ = [
-    'vorticity'
+    'cdiff','divergence','vorticity'
     ]
+
+def cdiff(a, dimidx):
+    '''
+    Performs a centered difference operation on a array in a specific direction
+
+    :param a: (*array*) The input array.
+    :param dimidx: (*int*) Demension index of the specific direction.
+
+    :returns: Result array.
+    '''
+    r = MeteoMath.cdiff(a.asarray(), dimidx)
+    if isinstance(a, DimArray):
+        return DimArray(NDArray(r), a.dims, a.fill_value, a.proj)
+    else:
+        return NDArray(r)
 
 def vorticity(u, v, x=None, y=None):
     """
@@ -19,18 +34,58 @@ def vorticity(u, v, x=None, y=None):
 
     :returns: Array of the vertical component of the curl.
     """
-    if x is None or y is None:
-        if isinstance(u, DimArray) and isinstance(v, DimArray):
-            x = u.dimvalue(1)
-            y = u.dimvalue(0)
-
+    ny = u.shape[-2]
+    nx = u.shape[-1]
+    if x is None:
+        if isinstance(u, DimArray):
+            x = u.dimvalue(-1)
         else:
-            raise ValueError("Need x, y coordinates")
-
-    if isinstance(x, (list, tuple)):
+            x = np.arange(nx)
+    elif isinstance(x, (list, tuple)):
         x = np.array(x)
-    if isinstance(y, (list, tuple)):
+
+    if y is None:
+        if isinstance(v, DimArray):
+            y = u.dimvalue(-2)
+        else:
+            y = np.arange(ny)
+    elif isinstance(y, (list, tuple)):
         y = np.array(y)
 
-    r = MeteoMath.hcurl(u.asarray(), v.asarray(), x.asarray(), y.asarray())
+    r = MeteoMath.vorticity(u.asarray(), v.asarray(), x.asarray(), y.asarray())
     return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
+
+def divergence(u, v, x=None, y=None):
+    '''
+    Calculates the horizontal divergence using finite differencing. The data should be lon/lat projection.
+
+    :param u: (*array*) U component array.
+    :param v: (*array*) V component array.
+    :param x: (*array*) X coordinate.
+    :param y: (*array*) Y coordinate.
+
+    :returns: Array of the horizontal divergence.
+    '''
+    ny = u.shape[-2]
+    nx = u.shape[-1]
+    if x is None:
+        if isinstance(u, DimArray):
+            x = u.dimvalue(-1)
+        else:
+            x = np.arange(nx)
+    elif isinstance(x, (list, tuple)):
+        x = np.array(x)
+
+    if y is None:
+        if isinstance(v, DimArray):
+            y = u.dimvalue(-2)
+        else:
+            y = np.arange(ny)
+    elif isinstance(y, (list, tuple)):
+        y = np.array(y)
+
+    r = MeteoMath.divergence(u.asarray(), v.asarray(), x.asarray(), y.asarray())
+    if isinstance(u, DimArray):
+        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
+    else:
+        return NDArray(r)

@@ -1950,7 +1950,11 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             if (attName.equals("missing_value")) {
-                missingValue = Double.parseDouble(att.getValue(0).toString());
+                try {
+                    missingValue = Double.parseDouble(att.getValue(0).toString());
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
 
             //MODIS NetCDF data
@@ -1958,7 +1962,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 try {
                     missingValue = Double.parseDouble(att.getValue(0).toString());
                 } catch (NumberFormatException e) {
-
+                    e.printStackTrace();
                 }
             }
         }

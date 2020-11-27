@@ -6778,38 +6778,8 @@ public class ArrayMath {
     public static List<Object> asList(Array a) {
         IndexIterator iterA = a.getIndexIterator();
         List<Object> r = new ArrayList<>();
-        switch (a.getDataType()) {
-            case SHORT:
-            case INT:
-                while (iterA.hasNext()) {
-                    r.add(iterA.getIntNext());
-                }
-                break;
-            case FLOAT:
-                while (iterA.hasNext()) {
-                    r.add(iterA.getFloatNext());
-                }
-                break;
-            case DOUBLE:
-                while (iterA.hasNext()) {
-                    r.add(iterA.getDoubleNext());
-                }
-                break;
-            case BOOLEAN:
-                while (iterA.hasNext()) {
-                    r.add(iterA.getBooleanNext());
-                }
-                break;
-            case STRING:
-                while (iterA.hasNext()) {
-                    r.add(iterA.getStringNext());
-                }
-                break;
-            case OBJECT:
-                while (iterA.hasNext()) {
-                    r.add(iterA.getObjectNext());
-                }
-                break;
+        while (iterA.hasNext()) {
+            r.add(iterA.getObjectNext());
         }
         return r;
     }

@@ -8,7 +8,7 @@
 from org.meteoinfo.math.meteo import MeteoMath
 from mipylib.numeric.core import NDArray, DimArray
 import constants as constants
-import meteo as meteo
+from .calc.thermo import relative_humidity_from_specific_humidity, temperature_from_potential_temperature
 
 __all__ = [
     'destagger','get_slp','get_rh','get_rh2m'
@@ -79,7 +79,7 @@ def get_slp(wrfin, timeidx=0, units='hPa'):
     
     full_ph = (ph + phb) / constants.g
     destag_ph = destagger(full_ph, -3)
-    tk = meteo.temperature_from_potential_temperature(full_p * 0.01, full_t)
+    tk = temperature_from_potential_temperature(full_p * 0.01, full_t)
     slp = MeteoMath.calSeaPrs(destag_ph._array, tk._array, full_p._array, qvapor._array)
     
     return DimArray(slp, dims=t.dims[1:])
@@ -103,8 +103,8 @@ def get_rh(wrfin, timeidx=0):
     full_t = t + constants.T_BASE
     full_p = p + pb
     qvapor[qvapor < 0] = 0.
-    tk = meteo.temperature_from_potential_temperature(full_p * 0.01, full_t)
-    rh = meteo.relative_humidity_from_specific_humidity(qvapor, tk, full_p * 0.01) * 100
+    tk = temperature_from_potential_temperature(full_p * 0.01, full_t)
+    rh = relative_humidity_from_specific_humidity(qvapor, tk - 273.15, full_p * 0.01) * 100
     
     return rh
     
@@ -124,6 +124,6 @@ def get_rh2m(wrfin, timeidx=0):
     psfc = wrfin['PSFC'][timeidx,:,:]
     q2 = wrfin['Q2'][timeidx,:,:]
     q2[q2 < 0] = 0.
-    rh = meteo.relative_humidity_from_specific_humidity(q2, t2, psfc * 0.01) * 100
+    rh = relative_humidity_from_specific_humidity(q2, t2 - 273.15, psfc * 0.01) * 100
     
     return rh

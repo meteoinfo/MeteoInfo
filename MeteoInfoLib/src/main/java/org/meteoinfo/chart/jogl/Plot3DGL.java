@@ -1491,7 +1491,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
         } else {
             textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
                     (int)(font.getSize() * (1 + (this.dpiScale - 1) * 0.8))), true, true);
-            xShift *= this.dpiScale;
         }
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
@@ -2560,6 +2559,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             }
             float strWidth = 0;
             Rectangle2D rect;
+            float xShift = this.tickSpace * this.dpiScale;
             for (int i = 0; i < bNum; i++) {
                 if (labelIdxs.contains(i)) {
                     ColorBreak cb = ls.getLegendBreaks().get(i);
@@ -2574,7 +2574,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     }
                     if (ls.getLegendType() == LegendType.UniqueValue) {
                         rect = this.drawString(gl, caption, legend.getTickLabelFont(), legend.getTickLabelColor(),
-                                x + lWidth, yy + barHeight * 0.5f, 0, XAlign.LEFT, YAlign.CENTER, 5, 0);
+                                x + lWidth, yy + barHeight * 0.5f, 0, XAlign.LEFT, YAlign.CENTER, xShift, 0);
                     } else {
                         rgba = Color.black.getRGBComponents(null);
                         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -2587,7 +2587,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         gl.glVertex2f(x + lWidth, yy + barHeight);
                         gl.glEnd();
                         rect = this.drawString(gl, caption, legend.getTickLabelFont(), legend.getTickLabelColor(),
-                                labelX, yy + barHeight, 0, XAlign.LEFT, YAlign.CENTER, 5, 0);
+                                labelX, yy + barHeight, 0, XAlign.LEFT, YAlign.CENTER, xShift, 0);
                     }
                     if (strWidth < rect.getWidth())
                         strWidth = (float) rect.getWidth();
@@ -2600,31 +2600,30 @@ public class Plot3DGL extends Plot implements GLEventListener {
             //Draw label
             ChartText label = legend.getLabel();
             if (label != null) {
-                float sx, sy, yShift;
+                float sx, sy;
+                float yShift = this.tickSpace * this.dpiScale;
                 switch (legend.getLabelLocation()) {
                     case "top":
                         sx = x + lWidth * 0.5f;
                         sy = y + lHeight;
-                        yShift = this.tickSpace;
                         drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 0, 0, yShift);
                         break;
                     case "bottom":
                         sx = x + lWidth * 0.5f;
                         sy = y;
-                        yShift = -this.tickSpace;
+                        yShift = -yShift;
                         drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.TOP, 0, 0, yShift);
                         break;
                     case "left":
                     case "in":
                         sx = x;
                         sy = y + lHeight * 0.5f;
-                        yShift = this.tickSpace;
                         drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
                         break;
                     default:
                         sx = labelX;
                         sy = y + lHeight * 0.5f;
-                        yShift = -strWidth - this.tickSpace;
+                        yShift = -strWidth - yShift;
                         drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.TOP, 90.f, 0, yShift);
                         break;
                 }

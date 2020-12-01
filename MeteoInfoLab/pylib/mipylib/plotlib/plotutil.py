@@ -837,7 +837,9 @@ def setpointlegendbreak(lb, **kwargs):
     if kwargs.has_key('alpha'):
         alpha = kwargs['alpha']
     if color is None:
-        if not alpha is None:
+        if alpha is None:
+            lb.setDrawFill(False)
+        else:
             color = getcolor(lb.getColor(), alpha)
             lb.setColor(color)
     else:

@@ -278,7 +278,7 @@ public class JOGLUtil {
                     z = za.getDouble(i);
                     for (int j = 0; j < dim2; j++) {
                         x = xa.getDouble(j);
-                        vertices[i][j] = new PointZ(x, y, z, data.getDouble(index.set(i, j)));
+                        vertices[i][j] = new PointZ(x, y, z, r.getDouble(index.set(i, j)));
                     }
                 }
                 graphics.setVertices(vertices);
@@ -301,7 +301,7 @@ public class JOGLUtil {
                     y = ya.getDouble(i);
                     for (int j = 0; j < dim2; j++) {
                         x = xa.getDouble(j);
-                        vertices[i][j] = new PointZ(x, y, z, data.getDouble(index.set(i, j)));
+                        vertices[i][j] = new PointZ(x, y, z, r.getDouble(index.set(i, j)));
                     }
                 }
                 graphics.setVertices(vertices);

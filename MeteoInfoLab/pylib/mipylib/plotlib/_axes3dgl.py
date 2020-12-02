@@ -414,8 +414,14 @@ class Axes3DGL(Axes3D):
         else:
             ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
         ls = ls.convertTo(ShapeTypes.Polygon)
-        edge = kwargs.pop('edge', True)
-        kwargs['edge'] = edge
+        facecolor = kwargs.pop('facecolor', None)
+        face_interp = None
+        if not facecolor is None:
+            face_interp = (facecolor == 'interp')
+            if not face_interp:
+                if not facecolor in ['flat','texturemap','none']:
+                    facecolor = plotutil.getcolor(facecolor)
+                    ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polygon, facecolor, 1)
         plotutil.setlegendscheme(ls, **kwargs)
 
         xslice = kwargs.pop('xslice', [])
@@ -429,6 +435,13 @@ class Axes3DGL(Axes3D):
             zslice = [zslice]
         graphics = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
                                   yslice, zslice, ls)
+        if face_interp:
+            for gg in graphics:
+                gg.setFaceInterp(face_interp)
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            for gg in graphics:
+                gg.setUsingLight(lighting)
         visible = kwargs.pop('visible', True)
         if visible:
             for gg in graphics:

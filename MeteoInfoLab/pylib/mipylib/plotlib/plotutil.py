@@ -828,7 +828,7 @@ def setpointlegendbreak(lb, **kwargs):
         else:
             pstyle = getpointstyle(marker)
             lb.setStyle(pstyle)
-    color = None
+    color = lb.getColor()
     if kwargs.has_key('color'):
         color = kwargs['color']
     elif kwargs.has_key('facecolor'):

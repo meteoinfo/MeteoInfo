@@ -19,14 +19,10 @@
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\water_vapor_flux_digv_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_8.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatter_density.py"/>
+      <OpenedFile File=""/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\water_vapor_flux_digv_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_8.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatter_density.py"/>
+      <RecentFile File=""/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +30,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="0,0" MainFormSize="1280,680"/>
+  <Startup MainFormLocation="0,0" MainFormSize="1304,735"/>
 </MeteoInfo>

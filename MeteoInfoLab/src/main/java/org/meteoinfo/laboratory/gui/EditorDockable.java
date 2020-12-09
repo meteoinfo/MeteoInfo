@@ -36,6 +36,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.text.BadLocationException;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import static com.formdev.flatlaf.FlatClientProperties.TABBED_PANE_HIDE_TAB_AREA_WITH_ONE_TAB;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.TextEditorPane;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -88,6 +89,7 @@ public class EditorDockable extends DefaultSingleCDockable {
                 EditorDockable.this.setTitleText("Editor - " + te.getFileName());
             }
         });
+        tabbedPanel.putClientProperty(TABBED_PANE_HIDE_TAB_AREA_WITH_ONE_TAB, true);
         this.getContentPane().add(tabbedPanel);
         //this.setCloseable(false);
     }

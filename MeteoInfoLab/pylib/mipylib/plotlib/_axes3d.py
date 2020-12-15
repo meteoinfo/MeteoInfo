@@ -18,7 +18,10 @@ from mipylib.numeric.core import NDArray, DimArray
 import mipylib.numeric as np
 import plotutil
 import mipylib.miutil as miutil
+from mipylib import migl
+from mipylib.geolib import migeo
 
+import os
 import datetime
 import numbers
 import warnings
@@ -1366,6 +1369,19 @@ class Axes3D(Axes):
         ls = kwargs.pop('symbolspec', None)
         offset = kwargs.pop('offset', 0)
         xshift = kwargs.pop('xshift', 0)
+
+        if isinstance(layer, basestring):
+            fn = layer
+            if not fn.endswith('.shp'):
+                fn = fn + '.shp'
+            if not os.path.exists(fn):
+                fn = os.path.join(migl.get_map_folder(), fn)
+            if os.path.exists(fn):
+                encoding = kwargs.pop('encoding', None)
+                layer = migeo.shaperead(fn, encoding)
+            else:
+                raise IOError('File not exists: ' + fn)
+
         layer = layer.layer
         if layer.getLayerType() == LayerTypes.VectorLayer:
             if ls is None:
@@ -1378,6 +1394,10 @@ class Axes3D(Axes):
                         geometry = 'line'
                     elif btype == BreakTypes.PolygonBreak:
                         geometry = 'polygon'
+                        if not kwargs.has_key('facecolor'):
+                            kwargs['facecolor'] = None
+                        if not kwargs.has_key('edgecolor'):
+                            kwargs['edgecolor'] = 'k'
                     lb, isunique = plotutil.getlegendbreak(geometry, **kwargs)
                     ls.getLegendBreaks().set(0, lb)
 
@@ -1402,35 +1422,7 @@ class Axes3D(Axes):
         :returns: Graphics.
         '''
         warnings.warn("plot_layer is deprecated", DeprecationWarning)
-        ls = kwargs.pop('symbolspec', None)
-        offset = kwargs.pop('offset', 0)
-        xshift = kwargs.pop('xshift', 0)
-        layer = layer.layer
-        if layer.getLayerType() == LayerTypes.VectorLayer:            
-            if ls is None:
-                ls = layer.getLegendScheme()
-                if len(kwargs) > 0 and layer.getLegendScheme().getBreakNum() == 1:
-                    lb = layer.getLegendScheme().getLegendBreaks().get(0)
-                    btype = lb.getBreakType()
-                    geometry = 'point'
-                    if btype == BreakTypes.PolylineBreak:
-                        geometry = 'line'
-                    elif btype == BreakTypes.PolygonBreak:
-                        geometry = 'polygon'
-                    lb, isunique = plotutil.getlegendbreak(geometry, **kwargs)
-                    ls.getLegendBreaks().set(0, lb)
-
-            plotutil.setlegendscheme(ls, **kwargs)
-            layer.setLegendScheme(ls)                    
-            graphics = GraphicFactory.createGraphicsFromLayer(layer, offset, xshift)
-        else:
-            interpolation = kwargs.pop('interpolation', None)
-            graphics = GraphicFactory.createImage(layer, offset, xshift, interpolation)
-        
-        visible = kwargs.pop('visible', True)
-        if visible:
-            self.add_graphic(graphics)
-        return graphics
+        return self.geoshow(layer, **kwargs)
         
     def fill_between(self, x, y1, y2=0, where=None, **kwargs):
         """

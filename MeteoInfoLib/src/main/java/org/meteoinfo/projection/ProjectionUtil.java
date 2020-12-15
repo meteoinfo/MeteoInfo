@@ -595,7 +595,7 @@ public class ProjectionUtil {
      * @param projectLabels If project labels
      */
     public static void projectLayer(VectorLayer oLayer, ProjectionInfo toProj, double refCutLon, boolean projectLabels) {
-        ProjectionInfo fromProj = oLayer.getProjInfo();
+        ProjectionInfo fromProj = oLayer.getOriginProjInfo();
         if (fromProj.equals(toProj)) {
             if (oLayer.isProjected()) {
                 oLayer.getOriginData();
@@ -843,6 +843,7 @@ public class ProjectionUtil {
                 break;
         }
         oLayer.getAttributeTable().setTable(aTable);
+        oLayer.setProjInfo(toProj);
 
         if (oLayer.getLabelPoints().size() > 0) {
             if (projectLabels) {

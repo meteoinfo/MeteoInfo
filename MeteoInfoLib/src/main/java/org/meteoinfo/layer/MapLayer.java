@@ -32,7 +32,7 @@ public class MapLayer implements Cloneable {
     private int _handle;
     private String _layerName;
     private String _fileName;
-    private ProjectionInfo _projInfo;
+    protected ProjectionInfo _projInfo;
     private Extent _extent;
     private boolean _visible;
     private LayerDrawType _layerDrawType;

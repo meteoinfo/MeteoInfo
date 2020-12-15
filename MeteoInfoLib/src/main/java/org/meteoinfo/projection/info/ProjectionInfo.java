@@ -657,5 +657,13 @@ public abstract class ProjectionInfo {
 
         return k0;
     }
+
+    /**
+     * Clone
+     * @return ProjectionInfo object
+     */
+    public Object clone() {
+        return ProjectionInfo.factory(this.toProj4String());
+    }
     // </editor-fold>
 }

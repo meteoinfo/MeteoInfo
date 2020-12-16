@@ -2674,8 +2674,8 @@ def griddata(points, values, xi=None, **kwargs):
     :param values: (*array_like*) The scattered data array.
     :param xi: (*list*) The list contains x and y coordinate arrays of the grid data. Default is ``None``,
         the grid x and y coordinate size were both 500.
-    :param method: (*string*) The interpolation method. [idw | cressman | nearest | inside | inside_min
-        | inside_max | inside_count | surface | barnes]
+    :param method: (*string*) The interpolation method. [idw | cressman | nearest | inside_mean | inside_min
+        | inside_max | inside_sum | inside_count | surface | barnes]
     :param fill_value: (*float*) Fill value, Default is ``nan``.
     :param pointnum: (*int*) Only used for 'idw' method. The number of the points to be used for each grid
         value interpolation.
@@ -2768,6 +2768,9 @@ def griddata(points, values, xi=None, **kwargs):
     elif method == 'inside_min':
         centerpoint = kwargs.pop('centerpoint', True)
         r = InterpUtil.interpolation_Inside_Min(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
+    elif method == 'inside_sum':
+        centerpoint = kwargs.pop('centerpoint', True)
+        r = InterpUtil.interpolation_Inside_Sum(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
     elif method == 'inside_count':
         centerpoint = kwargs.pop('centerpoint', True)
         r = InterpUtil.interpolation_Inside_Count(x_s.aslist(), y_s.aslist(), x_g.aslist(), y_g.aslist(), True, centerpoint)

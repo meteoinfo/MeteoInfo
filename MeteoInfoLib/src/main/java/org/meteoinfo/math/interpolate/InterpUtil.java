@@ -671,6 +671,90 @@ public class InterpUtil {
         return r;
     }
 
+    /**
+     * Interpolate with inside method - The grid cell value is the sum value
+     * of the inside points or fill value if no inside point.
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param centerPoint If the grid point is center or border
+     * @return grid data
+     */
+    public static Array interpolation_Inside_Sum(Array x_s, Array y_s, Array a, Array X, Array Y,
+                                                  boolean centerPoint) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+
+        int rowNum, colNum, pNum;
+        colNum = (int) X.getSize();
+        rowNum = (int) Y.getSize();
+        pNum = (int) x_s.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        double dX = X.getDouble(1) - X.getDouble(0);
+        double dY = Y.getDouble(1) - Y.getDouble(0);
+        int[][] pNums = new int[rowNum][colNum];
+        double x, y, v, sx, sy, ex, ey;
+        if (centerPoint) {
+            sx = X.getDouble(0) - dX * 0.5;
+            sy = Y.getDouble(0) - dY * 0.5;
+            ex = X.getDouble(colNum - 1) + dX * 0.5;
+            ey = Y.getDouble(rowNum - 1) + dY * 0.5;
+        } else {
+            sx = X.getDouble(0);
+            sy = Y.getDouble(0);
+            ex = X.getDouble(colNum - 1);
+            ey = Y.getDouble(rowNum - 1);
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                pNums[i][j] = 0;
+                r.setDouble(i * colNum + j, 0.0);
+            }
+        }
+
+        for (int p = 0; p < pNum; p++) {
+            v = a.getDouble(p);
+            if (Double.isNaN(v)) {
+                continue;
+            }
+
+            x = x_s.getDouble(p);
+            y = y_s.getDouble(p);
+            if (x < sx || x > ex) {
+                continue;
+            }
+            if (y < sy || y > ey) {
+                continue;
+            }
+
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
+            if (i >= rowNum)
+                i = rowNum - 1;
+            if (j >= colNum)
+                j = colNum - 1;
+            pNums[i][j] += 1;
+            r.setDouble(i * colNum + j, r.getDouble(i * colNum + j) + v);
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                if (pNums[i][j] == 0) {
+                    r.setDouble(i * colNum + j, Double.NaN);
+                }
+            }
+        }
+
+        return r;
+    }
+
 
     /**
      * Interpolate with inside method - The grid cell value is the average value

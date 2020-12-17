@@ -1591,6 +1591,8 @@ def delnan(a):
     else:
         aa = []
         for a0 in a:
+            if not isinstance(a0, NDArray):
+                a0 = array(a0)
             aa.append(a0._array)
         r = ArrayMath.removeNaN(aa)
         rr = []

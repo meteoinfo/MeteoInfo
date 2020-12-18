@@ -54,6 +54,16 @@ public class PointZ extends PointD implements Cloneable{
 
     /**
      * Constructor
+     * @param coord Coordinate array
+     */
+    public PointZ(double[] coord) {
+        X = coord[0];
+        Y = coord[1];
+        Z = coord[2];
+    }
+
+    /**
+     * Constructor
      *
      * @param x X
      * @param y Y
@@ -78,6 +88,14 @@ public class PointZ extends PointD implements Cloneable{
      */
     public PointD toPointD() {
         return new PointD(X, Y);
+    }
+
+    /**
+     * To double array
+     * @return Double array
+     */
+    public double[] toArray() {
+        return new double[]{X, Y, Z};
     }
     
     /**

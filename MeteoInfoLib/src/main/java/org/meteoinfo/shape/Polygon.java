@@ -128,6 +128,14 @@ public class Polygon {
     }
 
     /**
+     * Set extent
+     * @param extent Then extent
+     */
+    public void setExtent(Extent extent) {
+        this._extent = extent;
+    }
+
+    /**
      * Get rings
      *
      * @return Rings

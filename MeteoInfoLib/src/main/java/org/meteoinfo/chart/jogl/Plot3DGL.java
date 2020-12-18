@@ -32,12 +32,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+
+import jogamp.opengl.glu.tessellator.GLUtessellatorImpl;
 import org.meteoinfo.chart.ChartColorBar;
 import org.meteoinfo.chart.ChartLegend;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.chart.axis.Axis;
+import org.meteoinfo.chart.jogl.tessellator.Primitive;
+import org.meteoinfo.chart.jogl.tessellator.PrimitiveTessellator;
+import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
+import org.meteoinfo.chart.jogl.tessellator.TriangleTessellator;
 import org.meteoinfo.chart.plot.*;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.data.Dataset;
@@ -63,8 +69,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private Color background = Color.white;
     private boolean doScreenShot;
     private BufferedImage screenImage;
+    private GL2 gl;
     private final GLU glu = new GLU();
     private final GLUT glut = new GLUT();
+    private int startList = 2;
     private final GraphicCollection3D graphics;
     private Extent3D extent;
     private ChartText title;
@@ -75,6 +83,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private final Axis zAxis;
     private float xmin, xmax = 1.0f, ymin;
     private float ymax = 1.0f, zmin, zmax = 1.0f;
+    private Transform transform = new Transform();
 
     private Color boxColor = Color.getHSBColor(0f, 0f, 0.95f);
     //private Color lineBoxColor = new Color(220, 220, 220);
@@ -93,7 +102,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private float scaleZ = 1.0f;
     private float distanceX = 0.0f;
     private float distanceY = 0.0f;
-    tessellCallBack tessCallback;
+    TessCallback tessCallback;
     private int width;
     private int height;
     float tickSpace = 5.0f;
@@ -236,6 +245,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         xAxis.setMinMaxValue(xmin, xmax);
         yAxis.setMinMaxValue(ymin, ymax);
         zAxis.setMinMaxValue(zmin, zmax);
+        this.transform.setExtent(this.extent);
     }
 
     /**
@@ -803,6 +813,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     private void updateExtent() {
         this.extent = new Extent3D(xmin, xmax, ymin, ymax, zmin, zmax);
+        this.transform.setExtent(this.extent);
     }
 
     /**
@@ -854,7 +865,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
-        final GL2 gl = drawable.getGL().getGL2();
+        //final GL2 gl = drawable.getGL().getGL2();
         float[] rgba = this.background.getRGBComponents(null);
         if (this.background == Color.black)
             rgba[3] = 0.f;
@@ -1204,7 +1215,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 if (v < xmin || v > xmax) {
                     continue;
                 }
-                v = this.transform_xf(v);
+                v = this.transform.transform_x(v);
                 if (i == tlabs.size()) {
                     break;
                 }
@@ -1297,7 +1308,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 if (v < ymin || v > ymax) {
                     continue;
                 }
-                v = this.transform_yf(v);
+                v = this.transform.transform_y(v);
                 if (i == tlabs.size()) {
                     break;
                 }
@@ -1405,7 +1416,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 if (v < zmin || v > zmax) {
                     continue;
                 }
-                v = this.transform_zf(v);
+                v = this.transform.transform_z(v);
                 if (i == tlabs.size()) {
                     break;
                 }
@@ -1685,9 +1696,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawText(GL2 gl, ChartText3D text) {
-        float x = this.transform_xf((float) text.getX());
-        float y = this.transform_yf((float) text.getY());
-        float z = this.transform_zf((float) text.getZ());
+        float x = this.transform.transform_x((float) text.getX());
+        float y = this.transform.transform_y((float) text.getY());
+        float z = this.transform.transform_z((float) text.getZ());
         this.drawString(gl, text, x, y, z, text.getXAlign(), text.getYAlign());
     }
 
@@ -1700,7 +1711,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glPointSize(pb.getSize() * this.dpiScale);
             gl.glBegin(GL2.GL_POINTS);
             PointZ p = (PointZ) shape.getPoint();
-            gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+            gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
             gl.glEnd();
         }
     }
@@ -1715,7 +1726,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             PointZ p = (PointZ) shape.getPoint();
-            gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+            gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
         }
         gl.glEnd();
     }
@@ -1727,7 +1738,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             for (ParticleGraphics.Particle p : (List<ParticleGraphics.Particle>)map.getValue()) {
                 float[] rgba = p.rgba;
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glVertex3f(transform_xf((float) p.x), transform_yf((float) p.y), transform_zf((float) p.z));
+                gl.glVertex3f(transform.transform_x((float) p.x), transform.transform_y((float) p.y), transform.transform_z((float) p.z));
             }
             gl.glEnd();
         }
@@ -1751,7 +1762,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(plb.getWidth() * this.dpiScale);
                     p = ps.get(i);
-                    gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                    gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
                 }
                 gl.glEnd();
             } else {
@@ -1763,7 +1774,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 for (Polyline line : shape.getPolylines()) {
                     List<PointZ> ps = (List<PointZ>) line.getPointList();
                     for (PointZ p : ps) {
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
                     }
                 }
                 gl.glEnd();
@@ -1775,17 +1786,123 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (extent.intersects(graphic.getExtent())) {
             PolygonZShape shape = (PolygonZShape) graphic.getShape();
             PolygonBreak pb = (PolygonBreak) graphic.getLegend();
-            for (PolygonZ poly : (List<PolygonZ>) shape.getPolygons()) {
-                if (GeometryUtil.isConvex(poly)) {
-                    drawConvexPolygon(gl, poly, pb);
+            List<PolygonZ> polygonZS = (List<PolygonZ>) shape.getPolygons();
+            for (int i = 0; i < polygonZS.size(); i++) {
+                PolygonZ polygonZ = (PolygonZ) shape.getPolygons().get(i);
+                if (polygonZ instanceof TessPolygon) {
+                    drawTessPolygon(gl, (TessPolygon) polygonZ, pb);
                 } else {
-                    drawPolygon(gl, poly, pb);
+                    if (GeometryUtil.isConvex(polygonZ)) {
+                        drawConvexPolygon(gl, polygonZ, pb);
+                    } else {
+                        TessPolygon tessPolygon = new TessPolygon(polygonZ);
+                        drawTessPolygon(gl, tessPolygon, pb);
+                        polygonZS.set(i, tessPolygon);
+                    }
                 }
             }
         }
     }
 
+    private void drawTessPolygon(GL2 gl, TessPolygon tessPolygon, PolygonBreak aPGB) {
+        if (aPGB.isDrawFill() && aPGB.getColor().getAlpha() > 0) {
+            gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+            gl.glPolygonOffset(1.0f, 1.0f);
+
+            float[] rgba = aPGB.getColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+
+            try {
+                for (Primitive primitive : tessPolygon.getPrimitives()) {
+                    gl.glBegin(primitive.type);
+                    for (PointZ p : primitive.vertices) {
+                        gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
+                    }
+                    gl.glEnd();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (aPGB.isDrawOutline()) {
+            float[] rgba = aPGB.getOutlineColor().getRGBComponents(null);
+            gl.glLineWidth(aPGB.getOutlineSize() * this.dpiScale);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            PointZ p;
+            for (int i = 0; i < tessPolygon.getOutLine().size(); i++) {
+                p = ((List<PointZ>) tessPolygon.getOutLine()).get(i);
+                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
+            }
+            gl.glEnd();
+
+            if (tessPolygon.hasHole()) {
+                List<PointZ> newPList;
+                gl.glBegin(GL2.GL_LINE_STRIP);
+                for (int h = 0; h < tessPolygon.getHoleLines().size(); h++) {
+                    newPList = (List<PointZ>) tessPolygon.getHoleLines().get(h);
+                    for (int j = 0; j < newPList.size(); j++) {
+                        p = newPList.get(j);
+                        gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
+                    }
+                }
+                gl.glEnd();
+            }
+            gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
+        }
+    }
+
     private void drawPolygon(GL2 gl, PolygonZ aPG, PolygonBreak aPGB) {
+        if (aPGB.isDrawFill() && aPGB.getColor().getAlpha() > 0) {
+            gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+            gl.glPolygonOffset(1.0f, 1.0f);
+
+            float[] rgba = aPGB.getColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+
+            try {
+                TessPolygon tessPolygon = new TessPolygon(aPG);
+                for (Primitive primitive : tessPolygon.getPrimitives()) {
+                    gl.glBegin(primitive.type);
+                    for (PointZ p : primitive.vertices) {
+                        gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
+                    }
+                    gl.glEnd();
+                }
+                aPG = tessPolygon;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (aPGB.isDrawOutline()) {
+            float[] rgba = aPGB.getOutlineColor().getRGBComponents(null);
+            gl.glLineWidth(aPGB.getOutlineSize() * this.dpiScale);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            PointZ p;
+            for (int i = 0; i < aPG.getOutLine().size(); i++) {
+                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
+            }
+            gl.glEnd();
+
+            if (aPG.hasHole()) {
+                List<PointZ> newPList;
+                gl.glBegin(GL2.GL_LINE_STRIP);
+                for (int h = 0; h < aPG.getHoleLines().size(); h++) {
+                    newPList = (List<PointZ>) aPG.getHoleLines().get(h);
+                    for (int j = 0; j < newPList.size(); j++) {
+                        p = newPList.get(j);
+                        gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
+                    }
+                }
+                gl.glEnd();
+            }
+            gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
+        }
+    }
+
+    private void drawPolygon_bak(GL2 gl, PolygonZ aPG, PolygonBreak aPGB) {
         PointZ p;
         if (aPGB.isDrawFill() && aPGB.getColor().getAlpha() > 0) {
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
@@ -1795,39 +1912,40 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
 
             try {
-                //int startList = gl.glGenLists(1);
-                GLUtessellator tobj = GLU.gluNewTess();
-                GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
-                GLU.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
-                GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
-                GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-                GLU.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+                GLUtessellator tobj = glu.gluNewTess();
+                //TessCallback tessCallback = new TessCallback(gl, glu);
+
+                glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
+                glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
+                glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
+                glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
+                //glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
 
                 //gl.glNewList(startList, GL2.GL_COMPILE);
                 //gl.glShadeModel(GL2.GL_FLAT);
-                GLU.gluTessBeginPolygon(tobj, null);
-                GLU.gluTessBeginContour(tobj);
+                glu.gluTessBeginPolygon(tobj, null);
+                glu.gluTessBeginContour(tobj);
                 double[] v;
                 for (int i = 0; i < aPG.getOutLine().size() - 1; i++) {
                     p = ((List<PointZ>) aPG.getOutLine()).get(i);
-                    v = transform(p);
-                    GLU.gluTessVertex(tobj, v, 0, v);
+                    v = transform.transform(p);
+                    glu.gluTessVertex(tobj, v, 0, v);
                 }
-                GLU.gluTessEndContour(tobj);
+                glu.gluTessEndContour(tobj);
                 if (aPG.hasHole()) {
                     for (int i = 0; i < aPG.getHoleLineNumber(); i++) {
-                        GLU.gluTessBeginContour(tobj);
+                        glu.gluTessBeginContour(tobj);
                         for (int j = 0; j < aPG.getHoleLine(i).size() - 1; j++) {
                             p = ((List<PointZ>) aPG.getHoleLine(i)).get(j);
-                            v = transform(p);
-                            GLU.gluTessVertex(tobj, v, 0, v);
+                            v = transform.transform(p);
+                            glu.gluTessVertex(tobj, v, 0, v);
                         }
-                        GLU.gluTessEndContour(tobj);
+                        glu.gluTessEndContour(tobj);
                     }
                 }
-                GLU.gluTessEndPolygon(tobj);
+                glu.gluTessEndPolygon(tobj);
                 //gl.glEndList();
-                GLU.gluDeleteTess(tobj);
+                glu.gluDeleteTess(tobj);
 
                 //gl.glCallList(startList);
             } catch (Exception e) {
@@ -1841,7 +1959,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
             }
             gl.glEnd();
 
@@ -1852,7 +1970,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     newPList = (List<PointZ>) aPG.getHoleLines().get(h);
                     for (int j = 0; j < newPList.size(); j++) {
                         p = newPList.get(j);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
                     }
                 }
                 gl.glEnd();
@@ -1869,7 +1987,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_POLYGON);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
             }
             gl.glEnd();
         }
@@ -1881,7 +1999,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
             }
             gl.glEnd();
         }
@@ -1909,7 +2027,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_QUADS);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
             }
             gl.glEnd();
         }
@@ -1921,7 +2039,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
             }
             gl.glEnd();
         }
@@ -1949,7 +2067,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_TRIANGLES);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
             }
             gl.glEnd();
         }
@@ -1961,7 +2079,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
             }
             gl.glEnd();
         }
@@ -1974,9 +2092,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
             gl.glPolygonOffset(1.0f, 1.0f);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            float[] x0 = transformf(points[0]);
-            float[] x1 = transformf(points[1]);
-            float[] x2 = transformf(points[2]);
+            float[] x0 = transform.transformf(points[0]);
+            float[] x1 = transform.transformf(points[1]);
+            float[] x2 = transform.transformf(points[2]);
             gl.glBegin(GL2.GL_TRIANGLES);
             if (this.lighting.isEnable()) {
                 float[] normal = JOGLUtil.normalize(x0, x1, x2);
@@ -1995,7 +2113,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < 3; i++) {
                 p = points[i];
-                gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
             }
             gl.glEnd();
         }
@@ -2022,7 +2140,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         p = surface.getVertex(i, j);
                         rgba = surface.getEdgeRGBA(i, j);
                         gl.glColor4fv(rgba, 0);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
                     }
                     gl.glEnd();
                 }
@@ -2032,7 +2150,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         p = surface.getVertex(i, j);
                         rgba = surface.getEdgeRGBA(i, j);
                         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                        gl.glVertex3f(transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z));
+                        gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
                     }
                     gl.glEnd();
                 }
@@ -2040,21 +2158,21 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 float[] vertex;
                 for (int i = 0; i < dim1; i++) {
                     p = surface.getVertex(i, 0);
-                    vertex = this.transformf(p);
+                    vertex = this.transform.transformf(p);
                     for (int j = 0; j < dim2 - 1; j++) {
                         rgba = surface.getEdgeRGBA(i, j);
                         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                         gl.glBegin(GL2.GL_LINES);
                         gl.glVertex3fv(vertex, 0);
                         p = surface.getVertex(i, j + 1);
-                        vertex = this.transformf(p);
+                        vertex = this.transform.transformf(p);
                         gl.glVertex3fv(vertex, 0);
                         gl.glEnd();
                     }
                 }
                 for (int j = 0; j < dim2; j++) {
                     p = surface.getVertex(0, j);
-                    vertex = this.transformf(p);
+                    vertex = this.transform.transformf(p);
                     for (int i = 0; i < dim1 - 1; i++) {
                         p = surface.getVertex(i, j);
                         rgba = surface.getEdgeRGBA(i, j);
@@ -2062,7 +2180,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         gl.glBegin(GL2.GL_LINES);
                         gl.glVertex3fv(vertex, 0);
                         p = surface.getVertex(i + 1, j);
-                        vertex = this.transformf(p);
+                        vertex = this.transform.transformf(p);
                         gl.glVertex3fv(vertex, 0);
                         gl.glEnd();
                     }
@@ -2077,10 +2195,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
             if (surface.isFaceInterp()) {
                 for (int i = 0; i < dim1 - 1; i++) {
                     for (int j = 0; j < dim2 - 1; j++) {
-                        p1 = transformf(surface.getVertex(i, j));
-                        p2 = transformf(surface.getVertex(i + 1, j));
-                        p3 = transformf(surface.getVertex(i + 1, j + 1));
-                        p4 = transformf(surface.getVertex(i, j + 1));
+                        p1 = transform.transformf(surface.getVertex(i, j));
+                        p2 = transform.transformf(surface.getVertex(i + 1, j));
+                        p3 = transform.transformf(surface.getVertex(i + 1, j + 1));
+                        p4 = transform.transformf(surface.getVertex(i, j + 1));
                         gl.glBegin(GL2.GL_QUADS);
                         if (usingLight) {
                             float[] normal = JOGLUtil.normalize(p3, p2, p1);
@@ -2104,10 +2222,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
             } else {
                 for (int i = 0; i < dim1 - 1; i++) {
                     for (int j = 0; j < dim2 - 1; j++) {
-                        p1 = transformf(surface.getVertex(i, j));
-                        p2 = transformf(surface.getVertex(i + 1, j));
-                        p3 = transformf(surface.getVertex(i + 1, j + 1));
-                        p4 = transformf(surface.getVertex(i, j + 1));
+                        p1 = transform.transformf(surface.getVertex(i, j));
+                        p2 = transform.transformf(surface.getVertex(i + 1, j));
+                        p3 = transform.transformf(surface.getVertex(i + 1, j + 1));
+                        p4 = transform.transformf(surface.getVertex(i, j + 1));
                         gl.glBegin(GL2.GL_QUADS);
                         if (usingLight) {
                             float[] normal = JOGLUtil.normalize(p3, p2, p1);
@@ -2159,16 +2277,16 @@ public class Plot3DGL extends Plot implements GLEventListener {
         // Front Face
         //gl.glTexCoord2f(0.0f, 0.0f);
         gl.glTexCoord2f(0.0f, 1.0f);
-        gl.glVertex3f(transform_xf((float) coords.get(0).X), transform_yf((float) coords.get(0).Y), transform_zf((float) coords.get(0).Z));
+        gl.glVertex3f(transform.transform_x((float) coords.get(0).X), transform.transform_y((float) coords.get(0).Y), transform.transform_z((float) coords.get(0).Z));
         //gl.glTexCoord2f(1.0f, 0.0f);
         gl.glTexCoord2f(1.0f, 1.0f);
-        gl.glVertex3f(transform_xf((float) coords.get(1).X), transform_yf((float) coords.get(1).Y), transform_zf((float) coords.get(1).Z));
+        gl.glVertex3f(transform.transform_x((float) coords.get(1).X), transform.transform_y((float) coords.get(1).Y), transform.transform_z((float) coords.get(1).Z));
         //gl.glTexCoord2f(1.0f, 1.0f);
         gl.glTexCoord2f(1.0f, 0.0f);
-        gl.glVertex3f(transform_xf((float) coords.get(2).X), transform_yf((float) coords.get(2).Y), transform_zf((float) coords.get(2).Z));
+        gl.glVertex3f(transform.transform_x((float) coords.get(2).X), transform.transform_y((float) coords.get(2).Y), transform.transform_z((float) coords.get(2).Z));
         //gl.glTexCoord2f(0.0f, 1.0f);
         gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glVertex3f(transform_xf((float) coords.get(3).X), transform_yf((float) coords.get(3).Y), transform_zf((float) coords.get(3).Z));
+        gl.glVertex3f(transform.transform_x((float) coords.get(3).X), transform.transform_y((float) coords.get(3).Y), transform.transform_z((float) coords.get(3).Z));
         gl.glEnd();
 
         // Unbinding the texture
@@ -2237,16 +2355,16 @@ public class Plot3DGL extends Plot implements GLEventListener {
         // Front Face
         gl.glTexCoord2f(0.0f, 0.0f);
         //gl.glTexCoord2f(0.0f, 1.0f);
-        gl.glVertex3f(transform_xf((float) coords.get(0).X), transform_yf((float) coords.get(0).Y), transform_zf((float) coords.get(0).Z));
+        gl.glVertex3f(transform.transform_x((float) coords.get(0).X), transform.transform_y((float) coords.get(0).Y), transform.transform_z((float) coords.get(0).Z));
         gl.glTexCoord2f(1.0f, 0.0f);
         //gl.glTexCoord2f(1.0f, 1.0f);
-        gl.glVertex3f(transform_xf((float) coords.get(1).X), transform_yf((float) coords.get(1).Y), transform_zf((float) coords.get(1).Z));
+        gl.glVertex3f(transform.transform_x((float) coords.get(1).X), transform.transform_y((float) coords.get(1).Y), transform.transform_z((float) coords.get(1).Z));
         gl.glTexCoord2f(1.0f, 1.0f);
         //gl.glTexCoord2f(1.0f, 0.0f);
-        gl.glVertex3f(transform_xf((float) coords.get(2).X), transform_yf((float) coords.get(2).Y), transform_zf((float) coords.get(2).Z));
+        gl.glVertex3f(transform.transform_x((float) coords.get(2).X), transform.transform_y((float) coords.get(2).Y), transform.transform_z((float) coords.get(2).Z));
         gl.glTexCoord2f(0.0f, 1.0f);
         //gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glVertex3f(transform_xf((float) coords.get(3).X), transform_yf((float) coords.get(3).Y), transform_zf((float) coords.get(3).Z));
+        gl.glVertex3f(transform.transform_x((float) coords.get(3).X), transform.transform_y((float) coords.get(3).Y), transform.transform_z((float) coords.get(3).Z));
         gl.glEnd();
 
         // Unbinding the texture
@@ -2259,12 +2377,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
             PointBreak pb = (PointBreak) graphic.getLegend();
             PointZ sp = (PointZ) shape.getPoint();
             PointZ ep = (PointZ) shape.getEndPoint();
-            float x1 = transform_xf((float) sp.X);
-            float y1 = transform_yf((float) sp.Y);
-            float z1 = transform_zf((float) sp.Z);
-            float x2 = transform_xf((float) ep.X);
-            float y2 = transform_yf((float) ep.Y);
-            float z2 = transform_zf((float) ep.Z);
+            float x1 = transform.transform_x((float) sp.X);
+            float y1 = transform.transform_y((float) sp.Y);
+            float z1 = transform.transform_z((float) sp.Z);
+            float x2 = transform.transform_x((float) ep.X);
+            float y2 = transform.transform_y((float) ep.Y);
+            float z2 = transform.transform_z((float) ep.Z);
 
             gl.glPushMatrix();
             gl.glPushAttrib(GL2.GL_POLYGON_BIT); // includes GL_CULL_FACE
@@ -2413,7 +2531,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             List<PointZ> ps = cubic.getPoints();
             List<float[]> vertex = new ArrayList<>();
             for (PointZ p : ps) {
-                vertex.add(new float[]{transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z)});
+                vertex.add(new float[]{transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z)});
             }
 
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
@@ -2450,7 +2568,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             List<PointZ> ps = cylinder.getPoints();
             List<float[]> vertex = new ArrayList<>();
             for (PointZ p : ps) {
-                vertex.add(new float[]{transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z)});
+                vertex.add(new float[]{transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z)});
             }
             double height = vertex.get(1)[2] - vertex.get(0)[2];
 
@@ -2657,46 +2775,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return ls;
     }
 
-    private float transform_xf(float v) {
-        return (v - xmin) / (xmax - xmin) * 2.f - 1.0f;
-    }
-
-    private double transform_x(double v) {
-        return (v - xmin) / (xmax - xmin) * 2. - 1.0;
-    }
-
-    private float transform_yf(float v) {
-        return (v - ymin) / (ymax - ymin) * 2.f - 1.0f;
-    }
-
-    private double transform_y(double v) {
-        return (v - ymin) / (ymax - ymin) * 2. - 1.0;
-    }
-
-    private float transform_zf(float v) {
-        return (v - zmin) / (zmax - zmin) * 2.f - 1.0f;
-    }
-
-    private double transform_z(double v) {
-        return (v - zmin) / (zmax - zmin) * 2. - 1.0;
-    }
-
-    private float[] transformf(PointZ p) {
-        return new float[]{transform_xf((float) p.X), transform_yf((float) p.Y), transform_zf((float) p.Z)};
-    }
-
-    private double[] transform(PointZ p) {
-        return new double[]{transform_x(p.X), transform_y(p.Y), transform_z(p.Z)};
-    }
-
     @Override
     public void dispose(GLAutoDrawable drawable) {
-        // method body
+        //gl = null;
     }
 
     @Override
     public void init(GLAutoDrawable drawable) {
-        GL2 gl = drawable.getGL().getGL2();
+        gl = drawable.getGL().getGL2();
         //Background
         //gl.glClearColor(1f, 1f, 1f, 1.0f);
         gl.glEnable(GL2.GL_POINT_SMOOTH);
@@ -2709,7 +2795,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glEnable(GL2.GL_TEXTURE_2D);
 
         //jogl specific addition for tessellation
-        tessCallback = new tessellCallBack(gl, glu);
+        tessCallback = new TessCallback(gl, glu);
 
         this.positionArea = new Rectangle2D.Double(0, 0, 1, 1);
     }
@@ -2720,7 +2806,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.height = height;
         this.positionArea = this.getPositionArea(new Rectangle2D.Double(0, 0, width, height));
 
-        final GL2 gl = drawable.getGL().getGL2();
+        //final GL2 gl = drawable.getGL().getGL2();
         //gl.glTranslatef(0f, 0f, 5f);
         if (height <= 0) {
             height = 1;
@@ -2768,104 +2854,54 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
     // </editor-fold>
 
-    /*
-     * Tessellator callback implemenation with all the callback routines. YOu
-     * could use GLUtesselatorCallBackAdapter instead. But
-     */
-    class tessellCallBack
-            implements GLUtessellatorCallback {
+    public static class TessCallback extends com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter {
+        GL2 gl;
+        GLU glu;
 
-        private final GL2 gl;
-        private final GLU glu;
-
-        public tessellCallBack(GL2 gl, GLU glu) {
+        public TessCallback(GL2 gl, GLU glu) {
             this.gl = gl;
             this.glu = glu;
-        }
-
-        @Override
+        };
         public void begin(int type) {
             gl.glBegin(type);
         }
 
-        @Override
         public void end() {
             gl.glEnd();
         }
 
-        @Override
-        public void vertex(Object vertexData) {
-            double[] pointer;
-            if (vertexData instanceof double[]) {
-                pointer = (double[]) vertexData;
-                if (pointer.length == 6) {
-                    gl.glColor3dv(pointer, 3);
+        public void vertex(Object data) {
+            if (data instanceof double[]) {
+                double[] d = (double[]) data;
+                if (d.length == 6) {
+                    gl.glColor3dv(d, 3);
                 }
-                gl.glVertex3dv(pointer, 0);
+                gl.glVertex3dv(d, 0);
             }
         }
 
-        @Override
-        public void vertexData(Object vertexData, Object polygonData) {
+        public void error(int errnum) {
+            String estring;
+            estring = glu.gluErrorString(errnum);
+            System.out.println("Tessellation Error: " + estring);
+            //System.exit(0);
+            throw new RuntimeException();
         }
 
-        /*
-         * combineCallback is used to create a new vertex when edges intersect.
-         * coordinate location is trivial to calculate, but weight[4] may be used to
-         * average color, normal, or texture coordinate data. In this program, color
-         * is weighted.
-         */
-        @Override
-        public void combine(double[] coords, Object[] data, //
-                float[] weight, Object[] outData) {
-            double[] vertex = new double[3];
-            //int i;
+        public void combine(double[] coords, Object[] data,
+                            float[] weight, Object[] outData) {
+            double[] vertex = new double[6];
 
+            int i;
             vertex[0] = coords[0];
             vertex[1] = coords[1];
             vertex[2] = coords[2];
-//            for (i = 3; i < 6/* 7OutOfBounds from C! */; i++) {
-//                vertex[i] = weight[0] //
-//                        * ((double[]) data[0])[i] + weight[1]
-//                        * ((double[]) data[1])[i] + weight[2]
-//                        * ((double[]) data[2])[i] + weight[3]
-//                        * ((double[]) data[3])[i];
-//            }
+            for (i = 3; i < 6; i++)
+                vertex[i] = weight[0] * ((double[]) data[0])[i] +
+                        weight[1] * ((double[]) data[1])[i] +
+                        weight[2] * ((double[]) data[2])[i] +
+                        weight[3] * ((double[]) data[3])[i];
             outData[0] = vertex;
         }
-
-        @Override
-        public void combineData(double[] coords, Object[] data, //
-                float[] weight, Object[] outData, Object polygonData) {
-        }
-
-        @Override
-        public void error(int errnum) {
-            String estring;
-
-            estring = glu.gluErrorString(errnum);
-            System.err.println("Tessellation Error: " + estring);
-            System.exit(0);
-        }
-
-        @Override
-        public void beginData(int type, Object polygonData) {
-        }
-
-        @Override
-        public void endData(Object polygonData) {
-        }
-
-        @Override
-        public void edgeFlag(boolean boundaryEdge) {
-        }
-
-        @Override
-        public void edgeFlagData(boolean boundaryEdge, Object polygonData) {
-        }
-
-        @Override
-        public void errorData(int errnum, Object polygonData) {
-        }
-    }// tessellCallBack
+    }//End TessCallback
 }

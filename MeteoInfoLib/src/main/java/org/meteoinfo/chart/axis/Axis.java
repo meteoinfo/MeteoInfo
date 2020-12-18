@@ -1443,7 +1443,8 @@ public class Axis implements Cloneable {
         this.lineColor = c;
         this.tickColor = c;
         this.tickLabelColor = c;
-        this.label.setColor(c);
+        if (this.label != null)
+            this.label.setColor(c);
     }
 
     /**

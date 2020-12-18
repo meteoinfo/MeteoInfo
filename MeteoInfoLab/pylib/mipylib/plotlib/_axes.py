@@ -2851,6 +2851,8 @@ class Axes(object):
             boxprops.setDrawFill(False)
             boxprops.setOutlineColor(color is None and Color.blue or color)
         else:
+            if not boxprops.has_key('facecolor'):
+                boxprops['facecolor'] = None
             boxprops = plotutil.getlegendbreak('polygon', **boxprops)[0]
         if medianline:
             if medianprops is None:

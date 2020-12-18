@@ -1992,7 +1992,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             if (ncfile == null) {
                 //ncfile = NetcdfDatasets.openFile(this.getFileName(), null);
-                ncfile = NetcdfFiles.open(this.fileName);
+                ncfile = NetcdfFile.open(this.fileName);
             }
 
             int i, j;
@@ -2114,7 +2114,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             if (ncfile == null) {
                 //ncfile = NetcdfDataset.openFile(this.getFileName(), null);
-                ncfile = NetcdfFiles.open(this.fileName);
+                ncfile = NetcdfFile.open(this.fileName);
             }
 
             int i, j;
@@ -2206,7 +2206,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             if (ncfile == null) {
                 //ncfile = NetcdfDataset.openFile(this.getFileName(), null);
-                ncfile = NetcdfFiles.open(this.fileName);
+                ncfile = NetcdfFile.open(this.fileName);
             }
 
             int i, j;
@@ -2295,7 +2295,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             if (ncfile == null) {
                 //ncfile = NetcdfDataset.openFile(this.getFileName(), null);
-                ncfile = NetcdfFiles.open(this.fileName);
+                ncfile = NetcdfFile.open(this.fileName);
             }
 
             int i, j;
@@ -2389,7 +2389,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             if (ncfile == null) {
                 //ncfile = NetcdfDataset.openFile(this.getFileName(), null);
-                ncfile = NetcdfFiles.open(this.fileName);
+                ncfile = NetcdfFile.open(this.fileName);
             }
 
             int i, j;
@@ -2478,7 +2478,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             if (ncfile == null) {
                 //ncfile = NetcdfDataset.openFile(this.getFileName(), null);
-                ncfile = NetcdfFiles.open(this.fileName);
+                ncfile = NetcdfFile.open(this.fileName);
             }
 
             int i, j;
@@ -2572,7 +2572,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             if (ncfile == null) {
                 //ncfile = NetcdfDataset.openFile(this.getFileName(), null);
-                ncfile = NetcdfFiles.open(this.fileName);
+                ncfile = NetcdfFile.open(this.fileName);
             }
 
             int i;
@@ -2657,7 +2657,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             if (ncfile == null) {
                 //ncfile = NetcdfDataset.openFile(this.getFileName(), null);
-                ncfile = NetcdfFiles.open(this.fileName);
+                ncfile = NetcdfFile.open(this.fileName);
             }
 
             int i;
@@ -2742,7 +2742,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             if (ncfile == null) {
                 //ncfile = NetcdfDataset.openFile(this.getFileName(), null);
-                ncfile = NetcdfFiles.open(this.fileName);
+                ncfile = NetcdfFile.open(this.fileName);
             }
 
             int i;
@@ -2827,7 +2827,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             if (ncfile == null) {
                 //ncfile = NetcdfDataset.openFile(this.getFileName(), null);
-                ncfile = NetcdfFiles.open(this.fileName);
+                ncfile = NetcdfFile.open(this.fileName);
             }
 
             int i;

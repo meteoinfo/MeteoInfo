@@ -177,6 +177,39 @@ public class ColorMap {
 
         return ncs;
     }
+
+    /**
+     * Get colors
+     * @param n Color number
+     * @param start Start index
+     * @param stop Stop index
+     * @return Colors
+     */
+    public Color[] getColors(int n, int start, int stop){
+        Color[] ncs = new Color[n];
+        int cn = stop - start + 1;
+        float step = (float)(cn - 1) / (n - 1);
+        float idx = start;
+        for (int i = 0; i < n; i++){
+            ncs[i] = this.getColor(idx);
+            idx += step;
+        }
+
+        return ncs;
+    }
+
+    /**
+     * Get colors
+     * @param n Color number
+     * @param start Start index
+     * @return Colors
+     */
+    public Color[] getColors(int n, int start){
+        Color[] ncs = new Color[n];
+        int stop = this.colors.length - 1;
+
+        return getColors(n, start, stop);
+    }
     
     /**
      * Get colors
@@ -220,6 +253,35 @@ public class ColorMap {
         
         return cols;
     }
+
+    /**
+     * Get color list
+     * @param n Color number
+     * @param start Start index
+     * @param stop Stop index
+     * @return Color list
+     */
+    public List<Color> getColorList(int n, int start, int stop){
+        Color[] cs = this.getColors(n, start, stop);
+        List<Color> cols = new ArrayList<>();
+        cols.addAll(Arrays.asList(cs));
+
+        return cols;
+    }
+
+    /**
+     * Get color list
+     * @param n Color number
+     * @param start Start index
+     * @return Color list
+     */
+    public List<Color> getColorList(int n, int start){
+        Color[] cs = this.getColors(n, start);
+        List<Color> cols = new ArrayList<>();
+        cols.addAll(Arrays.asList(cs));
+
+        return cols;
+    }
     
     /**
      * Get color list
@@ -227,7 +289,7 @@ public class ColorMap {
      * @param alpha Alpha
      * @return Color list
      */
-    public List<Color> getColorList(int n, int alpha){
+    public List<Color> getColorListAlpha(int n, int alpha){
         Color[] cs = this.getColors(n);
         List<Color> cols = new ArrayList<>();
         for (Color c : cs){
@@ -235,6 +297,43 @@ public class ColorMap {
             cols.add(c);
         }        
         
+        return cols;
+    }
+
+    /**
+     * Get color list
+     * @param n Color number
+     * @param alpha Alpha
+     * @param start Start index
+     * @param stop Stop index
+     * @return Color list
+     */
+    public List<Color> getColorListAlpha(int n, int alpha, int start, int stop){
+        Color[] cs = this.getColors(n, start, stop);
+        List<Color> cols = new ArrayList<>();
+        for (Color c : cs){
+            c = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+            cols.add(c);
+        }
+
+        return cols;
+    }
+
+    /**
+     * Get color list
+     * @param n Color number
+     * @param alpha Alpha
+     * @param start Start index
+     * @return Color list
+     */
+    public List<Color> getColorListAlpha(int n, int alpha, int start){
+        Color[] cs = this.getColors(n, start);
+        List<Color> cols = new ArrayList<>();
+        for (Color c : cs){
+            c = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+            cols.add(c);
+        }
+
         return cols;
     }
     

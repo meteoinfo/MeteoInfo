@@ -35,7 +35,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.formdev.flatlaf.extras.SVGUtils;
+import com.formdev.flatlaf.extras.FlatSVGUtils;
 import org.meteoinfo.desktop.config.GenericFileFilter;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.GridData;
@@ -117,7 +117,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
         _parent = (FrmMain) parent;
 
-        this.setIconImages(SVGUtils.createWindowIconImages("/org/meteoinfo/desktop/icons/meteo-data.svg"));
+        this.setIconImages(FlatSVGUtils.createWindowIconImages("/org/meteoinfo/desktop/icons/meteo-data.svg"));
 
         initComponents();
 

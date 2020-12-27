@@ -3073,7 +3073,7 @@ def particles(*args, **kwargs):
     draw_if_interactive()
     return r
     
-def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None):
+def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop=None):
     '''
     Make colors.
     
@@ -3081,10 +3081,12 @@ def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None):
     :param cmap: (*string*) Color map name. Default is ``matlab_jet``.
     :param reverse: (*boolean*) Reverse the colors or not. Default is ``False``.
     :param alpha: (*float*) Alpha value (0 - 1) of the colors. Defaul is ``None``.
+    :param start: (*int*) Start color index. Default is ``None``.
+    :param stop: (*int*) Stop color index. Default is ``None``.
 
     :returns: (*list*) Created colors.
     '''
-    return plotutil.makecolors(n, cmap, reverse, alpha)
+    return plotutil.makecolors(n, cmap, reverse, alpha, start, stop)
 
 def makelegend(source, **kwargs):
     '''

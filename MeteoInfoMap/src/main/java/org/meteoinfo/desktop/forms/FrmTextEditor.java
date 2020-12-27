@@ -5,7 +5,7 @@
 package org.meteoinfo.desktop.forms;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.formdev.flatlaf.extras.SVGUtils;
+import com.formdev.flatlaf.extras.FlatSVGUtils;
 import com.l2fprod.common.swing.JFontChooser;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -114,7 +114,7 @@ public class FrmTextEditor extends javax.swing.JFrame {
         this.initializeConsole();
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setIconImages(SVGUtils.createWindowIconImages("/org/meteoinfo/desktop/icons/jython.svg"));
+        this.setIconImages(FlatSVGUtils.createWindowIconImages("/org/meteoinfo/desktop/icons/jython.svg"));
         this.setScriptLanguage(_scriptLanguage);
         addNewTextEditor("New file");
         this._splitPanelSize = this.jSplitPane1.getBounds().getSize();

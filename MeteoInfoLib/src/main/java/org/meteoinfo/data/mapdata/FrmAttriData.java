@@ -23,7 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.JTableHeader;
 
-import com.formdev.flatlaf.extras.SVGUtils;
+import com.formdev.flatlaf.extras.FlatSVGUtils;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.table.DataTableModel;
 import org.meteoinfo.ndarray.DataType;
@@ -48,7 +48,7 @@ public class FrmAttriData extends javax.swing.JFrame {
         initComponents();
         
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setIconImages(SVGUtils.createWindowIconImages("/org/meteoinfo/icons/table.svg"));
+        this.setIconImages(FlatSVGUtils.createWindowIconImages("/org/meteoinfo/icons/table.svg"));
 
         //this.jTable1.setColumnSelectionAllowed(true);
         //this.jTable1.setRowSelectionAllowed(false);        

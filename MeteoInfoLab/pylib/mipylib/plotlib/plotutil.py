@@ -213,14 +213,16 @@ def getcolormap(**kwargs):
         cmap.reverse()
     return cmap
     
-def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None):
+def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop=None):
     '''
     Make colors.
     
     :param n: (*int*) Colors number.
     :param cmap: (*string*) Color map name. Default is ``matlab_jet``.
     :param reverse: (*boolean*) Reverse the colors or not. Default is ``False``.
-    :param alpha: (*float*) Alpha value (0 - 1) of the colors. Defaul is ``None``.
+    :param alpha: (*float*) Alpha value (0 - 1) of the colors. Default is ``None``.
+    :param start: (*int*) Start color index. Default is ``None``.
+    :param stop: (*int*) Stop color index. Default is ``None``.
 
     :returns: (*list*) Created colors.
     '''
@@ -231,11 +233,22 @@ def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None):
         ocmap = getcolormap(cmap=cmap)
         if reverse:
             ocmap.reverse()
-        if alpha is None:
-            cols = ocmap.getColorList(n)    
+        if start is None and stop is None:
+            if alpha is None:
+                cols = ocmap.getColorList(n)
+            else:
+                alpha = (int)(alpha * 255)
+                cols = ocmap.getColorListAlpha(n, alpha)
         else:
-            alpha = (int)(alpha * 255)
-            cols = ocmap.getColorList(n, alpha)
+            if start is None:
+                start = 0
+            if stop is None:
+                stop = ocmap.getColorCount() - 1
+            if alpha is None:
+                cols = ocmap.getColorList(n, start, stop)
+            else:
+                alpha = (int)(alpha * 255)
+                cols = ocmap.getColorListAlpha(n, alpha, start, stop)
     return list(cols)
     
 def getpointstyle(style):

@@ -635,7 +635,11 @@ public class GraphicCollection extends Graphic implements Iterator {
                 aLP.setFont(labelSet.getLabelFont());
                 aLP.setAlignType(labelSet.getLabelAlignType());
                 aLP.setYShift(labelSet.getYOffset());
-                aLP.setColor(cb.getColor());
+                if (labelSet.isColorByLegend()) {
+                    aLP.setColor(cb.getColor());
+                } else {
+                    aLP.setColor(labelSet.getLabelColor());
+                }
                 Graphic aGraphic = new Graphic(aPS, aLP);
                 addLabel(aGraphic);
             }

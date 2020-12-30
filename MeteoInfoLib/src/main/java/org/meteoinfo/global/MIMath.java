@@ -1157,7 +1157,6 @@ public class MIMath {
      * @return Interval values
      */
     public static double[] getIntervalValues_Log(double min, double max) {
-        int i, v;
         int minE = (int) Math.floor(Math.log10(min));
         int maxE = (int) Math.ceil(Math.log10(max));
         if (min == 0) {
@@ -1167,14 +1166,20 @@ public class MIMath {
             maxE = minE + 2;
         }
 
-        double[] cValues = new double[maxE - minE + 1];
-        i = 0;
-        for (v = minE; v <= maxE; v++) {
-            cValues[i] = Math.pow(10, v);
-            i++;
+        List<Double> values = new ArrayList<>();
+        double v;
+        for (int i = minE; i <= maxE; i++) {
+            v = Math.pow(10, i);
+            if (v < min) {
+                continue;
+            } else if (v > max) {
+                break;
+            } else {
+                values.add(v);
+            }
         }
 
-        return cValues;
+        return values.stream().mapToDouble(i->i).toArray();
     }
 
     /**

@@ -337,6 +337,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                 }
             }
             this.interp.console.print(">>> ", consoleColors.getPromptColor());
+            this.interp.console.setStyle(consoleColors.getCommandColor());
         } catch (IOException ex) {
             Logger.getLogger(ConsoleDockable.class.getName()).log(Level.SEVERE, null, ex);
         }

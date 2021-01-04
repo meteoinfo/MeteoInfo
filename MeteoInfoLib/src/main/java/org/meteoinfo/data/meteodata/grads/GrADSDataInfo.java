@@ -870,8 +870,10 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         //attr = new Attribute("units", dataArray[2]);
                         //aVar.addAttribute(attr);
                         if (dataArray.length > 3) {
-                            aVar.setDescription(dataArray[3]);
-                            attr = new Attribute("description", dataArray[3]);
+                            int idx = aLine.indexOf(dataArray[3]);
+                            String desc = aLine.substring(idx);
+                            aVar.setDescription(desc);
+                            attr = new Attribute("description", desc);
                             aVar.addAttribute(attr);
                         }
                         if (eDim != null){

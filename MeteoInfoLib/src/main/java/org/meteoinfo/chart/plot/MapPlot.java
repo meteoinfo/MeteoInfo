@@ -665,20 +665,28 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
 
     @Override
     public void addText(ChartText text) {
-        if (this.getMapView().getProjection().isLonLatMap()) {
-            super.addText(text);
+        addText(text, true);
+    }
+
+    public void addText(ChartText text, boolean isLonLat) {
+        if (isLonLat) {
+            if (this.getMapView().getProjection().isLonLatMap()) {
+                super.addText(text);
+            } else {
+                PointShape ps = new PointShape();
+                PointD lonlatp = new PointD(text.getX(), text.getY());
+                PointD xyp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
+                        this.getMapView().getProjection().getProjInfo());
+                ps.setPoint(xyp);
+                LabelBreak lb = new LabelBreak();
+                lb.setText(text.getText());
+                lb.setFont(text.getFont());
+                lb.setColor(text.getColor());
+                Graphic aGraphic = new Graphic(ps, lb);
+                this.getMapView().addGraphic(aGraphic);
+            }
         } else {
-            PointShape ps = new PointShape();
-            PointD lonlatp = new PointD(text.getX(), text.getY());
-            PointD xyp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
-                    this.getMapView().getProjection().getProjInfo());
-            ps.setPoint(xyp);
-            LabelBreak lb = new LabelBreak();
-            lb.setText(text.getText());
-            lb.setFont(text.getFont());
-            lb.setColor(text.getColor());
-            Graphic aGraphic = new Graphic(ps, lb);
-            this.getMapView().addGraphic(aGraphic);
+            super.addText(text);
         }
     }
 

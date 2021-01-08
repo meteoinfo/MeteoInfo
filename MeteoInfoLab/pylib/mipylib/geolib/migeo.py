@@ -480,9 +480,9 @@ def project(x, y, fromproj=KnownCoordinateSystems.geographic.world.WGS1984, topr
     if isinstance(toproj, str):
         toproj = ProjectionInfo.factory(toproj)
     if isinstance(x, (tuple, list)):
-        x = array(x)
+        x = np.array(x)
     if isinstance(y, (tuple, list)):
-        y = array(y)
+        y = np.array(y)
     if isinstance(x, NDArray):
         outxy = Reproject.reproject(x.asarray(), y.asarray(), fromproj, toproj)
         return NDArray(outxy[0]), NDArray(outxy[1])

@@ -526,6 +526,118 @@ public class DrawMeteoData {
     }
 
     /**
+     * Create a polyline z layer
+     *
+     * @param xdata X array
+     * @param ydata Y array
+     * @param zdata Z array
+     * @param ls Legend scheme
+     * @param layerName Layer name
+     * @param fieldName Field name
+     * @return PolylineZ layer
+     */
+    public static VectorLayer createPolylineLayer(Array xdata, Array ydata, Array zdata, LegendScheme ls,
+                                                  String layerName, String fieldName) {
+        VectorLayer layer = new VectorLayer(ShapeTypes.PolylineZ);
+        Field aDC = new Field(fieldName, DataType.DOUBLE);
+        layer.editAddField(aDC);
+
+        PointZ aPoint;
+        List<PointZ> pList;
+        List<List<PointZ>> ppList = new ArrayList<>();
+        double preLon;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
+        if (xdata.getRank() == 1) {
+            pList = new ArrayList<>();
+            preLon = 0;
+            int j = 0;
+            while (xIter.hasNext()){
+                aPoint = new PointZ();
+                aPoint.X = xIter.getDoubleNext();
+                aPoint.Y = yIter.getDoubleNext();
+                aPoint.Z = zIter.getDoubleNext();
+                if (j == 0) {
+                    preLon = aPoint.X;
+                    pList.add(aPoint);
+                } else {
+                    if (Double.isNaN(aPoint.X)) {
+                        if (pList.size() > 1) {
+                            ppList.add(new ArrayList<>(pList));
+                        }
+                        pList.clear();
+                    } else {
+                        pList.add(aPoint);
+                    }
+                    preLon = aPoint.X;
+                }
+                j++;
+            }
+
+            if (pList.size() > 1) {
+                ppList.add(pList);
+            }
+        } else {    //Two dimensions
+            int[] shape = xdata.getShape();
+            int ny = shape[0];
+            int nx = shape[1];
+            for (int i = 0; i < ny; i++) {
+                pList = new ArrayList<>();
+                preLon = 0;
+                for (int j = 0; j < nx; j++) {
+                    aPoint = new PointZ();
+                    aPoint.X = xIter.getDoubleNext();
+                    aPoint.Y = yIter.getDoubleNext();
+                    aPoint.Z = zIter.getDoubleNext();
+                    //aPoint.X = xdata.getDouble(i * nx + j);
+                    //aPoint.Y = ydata.getDouble(i * nx + j);
+                    //aPoint.Z = zdata.getDouble(i * nx + j);
+                    if (j == 0) {
+                        preLon = aPoint.X;
+                        pList.add(aPoint);
+                    } else {
+                        if (Double.isNaN(aPoint.X)) {
+                            if (pList.size() > 1) {
+                                ppList.add(new ArrayList<>(pList));
+                            }
+                            pList.clear();
+                        } else {
+                            pList.add(aPoint);
+                        }
+                        preLon = aPoint.X;
+                    }
+                }
+
+                if (pList.size() > 1) {
+                    ppList.add(pList);
+                }
+            }
+        }
+
+        for (List<PointZ> ps : ppList) {
+            PolylineZShape aPolyline = new PolylineZShape();
+            aPolyline.setPoints(ps);
+            aPolyline.setValue(0);
+            aPolyline.setExtent(MIMath.getPointsExtent(ps));
+
+            int shapeNum = layer.getShapeNum();
+            try {
+                if (layer.editInsertShape(aPolyline, shapeNum)) {
+                    layer.editCellValue(fieldName, shapeNum, 0);
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        layer.setLayerName(layerName);
+        layer.setLegendScheme(ls);
+
+        return layer;
+    }
+
+    /**
      * Create contour layer
      *
      * @param gridData Grid data

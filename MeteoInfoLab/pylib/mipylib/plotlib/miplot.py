@@ -1905,7 +1905,11 @@ def text(x, y, s, **kwargs):
     if coordinates == 'figure':
         g_figure.getChart().addText(ctext)
     else:
-        g_axes.axes.addText(ctext)
+        if isinstance(g_axes, MapAxes):
+            islonlat = kwargs.pop('islonlat', True)
+            g_axes.axes.addText(ctext, islonlat)
+        else:
+            g_axes.axes.addText(ctext)
     draw_if_interactive()
     return ctext
 

@@ -614,7 +614,11 @@ class MapAxes(Axes):
         :returns: (*VectoryLayer*) Line VectoryLayer.
         """
         fill_value = kwargs.pop('fill_value', -9999.0)
-        proj = kwargs.pop('proj', None)    
+        proj = kwargs.pop('proj', None)
+        if proj is None:
+            is_lonlat = True
+        else:
+            is_lonlat = proj.isLonLat()
         n = len(args) 
         xdatalist = []
         ydatalist = []    
@@ -732,14 +736,22 @@ class MapAxes(Axes):
                                 lines.append(ncb)
                                 idx += 1
                             ls = LegendScheme(lines)
-                layer = DrawMeteoData.createPolylineLayer(xdatalist, ydatalist, ls, \
-                    'Plot_lines', 'ID', -180, 180)
+                if is_lonlat:
+                    layer = DrawMeteoData.createPolylineLayer(xdatalist, ydatalist, ls, \
+                        'Plot_lines', 'ID', -180, 180)
+                else:
+                    layer = DrawMeteoData.createPolylineLayer(xdatalist, ydatalist, ls, \
+                                                              'Plot_lines', 'ID')
             else:
                 xdata = plotutil.getplotdata(xdatalist[0])
                 ydata = plotutil.getplotdata(ydatalist[0])
                 zdata = plotutil.getplotdata(zvalues)
-                layer = DrawMeteoData.createPolylineLayer(xdata, ydata, zdata, ls, \
-                    'Plot_lines', 'ID', -180, 180)
+                if is_lonlat:
+                    layer = DrawMeteoData.createPolylineLayer(xdata, ydata, zdata, ls, \
+                        'Plot_lines', 'ID', -180, 180)
+                else:
+                    layer = DrawMeteoData.createPolylineLayer(xdata, ydata, zdata, ls, \
+                                                              'Plot_lines', 'ID')
             if not proj is None:
                 layer.setProjInfo(proj)
          
@@ -998,6 +1010,28 @@ class MapAxes(Axes):
             self.axes.setExtent(layer.getExtent().clone())
         
         return MILayer(layer)
+
+    def text(self, x, y, s, **kwargs):
+        """
+        Add text to the axes. Add text in string *s* to axis at location *x* , *y* , data
+        coordinates.
+
+        :param x: (*float*) Data x coordinate.
+        :param y: (*float*) Data y coordinate.
+        :param s: (*string*) Text.
+        :param fontname: (*string*) Font name. Default is ``Arial`` .
+        :param fontsize: (*int*) Font size. Default is ``14`` .
+        :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
+        :param color: (*color*) Tick label string color. Default is ``black`` .
+        :param coordinates=['axes'|'figure'|'data'|'inches']: (*string*) Coordinate system and units for
+            *X, Y*. 'axes' and 'figure' are normalized coordinate system with 0,0 in the lower left and
+            1,1 in the upper right, 'data' are the axes data coordinates (Default value); 'inches' is
+            position in the figure in inches, with 0,0 at the lower left corner.
+        """
+        ctext = plotutil.text(x, y, s, **kwargs)
+        islonlat = kwargs.pop('islonlat', True)
+        self.axes.addText(ctext, islonlat)
+        return ctext
         
     def contour(self, *args, **kwargs):  
         """

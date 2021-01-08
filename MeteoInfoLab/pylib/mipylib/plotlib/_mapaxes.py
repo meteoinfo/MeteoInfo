@@ -740,7 +740,7 @@ class MapAxes(Axes):
                 zdata = plotutil.getplotdata(zvalues)
                 layer = DrawMeteoData.createPolylineLayer(xdata, ydata, zdata, ls, \
                     'Plot_lines', 'ID', -180, 180)
-            if (proj != None):
+            if not proj is None:
                 layer.setProjInfo(proj)
          
             # Add layer

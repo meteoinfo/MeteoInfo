@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\grads">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\preprocessing"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\neural_network"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\datasets"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\neural_network"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\preprocessing"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\kmeans_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\xor_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\mnist_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\grads\swvtq.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\saturn.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution\mnist_cnn.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\moon.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\kmeans_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\xor_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\mnist_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\grads\swvtq.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\saturn.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution\mnist_cnn.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\moon.py"/>
     </RecentFiles>
   </File>
   <Font>

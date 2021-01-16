@@ -1057,7 +1057,8 @@ public class InterpUtil {
             }
 
             int j = (int) ((x - sx) / dX);
-            int i = (int) ((y - sy) / dY);if (i >= rowNum)
+            int i = (int) ((y - sy) / dY);
+            if (i >= rowNum)
                 i = rowNum - 1;
             if (j >= colNum)
                 j = colNum - 1;
@@ -1084,6 +1085,10 @@ public class InterpUtil {
 
                 int j = (int) ((x - sx) / dX);
                 int i = (int) ((y - sy) / dY);
+                if (i >= rowNum)
+                    i = rowNum - 1;
+                if (j >= colNum)
+                    j = colNum - 1;
                 pds.setInt(p, pNums[i][j]);
             }
             return new Array[]{r, pds};

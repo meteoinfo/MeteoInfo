@@ -34,6 +34,8 @@ class Axes3DGL(Axes3D):
         Axes 3d with openGL support.
         :param position: (*list of float*) Axes position specified by *position=* [left, bottom, width
             height] in normalized (0, 1) units. Default is [0.13, 0.11, 0.775, 0.815].
+        :param rotation: (*float*) Axes rotation angle around Z axis.
+        :param elevation: (*float*) Axes elevation angle with Z axis.
         :param antialias: (*bool*) Antialias or not. Default is `None`.
         """
         axes = kwargs.pop('axes', None)
@@ -71,6 +73,12 @@ class Axes3DGL(Axes3D):
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
         self.axes.setAxisTickFont(font)
+        rotation = kwargs.pop('rotation', None)
+        if not rotation is None:
+            self.axes.setAngleY(rotation)
+        elevation = kwargs.pop('elevation', None)
+        if not elevation is None:
+            self.axes.setAngleX(elevation)
         antialias = kwargs.pop('antialias', None)
         if not antialias is None:
             self.axes.setAntialias(antialias)

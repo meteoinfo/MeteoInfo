@@ -20,7 +20,7 @@ class GLFigure(GLChartPanel):
         
         :param ax: (*Axes3DGL*) 3D axes with JOGL
         '''
-        self.axes = None
+        self.axes = ax
         double_buffered = kwargs.pop('double_buffered', None)
         sample_buffers = kwargs.pop('sample_buffers', True)
         profile = GLProfile.get(GLProfile.GL2)

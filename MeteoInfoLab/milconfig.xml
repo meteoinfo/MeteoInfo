@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\datasets"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\interpolation">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\neural_network"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\preprocessing"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution"/>
@@ -14,23 +8,31 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\saturn.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution\mnist_cnn.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\moon.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\print_classpath.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\typhoon_pathway_lcc.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\700_3d_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\traj_meteo_p-test.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\griddata_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\saturn.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution\mnist_cnn.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\moon.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\print_classpath.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\typhoon_pathway_lcc.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\700_3d_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\traj_meteo_p-test.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\griddata_1.py"/>
     </RecentFiles>
   </File>
   <Font>

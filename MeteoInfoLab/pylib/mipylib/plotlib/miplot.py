@@ -1412,7 +1412,7 @@ def axes3dgl(*args, **kwargs):
     if g_figure is None or isinstance(g_figure, Figure):
         glfigure(**kwargs)
         
-    ax = Axes3DGL(**kwargs)
+    ax = Axes3DGL(*args, **kwargs)
     g_figure.set_axes(ax)
     g_axes = ax
     draw_if_interactive()

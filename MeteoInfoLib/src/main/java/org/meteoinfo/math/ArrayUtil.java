@@ -4332,13 +4332,19 @@ public class ArrayUtil {
         if (idx < n - 1) {
             index.setDim(idx, indices[idx]);
             iterIndex(ii, index, indices, idx + 1);
-            index.setDim(idx, indices[idx] + 1);
+            if (indices[idx] < index.getShape(idx) - 1)
+                index.setDim(idx, indices[idx] + 1);
+            else
+                index.setDim(idx, indices[idx]);
             iterIndex(ii, index, indices, idx + 1);
         } else {
             index.setDim(idx, indices[idx]);
             ii.add((Index) index.clone());
             //System.out.println(index);
-            index.setDim(idx, indices[idx] + 1);
+            if (indices[idx] < index.getShape(idx) - 1)
+                index.setDim(idx, indices[idx] + 1);
+            else
+                index.setDim(idx, indices[idx]);
             ii.add((Index) index.clone());
             //System.out.println(index);
         }
@@ -4396,7 +4402,10 @@ public class ArrayUtil {
                 idx = 0;
             }
             indices[i] = idx;
-            distances[i] = (x - a.getDouble(idx)) / (a.getDouble(idx + 1) - a.getDouble(idx));
+            if (idx == a.getSize() - 1)
+                distances[i] = 0;
+            else
+                distances[i] = (x - a.getDouble(idx)) / (a.getDouble(idx + 1) - a.getDouble(idx));
         }
 
         return new Object[]{indices, distances, outBounds};
@@ -4467,6 +4476,7 @@ public class ArrayUtil {
                 return idx;
             }
 
+            idx = n - 1;
             for (int i = 1; i < n; i++) {
                 if (v < a.getDouble(i)) {
                     idx = i - 1;
@@ -4482,6 +4492,7 @@ public class ArrayUtil {
                 return idx;
             }
 
+            idx = n - 1;
             for (int i = 1; i < n; i++) {
                 if (v > a.getDouble(i)) {
                     idx = i - 1;

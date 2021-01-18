@@ -173,7 +173,10 @@ def inpolygon(x, y, polygon):
     :returns: (*boolean array*) Inside or not.
     '''
     if isinstance(x, numbers.Number):
-        return GeoComputation.pointInPolygon(polygon, x, y)
+        if isinstance(polygon, (list, tuple)):
+            return GeoComputation.pointInPolygons(polygon, PointD(x, y))
+        else:
+            return GeoComputation.pointInPolygon(polygon, x, y)
     
     if isinstance(x, (list, tuple)):
         x = np.array(x)

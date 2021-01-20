@@ -768,8 +768,12 @@ class DimArray(NDArray):
         else:
             dims = []
             for i in range(0, self.ndim):
-                if i != axis:
-                    dims.append(self.dims[i])
+                if isinstance(axis, (list, tuple)):
+                    if not i in axis:
+                        dims.append(self.dims[i])
+                else:
+                    if i != axis:
+                        dims.append(self.dims[i])
             return DimArray(r, dims, self.fill_value, self.proj)
             
     def median(self, axis=None):

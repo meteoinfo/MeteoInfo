@@ -1063,8 +1063,8 @@ def mean(x, axis=None):
     Compute tha arithmetic mean along the specified axis.
     
     :param x: (*array_like*) Input values.
-    :param axis: (*int*) Axis along which the standard deviation is computed. 
-        The default is to compute the standard deviation of the flattened array.
+    :param axis: (*int*) Axis along which the means is computed.
+        The default is to compute the means of the flattened array.
     
     returns: (*array_like*) Mean result
     """

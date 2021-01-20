@@ -5850,7 +5850,50 @@ public class ArrayMath {
                     ranges.add(new Range(current[idx], current[idx], 1));
                 }
             }
-            mean = mean(a, ranges);
+            mean = meanRange(a, ranges);
+            r.setDouble(i, mean);
+            indexr.incr();
+        }
+
+        return r;
+    }
+
+    /**
+     * Compute mean value of an array along an axis (dimension)
+     *
+     * @param a Array a
+     * @param axis Axis
+     * @return Mean value array
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public static Array mean(Array a, List<Integer> axis) throws InvalidRangeException {
+        int[] dataShape = a.getShape();
+        int[] shape = new int[dataShape.length - axis.size()];
+        int idx = 0;
+        for (int i = 0; i < dataShape.length; i++) {
+            if (axis.contains(i)) {
+                continue;
+            }
+            shape[idx] = dataShape[i];
+            idx += 1;
+        }
+        Array r = Array.factory(DataType.DOUBLE, shape);
+        double mean;
+        Index indexr = r.getIndex();
+        int[] current;
+        for (int i = 0; i < r.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            List<Range> ranges = new ArrayList<>();
+            idx = 0;
+            for (int j = 0; j < dataShape.length; j++) {
+                if (axis.contains(j)) {
+                    ranges.add(new Range(0, dataShape[j] - 1, 1));
+                } else {
+                    ranges.add(new Range(current[idx], current[idx], 1));
+                    idx += 1;
+                }
+            }
+            mean = meanRange(a, ranges);
             r.setDouble(i, mean);
             indexr.incr();
         }
@@ -5919,14 +5962,14 @@ public class ArrayMath {
     }
 
     /**
-     * Compute mean value of an array
+     * Compute mean value of an array by ranges
      *
      * @param a Array a
      * @param ranges Range list
      * @return Mean value
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
-    public static double mean(Array a, List<Range> ranges) throws InvalidRangeException {
+    public static double meanRange(Array a, List<Range> ranges) throws InvalidRangeException {
         double mean = 0.0, v;
         int n = 0;
         IndexIterator ii = a.getRangeIterator(ranges);

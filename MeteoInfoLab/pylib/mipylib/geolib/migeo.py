@@ -173,10 +173,9 @@ def inpolygon(x, y, polygon):
     :returns: (*boolean array*) Inside or not.
     '''
     if isinstance(x, numbers.Number):
-        if isinstance(polygon, (list, tuple)):
-            return GeoComputation.pointInPolygons(polygon, PointD(x, y))
-        else:
-            return GeoComputation.pointInPolygon(polygon, x, y)
+        x = np.array([x])
+    if isinstance(y, numbers.Number):
+        y = np.array([y])
     
     if isinstance(x, (list, tuple)):
         x = np.array(x)
@@ -189,13 +188,17 @@ def inpolygon(x, y, polygon):
             x_p = np.array(x_p)
         if isinstance(y_p, (list, tuple)):
             y_p = np.array(y_p)
-        return NDArray(GeometryUtil.inPolygon(x._array, y._array, x_p._array, y_p._array))
+        r = NDArray(GeometryUtil.inPolygon(x._array, y._array, x_p._array, y_p._array))
     else:
         if isinstance(polygon, MILayer):
             polygon = polygon.shapes()
         elif isinstance(polygon, PolygonShape):
             polygon = [polygon]
-        return NDArray(GeometryUtil.inPolygon(x._array, y._array, polygon))
+        r = NDArray(GeometryUtil.inPolygon(x._array, y._array, polygon))
+        if len(r) == 1:
+            return r[0]
+        else:
+            return r
     
 def arrayinpolygon(a, polygon, x=None, y=None):
     '''

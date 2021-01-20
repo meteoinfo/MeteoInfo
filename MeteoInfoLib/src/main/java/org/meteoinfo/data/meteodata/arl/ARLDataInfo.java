@@ -234,63 +234,15 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
         this.setFileName(fileName);
         try {
             RandomAccessFile br = new RandomAccessFile(fileName, "r");
-            DataLabel aDL;
-            DataHead aDH = new DataHead();
             int i, j, vNum;
             String vName;
             List<String> vList = new ArrayList<>();
 
             //open file to decode the standard label (50) plus the 
             //fixed portion (108) of the extended header   
-            aDL = readDataLabel(br);
+            DataLabel aDL = readDataLabel(br);
 
-            byte[] bytes = new byte[4];
-            br.read(bytes);
-            aDH.MODEL = new String(bytes).trim();
-            bytes = new byte[3];
-            br.read(bytes);
-            aDH.ICX = Integer.parseInt(new String(bytes).trim());
-            bytes = new byte[2];
-            br.read(bytes);
-            aDH.MN = Short.parseShort(new String(bytes).trim());
-            bytes = new byte[7];
-            br.read(bytes);
-            aDH.POLE_LAT = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.POLE_LON = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.REF_LAT = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.REF_LON = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.SIZE = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.ORIENT = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.TANG_LAT = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.SYNC_XP = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.SYNC_YP = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.SYNC_LAT = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.SYNC_LON = Float.parseFloat(new String(bytes).trim());
-            br.read(bytes);
-            aDH.DUMMY = Float.parseFloat(new String(bytes).trim());
-            bytes = new byte[3];
-            br.read(bytes);
-            aDH.NX = Integer.parseInt(new String(bytes).trim());
-            br.read(bytes);
-            aDH.NY = Integer.parseInt(new String(bytes).trim());
-            br.read(bytes);
-            aDH.NZ = Integer.parseInt(new String(bytes).trim());
-            bytes = new byte[2];
-            br.read(bytes);
-            aDH.K_FLAG = Short.parseShort(new String(bytes).trim());
-            bytes = new byte[4];
-            br.read(bytes);
-            aDH.LENH = Integer.parseInt(new String(bytes).trim());
+            DataHead aDH = this.readDataHead(br);
 
             if (aDL.XGPT) {
                 int xn = aDL.IGC.charAt(0) - 64;
@@ -304,6 +256,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             int indexRecNum = 1;
             indexLen = recLen;
             int recNum = 0;
+            byte[] bytes;
 
             if (aDH.LENH > NXY) {
                 bytes = new byte[NXY - 108];
@@ -484,20 +437,23 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 //Read label
                 aDL = readDataLabel(br);
 
-                //Seek back
-                br.seek(br.getFilePointer() - 50);
+                //Rad data head
+                DataHead dh = this.readDataHead(br);
 
-                aTime = LocalDateTime.of(year, aDL.getMonth(), aDL.getDay(), aDL.getHour(), 0, 0);
-                if (aTime.equals(oldTime)) {
+                //Seek back
+                br.seek(br.getFilePointer() - 50 - 108);
+
+                aTime = LocalDateTime.of(year, aDL.getMonth(), aDL.getDay(), aDL.getHour(), dh.MN, 0);
+                /*if (aTime.equals(oldTime)) {
                     sameTimeNum += 1;
-                }
+                }*/
                 times.add(aTime);
                 timeNum += 1;
             } while (true);
 
             br.close();
 
-            //Update times
+            /*//Update times
             if (sameTimeNum > 1) {
                 int minutes = 60 / sameTimeNum;
                 int idx = 0;
@@ -515,7 +471,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                     newTimes.add(time);
                 }
                 times = newTimes;
-            }
+            }*/
 
             //Set dimensions
             List<Double> values = new ArrayList<>();
@@ -623,6 +579,64 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             br.read(bytes);
             aDL.setValue(Double.parseDouble(new String(bytes).trim()));
             return aDL;
+        } catch (IOException ex) {
+            Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    private DataHead readDataHead(RandomAccessFile br) {
+        try {
+            DataHead aDH = new DataHead();
+            byte[] bytes = new byte[4];
+            br.read(bytes);
+            aDH.MODEL = new String(bytes).trim();
+            bytes = new byte[3];
+            br.read(bytes);
+            aDH.ICX = Integer.parseInt(new String(bytes).trim());
+            bytes = new byte[2];
+            br.read(bytes);
+            aDH.MN = Short.parseShort(new String(bytes).trim());
+            bytes = new byte[7];
+            br.read(bytes);
+            aDH.POLE_LAT = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.POLE_LON = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.REF_LAT = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.REF_LON = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.SIZE = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.ORIENT = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.TANG_LAT = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.SYNC_XP = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.SYNC_YP = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.SYNC_LAT = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.SYNC_LON = Float.parseFloat(new String(bytes).trim());
+            br.read(bytes);
+            aDH.DUMMY = Float.parseFloat(new String(bytes).trim());
+            bytes = new byte[3];
+            br.read(bytes);
+            aDH.NX = Integer.parseInt(new String(bytes).trim());
+            br.read(bytes);
+            aDH.NY = Integer.parseInt(new String(bytes).trim());
+            br.read(bytes);
+            aDH.NZ = Integer.parseInt(new String(bytes).trim());
+            bytes = new byte[2];
+            br.read(bytes);
+            aDH.K_FLAG = Short.parseShort(new String(bytes).trim());
+            bytes = new byte[4];
+            br.read(bytes);
+            aDH.LENH = Integer.parseInt(new String(bytes).trim());
+
+            return aDH;
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;

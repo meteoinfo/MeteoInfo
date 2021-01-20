@@ -2228,28 +2228,30 @@ public class GraphicFactory {
             x = xIter.getDoubleNext();
             y = yIter.getDoubleNext();
             z = zIter.getDoubleNext();
-            // Add bar
-            if (widths.getSize() > 1 && widths.getSize() > i) {
-                width = widths.getDouble(i);
-                hw = width * 0.5;
-            }
-            List<PointZ> pList = new ArrayList<>();
-            pList.add(new PointZ(x + hw, y + hw, minz));
-            pList.add(new PointZ(x + hw, y - hw, minz));
-            pList.add(new PointZ(x + hw, y + hw, z));
-            pList.add(new PointZ(x + hw, y - hw, z));
-            pList.add(new PointZ(x - hw, y + hw, minz));
-            pList.add(new PointZ(x - hw, y - hw, minz));
-            pList.add(new PointZ(x - hw, y + hw, z));
-            pList.add(new PointZ(x - hw, y - hw, z));
-            CubicShape cs = new CubicShape();
-            cs.setPoints(pList);
-            if (bbs.size() > i) {
-                bb = bbs.get(i);
-            }
-            graphics.add(new Graphic(cs, bb));
+            if (!Double.isNaN(z)) {
+                // Add bar
+                if (widths.getSize() > 1 && widths.getSize() > i) {
+                    width = widths.getDouble(i);
+                    hw = width * 0.5;
+                }
+                List<PointZ> pList = new ArrayList<>();
+                pList.add(new PointZ(x + hw, y + hw, minz));
+                pList.add(new PointZ(x + hw, y - hw, minz));
+                pList.add(new PointZ(x + hw, y + hw, z));
+                pList.add(new PointZ(x + hw, y - hw, z));
+                pList.add(new PointZ(x - hw, y + hw, minz));
+                pList.add(new PointZ(x - hw, y - hw, minz));
+                pList.add(new PointZ(x - hw, y + hw, z));
+                pList.add(new PointZ(x - hw, y - hw, z));
+                CubicShape cs = new CubicShape();
+                cs.setPoints(pList);
+                if (bbs.size() > i) {
+                    bb = bbs.get(i);
+                }
+                graphics.add(new Graphic(cs, bb));
 
-            i++;
+                i++;
+            }
         }
 
         graphics.setSingleLegend(false);

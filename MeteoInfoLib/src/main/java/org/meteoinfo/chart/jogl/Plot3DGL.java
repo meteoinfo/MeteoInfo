@@ -2541,6 +2541,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_QUADS);
             for (int[] ii : index) {
+                if (this.lighting.isEnable()) {
+                    float[] normal = JOGLUtil.normalize(vertex.get(ii[0]), vertex.get(ii[1]), vertex.get(ii[2]));
+                    gl.glNormal3fv(normal, 0);
+                }
                 for (int i : ii) {
                     gl.glVertex3f(vertex.get(i)[0], vertex.get(i)[1], vertex.get(i)[2]);
                 }
@@ -2548,16 +2552,18 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glEnd();
             gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
 
-            rgba = bb.getOutlineColor().getRGBComponents(null);
-            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(bb.getOutlineSize() * this.dpiScale);
-            gl.glBegin(GL2.GL_LINES);
-            for (int[] ii : cubic.getLineIndex()) {
-                for (int i : ii) {
-                    gl.glVertex3f(vertex.get(i)[0], vertex.get(i)[1], vertex.get(i)[2]);
+            if (bb.isDrawOutline()) {
+                rgba = bb.getOutlineColor().getRGBComponents(null);
+                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                gl.glLineWidth(bb.getOutlineSize() * this.dpiScale);
+                gl.glBegin(GL2.GL_LINES);
+                for (int[] ii : cubic.getLineIndex()) {
+                    for (int i : ii) {
+                        gl.glVertex3f(vertex.get(i)[0], vertex.get(i)[1], vertex.get(i)[2]);
+                    }
                 }
+                gl.glEnd();
             }
-            gl.glEnd();
         }
     }
 

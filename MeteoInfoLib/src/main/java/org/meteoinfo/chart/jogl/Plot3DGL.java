@@ -2406,8 +2406,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
             //float coneHgt = coneFractionAxially * norm_of_v;
             //float coneRadius = coneFractionRadially * norm_of_v;
-            float coneRadius = 0.05f;
-            float coneHgt = coneRadius * 0.4f;
+            float coneRadius = shape.getHeadLength() * 0.02f;
+            float coneHgt = shape.getHeadWith() * 0.02f;
 
             // Set location of arrowhead to be at the startpoint of the line
             float[] vConeLocation = {x1, y1, z1};

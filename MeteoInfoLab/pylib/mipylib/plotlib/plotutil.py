@@ -874,6 +874,8 @@ def setpointlegendbreak(lb, **kwargs):
         lb.setDrawOutline(kwargs['edge'])
     if kwargs.has_key('edgesize'):
         lb.setOutlineSize(kwargs['edgesize'])
+    elif kwargs.has_key('linewidth'):
+        lb.setOutlineSize(kwargs['linewidth'])
         
 def text(x, y, s, **kwargs):
     """

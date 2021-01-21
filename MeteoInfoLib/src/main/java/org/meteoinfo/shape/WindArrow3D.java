@@ -14,7 +14,9 @@ public class WindArrow3D extends PointZShape {
     public double u;
     public double v;
     public double w;
-    public float length = 1;
+    public float scale = 1;
+    private float headWith = 1;
+    private float headLength = 2.5f;
     
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -31,6 +33,38 @@ public class WindArrow3D extends PointZShape {
     public ShapeTypes getShapeType(){
         return ShapeTypes.WindArraw;
     }
+
+    /**
+     * Get head width
+     * @return Head width
+     */
+    public float getHeadWith() {
+        return this.headWith;
+    }
+
+    /**
+     * Set head width
+     * @param value Head width
+     */
+    public void setHeadWith(float value) {
+        this.headWith = value;
+    }
+
+    /**
+     * Get head length
+     * @return Head length
+     */
+    public float getHeadLength() {
+        return this.headLength;
+    }
+
+    /**
+     * Set head length
+     * @param value Head length
+     */
+    public void setHeadLength(float value) {
+        this.headLength = value;
+    }
     // </editor-fold>
     // <editor-fold desc="Methods">
     /**
@@ -40,9 +74,9 @@ public class WindArrow3D extends PointZShape {
     public PointZ getEndPoint() {
         PointZ sp = (PointZ)this.getPoint();
         PointZ ed = new PointZ();
-        ed.X = sp.X + u * length;
-        ed.Y = sp.Y + v * length;
-        ed.Z = sp.Z + w * length;
+        ed.X = sp.X + u * scale;
+        ed.Y = sp.Y + v * scale;
+        ed.Z = sp.Z + w * scale;
         return ed;
     }
 
@@ -57,6 +91,7 @@ public class WindArrow3D extends PointZShape {
         aWA.u = u;
         aWA.v = v;
         aWA.w = w;
+        aWA.scale = scale;
         aWA.setPoint(this.getPoint());
         aWA.setValue(this.getValue());
         

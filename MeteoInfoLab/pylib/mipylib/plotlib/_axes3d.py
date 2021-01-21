@@ -1350,8 +1350,11 @@ class Axes3D(Axes):
         
         if not cdata is None:
             cdata = plotutil.getplotdata(cdata)
-        length = kwargs.pop('length', 1)
-        igraphic = GraphicFactory.createArrows3D(x, y, z, u, v, w, length, cdata, ls)
+        scale = kwargs.pop('scale', 1)
+        headwidth = kwargs.pop('headwidth', 1)
+        headlength = kwargs.pop('headlength', 2.5)
+        igraphic = GraphicFactory.createArrows3D(x, y, z, u, v, w, scale, headwidth,
+                                                 headlength, cdata, ls)
 
         visible = kwargs.pop('visible', True)
         if visible:

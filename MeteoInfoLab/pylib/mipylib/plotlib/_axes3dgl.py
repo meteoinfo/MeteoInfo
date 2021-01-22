@@ -283,6 +283,82 @@ class Axes3DGL(Axes3D):
 
         return barbreaks
 
+    def streamplot(self, *args, **kwargs):
+        """
+        Plot stream lines in 3D axes.
+
+        :param x: (*array_like*) X coordinate array.
+        :param y: (*array_like*) Y coordinate array.
+        :param z: (*array_like*) Z coordinate array.
+        :param u: (*array_like*) U component of the arrow vectors (wind field).
+        :param v: (*array_like*) V component of the arrow vectors (wind field).
+        :param w: (*array_like*) W component of the arrow vectors (wind field).
+        :param density: (*int*) Streamline density. Default is 4.
+        :return: Streamlines
+        """
+        ls = kwargs.pop('symbolspec', None)
+        cmap = plotutil.getcolormap(**kwargs)
+        density = kwargs.pop('density', 4)
+        iscolor = False
+        cdata = None
+        if len(args) < 6:
+            u = args[0]
+            v = args[1]
+            w = args[2]
+            u = np.asarray(u)
+            nz, ny, nx = u.shape
+            x = np.arange(nx)
+            y = np.arange(ny)
+            z = np.arange(nz)
+            args = args[3:]
+        if len(args) >= 6:
+            x = args[0]
+            y = args[1]
+            z = args[2]
+            u = args[3]
+            v = args[4]
+            w = args[5]
+            args = args[6:]
+        if len(args) > 0:
+            cdata = args[0]
+            iscolor = True
+            args = args[1:]
+        x = plotutil.getplotdata(x)
+        y = plotutil.getplotdata(y)
+        z = plotutil.getplotdata(z)
+        u = plotutil.getplotdata(u)
+        v = plotutil.getplotdata(v)
+        w = plotutil.getplotdata(w)
+
+        if ls is None:
+            if iscolor:
+                if len(args) > 0:
+                    cn = args[0]
+                    ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cn, cmap)
+                else:
+                    levs = kwargs.pop('levs', None)
+                    if levs is None:
+                        ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
+                    else:
+                        if isinstance(levs, NDArray):
+                            levs = levs.tolist()
+                        ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), levs, cmap)
+            else:
+                if cmap.getColorCount() == 1:
+                    c = cmap.getColor(0)
+                else:
+                    c = Color.black
+                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, c, 10)
+            ls = plotutil.setlegendscheme_line(ls, **kwargs)
+
+        if not cdata is None:
+            cdata = plotutil.getplotdata(cdata)
+
+        graphics = GraphicFactory.createStreamlines3D(x, y, z, u, v, w, cdata, density, ls)
+        self.add_graphic(graphics)
+
+        return graphics
+
     def geoshow(self, layer, **kwargs):
         '''
         Plot a layer in 3D axes.

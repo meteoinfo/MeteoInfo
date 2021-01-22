@@ -53,7 +53,10 @@ import org.meteoinfo.shape.*;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;
+import wcontour.Contour;
+import wcontour.global.Point3D;
 import wcontour.global.PolyLine;
+import wcontour.global.PolyLine3D;
 
 /**
  *
@@ -4698,7 +4701,33 @@ public class GraphicFactory {
 
         return gc;
     }
-    
+
+    public static GraphicCollection3D createStreamlines3D(Array xdata, Array ydata, Array zdata,
+                                                          Array udata, Array vdata, Array wdata,
+                                                          Array cdata, int density, LegendScheme ls) {
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        double[][][] u = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(udata);
+        double[][][] v = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(vdata);
+        double[][][] w = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(wdata);
+        double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
+        double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
+        double[] z = (double[]) ArrayUtil.copyToNDJavaArray_Double(zdata);
+
+        List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, x, y, z, density);
+        ColorBreak cb = ls.getLegendBreak(0);
+        for (PolyLine3D line : streamLines) {
+            PolylineZShape shape = new PolylineZShape();
+            List<PointZ> points = new ArrayList<>();
+            for (Point3D point : line.PointList) {
+                points.add(new PointZ(point.X, point.Y, point.Z));
+            }
+            shape.setPoints(points);
+            graphics.add(new Graphic(shape, cb));
+        }
+
+        return graphics;
+    }
+
     /**
      * Create stream line
      *

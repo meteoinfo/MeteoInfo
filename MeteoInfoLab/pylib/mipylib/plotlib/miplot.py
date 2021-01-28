@@ -46,7 +46,7 @@ __all__ = [
     'makelegend','makesymbolspec','masklayer','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
     'semilogx','semilogy','set','show','slice3','stationmodel','stem','stem3','step','streamplot','streamplot3',
-    'streamplotm','subplot','subplots','suptitle',
+    'streamplotm','streamslice','subplot','subplots','suptitle',
     'surf','taylor_diagram','text','text3','title','twinx','twiny','violinplot','weatherspec','xaxis',
     'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
     'isinteractive'
@@ -2482,6 +2482,33 @@ def streamplot3(*args, **kwargs):
             g_axes = axes3dgl()
 
     r = g_axes.streamplot(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+def streamslice(*args, **kwargs):
+    """
+    Plot stream lines slice in 3D axes.
+
+    :param x: (*array_like*) X coordinate array.
+    :param y: (*array_like*) Y coordinate array.
+    :param z: (*array_like*) Z coordinate array.
+    :param u: (*array_like*) U component of the arrow vectors (wind field).
+    :param v: (*array_like*) V component of the arrow vectors (wind field).
+    :param w: (*array_like*) W component of the arrow vectors (wind field).
+    :param xslice: (*list*) X slice locations.
+    :param yslice: (*list*) Y slice locations.
+    :param zslice: (*list*) Z slice locations.
+    :param density: (*int*) Streamline density. Default is 4.
+    :return: Streamline slices
+    """
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
+
+    r = g_axes.streamslice(*args, **kwargs)
     draw_if_interactive()
     return r
 

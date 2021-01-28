@@ -12,7 +12,7 @@ from org.meteoinfo.layer import LayerTypes
 from org.meteoinfo.shape import ShapeTypes
 from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil
 from javax.swing import WindowConstants
-from java.awt import Font
+from java.awt import Font, Color
 
 import os
 import numbers
@@ -311,7 +311,7 @@ class Axes3DGL(Axes3D):
             y = np.arange(ny)
             z = np.arange(nz)
             args = args[3:]
-        if len(args) >= 6:
+        else:
             x = args[0]
             y = args[1]
             z = args[2]
@@ -354,8 +354,123 @@ class Axes3DGL(Axes3D):
         if not cdata is None:
             cdata = plotutil.getplotdata(cdata)
 
-        graphics = GraphicFactory.createStreamlines3D(x, y, z, u, v, w, cdata, density, ls)
+        min_points = kwargs.pop('min_points', 3)
+        start_x = kwargs.pop('start_x', None)
+        start_y = kwargs.pop('start_y', None)
+        start_z = kwargs.pop('start_z', None)
+        if start_x is None or start_y is None or start_z is None:
+            graphics = GraphicFactory.createStreamlines3D(x, y, z, u, v, w, cdata, density, ls, min_points)
+        else:
+            start_x = np.asarray(start_x).flatten()
+            start_y = np.asarray(start_y).flatten()
+            start_z = np.asarray(start_z).flatten()
+            graphics = GraphicFactory.createStreamlines3D(x, y, z, u, v, w, cdata, density, ls, min_points,
+                                                          start_x._array, start_y._array, start_z._array)
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            graphics.setUsingLight(lighting)
         self.add_graphic(graphics)
+
+        return graphics
+
+    def streamslice(self, *args, **kwargs):
+        """
+        Plot stream lines slice in 3D axes.
+
+        :param x: (*array_like*) X coordinate array.
+        :param y: (*array_like*) Y coordinate array.
+        :param z: (*array_like*) Z coordinate array.
+        :param u: (*array_like*) U component of the arrow vectors (wind field).
+        :param v: (*array_like*) V component of the arrow vectors (wind field).
+        :param w: (*array_like*) W component of the arrow vectors (wind field).
+        :param xslice: (*list*) X slice locations.
+        :param yslice: (*list*) Y slice locations.
+        :param zslice: (*list*) Z slice locations.
+        :param density: (*int*) Streamline density. Default is 4.
+        :return: Streamline slices
+        """
+        ls = kwargs.pop('symbolspec', None)
+        cmap = plotutil.getcolormap(**kwargs)
+        density = kwargs.pop('density', 4)
+        iscolor = False
+        cdata = None
+        if len(args) < 6:
+            u = args[0]
+            v = args[1]
+            w = args[2]
+            u = np.asarray(u)
+            nz, ny, nx = u.shape
+            x = np.arange(nx)
+            y = np.arange(ny)
+            z = np.arange(nz)
+            args = args[3:]
+        else:
+            x = args[0]
+            y = args[1]
+            z = args[2]
+            u = args[3]
+            v = args[4]
+            w = args[5]
+            args = args[6:]
+        if len(args) > 0:
+            cdata = args[0]
+            iscolor = True
+            args = args[1:]
+        x = plotutil.getplotdata(x)
+        y = plotutil.getplotdata(y)
+        z = plotutil.getplotdata(z)
+        u = plotutil.getplotdata(u)
+        v = plotutil.getplotdata(v)
+        w = plotutil.getplotdata(w)
+
+        if ls is None:
+            if iscolor:
+                if len(args) > 0:
+                    cn = args[0]
+                    ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cn, cmap)
+                else:
+                    levs = kwargs.pop('levs', None)
+                    if levs is None:
+                        ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
+                    else:
+                        if isinstance(levs, NDArray):
+                            levs = levs.tolist()
+                        ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), levs, cmap)
+            else:
+                if cmap.getColorCount() == 1:
+                    c = cmap.getColor(0)
+                else:
+                    c = Color.black
+                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, c, 10)
+            ls = plotutil.setlegendscheme_line(ls, **kwargs)
+
+        if not cdata is None:
+            cdata = plotutil.getplotdata(cdata)
+
+        min_points = kwargs.pop('min_points', 3)
+        zslice_index = kwargs.pop('zslice_index', None)
+        if zslice_index is None:
+            xslice = kwargs.pop('xslice', [])
+            if isinstance(xslice, numbers.Number):
+                xslice = [xslice]
+            yslice = kwargs.pop('yslice', [])
+            if isinstance(yslice, numbers.Number):
+                yslice = [yslice]
+            zslice = kwargs.pop('zslice', [])
+            if isinstance(zslice, numbers.Number):
+                zslice = [zslice]
+            graphics = GraphicFactory.streamSlice(x, y, z, u, v, w, cdata, xslice, yslice, zslice, density, ls)
+        else:
+            graphics = GraphicFactory.streamSlice(x, y, z, u, v, w, cdata, zslice_index, density, ls)
+
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            for gg in graphics:
+                gg.setUsingLight(lighting)
+        visible = kwargs.pop('visible', True)
+        if visible:
+            for gg in graphics:
+                self.add_graphic(gg)
 
         return graphics
 

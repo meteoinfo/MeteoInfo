@@ -1643,6 +1643,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     }
                 }
                 if (isDraw) {
+                    boolean lightEnabled = this.lighting.isEnable();
+                    if (graphic instanceof GraphicCollection3D) {
+                        boolean usingLight = lightEnabled && ((GraphicCollection3D)graphic).isUsingLight();
+                        if (lightEnabled && !((GraphicCollection3D)graphic).isUsingLight()) {
+                            this.lighting.stop(gl);
+                        }
+                    }
                     switch (graphic.getGraphicN(0).getShape().getShapeType()) {
                         case PointZ:
                             this.drawPoints(gl, graphic);
@@ -1653,6 +1660,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
                                 this.drawGraphic(gl, gg);
                             }
                             break;
+                    }
+                    if (graphic instanceof GraphicCollection3D) {
+                        if (lightEnabled && !((GraphicCollection3D)graphic).isUsingLight()) {
+                            this.lighting.start(gl);
+                        }
                     }
                 }
             }

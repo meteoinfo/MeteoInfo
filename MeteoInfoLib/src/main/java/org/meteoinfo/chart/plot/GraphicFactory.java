@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.meteoinfo.chart.ChartText;
+import org.meteoinfo.chart.jogl.SurfaceGraphics;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.math.ArrayUtil;
@@ -48,11 +49,8 @@ import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.legend.PolylineBreak;
 import org.meteoinfo.legend.StreamlineBreak;
 import org.meteoinfo.math.meteo.MeteoMath;
-import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.shape.*;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.Index;
 import wcontour.Contour;
 import wcontour.global.Point3D;
 import wcontour.global.PolyLine;
@@ -4702,27 +4700,226 @@ public class GraphicFactory {
         return gc;
     }
 
+    /**
+     * Create 3D streamlines
+     * @param xdata X coordinate array
+     * @param ydata Y coordinate array
+     * @param zdata Z coordinate array
+     * @param udata U wind component array
+     * @param vdata V wind component array
+     * @param wdata W wind component array
+     * @param cdata Value array
+     * @param density Streamline density
+     * @param ls The legend scheme
+     * @return
+     */
     public static GraphicCollection3D createStreamlines3D(Array xdata, Array ydata, Array zdata,
                                                           Array udata, Array vdata, Array wdata,
-                                                          Array cdata, int density, LegendScheme ls) {
+                                                          Array cdata, int density, LegendScheme ls,
+                                                          int minPoints) {
         GraphicCollection3D graphics = new GraphicCollection3D();
         double[][][] u = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(udata);
         double[][][] v = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(vdata);
         double[][][] w = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(wdata);
-        double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
-        double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
-        double[] z = (double[]) ArrayUtil.copyToNDJavaArray_Double(zdata);
+        if (xdata.getRank() == 1) {
+            double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
+            double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
+            double[] z = (double[]) ArrayUtil.copyToNDJavaArray_Double(zdata);
 
-        List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, x, y, z, density);
-        ColorBreak cb = ls.getLegendBreak(0);
-        for (PolyLine3D line : streamLines) {
-            PolylineZShape shape = new PolylineZShape();
-            List<PointZ> points = new ArrayList<>();
-            for (Point3D point : line.PointList) {
-                points.add(new PointZ(point.X, point.Y, point.Z));
+            if (cdata == null) {
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, null, x, y, z, density);
+                ColorBreak cb = ls.getLegendBreak(0);
+                for (PolyLine3D line : streamLines) {
+                    if (line.PointList.size() < minPoints)
+                        continue;
+
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (Point3D point : line.PointList) {
+                        points.add(new PointZ(point.X, point.Y, point.Z));
+                    }
+                    shape.setPoints(points);
+                    graphics.add(new Graphic(shape, cb));
+                }
+            } else {
+                double[][][] m = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(cdata);
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, m, x, y, z, density);
+                ColorBreak cb;
+                double mm;
+                for (PolyLine3D line : streamLines) {
+                    if (line.PointList.size() < minPoints)
+                        continue;
+
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    ColorBreakCollection cbs = new ColorBreakCollection();
+                    for (Point3D point : line.PointList) {
+                        points.add(new PointZ(point.X, point.Y, point.Z));
+                        cb = ls.findLegendBreak(point.M);
+                        cbs.add(cb);
+                    }
+                    shape.setPoints(points);
+                    graphics.add(new Graphic(shape, cbs));
+                }
             }
-            shape.setPoints(points);
-            graphics.add(new Graphic(shape, cb));
+        } else {
+            double[][][] x = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(xdata);
+            double[][][] y = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(ydata);
+            double[][][] z = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(zdata);
+
+            if (cdata == null) {
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, null, x, y, z, density);
+                ColorBreak cb = ls.getLegendBreak(0);
+                for (PolyLine3D line : streamLines) {
+                    if (line.PointList.size() < minPoints)
+                        continue;
+
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (Point3D point : line.PointList) {
+                        points.add(new PointZ(point.X, point.Y, point.Z));
+                    }
+                    shape.setPoints(points);
+                    graphics.add(new Graphic(shape, cb));
+                }
+            } else {
+                double[][][] m = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(cdata);
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, m, x, y, z, density);
+                ColorBreak cb;
+                double mm;
+                for (PolyLine3D line : streamLines) {
+                    if (line.PointList.size() < minPoints)
+                        continue;
+
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    ColorBreakCollection cbs = new ColorBreakCollection();
+                    for (Point3D point : line.PointList) {
+                        points.add(new PointZ(point.X, point.Y, point.Z));
+                        cb = ls.findLegendBreak(point.M);
+                        cbs.add(cb);
+                    }
+                    shape.setPoints(points);
+                    graphics.add(new Graphic(shape, cbs));
+                }
+            }
+        }
+        graphics.setLegendScheme(ls);
+
+        return graphics;
+    }
+
+    /**
+     * Create 3D streamlines
+     * @param xdata X coordinate array
+     * @param ydata Y coordinate array
+     * @param zdata Z coordinate array
+     * @param udata U wind component array
+     * @param vdata V wind component array
+     * @param wdata W wind component array
+     * @param cdata Value array
+     * @param density Streamline density
+     * @param ls The legend scheme
+     * @return
+     */
+    public static GraphicCollection3D createStreamlines3D(Array xdata, Array ydata, Array zdata,
+                                                          Array udata, Array vdata, Array wdata,
+                                                          Array cdata, int density, LegendScheme ls,
+                                                          int minPoints, Array startX, Array startY,
+                                                          Array startZ) {
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        double[][][] u = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(udata);
+        double[][][] v = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(vdata);
+        double[][][] w = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(wdata);
+        double[] sX = (double[]) ArrayUtil.copyToNDJavaArray_Double(startX);
+        double[] sY = (double[]) ArrayUtil.copyToNDJavaArray_Double(startY);
+        double[] sZ = (double[]) ArrayUtil.copyToNDJavaArray_Double(startZ);
+        if (xdata.getRank() == 1) {
+            double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
+            double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
+            double[] z = (double[]) ArrayUtil.copyToNDJavaArray_Double(zdata);
+
+            if (cdata == null) {
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, null, x, y, z, density,
+                        sX, sY, sZ);
+                ColorBreak cb = ls.getLegendBreak(0);
+                for (PolyLine3D line : streamLines) {
+                    if (line.PointList.size() < minPoints)
+                        continue;
+
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (Point3D point : line.PointList) {
+                        points.add(new PointZ(point.X, point.Y, point.Z));
+                    }
+                    shape.setPoints(points);
+                    graphics.add(new Graphic(shape, cb));
+                }
+            } else {
+                double[][][] m = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(cdata);
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, m, x, y, z, density,
+                        sX, sY, sZ);
+                ColorBreak cb;
+                double mm;
+                for (PolyLine3D line : streamLines) {
+                    if (line.PointList.size() < minPoints)
+                        continue;
+
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    ColorBreakCollection cbs = new ColorBreakCollection();
+                    for (Point3D point : line.PointList) {
+                        points.add(new PointZ(point.X, point.Y, point.Z));
+                        cb = ls.findLegendBreak(point.M);
+                        cbs.add(cb);
+                    }
+                    shape.setPoints(points);
+                    graphics.add(new Graphic(shape, cbs));
+                }
+            }
+        } else {
+            double[][][] x = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(xdata);
+            double[][][] y = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(ydata);
+            double[][][] z = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(zdata);
+
+            if (cdata == null) {
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, null, x, y, z, density,
+                        sX, sY, sZ);
+                ColorBreak cb = ls.getLegendBreak(0);
+                for (PolyLine3D line : streamLines) {
+                    if (line.PointList.size() < minPoints)
+                        continue;
+
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (Point3D point : line.PointList) {
+                        points.add(new PointZ(point.X, point.Y, point.Z));
+                    }
+                    shape.setPoints(points);
+                    graphics.add(new Graphic(shape, cb));
+                }
+            } else {
+                double[][][] m = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(cdata);
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, m, x, y, z, density,
+                        sX, sY, sZ);
+                ColorBreak cb;
+                double mm;
+                for (PolyLine3D line : streamLines) {
+                    if (line.PointList.size() < minPoints)
+                        continue;
+
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    ColorBreakCollection cbs = new ColorBreakCollection();
+                    for (Point3D point : line.PointList) {
+                        points.add(new PointZ(point.X, point.Y, point.Z));
+                        cb = ls.findLegendBreak(point.M);
+                        cbs.add(cb);
+                    }
+                    shape.setPoints(points);
+                    graphics.add(new Graphic(shape, cbs));
+                }
+            }
         }
 
         return graphics;
@@ -4748,17 +4945,13 @@ public class GraphicFactory {
             udata = uvData[0];
             vdata = uvData[1];
         }
-        if (ArrayMath.containsNaN(udata))
-            ArrayMath.replaceValue(udata, Double.NaN, -9999.0);
-        if (ArrayMath.containsNaN(vdata))
-            ArrayMath.replaceValue(vdata, Double.NaN, -9999.0);
         
         double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
         double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
         double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
         double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
         List<wcontour.global.PolyLine> streamlines = wcontour.Contour.tracingStreamline(u, v,
-                x, y, -9999.0, density);
+                x, y, density);
         wcontour.global.PolyLine line;        
         for (int i = 0; i < streamlines.size() - 1; i++) {
             line = streamlines.get(i);
@@ -4777,6 +4970,344 @@ public class GraphicFactory {
         }
 
         return gc;
+    }
+
+    /**
+     * Trace streamlines
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param z Z value
+     * @param ua U component
+     * @param va V component
+     * @param data Data array
+     * @param density Streamline density
+     * @param zDir Z direction: "x", "y" or "z"
+     * @param ls Legend scheme
+     * @return Streamlines
+     */
+    public static GraphicCollection3D streamLines(Array xa, Array ya, double z, Array ua,
+                                                  Array va, Array data, int density,
+                                                  String zDir, LegendScheme ls) {
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        double[][] u = (double[][]) ArrayUtil.copyToNDJavaArray_Double(ua);
+        double[][] v = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va);
+        List<wcontour.global.PolyLine> streamlines;
+        if (xa.getRank() == 1) {
+            double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xa);
+            double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ya);
+            streamlines = wcontour.Contour.tracingStreamline(u, v,
+                    x, y, density);
+        } else {
+            xa = xa.copyIfView();
+            ya = ya.copyIfView();
+            double[][] x = (double[][]) ArrayUtil.copyToNDJavaArray_Double(xa);
+            double[][] y = (double[][]) ArrayUtil.copyToNDJavaArray_Double(ya);
+            streamlines = wcontour.Contour.tracingStreamline(u, v,
+                    x, y, density);
+        }
+
+        int ny = u.length;
+        int nx = u[0].length;
+        ColorBreak cb = ls.getLegendBreak(0);
+        if (data == null) {
+            for (wcontour.global.PolyLine line : streamlines) {
+                PolylineZShape shape = new PolylineZShape();
+                List<PointZ> points = new ArrayList<>();
+                PointZ p;
+                if (zDir.equals("x")) {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.Y = (line.PointList.get(j)).X;
+                        p.Z = (line.PointList.get(j)).Y;
+                        p.X = z;
+                        points.add(p);
+                    }
+                } else if (zDir.equals("y")) {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.X = (line.PointList.get(j)).X;
+                        p.Z = (line.PointList.get(j)).Y;
+                        p.Y = z;
+                        points.add(p);
+                    }
+                } else {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.X = (line.PointList.get(j)).X;
+                        p.Y = (line.PointList.get(j)).Y;
+                        p.Z = z;
+                        points.add(p);
+                    }
+                }
+                shape.setPoints(points);
+                graphics.add(new Graphic(shape, cb));
+            }
+        } else {
+            for (wcontour.global.PolyLine line : streamlines) {
+                PolylineZShape shape = new PolylineZShape();
+                List<PointZ> points = new ArrayList<>();
+                PointZ p;
+                ColorBreakCollection cbs = new ColorBreakCollection();
+                if (zDir.equals("x")) {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.Y = (line.PointList.get(j)).X;
+                        p.Z = (line.PointList.get(j)).Y;
+                        p.X = z;
+                        int[] idx = ArrayUtil.gridIndex(xa, ya, p.Y, p.Z);
+                        int yi = idx[0];
+                        int xi = idx[1];
+                        p.M = data.getDouble(yi * nx + xi);
+                        cb = ls.findLegendBreak(p.M);
+                        cbs.add(cb);
+                        points.add(p);
+                    }
+                } else if (zDir.equals("y")) {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.X = (line.PointList.get(j)).X;
+                        p.Z = (line.PointList.get(j)).Y;
+                        p.Y = z;
+                        int[] idx = ArrayUtil.gridIndex(xa, ya, p.X, p.Z);
+                        int yi = idx[0];
+                        int xi = idx[1];
+                        p.M = data.getDouble(yi * nx + xi);
+                        cb = ls.findLegendBreak(p.M);
+                        cbs.add(cb);
+                        points.add(p);
+                    }
+                } else {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.X = (line.PointList.get(j)).X;
+                        p.Y = (line.PointList.get(j)).Y;
+                        p.Z = z;
+                        int[] idx = ArrayUtil.gridIndex(xa, ya, p.X, p.Y);
+                        int yi = idx[0];
+                        int xi = idx[1];
+                        p.M = data.getDouble(yi * nx + xi);
+                        cb = ls.findLegendBreak(p.M);
+                        cbs.add(cb);
+                        points.add(p);
+                    }
+                }
+                shape.setPoints(points);
+                graphics.add(new Graphic(shape, cbs));
+                graphics.setLegendScheme(ls);
+            }
+        }
+
+        return graphics;
+    }
+
+    /**
+     * Trace streamlines
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate value
+     * @param ua U component
+     * @param va V component
+     * @param data Data array
+     * @param density Streamline density
+     * @param ls Legend scheme
+     * @return Streamlines
+     */
+    public static GraphicCollection3D streamLines(Array xa, Array ya, Array za, Array ua,
+                                                  Array va, Array data, int density,
+                                                  LegendScheme ls) {
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        double[][] u = (double[][]) ArrayUtil.copyToNDJavaArray_Double(ua);
+        double[][] v = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va);
+        List<wcontour.global.PolyLine> streamlines;
+        if (xa.getRank() == 1) {
+            double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xa);
+            double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ya);
+            streamlines = wcontour.Contour.tracingStreamline(u, v,
+                    x, y, density);
+        } else {
+            xa = xa.copyIfView();
+            ya = ya.copyIfView();
+            double[][] x = (double[][]) ArrayUtil.copyToNDJavaArray_Double(xa);
+            double[][] y = (double[][]) ArrayUtil.copyToNDJavaArray_Double(ya);
+            streamlines = wcontour.Contour.tracingStreamline(u, v,
+                    x, y, density);
+        }
+
+        int ny = u.length;
+        int nx = u[0].length;
+        ColorBreak cb = ls.getLegendBreak(0);
+        if (data == null) {
+            for (wcontour.global.PolyLine line : streamlines) {
+                PolylineZShape shape = new PolylineZShape();
+                List<PointZ> points = new ArrayList<>();
+                PointZ p;
+                for (int j = 0; j < line.PointList.size(); j++) {
+                    p = new PointZ();
+                    p.X = (line.PointList.get(j)).X;
+                    p.Y = (line.PointList.get(j)).Y;
+                    int[] idx = ArrayUtil.gridIndex(xa, ya, p.Y, p.Z);
+                    int yi = idx[0];
+                    int xi = idx[1];
+                    p.Z = za.getDouble(yi * nx + xi);
+                    points.add(p);
+                }
+                shape.setPoints(points);
+                graphics.add(new Graphic(shape, cb));
+            }
+        } else {
+            for (wcontour.global.PolyLine line : streamlines) {
+                PolylineZShape shape = new PolylineZShape();
+                List<PointZ> points = new ArrayList<>();
+                PointZ p;
+                ColorBreakCollection cbs = new ColorBreakCollection();
+                for (int j = 0; j < line.PointList.size(); j++) {
+                    p = new PointZ();
+                    p.X = (line.PointList.get(j)).X;
+                    p.Y = (line.PointList.get(j)).Y;
+                    int[] idx = ArrayUtil.gridIndex(xa, ya, p.X, p.Y);
+                    int yi = idx[0];
+                    int xi = idx[1];
+                    p.Z = za.getDouble(yi * nx + xi);
+                    p.M = data.getDouble(yi * nx + xi);
+                    cb = ls.findLegendBreak(p.M);
+                    cbs.add(cb);
+                    points.add(p);
+                }
+                shape.setPoints(points);
+                graphics.add(new Graphic(shape, cbs));
+                graphics.setLegendScheme(ls);
+            }
+        }
+
+        return graphics;
+    }
+
+    /**
+     * Create streamline slices in 3D axes
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate array
+     * @param ua U component array
+     * @param va V component array
+     * @param wa W component array
+     * @param data Data array
+     * @param xSlice X slices
+     * @param ySlice Y slices
+     * @param zSlice Z slices
+     * @param density Streamline density
+     * @param ls Legend scheme
+     * @return Streamline slices graphics
+     * @throws InvalidRangeException
+     */
+    public static List<GraphicCollection3D> streamSlice(Array xa, Array ya, Array za, Array ua,
+                                                        Array va, Array wa, Array data, List<Number> xSlice,
+                                                        List<Number> ySlice, List<Number> zSlice,
+                                                        int density, LegendScheme ls) throws InvalidRangeException {
+        List<GraphicCollection3D> sgs = new ArrayList<>();
+        double x, y, z;
+
+        //X slice
+        for (int i = 0; i < xSlice.size(); i++) {
+            x = xSlice.get(i).doubleValue();
+            Array aa = xa;
+            if (xa.getRank() == 3) {
+                int[] shape = xa.getShape();
+                aa = xa.section(new int[]{0,0,0}, new int[]{1,1,shape[2]});
+            }
+            Array xua = ArrayUtil.slice(va, 2, aa, x);
+            Array xva = ArrayUtil.slice(wa, 2, aa, x);
+            Array r = data == null ? null : ArrayUtil.slice(data, 2, aa, x);
+            Array yya = ya.getRank() == 1 ? ya : ArrayUtil.slice(ya, 2, aa, x);
+            Array zza = za.getRank() == 1 ? za : ArrayUtil.slice(za, 2, aa, x);
+            GraphicCollection3D graphics = streamLines(yya, zza, x, xua, xva, r, density, "x", ls);
+            sgs.add(graphics);
+        }
+
+        //Y slice
+        for (int i = 0; i < ySlice.size(); i++) {
+            y = ySlice.get(i).doubleValue();
+            Array aa = ya;
+            if (ya.getRank() == 3) {
+                int[] shape = ya.getShape();
+                aa = ya.section(new int[]{0,0,0}, new int[]{1,shape[1],1});
+            }
+            Array xua = ArrayUtil.slice(ua, 1, aa, y);
+            Array xva = ArrayUtil.slice(wa, 1, aa, y);
+            Array r = data == null ? null : ArrayUtil.slice(data, 1, aa, y);
+            Array xxa = xa.getRank() == 1 ? xa : ArrayUtil.slice(xa, 1, aa, y);
+            Array zza = za.getRank() == 1 ? za : ArrayUtil.slice(za, 1, aa, y);
+            GraphicCollection3D graphics = streamLines(xxa, zza, y, xua, xva, r, density, "y", ls);
+            sgs.add(graphics);
+        }
+
+        //Z slice
+        for (int i = 0; i < zSlice.size(); i++) {
+            z = zSlice.get(i).doubleValue();
+            Array aa = za;
+            if (za.getRank() == 3) {
+                int[] shape = za.getShape();
+                aa = za.section(new int[]{0,0,0}, new int[]{shape[0],1,1});
+            }
+            Array xua = ArrayUtil.slice(ua, 0, aa, z);
+            Array xva = ArrayUtil.slice(va, 0, aa, z);
+            Array r = data == null ? null : ArrayUtil.slice(data, 0, aa, z);
+            Array xxa = xa.getRank() == 1 ? xa : ArrayUtil.slice(xa, 0, aa, z);
+            Array yya = ya.getRank() == 1 ? ya : ArrayUtil.slice(ya, 0, aa, z);
+            GraphicCollection3D graphics = streamLines(xxa, yya, z, xua, xva, r, density, "z", ls);
+            sgs.add(graphics);
+        }
+
+        return sgs;
+    }
+
+    /**
+     * Create streamline slices in 3D axes
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate array
+     * @param ua U component array
+     * @param va V component array
+     * @param wa W component array
+     * @param data Data array
+     * @param xSlice X slices
+     * @param ySlice Y slices
+     * @param zSlice Z slices
+     * @param density Streamline density
+     * @param ls Legend scheme
+     * @return Streamline slices graphics
+     * @throws InvalidRangeException
+     */
+    public static List<GraphicCollection3D> streamSlice(Array xa, Array ya, Array za, Array ua,
+                                                        Array va, Array wa, Array data, List<Integer> zSliceIndex,
+                                                        int density, LegendScheme ls) throws InvalidRangeException {
+        List<GraphicCollection3D> sgs = new ArrayList<>();
+        int zIdx;
+
+        //Z slice
+        for (int i = 0; i < zSliceIndex.size(); i++) {
+            zIdx = zSliceIndex.get(i);
+            Array aa = za;
+            if (za.getRank() == 3) {
+                int[] shape = za.getShape();
+                aa = za.section(new int[]{0,0,0}, new int[]{shape[0],1,1});
+            }
+            Array xua = ArrayUtil.slice(ua, 0, zIdx);
+            Array xva = ArrayUtil.slice(va, 0, zIdx);
+            Array r = data == null ? null : ArrayUtil.slice(data, 0, zIdx);
+            Array xxa = xa.getRank() == 1 ? xa : ArrayUtil.slice(xa, 0, zIdx);
+            Array yya = ya.getRank() == 1 ? ya : ArrayUtil.slice(ya, 0, zIdx);
+            GraphicCollection3D graphics;
+            if (za.getRank() == 1) {
+                double z = za.getDouble(zIdx);
+                graphics = streamLines(xxa, yya, z, xua, xva, r, density, "z", ls);
+            } else {
+                Array zza = ArrayUtil.slice(za, 0, zIdx);
+                graphics = streamLines(xxa, yya, zza, xua, xva, r, density, ls);
+            }
+            sgs.add(graphics);
+        }
+
+        return sgs;
     }
   
 //    /**

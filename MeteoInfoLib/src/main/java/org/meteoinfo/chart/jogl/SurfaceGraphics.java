@@ -23,7 +23,6 @@ public class SurfaceGraphics extends GraphicCollection3D {
     private boolean faceInterp;
     private boolean edgeInterp;
     private boolean mesh;
-    private boolean usingLight;
     
     /**
      * Constructor
@@ -127,22 +126,6 @@ public class SurfaceGraphics extends GraphicCollection3D {
      */
     public void setMesh(boolean value) {
         this.mesh = value;
-    }
-
-    /**
-     * Get using light or not
-     * @return Boolean
-     */
-    public boolean isUsingLight() {
-        return this.usingLight;
-    }
-
-    /**
-     * Set using light or not
-     * @param value Boolean
-     */
-    public void setUsingLight(boolean value) {
-        this.usingLight = value;
     }
     
     /**

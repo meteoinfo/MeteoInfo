@@ -4018,6 +4018,38 @@ public class ArrayUtil {
      * Get slice array along an axis
      * @param a The original array
      * @param axis The axis
+     * @param idx The axis index
+     * @return Slice array
+     * @throws InvalidRangeException
+     */
+    public static Array slice(Array a, int axis, int idx) throws InvalidRangeException {
+        a = a.copyIfView();
+
+        int ndim = a.getRank();
+        int[] dShape = a.getShape();
+        if (idx < 0 || idx >= dShape[axis]) {
+            return null;
+        } else {
+            int[] origin = new int[ndim];
+            int[] shape = new int[ndim];
+            for (int i = 0; i < ndim; i++) {
+                if (i == axis) {
+                    origin[i] = idx;
+                    shape[i] = 1;
+                } else {
+                    origin[i] = 0;
+                    shape[i] = dShape[i];
+                }
+            }
+            Array r = a.section(origin, shape);
+            return r;
+        }
+    }
+
+    /**
+     * Get slice array along an axis
+     * @param a The original array
+     * @param axis The axis
      * @param dim axis dimension array
      * @param v axis value of slice
      * @return Slice array
@@ -4841,7 +4873,6 @@ public class ArrayUtil {
      */
     public static int getDimIndex(Array dim, Number v) {
         dim = dim.copyIfView();
-        int idx;
         switch (dim.getDataType()) {
             case BYTE:
                 return Arrays.binarySearch((byte[]) dim.getStorage(), v.byteValue());
@@ -4862,7 +4893,7 @@ public class ArrayUtil {
             return -1;
         }
 
-        idx = n - 1;
+        int idx = n - 1;
         for (int i = 1; i < n; i++) {
             if (v.doubleValue() < dim.getDouble(i)) {
                 idx = i - 1;
@@ -4872,35 +4903,100 @@ public class ArrayUtil {
         return idx;
     }
 
-    private static int[] gridIndex(Array xdim, Array ydim, double x, double y) {
-        int xn = (int) xdim.getSize();
-        int yn = (int) ydim.getSize();
-        int xIdx = getDimIndex(xdim, x);
-        if (xIdx == -1 || xIdx == - (xn + 1)) {
+    /**
+     * Get grid array x/y value index
+     * @param xdim X coordinate array
+     * @param ydim Y coordinate array
+     * @param x X value
+     * @param y Y value
+     * @return X/Y index
+     */
+    public static int[] gridIndex(Array xdim, Array ydim, double x, double y) {
+        if (xdim.getRank() == 1) {
+            int xn = (int) xdim.getSize();
+            int yn = (int) ydim.getSize();
+            int xIdx = getDimIndex(xdim, x);
+            if (xIdx == -1 || xIdx == -(xn + 1)) {
+                return null;
+            } else if (xIdx < 0) {
+                xIdx = -xIdx - 2;
+            }
+
+            int yIdx = getDimIndex(ydim, y);
+            if (yIdx == -1 || yIdx == -(yn + 1)) {
+                return null;
+            } else if (yIdx < 0) {
+                yIdx = -yIdx - 2;
+            }
+
+            if (xIdx == xn - 1) {
+                xIdx = xn - 2;
+            }
+            if (yIdx == yn - 1) {
+                yIdx = yn - 2;
+            }
+
+            return new int[]{yIdx, xIdx};
+        } else {
+            int xIdx = -1, yIdx = -1;
+            int[] shape = xdim.getShape();
+            int yn = shape[0];
+            int xn = shape[1];
+            Index index = new Index2D(shape);
+            double x1, x2, y1, y2;
+            for (int i = 0; i < yn - 1; i++) {
+                for (int j = 0; j < xn - 1; j++) {
+                    index = index.set(i, j);
+                    y1 = ydim.getDouble(index);
+                    index = index.set(i+1, j);
+                    y2 = ydim.getDouble(index);
+                    if (y >= y1 && y < y2) {
+                        index = index.set(i, j);
+                        x1 = xdim.getDouble(index);
+                        index = index.set(i, j+1);
+                        x2 = xdim.getDouble(index);
+                        if (x >= x1 && x < x2) {
+                            yIdx = i;
+                            xIdx = j;
+                        }
+                    }
+                }
+            }
+
+            if (yIdx >= 0 && xIdx >= 0)
+                return new int[]{yIdx, xIdx};
+            else
+                return null;
+        }
+    }
+
+    /**
+     * Get grid array x/y value index
+     * @param xdim X coordinate array
+     * @param ydim Y coordinate array
+     * @param x X value
+     * @param y Y value
+     * @return X/Y index
+     */
+    public static int[] gridIndex(double[][] xdim, double[][] ydim, double x, double y) {
+        int xIdx = -1, yIdx = -1;
+        int yn = xdim.length;
+        int xn = xdim[0].length;
+        for (int i = 0; i < yn - 1; i++) {
+            for (int j = 0; j < xn - 1; j++) {
+                if (y >= ydim[i][j] && y < ydim[i+1][j]) {
+                    if (x >= xdim[i][j] && x < xdim[i][j+1]) {
+                        yIdx = i;
+                        xIdx = j;
+                    }
+                }
+            }
+        }
+
+        if (yIdx >= 0 && xIdx >= 0)
+            return new int[]{yIdx, xIdx};
+        else
             return null;
-        } else if (xIdx < 0) {
-            xIdx = - xIdx - 2;
-        }
-
-        int yIdx = getDimIndex(ydim, y);
-        if (yIdx == -1 || yIdx == -(yn + 1)) {
-            return null;
-        } else if (yIdx < 0) {
-            yIdx = - yIdx - 2;
-        }
-
-        if (xIdx == xn - 1) {
-            xIdx = xn - 2;
-        }
-        if (yIdx == yn - 1) {
-            yIdx = yn - 2;
-        }
-        int i1 = yIdx;
-        int j1 = xIdx;
-        int i2 = i1 + 1;
-        int j2 = j1 + 1;
-
-        return new int[]{i1, j1, i2, j2};
     }
 
     private static double bilinear(Array data, Index dindex, Array xdim, Array ydim, double x, double y) {
@@ -4915,8 +5011,8 @@ public class ArrayUtil {
 
         int i1 = xyIdx[0];
         int j1 = xyIdx[1];
-        int i2 = xyIdx[2];
-        int j2 = xyIdx[3];
+        int i2 = i1 + 1;
+        int j2 = j1 + 1;
         Index index = data.getIndex();
         int n = index.getRank();
         for (int i = 0; i < n - 2; i++) {

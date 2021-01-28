@@ -21,6 +21,7 @@ public class GraphicCollection3D extends GraphicCollection{
     protected boolean allQuads;
     protected boolean allTriangle;
     protected boolean allConvexPolygon;
+    protected boolean usingLight;
     
     /**
      * Constructor
@@ -33,6 +34,7 @@ public class GraphicCollection3D extends GraphicCollection{
         allQuads = false;
         allTriangle = false;
         allConvexPolygon = false;
+        usingLight = true;
     }
     
     /**
@@ -158,5 +160,21 @@ public class GraphicCollection3D extends GraphicCollection{
      */
     public void setAllConvexPolygon(boolean value) {
         this.allConvexPolygon = value;
+    }
+
+    /**
+     * Get using light or not
+     * @return Boolean
+     */
+    public boolean isUsingLight() {
+        return this.usingLight;
+    }
+
+    /**
+     * Set using light or not
+     * @param value Boolean
+     */
+    public void setUsingLight(boolean value) {
+        this.usingLight = value;
     }
 }

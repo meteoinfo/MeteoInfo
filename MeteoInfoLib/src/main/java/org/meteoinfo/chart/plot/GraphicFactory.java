@@ -5093,9 +5093,9 @@ public class GraphicFactory {
                 }
                 shape.setPoints(points);
                 graphics.add(new Graphic(shape, cbs));
-                graphics.setLegendScheme(ls);
             }
         }
+        graphics.setLegendScheme(ls);
 
         return graphics;
     }
@@ -5175,9 +5175,9 @@ public class GraphicFactory {
                 }
                 shape.setPoints(points);
                 graphics.add(new Graphic(shape, cbs));
-                graphics.setLegendScheme(ls);
             }
         }
+        graphics.setLegendScheme(ls);
 
         return graphics;
     }
@@ -5287,10 +5287,6 @@ public class GraphicFactory {
         for (int i = 0; i < zSliceIndex.size(); i++) {
             zIdx = zSliceIndex.get(i);
             Array aa = za;
-            if (za.getRank() == 3) {
-                int[] shape = za.getShape();
-                aa = za.section(new int[]{0,0,0}, new int[]{shape[0],1,1});
-            }
             Array xua = ArrayUtil.slice(ua, 0, zIdx);
             Array xva = ArrayUtil.slice(va, 0, zIdx);
             Array r = data == null ? null : ArrayUtil.slice(data, 0, zIdx);
@@ -5302,6 +5298,7 @@ public class GraphicFactory {
                 graphics = streamLines(xxa, yya, z, xua, xva, r, density, "z", ls);
             } else {
                 Array zza = ArrayUtil.slice(za, 0, zIdx);
+                zza = zza.copyIfView();
                 graphics = streamLines(xxa, yya, zza, xua, xva, r, density, ls);
             }
             sgs.add(graphics);

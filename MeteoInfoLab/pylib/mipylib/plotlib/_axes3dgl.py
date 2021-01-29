@@ -461,6 +461,8 @@ class Axes3DGL(Axes3D):
                 zslice = [zslice]
             graphics = GraphicFactory.streamSlice(x, y, z, u, v, w, cdata, xslice, yslice, zslice, density, ls)
         else:
+            if isinstance(zslice_index, int):
+                zslice_index = [zslice_index]
             graphics = GraphicFactory.streamSlice(x, y, z, u, v, w, cdata, zslice_index, density, ls)
 
         lighting = kwargs.pop('lighting', None)

@@ -348,8 +348,16 @@ class Axes3DGL(Axes3D):
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
-                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, c, 10)
+                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, c, 1)
             ls = plotutil.setlegendscheme_line(ls, **kwargs)
+
+        if not kwargs.has_key('headwidth'):
+            kwargs['headwidth'] = 1
+        if not kwargs.has_key('headlength'):
+            kwargs['headlength'] = 2.5
+        for i in range(ls.getBreakNum()):
+            lb = plotutil.line2stream(ls.getLegendBreak(i), **kwargs)
+            ls.setLegendBreak(i, lb)
 
         if not cdata is None:
             cdata = plotutil.getplotdata(cdata)
@@ -441,8 +449,16 @@ class Axes3DGL(Axes3D):
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
-                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, c, 10)
+                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, c, 1)
             ls = plotutil.setlegendscheme_line(ls, **kwargs)
+
+        if not kwargs.has_key('headwidth'):
+            kwargs['headwidth'] = 1
+        if not kwargs.has_key('headlength'):
+            kwargs['headlength'] = 2.5
+        for i in range(ls.getBreakNum()):
+            lb = plotutil.line2stream(ls.getLegendBreak(i), **kwargs)
+            ls.setLegendBreak(i, lb)
 
         if not cdata is None:
             cdata = plotutil.getplotdata(cdata)

@@ -5055,9 +5055,11 @@ public class GraphicFactory {
                         p.Z = (line.PointList.get(j)).Y;
                         p.X = z;
                         int[] idx = ArrayUtil.gridIndex(xa, ya, p.Y, p.Z);
-                        int yi = idx[0];
-                        int xi = idx[1];
-                        p.M = data.getDouble(yi * nx + xi);
+                        if (idx != null) {
+                            int yi = idx[0];
+                            int xi = idx[1];
+                            p.M = data.getDouble(yi * nx + xi);
+                        }
                         cb = ls.findLegendBreak(p.M);
                         cbs.add(cb);
                         points.add(p);
@@ -5069,9 +5071,11 @@ public class GraphicFactory {
                         p.Z = (line.PointList.get(j)).Y;
                         p.Y = z;
                         int[] idx = ArrayUtil.gridIndex(xa, ya, p.X, p.Z);
-                        int yi = idx[0];
-                        int xi = idx[1];
-                        p.M = data.getDouble(yi * nx + xi);
+                        if (idx != null) {
+                            int yi = idx[0];
+                            int xi = idx[1];
+                            p.M = data.getDouble(yi * nx + xi);
+                        }
                         cb = ls.findLegendBreak(p.M);
                         cbs.add(cb);
                         points.add(p);
@@ -5083,9 +5087,11 @@ public class GraphicFactory {
                         p.Y = (line.PointList.get(j)).Y;
                         p.Z = z;
                         int[] idx = ArrayUtil.gridIndex(xa, ya, p.X, p.Y);
-                        int yi = idx[0];
-                        int xi = idx[1];
-                        p.M = data.getDouble(yi * nx + xi);
+                        if (idx != null) {
+                            int yi = idx[0];
+                            int xi = idx[1];
+                            p.M = data.getDouble(yi * nx + xi);
+                        }
                         cb = ls.findLegendBreak(p.M);
                         cbs.add(cb);
                         points.add(p);
@@ -5146,9 +5152,11 @@ public class GraphicFactory {
                     p.X = (line.PointList.get(j)).X;
                     p.Y = (line.PointList.get(j)).Y;
                     int[] idx = ArrayUtil.gridIndex(xa, ya, p.Y, p.Z);
-                    int yi = idx[0];
-                    int xi = idx[1];
-                    p.Z = za.getDouble(yi * nx + xi);
+                    if (idx != null) {
+                        int yi = idx[0];
+                        int xi = idx[1];
+                        p.Z = za.getDouble(yi * nx + xi);
+                    }
                     points.add(p);
                 }
                 shape.setPoints(points);
@@ -5165,10 +5173,12 @@ public class GraphicFactory {
                     p.X = (line.PointList.get(j)).X;
                     p.Y = (line.PointList.get(j)).Y;
                     int[] idx = ArrayUtil.gridIndex(xa, ya, p.X, p.Y);
-                    int yi = idx[0];
-                    int xi = idx[1];
-                    p.Z = za.getDouble(yi * nx + xi);
-                    p.M = data.getDouble(yi * nx + xi);
+                    if (idx != null) {
+                        int yi = idx[0];
+                        int xi = idx[1];
+                        p.Z = za.getDouble(yi * nx + xi);
+                        p.M = data.getDouble(yi * nx + xi);
+                    }
                     cb = ls.findLegendBreak(p.M);
                     cbs.add(cb);
                     points.add(p);

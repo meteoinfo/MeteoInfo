@@ -1683,7 +1683,18 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 break;
             case Polyline:
             case PolylineZ:
-                this.drawLineString(gl, graphic);
+                ColorBreak cb = graphic.getLegend();
+                if (cb instanceof StreamlineBreak) {
+                    this.drawStreamline(gl, graphic);
+                } else if (cb instanceof ColorBreakCollection) {
+                    if (((ColorBreakCollection) cb).get(0) instanceof StreamlineBreak) {
+                        this.drawStreamline(gl, graphic);
+                    } else {
+                        this.drawLineString(gl, graphic);
+                    }
+                } else {
+                    this.drawLineString(gl, graphic);
+                }
                 break;
             case Polygon:
             case PolygonZ:
@@ -1790,6 +1801,95 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     }
                 }
                 gl.glEnd();
+            }
+        }
+    }
+
+    private void drawStreamline(GL2 gl, Graphic graphic) {
+        if (extent.intersects(graphic.getExtent())) {
+            PolylineZShape shape = (PolylineZShape) graphic.getShape();
+            ColorBreak cb = graphic.getLegend();
+            if (cb.getBreakType() == BreakTypes.ColorBreakCollection) {
+                ColorBreakCollection cbc = (ColorBreakCollection) cb;
+                Polyline line = shape.getPolylines().get(0);
+                List<PointZ> ps = (List<PointZ>) line.getPointList();
+                float[] rgba;
+                PointZ p;
+                gl.glLineWidth(((PolylineBreak) cbc.get(0)).getWidth() * this.dpiScale);
+                gl.glBegin(GL2.GL_LINE_STRIP);
+                for (int i = 0; i < ps.size(); i++) {
+                    PolylineBreak plb = (PolylineBreak) cbc.get(i);
+                    rgba = plb.getColor().getRGBComponents(null);
+                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    gl.glLineWidth(plb.getWidth() * this.dpiScale);
+                    p = ps.get(i);
+                    gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
+                }
+                gl.glEnd();
+
+                //Draw arrow
+                StreamlineBreak slb = (StreamlineBreak) cbc.get(0);
+                int interval = slb.getInterval();
+                if (slb.getArrowHeadLength() > 0 || slb.getArrowHeadWidth() > 0) {
+                    float[] p2, p1;
+                    PointZ pp;
+                    for (int i = 0; i < ps.size(); i++) {
+                        slb = (StreamlineBreak) cbc.get(i);
+                        pp = ps.get(i);
+                        p2 = new float[]{transform.transform_x((float) pp.X),
+                                transform.transform_y((float) pp.Y),
+                                transform.transform_z((float) pp.Z)};
+                        if (i > 0 && i % interval == 0) {
+                            pp = ps.get(i - 1);
+                            p1 = new float[]{transform.transform_x((float) pp.X),
+                                    transform.transform_y((float) pp.Y),
+                                    transform.transform_z((float) pp.Z)};
+                            drawArrow(gl, p2, p1, slb);
+                        }
+                    }
+                }
+            } else {
+                StreamlineBreak slb = (StreamlineBreak) cb;
+                int interval = slb.getInterval() * 3;
+                float[] rgba = slb.getColor().getRGBComponents(null);
+                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                gl.glLineWidth(slb.getWidth() * this.dpiScale);
+                gl.glBegin(GL2.GL_LINE_STRIP);
+                for (Polyline line : shape.getPolylines()) {
+                    List<PointZ> ps = (List<PointZ>) line.getPointList();
+                    float[] p;
+                    PointZ pp;
+                    for (int i = 0; i < ps.size(); i++) {
+                        pp = ps.get(i);
+                        p = new float[]{transform.transform_x((float) pp.X),
+                                transform.transform_y((float) pp.Y),
+                                transform.transform_z((float) pp.Z)};
+                        gl.glVertex3f(p[0], p[1], p[2]);
+                    }
+                }
+                gl.glEnd();
+
+                //Draw arrow
+                if (slb.getArrowHeadLength() > 0 || slb.getArrowHeadWidth() > 0) {
+                    for (Polyline line : shape.getPolylines()) {
+                        List<PointZ> ps = (List<PointZ>) line.getPointList();
+                        float[] p, p1;
+                        PointZ pp;
+                        for (int i = 0; i < ps.size(); i++) {
+                            pp = ps.get(i);
+                            p = new float[]{transform.transform_x((float) pp.X),
+                                    transform.transform_y((float) pp.Y),
+                                    transform.transform_z((float) pp.Z)};
+                            if (i > 0 && i % interval == 0) {
+                                pp = ps.get(i - 1);
+                                p1 = new float[]{transform.transform_x((float) pp.X),
+                                        transform.transform_y((float) pp.Y),
+                                        transform.transform_z((float) pp.Z)};
+                                drawArrow(gl, p, p1, slb);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -2383,6 +2483,111 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
     }
 
+    void drawArrow(GL2 gl, float[] p1, float[] p2, StreamlineBreak slb) {
+        // Calculate vector along direction of line
+        float[] v = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
+        float norm_of_v = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+
+        // Size of cone in arrow:
+        //float coneFractionAxially = 0.025f; // radius at thickest part
+        //float coneFractionRadially = 0.12f; // length of arrow
+
+        //float coneHgt = coneFractionAxially;
+        //float coneRadius = coneFractionRadially;
+        float coneRadius = slb.getArrowHeadLength() * 0.02f;
+        float coneHgt = slb.getArrowHeadWidth() * 0.02f;
+
+        // Set location of arrowhead to be at the startpoint of the line
+        float[] vConeLocation = p2;
+
+        // Initialize transformation matrix
+        float[] mat44
+                = {1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1};
+
+        // The direction of the arrowhead is the line vector
+        float[] dVec = {v[0], v[1], v[2]};
+
+        // Normalize dVec to get Unit Vector norm_startVec
+        float[] norm_startVec = VectorUtil.normalizeVec3(dVec);
+
+        // Normalize zaxis to get Unit Vector norm_endVec
+        float[] zaxis = {0.0f, 0.0f, 1.0f};
+        float[] norm_endVec = VectorUtil.normalizeVec3(zaxis);
+
+        if (Float.isNaN(norm_endVec[0]) || Float.isNaN(norm_endVec[1]) || Float.isNaN(norm_endVec[2])) {
+            norm_endVec[0] = 0.0f;
+            norm_endVec[1] = 0.0f;
+            norm_endVec[2] = 0.0f;
+        }
+
+        // If vectors are identical, set transformation matrix to identity
+        if (((norm_startVec[0] - norm_endVec[0]) > 1e-14) && ((norm_startVec[1] - norm_endVec[1]) > 1e-14) && ((norm_startVec[2] - norm_endVec[2]) > 1e-14)) {
+            mat44[0] = 1.0f;
+            mat44[5] = 1.0f;
+            mat44[10] = 1.0f;
+            mat44[15] = 1.0f;
+        } // otherwise create the matrix
+        else {
+            // Vector cross-product, result = axb
+            float[] axb = new float[3];
+            VectorUtil.crossVec3(axb, norm_startVec, norm_endVec);
+
+            // Normalize axb to get Unit Vector norm_axb
+            float[] norm_axb = VectorUtil.normalizeVec3(axb);
+
+            if (Float.isNaN(norm_axb[0]) || Float.isNaN(norm_axb[1]) || Float.isNaN(norm_axb[2])) {
+                norm_axb[0] = 0.0f;
+                norm_axb[1] = 0.0f;
+                norm_axb[2] = 0.0f;
+            }
+
+            // Build the rotation matrix
+            float ac = (float) Math.acos(VectorUtil.dotVec3(norm_startVec, norm_endVec));
+
+            float s = (float) Math.sin(ac);
+            float c = (float) Math.cos(ac);
+            float t = 1 - c;
+
+            float x = norm_axb[0];
+            float y = norm_axb[1];
+            float z = norm_axb[2];
+
+            // Fill top-left 3x3
+            mat44[0] = t * x * x + c;
+            mat44[1] = t * x * y - s * z;
+            mat44[2] = t * x * z + s * y;
+
+            mat44[4] = t * x * y + s * z;
+            mat44[5] = t * y * y + c;
+            mat44[6] = t * y * z - s * x;
+
+            mat44[8] = t * x * z - s * y;
+            mat44[9] = t * y * z + s * x;
+            mat44[10] = t * z * z + c;
+
+            mat44[15] = 1.0f;
+        }
+
+        gl.glPushMatrix();
+        gl.glPushAttrib(GL2.GL_POLYGON_BIT); // includes GL_CULL_FACE
+        gl.glDisable(GL2.GL_CULL_FACE); // draw from all sides
+
+        // Translate and rotate arrowhead to correct position
+        gl.glTranslatef(vConeLocation[0], vConeLocation[1], vConeLocation[2]);
+        gl.glMultMatrixf(mat44, 0);
+
+        float[] rgba = slb.getColor().getRGBComponents(null);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        GLUquadric cone_obj = glu.gluNewQuadric();
+        glu.gluCylinder(cone_obj, 0, coneHgt, coneRadius, 8, 1);
+
+        gl.glPopAttrib(); // GL_CULL_FACE
+        gl.glPopMatrix();
+    }
+
     void drawWindArrow(GL2 gl, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
@@ -2409,7 +2614,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glEnd();
 
             // Calculate vector along direction of line
-            float[] v = {x2 - x1, y2 - y1, z2 - z1};
+            float[] v = {x1 - x2, y1 - y2, z1 - z2};
             float norm_of_v = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 
             // Size of cone in arrow:
@@ -2422,7 +2627,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             float coneHgt = shape.getHeadWith() * 0.02f;
 
             // Set location of arrowhead to be at the startpoint of the line
-            float[] vConeLocation = {x1, y1, z1};
+            float[] vConeLocation = {x2, y2, z2};
 
             // Initialize transformation matrix
             float[] mat44

@@ -704,21 +704,27 @@ def line2stream(lb, **kwargs):
     :returns: (*StreamineBreak*) Stream line break.
     '''
     albreak = StreamlineBreak(lb)
-    headwidth = kwargs.pop('headwidth', lb.getWidth() * 5.)
+    headwidth = lb.getWidth() * 5.
+    if kwargs.has_key('headwidth'):
+        headwidth = kwargs['headwidth']
     albreak.setArrowHeadWidth(headwidth)
-    headlength = kwargs.pop('headlength', headwidth * 1.5)
+    headlength = headwidth * 1.5
+    if kwargs.has_key('headlength'):
+        headlength = kwargs['headlength']
     albreak.setArrowHeadLength(headlength)
-    overhang = kwargs.pop('overhang', None)
+    overhang = None
+    if kwargs.has_key('overhang'):
+        overhang = kwargs['overhang']
     if not overhang is None:
         albreak.setArrowOverhang(overhang)
     if kwargs.has_key('fillcolor'):
-        fillcolor = kwargs.pop('fillcolor')
+        fillcolor = kwargs['fillcolor']
         albreak.setArrowFillColor(getcolor(fillcolor))
     if kwargs.has_key('edgecolor'):
-        edgecolor = kwargs.pop('edgecolor')
+        edgecolor = kwargs['edgecolor']
         albreak.setArrowOutlineColor(getcolor(edgecolor))
     if kwargs.has_key('interval'):
-        interval = kwargs.pop('interval')
+        interval = kwargs['interval']
         albreak.setInterval(interval)
     
     return albreak

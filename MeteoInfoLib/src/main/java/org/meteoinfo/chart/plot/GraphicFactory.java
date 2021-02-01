@@ -4921,6 +4921,7 @@ public class GraphicFactory {
                 }
             }
         }
+        graphics.setLegendScheme(ls);
 
         return graphics;
     }

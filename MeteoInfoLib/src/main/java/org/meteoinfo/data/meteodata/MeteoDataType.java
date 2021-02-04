@@ -56,6 +56,7 @@ public enum MeteoDataType {
         MICAPS_13,
         MICAPS_120,
         MICAPS_131,
+        MICAPS_MDFS,
         /// <summary>
         /// HYSPLIT concentration
         /// </summary>

@@ -52,38 +52,42 @@ public class MICAPSDataInfo {
 //            if (aLine.startsWith("\uFEFF")) {
 //                aLine = aLine.substring(1);
 //            }
-            dataArray = aLine.split("\\s+");
-            dataType = dataArray[0] + " " + dataArray[1];
-            dataType = dataType.trim().toLowerCase();
-            if (dataType.contains("iamond 1")) {
-                mdType = MeteoDataType.MICAPS_1;
-            }
-            if (dataType.equals("diamond 2")) {
-                mdType = MeteoDataType.MICAPS_2;
-            }
-            if (dataType.equals("diamond 3")) {
-                mdType = MeteoDataType.MICAPS_3;
-            }
-            if (dataType.equals("diamond 4")) {
-                mdType = MeteoDataType.MICAPS_4;
-            }
-            if (dataType.equals("diamond 7")) {
-                mdType = MeteoDataType.MICAPS_7;
-            }
-            if (dataType.equals("diamond 11")) {
-                mdType = MeteoDataType.MICAPS_11;
-            }
-            if (dataType.equals("diamond 13")) {
-                mdType = MeteoDataType.MICAPS_13;
-            }
-            if (dataType.contains("iamond 120")) {
-                mdType = MeteoDataType.MICAPS_120;
-            }
-            if (dataType.contains("diamond 131")){
-                mdType = MeteoDataType.MICAPS_131;
-            }
-            if (mdType == null) {
-                System.out.println(String.format("Unknown MICAPS data file type: %s", dataType));
+            if (aLine.substring(0, 4).equals("mdfs")) {
+                mdType = MeteoDataType.MICAPS_MDFS;
+            } else {
+                dataArray = aLine.split("\\s+");
+                dataType = dataArray[0] + " " + dataArray[1];
+                dataType = dataType.trim().toLowerCase();
+                if (dataType.contains("iamond 1")) {
+                    mdType = MeteoDataType.MICAPS_1;
+                }
+                if (dataType.equals("diamond 2")) {
+                    mdType = MeteoDataType.MICAPS_2;
+                }
+                if (dataType.equals("diamond 3")) {
+                    mdType = MeteoDataType.MICAPS_3;
+                }
+                if (dataType.equals("diamond 4")) {
+                    mdType = MeteoDataType.MICAPS_4;
+                }
+                if (dataType.equals("diamond 7")) {
+                    mdType = MeteoDataType.MICAPS_7;
+                }
+                if (dataType.equals("diamond 11")) {
+                    mdType = MeteoDataType.MICAPS_11;
+                }
+                if (dataType.equals("diamond 13")) {
+                    mdType = MeteoDataType.MICAPS_13;
+                }
+                if (dataType.contains("iamond 120")) {
+                    mdType = MeteoDataType.MICAPS_120;
+                }
+                if (dataType.contains("diamond 131")) {
+                    mdType = MeteoDataType.MICAPS_131;
+                }
+                if (mdType == null) {
+                    System.out.println(String.format("Unknown MICAPS data file type: %s", dataType));
+                }
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MICAPSDataInfo.class.getName()).log(Level.SEVERE, null, ex);

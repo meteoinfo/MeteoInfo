@@ -24,10 +24,7 @@ import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
 import org.meteoinfo.data.meteodata.hysplit.HYSPLITConcDataInfo;
 import org.meteoinfo.data.meteodata.hysplit.HYSPLITPartDataInfo;
 import org.meteoinfo.data.meteodata.hysplit.HYSPLITTrajDataInfo;
-import org.meteoinfo.data.meteodata.micaps.MICAPS1DataInfo;
-import org.meteoinfo.data.meteodata.micaps.MICAPS3DataInfo;
-import org.meteoinfo.data.meteodata.micaps.MICAPS4DataInfo;
-import org.meteoinfo.data.meteodata.micaps.MICAPSDataInfo;
+import org.meteoinfo.data.meteodata.micaps.*;
 import org.meteoinfo.data.meteodata.netcdf.NetCDFDataInfo;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -38,10 +35,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.math.ArrayMath;
-import org.meteoinfo.data.meteodata.micaps.MICAPS11DataInfo;
-import org.meteoinfo.data.meteodata.micaps.MICAPS120DataInfo;
-import org.meteoinfo.data.meteodata.micaps.MICAPS13DataInfo;
-import org.meteoinfo.data.meteodata.micaps.MICAPS7DataInfo;
 import org.meteoinfo.data.meteodata.mm5.MM5DataInfo;
 import org.meteoinfo.data.meteodata.mm5.MM5IMDataInfo;
 import org.meteoinfo.global.MIMath;
@@ -51,8 +44,6 @@ import org.meteoinfo.data.meteodata.awx.AWXDataInfo;
 import org.meteoinfo.data.meteodata.bandraster.BILDataInfo;
 import org.meteoinfo.data.meteodata.bandraster.GeoTiffDataInfo;
 import org.meteoinfo.data.meteodata.metar.METARDataInfo;
-import org.meteoinfo.data.meteodata.micaps.MICAPS131DataInfo;
-import org.meteoinfo.data.meteodata.micaps.MICAPS2DataInfo;
 import org.meteoinfo.data.meteodata.synop.SYNOPDataInfo;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.InvalidRangeException;
@@ -335,6 +326,14 @@ public class MeteoDataInfo {
                     case 1:
                     case 2:
                     case 3:
+                        return true;
+                    default:
+                        return false;
+                }
+            case MICAPS_MDFS:
+                switch (((MDFSDataInfo) _dataInfo).getType()) {
+                    case 4:
+                    case 11:
                         return true;
                     default:
                         return false;
@@ -884,6 +883,8 @@ public class MeteoDataInfo {
             case MICAPS_131:
                 _dataInfo = new MICAPS131DataInfo();
                 break;
+            case MICAPS_MDFS:
+                _dataInfo = new MDFSDataInfo();
         }
         _dataInfo.readDataInfo(fileName);
         _infoText = _dataInfo.generateInfoText();

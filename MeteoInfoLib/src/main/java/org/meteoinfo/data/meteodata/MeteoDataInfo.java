@@ -367,6 +367,12 @@ public class MeteoDataInfo {
                 } else {
                     return false;
                 }
+            case MICAPS_MDFS:
+                switch (((MDFSDataInfo) this._dataInfo).getType()) {
+                    case 1:
+                    case 2:
+                        return true;
+                }
             default:
                 return false;
         }
@@ -885,9 +891,21 @@ public class MeteoDataInfo {
                 break;
             case MICAPS_MDFS:
                 _dataInfo = new MDFSDataInfo();
+                break;
         }
         _dataInfo.readDataInfo(fileName);
         _infoText = _dataInfo.generateInfoText();
+        if (mdType == MeteoDataType.MICAPS_MDFS) {
+            switch (((MDFSDataInfo)_dataInfo).getType()) {
+                case 1:
+                case 2:
+                    _meteoUVSet.setUV(false);
+                    _meteoUVSet.setFixUVStr(true);
+                    _meteoUVSet.setUStr("WindDirection");
+                    _meteoUVSet.setVStr("WindSpeed");
+                    break;
+            }
+        }
     }
     // </editor-fold>
 

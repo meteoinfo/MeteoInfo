@@ -96,6 +96,19 @@ public class DataConvert {
     }
 
     /**
+     * Byte array convert to long integer
+     *
+     * @param bytes Byte array
+     * @param byteOrder Byte order
+     * @return Long integer value
+     */
+    public static Long bytes2Long(byte[] bytes, ByteOrder byteOrder) {
+        ByteBuffer buf = ByteBuffer.wrap(bytes);
+        buf.order(byteOrder);
+        return buf.getLong();
+    }
+
+    /**
      * Byte array convert to integer
      *
      * @param bytes byte array

@@ -19,10 +19,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.meteoinfo.data.dataframe.DataFrame;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.ndarray.DataType;
 
-/**
+import javax.xml.crypto.Data;
+
+ /**
  *
  * @author yaqiang
  */
@@ -33,6 +37,7 @@ public class StationInfoData {
     private List<String> _variables = new ArrayList<>();
     private List<List<String>> _dataList = new ArrayList<>();
     private List<String> _stations = new ArrayList<>();
+    private DataFrame dataFrame;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     // </editor-fold>
@@ -103,6 +108,22 @@ public class StationInfoData {
      */
     public void setDataList(List<List<String>> value) {
         _dataList = value;
+    }
+
+     /**
+      * Get Data frame
+      * @return Data frame
+      */
+    public DataFrame getDataFrame() {
+        return this.dataFrame;
+    }
+
+     /**
+      * Set data frame
+      * @param value Data frame
+      */
+    public void setDataFrame(DataFrame value) {
+        this.dataFrame = value;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

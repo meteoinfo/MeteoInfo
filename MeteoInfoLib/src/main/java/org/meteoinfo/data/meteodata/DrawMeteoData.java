@@ -16,6 +16,7 @@ package org.meteoinfo.data.meteodata;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
+import org.meteoinfo.data.dataframe.DataFrame;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.drawing.ContourDraw;
 import org.meteoinfo.drawing.Draw;
@@ -2133,50 +2134,80 @@ public class DrawMeteoData {
         int i, j;
         PointD aPoint;
         VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
-        for (i = 0; i < stInfoData.getFields().size(); i++) {
-            String fieldName = stInfoData.getFields().get(i);
-            DataType dtype = DataType.STRING;
-            if (stInfoData.getVariables().contains(stInfoData.getFields().get(i))) {
-                dtype = DataType.DOUBLE;
+
+        DataFrame dataFrame = stInfoData.getDataFrame();
+        if (dataFrame == null) {
+            for (i = 0; i < stInfoData.getFields().size(); i++) {
+                String fieldName = stInfoData.getFields().get(i);
+                DataType dtype = DataType.STRING;
+                if (stInfoData.getVariables().contains(stInfoData.getFields().get(i))) {
+                    dtype = DataType.DOUBLE;
+                }
+                aLayer.editAddField(fieldName, dtype);
             }
-            aLayer.editAddField(fieldName, dtype);
-        }
 
-        double v;
-        for (i = 0; i < stInfoData.getDataList().size(); i++) {
-            List<String> dataList = stInfoData.getDataList().get(i);
-            aPoint = new PointD();
-            aPoint.X = Double.parseDouble(dataList.get(1));
-            aPoint.Y = Double.parseDouble(dataList.get(2));
-            PointShape aPointShape = new PointShape();
-            aPointShape.setPoint(aPoint);
+            double v;
+            for (i = 0; i < stInfoData.getDataList().size(); i++) {
+                List<String> dataList = stInfoData.getDataList().get(i);
+                aPoint = new PointD();
+                aPoint.X = Double.parseDouble(dataList.get(1));
+                aPoint.Y = Double.parseDouble(dataList.get(2));
+                PointShape aPointShape = new PointShape();
+                aPointShape.setPoint(aPoint);
 
-            int shapeNum = aLayer.getShapeNum();
-            try {
-                if (aLayer.editInsertShape(aPointShape, shapeNum)) {
-                    for (j = 0; j < stInfoData.getFields().size(); j++) {
-                        if (stInfoData.getVariables().contains(stInfoData.getFields().get(j))) {
-                            if (dataList.size() <= j) {
-                                v = 9999.0;
-                            } else {
-                                if (dataList.get(j).isEmpty()) {
+                int shapeNum = aLayer.getShapeNum();
+                try {
+                    if (aLayer.editInsertShape(aPointShape, shapeNum)) {
+                        for (j = 0; j < stInfoData.getFields().size(); j++) {
+                            if (stInfoData.getVariables().contains(stInfoData.getFields().get(j))) {
+                                if (dataList.size() <= j) {
                                     v = 9999.0;
                                 } else {
-                                    try {
-                                        v = Double.parseDouble(dataList.get(j));
-                                    } catch (Exception e) {
+                                    if (dataList.get(j).isEmpty()) {
                                         v = 9999.0;
+                                    } else {
+                                        try {
+                                            v = Double.parseDouble(dataList.get(j));
+                                        } catch (Exception e) {
+                                            v = 9999.0;
+                                        }
                                     }
                                 }
+                                aLayer.editCellValue(stInfoData.getFields().get(j), shapeNum, v);
+                            } else {
+                                aLayer.editCellValue(stInfoData.getFields().get(j), shapeNum, dataList.get(j));
                             }
-                            aLayer.editCellValue(stInfoData.getFields().get(j), shapeNum, v);
-                        } else {
-                            aLayer.editCellValue(stInfoData.getFields().get(j), shapeNum, dataList.get(j));
                         }
                     }
+                } catch (Exception ex) {
+                    Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (Exception ex) {
-                Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            for (i = 0; i < dataFrame.size(); i++) {
+                String fieldName = dataFrame.getColumnNames().get(i);
+                DataType dataType = dataFrame.getColumnDataTypes().get(i);
+                aLayer.editAddField(fieldName, dataType);
+            }
+
+            double v;
+            for (i = 0; i < dataFrame.length(); i++) {
+                aPoint = new PointD();
+                aPoint.X = (float)dataFrame.getValue(i, "Longitude");
+                aPoint.Y = (float)dataFrame.getValue(i, "Latitude");
+                PointShape aPointShape = new PointShape();
+                aPointShape.setPoint(aPoint);
+
+                int shapeNum = aLayer.getShapeNum();
+                try {
+                    if (aLayer.editInsertShape(aPointShape, shapeNum)) {
+                        for (j = 0; j < dataFrame.size(); j++) {
+                            aLayer.editCellValue(j, shapeNum, dataFrame.getValue(i, j));
+                        }
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
 

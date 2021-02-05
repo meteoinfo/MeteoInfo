@@ -21,16 +21,14 @@
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city_streamslice_zslice_index.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city_quiver-1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot_4.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\micaps\mdfs_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\micaps\mdfs_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\micaps\mdfs_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city_streamslice_zslice_index.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city_quiver-1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot_4.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\micaps\mdfs_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\micaps\mdfs_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\micaps\mdfs_2.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -38,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="0,0" MainFormSize="1368,783"/>
+  <Startup MainFormLocation="0,0" MainFormSize="1280,680"/>
 </MeteoInfo>

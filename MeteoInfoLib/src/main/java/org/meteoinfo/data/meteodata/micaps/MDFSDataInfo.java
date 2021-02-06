@@ -119,6 +119,11 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     tDim.addValue(JDateUtil.toOADate(dt));
                     this.setTimeDimension(tDim);
                     this.addDimension(tDim);
+                    Dimension zDim = new Dimension(DimensionType.Z);
+                    zDim.setName("level");
+                    zDim.setValues(new float[]{level});
+                    this.setZDimension(zDim);
+                    this.addDimension(zDim);
                     Dimension stDim = new Dimension(DimensionType.Other);
                     stDim.setName("station");
                     float[] values = new float[numStation];
@@ -139,6 +144,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     var.setStation(false);
                     var.setDataType(DataType.STRING);
                     var.setDimension(tDim);
+                    var.setDimension(zDim);
                     var.setDimension(stDim);
                     var.addAttribute("name", varName);
                     this.addVariable(var);
@@ -149,6 +155,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     var.setStation(true);
                     var.setDataType(DataType.FLOAT);
                     var.setDimension(tDim);
+                    var.setDimension(zDim);
                     var.setDimension(stDim);
                     var.addAttribute("name", varName);
                     this.addVariable(var);
@@ -159,6 +166,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     var.setStation(true);
                     var.setDataType(DataType.FLOAT);
                     var.setDimension(tDim);
+                    var.setDimension(zDim);
                     var.setDimension(stDim);
                     var.addAttribute("name", varName);
                     this.variableNames.add(varName);
@@ -174,6 +182,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                         var.setStation(true);
                         var.setDataType((DataType) this.dataTypeMap.get(dataTypeId));
                         var.setDimension(tDim);
+                        var.setDimension(zDim);
                         var.setDimension(stDim);
                         var.addAttribute("name", varName);
                         this.addVariable(var);
@@ -237,6 +246,11 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     tDim.addValue(JDateUtil.toOADate(dt));
                     this.setTimeDimension(tDim);
                     this.addDimension(tDim);
+                    zDim = new Dimension(DimensionType.Z);
+                    zDim.setName("level");
+                    zDim.setValues(new float[]{level});
+                    this.setZDimension(zDim);
+                    this.addDimension(zDim);
                     Dimension yDim = new Dimension(DimensionType.Y);
                     if (deltaLat < 0) {
                         this.yReverse = true;
@@ -269,6 +283,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                             var.setName(this.element);
                             var.setDataType(DataType.FLOAT);
                             var.setDimension(tDim);
+                            var.setDimension(zDim);
                             var.setDimension(yDim);
                             var.setDimension(xDim);
                             this.addVariable(var);
@@ -281,6 +296,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                             var.setName("WindSpeed");
                             var.setDataType(DataType.FLOAT);
                             var.setDimension(tDim);
+                            var.setDimension(zDim);
                             var.setDimension(yDim);
                             var.setDimension(xDim);
                             this.addVariable(var);
@@ -289,6 +305,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                             var.setName("WindDirection");
                             var.setDataType(DataType.FLOAT);
                             var.setDimension(tDim);
+                            var.setDimension(zDim);
                             var.setDimension(yDim);
                             var.setDimension(xDim);
                             this.addVariable(var);

@@ -166,7 +166,7 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
                 }
                 var.setDataType(dt);
                 var.setStation(true);
-                //var.setDimension(tdim);
+                var.setDimension(tdim);
                 var.setDimension(stdim);
                 var.setFillValue(this.getMissingValue());
                 variables.add(var);

@@ -423,7 +423,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
             Section section = new Section(origin, size, stride);
             Array dataArray = Array.factory(DataType.FLOAT, section.getShape());
             IndexIterator ii = dataArray.getIndexIterator();
-            int rangeIdx = 1;
+            int rangeIdx = 2;
             switch (this.type) {
                 case 1:
                 case 2:

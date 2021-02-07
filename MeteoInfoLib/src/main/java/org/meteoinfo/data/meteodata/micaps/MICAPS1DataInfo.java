@@ -120,10 +120,12 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
             LocalDateTime time = LocalDateTime.of(year, Integer.parseInt(dataArray[1]),
                     Integer.parseInt(dataArray[2]), Integer.parseInt(dataArray[3]), 0, 0);
             Dimension tdim = new Dimension(DimensionType.T);
+            tdim.setName("time");
             double[] values = new double[1];
             values[0] = JDateUtil.toOADate(time);
             tdim.setValues(values);
             this.setTimeDimension(tdim);
+            this.addDimension(tdim);
 
             if (dataArray.length >= 5)
                 _stNum = Integer.parseInt(dataArray[4]);
@@ -396,8 +398,7 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
                 dt = DataType.INT;
                 break;
         }
-        int[] shape = new int[1];
-        shape[0] = this._stNum;
+        int[] shape = new int[]{1, this._stNum};
         Array r = Array.factory(dt, shape);
         int i;
         float v;

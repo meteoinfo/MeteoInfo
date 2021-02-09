@@ -646,7 +646,7 @@ public class GlobalUtil {
      *
      * @param line The string line
      * @param separator The separator
-     * @return Splitted string array
+     * @return Split string array
      */
     public static String[] split(String line, String separator) {
         if (separator == null || separator.equals(" ")) {

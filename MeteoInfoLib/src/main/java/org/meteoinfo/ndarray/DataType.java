@@ -45,34 +45,34 @@ import java.time.LocalDateTime;
  */
 public enum DataType {
 
-    BOOLEAN("boolean", 1, boolean.class, false),
-    BYTE("byte", 1, byte.class, false),
-    CHAR("char", 1, char.class, false),
-    SHORT("short", 2, short.class, false),
-    INT("int", 4, int.class, false),
-    LONG("long", 8, long.class, false),
-    FLOAT("float", 4, float.class, false),
-    DOUBLE("double", 8, double.class, false),
-    COMPLEX("complex", 1, Complex.class, false),
-    DATE("date", 1, LocalDateTime.class, false),
+    BOOLEAN("boolean", 1, boolean.class, false, 0),
+    BYTE("byte", 1, byte.class, false, 1),
+    CHAR("char", 1, char.class, false, 18),
+    SHORT("short", 2, short.class, false, 3),
+    INT("int", 4, int.class, false, 7),
+    LONG("long", 8, long.class, false, 9),
+    FLOAT("float", 4, float.class, false, 11),
+    DOUBLE("double", 8, double.class, false, 12),
+    COMPLEX("complex", 1, Complex.class, false, 15),
+    DATE("date", 1, LocalDateTime.class, false, 21),
     
     // object types
-    SEQUENCE("Sequence", 4, StructureDataIterator.class, false), // 32-bit index
-    STRING("String", 4, String.class, false), // 32-bit index
-    STRUCTURE("Structure", 1, StructureData.class, false), // size meaningless
+    SEQUENCE("Sequence", 4, StructureDataIterator.class, false, 22), // 32-bit index
+    STRING("String", 4, String.class, false, 19), // 32-bit index
+    STRUCTURE("Structure", 1, StructureData.class, false, 23), // size meaningless
 
-    ENUM1("enum1", 1, byte.class, false), // byte
-    ENUM2("enum2", 2, short.class, false), // short
-    ENUM4("enum4", 4, int.class, false), // int
+    ENUM1("enum1", 1, byte.class, false, 24), // byte
+    ENUM2("enum2", 2, short.class, false, 25), // short
+    ENUM4("enum4", 4, int.class, false, 26), // int
 
-    OPAQUE("opaque", 1, ByteBuffer.class, false), // byte blobs
+    OPAQUE("opaque", 1, ByteBuffer.class, false, 27), // byte blobs
 
-    OBJECT("object", 1, Object.class, false), // added for use with Array
+    OBJECT("object", 1, Object.class, false, 30), // added for use with Array
     
-    UBYTE("ubyte", 1, byte.class, true),
-    USHORT("ushort", 2, short.class, true),
-    UINT("uint", 4, int.class, true),
-    ULONG("ulong", 8, long.class, true);
+    UBYTE("ubyte", 1, byte.class, true, 2),
+    USHORT("ushort", 2, short.class, true, 4),
+    UINT("uint", 4, int.class, true, 8),
+    ULONG("ulong", 8, long.class, true, 10);
       
     /**
     * A property of {@link #isIntegral() integral} data types that determines whether they can represent both
@@ -89,16 +89,18 @@ public enum DataType {
     private final int size;
     private final Class primitiveClass;
     private final Signedness signedness;
+    private final int number;
 
-    DataType(String s, int size, Class primitiveClass, boolean isUnsigned) {
-        this(s, size, primitiveClass, isUnsigned ? Signedness.UNSIGNED : Signedness.SIGNED);
+    DataType(String s, int size, Class primitiveClass, boolean isUnsigned, int number) {
+        this(s, size, primitiveClass, isUnsigned ? Signedness.UNSIGNED : Signedness.SIGNED, number);
     }
 
-    DataType(String s, int size, Class primitiveClass, Signedness signedness) {
+    DataType(String s, int size, Class primitiveClass, Signedness signedness, int number) {
         this.niceName = s;
         this.size = size;
         this.primitiveClass = primitiveClass;
         this.signedness = signedness;
+        this.number = number;
     }
 
     /**
@@ -158,6 +160,16 @@ public enum DataType {
      */
     public boolean isUnsigned() {
         return signedness == Signedness.UNSIGNED;
+    }
+
+    /**
+     * Returns A unique number for each of the different built-in types.
+     * These are roughly ordered from least-to-most precision.
+     *
+     * @return
+     */
+    public int getNumber() {
+        return number;
     }
 
     /**

@@ -4556,7 +4556,7 @@ public class ArrayMath {
         int nIdx = (int)indices.getSize();
         if (axis == null) {
             int[] shape = a.getShape();
-            Array r = Array.factory(a.getDataType(), new int[]{nIdx});
+            Array r = Array.factory(a.getDataType(), indices.getShape());
             for (int i = 0; i < nIdx; i++) {
                 r.setObject(i, a.getObject(indices.getInt(i)));
             }

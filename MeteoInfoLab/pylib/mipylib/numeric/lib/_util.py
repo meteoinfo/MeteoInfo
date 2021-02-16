@@ -1,5 +1,16 @@
 import inspect
 
+def prod(iterable):
+    """
+    Product of a sequence of numbers.
+    Faster than np.prod for short lists like array shapes, and does
+    not overflow if using Python integers.
+    """
+    product = 1
+    for x in iterable:
+        product *= x
+    return product
+
 def getargspec_no_self(func):
     """inspect.getargspec replacement for compatibility with python 3.x.
     inspect.getargspec is deprecated in python 3. This wraps it, and

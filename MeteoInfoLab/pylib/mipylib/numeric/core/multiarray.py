@@ -27,7 +27,7 @@ class NDArray(object):
         for i in range(len(s)):
             s1.append(s[i])
         self._shape = tuple(s1)
-        self.dtype = _dtype.fromjava(array.getDataType())
+        self.dtype = _dtype.dtype.fromjava(array.getDataType())
         self.size = int(self._array.getSize())
         self.iterator = array.getIndexIterator()
         self.base = None
@@ -101,7 +101,7 @@ class NDArray(object):
                 break
             i += 1
         if allint:
-            if self.dtype == _dtype.char:
+            if self.dtype == _dtype.dtype.char:
                 return self._array.getString(aindex)
             else:
                 r = self._array.getObject(aindex)
@@ -214,7 +214,7 @@ class NDArray(object):
                 
         if r.getSize() == 1:
             iter = r.getIndexIterator()
-            if self.dtype == _dtype.char:
+            if self.dtype == _dtype.dtype.char:
                 return iter.getStringNext()
             else:
                 r = iter.getObjectNext()
@@ -489,7 +489,7 @@ class NDArray(object):
 
         :returns: (*array*) Converted array.
         '''
-        if self.dtype == _dtype.char:
+        if self.dtype == _dtype.dtype.char:
             return NDArray(ArrayUtil.convertEncoding(self._array, encoding))
         else:
             return None
@@ -502,7 +502,7 @@ class NDArray(object):
 
         :returns: (*string*) String.
         '''
-        if self.dtype == _dtype.char:
+        if self.dtype == _dtype.dtype.char:
             return ArrayUtil.getString(self._array, encoding)
         else:
             return None
@@ -545,8 +545,8 @@ class NDArray(object):
         
         :returns: (*array*) Converted array.
         '''
-        if not isinstance(dtype, _dtype.DataType):
-            dtype = _dtype.DataType(dtype)
+        if not isinstance(dtype, _dtype.dtype):
+            dtype = _dtype.dtype(dtype)
         if dtype.kind == 'i':
             r = NDArray(ArrayUtil.toInteger(self._array))
         elif dtype.kind == 'f':

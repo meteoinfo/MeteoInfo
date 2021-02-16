@@ -120,7 +120,7 @@ def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
     '''
     if p0 is None:
         # determine number of parameters by inspecting the function
-        from .._lib._util import getargspec_no_self as _getargspec
+        from ..lib._util import getargspec_no_self as _getargspec
         args, varargs, varkw, defaults = _getargspec(f)
         if len(args) < 2:
             raise ValueError("Unable to determine number of fit parameters.")

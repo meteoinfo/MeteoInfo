@@ -58,13 +58,19 @@ def isgriddata(gdata):
 def isstationdata(sdata):
     return isinstance(sdata, PyStationData)
     
-def array(object, dtype=None):
+def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
     """
     Create an array.
     
     :param object: (*array_like*) A Jython list or digital object.
     :param dtype: (*DataType*) Data type
-                        
+    :param copy: (*bool*) If true (default), then the object is copied.
+    :param order: (*str*) Specify the memory layout of the array.
+    :param subok: (*bool*) If True, then sub-classes will be passed-through,
+        otherwise the returned array will be forced to be a base-class array (default).
+    :param ndmin: (*int*) Specifies the minimum number of dimensions that the
+        resulting array should have.
+
     :returns: (*NDArray*) An array object satisfying the specified requirements.
                     
     Examples
@@ -85,29 +91,37 @@ def array(object, dtype=None):
               [3.0, 4.0]])
     """
     if isinstance(object, NDArray):
-        return object
+        a = object
     elif isinstance(object, Array):
-        return NDArray(object)
+        a = NDArray(object)
+    elif isinstance(object, PyComplex):
+        a = NDArray(JythonUtil.toComplexArray(object))
+    else:
+        if isinstance(object, (list, tuple)):
+            if len(object) > 0:
+                if isinstance(object[0], datetime.datetime):
+                    object = miutil.dates2nums(object)
+                elif isinstance(object[0], PyComplex):
+                    a = NDArray(JythonUtil.toComplexArray(object))
+                elif isinstance(object[0], (list, tuple)):
+                    if isinstance(object[0][0], PyComplex):
+                        a = NDArray(JythonUtil.toComplexArray(object))
 
-    if isinstance(object, PyComplex):
-        return NDArray(JythonUtil.toComplexArray(object))
+        if isinstance(dtype, basestring):
+            dtype = _dtype.DataType(dtype)
+        if not dtype is None:
+            dtype = dtype._dtype
 
-    if isinstance(object, (list, tuple)):
-        if len(object) > 0:
-            if isinstance(object[0], datetime.datetime):
-                object = miutil.dates2nums(object)
-            elif isinstance(object[0], PyComplex):
-                return NDArray(JythonUtil.toComplexArray(object))
-            elif isinstance(object[0], (list, tuple)):
-                if isinstance(object[0][0], PyComplex):
-                    return NDArray(JythonUtil.toComplexArray(object))
+        a = NDArray(ArrayUtil.array(object, dtype))
 
-    if isinstance(dtype, basestring):
-        dtype = _dtype.DataType(dtype)
-    if not dtype is None:
-        dtype = dtype._dtype
+    if a.ndim < ndmin:
+        shape = []
+        for i in range(ndmin - a.ndim):
+            shape.append(1)
+        shape.extend(a.shape)
+        a = a.reshape(shape)
 
-    return NDArray(ArrayUtil.array(object, dtype))
+    return a
     
 def dim_array(a, dims=None):
     '''
@@ -2520,7 +2534,7 @@ def asarray(data, dtype=None):
         if dtype is None:
             return data
         else:
-            return a.astype(dtype)
+            return data.astype(dtype)
     else:
         return array(data, dtype)
 

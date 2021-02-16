@@ -232,7 +232,7 @@ class DateTimeIndex(Index):
         '''
         Get hour index.
         '''
-        r = self._index.getHOur()
+        r = self._index.getHour()
         return Index(index=r)
         
     @property

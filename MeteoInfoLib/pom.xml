@@ -160,12 +160,12 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>0.46</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf-extras</artifactId>
-            <version>0.46</version>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 

@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <netcdfJavaVersion>5.3.3</netcdfJavaVersion>
+        <netcdfJavaVersion>5.4.1</netcdfJavaVersion>
     </properties>
 
     <repositories>

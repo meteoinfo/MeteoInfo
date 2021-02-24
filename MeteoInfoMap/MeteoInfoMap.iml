@@ -12,7 +12,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="MeteoInfoLib" />
-    <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.3.3" level="project" />
+    <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:0.1" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-graphics2d:2.4" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsbase:2.4" level="project" />

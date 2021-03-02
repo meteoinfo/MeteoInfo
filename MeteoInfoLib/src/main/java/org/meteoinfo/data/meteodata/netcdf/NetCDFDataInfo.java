@@ -1143,12 +1143,12 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                             case X:
                                 this.setXReverse(true);
                                 dim.setReverse(true);
-                                values = values.flip(0);
+                                //values = values.flip(0);
                                 break;
                             case Y:
                                 this.setYReverse(true);
                                 dim.setReverse(true);
-                                values = values.flip(0);
+                                //values = values.flip(0);
                                 break;
                         }
                     }

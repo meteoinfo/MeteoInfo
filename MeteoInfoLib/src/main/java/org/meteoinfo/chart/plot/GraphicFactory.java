@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.jogl.SurfaceGraphics;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
@@ -3062,8 +3064,14 @@ public class GraphicFactory {
         double[] cValues = (double[]) ccs[0];
 
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
+        double[] x = gridData.xArray;
+        double[] y = gridData.yArray;
+        if (gridData.getXDelt() < 0)
+            ArrayUtils.reverse(x);
+        if (gridData.getYDelt() < 0)
+            ArrayUtils.reverse(y);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
+                cValues, x, y, gridData.missingValue, S1);
         List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
@@ -3145,8 +3153,14 @@ public class GraphicFactory {
         double[] cValues = (double[]) ccs[0];
 
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
+        double[] x = gridData.xArray;
+        double[] y = gridData.yArray;
+        if (gridData.getXDelt() < 0)
+            ArrayUtils.reverse(x);
+        if (gridData.getYDelt() < 0)
+            ArrayUtils.reverse(y);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
+                cValues, x, y, gridData.missingValue, S1);
         List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
@@ -3231,8 +3245,14 @@ public class GraphicFactory {
         double[] cValues = (double[]) ccs[0];
 
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
+        double[] xArray = gridData.xArray;
+        double[] yArray = gridData.yArray;
+        if (gridData.getXDelt() < 0)
+            ArrayUtils.reverse(xArray);
+        if (gridData.getYDelt() < 0)
+            ArrayUtils.reverse(yArray);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
+                cValues, xArray, yArray, gridData.missingValue, S1);
         List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
@@ -3337,8 +3357,14 @@ public class GraphicFactory {
         minData = maxmin[1];
 
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
+        double[] xArray = gridData.xArray;
+        double[] yArray = gridData.yArray;
+        if (gridData.getXDelt() < 0)
+            ArrayUtils.reverse(xArray);
+        if (gridData.getYDelt() < 0)
+            ArrayUtils.reverse(yArray);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
+                cValues, xArray, yArray, gridData.missingValue, S1);
         List<wcontour.global.PolyLine> contourLines = (List<wcontour.global.PolyLine>) cbs[0];
         List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
@@ -3467,8 +3493,14 @@ public class GraphicFactory {
         minData = maxmin[1];
 
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
+        double[] xArray = gridData.xArray;
+        double[] yArray = gridData.yArray;
+        if (gridData.getXDelt() < 0)
+            ArrayUtils.reverse(xArray);
+        if (gridData.getYDelt() < 0)
+            ArrayUtils.reverse(yArray);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
+                cValues, xArray, yArray, gridData.missingValue, S1);
         List<wcontour.global.PolyLine> contourLines = (List<wcontour.global.PolyLine>) cbs[0];
         List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
@@ -3623,8 +3655,14 @@ public class GraphicFactory {
         minData = maxmin[1];
 
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
+        double[] xArray = gridData.xArray;
+        double[] yArray = gridData.yArray;
+        if (gridData.getXDelt() < 0)
+            ArrayUtils.reverse(xArray);
+        if (gridData.getYDelt() < 0)
+            ArrayUtils.reverse(yArray);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
+                cValues, xArray, yArray, gridData.missingValue, S1);
         List<wcontour.global.PolyLine> contourLines = (List<wcontour.global.PolyLine>) cbs[0];
         List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 

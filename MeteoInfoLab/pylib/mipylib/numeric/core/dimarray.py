@@ -227,37 +227,31 @@ class DimArray(NDArray):
                         step = 1
                     else:
                         step = int(float(kvalues[2]) / dim.getDeltaValue())
-                    if sidx > eidx:
-                        iidx = eidx
-                        eidx = sidx
-                        sidx = iidx
+                    if sidx > eidx and step > 0:
+                        step = -step
                 alllist = False
             else:                
                 print k
                 raise IndexError()
                 
             if isrange:
-                if sidx >= self.shape[i]:
+                if sidx >= self.shape[i] or eidx >= self.shape[i]:
                     raise IndexError()
-                    
-                if sidx != eidx:
-                    iszerodim = False
+
+                n = abs(eidx - sidx) + 1
+                if n > 1:
+                    dim = self.dims[i]
+                    ndims.append(dim.extract(sidx, eidx, step))
+
                 if step < 0:
-                    step = abs(step)
+                    #step = abs(step)
                     flips.append(i)
-                    if eidx < sidx:
-                        tempidx = sidx
-                        sidx = eidx + 2
-                        eidx = tempidx
-                if eidx < sidx:
-                    isempty = True
-                else:
-                    rr = Range(sidx, eidx, step)
-                    ranges.append(rr)
-                    n = eidx - sidx + 1
-                    if n > 1:
-                        dim = self.dims[i]
-                        ndims.append(dim.extract(sidx, eidx, step))
+                if sidx > eidx:
+                    iidx = eidx
+                    eidx = sidx
+                    sidx = iidx
+                rr = Range(sidx, eidx, abs(step))
+                ranges.append(rr)
                 nshape.append(eidx - sidx + 1 if eidx - sidx >= 0 else 0)
             else:
                 if len(k) > 1:

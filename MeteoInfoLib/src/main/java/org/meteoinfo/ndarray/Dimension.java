@@ -430,10 +430,31 @@ public class Dimension {
     public Dimension extract(int first, int last, int stride) {
         Dimension dim = new Dimension(this.getShortName(), this.getLength(), this._dimType);
         dim.setDimId(this._dimId);
-        dim.setReverse(this.reverse);
+        //dim.setReverse(this.reverse);
         if (this._dimValue.size() > last) {
             List<Double> values = new ArrayList<>();
-            int step = Math.abs(stride);
+            if (first <= last) {
+                if (stride > 0) {
+                    for (int i = first; i <= last; i += stride) {
+                        values.add(this._dimValue.get(i));
+                    }
+                } else {
+                    for (int i = last; i >= first; i += stride) {
+                        values.add(this._dimValue.get(i));
+                    }
+                }
+            } else {
+                if (stride > 0) {
+                    for (int i = last; i <= first; i += stride) {
+                        values.add(this._dimValue.get(i));
+                    }
+                } else {
+                    for (int i = first; i >= last; i += stride) {
+                        values.add(this._dimValue.get(i));
+                    }
+                }
+            }
+            /*int step = Math.abs(stride);
             if (this.reverse) {
                 int ff = this.getLength() - last - 1;
                 int ll = this.getLength() - first - 1;
@@ -444,7 +465,7 @@ public class Dimension {
                 for (int i = first; i <= last; i += step) {
                     values.add(this._dimValue.get(i));
                 }
-            }
+            }*/
             dim.setValues(values);
         }
 
@@ -482,18 +503,21 @@ public class Dimension {
     public Dimension extract(List<Integer> index) {
         Dimension dim = new Dimension(this.getShortName(), this.getLength(), this._dimType);
         dim.setDimId(this._dimId);
-        dim.setReverse(this.reverse);
+        //dim.setReverse(this.reverse);
         List<Double> values = new ArrayList<>();
-            if (this.reverse) {
-                for (int i = index.size() - 1; i <= 0; i--) {
-                    values.add(this._dimValue.get(index.get(i)));
-                }
-            } else {
-                for (int i = 0; i < index.size(); i++) {
-                    values.add(this._dimValue.get(index.get(i)));
-                }
+        for (int i = 0; i < index.size(); i++) {
+            values.add(this._dimValue.get(index.get(i)));
+        }
+        /*if (this.reverse) {
+            for (int i = index.size() - 1; i <= 0; i--) {
+                values.add(this._dimValue.get(index.get(i)));
             }
-            dim.setValues(values);
+        } else {
+            for (int i = 0; i < index.size(); i++) {
+                values.add(this._dimValue.get(index.get(i)));
+            }
+        }*/
+        dim.setValues(values);
 
         return dim;
     }

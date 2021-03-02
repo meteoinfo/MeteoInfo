@@ -87,18 +87,16 @@ class DimVariable(object):
 
         if indices is None:
             inds = []
-            for i in range(self.ndim):
+            for _ in range(self.ndim):
                 inds.append(slice(None))
             indices = tuple(inds)
         
         if not isinstance(indices, tuple):
-            inds = []
-            inds.append(indices)
-            indices = inds
+            indices = [indices]
             
         if len(indices) < self.ndim:
             indices = list(indices)
-            for i in range(self.ndim - len(indices)):
+            for _ in range(self.ndim - len(indices)):
                 indices.append(slice(None))
             indices = tuple(indices)
         
@@ -170,6 +168,9 @@ class DimVariable(object):
             isrange = True
             dimlen = self.dimlen(i)
             k = indices[i]
+            sidx = 0
+            eidx = 0
+            step = 1
             if isinstance(k, int):
                 if k < 0:
                     k = self.dims[i].getLength() + k
@@ -210,10 +211,6 @@ class DimVariable(object):
                     step = nidx - sidx
                 else:
                     step = 1 if k.step is None else k.step
-                if sidx > eidx:
-                    iidx = eidx
-                    eidx = sidx
-                    sidx = iidx
             elif isinstance(k, list):
                 onlyrange = False
                 isrange = False
@@ -242,19 +239,17 @@ class DimVariable(object):
                         step = 1
                     else:
                         step = int(float(kvalues[2]) / dim.getDeltaValue())
-                    if sidx > eidx:
-                        iidx = eidx
-                        eidx = sidx
-                        sidx = iidx
+                if sidx > eidx and step > 0:
+                    step = -step
             else:
                 print k
                 return None
             if isrange:
-                if eidx >= dimlen:
-                    print 'Index out of range!'
+                if sidx >= dimlen or eidx >= dimlen:
+                    print('Index out of range!')
                     return None
                 origin.append(sidx)
-                n = eidx - sidx + 1
+                n = abs(eidx - sidx) + 1
                 size.append(n)                   
                 if n > 1:
                     dim = self.variable.getDimension(i)
@@ -265,15 +260,19 @@ class DimVariable(object):
                     dims.append(dim)
                 stride.append(step) 
                 if step < 0:
-                    step = abs(step)
+                    #step = abs(step)
                     flips.append(i)
-                rr = Range(sidx, eidx, step)
+                if sidx > eidx:
+                    iidx = eidx
+                    eidx = sidx
+                    sidx = iidx
+                rr = Range(sidx, eidx, abs(step))
                 ranges.append(rr)
             else:
                 if len(k) > 1:
                     dim = self.variable.getDimension(i)
                     dim = dim.extract(k)
-                    dim.setReverse(False)
+                    #dim.setReverse(False)
                     dims.append(dim)
 
         if onlyrange:

@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.data.meteodata;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
@@ -700,8 +701,14 @@ public class DrawMeteoData {
         double[] cValues = (double[]) ccs[0];
 
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
+        double[] xArray = gridData.xArray;
+        double[] yArray = gridData.yArray;
+        if (gridData.getXDelt() < 0)
+            ArrayUtils.reverse(xArray);
+        if (gridData.getYDelt() < 0)
+            ArrayUtils.reverse(yArray);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
+                cValues, xArray, yArray, gridData.missingValue, S1);
         List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
@@ -919,8 +926,14 @@ public class DrawMeteoData {
         minData = maxmin[1];
 
         int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
+        double[] xArray = gridData.xArray;
+        double[] yArray = gridData.yArray;
+        if (gridData.getXDelt() < 0)
+            ArrayUtils.reverse(xArray);
+        if (gridData.getYDelt() < 0)
+            ArrayUtils.reverse(yArray);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, gridData.xArray, gridData.yArray, gridData.missingValue, S1);
+                cValues, xArray, yArray, gridData.missingValue, S1);
         ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
         List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 

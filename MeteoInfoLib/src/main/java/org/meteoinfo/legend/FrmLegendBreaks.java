@@ -5,6 +5,7 @@
 package org.meteoinfo.legend;
 
 import org.meteoinfo.layer.FrmLayerProperty;
+import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.shape.ShapeTypes;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,7 +17,6 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.meteoinfo.global.colors.ColorMap;
 import org.meteoinfo.global.colors.ColorUtil;
-import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.ui.ColorComboBoxModel;
 import org.meteoinfo.ui.ColorListCellRender;
 

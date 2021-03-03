@@ -34,7 +34,7 @@ import org.meteoinfo.data.mapdata.geotiff.compression.CompressionDecoder;
 import org.meteoinfo.data.mapdata.geotiff.compression.DeflateCompression;
 import org.meteoinfo.data.mapdata.geotiff.compression.LZWCompression;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.util.BigDecimalUtil;
+import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.ndarray.Array;

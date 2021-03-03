@@ -21,10 +21,10 @@ import static org.meteoinfo.drawing.Draw.getDashPattern;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.Extent;
 import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.legend.LineStyles;
 import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.GraphicCollection;
+import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
 /**
  *

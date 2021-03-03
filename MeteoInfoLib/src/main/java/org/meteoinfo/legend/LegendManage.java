@@ -17,6 +17,7 @@ import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.drawing.ContourDraw;
 import org.meteoinfo.global.MIMath;
+import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.shape.ShapeTypes;
 import java.awt.Color;
 import java.io.IOException;
@@ -26,16 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import org.meteoinfo.data.GridArray;
-import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.colors.ColorMap;
-import org.meteoinfo.global.colors.ColorUtil;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.shape.PointShape;
 import org.meteoinfo.shape.PolygonShape;
 import org.meteoinfo.shape.PolylineShape;
 import org.meteoinfo.shape.Shape;
-import wcontour.Legend;
 
 /**
  * Legend manage class

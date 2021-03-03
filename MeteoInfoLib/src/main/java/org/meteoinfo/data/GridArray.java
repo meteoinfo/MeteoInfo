@@ -32,9 +32,9 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import org.meteoinfo.ndarray.*;
+import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.data.meteodata.GridDataSetting;
 import org.meteoinfo.geoprocess.analysis.ResampleMethods;
-import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.legend.LegendManage;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;

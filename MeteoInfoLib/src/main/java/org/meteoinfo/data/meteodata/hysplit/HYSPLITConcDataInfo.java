@@ -35,7 +35,6 @@ import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.arl.ARLDataInfo;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
@@ -43,8 +42,9 @@ import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.Section;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
-/**
+ /**
  *
  * @author yaqiang
  */

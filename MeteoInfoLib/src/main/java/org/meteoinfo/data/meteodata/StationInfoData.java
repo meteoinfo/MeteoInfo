@@ -24,8 +24,6 @@ import org.meteoinfo.data.dataframe.DataFrame;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.ndarray.DataType;
 
-import javax.xml.crypto.Data;
-
  /**
  *
  * @author yaqiang

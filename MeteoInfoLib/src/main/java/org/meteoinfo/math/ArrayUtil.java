@@ -36,14 +36,13 @@ import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.MIMath;
 import org.meteoinfo.global.PointD;
-import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.global.util.JDateUtil;
 import org.meteoinfo.io.EndianDataOutputStream;
-import org.meteoinfo.layer.ChartSet;
 import org.meteoinfo.math.spatial.KDTree;
 import org.meteoinfo.math.spatial.KDTree.SearchResult;
 import org.meteoinfo.ndarray.*;
+import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.shape.PolygonShape;
 
 /**

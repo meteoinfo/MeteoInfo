@@ -13,19 +13,16 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
-    <RecentFolder Folder="Z:\benchmark\script"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city_streamslice_zslice_index.py"/>
-      <OpenedFile File="Z:\benchmark\script\plot_pm_overlay.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\netcdf\dimension_reverse.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city_streamslice_zslice_index.py"/>
-      <RecentFile File="Z:\benchmark\script\plot_pm_overlay.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\netcdf\dimension_reverse.py"/>
     </RecentFiles>
   </File>
@@ -34,5 +31,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="0,0" MainFormSize="1350,823"/>
+  <Startup MainFormLocation="0,0" MainFormSize="1280,680"/>
 </MeteoInfo>

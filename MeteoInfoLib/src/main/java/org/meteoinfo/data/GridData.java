@@ -37,7 +37,6 @@ import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.GridDataSetting;
 import org.meteoinfo.geoprocess.analysis.ResampleMethods;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
@@ -48,6 +47,7 @@ import org.meteoinfo.shape.ShapeTypes;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
 /**
  *

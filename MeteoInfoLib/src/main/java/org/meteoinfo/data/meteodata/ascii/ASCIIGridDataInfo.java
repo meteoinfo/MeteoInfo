@@ -34,7 +34,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.meteodata.MeteoDataType;
-import org.meteoinfo.global.util.BigDecimalUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
@@ -42,6 +41,7 @@ import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.Section;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
 /**
  *

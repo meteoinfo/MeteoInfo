@@ -13,12 +13,12 @@
  */
 package org.meteoinfo.global;
 
-import org.meteoinfo.data.mapdata.Field;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.global.util.BigDecimalUtil;
+
+import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.shape.PointZ;
 import org.meteoinfo.shape.Shape;
 

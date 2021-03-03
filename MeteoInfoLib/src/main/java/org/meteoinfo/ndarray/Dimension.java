@@ -563,9 +563,9 @@ public class Dimension {
             }
         }
 
-        if (this.reverse) {
+        /*if (this.reverse) {
             idx = this.getLength() - idx - 1;
-        }
+        }*/
 
         return idx;
     }

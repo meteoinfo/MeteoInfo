@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.data;
 
-import org.meteoinfo.global.MIMath;
+import org.meteoinfo.common.MIMath;
 
 /**
  *

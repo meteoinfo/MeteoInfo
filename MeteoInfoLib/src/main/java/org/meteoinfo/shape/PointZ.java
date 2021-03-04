@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.shape;
 
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.common.PointD;
 
 /**
  *

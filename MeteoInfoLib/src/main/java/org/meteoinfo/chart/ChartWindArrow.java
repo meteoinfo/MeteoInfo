@@ -11,9 +11,10 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
+
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.PointF;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.ArrowBreak;
 import org.meteoinfo.shape.GraphicCollection;

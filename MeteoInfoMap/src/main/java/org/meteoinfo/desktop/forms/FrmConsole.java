@@ -14,8 +14,8 @@ import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
-import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.console.JConsole;
 import org.meteoinfo.console.jython.JIntrospect;
 import org.python.core.Py;

@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import org.meteoinfo.global.MIMath;
+
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.legend.LegendManage;
 
 /**
@@ -459,7 +460,7 @@ public class ColorMap {
             line = line.trim();
             strs = line.split("\\s+");
             if (strs.length >= 3){
-                if (MIMath.isNumeric(strs[0]) && MIMath.isNumeric(strs[1]) && 
+                if (MIMath.isNumeric(strs[0]) && MIMath.isNumeric(strs[1]) &&
                         MIMath.isNumeric(strs[2])){
                     if (n == 0){
                         if (strs[0].contains("."))

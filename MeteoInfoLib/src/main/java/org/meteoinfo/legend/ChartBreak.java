@@ -15,8 +15,9 @@ package org.meteoinfo.legend;
 
 import java.awt.Color;
 import java.awt.Font;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.PointF;
+
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.shape.ShapeTypes;
 import java.util.ArrayList;
 import java.util.Collections;

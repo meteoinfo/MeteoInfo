@@ -15,8 +15,7 @@
 package org.meteoinfo.shape;
 
 import java.util.ArrayList;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.PointD;
+
 import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -25,6 +24,8 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.operation.polygonize.Polygonizer;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointD;
 
 /**
  * Shape class

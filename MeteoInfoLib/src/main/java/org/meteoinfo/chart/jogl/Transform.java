@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.jogl;
 
-import org.meteoinfo.global.Extent3D;
+import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.shape.PointZ;
 
 public class Transform {

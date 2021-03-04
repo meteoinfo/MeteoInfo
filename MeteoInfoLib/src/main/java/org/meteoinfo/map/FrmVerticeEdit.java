@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.map;
 
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.common.PointD;
 
 /**
  *

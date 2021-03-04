@@ -12,8 +12,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.undo.AbstractUndoableEdit;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.PointD;
+
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.shape.Graphic;
 import org.meteoinfo.shape.PolygonShape;

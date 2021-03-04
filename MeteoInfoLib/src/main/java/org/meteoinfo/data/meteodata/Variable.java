@@ -13,13 +13,14 @@
  */
 package org.meteoinfo.data.meteodata;
 
+import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.ndarray.Dimension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.global.util.JDateUtil;
+
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.Section;

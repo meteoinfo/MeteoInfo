@@ -17,7 +17,7 @@ import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.io.EndianDataOutputStream;
+import org.meteoinfo.common.io.EndianDataOutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;

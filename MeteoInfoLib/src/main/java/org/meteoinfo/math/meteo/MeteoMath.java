@@ -6,14 +6,12 @@
 package org.meteoinfo.math.meteo;
 
 import org.meteoinfo.math.ArrayMath;
-import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  *

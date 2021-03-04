@@ -5,8 +5,8 @@
 package org.meteoinfo.layer;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import org.meteoinfo.global.GenericFileFilter;
-import org.meteoinfo.global.MIMath;
+import org.meteoinfo.common.GenericFileFilter;
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.FrmLegendBreaks;

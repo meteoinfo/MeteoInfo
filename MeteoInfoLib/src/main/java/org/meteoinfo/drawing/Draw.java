@@ -13,14 +13,14 @@
  */
 package org.meteoinfo.drawing;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.legend.MarkerType;
 import org.meteoinfo.legend.PointStyle;
 import org.meteoinfo.geoprocess.Spline;
 import org.meteoinfo.global.colors.ColorUtil;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
-import org.meteoinfo.global.PointF;
 import org.meteoinfo.legend.BreakTypes;
 import org.meteoinfo.legend.ChartBreak;
 import org.meteoinfo.legend.LabelBreak;
@@ -60,7 +60,6 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.meteoinfo.chart.plot.XAlign;
 import org.meteoinfo.chart.plot.YAlign;
-import org.meteoinfo.bak.ArrayMath;
 import org.meteoinfo.legend.ArrowBreak;
 import org.meteoinfo.legend.ArrowLineBreak;
 import org.meteoinfo.legend.ColorBreakCollection;

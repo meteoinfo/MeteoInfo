@@ -1,23 +1,14 @@
 package map;
 
+import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.data.mapdata.MapDataManage;
-import org.meteoinfo.data.mapdata.ShapeFileManage;
-import org.meteoinfo.global.GenericFileFilter;
-import org.meteoinfo.global.event.*;
-import org.meteoinfo.global.util.GlobalUtil;
-import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;
-import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.layout.MapLayout;
 import org.meteoinfo.legend.LayersLegend;
-import org.meteoinfo.map.FeatureUndoableEdit;
 import org.meteoinfo.map.MapView;
-import org.meteoinfo.map.MapViewUndoRedo;
 import org.meteoinfo.map.MouseTools;
-import org.meteoinfo.projection.info.ProjectionInfo;
 
 import javax.swing.*;
-import javax.swing.undo.UndoableEdit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

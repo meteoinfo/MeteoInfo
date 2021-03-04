@@ -13,7 +13,8 @@
  */
 package org.meteoinfo.drawing;
 
-import org.meteoinfo.global.MIMath;
+import org.meteoinfo.common.MIMath;
+
 import java.util.List;
 
 /**

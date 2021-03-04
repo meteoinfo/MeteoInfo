@@ -14,6 +14,9 @@
 package org.meteoinfo.data.meteodata;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
@@ -21,10 +24,10 @@ import org.meteoinfo.data.dataframe.DataFrame;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.drawing.ContourDraw;
 import org.meteoinfo.drawing.Draw;
+import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.legend.MarkerType;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
@@ -45,10 +48,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.math.ArrayUtil;
+
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.XYListDataset;
-import org.meteoinfo.global.Extent;
 import org.meteoinfo.layer.ImageLayer;
 import org.meteoinfo.layer.RasterLayer;
 import org.meteoinfo.layer.WorldFilePara;
@@ -107,7 +109,7 @@ public class DrawMeteoData {
             }
             aPolyline.setPoints(pList);
             aPolyline.setValue(i);
-            aPolyline.setExtent(MIMath.getPointsExtent(pList));
+            aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
 
             int shapeNum = layer.getShapeNum();
             try {
@@ -157,7 +159,7 @@ public class DrawMeteoData {
             }
             aPolyline.setPoints(pList);
             aPolyline.setValue(i);
-            aPolyline.setExtent(MIMath.getPointsExtent(pList));
+            aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
 
             int shapeNum = layer.getShapeNum();
             try {
@@ -233,7 +235,7 @@ public class DrawMeteoData {
                 PolylineShape aPolyline = new PolylineShape();
                 aPolyline.setPoints(ps);
                 aPolyline.setValue(i);
-                aPolyline.setExtent(MIMath.getPointsExtent(ps));
+                aPolyline.setExtent(GeometryUtil.getPointsExtent(ps));
 
                 int shapeNum = layer.getShapeNum();
                 try {
@@ -368,7 +370,7 @@ public class DrawMeteoData {
                 PolylineShape aPolyline = new PolylineShape();
                 aPolyline.setPoints(ps);
                 aPolyline.setValue(k);
-                aPolyline.setExtent(MIMath.getPointsExtent(ps));
+                aPolyline.setExtent(GeometryUtil.getPointsExtent(ps));
 
                 int shapeNum = layer.getShapeNum();
                 try {
@@ -509,7 +511,7 @@ public class DrawMeteoData {
             PolylineZShape aPolyline = new PolylineZShape();
             aPolyline.setPoints(ps);
             aPolyline.setValue(0);
-            aPolyline.setExtent(MIMath.getPointsExtent(ps));
+            aPolyline.setExtent(GeometryUtil.getPointsExtent(ps));
 
             int shapeNum = layer.getShapeNum();
             try {
@@ -621,7 +623,7 @@ public class DrawMeteoData {
             PolylineZShape aPolyline = new PolylineZShape();
             aPolyline.setPoints(ps);
             aPolyline.setValue(0);
-            aPolyline.setExtent(MIMath.getPointsExtent(ps));
+            aPolyline.setExtent(GeometryUtil.getPointsExtent(ps));
 
             int shapeNum = layer.getShapeNum();
             try {
@@ -740,7 +742,7 @@ public class DrawMeteoData {
             }
             aPolyline.setPoints(pList);
             aPolyline.setValue(aValue);
-            aPolyline.setExtent(MIMath.getPointsExtent(pList));
+            aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
 
             int shapeNum = aLayer.getShapeNum();
             try {
@@ -826,7 +828,7 @@ public class DrawMeteoData {
             }
             aPolyline.setPoints(pList);
             aPolyline.setValue(aValue);
-            aPolyline.setExtent(MIMath.getPointsExtent(pList));
+            aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
             int shapeNum = aLayer.getShapeNum();
             try {
                 if (aLayer.editInsertShape(aPolyline, shapeNum)) {
@@ -968,7 +970,7 @@ public class DrawMeteoData {
             }
             PolygonShape aPolygonShape = new PolygonShape();
             aPolygonShape.setPoints(pList);
-            aPolygonShape.setExtent(MIMath.getPointsExtent(pList));
+            aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
             aPolygonShape.lowValue = aValue;
             if (aPolygon.HasHoles()) {
                 for (PolyLine holeLine : aPolygon.HoleLines) {

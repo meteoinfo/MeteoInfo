@@ -13,10 +13,11 @@
  */
 package org.meteoinfo.shape;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

@@ -6,7 +6,9 @@
       <module fileurl="file://$PROJECT_DIR$/MeteoInfoLab/MeteoInfoLab.iml" filepath="$PROJECT_DIR$/MeteoInfoLab/MeteoInfoLab.iml" />
       <module fileurl="file://$PROJECT_DIR$/MeteoInfoLib/MeteoInfoLib.iml" filepath="$PROJECT_DIR$/MeteoInfoLib/MeteoInfoLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/MeteoInfoMap/MeteoInfoMap.iml" filepath="$PROJECT_DIR$/MeteoInfoMap/MeteoInfoMap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/meteoinfo-common/meteoinfo-common.iml" filepath="$PROJECT_DIR$/meteoinfo-common/meteoinfo-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/meteoinfo-console/meteoinfo-console.iml" filepath="$PROJECT_DIR$/meteoinfo-console/meteoinfo-console.iml" />
+      <module fileurl="file://$PROJECT_DIR$/meteoinfo-math/meteoinfo-math.iml" filepath="$PROJECT_DIR$/meteoinfo-math/meteoinfo-math.iml" />
       <module fileurl="file://$PROJECT_DIR$/meteoinfo-ndarray/meteoinfo-ndarray.iml" filepath="$PROJECT_DIR$/meteoinfo-ndarray/meteoinfo-ndarray.iml" />
     </modules>
   </component>

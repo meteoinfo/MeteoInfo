@@ -22,8 +22,8 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
+import org.meteoinfo.common.util.GraphicsUtilities;
 import org.meteoinfo.global.util.GeoUtil;
-import org.meteoinfo.global.util.GraphicsUtilities;
 
 /**
  * The

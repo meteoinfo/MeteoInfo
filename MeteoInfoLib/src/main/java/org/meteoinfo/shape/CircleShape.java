@@ -15,10 +15,11 @@ package org.meteoinfo.shape;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.PointD;
 
-/**
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.geoprocess.GeoComputation;
+
+ /**
  * Circle shape class
  * 
  * @author Yaqiang Wang

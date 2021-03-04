@@ -9,7 +9,7 @@ from org.meteoinfo.data import GridData, GridArray
 from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.geoprocess import GeometryUtil
 from org.meteoinfo.geoprocess.analysis import ResampleMethods
-from org.meteoinfo.global import PointD
+from org.meteoinfo.common import PointD
 from org.meteoinfo.ndarray import Array, Range, MAMath, DataType, Dimension, DimensionType
 from multiarray import NDArray
 import math

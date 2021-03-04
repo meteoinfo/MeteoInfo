@@ -12,9 +12,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.desktop.config.Plugin;
 import org.meteoinfo.desktop.config.PluginCollection;
-import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.ui.CheckBoxListEntry;
 
 /**

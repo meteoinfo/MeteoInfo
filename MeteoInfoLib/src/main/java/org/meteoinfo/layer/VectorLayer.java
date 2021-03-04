@@ -13,14 +13,14 @@
  */
 package org.meteoinfo.layer;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.GenericFileFilter;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.data.mapdata.AttributeTable;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.data.mapdata.ShapeFileManage;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.GenericFileFilter;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
 import org.meteoinfo.global.colors.ColorUtil;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.table.DataColumn;

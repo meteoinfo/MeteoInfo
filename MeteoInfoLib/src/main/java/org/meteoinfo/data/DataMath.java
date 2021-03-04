@@ -14,9 +14,10 @@
 package org.meteoinfo.data;
 
 import java.util.ArrayList;
-import org.meteoinfo.global.MIMath;
 import java.util.Arrays;
 import java.util.List;
+
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.table.ColumnData;
 
 /**

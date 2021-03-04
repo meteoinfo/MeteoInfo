@@ -6,20 +6,17 @@
 package org.meteoinfo.plot;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.print.PrintException;
+
 import org.meteoinfo.chart.Chart;
 import org.meteoinfo.chart.ChartPanel;
 import org.meteoinfo.chart.plot.ChartPlotMethod;
 import org.meteoinfo.chart.plot.XY1DPlot;
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.XYArrayDataset;
 import org.meteoinfo.data.XYDataset;
-import org.meteoinfo.global.MIMath;
 import org.meteoinfo.legend.PointBreak;
 
 /**

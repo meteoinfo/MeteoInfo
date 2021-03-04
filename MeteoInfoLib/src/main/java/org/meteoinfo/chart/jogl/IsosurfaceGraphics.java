@@ -8,8 +8,9 @@ package org.meteoinfo.chart.jogl;
 import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
-import org.meteoinfo.global.Extent3D;
-import org.meteoinfo.global.MIMath;
+import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.shape.PointZ;
 
 /**
@@ -49,7 +50,7 @@ public class IsosurfaceGraphics extends GraphicCollection3D {
      */
     public void addTriangle(PointZ[] triangle) {
         this.triangles.add(triangle);
-        Extent3D extent = MIMath.getExtent(triangle);        
+        Extent3D extent = GeometryUtil.getExtent(triangle);
         if (this.triangles.size() == 1)
             this.setExtent(extent);
         else

@@ -5,33 +5,11 @@
  */
 package org.meteoinfo.script;
 
-import java.awt.Color;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.WindowConstants;
-import org.meteoinfo.chart.Chart;
-import org.meteoinfo.chart.ChartPanel;
-import org.meteoinfo.chart.plot.ChartPlotMethod;
-import org.meteoinfo.chart.plot.XY1DPlot;
+
 import org.meteoinfo.data.GridData;
-import org.meteoinfo.data.XYArrayDataset;
-import org.meteoinfo.data.mapdata.MapDataManage;
-import org.meteoinfo.data.meteodata.DrawMeteoData;
-import org.meteoinfo.data.meteodata.DrawType2D;
 import org.meteoinfo.data.meteodata.MeteoDataInfo;
-import org.meteoinfo.legend.PointStyle;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.layer.MapLayer;
-import org.meteoinfo.layout.MapLayout;
-import org.meteoinfo.legend.LineStyles;
-import org.meteoinfo.legend.MapFrame;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.map.MapView;
 
 /**
  *

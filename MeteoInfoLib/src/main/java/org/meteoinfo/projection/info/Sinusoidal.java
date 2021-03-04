@@ -15,7 +15,8 @@ package org.meteoinfo.projection.info;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.global.PointD;
+
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.ProjectionUtil;
@@ -73,7 +74,7 @@ public class Sinusoidal extends ProjectionInfo {
         double maxLon = cenLon + 180 - epsilon;
         double minLat = -90;
         double maxLat = 90;
-        List<PointD> points = new ArrayList<>();        
+        List<PointD> points = new ArrayList<>();
         double lon = maxLon;
         double lat = minLat;
         while (lat < maxLat) {

@@ -5,13 +5,12 @@
  */
 package org.meteoinfo.layout;
 
-import org.meteoinfo.map.*;
+import org.meteoinfo.common.PointF;
+
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.undo.AbstractUndoableEdit;
-import org.meteoinfo.global.PointF;
-import org.meteoinfo.shape.Graphic;
 
 /**
  *

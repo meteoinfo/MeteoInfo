@@ -8,8 +8,9 @@ package org.meteoinfo.shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.MIMath;
 
 /**
  *

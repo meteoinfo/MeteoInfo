@@ -7,8 +7,9 @@ package org.meteoinfo.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
+
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.ndarray.Array;
 
 /**

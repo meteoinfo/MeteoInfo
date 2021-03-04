@@ -13,15 +13,15 @@
  */
 package org.meteoinfo.data.meteodata.hysplit;
 
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.global.util.JDateUtil;
+import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.TrajDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
 
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -466,7 +466,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements TrajDataInfo {
                 TrajNum += 1;
                 aPolyline.setValue(TrajNum);
                 aPolyline.setPoints(PointList.get(i));
-                aPolyline.setExtent(MIMath.getPointsExtent(aPolyline.getPoints()));
+                aPolyline.setExtent(GeometryUtil.getPointsExtent(aPolyline.getPoints()));
 
                 int shapeNum = aLayer.getShapeNum();
                 if (aLayer.editInsertShape(aPolyline, shapeNum)) {

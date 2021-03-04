@@ -13,8 +13,6 @@
  */
 package org.meteoinfo.shape;
 
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +22,9 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.geoprocess.GeometryUtil;
 
 /**
  * Poyline shape class
@@ -93,7 +94,7 @@ public class PolylineShape extends Shape implements Cloneable {
                 for (int i = 0; i < parts.length; i++) {
                     parts[i] = partlist.get(i);
                 }
-                this.setExtent(MIMath.getPointsExtent(_points));
+                this.setExtent(GeometryUtil.getPointsExtent(_points));
                 break;
             default:
                 this.setPoints(points);
@@ -160,7 +161,7 @@ public class PolylineShape extends Shape implements Cloneable {
     @Override
     public void setPoints(List<? extends PointD> points) {
         _points = points;
-        this.setExtent(MIMath.getPointsExtent(_points));
+        this.setExtent(GeometryUtil.getPointsExtent(_points));
         updatePolyLines();
     }
 
@@ -274,7 +275,7 @@ public class PolylineShape extends Shape implements Cloneable {
         for (int i = 0; i < partList.size(); i++) {
             parts[i] = partList.get(i);
         }
-        this.setExtent(MIMath.getPointsExtent(_points));
+        this.setExtent(GeometryUtil.getPointsExtent(_points));
     }
 
     /**
@@ -310,7 +311,7 @@ public class PolylineShape extends Shape implements Cloneable {
         }
 
         ((List<PointD>) _points).add(vIdx, vertice);
-        this.setExtent(MIMath.getPointsExtent(_points));
+        this.setExtent(GeometryUtil.getPointsExtent(_points));
         updatePolyLines();
     }
 
@@ -327,7 +328,7 @@ public class PolylineShape extends Shape implements Cloneable {
         }
 
         ((List<PointD>) _points).remove(vIdx);
-        this.setExtent(MIMath.getPointsExtent(_points));
+        this.setExtent(GeometryUtil.getPointsExtent(_points));
         updatePolyLines();
     }
 

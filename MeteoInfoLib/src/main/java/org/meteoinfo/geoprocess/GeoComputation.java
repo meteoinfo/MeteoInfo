@@ -13,11 +13,12 @@
  */
 package org.meteoinfo.geoprocess;
 
-import org.meteoinfo.global.Direction;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.common.Direction;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.map.GridLabel;
+import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.shape.*;
@@ -28,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.bak.ArrayMath;
+
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
@@ -232,7 +233,7 @@ public class GeoComputation {
      */
     public static boolean pointInPolygons(List<PolygonShape> polygons, PointD aPoint) {
         boolean isIn = false;
-        Extent ext = MIMath.getExtent(polygons);
+        Extent ext = GeometryUtil.getExtent(polygons);
         if (MIMath.pointInExtent(aPoint, ext)) {
             for (PolygonShape aPGS : polygons) {
                 if (pointInPolygon(aPGS, aPoint)) {
@@ -360,7 +361,7 @@ public class GeoComputation {
         aExtent.maxX = sp.X + buffer;
         aExtent.minY = sp.Y - buffer;
         aExtent.maxY = sp.Y + buffer;
-        Extent bExtent = MIMath.getPointsExtent(points);
+        Extent bExtent = GeometryUtil.getPointsExtent(points);
         double dis;
         if (MIMath.isExtentCross(aExtent, bExtent)) {
             for (int j = 0; j < points.size(); j++) {
@@ -1347,7 +1348,7 @@ public class GeoComputation {
         if (inPolygon.hasHole()) {
             for (int h = 0; h < inPolygon.getHoleLines().size(); h++) {
                 List<PointD> holePList = (List<PointD>) inPolygon.getHoleLines().get(h);
-                Extent plExtent = MIMath.getPointsExtent(holePList);
+                Extent plExtent = GeometryUtil.getPointsExtent(holePList);
                 if (!isExtentCross(plExtent, clipObj)) {
                     continue;
                 }
@@ -1563,7 +1564,7 @@ public class GeoComputation {
         if (inPolygon.hasHole()) {
             for (int h = 0; h < inPolygon.getHoleLines().size(); h++) {
                 List<PointD> holePList = (List<PointD>) inPolygon.getHoleLines().get(h);
-                Extent plExtent = MIMath.getPointsExtent(holePList);
+                Extent plExtent = GeometryUtil.getPointsExtent(holePList);
                 if (!isExtentCross(plExtent, extent)) {
                     continue;
                 }
@@ -2020,7 +2021,7 @@ public class GeoComputation {
         int i, j;
         for (i = 0; i < holeList.size(); i++) {
             List<PointD> holePs = holeList.get(i);
-            Extent aExtent = MIMath.getPointsExtent(holePs);
+            Extent aExtent = GeometryUtil.getPointsExtent(holePs);
             for (j = 0; j < polygonList.size(); j++) {
                 Polygon aPolygon = polygonList.get(j);
                 if (aPolygon.getExtent().include(aExtent)) {
@@ -2043,7 +2044,7 @@ public class GeoComputation {
 
     private static boolean isExtentCross(Extent aExtent, Object clipObj) {
         if (clipObj instanceof List) {
-            Extent bExtent = MIMath.getPointsExtent((List<PointD>) clipObj);
+            Extent bExtent = GeometryUtil.getPointsExtent((List<PointD>) clipObj);
             return MIMath.isExtentCross(aExtent, bExtent);
         }
         if (clipObj.getClass() == ClipLine.class) {
@@ -2158,8 +2159,8 @@ public class GeoComputation {
         PListA.add(lineA.P2);
         PListB.add(lineB.P1);
         PListB.add(lineB.P2);
-        boundA = MIMath.getPointsExtent(PListA);
-        boundB = MIMath.getPointsExtent(PListB);
+        boundA = GeometryUtil.getPointsExtent(PListA);
+        boundB = GeometryUtil.getPointsExtent(PListB);
 
         if (!MIMath.isExtentCross(boundA, boundB)) {
             return false;
@@ -2481,7 +2482,7 @@ public class GeoComputation {
                 } else {
                     aGL.setLabDirection(Direction.Weast);
                 }
-                aGL.setAnge((float)ArrayMath.uv2ds(p2.X - p1.X, p2.Y - p1.Y)[0]);
+                aGL.setAnge((float)MeteoMath.uv2ds(p2.X - p1.X, p2.Y - p1.Y)[0]);
                 gridLabels.add(aGL);
 
                 p1 = aPList.get(aPList.size() - 1);
@@ -2498,7 +2499,7 @@ public class GeoComputation {
                 } else {
                     aGL.setLabDirection(Direction.East);
                 }
-                aGL.setAnge((float)ArrayMath.uv2ds(p2.X - p1.X, p2.Y - p1.Y)[0]);
+                aGL.setAnge((float) MeteoMath.uv2ds(p2.X - p1.X, p2.Y - p1.Y)[0]);
                 gridLabels.add(aGL);
 
                 return gridLabels;

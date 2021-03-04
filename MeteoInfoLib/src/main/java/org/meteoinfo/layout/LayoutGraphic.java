@@ -13,14 +13,14 @@
  */
 package org.meteoinfo.layout;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.global.event.IMapViewUpdatedListener;
 import org.meteoinfo.global.event.ISizeChangedListener;
 import org.meteoinfo.global.event.MapViewUpdatedEvent;
 import org.meteoinfo.global.event.SizeChangedEvent;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.PointD;
-import org.meteoinfo.global.PointF;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;

@@ -13,7 +13,8 @@
  */
 package org.meteoinfo.geoprocess;
 
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.common.PointD;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

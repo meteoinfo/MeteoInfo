@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.data.meteodata;
 
-import org.meteoinfo.global.Extent;
+import org.meteoinfo.common.Extent;
 
 /**
  *

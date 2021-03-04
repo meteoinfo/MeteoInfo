@@ -13,13 +13,14 @@
  */
 package org.meteoinfo.data.meteodata.ascii;
 
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
-import org.meteoinfo.global.MIMath;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

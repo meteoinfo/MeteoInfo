@@ -13,13 +13,13 @@
  */
 package org.meteoinfo.data.mapdata;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.mapdata.geotiff.GeoTiff;
 import org.meteoinfo.data.meteodata.DrawMeteoData;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.util.GlobalUtil;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.layer.ImageLayer;
 import org.meteoinfo.layer.LayerDrawType;
@@ -53,7 +53,7 @@ import org.meteoinfo.data.meteodata.ascii.ASCIIGridDataInfo;
 import org.meteoinfo.data.meteodata.ascii.SurferGridDataInfo;
 import org.meteoinfo.data.meteodata.bandraster.BILDataInfo;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.io.IOUtil;
+import org.meteoinfo.common.io.IOUtil;
 import org.meteoinfo.layer.RasterLayer;
 import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.legend.LegendType;
@@ -293,7 +293,7 @@ public class MapDataManage {
                 PolylineShape aPolyline = new PolylineShape();
                 aPolyline.setValue(lineNum);
                 aPolyline.setPoints(pList);
-                aPolyline.setExtent(MIMath.getPointsExtent(pList));
+                aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
                 aPolyline.setPartNum(1);
                 aPolyline.parts = new int[1];
                 aPolyline.parts[0] = 0;
@@ -521,7 +521,7 @@ public class MapDataManage {
                         }
                         PolylineShape aPLS = new PolylineShape();
                         aPLS.setValue(i);
-                        aPLS.setExtent(MIMath.getPointsExtent(pList));
+                        aPLS.setExtent(GeometryUtil.getPointsExtent(pList));
                         aPLS.setPoints(pList);
 
                         int sNum = aLayer.getShapeNum();
@@ -554,7 +554,7 @@ public class MapDataManage {
                         PolygonShape aPGS = new PolygonShape();
                         aPGS.lowValue = i;
                         aPGS.highValue = i;
-                        aPGS.setExtent(MIMath.getPointsExtent(pList));
+                        aPGS.setExtent(GeometryUtil.getPointsExtent(pList));
                         aPGS.setPoints(pList);
 
                         int sNum = aLayer.getShapeNum();

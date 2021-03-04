@@ -4,7 +4,7 @@
  */
 package org.meteoinfo.legend;
 
-import org.meteoinfo.global.util.GlobalUtil;
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.global.event.ISelectedCellChangedListener;
 import org.meteoinfo.global.event.SelectedCellChangedEvent;
 import org.meteoinfo.layout.MapLayout;

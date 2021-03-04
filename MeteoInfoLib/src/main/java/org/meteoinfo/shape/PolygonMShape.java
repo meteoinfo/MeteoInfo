@@ -6,10 +6,11 @@ package org.meteoinfo.shape;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.global.MIMath;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateXYM;
 import org.locationtech.jts.geom.Geometry;
+import org.meteoinfo.common.MIMath;
 
 /**
  *

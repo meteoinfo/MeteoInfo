@@ -29,8 +29,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.meteoinfo.global.util.JDateUtil;
-import org.meteoinfo.global.util.TypeUtils;
+import org.meteoinfo.common.util.JDateUtil;
+import org.meteoinfo.common.util.TypeUtils;
 import org.meteoinfo.ndarray.DataType;
 
 /**

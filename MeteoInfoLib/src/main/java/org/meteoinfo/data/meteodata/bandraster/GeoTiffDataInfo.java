@@ -18,11 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.math.ArrayMath;
+
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.mapdata.geotiff.GeoTiff;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
@@ -149,7 +150,7 @@ public class GeoTiffDataInfo extends DataInfo implements IGridDataInfo {
     public Array read(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Array array = read(varName);
-            array = ArrayMath.section(array, origin, size, stride);            
+            array = ArrayMath.section(array, origin, size, stride);
             return array;
         } catch (InvalidRangeException ex) {
             Logger.getLogger(GeoTiffDataInfo.class.getName()).log(Level.SEVERE, null, ex);

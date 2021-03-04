@@ -22,7 +22,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import org.meteoinfo.global.util.JDateUtil;
+import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.laboratory.event.CurrentPathChangedEvent;
 import org.meteoinfo.laboratory.event.ICurrentPathChangedListener;
 import org.meteoinfo.table.IconRenderer;

@@ -16,7 +16,7 @@ from org.meteoinfo.map import MapView
 from org.meteoinfo.legend import BreakTypes, LegendManage, LegendScheme, LegendType
 from org.meteoinfo.shape import Shape, PolylineShape, PolygonShape, ShapeTypes, Graphic
 from org.meteoinfo.projection.info import ProjectionInfo
-from org.meteoinfo.global import Extent
+from org.meteoinfo.common import Extent
 from org.meteoinfo.layer import LayerTypes, WebMapLayer
 from org.meteoinfo.data.mapdata.webmap import WebMapProvider
 from org.meteoinfo.layout import ScaleBarType

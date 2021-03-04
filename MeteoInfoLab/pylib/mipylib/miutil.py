@@ -5,8 +5,8 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.global import PointD
-from org.meteoinfo.global.util import JDateUtil
+from org.meteoinfo.common import PointD
+from org.meteoinfo.common.util import JDateUtil
 from org.meteoinfo.ndarray import Complex
 from org.meteoinfo.shape import PointShape, ShapeUtil
 from java.util import Locale

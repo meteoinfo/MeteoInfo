@@ -5,7 +5,6 @@
 package org.meteoinfo.layer;
 
 import org.meteoinfo.data.mapdata.Field;
-import org.meteoinfo.global.MIMath;
 import org.meteoinfo.legend.AlignType;
 import org.meteoinfo.map.MapView;
 import org.meteoinfo.shape.ShapeTypes;

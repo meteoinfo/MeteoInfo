@@ -8,10 +8,9 @@ package org.meteoinfo.chart.axis;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import org.meteoinfo.chart.ChartText;
-import org.meteoinfo.global.util.JDateUtil;
+import org.meteoinfo.common.util.JDateUtil;
 
 /**
  *

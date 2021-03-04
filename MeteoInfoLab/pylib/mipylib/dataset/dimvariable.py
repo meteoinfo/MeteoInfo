@@ -6,7 +6,7 @@
 #-----------------------------------------------------
 from org.meteoinfo.ndarray import Dimension, DimensionType, Range, Array, MAMath
 from org.meteoinfo.math import ArrayMath, ArrayUtil
-from org.meteoinfo.global import PointD
+from org.meteoinfo.common import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.data.meteodata import Attribute
 from ucar.nc2 import Attribute as NCAttribute

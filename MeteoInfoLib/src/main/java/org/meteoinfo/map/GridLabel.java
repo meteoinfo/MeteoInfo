@@ -13,10 +13,10 @@
  */
 package org.meteoinfo.map;
 
-import org.meteoinfo.global.Direction;
-import org.meteoinfo.global.PointD;
+ import org.meteoinfo.common.Direction;
+ import org.meteoinfo.common.PointD;
 
-/**
+ /**
  *
  * @author Yaqiang Wang
  */

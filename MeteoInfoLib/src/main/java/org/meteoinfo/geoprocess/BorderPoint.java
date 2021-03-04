@@ -13,9 +13,9 @@
  */
 package org.meteoinfo.geoprocess;
 
-import org.meteoinfo.global.PointD;
+ import org.meteoinfo.common.PointD;
 
-/**
+ /**
  *
  * @author Yaqiang Wang
  */

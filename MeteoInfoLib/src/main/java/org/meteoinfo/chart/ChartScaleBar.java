@@ -15,7 +15,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import org.meteoinfo.chart.plot.MapPlot;
-import org.meteoinfo.global.PointF;
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.layout.ScaleBarType;
 import org.meteoinfo.layout.ScaleBarUnits;
 

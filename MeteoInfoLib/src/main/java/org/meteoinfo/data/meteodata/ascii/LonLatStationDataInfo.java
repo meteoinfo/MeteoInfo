@@ -13,14 +13,16 @@
  */
 package org.meteoinfo.data.meteodata.ascii;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
 import org.meteoinfo.data.meteodata.StationInfoData;
 import org.meteoinfo.data.meteodata.StationModelData;
 import org.meteoinfo.data.meteodata.Variable;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,8 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.meteoinfo.data.meteodata.MeteoDataType;
-import org.meteoinfo.global.util.GlobalUtil;
-import org.meteoinfo.io.FileCharsetDetector;
+import org.meteoinfo.common.io.FileCharsetDetector;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.meteodata.Attribute;
 

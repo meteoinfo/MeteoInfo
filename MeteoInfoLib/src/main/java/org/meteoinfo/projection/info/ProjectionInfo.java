@@ -21,9 +21,9 @@ import java.util.Set;
 
 import org.meteoinfo.chart.plot.XAlign;
 import org.meteoinfo.chart.plot.YAlign;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.map.GridLabel;
 import org.meteoinfo.math.ArrayUtil;
-import org.meteoinfo.global.PointD;
 import org.meteoinfo.projection.ProjectionNames;
 import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;

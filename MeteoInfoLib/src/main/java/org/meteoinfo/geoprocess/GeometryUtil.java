@@ -10,7 +10,9 @@ import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.ndarray.*;
@@ -21,6 +23,157 @@ import org.meteoinfo.shape.*;
  * @author wyq
  */
 public class GeometryUtil {
+
+    /**
+     * Get extent from point list
+     *
+     * @param PList point list
+     * @return extent
+     */
+    public static Extent getPointsExtent(List<? extends PointD> PList) {
+        if (PList.get(0) instanceof PointZ){
+            Extent3D cET = new Extent3D();
+            for (int i = 0; i < PList.size(); i++) {
+                PointZ aP = (PointZ)PList.get(i);
+                if (i == 0) {
+                    cET.minX = aP.X;
+                    cET.maxX = aP.X;
+                    cET.minY = aP.Y;
+                    cET.maxY = aP.Y;
+                    cET.minZ = aP.Z;
+                    cET.maxZ = aP.Z;
+                } else {
+                    if (cET.minX > aP.X) {
+                        cET.minX = aP.X;
+                    } else if (cET.maxX < aP.X) {
+                        cET.maxX = aP.X;
+                    }
+
+                    if (cET.minY > aP.Y) {
+                        cET.minY = aP.Y;
+                    } else if (cET.maxY < aP.Y) {
+                        cET.maxY = aP.Y;
+                    }
+
+                    if (cET.minZ > aP.Z) {
+                        cET.minZ = aP.Z;
+                    } else if (cET.maxZ < aP.Z) {
+                        cET.maxZ = aP.Z;
+                    }
+                }
+            }
+
+            return cET;
+        } else {
+            Extent cET = new Extent();
+            for (int i = 0; i < PList.size(); i++) {
+                PointD aP = PList.get(i);
+                if (i == 0) {
+                    cET.minX = aP.X;
+                    cET.maxX = aP.X;
+                    cET.minY = aP.Y;
+                    cET.maxY = aP.Y;
+                } else {
+                    if (cET.minX > aP.X) {
+                        cET.minX = aP.X;
+                    } else if (cET.maxX < aP.X) {
+                        cET.maxX = aP.X;
+                    }
+
+                    if (cET.minY > aP.Y) {
+                        cET.minY = aP.Y;
+                    } else if (cET.maxY < aP.Y) {
+                        cET.maxY = aP.Y;
+                    }
+                }
+            }
+
+            return cET;
+        }
+    }
+
+    /**
+     * Get extent of the shapes
+     *
+     * @param shapes
+     * @return Extent
+     */
+    public static Extent getExtent(List<? extends Shape> shapes) {
+        Extent extent = (Extent) shapes.get(0).getExtent().clone();
+        double minx = extent.minX;
+        double maxx = extent.maxX;
+        double miny = extent.minY;
+        double maxy = extent.maxY;
+        Extent ext;
+        for (int i = 1; i < shapes.size(); i++) {
+            ext = shapes.get(i).getExtent();
+            if (minx > ext.minX) {
+                minx = ext.minX;
+            }
+            if (maxx < ext.maxX) {
+                maxx = ext.maxX;
+            }
+            if (miny > ext.minY) {
+                miny = ext.minY;
+            }
+            if (maxy < ext.maxY) {
+                maxy = ext.maxY;
+            }
+        }
+
+        extent.minX = minx;
+        extent.maxX = maxx;
+        extent.minY = miny;
+        extent.maxY = maxy;
+
+        return extent;
+    }
+
+    /**
+     * Get extent of the points
+     *
+     * @param points
+     * @return Extent
+     */
+    public static Extent3D getExtent(PointZ[] points) {
+        PointZ p = points[0];
+        double minx = p.X;
+        double maxx = p.X;
+        double miny = p.Y;
+        double maxy = p.Y;
+        double minz = p.Z;
+        double maxz = p.Z;
+        for (int i = 1; i < points.length; i++) {
+            if (minx > p.X) {
+                minx = p.M;
+            }
+            if (maxx < p.X) {
+                maxx = p.M;
+            }
+            if (miny > p.Y) {
+                miny = p.Y;
+            }
+            if (maxy < p.Y) {
+                maxy = p.Y;
+            }
+            if (minz > p.Z) {
+                minz = p.Z;
+            }
+            if (maxz < p.Z) {
+                maxz = p.Z;
+            }
+        }
+
+        Extent3D extent = new Extent3D();
+        extent.minX = minx;
+        extent.maxX = maxx;
+        extent.minY = miny;
+        extent.maxY = maxy;
+        extent.minZ = minz;
+        extent.maxZ = maxz;
+
+        return extent;
+    }
 
     /**
      * Get ellipse coordinate

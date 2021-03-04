@@ -49,6 +49,11 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>meteoinfo-math</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>meteoinfo-ndarray</artifactId>
             <version>${project.version}</version>
         </dependency>

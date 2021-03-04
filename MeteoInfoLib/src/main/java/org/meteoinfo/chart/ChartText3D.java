@@ -12,8 +12,8 @@ package org.meteoinfo.chart;
 
 import java.awt.Point;
 import org.meteoinfo.chart.plot3d.Projector;
+import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.data.DataMath;
-import org.meteoinfo.global.Extent3D;
 import org.meteoinfo.shape.PointZ;
 
 /**

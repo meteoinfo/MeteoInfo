@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.data.dataframe.impl;
 
-import org.meteoinfo.global.util.JDateUtil;
+import org.meteoinfo.common.util.JDateUtil;
 
 import java.time.LocalDateTime;
 import java.time.Period;

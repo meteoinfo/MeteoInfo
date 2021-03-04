@@ -13,10 +13,10 @@
  */
 package org.meteoinfo.legend;
 
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.drawing.ContourDraw;
-import org.meteoinfo.global.MIMath;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.shape.ShapeTypes;
 import java.awt.Color;

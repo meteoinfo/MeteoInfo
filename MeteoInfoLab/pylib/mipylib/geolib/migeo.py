@@ -16,8 +16,8 @@ from org.meteoinfo.math import ArrayMath, ArrayUtil
 from org.meteoinfo.data.mapdata import MapDataManage, AttributeTable
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.projection.info import ProjectionInfo
-from org.meteoinfo.global import PointD
-from org.meteoinfo.io import IOUtil
+from org.meteoinfo.common import PointD
+from org.meteoinfo.common.io import IOUtil
 from org.meteoinfo.geoprocess.analysis import ResampleMethods
 
 from milayer import MILayer

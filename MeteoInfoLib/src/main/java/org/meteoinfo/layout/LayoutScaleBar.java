@@ -16,7 +16,8 @@ package org.meteoinfo.layout;
 import com.l2fprod.common.beans.BaseBeanInfo;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor;
-import org.meteoinfo.global.PointF;
+import org.meteoinfo.common.PointF;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;

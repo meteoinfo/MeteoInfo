@@ -5,8 +5,9 @@
  */
 package org.meteoinfo.data;
 
+import org.meteoinfo.common.Extent;
+
 import java.util.List;
-import org.meteoinfo.global.Extent;
 
 /**
  *

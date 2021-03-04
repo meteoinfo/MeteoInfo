@@ -13,10 +13,10 @@
  */
 package org.meteoinfo.layout;
 
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.global.event.IMapViewUpdatedListener;
 import org.meteoinfo.global.event.MapViewUpdatedEvent;
-import org.meteoinfo.global.PointF;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;

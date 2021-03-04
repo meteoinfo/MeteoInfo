@@ -19,11 +19,9 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.*;
-import javax.swing.text.DefaultCaret;
 
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.console.JConsole;
-import org.meteoinfo.console.editor.JTextAreaPrintStream;
-import org.meteoinfo.console.editor.JTextAreaWriter;
 import org.meteoinfo.console.jython.JIntrospect;
 import org.meteoinfo.console.editor.MITextEditorPane;
 import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
@@ -33,9 +31,7 @@ import org.meteoinfo.console.editor.TextEditor;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.TextEditorPane;
 
-import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.ui.ButtonTabComponent;
-import org.python.util.PythonInterpreter;
 
 /**
  *

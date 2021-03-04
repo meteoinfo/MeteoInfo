@@ -13,9 +13,10 @@
  */
 package org.meteoinfo.shape;
 
+import org.meteoinfo.common.PointD;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.global.PointD;
 
 /**
  *

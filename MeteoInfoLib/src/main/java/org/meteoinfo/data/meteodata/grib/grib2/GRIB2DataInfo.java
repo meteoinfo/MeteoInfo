@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.meteoinfo.common.Bytes2Number;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
@@ -18,7 +20,6 @@ import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.Variable;
-import org.meteoinfo.global.Bytes2Number;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.meteodata.Attribute;

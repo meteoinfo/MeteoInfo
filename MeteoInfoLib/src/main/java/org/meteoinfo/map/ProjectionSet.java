@@ -13,11 +13,11 @@
  */
 package org.meteoinfo.map;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.global.event.IProjectionChangedListener;
 import org.meteoinfo.global.event.ProjectionChangedEvent;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
 import org.meteoinfo.layer.RasterLayer;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.projection.KnownCoordinateSystems;

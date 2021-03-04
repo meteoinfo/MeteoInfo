@@ -13,12 +13,12 @@
  */
 package org.meteoinfo.layer;
 
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.legend.AlignType;
 import java.awt.Color;
 import java.awt.Font;
-import org.meteoinfo.global.util.GlobalUtil;
 
-/**
+ /**
  * Template
  *
  * @author Yaqiang Wang

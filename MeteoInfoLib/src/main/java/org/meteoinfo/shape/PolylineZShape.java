@@ -13,15 +13,16 @@
  */
 package org.meteoinfo.shape;
 
-import org.meteoinfo.global.MIMath;
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.global.Extent;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateXYZM;
 import org.locationtech.jts.geom.Geometry;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
 
-/**
+ /**
  * PolylineZ shape class
  *
  * @author yaqiang

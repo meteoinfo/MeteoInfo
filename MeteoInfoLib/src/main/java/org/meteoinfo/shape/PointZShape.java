@@ -14,10 +14,10 @@
  */
 package org.meteoinfo.shape;
 
-import org.meteoinfo.global.Extent3D;
-import org.meteoinfo.global.PointD;
 import org.locationtech.jts.geom.CoordinateXYZM;
 import org.locationtech.jts.geom.Geometry;
+import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.PointD;
 
 /**
  *

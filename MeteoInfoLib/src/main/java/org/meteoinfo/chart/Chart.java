@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.chart.plot.MapPlot;
 import org.meteoinfo.chart.plot.Plot;
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.global.PointF;
 
 /**
  *

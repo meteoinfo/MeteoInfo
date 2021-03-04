@@ -17,7 +17,6 @@ import org.meteoinfo.data.meteodata.DrawType2D;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.colors.ColorMap;
 import org.meteoinfo.global.colors.ColorUtil;
-import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.shape.ShapeTypes;
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -44,15 +43,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import static org.meteoinfo.shape.ShapeTypes.Point;
-import static org.meteoinfo.shape.ShapeTypes.PointM;
-import static org.meteoinfo.shape.ShapeTypes.PointZ;
-import static org.meteoinfo.shape.ShapeTypes.Polygon;
-import static org.meteoinfo.shape.ShapeTypes.PolygonM;
-import static org.meteoinfo.shape.ShapeTypes.PolygonZ;
-import static org.meteoinfo.shape.ShapeTypes.Polyline;
-import static org.meteoinfo.shape.ShapeTypes.PolylineM;
-import static org.meteoinfo.shape.ShapeTypes.PolylineZ;
 import org.w3c.dom.DOMException;
 
 /**

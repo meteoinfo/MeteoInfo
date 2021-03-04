@@ -5,6 +5,8 @@
 package org.meteoinfo.desktop.forms;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.data.meteodata.DrawMeteoData;
@@ -13,8 +15,7 @@ import org.meteoinfo.data.meteodata.MeteoDataInfo;
 import org.meteoinfo.data.meteodata.PlotDimension;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.PointF;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Rectangle;

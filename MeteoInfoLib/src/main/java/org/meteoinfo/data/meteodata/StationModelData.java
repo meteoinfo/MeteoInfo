@@ -13,7 +13,8 @@
  */
 package org.meteoinfo.data.meteodata;
 
-import org.meteoinfo.global.Extent;
+import org.meteoinfo.common.Extent;
+
 import java.util.ArrayList;
 import java.util.List;
 

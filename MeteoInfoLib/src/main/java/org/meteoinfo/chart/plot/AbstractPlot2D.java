@@ -27,11 +27,9 @@ import org.meteoinfo.chart.Location;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LogAxis;
-import static org.meteoinfo.chart.plot.Plot.MINIMUM_HEIGHT_TO_DRAW;
-import static org.meteoinfo.chart.plot.Plot.MINIMUM_WIDTH_TO_DRAW;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.PointF;
 
 /**
  *

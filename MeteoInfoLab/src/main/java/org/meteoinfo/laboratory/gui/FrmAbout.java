@@ -4,6 +4,8 @@
  */
 package org.meteoinfo.laboratory.gui;
 
+import org.meteoinfo.common.util.GlobalUtil;
+
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.io.IOException;
@@ -11,7 +13,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.global.util.GlobalUtil;
 
 /**
  *

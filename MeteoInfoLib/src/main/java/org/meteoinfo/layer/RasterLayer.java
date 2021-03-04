@@ -15,8 +15,10 @@ package org.meteoinfo.layer;
 
 import com.l2fprod.common.beans.BaseBeanInfo;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.GenericFileFilter;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.shape.ShapeTypes;
 import java.awt.Color;
@@ -31,8 +33,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.mapdata.MapDataManage;
-import org.meteoinfo.global.GenericFileFilter;
-import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.ndarray.Index;
 

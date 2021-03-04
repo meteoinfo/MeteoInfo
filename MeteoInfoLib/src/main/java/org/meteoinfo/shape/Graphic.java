@@ -13,10 +13,11 @@
  */
 package org.meteoinfo.shape;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.legend.MarkerType;
 import org.meteoinfo.legend.PointStyle;
 import org.meteoinfo.global.colors.ColorUtil;
-import org.meteoinfo.global.PointD;
 import org.meteoinfo.layout.ResizeAbility;
 import org.meteoinfo.legend.BreakTypes;
 import org.meteoinfo.legend.ChartBreak;
@@ -32,7 +33,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.global.Extent;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

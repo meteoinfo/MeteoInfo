@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.math.ArrayMath;
-import org.meteoinfo.global.MIMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 

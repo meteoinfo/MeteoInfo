@@ -19,12 +19,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.desktop.config.Options;
 import org.meteoinfo.desktop.forms.FrmMain;
 import org.meteoinfo.desktop.forms.FrmTextEditor;
 import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.global.util.FontUtil;
-import org.meteoinfo.global.util.GlobalUtil;
 import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.util.InteractiveConsole;

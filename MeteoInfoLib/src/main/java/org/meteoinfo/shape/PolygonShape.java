@@ -13,18 +13,21 @@
  */
 package org.meteoinfo.shape;
 
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.meteoinfo.global.PointF;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiPolygon;
+import org.meteoinfo.geoprocess.GeometryUtil;
 
 /**
  * PolygonShape class
@@ -137,7 +140,7 @@ public class PolygonShape extends Shape implements Cloneable {
                 ((List<Polygon>)this._polygons).add(polygon);
                 break;
         }   
-        this.setExtent(MIMath.getPointsExtent(_points));
+        this.setExtent(GeometryUtil.getPointsExtent(_points));
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -184,7 +187,7 @@ public class PolygonShape extends Shape implements Cloneable {
     @Override
     public void setPoints(List<? extends PointD> points) {
         _points = points;
-        this.setExtent(MIMath.getPointsExtent(_points));
+        this.setExtent(GeometryUtil.getPointsExtent(_points));
         updatePolygons();
     }
     
@@ -198,7 +201,7 @@ public class PolygonShape extends Shape implements Cloneable {
             ps.add(new PointD(points[i].X, points[i].Y));
         }
         _points = ps;
-        this.setExtent(MIMath.getPointsExtent(_points));
+        this.setExtent(GeometryUtil.getPointsExtent(_points));
         updatePolygons_keep();
     }
     
@@ -390,7 +393,7 @@ public class PolygonShape extends Shape implements Cloneable {
             parts[i] = partList.get(i);
         }
         if (_points.size() > 0)
-            this.setExtent(MIMath.getPointsExtent(_points));
+            this.setExtent(GeometryUtil.getPointsExtent(_points));
     }
     
     /**
@@ -462,7 +465,7 @@ public class PolygonShape extends Shape implements Cloneable {
         }
         
         ((List<PointD>) _points).add(vIdx, vertice);
-        this.setExtent(MIMath.getPointsExtent(_points));
+        this.setExtent(GeometryUtil.getPointsExtent(_points));
         this.updatePolygons();
     }
 
@@ -479,7 +482,7 @@ public class PolygonShape extends Shape implements Cloneable {
         }
         
         ((List<PointD>) _points).remove(vIdx);
-        this.setExtent(MIMath.getPointsExtent(_points));
+        this.setExtent(GeometryUtil.getPointsExtent(_points));
         this.updatePolygons();
     }
     

@@ -18,12 +18,12 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.data.meteodata.ascii.LonLatStationDataInfo;
 import org.meteoinfo.desktop.config.GenericFileFilter;
-import org.meteoinfo.global.MIMath;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.table.RowHeaderTable;
 import org.meteoinfo.projection.info.ProjectionInfo;

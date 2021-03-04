@@ -13,9 +13,9 @@
  */
 package org.meteoinfo.data.mapdata;
 
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.PointD;
-import org.meteoinfo.io.EndianDataOutputStream;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.io.EndianDataOutputStream;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.LegendManage;
@@ -47,8 +47,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.projection.info.ProjectionInfo;
-import org.locationtech.proj4j.CRSFactory;
-import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.meteoinfo.shape.PointM;
 import org.meteoinfo.shape.PointZShape;
 import org.meteoinfo.shape.PolygonMShape;

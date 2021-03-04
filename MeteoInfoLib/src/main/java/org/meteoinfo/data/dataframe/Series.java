@@ -15,14 +15,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import org.meteoinfo.global.util.JDateUtil;
-import org.meteoinfo.math.ArrayMath;
+
+import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.dataframe.impl.Grouping;
 import org.meteoinfo.data.dataframe.impl.KeyFunction;
 import org.meteoinfo.data.dataframe.impl.TimeFunction;
 import org.meteoinfo.data.dataframe.impl.TimeFunctions;
 import org.meteoinfo.data.dataframe.impl.Views;
 import org.meteoinfo.data.dataframe.impl.WindowFunction;
+import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.InvalidRangeException;

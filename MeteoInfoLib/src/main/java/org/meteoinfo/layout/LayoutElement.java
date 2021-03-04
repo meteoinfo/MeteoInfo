@@ -13,11 +13,12 @@
  */
 package org.meteoinfo.layout;
 
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.global.event.ILocationChangedListener;
 import org.meteoinfo.global.event.ISizeChangedListener;
 import org.meteoinfo.global.event.LocationChangedEvent;
 import org.meteoinfo.global.event.SizeChangedEvent;
-import org.meteoinfo.global.PointF;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;

@@ -35,16 +35,17 @@ import org.meteoinfo.chart.ChartLegend;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.axis.LogAxis;
 import org.meteoinfo.chart.axis.TimeAxis;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.data.Dataset;
 import org.meteoinfo.drawing.Draw;
 import static org.meteoinfo.drawing.Draw.getHatchImage;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
-import org.meteoinfo.global.PointF;
+
+import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.legend.ArrowBreak;
 import org.meteoinfo.legend.BarBreak;
-import static org.meteoinfo.legend.BreakTypes.LabelBreak;
 import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.ColorBreakCollection;
 import org.meteoinfo.legend.LabelBreak;
@@ -767,7 +768,7 @@ public class Plot2D extends AbstractPlot2D {
                     aY = (float) sXY[1];
                     points.add(new PointD(aX, aY));
                 }
-                Extent aExtent = MIMath.getPointsExtent(points);
+                Extent aExtent = GeometryUtil.getPointsExtent(points);
                 rect.x = (int) aExtent.minX;
                 rect.y = (int) aExtent.minY;
                 rect.width = (int) (aExtent.maxX - aExtent.minX);
@@ -779,7 +780,7 @@ public class Plot2D extends AbstractPlot2D {
     }
 
     private List<PointF> drawPolygon(Graphics2D g, Polygon aPG, PolygonBreak aPGB,
-            boolean isSelected, Rectangle2D area) {
+                                     boolean isSelected, Rectangle2D area) {
         int len = aPG.getOutLine().size();
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, len);
         PointD wPoint;

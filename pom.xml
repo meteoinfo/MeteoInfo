@@ -18,6 +18,8 @@
         <module>MeteoInfoLab</module>
         <module>meteoinfo-console</module>
         <module>meteoinfo-ndarray</module>
+        <module>meteoinfo-math</module>
+        <module>meteoinfo-common</module>
     </modules>
     
     <properties>

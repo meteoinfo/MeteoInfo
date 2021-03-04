@@ -11,8 +11,9 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.global.PointF;
 import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.shape.ArcShape;
@@ -105,7 +106,7 @@ public class PiePlot extends Plot2D {
         }
         float sx = (float) (rect.getX() - area.getX());
         float sy = (float) (rect.getY() - area.getY());
-        Draw.drawPie(new PointF(sx, sy), (float) rect.getWidth(), (float) rect.getHeight(), 
+        Draw.drawPie(new PointF(sx, sy), (float) rect.getWidth(), (float) rect.getHeight(),
                 startAngle, sweepAngle, aPGB, g);
 
         //Draw label

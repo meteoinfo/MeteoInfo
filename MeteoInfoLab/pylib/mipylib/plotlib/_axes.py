@@ -14,7 +14,7 @@ from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
 from org.meteoinfo.legend import LegendManage, BarBreak, PolygonBreak, PolylineBreak, \
     PointBreak, LineStyles, PointStyle, LegendScheme, LegendType
 from org.meteoinfo.shape import ShapeTypes, Graphic, GraphicCollection
-from org.meteoinfo.global import MIMath, Extent
+from org.meteoinfo.common import MIMath, Extent
 from org.meteoinfo.layer import MapLayer
 
 from java.awt import Font, Color, BasicStroke

@@ -2,8 +2,8 @@ package org.meteoinfo.shape;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.geoprocess.GeometryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class CylinderShape extends Shape {
         this.points = new ArrayList<>();
         this.points.add(new PointZ());
         this.points.add(new PointZ());
-        this.setExtent(MIMath.getPointsExtent(this.points));
+        this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
 
     /**
@@ -33,7 +33,7 @@ public class CylinderShape extends Shape {
         super();
         this.points = points;
         this.radius = radius;
-        this.setExtent(MIMath.getPointsExtent(this.points));
+        this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
 
     /**
@@ -48,7 +48,7 @@ public class CylinderShape extends Shape {
         this.points.add(p1);
         this.points.add(p2);
         this.radius = radius;
-        this.setExtent(MIMath.getPointsExtent(this.points));
+        this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
 
     @Override
@@ -84,7 +84,7 @@ public class CylinderShape extends Shape {
      */
     public void setPoints(List<? extends PointD> value) {
         this.points = (List<PointZ>)value;
-        this.setExtent(MIMath.getPointsExtent(this.points));
+        this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
 
     /**

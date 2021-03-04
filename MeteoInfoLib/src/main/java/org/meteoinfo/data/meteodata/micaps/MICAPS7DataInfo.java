@@ -25,17 +25,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.global.util.JDateUtil;
+import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.TrajDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.data.meteodata.hysplit.TrajectoryInfo;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
@@ -333,7 +334,7 @@ public class MICAPS7DataInfo extends DataInfo implements TrajDataInfo {
                     TrajNum += 1;
                     aPolyline.setValue(TrajNum);
                     aPolyline.setPoints(PointList.get(i));
-                    aPolyline.setExtent(MIMath.getPointsExtent(aPolyline.getPoints()));
+                    aPolyline.setExtent(GeometryUtil.getPointsExtent(aPolyline.getPoints()));
 
                     int shapeNum = aLayer.getShapeNum();
                     if (aLayer.editInsertShape(aPolyline, shapeNum)) {

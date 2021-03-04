@@ -13,6 +13,10 @@
  */
 package org.meteoinfo.projection;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.projection.info.ProjectionInfo;
@@ -22,9 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
 import org.meteoinfo.layer.RasterLayer;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.map.ProjectionSet;
@@ -678,7 +679,7 @@ public class ProjectionUtil {
                     }
                 }
                 oLayer.setShapes(new ArrayList<>(shapePoints));
-                oLayer.setExtent(MIMath.getPointsExtent(newPoints));
+                oLayer.setExtent(GeometryUtil.getPointsExtent(newPoints));
 
                 break;
             case Polyline:
@@ -957,7 +958,7 @@ public class ProjectionUtil {
             }
         }
         aLayer.setShapes(new ArrayList<>(vectors));
-        aLayer.setExtent(MIMath.getPointsExtent(newPoints));
+        aLayer.setExtent(GeometryUtil.getPointsExtent(newPoints));
         aLayer.getAttributeTable().setTable(aTable);
 
         return aLayer;
@@ -1057,7 +1058,7 @@ public class ProjectionUtil {
             }
         }
         oLayer.setShapes(new ArrayList<>(shapes));
-        oLayer.setExtent(MIMath.getPointsExtent(newPoints));
+        oLayer.setExtent(GeometryUtil.getPointsExtent(newPoints));
         oLayer.getAttributeTable().setTable(aTable);
 
         if (oLayer.getLabelPoints().size() > 0) {

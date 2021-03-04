@@ -14,13 +14,13 @@
  */
 package org.meteoinfo.shape;
 
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.PointD;
 import java.util.ArrayList;
 import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointD;
 
 /**
  * Point shape class

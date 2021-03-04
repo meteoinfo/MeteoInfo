@@ -13,6 +13,9 @@
  */
 package org.meteoinfo.global.colors;
 
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.util.GlobalUtil;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.util.GlobalUtil;
 
-/**
+ /**
  * ColorUtiles class
  *
  * @author Yaqiang

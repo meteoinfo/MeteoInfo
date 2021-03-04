@@ -2,8 +2,8 @@ package org.meteoinfo.shape;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.geoprocess.GeometryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class CubicShape extends Shape{
         for (int i = 0; i < 8; i++) {
             this.points.add(new PointZ());
         }
-        this.setExtent(MIMath.getPointsExtent(this.points));
+        this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
 
     /**
@@ -50,7 +50,7 @@ public class CubicShape extends Shape{
     public CubicShape(List<PointZ> points) {
         super();
         this.points = points;
-        this.setExtent(MIMath.getPointsExtent(this.points));
+        this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
 
     @Override
@@ -77,7 +77,7 @@ public class CubicShape extends Shape{
      */
     public void setPoints(List<? extends PointD> value) {
         this.points = (List<PointZ>)value;
-        this.setExtent(MIMath.getPointsExtent(this.points));
+        this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
 
     /**

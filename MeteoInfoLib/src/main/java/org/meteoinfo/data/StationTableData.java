@@ -13,7 +13,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import org.meteoinfo.global.util.GlobalUtil;
+
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;

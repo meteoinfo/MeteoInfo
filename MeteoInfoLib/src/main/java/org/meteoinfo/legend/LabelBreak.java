@@ -13,15 +13,15 @@
  */
 package org.meteoinfo.legend;
 
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.global.event.ISizeChangedListener;
 import org.meteoinfo.global.event.SizeChangedEvent;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.HashMap;
 import javax.swing.event.EventListenerList;
-import org.meteoinfo.global.util.GlobalUtil;
 
-/**
+ /**
  * Label break class
  *
  * @author Yaqiang Wang

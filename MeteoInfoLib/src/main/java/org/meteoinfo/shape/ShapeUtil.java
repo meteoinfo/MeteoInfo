@@ -7,7 +7,8 @@ package org.meteoinfo.shape;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.global.PointD;
+
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.ndarray.Array;
 
 /**

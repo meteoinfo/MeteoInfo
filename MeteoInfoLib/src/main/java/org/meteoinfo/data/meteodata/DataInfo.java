@@ -19,7 +19,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meteoinfo.global.util.JDateUtil;
+import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.projection.KnownCoordinateSystems;

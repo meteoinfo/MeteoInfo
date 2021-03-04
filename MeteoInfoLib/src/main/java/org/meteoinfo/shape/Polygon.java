@@ -13,13 +13,15 @@
  */
 package org.meteoinfo.shape;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.global.DataConvert;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -63,7 +65,7 @@ public class Polygon {
      */
     public void setOutLine(List<? extends PointD> outLine) {
         _outLine = outLine;
-        _extent = MIMath.getPointsExtent(outLine);
+        _extent = GeometryUtil.getPointsExtent(outLine);
     }
 
     /**

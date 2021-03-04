@@ -15,9 +15,10 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.laboratory.application.Application;
 import org.meteoinfo.laboratory.application.AppCollection;
-import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.plugin.IPlugin;
 import org.meteoinfo.ui.CheckBoxListEntry;
 import org.python.core.PyObject;

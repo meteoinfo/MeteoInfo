@@ -18,20 +18,19 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
-import org.meteoinfo.math.ArrayMath;
-import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.data.analysis.Statistics;
 import org.meteoinfo.drawing.ContourDraw;
 import org.meteoinfo.drawing.Draw;
+import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.legend.PointStyle;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.Extent3D;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
 import org.meteoinfo.layer.ImageLayer;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.ArrowLineBreak;
@@ -48,6 +47,8 @@ import org.meteoinfo.legend.PointBreak;
 import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.legend.PolylineBreak;
 import org.meteoinfo.legend.StreamlineBreak;
+import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
@@ -3100,7 +3101,7 @@ public class GraphicFactory {
             }
             aPolyline.setPoints(pList);
             aPolyline.setValue(v);
-            aPolyline.setExtent(MIMath.getPointsExtent(pList));
+            aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
 
             switch (ls.getLegendType()) {
                 case UniqueValue:
@@ -3216,7 +3217,7 @@ public class GraphicFactory {
             }
             aPolyline.setPoints(pList);
             aPolyline.setValue(v);
-            aPolyline.setExtent(MIMath.getPointsExtent(pList));
+            aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
             cbb = ls.findLegendBreak(v);
             graphics.add(new Graphic(aPolyline, cbb));
         }
@@ -3325,7 +3326,7 @@ public class GraphicFactory {
             }
             aPolyline.setPoints(pList);
             aPolyline.setValue(v);
-            aPolyline.setExtent(MIMath.getPointsExtent(pList));
+            aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
             cbb = ls.findLegendBreak(v);
             graphics.add(new Graphic(aPolyline, cbb));
         }
@@ -3391,7 +3392,7 @@ public class GraphicFactory {
             }
             PolygonShape aPolygonShape = new PolygonShape();
             aPolygonShape.setPoints(pList);
-            aPolygonShape.setExtent(MIMath.getPointsExtent(pList));
+            aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
             aPolygonShape.lowValue = v;
             if (poly.HasHoles()) {
                 for (PolyLine holeLine : poly.HoleLines) {
@@ -3555,7 +3556,7 @@ public class GraphicFactory {
             }
             PolygonZShape aPolygonShape = new PolygonZShape();
             aPolygonShape.setPoints(pList);
-            aPolygonShape.setExtent(MIMath.getPointsExtent(pList));
+            aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
             aPolygonShape.lowValue = v;
             if (poly.HasHoles()) {
                 switch (zdir) {
@@ -3734,7 +3735,7 @@ public class GraphicFactory {
             }
             PolygonZShape aPolygonShape = new PolygonZShape();
             aPolygonShape.setPoints(pList);
-            aPolygonShape.setExtent(MIMath.getPointsExtent(pList));
+            aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
             aPolygonShape.lowValue = v;
             if (poly.HasHoles()) {
                 switch (zdir) {

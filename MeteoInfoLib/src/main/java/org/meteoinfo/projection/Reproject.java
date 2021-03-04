@@ -17,12 +17,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.geoprocess.analysis.ResampleMethods;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.projection.info.ProjectionInfo;
-import org.meteoinfo.global.PointD;
 import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;

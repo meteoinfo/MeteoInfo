@@ -26,10 +26,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.meteoinfo.math.ArrayUtil;
+
 import org.meteoinfo.data.dataframe.DataFrame;
 import org.meteoinfo.data.dataframe.Series;
 import org.meteoinfo.data.dataframe.impl.Transforms.CumulativeFunction;
+import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
 
 public class Grouping

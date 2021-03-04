@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.shape;
 
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.legend.ChartBreak;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;

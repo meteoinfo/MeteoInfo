@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.*;
-import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
@@ -26,7 +25,7 @@ import javax.swing.*;
 
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
-import org.meteoinfo.global.Extent3D;
+import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.image.ImageUtil;
 import org.w3c.dom.Element;
 

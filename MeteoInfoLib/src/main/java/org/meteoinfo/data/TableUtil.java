@@ -15,8 +15,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.analysis.Statistics;
-import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;

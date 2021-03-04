@@ -14,7 +14,8 @@
 package org.meteoinfo.projection.info;
 
 import java.util.List;
-import org.meteoinfo.global.PointD;
+
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.Reproject;

@@ -6,7 +6,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.shape import ShapeUtil, PointShape
-from org.meteoinfo.global import PointD
+from org.meteoinfo.common import PointD
 import mipylib.numeric as np
 
 __all__ = [

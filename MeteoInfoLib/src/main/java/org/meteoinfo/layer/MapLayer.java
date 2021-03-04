@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.layer;
 
-import org.meteoinfo.global.Extent;
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;

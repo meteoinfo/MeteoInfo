@@ -16,7 +16,7 @@ package org.meteoinfo.table;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 
-import org.meteoinfo.global.util.JDateUtil;
+import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.ndarray.DataType;
 
 /**

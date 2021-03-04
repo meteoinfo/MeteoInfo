@@ -17,12 +17,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
+import org.meteoinfo.common.GenericFileFilter;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.mapdata.Field;
-import org.meteoinfo.global.GenericFileFilter;
-import org.meteoinfo.global.MIMath;
-import org.meteoinfo.global.PointD;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.global.util.GlobalUtil;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.LegendManage;
@@ -286,7 +287,7 @@ public class FrmAddXYData extends javax.swing.JDialog {
             try {
                 File aFile = aDlg.getSelectedFile();
                 System.setProperty("user.dir", aFile.getParent());
-                String extent = ((org.meteoinfo.global.GenericFileFilter) aDlg.getFileFilter()).getFileExtent();
+                String extent = ((GenericFileFilter) aDlg.getFileFilter()).getFileExtent();
                 String fileName = aFile.getAbsolutePath();
                 if (!fileName.substring(fileName.length() - extent.length()).equals(extent)) {
                     fileName = fileName + "." + extent;

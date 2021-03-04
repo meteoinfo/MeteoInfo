@@ -17,8 +17,8 @@ import java.util.List;
 
 import org.meteoinfo.chart.plot.XAlign;
 import org.meteoinfo.chart.plot.YAlign;
-import org.meteoinfo.global.Direction;
-import org.meteoinfo.global.PointD;
+import org.meteoinfo.common.Direction;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.map.GridLabel;
 import org.meteoinfo.projection.ProjectionNames;
 import org.locationtech.proj4j.CoordinateReferenceSystem;

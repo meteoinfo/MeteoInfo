@@ -6,15 +6,12 @@
 package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.*;
-import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.glu.GLUtessellator;
-import com.jogamp.opengl.glu.GLUtessellatorCallback;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureCoords;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.math.VectorUtil;
@@ -33,7 +30,6 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-import jogamp.opengl.glu.tessellator.GLUtessellatorImpl;
 import org.meteoinfo.chart.ChartColorBar;
 import org.meteoinfo.chart.ChartLegend;
 import org.meteoinfo.chart.ChartText;
@@ -41,22 +37,17 @@ import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.jogl.tessellator.Primitive;
-import org.meteoinfo.chart.jogl.tessellator.PrimitiveTessellator;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
-import org.meteoinfo.chart.jogl.tessellator.TriangleTessellator;
 import org.meteoinfo.chart.plot.*;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.data.Dataset;
 import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.Extent;
-import org.meteoinfo.global.Extent3D;
-import org.meteoinfo.global.util.FontUtil;
 import org.meteoinfo.legend.*;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.shape.*;
-
-import static org.meteoinfo.shape.ShapeTypes.PointZ;
 
 /**
  *

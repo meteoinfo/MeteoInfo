@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.table;
 
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.ndarray.DataType;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.TableUtil;
 import org.meteoinfo.data.mapdata.Field;
-import org.meteoinfo.global.MIMath;
 import ucar.ma2.Range;
 
 /**

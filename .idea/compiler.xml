@@ -6,16 +6,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="meteoinfo-ndarray" />
         <module name="MeteoInfoLab" />
-        <module name="MeteoInfoLib" />
+        <module name="meteoinfo-math" />
         <module name="MeteoInfoMap" />
         <module name="meteoinfo-console" />
+        <module name="meteoinfo-ndarray" />
+        <module name="meteoinfo-common" />
+        <module name="MeteoInfoLib" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="MeteoInfo" target="1.8" />
+      <module name="meteoinfo-common" target="1.8" />
       <module name="meteoinfo-console" target="1.8" />
+      <module name="meteoinfo-math" target="1.8" />
       <module name="meteoinfo-ndarray" target="1.8" />
       <module name="MeteoInfoLab" target="1.8" />
       <module name="MeteoInfoLib" target="1.8" />

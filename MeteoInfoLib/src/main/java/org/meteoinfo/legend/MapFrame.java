@@ -14,7 +14,7 @@
 package org.meteoinfo.legend;
 
 import com.l2fprod.common.beans.BaseBeanInfo;
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.global.event.ILayersUpdatedListener;
 import org.meteoinfo.global.event.ILayoutBoundsChangedListener;
 import org.meteoinfo.global.event.IMapViewUpdatedListener;

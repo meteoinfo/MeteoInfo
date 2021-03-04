@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.legend;
 
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorUtil;
 import java.awt.Color;
 import java.util.HashMap;
 import org.w3c.dom.Attr;

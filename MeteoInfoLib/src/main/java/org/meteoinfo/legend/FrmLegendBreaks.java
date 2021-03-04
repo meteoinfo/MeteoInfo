@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import org.meteoinfo.global.colors.ColorMap;
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorMap;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.ui.ColorComboBoxModel;
 import org.meteoinfo.ui.ColorListCellRender;
 

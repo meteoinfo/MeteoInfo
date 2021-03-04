@@ -7,7 +7,7 @@ package org.meteoinfo.ui;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
-import org.meteoinfo.global.colors.ColorMap;
+import org.meteoinfo.common.colors.ColorMap;
 
 /**
  *

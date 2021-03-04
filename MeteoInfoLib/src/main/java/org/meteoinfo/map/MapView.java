@@ -26,7 +26,7 @@ import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.legend.PointStyle;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.global.event.GraphicSelectedEvent;
 import org.meteoinfo.global.event.IGraphicSelectedListener;
 import org.meteoinfo.global.event.ILayersUpdatedListener;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.global.colors;
+package org.meteoinfo.common.colors;
 
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.legend.LegendManage;
+//import org.meteoinfo.legend.LegendManage;
 
 /**
  *
@@ -337,6 +337,22 @@ public class ColorMap {
 
         return cols;
     }
+
+    /**
+     * Get rainbow color by HSV/HSB
+     *
+     * @param cNum Color number
+     * @return Rainbow colors
+     */
+    private Color[] getRainBowColors_HSV(int cNum) {
+        double p = 360.0 / cNum;
+        Color[] colors = new Color[cNum];
+        for (int i = 0; i < cNum; i++) {
+            colors[cNum - i - 1] = Color.getHSBColor((float) (i * p), 1.0f, 1.0f);
+        }
+
+        return colors;
+    }
     
     /**
      * Create rainbow colors
@@ -346,8 +362,8 @@ public class ColorMap {
      */
     private Color[] gradsRainBowColors(int cNum) {
         if (cNum > 13) {
-            //return getRainBowColors_HSL(cNum);
-            return LegendManage.getRainBowColors_HSV(cNum);
+            return getRainBowColors_HSV(cNum);
+            //return LegendManage.getRainBowColors_HSV(cNum);
         }
         
         List<Color> colorList = new ArrayList<>();
@@ -548,7 +564,7 @@ public class ColorMap {
     /**
      * Read colors from file
      * @param fileName The file name
-     * @throws java.io.FileNotFoundException
+     * @throws FileNotFoundException
      */
     public void readFromFile(String fileName) throws FileNotFoundException, IOException{
         BufferedReader sr = new BufferedReader(new FileReader(new File(fileName)));
@@ -559,7 +575,7 @@ public class ColorMap {
      * Read colors from file
      * @param fileName The file name
      * @param alpha Alpha
-     * @throws java.io.FileNotFoundException
+     * @throws FileNotFoundException
      */
     public void readFromFile(String fileName, int alpha) throws FileNotFoundException, IOException{
         BufferedReader sr = new BufferedReader(new FileReader(new File(fileName)));
@@ -569,7 +585,7 @@ public class ColorMap {
     /**
      * Read colors from file
      * @param file The file
-     * @throws java.io.FileNotFoundException
+     * @throws FileNotFoundException
      */
     public void readFromFile(File file) throws FileNotFoundException, IOException{
         BufferedReader sr = new BufferedReader(new FileReader(file));

@@ -15,8 +15,8 @@ package org.meteoinfo.legend;
 
 import org.meteoinfo.data.meteodata.DrawType2D;
 import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.colors.ColorMap;
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorMap;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.shape.ShapeTypes;
 import java.awt.Color;
 import java.io.BufferedReader;

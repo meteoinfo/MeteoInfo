@@ -17,7 +17,7 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.legend.MarkerType;
 import org.meteoinfo.legend.PointStyle;
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.layout.ResizeAbility;
 import org.meteoinfo.legend.BreakTypes;
 import org.meteoinfo.legend.ChartBreak;

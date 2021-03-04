@@ -8,7 +8,7 @@ package org.meteoinfo.legend;
 import java.awt.Color;
 
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.global.colors.ColorMap;
+import org.meteoinfo.common.colors.ColorMap;
 
 /**
  *

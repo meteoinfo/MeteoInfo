@@ -24,7 +24,7 @@ import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.global.event.ActiveMapFrameChangedEvent;
 import org.meteoinfo.global.event.ElementSelectedEvent;
 import org.meteoinfo.global.event.IActiveMapFrameChangedListener;

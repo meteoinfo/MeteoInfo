@@ -19,7 +19,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.meteoinfo.io.IOUtil;
+import org.meteoinfo.common.io.IOUtil;
 
 /**
  *

@@ -21,7 +21,7 @@ import org.meteoinfo.data.mapdata.AttributeTable;
 import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.data.mapdata.ShapeFileManage;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;

@@ -11,10 +11,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
  * General Public License for more details.
  */
-package org.meteoinfo.global.colors;
+package org.meteoinfo.common.colors;
 
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.util.GlobalUtil;
+import org.meteoinfo.common.colors.ColorMap;
+import org.meteoinfo.common.colors.WebColor;
 
 import java.awt.Color;
 import java.io.File;
@@ -264,7 +266,7 @@ public class ColorUtil {
      * Load color map from rgb file
      * @param fn Color map rgb file path
      * @return Color table
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public static ColorMap loadColorMap(String fn) throws IOException{
         File ctFile = new File(fn);
@@ -282,7 +284,7 @@ public class ColorUtil {
      * @param fn Color map rgb file path
      * @param alpha Alpha
      * @return Color table
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public static ColorMap loadColorMap(String fn, int alpha) throws IOException{
         File ctFile = new File(fn);

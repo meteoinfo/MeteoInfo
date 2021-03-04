@@ -69,7 +69,7 @@ import org.meteoinfo.desktop.config.ProjectFile;
 import org.meteoinfo.data.mapdata.FrmAttriData;
 import org.meteoinfo.data.mapdata.MapDataManage;
 import org.meteoinfo.global.FrmProperty;
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.global.event.ActiveMapFrameChangedEvent;
 import org.meteoinfo.global.event.ElementSelectedEvent;
 import org.meteoinfo.global.event.GraphicSelectedEvent;

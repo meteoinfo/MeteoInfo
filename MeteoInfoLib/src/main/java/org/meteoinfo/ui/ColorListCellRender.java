@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.ui;
 
-import org.meteoinfo.global.colors.ColorMap;
+import org.meteoinfo.common.colors.ColorMap;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FontMetrics;

@@ -20,7 +20,7 @@ import org.meteoinfo.common.PointF;
 import org.meteoinfo.legend.MarkerType;
 import org.meteoinfo.legend.PointStyle;
 import org.meteoinfo.geoprocess.Spline;
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.legend.BreakTypes;
 import org.meteoinfo.legend.ChartBreak;
 import org.meteoinfo.legend.LabelBreak;

@@ -28,7 +28,7 @@ import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.data.XYSeriesData;
 import org.meteoinfo.data.XYYSeriesData;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.global.colors.ColorUtil;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.LegendScheme;
 import org.meteoinfo.legend.PointBreak;

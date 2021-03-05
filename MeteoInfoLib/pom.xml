@@ -58,6 +58,26 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>meteoinfo-geometry</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>meteoinfo-ui</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>meteoinfo-image</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>meteoinfo-table</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdfAll</artifactId>
             <version>${netcdfJavaVersion}</version>
@@ -113,16 +133,6 @@
             <version>1.4</version>
         </dependency>
         <dependency>
-            <groupId>org.ejml</groupId>
-            <artifactId>ejml-experimental</artifactId>
-            <version>0.32</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ejml</groupId>
-            <artifactId>ejml-simple</artifactId>
-            <version>0.32</version>
-        </dependency>
-        <dependency>
             <groupId>org.mozilla.intl</groupId>
             <artifactId>chardet</artifactId>
             <version>1.0</version>
@@ -136,11 +146,6 @@
             <groupId>org.freehep</groupId>
             <artifactId>freehep-util</artifactId>
             <version>2.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>

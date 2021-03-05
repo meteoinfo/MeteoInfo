@@ -33,6 +33,7 @@ import org.meteoinfo.common.PointD;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.XYDataset;
 import org.meteoinfo.data.XYListDataset;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.data.meteodata.MeteoDataInfo;
 import org.meteoinfo.data.meteodata.PlotDimension;
@@ -44,13 +45,8 @@ import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layout.LayoutChart;
 import org.meteoinfo.layout.MapLayout;
-import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

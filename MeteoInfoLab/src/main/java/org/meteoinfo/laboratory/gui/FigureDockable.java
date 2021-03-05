@@ -20,7 +20,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import bibliothek.gui.dock.common.mode.ExtendedMode;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.chart.ChartPanel;
 import org.meteoinfo.chart.IChartPanel;
@@ -28,7 +27,6 @@ import org.meteoinfo.chart.MouseMode;
 import org.meteoinfo.chart.jogl.GLChartPanel;
 import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
 import org.meteoinfo.ui.ButtonTabComponent;
-import org.scilab.forge.jlatexmath.Char;
 
 /**
  *

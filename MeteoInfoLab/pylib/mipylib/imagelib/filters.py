@@ -6,7 +6,7 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.shape import Graphic
+from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.image import ImageUtil
 from mipylib.geolib.milayer import MILayer
 from mipylib.numeric.core import NDArray

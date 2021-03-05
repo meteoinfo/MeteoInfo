@@ -21,7 +21,7 @@
 Command Line: -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:53660,suspend=y,server=n -javaagent:C:\Users\dell\AppData\Local\JetBrains\IdeaIC2020.1\captureAgent\debugger-agent.jar -Dfile.encoding=UTF-8 org.meteoinfo.laboratory.MeteoInfoLab
 
 Host: Intel(R) Xeon(R) Silver 4210 CPU @ 2.20GHz, 40 cores, 63G,  Windows 10 , 64 bit Build 18362 (10.0.18362.329)
-Time: Sat Apr 18 10:19:59 2020 ?D1¨²¡À¨º¡Á?¨º¡À?? elapsed time: 51 seconds (0d 0h 0m 51s)
+Time: Sat Apr 18 10:19:59 2020 ?D1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½?? elapsed time: 51 seconds (0d 0h 0m 51s)
 
 ---------------  T H R E A D  ---------------
 
@@ -601,7 +601,7 @@ CodeHeap 'non-nmethods': size=8000Kb used=2414Kb max_used=3974Kb free=5585Kb
 
 Compilation events (10 events):
 Event: 51.661 Thread 0x0000016dee056800 nmethod 8189 0x0000016dadaaa190 code [0x0000016dadaaa360, 0x0000016dadaaa858]
-Event: 51.661 Thread 0x0000016dee056800 8191       3       org.meteoinfo.shape.Graphic::getGraphicN (2 bytes)
+Event: 51.661 Thread 0x0000016dee056800 8191       3       Graphic::getGraphicN (2 bytes)
 Event: 51.662 Thread 0x0000016dee056800 nmethod 8191 0x0000016dada00510 code [0x0000016dada006c0, 0x0000016dada00818]
 Event: 51.662 Thread 0x0000016dee056800 8192       3       jogamp.opengl.gl4.GL4bcImpl::glPolygonOffset (44 bytes)
 Event: 51.662 Thread 0x0000016dee056800 nmethod 8192 0x0000016dadaa8e10 code [0x0000016dadaa90c0, 0x0000016dadaa9d60]

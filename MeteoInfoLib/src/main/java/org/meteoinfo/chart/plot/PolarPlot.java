@@ -16,14 +16,15 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.chart.Margin;
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.drawing.Draw;
 import static org.meteoinfo.drawing.Draw.getDashPattern;
-import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.legend.LineStyles;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.GraphicCollection;
+
+import org.meteoinfo.geometry.legend.LineStyles;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
 /**

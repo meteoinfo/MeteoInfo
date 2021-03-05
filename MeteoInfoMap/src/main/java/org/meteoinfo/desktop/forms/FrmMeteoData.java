@@ -59,6 +59,7 @@ import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
 import org.meteoinfo.data.meteodata.micaps.MICAPS7DataInfo;
 import org.meteoinfo.data.meteodata.netcdf.NetCDFDataInfo;
 import org.meteoinfo.common.colors.ColorUtil;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.legend.*;
 import org.meteoinfo.geoprocess.analysis.InterpolationMethods;
 import org.meteoinfo.geoprocess.analysis.InterpolationSetting;
@@ -68,7 +69,7 @@ import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layer.RasterLayer;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.projection.info.ProjectionInfo;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

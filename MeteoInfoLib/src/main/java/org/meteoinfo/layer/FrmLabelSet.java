@@ -4,16 +4,17 @@
  */
 package org.meteoinfo.layer;
 
-import org.meteoinfo.data.mapdata.Field;
-import org.meteoinfo.legend.AlignType;
+import org.meteoinfo.geometry.legend.AlignType;
+import org.meteoinfo.geometry.legend.LabelBreak;
 import org.meteoinfo.map.MapView;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import com.l2fprod.common.swing.JFontChooser;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JColorChooser;
-import org.meteoinfo.legend.LabelBreak;
-import org.meteoinfo.shape.Graphic;
+
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.table.Field;
 
 /**
  *

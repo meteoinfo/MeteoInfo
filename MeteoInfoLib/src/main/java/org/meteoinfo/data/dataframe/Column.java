@@ -7,7 +7,7 @@ package org.meteoinfo.data.dataframe;
 
 import java.text.DecimalFormat;
 import org.joda.time.DateTime;
-import org.meteoinfo.global.DataConvert;
+import org.meteoinfo.ndarray.util.DataTypeUtil;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
@@ -223,7 +223,7 @@ public class Column {
      * @return Result object
      */
     public Object convertTo(Object value) {
-        return DataConvert.convertTo(value, this.dataType, this.format);
+        return DataTypeUtil.convertTo(value, this.dataType, this.format);
     }
     
     /**
@@ -232,7 +232,7 @@ public class Column {
      * @return Result object
      */
     public Object convertStringTo(String s) {
-        return DataConvert.convertStringTo(s, dataType, format);
+        return DataTypeUtil.convertStringTo(s, dataType, format);
     }
     
     @Override

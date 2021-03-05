@@ -39,13 +39,13 @@ import org.meteoinfo.data.dataframe.impl.SortDirection;
 import org.meteoinfo.data.dataframe.impl.Sorting;
 import org.meteoinfo.data.dataframe.impl.Views;
 import org.meteoinfo.data.dataframe.impl.WindowFunction;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.util.DataTypeUtil;
 
 /**
  *
@@ -1664,7 +1664,7 @@ public class DataFrame implements Iterable {
                 for (int i : rowRange) {
                     idx = ii * cn + jj;
                     if (i < 0) {
-                        ((Array) r).setObject(idx, DataConvert.convertTo(null, dtype, format));
+                        ((Array) r).setObject(idx, DataTypeUtil.convertTo(null, dtype, format));
                     } else {
                         ((Array) r).setObject(idx, ((Array) data).getObject(i * n + j));
                     }
@@ -1683,7 +1683,7 @@ public class DataFrame implements Iterable {
                 int idx = 0;
                 for (int i : rowRange) {
                     if (i < 0) {
-                        rr.setObject(idx, DataConvert.convertTo(null, dtype, format));
+                        rr.setObject(idx, DataTypeUtil.convertTo(null, dtype, format));
                     } else {
                         rr.setObject(idx, mr.getObject(i));
                     }
@@ -1744,7 +1744,7 @@ public class DataFrame implements Iterable {
                 for (int i : rowRange) {
                     idx = ii * cn + jj;
                     if (i < 0) {
-                        ((Array) r).setObject(idx, DataConvert.convertTo(null, dtype, format));
+                        ((Array) r).setObject(idx, DataTypeUtil.convertTo(null, dtype, format));
                     } else {
                         ((Array) r).setObject(idx, ((Array) data).getObject(i * n + j));
                     }
@@ -1763,7 +1763,7 @@ public class DataFrame implements Iterable {
                 int idx = 0;
                 for (int i : rowRange) {
                     if (i < 0) {
-                        rr.setObject(idx, DataConvert.convertTo(null, dtype, format));
+                        rr.setObject(idx, DataTypeUtil.convertTo(null, dtype, format));
                     } else {
                         rr.setObject(idx, mr.getObject(i));
                     }
@@ -1878,7 +1878,7 @@ public class DataFrame implements Iterable {
                 for (int i : rowRange) {
                     idx = ii * cn + jj;
                     if (i < 0) {
-                        ((Array) r).setObject(idx, DataConvert.convertTo(null, dtype, format));
+                        ((Array) r).setObject(idx, DataTypeUtil.convertTo(null, dtype, format));
                     } else {
                         ((Array) r).setObject(idx, ((Array) data).getObject(i * n + j));
                     }
@@ -2187,13 +2187,13 @@ public class DataFrame implements Iterable {
                 if (indexFormat.substring(0, 1).equals("%")) {
                     indexFormat = indexFormat.substring(1);
                 }
-                idxDT = DataConvert.getDataType(indexFormat);
+                idxDT = DataTypeUtil.getDataType(indexFormat);
                 if (idxDT == DataType.DATE) {
-                    indexFormat = DataConvert.getDateFormat(indexFormat);
+                    indexFormat = DataTypeUtil.getDateFormat(indexFormat);
                     dtFormatter = DateTimeFormatter.ofPattern(indexFormat);
                 }
             } else {
-                idxDT = DataConvert.detectDataType(indexValues, 10, null);
+                idxDT = DataTypeUtil.detectDataType(indexValues, 10, null);
                 if (idxDT == DataType.DATE) {
                     dtFormatter = TypeUtils.getDateTimeFormatter(indexValues.get(0));
                 }
@@ -2213,7 +2213,7 @@ public class DataFrame implements Iterable {
                 }
             } else {
                 for (String s : indexValues) {
-                    indexData.add(DataConvert.convertStringTo(s, idxDT, null));
+                    indexData.add(DataTypeUtil.convertStringTo(s, idxDT, null));
                 }
                 index = Index.factory(indexData);
                 index.updateFormat();
@@ -2463,13 +2463,13 @@ public class DataFrame implements Iterable {
                 if (indexFormat.substring(0, 1).equals("%")) {
                     indexFormat = indexFormat.substring(1);
                 }
-                idxDT = DataConvert.getDataType(indexFormat);
+                idxDT = DataTypeUtil.getDataType(indexFormat);
                 if (idxDT == DataType.DATE) {
-                    indexFormat = DataConvert.getDateFormat(indexFormat);
+                    indexFormat = DataTypeUtil.getDateFormat(indexFormat);
                     dtFormatter = DateTimeFormatter.ofPattern(indexFormat);
                 }
             } else {
-                idxDT = DataConvert.detectDataType(indexValues, 10, null);
+                idxDT = DataTypeUtil.detectDataType(indexValues, 10, null);
                 if (idxDT == DataType.DATE) {
                     dtFormatter = TypeUtils.getDateTimeFormatter(indexValues.get(0));
                 }
@@ -2489,7 +2489,7 @@ public class DataFrame implements Iterable {
                 }
             } else {
                 for (String s : indexValues) {
-                    indexData.add(DataConvert.convertStringTo(s, idxDT, null));
+                    indexData.add(DataTypeUtil.convertStringTo(s, idxDT, null));
                 }
                 index = Index.factory(indexData);
                 index.updateFormat();

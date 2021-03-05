@@ -1,7 +1,7 @@
 package org.meteoinfo.chart.jogl;
 
 import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.shape.PointZ;
+import org.meteoinfo.geometry.shape.PointZ;
 
 public class Transform {
     private float xmin, xmax = 1.0f, ymin;

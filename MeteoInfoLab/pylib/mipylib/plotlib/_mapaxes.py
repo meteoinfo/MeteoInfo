@@ -13,8 +13,10 @@ from org.meteoinfo.chart import ChartScaleBar, ChartNorthArrow
 from org.meteoinfo.chart.plot import MapPlot, GraphicFactory
 from org.meteoinfo.data.meteodata import DrawMeteoData
 from org.meteoinfo.map import MapView
-from org.meteoinfo.legend import BreakTypes, LegendManage, LegendScheme, LegendType
-from org.meteoinfo.shape import Shape, PolylineShape, PolygonShape, ShapeTypes, Graphic
+from org.meteoinfo.geometry.legend import BreakTypes, LegendScheme, LegendType
+from org.meteoinfo.legend import LegendManage
+from org.meteoinfo.geometry.shape import Shape, PolylineShape, PolygonShape, ShapeTypes
+from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.projection.info import ProjectionInfo
 from org.meteoinfo.common import Extent
 from org.meteoinfo.layer import LayerTypes, WebMapLayer

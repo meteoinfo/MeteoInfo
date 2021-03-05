@@ -5,7 +5,7 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.shape import ShapeUtil, PointShape
+from org.meteoinfo.geometry.shape import ShapeUtil, PointShape
 from org.meteoinfo.common import PointD
 import mipylib.numeric as np
 

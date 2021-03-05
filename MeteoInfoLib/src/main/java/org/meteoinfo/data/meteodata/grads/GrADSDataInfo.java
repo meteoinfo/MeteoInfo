@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.data.meteodata.grads;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridData;
@@ -21,7 +22,6 @@ import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.common.io.EndianDataOutputStream;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;

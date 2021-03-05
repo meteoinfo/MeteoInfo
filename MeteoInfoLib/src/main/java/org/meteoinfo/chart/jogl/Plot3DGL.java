@@ -40,14 +40,16 @@ import org.meteoinfo.chart.jogl.tessellator.Primitive;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.plot.*;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.data.Dataset;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geoprocess.GeometryUtil;
-import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.legend.*;
 import org.meteoinfo.math.meteo.MeteoMath;
-import org.meteoinfo.shape.*;
+import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.graphic.Graphic;
 
 /**
  *

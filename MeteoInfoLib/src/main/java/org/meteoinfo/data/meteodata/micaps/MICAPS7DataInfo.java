@@ -28,8 +28,9 @@ import java.util.logging.Logger;
 
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.util.JDateUtil;
-import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.geometry.legend.LegendType;
 import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
@@ -41,15 +42,14 @@ import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.LegendType;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.PolylineShape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.table.Field;
 
-/**
+ /**
  *
  * @author yaqiang
  */

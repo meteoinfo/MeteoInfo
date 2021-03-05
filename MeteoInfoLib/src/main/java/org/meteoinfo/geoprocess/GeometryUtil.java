@@ -16,7 +16,7 @@ import org.meteoinfo.common.PointD;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.ndarray.*;
-import org.meteoinfo.shape.*;
+import org.meteoinfo.geometry.shape.*;
 
 /**
  *

@@ -12,13 +12,13 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.global.DataConvert;
+import org.meteoinfo.geometry.legend.ArrowBreak;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.legend.ArrowBreak;
-import org.meteoinfo.shape.GraphicCollection;
-import org.meteoinfo.shape.WindArrow;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.shape.WindArrow;
 
 /**
  *

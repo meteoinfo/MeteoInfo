@@ -1,5 +1,6 @@
 package org.meteoinfo.data.meteodata.micaps;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridArray;
@@ -10,7 +11,6 @@ import org.meteoinfo.data.dataframe.ColumnIndex;
 import org.meteoinfo.data.dataframe.DataFrame;
 import org.meteoinfo.data.dataframe.Index;
 import org.meteoinfo.data.meteodata.*;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.ndarray.*;
 
 import java.io.IOException;

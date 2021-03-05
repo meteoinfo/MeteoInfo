@@ -19,13 +19,13 @@ import org.meteoinfo.common.io.EndianDataOutputStream;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.PolylineShape;
-import org.meteoinfo.shape.PolylineZShape;
-import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.shape.PolylineZShape;
+import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.Color;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -47,12 +47,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.projection.info.ProjectionInfo;
-import org.meteoinfo.shape.PointM;
-import org.meteoinfo.shape.PointZShape;
-import org.meteoinfo.shape.PolygonMShape;
-import org.meteoinfo.shape.PolygonZShape;
+import org.meteoinfo.geometry.shape.PointM;
+import org.meteoinfo.geometry.shape.PointZShape;
+import org.meteoinfo.geometry.shape.PolygonMShape;
+import org.meteoinfo.geometry.shape.PolygonZShape;
+import org.meteoinfo.table.AttributeTable;
 
-/**
+ /**
  * Shape file read and write
  *
  * @author yaqiang

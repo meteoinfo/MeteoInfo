@@ -4,9 +4,13 @@
  */
 package org.meteoinfo.legend;
 
+import org.meteoinfo.common.util.FontUtil;
 import org.meteoinfo.common.util.GlobalUtil;
-import org.meteoinfo.global.event.ISelectedCellChangedListener;
-import org.meteoinfo.global.event.SelectedCellChangedEvent;
+import org.meteoinfo.geometry.legend.MarkerType;
+import org.meteoinfo.geometry.legend.PointBreak;
+import org.meteoinfo.geometry.legend.PointStyle;
+import org.meteoinfo.ui.event.ISelectedCellChangedListener;
+import org.meteoinfo.ui.event.SelectedCellChangedEvent;
 import org.meteoinfo.layout.MapLayout;
 import org.meteoinfo.map.MapView;
 import java.awt.Color;
@@ -22,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
-import org.meteoinfo.global.util.FontUtil;
 
 /**
  *
@@ -609,7 +612,7 @@ public class FrmPointSymbolSet extends javax.swing.JDialog {
         //FontUtil.registerWeatherFont();
         GraphicsEnvironment gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
         String[] fonts = gEnv.getAvailableFontFamilyNames();
-        Font weatherFont = FontUtil.getWeatherFont();        
+        Font weatherFont = FontUtil.getWeatherFont();
         if (weatherFont != null)
             this.jComboBox_FontFamily.addItem(weatherFont.getFontName());
         for (String ff : fonts) {

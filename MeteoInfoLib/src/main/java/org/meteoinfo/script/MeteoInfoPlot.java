@@ -12,8 +12,8 @@ import javax.swing.WindowConstants;
 import org.meteoinfo.chart.ChartPanel;
 import org.meteoinfo.chart.plot.XY1DPlot;
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.legend.PointStyle;
-import org.meteoinfo.legend.LineStyles;
+import org.meteoinfo.geometry.legend.LineStyles;
+import org.meteoinfo.geometry.legend.PointStyle;
 
 /**
  *

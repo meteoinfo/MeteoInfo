@@ -23,12 +23,12 @@ import org.meteoinfo.data.meteodata.DrawMeteoData;
 import org.meteoinfo.data.meteodata.DrawType2D;
 import org.meteoinfo.data.meteodata.MeteoDataInfo;
 import org.meteoinfo.data.meteodata.PlotDimension;
-import org.meteoinfo.legend.PointStyle;
+import org.meteoinfo.geometry.legend.LineStyles;
+import org.meteoinfo.geometry.legend.PointStyle;
+import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layout.MapLayout;
-import org.meteoinfo.legend.LineStyles;
 import org.meteoinfo.legend.MapFrame;
-import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.map.MapView;
 
 /**

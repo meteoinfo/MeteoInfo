@@ -43,17 +43,13 @@ import org.meteoinfo.data.Dataset;
 import org.meteoinfo.drawing.Draw;
 import static org.meteoinfo.drawing.Draw.getHatchImage;
 
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.graphic.ImageGraphic;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geoprocess.GeometryUtil;
-import org.meteoinfo.legend.ArrowBreak;
-import org.meteoinfo.legend.BarBreak;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.ColorBreakCollection;
-import org.meteoinfo.legend.LabelBreak;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.shape.*;
+import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.shape.PolylineErrorShape;
 
 /**
  *
@@ -62,7 +58,7 @@ import org.meteoinfo.shape.*;
 public class Plot2D extends AbstractPlot2D {
 
     // <editor-fold desc="Variables">
-    private GraphicCollection graphics;    
+    private GraphicCollection graphics;
     private float barsWidth = 0.8f;
 
     // </editor-fold>

@@ -24,11 +24,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.JTableHeader;
 
 import com.formdev.flatlaf.extras.FlatSVGUtils;
-import org.meteoinfo.table.DataTable;
-import org.meteoinfo.table.DataTableModel;
+import org.meteoinfo.table.*;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.table.MyCellEditor;
-import org.meteoinfo.table.RowHeaderTable;
 import org.meteoinfo.layer.VectorLayer;
 
 /**

@@ -37,9 +37,12 @@ import org.meteoinfo.common.PointF;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.Dataset;
 import org.meteoinfo.drawing.Draw;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.legend.*;
 import org.meteoinfo.math.sort.QuickSort;
-import org.meteoinfo.shape.*;
+import org.meteoinfo.geometry.shape.*;
 
 /**
  *

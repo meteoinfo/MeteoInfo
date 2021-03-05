@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.jogl.tessellator;
 
-import org.meteoinfo.shape.PolygonZ;
+import org.meteoinfo.geometry.shape.PolygonZ;
 
 import java.util.List;
 

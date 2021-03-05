@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.legend;
 
+import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.global.FrmProperty;
 import org.meteoinfo.layer.MapLayer;
 import javax.swing.JPanel;

@@ -20,6 +20,13 @@
         <module>meteoinfo-ndarray</module>
         <module>meteoinfo-math</module>
         <module>meteoinfo-common</module>
+        <module>meteoinfo-geometry</module>
+        <module>meteoinfo-chart</module>
+        <module>meteoinfo-table</module>
+        <module>meteoinfo-ui</module>
+        <module>meteoinfo-image</module>
+        <module>meteoinfo-geo</module>
+        <module>meteoinfo-legend</module>
     </modules>
     
     <properties>

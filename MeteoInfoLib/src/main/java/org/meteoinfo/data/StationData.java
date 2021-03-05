@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
@@ -29,12 +30,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.Reproject;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import ucar.ma2.Array;
 
 /**

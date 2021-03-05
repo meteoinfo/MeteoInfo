@@ -13,13 +13,9 @@
  */
 package org.meteoinfo.chart;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
 import com.l2fprod.common.beans.BaseBeanInfo;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor;
@@ -35,8 +31,7 @@ import java.util.List;
 import org.meteoinfo.chart.plot.PlotOrientation;
 import org.meteoinfo.chart.plot.XAlign;
 import org.meteoinfo.chart.plot.YAlign;
-import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.legend.LegendType;
+import org.meteoinfo.geometry.legend.*;
 
 /**
  *

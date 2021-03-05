@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridArray;
@@ -33,7 +34,6 @@ import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.Variable;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.Reproject;

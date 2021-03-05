@@ -27,7 +27,7 @@ import org.meteoinfo.data.mapdata.webmap.empty.EmptyTileFactory;
 import org.meteoinfo.global.util.GeoUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.Reproject;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

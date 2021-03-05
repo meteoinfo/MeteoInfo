@@ -70,23 +70,23 @@ import org.meteoinfo.data.mapdata.FrmAttriData;
 import org.meteoinfo.data.mapdata.MapDataManage;
 import org.meteoinfo.global.FrmProperty;
 import org.meteoinfo.common.colors.ColorUtil;
-import org.meteoinfo.global.event.ActiveMapFrameChangedEvent;
-import org.meteoinfo.global.event.ElementSelectedEvent;
-import org.meteoinfo.global.event.GraphicSelectedEvent;
-import org.meteoinfo.global.event.IActiveMapFrameChangedListener;
-import org.meteoinfo.global.event.IElementSelectedListener;
-import org.meteoinfo.global.event.IGraphicSelectedListener;
-import org.meteoinfo.global.event.INodeSelectedListener;
-import org.meteoinfo.global.event.IShapeSelectedListener;
-import org.meteoinfo.global.event.IUndoEditListener;
-import org.meteoinfo.global.event.IZoomChangedListener;
-import org.meteoinfo.global.event.NodeSelectedEvent;
-import org.meteoinfo.global.event.ShapeSelectedEvent;
-import org.meteoinfo.global.event.UndoEditEvent;
-import org.meteoinfo.global.event.ZoomChangedEvent;
+import org.meteoinfo.ui.WrappingLayout;
+import org.meteoinfo.ui.event.ActiveMapFrameChangedEvent;
+import org.meteoinfo.ui.event.ElementSelectedEvent;
+import org.meteoinfo.ui.event.GraphicSelectedEvent;
+import org.meteoinfo.ui.event.IActiveMapFrameChangedListener;
+import org.meteoinfo.ui.event.IElementSelectedListener;
+import org.meteoinfo.ui.event.IGraphicSelectedListener;
+import org.meteoinfo.ui.event.INodeSelectedListener;
+import org.meteoinfo.ui.event.IShapeSelectedListener;
+import org.meteoinfo.ui.event.IUndoEditListener;
+import org.meteoinfo.ui.event.IZoomChangedListener;
+import org.meteoinfo.ui.event.NodeSelectedEvent;
+import org.meteoinfo.ui.event.ShapeSelectedEvent;
+import org.meteoinfo.ui.event.UndoEditEvent;
+import org.meteoinfo.ui.event.ZoomChangedEvent;
 //import org.meteoinfo.help.Help;
 import org.meteoinfo.layer.*;
-import org.meteoinfo.ui.WrappingLayout;
 import org.meteoinfo.layout.ElementType;
 import org.meteoinfo.layout.FrmPageSet;
 import org.meteoinfo.layout.LayoutGraphic;
@@ -112,14 +112,14 @@ import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.Reproject;
-import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.data.mapdata.ShapeFileManage;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
-import org.meteoinfo.shape.ShapeFactory;
-import org.meteoinfo.shape.ShapeSelection;
+import org.meteoinfo.geometry.shape.ShapeFactory;
+import org.meteoinfo.geometry.shape.ShapeSelection;
 import org.xml.sax.SAXException;
 
 /**
@@ -1839,7 +1839,7 @@ public class FrmMain extends JFrame implements IApplication {
         this.setSize(this._options.getMainFormSize());
         try {
             this._plugins.loadConfigFile(this._plugins.getPluginConfigFile());
-            this.loadPlugins(this._plugins);
+            //this.loadPlugins(this._plugins);
         } catch (MalformedURLException ex) {
             Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException | ParserConfigurationException | SAXException ex) {
@@ -2696,7 +2696,7 @@ public class FrmMain extends JFrame implements IApplication {
 
         VectorLayer layer = (VectorLayer) _mapDocument.getActiveMapFrame().getMapView().getSelectedLayer();
         if (layer.isEditing()) {
-            DataFlavor dataFlavors = new DataFlavor(org.meteoinfo.shape.Shape.class, "Shape Object");
+            DataFlavor dataFlavors = new DataFlavor(org.meteoinfo.geometry.shape.Shape.class, "Shape Object");
             if (t.isDataFlavorSupported(dataFlavors)) {
                 try {
                     List<Shape> shapes = (List<Shape>) t.getTransferData(dataFlavors);

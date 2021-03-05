@@ -17,7 +17,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.XYArrayDataset;
 import org.meteoinfo.data.XYDataset;
-import org.meteoinfo.legend.PointBreak;
+import org.meteoinfo.geometry.legend.PointBreak;
 
 /**
  *

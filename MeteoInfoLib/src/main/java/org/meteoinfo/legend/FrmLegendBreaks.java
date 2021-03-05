@@ -4,9 +4,11 @@
  */
 package org.meteoinfo.legend;
 
+import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.layer.FrmLayerProperty;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;

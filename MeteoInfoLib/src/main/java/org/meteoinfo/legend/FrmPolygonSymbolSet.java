@@ -4,13 +4,15 @@
  */
 package org.meteoinfo.legend;
 
+import org.meteoinfo.geometry.legend.HatchStyle;
+import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.layout.MapLayout;
 import org.meteoinfo.map.MapView;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JColorChooser;
-import org.meteoinfo.global.event.ISelectedCellChangedListener;
-import org.meteoinfo.global.event.SelectedCellChangedEvent;
+import org.meteoinfo.ui.event.ISelectedCellChangedListener;
+import org.meteoinfo.ui.event.SelectedCellChangedEvent;
 
 /**
  *
@@ -243,7 +245,7 @@ public class FrmPolygonSymbolSet extends javax.swing.JDialog {
 
         symbolControl1.setCellSize(new java.awt.Dimension(50, 40));
         symbolControl1.setPreferredSize(new java.awt.Dimension(200, 50));
-        symbolControl1.setShapeType(org.meteoinfo.shape.ShapeTypes.Polygon);
+        symbolControl1.setShapeType(org.meteoinfo.geometry.shape.ShapeTypes.Polygon);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

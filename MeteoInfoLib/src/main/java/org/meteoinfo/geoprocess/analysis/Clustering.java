@@ -16,8 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.PolylineZShape;
+import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.geometry.shape.PolylineZShape;
 
 /**
  *

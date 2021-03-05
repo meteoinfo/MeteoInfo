@@ -21,7 +21,7 @@ import org.meteoinfo.map.GridLabel;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.shape.*;
+import org.meteoinfo.geometry.shape.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,11 +30,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.layer.VectorLayer;
+import org.meteoinfo.table.Field;
 
 /**
  * GeoComputation class

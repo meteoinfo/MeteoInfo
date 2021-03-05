@@ -11,9 +11,11 @@ from org.meteoinfo.chart import Location, ChartWindArrow, ChartText, LegendPosit
 from org.meteoinfo.chart.plot import Plot2D, PolarPlot, GraphicFactory, \
     PlotOrientation, XAlign, YAlign
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
-from org.meteoinfo.legend import LegendManage, BarBreak, PolygonBreak, PolylineBreak, \
+from org.meteoinfo.legend import LegendManage
+from org.meteoinfo.geometry.legend import BarBreak, PolygonBreak, PolylineBreak, \
     PointBreak, LineStyles, PointStyle, LegendScheme, LegendType
-from org.meteoinfo.shape import ShapeTypes, Graphic, GraphicCollection
+from org.meteoinfo.geometry.shape import ShapeTypes
+from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
 from org.meteoinfo.common import MIMath, Extent
 from org.meteoinfo.layer import MapLayer
 

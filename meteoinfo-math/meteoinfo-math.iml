@@ -23,5 +23,13 @@
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.3" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.17" level="project" />
     <orderEntry type="library" name="Maven: org.mozilla.intl:chardet:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-experimental:0.32" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-core:0.32" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-ddense:0.32" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-dsparse:0.32" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-zdense:0.32" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-simple:0.32" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-fdense:0.32" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-cdense:0.32" level="project" />
   </component>
 </module>

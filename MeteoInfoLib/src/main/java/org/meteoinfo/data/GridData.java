@@ -15,6 +15,7 @@ package org.meteoinfo.data;
 
 import java.io.BufferedReader;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
@@ -38,14 +39,13 @@ import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.GridDataSetting;
 import org.meteoinfo.geoprocess.analysis.ResampleMethods;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;
 import org.meteoinfo.projection.Reproject;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;

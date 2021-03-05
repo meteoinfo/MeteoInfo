@@ -6,7 +6,8 @@ package org.meteoinfo.legend;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.common.GenericFileFilter;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.legend.*;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;

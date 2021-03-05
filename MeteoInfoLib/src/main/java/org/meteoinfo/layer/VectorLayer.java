@@ -13,31 +13,20 @@
  */
 package org.meteoinfo.layer;
 
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.GenericFileFilter;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
-import org.meteoinfo.data.mapdata.AttributeTable;
-import org.meteoinfo.data.mapdata.Field;
+import org.meteoinfo.common.*;
 import org.meteoinfo.data.mapdata.ShapeFileManage;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.projection.info.ProjectionInfo;
-import org.meteoinfo.table.DataColumn;
-import org.meteoinfo.table.DataRow;
+import org.meteoinfo.table.*;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.legend.ChartBreak;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.LabelBreak;
-import org.meteoinfo.legend.LegendType;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.PolylineShape;
-import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,23 +49,19 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
-import org.meteoinfo.global.DataConvert;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
-import org.meteoinfo.table.DataColumnCollection;
-import org.meteoinfo.table.DataTable;
 import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.shape.ChartGraphic;
+import org.meteoinfo.geometry.graphic.ChartGraphic;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-import org.meteoinfo.shape.PointZShape;
-import org.meteoinfo.shape.Polygon;
-import org.meteoinfo.shape.Polyline;
-import org.meteoinfo.shape.PolylineZShape;
+import org.meteoinfo.geometry.shape.PointZShape;
+import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.shape.Polyline;
+import org.meteoinfo.geometry.shape.PolylineZShape;
 
 /**
  * Vector layer class

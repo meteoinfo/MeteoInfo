@@ -24,30 +24,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.data.mapdata.Field;
+
 import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.layer.RasterLayer;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.map.ProjectionSet;
-import org.meteoinfo.shape.CircleShape;
-import org.meteoinfo.shape.CurveLineShape;
-import org.meteoinfo.shape.CurvePolygonShape;
-import org.meteoinfo.shape.EllipseShape;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.GraphicCollection;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.Polygon;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.Polyline;
-import org.meteoinfo.shape.PolylineShape;
-import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.StationModelShape;
-import org.meteoinfo.shape.WindArrow;
-import org.meteoinfo.shape.WindBarb;
+import org.meteoinfo.geometry.shape.CircleShape;
+import org.meteoinfo.geometry.shape.CurveLineShape;
+import org.meteoinfo.geometry.shape.CurvePolygonShape;
+import org.meteoinfo.geometry.shape.EllipseShape;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.Polyline;
+import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.shape.StationModelShape;
+import org.meteoinfo.geometry.shape.WindArrow;
+import org.meteoinfo.geometry.shape.WindBarb;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.table.Field;
 
 /**
  *

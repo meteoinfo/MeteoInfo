@@ -5,9 +5,9 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 import org.meteoinfo.chart.jogl.Triangle;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.Polygon;
-import org.meteoinfo.shape.PolygonZ;
+import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.shape.PolygonZ;
 
 import java.util.ArrayList;
 import java.util.List;

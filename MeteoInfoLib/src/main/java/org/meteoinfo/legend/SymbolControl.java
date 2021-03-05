@@ -15,9 +15,10 @@ package org.meteoinfo.legend;
 
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.global.event.ISelectedCellChangedListener;
-import org.meteoinfo.global.event.SelectedCellChangedEvent;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.legend.*;
+import org.meteoinfo.ui.event.ISelectedCellChangedListener;
+import org.meteoinfo.ui.event.SelectedCellChangedEvent;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;

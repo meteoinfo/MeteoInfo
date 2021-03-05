@@ -21,9 +21,9 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import org.meteoinfo.common.DataConvert;
+import org.meteoinfo.common.util.FontUtil;
 import org.meteoinfo.common.util.GlobalUtil;
-import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.util.FontUtil;
 import org.meteoinfo.laboratory.gui.FrmMain;
 import org.meteoinfo.console.jython.MyPythonInterpreter;
 import org.python.core.Py;
@@ -116,7 +116,7 @@ public class MeteoInfoLab {
     private static void runScript(String args[], String fn, int idx) {
         //String ext = GlobalUtil.getFileExtension(fn);
         //registerFonts();
-        org.meteoinfo.global.util.FontUtil.registerWeatherFont();
+        org.meteoinfo.common.util.FontUtil.registerWeatherFont();
 
         System.out.println("Running Jython script...");
         PySystemState state = new PySystemState();
@@ -345,7 +345,7 @@ public class MeteoInfoLab {
 //                }
                 //registerFonts();
                 System.out.println("Register weather font...");
-                org.meteoinfo.global.util.FontUtil.registerWeatherFont();
+                org.meteoinfo.common.util.FontUtil.registerWeatherFont();
                 System.out.println("Open main form...");
                 FrmMain frame = new FrmMain(startupPath, options);
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

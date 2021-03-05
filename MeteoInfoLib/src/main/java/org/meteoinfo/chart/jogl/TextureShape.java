@@ -9,8 +9,8 @@ import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
 import java.io.File;
 import java.io.IOException;
-import org.meteoinfo.shape.ImageShape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ImageShape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

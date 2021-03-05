@@ -7,9 +7,10 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.chart.plot import GraphicFactory
-from org.meteoinfo.legend import BreakTypes, LegendManage, BarBreak
+from org.meteoinfo.geometry.legend import BreakTypes, BarBreak
+from org.meteoinfo.legend import LegendManage
 from org.meteoinfo.layer import LayerTypes
-from org.meteoinfo.shape import ShapeTypes
+from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil
 from javax.swing import WindowConstants
 from java.awt import Font, Color

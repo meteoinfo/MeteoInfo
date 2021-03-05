@@ -16,6 +16,7 @@ package org.meteoinfo.legend;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
+import org.meteoinfo.geometry.legend.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

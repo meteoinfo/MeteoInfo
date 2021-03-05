@@ -29,10 +29,10 @@ import org.meteoinfo.data.meteodata.GridDataSetting;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
 import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.PolylineShape;
-import org.meteoinfo.shape.Shape;
+import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.shape.Shape;
 
 /**
  *

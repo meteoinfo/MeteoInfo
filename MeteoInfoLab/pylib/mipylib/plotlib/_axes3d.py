@@ -9,8 +9,10 @@
 from org.meteoinfo.chart.plot import Plot3D, GraphicFactory
 from org.meteoinfo.chart import ChartText3D
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
-from org.meteoinfo.legend import LegendManage, BreakTypes, PolylineBreak
-from org.meteoinfo.shape import ShapeTypes, Graphic
+from org.meteoinfo.legend import LegendManage
+from org.meteoinfo.geometry.legend import BreakTypes, PolylineBreak
+from org.meteoinfo.geometry.shape import ShapeTypes
+from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.layer import LayerTypes
 
 from ._axes import Axes

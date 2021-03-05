@@ -13,8 +13,8 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.util.JDateUtil;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.math.ArrayMath;

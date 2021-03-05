@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.jogl;
 
-import org.meteoinfo.shape.PointZ;
+import org.meteoinfo.geometry.shape.PointZ;
 
 import java.util.ArrayList;
 import java.util.List;

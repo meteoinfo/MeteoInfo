@@ -14,12 +14,12 @@ import java.awt.geom.Rectangle2D;
 
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.shape.ArcShape;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.GraphicCollection;
-import org.meteoinfo.shape.Shape;
+import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.legend.PolygonBreak;
+import org.meteoinfo.geometry.shape.ArcShape;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.shape.Shape;
 
 /**
  *

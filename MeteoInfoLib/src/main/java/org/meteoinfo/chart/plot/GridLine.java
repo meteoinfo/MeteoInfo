@@ -5,10 +5,9 @@
  */
 package org.meteoinfo.chart.plot;
 
-import java.awt.Color;
+import org.meteoinfo.geometry.legend.LineStyles;
 
-import org.locationtech.proj4j.datum.Grid;
-import org.meteoinfo.legend.LineStyles;
+import java.awt.Color;
 
 /**
  *

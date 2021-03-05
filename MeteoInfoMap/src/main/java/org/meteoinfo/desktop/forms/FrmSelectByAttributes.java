@@ -15,7 +15,7 @@ import org.meteoinfo.table.DataRow;
 import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.shape.Shape;
+import org.meteoinfo.geometry.shape.Shape;
 
 /**
  *

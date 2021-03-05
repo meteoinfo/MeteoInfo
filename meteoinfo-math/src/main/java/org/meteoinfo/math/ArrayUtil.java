@@ -7,9 +7,8 @@ package org.meteoinfo.math;
 
 //import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.ndarray.*;
-import org.meteoinfo.ndarray.util.DataConvert;
+import org.meteoinfo.ndarray.util.DataTypeUtil;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.common.io.EndianDataOutputStream;
@@ -408,7 +407,7 @@ public class ArrayUtil {
                     bytes = new byte[(int) r.getSize()];
                     ins.read(bytes);
                     for (int i = 0; i < r.getSize(); i++) {
-                        r.setInt(i, DataConvert.byte2Int(bytes[i]));
+                        r.setInt(i, DataTypeUtil.byte2Int(bytes[i]));
                     }
                     break;
                 case SHORT:
@@ -417,7 +416,7 @@ public class ArrayUtil {
                     ins.read(bytes);
                     while (iter.hasNext()) {
                         System.arraycopy(bytes, start, db, 0, 2);
-                        iter.setShortNext(DataConvert.bytes2Short(db, bOrder));
+                        iter.setShortNext(DataTypeUtil.bytes2Short(db, bOrder));
                         start += 2;
                     }
                     break;
@@ -427,7 +426,7 @@ public class ArrayUtil {
                     ins.read(bytes);
                     while (iter.hasNext()) {
                         System.arraycopy(bytes, start, db, 0, 4);
-                        iter.setIntNext(DataConvert.bytes2Int(db, bOrder));
+                        iter.setIntNext(DataTypeUtil.bytes2Int(db, bOrder));
                         start += 4;
                     }
                     break;
@@ -437,7 +436,7 @@ public class ArrayUtil {
                     ins.read(bytes);
                     while (iter.hasNext()) {
                         System.arraycopy(bytes, start, db, 0, 4);
-                        iter.setFloatNext(DataConvert.bytes2Float(db, bOrder));
+                        iter.setFloatNext(DataTypeUtil.bytes2Float(db, bOrder));
                         start += 4;
                     }
                     break;
@@ -447,7 +446,7 @@ public class ArrayUtil {
                     ins.read(bytes);
                     while (iter.hasNext()) {
                         System.arraycopy(bytes, start, db, 0, 8);
-                        iter.setDoubleNext(DataConvert.bytes2Double(db, bOrder));
+                        iter.setDoubleNext(DataTypeUtil.bytes2Double(db, bOrder));
                         start += 8;
                     }
                     break;

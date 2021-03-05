@@ -4,6 +4,8 @@
  */
 package org.meteoinfo.legend;
 
+import org.meteoinfo.geometry.legend.ColorBreak;
+
 import java.awt.Color;
 import javax.swing.JColorChooser;
 

@@ -7,11 +7,11 @@ package org.meteoinfo.chart.jogl;
 
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.geometry.legend.PolygonBreak;
+import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

@@ -9,11 +9,12 @@ import os
 import numbers
 
 from org.meteoinfo.data.mapdata.geotiff import GeoTiff
-from org.meteoinfo.shape import ShapeUtil, PolygonShape
-from org.meteoinfo.legend import BreakTypes
+from org.meteoinfo.geometry.shape import ShapeUtil, PolygonShape
+from org.meteoinfo.geometry.legend import BreakTypes
 from org.meteoinfo.geoprocess import GeoComputation, GeometryUtil
 from org.meteoinfo.math import ArrayMath, ArrayUtil
-from org.meteoinfo.data.mapdata import MapDataManage, AttributeTable
+from org.meteoinfo.data.mapdata import MapDataManage
+from org.meteoinfo.table import AttributeTable
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.projection.info import ProjectionInfo
 from org.meteoinfo.common import PointD

@@ -33,7 +33,7 @@ import org.locationtech.proj4j.datum.Ellipsoid;
 import org.locationtech.proj4j.parser.Proj4Keyword;
 import org.locationtech.proj4j.parser.Proj4Parser;
 import org.locationtech.proj4j.proj.Projection;
-import org.meteoinfo.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.projection.ProjRegistry;
 

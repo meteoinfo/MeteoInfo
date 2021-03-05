@@ -4,8 +4,8 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.PolygonZ;
+import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.geometry.shape.PolygonZ;
 
 import java.util.ArrayList;
 import java.util.List;

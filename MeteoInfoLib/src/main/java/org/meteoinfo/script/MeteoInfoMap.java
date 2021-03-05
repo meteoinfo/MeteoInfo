@@ -13,10 +13,10 @@ import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.mapdata.MapDataManage;
 import org.meteoinfo.data.meteodata.DrawMeteoData;
 import org.meteoinfo.data.meteodata.DrawType2D;
+import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layout.MapLayout;
 import org.meteoinfo.legend.MapFrame;
-import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.map.MapView;
 
 /**

@@ -23,11 +23,11 @@ import org.meteoinfo.chart.Location;
 import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.plot.XAlign;
 import org.meteoinfo.chart.plot.YAlign;
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.legend.LineStyles;
+import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
 /**

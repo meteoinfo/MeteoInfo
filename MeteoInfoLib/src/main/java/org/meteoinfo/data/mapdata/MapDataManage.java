@@ -13,12 +13,15 @@
  */
 package org.meteoinfo.data.mapdata;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.mapdata.geotiff.GeoTiff;
 import org.meteoinfo.data.meteodata.DrawMeteoData;
+import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.geometry.legend.LegendType;
 import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.layer.ImageLayer;
@@ -27,8 +30,8 @@ import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.layer.WorldFilePara;
 import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.shape.PolylineShape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
@@ -52,17 +55,15 @@ import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.meteodata.ascii.ASCIIGridDataInfo;
 import org.meteoinfo.data.meteodata.ascii.SurferGridDataInfo;
 import org.meteoinfo.data.meteodata.bandraster.BILDataInfo;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.common.io.IOUtil;
 import org.meteoinfo.layer.RasterLayer;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.LegendType;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.Shape;
+import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.table.Field;
 
 /**
  *

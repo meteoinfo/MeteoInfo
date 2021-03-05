@@ -13,7 +13,7 @@ import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.map.MapView;
-import org.meteoinfo.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.PolygonShape;
 
 /**
  *

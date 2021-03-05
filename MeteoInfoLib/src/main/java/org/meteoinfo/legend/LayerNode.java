@@ -13,10 +13,13 @@
  */
 package org.meteoinfo.legend;
 
+import org.meteoinfo.geometry.legend.ChartBreak;
+import org.meteoinfo.geometry.legend.Constants;
+import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -8,7 +8,7 @@ package org.meteoinfo.chart.axis;
 import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.chart.ChartText;
-import org.meteoinfo.global.DataConvert;
+import org.meteoinfo.common.DataConvert;
 
 /**
  *

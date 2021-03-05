@@ -15,9 +15,9 @@ import org.meteoinfo.geoprocess.SpatialQueryTypes;
 import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.shape.PolygonShape;
-import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

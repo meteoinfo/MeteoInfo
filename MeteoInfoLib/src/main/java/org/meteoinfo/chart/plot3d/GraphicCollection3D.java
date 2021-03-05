@@ -6,7 +6,7 @@
 package org.meteoinfo.chart.plot3d;
 
 import java.util.List;
-import org.meteoinfo.shape.GraphicCollection;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
 
 /**
  *

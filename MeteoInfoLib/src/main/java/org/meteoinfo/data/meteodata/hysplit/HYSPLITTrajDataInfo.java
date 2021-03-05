@@ -13,10 +13,11 @@
  */
 package org.meteoinfo.data.meteodata.hysplit;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.util.JDateUtil;
-import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
@@ -38,19 +39,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.data.meteodata.MeteoDataType;
-import org.meteoinfo.legend.PointStyle;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.LegendType;
-import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.PointZShape;
-import org.meteoinfo.shape.PolylineZShape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.geometry.shape.PointZShape;
+import org.meteoinfo.geometry.shape.PolylineZShape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.table.ColumnData;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataTable;
@@ -61,6 +56,7 @@ import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.Section;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.table.Field;
 
 /**
  *

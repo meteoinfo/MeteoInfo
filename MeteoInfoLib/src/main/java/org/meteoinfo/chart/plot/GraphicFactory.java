@@ -28,31 +28,21 @@ import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.data.analysis.Statistics;
 import org.meteoinfo.drawing.ContourDraw;
 import org.meteoinfo.drawing.Draw;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.graphic.ImageGraphic;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geoprocess.GeometryUtil;
-import org.meteoinfo.legend.PointStyle;
 import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.layer.ImageLayer;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.legend.ArrowLineBreak;
-import org.meteoinfo.legend.ArrowPolygonBreak;
-import org.meteoinfo.legend.BarBreak;
-import org.meteoinfo.legend.BreakTypes;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.ColorBreakCollection;
 import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.LegendType;
-import org.meteoinfo.legend.LineStyles;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.legend.StreamlineBreak;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
-import org.meteoinfo.shape.*;
+import org.meteoinfo.geometry.shape.*;
 import wcontour.Contour;
 import wcontour.global.Point3D;
 import wcontour.global.PolyLine;
@@ -754,7 +744,7 @@ public class GraphicFactory {
      * @return LineString graphics
      */
     public static GraphicCollection createErrorLineString(Array xdata, Array ydata, Array xErrorLeft,
-            Array xErrorRight, Array yErrorBottom, Array yErrorUp, PolylineBreak cb, PolylineBreak ecb, float capSize) {
+                                                          Array xErrorRight, Array yErrorBottom, Array yErrorUp, PolylineBreak cb, PolylineBreak ecb, float capSize) {
         GraphicCollection gc = new GraphicCollection();
         PolylineShape pls;
         CapPolylineShape epls;
@@ -2961,7 +2951,7 @@ public class GraphicFactory {
      * @return Graphics
      */
     public static GraphicCollection createImage(GridArray gdata, LegendScheme ls, double offset,
-            String zdir, List<Number> sePoint, String interpolation) {
+                                                String zdir, List<Number> sePoint, String interpolation) {
         Graphic gg = createImage(gdata, ls);
         if (interpolation != null) {
             ((ImageShape) gg.getShape()).setInterpolation(interpolation);

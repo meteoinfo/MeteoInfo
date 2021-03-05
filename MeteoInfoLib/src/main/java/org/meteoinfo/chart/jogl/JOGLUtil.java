@@ -17,18 +17,18 @@ import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.layer.ImageLayer;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.PolygonBreak;
 import org.meteoinfo.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.InvalidRangeException;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.GraphicCollection;
-import org.meteoinfo.shape.ImageShape;
-import org.meteoinfo.shape.PointZ;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.shape.ImageShape;
+import org.meteoinfo.geometry.shape.PointZ;
 
 /**
  *

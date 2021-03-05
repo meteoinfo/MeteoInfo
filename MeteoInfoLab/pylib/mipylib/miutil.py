@@ -8,7 +8,7 @@
 from org.meteoinfo.common import PointD
 from org.meteoinfo.common.util import JDateUtil
 from org.meteoinfo.ndarray import Complex
-from org.meteoinfo.shape import PointShape, ShapeUtil
+from org.meteoinfo.geometry.shape import PointShape, ShapeUtil
 from java.util import Locale
 from java.time import LocalDateTime
 from java.time.format import DateTimeFormatter

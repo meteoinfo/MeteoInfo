@@ -14,10 +14,10 @@
 package org.meteoinfo.layer;
 
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.legend.LegendScheme;
+import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.info.ProjectionInfo;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  * Map layer class

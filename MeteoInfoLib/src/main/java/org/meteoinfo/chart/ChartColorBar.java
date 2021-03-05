@@ -17,17 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.chart.plot.XAlign;
 import org.meteoinfo.chart.plot.YAlign;
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.LegendType;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.legend.*;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

@@ -20,12 +20,12 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.meteoinfo.common.DataConvert;
+import org.meteoinfo.common.util.FontUtil;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.desktop.config.Options;
 import org.meteoinfo.desktop.forms.FrmMain;
 import org.meteoinfo.desktop.forms.FrmTextEditor;
-import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.global.util.FontUtil;
 import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.util.InteractiveConsole;
@@ -52,7 +52,7 @@ public class MeteoInfoMap {
                     System.out.println("Register: " + fontFn);
                     FontUtil.registerFont(fontFn);
                 }
-                args = (String[])DataConvert.resizeArray(args, args.length - 1);
+                args = (String[]) DataConvert.resizeArray(args, args.length - 1);
             }
         }
         if (args.length >= 1) {
@@ -363,7 +363,7 @@ public class MeteoInfoMap {
                 }
 
                 //registerFonts();
-                org.meteoinfo.global.util.FontUtil.registerWeatherFont();
+                org.meteoinfo.common.util.FontUtil.registerWeatherFont();
                 FrmMain frame = new FrmMain(startupPath, options);
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 //frame.setLocationRelativeTo(null);

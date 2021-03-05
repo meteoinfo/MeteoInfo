@@ -30,7 +30,6 @@ import org.meteoinfo.desktop.config.GenericFileFilter;
 import org.meteoinfo.console.editor.TextEditor;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.TextEditorPane;
-
 import org.meteoinfo.ui.ButtonTabComponent;
 
 /**

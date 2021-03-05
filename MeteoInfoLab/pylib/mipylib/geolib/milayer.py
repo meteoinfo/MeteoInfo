@@ -12,9 +12,9 @@ from java.time import LocalDateTime
 
 from org.meteoinfo.data import TableUtil, XYListDataset
 from org.meteoinfo.layer import LayerTypes, VectorLayer
-from org.meteoinfo.legend import LegendType
+from org.meteoinfo.geometry.legend import LegendType
 from org.meteoinfo.projection import ProjectionUtil, KnownCoordinateSystems
-from org.meteoinfo.shape import PolygonShape, ShapeTypes
+from org.meteoinfo.geometry.shape import PolygonShape, ShapeTypes
 from org.meteoinfo.geoprocess import GeometryUtil
 
 

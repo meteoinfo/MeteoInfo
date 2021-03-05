@@ -1,7 +1,7 @@
 package org.meteoinfo.chart.jogl.tessellator;
 
 import com.jogamp.opengl.GL2;
-import org.meteoinfo.shape.PointZ;
+import org.meteoinfo.geometry.shape.PointZ;
 
 import java.util.ArrayList;
 

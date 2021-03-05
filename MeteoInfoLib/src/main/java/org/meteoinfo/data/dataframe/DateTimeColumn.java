@@ -6,7 +6,7 @@
 package org.meteoinfo.data.dataframe;
 
 import org.joda.time.DateTime;
-import org.meteoinfo.global.DataConvert;
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 

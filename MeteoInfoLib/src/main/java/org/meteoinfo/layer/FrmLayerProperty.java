@@ -7,17 +7,12 @@ package org.meteoinfo.layer;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.MIMath;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.legend.ColorBreak;
 import org.meteoinfo.legend.FrmLegendBreaks;
 import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.LegendType;
 import org.meteoinfo.legend.MapFrame;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import com.l2fprod.common.model.DefaultBeanInfoResolver;
 import com.l2fprod.common.propertysheet.PropertySheet;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
@@ -35,11 +30,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.ui.CheckBoxListEntry;
-import org.meteoinfo.legend.AlignType;
-import org.meteoinfo.legend.ChartTypes;
-import org.meteoinfo.shape.PointZ;
-import org.meteoinfo.shape.Shape;
 import org.xml.sax.SAXException;
 
 /**

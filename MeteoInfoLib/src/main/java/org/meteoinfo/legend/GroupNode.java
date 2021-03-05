@@ -14,6 +14,8 @@
 package org.meteoinfo.legend;
 
 import com.l2fprod.common.beans.BaseBeanInfo;
+import org.meteoinfo.geometry.legend.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
 

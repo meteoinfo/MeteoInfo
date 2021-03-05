@@ -29,12 +29,8 @@ import org.meteoinfo.data.XYSeriesData;
 import org.meteoinfo.data.XYYSeriesData;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.common.colors.ColorUtil;
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.legend.*;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

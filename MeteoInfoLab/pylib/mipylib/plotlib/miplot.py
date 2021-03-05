@@ -19,9 +19,10 @@ from org.meteoinfo.chart import Location
 from org.meteoinfo.chart.plot import Plot2D, MapPlot, Plot3D
 from org.meteoinfo.data.meteodata import DrawMeteoData
 from org.meteoinfo.image import AnimatedGifEncoder
-from org.meteoinfo.legend import LegendManage, LegendScheme, LegendType
+from org.meteoinfo.legend import LegendManage
+from org.meteoinfo.geometry.legend import LegendScheme, LegendType
 from org.meteoinfo.script import ChartForm
-from org.meteoinfo.shape import ShapeTypes
+from org.meteoinfo.geometry.shape import ShapeTypes
 from ._axes import Axes, PolarAxes
 from ._axes3d import Axes3D
 from ._axes3dgl import Axes3DGL

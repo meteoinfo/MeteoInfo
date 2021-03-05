@@ -22,7 +22,7 @@ import org.meteoinfo.common.PointD;
 import org.meteoinfo.map.GridLabel;
 import org.meteoinfo.projection.ProjectionNames;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.shape.PolygonShape;
+import org.meteoinfo.geometry.shape.PolygonShape;
 
 /**
  *

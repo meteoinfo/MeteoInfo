@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.legend;
 
+import org.meteoinfo.geometry.legend.LabelBreak;
 import org.meteoinfo.layout.MapLayout;
 import org.meteoinfo.map.MapView;
 import com.l2fprod.common.swing.JFontChooser;

@@ -11,7 +11,7 @@ import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.geoprocess.GeometryUtil;
-import org.meteoinfo.shape.PointZ;
+import org.meteoinfo.geometry.shape.PointZ;
 
 /**
  *

@@ -18,7 +18,7 @@ import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.util.GlobalUtil;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.RenderingHints;

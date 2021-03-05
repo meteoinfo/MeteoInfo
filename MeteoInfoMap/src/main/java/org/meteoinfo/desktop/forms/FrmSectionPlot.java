@@ -8,6 +8,9 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.data.GridData;
+import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.geometry.legend.LegendType;
+import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.data.meteodata.DrawMeteoData;
 import org.meteoinfo.data.meteodata.DrawType2D;
@@ -52,14 +55,11 @@ import org.meteoinfo.layout.MouseMode;
 import org.meteoinfo.legend.FrmLegendSet;
 import org.meteoinfo.legend.LayerNode;
 import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.legend.LegendType;
 import org.meteoinfo.legend.MapFrame;
 import org.meteoinfo.legend.NodeTypes;
-import org.meteoinfo.legend.PointBreak;
 import org.meteoinfo.desktop.config.GenericFileFilter;
 import org.meteoinfo.image.AnimatedGifEncoder;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

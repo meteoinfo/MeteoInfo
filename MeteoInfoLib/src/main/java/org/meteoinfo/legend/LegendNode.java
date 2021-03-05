@@ -13,7 +13,8 @@
  */
 package org.meteoinfo.legend;
 
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

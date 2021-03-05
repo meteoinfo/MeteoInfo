@@ -14,7 +14,8 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.global.DataConvert;
+
+import org.meteoinfo.common.DataConvert;
 import ucar.nc2.iosp.bufr.BufrTableLookup;
 import ucar.nc2.iosp.bufr.DataDescriptor;
 import ucar.nc2.iosp.bufr.Descriptor;

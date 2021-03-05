@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.data.mapdata.geotiff;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.data.GridData;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,7 +34,6 @@ import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.mapdata.geotiff.compression.CompressionDecoder;
 import org.meteoinfo.data.mapdata.geotiff.compression.DeflateCompression;
 import org.meteoinfo.data.mapdata.geotiff.compression.LZWCompression;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.math.ArrayMath;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;

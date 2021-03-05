@@ -8,11 +8,12 @@
 import os
 import datetime
 
-from org.meteoinfo.legend import LineStyles, HatchStyle, ColorBreak, PointBreak, PolylineBreak, \
-    PolygonBreak, ArrowBreak, ArrowLineBreak, ArrowPolygonBreak, StreamlineBreak, LegendManage, \
+from org.meteoinfo.geometry.legend import LineStyles, HatchStyle, ColorBreak, PointBreak, PolylineBreak, \
+    PolygonBreak, ArrowBreak, ArrowLineBreak, ArrowPolygonBreak, StreamlineBreak, \
     PointStyle, MarkerType, LegendScheme
+from org.meteoinfo.legend import LegendManage
 from org.meteoinfo.common.colors import ColorUtil, ColorMap
-from org.meteoinfo.shape import ShapeTypes
+from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.chart import ChartText
 
 from java.awt import Color, Font

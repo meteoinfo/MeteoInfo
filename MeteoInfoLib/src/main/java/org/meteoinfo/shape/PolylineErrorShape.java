@@ -5,8 +5,11 @@
  */
 package org.meteoinfo.shape;
 
+import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.ndarray.Array;
+
 import java.util.List;
-import ucar.ma2.Array;
 
 /**
  *

@@ -33,7 +33,7 @@
 
 package org.meteoinfo.ndarray;
 
-import org.meteoinfo.ndarray.util.DataConvert;
+import org.meteoinfo.ndarray.util.DataTypeUtil;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -217,7 +217,7 @@ public class StructureDataDeep extends StructureDataA {
             break;
           case CHAR:
             char[] cdata = sdata.getJavaArrayChar(m);
-            bb.put(DataConvert.convertCharToByte(cdata));
+            bb.put(DataTypeUtil.convertCharToByte(cdata));
             break;
           case LONG:
             long[] ldata = sdata.getJavaArrayLong(m);

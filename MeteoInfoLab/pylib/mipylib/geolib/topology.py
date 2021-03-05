@@ -7,7 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.geoprocess import GeometryUtil
-from org.meteoinfo.shape import Graphic
+from org.meteoinfo.geometry.graphic import Graphic
 
 __all__ = [
     'buffer','contains','convexhull','coveredby','covers','crosses','difference',

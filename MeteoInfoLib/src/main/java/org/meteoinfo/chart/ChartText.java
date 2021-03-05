@@ -22,8 +22,8 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.drawing.Draw;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.shape.Shape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *

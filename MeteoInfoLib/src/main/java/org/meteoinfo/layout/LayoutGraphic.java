@@ -13,28 +13,24 @@
  */
 package org.meteoinfo.layout;
 
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.global.event.IMapViewUpdatedListener;
-import org.meteoinfo.global.event.ISizeChangedListener;
-import org.meteoinfo.global.event.MapViewUpdatedEvent;
-import org.meteoinfo.global.event.SizeChangedEvent;
+import org.meteoinfo.geometry.legend.*;
+import org.meteoinfo.ui.event.IMapViewUpdatedListener;
+import org.meteoinfo.ui.event.ISizeChangedListener;
+import org.meteoinfo.ui.event.MapViewUpdatedEvent;
+import org.meteoinfo.ui.event.SizeChangedEvent;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.legend.BreakTypes;
-import org.meteoinfo.legend.LabelBreak;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
-import org.meteoinfo.legend.VectorBreak;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.ShapeTypes;
-import org.meteoinfo.shape.WindArrow;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.WindArrow;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -44,8 +40,8 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.shape.EllipseShape;
+
+import org.meteoinfo.geometry.shape.EllipseShape;
 
 /**
  *

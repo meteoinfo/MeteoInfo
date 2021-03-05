@@ -22,13 +22,13 @@ import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.util.GlobalUtil;
-import org.meteoinfo.data.mapdata.Field;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.layer.LayerDrawType;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.legend.LegendManage;
-import org.meteoinfo.shape.PointShape;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.table.Field;
 
 /**
  *

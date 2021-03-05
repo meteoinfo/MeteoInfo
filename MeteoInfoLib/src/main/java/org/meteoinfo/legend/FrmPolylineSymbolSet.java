@@ -13,8 +13,11 @@
  */
 package org.meteoinfo.legend;
 
-import org.meteoinfo.global.event.ISelectedCellChangedListener;
-import org.meteoinfo.global.event.SelectedCellChangedEvent;
+import org.meteoinfo.geometry.legend.LineStyles;
+import org.meteoinfo.geometry.legend.PointStyle;
+import org.meteoinfo.geometry.legend.PolylineBreak;
+import org.meteoinfo.ui.event.ISelectedCellChangedListener;
+import org.meteoinfo.ui.event.SelectedCellChangedEvent;
 import org.meteoinfo.layout.MapLayout;
 import org.meteoinfo.map.MapView;
 import java.awt.Color;
@@ -144,7 +147,7 @@ public class FrmPolylineSymbolSet extends javax.swing.JDialog {
 
         symbolControl1.setCellSize(new java.awt.Dimension(50, 40));
         symbolControl1.setPreferredSize(new java.awt.Dimension(200, 50));
-        symbolControl1.setShapeType(org.meteoinfo.shape.ShapeTypes.Polyline);
+        symbolControl1.setShapeType(org.meteoinfo.geometry.shape.ShapeTypes.Polyline);
 
         jLabel1.setText("Size:");
 

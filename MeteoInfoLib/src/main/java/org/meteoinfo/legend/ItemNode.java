@@ -13,6 +13,8 @@
  */
 package org.meteoinfo.legend;
 
+import org.meteoinfo.geometry.legend.Constants;
+
 import java.awt.Color;
 
 /**

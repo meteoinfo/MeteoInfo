@@ -6,17 +6,9 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.shape import Graphic
-from org.meteoinfo.image import ImageUtil, GifDecoder, AnimatedGifEncoder
-from mipylib.geolib.milayer import MILayer
-from mipylib.numeric.core import NDArray
-from org.meteoinfo.image.filter import ContrastFilter, SharpenFilter, RGBAdjustFilter, ChannelMixFilter, \
-    GainFilter, GammaFilter, GrayFilter, GrayscaleFilter, HSBAdjustFilter, InvertAlphaFilter, \
-    InvertFilter, LevelsFilter, MaskFilter, PosterizeFilter, RescaleFilter, SolarizeFilter, \
-    ThresholdFilter, FlipFilter, RotateFilter, EmbossFilter, TritoneFilter, LightFilter, OpacityFilter
-from java.awt.image import BufferedImage
-import math
 import os
+from mipylib.numeric.core import NDArray
+from org.meteoinfo.image import ImageUtil, GifDecoder, AnimatedGifEncoder
 
 __all__ = [
     'imread','imload','imwrite','gifopen','gifread','gifload','gifanimation','gifaddframe',

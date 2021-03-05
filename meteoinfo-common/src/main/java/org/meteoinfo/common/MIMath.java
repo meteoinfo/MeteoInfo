@@ -251,6 +251,22 @@ public class MIMath {
     }
 
     /**
+     * Mean funtion
+     *
+     * @param aDataList The data list
+     * @return Mean
+     */
+    public static double mean(List<Double> aDataList) {
+        double aSum = 0.0;
+
+        for (Double v : aDataList) {
+            aSum = aSum + v;
+        }
+
+        return aSum / aDataList.size();
+    }
+
+    /**
      * Array reverse
      *
      * @param points PointD array
@@ -1100,5 +1116,70 @@ public class MIMath {
         double y = Math.sin(B) * r;
 
         return new double[]{x, y};
+    }
+
+    /**
+     * Get wind direction/speed from U/V
+     *
+     * @param U The U value
+     * @param V The V value
+     * @return Wind direction/speed array
+     */
+    public static double[] getDSFromUV(double U, double V) {
+        double windSpeed = Math.sqrt(U * U + V * V);
+        double windDir;
+        if (windSpeed == 0) {
+            windDir = 0;
+        } else {
+            windDir = Math.asin(U / windSpeed) * 180 / Math.PI;
+            if (U < 0 && V < 0) {
+                windDir = 180.0 - windDir;
+            } else if (U > 0 && V < 0) {
+                windDir = 180.0 - windDir;
+            } else if (U < 0 && V > 0) {
+                windDir = 360.0 + windDir;
+            }
+            windDir += 180;
+            if (windDir >= 360) {
+                windDir -= 360;
+            }
+        }
+
+        return new double[]{windDir, windSpeed};
+    }
+
+    /**
+     * Get wind U/V from wind direction/speed
+     *
+     * @param windDir The wind direction
+     * @param windSpeed The wind speed
+     * @return Wind U/V
+     */
+    public static double[] getUVFromDS(double windDir, double windSpeed) {
+        double dir = windDir + 180;
+        if (dir > 360) {
+            dir = dir - 360;
+        }
+
+        dir = dir * Math.PI / 180;
+        double U = windSpeed * Math.sin(dir);
+        double V = windSpeed * Math.cos(dir);
+
+        return new double[]{U, V};
+    }
+
+    /**
+     * Get end point by start point, angle and length
+     * @param x Start point x
+     * @param y Start point y
+     * @param angle Angle
+     * @param len Length
+     * @return End point x/y values;
+     */
+    public static double[] getEndPoint(double x, double y, double angle, double len){
+        double[] r = getUVFromDS(angle, len);
+        r[0] += x;
+        r[1] += y;
+        return r;
     }
 }

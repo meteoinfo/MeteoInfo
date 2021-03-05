@@ -15,10 +15,11 @@ package org.meteoinfo.layer;
 
 import java.awt.Color;
 import java.awt.Font;
-import org.meteoinfo.legend.AlignType;
-import org.meteoinfo.legend.ChartTypes;
-import org.meteoinfo.legend.LegendScheme;
-import org.meteoinfo.shape.ShapeTypes;
+
+import org.meteoinfo.geometry.legend.AlignType;
+import org.meteoinfo.geometry.legend.ChartTypes;
+import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.util.ArrayList;
 import java.util.List;
 

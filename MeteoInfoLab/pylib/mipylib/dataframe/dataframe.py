@@ -8,8 +8,8 @@
 
 import datetime
 
-from org.meteoinfo.data.dataframe import DataFrame as MIDataFrame
-from org.meteoinfo.data.dataframe import Series as MISeries
+from org.meteoinfo.dataframe import DataFrame as MIDataFrame
+from org.meteoinfo.dataframe import Series as MISeries
 from org.meteoinfo.ndarray import Range, Array
 
 import mipylib.numeric as np

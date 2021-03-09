@@ -11,7 +11,7 @@ import org.apache.commons.math3.analysis.interpolation.*;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.meteoinfo.common.PointD;
 //import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.math.spatial.KDTree;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;

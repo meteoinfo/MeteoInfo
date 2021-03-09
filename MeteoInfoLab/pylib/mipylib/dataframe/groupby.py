@@ -9,7 +9,7 @@
 import dataframe
 import series
 
-from org.meteoinfo.data.dataframe import DataFrame as MIDataFrame
+from org.meteoinfo.dataframe import DataFrame as MIDataFrame
 
 
 class GroupBy(object):

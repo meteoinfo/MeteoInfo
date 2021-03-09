@@ -5,12 +5,11 @@
 package org.meteoinfo.desktop.forms;
 
 import org.meteoinfo.projection.KnownCoordinateSystems;
-import org.meteoinfo.projection.info.ProjectionInfo;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import java.awt.Component;
 import java.awt.Cursor;
 import org.locationtech.proj4j.proj.Projection;
-import static org.meteoinfo.projection.ProjectionNames.Mercator;
 
 /**
  *

@@ -33,11 +33,11 @@ import org.meteoinfo.common.PointD;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.XYDataset;
 import org.meteoinfo.data.XYListDataset;
-import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.data.meteodata.MeteoDataInfo;
 import org.meteoinfo.data.meteodata.PlotDimension;
 import org.meteoinfo.data.meteodata.Variable;
+import org.meteoinfo.geometry.legend.*;
+import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.data.meteodata.hysplit.HYSPLITTrajDataInfo;
 import org.meteoinfo.desktop.config.GenericFileFilter;
 import org.meteoinfo.image.AnimatedGifEncoder;
@@ -1190,8 +1190,8 @@ public class FrmOneDim extends javax.swing.JFrame {
     }
 
     private void createChart(XYDataset dataset, List<ColorBreak> legendBreaks, String title, String xLabel, String yLabel,
-            ChartPlotMethod method, PlotOrientation orientation, boolean yInverse, boolean xInverse, boolean isTime,
-            boolean drawLegend) {
+                             ChartPlotMethod method, PlotOrientation orientation, boolean yInverse, boolean xInverse, boolean isTime,
+                             boolean drawLegend) {
         XY1DPlot plot = new XY1DPlot(isTime, orientation, dataset);
         if (title != null) {
             plot.setTitle(title);

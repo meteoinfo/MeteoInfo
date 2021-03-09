@@ -5,7 +5,7 @@
 # Note: Jython
 #-----------------------------------------------------
 from org.meteoinfo.ndarray import Dimension, DimensionType, Range, Array, MAMath
-from org.meteoinfo.math import ArrayMath, ArrayUtil
+from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.common import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.data.meteodata import Attribute

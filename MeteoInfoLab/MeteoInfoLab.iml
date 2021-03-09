@@ -46,6 +46,9 @@
     <orderEntry type="module" module-name="meteoinfo-ui" />
     <orderEntry type="module" module-name="meteoinfo-image" />
     <orderEntry type="module" module-name="meteoinfo-table" />
+    <orderEntry type="module" module-name="meteoinfo-dataframe" />
+    <orderEntry type="module" module-name="meteoinfo-projection" />
+    <orderEntry type="module" module-name="meteoinfo-data" />
     <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:0.1" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-graphics2d:2.4" level="project" />

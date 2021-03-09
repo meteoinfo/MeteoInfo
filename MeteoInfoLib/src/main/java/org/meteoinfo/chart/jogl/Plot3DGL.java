@@ -40,9 +40,7 @@ import org.meteoinfo.chart.jogl.tessellator.Primitive;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.plot.*;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
-import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.*;
 import org.meteoinfo.data.Dataset;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
@@ -1471,7 +1469,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
-            XAlign xAlign, YAlign yAlign, float xShift, float yShift) {
+                           XAlign xAlign, YAlign yAlign, float xShift, float yShift) {
         return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx,
                 vy, vz, xAlign, yAlign, xShift, yShift);
     }

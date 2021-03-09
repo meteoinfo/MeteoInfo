@@ -12,7 +12,7 @@ import numbers
 import operator
 import itertools
 from org.meteoinfo.data import GridData, GridArray, StationData, DataMath, TableData, TableUtil
-from org.meteoinfo.math import ArrayMath, ArrayUtil
+from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
 from org.meteoinfo.math.interpolate import InterpUtil
 from org.meteoinfo.ndarray import Array, Dimension

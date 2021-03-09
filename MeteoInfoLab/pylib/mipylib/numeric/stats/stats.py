@@ -7,7 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.stats import StatsUtil
-from org.meteoinfo.math import ArrayMath
+from org.meteoinfo.ndarray.math import ArrayMath
 from org.meteoinfo.ndarray import Array
 
 from ..core import numeric as np

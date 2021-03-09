@@ -6,18 +6,17 @@
 #-----------------------------------------------------
 
 import datetime
-
-from org.meteoinfo.data.dataframe import Series as MISeries
-from org.meteoinfo.ndarray import Range
-
-import mipylib.numeric as np
 import mipylib.miutil as miutil
-from index import Index, DateTimeIndex
-import groupby
-from indexing import LocIndexer, ILocIndexer, AtIndexer, IAtIndexer
-
+import mipylib.numeric as np
 from java.lang import Double
 from java.util import Date
+from org.meteoinfo.dataframe import Series as MISeries
+from org.meteoinfo.ndarray import Range
+
+import groupby
+from index import Index
+from indexing import LocIndexer, ILocIndexer
+
 nan = Double.NaN
 
 class Series(object):

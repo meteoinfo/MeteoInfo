@@ -4,7 +4,7 @@
  */
 package org.meteoinfo.desktop.forms;
 
-import org.meteoinfo.data.meteodata.GridDataSetting;
+import org.meteoinfo.data.GridDataSetting;
 
 /**
  *

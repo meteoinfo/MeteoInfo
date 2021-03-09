@@ -12,14 +12,14 @@ from org.meteoinfo.data.mapdata.geotiff import GeoTiff
 from org.meteoinfo.geometry.shape import ShapeUtil, PolygonShape
 from org.meteoinfo.geometry.legend import BreakTypes
 from org.meteoinfo.geoprocess import GeoComputation, GeometryUtil
-from org.meteoinfo.math import ArrayMath, ArrayUtil
+from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.data.mapdata import MapDataManage
 from org.meteoinfo.table import AttributeTable
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
-from org.meteoinfo.projection.info import ProjectionInfo
+from org.meteoinfo.projection import ProjectionInfo
 from org.meteoinfo.common import PointD
 from org.meteoinfo.common.io import IOUtil
-from org.meteoinfo.geoprocess.analysis import ResampleMethods
+from org.meteoinfo.common import ResampleMethods
 
 from milayer import MILayer
 from mipylib.numeric.core import NDArray, DimArray

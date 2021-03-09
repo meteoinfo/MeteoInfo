@@ -17,7 +17,7 @@ from org.meteoinfo.geometry.legend import BreakTypes, LegendScheme, LegendType
 from org.meteoinfo.legend import LegendManage
 from org.meteoinfo.geometry.shape import Shape, PolylineShape, PolygonShape, ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic
-from org.meteoinfo.projection.info import ProjectionInfo
+from org.meteoinfo.projection import ProjectionInfo
 from org.meteoinfo.common import Extent
 from org.meteoinfo.layer import LayerTypes, WebMapLayer
 from org.meteoinfo.data.mapdata.webmap import WebMapProvider

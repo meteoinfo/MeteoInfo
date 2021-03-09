@@ -7,7 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.fitting import FittingUtil
-from org.meteoinfo.math import ArrayMath, ArrayUtil
+from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 
 from ..core import NDArray
 

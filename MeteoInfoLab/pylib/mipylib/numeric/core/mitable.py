@@ -8,7 +8,7 @@
 import datetime
 
 from org.meteoinfo.data import TableData, TimeTableData, TableUtil
-from org.meteoinfo.math import ArrayUtil
+from org.meteoinfo.ndarray.math import ArrayUtil
 from org.meteoinfo.ndarray import Range, DataType
 from java.time import LocalDateTime
 

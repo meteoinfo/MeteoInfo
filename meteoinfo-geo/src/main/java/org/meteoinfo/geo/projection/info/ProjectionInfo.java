@@ -19,11 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.meteoinfo.geometry.graphic.XAlign;
-import org.meteoinfo.geometry.graphic.YAlign;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.geo.mapview.GridLabel;
-import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.geo.projection.ProjectionNames;
 import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;

@@ -1,5 +1,5 @@
 from .numeric import asarray, array
-from org.meteoinfo.math import ArrayMath
+from org.meteoinfo.ndarray.math import ArrayMath
 
 __all__ = ['ndim', 'take']
 

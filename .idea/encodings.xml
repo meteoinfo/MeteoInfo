@@ -17,6 +17,10 @@
     <file url="file://$PROJECT_DIR$/meteoinfo-common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/meteoinfo-console/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/meteoinfo-console/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/meteoinfo-data/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/meteoinfo-data/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/meteoinfo-dataframe/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/meteoinfo-dataframe/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/meteoinfo-geo/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/meteoinfo-geo/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/meteoinfo-geometry/src/main/java" charset="UTF-8" />
@@ -27,6 +31,8 @@
     <file url="file://$PROJECT_DIR$/meteoinfo-math/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/meteoinfo-ndarray/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/meteoinfo-ndarray/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/meteoinfo-projection/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/meteoinfo-projection/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/meteoinfo-table/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/meteoinfo-table/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/meteoinfo-ui/src/main/java" charset="UTF-8" />

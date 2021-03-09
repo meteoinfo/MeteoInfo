@@ -13,10 +13,7 @@
  */
 package org.meteoinfo.drawing;
 
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
-import org.meteoinfo.common.PointF;
+import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geoprocess.Spline;
 import org.meteoinfo.common.colors.ColorUtil;
@@ -50,8 +47,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.meteoinfo.chart.plot.XAlign;
-import org.meteoinfo.chart.plot.YAlign;
+
 import org.meteoinfo.geometry.shape.EllipseShape;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.geometry.shape.PolygonShape;

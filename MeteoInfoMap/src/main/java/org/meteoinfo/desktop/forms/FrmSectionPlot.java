@@ -8,15 +8,11 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.data.GridData;
+import org.meteoinfo.data.meteodata.*;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LegendType;
 import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.ndarray.Dimension;
-import org.meteoinfo.data.meteodata.DrawMeteoData;
-import org.meteoinfo.data.meteodata.DrawType2D;
-import org.meteoinfo.data.meteodata.MeteoDataInfo;
-import org.meteoinfo.data.meteodata.PlotDimension;
-import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
 
 import java.awt.Color;

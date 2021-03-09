@@ -17,7 +17,7 @@ import org.meteoinfo.common.Direction;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
-import org.meteoinfo.map.GridLabel;
+import org.meteoinfo.common.GridLabel;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;

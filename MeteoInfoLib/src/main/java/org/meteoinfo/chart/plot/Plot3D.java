@@ -30,17 +30,13 @@ import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LogAxis;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.chart.plot3d.Projector;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointF;
+import org.meteoinfo.common.*;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.Dataset;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.legend.*;
 import org.meteoinfo.math.sort.QuickSort;
 import org.meteoinfo.geometry.shape.*;
 

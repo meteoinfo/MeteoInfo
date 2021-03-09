@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="meteoinfo-image" />
         <module name="meteoinfo-geometry" />
+        <module name="meteoinfo-projection" />
         <module name="MeteoInfoLab" />
         <module name="meteoinfo-console" />
         <module name="meteoinfo-geo" />
@@ -15,6 +16,8 @@
         <module name="meteoinfo-ndarray" />
         <module name="meteoinfo-table" />
         <module name="MeteoInfoLib" />
+        <module name="meteoinfo-data" />
+        <module name="meteoinfo-dataframe" />
         <module name="meteoinfo-math" />
         <module name="meteoinfo-ui" />
         <module name="MeteoInfoMap" />
@@ -26,12 +29,15 @@
       <module name="meteoinfo-chart" target="1.8" />
       <module name="meteoinfo-common" target="1.8" />
       <module name="meteoinfo-console" target="1.8" />
+      <module name="meteoinfo-data" target="1.8" />
+      <module name="meteoinfo-dataframe" target="1.8" />
       <module name="meteoinfo-geo" target="1.8" />
       <module name="meteoinfo-geometry" target="1.8" />
       <module name="meteoinfo-image" target="1.8" />
       <module name="meteoinfo-legend" target="11" />
       <module name="meteoinfo-math" target="1.8" />
       <module name="meteoinfo-ndarray" target="1.8" />
+      <module name="meteoinfo-projection" target="1.8" />
       <module name="meteoinfo-table" target="1.8" />
       <module name="meteoinfo-ui" target="1.8" />
       <module name="MeteoInfoLab" target="1.8" />

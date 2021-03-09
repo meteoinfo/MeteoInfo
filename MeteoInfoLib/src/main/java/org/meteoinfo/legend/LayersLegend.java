@@ -73,7 +73,7 @@ import org.meteoinfo.layer.FrmLabelSet;
 import org.meteoinfo.layer.WebMapLayer;
 import org.meteoinfo.map.MapView;
 import org.meteoinfo.map.MapViewUndoRedo;
-import org.meteoinfo.projection.info.ProjectionInfo;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -5,8 +5,8 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.data.dataframe import Index as MIIndex
-from org.meteoinfo.data.dataframe import DateTimeIndex as MIDateTimeIndex
+from org.meteoinfo.dataframe import Index as MIIndex
+from org.meteoinfo.dataframe import DateTimeIndex as MIDateTimeIndex
 from java.time import LocalDateTime
 
 import datetime

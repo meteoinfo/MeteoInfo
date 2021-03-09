@@ -18,7 +18,7 @@ import org.meteoinfo.data.mapdata.ShapeFileManage;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.common.colors.ColorUtil;
-import org.meteoinfo.projection.info.ProjectionInfo;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.table.*;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.geometry.graphic.Graphic;

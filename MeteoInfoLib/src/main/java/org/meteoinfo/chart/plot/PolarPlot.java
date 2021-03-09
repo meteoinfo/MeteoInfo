@@ -16,9 +16,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.chart.Margin;
-import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.*;
 import org.meteoinfo.drawing.Draw;
 import static org.meteoinfo.drawing.Draw.getDashPattern;
 

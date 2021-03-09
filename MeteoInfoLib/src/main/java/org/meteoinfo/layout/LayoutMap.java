@@ -26,7 +26,7 @@ import org.meteoinfo.ui.event.LayersUpdatedEvent;
 import org.meteoinfo.ui.event.MapViewUpdatedEvent;
 import org.meteoinfo.legend.GridLabelPosition;
 import org.meteoinfo.legend.MapFrame;
-import org.meteoinfo.map.GridLabel;
+import org.meteoinfo.common.GridLabel;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;

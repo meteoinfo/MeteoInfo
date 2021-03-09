@@ -13,9 +13,10 @@
  */
 package org.meteoinfo.geoprocess.analysis;
 
+import org.meteoinfo.data.GridDataSetting;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.data.meteodata.GridDataSetting;
 
 /**
  *

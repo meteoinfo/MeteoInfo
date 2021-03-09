@@ -21,11 +21,12 @@
  *----------------------------------------------------------------------------------------*/
 package org.meteoinfo.chart.plot3d;
 
+import org.meteoinfo.data.DataMath;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.data.DataMath;
 
 /**
  * The class <code>Projector</code> projects points in 3D space to 2D space.

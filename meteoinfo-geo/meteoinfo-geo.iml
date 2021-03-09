@@ -38,6 +38,7 @@
     <orderEntry type="library" name="Maven: org.locationtech.jts:jts-core:1.17.0" level="project" />
     <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.2-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="meteoinfo-table" />
+    <orderEntry type="library" name="Maven: org.meteothink:wContour:1.7.0" level="project" />
     <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:0.1" level="project" />
   </component>
 </module>

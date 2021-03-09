@@ -16,12 +16,13 @@ package org.meteoinfo.map;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.geo.util.GeoProjectionUtil;
 import org.meteoinfo.ui.event.IProjectionChangedListener;
 import org.meteoinfo.ui.event.ProjectionChangedEvent;
 import org.meteoinfo.layer.RasterLayer;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.projection.KnownCoordinateSystems;
-import org.meteoinfo.projection.info.ProjectionInfo;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.Reproject;
 import org.meteoinfo.geometry.shape.CircleShape;
 import org.meteoinfo.geometry.shape.CurveLineShape;
@@ -42,7 +43,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.event.EventListenerList;
-import org.meteoinfo.projection.ProjectionUtil;
+
 import org.locationtech.proj4j.CRSFactory;
 
 /**
@@ -241,11 +242,11 @@ public class ProjectionSet {
                 case VectorLayer:
                     VectorLayer oLayer = (VectorLayer) aMapView.getLayers().get(i);
                     //projectLayer(oLayer, toProj);
-                    ProjectionUtil.projectLayer(oLayer, toProj);
+                    GeoProjectionUtil.projectLayer(oLayer, toProj);
                     break;
                 case RasterLayer:
                     RasterLayer oRLayer = (RasterLayer) aMapView.getLayers().get(i);
-                    ProjectionUtil.projectLayer(oRLayer, toProj);                    
+                    GeoProjectionUtil.projectLayer(oRLayer, toProj);
                     break;
             }
         }
@@ -259,7 +260,7 @@ public class ProjectionSet {
         aMapView.setExtent(aMapView.getLayersWholeExtent());
         Extent aExten = aMapView.getExtent();
         aMapView.setLonLatLayer(aMapView.generateLonLatLayer());
-        ProjectionUtil.projectLayer(aMapView.getLonLatLayer(), toProj);
+        GeoProjectionUtil.projectLayer(aMapView.getLonLatLayer(), toProj);
         //aMapView.setLonLatProjLayer(aMapView.getLonLatLayer());
         for (int i = 0; i < aMapView.getLonLatLayer().getShapeNum(); i++) {
             PolylineShape aPLS = (PolylineShape) aMapView.getLonLatLayer().getShapes().get(i);

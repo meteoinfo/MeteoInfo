@@ -22,6 +22,7 @@ import org.meteoinfo.common.*;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.mapdata.MapDataManage;
 import org.meteoinfo.drawing.Draw;
+import org.meteoinfo.geo.util.GeoProjectionUtil;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geoprocess.GeometryUtil;
 import org.meteoinfo.geoprocess.GeoComputation;
@@ -55,7 +56,7 @@ import org.meteoinfo.legend.FrmPolygonSymbolSet;
 import org.meteoinfo.legend.FrmPolylineSymbolSet;
 import org.meteoinfo.legend.LegendManage;
 import org.meteoinfo.projection.KnownCoordinateSystems;
-import org.meteoinfo.projection.info.ProjectionInfo;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.geometry.shape.CircleShape;
 import org.meteoinfo.geometry.shape.CurveLineShape;
@@ -154,11 +155,10 @@ import org.meteoinfo.ui.event.IShapeSelectedListener;
 import org.meteoinfo.ui.event.IUndoEditListener;
 import org.meteoinfo.ui.event.ShapeSelectedEvent;
 import org.meteoinfo.ui.event.UndoEditEvent;
-import org.meteoinfo.global.util.GeoUtil;
+import org.meteoinfo.data.mapdata.webmap.GeoUtil;
 import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.layer.VisibleScale;
 import org.meteoinfo.layer.WebMapLayer;
-import org.meteoinfo.projection.ProjectionUtil;
 import org.meteoinfo.projection.Reproject;
 import org.meteoinfo.geometry.graphic.ChartGraphic;
 import org.meteoinfo.geometry.shape.PointZShape;
@@ -3480,13 +3480,13 @@ public class MapView extends JPanel implements IWebMapPanel {
         if (!aLayer.getProjInfo().equals(_projection.getProjInfo())) {
             if (EarthWind) {
                 if (aProjInfo.getProjectionName() == ProjectionNames.LongLat) {
-                    ProjectionUtil.projectLayer(aLayer, _projection.getProjInfo());
+                    GeoProjectionUtil.projectLayer(aLayer, _projection.getProjInfo());
                 } else {
-                    ProjectionUtil.projectWindLayer(aLayer, _projection.getProjInfo(), false);
-                    ProjectionUtil.projectLayerAngle(aLayer, GeoProjInfo, _projection.getProjInfo());
+                    GeoProjectionUtil.projectWindLayer(aLayer, _projection.getProjInfo(), false);
+                    GeoProjectionUtil.projectLayerAngle(aLayer, GeoProjInfo, _projection.getProjInfo());
                 }
             } else {
-                ProjectionUtil.projectLayer(aLayer, _projection.getProjInfo());
+                GeoProjectionUtil.projectLayer(aLayer, _projection.getProjInfo());
             }
 
         }
@@ -3514,13 +3514,13 @@ public class MapView extends JPanel implements IWebMapPanel {
                 }
 
                 if (!aLayer.getProjInfo().equals(_projection.getProjInfo())) {
-                    ProjectionUtil.projectLayer(aLayer, _projection.getProjInfo(), projectLabels);
+                    GeoProjectionUtil.projectLayer(aLayer, _projection.getProjInfo(), projectLabels);
                 }
                 break;
             case RasterLayer:
                 RasterLayer rLayer = (RasterLayer) layer;
                 if (!rLayer.getProjInfo().equals(_projection.getProjInfo())) {
-                    ProjectionUtil.projectLayer(rLayer, _projection.getProjInfo());
+                    GeoProjectionUtil.projectLayer(rLayer, _projection.getProjInfo());
                 }
                 break;
         }
@@ -3536,13 +3536,13 @@ public class MapView extends JPanel implements IWebMapPanel {
             case VectorLayer:
                 VectorLayer aLayer = (VectorLayer) layer;
                 if (!aLayer.getProjInfo().equals(_projection.getProjInfo())) {
-                    ProjectionUtil.projectLayer(aLayer, _projection.getProjInfo(), projectLabels);
+                    GeoProjectionUtil.projectLayer(aLayer, _projection.getProjInfo(), projectLabels);
                 }
                 break;
             case RasterLayer:
                 RasterLayer rLayer = (RasterLayer) layer;
                 if (!rLayer.getProjInfo().equals(_projection.getProjInfo())) {
-                    ProjectionUtil.projectLayer(rLayer, _projection.getProjInfo());
+                    GeoProjectionUtil.projectLayer(rLayer, _projection.getProjInfo());
                 }
                 break;
         }
@@ -7093,7 +7093,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             _lonLatLayer = generateLonLatLayer();
             if (!_projection.isLonLatMap()) {
                 ProjectionInfo toProj = _projection.getProjInfo();
-                ProjectionUtil.projectLayer(_lonLatLayer, toProj);
+                GeoProjectionUtil.projectLayer(_lonLatLayer, toProj);
             }
 
             _gridDeltChanged = false;

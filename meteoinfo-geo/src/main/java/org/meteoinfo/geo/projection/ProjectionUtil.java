@@ -24,7 +24,7 @@ import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 import org.meteoinfo.geo.layer.RasterLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.geo.projection.info.ProjectionInfo;

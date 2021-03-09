@@ -6,7 +6,7 @@
 package org.meteoinfo.image;
 
 import org.apache.commons.imaging.*;
-import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.*;
 
 import javax.imageio.ImageIO;

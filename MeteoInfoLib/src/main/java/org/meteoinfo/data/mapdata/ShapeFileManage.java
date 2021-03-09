@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.meteoinfo.projection.info.ProjectionInfo;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.geometry.shape.PointM;
 import org.meteoinfo.geometry.shape.PointZShape;
 import org.meteoinfo.geometry.shape.PolygonMShape;

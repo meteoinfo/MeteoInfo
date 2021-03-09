@@ -16,9 +16,10 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.meteoinfo.chart.plot.XAlign;
-import org.meteoinfo.chart.plot.YAlign;
+
 import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.XAlign;
+import org.meteoinfo.common.YAlign;
 import org.meteoinfo.drawing.Draw;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;

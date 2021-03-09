@@ -18,7 +18,7 @@ import org.meteoinfo.data.meteodata.MeteoDataInfo;
 public class MeteoInfoData {
     // <editor-fold desc="Variables">
     private List<MeteoDataInfo> dataInfoList;
-    private MeteoDataInfo currentDataInfo;    
+    private MeteoDataInfo currentDataInfo;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">

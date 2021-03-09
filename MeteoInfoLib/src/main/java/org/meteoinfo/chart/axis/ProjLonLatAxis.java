@@ -11,7 +11,7 @@ import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.projection.KnownCoordinateSystems;
-import org.meteoinfo.projection.info.ProjectionInfo;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.Reproject;
 
 /**

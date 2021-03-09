@@ -15,11 +15,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
-import org.meteoinfo.chart.plot.XAlign;
-import org.meteoinfo.chart.plot.YAlign;
-import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.PointD;
-import org.meteoinfo.common.PointF;
+
+import org.meteoinfo.common.*;
 import org.meteoinfo.drawing.Draw;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.ShapeTypes;

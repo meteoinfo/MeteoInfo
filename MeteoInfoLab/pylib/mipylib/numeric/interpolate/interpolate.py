@@ -7,7 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.interpolate import InterpUtil
-from org.meteoinfo.math import ArrayUtil
+from org.meteoinfo.ndarray.math import ArrayUtil
 
 from ..core import NDArray
 from ..core import numeric as np

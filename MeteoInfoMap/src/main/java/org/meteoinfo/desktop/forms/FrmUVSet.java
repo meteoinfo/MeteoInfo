@@ -4,11 +4,12 @@
  */
 package org.meteoinfo.desktop.forms;
 
-import java.util.List;
-import javax.swing.DefaultComboBoxModel;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.data.meteodata.MeteoDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
+
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 
 /**
  *

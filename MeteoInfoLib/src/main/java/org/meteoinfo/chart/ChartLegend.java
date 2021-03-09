@@ -15,6 +15,8 @@ package org.meteoinfo.chart;
 
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.PointF;
+import org.meteoinfo.common.XAlign;
+import org.meteoinfo.common.YAlign;
 import org.meteoinfo.drawing.Draw;
 import com.l2fprod.common.beans.BaseBeanInfo;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
@@ -29,8 +31,6 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import org.meteoinfo.chart.plot.PlotOrientation;
-import org.meteoinfo.chart.plot.XAlign;
-import org.meteoinfo.chart.plot.YAlign;
 import org.meteoinfo.geometry.legend.*;
 
 /**

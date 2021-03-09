@@ -39,26 +39,17 @@ import com.formdev.flatlaf.extras.FlatSVGUtils;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.desktop.config.GenericFileFilter;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.GridData;
+import org.meteoinfo.data.GridDataSetting;
 import org.meteoinfo.data.StationData;
-import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.data.meteodata.DrawMeteoData;
-import org.meteoinfo.data.meteodata.DrawType2D;
-import org.meteoinfo.data.meteodata.GridDataSetting;
-import org.meteoinfo.data.meteodata.MeteoDataInfo;
-import org.meteoinfo.data.meteodata.MeteoDataType;
-import org.meteoinfo.data.meteodata.MeteoUVSet;
-import org.meteoinfo.data.meteodata.PlotDimension;
-import org.meteoinfo.data.meteodata.StationInfoData;
-import org.meteoinfo.data.meteodata.StationModelData;
-import org.meteoinfo.data.meteodata.TrajDataInfo;
-import org.meteoinfo.data.meteodata.Variable;
+import org.meteoinfo.data.meteodata.*;
+import org.meteoinfo.desktop.config.GenericFileFilter;
 import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
 import org.meteoinfo.data.meteodata.micaps.MICAPS7DataInfo;
 import org.meteoinfo.data.meteodata.netcdf.NetCDFDataInfo;
 import org.meteoinfo.common.colors.ColorUtil;
+import org.meteoinfo.geo.util.GeoMathUtil;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.legend.*;
 import org.meteoinfo.geoprocess.analysis.InterpolationMethods;
@@ -68,7 +59,7 @@ import org.meteoinfo.layer.LayerTypes;
 import org.meteoinfo.layer.MapLayer;
 import org.meteoinfo.layer.RasterLayer;
 import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.projection.info.ProjectionInfo;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
@@ -2601,7 +2592,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 }
                 return drawMeteoMap_Station(true, _legendScheme, fieldName);
             default:
-                _gridData = _stationData.interpolateData(_interpolationSetting);
+                _gridData = GeoMathUtil.interpolateData(_stationData, _interpolationSetting);
                 if (!_useSameLegendScheme) {
                     createLegendScheme_Station();
                 }
@@ -2989,8 +2980,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
                                 nstUData = uvData[0];
                                 nstVData = uvData[1];
                             }
-                            GridData UData = nstUData.interpolateData(_interpolationSetting);
-                            GridData VData = nstVData.interpolateData(_interpolationSetting);
+                            GridData UData = GeoMathUtil.interpolateData(nstUData, _interpolationSetting);
+                            GridData VData = GeoMathUtil.interpolateData(nstVData, _interpolationSetting);
                             LName = "Streamline_" + LName;
                             aLayer = DrawMeteoData.createStreamlineLayer(UData, VData, _strmDensity, aLS, LName,
                                     true);

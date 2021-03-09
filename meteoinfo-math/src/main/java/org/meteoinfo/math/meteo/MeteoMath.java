@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.math.meteo;
 
-import org.meteoinfo.math.ArrayMath;
+import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;

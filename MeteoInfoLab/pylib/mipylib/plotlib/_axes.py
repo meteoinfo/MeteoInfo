@@ -9,7 +9,8 @@
 from org.meteoinfo.chart import Location, ChartWindArrow, ChartText, LegendPosition, \
     ChartLegend, ChartColorBar
 from org.meteoinfo.chart.plot import Plot2D, PolarPlot, GraphicFactory, \
-    PlotOrientation, XAlign, YAlign
+    PlotOrientation
+from org.meteoinfo.common import XAlign, YAlign
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
 from org.meteoinfo.legend import LegendManage
 from org.meteoinfo.geometry.legend import BarBreak, PolygonBreak, PolylineBreak, \

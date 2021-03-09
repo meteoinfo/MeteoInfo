@@ -14,7 +14,7 @@ from org.meteoinfo.data.meteodata.arl import ARLDataInfo
 from org.meteoinfo.data.meteodata.bufr import BufrDataInfo
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
 from org.meteoinfo.data import TableUtil
-from org.meteoinfo.math import ArrayUtil
+from org.meteoinfo.ndarray.math import ArrayUtil
 from ucar.nc2 import NetcdfFileWriter
 from ucar.nc2.iosp.bufr.tables import BufrTables
 
@@ -28,7 +28,7 @@ import mipylib.migl as migl
 __all__ = [
     'addfile','addfiles','addfile_arl','addfile_ascii_grid','addfile_awx','addfile_geotiff',
     'addfile_grads','addfile_hyconc','addfile_hytraj','addfile_hypart','addfile_lonlat',
-    'addfile_mdfs','addfile_micaps',
+    'addfile_micaps',
     'addfile_mm5','addfile_nc','addfile_grib','addfile_surfer','add_bufr_lookup',
     'addtimedim','joinncfile','asciiread','asciiwrite','bincreate','binread','binwrite',
     'numasciicol','numasciirow','readtable','convert2nc','grads2nc','ncwrite'

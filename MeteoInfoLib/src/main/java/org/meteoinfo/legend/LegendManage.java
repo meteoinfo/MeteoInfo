@@ -15,6 +15,7 @@ package org.meteoinfo.legend;
 
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.MIMath;
+import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.drawing.ContourDraw;
@@ -28,7 +29,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.meteoinfo.data.GridArray;
+
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.layer.VectorLayer;
 import org.meteoinfo.geometry.shape.PointShape;
@@ -91,7 +92,7 @@ public class LegendManage {
      * @return Legend scheme
      */
     public static LegendScheme createLegendSchemeFromGridData(GridArray aGridData,
-            LegendType aLT, ShapeTypes aST) {
+                                                              LegendType aLT, ShapeTypes aST) {
         LegendScheme aLS;
         double[] CValues;
         Color[] colors;
@@ -130,7 +131,7 @@ public class LegendManage {
      * @return Legend scheme
      */
     public static LegendScheme createLegendSchemeFromStationData(StationData stationData,
-            LegendType aLT, ShapeTypes aST) {
+                                                                 LegendType aLT, ShapeTypes aST) {
         LegendScheme aLS;
         double[] CValues;
         Color[] colors;

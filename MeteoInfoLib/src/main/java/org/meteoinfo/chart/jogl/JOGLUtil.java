@@ -21,7 +21,7 @@ import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.layer.ImageLayer;
-import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.InvalidRangeException;

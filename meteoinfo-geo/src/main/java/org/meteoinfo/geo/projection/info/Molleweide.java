@@ -16,8 +16,6 @@ package org.meteoinfo.geo.projection.info;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meteoinfo.geometry.graphic.XAlign;
-import org.meteoinfo.geometry.graphic.YAlign;
 import org.meteoinfo.common.Direction;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.geo.mapview.GridLabel;

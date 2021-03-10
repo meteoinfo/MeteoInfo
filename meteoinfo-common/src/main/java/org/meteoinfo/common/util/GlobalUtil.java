@@ -186,7 +186,7 @@ import java.util.zip.ZipInputStream;
              URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url});
              for (String name : classNames) {
                  Class<?> clazz = urlClassLoader.loadClass(name);
-                 if (isInterface(clazz, "org.meteoinfo.plugin.IPlugin")) {
+                 if (isInterface(clazz, "org.meteoinfo.geo.plugin.IPlugin")) {
                      pluginClassName = name;
                      break;
                  }

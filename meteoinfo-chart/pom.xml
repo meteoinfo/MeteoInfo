@@ -16,12 +16,30 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>freehep</id>
+            <name>freehep</name>
+            <url>http://java.freehep.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>boundless</id>
+            <name>boundlessgeo</name>
+            <url>http://repo.boundlessgeo.com/main/</url>
+        </repository>
+        <repository>
+            <id>ebi</id>
+            <name>ebiRepo</name>
+            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>meteoinfo-math</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>meteoinfo-geo</artifactId>
@@ -30,16 +48,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>meteoinfo-ui</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>meteoinfo-image</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>meteoinfo-table</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

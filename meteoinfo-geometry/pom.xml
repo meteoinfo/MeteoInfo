@@ -37,11 +37,6 @@
             <artifactId>jts-core</artifactId>
             <version>1.17.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.locationtech.proj4j</groupId>
-            <artifactId>proj4j</artifactId>
-            <version>1.1.2-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
 </project>

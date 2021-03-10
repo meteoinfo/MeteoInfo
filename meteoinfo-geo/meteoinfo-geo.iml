@@ -36,12 +36,12 @@
     <orderEntry type="module" module-name="meteoinfo-ui" />
     <orderEntry type="library" name="Maven: com.toedter:jcalendar:1.4" level="project" />
     <orderEntry type="library" name="Maven: org.locationtech.jts:jts-core:1.17.0" level="project" />
-    <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.2-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="meteoinfo-table" />
     <orderEntry type="module" module-name="meteoinfo-image" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-imaging:1.0-alpha1" level="project" />
     <orderEntry type="module" module-name="meteoinfo-data" />
     <orderEntry type="module" module-name="meteoinfo-projection" />
+    <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.2-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="meteoinfo-dataframe" />
     <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.meteothink:wContour:1.7.0" level="project" />

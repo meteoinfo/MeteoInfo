@@ -1,11 +1,12 @@
 package org.meteoinfo.geo.util;
 
+import org.locationtech.proj4j.datum.Grid;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.GridDataSetting;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geometry.geoprocess.GeoComputation;
+import org.meteoinfo.geo.analysis.GeoComputation;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.geo.analysis.InterpolationSetting;
@@ -14,6 +15,104 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GeoMathUtil {
+    /**
+     * Mask out grid data with a polygon shape
+     *
+     * @param gridData The grid data
+     * @param aPGS The polygon shape
+     * @return Maskouted grid data
+     */
+    public static GridData maskout(GridData gridData, PolygonShape aPGS) {
+        int xNum = gridData.getXNum();
+        int yNum = gridData.getYNum();
+
+        GridData cGrid = new GridData(gridData);
+        for (int i = 0; i < yNum; i++) {
+            if (gridData.yArray[i] >= aPGS.getExtent().minY && gridData.yArray[i] <= aPGS.getExtent().maxY) {
+                for (int j = 0; j < xNum; j++) {
+                    if (gridData.xArray[j] >= aPGS.getExtent().minX && gridData.xArray[j] <= aPGS.getExtent().maxX) {
+                        if (GeoComputation.pointInPolygon(aPGS, new PointD(gridData.xArray[j], gridData.yArray[i]))) {
+                            cGrid.data[i][j] = gridData.data[i][j];
+                        } else {
+                            cGrid.data[i][j] = gridData.missingValue;
+                        }
+                    } else {
+                        cGrid.data[i][j] = gridData.missingValue;
+                    }
+                }
+            } else {
+                for (int j = 0; j < xNum; j++) {
+                    cGrid.data[i][j] = gridData.missingValue;
+                }
+            }
+        }
+
+        return cGrid;
+    }
+
+    /**
+     * Mask out grid data with polygon shapes
+     *
+     * @param gridData The grid data
+     * @param polygons The polygon shapes
+     * @return Maskouted grid data
+     */
+    public static GridData maskout(GridData gridData, List<PolygonShape> polygons) {
+        int xNum = gridData.getXNum();
+        int yNum = gridData.getYNum();
+
+        GridData cGrid = new GridData(gridData);
+        for (int i = 0; i < yNum; i++) {
+            for (int j = 0; j < xNum; j++) {
+                if (GeoComputation.pointInPolygons(polygons, new PointD(gridData.xArray[j], gridData.yArray[i]))) {
+                    cGrid.data[i][j] = gridData.data[i][j];
+                } else {
+                    cGrid.data[i][j] = gridData.missingValue;
+                }
+            }
+        }
+
+        return cGrid;
+    }
+
+    /**
+     * Mask out grid data with a polygon layer
+     *
+     * @param gridData The grid data
+     * @param maskLayer The polygon layer
+     * @return Maskouted grid data
+     */
+    public static GridData maskout(GridData gridData, VectorLayer maskLayer) {
+        if (maskLayer.getShapeType() != ShapeTypes.Polygon) {
+            return gridData;
+        }
+
+        int xNum = gridData.getXNum();
+        int yNum = gridData.getYNum();
+        GridData cGrid = new GridData(gridData);
+        for (int i = 0; i < yNum; i++) {
+            if (gridData.yArray[i] >= maskLayer.getExtent().minY && gridData.yArray[i] <= maskLayer.getExtent().maxY) {
+                for (int j = 0; j < xNum; j++) {
+                    if (gridData.xArray[j] >= maskLayer.getExtent().minX && gridData.xArray[j] <= maskLayer.getExtent().maxX) {
+                        if (GeoComputation.pointInPolygonLayer(maskLayer, new PointD(gridData.xArray[j], gridData.yArray[i]), false)) {
+                            cGrid.data[i][j] = gridData.data[i][j];
+                        } else {
+                            cGrid.data[i][j] = gridData.missingValue;
+                        }
+                    } else {
+                        cGrid.data[i][j] = gridData.missingValue;
+                    }
+                }
+            } else {
+                for (int j = 0; j < xNum; j++) {
+                    cGrid.data[i][j] = gridData.missingValue;
+                }
+            }
+        }
+
+        return cGrid;
+    }
+
     /**
       * Maskout station data
       *

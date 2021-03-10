@@ -1839,7 +1839,7 @@ public class FrmMain extends JFrame implements IApplication {
         this.setSize(this._options.getMainFormSize());
         try {
             this._plugins.loadConfigFile(this._plugins.getPluginConfigFile());
-            //this.loadPlugins(this._plugins);
+            this.loadPlugins(this._plugins);
         } catch (MalformedURLException ex) {
             Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException | ParserConfigurationException | SAXException ex) {

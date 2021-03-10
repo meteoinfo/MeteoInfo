@@ -15,6 +15,7 @@ package org.meteoinfo.data.meteodata.ascii;
 
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.data.GridData;
+import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
@@ -34,7 +35,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.GridArray;
-import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;

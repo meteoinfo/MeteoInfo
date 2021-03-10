@@ -39,7 +39,7 @@ import org.meteoinfo.data.meteodata.Attribute;
  *
  * @author Yaqiang Wang
  */
-public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo{
+public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo {
     // <editor-fold desc="Variables">
     private String _description;
     private List<String> _varList = new ArrayList<>();

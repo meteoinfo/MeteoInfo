@@ -5,7 +5,7 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geo.mapview.GridLabel;
+import org.meteoinfo.common.GridLabel;
 import org.meteoinfo.geometry.geoprocess.BorderPoint;
 import org.meteoinfo.geometry.shape.Line;
 import org.meteoinfo.geometry.shape.PolygonShape;

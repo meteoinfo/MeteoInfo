@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
-import org.meteoinfo.layer.VectorLayer;
+import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.table.Field;
 
 /**

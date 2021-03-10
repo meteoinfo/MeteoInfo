@@ -13,7 +13,6 @@
  */
 package org.meteoinfo.data.meteodata.micaps;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,21 +27,14 @@ import java.util.logging.Logger;
 
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.util.JDateUtil;
+import org.meteoinfo.data.meteodata.Attribute;
 import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.geometry.legend.LegendType;
-import org.meteoinfo.ndarray.Dimension;
-import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.data.meteodata.hysplit.TrajectoryInfo;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.geometry.shape.PointShape;
-import org.meteoinfo.geometry.shape.PolylineShape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.data.meteodata.Attribute;
-import org.meteoinfo.table.Field;
 
  /**
  *

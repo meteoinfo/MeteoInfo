@@ -1,12 +1,12 @@
 package map;
 
 import org.meteoinfo.common.GenericFileFilter;
-import org.meteoinfo.data.mapdata.MapDataManage;
-import org.meteoinfo.layer.MapLayer;
-import org.meteoinfo.layout.MapLayout;
-import org.meteoinfo.legend.LayersLegend;
-import org.meteoinfo.map.MapView;
-import org.meteoinfo.map.MouseTools;
+import org.meteoinfo.geo.mapdata.MapDataManage;
+import org.meteoinfo.geo.layer.MapLayer;
+import org.meteoinfo.geo.layout.MapLayout;
+import org.meteoinfo.geo.legend.LayersLegend;
+import org.meteoinfo.geo.mapview.MapView;
+import org.meteoinfo.geo.mapview.MouseTools;
 
 import javax.swing.*;
 import java.awt.*;

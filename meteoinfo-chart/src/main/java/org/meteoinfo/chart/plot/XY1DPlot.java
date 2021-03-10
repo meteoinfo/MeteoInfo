@@ -13,9 +13,9 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.data.*;
-import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.legend.*;
-import org.meteoinfo.shape.ShapeTypes;
+import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.geometry.legend.*;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

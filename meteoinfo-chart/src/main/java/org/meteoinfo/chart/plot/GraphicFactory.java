@@ -8,25 +8,28 @@ package org.meteoinfo.chart.plot;
 import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.*;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.data.analysis.Statistics;
-import org.meteoinfo.drawing.ContourDraw;
-import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.geoprocess.GeoComputation;
-import org.meteoinfo.geoprocess.GeometryUtil;
-import org.meteoinfo.layer.ImageLayer;
-import org.meteoinfo.layer.VectorLayer;
-import org.meteoinfo.legend.*;
-import org.meteoinfo.math.ArrayMath;
-import org.meteoinfo.math.ArrayUtil;
+import org.meteoinfo.geo.drawing.ContourDraw;
+import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.geo.layer.ImageLayer;
+import org.meteoinfo.geo.layer.VectorLayer;
+import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.graphic.ImageGraphic;
+import org.meteoinfo.geometry.legend.*;
+import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.geoprocess.GeoComputation;
+import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 import org.meteoinfo.math.meteo.MeteoMath;
-import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.*;
+import org.meteoinfo.ndarray.math.ArrayMath;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import wcontour.Contour;
 import wcontour.global.Point3D;
@@ -735,7 +738,7 @@ public class GraphicFactory {
      * @return LineString graphics
      */
     public static GraphicCollection createErrorLineString(Array xdata, Array ydata, Array xErrorLeft,
-            Array xErrorRight, Array yErrorBottom, Array yErrorUp, PolylineBreak cb, PolylineBreak ecb, float capSize) {
+                                                          Array xErrorRight, Array yErrorBottom, Array yErrorUp, PolylineBreak cb, PolylineBreak ecb, float capSize) {
         GraphicCollection gc = new GraphicCollection();
         PolylineShape pls;
         CapPolylineShape epls;
@@ -2942,7 +2945,7 @@ public class GraphicFactory {
      * @return Graphics
      */
     public static GraphicCollection createImage(GridArray gdata, LegendScheme ls, double offset,
-            String zdir, List<Number> sePoint, String interpolation) {
+                                                String zdir, List<Number> sePoint, String interpolation) {
         Graphic gg = createImage(gdata, ls);
         if (interpolation != null) {
             ((ImageShape) gg.getShape()).setInterpolation(interpolation);
@@ -3053,17 +3056,17 @@ public class GraphicFactory {
             ArrayUtils.reverse(y);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, x, y, gridData.missingValue, S1);
-        List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
+        List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
             return null;
         }
 
         if (isSmooth) {
-            ContourLines = wcontour.Contour.smoothLines(ContourLines);
+            ContourLines = Contour.smoothLines(ContourLines);
         }
 
-        wcontour.global.PolyLine aLine;
+        PolyLine aLine;
         double v;
         ColorBreak cbb = ls.findLegendBreak(0);
         GraphicCollection graphics = new GraphicCollection();
@@ -3142,17 +3145,17 @@ public class GraphicFactory {
             ArrayUtils.reverse(y);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, x, y, gridData.missingValue, S1);
-        List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
+        List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
             return null;
         }
 
         if (isSmooth) {
-            ContourLines = wcontour.Contour.smoothLines(ContourLines);
+            ContourLines = Contour.smoothLines(ContourLines);
         }
 
-        wcontour.global.PolyLine aLine;
+        PolyLine aLine;
         double v;
         ColorBreak cbb;
         GraphicCollection3D graphics = new GraphicCollection3D();
@@ -3234,17 +3237,17 @@ public class GraphicFactory {
             ArrayUtils.reverse(yArray);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, xArray, yArray, gridData.missingValue, S1);
-        List<wcontour.global.PolyLine> ContourLines = (List<wcontour.global.PolyLine>) cbs[0];
+        List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
             return null;
         }
 
         if (isSmooth) {
-            ContourLines = wcontour.Contour.smoothLines(ContourLines);
+            ContourLines = Contour.smoothLines(ContourLines);
         }
 
-        wcontour.global.PolyLine aLine;
+        PolyLine aLine;
         double v;
         ColorBreak cbb;
         GraphicCollection3D graphics = new GraphicCollection3D();
@@ -3346,11 +3349,11 @@ public class GraphicFactory {
             ArrayUtils.reverse(yArray);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, xArray, yArray, gridData.missingValue, S1);
-        List<wcontour.global.PolyLine> contourLines = (List<wcontour.global.PolyLine>) cbs[0];
+        List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
         List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
         if (isSmooth) {
-            contourLines = wcontour.Contour.smoothLines(contourLines);
+            contourLines = Contour.smoothLines(contourLines);
         }
         List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
 
@@ -3482,11 +3485,11 @@ public class GraphicFactory {
             ArrayUtils.reverse(yArray);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, xArray, yArray, gridData.missingValue, S1);
-        List<wcontour.global.PolyLine> contourLines = (List<wcontour.global.PolyLine>) cbs[0];
+        List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
         List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
         if (isSmooth) {
-            contourLines = wcontour.Contour.smoothLines(contourLines);
+            contourLines = Contour.smoothLines(contourLines);
         }
         List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
 
@@ -3644,11 +3647,11 @@ public class GraphicFactory {
             ArrayUtils.reverse(yArray);
         Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
                 cValues, xArray, yArray, gridData.missingValue, S1);
-        List<wcontour.global.PolyLine> contourLines = (List<wcontour.global.PolyLine>) cbs[0];
+        List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
         List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
         if (isSmooth) {
-            contourLines = wcontour.Contour.smoothLines(contourLines);
+            contourLines = Contour.smoothLines(contourLines);
         }
         List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
 
@@ -4970,9 +4973,9 @@ public class GraphicFactory {
         double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
         double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
         double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
-        List<wcontour.global.PolyLine> streamlines = wcontour.Contour.tracingStreamline(u, v,
+        List<PolyLine> streamlines = Contour.tracingStreamline(u, v,
                 x, y, density);
-        wcontour.global.PolyLine line;        
+        PolyLine line;
         for (int i = 0; i < streamlines.size() - 1; i++) {
             line = streamlines.get(i);
             PolylineShape aPolyline = new PolylineShape();
@@ -5011,18 +5014,18 @@ public class GraphicFactory {
         GraphicCollection3D graphics = new GraphicCollection3D();
         double[][] u = (double[][]) ArrayUtil.copyToNDJavaArray_Double(ua);
         double[][] v = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va);
-        List<wcontour.global.PolyLine> streamlines;
+        List<PolyLine> streamlines;
         if (xa.getRank() == 1) {
             double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xa);
             double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ya);
-            streamlines = wcontour.Contour.tracingStreamline(u, v,
+            streamlines = Contour.tracingStreamline(u, v,
                     x, y, density);
         } else {
             xa = xa.copyIfView();
             ya = ya.copyIfView();
             double[][] x = (double[][]) ArrayUtil.copyToNDJavaArray_Double(xa);
             double[][] y = (double[][]) ArrayUtil.copyToNDJavaArray_Double(ya);
-            streamlines = wcontour.Contour.tracingStreamline(u, v,
+            streamlines = Contour.tracingStreamline(u, v,
                     x, y, density);
         }
 
@@ -5030,7 +5033,7 @@ public class GraphicFactory {
         int nx = u[0].length;
         ColorBreak cb = ls.getLegendBreak(0);
         if (data == null) {
-            for (wcontour.global.PolyLine line : streamlines) {
+            for (PolyLine line : streamlines) {
                 PolylineZShape shape = new PolylineZShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
@@ -5063,7 +5066,7 @@ public class GraphicFactory {
                 graphics.add(new Graphic(shape, cb));
             }
         } else {
-            for (wcontour.global.PolyLine line : streamlines) {
+            for (PolyLine line : streamlines) {
                 PolylineZShape shape = new PolylineZShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
@@ -5144,18 +5147,18 @@ public class GraphicFactory {
         GraphicCollection3D graphics = new GraphicCollection3D();
         double[][] u = (double[][]) ArrayUtil.copyToNDJavaArray_Double(ua);
         double[][] v = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va);
-        List<wcontour.global.PolyLine> streamlines;
+        List<PolyLine> streamlines;
         if (xa.getRank() == 1) {
             double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xa);
             double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ya);
-            streamlines = wcontour.Contour.tracingStreamline(u, v,
+            streamlines = Contour.tracingStreamline(u, v,
                     x, y, density);
         } else {
             xa = xa.copyIfView();
             ya = ya.copyIfView();
             double[][] x = (double[][]) ArrayUtil.copyToNDJavaArray_Double(xa);
             double[][] y = (double[][]) ArrayUtil.copyToNDJavaArray_Double(ya);
-            streamlines = wcontour.Contour.tracingStreamline(u, v,
+            streamlines = Contour.tracingStreamline(u, v,
                     x, y, density);
         }
 
@@ -5163,7 +5166,7 @@ public class GraphicFactory {
         int nx = u[0].length;
         ColorBreak cb = ls.getLegendBreak(0);
         if (data == null) {
-            for (wcontour.global.PolyLine line : streamlines) {
+            for (PolyLine line : streamlines) {
                 PolylineZShape shape = new PolylineZShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
@@ -5183,7 +5186,7 @@ public class GraphicFactory {
                 graphics.add(new Graphic(shape, cb));
             }
         } else {
-            for (wcontour.global.PolyLine line : streamlines) {
+            for (PolyLine line : streamlines) {
                 PolylineZShape shape = new PolylineZShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;

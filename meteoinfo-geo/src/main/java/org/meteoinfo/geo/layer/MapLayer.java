@@ -15,8 +15,8 @@ package org.meteoinfo.geo.layer;
 
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.geo.projection.KnownCoordinateSystems;
-import org.meteoinfo.geo.projection.info.ProjectionInfo;
+import org.meteoinfo.projection.KnownCoordinateSystems;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 
  /**
@@ -26,7 +26,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
   */
  public class MapLayer implements Cloneable {
      // <editor-fold desc="Variables">
-
+ 
      private LayerTypes _layerType;
      private ShapeTypes _shapeType;
      private int _handle;
@@ -44,7 +44,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      private VisibleScale _visibleScale;
      // </editor-fold>
      // <editor-fold desc="Constructor">
-
+ 
      /**
       * Constructor
       */
@@ -64,7 +64,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      }
      // </editor-fold>
      // <editor-fold desc="Get Set Methods">
-
+ 
      /**
       * Get layer type
       *
@@ -73,7 +73,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public LayerTypes getLayerType() {
          return _layerType;
      }
-
+ 
      /**
       * Set layer type
       *
@@ -82,7 +82,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setLayerType(LayerTypes lt) {
          _layerType = lt;
      }
-
+ 
      /**
       * Get shape type
       *
@@ -91,7 +91,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public ShapeTypes getShapeType() {
          return _shapeType;
      }
-
+ 
      /**
       * Set shape type
       *
@@ -100,7 +100,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setShapeType(ShapeTypes st) {
          _shapeType = st;
      }
-
+ 
      /**
       * Get layer draw type
       *
@@ -109,7 +109,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public LayerDrawType getLayerDrawType() {
          return _layerDrawType;
      }
-
+ 
      /**
       * Set layer draw type
       *
@@ -118,7 +118,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setLayerDrawType(LayerDrawType ldt) {
          _layerDrawType = ldt;
      }
-
+ 
      /**
       * Get file name
       *
@@ -127,7 +127,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public String getFileName() {
          return _fileName;
      }
-
+ 
      /**
       * Set file name
       *
@@ -136,7 +136,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setFileName(String fn) {
          _fileName = fn;
      }
-
+ 
      /**
       * Get layer handle
       *
@@ -145,7 +145,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public int getHandle() {
          return _handle;
      }
-
+ 
      /**
       * Set layer handle
       *
@@ -154,7 +154,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setHandle(int handle) {
          _handle = handle;
      }
-
+ 
      /**
       * Get layer name
       *
@@ -163,7 +163,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public String getLayerName() {
          return _layerName;
      }
-
+ 
      /**
       * Set layer name
       *
@@ -172,7 +172,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setLayerName(String lName) {
          _layerName = lName;
      }
-
+ 
      /**
       * Get extent
       *
@@ -181,7 +181,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public Extent getExtent() {
          return _extent;
      }
-
+ 
      /**
       * Set extent
       *
@@ -190,7 +190,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setExtent(Extent extent) {
          _extent = extent;
      }
-
+ 
      /**
       * Get if layer is visible
       *
@@ -199,7 +199,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public boolean isVisible() {
          return _visible;
      }
-
+ 
      /**
       * Set if layer is visible
       *
@@ -208,7 +208,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setVisible(boolean isTrue) {
          _visible = isTrue;
      }
-
+ 
      /**
       * Get legend scheme
       *
@@ -217,7 +217,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public LegendScheme getLegendScheme() {
          return _legendScheme;
      }
-
+     
      /**
       * Get if is maskout
       * @return Boolean
@@ -225,7 +225,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public boolean isMaskout(){
          return this._isMaskout;
      }
-
+     
      /**
       * Set if is maskout
       * @param istrue Boolean
@@ -233,7 +233,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setMaskout(boolean istrue){
          this._isMaskout = istrue;
      }
-
+ 
      /**
       * Set legend scheme
       *
@@ -242,7 +242,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setLegendScheme(LegendScheme ls) {
          _legendScheme = ls;
      }
-
+ 
      /**
       * Get transparency percent
       *
@@ -251,7 +251,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public int getTransparency() {
          return this._transparencyPerc;
      }
-
+ 
      /**
       * Set transparency percent
       *
@@ -260,7 +260,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setTransparency(int trans) {
          this._transparencyPerc = trans;
      }
-
+ 
      /**
       * Get if is expanded
       *
@@ -269,7 +269,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public boolean isExpanded() {
          return this._expanded;
      }
-
+ 
      /**
       * Set if expand
       *
@@ -278,7 +278,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setExpanded(boolean istrue) {
          this._expanded = istrue;
      }
-
+     
      /**
       * Get projection info
       * @return Projection info
@@ -286,7 +286,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public ProjectionInfo getProjInfo(){
          return _projInfo;
      }
-
+     
      /**
       * Set projection info
       * @param projInfo Projection info
@@ -294,7 +294,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setProjInfo(ProjectionInfo projInfo){
          _projInfo = projInfo;
      }
-
+     
      /**
       * Get tag
       * @return Tag
@@ -302,7 +302,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public String getTag(){
          return _tag;
      }
-
+     
      /**
       * Set tag
       * @param value Tag value
@@ -310,7 +310,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public void setTag(String value){
          _tag = value;
      }
-
+     
      /**
       * Get visible scale
       * @return Visible scale
@@ -318,7 +318,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public VisibleScale getVisibleScale(){
          return _visibleScale;
      }
-
+     
      /**
       * Set visible scale
       * @param value Visible scale
@@ -335,16 +335,16 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public boolean hasLegendScheme(){
          return this._legendScheme != null;
      }
-
+     
      @Override
      public Object clone() throws CloneNotSupportedException {
          MapLayer aLayer = (MapLayer)super.clone();
          if (_legendScheme != null)
              aLayer._legendScheme = (LegendScheme)this._legendScheme.clone();
-
+         
          return aLayer;
      }
-
+     
      /**
       * To string
       * @return String
@@ -353,7 +353,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      public String toString(){
          return this.getLayerName();
      }
-
+     
      /**
       * To string
       * @return String
@@ -363,20 +363,20 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
          str += System.getProperty("line.separator") + "Layer file: " + this.getFileName();
          str += System.getProperty("line.separator") + "Layer type: " + this.getLayerType();
          str += System.getProperty("line.separator") + "Shape type: " + this.getShapeType();
-
+         
          return str;
      }
-
+     
      /**
       * Save layer to a file
       */
      public void saveFile(){}
-
+     
      /**
       * Save layer to a file
       * @param fileName File name
       */
      public void saveFile(String fileName){}
      // </editor-fold>
-
+ 
  }

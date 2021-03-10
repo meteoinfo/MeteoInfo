@@ -10,7 +10,7 @@ import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LogAxis;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.chart.drawing.Draw;
+import org.meteoinfo.geo.drawing.Draw;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

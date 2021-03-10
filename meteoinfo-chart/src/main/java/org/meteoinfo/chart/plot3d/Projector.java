@@ -21,7 +21,7 @@
  *----------------------------------------------------------------------------------------*/
 package org.meteoinfo.chart.plot3d;
 
-import org.meteoinfo.common.MIMath;
+import org.meteoinfo.data.DataMath;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -425,7 +425,7 @@ public final class Projector {
         Point p2 = project(x2, y2, z2);
         float u = p2.x - p1.x;
         float v = p2.y - p1.y;
-        return MIMath.getDSFromUV(u, v);
+        return DataMath.getDSFromUV(u, v);
     }
     
     /**

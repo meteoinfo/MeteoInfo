@@ -15,6 +15,7 @@ package org.meteoinfo.geo.layer;
 
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.geometry.legend.AlignType;
+
 import java.awt.Color;
 import java.awt.Font;
 

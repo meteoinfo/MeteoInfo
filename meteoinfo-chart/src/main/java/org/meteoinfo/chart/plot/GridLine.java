@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.chart.plot;
 
-import org.meteoinfo.chart.legend.LineStyles;
+import org.meteoinfo.geometry.legend.LineStyles;
 
 import java.awt.*;
 

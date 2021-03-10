@@ -6,6 +6,7 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.chart.Margin;
+import org.meteoinfo.data.Dataset;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -261,7 +262,19 @@ public abstract class Plot {
     public void setOuterPositionArea(Rectangle2D value){
         this.outerPositionArea = value;
     }
-
+    
+    /**
+     * Get dataset
+     * @return Dataset
+     */
+    public abstract Dataset getDataset();
+    
+    /**
+     * Set dataset
+     * @param dataset Dataset
+     */
+    public abstract void setDataset(Dataset dataset);
+    
     /**
      * Get plot type
      * @return Plot type

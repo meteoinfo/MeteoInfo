@@ -5,10 +5,10 @@
  */
 package org.meteoinfo.chart.plot;
 
-import org.meteoinfo.legend.ColorBreak;
-import org.meteoinfo.legend.PointBreak;
-import org.meteoinfo.legend.PolygonBreak;
-import org.meteoinfo.legend.PolylineBreak;
+import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.legend.PointBreak;
+import org.meteoinfo.geometry.legend.PolygonBreak;
+import org.meteoinfo.geometry.legend.PolylineBreak;
 
 import java.awt.*;
 import java.util.ArrayList;

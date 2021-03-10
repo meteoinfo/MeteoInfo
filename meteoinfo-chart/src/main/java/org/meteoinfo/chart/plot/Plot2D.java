@@ -17,22 +17,21 @@ import org.meteoinfo.chart.ChartLegend;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.axis.LogAxis;
 import org.meteoinfo.chart.axis.TimeAxis;
-import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.chart.graphic.GraphicCollection;
-import org.meteoinfo.chart.graphic.ImageGraphic;
-import org.meteoinfo.chart.graphic.PolylineErrorShape;
-import org.meteoinfo.chart.legend.*;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.chart.drawing.Draw;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
-import org.meteoinfo.geo.shape.*;
-import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.data.Dataset;
+import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.graphic.ImageGraphic;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.geometry.shape.Shape;
-import org.meteoinfo.legend.*;
+import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.chart.shape.PolylineErrorShape;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -40,7 +39,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.meteoinfo.chart.drawing.Draw.getHatchImage;
+import static org.meteoinfo.geo.drawing.Draw.getHatchImage;
 
 /**
  *
@@ -1193,6 +1192,16 @@ public class Plot2D extends AbstractPlot2D {
         } else {
             this.getLegend().setLegendScheme(this.getLegendScheme());
         }
+    }
+
+    @Override
+    public Dataset getDataset() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDataset(Dataset dataset) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**

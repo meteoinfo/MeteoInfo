@@ -17,15 +17,16 @@ import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.plot.XY1DPlot;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.data.GridData;
-import org.meteoinfo.data.mapdata.MapDataManage;
+import org.meteoinfo.geo.mapdata.MapDataManage;
 import org.meteoinfo.data.meteodata.*;
+import org.meteoinfo.geo.meteodata.DrawMeteoData;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.geometry.legend.PointStyle;
 import org.meteoinfo.geometry.legend.PolygonBreak;
-import org.meteoinfo.layer.MapLayer;
-import org.meteoinfo.layout.MapLayout;
-import org.meteoinfo.legend.MapFrame;
-import org.meteoinfo.map.MapView;
+import org.meteoinfo.geo.layer.MapLayer;
+import org.meteoinfo.geo.layout.MapLayout;
+import org.meteoinfo.geo.legend.MapFrame;
+import org.meteoinfo.geo.mapview.MapView;
 
 /**
  *

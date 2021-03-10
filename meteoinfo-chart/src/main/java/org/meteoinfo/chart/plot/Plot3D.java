@@ -8,20 +8,17 @@ package org.meteoinfo.chart.plot;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LogAxis;
-import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.chart.graphic.GraphicCollection;
-import org.meteoinfo.chart.legend.*;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.chart.plot3d.Projector;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointF;
-//import org.meteoinfo.data.DataMath;
-import org.meteoinfo.chart.drawing.Draw;
-import org.meteoinfo.geo.shape.*;
-import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.common.*;
+import org.meteoinfo.data.DataMath;
+import org.meteoinfo.data.Dataset;
+import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.math.sort.QuickSort;
 
 import java.awt.*;
@@ -650,6 +647,16 @@ public class Plot3D extends Plot {
         double w = area.getWidth() * rect.getWidth();
         double h = area.getHeight() * rect.getHeight();
         return new Rectangle2D.Double(x, y, w, h);
+    }
+
+    @Override
+    public Dataset getDataset() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDataset(Dataset dataset) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -1931,9 +1938,9 @@ public class Plot3D extends Plot {
             g.setColor(this.xAxis.getLineColor());
             g.drawLine(x[0], y[0], projection.x, projection.y);
             if (projection.x > x[0]) {
-                value = MIMath.getDSFromUV(projection.x - x[0], projection.y - y[0]);
+                value = DataMath.getDSFromUV(projection.x - x[0], projection.y - y[0]);
             } else {
-                value = MIMath.getDSFromUV(x[0] - projection.x, y[0] - projection.y);
+                value = DataMath.getDSFromUV(x[0] - projection.x, y[0] - projection.y);
             }
             xangle = (float) value[0];
             xlen = (float) value[1];
@@ -1946,9 +1953,9 @@ public class Plot3D extends Plot {
             g.setColor(this.yAxis.getLineColor());
             g.drawLine(x[0], y[0], projection.x, projection.y);
             if (projection.x > x[0]) {
-                value = MIMath.getDSFromUV(projection.x - x[0], projection.y - y[0]);
+                value = DataMath.getDSFromUV(projection.x - x[0], projection.y - y[0]);
             } else {
-                value = MIMath.getDSFromUV(x[0] - projection.x, y[0] - projection.y);
+                value = DataMath.getDSFromUV(x[0] - projection.x, y[0] - projection.y);
             }
             yangle = (float) value[0];
             ylen = (float) value[1];
@@ -1994,11 +2001,11 @@ public class Plot3D extends Plot {
                     }
                 }
                 //projection = projector.project(vi, factor_y * 10.5f, -10);                
-                value = MIMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength());
+                value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength());
                 g.setColor(this.xAxis.getLineColor());
                 //g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
                 g.drawLine(tickpos.x, tickpos.y, (int) value[0], (int) value[1]);
-                value = MIMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + 5);
+                value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + 5);
                 tickpos = new Point((int) value[0], (int) value[1]);                
                 if (x_left) {
                     //outString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP);
@@ -2020,7 +2027,7 @@ public class Plot3D extends Plot {
                 tickpos = projector.project(0, factor_y * 10.f, -10);
                 Dimension dim = Draw.getStringDimension(label, g);
                 strWidth = (int) Math.abs((strWidth * Math.sin(Math.toRadians(angle))));
-                value = MIMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + strWidth + dim.height + 5);
+                value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + strWidth + dim.height + 5);
                 tickpos.x = (int) value[0];
                 tickpos.y = (int) value[1];
                 if (this.projector.getElevationAngle() < 10) {
@@ -2075,10 +2082,10 @@ public class Plot3D extends Plot {
                         g.drawLine(x[0], y[0], projection.x, projection.y);
                     }
                 }
-                value = MIMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength());
+                value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength());
                 g.setColor(this.yAxis.getLineColor());
                 g.drawLine(tickpos.x, tickpos.y, (int) value[0], (int) value[1]);
-                value = MIMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + 5);
+                value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + 5);
                 tickpos = new Point((int) value[0], (int) value[1]);
                 if (y_left) {
                     //outString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP);
@@ -2100,7 +2107,7 @@ public class Plot3D extends Plot {
                 tickpos = projector.project(factor_x * 10.f, 0, -10);
                 Dimension dim = Draw.getStringDimension(label, g);
                 strWidth = (int) Math.abs((strWidth * Math.sin(Math.toRadians(angle))));
-                value = MIMath.getEndPoint(tickpos.x, tickpos.y, angle, this.yAxis.getTickLength() + strWidth + dim.height + 5);
+                value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.yAxis.getTickLength() + strWidth + dim.height + 5);
                 tickpos.x = (int) value[0];
                 tickpos.y = (int) value[1];
                 if (this.projector.getElevationAngle() < 10) {

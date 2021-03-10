@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<MeteoInfo File="milconfig.xml" Type="configurefile">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\geotiff">
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
+  </Path>
+  <File>
+    <OpenedFiles>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_particles_relief.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\image\gray_scale.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\geos_proj.py"/>
+    </OpenedFiles>
+    <RecentFiles>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_particles_relief.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\image\gray_scale.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\geos_proj.py"/>
+    </RecentFiles>
+  </File>
+  <Font>
+    <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
+  </Font>
+  <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
+  <Figure DoubleBuffering="true"/>
+  <Startup MainFormLocation="0,0" MainFormSize="1356,747"/>
+</MeteoInfo>

@@ -14,8 +14,8 @@
     
     <modules>
         <module>MeteoInfoLib</module>
-        <module>MeteoInfoMap</module>
-        <module>MeteoInfoLab</module>
+        <module>meteoinfo-map</module>
+        <module>meteoinfo-lab</module>
         <module>meteoinfo-console</module>
         <module>meteoinfo-ndarray</module>
         <module>meteoinfo-math</module>

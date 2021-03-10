@@ -8,8 +8,8 @@ package org.meteoinfo.script;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import org.meteoinfo.layout.MapLayout;
-import org.meteoinfo.layout.MouseMode;
+import org.meteoinfo.geo.layout.MapLayout;
+import org.meteoinfo.geo.layout.MouseMode;
 
 /**
  *

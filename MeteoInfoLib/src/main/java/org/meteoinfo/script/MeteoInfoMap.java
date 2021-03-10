@@ -11,14 +11,14 @@ import java.util.logging.Logger;
 import javax.swing.WindowConstants;
 
 import org.meteoinfo.data.GridData;
-import org.meteoinfo.data.mapdata.MapDataManage;
-import org.meteoinfo.data.meteodata.DrawMeteoData;
+import org.meteoinfo.geo.mapdata.MapDataManage;
+import org.meteoinfo.geo.meteodata.DrawMeteoData;
 import org.meteoinfo.data.meteodata.DrawType2D;
 import org.meteoinfo.geometry.legend.PolygonBreak;
-import org.meteoinfo.layer.MapLayer;
-import org.meteoinfo.layout.MapLayout;
-import org.meteoinfo.legend.MapFrame;
-import org.meteoinfo.map.MapView;
+import org.meteoinfo.geo.layer.MapLayer;
+import org.meteoinfo.geo.layout.MapLayout;
+import org.meteoinfo.geo.legend.MapFrame;
+import org.meteoinfo.geo.mapview.MapView;
 
 /**
  *

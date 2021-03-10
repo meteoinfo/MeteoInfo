@@ -6,14 +6,12 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.chart.Margin;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.drawing.Draw;
-import org.meteoinfo.global.DataConvert;
-import org.meteoinfo.legend.LineStyles;
+import org.meteoinfo.common.*;
+import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
-import org.meteoinfo.shape.Graphic;
-import org.meteoinfo.shape.GraphicCollection;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -22,7 +20,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.meteoinfo.drawing.Draw.getDashPattern;
+import static org.meteoinfo.geo.drawing.Draw.getDashPattern;
 
 /**
  *

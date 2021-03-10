@@ -15,6 +15,7 @@ package org.meteoinfo.geo.layer;
 
 import java.awt.Color;
 import java.awt.Font;
+
 import org.meteoinfo.geometry.legend.AlignType;
 import org.meteoinfo.geometry.legend.ChartTypes;
 import org.meteoinfo.geometry.legend.LegendScheme;
@@ -29,7 +30,7 @@ import java.util.List;
   */
  public class ChartSet {
      // <editor-fold desc="Variables">
-
+ 
      private ChartTypes _chartType;
      private boolean _drawCharts;
      private List<String> _fieldNames;
@@ -51,7 +52,7 @@ import java.util.List;
      private int decimalDigits;
      // </editor-fold>
      // <editor-fold desc="Constructor">
-
+ 
      /**
       * Constructor
       */
@@ -76,7 +77,7 @@ import java.util.List;
      }
      // </editor-fold>
      // <editor-fold desc="Get Set Methods">
-
+ 
      /**
       * Get chart type
       *
@@ -85,7 +86,7 @@ import java.util.List;
      public ChartTypes getChartType() {
          return _chartType;
      }
-
+ 
      /**
       * Set chart type
       *
@@ -94,7 +95,7 @@ import java.util.List;
      public void setChartType(ChartTypes type) {
          _chartType = type;
      }
-
+     
      /**
       * Set chart type
       * @param tstr Chart type string
@@ -109,7 +110,7 @@ import java.util.List;
                  break;
          }
      }
-
+ 
      /**
       * Set if draw charts
       *
@@ -118,7 +119,7 @@ import java.util.List;
      public boolean isDrawCharts() {
          return _drawCharts;
      }
-
+ 
      /**
       * Set if draw charts
       *
@@ -127,7 +128,7 @@ import java.util.List;
      public void setDrawCharts(boolean istrue) {
          _drawCharts = istrue;
      }
-
+ 
      /**
       * Get field names
       *
@@ -136,7 +137,7 @@ import java.util.List;
      public List<String> getFieldNames() {
          return _fieldNames;
      }
-
+ 
      /**
       * Set field names
       *
@@ -145,7 +146,7 @@ import java.util.List;
      public void setFieldNames(List<String> names) {
          _fieldNames = names;
      }
-
+ 
      /**
       * Get x shift
       *
@@ -154,7 +155,7 @@ import java.util.List;
      public int getXShift() {
          return _xShift;
      }
-
+ 
      /**
       * Set x shift
       *
@@ -163,7 +164,7 @@ import java.util.List;
      public void setXShift(int shift) {
          _xShift = shift;
      }
-
+ 
      /**
       * Get y shift
       *
@@ -172,7 +173,7 @@ import java.util.List;
      public int getYShift() {
          return _yShift;
      }
-
+ 
      /**
       * Set y shift
       *
@@ -181,7 +182,7 @@ import java.util.List;
      public void setYShift(int shift) {
          _yShift = shift;
      }
-
+ 
      /**
       * Get legend scheme
       *
@@ -190,7 +191,7 @@ import java.util.List;
      public LegendScheme getLegendScheme() {
          return _legendScheme;
      }
-
+ 
      /**
       * Set legend scheme
       *
@@ -199,7 +200,7 @@ import java.util.List;
      public void setLegendScheme(LegendScheme ls) {
          _legendScheme = ls;
      }
-
+ 
      /**
       * Get maximum size
       *
@@ -208,7 +209,7 @@ import java.util.List;
      public int getMaxSize() {
          return _maxSize;
      }
-
+ 
      /**
       * Set maximum size
       *
@@ -217,7 +218,7 @@ import java.util.List;
      public void setMaxSize(int size) {
          _maxSize = size;
      }
-
+ 
      /**
       * Get minimum size
       *
@@ -226,7 +227,7 @@ import java.util.List;
      public int getMinSize() {
          return _minSize;
      }
-
+ 
      /**
       * Set minimum size
       *
@@ -235,7 +236,7 @@ import java.util.List;
      public void setMinSize(int size) {
          _minSize = size;
      }
-
+ 
      /**
       * Get maximum value
       *
@@ -244,11 +245,11 @@ import java.util.List;
      public float getMaxValue() {
          return _maxValue;
      }
-
+ 
      public void setMaxValue(float value) {
          _maxValue = value;
      }
-
+ 
      /**
       * Get minimum value
       *
@@ -257,7 +258,7 @@ import java.util.List;
      public float getMinValue() {
          return _minValue;
      }
-
+ 
      /**
       * Set minimum value
       *
@@ -266,7 +267,7 @@ import java.util.List;
      public void setMinValue(float value) {
          _minValue = value;
      }
-
+ 
      /**
       * Get bar width
       *
@@ -275,7 +276,7 @@ import java.util.List;
      public int getBarWidth() {
          return _barWidth;
      }
-
+ 
      /**
       * Set bar width
       *
@@ -284,7 +285,7 @@ import java.util.List;
      public void setBarWidth(int width) {
          _barWidth = width;
      }
-
+ 
      /**
       * Get if avoid collision
       *
@@ -293,7 +294,7 @@ import java.util.List;
      public boolean isAvoidCollision() {
          return _avoidCollision;
      }
-
+ 
      /**
       * Set if avoid collision
       *
@@ -302,7 +303,7 @@ import java.util.List;
      public void setAvoidCollision(boolean istrue) {
          _avoidCollision = istrue;
      }
-
+ 
      /**
       * Get align type
       *
@@ -311,7 +312,7 @@ import java.util.List;
      public AlignType getAlignType() {
          return _alignType;
      }
-
+ 
      /**
       * Set align type
       *
@@ -320,7 +321,7 @@ import java.util.List;
      public void setAlignType(AlignType type) {
          _alignType = type;
      }
-
+     
      /**
       * Set align type
       * @param tstr Align type string
@@ -340,8 +341,8 @@ import java.util.List;
                  this._alignType = AlignType.None;
                  break;
          }
-     }
-
+     } 
+ 
      /**
       * Get if view 3D
       *
@@ -350,7 +351,7 @@ import java.util.List;
      public boolean isView3D() {
          return _view3D;
      }
-
+ 
      /**
       * Set if view 3D
       *
@@ -359,7 +360,7 @@ import java.util.List;
      public void setView3D(boolean istrue) {
          _view3D = istrue;
      }
-
+ 
      /**
       * Get 3D thickness
       *
@@ -368,7 +369,7 @@ import java.util.List;
      public int getThickness() {
          return _thickness;
      }
-
+ 
      /**
       * Set 3D thickness
       *
@@ -377,7 +378,7 @@ import java.util.List;
      public void setThickness(int value) {
          _thickness = value;
      }
-
+     
      /**
       * Get if draw label
       * @return Boolean
@@ -385,7 +386,7 @@ import java.util.List;
      public boolean isDrawLabel(){
          return this.drawLabel;
      }
-
+     
      /**
       * Set if draw label
       * @param value Boolean
@@ -393,7 +394,7 @@ import java.util.List;
      public void setDrawLabel(boolean value){
          this.drawLabel = value;
      }
-
+     
      /**
       * Get label font
       * @return Label font
@@ -401,7 +402,7 @@ import java.util.List;
      public Font getLabelFont(){
          return this.labelFont;
      }
-
+     
      /**
       * Set label font
       * @param value Label font
@@ -409,7 +410,7 @@ import java.util.List;
      public void setLabelFont(Font value){
          this.labelFont = value;
      }
-
+     
      /**
       * Get label color
       * @return Label color
@@ -417,7 +418,7 @@ import java.util.List;
      public Color getLabelColor(){
          return this.labelColor;
      }
-
+     
      /**
       * Set label color
       * @param value Label color
@@ -425,7 +426,7 @@ import java.util.List;
      public void setLabelColor(Color value){
          this.labelColor = value;
      }
-
+     
      /**
       * Get decimal digits
       * @return Decimal digits
@@ -433,7 +434,7 @@ import java.util.List;
      public int getDecimalDigits(){
          return this.decimalDigits;
      }
-
+     
      /**
       * Set decimal digits
       * @param value Decimal digits

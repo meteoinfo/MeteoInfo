@@ -21,11 +21,11 @@ import java.util.ArrayList;
   */
  public class LayerCollection extends ArrayList<MapLayer> {
      // <editor-fold desc="Variables">
-
+ 
      private int _selectedLayer;
      // </editor-fold>
      // <editor-fold desc="Constructor">
-
+ 
      /**
       * Constructor
       */
@@ -34,7 +34,7 @@ import java.util.ArrayList;
      }
      // </editor-fold>
      // <editor-fold desc="Get Set Methods">
-
+ 
      /**
       * Get selected layer
       *
@@ -43,7 +43,7 @@ import java.util.ArrayList;
      public int getSelectedLayer() {
          return _selectedLayer;
      }
-
+ 
      /**
       * Set selected layer handle
       *
@@ -52,7 +52,7 @@ import java.util.ArrayList;
      public void setSelectedLayer(int handle) {
          _selectedLayer = handle;
      }
-
+ 
      // </editor-fold>
      // <editor-fold desc="Methods">
      // </editor-fold>

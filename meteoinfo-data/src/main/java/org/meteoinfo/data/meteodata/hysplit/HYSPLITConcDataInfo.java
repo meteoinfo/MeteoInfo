@@ -15,6 +15,7 @@ package org.meteoinfo.data.meteodata.hysplit;
 
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.util.JDateUtil;
+import org.meteoinfo.data.meteodata.arl.ARLDataInfo;
 import org.meteoinfo.data.meteodata.ascii.ASCIIGridDataInfo;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
@@ -34,7 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.meteodata.MeteoDataType;
-import org.meteoinfo.data.meteodata.arl.ARLDataInfo;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
@@ -226,7 +226,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
             yDim.setValues(Y);
             this.setYDimension(yDim);
             this.addDimension(yDim);
-            List<Variable> variables = new ArrayList<>();            
+            List<Variable> variables = new ArrayList<>();
 
             //Record #4
             br.skipBytes(8);            

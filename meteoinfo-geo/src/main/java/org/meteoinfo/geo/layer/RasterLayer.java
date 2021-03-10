@@ -19,7 +19,7 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.util.GlobalUtil;
-import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.data.GridArray;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.Color;
@@ -32,9 +32,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import org.meteoinfo.geo.data.GridArray;
-import org.meteoinfo.geo.data.mapdata.MapDataManage;
-import org.meteoinfo.geo.projection.info.ProjectionInfo;
+
+import org.meteoinfo.geo.mapdata.MapDataManage;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.ndarray.Index;
 
 /**

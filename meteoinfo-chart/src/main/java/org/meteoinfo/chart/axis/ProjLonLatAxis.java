@@ -6,11 +6,11 @@
 package org.meteoinfo.chart.axis;
 
 import org.meteoinfo.chart.ChartText;
+import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.global.DataConvert;
 import org.meteoinfo.projection.KnownCoordinateSystems;
+import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.Reproject;
-import org.meteoinfo.projection.info.ProjectionInfo;
 
 import java.util.ArrayList;
 import java.util.List;

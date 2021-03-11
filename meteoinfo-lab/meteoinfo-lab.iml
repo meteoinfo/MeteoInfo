@@ -21,6 +21,11 @@
         <jarDirectory url="file://$MODULE_DIR$/../../toolbox/miml_dev/miml/lib" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="meteoinfo-math" />
+    <orderEntry type="module" module-name="meteoinfo-ndarray" />
+    <orderEntry type="module" module-name="meteoinfo-table" />
+    <orderEntry type="module" module-name="meteoinfo-image" />
+    <orderEntry type="module" module-name="meteoinfo-common" />
     <orderEntry type="module" module-name="meteoinfo-chart" />
     <orderEntry type="module" module-name="meteoinfo-geo" />
     <orderEntry type="module" module-name="meteoinfo-math" />

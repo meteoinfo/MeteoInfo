@@ -13,7 +13,6 @@
     </parent>
     
     <modules>
-        <module>MeteoInfoLib</module>
         <module>meteoinfo-map</module>
         <module>meteoinfo-lab</module>
         <module>meteoinfo-console</module>

@@ -15,7 +15,6 @@
         <module name="meteoinfo-chart" />
         <module name="meteoinfo-ndarray" />
         <module name="meteoinfo-table" />
-        <module name="MeteoInfoLib" />
         <module name="meteoinfo-data" />
         <module name="meteoinfo-dataframe" />
         <module name="meteoinfo-map" />

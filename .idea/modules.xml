@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MeteoInfo.iml" filepath="$PROJECT_DIR$/MeteoInfo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MeteoInfoLib/MeteoInfoLib.iml" filepath="$PROJECT_DIR$/MeteoInfoLib/MeteoInfoLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/meteoinfo-chart/meteoinfo-chart.iml" filepath="$PROJECT_DIR$/meteoinfo-chart/meteoinfo-chart.iml" />
       <module fileurl="file://$PROJECT_DIR$/meteoinfo-common/meteoinfo-common.iml" filepath="$PROJECT_DIR$/meteoinfo-common/meteoinfo-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/meteoinfo-console/meteoinfo-console.iml" filepath="$PROJECT_DIR$/meteoinfo-console/meteoinfo-console.iml" />

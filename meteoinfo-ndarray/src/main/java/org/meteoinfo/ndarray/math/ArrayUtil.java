@@ -2129,6 +2129,26 @@ public class ArrayUtil {
         return javaArray;
     }
 
+    /**
+     * Convert array to N-Dimension double Java array
+     *
+     * @param a Array a
+     * @param missingValue The missing value
+     * @return N-D Java array
+     */
+    public static Object copyToNDJavaArray_Double(Array a, double missingValue) {
+        Object javaArray;
+        try {
+            javaArray = java.lang.reflect.Array.newInstance(Double.TYPE, a.getShape());
+        } catch (IllegalArgumentException | NegativeArraySizeException e) {
+            throw new IllegalArgumentException(e);
+        }
+        IndexIterator iter = a.getIndexIterator();
+        reflectArrayCopyOut(javaArray, a, iter, missingValue);
+
+        return javaArray;
+    }
+
     private static void reflectArrayCopyOut(Object jArray, Array aa, IndexIterator aaIter) {
         Class cType = jArray.getClass().getComponentType();
 
@@ -2145,9 +2165,37 @@ public class ArrayUtil {
         }
     }
 
+    private static void reflectArrayCopyOut(Object jArray, Array aa, IndexIterator aaIter,
+                                            double missingValue) {
+        Class cType = jArray.getClass().getComponentType();
+
+        if (!cType.isArray()) {
+            if (cType == long.class) {
+                copyTo1DJavaArray_Long(aaIter, jArray);
+            } else {
+                copyTo1DJavaArray(aaIter, jArray, missingValue);
+            }
+        } else {
+            for (int i = 0; i < java.lang.reflect.Array.getLength(jArray); i++) {
+                reflectArrayCopyOut(java.lang.reflect.Array.get(jArray, i), aa, aaIter, missingValue);
+            }
+        }
+    }
+
     protected static void copyTo1DJavaArray(IndexIterator iter, Object javaArray) {
         for (int i = 0; i < java.lang.reflect.Array.getLength(javaArray); i++) {
             java.lang.reflect.Array.set(javaArray, i, iter.getObjectNext());
+        }
+    }
+
+    protected static void copyTo1DJavaArray(IndexIterator iter, Object javaArray, double missingValue) {
+        double v;
+        for (int i = 0; i < java.lang.reflect.Array.getLength(javaArray); i++) {
+            v = iter.getDoubleNext();
+            if (Double.isNaN(v))
+                java.lang.reflect.Array.set(javaArray, i, missingValue);
+            else
+                java.lang.reflect.Array.set(javaArray, i, v);
         }
     }
 

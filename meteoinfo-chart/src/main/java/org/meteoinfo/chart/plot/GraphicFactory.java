@@ -3037,6 +3037,97 @@ public class GraphicFactory {
     /**
      * Create contour lines
      *
+     * @param xa X coordinate array - one dimension
+     * @param ya Y coordinate array - one dimension
+     * @param va Data array - two dimension
+     * @param ls Legend scheme
+     * @param isSmooth Is smooth or not
+     * @return Contour lines
+     */
+    public static GraphicCollection createContourLines(Array xa, Array ya, Array va, LegendScheme ls, boolean isSmooth) {
+        ls = ls.convertTo(ShapeTypes.Polyline);
+        Object[] ccs = LegendManage.getContoursAndColors(ls);
+        double[] cValues = (double[]) ccs[0];
+
+        int[] shape = va.getShape();
+        int[][] S1 = new int[shape[0]][shape[1]];
+        double[] x = (double[])ArrayUtil.copyToNDJavaArray_Double(xa);
+        double[] y = (double[])ArrayUtil.copyToNDJavaArray_Double(ya);
+        double missingValue = -9999.0;
+        double[][] data = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va, missingValue);
+        if (x[1] - x[0] < 0)
+            ArrayUtils.reverse(x);
+        if (y[1] - y[0] < 0)
+            ArrayUtils.reverse(y);
+        Object[] cbs = ContourDraw.tracingContourLines(data,
+                cValues, x, y, missingValue, S1);
+        List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
+
+        if (ContourLines.isEmpty()) {
+            return null;
+        }
+
+        if (isSmooth) {
+            ContourLines = Contour.smoothLines(ContourLines);
+        }
+
+        PolyLine aLine;
+        double v;
+        ColorBreak cbb = ls.findLegendBreak(0);
+        GraphicCollection graphics = new GraphicCollection();
+        for (int i = 0; i < ContourLines.size(); i++) {
+            aLine = ContourLines.get(i);
+            v = aLine.Value;
+
+            PolylineShape aPolyline = new PolylineShape();
+            PointD aPoint;
+            List<PointD> pList = new ArrayList<>();
+            for (int j = 0; j < aLine.PointList.size(); j++) {
+                aPoint = new PointD();
+                aPoint.X = aLine.PointList.get(j).X;
+                aPoint.Y = aLine.PointList.get(j).Y;
+                pList.add(aPoint);
+            }
+            aPolyline.setPoints(pList);
+            aPolyline.setValue(v);
+            aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
+
+            switch (ls.getLegendType()) {
+                case UniqueValue:
+                    for (int j = 0; j < ls.getBreakNum(); j++) {
+                        ColorBreak cb = ls.getLegendBreaks().get(j);
+                        if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))) {
+                            cbb = cb;
+                            break;
+                        }
+                    }
+                    break;
+                case GraduatedColor:
+                    int blNum = 0;
+                    for (int j = 0; j < ls.getBreakNum(); j++) {
+                        ColorBreak cb = ls.getLegendBreaks().get(j);
+                        blNum += 1;
+                        if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))
+                                || (v > Double.parseDouble(cb.getStartValue().toString())
+                                && v < Double.parseDouble(cb.getEndValue().toString()))
+                                || (blNum == ls.getBreakNum() && v == Double.parseDouble(cb.getEndValue().toString()))) {
+                            cbb = cb;
+                            break;
+                        }
+                    }
+                    break;
+            }
+            graphics.add(new Graphic(aPolyline, cbb));
+        }
+        graphics.setSingleLegend(false);
+        graphics.setLegendScheme(ls);
+
+        return graphics;
+    }
+
+    /**
+     * Create contour lines
+     *
      * @param gridData Grid data
      * @param ls Legend scheme
      * @param isSmooth Is smooth or not
@@ -3410,6 +3501,131 @@ public class GraphicFactory {
 //                    }
 //                }
 //            }
+            if (!poly.IsHighCenter && poly.HighValue == poly.LowValue) {
+                aPolygonShape.highValue = v;
+                if (valueIdx == 0) {
+                    aPolygonShape.lowValue = minData;
+                } else {
+                    aPolygonShape.lowValue = cValues[valueIdx - 1];
+                }
+            }
+
+            v = aPolygonShape.lowValue;
+            switch (ls.getLegendType()) {
+                case UniqueValue:
+                    for (int j = 0; j < ls.getBreakNum(); j++) {
+                        ColorBreak cb = ls.getLegendBreaks().get(j);
+                        if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))) {
+                            cbb = cb;
+                            break;
+                        }
+                    }
+                    break;
+                case GraduatedColor:
+                    int blNum = 0;
+                    for (int j = 0; j < ls.getBreakNum(); j++) {
+                        ColorBreak cb = ls.getLegendBreaks().get(j);
+                        blNum += 1;
+                        if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))
+                                || (v > Double.parseDouble(cb.getStartValue().toString())
+                                && v < Double.parseDouble(cb.getEndValue().toString()))
+                                || (blNum == ls.getBreakNum() && v == Double.parseDouble(cb.getEndValue().toString()))) {
+                            cbb = cb;
+                            break;
+                        }
+                    }
+                    break;
+            }
+            graphics.add(new Graphic(aPolygonShape, cbb));
+        }
+        graphics.setSingleLegend(false);
+        graphics.setLegendScheme(ls);
+
+        return graphics;
+    }
+
+    /**
+     * Create contour polygons
+     *
+     * @param xa X coordinate array - one dimension
+     * @param ya Y coordinate array - one dimension
+     * @param va Data array - two dimension
+     * @param ls Legend scheme
+     * @param isSmooth Is smooth or not
+     * @return Contour polygons
+     */
+    public static GraphicCollection createContourPolygons(Array xa, Array ya, Array va, LegendScheme ls, boolean isSmooth) {
+        ls = ls.convertTo(ShapeTypes.Polygon);
+        Object[] ccs = LegendManage.getContoursAndColors(ls);
+        double[] cValues = (double[]) ccs[0];
+
+        double minData = ArrayMath.min(va).doubleValue();
+        double maxData = ArrayMath.max(va).doubleValue();
+
+        int[] shape = va.getShape();
+        int[][] S1 = new int[shape[0]][shape[1]];
+        double[] x = (double[])ArrayUtil.copyToNDJavaArray_Double(xa);
+        double[] y = (double[])ArrayUtil.copyToNDJavaArray_Double(ya);
+        double missingValue = -9999.0;
+        double[][] data = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va, missingValue);
+        if (x[1] - x[0] < 0)
+            ArrayUtils.reverse(x);
+        if (y[1] - y[0] < 0)
+            ArrayUtils.reverse(y);
+        Object[] cbs = ContourDraw.tracingContourLines(data,
+                cValues, x, y, missingValue, S1);
+        List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+        List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
+
+        if (isSmooth) {
+            contourLines = Contour.smoothLines(contourLines);
+        }
+        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(data, contourLines, borders, cValues);
+
+        double v;
+        ColorBreak cbb = ls.findLegendBreak(0);
+        GraphicCollection graphics = new GraphicCollection();
+        for (int i = 0; i < contourPolygons.size(); i++) {
+            wcontour.global.Polygon poly = contourPolygons.get(i);
+            v = poly.LowValue;
+            PointD aPoint;
+            List<PointD> pList = new ArrayList<>();
+            for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
+                aPoint = new PointD();
+                aPoint.X = pointList.X;
+                aPoint.Y = pointList.Y;
+                pList.add(aPoint);
+            }
+            if (!GeoComputation.isClockwise(pList)) {
+                Collections.reverse(pList);
+            }
+            PolygonShape aPolygonShape = new PolygonShape();
+            aPolygonShape.setPoints(pList);
+            aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
+            aPolygonShape.lowValue = v;
+            if (poly.HasHoles()) {
+                for (PolyLine holeLine : poly.HoleLines) {
+                    pList = new ArrayList<>();
+                    for (wcontour.global.PointD pointList : holeLine.PointList) {
+                        aPoint = new PointD();
+                        aPoint.X = pointList.X;
+                        aPoint.Y = pointList.Y;
+                        pList.add(aPoint);
+                    }
+                    aPolygonShape.addHole(pList, 0);
+                }
+            }
+            int valueIdx = Arrays.binarySearch(cValues, v);
+            if (valueIdx < 0) {
+                valueIdx = -valueIdx;
+            }
+
+            if (valueIdx == cValues.length - 1) {
+                aPolygonShape.highValue = maxData;
+            } else {
+                aPolygonShape.highValue = cValues[valueIdx + 1];
+            }
+
             if (!poly.IsHighCenter && poly.HighValue == poly.LowValue) {
                 aPolygonShape.highValue = v;
                 if (valueIdx == 0) {

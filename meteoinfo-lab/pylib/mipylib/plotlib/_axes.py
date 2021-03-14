@@ -2085,38 +2085,45 @@ class Axes(object):
         fill_value = kwargs.pop('fill_value', -9999.0)
         xaxistype = None
         if n <= 2:
-            gdata = np.asgriddata(args[0])
-            if isinstance(args[0], DimArray):
+            a = args[0]
+            if isinstance(a, DimArray):
+                y = a.dimvalue(0)
+                x = a.dimvalue(1)
                 if args[0].islondim(1):
                     xaxistype = 'lon'
                 elif args[0].islatdim(1):
                     xaxistype = 'lat'
                 elif args[0].istimedim(1):
                     xaxistype = 'time'
+            else:
+                x = np.arange(a.shape[1])
+                y = np.arange(a.shape[0])
             args = args[1:]
         elif n <=4:
             x = args[0]
             y = args[1]
             a = args[2]
-            gdata = np.asgriddata(a, x, y, fill_value)
             args = args[3:]
         if ls is None:
             if len(args) > 0:
                 level_arg = args[0]
                 if isinstance(level_arg, int):
                     cn = level_arg
-                    ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cn, cmap)
+                    ls = LegendManage.createLegendScheme(a.min(), a.max(), cn, cmap)
                 else:
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
-                    ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), level_arg, cmap)
+                    ls = LegendManage.createLegendScheme(a.min(), a.max(), level_arg, cmap)
             else:    
-                ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cmap)
+                ls = LegendManage.createLegendScheme(a.min(), a.max(), cmap)
             ls = ls.convertTo(ShapeTypes.Polyline)
             plotutil.setlegendscheme(ls, **kwargs)
         
         smooth = kwargs.pop('smooth', True)
-        igraphic = GraphicFactory.createContourLines(gdata.data, ls, smooth)
+        if x.ndim == 2 and y.ndim == 2:
+            griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
+            a, x, y = np.griddata((x,y), a, **griddata_props)
+        igraphic = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
 
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
@@ -2210,39 +2217,47 @@ class Axes(object):
         fill_value = kwargs.pop('fill_value', -9999.0)
         xaxistype = None
         if n <= 2:
-            gdata = np.asgriddata(args[0])
-            if isinstance(args[0], DimArray):
+            a = args[0]
+            if isinstance(a, DimArray):
+                y = a.dimvalue(0)
+                x = a.dimvalue(1)
                 if args[0].islondim(1):
                     xaxistype = 'lon'
                 elif args[0].islatdim(1):
                     xaxistype = 'lat'
                 elif args[0].istimedim(1):
                     xaxistype = 'time'
+            else:
+                x = np.arange(a.shape[1])
+                y = np.arange(a.shape[0])
             args = args[1:]
         elif n <=4:
             x = args[0]
             y = args[1]
             a = args[2]
-            gdata = np.asgriddata(a, x, y, fill_value)
+            #gdata = np.asgriddata(a, x, y, fill_value)
             args = args[3:]
         if ls is None:
             if len(args) > 0:
                 level_arg = args[0]
                 if isinstance(level_arg, int):
                     cn = level_arg
-                    ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cn, cmap)
+                    ls = LegendManage.createLegendScheme(a.min(), a.max(), cn, cmap)
                 else:
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
-                    ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), level_arg, cmap)
+                    ls = LegendManage.createLegendScheme(a.min(), a.max(), level_arg, cmap)
             else:    
-                ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cmap)
+                ls = LegendManage.createLegendScheme(a.min(), a.max(), cmap)
         ls = ls.convertTo(ShapeTypes.Polygon)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
         smooth = kwargs.pop('smooth', True)
-        igraphic = GraphicFactory.createContourPolygons(gdata.data, ls, smooth)
+        if x.ndim == 2 and y.ndim == 2:
+            griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
+            a, x, y = np.griddata((x,y), a, **griddata_props)
+        igraphic = GraphicFactory.createContourPolygons(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
         
         visible = kwargs.pop('visible', True)
         if visible:

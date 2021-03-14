@@ -1071,8 +1071,10 @@ class MapAxes(Axes):
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
         ls = ls.convertTo(ShapeTypes.Polyline)
         plotutil.setlegendscheme(ls, **kwargs)
-        isadd = kwargs.pop('isadd', True)
         smooth = kwargs.pop('smooth', True)
+        if x.ndim == 2 and y.ndim == 2:
+            griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
+            a, x, y = np.griddata((x,y), a, **griddata_props)
         layer = DrawMeteoData.createContourLayer(a._array, x._array, y._array, ls, 'layer', 'data', smooth)
         if layer is None:
             return None
@@ -1130,8 +1132,10 @@ class MapAxes(Axes):
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
-        isadd = kwargs.pop('isadd', True)
         smooth = kwargs.pop('smooth', True)
+        if x.ndim == 2 and y.ndim == 2:
+            griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
+            a, x, y = np.griddata((x,y), a, **griddata_props)
         layer = DrawMeteoData.createShadedLayer(a._array, x._array, y._array, ls, 'layer', 'data', smooth)
         proj = kwargs.pop('proj', None)
         if not proj is None:

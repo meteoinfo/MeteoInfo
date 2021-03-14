@@ -1627,7 +1627,7 @@ def nonzero(a):
     '''
     if isinstance(a, list):
         a = array(a)
-    ra = ArrayMath.nonzero(a.asarray())
+    ra = ArrayUtil.nonzero(a.asarray())
     if ra is None:
         return None
         
@@ -1646,7 +1646,7 @@ def flatnonzero(a):
     '''
     if isinstance(a, list):
         a = array(a)
-    r = ArrayMath.flatNonZero(a.asarray())
+    r = ArrayUtil.flatNonZero(a.asarray())
 
     return NDArray(r)
     

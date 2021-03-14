@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\contour">
+    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\numeric\linalg"/>
+    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\numeric\random"/>
+    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\numeric\stats"/>
+    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\numeric"/>
+    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script"/>
+    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\plot\wind"/>
+    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\plot"/>
+    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\plot\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\verification"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_particles_relief.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\image\gray_scale.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\netcdf\lonlat_2d_contour.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contour_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_particles_relief.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\image\gray_scale.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\netcdf\lonlat_2d_contour.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contour_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="0,0" MainFormSize="1280,680"/>
+  <Startup MainFormLocation="0,0" MainFormSize="1357,782"/>
 </MeteoInfo>

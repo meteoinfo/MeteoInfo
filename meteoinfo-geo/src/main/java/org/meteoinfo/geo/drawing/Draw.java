@@ -3109,7 +3109,7 @@ public class Draw {
                             aPB = new PointBreak();
                             aPB.setSize(aSize);
                             aPB.setColor(aColor);
-                            aPB.setStyle(PointStyle.UpSemiCircle);
+                            aPB.setStyle(PointStyle.DownSemiCircle);
                             aPB.setOutlineColor(aColor);
                             aPB.setDrawFill(true);
                             aPB.setDrawOutline(true);
@@ -3140,7 +3140,7 @@ public class Draw {
                             aPB = new PointBreak();
                             aPB.setSize(aSize);
                             aPB.setColor(Color.red);
-                            aPB.setStyle(PointStyle.DownSemiCircle);
+                            aPB.setStyle(PointStyle.UpSemiCircle);
                             aPB.setOutlineColor(Color.red);
                             aPB.setDrawFill(true);
                             aPB.setDrawOutline(true);
@@ -3346,7 +3346,7 @@ public class Draw {
                         aPB = new PointBreak();
                         aPB.setSize(aSize);
                         aPB.setColor(aColor);
-                        aPB.setStyle(PointStyle.UpSemiCircle);
+                        aPB.setStyle(PointStyle.DownSemiCircle);
                         aPB.setOutlineColor(aColor);
                         aPB.setDrawFill(true);
                         aPB.setDrawOutline(true);
@@ -3377,7 +3377,7 @@ public class Draw {
                         aPB = new PointBreak();
                         aPB.setSize(aSize);
                         aPB.setColor(Color.red);
-                        aPB.setStyle(PointStyle.DownSemiCircle);
+                        aPB.setStyle(PointStyle.UpSemiCircle);
                         aPB.setOutlineColor(Color.red);
                         aPB.setDrawFill(true);
                         aPB.setDrawOutline(true);
@@ -3493,7 +3493,7 @@ public class Draw {
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(aColor);
-                    aPB.setStyle(PointStyle.UpSemiCircle);
+                    aPB.setStyle(PointStyle.DownSemiCircle);
                     aPB.setOutlineColor(aColor);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3515,7 +3515,7 @@ public class Draw {
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(Color.red);
-                    aPB.setStyle(PointStyle.DownSemiCircle);
+                    aPB.setStyle(PointStyle.UpSemiCircle);
                     aPB.setOutlineColor(Color.red);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);

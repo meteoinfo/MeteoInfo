@@ -8,7 +8,7 @@
       <MaskOut MaskLayer="china.shp" SetMaskLayer="false"/>
       <Projection IsLonLatMap="true" ProjStr="+title=long/lat:WGS84 +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees "/>
       <GroupLayer>
-        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\Distribution\Java\MeteoInfo\MeteoInfo\map\cn_province.shp" Handle="2" IsMaskout="false" LayerDrawType="Map" LayerName="cn_province.shp" LayerType="VectorLayer" ShapeType="PolygonZ" TransparencyPerc="0" Visible="true">
+        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\Distribution\Java\MeteoInfo\MeteoInfo\map\cn_province.shp" Handle="1" IsMaskout="false" LayerDrawType="Map" LayerName="cn_province.shp" LayerType="VectorLayer" ShapeType="PolygonZ" TransparencyPerc="0" Visible="true">
           <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="PolygonZ" UNDEF="-9999.0">
             <Breaks>
               <Break BackColor="0x00ffffff" Caption="" Color="0xfffffbc3" DrawFill="false" DrawOutline="true" DrawShape="true" EndValue="0" OutlineColor="0xff808080" OutlineSize="1.0" StartValue="0" Style="NONE" StyleSize="8" Tag=""/>
@@ -24,7 +24,7 @@
           <ChartGraphics/>
           <VisibleScale EnableMaxVisScale="false" EnableMinVisScale="false" MaxVisScale="0.0" MinVisScale="0.0"/>
         </Layer>
-        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\country1.shp" Handle="3" IsMaskout="false" LayerDrawType="Map" LayerName="country1.shp" LayerType="VectorLayer" ShapeType="Polygon" TransparencyPerc="0" Visible="true">
+        <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\country1.shp" Handle="2" IsMaskout="false" LayerDrawType="Map" LayerName="country1.shp" LayerType="VectorLayer" ShapeType="Polygon" TransparencyPerc="0" Visible="true">
           <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="Polygon" UNDEF="-9999.0">
             <Breaks>
               <Break BackColor="0x00ffffff" Caption="" Color="0xfffffbc3" DrawFill="false" DrawOutline="true" DrawShape="true" EndValue="0" OutlineColor="0xff000000" OutlineSize="1.0" StartValue="0" Style="NONE" StyleSize="8" Tag=""/>
@@ -41,7 +41,33 @@
           <VisibleScale EnableMaxVisScale="false" EnableMinVisScale="false" MaxVisScale="0.0" MinVisScale="0.0"/>
         </Layer>
       </GroupLayer>
-      <Graphics/>
+      <Graphics>
+        <Graphic>
+          <Shape Selected="false" ShapeType="CurveLine" Visible="true">
+            <Points>
+              <Point X="118.55421447753906" Y="54.82384490966797"/>
+              <Point X="109.51807403564453" Y="44.703365325927734"/>
+              <Point X="97.59036254882812" Y="35.66722106933594"/>
+              <Point X="68.3132553100586" Y="17.956377029418945"/>
+              <Point X="43.37349319458008" Y="10.004569053649902"/>
+              <Point X="9.75903606414795" Y="4.582882404327393"/>
+            </Points>
+          </Shape>
+          <Legend Color="0xffff0000" DrawSymbol="false" LegendType="PolylineBreak" Size="2.0" Style="STATIONARYFRONT" SymbolColor="0xff000000" SymbolInterval="1" SymbolSize="8.0" SymbolStyle="UpTriangle"/>
+        </Graphic>
+        <Graphic>
+          <Shape Selected="false" ShapeType="CurveLine" Visible="true">
+            <Points>
+              <Point X="60.361446380615234" Y="54.46240234375"/>
+              <Point X="43.37349319458008" Y="45.06481170654297"/>
+              <Point X="22.048192977905273" Y="37.11300277709961"/>
+              <Point X="1.0843373537063599" Y="34.221435546875"/>
+              <Point X="-16.265060424804688" Y="36.751556396484375"/>
+            </Points>
+          </Shape>
+          <Legend Color="0xffff0000" DrawSymbol="false" LegendType="PolylineBreak" Size="2.0" Style="OCCLUDEDFRONT" SymbolColor="0xff000000" SymbolInterval="1" SymbolSize="8.0" SymbolStyle="UpTriangle"/>
+        </Graphic>
+      </Graphics>
     </MapFrame>
   </MapFrames>
   <Layout BackColor="0xffffffff" ForeColor="0xff000000" Landscape="true" PaperSizeHeight="750" PaperSizeName="Custom" PaperSizeWidth="500" SmoothingMode="false">

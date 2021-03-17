@@ -497,6 +497,7 @@ class Figure(ChartPanel):
         :param plot_number: (*int) Is used to identify the particular subplot that this function
             is to create within the notional gird. It starts at 1, increments across rows first
             and has a maximum of ``nrows * ncols`` .
+        :param axestype: (*string*) Axes type [axes | 3d | map | polar].
 
         :returns: Current axes specified by ``plot_number`` .
         """
@@ -590,7 +591,7 @@ class Figure(ChartPanel):
             expressed as a fraction of the average axis width.
         :param hspace: (*float*) The amount of height reserved for blank space between subplots,
             expressed as a fraction of the average axis height.
-        :param axestype: (*string*) Axes type [Axes | Axes3D | MapAxes | PolarAxes].
+        :param axestype: (*string*) Axes type [axes | 3d | map | polar].
 
         :returns: The figure and the axes tuple.
         '''
@@ -629,13 +630,13 @@ class Figure(ChartPanel):
                 if i > 0:
                     y -= hspace
             for j in range(ncols):   
-                if axestype == 'axes3d':
+                if axestype == '3d':
                     ax = Axes3D()
                     self.__set_axes3d(ax, **kwarg)
-                elif axestype == 'mapaxes':
+                elif axestype == 'map':
                     ax = MapAxes()
                     self.__set_axesm(ax, **kwargs)
-                elif axestype == 'polaraxes':
+                elif axestype == 'polar':
                     ax = PolarAxes()
                 else:
                     ax = Axes()

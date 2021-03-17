@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map">
-    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\numeric\random"/>
-    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\numeric\stats"/>
-    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\numeric"/>
-    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script"/>
-    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\plot\wind"/>
-    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\plot"/>
-    <RecentFolder Folder="D:\MyProgram\Distribution\Java\MeteoInfo3\MeteoInfo\script\plot\3d"/>
+  <Path OpenPath="D:\Working\MIScript\cuace\script\verification">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython"/>
+    <RecentFolder Folder="D:\Working\MIScript"/>
+    <RecentFolder Folder="D:\Working\MIScript\mywork"/>
+    <RecentFolder Folder="D:\Working\MIScript\mywork\aqi_data"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace\script"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace\script\verification"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_particles_relief.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\netcdf\lonlat_2d_contour.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\add_curveline.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_particles_relief.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\netcdf\lonlat_2d_contour.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\add_curveline.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +30,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="0,0" MainFormSize="1357,782"/>
+  <Startup MainFormLocation="0,0" MainFormSize="1510,889"/>
 </MeteoInfo>

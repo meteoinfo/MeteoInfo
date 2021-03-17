@@ -2521,14 +2521,15 @@ public class DataFrame implements Iterable {
      *
      * @param fileName File name
      * @param delimiter Delimiter
+     * @param formatSpec Format specifiers string
      * @param dateFormat Date format string
      * @param floatFormat Float format string
      * @param index If write index
      * @throws IOException
      */
-    public void saveCSV(String fileName, String delimiter, String dateFormat, String floatFormat,
+    public void saveCSV(String fileName, String delimiter, String formatSpec, String dateFormat, String floatFormat,
             boolean index) throws IOException {
-        BufferedWriter sw = new BufferedWriter(new FileWriter(new File(fileName)));
+        BufferedWriter sw = new BufferedWriter(new FileWriter(fileName));
         String str = "";
         String idxFormat = this.index.format;
         if (index) {
@@ -2548,13 +2549,29 @@ public class DataFrame implements Iterable {
 
         String line, vstr;
         List<String> formats = new ArrayList<>();
-        for (Column col : this.columns) {
-            if (col.getDataType() == DataType.FLOAT || col.getDataType() == DataType.DOUBLE) {
-                formats.add(floatFormat == null ? col.getFormat() : floatFormat);
-            } else {
-                formats.add(col.getFormat());
+        if (formatSpec == null) {
+            for (Column col : this.columns) {
+                if (col.getDataType() == DataType.FLOAT || col.getDataType() == DataType.DOUBLE) {
+                    formats.add(floatFormat == null ? col.getFormat() : floatFormat);
+                } else {
+                    formats.add(col.getFormat());
+                }
+            }
+        } else {
+            String[] formatStrs = formatSpec.split("%");
+            int i = 1;
+            for (Column col : this.columns) {
+                if (i < formatStrs.length) {
+                    if (formatStrs[i].equals("i"))
+                        formatStrs[i] = "d";
+                    formats.add("%" + formatStrs[i]);
+                } else {
+                    formats.add(col.getFormat());
+                }
+                i += 1;
             }
         }
+
         for (int j = 0; j < this.length(); j++) {
             line = "";
             if (index) {

@@ -860,13 +860,13 @@ class DataFrame(object):
         '''
         Save the data to an csv file.
         
-        :param filename: (*string*) The file name.
+        :param filepath: (*string*) The output file path.
         :param delimiter: (*string*) Field delimiter character. Default is ``,``.
         :param format: (*string*) Format string.
         :param date_format: (*string*) Date format string. i.e. 'yyyyMMddHH'.
         :param float_format: (*string*) Float format string. i.e. '%.2f'.
         :param index: (*boolean*) Write index or not.
         '''
-        self._dataframe.saveCSV(filepath, delimiter, date_format, float_format, index)
+        self._dataframe.saveCSV(filepath, delimiter, format, date_format, float_format, index)
 
 #################################################################

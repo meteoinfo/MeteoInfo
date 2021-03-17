@@ -12,7 +12,7 @@ from java.time import LocalDateTime
 import datetime
 import numbers
 
-from mipylib.numeric.core import NDArray
+import mipylib.numeric as np
 import mipylib.miutil as miutil
 
 class Index(object):
@@ -41,7 +41,7 @@ class Index(object):
         :param name: (*string*) Index name                
         '''
         if index is None:
-            if isinstance(data, NDArray):
+            if isinstance(data, np.NDArray):
                 data = data.aslist()
             self.data = data
             self._index = MIIndex.factory(data)
@@ -89,7 +89,7 @@ class Index(object):
             
     def __eq__(self, other):
         if isinstance(other, numbers.Number):
-            return NDArray(self._index.equal(other))
+            return np.NDArray(self._index.equal(other))
         else:
             return False
             
@@ -112,11 +112,14 @@ class Index(object):
         
         :returns: int if unique index, slice if monotonic index, else mask.
         '''
-        if isinstance(key, NDArray) and key.dtype.toString() == 'boolean':
+        if isinstance(key, np.NDArray) and key.dtype == np.dtype.bool:
             r = self._index.filterIndices(key.asarray())
             return list(r)
-        else:    
-            r = self._index.getIndices(key)
+        else:
+            if isinstance(key, np.NDArray):
+                r = self._index.getIndices(key.asarray())
+            else:
+                r = self._index.getIndices(key)
             if outkeys:            
                 return list(r[0]), list(r[1])
             else:
@@ -147,7 +150,7 @@ class DateTimeIndex(Index):
     def __init__(self, data=None, name='Index', start=None, end=None, periods=None, freq='D', index=None):
         if index is None:
             if not data is None:
-                if isinstance(data, NDArray):
+                if isinstance(data, np.NDArray):
                     data = data.aslist()
                 self.data = data
                 if isinstance(data[0], datetime.datetime):
@@ -195,7 +198,7 @@ class DateTimeIndex(Index):
             return list(r)
         elif isinstance(key, datetime.datetime):
             key = miutil.jdatetime(key)
-        elif isinstance(key, (list, tuple, NDArray)) and isinstance(key[0], datetime.datetime):
+        elif isinstance(key, (list, tuple, np.NDArray)) and isinstance(key[0], datetime.datetime):
             key = miutil.jdatetime(key)
         r = self._index.getIndices(key)
         if outkeys:            

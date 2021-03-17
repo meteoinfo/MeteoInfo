@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
   <Path OpenPath="D:\Working\MIScript\cuace\script\verification">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython"/>
     <RecentFolder Folder="D:\Working\MIScript"/>
     <RecentFolder Folder="D:\Working\MIScript\mywork"/>
     <RecentFolder Folder="D:\Working\MIScript\mywork\aqi_data"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace\script"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace\script\verification"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_particles_relief.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace\script\verification\plot_result_pm25_day_max_monthly.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_particles_relief.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace\script\verification\plot_result_pm25_day_max_monthly.py"/>
     </RecentFiles>
   </File>
   <Font>

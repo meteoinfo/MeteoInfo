@@ -746,13 +746,59 @@ class DimArray(NDArray):
                 if i != axis:
                     dims.append(self.dims[i])
             return DimArray(r, dims, self.fill_value, self.proj)
+
+    def max(self, axis=None):
+        '''
+        Compute tha arithmetic maximum along the specified axis.
+
+        :param axis: (*int*) Axis along which the value is computed.
+            The default is to compute the value of the flattened array.
+
+        returns: (*array_like*) Maximum result
+        '''
+        r = super(DimArray, self).max(axis)
+        if isinstance(r, numbers.Number):
+            return r
+        else:
+            dims = []
+            for i in range(0, self.ndim):
+                if isinstance(axis, (list, tuple)):
+                    if not i in axis:
+                        dims.append(self.dims[i])
+                else:
+                    if i != axis:
+                        dims.append(self.dims[i])
+            return DimArray(r, dims, self.fill_value, self.proj)
+
+    def min(self, axis=None):
+        '''
+        Compute tha arithmetic minimum along the specified axis.
+
+        :param axis: (*int*) Axis along which the value is computed.
+            The default is to compute the value of the flattened array.
+
+        returns: (*array_like*) Minimum result
+        '''
+        r = super(DimArray, self).min(axis)
+        if isinstance(r, numbers.Number):
+            return r
+        else:
+            dims = []
+            for i in range(0, self.ndim):
+                if isinstance(axis, (list, tuple)):
+                    if not i in axis:
+                        dims.append(self.dims[i])
+                else:
+                    if i != axis:
+                        dims.append(self.dims[i])
+            return DimArray(r, dims, self.fill_value, self.proj)
         
     def mean(self, axis=None):
         '''
         Compute tha arithmetic mean along the specified axis.
 
-        :param axis: (*int*) Axis along which the standard deviation is computed. 
-            The default is to compute the standard deviation of the flattened array.
+        :param axis: (*int*) Axis along which the value is computed.
+            The default is to compute the value of the flattened array.
         
         returns: (*array_like*) Mean result
         '''
@@ -774,8 +820,8 @@ class DimArray(NDArray):
         '''
         Compute tha median along the specified axis.
 
-        :param axis: (*int*) Axis along which the standard deviation is computed. 
-            The default is to compute the standard deviation of the flattened array.
+        :param axis: (*int*) Axis along which the value is computed.
+            The default is to compute the value of the flattened array.
         
         returns: (*array_like*) Median result
         '''

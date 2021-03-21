@@ -4,15 +4,21 @@
  */
 package org.meteoinfo.geo.analysis;
 
+import org.locationtech.jts.io.InStream;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.PolylineZShape;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  *
@@ -43,7 +49,7 @@ public class Clustering {
         int col;
         List<String> flags = new ArrayList<>();    //Date time and height
 
-        BufferedReader sr = new BufferedReader(new FileReader(new File(inFile)));
+        BufferedReader sr = new BufferedReader(new FileReader(inFile));
         row = 0;
         while ((aLine = sr.readLine()) != null) {
             if (aLine.isEmpty()) {
@@ -149,7 +155,7 @@ public class Clustering {
         int[][] ICLASS = calculation(DATA, LN, disType);
 
         //Write clustering result to output file
-        BufferedWriter sw = new BufferedWriter(new FileWriter(new File(outFile)));
+        BufferedWriter sw = new BufferedWriter(new FileWriter(outFile));
         aLine = "Time,Height";
         for (i = 2; i <= LN; i++) {
             aLine = aLine + "," + String.valueOf(i) + "CL";
@@ -165,6 +171,27 @@ public class Clustering {
             sw.newLine();
         }
         sw.close();
+    }
+
+    /**
+     * Clustering calculation
+     *
+     * @param trajData Trajectory data array
+     * @param LN Level number
+     * @param disType Distant define type: Euclidean or Angle
+     * @throws IOException
+     */
+    public static Array calculate(Array trajData, int LN, DistanceType disType) throws IOException {
+        double[][] DATA = (double[][]) ArrayUtil.copyToNDJavaArray_Double(trajData);
+
+        //Clustering calculation
+        int[][] ICLASS = calculation(DATA, LN, disType);
+
+        int[] rData = Stream.of(ICLASS).flatMapToInt(IntStream::of).toArray();
+        Array r = Array.factory(DataType.INT, new int[]{ICLASS.length, ICLASS[0].length},
+                rData);
+
+        return r;
     }
 
     /**

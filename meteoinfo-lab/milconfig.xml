@@ -20,11 +20,11 @@
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_particles_relief.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_cressman.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\test_griddata.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_cuace_3d_particles_relief.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_cressman.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\test_griddata.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -32,5 +32,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="0,0" MainFormSize="1416,841"/>
+  <Startup MainFormLocation="0,0" MainFormSize="1280,680"/>
 </MeteoInfo>

@@ -1113,6 +1113,8 @@ public class InterpUtil {
      */
     public static Object interpolation_Inside_Count(List<Number> x_s, List<Number> y_s, Array a,
                                                     List<Number> X, List<Number> Y, boolean pointDensity, boolean centerPoint) {
+        a = a.copyIfView();
+
         int rowNum, colNum, pNum;
         colNum = X.size();
         rowNum = Y.size();

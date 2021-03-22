@@ -1099,6 +1099,104 @@ public class InterpUtil {
     }
 
     /**
+     * Interpolate with inside method - The grid cell value is the count number
+     * of the inside points or fill value if no inside point.
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @param pointDensity If return point density value
+     * @param centerPoint points locate at center or border of grid
+     * @return grid data
+     */
+    public static Object interpolation_Inside_Count(List<Number> x_s, List<Number> y_s, Array a,
+                                                    List<Number> X, List<Number> Y, boolean pointDensity, boolean centerPoint) {
+        int rowNum, colNum, pNum;
+        colNum = X.size();
+        rowNum = Y.size();
+        pNum = x_s.size();
+        Array r = Array.factory(DataType.INT, new int[]{rowNum, colNum});
+        double dX = X.get(1).doubleValue() - X.get(0).doubleValue();
+        double dY = Y.get(1).doubleValue() - Y.get(0).doubleValue();
+        int[][] pNums = new int[rowNum][colNum];
+        double x, y, sx, sy, ex, ey;
+        if (centerPoint) {
+            sx = X.get(0).doubleValue() - dX * 0.5;
+            sy = Y.get(0).doubleValue() - dY * 0.5;
+            ex = X.get(colNum - 1).doubleValue() + dX * 0.5;
+            ey = Y.get(rowNum - 1).doubleValue() + dY * 0.5;
+        } else {
+            sx = X.get(0).doubleValue();
+            sy = Y.get(0).doubleValue();
+            ex = X.get(colNum - 1).doubleValue();
+            ey = Y.get(rowNum - 1).doubleValue();
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                pNums[i][j] = 0;
+            }
+        }
+
+        double v;
+        for (int p = 0; p < pNum; p++) {
+            v = a.getDouble(p);
+            if (Double.isNaN(v)) {
+                continue;
+            }
+            x = x_s.get(p).doubleValue();
+            y = y_s.get(p).doubleValue();
+            if (x < sx || x > ex) {
+                continue;
+            }
+            if (y < sy || y > ey) {
+                continue;
+            }
+
+            int j = (int) ((x - sx) / dX);
+            int i = (int) ((y - sy) / dY);
+            if (i >= rowNum)
+                i = rowNum - 1;
+            if (j >= colNum)
+                j = colNum - 1;
+            pNums[i][j] += 1;
+        }
+
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                r.setInt(i * colNum + j, pNums[i][j]);
+            }
+        }
+
+        if (pointDensity) {
+            Array pds = Array.factory(DataType.INT, new int[]{pNum});
+            for (int p = 0; p < pNum; p++) {
+                x = x_s.get(p).doubleValue();
+                y = y_s.get(p).doubleValue();
+                if (x < sx || x > ex) {
+                    continue;
+                }
+                if (y < sy || y > ey) {
+                    continue;
+                }
+
+                int j = (int) ((x - sx) / dX);
+                int i = (int) ((y - sy) / dY);
+                if (i >= rowNum)
+                    i = rowNum - 1;
+                if (j >= colNum)
+                    j = colNum - 1;
+                pds.setInt(p, pNums[i][j]);
+            }
+            return new Array[]{r, pds};
+        }
+
+        return r;
+    }
+
+    /**
      * Interpolate with nearest method
      *
      * @param x_s scatter X array

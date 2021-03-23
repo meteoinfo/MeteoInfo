@@ -882,7 +882,7 @@ class Axes3D(Axes):
                     ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
             else:
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
-            ls = ls.convertTo(ShapeTypes.Polyline)
+            ls = ls.convertTo(ShapeTypes.POLYLINE)
             plotutil.setlegendscheme(ls, **kwargs)
             graphics = GraphicFactory.createWireframe(x.asarray(), y.asarray(), z.asarray(), ls)
 
@@ -937,7 +937,7 @@ class Axes3D(Axes):
                     ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
             else:    
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
-            ls = ls.convertTo(ShapeTypes.Polyline)
+            ls = ls.convertTo(ShapeTypes.POLYLINE)
             plotutil.setlegendscheme(ls, **kwargs)
             graphics = GraphicFactory.createWireframe(x.asarray(), y.asarray(), z.asarray(), ls)
         
@@ -985,7 +985,7 @@ class Axes3D(Axes):
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
         else:
             ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         edge = kwargs.pop('edge', True)
         kwargs['edge'] = edge
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1035,7 +1035,7 @@ class Axes3D(Axes):
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
         else:    
             ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         edge = kwargs.pop('edge', True)
         kwargs['edge'] = edge
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1095,7 +1095,7 @@ class Axes3D(Axes):
                 ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), level_arg, cmap)
         else:    
             ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.Polyline)
+        ls = ls.convertTo(ShapeTypes.POLYLINE)
         plotutil.setlegendscheme(ls, **kwargs)
         
         smooth = kwargs.pop('smooth', True)
@@ -1161,7 +1161,7 @@ class Axes3D(Axes):
                 ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), level_arg, cmap)
         else:    
             ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1271,7 +1271,7 @@ class Axes3D(Axes):
                     ls = LegendManage.createImageLegend(gdata, level_arg, cmap)
             else:
                 ls = plotutil.getlegendscheme(args, gdata.min(), gdata.max(), **kwargs)
-            ls = ls.convertTo(ShapeTypes.Image)
+            ls = ls.convertTo(ShapeTypes.IMAGE)
             plotutil.setlegendscheme(ls, **kwargs)
             if zdir == 'xy':
                 sepoint = kwargs.pop('sepoint', [0,0,1,1])
@@ -1347,7 +1347,7 @@ class Axes3D(Axes):
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
-                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, c, 10)
+                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
         
         if not cdata is None:

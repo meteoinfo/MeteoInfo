@@ -552,7 +552,7 @@ def getlegendscheme(args, min, max, **kwargs):
         # ecobj = kwargs.pop('edgecolor', None)
         # if not ecobj is None:
         #     edgecolor = getcolor(ecobj)
-        #     ls = ls.convertTo(ShapeTypes.Polygon)
+        #     ls = ls.convertTo(ShapeTypes.POLYGON)
         #     for lb in ls.getLegendBreaks():
         #         lb.setDrawOutline(True)
         #         lb.setOutlineColor(edgecolor)
@@ -560,11 +560,11 @@ def getlegendscheme(args, min, max, **kwargs):
     
 def setlegendscheme(ls, **kwargs):
     st = ls.getShapeType()
-    if st == ShapeTypes.Point:
+    if st == ShapeTypes.POINT:
         setlegendscheme_point(ls, **kwargs)
-    elif st == ShapeTypes.Polyline:
+    elif st == ShapeTypes.POLYLINE:
         setlegendscheme_line(ls, **kwargs)
-    elif st == ShapeTypes.Polygon:
+    elif st == ShapeTypes.POLYGON:
         setlegendscheme_polygon(ls, **kwargs)
     else:
         setlegendscheme_image(ls, **kwargs)
@@ -584,7 +584,7 @@ def setlegendscheme_image(ls, **kwargs):
     return ls
         
 def setlegendscheme_point(ls, **kwargs):
-    ls = ls.convertTo(ShapeTypes.Point)  
+    ls = ls.convertTo(ShapeTypes.POINT)
     sizes = kwargs.get('size', None)
     colors = kwargs.get('colors', None)
     edgecolors = kwargs.get('edgecolors', None)
@@ -612,7 +612,7 @@ def setlegendscheme_arrow(ls, **kwargs):
     
     :returns: (*LegendScheme*) Result legend scheme.
     '''
-    ls = ls.convertTo(ShapeTypes.Point)  
+    ls = ls.convertTo(ShapeTypes.POINT)
     sizes = kwargs.get('size', None)
     colors = kwargs.get('colors', None)
     marker = kwargs.get('marker', None)    
@@ -759,7 +759,7 @@ def polygon2arrow(pb, **kwargs):
     return arrowbreak
     
 def setlegendscheme_line(ls, **kwargs):
-    ls = ls.convertTo(ShapeTypes.Polyline)
+    ls = ls.convertTo(ShapeTypes.POLYLINE)
     size = kwargs.pop('size', None)
     size = kwargs.pop('linewidth', size)
     lsobj = kwargs.pop('linestyle', None)
@@ -779,7 +779,7 @@ def setlegendscheme_line(ls, **kwargs):
     return ls
     
 def setlegendscheme_polygon(ls, **kwargs):
-    ls = ls.convertTo(ShapeTypes.Polygon)
+    ls = ls.convertTo(ShapeTypes.POLYGON)
     fill = True
     if kwargs.has_key('facecolor'):
         facecolor = kwargs['facecolor']
@@ -978,15 +978,13 @@ def makesymbolspec(geometry, *args, **kwargs):
     
     :returns: Created legend.
     '''
-    shapetype = ShapeTypes.Image
+    shapetype = ShapeTypes.IMAGE
     if geometry == 'point':
-        shapetype = ShapeTypes.Point
+        shapetype = ShapeTypes.POINT
     elif geometry == 'line':
-        shapetype = ShapeTypes.Polyline
+        shapetype = ShapeTypes.POLYLINE
     elif geometry == 'polygon':
-        shapetype = ShapeTypes.Polygon  
-    else:
-        shapetype = ShapeTypes.Image
+        shapetype = ShapeTypes.POLYGON
         
     levels = kwargs.pop('levels', None)
     cols = kwargs.pop('colors', None)

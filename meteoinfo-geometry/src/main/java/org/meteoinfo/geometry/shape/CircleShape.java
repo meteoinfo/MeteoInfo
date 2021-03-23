@@ -55,7 +55,7 @@ public class CircleShape extends PolygonShape {
     
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.Circle;
+        return ShapeTypes.CIRCLE;
     }
     
     /**

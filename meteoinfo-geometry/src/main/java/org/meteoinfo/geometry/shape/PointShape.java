@@ -54,7 +54,7 @@ public class PointShape extends Shape implements Cloneable{
     
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.Point;
+        return ShapeTypes.POINT;
     }
     
     /**

@@ -32,7 +32,7 @@ public class CurveLineShape extends PolylineShape {
     // <editor-fold desc="Get Set Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.CurveLine;
+        return ShapeTypes.CURVE_LINE;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

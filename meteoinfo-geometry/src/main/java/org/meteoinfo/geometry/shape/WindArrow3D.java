@@ -31,7 +31,7 @@ public class WindArrow3D extends PointZShape {
     // <editor-fold desc="Get Set Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.WindArraw;
+        return ShapeTypes.WIND_ARROW;
     }
 
     /**

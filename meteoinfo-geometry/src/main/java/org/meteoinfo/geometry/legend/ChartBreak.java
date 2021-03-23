@@ -63,7 +63,7 @@ package org.meteoinfo.geometry.legend;
          _chartData = new ArrayList<>();
          _xShift = 0;
          _yShift = 0;
-         _legendScheme = new LegendScheme(ShapeTypes.Polygon);
+         _legendScheme = new LegendScheme(ShapeTypes.POLYGON);
          _maxSize = 50;
          _minSize = 10;
          _barWidth = 10;

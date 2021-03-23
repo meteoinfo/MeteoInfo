@@ -46,7 +46,7 @@ public class WindArrow extends PointShape {
     // <editor-fold desc="Get Set Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.WindArraw;
+        return ShapeTypes.WIND_ARROW;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

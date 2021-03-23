@@ -3168,15 +3168,13 @@ def makesymbolspec(geometry, *args, **kwargs):
     
     :returns: Created legend.
     '''
-    shapetype = ShapeTypes.Image
+    shapetype = ShapeTypes.IMAGE
     if geometry == 'point':
-        shapetype = ShapeTypes.Point
+        shapetype = ShapeTypes.POINT
     elif geometry == 'line':
-        shapetype = ShapeTypes.Polyline
+        shapetype = ShapeTypes.POLYLINE
     elif geometry == 'polygon':
-        shapetype = ShapeTypes.Polygon  
-    else:
-        shapetype = ShapeTypes.Image
+        shapetype = ShapeTypes.POLYGON
         
     levels = kwargs.pop('levels', None)
     cols = kwargs.pop('colors', None)

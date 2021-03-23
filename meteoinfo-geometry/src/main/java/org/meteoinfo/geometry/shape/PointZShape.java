@@ -52,7 +52,7 @@ public class PointZShape extends PointShape {
     
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.PointZ;
+        return ShapeTypes.POINT_Z;
     }
 
 //    /**

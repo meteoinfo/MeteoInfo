@@ -540,9 +540,9 @@ class MapAxes(Axes):
                 graphic = args[0]
                 displaytype = 'point'
                 stype = graphic.getShape().getShapeType()
-                if stype == ShapeTypes.Polyline:
+                if stype == ShapeTypes.POLYLINE:
                     displaytype = 'line'
-                elif stype == ShapeTypes.Polygon:
+                elif stype == ShapeTypes.POLYGON:
                     displaytype = 'polygon'
                 lbreak, isunique = plotutil.getlegendbreak(displaytype, **kwargs)
                 graphic.setLegend(lbreak)
@@ -985,7 +985,7 @@ class MapAxes(Axes):
                 if isinstance(marker, (list, tuple, NDArray)) and len(marker) == x.size:
                     isunique = True
             if isunique:
-                ls = LegendManage.createUniqValueLegendScheme(x.size, ShapeTypes.Point)
+                ls = LegendManage.createUniqValueLegendScheme(x.size, ShapeTypes.POINT)
             else:
                 ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
@@ -1069,7 +1069,7 @@ class MapAxes(Axes):
             a = args[2]
             args = args[3:]
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
-        ls = ls.convertTo(ShapeTypes.Polyline)
+        ls = ls.convertTo(ShapeTypes.POLYLINE)
         plotutil.setlegendscheme(ls, **kwargs)
         smooth = kwargs.pop('smooth', True)
         if x.ndim == 2 and y.ndim == 2:
@@ -1128,7 +1128,7 @@ class MapAxes(Axes):
             a = args[2]
             args = args[3:]
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1305,7 +1305,7 @@ class MapAxes(Axes):
             x, y = np.meshgrid(x, y)  
             
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1368,7 +1368,7 @@ class MapAxes(Axes):
             args = args[3:]  
             
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         plotutil.setlegendscheme(ls, **kwargs)
 
         layer = DrawMeteoData.createGridFillLayer(x._array, y._array, a._array, ls, 'layer', 'data')
@@ -1458,7 +1458,7 @@ class MapAxes(Axes):
                 c = cmap.getColor(0)
             else:
                 c = Color.black
-            ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, c, 10)
+            ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
         ls = plotutil.setlegendscheme_arrow(ls, **kwargs)
         if not cdata is None:
             cdata = cdata._array
@@ -1549,7 +1549,7 @@ class MapAxes(Axes):
                 c = cmap.getColor(0)
             else:
                 c = Color.black
-            ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, c, 10)
+            ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
         ls = plotutil.setlegendscheme_point(ls, **kwargs)
         if not cdata is None:
             cdata = cdata._array
@@ -1601,7 +1601,7 @@ class MapAxes(Axes):
             y = args[1]
             u = args[2]
             v = args[3]
-        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline)
+        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE)
         #plotutil.setlegendscheme(ls, **kwargs)
         lb, isunique = plotutil.getlegendbreak('line', **kwargs)
         if not kwargs.has_key('headwidth'):
@@ -1644,7 +1644,7 @@ class MapAxes(Axes):
         surface = kwargs.pop('surface', True)
         color = kwargs.pop('color', 'b')
         color = plotutil.getcolor(color)
-        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, color, size)
+        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, color, size)
         layer = DrawMeteoData.createStationModelLayer(smdata, ls, 'stationmodel', surface)
         if not proj is None:
             layer.setProjInfo(proj)

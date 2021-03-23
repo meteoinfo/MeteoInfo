@@ -49,7 +49,7 @@ public class ImageShape extends PointShape {
     
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.Image;
+        return ShapeTypes.IMAGE;
     }
     
     /**

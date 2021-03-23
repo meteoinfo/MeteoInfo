@@ -434,14 +434,14 @@ public class GraphicCollection extends Graphic implements Iterator {
 
         for (Graphic aGraphic : this.graphics) {
             switch (aGraphic.getShape().getShapeType()) {
-                case Point:
+                case POINT:
                     PointShape aPS = (PointShape) aGraphic.getShape();
                     if (MIMath.pointInExtent(aPS.getPoint(), aExtent)) {
                         selectedGraphics.add(aGraphic);
                     }
                     break;
-                case Polyline:
-                case PolylineZ:
+                case POLYLINE:
+                case POLYLINE_Z:
                     PolylineShape aPLS = (PolylineShape) aGraphic.getShape();
                     if (MIMath.isExtentCross(aExtent, aPLS.getExtent())) {
                         for (j = 0; j < aPLS.getPoints().size(); j++) {
@@ -453,8 +453,8 @@ public class GraphicCollection extends Graphic implements Iterator {
                         }
                     }
                     break;
-                case Polygon:
-                case Rectangle:
+                case POLYGON:
+                case RECTANGLE:
                     PolygonShape aPGS = (PolygonShape) aGraphic.getShape();
                     if (!(aPGS.getPartNum() > 1)) {
                         if (GeoComputation.pointInPolygon((List<PointD>) aPGS.getPoints(), aPoint)) {
@@ -556,19 +556,19 @@ public class GraphicCollection extends Graphic implements Iterator {
             Shape shape = graphic.getShape();
             PointShape aPS = new PointShape();
             switch (shape.getShapeType()) {
-                case Point:
-                case PointM:
-                case PointZ:
+                case POINT:
+                case POINT_M:
+                case POINT_Z:
                     aPS.setPoint((PointD) ((PointShape) shape).getPoint().clone());
                     break;
-                case Polyline:
-                case PolylineM:
-                case PolylineZ:
+                case POLYLINE:
+                case POLYLINE_M:
+                case POLYLINE_Z:
                     int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
                     aPS.setPoint((PointD) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
                     break;
-                case Polygon:
-                case PolygonM:
+                case POLYGON:
+                case POLYGON_M:
                     Extent aExtent = shape.getExtent();
                     aPoint = new PointD();
                     aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);

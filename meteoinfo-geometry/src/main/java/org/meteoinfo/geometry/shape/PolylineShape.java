@@ -106,7 +106,7 @@ public class PolylineShape extends Shape implements Cloneable {
 
     @Override
     public ShapeTypes getShapeType() {
-        return ShapeTypes.Polyline;
+        return ShapeTypes.POLYLINE;
     }
 
     /**

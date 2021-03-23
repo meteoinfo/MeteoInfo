@@ -23,18 +23,20 @@ class MILayer(object):
     Map layer
     
     :param layer: (*MapLayer*) MapLayer object.
-    :param shapetype: (*ShapeTypes*) Shape type ['point' | 'line' | 'polygon']
+    :param shapetype: (*ShapeTypes*) Shape type ['point' | 'point_z' | 'line' | 'line_z' | 'polygon'
+        | 'polygon_z']
     '''
     def __init__(self, layer=None, shapetype=None):
         if layer is None:
             if shapetype is None:
-                print 'shapetype must be specified!'
-            else:                
-                type = ShapeTypes.Point
-                if shapetype == 'line':
-                    type = ShapeTypes.Polyline
-                elif shapetype == 'polygon':
-                    type = ShapeTypes.Polygon
+                print('shapetype must be specified!')
+            else:
+                shapetype = shapetype.upper()
+                try:
+                    type = ShapeTypes.valueOf(shapetype)
+                except:
+                    print('shapetype is not valid: {}'.foramt(shapetype))
+                    type = ShapeTypes.POINT
                 self.layer = VectorLayer(type)
                 self.shapetype = type
                 self.proj = KnownCoordinateSystems.geographic.world.WGS1984
@@ -225,9 +227,9 @@ class MILayer(object):
         :param m: (*array_like*) Optional, M coordinates of the shape points.
         '''
         type = 'point'
-        if self.shapetype == ShapeTypes.Polyline:
+        if self.shapetype == ShapeTypes.POLYLINE:
             type = 'line'
-        elif self.shapetype == ShapeTypes.Polygon:
+        elif self.shapetype == ShapeTypes.POLYGON:
             type = 'polygon'
         shapes = geoutil.makeshapes(x, y, type, z, m)
         if len(shapes) == 1:

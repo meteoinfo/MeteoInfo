@@ -349,7 +349,7 @@ class Axes3DGL(Axes3D):
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
-                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, c, 1)
+                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, c, 1)
             ls = plotutil.setlegendscheme_line(ls, **kwargs)
 
         if not kwargs.has_key('headwidth'):
@@ -450,7 +450,7 @@ class Axes3DGL(Axes3D):
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
-                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, c, 1)
+                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, c, 1)
             ls = plotutil.setlegendscheme_line(ls, **kwargs)
 
         if not kwargs.has_key('headwidth'):
@@ -631,7 +631,7 @@ class Axes3DGL(Axes3D):
                 ls = LegendManage.createLegendScheme(data.min(), data.max(), level_arg, cmap)
         else:
             ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         facecolor = kwargs.pop('facecolor', None)
         face_interp = None
         if not facecolor is None:
@@ -639,7 +639,7 @@ class Axes3DGL(Axes3D):
             if not face_interp:
                 if not facecolor in ['flat','texturemap','none']:
                     facecolor = plotutil.getcolor(facecolor)
-                    ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polygon, facecolor, 1)
+                    ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, facecolor, 1)
         plotutil.setlegendscheme(ls, **kwargs)
 
         xslice = kwargs.pop('xslice', [])
@@ -711,7 +711,7 @@ class Axes3DGL(Axes3D):
                 ls = LegendManage.createLegendScheme(data.min(), data.max(), level_arg, cmap)
         else:
             ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         edge = kwargs.pop('edge', True)
         kwargs['edge'] = edge
         plotutil.setlegendscheme(ls, **kwargs)
@@ -775,7 +775,7 @@ class Axes3DGL(Axes3D):
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
             else:
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
-        ls = ls.convertTo(ShapeTypes.Polygon, True)
+        ls = ls.convertTo(ShapeTypes.POLYGON, True)
         face_interp = None
         if kwargs.has_key('facecolor'):
             facecolor = kwargs.pop('facecolor', None)
@@ -847,7 +847,7 @@ class Axes3DGL(Axes3D):
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
             else:
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         facecolor = kwargs.pop('facecolor', None)
         face_interp = None
         if not facecolor is None:
@@ -855,7 +855,7 @@ class Axes3DGL(Axes3D):
             if not face_interp:
                 if not facecolor in ['flat','texturemap','none']:
                     facecolor = plotutil.getcolor(facecolor)
-                    ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polygon, facecolor, 1)
+                    ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, facecolor, 1)
         plotutil.setlegendscheme(ls, **kwargs)
         graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), ls)
         if face_interp:
@@ -911,7 +911,7 @@ class Axes3DGL(Axes3D):
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
             else:
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         facecolor = kwargs.pop('facecolor', None)
         face_interp = None
         if not facecolor is None:
@@ -969,7 +969,7 @@ class Axes3DGL(Axes3D):
                     ls = LegendManage.createLegendScheme(data.min(), data.max(), level_arg, cmap)
             else:
                 ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
-            ls = ls.convertTo(ShapeTypes.Polygon)
+            ls = ls.convertTo(ShapeTypes.POLYGON)
             edge = kwargs.pop('edge', True)
             kwargs['edge'] = edge
             plotutil.setlegendscheme(ls, **kwargs)
@@ -1031,7 +1031,7 @@ class Axes3DGL(Axes3D):
                     ls = LegendManage.createLegendScheme(data.min(), data.max(), level_arg, cmap)
             else:
                 ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
-            ls = ls.convertTo(ShapeTypes.Polygon)
+            ls = ls.convertTo(ShapeTypes.POLYGON)
             edge = kwargs.pop('edge', True)
             kwargs['edge'] = edge
             plotutil.setlegendscheme(ls, **kwargs)

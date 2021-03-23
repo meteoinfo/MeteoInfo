@@ -19,7 +19,7 @@ import org.meteoinfo.geometry.geoprocess.GeoComputation;
 public class PolygonZShape extends PolygonShape {
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.PolygonZ;
+        return ShapeTypes.POLYGON_Z;
     }
     
     /**

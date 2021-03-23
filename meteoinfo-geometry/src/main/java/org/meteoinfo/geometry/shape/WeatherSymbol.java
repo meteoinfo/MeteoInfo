@@ -41,7 +41,7 @@ public class WeatherSymbol extends PointShape {
     // <editor-fold desc="Get Set Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.WeatherSymbol;
+        return ShapeTypes.WEATHER_SYMBOL;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

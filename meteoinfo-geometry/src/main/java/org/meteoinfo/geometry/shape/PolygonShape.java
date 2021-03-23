@@ -147,7 +147,7 @@ public class PolygonShape extends Shape implements Cloneable {
     
     @Override
     public ShapeTypes getShapeType() {
-        return ShapeTypes.Polygon;
+        return ShapeTypes.POLYGON;
     }
 
     /**

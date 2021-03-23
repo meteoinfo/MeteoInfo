@@ -49,7 +49,7 @@ public class WindBarb extends PointShape {
     // <editor-fold desc="Get Set Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.WindBarb;
+        return ShapeTypes.WIND_BARB;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

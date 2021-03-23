@@ -129,7 +129,7 @@ public class BarShape extends PointShape {
     // <editor-fold desc="Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.Bar;
+        return ShapeTypes.BAR;
     }
     // </editor-fold>
 }

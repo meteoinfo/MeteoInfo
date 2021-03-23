@@ -33,7 +33,7 @@ public class CurvePolygonShape extends PolygonShape {
     // <editor-fold desc="Get Set Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.CurvePolygon;
+        return ShapeTypes.CURVE_POLYGON;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

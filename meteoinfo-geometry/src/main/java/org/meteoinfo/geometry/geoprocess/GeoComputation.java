@@ -868,16 +868,16 @@ public class GeoComputation {
      */
     public static Shape clipShape(Shape aShape, Object clipObj) {
         switch (aShape.getShapeType()) {
-            case Point:
-            case WeatherSymbol:
-            case WindArraw:
-            case WindBarb:
-            case StationModel:
+            case POINT:
+            case WEATHER_SYMBOL:
+            case WIND_ARROW:
+            case WIND_BARB:
+            case STATION_MODEL:
                 return clipPointShape((PointShape) aShape, clipObj);
-            case Polyline:
+            case POLYLINE:
                 return clipPolylineShape((PolylineShape) aShape, clipObj);
-            case Polygon:
-            case PolygonM:
+            case POLYGON:
+            case POLYGON_M:
                 return clipPolygonShape((PolygonShape) aShape, clipObj);
             default:
                 return null;

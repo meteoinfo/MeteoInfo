@@ -61,7 +61,7 @@ public class StationModelShape extends PointShape {
     // <editor-fold desc="Get Set Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.StationModel;
+        return ShapeTypes.STATION_MODEL;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

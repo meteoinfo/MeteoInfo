@@ -61,7 +61,7 @@ package org.meteoinfo.geometry.legend;
       * Constructor
       */
      public LegendScheme(){
-         this.shapeType = ShapeTypes.Image;
+         this.shapeType = ShapeTypes.IMAGE;
          legendBreaks = new ArrayList<>();
      }
 
@@ -87,13 +87,13 @@ package org.meteoinfo.geometry.legend;
          ColorBreak cb;
          for (int i = 0; i < n; i++) {
              switch (aShapeType) {
-                 case Point:
+                 case POINT:
                      legendBreaks.add(cb = new PointBreak());
                      break;
-                 case Polyline:
+                 case POLYLINE:
                      legendBreaks.add(cb = new PolylineBreak());
                      break;
-                 case Polygon:
+                 case POLYGON:
                      legendBreaks.add(cb = new PolygonBreak());
                      break;
                  default:
@@ -113,16 +113,16 @@ package org.meteoinfo.geometry.legend;
          ColorBreak lb = lbs.get(0);
          switch (lb.getBreakType()){
              case PointBreak:
-                 this.shapeType = ShapeTypes.Point;
+                 this.shapeType = ShapeTypes.POINT;
                  break;
              case PolylineBreak:
-                 this.shapeType = ShapeTypes.Polyline;
+                 this.shapeType = ShapeTypes.POLYLINE;
                  break;
              case PolygonBreak:
-                 this.shapeType = ShapeTypes.Polygon;
+                 this.shapeType = ShapeTypes.POLYGON;
                  break;
              default:
-                 this.shapeType = ShapeTypes.Image;
+                 this.shapeType = ShapeTypes.IMAGE;
                  break;
          }
          if (lbs.size() == 1)
@@ -209,19 +209,19 @@ package org.meteoinfo.geometry.legend;
      public BreakTypes getBreakType() {
          BreakTypes breakType = BreakTypes.ColorBreak;
          switch (this.shapeType) {
-             case Point:
-             case PointM:
-             case PointZ:
+             case POINT:
+             case POINT_M:
+             case POINT_Z:
                  breakType = BreakTypes.PointBreak;
                  break;
-             case Polyline:
-             case PolylineM:
-             case PolylineZ:
+             case POLYLINE:
+             case POLYLINE_M:
+             case POLYLINE_Z:
                  breakType = BreakTypes.PolylineBreak;
                  break;
-             case Polygon:
-             case PolygonM:
-             case PolygonZ:
+             case POLYGON:
+             case POLYGON_M:
+             case POLYGON_Z:
                  breakType = BreakTypes.PolygonBreak;
                  break;
          }
@@ -630,7 +630,7 @@ package org.meteoinfo.geometry.legend;
          ls.undef = this.undef;
          for (ColorBreak cb : this.legendBreaks){
              switch(shapeType){
-                 case Point:
+                 case POINT:
                      PointBreak pb = new PointBreak();
                      pb.setColor(cb.getColor());
                      pb.setStartValue(cb.getStartValue());
@@ -641,7 +641,7 @@ package org.meteoinfo.geometry.legend;
                      pb.setTag(cb.getTag());
                      ls.legendBreaks.add(pb);
                      break;
-                 case Polyline:
+                 case POLYLINE:
                      PolylineBreak plb = new PolylineBreak();
                      plb.setColor(cb.getColor());
                      plb.setStartValue(cb.getStartValue());
@@ -652,7 +652,7 @@ package org.meteoinfo.geometry.legend;
                      plb.setTag(cb.getTag());
                      ls.legendBreaks.add(plb);
                      break;
-                 case Polygon:
+                 case POLYGON:
                      PolygonBreak pgb = new PolygonBreak();
                      pgb.setColor(cb.getColor());
                      //System.out.println(pgb.getColor().getAlpha());
@@ -665,7 +665,7 @@ package org.meteoinfo.geometry.legend;
                      pgb.setTag(cb.getTag());
                      ls.legendBreaks.add(pgb);
                      break;
-                 case Image:
+                 case IMAGE:
                      ColorBreak ncb = new ColorBreak();
                      ncb.setColor(cb.getColor());
                      ncb.setStartValue(cb.getStartValue());
@@ -702,7 +702,7 @@ package org.meteoinfo.geometry.legend;
          ls.undef = this.undef;
          for (ColorBreak cb : this.legendBreaks){
              switch(shapeType){
-                 case Point:
+                 case POINT:
                      PointBreak pb = new PointBreak();
                      if (edgeColor)
                          pb.setOutlineColor(cb.getColor());
@@ -716,7 +716,7 @@ package org.meteoinfo.geometry.legend;
                      pb.setTag(cb.getTag());
                      ls.legendBreaks.add(pb);
                      break;
-                 case Polyline:
+                 case POLYLINE:
                      PolylineBreak plb = new PolylineBreak();
                      plb.setColor(cb.getColor());
                      plb.setStartValue(cb.getStartValue());
@@ -727,7 +727,7 @@ package org.meteoinfo.geometry.legend;
                      plb.setTag(cb.getTag());
                      ls.legendBreaks.add(plb);
                      break;
-                 case Polygon:
+                 case POLYGON:
                      PolygonBreak pgb = new PolygonBreak();
                      if (edgeColor)
                          pgb.setOutlineColor(cb.getColor());
@@ -742,15 +742,15 @@ package org.meteoinfo.geometry.legend;
                      pgb.setTag(cb.getTag());
                      ls.legendBreaks.add(pgb);
                      break;
-                 case Image:
+                 case IMAGE:
                      ColorBreak ncb = new ColorBreak();
                      ncb.setColor(cb.getColor());
                      switch (this.shapeType) {
-                         case Point:
+                         case POINT:
                              if (edgeColor)
                                  ncb.setColor(((PointBreak)cb).getOutlineColor());
                              break;
-                         case Polygon:
+                         case POLYGON:
                              if (edgeColor)
                                  ncb.setColor(((PolygonBreak)cb).getOutlineColor());
                              break;
@@ -773,7 +773,7 @@ package org.meteoinfo.geometry.legend;
       * Convert point legend to arrow legend
       */
      public void asArrow() {
-         if (this.getShapeType() != ShapeTypes.Point)
+         if (this.getShapeType() != ShapeTypes.POINT)
              return;
 
          if (this.legendBreaks.get(0) instanceof ArrowBreak) {
@@ -834,8 +834,8 @@ package org.meteoinfo.geometry.legend;
          Attr drawFill;
          Attr tagAttr;
          switch (this.shapeType) {
-             case Point:
-             case PointZ:
+             case POINT:
+             case POINT_Z:
                  Attr isNoData;
                  for (ColorBreak aCB : this.legendBreaks) {
                      PointBreak aPB = (PointBreak) aCB;
@@ -900,8 +900,8 @@ package org.meteoinfo.geometry.legend;
                      breaks.appendChild(brk);
                  }
                  break;
-             case Polyline:
-             case PolylineZ:
+             case POLYLINE:
+             case POLYLINE_Z:
                  for (ColorBreak aCB : this.legendBreaks) {
                      PolylineBreak aPLB = (PolylineBreak) aCB;
                      brk = doc.createElement("Break");
@@ -956,9 +956,9 @@ package org.meteoinfo.geometry.legend;
                      breaks.appendChild(brk);
                  }
                  break;
-             case Polygon:
-             case PolygonM:
-             case PolygonZ:
+             case POLYGON:
+             case POLYGON_M:
+             case POLYGON_Z:
                  for (ColorBreak aCB : this.legendBreaks) {
                      PolygonBreak aPGB = (PolygonBreak) aCB;
                      brk = doc.createElement("Break");
@@ -1007,7 +1007,7 @@ package org.meteoinfo.geometry.legend;
                      breaks.appendChild(brk);
                  }
                  break;
-             case Image:
+             case IMAGE:
                  for (ColorBreak aCB : this.legendBreaks) {
                      brk = doc.createElement("Break");
                      caption = doc.createAttribute("Caption");
@@ -1121,7 +1121,7 @@ package org.meteoinfo.geometry.legend;
          NodeList breaks = ((Element)breaksNode).getElementsByTagName("Break");
          if (sameShapeType) {
              switch (shapeType) {
-                 case Point:
+                 case POINT:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          PointBreak aPB = new PointBreak();
@@ -1152,8 +1152,8 @@ package org.meteoinfo.geometry.legend;
                          }
                      }
                      break;
-                 case Polyline:
-                 case PolylineZ:
+                 case POLYLINE:
+                 case POLYLINE_Z:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          PolylineBreak aPLB = new PolylineBreak();
@@ -1183,9 +1183,9 @@ package org.meteoinfo.geometry.legend;
                          }
                      }
                      break;
-                 case Polygon:
-                 case PolygonM:
-                 case PolygonZ:
+                 case POLYGON:
+                 case POLYGON_M:
+                 case POLYGON_Z:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          PolygonBreak aPGB = new PolygonBreak();
@@ -1210,7 +1210,7 @@ package org.meteoinfo.geometry.legend;
                          }
                      }
                      break;
-                 case Image:
+                 case IMAGE:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          ColorBreak aCB = new ColorBreak();
@@ -1230,7 +1230,7 @@ package org.meteoinfo.geometry.legend;
              }
          } else {
              switch (shapeType) {
-                 case Point:
+                 case POINT:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          PointBreak aPB = new PointBreak();
@@ -1247,8 +1247,8 @@ package org.meteoinfo.geometry.legend;
                          }
                      }
                      break;
-                 case Polyline:
-                 case PolylineZ:
+                 case POLYLINE:
+                 case POLYLINE_Z:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          PolylineBreak aPLB = new PolylineBreak();
@@ -1267,7 +1267,7 @@ package org.meteoinfo.geometry.legend;
                          }
                      }
                      break;
-                 case Polygon:
+                 case POLYGON:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          PolygonBreak aPGB = new PolygonBreak();
@@ -1288,7 +1288,7 @@ package org.meteoinfo.geometry.legend;
                      }
 
                      break;
-                 case Image:
+                 case IMAGE:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          ColorBreak aCB = new ColorBreak();
@@ -1356,7 +1356,7 @@ package org.meteoinfo.geometry.legend;
          try {
              File aFile = new File(filePath);
              sr = new BufferedReader(new FileReader(aFile));
-             this.shapeType = ShapeTypes.Image;
+             this.shapeType = ShapeTypes.IMAGE;
              this.legendType = LegendType.UniqueValue;
              this.legendBreaks = new ArrayList<>();
              ColorBreak aCB;
@@ -1403,7 +1403,7 @@ package org.meteoinfo.geometry.legend;
          try {
              File aFile = new File(filePath);
              sr = new BufferedReader(new FileReader(aFile));
-             this.shapeType = ShapeTypes.Image;
+             this.shapeType = ShapeTypes.IMAGE;
              this.legendType = LegendType.GraduatedColor;
              this.legendBreaks = new ArrayList<>();
              List<Color> colorList = new ArrayList<>();

@@ -33,7 +33,7 @@ public class EllipseShape extends PolygonShape {
     // <editor-fold desc="Get Set Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.Ellipse;
+        return ShapeTypes.ELLIPSE;
     }
     
     /**

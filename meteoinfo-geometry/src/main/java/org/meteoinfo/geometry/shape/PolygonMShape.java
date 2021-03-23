@@ -44,7 +44,7 @@ public class PolygonMShape extends PolygonShape{
     // <editor-fold desc="Get Set Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.PolygonM;
+        return ShapeTypes.POLYGON_M;
     }
     
     /**

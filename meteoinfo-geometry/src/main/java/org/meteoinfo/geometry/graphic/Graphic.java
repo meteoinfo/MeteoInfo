@@ -167,7 +167,7 @@ package org.meteoinfo.geometry.graphic;
      private void updateResizeAbility() {
          if (_shape != null && _legend != null) {
              switch (_shape.getShapeType()) {
-                 case Point:
+                 case POINT:
                      switch (_legend.getBreakType()) {
                          case PointBreak:
                              _resizeAbility = ResizeAbility.SameWidthHeight;
@@ -178,7 +178,7 @@ package org.meteoinfo.geometry.graphic;
                              break;
                      }
                      break;
-                 case Circle:
+                 case CIRCLE:
                      _resizeAbility = ResizeAbility.SameWidthHeight;
                      break;
                  default:
@@ -198,9 +198,9 @@ package org.meteoinfo.geometry.graphic;
      public void verticeMoveUpdate(int vIdx, double newX, double newY) {
          List<PointD> points = (List<PointD>)_shape.getPoints();
          switch (_shape.getShapeType()){
-             case Polygon:
-             case CurvePolygon:
-             case Rectangle:
+             case POLYGON:
+             case CURVE_POLYGON:
+             case RECTANGLE:
                  int last = points.size() - 1;
                  if (vIdx == 0) {
                      if (points.get(0).X == points.get(last).X && points.get(0).Y == points.get(last).Y) {
@@ -267,7 +267,7 @@ package org.meteoinfo.geometry.graphic;
       */
      protected void addShape(Document doc, Element parent, Shape aShape) {
          Element shape = doc.createElement("Shape");
-         boolean hasAngle = aShape.getShapeType() == ShapeTypes.Ellipse;
+         boolean hasAngle = aShape.getShapeType() == ShapeTypes.ELLIPSE;
 
          //Add general attribute
          Attr shapeType = doc.createAttribute("ShapeType");
@@ -522,36 +522,36 @@ package org.meteoinfo.geometry.graphic;
          try {
              ShapeTypes shapeType = ShapeTypes.valueOf(shapeNode.getAttributes().getNamedItem("ShapeType").getNodeValue());
              switch (shapeType) {
-                 case Point:
+                 case POINT:
                      aShape = new PointShape();
                      break;
-                 case WindArraw:
+                 case WIND_ARROW:
                      aShape = new WindArrow();
                      break;
-                 case Polyline:
+                 case POLYLINE:
                      aShape = new PolylineShape();
                      break;
-                 case CurveLine:
+                 case CURVE_LINE:
                      aShape = new CurveLineShape();
                      break;
-                 case Circle:
+                 case CIRCLE:
                      aShape = new CircleShape();
                      break;
-                 case Polygon:
-                 case Rectangle:
+                 case POLYGON:
+                 case RECTANGLE:
                      aShape = new PolygonShape();
                      break;
-                 case CurvePolygon:
+                 case CURVE_POLYGON:
                      aShape = new CurvePolygonShape();
                      break;
-                 case Ellipse:
+                 case ELLIPSE:
                      aShape = new EllipseShape();
                      break;
              }
 
              aShape.setVisible(Boolean.parseBoolean(shapeNode.getAttributes().getNamedItem("Visible").getNodeValue()));
              aShape.setSelected(Boolean.parseBoolean(shapeNode.getAttributes().getNamedItem("Selected").getNodeValue()));
-             if (aShape.getShapeType() == ShapeTypes.Ellipse){
+             if (aShape.getShapeType() == ShapeTypes.ELLIPSE){
                  Node angleNode = shapeNode.getAttributes().getNamedItem("Angle");
                  if (angleNode != null)
                      ((EllipseShape)aShape).setAngle(Float.parseFloat(angleNode.getNodeValue()));

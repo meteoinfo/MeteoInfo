@@ -21,27 +21,27 @@ package org.meteoinfo.geometry.shape;
  */
 public enum ShapeTypes {
 
-    Point(1),
-    Polyline(3),
-    Polygon(5),
-    PointZ(11),
-    PolylineZ(13),
-    PolygonZ(15),
-    PointM(21),
-    PolylineM(23),
-    PolygonM(25),
-    WindArraw(41),
-    WindBarb(42),
-    WeatherSymbol(43),
-    StationModel(44),
-    Image(99),
-    Rectangle(51),
-    CurveLine(52),
-    CurvePolygon(53),
-    Ellipse(54),
-    Circle(55),
-    Bar(56),
-    PolylineError(57),
+    POINT(1),
+    POLYLINE(3),
+    POLYGON(5),
+    POINT_Z(11),
+    POLYLINE_Z(13),
+    POLYGON_Z(15),
+    POINT_M(21),
+    POLYLINE_M(23),
+    POLYGON_M(25),
+    WIND_ARROW(41),
+    WIND_BARB(42),
+    WEATHER_SYMBOL(43),
+    STATION_MODEL(44),
+    IMAGE(99),
+    RECTANGLE(51),
+    CURVE_LINE(52),
+    CURVE_POLYGON(53),
+    ELLIPSE(54),
+    CIRCLE(55),
+    BAR(56),
+    POLYLINE_ERROR(57),
     ARC(58),
     TEXT(59),
     TEXTURE(60),
@@ -76,43 +76,43 @@ public enum ShapeTypes {
 //        }
         switch(ordinal){
             case 1:
-                return ShapeTypes.Point;
+                return ShapeTypes.POINT;
             case 3:
-                return ShapeTypes.Polyline;
+                return ShapeTypes.POLYLINE;
             case 5:
-                return ShapeTypes.Polygon;
+                return ShapeTypes.POLYGON;
             case 11:
-                return ShapeTypes.PointZ;
+                return ShapeTypes.POINT_Z;
             case 13:;
-                return ShapeTypes.PolylineZ;
+                return ShapeTypes.POLYLINE_Z;
             case 15:
-                return ShapeTypes.PolygonZ;
+                return ShapeTypes.POLYGON_Z;
             case 21:
-                return ShapeTypes.PointM;
+                return ShapeTypes.POINT_M;
             case 23:
-                return ShapeTypes.PolylineM;
+                return ShapeTypes.POLYLINE_M;
             case 25:
-                return ShapeTypes.PolygonM;
+                return ShapeTypes.POLYGON_M;
             case 41:
-                return ShapeTypes.WindArraw;
+                return ShapeTypes.WIND_ARROW;
             case 42:
-                return ShapeTypes.WindBarb;
+                return ShapeTypes.WIND_BARB;
             case 43:
-                return ShapeTypes.WeatherSymbol;
+                return ShapeTypes.WEATHER_SYMBOL;
             case 44:
-                return ShapeTypes.StationModel;
+                return ShapeTypes.STATION_MODEL;
             case 51:
-                return ShapeTypes.Rectangle;
+                return ShapeTypes.RECTANGLE;
             case 52:
-                return ShapeTypes.CurveLine;
+                return ShapeTypes.CURVE_LINE;
             case 53:
-                return ShapeTypes.CurvePolygon;
+                return ShapeTypes.CURVE_POLYGON;
             case 54:
-                return ShapeTypes.Ellipse;
+                return ShapeTypes.ELLIPSE;
             case 55:
-                return ShapeTypes.Circle;
+                return ShapeTypes.CIRCLE;
             case 99:
-                return ShapeTypes.Image;
+                return ShapeTypes.IMAGE;
             default:
                 throw new IndexOutOfBoundsException("Invalid ordinal");
         }
@@ -124,13 +124,13 @@ public enum ShapeTypes {
      */
     public boolean isPoint(){
         switch(this){
-            case Point:
-            case PointM:
-            case PointZ:
-            case WindArraw:
-            case WindBarb:
-            case WeatherSymbol:
-            case StationModel:
+            case POINT:
+            case POINT_M:
+            case POINT_Z:
+            case WIND_ARROW:
+            case WIND_BARB:
+            case WEATHER_SYMBOL:
+            case STATION_MODEL:
                 return true;                
         }
         return false;
@@ -142,10 +142,10 @@ public enum ShapeTypes {
      */
     public boolean isLine(){
         switch(this){
-            case Polyline:
-            case PolylineZ:
-            case PolylineM:
-            case CurveLine:            
+            case POLYLINE:
+            case POLYGON_Z:
+            case POLYLINE_M:
+            case CURVE_LINE:
                 return true;
         }
         return false;
@@ -157,13 +157,13 @@ public enum ShapeTypes {
      */
     public boolean isPolygon(){
         switch(this){
-            case Polygon:
-            case PolygonM:
-            case PolygonZ:
-            case Rectangle:
-            case CurvePolygon:
-            case Ellipse:
-            case Circle:
+            case POLYGON:
+            case POLYGON_M:
+            case POLYGON_Z:
+            case RECTANGLE:
+            case CURVE_POLYGON:
+            case ELLIPSE:
+            case CIRCLE:
                 return true;
         }
         return false;
@@ -195,9 +195,9 @@ public enum ShapeTypes {
      */
     public boolean isZ() {
         switch (this) {
-            case PointZ:
-            case PolylineZ:
-            case PolygonZ:
+            case POINT_Z:
+            case POLYLINE_Z:
+            case POLYGON_Z:
                 return true;
         }
         return false;

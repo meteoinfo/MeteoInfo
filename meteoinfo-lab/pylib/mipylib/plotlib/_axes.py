@@ -2116,7 +2116,7 @@ class Axes(object):
                     ls = LegendManage.createLegendScheme(a.min(), a.max(), level_arg, cmap)
             else:    
                 ls = LegendManage.createLegendScheme(a.min(), a.max(), cmap)
-            ls = ls.convertTo(ShapeTypes.Polyline)
+            ls = ls.convertTo(ShapeTypes.POLYLINE)
             plotutil.setlegendscheme(ls, **kwargs)
         
         smooth = kwargs.pop('smooth', True)
@@ -2155,7 +2155,7 @@ class Axes(object):
         if isinstance(layer, MILayer):
             gc = layer.layer   
         dynamic = kwargs.pop('dynamic', True)
-        if gc.getShapeType() != ShapeTypes.Polyline:
+        if gc.getShapeType() != ShapeTypes.POLYLINE:
             dynamic = False
         drawshadow = kwargs.pop('drawshadow', dynamic)    
         labelset = gc.getLabelSet()
@@ -2249,7 +2249,7 @@ class Axes(object):
                     ls = LegendManage.createLegendScheme(a.min(), a.max(), level_arg, cmap)
             else:    
                 ls = LegendManage.createLegendScheme(a.min(), a.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
@@ -2345,7 +2345,7 @@ class Axes(object):
                         ls = LegendManage.createImageLegend(gdata, level_arg, cmap)
                 else:
                     ls = plotutil.getlegendscheme(args, gdata.min(), gdata.max(), **kwargs)
-                ls = ls.convertTo(ShapeTypes.Image)
+                ls = ls.convertTo(ShapeTypes.IMAGE)
                 plotutil.setlegendscheme(ls, **kwargs)
                 
             igraphic = GraphicFactory.createImage(gdata, ls, extent)
@@ -2397,7 +2397,7 @@ class Axes(object):
         if a.ndim == 2 and x.ndim == 1:            
             x, y = np.meshgrid(x, y)            
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
@@ -2441,7 +2441,7 @@ class Axes(object):
             args = args[3:]
             
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
-        ls = ls.convertTo(ShapeTypes.Polygon)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         plotutil.setlegendscheme(ls, **kwargs)
         graphics = GraphicFactory.createGridPolygons(x.asarray(), y.asarray(), a.asarray(), ls)            
         visible = kwargs.pop('visible', True)
@@ -3184,7 +3184,7 @@ class Axes(object):
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
-                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, c, 10)
+                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
         
         if not cdata is None:
@@ -3283,7 +3283,7 @@ class Axes(object):
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
-                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, c, 10)
+                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
             ls = plotutil.setlegendscheme_arrow(ls, **kwargs)
         
         if not cdata is None:

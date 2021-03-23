@@ -56,7 +56,7 @@ public class RectangleShape extends PolygonShape {
     // <editor-fold desc="Get Set Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.Rectangle;
+        return ShapeTypes.RECTANGLE;
     }
     
     /**

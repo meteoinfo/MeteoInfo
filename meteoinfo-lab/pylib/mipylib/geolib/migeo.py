@@ -126,7 +126,8 @@ def maplayer(shapetype='polygon'):
     '''
     Create a new map layer.
     
-    :param shapetype: (*string*) Shape type of the layer. ['point' | 'line' | 'polygon'].
+    :param shapetype: (*ShapeTypes*) Shape type ['point' | 'point_z' | 'line' | 'line_z' | 'polygon'
+        | 'polygon_z']
     
     :returns: (*MILayer*) MILayer object.
     '''

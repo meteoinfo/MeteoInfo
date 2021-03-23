@@ -61,8 +61,8 @@ public class FrmLegendBreaks extends javax.swing.JDialog {
                 aCB = _legendScheme.getLegendBreaks().get(bnum - 1);
                 endValue = Double.parseDouble(aCB.getStartValue().toString());
                 switch (_legendScheme.getShapeType()) {
-                    case Polyline:
-                    case PolylineZ:
+                    case POLYLINE:
+                    case POLYLINE_Z:
                         _interval = BigDecimalUtil.div((BigDecimalUtil.sub(endValue, startValue)), (bnum - 1));
                         break;
                     default:
@@ -411,7 +411,7 @@ public class FrmLegendBreaks extends javax.swing.JDialog {
         // TODO add your handling code here:
         int colorNum = _legendScheme.getBreakNum();
 
-        if (_legendScheme.getShapeType() == ShapeTypes.Polyline) {
+        if (_legendScheme.getShapeType() == ShapeTypes.POLYLINE) {
             colorNum += 1;
         }
 

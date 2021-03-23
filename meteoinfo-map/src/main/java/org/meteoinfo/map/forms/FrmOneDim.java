@@ -497,7 +497,7 @@ public class FrmOneDim extends javax.swing.JFrame {
                     }
                 }
                 if (ls == null) {
-                    ls = LegendManage.createUniqValueLegendScheme(ldataset.getSeriesCount(), ShapeTypes.Polyline);
+                    ls = LegendManage.createUniqValueLegendScheme(ldataset.getSeriesCount(), ShapeTypes.POLYLINE);
                     for (ColorBreak cb : ls.getLegendBreaks()) {
                         PolylineBreak plb = (PolylineBreak) cb;
                         plb.setDrawSymbol(true);
@@ -610,7 +610,7 @@ public class FrmOneDim extends javax.swing.JFrame {
                     if (_plotDimension == PlotDimension.Time) {
                         isTime = true;
                     }
-                    ls = LegendManage.createUniqValueLegendScheme(dataset.getSeriesCount(), ShapeTypes.Polyline);
+                    ls = LegendManage.createUniqValueLegendScheme(dataset.getSeriesCount(), ShapeTypes.POLYLINE);
                     for (ColorBreak cb : ls.getLegendBreaks()) {
                         PolylineBreak plb = (PolylineBreak) cb;
                         plb.setDrawSymbol(true);
@@ -698,7 +698,7 @@ public class FrmOneDim extends javax.swing.JFrame {
         if (_plotDimension == PlotDimension.Time) {
             isTime = true;
         }
-        LegendScheme ls = LegendManage.createUniqValueLegendScheme(dataset.getSeriesCount(), ShapeTypes.Polyline);
+        LegendScheme ls = LegendManage.createUniqValueLegendScheme(dataset.getSeriesCount(), ShapeTypes.POLYLINE);
         for (ColorBreak cb : ls.getLegendBreaks()) {
             PolylineBreak plb = (PolylineBreak) cb;
             plb.setDrawSymbol(true);

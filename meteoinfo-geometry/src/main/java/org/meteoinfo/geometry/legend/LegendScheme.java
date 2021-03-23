@@ -1100,7 +1100,7 @@ package org.meteoinfo.geometry.legend;
              fieldName = LSNode.getAttributes().getNamedItem("FieldName").getNodeValue();
          }
          legendType = LegendType.valueOf(LSNode.getAttributes().getNamedItem("LegendType").getNodeValue());
-         ShapeTypes aShapeType = ShapeTypes.valueOf(LSNode.getAttributes().getNamedItem("ShapeType").getNodeValue());
+         ShapeTypes aShapeType = ShapeTypes.valueOfBack(LSNode.getAttributes().getNamedItem("ShapeType").getNodeValue());
 
          //BreakNum = Convert.ToInt32(LSNode.Attributes["BreakNum"].InnerText);
          hasNoData = Boolean.parseBoolean(LSNode.getAttributes().getNamedItem("HasNoData").getNodeValue());

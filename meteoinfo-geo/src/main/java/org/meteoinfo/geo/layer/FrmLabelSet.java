@@ -507,7 +507,7 @@ public class FrmLabelSet extends javax.swing.JDialog {
 
         //Set contour dynamic label
         this.jCheckBox_ContourDynamic.setSelected(labelSet.isDynamicContourLabel());
-        if (_layer.getShapeType() == ShapeTypes.Polyline) {
+        if (_layer.getShapeType() == ShapeTypes.POLYLINE) {
             this.jCheckBox_ContourDynamic.setEnabled(true);
         } else {
             this.jCheckBox_ContourDynamic.setEnabled(false);

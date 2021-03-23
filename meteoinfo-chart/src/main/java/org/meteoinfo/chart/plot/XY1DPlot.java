@@ -843,7 +843,7 @@ public class XY1DPlot extends AbstractPlot2D {
 //                ls.getLegendBreaks().addAll(Arrays.asList(this.polygonBreaks));
 //                break;
 //        }
-        ShapeTypes stype = ShapeTypes.Polyline;
+        ShapeTypes stype = ShapeTypes.POLYLINE;
         LegendScheme ls = new LegendScheme(stype);
         for (SeriesLegend slegend : this.seriesLegends) {
             ls.getLegendBreaks().add(slegend.getLegendBreak());

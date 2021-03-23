@@ -747,25 +747,25 @@ public class Plot3D extends Plot {
     private void drawGrahic(Graphics2D g, Graphic graphic) {
         Shape shape = graphic.getGraphicN(0).getShape();
         switch (shape.getShapeType()) {
-            case Point:
-            case PointZ:
+            case POINT:
+            case POINT_Z:
                 this.drawPoint(g, graphic);
                 break;
             case TEXT:
                 this.drawText((ChartText3D) shape, g);
                 break;
-            case Polyline:
-            case PolylineZ:
+            case POLYLINE:
+            case POLYLINE_Z:
                 this.drawLineString(g, graphic);
                 break;
-            case Polygon:
-            case PolygonZ:
+            case POLYGON:
+            case POLYGON_Z:
                 this.drawPolygonShape(g, graphic);
                 break;
-            case WindArraw:
+            case WIND_ARROW:
                 this.drawWindArrow(g, graphic);
                 break;
-            case Image:
+            case IMAGE:
 
                 break;
         }
@@ -861,7 +861,7 @@ public class Plot3D extends Plot {
         //Draw graphics
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
-            if (gg.getShape().getShapeType() == ShapeTypes.Image) {
+            if (gg.getShape().getShapeType() == ShapeTypes.IMAGE) {
                 //g.setClip(oldRegion);
                 this.drawImage(g, gg, zdir, (float) ((GraphicCollection3D) graphic).getZValue());
             } else {
@@ -2351,7 +2351,7 @@ public class Plot3D extends Plot {
         }
 
         if (ls == null) {
-            ShapeTypes stype = ShapeTypes.Polyline;
+            ShapeTypes stype = ShapeTypes.POLYLINE;
             ls = new LegendScheme(stype);
             for (Graphic g : this.graphics.getGraphics()) {
                 ls.getLegendBreaks().add(g.getLegend());

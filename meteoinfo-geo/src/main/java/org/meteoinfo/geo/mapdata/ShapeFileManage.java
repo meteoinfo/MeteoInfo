@@ -129,25 +129,25 @@ public class ShapeFileManage {
 
         //Get Shape Data             
         switch (aST) {
-            case Point://single point                                                              
+            case POINT://single point
                 aLayer = readPointShapes(br, shapeNum);
                 break;
-            case PointZ:
+            case POINT_Z:
                 aLayer = readPointZShapes(br, shapeNum);
                 break;
-            case Polyline:    //Polyline layer       
+            case POLYLINE:    //Polyline layer
                 aLayer = readPolylineShapes(br, shapeNum);
                 break;
-            case PolylineZ:
+            case POLYLINE_Z:
                 aLayer = readPolylineZShapes(br, shapeNum);
                 break;
-            case Polygon:    //Polygon layer                                                               
+            case POLYGON:    //Polygon layer
                 aLayer = readPolygonShapes(br, shapeNum);
                 break;
-            case PolygonM:
+            case POLYGON_M:
                 aLayer = readPolygonMShapes(br, shapeNum);
                 break;
-            case PolygonZ:
+            case POLYGON_Z:
                 aLayer = readPolygonZShapes(br, shapeNum);
                 break;
             default:
@@ -202,7 +202,7 @@ public class ShapeFileManage {
     private static VectorLayer readPointShapes(DataInputStream br, int shapeNum) throws IOException {
         int RecordNum, ContentLength, aShapeType;
         double x, y;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
         byte[] bytes = new byte[28 * shapeNum];
         br.read(bytes);
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
@@ -229,14 +229,14 @@ public class ShapeFileManage {
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.black, 5));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.black, 5));
         return aLayer;
     }
     
     private static VectorLayer readPointZShapes(DataInputStream br, int shapeNum) throws IOException {
         int RecordNum, ContentLength, aShapeType;
         double x, y, z, m;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.PointZ);
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT_Z);
         byte[] bytes = new byte[44 * shapeNum];
         br.read(bytes);
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
@@ -267,12 +267,12 @@ public class ShapeFileManage {
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.black, 5));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.black, 5));
         return aLayer;
     }
 
     private static VectorLayer readPolylineShapes(DataInputStream br, int shapeNum) throws IOException {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE);
         int RecordNum, ContentLength, aShapeType;
         double x, y;
         byte[] bytes;
@@ -326,13 +326,13 @@ public class ShapeFileManage {
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, Color.darkGray, 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
 
         return aLayer;
     }
 
     private static VectorLayer readPolylineZShapes(DataInputStream br, int shapeNum) throws IOException {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.PolylineZ);
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE_Z);
         int RecordNum, ContentLength, aShapeType;
         double x, y;
         byte[] bytes;
@@ -412,13 +412,13 @@ public class ShapeFileManage {
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, Color.darkGray, 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
 
         return aLayer;
     }
 
     private static VectorLayer readPolygonShapes(DataInputStream br, int shapeNum) throws IOException {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.Polygon);
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYGON);
         int RecordNum, ContentLength, aShapeType;
         double x, y;
         byte[] bytes;
@@ -471,13 +471,13 @@ public class ShapeFileManage {
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polygon, new Color(255, 251, 195), 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, new Color(255, 251, 195), 1.0F));
 
         return aLayer;
     }
     
     private static VectorLayer readPolygonMShapes(DataInputStream br, int shapeNum) throws IOException {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.PolygonM);
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYGON_M);
         int RecordNum, ContentLength, aShapeType;
         double x, y;
         byte[] bytes;
@@ -545,13 +545,13 @@ public class ShapeFileManage {
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polygon, new Color(255, 251, 195), 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, new Color(255, 251, 195), 1.0F));
 
         return aLayer;
     }
     
     private static VectorLayer readPolygonZShapes(DataInputStream br, int shapeNum) throws IOException {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.PolygonZ);
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYGON_Z);
         int RecordNum, ContentLength, aShapeType;
         double x, y;
         byte[] bytes;
@@ -627,7 +627,7 @@ public class ShapeFileManage {
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polygon, new Color(255, 251, 195), 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, new Color(255, 251, 195), 1.0F));
 
         return aLayer;
     }
@@ -712,12 +712,12 @@ public class ShapeFileManage {
         String projFilePath = shpfilepath.replace(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".prj");        
 
         switch (aLayer.getShapeType()) {
-            case Point:
-            case PointZ:
-            case Polyline:
-            case PolylineZ:
-            case Polygon:
-            case PolygonZ:
+            case POINT:
+            case POINT_Z:
+            case POLYLINE:
+            case POLYLINE_Z:
+            case POLYGON:
+            case POLYGON_Z:
                 writeShxFile(shxfilepath, aLayer);
                 writeShpFile(shpfilepath, aLayer);
                 writeDbfFile(dbffilepath, aLayer);
@@ -742,12 +742,12 @@ public class ShapeFileManage {
         String projFilePath = shpfilepath.replace(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".prj");        
 
         switch (aLayer.getShapeType()) {
-            case Point:
-            case PointZ:
-            case Polyline:
-            case PolylineZ:
-            case Polygon:
-            case PolygonZ:
+            case POINT:
+            case POINT_Z:
+            case POLYLINE:
+            case POLYLINE_Z:
+            case POLYGON:
+            case POLYGON_Z:
                 writeShxFile(shxfilepath, aLayer);
                 writeShpFile(shpfilepath, aLayer);
                 writeDbfFile(dbffilepath, aLayer, encoding);
@@ -795,26 +795,26 @@ public class ShapeFileManage {
     private static int getContentLength(Shape aShape, ShapeTypes aST) {
         int contentLength = 0;
         switch (aST) {
-            case Point:
+            case POINT:
                 contentLength = 2 + 4 * 2;
                 break;
-            case PointZ:
+            case POINT_Z:
                 contentLength = 2 + 4 * 4;
                 break;
-            case Polyline:
+            case POLYLINE:
                 PolylineShape aPLS = (PolylineShape) aShape;
                 contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPLS.getPartNum() + 4 * 2 * aPLS.getPointNum();
                 break;
-            case PolylineZ:
+            case POLYLINE_Z:
                 PolylineZShape aPLZS = (PolylineZShape) aShape;
                 contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPLZS.getPartNum() + 4 * 2 * aPLZS.getPointNum()
                         + 4 + 4 + 4 * aPLZS.getPointNum() + 4 + 4 + 4 * aPLZS.getPointNum();
                 break;
-            case Polygon:
+            case POLYGON:
                 PolygonShape aPGS = (PolygonShape) aShape;
                 contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPGS.getPartNum() + 4 * 2 * aPGS.getPointNum();
                 break;
-            case PolygonZ:
+            case POLYGON_Z:
                 PolygonZShape aPGZS = (PolygonZShape) aShape;
                 contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPGZS.getPartNum() + 4 * 2 * aPGZS.getPointNum()
                         + 4 + 4 + 4 * aPGZS.getPointNum() + 4 + 4 + 4 * aPGZS.getPointNum();
@@ -832,12 +832,12 @@ public class ShapeFileManage {
         bw.writeIntBE(ContentLength);
         bw.writeIntLE(aST.getValue());
         switch (aST) {
-            case Point:
+            case POINT:
                 PointShape aPS = (PointShape) aShape;
                 bw.writeDoubleLE(aPS.getPoint().X);
                 bw.writeDoubleLE(aPS.getPoint().Y);
                 break;
-            case Polyline:
+            case POLYLINE:
                 PolylineShape aPLS = (PolylineShape) aShape;
                 bw.writeDoubleLE(aPLS.getExtent().minX);
                 bw.writeDoubleLE(aPLS.getExtent().minY);
@@ -853,7 +853,7 @@ public class ShapeFileManage {
                     bw.writeDoubleLE((aPLS.getPoints().get(i)).Y);
                 }
                 break;
-            case PolylineZ:
+            case POLYLINE_Z:
                 PolylineZShape aPLZS = (PolylineZShape) aShape;
                 bw.writeDoubleLE(aPLZS.getExtent().minX);
                 bw.writeDoubleLE(aPLZS.getExtent().minY);
@@ -879,7 +879,7 @@ public class ShapeFileManage {
                     bw.writeDoubleLE(aPLZS.getMArray()[i]);
                 }
                 break;
-            case Polygon:
+            case POLYGON:
                 PolygonShape aPGS = (PolygonShape) aShape;
                 bw.writeDoubleLE(aPGS.getExtent().minX);
                 bw.writeDoubleLE(aPGS.getExtent().minY);
@@ -895,7 +895,7 @@ public class ShapeFileManage {
                     bw.writeDoubleLE((aPGS.getPoints().get(i)).Y);
                 }
                 break;
-            case PolygonZ:
+            case POLYGON_Z:
                 PolygonZShape aPGZS = (PolygonZShape) aShape;
                 bw.writeDoubleLE(aPGZS.getExtent().minX);
                 bw.writeDoubleLE(aPGZS.getExtent().minY);

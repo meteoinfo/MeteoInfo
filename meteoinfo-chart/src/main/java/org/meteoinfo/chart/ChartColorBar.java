@@ -441,24 +441,24 @@ public class ChartColorBar extends ChartLegend {
         for (int i = 0; i < bNum; i++) {
             idx = i;
             switch (aLS.getShapeType()) {
-                case Point:
+                case POINT:
                     PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPB.isDrawShape();
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
                     break;
-                case Polyline:
+                case POLYLINE:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.getDrawPolyline();
                     FillColor = aPLB.getColor();
                     break;
-                case Polygon:
+                case POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPGB.isDrawShape();
                     DrawFill = aPGB.isDrawFill();
                     FillColor = aPGB.getColor();
                     break;
-                case Image:
+                case IMAGE:
                     ColorBreak aCB = aLS.getLegendBreaks().get(idx);
                     DrawShape = true;
                     DrawFill = true;
@@ -468,7 +468,7 @@ public class ChartColorBar extends ChartLegend {
 
             if (DrawShape) {
                 if (this.extendRect) {
-                    if (aLS.getShapeType() == ShapeTypes.Polygon) {
+                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(false);
                         Draw.drawPolygonSymbol(aP.X, aP.Y, _vBarWidth, _hBarHeight, aPGB, g);
@@ -495,7 +495,7 @@ public class ChartColorBar extends ChartLegend {
                         Points[3] = new PointD();
                         Points[3].X = _vBarWidth - extendw;
                         Points[3].Y = aP.Y + _hBarHeight * 0.5;
-                        if (aLS.getShapeType() == ShapeTypes.Polygon) {
+                        if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                             PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                             aPGB.setDrawOutline(false);
                             Draw.drawPolygon(Points, aPGB, g);
@@ -516,14 +516,14 @@ public class ChartColorBar extends ChartLegend {
                         Points[3] = new PointD();
                         Points[3].X = i * _vBarWidth - 1.0f;
                         Points[3].Y = aP.Y + _hBarHeight;
-                        if (aLS.getShapeType() == ShapeTypes.Polygon) {
+                        if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                             PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                             aPGB.setDrawOutline(false);
                             Draw.drawPolygon(Points, aPGB, g);
                         } else {
                             Draw.drawPolygon(Points, FillColor, OutlineColor, DrawFill, DrawOutline, g);
                         }
-                    } else if (aLS.getShapeType() == ShapeTypes.Polygon) {
+                    } else if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(false);
                         Draw.drawPolygonSymbol(aP.X, aP.Y, _vBarWidth, _hBarHeight, aPGB, g);
@@ -767,24 +767,24 @@ public class ChartColorBar extends ChartLegend {
         for (int i = 0; i < bNum; i++) {
             idx = i;
             switch (aLS.getShapeType()) {
-                case Point:
+                case POINT:
                     PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPB.isDrawShape();
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
                     break;
-                case Polyline:
+                case POLYLINE:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.getDrawPolyline();
                     FillColor = aPLB.getColor();
                     break;
-                case Polygon:
+                case POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPGB.isDrawShape();
                     DrawFill = aPGB.isDrawFill();
                     FillColor = aPGB.getColor();
                     break;
-                case Image:
+                case IMAGE:
                     ColorBreak aCB = aLS.getLegendBreaks().get(idx);
                     DrawShape = true;
                     DrawFill = true;
@@ -796,7 +796,7 @@ public class ChartColorBar extends ChartLegend {
 
             if (DrawShape) {
                 if (this.extendRect) {
-                    if (aLS.getShapeType() == ShapeTypes.Polygon) {
+                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(false);
                         Draw.drawPolygonSymbol(aP.X, aP.Y, _vBarWidth, _hBarHeight, aPGB, g);
@@ -818,7 +818,7 @@ public class ChartColorBar extends ChartLegend {
                     Points[3] = new PointD();
                     Points[3].X = aP.X + _vBarWidth * 0.5;
                     Points[3].Y = this.legendHeight;
-                    if (aLS.getShapeType() == ShapeTypes.Polygon) {
+                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(false);
                         Draw.drawPolygon(Points, aPGB, g);
@@ -839,14 +839,14 @@ public class ChartColorBar extends ChartLegend {
                     Points[3] = new PointD();
                     Points[3].X = aP.X;
                     Points[3].Y = _hBarHeight;
-                    if (aLS.getShapeType() == ShapeTypes.Polygon) {
+                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(false);
                         Draw.drawPolygon(Points, aPGB, g);
                     } else {
                         Draw.drawPolygon(Points, FillColor, OutlineColor, DrawFill, DrawOutline, g);
                     }
-                } else if (aLS.getShapeType() == ShapeTypes.Polygon) {
+                } else if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                     aPGB.setDrawOutline(false);
                     Draw.drawPolygonSymbol(aP.X, aP.Y, _vBarWidth, _hBarHeight, aPGB, g);

@@ -214,7 +214,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
     @Override
     public LegendScheme getLegendScheme() {
         if (this.mesh) {
-            LegendScheme ls = this.legendScheme.convertTo(ShapeTypes.Image, true);
+            LegendScheme ls = this.legendScheme.convertTo(ShapeTypes.IMAGE, true);
             return ls;
         } else {
             return this.legendScheme;

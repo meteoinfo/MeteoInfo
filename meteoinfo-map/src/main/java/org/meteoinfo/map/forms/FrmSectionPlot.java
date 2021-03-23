@@ -1737,7 +1737,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         }
 
         if (aLayer != null) {
-            if (aLayer.getShapeType() == ShapeTypes.Polygon) {
+            if (aLayer.getShapeType() == ShapeTypes.POLYGON) {
                 _lastAddedLayerHandle = this.layersLegend1.getActiveMapFrame().insertPolygonLayer(aLayer);
             } else {
                 _lastAddedLayerHandle = this.layersLegend1.getActiveMapFrame().insertPolylineLayer(aLayer);
@@ -1986,47 +1986,47 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         switch (_2DDrawType) {
             case Contour:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.UniqueValue, ShapeTypes.Polyline);
+                        LegendType.UniqueValue, ShapeTypes.POLYLINE);
                 break;
             case Shaded:
             case Grid_Fill:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.Polygon);
+                        LegendType.GraduatedColor, ShapeTypes.POLYGON);
                 break;
             case Grid_Point:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.Point);
+                        LegendType.GraduatedColor, ShapeTypes.POINT);
                 break;
             case Vector:
                 if (this.jCheckBox_ColorVar.isSelected()) {
                     _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                            LegendType.GraduatedColor, ShapeTypes.Point);
+                            LegendType.GraduatedColor, ShapeTypes.POINT);
                     PointBreak aPB;
                     for (int i = 0; i < _legendScheme.getLegendBreaks().size(); i++) {
                         aPB = (PointBreak) _legendScheme.getLegendBreaks().get(i);
                         aPB.setSize(10);
                     }
                 } else {
-                    _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point,
+                    _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT,
                             Color.blue, 10);
                 }
                 break;
             case Barb:
                 if (this.jCheckBox_ColorVar.isSelected()) {
                     _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                            LegendType.GraduatedColor, ShapeTypes.Point);
+                            LegendType.GraduatedColor, ShapeTypes.POINT);
                     PointBreak aPB;
                     for (int i = 0; i < _legendScheme.getLegendBreaks().size(); i++) {
                         aPB = (PointBreak) _legendScheme.getLegendBreaks().get(i);
                         aPB.setSize(10);
                     }
                 } else {
-                    _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point,
+                    _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT,
                             Color.blue, 10);
                 }
                 break;
             case Streamline:
-                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline,
+                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE,
                         Color.blue, 1);
                 break;
         }

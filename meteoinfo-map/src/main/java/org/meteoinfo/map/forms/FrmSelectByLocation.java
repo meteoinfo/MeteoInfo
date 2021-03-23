@@ -227,7 +227,7 @@ public class FrmSelectByLocation extends javax.swing.JDialog {
                 }
                 break;
             case Contain:
-                if (fromLayer.getShapeType() != ShapeTypes.Polygon) {
+                if (fromLayer.getShapeType() != ShapeTypes.POLYGON) {
                     JOptionPane.showMessageDialog(null, "The first layer must be polygon layer for 'Within' case!");
                     this.setCursor(Cursor.getDefaultCursor());
                     return;

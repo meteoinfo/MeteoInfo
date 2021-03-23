@@ -201,14 +201,14 @@ public class LayerNode extends ItemNode {
                     VectorLayer aLayer = (VectorLayer) _mapLayer;
                     if (aLayer.getChartSet().isDrawCharts() && aLayer.getChartPoints().size() > 0) {
                         LegendNode aLN = new LegendNode();
-                        aLN.setShapeType(ShapeTypes.Polygon);
+                        aLN.setShapeType(ShapeTypes.POLYGON);
                         ChartBreak aCB = ((ChartBreak) aLayer.getChartPoints().get(0).getLegend()).getSampleChartBreak();
                         aLN.setLegendBreak(aCB);
                         aLN.setHeight(((ChartBreak) aLN.getLegendBreak()).getHeight() + 10);
                         _legendNodes.add(aLN);
                         for (int i = 0; i < aLayer.getChartSet().getLegendScheme().getBreakNum(); i++) {
                             aLN = new LegendNode();
-                            aLN.setShapeType(ShapeTypes.Polygon);
+                            aLN.setShapeType(ShapeTypes.POLYGON);
                             aLN.setLegendBreak(aLayer.getChartSet().getLegendScheme().getLegendBreaks().get(i));
                             _legendNodes.add(aLN);
                         }

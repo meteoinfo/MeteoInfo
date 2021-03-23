@@ -202,41 +202,41 @@ public class Plot2D extends AbstractPlot2D {
                 }
                 Shape shape = gg.getShape();
                 switch (shape.getShapeType()) {
-                    case Point:
-                    case PointM:
-                    case PointZ:
+                    case POINT:
+                    case POINT_M:
+                    case POINT_Z:
                         this.drawPoint(g, (PointShape) shape, (PointBreak) cb, area);
                         break;
                     case TEXT:
                         this.drawText((ChartText)shape, g, area);
                         break;
-                    case Polyline:
-                    case PolylineZ:
+                    case POLYLINE:
+                    case POLYLINE_Z:
                         if (cb instanceof PointBreak) {
                             this.drawPolyline(g, (PolylineShape) shape, (PointBreak) cb, area);
                         } else {
                             this.drawPolyline(g, (PolylineShape) shape, (PolylineBreak) cb, area);
                         }
                         break;
-                    case Polygon:
-                    case PolygonZ:
+                    case POLYGON:
+                    case POLYGON_Z:
                         for (Polygon poly : ((PolygonShape) shape).getPolygons()) {
                             drawPolygon(g, poly, (PolygonBreak) cb, false, area);
                         }
                         break;
-                    case Rectangle:
+                    case RECTANGLE:
                         this.drawRectangle(g, (RectangleShape) shape, (PolygonBreak) cb, false, area);
                         break;
                     case ARC:
                         this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb, area);
                         break;
-                    case WindBarb:
+                    case WIND_BARB:
                         this.drawWindBarb(g, (WindBarb) shape, (PointBreak) cb, area);
                         break;
-                    case WindArraw:
+                    case WIND_ARROW:
                         this.drawWindArrow(g, (WindArrow) shape, (ArrowBreak) cb, area);
                         break;
-                    case Image:
+                    case IMAGE:
                         this.drawImage(g, gg, area);
                         break;
                 }
@@ -266,7 +266,7 @@ public class Plot2D extends AbstractPlot2D {
             ColorBreak cb = graphic.getLegend();
             ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
             switch(shapeType){
-                case Bar:
+                case BAR:
                     this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
                     barIdx += 1;
                     break;
@@ -278,16 +278,16 @@ public class Plot2D extends AbstractPlot2D {
                 }
                 Shape shape = gg.getShape();
                 switch (shape.getShapeType()) {
-                    case Point:
-                    case PointM:
-                    case PointZ:
+                    case POINT:
+                    case POINT_M:
+                    case POINT_Z:
                         this.drawPoint(g, (PointShape) shape, (PointBreak) cb, area);
                         break;
                     case TEXT:
                         this.drawText((ChartText)shape, g, area);
                         break;
-                    case Polyline:
-                    case PolylineZ:
+                    case POLYLINE:
+                    case POLYLINE_Z:
                         if (shape instanceof CapPolylineShape){
                             this.drawCapPolyline(g, (CapPolylineShape) shape, (PolylineBreak) cb, area);
                         } else {
@@ -304,35 +304,35 @@ public class Plot2D extends AbstractPlot2D {
                             }
                         }
                         break;
-                    case CurveLine:
+                    case CURVE_LINE:
                         this.drawCurveline(g, (CurveLineShape) shape, (PolylineBreak) cb, area);
                         break;
-                    case PolylineError:
+                    case POLYLINE_ERROR:
                         if (cb instanceof PointBreak) {
                             this.drawPolylineError(g, (PolylineErrorShape) shape, (PointBreak) cb, area);
                         } else {
                             this.drawPolylineError(g, (PolylineErrorShape) shape, (PolylineBreak) cb, area);
                         }
                         break;
-                    case Polygon:
-                    case PolygonZ:
+                    case POLYGON:
+                    case POLYGON_Z:
                         for (Polygon poly : ((PolygonShape) shape).getPolygons()) {
                             drawPolygon(g, poly, (PolygonBreak) cb, false, area);
                         }
                         break;
-                    case Rectangle:
+                    case RECTANGLE:
                         this.drawRectangle(g, (RectangleShape) shape, (PolygonBreak) cb, false, area);
                         break;
                     case ARC:
                         this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb, area);
                         break;
-                    case WindBarb:
+                    case WIND_BARB:
                         this.drawWindBarb(g, (WindBarb) shape, (PointBreak) cb, area);
                         break;
-                    case WindArraw:
+                    case WIND_ARROW:
                         this.drawWindArrow(g, (WindArrow) shape, (ArrowBreak) cb, area);
                         break;
-                    case Image:
+                    case IMAGE:
                         this.drawImage(g, gg, area);
                         break;
                 }
@@ -701,8 +701,8 @@ public class Plot2D extends AbstractPlot2D {
         double[] sXY;
         float aX, aY;
         switch (aGraphic.getShape().getShapeType()) {
-            case Point:
-            case PointM:
+            case POINT:
+            case POINT_M:
                 PointShape aPS = (PointShape) aGraphic.getShape();
                 sXY = projToScreen(aPS.getPoint().X, aPS.getPoint().Y, area);
                 aX = (float) sXY[0];
@@ -739,13 +739,13 @@ public class Plot2D extends AbstractPlot2D {
                         break;
                 }
                 break;
-            case Polyline:
-            case Polygon:
-            case Rectangle:
-            case CurveLine:
-            case Ellipse:
-            case Circle:
-            case CurvePolygon:
+            case POLYLINE:
+            case POLYGON:
+            case RECTANGLE:
+            case CURVE_LINE:
+            case ELLIPSE:
+            case CIRCLE:
+            case CURVE_POLYGON:
                 List<PointD> newPList = (List<PointD>) aGraphic.getShape().getPoints();
                 List<PointD> points = new ArrayList<>();
                 for (PointD wPoint : newPList) {
@@ -976,7 +976,7 @@ public class Plot2D extends AbstractPlot2D {
     private int getBarSeriesNum() {
         int n = 0;
         for (Graphic g : this.graphics.getGraphics()) {
-            if (g.getGraphicN(0).getShape().getShapeType() == ShapeTypes.Bar) {
+            if (g.getGraphicN(0).getShape().getShapeType() == ShapeTypes.BAR) {
                 n += 1;
             }
         }
@@ -1092,7 +1092,7 @@ public class Plot2D extends AbstractPlot2D {
     private int getBarIndex() {
         int idx = -1;
         for (int i = 0; i < this.graphics.size(); i++) {
-            if (this.graphics.get(i).getGraphicN(0).getShape().getShapeType() == ShapeTypes.Bar) {
+            if (this.graphics.get(i).getGraphicN(0).getShape().getShapeType() == ShapeTypes.BAR) {
                 idx = i;
                 break;
             }
@@ -1103,7 +1103,7 @@ public class Plot2D extends AbstractPlot2D {
     private int getImageIndex() {
         int idx = -1;
         for (int i = 0; i < this.graphics.size(); i++) {
-            if (this.graphics.get(i).getGraphicN(0).getShape().getShapeType() == ShapeTypes.Image) {
+            if (this.graphics.get(i).getGraphicN(0).getShape().getShapeType() == ShapeTypes.IMAGE) {
                 idx = i;
                 break;
             }
@@ -1222,7 +1222,7 @@ public class Plot2D extends AbstractPlot2D {
         }
 
         if (ls == null) {
-            ShapeTypes stype = ShapeTypes.Polyline;
+            ShapeTypes stype = ShapeTypes.POLYLINE;
             ls = new LegendScheme(stype);
             for (Graphic g : this.graphics.getGraphics()) {
                 ls.getLegendBreaks().add(g.getLegend());

@@ -132,7 +132,7 @@ public class PolylineErrorShape extends PolylineShape {
     // <editor-fold desc="Methods">
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.PolylineError;
+        return ShapeTypes.POLYLINE_ERROR;
     }
     
     /**

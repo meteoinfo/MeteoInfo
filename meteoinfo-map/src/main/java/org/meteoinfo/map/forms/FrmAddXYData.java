@@ -294,11 +294,11 @@ public class FrmAddXYData extends javax.swing.JDialog {
                 }
 
                 //New layer
-                VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
+                VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
                 aLayer.setLayerDrawType(LayerDrawType.Map);
                 aLayer.setLayerName(aFile.getName());
                 aLayer.setFileName(fileName);
-                aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.black, 5));
+                aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.black, 5));
                 aLayer.setVisible(true);
                 for (Field field : fields){
                     aLayer.editAddField(field);

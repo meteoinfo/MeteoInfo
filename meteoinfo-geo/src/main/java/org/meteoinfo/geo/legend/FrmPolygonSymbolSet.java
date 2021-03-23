@@ -11,6 +11,8 @@ import org.meteoinfo.geo.mapview.MapView;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JColorChooser;
+
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ui.event.ISelectedCellChangedListener;
 import org.meteoinfo.ui.event.SelectedCellChangedEvent;
 
@@ -245,7 +247,7 @@ public class FrmPolygonSymbolSet extends javax.swing.JDialog {
 
         symbolControl1.setCellSize(new Dimension(50, 40));
         symbolControl1.setPreferredSize(new Dimension(200, 50));
-        symbolControl1.setShapeType(org.meteoinfo.geometry.shape.ShapeTypes.Polygon);
+        symbolControl1.setShapeType(ShapeTypes.POLYGON);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

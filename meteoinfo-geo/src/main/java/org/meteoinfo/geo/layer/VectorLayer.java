@@ -234,9 +234,9 @@ public class VectorLayer extends MapLayer {
     public void setTransparency(int trans) {
         super.setTransparency(trans);
         switch (this.getShapeType()) {
-            case Polygon:
-            case PolygonM:
-            case PolygonZ:
+            case POLYGON:
+            case POLYGON_M:
+            case POLYGON_Z:
                 for (int i = 0; i < this.getLegendScheme().getBreakNum(); i++) {
                     PolygonBreak aPGB = (PolygonBreak) this.getLegendScheme().getLegendBreaks().get(i);
                     int alpha = (int) ((1 - (double) trans / 100.0) * 255);
@@ -485,20 +485,20 @@ public class VectorLayer extends MapLayer {
 
             PointShape aPS = new PointShape();
             switch (this.getShapeType()) {
-                case Point:
-                case PointM:
-                case PointZ:
+                case POINT:
+                case POINT_M:
+                case POINT_Z:
                     aPS.setPoint((PointD) ((PointShape) aShape).getPoint().clone());
                     break;
-                case Polyline:
-                case PolylineM:
-                case PolylineZ:
+                case POLYLINE:
+                case POLYLINE_M:
+                case POLYLINE_Z:
                     int pIdx = ((PolylineShape) aShape).getPoints().size() / 2;
                     aPS.setPoint((PointD) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
                     break;
-                case Polygon:
-                case PolygonM:
-                case PolygonZ:
+                case POLYGON:
+                case POLYGON_M:
+                case POLYGON_Z:
                     Extent aExtent = aShape.getExtent();
                     aPoint.X = (aExtent.minX + aExtent.maxX) / 2;
                     aPoint.Y = (aExtent.minY + aExtent.maxY) / 2;
@@ -738,13 +738,13 @@ public class VectorLayer extends MapLayer {
         PointD sp = aExtent.getCenterPoint();
 
         switch (this.getShapeType()) {
-            case Point:
-            case PointM:
-            case PointZ:
-            case WindArraw:
-            case WindBarb:
-            case WeatherSymbol:
-            case StationModel:
+            case POINT:
+            case POINT_M:
+            case POINT_Z:
+            case WIND_ARROW:
+            case WIND_BARB:
+            case WEATHER_SYMBOL:
+            case STATION_MODEL:
                 for (i = 0; i < shapes.size(); i++) {
                     PointShape aPS = (PointShape) shapes.get(i);
                     if (MIMath.pointInExtent(aPS.getPoint(), aExtent)) {
@@ -755,9 +755,9 @@ public class VectorLayer extends MapLayer {
                     }
                 }
                 break;
-            case Polyline:
-            case PolylineM:
-            case PolylineZ:
+            case POLYLINE:
+            case POLYLINE_M:
+            case POLYLINE_Z:
                 Object sel;
                 List<Double> dislist = new ArrayList<>();
                 for (i = 0; i < shapes.size(); i++) {
@@ -784,9 +784,9 @@ public class VectorLayer extends MapLayer {
                     }
                 }
                 break;
-            case Polygon:
-            case PolygonM:
-            case PolygonZ:
+            case POLYGON:
+            case POLYGON_M:
+            case POLYGON_Z:
                 for (i = shapes.size() - 1; i >= 0; i--) {
                     PolygonShape aPGS = (PolygonShape) shapes.get(i);
                     if (isSingleSel) {
@@ -1511,7 +1511,7 @@ public class VectorLayer extends MapLayer {
             shapes = (List<Shape>) this._shapeList;
         }
 
-        VectorLayer newLayer = new VectorLayer(ShapeTypes.Polygon);
+        VectorLayer newLayer = new VectorLayer(ShapeTypes.POLYGON);
         newLayer.setProjInfo(this.getProjInfo());
 
         if (isMerge) {
@@ -1559,7 +1559,7 @@ public class VectorLayer extends MapLayer {
             shapes = (List<Shape>) this._shapeList;
         }
 
-        VectorLayer newLayer = new VectorLayer(ShapeTypes.Polygon);
+        VectorLayer newLayer = new VectorLayer(ShapeTypes.POLYGON);
         newLayer.setProjInfo(this.getProjInfo());
 
         if (shapes.size() == 1) {
@@ -2072,20 +2072,20 @@ public class VectorLayer extends MapLayer {
 
             PointShape aPS = new PointShape();
             switch (this.getShapeType()) {
-                case Point:
-                case PointM:
-                case PointZ:
+                case POINT:
+                case POINT_M:
+                case POINT_Z:
                     aPS.setPoint((PointD) ((PointShape) aShape).getPoint().clone());
                     break;
-                case Polyline:
-                case PolylineM:
-                case PolylineZ:
+                case POLYLINE:
+                case POLYLINE_M:
+                case POLYLINE_Z:
                     int pIdx = ((PolylineShape) aShape).getPoints().size() / 2;
                     aPS.setPoint((PointD) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
                     break;
-                case Polygon:
-                case PolygonM:
-                case PolygonZ:
+                case POLYGON:
+                case POLYGON_M:
+                case POLYGON_Z:
                     Extent aExtent = aShape.getExtent();
                     aPoint = new PointD();
                     aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
@@ -2624,7 +2624,7 @@ public class VectorLayer extends MapLayer {
                     handler.startElement("", "", "coordinates", atts);
                     for (PointD point : line.getPointList()) {
                         str = String.valueOf(point.X) + "," + String.valueOf(point.Y);
-                        if (this.getShapeType() == ShapeTypes.PolylineZ) {
+                        if (this.getShapeType() == ShapeTypes.POLYLINE_Z) {
                             str = str + "," + String.valueOf(((PolylineZShape) shp).getZArray()[i]);
                         }
                         str = str + " ";
@@ -2785,7 +2785,7 @@ public class VectorLayer extends MapLayer {
                 handler.startElement("", "", "Point", atts);
                 handler.startElement("", "", "coordinates", atts);
                 str = String.valueOf(pgs.getPoint().X) + "," + String.valueOf(pgs.getPoint().Y);
-                if (this.getShapeType() == ShapeTypes.PointZ) {
+                if (this.getShapeType() == ShapeTypes.POINT_Z) {
                     str = str + "," + String.valueOf(((PointZShape) shp).getZ());
                 }
                 handler.characters(str.toCharArray(), 0, str.length());
@@ -2930,21 +2930,21 @@ public class VectorLayer extends MapLayer {
                 Color aColor = Color.black;
                 float size = 1.0F;
                 switch (aST) {
-                    case Point:
-                    case PointM:
-                    case PointZ:
+                    case POINT:
+                    case POINT_M:
+                    case POINT_Z:
                         aColor = Color.black;
                         size = 5;
                         break;
-                    case Polyline:
-                    case PolylineM:
-                    case PolylineZ:
+                    case POLYLINE:
+                    case POLYLINE_M:
+                    case POLYLINE_Z:
                         aColor = Color.black;
                         break;
-                    case Polygon:
-                    case PolygonM:
-                    case PolygonZ:
-                    case Image:
+                    case POLYGON:
+                    case POLYGON_M:
+                    case POLYGON_Z:
+                    case IMAGE:
                         aColor = new Color(255, 251, 195);
                         break;
                 }

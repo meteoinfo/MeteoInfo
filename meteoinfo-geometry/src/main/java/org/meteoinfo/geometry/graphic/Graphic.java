@@ -520,7 +520,7 @@ package org.meteoinfo.geometry.graphic;
      protected Shape loadShape(Node shapeNode) {
          Shape aShape = null;
          try {
-             ShapeTypes shapeType = ShapeTypes.valueOf(shapeNode.getAttributes().getNamedItem("ShapeType").getNodeValue());
+             ShapeTypes shapeType = ShapeTypes.valueOfBack(shapeNode.getAttributes().getNamedItem("ShapeType").getNodeValue());
              switch (shapeType) {
                  case POINT:
                      aShape = new PointShape();

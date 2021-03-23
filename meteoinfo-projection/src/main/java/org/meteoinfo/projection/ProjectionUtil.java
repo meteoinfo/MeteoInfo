@@ -306,13 +306,13 @@ public class ProjectionUtil {
                 rp.Y = points[0][1];
                 newPS.setPoint(rp);
                 switch (aPS.getShapeType()) {
-                    case WindBarb:
+                    case WIND_BARB:
                         ((WindBarb) newPS).angle = projectAngle(((WindBarb) newPS).angle, fromP, toP, fromProj, toProj);
                         break;
-                    case WindArraw:
+                    case WIND_ARROW:
                         ((WindArrow) newPS).angle = projectAngle(((WindArrow) newPS).angle, fromP, toP, fromProj, toProj);
                         break;
-                    case StationModel:
+                    case STATION_MODEL:
                         ((StationModelShape) newPS).windBarb.angle = projectAngle(((StationModelShape) newPS).windBarb.angle, fromP, toP, fromProj, toProj);
                         break;
                 }
@@ -560,29 +560,29 @@ public class ProjectionUtil {
     private static Shape projectShape(Shape aShape, ProjectionInfo fromProj, ProjectionInfo toProj) {
         Shape newShape;
         switch (aShape.getShapeType()) {
-            case Point:
-            case PointM:
+            case POINT:
+            case POINT_M:
                 newShape = projectPointShape((PointShape) aShape, fromProj, toProj);
                 break;
-            case Polyline:
-            case PolylineM:
+            case POLYLINE:
+            case POLYLINE_M:
                 newShape = projectPolylineShape((PolylineShape) aShape, fromProj, toProj);
                 break;
-            case CurveLine:
+            case CURVE_LINE:
                 newShape = projectCurvelineShape((CurveLineShape) aShape, fromProj, toProj);
                 break;
-            case Polygon:
-            case PolygonM:
-            case Rectangle:
+            case POLYGON:
+            case POLYGON_M:
+            case RECTANGLE:
                 newShape = projectPolygonShape((PolygonShape) aShape, fromProj, toProj);
                 break;
-            case CurvePolygon:
+            case CURVE_POLYGON:
                 newShape = projectCurvePolygonShape((CurvePolygonShape) aShape, fromProj, toProj);
                 break;
-            case Circle:
+            case CIRCLE:
                 newShape = projectCircleShape((CircleShape) aShape, fromProj, toProj);
                 break;
-            case Ellipse:
+            case ELLIPSE:
                 newShape = projectEllipseShape((EllipseShape) aShape, fromProj, toProj);
                 break;
             default:

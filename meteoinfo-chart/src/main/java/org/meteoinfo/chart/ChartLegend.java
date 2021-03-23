@@ -1116,7 +1116,7 @@ public class ChartLegend {
         }
         for (int i = 0; i < bNum; i++) {
             switch (this.legendScheme.getShapeType()) {
-                case Point:
+                case POINT:
                     PointBreak aPB = (PointBreak) legendScheme.getLegendBreaks().get(i);
                     if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
                         caption = DataConvert.removeTailingZeros(aPB.getEndValue().toString());
@@ -1124,7 +1124,7 @@ public class ChartLegend {
                         caption = aPB.getCaption();
                     }
                     break;
-                case Polyline:
+                case POLYLINE:
                     PolylineBreak aPLB = (PolylineBreak) legendScheme.getLegendBreaks().get(i);
                     if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
                         caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());
@@ -1132,7 +1132,7 @@ public class ChartLegend {
                         caption = aPLB.getCaption();
                     }
                     break;
-                case Polygon:
+                case POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) legendScheme.getLegendBreaks().get(i);
                     if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
                         caption = DataConvert.removeTailingZeros(aPGB.getEndValue().toString());
@@ -1140,7 +1140,7 @@ public class ChartLegend {
                         caption = aPGB.getCaption();
                     }
                     break;
-                case Image:
+                case IMAGE:
                     ColorBreak aCB = legendScheme.getLegendBreaks().get(i);
                     if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
                         caption = DataConvert.removeTailingZeros(aCB.getEndValue().toString());
@@ -1181,7 +1181,7 @@ public class ChartLegend {
         }
         for (int i = 0; i < bNum; i++) {
             switch (this.legendScheme.getShapeType()) {
-                case Point:
+                case POINT:
                     PointBreak aPB = (PointBreak) legendScheme.getLegendBreaks().get(i);
                     if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
                         caption = DataConvert.removeTailingZeros(aPB.getEndValue().toString());
@@ -1189,7 +1189,7 @@ public class ChartLegend {
                         caption = aPB.getCaption();
                     }
                     break;
-                case Polyline:
+                case POLYLINE:
                     PolylineBreak aPLB = (PolylineBreak) legendScheme.getLegendBreaks().get(i);
                     if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
                         caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());
@@ -1197,7 +1197,7 @@ public class ChartLegend {
                         caption = aPLB.getCaption();
                     }
                     break;
-                case Polygon:
+                case POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) legendScheme.getLegendBreaks().get(i);
                     if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
                         caption = DataConvert.removeTailingZeros(aPGB.getEndValue().toString());
@@ -1205,7 +1205,7 @@ public class ChartLegend {
                         caption = aPGB.getCaption();
                     }
                     break;
-                case Image:
+                case IMAGE:
                     ColorBreak aCB = legendScheme.getLegendBreaks().get(i);
                     if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
                         caption = DataConvert.removeTailingZeros(aCB.getEndValue().toString());

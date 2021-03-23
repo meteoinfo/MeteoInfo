@@ -187,13 +187,13 @@ public class GeoProjectionUtil {
         //aLayer.AttributeTable.Table.Rows.Clear();
         float cutoff = toProj.getCutoff();
         switch (oLayer.getShapeType()) {
-            case Point:
-            case PointM:
-            case PointZ:
-            case WeatherSymbol:
-            case WindArraw:
-            case WindBarb:
-            case StationModel:
+            case POINT:
+            case POINT_M:
+            case POINT_Z:
+            case WEATHER_SYMBOL:
+            case WIND_ARROW:
+            case WIND_BARB:
+            case STATION_MODEL:
                 List<Shape> shapePoints = new ArrayList<>();
                 newPoints.clear();                
                 for (s = 0; s < oLayer.getShapeNum(); s++) {
@@ -239,9 +239,9 @@ public class GeoProjectionUtil {
                 oLayer.setExtent(GeometryUtil.getPointsExtent(newPoints));
 
                 break;
-            case Polyline:
-            case PolylineM:
-            case PolylineZ:
+            case POLYLINE:
+            case POLYLINE_M:
+            case POLYLINE_Z:
                 List<Shape> newPolylines = new ArrayList<>();
                 for (s = 0; s < oLayer.getShapeNum(); s++) {
                     PolylineShape aPLS = (PolylineShape) oLayer.getShapes().get(s);
@@ -323,9 +323,9 @@ public class GeoProjectionUtil {
                 newPolylines.clear();
                 oLayer.setExtent(lExtent);
                 break;
-            case Polygon:
-            case PolygonM:
-            case PolygonZ:
+            case POLYGON:
+            case POLYGON_M:
+            case POLYGON_Z:
                 List<Shape> newPolygons = new ArrayList<>();
                 for (s = 0; s < oLayer.getShapeNum(); s++) {
                     DataRow aDR = oLayer.getAttributeTable().getTable().getRows().get(s);

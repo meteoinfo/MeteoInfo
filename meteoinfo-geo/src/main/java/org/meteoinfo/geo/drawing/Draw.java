@@ -2400,7 +2400,7 @@ public class Draw {
         rect.height = (int) aExtent.getHeight();
 
         switch (aGraphic.getShape().getShapeType()) {
-            case Point:
+            case POINT:
                 switch (aGraphic.getLegend().getBreakType()) {
                     case PointBreak:
                         drawPoint((PointF) points[0].clone(), (PointBreak) aGraphic.getLegend(), g);
@@ -2415,31 +2415,31 @@ public class Draw {
                         break;
                 }
                 break;
-            case Polyline:
+            case POLYLINE:
                 if (aGraphic.getLegend().getBreakType() == BreakTypes.ColorBreakCollection) {
                     drawPolyline(points, (ColorBreakCollection) aGraphic.getLegend(), g);
                 } else {
                     drawPolyline(points, (PolylineBreak) aGraphic.getLegend(), g);
                 }
                 break;
-            case Polygon:
+            case POLYGON:
                 PolygonShape pgs = (PolygonShape) aGraphic.getShape().clone();
                 pgs.setPoints_keep(points);
                 drawPolygonShape(pgs, (PolygonBreak) aGraphic.getLegend(), g);
                 break;
-            case Rectangle:
+            case RECTANGLE:
                 drawPolygon(points, (PolygonBreak) aGraphic.getLegend(), g);
                 break;
-            case CurveLine:
+            case CURVE_LINE:
                 drawCurveLine(points, (PolylineBreak) aGraphic.getLegend(), g);
                 break;
-            case CurvePolygon:
+            case CURVE_POLYGON:
                 drawCurvePolygon(points, (PolygonBreak) aGraphic.getLegend(), g);
                 break;
-            case Circle:
+            case CIRCLE:
                 drawCircle(points, (PolygonBreak) aGraphic.getLegend(), g);
                 break;
-            case Ellipse:
+            case ELLIPSE:
                 EllipseShape eshape = (EllipseShape) aGraphic.getShape();
                 drawEllipse(points, eshape.getAngle(), (PolygonBreak) aGraphic.getLegend(), g);
                 break;
@@ -2455,21 +2455,21 @@ public class Draw {
                 g.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f));
                 g.draw(rect);
                 switch (aGraphic.getShape().getShapeType()) {
-                    case Point:
+                    case POINT:
                         if (aGraphic.getLegend().getBreakType() == BreakTypes.PointBreak) {
                             drawSelectedCorners(g, rect);
                         }
                         break;
-                    case Polyline:
-                    case CurveLine:
-                    case Polygon:
-                    case Rectangle:
-                    case Ellipse:
-                    case CurvePolygon:
+                    case POLYLINE:
+                    case CURVE_LINE:
+                    case POLYGON:
+                    case RECTANGLE:
+                    case ELLIPSE:
+                    case CURVE_POLYGON:
                         drawSelectedCorners(g, rect);
                         drawSelectedEdgeCenters(g, rect);
                         break;
-                    case Circle:
+                    case CIRCLE:
                         drawSelectedCorners(g, rect);
                         break;
                 }

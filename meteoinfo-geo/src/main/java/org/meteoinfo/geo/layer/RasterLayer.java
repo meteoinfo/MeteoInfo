@@ -58,7 +58,7 @@ public class RasterLayer extends ImageLayer {
      */
     public RasterLayer() {
         this.setLayerType(LayerTypes.RasterLayer);
-        this.setShapeType(ShapeTypes.Image);
+        this.setShapeType(ShapeTypes.IMAGE);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -254,7 +254,7 @@ public class RasterLayer extends ImageLayer {
         BufferedImage image = this.getImageFromGridData(_gridData, colors);
         this.setImage(image);
 
-        LegendScheme ls = new LegendScheme(ShapeTypes.Image);
+        LegendScheme ls = new LegendScheme(ShapeTypes.IMAGE);
         ls.importFromPaletteFile_Unique(aFile);
         this.setLegendScheme(ls);
     }

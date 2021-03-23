@@ -14,6 +14,8 @@
  */
 package org.meteoinfo.geometry.shape;
 
+import java.util.Locale;
+
 /**
  * Shape type enum
  *
@@ -71,9 +73,6 @@ public enum ShapeTypes {
      * @return ShapeTypes value
      */
     public static ShapeTypes valueOf(int ordinal) {
-//        if (ordinal < 0 || ordinal >= values().length) {
-//            throw new IndexOutOfBoundsException("Invalid ordinal");
-//        }
         switch(ordinal){
             case 1:
                 return ShapeTypes.POINT;
@@ -117,6 +116,44 @@ public enum ShapeTypes {
                 throw new IndexOutOfBoundsException("Invalid ordinal");
         }
     }
+
+    /**
+     * Get value from name - for backward compatible
+     * @param name Shape type name
+     * @return Shape type
+     */
+    public static ShapeTypes valueOfBack(String name) {
+        switch (name.toUpperCase()) {
+            case "POINTM":
+                return ShapeTypes.POINT_M;
+            case "POINTZ":
+                return ShapeTypes.POINT_Z;
+            case "POLYLINEM":
+                return ShapeTypes.POLYLINE_M;
+            case "POLYLINEZ":
+                return ShapeTypes.POLYLINE_Z;
+            case "POLYGONM":
+                return ShapeTypes.POLYGON_M;
+            case "POLYGONZ":
+                return ShapeTypes.POLYGON_Z;
+            case "CURVELINE":
+                return ShapeTypes.CURVE_LINE;
+            case "CURVEPOLYGON":
+                return ShapeTypes.CURVE_POLYGON;
+            case "POLYLINEERROR":
+                return ShapeTypes.POLYLINE_ERROR;
+            case "STATIONMODEL":
+                return ShapeTypes.STATION_MODEL;
+            case "WEATHERSYMBOL":
+                return ShapeTypes.WEATHER_SYMBOL;
+            case "WINDARROR":
+                return ShapeTypes.WIND_ARROW;
+            case "WINDBARB":
+                return ShapeTypes.WIND_BARB;
+            default:
+                return ShapeTypes.valueOf(name.toUpperCase());
+        }
+    }
     
     /**
      * If is point
@@ -143,7 +180,7 @@ public enum ShapeTypes {
     public boolean isLine(){
         switch(this){
             case POLYLINE:
-            case POLYGON_Z:
+            case POLYLINE_Z:
             case POLYLINE_M:
             case CURVE_LINE:
                 return true;

@@ -1400,10 +1400,10 @@ public class MapView extends JPanel implements IWebMapPanel {
                                 pXY = screenToProj(e.getX(), e.getY());
                                 aPS = new PointShape();
                                 switch (layer.getShapeType()) {
-                                    case Point:
+                                    case POINT:
                                         aPS.setPoint(new PointD(pXY[0], pXY[1]));
                                         break;
-                                    case PointZ:
+                                    case POINT_Z:
                                         aPS = new PointZShape();
                                         aPS.setPoint(new PointZ(pXY[0], pXY[1], 0, 0));
                                 }
@@ -1497,7 +1497,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                 if (aMLayer != null) {
                                     if (aMLayer.getLayerType() == LayerTypes.VectorLayer) {
                                         VectorLayer aLayer = (VectorLayer) aMLayer;
-                                        if (aLayer.getShapeType() != ShapeTypes.Point) {
+                                        if (aLayer.getShapeType() != ShapeTypes.POINT) {
                                             PointF aPoint = new PointF(e.getX(), e.getY());
                                             List<Integer> selectedShapes = selectShapes(aLayer, aPoint);
                                             if (selectedShapes.size() > 0) {
@@ -1508,8 +1508,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                                                 //drawIdShape(g, aShape);
                                                 double value = 0.0;
                                                 switch (aShape.getShapeType()) {
-                                                    case Polyline:
-                                                    case PolylineZ:
+                                                    case POLYLINE:
+                                                    case POLYLINE_Z:
                                                         _frmMeasure.setArea(false);
                                                         double areaValue = 0.0;
                                                         if (_projection.isLonLatMap()) {
@@ -1530,9 +1530,9 @@ public class MapView extends JPanel implements IWebMapPanel {
                                                             _frmMeasure.setAreaValue(areaValue);
                                                         }
                                                         break;
-                                                    case Polygon:
-                                                    case PolygonM:
-                                                    case PolygonZ:
+                                                    case POLYGON:
+                                                    case POLYGON_M:
+                                                    case POLYGON_Z:
                                                         _frmMeasure.setArea(true);
                                                         if (_projection.isLonLatMap()) {
                                                             value = ((PolygonShape) aShape).getSphericalArea();
@@ -2714,7 +2714,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                 });
                                 jPopupMenu_Graphic.add(jMenuItem_Reverse);
 
-                                if (aGraphic.getShape().getShapeType() == ShapeTypes.Polyline || aGraphic.getShape().getShapeType() == ShapeTypes.Polygon) {
+                                if (aGraphic.getShape().getShapeType() == ShapeTypes.POLYLINE || aGraphic.getShape().getShapeType() == ShapeTypes.POLYGON) {
                                     jPopupMenu_Graphic.add(new JSeparator());
                                     JMenuItem jMenuItem_Smooth = new JMenuItem("Smooth Graphic");
                                     jMenuItem_Smooth.addActionListener(new ActionListener() {
@@ -2741,7 +2741,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                 }
                             }
 
-                            if (aGraphic.getShape().getShapeType() == ShapeTypes.Ellipse) {
+                            if (aGraphic.getShape().getShapeType() == ShapeTypes.ELLIPSE) {
                                 JMenuItem jMenuItem_Angle = new JMenuItem("Set Angle");
                                 jMenuItem_Angle.addActionListener(new ActionListener() {
                                     @Override
@@ -3232,7 +3232,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             pointList.add(new wcontour.global.PointD(aP.X, aP.Y));
         }
 
-        if (aGraphic.getShape().getShapeType() == ShapeTypes.Polygon) {
+        if (aGraphic.getShape().getShapeType() == ShapeTypes.POLYGON) {
             pointList.add(pointList.get(0));
         }
 
@@ -3257,7 +3257,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             pointList.add(new wcontour.global.PointD(aP.X, aP.Y));
         }
 
-        if (shape.getShapeType() == ShapeTypes.Polygon) {
+        if (shape.getShapeType() == ShapeTypes.POLYGON) {
             pointList.add(pointList.get(0));
         }
 
@@ -3780,12 +3780,12 @@ public class MapView extends JPanel implements IWebMapPanel {
             if (layers.get(i).getLayerType() == LayerTypes.VectorLayer) {
                 bLayer = (VectorLayer) layers.get(i);
                 switch (bLayer.getShapeType()) {
-                    case Polyline:
-                    case PolylineM:
-                    case PolylineZ:
-                    case Polygon:
-                    case PolygonM:
-                    case PolygonZ:
+                    case POLYLINE:
+                    case POLYLINE_M:
+                    case POLYLINE_Z:
+                    case POLYGON:
+                    case POLYGON_M:
+                    case POLYGON_Z:
                         lIdx = i;
                         break;
                 }
@@ -3814,9 +3814,9 @@ public class MapView extends JPanel implements IWebMapPanel {
             if (layers.get(i).getLayerType() == LayerTypes.VectorLayer) {
                 bLayer = (VectorLayer) layers.get(i);
                 switch (bLayer.getShapeType()) {
-                    case Polygon:
-                    case PolygonM:
-                    case PolygonZ:
+                    case POLYGON:
+                    case POLYGON_M:
+                    case POLYGON_Z:
                         lIdx = i;
                         break;
                 }
@@ -4440,7 +4440,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         boolean isDraw = true;
                         switch (aVLayer.getLayerDrawType()) {
                             case Vector:
-                                if (aVLayer.getShape(0).getShapeType() == ShapeTypes.WindArraw) {
+                                if (aVLayer.getShape(0).getShapeType() == ShapeTypes.WIND_ARROW) {
                                     drawVectLayerWithLegendScheme(aVLayer, g, 0);
                                     if (this._multiGlobalDraw) {
                                         if (aLayer.getExtent().minX > -360 && aLayer.getExtent().maxX > 0) {
@@ -4454,7 +4454,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                 }
                                 break;
                             case Barb:
-                                if (aVLayer.getShape(0).getShapeType() == ShapeTypes.WindBarb) {
+                                if (aVLayer.getShape(0).getShapeType() == ShapeTypes.WIND_BARB) {
                                     drawBarbLayerWithLegendScheme(aVLayer, g, 0);
                                     if (this._multiGlobalDraw) {
                                         if (aLayer.getExtent().minX > -360 && aLayer.getExtent().maxX > 0) {
@@ -4468,7 +4468,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                 }
                                 break;
                             case StationModel:
-                                if (aVLayer.getShape(0).getShapeType() == ShapeTypes.StationModel) {
+                                if (aVLayer.getShape(0).getShapeType() == ShapeTypes.STATION_MODEL) {
                                     drawStationModelLayer(aVLayer, g, 0);
                                     if (this._multiGlobalDraw) {
                                         if (aLayer.getExtent().minX > -360 && aLayer.getExtent().maxX > 0) {
@@ -4734,9 +4734,9 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         boolean hasDrawCharts = false;
         switch (aLayer.getShapeType()) {
-            case Point:
-            case PointM:
-            case PointZ:
+            case POINT:
+            case POINT_M:
+            case POINT_Z:
                 //Draw layer charts
                 if (aLayer.getChartSet().isDrawCharts()) {
                     drawLayerCharts(g, aLayer, LonShift);
@@ -4745,14 +4745,14 @@ public class MapView extends JPanel implements IWebMapPanel {
 
                 drawPointLayer(aLayer, g, LonShift);
                 break;
-            case Polygon:
-            case PolygonM:
-            case PolygonZ:
+            case POLYGON:
+            case POLYGON_M:
+            case POLYGON_Z:
                 drawPolygonLayer(aLayer, g, LonShift);
                 break;
-            case Polyline:
-            case PolylineM:
-            case PolylineZ:
+            case POLYLINE:
+            case POLYLINE_M:
+            case POLYLINE_Z:
                 drawPolylineLayer(aLayer, g, LonShift);
                 break;
         }
@@ -6002,11 +6002,11 @@ public class MapView extends JPanel implements IWebMapPanel {
 
             //Region oldRegion = g.Clip;
             switch (aGraphic.getShape().getShapeType()) {
-                case Polygon:
-                case Rectangle:
-                case Circle:
-                case CurvePolygon:
-                case Ellipse:
+                case POLYGON:
+                case RECTANGLE:
+                case CIRCLE:
+                case CURVE_POLYGON:
+                case ELLIPSE:
                     if (((PolygonBreak) aGraphic.getLegend()).isMaskout()) {
                         setClipRegion(g);
                     }
@@ -6111,9 +6111,9 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         for (double LonShift : lonShifts) {
             switch (aShape.getShapeType()) {
-                case Point:
-                case PointM:
-                case PointZ:
+                case POINT:
+                case POINT_M:
+                case POINT_Z:
                     PointShape aPS = (PointShape) aShape;
                     double[] sXY = projToScreen(aPS.getPoint().X, aPS.getPoint().Y, LonShift);
                     PointF aPoint = new PointF();
@@ -6127,18 +6127,18 @@ public class MapView extends JPanel implements IWebMapPanel {
 
                     Draw.drawPoint(aPoint, aPB, g);
                     break;
-                case Polyline:
-                case PolylineM:
-                case PolylineZ:
+                case POLYLINE:
+                case POLYLINE_M:
+                case POLYLINE_Z:
                     PolylineShape aPLS = (PolylineShape) aShape;
                     PolylineBreak aPLB = new PolylineBreak();
                     aPLB.setColor(Color.red);
                     aPLB.setWidth(2);
                     drawPolylineShape(g, aPLS, aPLB, LonShift, false, false, true);
                     break;
-                case Polygon:
-                case PolygonM:
-                case PolygonZ:
+                case POLYGON:
+                case POLYGON_M:
+                case POLYGON_Z:
                     PolygonShape aPGS = (PolygonShape) aShape;
                     PolygonBreak aPGB = new PolygonBreak();
                     aPGB.setOutlineColor(Color.red);
@@ -6179,9 +6179,9 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         for (double LonShift : lonShifts) {
             switch (aShape.getShapeType()) {
-                case Point:
-                case PointM:
-                case PointZ:
+                case POINT:
+                case POINT_M:
+                case POINT_Z:
                     PointShape aPS = (PointShape) aShape;
                     double[] sXY = projToScreen(aPS.getPoint().X, aPS.getPoint().Y, LonShift);
                     PointF aPoint = new PointF();
@@ -6195,18 +6195,18 @@ public class MapView extends JPanel implements IWebMapPanel {
 
                     Draw.drawPoint(aPoint, aPB, g);
                     break;
-                case Polyline:
-                case PolylineM:
-                case PolylineZ:
+                case POLYLINE:
+                case POLYLINE_M:
+                case POLYLINE_Z:
                     PolylineShape aPLS = (PolylineShape) aShape;
                     PolylineBreak aPLB = new PolylineBreak();
                     aPLB.setColor(Color.red);
                     aPLB.setWidth(2);
                     drawPolylineShape(g, aPLS, aPLB, LonShift, false);
                     break;
-                case Polygon:
-                case PolygonM:
-                case PolygonZ:
+                case POLYGON:
+                case POLYGON_M:
+                case POLYGON_Z:
                     PolygonShape aPGS = (PolygonShape) aShape;
                     PolygonBreak aPGB = new PolygonBreak();
                     aPGB.setOutlineColor(Color.red);
@@ -6737,7 +6737,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         double lon, lat;
         List<PointD> PList;
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE);
         String columnName = "Value";
         Field aDC = new Field(columnName, DataType.FLOAT);
         aLayer.editAddField(aDC);
@@ -6864,7 +6864,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         aLayer.setLayerName("Map_LonLat");
         aLayer.setFileName("");
         aLayer.setLayerDrawType(LayerDrawType.Map);
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, Color.darkGray, 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
         PolylineBreak aPLB = (PolylineBreak) aLayer.getLegendScheme().getLegendBreaks().get(0);
         aPLB.setStyle(LineStyles.DASH);
         aLayer.setVisible(true);
@@ -6880,7 +6880,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         double lon, lat;
         List<PointD> PList;
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE);
         String columnName = "Value";
         Field aDC = new Field(columnName, DataType.FLOAT);
         aLayer.editAddField(aDC);
@@ -7079,7 +7079,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         aLayer.setLayerName("Map_LonLat");
         aLayer.setFileName("");
         aLayer.setLayerDrawType(LayerDrawType.Map);
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, Color.darkGray, 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
         PolylineBreak aPLB = (PolylineBreak) aLayer.getLegendScheme().getLegendBreaks().get(0);
         aPLB.setStyle(LineStyles.DASH);
         aLayer.setVisible(true);
@@ -7615,20 +7615,20 @@ public class MapView extends JPanel implements IWebMapPanel {
         Extent aExtent = aShape.getExtent();
 
         switch (aShape.getShapeType()) {
-            case Point:
-            case PointM:
+            case POINT:
+            case POINT_M:
                 if (legend.getBreakType() == BreakTypes.PointBreak) {
                     PointBreak aPB = (PointBreak) legend;
                     aPB.setSize(newRect.width);
                 }
                 break;
-            case Polyline:
-            case CurveLine:
-            case Polygon:
-            case PolygonM:
-            case PolygonZ:
-            case Circle:
-            case CurvePolygon:
+            case POLYLINE:
+            case CURVE_LINE:
+            case POLYGON:
+            case POLYGON_M:
+            case POLYGON_Z:
+            case CIRCLE:
+            case CURVE_POLYGON:
                 moveShape(aShape, newExtent.minX - aExtent.minX, newExtent.minY - aExtent.minY);
 
                 double deltaX = newExtent.getWidth() - aExtent.getWidth();
@@ -7641,14 +7641,14 @@ public class MapView extends JPanel implements IWebMapPanel {
                 }
                 aShape.setPoints(points);
                 break;
-            case Rectangle:
-            case Ellipse:
+            case RECTANGLE:
+            case ELLIPSE:
                 points = new ArrayList<>();
                 points.add(new PointD(newExtent.minX, newExtent.minY));
                 points.add(new PointD(newExtent.minX, newExtent.maxY));
                 points.add(new PointD(newExtent.maxX, newExtent.maxY));
                 points.add(new PointD(newExtent.maxX, newExtent.minY));
-                if (aShape.getShapeType() == ShapeTypes.Rectangle) {
+                if (aShape.getShapeType() == ShapeTypes.RECTANGLE) {
                     points.add((PointD) points.get(0).clone());
                 }
                 aShape.setPoints(points);
@@ -8031,7 +8031,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         if (_projection.isLonLatMap()) {
             boolean ifCheckLonShift = true;
-            if (baseGraphics.get(0).getShape().getShapeType() == ShapeTypes.Point) {
+            if (baseGraphics.get(0).getShape().getShapeType() == ShapeTypes.POINT) {
                 for (i = 0; i < baseGraphics.size(); i++) {
                     Graphic aGraphic = baseGraphics.get(i);
                     Rectangle rect = getGraphicRectangle(g, aGraphic, lonShift);
@@ -8111,8 +8111,8 @@ public class MapView extends JPanel implements IWebMapPanel {
             for (i = 0; i < baseGraphics.size(); i++) {
                 Graphic aGraphic = baseGraphics.get(i);
                 switch (aGraphic.getShape().getShapeType()) {
-                    case Polyline:
-                    case CurveLine:
+                    case POLYLINE:
+                    case CURVE_LINE:
                         PolylineShape aPLS = (PolylineShape) aGraphic.getShape();
                         if (GeoComputation.selectPolylineShape(pp, aPLS, buffer) != null) {
                             selectedGraphics.add(aGraphic);
@@ -8155,8 +8155,8 @@ public class MapView extends JPanel implements IWebMapPanel {
             for (i = 0; i < baseGraphics.size(); i++) {
                 Graphic aGraphic = baseGraphics.get(i);
                 switch (aGraphic.getShape().getShapeType()) {
-                    case Polyline:
-                    case CurveLine:
+                    case POLYLINE:
+                    case CURVE_LINE:
                         PolylineShape aPLS = (PolylineShape) aGraphic.getShape();
                         if (GeoComputation.selectPolylineShape(pp, aPLS, buffer) != null) {
                             selectedGraphics.add(aGraphic);
@@ -8212,7 +8212,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         if (_projection.isLonLatMap()) {
             boolean ifCheckLonShift = true;
-            if (baseGraphics.get(0).getShape().getShapeType() == ShapeTypes.Point) {
+            if (baseGraphics.get(0).getShape().getShapeType() == ShapeTypes.POINT) {
                 for (i = 0; i < baseGraphics.size(); i++) {
                     Graphic aGraphic = baseGraphics.get(i);
                     Rectangle rect = getGraphicRectangle(g, aGraphic, lonShift);
@@ -8417,12 +8417,12 @@ public class MapView extends JPanel implements IWebMapPanel {
                 vIdx = i;
                 vertices.add(points.get(i));
                 switch (aShape.getShapeType()) {
-                    case Point:
-                    case PointZ:
+                    case POINT:
+                    case POINT_Z:
                         vertices.add(points.get(0));
                         break;
-                    case Polyline:
-                    case CurveLine:
+                    case POLYLINE:
+                    case CURVE_LINE:
                         if (i == 0) {
                             vertices.add(points.get(i + 1));
                         } else if (i == points.size() - 1) {
@@ -8476,7 +8476,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         if (MIMath.isExtentCross(aExtent, aShape.getExtent())) {
             switch (aShape.getShapeType()) {
-                case Polyline:
+                case POLYLINE:
                     PolylineShape lShape = (PolylineShape) aShape;
                     for (Polyline line : lShape.getPolylines()) {
                         Object sel = GeoComputation.selectPolyline(bPoint, (List<PointD>) line.getPointList(), aExtent.getWidth() / 2);
@@ -8485,7 +8485,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         }
                     }
                     break;
-                case Polygon:
+                case POLYGON:
                     PolygonShape pShape = (PolygonShape) aShape;
                     for (Polygon polygon : pShape.getPolygons()) {
                         for (List<? extends PointD> points : polygon.getRings()) {
@@ -8787,8 +8787,8 @@ public class MapView extends JPanel implements IWebMapPanel {
         double[] sXY;
         float aX, aY;
         switch (aGraphic.getShape().getShapeType()) {
-            case Point:
-            case PointM:
+            case POINT:
+            case POINT_M:
                 PointShape aPS = (PointShape) aGraphic.getShape();
                 sXY = projToScreen(aPS.getPoint().X, aPS.getPoint().Y, lonShift);
                 aX = (float) sXY[0];
@@ -8829,13 +8829,13 @@ public class MapView extends JPanel implements IWebMapPanel {
                         break;
                 }
                 break;
-            case Polyline:
-            case Polygon:
-            case Rectangle:
-            case CurveLine:
-            case Ellipse:
-            case Circle:
-            case CurvePolygon:
+            case POLYLINE:
+            case POLYGON:
+            case RECTANGLE:
+            case CURVE_LINE:
+            case ELLIPSE:
+            case CIRCLE:
+            case CURVE_POLYGON:
                 List<PointD> newPList = (List<PointD>) aGraphic.getShape().getPoints();
                 List<PointD> points = new ArrayList<>();
                 for (PointD wPoint : newPList) {

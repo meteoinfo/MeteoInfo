@@ -60,7 +60,7 @@ public class ImageLayer extends MapLayer {
     public ImageLayer() {
         super();
         this.setLayerType(LayerTypes.ImageLayer);
-        this.setShapeType(ShapeTypes.Image);
+        this.setShapeType(ShapeTypes.IMAGE);
         _isSetTransColor = false;
         _transparencyColor = Color.black;
         this.interp = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;

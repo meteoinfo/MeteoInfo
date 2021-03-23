@@ -744,11 +744,11 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                 switch (aLT) {
                     case UniqueValue:
                         List<Number> values = ((RasterLayer) _mapLayer).getGridData().getUniqueValues();
-                        this._legendScheme = LegendManage.createUniqValueLegendScheme(values, ShapeTypes.Image);
+                        this._legendScheme = LegendManage.createUniqValueLegendScheme(values, ShapeTypes.IMAGE);
                         break;
                     case GraduatedColor:
                         if (this._legendScheme == null || this._legendScheme.getLegendType() != LegendType.GraduatedColor)
-                            this._legendScheme = LegendManage.createLegendSchemeFromGridData(((RasterLayer) _mapLayer).getGridData(), LegendType.GraduatedColor, ShapeTypes.Polygon);
+                            this._legendScheme = LegendManage.createLegendSchemeFromGridData(((RasterLayer) _mapLayer).getGridData(), LegendType.GraduatedColor, ShapeTypes.POLYGON);
                         break;
                 }
                 this.legendView1.setLegendScheme(_legendScheme);
@@ -843,8 +843,8 @@ public class FrmLayerProperty extends javax.swing.JDialog {
     private void jButton_AddBreakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AddBreakActionPerformed
         // TODO add your handling code here:
         switch (_legendScheme.getShapeType()) {
-            case Polyline:
-            case PolylineZ:
+            case POLYLINE:
+            case POLYLINE_Z:
                 PolylineBreak aPLB = new PolylineBreak();
                 aPLB.setDrawPolyline(true);
                 aPLB.setWidth(0.1F);
@@ -854,7 +854,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                 aPLB.setCaption("");
                 _legendScheme.getLegendBreaks().add(aPLB);
                 break;
-            case Point:
+            case POINT:
                 PointBreak aPB = new PointBreak();
                 aPB.setDrawShape(true);
                 aPB.setDrawFill(true);
@@ -865,7 +865,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                 aPB.setCaption("");
                 _legendScheme.getLegendBreaks().add(aPB);
                 break;
-            case Polygon:
+            case POLYGON:
                 PolygonBreak aPGB = new PolygonBreak();
                 aPGB.setDrawShape(true);
                 aPGB.setDrawFill(true);
@@ -875,7 +875,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                 aPGB.setCaption("");
                 _legendScheme.getLegendBreaks().add(aPGB);
                 break;
-            case Image:
+            case IMAGE:
                 ColorBreak aCB = new ColorBreak();
                 aCB.setColor(Color.red);
                 aCB.setStartValue(0);
@@ -910,7 +910,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         int oldIdx, newIdx;
         oldIdx = legendView1.getSelectedRows().get(0);
         if (oldIdx > 0) {
-            if (_legendScheme.getShapeType() == ShapeTypes.Point) {
+            if (_legendScheme.getShapeType() == ShapeTypes.POINT) {
                 PointBreak aPB = (PointBreak) _legendScheme.getLegendBreaks().get(oldIdx);
                 if (aPB.isNoData()) {
                     return;
@@ -930,7 +930,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         int oldIdx, newIdx, endIdx;
         oldIdx = legendView1.getSelectedRows().get(0);
         endIdx = legendView1.getLegendScheme().getBreakNum() - 1;
-        if (_legendScheme.getShapeType() == ShapeTypes.Point) {
+        if (_legendScheme.getShapeType() == ShapeTypes.POINT) {
             PointBreak aPB = (PointBreak) _legendScheme.getLegendBreaks().get(oldIdx);
             if (aPB.isNoData()) {
                 endIdx = endIdx - 1;
@@ -1070,10 +1070,10 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                         }
                     }
                     switch (aLayer.getShapeType()){
-                        case PolylineM:
+                        case POLYLINE_M:
                             this.jComboBox_Field.addItem("Geometry_M");
                             break;
-                        case PolylineZ:
+                        case POLYLINE_Z:
                             this.jComboBox_Field.addItem("Geometry_M");
                             this.jComboBox_Field.addItem("Geometry_Z");
                             break;
@@ -1095,22 +1095,22 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                 case SingleSymbol:
                     Color aColor = Color.black;
                     switch (aST) {
-                        case Point:
+                        case POINT:
                             aColor = Color.black;
                             break;
-                        case Polyline:
-                        case PolylineZ:
+                        case POLYLINE:
+                        case POLYLINE_Z:
                             aColor = Color.black;
                             break;
-                        case Polygon:
-                        case PolygonM:
-                        case PolygonZ:
-                        case Image:
+                        case POLYGON:
+                        case POLYGON_M:
+                        case POLYGON_Z:
+                        case IMAGE:
                             aColor = new Color(255, 251, 195);
                             break;
                     }
                     float size = 1.0F;
-                    if (_legendScheme.getShapeType() == ShapeTypes.Point) {
+                    if (_legendScheme.getShapeType() == ShapeTypes.POINT) {
                         size = 5;
                     }
                     _legendScheme = LegendManage.createSingleSymbolLegendScheme(_legendScheme.getShapeType(), aColor,
@@ -1350,7 +1350,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                         //this.jTabbedPane1.setEnabledAt(2, true);
                         this.jTabbedPane1.addTab("Chart", jPanel_Chart);
                         VectorLayer aLayer = (VectorLayer) _mapLayer;
-                        if (_mapLayer.getShapeType() == ShapeTypes.Polygon) {
+                        if (_mapLayer.getShapeType() == ShapeTypes.POLYGON) {
                             this.jComboBox_ChartType.removeAllItems();
                             this.jComboBox_ChartType.addItem(ChartTypes.BarChart.toString());
                             this.jComboBox_ChartType.addItem(ChartTypes.PieChart.toString());

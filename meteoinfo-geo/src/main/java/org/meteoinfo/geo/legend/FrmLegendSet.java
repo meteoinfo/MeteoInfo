@@ -308,46 +308,46 @@ public class FrmLegendSet extends JDialog {
     private void jButton_AddBreakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AddBreakActionPerformed
         // TODO add your handling code here:
         switch (_legendScheme.getShapeType()) {
-            case Polyline:
-            case PolylineZ:
-            PolylineBreak aPLB = new PolylineBreak();
-            aPLB.setDrawPolyline(true);
-            aPLB.setWidth(0.1F);
-            aPLB.setColor(Color.red);
-            aPLB.setStartValue(0);
-            aPLB.setEndValue(0);
-            aPLB.setCaption("");
-            _legendScheme.getLegendBreaks().add(aPLB);
-            break;
-            case Point:
-            PointBreak aPB = new PointBreak();
-            aPB.setDrawShape(true);
-            aPB.setDrawFill(true);
-            aPB.setSize(5);
-            aPB.setColor(Color.red);
-            aPB.setStartValue(0);
-            aPB.setEndValue(0);
-            aPB.setCaption("");
-            _legendScheme.getLegendBreaks().add(aPB);
-            break;
-            case Polygon:
-            PolygonBreak aPGB = new PolygonBreak();
-            aPGB.setDrawShape(true);
-            aPGB.setDrawFill(true);
-            aPGB.setColor(Color.red);
-            aPGB.setStartValue(0);
-            aPGB.setEndValue(0);
-            aPGB.setCaption("");
-            _legendScheme.getLegendBreaks().add(aPGB);
-            break;
-            case Image:
-            ColorBreak aCB = new ColorBreak();
-            aCB.setColor(Color.red);
-            aCB.setStartValue(0);
-            aCB.setEndValue(0);
-            aCB.setCaption("");
-            _legendScheme.getLegendBreaks().add(aCB);
-            break;
+            case POLYLINE:
+            case POLYLINE_Z:
+                PolylineBreak aPLB = new PolylineBreak();
+                aPLB.setDrawPolyline(true);
+                aPLB.setWidth(0.1F);
+                aPLB.setColor(Color.red);
+                aPLB.setStartValue(0);
+                aPLB.setEndValue(0);
+                aPLB.setCaption("");
+                _legendScheme.getLegendBreaks().add(aPLB);
+                break;
+            case POINT:
+                PointBreak aPB = new PointBreak();
+                aPB.setDrawShape(true);
+                aPB.setDrawFill(true);
+                aPB.setSize(5);
+                aPB.setColor(Color.red);
+                aPB.setStartValue(0);
+                aPB.setEndValue(0);
+                aPB.setCaption("");
+                _legendScheme.getLegendBreaks().add(aPB);
+                break;
+            case POLYGON:
+                PolygonBreak aPGB = new PolygonBreak();
+                aPGB.setDrawShape(true);
+                aPGB.setDrawFill(true);
+                aPGB.setColor(Color.red);
+                aPGB.setStartValue(0);
+                aPGB.setEndValue(0);
+                aPGB.setCaption("");
+                _legendScheme.getLegendBreaks().add(aPGB);
+                break;
+            case IMAGE:
+                ColorBreak aCB = new ColorBreak();
+                aCB.setColor(Color.red);
+                aCB.setStartValue(0);
+                aCB.setEndValue(0);
+                aCB.setCaption("");
+                _legendScheme.getLegendBreaks().add(aCB);
+                break;
         }
         legendView1.update(_legendScheme);
     }//GEN-LAST:event_jButton_AddBreakActionPerformed
@@ -375,7 +375,7 @@ public class FrmLegendSet extends JDialog {
         int oldIdx, newIdx;
         oldIdx = legendView1.getSelectedRows().get(0);
         if (oldIdx > 0) {
-            if (_legendScheme.getShapeType() == ShapeTypes.Point) {
+            if (_legendScheme.getShapeType() == ShapeTypes.POINT) {
                 PointBreak aPB = (PointBreak) _legendScheme.getLegendBreaks().get(oldIdx);
                 if (aPB.isNoData()) {
                     return;
@@ -395,7 +395,7 @@ public class FrmLegendSet extends JDialog {
         int oldIdx, newIdx, endIdx;
         oldIdx = legendView1.getSelectedRows().get(0);
         endIdx = legendView1.getLegendScheme().getBreakNum() - 1;
-        if (_legendScheme.getShapeType() == ShapeTypes.Point) {
+        if (_legendScheme.getShapeType() == ShapeTypes.POINT) {
             PointBreak aPB = (PointBreak) _legendScheme.getLegendBreaks().get(oldIdx);
             if (aPB.isNoData()) {
                 endIdx = endIdx - 1;

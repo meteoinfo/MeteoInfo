@@ -60,7 +60,7 @@ public class PolylineZShape extends PolylineShape {
     
     @Override
     public ShapeTypes getShapeType(){
-        return ShapeTypes.POLYGON_Z;
+        return ShapeTypes.POLYLINE_Z;
     }
 
     /**

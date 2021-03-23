@@ -78,7 +78,7 @@ public class SymbolControl extends JPanel {
             }
         });
 
-        _shapeType = ShapeTypes.Point;
+        _shapeType = ShapeTypes.POINT;
         _markerType = MarkerType.Simple;
         _cellSize = new Dimension(25, 25);
         _symbolNumber = PointStyle.values().length;
@@ -175,7 +175,7 @@ public class SymbolControl extends JPanel {
     public void setShapeType(ShapeTypes st) {
         _shapeType = st;
         switch (_shapeType) {
-            case Point:
+            case POINT:
                 setCellSize(new Dimension(25, 25));
                 if (_markerType == MarkerType.Simple) {
                     setSymbolNumber(PointStyle.values().length);
@@ -183,11 +183,11 @@ public class SymbolControl extends JPanel {
                     setSymbolNumber(256);
                 }
                 break;
-            case Polyline:
+            case POLYLINE:
                 setCellSize(new Dimension(50, 40));
                 setSymbolNumber(LineStyles.values().length);
                 break;
-            case Polygon:
+            case POLYGON:
                 setCellSize(new Dimension(30, 30));
                 setSymbolNumber(HatchStyle.values().length);
                 break;
@@ -351,7 +351,7 @@ public class SymbolControl extends JPanel {
     private void drawCells(Graphics2D g, int sHeight) {
         int hideRows = 0;
         switch (_shapeType) {
-            case Point:
+            case POINT:
                 switch (_markerType) {
                     case Character:
                         Font smallFont = new Font(this.getFont().getFamily(), Font.PLAIN, (int) (_cellSize.width * 0.8F));
@@ -434,7 +434,7 @@ public class SymbolControl extends JPanel {
                         break;
                 }
                 break;
-            case Polyline:
+            case POLYLINE:
                 PolylineBreak aPLB = new PolylineBreak();
                 aPLB.setWidth(2);
                 aPLB.setColor(Color.black);
@@ -461,7 +461,7 @@ public class SymbolControl extends JPanel {
                             rect.width * 0.8f, rect.height * 0.8f, aPLB, g);
                 }
                 break;
-            case Polygon:
+            case POLYGON:
                 PolygonBreak aPGB = new PolygonBreak();
                 aPGB.setColor(Color.red);
                 aPGB.setOutlineColor(Color.black);

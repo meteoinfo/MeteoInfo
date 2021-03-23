@@ -83,7 +83,7 @@ public class GeoMathUtil {
      * @return Maskouted grid data
      */
     public static GridData maskout(GridData gridData, VectorLayer maskLayer) {
-        if (maskLayer.getShapeType() != ShapeTypes.Polygon) {
+        if (maskLayer.getShapeType() != ShapeTypes.POLYGON) {
             return gridData;
         }
 
@@ -161,7 +161,7 @@ public class GeoMathUtil {
       * @return Result station data
       */
      public static StationData maskout(StationData stationData, VectorLayer maskLayer) {
-         if (maskLayer.getShapeType() != ShapeTypes.Polygon) {
+         if (maskLayer.getShapeType() != ShapeTypes.POLYGON) {
              return stationData;
          }
 
@@ -217,7 +217,7 @@ public class GeoMathUtil {
       * @return Result station data
       */
      public static StationData maskin(StationData stationData, VectorLayer maskLayer) {
-         if (maskLayer.getShapeType() != ShapeTypes.Polygon) {
+         if (maskLayer.getShapeType() != ShapeTypes.POLYGON) {
              return stationData;
          }
 

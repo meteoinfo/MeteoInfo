@@ -184,9 +184,9 @@ public class FrmOutputMapData extends javax.swing.JDialog {
             this.jComboBox_OutputFormat.addItem("Shape File");
             this.jComboBox_OutputFormat.addItem("KML File");
             switch (_currentLayer.getShapeType()) {
-                case Polygon:
-                case PolygonM:
-                case PolygonZ:
+                case POLYGON:
+                case POLYGON_M:
+                case POLYGON_Z:
                     //this.jComboBox_OutputFormat.addItem("GrADS Map File");
                     this.jComboBox_OutputFormat.addItem("GrADS Maskout File");
                     //this.jComboBox_OutputFormat.addItem("Surfer BLN File");
@@ -276,7 +276,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
             }
             int i;
             switch (_currentLayer.getShapeType()) {
-                case Point:
+                case POINT:
                     sw.write("Point");
                     sw.newLine();
                     sw.write(String.valueOf(shpNum));
@@ -300,8 +300,8 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                         }
                     }
                     break;
-                case Polyline:
-                case PolylineZ:
+                case POLYLINE:
+                case POLYLINE_Z:
                     sw.write("Polyline");
                     sw.newLine();
                     int shapeNum = 0;
@@ -350,7 +350,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                         this.jProgressBar1.setValue((i + 1) * 100 / _currentLayer.getShapeNum());
                     }
                     break;
-                case Polygon:
+                case POLYGON:
                     sw.write("Polygon");
                     sw.newLine();
                     shapeNum = 0;

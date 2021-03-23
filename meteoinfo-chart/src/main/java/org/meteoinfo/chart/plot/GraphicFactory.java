@@ -1140,7 +1140,7 @@ public class GraphicFactory {
             LegendScheme ls = new LegendScheme();
             ls.setLegendBreaks(cbs);
             ls.setLegendType(LegendType.UniqueValue);
-            ls.setShapeType(ShapeTypes.Point);
+            ls.setShapeType(ShapeTypes.POINT);
             graphics.setLegendScheme(ls);
         } else {
             while (xIter.hasNext()){
@@ -1150,7 +1150,7 @@ public class GraphicFactory {
                 LegendScheme ls = new LegendScheme();
                 ls.setLegendBreaks(cbs);
                 ls.setLegendType(LegendType.SingleSymbol);
-                ls.setShapeType(ShapeTypes.Point);
+                ls.setShapeType(ShapeTypes.POINT);
                 graphics.setLegendScheme(ls);
             }
         }
@@ -1238,7 +1238,7 @@ public class GraphicFactory {
             LegendScheme ls = new LegendScheme();
             ls.setLegendBreaks(cbs);
             ls.setLegendType(LegendType.UniqueValue);
-            ls.setShapeType(ShapeTypes.Point);
+            ls.setShapeType(ShapeTypes.POINT);
             graphics.setLegendScheme(ls);
         } else {
             while (xIter.hasNext()) {
@@ -1252,7 +1252,7 @@ public class GraphicFactory {
                 LegendScheme ls = new LegendScheme();
                 ls.setLegendBreaks(cbs);
                 ls.setLegendType(LegendType.SingleSymbol);
-                ls.setShapeType(ShapeTypes.Point);
+                ls.setShapeType(ShapeTypes.POINT);
                 graphics.setLegendScheme(ls);
             }
         }
@@ -1367,7 +1367,7 @@ public class GraphicFactory {
             LegendScheme ls = new LegendScheme();
             ls.setLegendBreaks(cbs);
             ls.setLegendType(LegendType.UniqueValue);
-            ls.setShapeType(ShapeTypes.Point);
+            ls.setShapeType(ShapeTypes.POINT);
             graphics.setLegendScheme(ls);
         } else {
             while (xIter.hasNext()) {
@@ -1399,7 +1399,7 @@ public class GraphicFactory {
             LegendScheme ls = new LegendScheme();
             ls.setLegendBreaks(cbs);
             ls.setLegendType(LegendType.SingleSymbol);
-            ls.setShapeType(ShapeTypes.Point);
+            ls.setShapeType(ShapeTypes.POINT);
             graphics.setLegendScheme(ls);
         }
         return new GraphicCollection[]{stemlines, graphics};
@@ -1722,7 +1722,7 @@ public class GraphicFactory {
         PointZ pz;
         ColorBreak cb;
         switch (shapeType) {
-            case Point:
+            case POINT:
                 for (PointShape shape : (List<PointShape>) layer.getShapes()) {
                     PointZShape s = new PointZShape();
                     PointD pd = shape.getPoint();
@@ -1732,7 +1732,7 @@ public class GraphicFactory {
                     graphics.add(new Graphic(s, cb));
                 }
                 break;
-            case Polyline:
+            case POLYLINE:
                 for (PolylineShape shape : (List<PolylineShape>) layer.getShapes()) {
                     cb = ls.getLegendBreaks().get(shape.getLegendIndex());
                     for (Polyline pl : (List<Polyline>) shape.getPolylines()) {
@@ -1747,7 +1747,7 @@ public class GraphicFactory {
                     }
                 }
                 break;
-            case Polygon:
+            case POLYGON:
                 for (PolygonShape shape : (List<PolygonShape>) layer.getShapes()) {
                     PolygonZShape s = new PolygonZShape();
                     List<PointZ> plist = new ArrayList<>();
@@ -1762,9 +1762,9 @@ public class GraphicFactory {
                     graphics.add(new Graphic(s, cb));
                 }
                 break;
-            case PointZ:
-            case PolylineZ:
-            case PolygonZ:
+            case POINT_Z:
+            case POLYLINE_Z:
+            case POLYGON_Z:
                 graphics.setFixZ(false);
                 if (xshift == 0) {
                     for (Shape shape : layer.getShapes()) {
@@ -1774,7 +1774,7 @@ public class GraphicFactory {
                     }
                 } else {
                     switch (shapeType) {
-                        case PointZ:
+                        case POINT_Z:
                             for (PointZShape shape : (List<PointZShape>) layer.getShapes()) {
                                 PointZShape s = new PointZShape();
                                 PointZ pd = (PointZ) shape.getPoint();
@@ -1784,7 +1784,7 @@ public class GraphicFactory {
                                 graphics.add(new Graphic(s, cb));
                             }
                             break;
-                        case PolylineZ:
+                        case POLYLINE_Z:
                             for (PolylineZShape shape : (List<PolylineZShape>) layer.getShapes()) {
                                 cb = ls.getLegendBreaks().get(shape.getLegendIndex());
                                 for (PolylineZ pl : (List<PolylineZ>) shape.getPolylines()) {
@@ -1799,7 +1799,7 @@ public class GraphicFactory {
                                 }
                             }
                             break;
-                        case PolygonZ:
+                        case POLYGON_Z:
                             for (PolygonZShape shape : (List<PolygonZShape>) layer.getShapes()) {
                                 PolygonZShape s = new PolygonZShape();
                                 List<PointZ> plist = new ArrayList<>();
@@ -3045,7 +3045,7 @@ public class GraphicFactory {
      * @return Contour lines
      */
     public static GraphicCollection createContourLines(Array xa, Array ya, Array va, LegendScheme ls, boolean isSmooth) {
-        ls = ls.convertTo(ShapeTypes.Polyline);
+        ls = ls.convertTo(ShapeTypes.POLYLINE);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
@@ -3134,7 +3134,7 @@ public class GraphicFactory {
      * @return Contour lines
      */
     public static GraphicCollection createContourLines(GridData gridData, LegendScheme ls, boolean isSmooth) {
-        ls = ls.convertTo(ShapeTypes.Polyline);
+        ls = ls.convertTo(ShapeTypes.POLYLINE);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
@@ -3223,7 +3223,7 @@ public class GraphicFactory {
      */
     public static GraphicCollection createContourLines(GridData gridData, double offset,
             String zdir, LegendScheme ls, boolean isSmooth) {
-        ls = ls.convertTo(ShapeTypes.Polyline);
+        ls = ls.convertTo(ShapeTypes.POLYLINE);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
@@ -3315,7 +3315,7 @@ public class GraphicFactory {
      */
     public static GraphicCollection createContourLines(GridData gridData, double offset,
             String zdir, LegendScheme ls, boolean isSmooth, List<Number> sePoint) {
-        ls = ls.convertTo(ShapeTypes.Polyline);
+        ls = ls.convertTo(ShapeTypes.POLYLINE);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
@@ -3420,7 +3420,7 @@ public class GraphicFactory {
      * @return Contour polygons
      */
     public static GraphicCollection createContourPolygons(GridData gridData, LegendScheme ls, boolean isSmooth) {
-        ls = ls.convertTo(ShapeTypes.Polygon);
+        ls = ls.convertTo(ShapeTypes.POLYGON);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
@@ -3555,7 +3555,7 @@ public class GraphicFactory {
      * @return Contour polygons
      */
     public static GraphicCollection createContourPolygons(Array xa, Array ya, Array va, LegendScheme ls, boolean isSmooth) {
-        ls = ls.convertTo(ShapeTypes.Polygon);
+        ls = ls.convertTo(ShapeTypes.POLYGON);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
@@ -3681,7 +3681,7 @@ public class GraphicFactory {
      */
     public static GraphicCollection createContourPolygons(GridData gridData, double offset,
             String zdir, LegendScheme ls, boolean isSmooth) {
-        ls = ls.convertTo(ShapeTypes.Polygon);
+        ls = ls.convertTo(ShapeTypes.POLYGON);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
@@ -3843,7 +3843,7 @@ public class GraphicFactory {
      */
     public static GraphicCollection createContourPolygons(GridData gridData, double offset,
             String zdir, LegendScheme ls, boolean isSmooth, List<Number> sePoint) {
-        ls = ls.convertTo(ShapeTypes.Polygon);
+        ls = ls.convertTo(ShapeTypes.POLYGON);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
@@ -4623,8 +4623,8 @@ public class GraphicFactory {
         }
 
         ShapeTypes sts = ls.getShapeType();
-        ls = ls.convertTo(ShapeTypes.Point);
-        if (sts != ShapeTypes.Point) {
+        ls = ls.convertTo(ShapeTypes.POINT);
+        if (sts != ShapeTypes.POINT) {
             for (int i = 0; i < ls.getBreakNum(); i++) {
                 ((PointBreak) ls.getLegendBreaks().get(i)).setSize(10);
             }
@@ -4801,8 +4801,8 @@ public class GraphicFactory {
         }
 
         ShapeTypes sts = ls.getShapeType();
-        ls = ls.convertTo(ShapeTypes.Point);
-        if (sts != ShapeTypes.Point) {
+        ls = ls.convertTo(ShapeTypes.POINT);
+        if (sts != ShapeTypes.POINT) {
             for (int i = 0; i < ls.getBreakNum(); i++) {
                 ((PointBreak) ls.getLegendBreaks().get(i)).setSize(10);
             }
@@ -4875,8 +4875,8 @@ public class GraphicFactory {
             Array vdata, Array wdata, float scale, float headWidth, float headLength, Array cdata, LegendScheme ls) {
         GraphicCollection gc = new GraphicCollection();
         ShapeTypes sts = ls.getShapeType();
-        ls = ls.convertTo(ShapeTypes.Point);
-        if (sts != ShapeTypes.Point) {
+        ls = ls.convertTo(ShapeTypes.POINT);
+        if (sts != ShapeTypes.POINT) {
             for (int i = 0; i < ls.getBreakNum(); i++) {
                 ((PointBreak) ls.getLegendBreaks().get(i)).setSize(10);
             }
@@ -5602,7 +5602,7 @@ public class GraphicFactory {
         float ex;
         double dx, dy, ldx, ldy;
         String label, pct = null;
-        LegendScheme ls = new LegendScheme(ShapeTypes.Polygon);
+        LegendScheme ls = new LegendScheme(ShapeTypes.POLYGON);
         Boolean drawEdge = wedgeprops.get("drawedge") == null ? null : (Boolean) wedgeprops.get("drawedge");
         Color edgeColor = wedgeprops.get("edgecolor") == null ? null : (Color) wedgeprops.get("edgecolor");
         Float lineWidth = wedgeprops.get("linewidth") == null ? null : Float.parseFloat(String.valueOf(wedgeprops.get("linewidth")));

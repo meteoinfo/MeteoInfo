@@ -218,10 +218,10 @@ public class FrmMain extends JFrame implements IApplication {
                 if (_mapLayout.getSelectedElements().size() > 0) {
                     if (_mapLayout.getSelectedElements().get(0).getElementType() == ElementType.LayoutGraphic) {
                         switch (((LayoutGraphic) _mapLayout.getSelectedElements().get(0)).getGraphic().getShape().getShapeType()) {
-                            case Polyline:
-                            case CurveLine:
-                            case Polygon:
-                            case CurvePolygon:
+                            case POLYLINE:
+                            case CURVE_LINE:
+                            case POLYGON:
+                            case CURVE_POLYGON:
                                 jButton_EditVertices.setEnabled(true);
                                 break;
                             default:
@@ -1886,10 +1886,10 @@ public class FrmMain extends JFrame implements IApplication {
             public void graphicSelectedEvent(GraphicSelectedEvent event) {
                 if (_mapView.getSelectedGraphics().size() > 0) {
                     switch (_mapView.getSelectedGraphics().get(0).getShape().getShapeType()) {
-                        case Polyline:
-                        case CurveLine:
-                        case Polygon:
-                        case CurvePolygon:
+                        case POLYLINE:
+                        case CURVE_LINE:
+                        case POLYGON:
+                        case CURVE_POLYGON:
                             jButton_EditVertices.setEnabled(true);
                             break;
                         default:
@@ -2720,11 +2720,11 @@ public class FrmMain extends JFrame implements IApplication {
         String option = (String) JOptionPane.showInputDialog(this, "Select Layer Type:",
                 "Select", JOptionPane.PLAIN_MESSAGE, null, options, "Point Layer");
         if (option != null) {
-            ShapeTypes type = ShapeTypes.Point;
+            ShapeTypes type = ShapeTypes.POINT;
             if (option.equals("Polyline Layer")) {
-                type = ShapeTypes.Polyline;
+                type = ShapeTypes.POLYLINE;
             } else if (option.equals("Polygon Layer")) {
-                type = ShapeTypes.Polygon;
+                type = ShapeTypes.POLYGON;
             }
             VectorLayer layer = new VectorLayer(type);
             layer.setLayerName("New " + option);

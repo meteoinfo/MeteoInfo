@@ -1639,7 +1639,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         }
                     }
                     switch (graphic.getGraphicN(0).getShape().getShapeType()) {
-                        case PointZ:
+                        case POINT_Z:
                             this.drawPoints(gl, graphic);
                             break;
                         default:
@@ -1662,15 +1662,15 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawGraphic(GL2 gl, Graphic graphic) {
         Shape shape = graphic.getGraphicN(0).getShape();
         switch (shape.getShapeType()) {
-            case Point:
-            case PointZ:
+            case POINT:
+            case POINT_Z:
                 this.drawPoint(gl, graphic);
                 break;
             case TEXT:
                 //this.drawText(gl, (ChartText3D) shape);
                 break;
-            case Polyline:
-            case PolylineZ:
+            case POLYLINE:
+            case POLYLINE_Z:
                 ColorBreak cb = graphic.getLegend();
                 if (cb instanceof StreamlineBreak) {
                     this.drawStreamline(gl, graphic);
@@ -1684,11 +1684,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     this.drawLineString(gl, graphic);
                 }
                 break;
-            case Polygon:
-            case PolygonZ:
+            case POLYGON:
+            case POLYGON_Z:
                 this.drawPolygonShape(gl, graphic);
                 break;
-            case WindArraw:
+            case WIND_ARROW:
                 this.drawWindArrow(gl, graphic);
                 break;
             case CUBIC:
@@ -1697,7 +1697,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             case CYLINDER:
                 this.drawCylinder(gl, graphic);
                 break;
-            case Image:
+            case IMAGE:
                 this.drawImage(gl, graphic);
                 break;
             case TEXTURE:
@@ -2977,7 +2977,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
 
         if (ls == null) {
-            ShapeTypes stype = ShapeTypes.Polyline;
+            ShapeTypes stype = ShapeTypes.POLYLINE;
             ls = new LegendScheme(stype);
             for (Graphic g : this.graphics.getGraphics()) {
                 ls.getLegendBreaks().add(g.getLegend());

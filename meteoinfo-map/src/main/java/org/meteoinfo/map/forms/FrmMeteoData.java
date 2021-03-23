@@ -2634,38 +2634,38 @@ public class FrmMeteoData extends javax.swing.JDialog {
         switch (_2DDrawType) {
             case Contour:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.UniqueValue, ShapeTypes.Polyline);
+                        LegendType.UniqueValue, ShapeTypes.POLYLINE);
                 break;
             case Shaded:
             case Grid_Fill:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.Polygon);
+                        LegendType.GraduatedColor, ShapeTypes.POLYGON);
                 break;
             case Grid_Point:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.Point);
+                        LegendType.GraduatedColor, ShapeTypes.POINT);
                 break;
             case Vector:
             case Barb:
                 if (this.jCheckBox_ColorVar.isSelected()) {
                     _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                            LegendType.GraduatedColor, ShapeTypes.Point);
+                            LegendType.GraduatedColor, ShapeTypes.POINT);
                     PointBreak aPB;
                     for (int i = 0; i < _legendScheme.getBreakNum(); i++) {
                         aPB = (PointBreak) _legendScheme.getLegendBreaks().get(i);
                         aPB.setSize(10);
                     }
                 } else {
-                    _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.blue, 10);
+                    _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.blue, 10);
                 }
                 break;
             case Streamline:
-                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, Color.blue, 1);
+                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.blue, 1);
                 _legendScheme.setLegendBreak(0, new StreamlineBreak((PolylineBreak)_legendScheme.getLegendBreak(0)));
                 break;
             case Raster:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData, LegendType.GraduatedColor,
-                        ShapeTypes.Image);
+                        ShapeTypes.IMAGE);
                 break;
         }
     }
@@ -2674,7 +2674,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         switch (_2DDrawType) {
             case Station_Point:
                 _legendScheme = LegendManage.createLegendSchemeFromStationData(_stationData,
-                        LegendType.GraduatedColor, ShapeTypes.Point);
+                        LegendType.GraduatedColor, ShapeTypes.POINT);
                 if (_meteoDataInfo.getDataType() == MeteoDataType.HDF) {
                     for (int i = 0; i < _legendScheme.getBreakNum(); i++) {
                         ((PointBreak) _legendScheme.getLegendBreaks().get(i)).setDrawOutline(false);
@@ -2683,45 +2683,45 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 break;
             case Grid_Point:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.Point);
+                        LegendType.GraduatedColor, ShapeTypes.POINT);
                 break;
             case Contour:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.UniqueValue, ShapeTypes.Polyline);
+                        LegendType.UniqueValue, ShapeTypes.POLYLINE);
                 break;
             case Shaded:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.Polygon);
+                        LegendType.GraduatedColor, ShapeTypes.POLYGON);
                 break;
             case Raster:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData, LegendType.GraduatedColor,
-                        ShapeTypes.Image);
+                        ShapeTypes.IMAGE);
                 break;
             case Vector:
             case Barb:
                 if (this.jCheckBox_ColorVar.isSelected()) {
                     _legendScheme = LegendManage.createLegendSchemeFromStationData(_stationData,
-                            LegendType.GraduatedColor, ShapeTypes.Point);
+                            LegendType.GraduatedColor, ShapeTypes.POINT);
                     for (int i = 0; i < _legendScheme.getLegendBreaks().size(); i++) {
                         PointBreak aPB = (PointBreak) _legendScheme.getLegendBreaks().get(i);
                         aPB.setSize(10);
                     }
                 } else {
-                    _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.blue, 10);
+                    _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.blue, 10);
                 }
                 break;
             case Streamline:
-                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, Color.blue, 1);
+                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.blue, 1);
                 _legendScheme.setLegendBreak(0, new StreamlineBreak((PolylineBreak)_legendScheme.getLegendBreak(0)));
                 break;
             case Weather_Symbol:
-                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.blue, 12);
+                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.blue, 12);
                 break;
             case Station_Model:
-                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.blue, 12);
+                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.blue, 12);
                 break;
             case Station_Info:
-                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.red, 8);
+                _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.red, 8);
                 break;
         }
 
@@ -2877,7 +2877,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
             VectorLayer aVLayer = (VectorLayer) aLayer;
             aVLayer.setMaskout(true);
-            if (aVLayer.getShapeType() == ShapeTypes.Polygon) {
+            if (aVLayer.getShapeType() == ShapeTypes.POLYGON) {
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolygonLayer(aVLayer);
             } else {
                 if (_2DDrawType == DrawType2D.Vector || _2DDrawType == DrawType2D.Barb) {
@@ -3033,7 +3033,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         aLayer.setProjInfo(_meteoDataInfo.getProjectionInfo());
         if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
             if (ifAddLayer) {
-                if (aLayer.getShapeType() == ShapeTypes.Polygon) {
+                if (aLayer.getShapeType() == ShapeTypes.POLYGON) {
                     _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolygonLayer(aLayer);
                 } else {
                     _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer((VectorLayer) aLayer);

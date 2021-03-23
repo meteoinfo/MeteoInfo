@@ -590,7 +590,7 @@ import org.xml.sax.SAXException;
                                  if (aMLayer != null) {
                                      if (aMLayer.getLayerType() == LayerTypes.VectorLayer) {
                                          VectorLayer aLayer = (VectorLayer) aMLayer;
-                                         if (aLayer.getShapeType() != ShapeTypes.Point) {
+                                         if (aLayer.getShapeType() != ShapeTypes.POINT) {
                                              PointF mapP = pageToScreen(_currentLayoutMap.getLeft(), _currentLayoutMap.getTop());
                                              PointF aPoint = new PointF(e.getX() - mapP.X, e.getY() - mapP.Y);
                                              List<Integer> selectedShapes = _currentLayoutMap.getMapFrame().getMapView().selectShapes(aLayer, aPoint);
@@ -604,8 +604,8 @@ import org.xml.sax.SAXException;
                                                  //_currentLayoutMap.getMapFrame().getMapView().drawIdShape((Graphics2D) this.getGraphics(), aLayer.getShapes().get(shapeIdx), rect);
                                                  double value = 0.0;
                                                  switch (aShape.getShapeType()) {
-                                                     case Polyline:
-                                                     case PolylineZ:
+                                                     case POLYLINE:
+                                                     case POLYLINE_Z:
                                                          _frmMeasure.setArea(false);
                                                          if (_currentLayoutMap.getMapFrame().getMapView().getProjection().isLonLatMap()) {
                                                              value = GeoComputation.getDistance(((PolylineShape) aShape).getPoints(), true);
@@ -614,9 +614,9 @@ import org.xml.sax.SAXException;
                                                              value *= _currentLayoutMap.getMapFrame().getMapView().getProjection().getProjInfo().getCoordinateReferenceSystem().getProjection().getFromMetres();
                                                          }
                                                          break;
-                                                     case Polygon:
-                                                     case PolygonM:
-                                                     case PolygonZ:
+                                                     case POLYGON:
+                                                     case POLYGON_M:
+                                                     case POLYGON_Z:
                                                          _frmMeasure.setArea(true);
                                                          if (_currentLayoutMap.getMapFrame().getMapView().getProjection().isLonLatMap()) {
                                                              value = ((PolygonShape) aShape).getSphericalArea();
@@ -1561,7 +1561,7 @@ import org.xml.sax.SAXException;
                                          });
                                          jPopupMenu_Element.add(jMenuItem_Reverse);
 
-                                         if (aGraphic.getShape().getShapeType() == ShapeTypes.Polyline || aGraphic.getShape().getShapeType() == ShapeTypes.Polygon) {
+                                         if (aGraphic.getShape().getShapeType() == ShapeTypes.POLYLINE || aGraphic.getShape().getShapeType() == ShapeTypes.POLYGON) {
                                              jPopupMenu_Element.add(new JSeparator());
                                              JMenuItem jMenuItem_Smooth = new JMenuItem("Smooth Graphic");
                                              jMenuItem_Smooth.addActionListener(new ActionListener() {
@@ -1573,7 +1573,7 @@ import org.xml.sax.SAXException;
                                              jPopupMenu_Element.add(jMenuItem_Smooth);
                                          }
 
-                                         if (aGraphic.getShape().getShapeType() == ShapeTypes.Ellipse) {
+                                         if (aGraphic.getShape().getShapeType() == ShapeTypes.ELLIPSE) {
                                              JMenuItem jMenuItem_Angle = new JMenuItem("Set Angle");
                                              jMenuItem_Angle.addActionListener(new ActionListener() {
                                                  @Override
@@ -1807,7 +1807,7 @@ import org.xml.sax.SAXException;
              pointList.add(new wcontour.global.PointD(aP.X, aP.Y));
          }
 
-         if (aGraphic.getShape().getShapeType() == ShapeTypes.Polygon) {
+         if (aGraphic.getShape().getShapeType() == ShapeTypes.POLYGON) {
              pointList.add(pointList.get(0));
          }
 
@@ -3682,8 +3682,8 @@ import org.xml.sax.SAXException;
                  vIdx = i;
                  vertices.add(points.get(i));
                  switch (aShape.getShapeType()) {
-                     case Polyline:
-                     case CurveLine:
+                     case POLYLINE:
+                     case CURVE_LINE:
                          if (i == 0) {
                              vertices.add(points.get(i + 1));
                          } else if (i == points.size() - 1) {
@@ -4277,7 +4277,7 @@ import org.xml.sax.SAXException;
                      break;
                  case LayoutGraphic:
                      LayoutGraphic aLG = loadLayoutGraphicElement(elementNode);
-                     if (aLG.getGraphic().getShape().getShapeType() == ShapeTypes.WindArraw) {
+                     if (aLG.getGraphic().getShape().getShapeType() == ShapeTypes.WIND_ARROW) {
                          ((WindArrow) aLG.getGraphic().getShape()).angle = 270;
                      }
                      addElement(aLG);
@@ -4430,7 +4430,7 @@ import org.xml.sax.SAXException;
          aGraphic.importFromXML((Element) graphicNode);
 
          LayoutGraphic aLG;
-         if (aGraphic.getShape().getShapeType() == ShapeTypes.WindArraw) {
+         if (aGraphic.getShape().getShapeType() == ShapeTypes.WIND_ARROW) {
              aLG = new LayoutGraphic(aGraphic, this, this.getActiveLayoutMap());
          } else {
              aLG = new LayoutGraphic(aGraphic, this);

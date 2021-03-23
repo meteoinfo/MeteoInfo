@@ -234,7 +234,7 @@ public class MapDataManage {
         PointD aPoint;
         List<PointD> pList = new ArrayList<>();
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.Polyline);
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE);
         String columnName = "Value";
         Field aDC = new Field(columnName, DataType.INT);
         aLayer.editAddField(aDC);
@@ -299,7 +299,7 @@ public class MapDataManage {
         aLayer.setLayerName(new File(aFile).getName());
         aLayer.setFileName(aFile);
         aLayer.setLayerDrawType(LayerDrawType.Map);
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, Color.darkGray, 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
         aLayer.setVisible(true);
 
         return aLayer;
@@ -395,7 +395,7 @@ public class MapDataManage {
         data.yArray = dataInfo.getYDimension().getValues();
         data.missingValue = dataInfo.getMissingValue();
         LegendScheme aLS = LegendManage.createLegendSchemeFromGridData(data, LegendType.GraduatedColor,
-                ShapeTypes.Image);
+                ShapeTypes.IMAGE);
         RasterLayer aLayer = DrawMeteoData.createRasterLayer(data, new File(fileName).getName(), aLS);
         aLayer.setFileName(fileName);
 
@@ -430,7 +430,7 @@ public class MapDataManage {
         dataInfo.readDataInfo(fileName);
         GridData gData = dataInfo.getGridData_LonLat(0, "var", 0);
         LegendScheme aLS = LegendManage.createLegendSchemeFromGridData(gData, LegendType.GraduatedColor,
-                ShapeTypes.Image);
+                ShapeTypes.IMAGE);
         RasterLayer aLayer = DrawMeteoData.createRasterLayer(gData, new File(fileName).getName(), aLS);
         aLayer.setFileName(fileName);
 
@@ -458,14 +458,14 @@ public class MapDataManage {
             PointD aPoint;
             boolean IsTrue;
             String columnName = "Value";
-            VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
+            VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
             //Read shape type
             shapeType = sr.readLine().trim().toLowerCase();
             //Read shape number
             shapeNum = Integer.parseInt(sr.readLine());
             switch (shapeType) {
                 case "point":
-                    aLayer = new VectorLayer(ShapeTypes.Point);
+                    aLayer = new VectorLayer(ShapeTypes.POINT);
                     aLayer.editAddField(columnName, DataType.INT);
                     for (i = 0; i < shapeNum; i++) {
                         aLine = sr.readLine();
@@ -486,12 +486,12 @@ public class MapDataManage {
                     aLayer.setLayerName(file.getName());
                     aLayer.setFileName(fileName);
                     aLayer.setLayerDrawType(LayerDrawType.Map);
-                    aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Point, Color.black, 5));
+                    aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.black, 5));
                     aLayer.setVisible(true);
                     IsTrue = true;
                     break;
                 case "polyline":
-                    aLayer = new VectorLayer(ShapeTypes.Polyline);
+                    aLayer = new VectorLayer(ShapeTypes.POLYLINE);
                     aLayer.editAddField(columnName, DataType.INT);
                     for (i = 0; i < shapeNum; i++) {
                         pNum = Integer.parseInt(sr.readLine());
@@ -517,12 +517,12 @@ public class MapDataManage {
                     aLayer.setLayerName(file.getName());
                     aLayer.setFileName(fileName);
                     aLayer.setLayerDrawType(LayerDrawType.Map);
-                    aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polyline, Color.darkGray, 1.0F));
+                    aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
                     aLayer.setVisible(true);
                     IsTrue = true;
                     break;
                 case "polygon":
-                    aLayer = new VectorLayer(ShapeTypes.Polygon);
+                    aLayer = new VectorLayer(ShapeTypes.POLYGON);
                     aLayer.editAddField(columnName, DataType.INT);
                     //ArrayList polygons = new ArrayList();
                     for (i = 0; i < shapeNum; i++) {
@@ -550,7 +550,7 @@ public class MapDataManage {
                     aLayer.setLayerName(file.getName());
                     aLayer.setFileName(fileName);
                     aLayer.setLayerDrawType(LayerDrawType.Map);
-                    aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.Polygon, new Color(255, 251, 195), 1.0F));
+                    aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, new Color(255, 251, 195), 1.0F));
                     aLayer.setVisible(true);
                     IsTrue = true;
                     break;
@@ -594,7 +594,7 @@ public class MapDataManage {
             int shpNum = shapes.size();
             int i;
             switch (shapes.get(0).getShapeType()) {
-                case Point:
+                case POINT:
                     sw.write("Point");
                     sw.newLine();
                     sw.write(String.valueOf(shpNum));
@@ -608,8 +608,8 @@ public class MapDataManage {
                         }
                     }
                     break;
-                case Polyline:
-                case PolylineZ:
+                case POLYLINE:
+                case POLYLINE_Z:
                     sw.write("Polyline");
                     sw.newLine();
                     int shapeNum = 0;
@@ -647,7 +647,7 @@ public class MapDataManage {
                         }
                     }
                     break;
-                case Polygon:
+                case POLYGON:
                     sw.write("Polygon");
                     sw.newLine();
                     shapeNum = 0;

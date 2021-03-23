@@ -62,7 +62,7 @@ import java.util.List;
          _fieldNames = new ArrayList<>();
          _xShift = 0;
          _yShift = 0;
-         _legendScheme = new LegendScheme(ShapeTypes.Polygon);
+         _legendScheme = new LegendScheme(ShapeTypes.POLYGON);
          _maxSize = 50;
          _minSize = 0;
          _barWidth = 8;
@@ -450,7 +450,7 @@ import java.util.List;
      public void update(){
          if (this._fieldNames.size() != this._legendScheme.getBreakNum()){
              this._fieldNames = new ArrayList<>();
-             _legendScheme = new LegendScheme(ShapeTypes.Polygon);
+             _legendScheme = new LegendScheme(ShapeTypes.POLYGON);
          }
      }
      // </editor-fold>

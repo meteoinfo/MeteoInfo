@@ -226,12 +226,7 @@ class MILayer(object):
         :param z: (*array_like*) Optional, Z coordinates of the shape points.
         :param m: (*array_like*) Optional, M coordinates of the shape points.
         '''
-        type = 'point'
-        if self.shapetype == ShapeTypes.POLYLINE:
-            type = 'line'
-        elif self.shapetype == ShapeTypes.POLYGON:
-            type = 'polygon'
-        shapes = geoutil.makeshapes(x, y, type, z, m)
+        shapes = geoutil.makeshapes(x, y, self.shapetype, z, m)
         if len(shapes) == 1:
             self.layer.editAddShape(shapes[0], fields)
         else:

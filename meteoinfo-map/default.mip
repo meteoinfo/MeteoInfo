@@ -9,7 +9,7 @@
       <Projection IsLonLatMap="true" ProjStr="+title=long/lat:WGS84 +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees "/>
       <GroupLayer>
         <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\Distribution\Java\MeteoInfo\MeteoInfo\map\cn_province.shp" Handle="1" IsMaskout="false" LayerDrawType="Map" LayerName="cn_province.shp" LayerType="VectorLayer" ShapeType="PolygonZ" TransparencyPerc="0" Visible="true">
-          <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="PolygonZ" UNDEF="-9999.0">
+          <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="POLYGON_Z" UNDEF="-9999.0">
             <Breaks>
               <Break BackColor="0x00ffffff" Caption="" Color="0xfffffbc3" DrawFill="false" DrawOutline="true" DrawShape="true" EndValue="0" OutlineColor="0xff808080" OutlineSize="1.0" StartValue="0" Style="NONE" StyleSize="8" Tag=""/>
             </Breaks>
@@ -17,7 +17,7 @@
           <LabelSet AlignType="Center" AutoDecimal="true" AvoidCollision="true" DecimalDigits="2" DrawLabels="false" DrawShadow="false" FieldName="" FontName="宋体" FontSize="12" LabelColor="0xff000000" Offset="0" ShadowColor="0xffffffff"/>
           <Graphics/>
           <ChartSet AlignType="Center" AvoidCollision="true" BarWidth="8" ChartType="BarChart" DrawCharts="false" DrawLabel="false" FieldNames="" FontName="Arial" FontSize="12" LabelColor="0xff000000" MaxSize="50" MaxValue="0.0" MinSize="0" MinValue="0.0" Thickness="5" View3D="false" XShift="0" YShift="0">
-            <LegendScheme BreakNum="0" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="Polygon" UNDEF="0.0">
+            <LegendScheme BreakNum="0" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="POLYGON" UNDEF="0.0">
               <Breaks/>
             </LegendScheme>
           </ChartSet>
@@ -25,7 +25,7 @@
           <VisibleScale EnableMaxVisScale="false" EnableMinVisScale="false" MaxVisScale="0.0" MinVisScale="0.0"/>
         </Layer>
         <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\..\Temp\Map\country1.shp" Handle="2" IsMaskout="false" LayerDrawType="Map" LayerName="country1.shp" LayerType="VectorLayer" ShapeType="Polygon" TransparencyPerc="0" Visible="true">
-          <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="Polygon" UNDEF="-9999.0">
+          <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="POLYGON" UNDEF="-9999.0">
             <Breaks>
               <Break BackColor="0x00ffffff" Caption="" Color="0xfffffbc3" DrawFill="false" DrawOutline="true" DrawShape="true" EndValue="0" OutlineColor="0xff000000" OutlineSize="1.0" StartValue="0" Style="NONE" StyleSize="8" Tag=""/>
             </Breaks>
@@ -33,7 +33,7 @@
           <LabelSet AlignType="Center" AutoDecimal="true" AvoidCollision="true" DecimalDigits="2" DrawLabels="false" DrawShadow="false" FieldName="" FontName="宋体" FontSize="12" LabelColor="0xff000000" Offset="0" ShadowColor="0xffffffff"/>
           <Graphics/>
           <ChartSet AlignType="Center" AvoidCollision="true" BarWidth="8" ChartType="BarChart" DrawCharts="false" DrawLabel="false" FieldNames="" FontName="Arial" FontSize="12" LabelColor="0xff000000" MaxSize="50" MaxValue="0.0" MinSize="0" MinValue="0.0" Thickness="5" View3D="false" XShift="0" YShift="0">
-            <LegendScheme BreakNum="0" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="Polygon" UNDEF="0.0">
+            <LegendScheme BreakNum="0" FieldName="" HasNoData="false" LegendType="SingleSymbol" MaxValue="0.0" MinValue="0.0" ShapeType="POLYGON" UNDEF="0.0">
               <Breaks/>
             </LegendScheme>
           </ChartSet>
@@ -43,7 +43,7 @@
       </GroupLayer>
       <Graphics>
         <Graphic>
-          <Shape Selected="false" ShapeType="CurveLine" Visible="true">
+          <Shape Selected="false" ShapeType="CURVE_LINE" Visible="true">
             <Points>
               <Point X="118.55421447753906" Y="54.82384490966797"/>
               <Point X="109.51807403564453" Y="44.703365325927734"/>
@@ -56,7 +56,7 @@
           <Legend Color="0xffff0000" DrawSymbol="false" LegendType="PolylineBreak" Size="2.0" Style="STATIONARYFRONT" SymbolColor="0xff000000" SymbolInterval="1" SymbolSize="8.0" SymbolStyle="UpTriangle"/>
         </Graphic>
         <Graphic>
-          <Shape Selected="false" ShapeType="CurveLine" Visible="true">
+          <Shape Selected="false" ShapeType="CURVE_LINE" Visible="true">
             <Points>
               <Point X="60.361446380615234" Y="54.46240234375"/>
               <Point X="43.37349319458008" Y="45.06481170654297"/>
@@ -75,7 +75,7 @@
       <LayoutMap DrawBackColor="false" DrawDegreeSymbol="false" DrawGridLabel="true" DrawGridLine="false" DrawNeatLine="true" ElementType="LayoutMap" GridFontName="Arial" GridFontSize="12" GridLabelPosition="LEFT_BOTTOM" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH" GridXDelt="10.0" GridXOrigin="-180.0" GridYDelt="10.0" GridYOrigin="-90.0" Height="404" Left="48" NeatLineColor="0xff000000" NeatLineSize="1.0" Top="30" Width="592"/>
       <LayoutGraphic ElementType="LayoutGraphic" Height="16" IsTitle="false" Left="309" Top="13" Width="106">
         <Graphic>
-          <Shape Selected="false" ShapeType="Point" Visible="true">
+          <Shape Selected="false" ShapeType="POINT" Visible="true">
             <Points>
               <Point X="362.0" Y="23.0"/>
             </Points>

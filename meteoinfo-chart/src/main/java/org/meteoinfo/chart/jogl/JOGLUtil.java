@@ -472,29 +472,70 @@ public class JOGLUtil {
         double vMin = ls.getMinValue();
         double vMax = ls.getMaxValue();
         Index index = data.getIndex();
-        for (int i = 0; i < za.getSize(); i++) {
-            for (int j = 0; j < ya.getSize(); j++) {
-                for (int k = 0; k < xa.getSize(); k++) {
-                    index.set(i, j, k);
-                    v = data.getDouble(index);
-                    if (Double.isNaN(v)) {
-                        continue;
+        if (za.getRank() == 1) {
+            for (int i = 0; i < za.getSize(); i++) {
+                for (int j = 0; j < ya.getSize(); j++) {
+                    for (int k = 0; k < xa.getSize(); k++) {
+                        index.set(i, j, k);
+                        v = data.getDouble(index);
+                        if (Double.isNaN(v)) {
+                            continue;
+                        }
+                        if (v < vMin || v > vMax) {
+                            continue;
+                        }
+                        level = ls.legendBreakIndex(v);
+                        if (level >= 0) {
+                            cb = ls.getLegendBreak(level);
+                            rgba = cb.getColor().getRGBComponents(null);
+                            rgba[3] = alphas[level];
+                            for (int l = 0; l <= level * density; l++) {
+                                particle = new ParticleGraphics.Particle();
+                                particle.x = xa.getFloat(k) + (random.nextFloat() - 0.5f) * dx * 2;
+                                particle.y = ya.getFloat(j) + (random.nextFloat() - 0.5f) * dy * 2;
+                                particle.z = za.getFloat(i) + (random.nextFloat() - 0.5f) * dz * 2;
+                                particle.rgba = rgba;
+                                graphics.addParticle(level, particle);
+                            }
+                        }
                     }
-                    if (v < vMin || v > vMax) {
-                        continue;
-                    }
-                    level = ls.legendBreakIndex(v);
-                    if (level >= 0) {
-                        cb = ls.getLegendBreak(level);
-                        rgba = cb.getColor().getRGBComponents(null);
-                        rgba[3] = alphas[level];
-                        for (int l = 0; l <= level * density; l++) {
-                            particle = new ParticleGraphics.Particle();
-                            particle.x = xa.getFloat(k) + (random.nextFloat() - 0.5f) * dx * 2;
-                            particle.y = ya.getFloat(j) + (random.nextFloat() - 0.5f) * dy * 2;
-                            particle.z = za.getFloat(i) + (random.nextFloat() - 0.5f) * dz * 2;
-                            particle.rgba = rgba;
-                            graphics.addParticle(level, particle);
+                }
+            }
+        } else {
+            int zn = za.getShape()[0];
+            Index zIndex = za.getIndex();
+            float z;
+            for (int i = 0; i < zn; i++) {
+                for (int j = 0; j < ya.getSize(); j++) {
+                    for (int k = 0; k < xa.getSize(); k++) {
+                        index.set(i, j, k);
+                        v = data.getDouble(index);
+                        if (Double.isNaN(v)) {
+                            continue;
+                        }
+                        if (v < vMin || v > vMax) {
+                            continue;
+                        }
+                        level = ls.legendBreakIndex(v);
+                        zIndex.set(i, j, k);
+                        z = za.getFloat(zIndex);
+                        if (i == 0)
+                            zIndex.set(1, j, k);
+                        else
+                            zIndex.set(i - 1, j, k);
+                        dz = Math.abs(z - za.getFloat(zIndex));
+                        if (level >= 0) {
+                            cb = ls.getLegendBreak(level);
+                            rgba = cb.getColor().getRGBComponents(null);
+                            rgba[3] = alphas[level];
+                            for (int l = 0; l <= level * density; l++) {
+                                particle = new ParticleGraphics.Particle();
+                                particle.x = xa.getFloat(k) + (random.nextFloat() - 0.5f) * dx * 2;
+                                particle.y = ya.getFloat(j) + (random.nextFloat() - 0.5f) * dy * 2;
+                                particle.z = z + (random.nextFloat() - 0.5f) * dz * 2;
+                                particle.rgba = rgba;
+                                graphics.addParticle(level, particle);
+                            }
                         }
                     }
                 }

@@ -431,6 +431,7 @@ public class ProjRegistry {
         registerEsri("Transverse_Cylindrical_Equal_Area", TransverseCylindricalEqualArea.class, "Transverse Cylindrical Equal Area");
 //    registerEsri( "tissot", TissotProjection.class, "Tissot Conic" );
         registerEsri("Transverse_Mercator", TransverseMercatorProjection.class, "Transverse Mercator");
+        registerEsri("Gauss_Kruger", TransverseMercatorProjection.class, "Gauss_Kruger");
 //    registerEsri( "tpeqd", Projection.class, "Two Point Equidistant" );
 //    registerEsri( "tpers", Projection.class, "Tilted perspective" );
 //    registerEsri( "ups", Projection.class, "Universal Polar Stereographic" );

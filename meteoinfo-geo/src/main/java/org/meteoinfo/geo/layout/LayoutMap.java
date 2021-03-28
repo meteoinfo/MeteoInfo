@@ -85,8 +85,8 @@ public class LayoutMap extends LayoutElement {
      */
     public LayoutMap(MapFrame mapFrame, TileLoadListener tll) {
         super();
-        this.setElementType(ElementType.LayoutMap);
-        this.setResizeAbility(ResizeAbility.ResizeAll);
+        this.setElementType(ElementType.MAP);
+        this.setResizeAbility(ResizeAbility.RESIZE_ALL);
         this.setMapFrame(mapFrame);
         this.tileLoadListener = tll;
     }

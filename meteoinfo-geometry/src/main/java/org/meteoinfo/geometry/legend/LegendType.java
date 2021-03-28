@@ -20,8 +20,21 @@ package org.meteoinfo.geometry.legend;
  */
 public enum LegendType {
 
-    SingleSymbol,
-    GraduatedColor,
-    UniqueValue,
-    Graph
+    SINGLE_SYMBOL,
+    GRADUATED_COLOR,
+    UNIQUE_VALUE,
+    GRAPH;
+
+    public static LegendType valueOfBack(String value) {
+        switch (value.toUpperCase()) {
+            case "SINGLESYMBOL":
+                return LegendType.SINGLE_SYMBOL;
+            case "GRADUATEDCOLOR":
+                return LegendType.GRADUATED_COLOR;
+            case "UNIQUEVALUE":
+                return LegendType.UNIQUE_VALUE;
+            default:
+                return LegendType.valueOf(value.toUpperCase());
+        }
+    }
 }

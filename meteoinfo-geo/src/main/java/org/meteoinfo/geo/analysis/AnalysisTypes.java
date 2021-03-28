@@ -9,6 +9,6 @@ package org.meteoinfo.geo.analysis;
  * @author yaqiang
  */
 public enum AnalysisTypes {
-    Resample,
-    Aggregate
+    RESAMPLE,
+    AGGREGATE
 }

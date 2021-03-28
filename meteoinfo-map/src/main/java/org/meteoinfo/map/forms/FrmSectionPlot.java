@@ -73,7 +73,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
     private boolean _useSameLegendScheme = false;
     private LegendScheme _legendScheme = null;
     private boolean _isLoading = false;
-    private DrawType2D _2DDrawType = DrawType2D.Contour;
+    private DrawType2D _2DDrawType = DrawType2D.CONTOUR;
     private int _skipY = 1;
     private int _skipX = 1;
     private double[] _CValues, _X, _Y;
@@ -790,17 +790,17 @@ public class FrmSectionPlot extends javax.swing.JFrame {
 
         //Draw 2D figure
         switch (_meteoDataInfo.getDataType()) {
-            case GrADS_Grid:
+            case GRADS_GRID:
             //case MeteoDataType.MICAPS_4:                    
-            case HYSPLIT_Conc:
-            case ARL_Grid:
-            case NetCDF:
+            case HYSPLIT_CONC:
+            case ARL_GRID:
+            case NETCDF:
             case GRIB1:
             case GRIB2:
                 getGridData();
                 drawGrid();
                 break;
-            case GrADS_Station:
+            case GRADS_STATION:
                 _gridData = ((GrADSDataInfo) _meteoDataInfo.getDataInfo()).getGridData_Station(
                         this.jComboBox_Variable.getSelectedIndex(), this.jList_Stations.getSelectedValuesList().get(0).toString());
                 drawGrid();
@@ -848,17 +848,17 @@ public class FrmSectionPlot extends javax.swing.JFrame {
 
         //Draw 2D figure
         switch (_meteoDataInfo.getDataType()) {
-            case GrADS_Grid:
+            case GRADS_GRID:
             //case MeteoDataType.MICAPS_4:                    
-            case HYSPLIT_Conc:
-            case ARL_Grid:
-            case NetCDF:
+            case HYSPLIT_CONC:
+            case ARL_GRID:
+            case NETCDF:
             case GRIB1:
             case GRIB2:
                 getGridData();
                 drawGrid();
                 break;
-            case GrADS_Station:
+            case GRADS_STATION:
                 _gridData = ((GrADSDataInfo) _meteoDataInfo.getDataInfo()).getGridData_Station(
                         this.jComboBox_Variable.getSelectedIndex(), this.jList_Stations.getSelectedValuesList().get(0).toString());
                 drawGrid();
@@ -1043,28 +1043,28 @@ public class FrmSectionPlot extends javax.swing.JFrame {
 
     private void jButton_SelectElementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_SelectElementActionPerformed
         // TODO add your handling code here:
-        this.mapLayout1.setMouseMode(MouseMode.Select);
+        this.mapLayout1.setMouseMode(MouseMode.SELECT);
 
         setCurrentTool((JButton) evt.getSource());
     }//GEN-LAST:event_jButton_SelectElementActionPerformed
 
     private void jButton_ZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ZoomInActionPerformed
         // TODO add your handling code here:
-        this.mapLayout1.setMouseMode(MouseMode.Map_ZoomIn);
+        this.mapLayout1.setMouseMode(MouseMode.MAP_ZOOM_IN);
 
         setCurrentTool((JButton) evt.getSource());
     }//GEN-LAST:event_jButton_ZoomInActionPerformed
 
     private void jButton_ZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ZoomOutActionPerformed
         // TODO add your handling code here:
-        this.mapLayout1.setMouseMode(MouseMode.Map_ZoomOut);
+        this.mapLayout1.setMouseMode(MouseMode.MAP_ZOOM_OUT);
 
         setCurrentTool((JButton) evt.getSource());
     }//GEN-LAST:event_jButton_ZoomOutActionPerformed
 
     private void jButton_PanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_PanActionPerformed
         // TODO add your handling code here:
-        this.mapLayout1.setMouseMode(MouseMode.Map_Pan);
+        this.mapLayout1.setMouseMode(MouseMode.MAP_PAN);
 
         setCurrentTool((JButton) evt.getSource());
     }//GEN-LAST:event_jButton_PanActionPerformed
@@ -1080,7 +1080,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
             return;
         }
 
-        if (this.layersLegend1.getSelectedNode().getNodeType() == NodeTypes.LayerNode) {
+        if (this.layersLegend1.getSelectedNode().getNodeType() == NodeTypes.LAYER_NODE) {
             MapFrame aMF = this.layersLegend1.getCurrentMapFrame();
             MapLayer aLayer = ((LayerNode) this.layersLegend1.getSelectedNode()).getMapLayer();
             if (aLayer != null) {
@@ -1091,7 +1091,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
 
     private void jButton_IdentiferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_IdentiferActionPerformed
         // TODO add your handling code here:
-        this.mapLayout1.setMouseMode(MouseMode.Map_Identifer);
+        this.mapLayout1.setMouseMode(MouseMode.MAP_IDENTIFIER);
 
         setCurrentTool((JButton) evt.getSource());
     }//GEN-LAST:event_jButton_IdentiferActionPerformed
@@ -1102,10 +1102,10 @@ public class FrmSectionPlot extends javax.swing.JFrame {
             return;
         }
 
-        if (this.layersLegend1.getSelectedNode().getNodeType() == NodeTypes.LayerNode) {
+        if (this.layersLegend1.getSelectedNode().getNodeType() == NodeTypes.LAYER_NODE) {
             LayerNode aLN = (LayerNode) this.layersLegend1.getSelectedNode();
             MapLayer aMLayer = aLN.getMapFrame().getMapView().getLayerByHandle(aLN.getLayerHandle());
-            if (aMLayer.getLayerType() == LayerTypes.VectorLayer) {
+            if (aMLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                 VectorLayer aLayer = (VectorLayer) aMLayer;
                 if (aLayer.getShapeNum() > 0) {
                     FrmLabelSet aFrmLabel = new FrmLabelSet(this, false, this.layersLegend1.getActiveMapFrame().getMapView());
@@ -1237,7 +1237,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         //this.mapLayout1.setMapFrames(this.layersLegend1.getMapFrames());
         //this.mapLayout1.addElement(new LayoutMap(this.mapLayout1.getMapFrames().get(0)));
         LayoutLegend legend = this.mapLayout1.addLegend(660, 100);
-        legend.setLegendStyle(LegendStyles.Bar_Vertical);
+        legend.setLegendStyle(LegendStyles.BAR_VERTICAL);
         legend.setWidth(36);
         legend.setHeight(295);
         this.mapLayout1.addText("MeteoInfo: Meteorological Data Infomation System", 320, 20, "Arial", 16);
@@ -1273,17 +1273,17 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         _isLoading = true;
         this.jComboBox_DrawType.removeAllItems();
         switch (_meteoDataInfo.getDataType()) {
-            case HYSPLIT_Particle:
-                this.jComboBox_DrawType.addItem(DrawType2D.Station_Point);
+            case HYSPLIT_PARTICLE:
+                this.jComboBox_DrawType.addItem(DrawType2D.STATION_POINT);
                 break;
             default:
-                this.jComboBox_DrawType.addItem(DrawType2D.Contour);
-                this.jComboBox_DrawType.addItem(DrawType2D.Shaded);
-                this.jComboBox_DrawType.addItem(DrawType2D.Grid_Fill);
-                this.jComboBox_DrawType.addItem(DrawType2D.Grid_Point);
-                this.jComboBox_DrawType.addItem(DrawType2D.Vector);
-                this.jComboBox_DrawType.addItem(DrawType2D.Barb);
-                this.jComboBox_DrawType.addItem(DrawType2D.Streamline);
+                this.jComboBox_DrawType.addItem(DrawType2D.CONTOUR);
+                this.jComboBox_DrawType.addItem(DrawType2D.SHADED);
+                this.jComboBox_DrawType.addItem(DrawType2D.GRID_FILL);
+                this.jComboBox_DrawType.addItem(DrawType2D.GRID_POINT);
+                this.jComboBox_DrawType.addItem(DrawType2D.VECTOR);
+                this.jComboBox_DrawType.addItem(DrawType2D.BARB);
+                this.jComboBox_DrawType.addItem(DrawType2D.STREAMLINE);
                 break;
         }
         this.jComboBox_DrawType.setSelectedIndex(0);
@@ -1412,8 +1412,8 @@ public class FrmSectionPlot extends javax.swing.JFrame {
 
         //Set CHB_ColorVar visible
         switch (_2DDrawType) {
-            case Vector:
-            case Barb:
+            case VECTOR:
+            case BARB:
                 this.jCheckBox_ColorVar.setVisible(true);
                 break;
             default:
@@ -1662,12 +1662,12 @@ public class FrmSectionPlot extends javax.swing.JFrame {
 
     public void drawMeteoMap(boolean isNew, LegendScheme aLS) {
         switch (_meteoDataInfo.getDataType()) {
-            case GrADS_Grid:
-            case GrADS_Station:
+            case GRADS_GRID:
+            case GRADS_STATION:
             case MICAPS_4:
-            case HYSPLIT_Conc:
-            case ARL_Grid:
-            case NetCDF:
+            case HYSPLIT_CONC:
+            case ARL_GRID:
+            case NETCDF:
             case GRIB1:
             case GRIB2:
                 drawMeteoMap_Grid(isNew, aLS);
@@ -1680,20 +1680,20 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         String LName = getLayerName(_plotDimension);
         String fieldName = this.jComboBox_Variable.getSelectedItem().toString();
         switch (_2DDrawType) {
-            case Contour:
+            case CONTOUR:
                 aLayer = DrawMeteoData.createContourLayer(_gridData, aLS, LName, fieldName, true);
                 aLayer.addLabelsContourDynamic(this.layersLegend1.getActiveMapFrame().getMapView().getViewExtent());
                 break;
-            case Shaded:
+            case SHADED:
                 aLayer = DrawMeteoData.createShadedLayer(_gridData, aLS, LName, fieldName, true);
                 break;
-            case Grid_Fill:
+            case GRID_FILL:
                 aLayer = DrawMeteoData.createGridFillLayer(_gridData, aLS, LName, fieldName);
                 break;
-            case Grid_Point:
+            case GRID_POINT:
                 aLayer = DrawMeteoData.createGridPointLayer(_gridData, aLS, LName, fieldName);
                 break;
-            case Vector:
+            case VECTOR:
                 GridData[] uvData = getUVGridData();
                 if (uvData != null) {
                     GridData uData = uvData[0];
@@ -1702,7 +1702,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
                             LName, _meteoDataInfo.getMeteoUVSet().isUV());
                 }
                 break;
-            case Barb:
+            case BARB:
                 uvData = getUVGridData();
                 if (uvData != null) {
                     GridData uData = uvData[0];
@@ -1718,7 +1718,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
                             this.jCheckBox_ColorVar.isSelected(), LName, _meteoDataInfo.getMeteoUVSet().isUV());
                 }
                 break;
-            case Streamline:
+            case STREAMLINE:
                 uvData = getUVGridData();
                 if (uvData != null) {
                     GridData uData = uvData[0];
@@ -1984,23 +1984,23 @@ public class FrmSectionPlot extends javax.swing.JFrame {
 
     private void createLegendScheme() {
         switch (_2DDrawType) {
-            case Contour:
+            case CONTOUR:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.UniqueValue, ShapeTypes.POLYLINE);
+                        LegendType.UNIQUE_VALUE, ShapeTypes.POLYLINE);
                 break;
-            case Shaded:
-            case Grid_Fill:
+            case SHADED:
+            case GRID_FILL:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.POLYGON);
+                        LegendType.GRADUATED_COLOR, ShapeTypes.POLYGON);
                 break;
-            case Grid_Point:
+            case GRID_POINT:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.POINT);
+                        LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
                 break;
-            case Vector:
+            case VECTOR:
                 if (this.jCheckBox_ColorVar.isSelected()) {
                     _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                            LegendType.GraduatedColor, ShapeTypes.POINT);
+                            LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
                     PointBreak aPB;
                     for (int i = 0; i < _legendScheme.getLegendBreaks().size(); i++) {
                         aPB = (PointBreak) _legendScheme.getLegendBreaks().get(i);
@@ -2011,10 +2011,10 @@ public class FrmSectionPlot extends javax.swing.JFrame {
                             Color.blue, 10);
                 }
                 break;
-            case Barb:
+            case BARB:
                 if (this.jCheckBox_ColorVar.isSelected()) {
                     _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                            LegendType.GraduatedColor, ShapeTypes.POINT);
+                            LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
                     PointBreak aPB;
                     for (int i = 0; i < _legendScheme.getLegendBreaks().size(); i++) {
                         aPB = (PointBreak) _legendScheme.getLegendBreaks().get(i);
@@ -2025,7 +2025,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
                             Color.blue, 10);
                 }
                 break;
-            case Streamline:
+            case STREAMLINE:
                 _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE,
                         Color.blue, 1);
                 break;

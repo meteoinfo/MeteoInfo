@@ -241,7 +241,7 @@ public class LegendView extends JPanel {
                         _textField.setName("Value");
                         _textField.setVisible(true);
                     } else if (ifInLabel(e.getX())) {
-                        if (_legendScheme.getLegendType() == LegendType.SingleSymbol) {
+                        if (_legendScheme.getLegendType() == LegendType.SINGLE_SYMBOL) {
                             _textField.setLocation(_symbolWidth, curTop);
                         } else {
                             _textField.setLocation(_symbolWidth + _valueWidth, curTop);
@@ -295,7 +295,7 @@ public class LegendView extends JPanel {
     }
 
     private boolean ifInValue(int x) {
-        if (_legendScheme.getLegendType() == LegendType.SingleSymbol) {
+        if (_legendScheme.getLegendType() == LegendType.SINGLE_SYMBOL) {
             return false;
         } else {
             if (x > _symbolWidth && x < _symbolWidth + _valueWidth) {
@@ -307,7 +307,7 @@ public class LegendView extends JPanel {
     }
 
     private boolean ifInLabel(int x) {
-        if (_legendScheme.getLegendType() == LegendType.SingleSymbol) {
+        if (_legendScheme.getLegendType() == LegendType.SINGLE_SYMBOL) {
             if (x > _symbolWidth && x < _symbolWidth + _labelWidth) {
                 return true;
             } else {
@@ -324,7 +324,7 @@ public class LegendView extends JPanel {
 
     private void showSymbolSetForm(ColorBreak aCB) {
         switch (_legendScheme.getBreakType()) {
-            case PointBreak:
+            case POINT_BREAK:
                 PointBreak aPB = (PointBreak) aCB;
 
                 if (_frmPointSymbolSet == null) {
@@ -335,7 +335,7 @@ public class LegendView extends JPanel {
                 _frmPointSymbolSet.setPointBreak(aPB);
                 _frmPointSymbolSet.setVisible(true);
                 break;
-            case PolylineBreak:
+            case POLYLINE_BREAK:
                 PolylineBreak aPLB = (PolylineBreak) aCB;
 
                 if (_frmPolylineSymbolSet == null) {
@@ -346,7 +346,7 @@ public class LegendView extends JPanel {
                 _frmPolylineSymbolSet.setPolylineBreak(aPLB);
                 _frmPolylineSymbolSet.setVisible(true);
                 break;
-            case PolygonBreak:
+            case POLYGON_BREAK:
                 PolygonBreak aPGB = (PolygonBreak) aCB;
 
                 if (_frmPolygonSymbolSet == null) {
@@ -357,7 +357,7 @@ public class LegendView extends JPanel {
                 _frmPolygonSymbolSet.setPolygonBreak(aPGB);
                 _frmPolygonSymbolSet.setVisible(true);
                 break;
-            case ColorBreak:
+            case COLOR_BREAK:
                 if (_frmColorSymbolSet == null) {
                     _frmColorSymbolSet = new FrmColorSymbolSet((JDialog) SwingUtilities.getWindowAncestor(this), false, this);
                     _frmColorSymbolSet.setLocationRelativeTo(this);
@@ -504,12 +504,12 @@ public class LegendView extends JPanel {
             {                
                 switch (_legendScheme.getBreakType())
                 {
-                    case PointBreak:
+                    case POINT_BREAK:
                         PointBreak aPB = (PointBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPB.setOutlineColor(aColor);
                         //_legendScheme.LegendBreaks[rowIdx] = aPB;
                         break;
-                    case PolygonBreak:
+                    case POLYGON_BREAK:
                         PolygonBreak aPGB = (PolygonBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPGB.setOutlineColor(aColor);
                         //_legendScheme.LegendBreaks[rowIdx] = aPGB;
@@ -530,11 +530,11 @@ public class LegendView extends JPanel {
             {                
                 switch (_legendScheme.getBreakType())
                 {
-                    case PointBreak:
+                    case POINT_BREAK:
                         PointBreak pb = (PointBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         pb.setOutlineSize(outlineSize);
                         break;
-                    case PolygonBreak:
+                    case POLYGON_BREAK:
                         PolygonBreak aPGB = (PolygonBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPGB.setOutlineSize(outlineSize);
                         //_legendScheme.LegendBreaks[rowIdx] = aPGB;
@@ -584,17 +584,17 @@ public class LegendView extends JPanel {
             {                
                 switch (_legendScheme.getBreakType())
                 {
-                    case PointBreak:
+                    case POINT_BREAK:
                         PointBreak aPB = (PointBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPB.setSize(aSize);
                         //_legendScheme.LegendBreaks[rowIdx] = aPB;
                         break;
-                    case PolylineBreak:
+                    case POLYLINE_BREAK:
                         PolylineBreak aPLB = (PolylineBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPLB.setWidth(aSize);
                         //_legendScheme.LegendBreaks[rowIdx] = aPLB;
                         break;
-                    case PolygonBreak:
+                    case POLYGON_BREAK:
                         PolygonBreak aPGB = (PolygonBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPGB.setOutlineSize(aSize);
                         //_legendScheme.LegendBreaks[rowIdx] = aPGB;
@@ -662,12 +662,12 @@ public class LegendView extends JPanel {
             {                
                 switch (_legendScheme.getBreakType())
                 {
-                    case PointBreak:
+                    case POINT_BREAK:
                         PointBreak aPB = (PointBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPB.setDrawOutline(drawOutLine);
                         //_legendScheme.LegendBreaks[rowIdx] = aPB;
                         break;
-                    case PolygonBreak:
+                    case POLYGON_BREAK:
                         PolygonBreak aPGB = (PolygonBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPGB.setDrawOutline(drawOutLine);
                         //_legendScheme.LegendBreaks[rowIdx] = aPGB;
@@ -688,12 +688,12 @@ public class LegendView extends JPanel {
             {                
                 switch (_legendScheme.getBreakType())
                 {
-                    case PointBreak:
+                    case POINT_BREAK:
                         PointBreak aPB = (PointBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPB.setDrawFill(drawFill);
                         //_legendScheme.LegendBreaks[rowIdx] = aPB;
                         break;
-                    case PolygonBreak:
+                    case POLYGON_BREAK:
                         PolygonBreak aPGB = (PolygonBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPGB.setDrawFill(drawFill);
                         //_legendScheme.LegendBreaks[rowIdx] = aPGB;
@@ -714,17 +714,17 @@ public class LegendView extends JPanel {
             {                
                 switch (_legendScheme.getBreakType())
                 {
-                    case PointBreak:
+                    case POINT_BREAK:
                         PointBreak aPB = (PointBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPB.setDrawShape(drawShape);
                         //_legendScheme.LegendBreaks[rowIdx] = aPB;
                         break;
-                    case PolylineBreak:
+                    case POLYLINE_BREAK:
                         PolylineBreak aPLB = (PolylineBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPLB.setDrawPolyline(drawShape);
                         //_legendScheme.LegendBreaks[rowIdx] = aPLB;
                         break;
-                    case PolygonBreak:
+                    case POLYGON_BREAK:
                         PolygonBreak aPGB = (PolygonBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                         aPGB.setDrawShape(drawShape);
                         //_legendScheme.LegendBreaks[rowIdx] = aPGB;
@@ -818,13 +818,13 @@ public class LegendView extends JPanel {
                 PointBreak aPB = (PointBreak)_legendScheme.getLegendBreaks().get(rowIdx);
                 switch (aPB.getMarkerType())
                 {
-                    case Character:
+                    case CHARACTER:
                         aPB.setCharIndex(markerIdx);
                         break;
-                    case Simple:
+                    case SIMPLE:
                         aPB.setStyle(PointStyle.values()[markerIdx]);
                         break;
-                    case Image:
+                    case IMAGE:
 
                         break;
                 }
@@ -1013,7 +1013,7 @@ public class LegendView extends JPanel {
         g.setColor(this.getForeground());
         g.drawString(str, aPoint.X, aPoint.Y);
 
-        if (_legendScheme.getLegendType() != LegendType.SingleSymbol) {
+        if (_legendScheme.getLegendType() != LegendType.SINGLE_SYMBOL) {
             //Value
             sX = _symbolWidth;
             g.setColor(bColor);
@@ -1079,25 +1079,25 @@ public class LegendView extends JPanel {
 
         //Draw symbol
         switch (aCB.getBreakType()) {
-            case PointBreak:
+            case POINT_BREAK:
                 PointBreak aPB = (PointBreak) aCB;
                 aSize = aPB.getSize();
                 if (aPB.isDrawShape()) {
-                    if (aPB.getMarkerType() == MarkerType.Character) {
+                    if (aPB.getMarkerType() == MarkerType.CHARACTER) {
                         Draw.drawPoint(aP, aPB, g);
                     } else {
                         Draw.drawPoint(aP, aPB, g);
                     }
                 }
                 break;
-            case PolylineBreak:
+            case POLYLINE_BREAK:
                 PolylineBreak aPLB = (PolylineBreak) aCB;
                 aSize = aPLB.getWidth();
                 width = rect.width / 3 * 2;
                 height = rect.height / 3 * 2;
                 Draw.drawPolylineSymbol(aP, width, height, aPLB, g);
                 break;
-            case PolygonBreak:
+            case POLYGON_BREAK:
                 PolygonBreak aPGB = (PolygonBreak) aCB;
                 width = rect.width / 3 * 2;
                 height = rect.height / 5 * 4;
@@ -1105,7 +1105,7 @@ public class LegendView extends JPanel {
                     Draw.drawPolygonSymbol(aP, width, height, aPGB, g);
                 }                
                 break;
-            case ColorBreak:
+            case COLOR_BREAK:
                 width = rect.width / 3 * 2;
                 height = rect.height / 3 * 2;
                 Draw.drawPolygonSymbol(aP, aCB.getColor(), Color.black, width,
@@ -1127,7 +1127,7 @@ public class LegendView extends JPanel {
 
         g.setFont(font);
         g.setColor(this.getForeground());
-        if (_legendScheme.getLegendType() == LegendType.SingleSymbol) {
+        if (_legendScheme.getLegendType() == LegendType.SINGLE_SYMBOL) {
             g.drawString(str, aP.X, aP.Y);
         } else {
             //Label

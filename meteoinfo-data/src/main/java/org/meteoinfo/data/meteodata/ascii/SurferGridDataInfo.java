@@ -52,7 +52,7 @@ import org.meteoinfo.data.meteodata.Attribute;
       * Constructor
       */
      public SurferGridDataInfo() {
-         this.setDataType(MeteoDataType.Sufer_Grid);
+         this.setDataType(MeteoDataType.SURFER_GRID);
      }
      // </editor-fold>
      // <editor-fold desc="Get Set Methods">

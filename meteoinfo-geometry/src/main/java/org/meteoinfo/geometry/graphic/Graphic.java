@@ -35,7 +35,7 @@ package org.meteoinfo.geometry.graphic;
 
      private Shape _shape = null;
      private ColorBreak _legend = null;
-     private ResizeAbility _resizeAbility = ResizeAbility.ResizeAll;
+     private ResizeAbility _resizeAbility = ResizeAbility.RESIZE_ALL;
      // </editor-fold>
      // <editor-fold desc="Constructor">
 
@@ -169,20 +169,20 @@ package org.meteoinfo.geometry.graphic;
              switch (_shape.getShapeType()) {
                  case POINT:
                      switch (_legend.getBreakType()) {
-                         case PointBreak:
-                             _resizeAbility = ResizeAbility.SameWidthHeight;
+                         case POINT_BREAK:
+                             _resizeAbility = ResizeAbility.SAME_WIDTH_HEIGHT;
                              break;
-                         case LabelBreak:
-                         case ChartBreak:
-                             _resizeAbility = ResizeAbility.None;
+                         case LABEL_BREAK:
+                         case CHART_BREAK:
+                             _resizeAbility = ResizeAbility.NONE;
                              break;
                      }
                      break;
                  case CIRCLE:
-                     _resizeAbility = ResizeAbility.SameWidthHeight;
+                     _resizeAbility = ResizeAbility.SAME_WIDTH_HEIGHT;
                      break;
                  default:
-                     _resizeAbility = ResizeAbility.ResizeAll;
+                     _resizeAbility = ResizeAbility.RESIZE_ALL;
                      break;
              }
          }
@@ -330,7 +330,7 @@ package org.meteoinfo.geometry.graphic;
          Attr drawFill;
          legendType.setValue(aLegend.getBreakType().toString());
          switch (aLegend.getBreakType()) {
-             case PointBreak:
+             case POINT_BREAK:
                  PointBreak aPB = (PointBreak) aLegend;
                  outlineColor = doc.createAttribute("OutlineColor");
                  size = doc.createAttribute("Size");
@@ -367,7 +367,7 @@ package org.meteoinfo.geometry.graphic;
                  legend.setAttributeNode(imagePath);
                  legend.setAttributeNode(angle);
                  break;
-             case LabelBreak:
+             case LABEL_BREAK:
                  LabelBreak aLB = (LabelBreak) aLegend;
                  Attr text = doc.createAttribute("Text");
                  angle = doc.createAttribute("Angle");
@@ -392,7 +392,7 @@ package org.meteoinfo.geometry.graphic;
                  legend.setAttributeNode(fontBold);
                  legend.setAttributeNode(yShift);
                  break;
-             case ChartBreak:
+             case CHART_BREAK:
                  ChartBreak aChB = (ChartBreak) aLegend;
                  Attr shapeIndex = doc.createAttribute("ShapeIndex");
                  Attr chartType = doc.createAttribute("ChartType");
@@ -431,11 +431,11 @@ package org.meteoinfo.geometry.graphic;
                  legend.setAttributeNode(fontSize);
                  legend.setAttributeNode(labelColor);
                  break;
-             case VectorBreak:
+             case VECTOR_BREAK:
                  //legendType.InnerText = "VectorBreak";
                  legend.setAttributeNode(legendType);
                  break;
-             case PolylineBreak:
+             case POLYLINE_BREAK:
                  PolylineBreak aPLB = (PolylineBreak) aLegend;
                  size = doc.createAttribute("Size");
                  style = doc.createAttribute("Style");
@@ -463,7 +463,7 @@ package org.meteoinfo.geometry.graphic;
                  legend.setAttributeNode(symbolColor);
                  legend.setAttributeNode(symbolInterval);
                  break;
-             case PolygonBreak:
+             case POLYGON_BREAK:
                  PolygonBreak aPGB = (PolygonBreak) aLegend;
                  outlineColor = doc.createAttribute("OutlineColor");
                  drawOutline = doc.createAttribute("DrawOutline");
@@ -578,9 +578,9 @@ package org.meteoinfo.geometry.graphic;
          try {
              Color color = ColorUtil.parseToColor(legendNode.getAttributes().getNamedItem("Color").getNodeValue());
              String legendType = legendNode.getAttributes().getNamedItem("LegendType").getNodeValue();
-             BreakTypes breakType = BreakTypes.valueOf(legendType);
+             BreakTypes breakType = BreakTypes.valueOfBack(legendType);
              switch (breakType) {
-                 case PointBreak:
+                 case POINT_BREAK:
                      PointBreak aPB = new PointBreak();
                      try {
                          aPB.setColor(color);
@@ -588,8 +588,8 @@ package org.meteoinfo.geometry.graphic;
                          aPB.setDrawOutline(Boolean.parseBoolean(legendNode.getAttributes().getNamedItem("DrawOutline").getNodeValue()));
                          aPB.setOutlineColor(ColorUtil.parseToColor(legendNode.getAttributes().getNamedItem("OutlineColor").getNodeValue()));
                          aPB.setSize(Float.parseFloat(legendNode.getAttributes().getNamedItem("Size").getNodeValue()));
-                         aPB.setStyle(PointStyle.valueOf(legendNode.getAttributes().getNamedItem("Style").getNodeValue()));
-                         aPB.setMarkerType(MarkerType.valueOf(legendNode.getAttributes().getNamedItem("MarkerType").getNodeValue()));
+                         aPB.setStyle(PointStyle.valueOfBack(legendNode.getAttributes().getNamedItem("Style").getNodeValue()));
+                         aPB.setMarkerType(MarkerType.valueOfBack(legendNode.getAttributes().getNamedItem("MarkerType").getNodeValue()));
                          aPB.setFontName(legendNode.getAttributes().getNamedItem("FontName").getNodeValue());
                          aPB.setCharIndex(Integer.parseInt(legendNode.getAttributes().getNamedItem("CharIndex").getNodeValue()));
                          aPB.setImagePath(legendNode.getAttributes().getNamedItem("ImagePath").getNodeValue());
@@ -599,7 +599,7 @@ package org.meteoinfo.geometry.graphic;
                          legend = aPB;
                      }
                      break;
-                 case LabelBreak:
+                 case LABEL_BREAK:
                      LabelBreak aLB = new LabelBreak();
                      try {
                          aLB.setColor(color);
@@ -620,8 +620,8 @@ package org.meteoinfo.geometry.graphic;
                          legend = aLB;
                      }
                      break;
-                 case ChartBreak:
-                     ChartBreak aChB = new ChartBreak(ChartTypes.BarChart);
+                 case CHART_BREAK:
+                     ChartBreak aChB = new ChartBreak(ChartTypes.BAR_CHART);
                      try {
                          ChartTypes chartType = ChartTypes.valueOf(legendNode.getAttributes().getNamedItem("ChartType").getNodeValue());
                          aChB = new ChartBreak(chartType);
@@ -644,7 +644,7 @@ package org.meteoinfo.geometry.graphic;
                          legend = aChB;
                      }
                      break;
-                 case VectorBreak:
+                 case VECTOR_BREAK:
                      VectorBreak aVB = new VectorBreak();
                      try {
                          aVB.setColor(color);
@@ -653,15 +653,15 @@ package org.meteoinfo.geometry.graphic;
                          legend = aVB;
                      }
                      break;
-                 case PolylineBreak:
+                 case POLYLINE_BREAK:
                      PolylineBreak aPLB = new PolylineBreak();
                      try {
                          aPLB.setColor(color);
                          aPLB.setWidth(Float.parseFloat(legendNode.getAttributes().getNamedItem("Size").getNodeValue()));
-                         aPLB.setStyle(LineStyles.valueOf(legendNode.getAttributes().getNamedItem("Style").getNodeValue()));
+                         aPLB.setStyle(LineStyles.valueOfBack(legendNode.getAttributes().getNamedItem("Style").getNodeValue()));
                          aPLB.setDrawSymbol(Boolean.parseBoolean(legendNode.getAttributes().getNamedItem("DrawSymbol").getNodeValue()));
                          aPLB.setSymbolSize(Float.parseFloat(legendNode.getAttributes().getNamedItem("SymbolSize").getNodeValue()));
-                         aPLB.setSymbolStyle(PointStyle.valueOf(legendNode.getAttributes().getNamedItem("SymbolStyle").getNodeValue()));
+                         aPLB.setSymbolStyle(PointStyle.valueOfBack(legendNode.getAttributes().getNamedItem("SymbolStyle").getNodeValue()));
                          aPLB.setSymbolColor(ColorUtil.parseToColor(legendNode.getAttributes().getNamedItem("SymbolColor").getNodeValue()));
                          aPLB.setSymbolInterval(Integer.parseInt(legendNode.getAttributes().getNamedItem("SymbolInterval").getNodeValue()));
                      } catch (Exception e) {
@@ -669,7 +669,7 @@ package org.meteoinfo.geometry.graphic;
                          legend = aPLB;
                      }
                      break;
-                 case PolygonBreak:
+                 case POLYGON_BREAK:
                      PolygonBreak aPGB = new PolygonBreak();
                      try {
                          aPGB.setColor(color);

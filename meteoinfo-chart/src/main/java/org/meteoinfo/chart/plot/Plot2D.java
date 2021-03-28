@@ -292,13 +292,13 @@ public class Plot2D extends AbstractPlot2D {
                             this.drawCapPolyline(g, (CapPolylineShape) shape, (PolylineBreak) cb, area);
                         } else {
                             switch (cb.getBreakType()){
-                                case PointBreak:
+                                case POINT_BREAK:
                                     this.drawPolyline(g, (PolylineShape) shape, (PointBreak) cb, area);
                                     break;
-                                case PolylineBreak:
+                                case POLYLINE_BREAK:
                                     this.drawPolyline(g, (PolylineShape) shape, (PolylineBreak) cb, area);
                                     break;
-                                case ColorBreakCollection:
+                                case COLOR_BREAK_COLLECTION:
                                     this.drawPolyline(g, (PolylineShape) shape, (ColorBreakCollection) cb, area);
                                     break;
                             }
@@ -610,10 +610,10 @@ public class Plot2D extends AbstractPlot2D {
             FontMetrics metrics = g.getFontMetrics(drawFont);
             Dimension labSize = new Dimension(metrics.stringWidth(LabelStr), metrics.getHeight());
             switch (aLB.getAlignType()) {
-                case Center:
+                case CENTER:
                     aPoint.X = (float) xy[0] - labSize.width / 2;
                     break;
-                case Left:
+                case LEFT:
                     aPoint.X = (float) xy[0] - labSize.width;
                     break;
             }
@@ -708,7 +708,7 @@ public class Plot2D extends AbstractPlot2D {
                 aX = (float) sXY[0];
                 aY = (float) sXY[1];
                 switch (aGraphic.getLegend().getBreakType()) {
-                    case PointBreak:
+                    case POINT_BREAK:
                         PointBreak aPB = (PointBreak) aGraphic.getLegend();
                         int buffer = (int) aPB.getSize() + 2;
                         rect.x = (int) aX - buffer / 2;
@@ -716,17 +716,17 @@ public class Plot2D extends AbstractPlot2D {
                         rect.width = buffer;
                         rect.height = buffer;
                         break;
-                    case LabelBreak:
+                    case LABEL_BREAK:
                         LabelBreak aLB = (LabelBreak) aGraphic.getLegend();
                         g.setFont(aLB.getFont());
                         //FontMetrics metrics = g.getFontMetrics(aLB.getFont());
                         //Dimension labSize = new Dimension(metrics.stringWidth(aLB.getText()), metrics.getHeight());
                         Dimension labSize = Draw.getStringDimension(aLB.getText(), g);
                         switch (aLB.getAlignType()) {
-                            case Center:
+                            case CENTER:
                                 aX = aX - labSize.width / 2;
                                 break;
-                            case Left:
+                            case LEFT:
                                 aX = aX - labSize.width;
                                 break;
                         }

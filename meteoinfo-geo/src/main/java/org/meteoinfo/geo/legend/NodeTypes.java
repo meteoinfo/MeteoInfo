@@ -19,7 +19,7 @@ package org.meteoinfo.geo.legend;
  */
 public enum NodeTypes {
 
-    LayerNode,
-    MapFrameNode,
-    GroupNode
+    LAYER_NODE,
+    MAP_FRAME_NODE,
+    GROUP_NODE;
 }

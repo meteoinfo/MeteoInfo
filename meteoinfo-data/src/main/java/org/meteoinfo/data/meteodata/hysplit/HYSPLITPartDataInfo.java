@@ -54,7 +54,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
      * Constructor
      */
     public HYSPLITPartDataInfo(){
-        this.setDataType(MeteoDataType.HYSPLIT_Particle);
+        this.setDataType(MeteoDataType.HYSPLIT_PARTICLE);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

@@ -57,7 +57,7 @@ public class RasterLayer extends ImageLayer {
      * Constructor
      */
     public RasterLayer() {
-        this.setLayerType(LayerTypes.RasterLayer);
+        this._layerType = LayerTypes.RASTER_LAYER;
         this.setShapeType(ShapeTypes.IMAGE);
     }
     // </editor-fold>
@@ -416,15 +416,6 @@ public class RasterLayer extends ImageLayer {
          */
         public LayerTypes getLayerType() {
             return RasterLayer.this.getLayerType();
-        }
-
-        /**
-         * Set layer type
-         *
-         * @param lt Layer type
-         */
-        public void setLayerType(LayerTypes lt) {
-            RasterLayer.this.setLayerType(lt);
         }
 
         /**

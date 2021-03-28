@@ -1139,7 +1139,7 @@ public class GraphicFactory {
             graphics.setSingleLegend(false);
             LegendScheme ls = new LegendScheme();
             ls.setLegendBreaks(cbs);
-            ls.setLegendType(LegendType.UniqueValue);
+            ls.setLegendType(LegendType.UNIQUE_VALUE);
             ls.setShapeType(ShapeTypes.POINT);
             graphics.setLegendScheme(ls);
         } else {
@@ -1149,7 +1149,7 @@ public class GraphicFactory {
                 graphics.add(new Graphic(ps, cbs.get(0)));
                 LegendScheme ls = new LegendScheme();
                 ls.setLegendBreaks(cbs);
-                ls.setLegendType(LegendType.SingleSymbol);
+                ls.setLegendType(LegendType.SINGLE_SYMBOL);
                 ls.setShapeType(ShapeTypes.POINT);
                 graphics.setLegendScheme(ls);
             }
@@ -1237,7 +1237,7 @@ public class GraphicFactory {
             graphics.setSingleLegend(false);
             LegendScheme ls = new LegendScheme();
             ls.setLegendBreaks(cbs);
-            ls.setLegendType(LegendType.UniqueValue);
+            ls.setLegendType(LegendType.UNIQUE_VALUE);
             ls.setShapeType(ShapeTypes.POINT);
             graphics.setLegendScheme(ls);
         } else {
@@ -1251,7 +1251,7 @@ public class GraphicFactory {
                 graphics.add(new Graphic(ps, cbs.get(0)));
                 LegendScheme ls = new LegendScheme();
                 ls.setLegendBreaks(cbs);
-                ls.setLegendType(LegendType.SingleSymbol);
+                ls.setLegendType(LegendType.SINGLE_SYMBOL);
                 ls.setShapeType(ShapeTypes.POINT);
                 graphics.setLegendScheme(ls);
             }
@@ -1366,7 +1366,7 @@ public class GraphicFactory {
             graphics.setSingleLegend(false);
             LegendScheme ls = new LegendScheme();
             ls.setLegendBreaks(cbs);
-            ls.setLegendType(LegendType.UniqueValue);
+            ls.setLegendType(LegendType.UNIQUE_VALUE);
             ls.setShapeType(ShapeTypes.POINT);
             graphics.setLegendScheme(ls);
         } else {
@@ -1398,7 +1398,7 @@ public class GraphicFactory {
             }
             LegendScheme ls = new LegendScheme();
             ls.setLegendBreaks(cbs);
-            ls.setLegendType(LegendType.SingleSymbol);
+            ls.setLegendType(LegendType.SINGLE_SYMBOL);
             ls.setShapeType(ShapeTypes.POINT);
             graphics.setLegendScheme(ls);
         }
@@ -2753,7 +2753,7 @@ public class GraphicFactory {
                     oneColor = undefColor;
                 } else {
                     oneColor = defaultColor;
-                    if (ls.getLegendType() == LegendType.GraduatedColor) {
+                    if (ls.getLegendType() == LegendType.GRADUATED_COLOR) {
                         for (int k = 0; k < breakNum - 1; k++) {
                             if (oneValue < breakValue[k]) {
                                 oneColor = breakColor[k];
@@ -2825,7 +2825,7 @@ public class GraphicFactory {
                     oneColor = undefColor;
                 } else {
                     oneColor = defaultColor;
-                    if (ls.getLegendType() == LegendType.GraduatedColor) {
+                    if (ls.getLegendType() == LegendType.GRADUATED_COLOR) {
                         for (int k = 0; k < breakNum - 1; k++) {
                             if (oneValue < breakValue[k]) {
                                 oneColor = breakColor[k];
@@ -2892,7 +2892,7 @@ public class GraphicFactory {
                     oneColor = undefColor;
                 } else {
                     oneColor = defaultColor;
-                    if (ls.getLegendType() == LegendType.GraduatedColor) {
+                    if (ls.getLegendType() == LegendType.GRADUATED_COLOR) {
                         for (int k = 0; k < breakNum - 1; k++) {
                             if (oneValue < breakValue[k]) {
                                 oneColor = breakColor[k];
@@ -3093,7 +3093,7 @@ public class GraphicFactory {
             aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
 
             switch (ls.getLegendType()) {
-                case UniqueValue:
+                case UNIQUE_VALUE:
                     for (int j = 0; j < ls.getBreakNum(); j++) {
                         ColorBreak cb = ls.getLegendBreaks().get(j);
                         if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))) {
@@ -3102,7 +3102,7 @@ public class GraphicFactory {
                         }
                     }
                     break;
-                case GraduatedColor:
+                case GRADUATED_COLOR:
                     int blNum = 0;
                     for (int j = 0; j < ls.getBreakNum(); j++) {
                         ColorBreak cb = ls.getLegendBreaks().get(j);
@@ -3179,7 +3179,7 @@ public class GraphicFactory {
             aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
 
             switch (ls.getLegendType()) {
-                case UniqueValue:
+                case UNIQUE_VALUE:
                     for (int j = 0; j < ls.getBreakNum(); j++) {
                         ColorBreak cb = ls.getLegendBreaks().get(j);
                         if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))) {
@@ -3188,7 +3188,7 @@ public class GraphicFactory {
                         }
                     }
                     break;
-                case GraduatedColor:
+                case GRADUATED_COLOR:
                     int blNum = 0;
                     for (int j = 0; j < ls.getBreakNum(); j++) {
                         ColorBreak cb = ls.getLegendBreaks().get(j);
@@ -3512,7 +3512,7 @@ public class GraphicFactory {
 
             v = aPolygonShape.lowValue;
             switch (ls.getLegendType()) {
-                case UniqueValue:
+                case UNIQUE_VALUE:
                     for (int j = 0; j < ls.getBreakNum(); j++) {
                         ColorBreak cb = ls.getLegendBreaks().get(j);
                         if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))) {
@@ -3521,7 +3521,7 @@ public class GraphicFactory {
                         }
                     }
                     break;
-                case GraduatedColor:
+                case GRADUATED_COLOR:
                     int blNum = 0;
                     for (int j = 0; j < ls.getBreakNum(); j++) {
                         ColorBreak cb = ls.getLegendBreaks().get(j);
@@ -3637,7 +3637,7 @@ public class GraphicFactory {
 
             v = aPolygonShape.lowValue;
             switch (ls.getLegendType()) {
-                case UniqueValue:
+                case UNIQUE_VALUE:
                     for (int j = 0; j < ls.getBreakNum(); j++) {
                         ColorBreak cb = ls.getLegendBreaks().get(j);
                         if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))) {
@@ -3646,7 +3646,7 @@ public class GraphicFactory {
                         }
                     }
                     break;
-                case GraduatedColor:
+                case GRADUATED_COLOR:
                     int blNum = 0;
                     for (int j = 0; j < ls.getBreakNum(); j++) {
                         ColorBreak cb = ls.getLegendBreaks().get(j);
@@ -5792,11 +5792,11 @@ public class GraphicFactory {
         }
         if (flierBreak == null) {
             flierBreak = new PointBreak();
-            flierBreak.setStyle(PointStyle.Plus);
+            flierBreak.setStyle(PointStyle.PLUS);
         }
         if (meanBreak == null) {
             meanBreak = new PointBreak();
-            ((PointBreak) meanBreak).setStyle(PointStyle.Square);
+            ((PointBreak) meanBreak).setStyle(PointStyle.SQUARE);
             ((PointBreak) meanBreak).setColor(Color.red);
             ((PointBreak) meanBreak).setOutlineColor(Color.black);
         }
@@ -5829,7 +5829,7 @@ public class GraphicFactory {
 
             //Add meadian line
             if (showmedians) {
-                if (medianBreak.getBreakType() == BreakTypes.PolylineBreak) {
+                if (medianBreak.getBreakType() == BreakTypes.POLYLINE_BREAK) {
                     pList = new ArrayList<>();
                     pList.add(new PointD(v - width * 0.5, median));
                     pList.add(new PointD(v + width * 0.5, median));
@@ -5906,7 +5906,7 @@ public class GraphicFactory {
             //Add mean line
             if (showmeans) {
                 double mean = ArrayMath.mean(a);
-                if (meanBreak.getBreakType() == BreakTypes.PointBreak) {
+                if (meanBreak.getBreakType() == BreakTypes.POINT_BREAK) {
                     PointShape ps = new PointShape();
                     ps.setPoint(new PointD(v, mean));
                     gc.add(new Graphic(ps, meanBreak));

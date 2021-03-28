@@ -56,7 +56,7 @@ public class ChartScaleBar extends ChartElement {
         this.height = 50;
         this.mapPlot = mapPlot;
         _antiAlias = true;
-        _scaleBarType = ScaleBarType.SCALELINE_1;
+        _scaleBarType = ScaleBarType.SCALE_LINE_1;
         lineWidth = 1;
         _drawNeatLine = false;
         _neatLineColor = Color.black;
@@ -326,10 +326,10 @@ public class ChartScaleBar extends ChartElement {
 
         //Draw scale bar
         switch (_scaleBarType) {
-            case SCALELINE_1:
+            case SCALE_LINE_1:
                 drawScaleLine1(g, breakWidth, geoBreakWidth);
                 break;
-            case SCALELINE_2:
+            case SCALE_LINE_2:
                 drawScaleLine2(g, breakWidth, geoBreakWidth);
                 break;
             case ALTERNATING_BAR:

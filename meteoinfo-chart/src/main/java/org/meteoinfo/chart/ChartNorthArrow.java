@@ -60,7 +60,7 @@ public class ChartNorthArrow extends ChartElement {
         _drawNeatLine = false;
         _neatLineColor = Color.black;
         _neatLineSize = 1;
-        _northArrowType = NorthArrowType.NORTHARROW_1;
+        _northArrowType = NorthArrowType.NORTH_ARROW_1;
         _angle = 0;
     }
     // </editor-fold>
@@ -247,7 +247,7 @@ public class ChartNorthArrow extends ChartElement {
 
     private void drawNorthArrow(Graphics2D g) {
         switch (_northArrowType) {
-            case NORTHARROW_1:
+            case NORTH_ARROW_1:
                 drawNorthArrow1(g);
                 break;
         }

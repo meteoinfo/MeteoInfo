@@ -20,19 +20,38 @@ package org.meteoinfo.geometry.legend;
  */
 public enum PointStyle {
 
-    Circle,
-    Square,
-    UpTriangle,
-    DownTriangle,
-    Diamond,
-    XCross,
-    Plus,
-    Minus,
-    Star,
-    StarLines,
-    Pentagon,
-    UpSemiCircle,
-    DownSemiCircle,
+    CIRCLE,
+    SQUARE,
+    UP_TRIANGLE,
+    DOWN_TRIANGLE,
+    DIAMOND,
+    X_CROSS,
+    PLUS,
+    MINUS,
+    STAR,
+    STAR_LINES,
+    PENTAGON,
+    UP_SEMI_CIRCLE,
+    DOWN_SEMI_CIRCLE,
     DOUBLE_CIRCLE,
-    CIRCLE_STAR
+    CIRCLE_STAR;
+
+    public static PointStyle valueOfBack(String value) {
+        switch (value.toUpperCase()) {
+            case "UPTRIANGLE":
+                return PointStyle.UP_TRIANGLE;
+            case "DOWNTRIANGLE":
+                return PointStyle.DOWN_TRIANGLE;
+            case "XCROSS":
+                return PointStyle.X_CROSS;
+            case "STAR_LINES":
+                return PointStyle.STAR_LINES;
+            case "UP_SEMI_CIRCLE":
+                return PointStyle.UP_SEMI_CIRCLE;
+            case "DOWN_SEMI_CIRCLE":
+                return PointStyle.DOWN_SEMI_CIRCLE;
+            default:
+                return PointStyle.valueOf(value.toUpperCase());
+        }
+    }
 }

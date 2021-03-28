@@ -474,7 +474,7 @@ class MapAxes(Axes):
             layer = layer.layer
             layer.setVisible(visible)
             order = kwargs.pop('order', None)
-            if layer.getLayerType() == LayerTypes.ImageLayer:
+            if layer.getLayerType() == LayerTypes.IMAGE_LAYER:
                 if order is None:
                     self.add_layer(layer)
                 else:
@@ -490,9 +490,9 @@ class MapAxes(Axes):
                         lb = layer.getLegendScheme().getLegendBreaks().get(0)
                         btype = lb.getBreakType()
                         geometry = 'point'
-                        if btype == BreakTypes.PolylineBreak:
+                        if btype == BreakTypes.POLYLINE_BREAK:
                             geometry = 'line'
-                        elif btype == BreakTypes.PolygonBreak:
+                        elif btype == BreakTypes.POLYGON_BREAK:
                             geometry = 'polygon'
                             if not kwargs.has_key('facecolor'):
                                 kwargs['facecolor'] = None
@@ -990,7 +990,7 @@ class MapAxes(Axes):
                 ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
         
-        if a.size == ls.getBreakNum() and ls.getLegendType() == LegendType.UniqueValue:
+        if a.size == ls.getBreakNum() and ls.getLegendType() == LegendType.UNIQUE_VALUE:
             layer = DrawMeteoData.createSTPointLayer_Unique(a._array, x._array, y._array, ls, 'layer', 'data')
         else:
             layer = DrawMeteoData.createSTPointLayer(a._array, x._array, y._array, ls, 'layer', 'data')

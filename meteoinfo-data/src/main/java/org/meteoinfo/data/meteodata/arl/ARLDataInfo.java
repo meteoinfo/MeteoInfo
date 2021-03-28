@@ -133,7 +133,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
         missingValue = -9999;
         isGlobal = false;
         //projInfo = KnownCoordinateSystems.geographic.world.WGS1984;
-        this.meteoDataType = MeteoDataType.ARL_Grid;
+        this.meteoDataType = MeteoDataType.ARL_GRID;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

@@ -63,7 +63,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
         //Get map layer list
         int i;
         for (i = 0; i < _parent.getMapDocument().getActiveMapFrame().getMapView().getLayerNum(); i++) {
-            if (_parent.getMapDocument().getActiveMapFrame().getMapView().getLayers().get(i).getLayerType() == LayerTypes.VectorLayer) {
+            if (_parent.getMapDocument().getActiveMapFrame().getMapView().getLayers().get(i).getLayerType() == LayerTypes.VECTOR_LAYER) {
                 VectorLayer aLayer = (VectorLayer) _parent.getMapDocument().getActiveMapFrame().getMapView().getLayers().get(i);
                 _mapLayers.add(aLayer);
             }

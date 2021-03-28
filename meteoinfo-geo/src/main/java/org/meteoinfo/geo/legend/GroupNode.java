@@ -43,7 +43,7 @@ public class GroupNode extends ItemNode {
         _groupHandle = -1;
         this.setText(name);
         _layers = new ArrayList<LayerNode>();
-        this.setNodeType(NodeTypes.GroupNode);
+        this.setNodeType(NodeTypes.GROUP_NODE);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

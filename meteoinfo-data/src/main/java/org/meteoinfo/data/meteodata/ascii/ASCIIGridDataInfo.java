@@ -59,7 +59,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
      * Constructor
      */
     public ASCIIGridDataInfo() {
-        this.setDataType(MeteoDataType.ASCII_Grid);
+        this.setDataType(MeteoDataType.ASCII_GRID);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

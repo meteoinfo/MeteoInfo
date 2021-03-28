@@ -79,7 +79,7 @@ public class SymbolControl extends JPanel {
         });
 
         _shapeType = ShapeTypes.POINT;
-        _markerType = MarkerType.Simple;
+        _markerType = MarkerType.SIMPLE;
         _cellSize = new Dimension(25, 25);
         _symbolNumber = PointStyle.values().length;
         _colNumber = 10;
@@ -177,7 +177,7 @@ public class SymbolControl extends JPanel {
         switch (_shapeType) {
             case POINT:
                 setCellSize(new Dimension(25, 25));
-                if (_markerType == MarkerType.Simple) {
+                if (_markerType == MarkerType.SIMPLE) {
                     setSymbolNumber(PointStyle.values().length);
                 } else {
                     setSymbolNumber(256);
@@ -353,7 +353,7 @@ public class SymbolControl extends JPanel {
         switch (_shapeType) {
             case POINT:
                 switch (_markerType) {
-                    case Character:
+                    case CHARACTER:
                         Font smallFont = new Font(this.getFont().getFamily(), Font.PLAIN, (int) (_cellSize.width * 0.8F));
                         for (int i = 0; i < _symbolNumber; i++) {
                             int row = i / _colNumber;
@@ -377,7 +377,7 @@ public class SymbolControl extends JPanel {
                             g.drawString(text, col * _cellSize.width, sHeight + _cellSize.height);
                         }
                         break;
-                    case Simple:
+                    case SIMPLE:
                         PointBreak aPB = new PointBreak();
                         aPB.setColor(Color.red);
                         aPB.setDrawOutline(true);
@@ -408,7 +408,7 @@ public class SymbolControl extends JPanel {
                             Draw.drawPoint(sP, aPB, g);
                         }
                         break;
-                    case Image:
+                    case IMAGE:
                         float size = _cellSize.width * 0.8f;
                         for (int i = 0; i < _symbolNumber; i++) {
                             int row = i / _colNumber;

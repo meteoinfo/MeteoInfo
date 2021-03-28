@@ -20,19 +20,40 @@ package org.meteoinfo.geo.layer;
  */
 public enum LayerDrawType {
 
-    Map,
-    Shaded,
-    Contour,
-    GridFill,
-    GridPoint,
-    Vector,
-    StationPoint,
-    Barb,
-    WeatherSymbol,
-    StationModel,
-    Image,
-    Raster,
-    TrajLine,
-    TrajPoint,
-    Streamline
+    MAP,
+    SHADED,
+    CONTOUR,
+    GRID_FILL,
+    GRID_POINT,
+    VECTOR,
+    STATION_POINT,
+    BARB,
+    WEATHER_SYMBOL,
+    STATION_MODEL,
+    IMAGE,
+    RASTER,
+    TRAJECTORY_LINE,
+    TRAJECTORY_POINT,
+    STREAMLINE;
+
+    public static LayerDrawType valueOfBack(String value) {
+        switch (value.toUpperCase()) {
+            case "GRIDFILL":
+                return LayerDrawType.GRID_FILL;
+            case "GRIDPOINT":
+                return LayerDrawType.GRID_POINT;
+            case "STATIONPOINT":
+                return LayerDrawType.STATION_POINT;
+            case "WEATHERSYMBOL":
+                return LayerDrawType.WEATHER_SYMBOL;
+            case "STATIONMODEL":
+                return LayerDrawType.STATION_MODEL;
+            case "TRAJLINE":
+                return LayerDrawType.TRAJECTORY_LINE;
+            case "TRAJPOINT":
+                return LayerDrawType.TRAJECTORY_POINT;
+            default:
+                return LayerDrawType.valueOf(value.toUpperCase());
+        }
+    }
 }

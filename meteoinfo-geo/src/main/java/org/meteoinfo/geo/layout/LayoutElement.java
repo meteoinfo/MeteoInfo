@@ -94,7 +94,7 @@ import javax.swing.event.EventListenerList;
          _foreColor = Color.black;
          _backColor = Color.white;
          _selected = false;
-         _resizeAbility = ResizeAbility.None;
+         _resizeAbility = ResizeAbility.NONE;
      }
      // </editor-fold>
      // <editor-fold desc="Get Set Methods">

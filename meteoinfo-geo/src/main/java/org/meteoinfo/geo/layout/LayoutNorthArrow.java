@@ -49,8 +49,8 @@ public class LayoutNorthArrow extends LayoutElement {
      */
     public LayoutNorthArrow(LayoutMap layoutMap) {
         super();
-        this.setElementType(ElementType.LayoutNorthArraw);
-        this.setResizeAbility(ResizeAbility.ResizeAll);
+        this.setElementType(ElementType.NORTH_ARROW);
+        this.setResizeAbility(ResizeAbility.RESIZE_ALL);
 
         this.setWidth(50);
         this.setHeight(50);
@@ -60,7 +60,7 @@ public class LayoutNorthArrow extends LayoutElement {
         _drawNeatLine = false;
         _neatLineColor = Color.black;
         _neatLineSize = 1;
-        _northArrowType = NorthArrowType.NORTHARROW_1;
+        _northArrowType = NorthArrowType.NORTH_ARROW_1;
         _angle = 0;
     }
     // </editor-fold>
@@ -204,7 +204,7 @@ public class LayoutNorthArrow extends LayoutElement {
 
     private void drawNorthArrow(Graphics2D g, float zoom) {
         switch (_northArrowType) {
-            case NORTHARROW_1:
+            case NORTH_ARROW_1:
                 drawNorthArrow1(g, zoom);
                 break;
         }

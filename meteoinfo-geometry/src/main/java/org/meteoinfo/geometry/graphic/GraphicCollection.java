@@ -652,7 +652,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @return Arrow zoom
      */
     public float getArrowZoom() {
-        if (this.getLegend().getBreakType() == BreakTypes.PointBreak) {
+        if (this.getLegend().getBreakType() == BreakTypes.POINT_BREAK) {
             float size = ((PointBreak) this.getLegend()).getSize();
             return size / 10;
         }

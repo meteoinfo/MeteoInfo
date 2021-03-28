@@ -60,7 +60,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
      * Constructor
      */
     public HYSPLITConcDataInfo(){
-        this.setDataType(MeteoDataType.HYSPLIT_Conc);
+        this.setDataType(MeteoDataType.HYSPLIT_CONC);
     }
     
     /**

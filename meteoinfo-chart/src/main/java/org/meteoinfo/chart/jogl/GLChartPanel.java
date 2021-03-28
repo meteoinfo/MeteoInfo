@@ -231,7 +231,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                 image = toolkit.getImage(this.getClass().getResource("/images/Pan_Open_32x32x32.png"));
                 customCursor = toolkit.createCustomCursor(image, new Point(8, 8), "Pan");
                 break;
-            case IDENTIFER:
+            case IDENTIFIER:
                 image = toolkit.getImage(this.getClass().getResource("/images/identifer_32x32x32.png"));
                 customCursor = toolkit.createCustomCursor(image, new Point(8, 8), "Identifer");
                 break;

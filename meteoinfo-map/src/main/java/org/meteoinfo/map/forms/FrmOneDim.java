@@ -481,7 +481,7 @@ public class FrmOneDim extends javax.swing.JFrame {
         String varName = this.jComboBox_Variable.getSelectedItem().toString();
         ChartPlotMethod method = (ChartPlotMethod) this.jComboBox_DrawType.getSelectedItem();
         switch (this._meteoDataInfo.getDataType()) {
-            case HYSPLIT_Traj:
+            case HYSPLIT_TRAJ:
                 int varIdx = 11;
                 String yLabel = "Meters AGL";
                 if (varName.equals("Pressure")) {
@@ -492,7 +492,7 @@ public class FrmOneDim extends javax.swing.JFrame {
                 LegendScheme ls = null;
                 MapLayer layer = this.mainGUI.getMeteoDataset().getLastAddLayer();
                 if (layer != null) {
-                    if (layer.getLayerDrawType() == LayerDrawType.TrajLine) {
+                    if (layer.getLayerDrawType() == LayerDrawType.TRAJECTORY_LINE) {
                         ls = layer.getLegendScheme();
                     }
                 }
@@ -1001,7 +1001,7 @@ public class FrmOneDim extends javax.swing.JFrame {
         this._isLoading = true;
 
         switch (this._meteoDataInfo.getDataType()) {
-            case HYSPLIT_Traj:
+            case HYSPLIT_TRAJ:
                 this.jPanel_Dimensions.setVisible(false);
                 //this.jComboBox_DrawType.setVisible(false);
                 this.jComboBox_Lat1.setVisible(false);

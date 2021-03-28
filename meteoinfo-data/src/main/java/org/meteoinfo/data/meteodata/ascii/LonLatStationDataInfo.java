@@ -59,7 +59,7 @@ import org.meteoinfo.data.meteodata.Attribute;
       * Constructor
       */
      public LonLatStationDataInfo() {
-         this.setDataType(MeteoDataType.LonLatStation);
+         this.setDataType(MeteoDataType.LON_LAT_STATION);
      }
      // </editor-fold>
      // <editor-fold desc="Get Set Methods">

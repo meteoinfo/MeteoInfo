@@ -57,7 +57,7 @@ def shaperead(fn, encoding=None):
             layer = MILayer(MapDataManage.readMapFile_ShapeFile(fn, encoding))
             if not layer.legend() is None:
                 lb = layer.legend().getLegendBreaks()[0]
-                if lb.getBreakType() == BreakTypes.PolygonBreak:
+                if lb.getBreakType() == BreakTypes.POLYGON_BREAK:
                     lb.setDrawFill(False)
             return layer
         except:
@@ -82,7 +82,7 @@ def georead(fn):
             layer = MILayer(MapDataManage.loadLayer(fn))
             if not layer.legend() is None:
                 lb = layer.legend().getLegendBreaks()[0]
-                if lb.getBreakType() == BreakTypes.PolygonBreak:
+                if lb.getBreakType() == BreakTypes.POLYGON_BREAK:
                     lb.setDrawFill(False)
             return layer
         except:

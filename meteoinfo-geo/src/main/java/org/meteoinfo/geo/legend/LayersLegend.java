@@ -416,13 +416,13 @@ public class LayersLegend extends JPanel {
 
             selectNode(aNode);
             switch (aNode.getNodeType()) {
-                case GroupNode:
+                case GROUP_NODE:
                     onGroupMouseClicked(e);
                     break;
-                case LayerNode:
+                case LAYER_NODE:
                     onLayerMouseClicked(e);
                     break;
-                case MapFrameNode:
+                case MAP_FRAME_NODE:
                     onMapFrameMouseClicked(e);
                     break;
             }
@@ -433,7 +433,7 @@ public class LayersLegend extends JPanel {
             ItemNode aNode = getNodeByPosition(e.getX(), e.getY(), mPos);
             if (aNode != null) {
                 switch (aNode.getNodeType()) {
-                    case LayerNode:
+                    case LAYER_NODE:
                         this.onPropertiesClick(null);
 //                    LayerNode aLN = (LayerNode) aNode;
 //                    MapLayer aLayer = aLN.getMapLayer();
@@ -457,13 +457,13 @@ public class LayersLegend extends JPanel {
 //                        frmLayerProp.setVisible(true);
 //                    }
                         break;
-                    case GroupNode:
+                    case GROUP_NODE:
                         FrmProperty pFrm = new FrmProperty((JFrame) SwingUtilities.getWindowAncestor(this), true, false);
                         pFrm.setObject(((GroupNode) aNode).new GroupNodeBean());
                         pFrm.setLocationRelativeTo(this);
                         pFrm.setVisible(true);
                         break;
-                    case MapFrameNode:
+                    case MAP_FRAME_NODE:
                         pFrm = new FrmProperty((JFrame) SwingUtilities.getWindowAncestor(this), true, false);
                         pFrm.setObject(((MapFrame) aNode).new MapFrameBean());
                         pFrm.setLocationRelativeTo(this);
@@ -497,12 +497,12 @@ public class LayersLegend extends JPanel {
                     MapFrame fromMF = getMapFrame(_dragNode);
                     MapFrame mapFrame = getMapFrame(aNode);
                     if (fromMF == mapFrame) {
-                        if (_dragNode.getNodeType() == NodeTypes.GroupNode) {
+                        if (_dragNode.getNodeType() == NodeTypes.GROUP_NODE) {
                             //Remove drag node
                             ((GroupNode) _dragNode).getMapFrame().removeNode(_dragNode);
 
                             //Add the node to new position
-                            if (aNode.getNodeType() == NodeTypes.MapFrameNode) {
+                            if (aNode.getNodeType() == NodeTypes.MAP_FRAME_NODE) {
                                 mapFrame.addNode(_dragNode);
                             } else {
                                 int idx = mapFrame.getNodes().indexOf(aNode);
@@ -511,7 +511,7 @@ public class LayersLegend extends JPanel {
                                 }
                                 mapFrame.addNode(idx, _dragNode);
                             }
-                        } else if (_dragNode.getNodeType() == NodeTypes.LayerNode) {
+                        } else if (_dragNode.getNodeType() == NodeTypes.LAYER_NODE) {
                             //Remove drag node
                             if (((LayerNode) _dragNode).getGroupHandle() >= 0) {
                                 GroupNode sGroup = mapFrame.getGroupByHandle(((LayerNode) _dragNode).getGroupHandle());
@@ -522,13 +522,13 @@ public class LayersLegend extends JPanel {
 
                             //Add to new position
                             switch (aNode.getNodeType()) {
-                                case MapFrameNode:
+                                case MAP_FRAME_NODE:
                                     mapFrame.addNode(_dragNode);
                                     break;
-                                case GroupNode:
+                                case GROUP_NODE:
                                     ((GroupNode) aNode).addLayer((LayerNode) _dragNode);
                                     break;
-                                case LayerNode:
+                                case LAYER_NODE:
                                     if (((LayerNode) aNode).getGroupHandle() >= 0) {
                                         GroupNode dGroup = mapFrame.getGroupByHandle(((LayerNode) aNode).getGroupHandle());
                                         dGroup.addLayer(dGroup.getLayerIndex((LayerNode) aNode), (LayerNode) _dragNode);
@@ -544,7 +544,7 @@ public class LayersLegend extends JPanel {
                         }
 
                         mapFrame.reOrderMapViewLayers();
-                    } else if (_dragNode.getNodeType() == NodeTypes.GroupNode) {
+                    } else if (_dragNode.getNodeType() == NodeTypes.GROUP_NODE) {
                         //Add the node to new position
                         GroupNode newGN = new GroupNode(_dragNode.getText());
                         for (LayerNode aLN : ((GroupNode) _dragNode).getLayers()) {
@@ -553,23 +553,23 @@ public class LayersLegend extends JPanel {
                             //    bLN.MapLayer = (MapLayer)fromMF.MapView.GetGeoLayerFromHandle(bLN.LayerHandle).Clone();
                             newGN.addLayer(bLN);
                         }
-                        if (aNode.getNodeType() == NodeTypes.MapFrameNode) {
+                        if (aNode.getNodeType() == NodeTypes.MAP_FRAME_NODE) {
                             mapFrame.addGroupNode(newGN);
                         } else {
                             int idx = mapFrame.getNodes().indexOf(aNode);
                             mapFrame.addGroupNode(idx, newGN);
                         }
-                    } else if (_dragNode.getNodeType() == NodeTypes.LayerNode) {
+                    } else if (_dragNode.getNodeType() == NodeTypes.LAYER_NODE) {
                         //Add to new position
                         LayerNode aLN = (LayerNode) ((LayerNode) (_dragNode)).clone();
                         switch (aNode.getNodeType()) {
-                            case MapFrameNode:
+                            case MAP_FRAME_NODE:
                                 mapFrame.addLayerNode(aLN);
                                 break;
-                            case GroupNode:
+                            case GROUP_NODE:
                                 mapFrame.addLayerNode(aLN, (GroupNode) aNode);
                                 break;
-                            case LayerNode:
+                            case LAYER_NODE:
                                 if (((LayerNode) aNode).getGroupHandle() >= 0) {
                                     GroupNode dGroup = mapFrame.getGroupByHandle(((LayerNode) aNode).getGroupHandle());
                                     //dGroup.InsertLayer((LayerNode)_dragNode, dGroup.GetLayerIndex((LayerNode)aNode));
@@ -595,14 +595,14 @@ public class LayersLegend extends JPanel {
             mPos.inItem = false;
             ItemNode aNode = getNodeByPosition(e.getX(), e.getY(), mPos);
             if (aNode != null && aNode != _dragNode) {
-                if (_dragNode.getNodeType() == NodeTypes.GroupNode && aNode.getNodeType() == NodeTypes.LayerNode) {
+                if (_dragNode.getNodeType() == NodeTypes.GROUP_NODE && aNode.getNodeType() == NodeTypes.LAYER_NODE) {
                     if (((LayerNode) aNode).getGroupHandle() != -1) {
                         return;
                     }
                 }
 
                 _dragPosY = mPos.curTop + aNode.getHeight();
-                if (aNode.getNodeType() == NodeTypes.LayerNode) {
+                if (aNode.getNodeType() == NodeTypes.LAYER_NODE) {
                     _dragPosY = mPos.curTop + aNode.getDrawHeight();
                 }
             }
@@ -716,8 +716,8 @@ public class LayersLegend extends JPanel {
             });
             mnuLayer.add(removeLayerMI);
             switch (aLayerObj.getLayerType()) {
-                case VectorLayer:
-                case RasterLayer:
+                case VECTOR_LAYER:
+                case RASTER_LAYER:
                     if (!new File(aLayerObj.getFileName()).exists()) {
                         JMenuItem saveLayerMI = new JMenuItem("Save Layer");
                         saveLayerMI.addActionListener(new ActionListener() {
@@ -733,7 +733,7 @@ public class LayersLegend extends JPanel {
             mnuLayer.addSeparator();
 
             //Attribute table
-            if (aLayerObj.getLayerType() == LayerTypes.VectorLayer) {
+            if (aLayerObj.getLayerType() == LayerTypes.VECTOR_LAYER) {
                 JMenuItem attrTableMI = new JMenuItem("Attribute Table");
                 attrTableMI.setIcon(new FlatSVGIcon("org/meteoinfo/icons/table.svg"));
                 attrTableMI.addActionListener(new ActionListener() {
@@ -790,7 +790,7 @@ public class LayersLegend extends JPanel {
             mnuLayer.addSeparator();
 
             //Label
-            if (aLayerObj.getLayerType() == LayerTypes.VectorLayer) {
+            if (aLayerObj.getLayerType() == LayerTypes.VECTOR_LAYER) {
                 JMenuItem labelMI = new JMenuItem("Label");
                 labelMI.setIcon(new FlatSVGIcon("org/meteoinfo/icons/label.svg"));
                 labelMI.addActionListener(new ActionListener() {
@@ -951,7 +951,7 @@ public class LayersLegend extends JPanel {
     }
 
     private void onRemoveGroupClick(ActionEvent e) {
-        if (_selectedNode.getNodeType() == NodeTypes.GroupNode) {
+        if (_selectedNode.getNodeType() == NodeTypes.GROUP_NODE) {
             GroupNode aGN = (GroupNode) _selectedNode;
             aGN.getMapFrame().removeGroup(aGN);
         }
@@ -959,7 +959,7 @@ public class LayersLegend extends JPanel {
     }
 
     private void onRemoveLayerClick(ActionEvent e) {
-        if (_selectedNode.getNodeType() == NodeTypes.LayerNode) {
+        if (_selectedNode.getNodeType() == NodeTypes.LAYER_NODE) {
             LayerNode aLN = (LayerNode) _selectedNode;
             aLN.getMapFrame().removeLayer(aLN);
         }
@@ -968,7 +968,7 @@ public class LayersLegend extends JPanel {
     }
 
     private void onSaveLayerClick(ActionEvent e) {
-        if (_selectedNode.getNodeType() == NodeTypes.LayerNode) {
+        if (_selectedNode.getNodeType() == NodeTypes.LAYER_NODE) {
             LayerNode aLN = (LayerNode) _selectedNode;
             MapLayer aLayer = aLN.getMapLayer();
             if (aLN.getMapFrame().getMapView().getProjection().getProjInfo().equals(aLayer.getProjInfo())) {
@@ -989,7 +989,7 @@ public class LayersLegend extends JPanel {
     private void onAttrTableClick(ActionEvent e) {
         LayerNode aLN = (LayerNode) _selectedNode;
         MapLayer aLayer = aLN.getMapFrame().getMapView().getLayerByHandle(aLN.getLayerHandle());
-        if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+        if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
             FrmAttriData frm = new FrmAttriData();
             frm.setLayer((VectorLayer) aLayer);
@@ -1069,7 +1069,7 @@ public class LayersLegend extends JPanel {
     private void onLabelClick(ActionEvent e) {
         LayerNode aLN = (LayerNode) _selectedNode;
         MapLayer aLayer = aLN.getMapFrame().getMapView().getLayerByHandle(aLN.getLayerHandle());
-        if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+        if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             VectorLayer layer = (VectorLayer) aLayer;
             if (layer.getShapeNum() > 0) {
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -1112,7 +1112,7 @@ public class LayersLegend extends JPanel {
 
             mPos.curTop += mapFrame.getHeight() + Constants.ITEM_PAD;
             for (int i = mapFrame.getNodes().size() - 1; i >= 0; i--) {
-                if (mapFrame.getNodes().get(i).getNodeType() == NodeTypes.LayerNode) {
+                if (mapFrame.getNodes().get(i).getNodeType() == NodeTypes.LAYER_NODE) {
                     if (y > mPos.curTop && y < mPos.curTop + mapFrame.getNodes().get(i).getDrawHeight()) {
                         if (y < mPos.curTop + mapFrame.getNodes().get(i).getHeight()) {
                             mPos.inItem = true;
@@ -1163,7 +1163,7 @@ public class LayersLegend extends JPanel {
         ItemNode aIN = getNodeByPosition(x, y, mPos);
         if (aIN != null) {
             int leftPad = Constants.MAPFRAME_LEFT_PAD;
-            if (aIN.getNodeType() == NodeTypes.MapFrameNode) {
+            if (aIN.getNodeType() == NodeTypes.MAP_FRAME_NODE) {
                 if (x > leftPad && x < leftPad + Constants.EXPAND_BOX_SIZE) {
                     mPos.inExpansionBox = true;
                 } else {
@@ -1176,7 +1176,7 @@ public class LayersLegend extends JPanel {
                 } else {
                     mPos.inCheckBox = false;
                 }
-            } else if (aIN.getNodeType() == NodeTypes.GroupNode) {
+            } else if (aIN.getNodeType() == NodeTypes.GROUP_NODE) {
                 leftPad += Constants.ITEM_LEFT_PAD;
                 if (x > leftPad && x < leftPad + Constants.EXPAND_BOX_SIZE) {
                     mPos.inExpansionBox = true;
@@ -1190,7 +1190,7 @@ public class LayersLegend extends JPanel {
                 } else {
                     mPos.inCheckBox = false;
                 }
-            } else if (aIN.getNodeType() == NodeTypes.LayerNode) {
+            } else if (aIN.getNodeType() == NodeTypes.LAYER_NODE) {
                 if (mPos.inItem) {
                     leftPad += Constants.ITEM_LEFT_PAD;
                     if (((LayerNode) aIN).getGroupHandle() >= 0) {
@@ -1318,13 +1318,13 @@ public class LayersLegend extends JPanel {
     private MapFrame getMapFrame(ItemNode aNode) {
         MapFrame mf = null;
         switch (aNode.getNodeType()) {
-            case MapFrameNode:
+            case MAP_FRAME_NODE:
                 mf = (MapFrame) aNode;
                 break;
-            case LayerNode:
+            case LAYER_NODE:
                 mf = ((LayerNode) aNode).getMapFrame();
                 break;
-            case GroupNode:
+            case GROUP_NODE:
                 mf = ((GroupNode) aNode).getMapFrame();
                 break;
         }
@@ -1361,7 +1361,7 @@ public class LayersLegend extends JPanel {
 
         aNode.setSelected(true);
         MapFrame aMF = getMapFrame(aNode);
-        if (aNode.getNodeType() == NodeTypes.LayerNode) {
+        if (aNode.getNodeType() == NodeTypes.LAYER_NODE) {
             aMF.getMapView().setSelectedLayerHandle(((LayerNode) aNode).getLayerHandle());
         } else {
             aMF.getMapView().setSelectedLayerHandle(-1);
@@ -1524,7 +1524,7 @@ public class LayersLegend extends JPanel {
             sP.y += aMapFrame.getHeight() + Constants.ITEM_PAD;
             for (int i = aMapFrame.getNodes().size() - 1; i >= 0; i--) {
                 ItemNode aTN = aMapFrame.getNodes().get(i);
-                if (aTN.getNodeType() == NodeTypes.GroupNode) {
+                if (aTN.getNodeType() == NodeTypes.GROUP_NODE) {
                     if (sP.y + aTN.getDrawHeight() < this.getY()) {
                         sP.y += aTN.getDrawHeight() + Constants.ITEM_PAD;
                         continue;
@@ -1643,14 +1643,14 @@ public class LayersLegend extends JPanel {
         String caption = "";
 
         switch (aLN.getLegendBreak().getBreakType()) {
-            case PointBreak:
+            case POINT_BREAK:
                 PointBreak aPB = (PointBreak) aLN.getLegendBreak();
                 caption = aPB.getCaption();
                 aP.X = rect.x + rect.width / 2;
                 aP.Y = rect.y + rect.height / 2;
                 //aSize = aPB.getSize();
                 if (aPB.isDrawShape()) {
-                    if (aPB.getMarkerType() == MarkerType.Character) {
+                    if (aPB.getMarkerType() == MarkerType.CHARACTER) {
 //                            TextRenderingHint aTextRendering = g.TextRenderingHint;
 //                            g.TextRenderingHint = TextRenderingHint.AntiAlias;
                         Draw.drawPoint(aP, aPB, g);
@@ -1660,7 +1660,7 @@ public class LayersLegend extends JPanel {
                     }
                 }
                 break;
-            case PolylineBreak:
+            case POLYLINE_BREAK:
                 PolylineBreak aPLB = (PolylineBreak) aLN.getLegendBreak();
                 caption = aPLB.getCaption();
                 aP.X = rect.x + rect.width / 2;
@@ -1670,7 +1670,7 @@ public class LayersLegend extends JPanel {
                 height = rect.height / 3 * 2;
                 Draw.drawPolylineSymbol(aP, width, height, aPLB, g);
                 break;
-            case PolygonBreak:
+            case POLYGON_BREAK:
                 PolygonBreak aPGB = (PolygonBreak) aLN.getLegendBreak();
                 caption = aPGB.getCaption();
                 aP.X = rect.x + rect.width / 2;
@@ -1681,7 +1681,7 @@ public class LayersLegend extends JPanel {
                     Draw.drawPolygonSymbol(aP, width, height, aPGB, g);
                 }
                 break;
-            case ColorBreak:
+            case COLOR_BREAK:
                 ColorBreak aCB = aLN.getLegendBreak();
                 caption = aCB.getCaption();
                 aP.X = rect.x + rect.width / 2;
@@ -1691,15 +1691,15 @@ public class LayersLegend extends JPanel {
                 Draw.drawPolygonSymbol(aP, aCB.getColor(), Color.black, width,
                         height, true, true, g);
                 break;
-            case ChartBreak:
+            case CHART_BREAK:
                 ChartBreak aChB = (ChartBreak) aLN.getLegendBreak();
                 aP.X = rect.x;
                 aP.Y = rect.y + rect.height - 5;
                 switch (aChB.getChartType()) {
-                    case BarChart:
+                    case BAR_CHART:
                         Draw.drawBarChartSymbol(aP, aChB, g, true);
                         break;
-                    case PieChart:
+                    case PIE_CHART:
                         Draw.drawPieChartSymbol(aP, aChB, g, null);
                         break;
                 }

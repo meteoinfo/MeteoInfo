@@ -30,7 +30,7 @@ public class VectorBreak extends ColorBreak {
      */
     public VectorBreak() {
         super();
-        this.setBreakType(BreakTypes.VectorBreak);
+        this.setBreakType(BreakTypes.VECTOR_BREAK);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

@@ -59,7 +59,7 @@ public class ImageLayer extends MapLayer {
      */
     public ImageLayer() {
         super();
-        this.setLayerType(LayerTypes.ImageLayer);
+        this._layerType = LayerTypes.IMAGE_LAYER;
         this.setShapeType(ShapeTypes.IMAGE);
         _isSetTransColor = false;
         _transparencyColor = Color.black;
@@ -490,15 +490,6 @@ public class ImageLayer extends MapLayer {
          */
         public LayerTypes getLayerType() {
             return ImageLayer.this.getLayerType();
-        }
-
-        /**
-         * Set layer type
-         *
-         * @param lt Layer type
-         */
-        public void setLayerType(LayerTypes lt) {
-            ImageLayer.this.setLayerType(lt);
         }
 
         /**

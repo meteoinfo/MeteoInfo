@@ -398,7 +398,7 @@ public class ChartColorBar extends ChartLegend {
             int tickGap = this.getTickGap(g);
             int sIdx = (bNum % tickGap) / 2;
             int labNum = bNum - 1;
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 labNum += 1;
             } else if (this.drawMinLabel) {
                 sIdx = 0;
@@ -573,7 +573,7 @@ public class ChartColorBar extends ChartLegend {
             if (labelIdxs.contains(i)) {
                 ColorBreak cb = aLS.getLegendBreaks().get(i);
                 if (this.autoTick) {
-                    if (aLS.getLegendType() == LegendType.UniqueValue) {
+                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = cb.getCaption();
                     } else {
                         caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
@@ -582,7 +582,7 @@ public class ChartColorBar extends ChartLegend {
                     caption = tLabels.get(idx);
                 }
                 
-                if (aLS.getLegendType() == LegendType.UniqueValue) {
+                if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                     sP.X = aP.X;
                     sP.Y = aP.Y + _hBarHeight / 2 + 5;
                     g.setColor(this.tickLabelColor);
@@ -715,7 +715,7 @@ public class ChartColorBar extends ChartLegend {
             int tickGap = this.getTickGap(g);
             int sIdx = (bNum % tickGap) / 2;
             int labNum = bNum - 1;
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 labNum += 1;
             } else if (this.drawMinLabel) {
                 sIdx = 0;
@@ -889,7 +889,7 @@ public class ChartColorBar extends ChartLegend {
             if (labelIdxs.contains(i)) {
                 ColorBreak cb = aLS.getLegendBreaks().get(i);
                 if (this.autoTick) {
-                    if (aLS.getLegendType() == LegendType.UniqueValue) {
+                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = cb.getCaption();
                     } else {
                         caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
@@ -898,7 +898,7 @@ public class ChartColorBar extends ChartLegend {
                     caption = tLabels.get(idx);
                 }
 
-                if (aLS.getLegendType() == LegendType.UniqueValue) {
+                if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                     sP.X = aP.X + _vBarWidth / 2 + 5;
                     sP.Y = aP.Y;
                     g.setColor(this.tickLabelColor);

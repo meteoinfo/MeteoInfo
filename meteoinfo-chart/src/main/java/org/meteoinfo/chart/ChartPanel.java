@@ -329,7 +329,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                 image = toolkit.getImage(this.getClass().getResource("/images/Pan_Open_32x32x32.png"));
                 customCursor = toolkit.createCustomCursor(image, new Point(8, 8), "Pan");
                 break;
-            case IDENTIFER:
+            case IDENTIFIER:
                 image = toolkit.getImage(this.getClass().getResource("/images/identifer_32x32x32.png"));
                 customCursor = toolkit.createCustomCursor(image, new Point(8, 8), "Identifer");
                 break;
@@ -477,7 +477,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                 MapPlot plot = (MapPlot) this.currentPlot;
                 if (plot.getMapView().isDrawIdentiferShape()) {
                     if (plot.getSelectedLayer() != null) {
-                        if (plot.getSelectedLayer().getLayerType() == LayerTypes.VectorLayer) {
+                        if (plot.getSelectedLayer().getLayerType() == LayerTypes.VECTOR_LAYER) {
                             VectorLayer layer = (VectorLayer) plot.getSelectedLayer();
                             Rectangle2D rect = plot.getGraphArea();
                             Rectangle rr = new Rectangle((int) rect.getX(), (int) rect.getY(),
@@ -855,7 +855,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
         if (clickTimes == 1) {
             if (e.getButton() == MouseEvent.BUTTON1) {
                 switch (this.mouseMode) {
-                    case IDENTIFER:
+                    case IDENTIFIER:
                         Plot plot = selPlot(e.getX(), e.getY());
                         if (plot == null) {
                             return;
@@ -872,13 +872,13 @@ public class ChartPanel extends JPanel implements IChartPanel{
                         if (aMLayer == null) {
                             return;
                         }
-                        if (aMLayer.getLayerType() == LayerTypes.ImageLayer) {
+                        if (aMLayer.getLayerType() == LayerTypes.IMAGE_LAYER) {
                             return;
                         }
 
                         Rectangle2D rect = mplot.getGraphArea();
                         PointF aPoint = new PointF(e.getX() - (float) rect.getX(), e.getY() - (float) rect.getY());
-                        if (aMLayer.getLayerType() == LayerTypes.VectorLayer) {
+                        if (aMLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                             VectorLayer aLayer = (VectorLayer) aMLayer;
                             List<Integer> selectedShapes = mapView.selectShapes(aLayer, aPoint, true, false);
                             if (selectedShapes.size() > 0) {
@@ -938,7 +938,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                 mapView.setDrawIdentiferShape(true);
                                 this.repaintOld();
                             }
-                        } else if (aMLayer.getLayerType() == LayerTypes.RasterLayer) {
+                        } else if (aMLayer.getLayerType() == LayerTypes.RASTER_LAYER) {
                             RasterLayer aRLayer = (RasterLayer) aMLayer;
                             int[] ijIdx = mapView.selectGridCell(aRLayer, aPoint);
                             if (ijIdx != null) {

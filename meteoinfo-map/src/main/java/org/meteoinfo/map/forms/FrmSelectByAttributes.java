@@ -43,7 +43,7 @@ public class FrmSelectByAttributes extends javax.swing.JDialog {
         int i;
         for (i = 0; i < _frmMain.getMapDocument().getActiveMapFrame().getMapView().getLayerNum(); i++) {
             MapLayer mLayer = _frmMain.getMapDocument().getActiveMapFrame().getMapView().getLayers().get(i);
-            if (mLayer.getLayerType() == LayerTypes.VectorLayer) {
+            if (mLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                 VectorLayer aLayer = (VectorLayer) mLayer;
                 _mapLayers.add(aLayer);
             }

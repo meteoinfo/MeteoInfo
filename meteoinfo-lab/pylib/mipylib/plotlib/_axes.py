@@ -2904,7 +2904,7 @@ class Axes(object):
         else:
             if meanprops is None:
                 meanprops = PointBreak()
-                meanprops.setStyle(PointStyle.Square)
+                meanprops.setStyle(PointStyle.SQUARE)
                 meanprops.setColor(color is None and Color.red or color)
                 meanprops.setOutlineColor(color is None and Color.black or color)
             else:
@@ -2916,7 +2916,7 @@ class Axes(object):
         if flierprops is None:
             flierprops = PointBreak()
             flierprops.setColor(color is None and Color.red or color)
-            flierprops.setStyle(PointStyle.Plus)
+            flierprops.setStyle(PointStyle.PLUS)
         
         #Create graphics
         graphics = GraphicFactory.createBox(x, positions, widths, showcaps, showfliers, showmeans, \
@@ -3502,11 +3502,11 @@ class Axes(object):
                     for lb in lbs:
                         ls.addLegendBreak(lb)
                     if len(lbs) == 1:
-                        ls.setLegendType(LegendType.SingleSymbol)
+                        ls.setLegendType(LegendType.SINGLE_SYMBOL)
                     elif lbs[0].getStartValue() == lbs[1].getEndValue():
-                        ls.setLegendType(LegendType.UniqueValue)
+                        ls.setLegendType(LegendType.UNIQUE_VALUE)
                     else:
-                        ls.setLegendType(LegendType.GraduatedColor)
+                        ls.setLegendType(LegendType.GRADUATED_COLOR)
                     if clegend is None:
                         clegend = ChartLegend(ls)
                         self.axes.setLegend(clegend)
@@ -3746,7 +3746,7 @@ class Axes(object):
         if not ticklabels is None:
             if isinstance(ticklabels, (NDArray, DimArray)):
                 ticklabels = ticklabels.aslist()
-            if ls.getLegendType() == LegendType.UniqueValue:
+            if ls.getLegendType() == LegendType.UNIQUE_VALUE:
                 legend.setTickCaptions(ticklabels)
             else:
                 if isinstance(ticklabels[0], (int, long, float)):

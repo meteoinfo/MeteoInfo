@@ -20,7 +20,11 @@ package org.meteoinfo.geometry.legend;
  */
 public enum MarkerType {
 
-    Simple,
-    Character,
-    Image;
+    SIMPLE,
+    CHARACTER,
+    IMAGE;
+
+    public static MarkerType valueOfBack(String value) {
+        return MarkerType.valueOf(value.toUpperCase());
+    }
 }

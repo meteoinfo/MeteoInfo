@@ -518,16 +518,16 @@ class Axes3DGL(Axes3D):
                 raise IOError('File not exists: ' + fn)
 
         layer = layer.layer
-        if layer.getLayerType() == LayerTypes.VectorLayer:
+        if layer.getLayerType() == LayerTypes.VECTOR_LAYER:
             if ls is None:
                 ls = layer.getLegendScheme()
                 if layer.getLegendScheme().getBreakNum() == 1:
                     lb = layer.getLegendScheme().getLegendBreaks().get(0)
                     btype = lb.getBreakType()
                     geometry = 'point'
-                    if btype == BreakTypes.PolylineBreak:
+                    if btype == BreakTypes.POLYLINE_BREAK:
                         geometry = 'line'
-                    elif btype == BreakTypes.PolygonBreak:
+                    elif btype == BreakTypes.POLYGON_BREAK:
                         geometry = 'polygon'
                         if not kwargs.has_key('facecolor'):
                             kwargs['facecolor'] = None
@@ -561,16 +561,16 @@ class Axes3DGL(Axes3D):
         offset = kwargs.pop('offset', 0)
         xshift = kwargs.pop('xshift', 0)
         layer = layer.layer
-        if layer.getLayerType() == LayerTypes.VectorLayer:            
+        if layer.getLayerType() == LayerTypes.VECTOR_LAYER:
             if ls is None:
                 ls = layer.getLegendScheme()
                 if len(kwargs) > 0 and layer.getLegendScheme().getBreakNum() == 1:
                     lb = layer.getLegendScheme().getLegendBreaks().get(0)
                     btype = lb.getBreakType()
                     geometry = 'point'
-                    if btype == BreakTypes.PolylineBreak:
+                    if btype == BreakTypes.POLYLINE_BREAK:
                         geometry = 'line'
-                    elif btype == BreakTypes.PolygonBreak:
+                    elif btype == BreakTypes.POLYGON_BREAK:
                         geometry = 'polygon'
                     lb, isunique = plotutil.getlegendbreak(geometry, **kwargs)
                     ls.getLegendBreaks().set(0, lb)

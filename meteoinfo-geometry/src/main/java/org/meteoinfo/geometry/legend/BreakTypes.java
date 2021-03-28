@@ -21,12 +21,35 @@ package org.meteoinfo.geometry.legend;
  */
 public enum BreakTypes {
 
-    PointBreak,
-    PolylineBreak,
-    PolygonBreak,
-    ColorBreak,
-    VectorBreak,
-    LabelBreak,
-    ChartBreak,
-    ColorBreakCollection
+    POINT_BREAK,
+    POLYLINE_BREAK,
+    POLYGON_BREAK,
+    COLOR_BREAK,
+    VECTOR_BREAK,
+    LABEL_BREAK,
+    CHART_BREAK,
+    COLOR_BREAK_COLLECTION;
+
+    public static BreakTypes valueOfBack(String value) {
+        switch (value.toUpperCase()) {
+            case "POINTBREAK":
+                return BreakTypes.POINT_BREAK;
+            case "POLYLINEBREAK":
+                return BreakTypes.POLYLINE_BREAK;
+            case "POLYGONBREAK":
+                return BreakTypes.POLYGON_BREAK;
+            case "COLORBREAK":
+                return BreakTypes.COLOR_BREAK;
+            case "VECTORBREAK":
+                return BreakTypes.VECTOR_BREAK;
+            case "LABELBREAK":
+                return BreakTypes.LABEL_BREAK;
+            case "CHARTBREAK":
+                return BreakTypes.CHART_BREAK;
+            case "COLORBREAKCOLLECTION":
+                return BreakTypes.COLOR_BREAK_COLLECTION;
+            default:
+                return BreakTypes.valueOf(value.toUpperCase());
+        }
+    }
 }

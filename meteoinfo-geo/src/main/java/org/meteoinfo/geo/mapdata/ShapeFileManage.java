@@ -160,7 +160,7 @@ public class ShapeFileManage {
             aLayer.setExtent(aExtent);
             
             //Layer property
-            aLayer.setLayerDrawType(LayerDrawType.Map);
+            aLayer.setLayerDrawType(LayerDrawType.MAP);
             aLayer.setFileName(shpfilepath);
             aLayer.setLayerName(shpFile.getName());
             aLayer.setVisible(true);

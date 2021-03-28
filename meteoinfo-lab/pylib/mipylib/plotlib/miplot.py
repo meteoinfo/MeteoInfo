@@ -3223,9 +3223,9 @@ def makesymbolspec(geometry, *args, **kwargs):
     ls.setFieldName(field)
     if ls.getBreakNum() > 1:
         if isunique:
-            ls.setLegendType(LegendType.UniqueValue)
+            ls.setLegendType(LegendType.UNIQUE_VALUE)
         else:
-            ls.setLegendType(LegendType.GraduatedColor)
+            ls.setLegendType(LegendType.GRADUATED_COLOR)
             
     return ls
     

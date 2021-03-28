@@ -302,21 +302,21 @@ public class MeteoDataInfo {
     public boolean isGridData() {
 
         switch (this.getDataType()) {
-            case ARL_Grid:
-            case ASCII_Grid:
-            case GrADS_Grid:
+            case ARL_GRID:
+            case ASCII_GRID:
+            case GRADS_GRID:
             case GRIB1:
             case GRIB2:
-            case HYSPLIT_Conc:
+            case HYSPLIT_CONC:
             case MICAPS_11:
             case MICAPS_13:
             case MICAPS_4:
             case MICAPS_131:
-            case Sufer_Grid:
+            case SURFER_GRID:
             case MM5:
             case MM5IM:
                 return true;
-            case NetCDF:
+            case NETCDF:
                 if (((NetCDFDataInfo) _dataInfo).isSWATH()) {
                     return false;
                 } else {
@@ -353,16 +353,16 @@ public class MeteoDataInfo {
      */
     public boolean isStationData() {
         switch (this.getDataType()) {
-            case GrADS_Station:
+            case GRADS_STATION:
             case ISH:
             case METAR:
             case MICAPS_1:
             case MICAPS_2:
             case MICAPS_3:
             case MICAPS_120:
-            case LonLatStation:
+            case LON_LAT_STATION:
             case SYNOP:
-            case HYSPLIT_Particle:
+            case HYSPLIT_PARTICLE:
                 return true;
             case AWX:
                 if (((AWXDataInfo) this.getDataInfo()).getProductType() == 4) {
@@ -388,7 +388,7 @@ public class MeteoDataInfo {
      */
     public boolean isTrajData() {
         switch (this.getDataType()) {
-            case HYSPLIT_Traj:
+            case HYSPLIT_TRAJ:
             case MICAPS_7:
                 return true;
             default:
@@ -403,7 +403,7 @@ public class MeteoDataInfo {
      */
     public boolean isSWATHData() {
         switch (this.getDataType()) {
-            case NetCDF:
+            case NETCDF:
                 if (((NetCDFDataInfo) _dataInfo).isSWATH()) {
                     return true;
                 }
@@ -493,7 +493,7 @@ public class MeteoDataInfo {
      * Close opened file
      */
     public void close() {
-        if (this._dataInfo.getDataType() == MeteoDataType.NetCDF) {
+        if (this._dataInfo.getDataType() == MeteoDataType.NETCDF) {
             NetCDFDataInfo dinfo = (NetCDFDataInfo) this._dataInfo;
             try {
                 dinfo.close();

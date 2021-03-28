@@ -1118,7 +1118,7 @@ public class ChartLegend {
             switch (this.legendScheme.getShapeType()) {
                 case POINT:
                     PointBreak aPB = (PointBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
+                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
                         caption = DataConvert.removeTailingZeros(aPB.getEndValue().toString());
                     } else {
                         caption = aPB.getCaption();
@@ -1126,7 +1126,7 @@ public class ChartLegend {
                     break;
                 case POLYLINE:
                     PolylineBreak aPLB = (PolylineBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
+                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
                         caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());
                     } else {
                         caption = aPLB.getCaption();
@@ -1134,7 +1134,7 @@ public class ChartLegend {
                     break;
                 case POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
+                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
                         caption = DataConvert.removeTailingZeros(aPGB.getEndValue().toString());
                     } else {
                         caption = aPGB.getCaption();
@@ -1142,7 +1142,7 @@ public class ChartLegend {
                     break;
                 case IMAGE:
                     ColorBreak aCB = legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
+                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
                         caption = DataConvert.removeTailingZeros(aCB.getEndValue().toString());
                     } else {
                         caption = aCB.getCaption();
@@ -1152,7 +1152,7 @@ public class ChartLegend {
 
             boolean isValid = true;
             switch (legendScheme.getLegendType()) {
-                case GraduatedColor:
+                case GRADUATED_COLOR:
                     if (i == bNum - 1) {
                         isValid = false;
                     }
@@ -1183,7 +1183,7 @@ public class ChartLegend {
             switch (this.legendScheme.getShapeType()) {
                 case POINT:
                     PointBreak aPB = (PointBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
+                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
                         caption = DataConvert.removeTailingZeros(aPB.getEndValue().toString());
                     } else {
                         caption = aPB.getCaption();
@@ -1191,7 +1191,7 @@ public class ChartLegend {
                     break;
                 case POLYLINE:
                     PolylineBreak aPLB = (PolylineBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
+                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
                         caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());
                     } else {
                         caption = aPLB.getCaption();
@@ -1199,7 +1199,7 @@ public class ChartLegend {
                     break;
                 case POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
+                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
                         caption = DataConvert.removeTailingZeros(aPGB.getEndValue().toString());
                     } else {
                         caption = aPGB.getCaption();
@@ -1207,7 +1207,7 @@ public class ChartLegend {
                     break;
                 case IMAGE:
                     ColorBreak aCB = legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GraduatedColor) {
+                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
                         caption = DataConvert.removeTailingZeros(aCB.getEndValue().toString());
                     } else {
                         caption = aCB.getCaption();
@@ -1217,7 +1217,7 @@ public class ChartLegend {
 
             boolean isValid = true;
             switch (legendScheme.getLegendType()) {
-                case GraduatedColor:
+                case GRADUATED_COLOR:
                     if (i == bNum - 1) {
                         isValid = false;
                     }

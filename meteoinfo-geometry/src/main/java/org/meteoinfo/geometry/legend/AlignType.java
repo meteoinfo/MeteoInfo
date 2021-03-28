@@ -19,8 +19,12 @@ package org.meteoinfo.geometry.legend;
  * @author Yaqiang Wang
  */
 public enum AlignType {
-    Left,
-    Center,
-    Right,
-    None
+    LEFT,
+    CENTER,
+    RIGHT,
+    NONE;
+
+    public static AlignType valueOfBack(String value) {
+        return AlignType.valueOf(value.toUpperCase());
+    }
 }

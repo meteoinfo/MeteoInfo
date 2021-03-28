@@ -57,7 +57,7 @@ import java.util.List;
       * Constructor
       */
      public ChartSet() {
-         _chartType = ChartTypes.BarChart;
+         _chartType = ChartTypes.BAR_CHART;
          _drawCharts = false;
          _fieldNames = new ArrayList<>();
          _xShift = 0;
@@ -67,7 +67,7 @@ import java.util.List;
          _minSize = 0;
          _barWidth = 8;
          _avoidCollision = true;
-         _alignType = AlignType.Center;
+         _alignType = AlignType.CENTER;
          _view3D = false;
          _thickness = 5;
          drawLabel = false;
@@ -103,10 +103,10 @@ import java.util.List;
      public void setChartType(String tstr) {
          switch(tstr.toLowerCase()) {
              case "bar":
-                 this._chartType = ChartTypes.BarChart;
+                 this._chartType = ChartTypes.BAR_CHART;
                  break;
              case "pie":
-                 this._chartType = ChartTypes.PieChart;
+                 this._chartType = ChartTypes.PIE_CHART;
                  break;
          }
      }
@@ -326,21 +326,8 @@ import java.util.List;
       * Set align type
       * @param tstr Align type string
       */
-     public void setAlignType(String tstr) {
-         switch(tstr.toLowerCase()) {
-             case "center":
-                 this._alignType = AlignType.Center;
-                 break;
-             case "left":
-                 this._alignType = AlignType.Left;
-                 break;
-             case "right":
-                 this._alignType = AlignType.Right;
-                 break;
-             case "none":
-                 this._alignType = AlignType.None;
-                 break;
-         }
+     public void setAlignType(String alignType) {
+         this._alignType = AlignType.valueOf(alignType.toUpperCase());
      } 
  
      /**

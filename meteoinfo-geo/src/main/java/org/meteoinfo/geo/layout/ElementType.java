@@ -19,11 +19,11 @@ package org.meteoinfo.geo.layout;
  */
 public enum ElementType {
 
-    LayoutMap,
-    LayoutIllustration,
-    LayoutLegend,
-    LayoutGraphic,
-    LayoutScaleBar,
-    LayoutNorthArraw,
-    LayoutChart
+    MAP,
+    ILLUSTRATION,
+    LEGEND,
+    GRAPHIC,
+    SCALE_BAR,
+    NORTH_ARROW,
+    CHART;
 }

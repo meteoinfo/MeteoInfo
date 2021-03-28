@@ -262,27 +262,27 @@ def getpointstyle(style):
     elif 'os' in style:
         pointStyle = PointStyle.CIRCLE_STAR
     elif 'o' in style:
-        pointStyle = PointStyle.Circle
+        pointStyle = PointStyle.CIRCLE
     elif '.' in style:
-        pointStyle = PointStyle.Circle
+        pointStyle = PointStyle.CIRCLE
     elif 'D' in style:
-        pointStyle = PointStyle.Diamond
+        pointStyle = PointStyle.DIAMOND
     elif '+' in style:
-        pointStyle = PointStyle.Plus
+        pointStyle = PointStyle.PLUS
     elif 'm' in style:
-        pointStyle = PointStyle.Minus
+        pointStyle = PointStyle.MINUS
     elif 's' in style:
-        pointStyle = PointStyle.Square
+        pointStyle = PointStyle.SQUARE
     elif 'S' in style:
-        pointStyle = PointStyle.Star
+        pointStyle = PointStyle.STAR
     elif '*' in style:
-        pointStyle = PointStyle.StarLines
+        pointStyle = PointStyle.STAR_LINES
     elif '^' in style:
-        pointStyle = PointStyle.UpTriangle
+        pointStyle = PointStyle.UP_TRIANGLE
     elif 'x' in style:
-        pointStyle = PointStyle.XCross
+        pointStyle = PointStyle.X_CROSS
     elif 'p' in style:
-        pointStyle = PointStyle.Pentagon
+        pointStyle = PointStyle.PENTAGON
     
     return pointStyle
     
@@ -300,7 +300,7 @@ def getlinestyle(style):
         elif ':' in style:
             lineStyle = LineStyles.DOT
         elif '-.' in style:
-            lineStyle = LineStyles.DASHDOT
+            lineStyle = LineStyles.DASH_DOT
         elif '-' in style:
             lineStyle = LineStyles.SOLID
     
@@ -319,7 +319,7 @@ def getlinestyle_1(style):
         lineStyle = LineStyles.DOT
         rr = ':'
     elif '-.' in style:
-        lineStyle = LineStyles.DASHDOT
+        lineStyle = LineStyles.DASH_DOT
         rr = '-.'
     elif '-' in style:
         lineStyle = LineStyles.SOLID
@@ -417,11 +417,11 @@ def getlegendbreak(geometry, **kwargs):
         if marker == 'image':
             imagepath = kwargs.pop('imagepath', None)
             if not imagepath is None:
-                lb.setMarkerType(MarkerType.Image)
+                lb.setMarkerType(MarkerType.IMAGE)
                 lb.setImagePath(imagepath)
         elif marker == 'font':
             fontname = kwargs.pop('fontname', 'Weather')
-            lb.setMarkerType(MarkerType.Character)
+            lb.setMarkerType(MarkerType.CHARACTER)
             lb.setFontName(fontname)
             charindex = kwargs.pop('charindex', 0)
             lb.setCharIndex(charindex)
@@ -833,13 +833,13 @@ def setpointlegendbreak(lb, **kwargs):
         marker = kwargs['marker']
         if marker == 'image':
             if kwargs.has_key('imagepath'):
-                lb.setMarkerType(MarkerType.Image)
+                lb.setMarkerType(MarkerType.IMAGE)
                 lb.setImagePath(kwargs['imagepath'])
         elif marker == 'font':
             fontname = 'Weather'
             if kwargs.has_key('fontname'):
                 fontname = kwargs['fontname']
-            lb.setMarkerType(MarkerType.Character)
+            lb.setMarkerType(MarkerType.CHARACTER)
             lb.setFontName(fontname)
             charindex = 0
             if kwargs.has_key('charindex'):
@@ -1033,9 +1033,9 @@ def makesymbolspec(geometry, *args, **kwargs):
     ls.setFieldName(field)
     if ls.getBreakNum() > 1:
         if isunique:
-            ls.setLegendType(LegendType.UniqueValue)
+            ls.setLegendType(LegendType.UNIQUE_VALUE)
         else:
-            ls.setLegendType(LegendType.GraduatedColor)
+            ls.setLegendType(LegendType.GRADUATED_COLOR)
             
     return ls
     

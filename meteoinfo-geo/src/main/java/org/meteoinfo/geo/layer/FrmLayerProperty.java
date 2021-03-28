@@ -664,13 +664,13 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         }
 
         switch (chartSet.getChartType()) {
-            case BarChart:
+            case BAR_CHART:
                 minMax = MIMath.getMinMaxValue(minList, -9999.0);
                 chartSet.setMinValue((float) minMax[0]);
                 minMax = MIMath.getMinMaxValue(maxList, -9999.0);
                 chartSet.setMaxValue((float) minMax[1]);
                 break;
-            case PieChart:
+            case PIE_CHART:
                 minMax = MIMath.getMinMaxValue(sumList, -9999.0);
                 chartSet.setMinValue((float) minMax[0]);
                 chartSet.setMaxValue((float) minMax[1]);
@@ -735,20 +735,20 @@ public class FrmLayerProperty extends javax.swing.JDialog {
 
         LegendType aLT = (LegendType) this.jComboBox_LegendType.getSelectedItem();
         switch (this._mapLayer.getLayerType()) {
-            case VectorLayer:
+            case VECTOR_LAYER:
                 this._ifCreateLegendScheme = false;
                 setFieldByLegendType(aLT);
                 this._ifCreateLegendScheme = true;
                 break;
-            case RasterLayer:
+            case RASTER_LAYER:
                 switch (aLT) {
-                    case UniqueValue:
+                    case UNIQUE_VALUE:
                         List<Number> values = ((RasterLayer) _mapLayer).getGridData().getUniqueValues();
                         this._legendScheme = LegendManage.createUniqValueLegendScheme(values, ShapeTypes.IMAGE);
                         break;
-                    case GraduatedColor:
-                        if (this._legendScheme == null || this._legendScheme.getLegendType() != LegendType.GraduatedColor)
-                            this._legendScheme = LegendManage.createLegendSchemeFromGridData(((RasterLayer) _mapLayer).getGridData(), LegendType.GraduatedColor, ShapeTypes.POLYGON);
+                    case GRADUATED_COLOR:
+                        if (this._legendScheme == null || this._legendScheme.getLegendType() != LegendType.GRADUATED_COLOR)
+                            this._legendScheme = LegendManage.createLegendSchemeFromGridData(((RasterLayer) _mapLayer).getGridData(), LegendType.GRADUATED_COLOR, ShapeTypes.POLYGON);
                         break;
                 }
                 this.legendView1.setLegendScheme(_legendScheme);
@@ -790,7 +790,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
             } else if (fext.equals("lgs")) {
                 try {
                     _legendScheme.importFromXMLFile(aFile.getAbsolutePath());
-                    if (this._mapLayer.getLayerType() == LayerTypes.VectorLayer) {
+                    if (this._mapLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                         VectorLayer layer = (VectorLayer) this._mapLayer;
                         if (layer.getField(_legendScheme.getFieldName()) == null) {
                             _legendScheme.setFieldName(this.jComboBox_Field.getSelectedItem().toString());
@@ -959,7 +959,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
     private void jButton_MakeBreaksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_MakeBreaksActionPerformed
         // TODO add your handling code here:
         boolean isUniqueValue = false;
-        if (_legendScheme.getLegendType() == LegendType.UniqueValue) {
+        if (_legendScheme.getLegendType() == LegendType.UNIQUE_VALUE) {
             isUniqueValue = true;
         }
 
@@ -995,7 +995,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
     private void jComboBox_ChartTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_ChartTypeActionPerformed
         // TODO add your handling code here:
         if (this.jComboBox_ChartType.getItemCount() > 0) {
-            if (this.jComboBox_ChartType.getSelectedItem().toString().equals(ChartTypes.PieChart.toString())) {
+            if (this.jComboBox_ChartType.getSelectedItem().toString().equals(ChartTypes.PIE_CHART.toString())) {
                 this.jLabel_BarWidth.setEnabled(false);
                 this.jTextField_BarWidth.setEnabled(false);
             } else {
@@ -1043,17 +1043,17 @@ public class FrmLayerProperty extends javax.swing.JDialog {
     }
 
     private void setFieldByLegendType(LegendType aLT, boolean createLegend) {
-        if (_mapLayer.getLayerType() == LayerTypes.VectorLayer) {
+        if (_mapLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             VectorLayer aLayer = (VectorLayer) _mapLayer;
             switch (aLT) {
-                case SingleSymbol:
+                case SINGLE_SYMBOL:
                     this.jComboBox_Field.setEnabled(false);
                     this.jComboBox_Field.removeAllItems();
                     this._ifCreateLegendScheme = createLegend;
                     createLegendScheme(aLT, "");
                     this._ifCreateLegendScheme = false;
                     break;
-                case UniqueValue:
+                case UNIQUE_VALUE:
                     this.jComboBox_Field.setEnabled(true);
                     this.jComboBox_Field.removeAllItems();
                     for (String fn : aLayer.getFieldNames()) {
@@ -1061,7 +1061,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                     }
                     this.jComboBox_Field.setSelectedItem("<None>");
                     break;
-                case GraduatedColor:
+                case GRADUATED_COLOR:
                     this.jComboBox_Field.setEnabled(true);
                     this.jComboBox_Field.removeAllItems();
                     for (int i = 0; i < aLayer.getFieldNumber(); i++) {
@@ -1092,7 +1092,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
             min = _legendScheme.getMinValue();
             max = _legendScheme.getMaxValue();
             switch (aLT) {
-                case SingleSymbol:
+                case SINGLE_SYMBOL:
                     Color aColor = Color.black;
                     switch (aST) {
                         case POINT:
@@ -1124,7 +1124,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                     this.jButton_MakeBreaks.setEnabled(false);
                     this.jButton_ReverseBreaks.setEnabled(false);
                     break;
-                case UniqueValue:
+                case UNIQUE_VALUE:
                     Color[] colors;
                     List<String> valueList = new ArrayList<>();
 
@@ -1177,7 +1177,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                     this.jButton_MakeBreaks.setEnabled(true);
                     this.jButton_ReverseBreaks.setEnabled(true);
                     break;
-                case GraduatedColor:
+                case GRADUATED_COLOR:
                     aLayer = (VectorLayer) _mapLayer;
                     List<Double> S  = new ArrayList<>();
                     if (fieldName.equals("Geometry_M")){
@@ -1249,11 +1249,11 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         _mapLayer = aLayer;
         _object = aLayer;
         switch (aLayer.getLayerType()) {
-            case VectorLayer:
+            case VECTOR_LAYER:
                 _legendScheme = (LegendScheme) _mapLayer.getLegendScheme().clone();
                 this.legendView1.setLegendScheme(_mapLayer.getLegendScheme());
                 break;
-            case RasterLayer:
+            case RASTER_LAYER:
                 if (_mapLayer.getLegendScheme() != null) {
                     _legendScheme = (LegendScheme) _mapLayer.getLegendScheme().clone();
                     this.legendView1.setLegendScheme(_mapLayer.getLegendScheme());
@@ -1262,10 +1262,10 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                 }
                 _object = ((RasterLayer) aLayer).new RasterLayerBean();
                 break;
-            case ImageLayer:
+            case IMAGE_LAYER:
                 _object = ((ImageLayer) aLayer).new ImageLayerBean();
                 break;
-            case WebMapLayer:
+            case WEB_MAP_LAYER:
                 _object = ((WebMapLayer) aLayer).new WebMapLayerBean();
         }
 
@@ -1301,8 +1301,8 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         this.jTabbedPane1.removeAll();
         this.jTabbedPane1.addTab("General", jPanel_General);
         switch (_mapLayer.getLayerType()) {
-            case VectorLayer:
-            case RasterLayer:
+            case VECTOR_LAYER:
+            case RASTER_LAYER:
                 if (this._legendScheme != null) {
                     this.jTabbedPane1.addTab("Legend", jPanel_Legend);
                 }
@@ -1310,17 +1310,17 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         }
 
         switch (_mapLayer.getLayerType()) {
-            case VectorLayer:
+            case VECTOR_LAYER:
                 this.jComboBox_LegendType.setEnabled(true);
                 this.jComboBox_Field.setEnabled(true);
                 //Set legend type             
                 this.jComboBox_LegendType.removeAllItems();
-                this.jComboBox_LegendType.addItem(LegendType.SingleSymbol);
-                this.jComboBox_LegendType.addItem(LegendType.UniqueValue);
-                this.jComboBox_LegendType.addItem(LegendType.GraduatedColor);
+                this.jComboBox_LegendType.addItem(LegendType.SINGLE_SYMBOL);
+                this.jComboBox_LegendType.addItem(LegendType.UNIQUE_VALUE);
+                this.jComboBox_LegendType.addItem(LegendType.GRADUATED_COLOR);
                 this.jComboBox_LegendType.setSelectedItem(_legendScheme.getLegendType());
                 switch ((LegendType) this.jComboBox_LegendType.getSelectedItem()) {
-                    case SingleSymbol:
+                    case SINGLE_SYMBOL:
                         this.jButton_AddBreak.setEnabled(false);
                         this.jButton_RemoveBreak.setEnabled(false);
                         this.jButton_RemoveAllBreaks.setEnabled(false);
@@ -1345,19 +1345,19 @@ public class FrmLayerProperty extends javax.swing.JDialog {
 
                 //Set chart
                 switch (_mapLayer.getLegendScheme().getBreakType()) {
-                    case PointBreak:
-                    case PolygonBreak:
+                    case POINT_BREAK:
+                    case POLYGON_BREAK:
                         //this.jTabbedPane1.setEnabledAt(2, true);
                         this.jTabbedPane1.addTab("Chart", jPanel_Chart);
                         VectorLayer aLayer = (VectorLayer) _mapLayer;
                         if (_mapLayer.getShapeType() == ShapeTypes.POLYGON) {
                             this.jComboBox_ChartType.removeAllItems();
-                            this.jComboBox_ChartType.addItem(ChartTypes.BarChart.toString());
-                            this.jComboBox_ChartType.addItem(ChartTypes.PieChart.toString());
+                            this.jComboBox_ChartType.addItem(ChartTypes.BAR_CHART.toString());
+                            this.jComboBox_ChartType.addItem(ChartTypes.PIE_CHART.toString());
                         } else {
                             this.jComboBox_ChartType.removeAllItems();
-                            this.jComboBox_ChartType.addItem(ChartTypes.BarChart.toString());
-                            this.jComboBox_ChartType.addItem(ChartTypes.PieChart.toString());
+                            this.jComboBox_ChartType.addItem(ChartTypes.BAR_CHART.toString());
+                            this.jComboBox_ChartType.addItem(ChartTypes.PIE_CHART.toString());
                             //CB_ChartType.Items.Add(ChartTypes.WindVector.ToString());
                             //CB_ChartType.Items.Add(ChartTypes.WindBarb.ToString());
                             //CB_ChartType.Items.Add(ChartTypes.StationModel.ToString());
@@ -1403,15 +1403,15 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                         break;
                 }
                 break;
-            case RasterLayer:
+            case RASTER_LAYER:
                 if (this._legendScheme != null) {
                     this.jComboBox_LegendType.setEnabled(true);
                     this.jComboBox_Field.removeAllItems();
                     this.jComboBox_Field.setEnabled(false);
                     //Set legend type             
                     this.jComboBox_LegendType.removeAllItems();
-                    this.jComboBox_LegendType.addItem(LegendType.UniqueValue);
-                    this.jComboBox_LegendType.addItem(LegendType.GraduatedColor);
+                    this.jComboBox_LegendType.addItem(LegendType.UNIQUE_VALUE);
+                    this.jComboBox_LegendType.addItem(LegendType.GRADUATED_COLOR);
                     this.jComboBox_LegendType.setSelectedItem(_legendScheme.getLegendType());
                     this.jButton_AddBreak.setEnabled(true);
                     this.jButton_RemoveBreak.setEnabled(true);

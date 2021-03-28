@@ -515,13 +515,13 @@ public class GeoProjectionUtil {
                 Reproject.reprojectPoints(points, toProj, fromProj, 0, points.length);
                 toP = points[0];
                 switch (aLayer.getLayerDrawType()) {
-                    case Vector:
+                    case VECTOR:
                         ((WindArrow) aPS).angle = ProjectionUtil.projectAngle(((WindArrow) aPS).angle, toP, fromP, fromProj, toProj);
                         break;
-                    case Barb:
+                    case BARB:
                         ((WindBarb) aPS).angle = ProjectionUtil.projectAngle(((WindBarb) aPS).angle, toP, fromP, fromProj, toProj);
                         break;
-                    case StationModel:
+                    case STATION_MODEL:
                         ((StationModelShape) aPS).windBarb.angle = ProjectionUtil.projectAngle(((StationModelShape) aPS).windBarb.angle, toP, fromP, fromProj, toProj);
                         break;
                 }
@@ -614,13 +614,13 @@ public class GeoProjectionUtil {
                 aPS.setPoint(aPoint);
                 if (IfReprojectAngle) {
                     switch (oLayer.getLayerDrawType()) {
-                        case Vector:
+                        case VECTOR:
                             ((WindArrow) aPS).angle = ProjectionUtil.projectAngle(((WindArrow) aPS).angle, fromP, toP, fromProj, toProj);
                             break;
-                        case Barb:
+                        case BARB:
                             ((WindBarb) aPS).angle = ProjectionUtil.projectAngle(((WindBarb) aPS).angle, fromP, toP, fromProj, toProj);
                             break;
-                        case StationModel:
+                        case STATION_MODEL:
                             ((StationModelShape) aPS).windBarb.angle = ProjectionUtil.projectAngle(((StationModelShape) aPS).windBarb.angle, fromP, toP, fromProj, toProj);
                             break;
                     }

@@ -178,9 +178,9 @@ public class MainToolBar extends JToolBar {
 
     private void jButton_SelectActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        this.mapView.setMouseTool(MouseTools.SelectElements);
+        this.mapView.setMouseTool(MouseTools.SELECT_ELEMENTS);
         if (this.mapLayout != null) {
-            this.mapLayout.setMouseMode(MouseMode.Select);
+            this.mapLayout.setMouseMode(MouseMode.SELECT);
         }
 
         setCurrentTool((JButton) evt.getSource());
@@ -188,9 +188,9 @@ public class MainToolBar extends JToolBar {
 
     private void jButton_ZoomInActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        this.mapView.setMouseTool(MouseTools.Zoom_In);
+        this.mapView.setMouseTool(MouseTools.ZOOM_IN);
         if (this.mapLayout != null) {
-            this.mapLayout.setMouseMode(MouseMode.Map_ZoomIn);
+            this.mapLayout.setMouseMode(MouseMode.MAP_ZOOM_IN);
         }
 
         setCurrentTool((JButton) evt.getSource());
@@ -198,9 +198,9 @@ public class MainToolBar extends JToolBar {
 
     private void jButton_ZoomOutActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        this.mapView.setMouseTool(MouseTools.Zoom_Out);
+        this.mapView.setMouseTool(MouseTools.ZOOM_OUT);
         if (this.mapLayout != null) {
-            this.mapLayout.setMouseMode(MouseMode.Map_ZoomOut);
+            this.mapLayout.setMouseMode(MouseMode.MAP_ZOOM_OUT);
         }
 
         setCurrentTool((JButton) evt.getSource());
@@ -208,9 +208,9 @@ public class MainToolBar extends JToolBar {
 
     private void jButton_PanActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        this.mapView.setMouseTool(MouseTools.Pan);
+        this.mapView.setMouseTool(MouseTools.PAN);
         if (this.mapLayout != null) {
-            this.mapLayout.setMouseMode(MouseMode.Map_Pan);
+            this.mapLayout.setMouseMode(MouseMode.MAP_PAN);
         }
 
         setCurrentTool((JButton) evt.getSource());
@@ -230,9 +230,9 @@ public class MainToolBar extends JToolBar {
 
     private void jButton_IdentiferActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        this.mapView.setMouseTool(MouseTools.Identifer);
+        this.mapView.setMouseTool(MouseTools.IDENTIFIER);
         if (this.mapLayout != null) {
-            this.mapLayout.setMouseMode(MouseMode.Map_Identifer);
+            this.mapLayout.setMouseMode(MouseMode.MAP_IDENTIFIER);
         }
 
         setCurrentTool((JButton) evt.getSource());
@@ -240,7 +240,7 @@ public class MainToolBar extends JToolBar {
 
     private void jButton_LabelActionPerformed(java.awt.event.ActionEvent evt) {
         MapLayer aMLayer = this.mapView.getSelectedLayer();
-        if (aMLayer.getLayerType() == LayerTypes.VectorLayer) {
+        if (aMLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             VectorLayer aLayer = (VectorLayer) aMLayer;
             if (aLayer.getShapeNum() > 0) {
                 FrmLabelSet aFrmLabel = new FrmLabelSet(null, false, this.mapView);

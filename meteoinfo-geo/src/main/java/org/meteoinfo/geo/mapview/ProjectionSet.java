@@ -239,12 +239,12 @@ public class ProjectionSet {
 
         for (int i = 0; i < aMapView.getLayers().size(); i++) {
             switch (aMapView.getLayers().get(i).getLayerType()) {
-                case VectorLayer:
+                case VECTOR_LAYER:
                     VectorLayer oLayer = (VectorLayer) aMapView.getLayers().get(i);
                     //projectLayer(oLayer, toProj);
                     GeoProjectionUtil.projectLayer(oLayer, toProj);
                     break;
-                case RasterLayer:
+                case RASTER_LAYER:
                     RasterLayer oRLayer = (RasterLayer) aMapView.getLayers().get(i);
                     GeoProjectionUtil.projectLayer(oRLayer, toProj);
                     break;

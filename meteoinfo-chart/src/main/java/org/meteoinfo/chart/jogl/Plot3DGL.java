@@ -1759,7 +1759,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (extent.intersects(graphic.getExtent())) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
             ColorBreak cb = graphic.getLegend();
-            if (cb.getBreakType() == BreakTypes.ColorBreakCollection) {
+            if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
                 Polyline line = shape.getPolylines().get(0);
                 List<PointZ> ps = (List<PointZ>) line.getPointList();
@@ -1797,7 +1797,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (extent.intersects(graphic.getExtent())) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
             ColorBreak cb = graphic.getLegend();
-            if (cb.getBreakType() == BreakTypes.ColorBreakCollection) {
+            if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
                 Polyline line = shape.getPolylines().get(0);
                 List<PointZ> ps = (List<PointZ>) line.getPointList();
@@ -2821,7 +2821,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 int tickGap = this.getLegendTickGap(legend, legendLen);
                 int sIdx = (bNum % tickGap) / 2;
                 int labNum = bNum - 1;
-                if (ls.getLegendType() == LegendType.UniqueValue) {
+                if (ls.getLegendType() == LegendType.UNIQUE_VALUE) {
                     labNum += 1;
                 } else if (legend.isDrawMinLabel()) {
                     sIdx = 0;
@@ -2893,7 +2893,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 if (labelIdxs.contains(i)) {
                     ColorBreak cb = ls.getLegendBreaks().get(i);
                     if (legend.isAutoTick()) {
-                        if (ls.getLegendType() == LegendType.UniqueValue) {
+                        if (ls.getLegendType() == LegendType.UNIQUE_VALUE) {
                             caption = cb.getCaption();
                         } else {
                             caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
@@ -2901,7 +2901,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     } else {
                         caption = tLabels.get(idx);
                     }
-                    if (ls.getLegendType() == LegendType.UniqueValue) {
+                    if (ls.getLegendType() == LegendType.UNIQUE_VALUE) {
                         rect = this.drawString(gl, caption, legend.getTickLabelFont(), legend.getTickLabelColor(),
                                 x + lWidth, yy + barHeight * 0.5f, 0, XAlign.LEFT, YAlign.CENTER, xShift, 0);
                     } else {

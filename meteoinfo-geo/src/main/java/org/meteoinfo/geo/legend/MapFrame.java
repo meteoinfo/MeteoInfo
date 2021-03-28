@@ -152,7 +152,7 @@ public class MapFrame extends ItemNode {
      */
     public MapFrame() {
         this.setText("New Map Frame");
-        this.setNodeType(NodeTypes.MapFrameNode);
+        this.setNodeType(NodeTypes.MAP_FRAME_NODE);
         this.expand();
         _layoutBounds = new Rectangle(100, 100, 300, 200);
 
@@ -935,7 +935,7 @@ public class MapFrame extends ItemNode {
     public List<LayerNode> getLayerNodes() {
         List<LayerNode> layerNodes = new ArrayList<>();
         for (ItemNode aIN : _nodes) {
-            if (aIN.getNodeType() == NodeTypes.GroupNode) {
+            if (aIN.getNodeType() == NodeTypes.GROUP_NODE) {
                 for (LayerNode aLN : ((GroupNode) aIN).getLayers()) {
                     layerNodes.add(aLN);
                 }
@@ -1134,10 +1134,10 @@ public class MapFrame extends ItemNode {
      * @param aNode The node
      */
     public void addNode(ItemNode aNode) {
-        if (aNode.getNodeType() == NodeTypes.GroupNode) {
+        if (aNode.getNodeType() == NodeTypes.GROUP_NODE) {
             ((GroupNode) aNode).setGroupHandle(getNewGroupHandle());
             ((GroupNode) aNode).setMapFrame(this);
-        } else if (aNode.getNodeType() == NodeTypes.LayerNode) {
+        } else if (aNode.getNodeType() == NodeTypes.LAYER_NODE) {
             ((LayerNode) aNode).setMapFrame(this);
         }
 
@@ -1155,10 +1155,10 @@ public class MapFrame extends ItemNode {
             return;
         }
 
-        if (aNode.getNodeType() == NodeTypes.GroupNode) {
+        if (aNode.getNodeType() == NodeTypes.GROUP_NODE) {
             ((GroupNode) aNode).setGroupHandle(getNewGroupHandle());
             ((GroupNode) aNode).setMapFrame(this);
-        } else if (aNode.getNodeType() == NodeTypes.LayerNode) {
+        } else if (aNode.getNodeType() == NodeTypes.LAYER_NODE) {
             ((LayerNode) aNode).setMapFrame(this);
         }
 
@@ -1274,7 +1274,7 @@ public class MapFrame extends ItemNode {
     private int getNewGroupHandle() {
         int handle = 0;
         for (ItemNode aTN : _nodes) {
-            if (aTN.getNodeType() == NodeTypes.GroupNode) {
+            if (aTN.getNodeType() == NodeTypes.GROUP_NODE) {
                 if (((GroupNode) aTN).getGroupHandle() > handle) {
                     handle = ((GroupNode) aTN).getGroupHandle();
                 }
@@ -1294,7 +1294,7 @@ public class MapFrame extends ItemNode {
     public GroupNode getGroupByHandle(int handle) {
         GroupNode aGroup = null;
         for (ItemNode aNode : _nodes) {
-            if (aNode.getNodeType() == NodeTypes.GroupNode) {
+            if (aNode.getNodeType() == NodeTypes.GROUP_NODE) {
                 if (((GroupNode) aNode).getGroupHandle() == handle) {
                     aGroup = (GroupNode) aNode;
                     break;
@@ -1314,7 +1314,7 @@ public class MapFrame extends ItemNode {
     public GroupNode getGroupByName(String name) {
         GroupNode aGroup = null;
         for (ItemNode aTN : _nodes) {
-            if (aTN.getNodeType() == NodeTypes.GroupNode) {
+            if (aTN.getNodeType() == NodeTypes.GROUP_NODE) {
                 if (((GroupNode) aTN).getText().equals(name)) {
                     aGroup = (GroupNode) aTN;
                     break;
@@ -1366,7 +1366,7 @@ public class MapFrame extends ItemNode {
     public void unSelectNodes() {
         for (ItemNode aNode : _nodes) {
             aNode.setSelected(false);
-            if (aNode.getNodeType() == NodeTypes.GroupNode) {
+            if (aNode.getNodeType() == NodeTypes.GROUP_NODE) {
                 for (LayerNode lNode : ((GroupNode) aNode).getLayers()) {
                     lNode.setSelected(false);
                 }
@@ -1383,7 +1383,7 @@ public class MapFrame extends ItemNode {
     public LayerNode getLayerNodeByHandle(int handle) {
         LayerNode aLN = null;
         for (ItemNode aTN : _nodes) {
-            if (aTN.getNodeType() == NodeTypes.LayerNode) {
+            if (aTN.getNodeType() == NodeTypes.LAYER_NODE) {
                 if (((LayerNode) aTN).getLayerHandle() == handle) {
                     aLN = (LayerNode) aTN;
                     break;
@@ -1416,7 +1416,7 @@ public class MapFrame extends ItemNode {
     public LayerNode getLayerNodeByName(String lName) {
         LayerNode aLN = null;
         for (ItemNode aTN : _nodes) {
-            if (aTN.getNodeType() == NodeTypes.LayerNode) {
+            if (aTN.getNodeType() == NodeTypes.LAYER_NODE) {
                 if (((LayerNode) aTN).getText().equals(lName)) {
                     aLN = (LayerNode) aTN;
                     break;
@@ -1478,7 +1478,7 @@ public class MapFrame extends ItemNode {
     public void reOrderMapViewLayers() {
         for (int i = _nodes.size() - 1; i >= 0; i--) {
             ItemNode aTN = _nodes.get(i);
-            if (aTN.getNodeType() == NodeTypes.LayerNode) {
+            if (aTN.getNodeType() == NodeTypes.LAYER_NODE) {
                 for (int j = 0; j < _mapView.getLayerNum(); j++) {
                     if (_mapView.getLayers().get(j).getHandle() == ((LayerNode) aTN).getLayerHandle()) {
                         if (j > 0) {
@@ -1624,7 +1624,7 @@ public class MapFrame extends ItemNode {
         Element GroupLayer = m_Doc.createElement("GroupLayer");
         for (int i = 0; i < _nodes.size(); i++) {
             ItemNode aTN = this.getNodes().get(i);
-            if (aTN.getNodeType() == NodeTypes.LayerNode) {
+            if (aTN.getNodeType() == NodeTypes.LAYER_NODE) {
                 MapLayer aLayer = _mapView.getLayerByHandle(((LayerNode) aTN).getLayerHandle());
                 addLayerElement(m_Doc, GroupLayer, aLayer, projectFilePath);
             } else {
@@ -1661,21 +1661,21 @@ public class MapFrame extends ItemNode {
         File aFile = new File(aLayer.getFileName());
         if (aFile.isFile()) {
             switch (aLayer.getLayerType()) {
-                case VectorLayer:
+                case VECTOR_LAYER:
                     VectorLayer aVLayer = (VectorLayer) aLayer;
                     _mapView.exportVectorLayerElement(m_Doc, parent, aVLayer, projectFilePath);
                     break;
-                case ImageLayer:
+                case IMAGE_LAYER:
                     ImageLayer aILayer = (ImageLayer) aLayer;
                     _mapView.exportImageLayer(m_Doc, parent, aILayer, projectFilePath);
                     break;
-                case RasterLayer:
+                case RASTER_LAYER:
                     RasterLayer aRLayer = (RasterLayer) aLayer;
                     _mapView.exportRasterLayer(m_Doc, parent, aRLayer, projectFilePath);
                     break;
             }
         } else {
-            if (aLayer.getLayerType() == LayerTypes.WebMapLayer) {
+            if (aLayer.getLayerType() == LayerTypes.WEB_MAP_LAYER) {
                 WebMapLayer wmLayer = (WebMapLayer) aLayer;
                 _mapView.exportWebMapLayer(m_Doc, parent, wmLayer, projectFilePath);
             }
@@ -1781,28 +1781,28 @@ public class MapFrame extends ItemNode {
 
     private void loadLayer(String pPath, Node aLayer, int groupHnd) {
         try {
-            LayerTypes aLayerType = LayerTypes.valueOf(aLayer.getAttributes().getNamedItem("LayerType").getNodeValue());
+            LayerTypes aLayerType = LayerTypes.valueOfBack(aLayer.getAttributes().getNamedItem("LayerType").getNodeValue());
 
             switch (aLayerType) {
-                case VectorLayer:
+                case VECTOR_LAYER:
                     VectorLayer aVLayer = _mapView.loadVectorLayer(pPath, aLayer);
                     if (aVLayer != null) {
                         addLayer(aVLayer, groupHnd);
                     }
                     break;
-                case ImageLayer:
+                case IMAGE_LAYER:
                     ImageLayer aILayer = _mapView.loadImageLayer(aLayer);
                     if (aILayer != null) {
                         addLayer(aILayer, groupHnd);
                     }
                     break;
-                case RasterLayer:
+                case RASTER_LAYER:
                     RasterLayer aRLayer = _mapView.loadRasterLayer(aLayer);
                     if (aRLayer != null) {
                         addLayer(aRLayer, groupHnd);
                     }
                     break;
-                case WebMapLayer:
+                case WEB_MAP_LAYER:
                     WebMapLayer wmLayer = _mapView.loadWebMapLayer(aLayer);
                     if (wmLayer != null) {
                         addLayer(wmLayer, groupHnd);

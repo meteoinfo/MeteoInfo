@@ -47,14 +47,14 @@ package org.meteoinfo.geometry.legend;
       */
      public PointBreak() {
          super();
-         this.breakType = BreakTypes.PointBreak;
-         markerType = MarkerType.Simple;
+         this.breakType = BreakTypes.POINT_BREAK;
+         markerType = MarkerType.SIMPLE;
          fontName = "Arial";
          charIndex = 0;
          outlineColor = Color.black;
          outlineSize = 1.0f;
          size = 6.0f;
-         style = PointStyle.Circle;
+         style = PointStyle.CIRCLE;
          drawOutline = true;
          drawFill = true;
          angle = 0;

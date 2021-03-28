@@ -49,7 +49,7 @@ public class LabelSet {
         _labelColor = Color.black;
         _drawShadow = false;
         _shadowColor = Color.white;
-        _labelAlignType = AlignType.Center;
+        _labelAlignType = AlignType.CENTER;
         _xOffset = 0;
         _yOffset = 0;
         _avoidCollision = true;

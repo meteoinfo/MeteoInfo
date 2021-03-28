@@ -209,14 +209,14 @@ public class MapView extends JPanel implements IWebMapPanel {
     private boolean _isGeoMap = true;
     private boolean _isLayoutMap = false;
     private final ProjectionSet _projection = new ProjectionSet();
-    private MouseTools _mouseTool = MouseTools.None;
+    private MouseTools _mouseTool = MouseTools.NONE;
     private VectorLayer _lonLatLayer = null;
     //private VectorLayer _lonLatProjLayer = null;
     private GraphicCollection _graphicCollection = new GraphicCollection();
     private final GraphicCollection _selectedGraphics = new GraphicCollection();
     private GraphicCollection _visibleGraphics = new GraphicCollection();
     private Rectangle _selectedRectangle = new Rectangle();
-    private Edge _resizeSelectedEdge = Edge.None;
+    private Edge _resizeSelectedEdge = Edge.NONE;
     private Rectangle _resizeRectangle = new Rectangle();
     public boolean _drawIdentiferShape = false;
     private boolean _mouseDoubleClicked = false;    //If fired mouse double click event
@@ -344,7 +344,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         //this.setBackground(Color.white);
         this.setBackground(new Color(255, 255, 255, 0));
         _maskOut = new MaskOut(this);
-        _mouseTool = MouseTools.None;
+        _mouseTool = MouseTools.NONE;
 
         //FontUtil.registerWeatherFont();
         _viewExtent.minX = -180;
@@ -645,49 +645,49 @@ public class MapView extends JPanel implements IWebMapPanel {
         Cursor customCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 
         switch (mt) {
-            case Zoom_In:
+            case ZOOM_IN:
                 image = toolkit.getImage(this.getClass().getResource("/images/zoom_in_32x32x32.png"));
                 customCursor = toolkit.createCustomCursor(image, new Point(8, 8), "Zoom In");
                 break;
-            case Zoom_Out:
+            case ZOOM_OUT:
                 image = toolkit.getImage(this.getClass().getResource("/images/zoom_out_32x32x32.png"));
                 customCursor = toolkit.createCustomCursor(image, new Point(8, 8), "Zoom Out");
                 break;
-            case Pan:
+            case PAN:
                 image = toolkit.getImage(this.getClass().getResource("/images/Pan_Open_32x32x32.png"));
                 customCursor = toolkit.createCustomCursor(image, new Point(8, 8), "Pan");
                 break;
-            case Identifer:
+            case IDENTIFIER:
                 image = toolkit.getImage(this.getClass().getResource("/images/identifer_32x32x32.png"));
                 customCursor = toolkit.createCustomCursor(image, new Point(8, 8), "Identifer");
                 break;
-            case SelectFeatures_Rectangle:
+            case SELECT_FEATURES_RECTANGLE:
                 customCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
                 //this._tempImage = GlobalUtil.deepCopy(_mapBitmap);
                 break;
-            case Edit_Tool:
-            case Edit_FeatureVertices:
+            case EDIT_TOOL:
+            case EDIT_FEATURE_VERTICES:
                 image = toolkit.getImage(this.getClass().getResource("/images/Edit_tool.png"));
                 customCursor = toolkit.createCustomCursor(image, new Point(2, 2), "Edit Tool");
                 break;
-            case New_Label:
-            case New_Point:
-            case New_Polygon:
-            case New_Polyline:
-            case New_Rectangle:
-            case New_Circle:
-            case New_Curve:
-            case New_CurvePolygon:
-            case New_Ellipse:
-            case New_Freehand:
-            case Edit_NewFeature:
-            case Edit_AddRing:
-            case Edit_FillRing:
-            case Edit_ReformFeature:
-            case Edit_SplitFeature:
+            case NEW_LABEL:
+            case NEW_POINT:
+            case NEW_POLYGON:
+            case NEW_POLYLINE:
+            case NEW_RECTANGLE:
+            case NEW_CIRCLE:
+            case NEW_CURVE:
+            case NEW_CURVE_POLYGON:
+            case NEW_ELLIPSE:
+            case NEW_FREEHAND:
+            case EDIT_NEW_FEATURE:
+            case EDIT_ADD_RING:
+            case EDIT_FILL_RING:
+            case EDIT_REFORM_FEATURE:
+            case EDIT_SPLIT_FEATURE:
                 customCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
                 break;
-            case Measurement:
+            case MEASUREMENT:
                 customCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
                 break;
         }
@@ -1325,11 +1325,11 @@ public class MapView extends JPanel implements IWebMapPanel {
         if (e.getButton() == MouseEvent.BUTTON1) {
             Graphics2D g = (Graphics2D) this.getGraphics();
             switch (_mouseTool) {
-                case Zoom_In:
+                case ZOOM_IN:
                     break;
-                case Pan:
+                case PAN:
                     break;
-                case Edit_Tool:
+                case EDIT_TOOL:
                     VectorLayer layer = (VectorLayer) this.getSelectedLayer();
                     List<Shape> selShapes = (List<Shape>) layer.getSelectedShapes();
                     if (selShapes.size() > 0) {
@@ -1343,11 +1343,11 @@ public class MapView extends JPanel implements IWebMapPanel {
                             } else {
                                 _selectedRectangle = new Rectangle((int) dRect.x - 5, (int) dRect.y - 5, (int) dRect.width + 10, (int) dRect.height + 10);
                             }
-                            _mouseTool = MouseTools.Edit_MoveSelection;
+                            _mouseTool = MouseTools.EDIT_MOVE_SELECTION;
                         }
                     }
                     break;
-                case SelectElements:
+                case SELECT_ELEMENTS:
                     PointF mousePoint = new PointF();
                     mousePoint.X = e.getX();
                     mousePoint.Y = e.getY();
@@ -1358,17 +1358,17 @@ public class MapView extends JPanel implements IWebMapPanel {
                         //_isInSelectedGraphics = true;
                         _selectedRectangle = getGraphicRectangle(g, _selectedGraphics.get(0), lonShift);
                         _resizeRectangle = _selectedRectangle;
-                        if (_resizeSelectedEdge == Edge.None) {
-                            _mouseTool = MouseTools.MoveSelection;
+                        if (_resizeSelectedEdge == Edge.NONE) {
+                            _mouseTool = MouseTools.MOVE_SELECTION;
                         } else {
-                            _mouseTool = MouseTools.ResizeSelection;
+                            _mouseTool = MouseTools.RESIZE_SELECTION;
                         }
                     } else {
-                        _mouseTool = MouseTools.CreateSelection;
+                        _mouseTool = MouseTools.CREATE_SELECTION;
                     }
 
                     break;
-                case New_Point:
+                case NEW_POINT:
                     PointShape aPS = new PointShape();
                     float[] pXY = screenToProj(e.getX(), e.getY());
                     aPS.setPoint(new PointD(pXY[0], pXY[1]));
@@ -1381,7 +1381,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     UndoableEdit edit = (new MapViewUndoRedo()).new AddGraphicEdit(this, aGraphic);
                     this.fireUndoEditEvent(edit);
                     break;
-                case New_Label:
+                case NEW_LABEL:
                     pXY = screenToProj(e.getX(), e.getY());
                     aPS = new PointShape();
                     aPS.setPoint(new PointD(pXY[0], pXY[1]));
@@ -1391,10 +1391,10 @@ public class MapView extends JPanel implements IWebMapPanel {
                     edit = (new MapViewUndoRedo()).new AddGraphicEdit(this, aGraphic);
                     this.fireUndoEditEvent(edit);
                     break;
-                case Edit_NewFeature:
+                case EDIT_NEW_FEATURE:
                     MapLayer selLayer = this.getSelectedLayer();
                     if (selLayer != null) {
-                        if (selLayer.getLayerType() == LayerTypes.VectorLayer) {
+                        if (selLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                             layer = (VectorLayer) selLayer;
                             if (layer.getShapeType().isPoint()) {
                                 pXY = screenToProj(e.getX(), e.getY());
@@ -1433,24 +1433,24 @@ public class MapView extends JPanel implements IWebMapPanel {
                         }
                     }
                     break;
-                case Edit_AddRing:
-                case Edit_FillRing:
-                case Edit_ReformFeature:
-                case Edit_SplitFeature:
-                case New_Polyline:
-                case New_Polygon:
-                case New_Curve:
-                case New_CurvePolygon:
-                case New_Freehand:
-                case SelectFeatures_Polygon:
-                case SelectFeatures_Lasso:
+                case EDIT_ADD_RING:
+                case EDIT_FILL_RING:
+                case EDIT_REFORM_FEATURE:
+                case EDIT_SPLIT_FEATURE:
+                case NEW_POLYLINE:
+                case NEW_POLYGON:
+                case NEW_CURVE:
+                case NEW_CURVE_POLYGON:
+                case NEW_FREEHAND:
+                case SELECT_FEATURES_POLYGON:
+                case SELECT_FEATURES_LASSO:
                     if (_startNewGraphic) {
                         _graphicPoints = new ArrayList<>();
                         _startNewGraphic = false;
                     }
                     _graphicPoints.add(new PointF(e.getX(), e.getY()));
                     break;
-                case Edit_FeatureVertices:
+                case EDIT_FEATURE_VERTICES:
                     layer = (VectorLayer) this.getSelectedLayer();
                     Shape eShape = layer.getEditingShape();
                     if (eShape != null) {
@@ -1458,7 +1458,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                             _editingVerticeIndex = selectEditVertices(new Point(e.getX(), e.getY()), eShape,
                                     _editingVertices);
                             if (_editingVerticeIndex >= 0) {
-                                _mouseTool = MouseTools.Edit_InEditingVertices;
+                                _mouseTool = MouseTools.EDIT_IN_EDITING_VERTICES;
                             }
 //                            else {
 //                                eShape.setEditing(false);
@@ -1468,16 +1468,16 @@ public class MapView extends JPanel implements IWebMapPanel {
                         }
                     }
                     break;
-                case EditVertices:
+                case EDIT_VERTICES:
                     if (_selectedGraphics.size() > 0) {
                         _editingVerticeIndex = selectEditVertices(new Point(e.getX(), e.getY()), _selectedGraphics.get(0).getShape(),
                                 _editingVertices);
                         if (_editingVerticeIndex >= 0) {
-                            _mouseTool = MouseTools.InEditingVertices;
+                            _mouseTool = MouseTools.IN_EDITING_VERTICES;
                         }
                     }
                     break;
-                case Measurement:
+                case MEASUREMENT:
                     if (_frmMeasure == null) {
                         break;
                     }
@@ -1495,7 +1495,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                             case Feature:
                                 MapLayer aMLayer = getLayerByHandle(_selectedLayer);
                                 if (aMLayer != null) {
-                                    if (aMLayer.getLayerType() == LayerTypes.VectorLayer) {
+                                    if (aMLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                                         VectorLayer aLayer = (VectorLayer) aMLayer;
                                         if (aLayer.getShapeType() != ShapeTypes.POINT) {
                                             PointF aPoint = new PointF(e.getX(), e.getY());
@@ -1555,7 +1555,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             }
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             switch (_mouseTool) {
-                case Measurement:
+                case MEASUREMENT:
                     if (_frmMeasure.isVisible()) {
                         switch (_frmMeasure.getMeasureType()) {
                             case Length:
@@ -1585,90 +1585,90 @@ public class MapView extends JPanel implements IWebMapPanel {
         //int aWidth, aHeight, aX, aY;
         g.setColor(this.getForeground());
         switch (_mouseTool) {
-            case Zoom_In:
+            case ZOOM_IN:
                 this.repaintOld();
                 break;
-            case Pan:
+            case PAN:
                 _xShift = e.getX() - _mouseDownPoint.x;
                 _yShift = e.getY() - _mouseDownPoint.y;
                 this.repaintOld();
                 //this.newPaint = false;
                 //this.repaint();
                 break;
-            case CreateSelection:
-            case SelectFeatures_Rectangle:
-            case Edit_Tool:
+            case CREATE_SELECTION:
+            case SELECT_FEATURES_RECTANGLE:
+            case EDIT_TOOL:
                 this.repaintOld();
                 break;
-            case MoveSelection:
-            case Edit_MoveSelection:
+            case MOVE_SELECTION:
+            case EDIT_MOVE_SELECTION:
                 //Move selected graphics
                 this.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                 this.repaintOld();
                 break;
-            case ResizeSelection:
+            case RESIZE_SELECTION:
                 Graphic aGraphic = _selectedGraphics.get(0);
                 if (_selectedRectangle.width > 2 && _selectedRectangle.height > 2) {
                     switch (aGraphic.getResizeAbility()) {
-                        case SameWidthHeight:
+                        case SAME_WIDTH_HEIGHT:
                             //deltaY = deltaX;
                             switch (_resizeSelectedEdge) {
-                                case TopLeft:
+                                case TOP_LEFT:
                                     _resizeRectangle.x += deltaX;
                                     _resizeRectangle.y += deltaX;
                                     _resizeRectangle.width -= deltaX;
                                     _resizeRectangle.height -= deltaX;
                                     break;
-                                case BottomRight:
+                                case BOTTOM_RIGHT:
                                     _resizeRectangle.width += deltaX;
                                     _resizeRectangle.height += deltaX;
                                     break;
-                                case TopRight:
+                                case TOP_RIGHT:
                                     _resizeRectangle.y += deltaY;
                                     _resizeRectangle.width -= deltaY;
                                     _resizeRectangle.height -= deltaY;
                                     break;
-                                case BottomLeft:
+                                case BOTTOM_LEFT:
                                     _resizeRectangle.x += deltaX;
                                     _resizeRectangle.width -= deltaX;
                                     _resizeRectangle.height -= deltaX;
                                     break;
                             }
                             break;
-                        case ResizeAll:
+                        case RESIZE_ALL:
                             switch (_resizeSelectedEdge) {
-                                case TopLeft:
+                                case TOP_LEFT:
                                     _resizeRectangle.x += deltaX;
                                     _resizeRectangle.y += deltaY;
                                     _resizeRectangle.width -= deltaX;
                                     _resizeRectangle.height -= deltaY;
                                     break;
-                                case BottomRight:
+                                case BOTTOM_RIGHT:
                                     _resizeRectangle.width += deltaX;
                                     _resizeRectangle.height += deltaY;
                                     break;
-                                case Top:
+                                case TOP:
                                     _resizeRectangle.y += deltaY;
                                     _resizeRectangle.height -= deltaY;
                                     break;
-                                case Bottom:
+                                case BOTTOM:
                                     _resizeRectangle.height += deltaY;
                                     break;
-                                case TopRight:
+                                case TOP_RIGHT:
                                     _resizeRectangle.y += deltaY;
                                     _resizeRectangle.width += deltaX;
                                     _resizeRectangle.height -= deltaY;
                                     break;
-                                case BottomLeft:
+                                case BOTTOM_LEFT:
                                     _resizeRectangle.x += deltaX;
                                     _resizeRectangle.width -= deltaX;
                                     _resizeRectangle.height += deltaY;
                                     break;
-                                case Left:
+                                case LEFT:
                                     _resizeRectangle.x += deltaX;
                                     _resizeRectangle.width -= deltaX;
                                     break;
-                                case Right:
+                                case RIGHT:
                                     _resizeRectangle.width += deltaX;
                                     break;
                             }
@@ -1680,18 +1680,18 @@ public class MapView extends JPanel implements IWebMapPanel {
                 }
                 this.repaintOld();
                 break;
-            case New_Rectangle:
-            case New_Ellipse:
-            case New_Freehand:
-            case New_Circle:
-            case SelectFeatures_Lasso:
-            case SelectFeatures_Circle:
+            case NEW_RECTANGLE:
+            case NEW_ELLIPSE:
+            case NEW_FREEHAND:
+            case NEW_CIRCLE:
+            case SELECT_FEATURES_LASSO:
+            case SELECT_FEATURES_CIRCLE:
                 this.repaintOld();
                 break;
-            case InEditingVertices:
+            case IN_EDITING_VERTICES:
                 this.repaintOld();
                 break;
-            case Edit_InEditingVertices:
+            case EDIT_IN_EDITING_VERTICES:
                 VectorLayer layer = (VectorLayer) this.getSelectedLayer();
                 PointD snapP = this.selectSnapVertice(this._mouseLastPos, layer, 10);
                 if (snapP != null) {
@@ -1714,7 +1714,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         //float aWidth, aHeight, aX, aY;
         g.setColor(this.getForeground());
         switch (_mouseTool) {
-            case Edit_Tool:
+            case EDIT_TOOL:
                 VectorLayer layer = (VectorLayer) this.getSelectedLayer();
                 List<Shape> selShapes = (List<Shape>) layer.getSelectedShapes();
                 boolean isMove = false;
@@ -1734,7 +1734,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     this.setCursor(toolkit.createCustomCursor(image, new Point(2, 2), "Edit Tool"));
                 }
                 break;
-            case SelectElements:
+            case SELECT_ELEMENTS:
                 if (_selectedGraphics.size() > 0) {
 
                     GraphicCollection tempGraphics = new GraphicCollection();
@@ -1744,15 +1744,15 @@ public class MapView extends JPanel implements IWebMapPanel {
                         Rectangle aRect = getGraphicRectangle(g, _selectedGraphics.get(0), lonShift);
                         _resizeSelectedEdge = intersectElementEdge(aRect, new PointF(e.getX(), e.getY()), 3F);
                         switch (_selectedGraphics.get(0).getResizeAbility()) {
-                            case SameWidthHeight:
+                            case SAME_WIDTH_HEIGHT:
                                 switch (_resizeSelectedEdge) {
-                                    case TopLeft:
-                                    case BottomRight:
+                                    case TOP_LEFT:
+                                    case BOTTOM_RIGHT:
                                         this.setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
                                         //this.Cursor = Cursors.SizeNWSE;
                                         break;
-                                    case TopRight:
-                                    case BottomLeft:
+                                    case TOP_RIGHT:
+                                    case BOTTOM_LEFT:
                                         this.setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
                                         //this.Cursor = Cursors.SizeNESW;
                                         break;
@@ -1762,29 +1762,29 @@ public class MapView extends JPanel implements IWebMapPanel {
                                         break;
                                 }
                                 break;
-                            case ResizeAll:
+                            case RESIZE_ALL:
                                 switch (_resizeSelectedEdge) {
-                                    case TopLeft:
-                                    case BottomRight:
+                                    case TOP_LEFT:
+                                    case BOTTOM_RIGHT:
                                         this.setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
                                         //this.Cursor = Cursors.SizeNWSE;
                                         break;
-                                    case Top:
-                                    case Bottom:
+                                    case TOP:
+                                    case BOTTOM:
                                         this.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
                                         //this.Cursor = Cursors.SizeNS;
                                         break;
-                                    case TopRight:
-                                    case BottomLeft:
+                                    case TOP_RIGHT:
+                                    case BOTTOM_LEFT:
                                         this.setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
                                         //this.Cursor = Cursors.SizeNESW;
                                         break;
-                                    case Left:
-                                    case Right:
+                                    case LEFT:
+                                    case RIGHT:
                                         this.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
                                         //this.Cursor = Cursors.SizeWE;
                                         break;
-                                    case None:
+                                    case NONE:
                                         this.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                                         //this.Cursor = Cursors.SizeAll;
                                         break;
@@ -1803,18 +1803,18 @@ public class MapView extends JPanel implements IWebMapPanel {
                     this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
                 break;
-            case Edit_NewFeature:
-            case Edit_AddRing:
-            case Edit_FillRing:
-            case Edit_ReformFeature:
-            case Edit_SplitFeature:
+            case EDIT_NEW_FEATURE:
+            case EDIT_ADD_RING:
+            case EDIT_FILL_RING:
+            case EDIT_REFORM_FEATURE:
+            case EDIT_SPLIT_FEATURE:
                 VectorLayer selLayer = (VectorLayer) this.getSelectedLayer();
                 if (selLayer == null) {
                     return;
                 }
                 if (!selLayer.getShapeType().isPoint()) {
                     switch (this._mouseTool) {
-                        case Edit_NewFeature:
+                        case EDIT_NEW_FEATURE:
                             PointD snapP = this.selectSnapVertice(this._mouseLastPos, selLayer, 10);
                             if (snapP != null) {
                                 double[] screenP = this.projToScreen(snapP.X, snapP.Y);
@@ -1833,17 +1833,17 @@ public class MapView extends JPanel implements IWebMapPanel {
                     }
                 }
                 break;
-            case New_Polyline:
-            case New_Polygon:
-            case New_Curve:
-            case New_CurvePolygon:
-            case New_Freehand:
-            case SelectFeatures_Polygon:
+            case NEW_POLYLINE:
+            case NEW_POLYGON:
+            case NEW_CURVE:
+            case NEW_CURVE_POLYGON:
+            case NEW_FREEHAND:
+            case SELECT_FEATURES_POLYGON:
                 if (!_startNewGraphic) {
                     this.repaintOld();
                 }
                 break;
-            case Edit_FeatureVertices:
+            case EDIT_FEATURE_VERTICES:
                 selLayer = (VectorLayer) this.getSelectedLayer();
                 if (selLayer == null) {
                     return;
@@ -1867,7 +1867,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     }
                 }
                 break;
-            case EditVertices:
+            case EDIT_VERTICES:
                 if (_selectedGraphics.size() > 0) {
                     eShape = _selectedGraphics.get(0).getShape();
                     _editingVerticeIndex = selectEditVertices(new Point(e.getX(), e.getY()), eShape,
@@ -1884,7 +1884,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     }
                 }
                 break;
-            case Measurement:
+            case MEASUREMENT:
                 if (_frmMeasure == null) {
                     break;
                 }
@@ -1955,7 +1955,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         _mousePos.x = e.getX();
         _mousePos.y = e.getY();
         switch (_mouseTool) {
-            case Zoom_In:
+            case ZOOM_IN:
                 if (Math.abs(_mousePos.x - _mouseDownPoint.x) > 5) {
                     ZoomF = Math.abs(_mousePos.x - _mouseDownPoint.x) / (double) this.getWidth();
                     ZoomFY = Math.abs(_mousePos.y - _mouseDownPoint.y) / (double) this.getHeight();
@@ -1991,7 +1991,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     //this.fireUndoEditEvent(edit);
                 }
                 break;
-            case Zoom_Out:
+            case ZOOM_OUT:
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     ZoomF = 1.5;
                 } else {
@@ -2007,7 +2007,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 //UndoableEdit edit = (new MapViewUndoRedo()).new ZoomEdit(this, oldExtent, (Extent) _viewExtent.clone());
                 //this.fireUndoEditEvent(edit);
                 break;
-            case Pan:
+            case PAN:
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     _xShift = 0;
                     _yShift = 0;
@@ -2025,8 +2025,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                     //this.fireUndoEditEvent(edit);
                 }
                 break;
-            case SelectFeatures_Rectangle:
-            case Edit_Tool:
+            case SELECT_FEATURES_RECTANGLE:
+            case EDIT_TOOL:
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (_selectedLayer < 0) {
                         return;
@@ -2035,7 +2035,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     if (aMLayer == null) {
                         return;
                     }
-                    if (aMLayer.getLayerType() != LayerTypes.VectorLayer) {
+                    if (aMLayer.getLayerType() != LayerTypes.VECTOR_LAYER) {
                         return;
                     }
 
@@ -2078,7 +2078,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     this.fireShapeSelectedEvent();
                 }
                 break;
-            case CreateSelection:
+            case CREATE_SELECTION:
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (!(e.isControlDown() || e.isShiftDown())) {
                         //Remove selected graphics
@@ -2138,28 +2138,28 @@ public class MapView extends JPanel implements IWebMapPanel {
 
                             //Show symbol form
                             switch (aGraphic.getLegend().getBreakType()) {
-                                case PointBreak:
+                                case POINT_BREAK:
                                     if (_frmPointSymbolSet != null) {
                                         if (_frmPointSymbolSet.isVisible()) {
                                             _frmPointSymbolSet.setPointBreak((PointBreak) aGraphic.getLegend());
                                         }
                                     }
                                     break;
-                                case LabelBreak:
+                                case LABEL_BREAK:
                                     if (_frmLabelSymbolSet != null) {
                                         if (_frmLabelSymbolSet.isVisible()) {
                                             _frmLabelSymbolSet.setLabelBreak((LabelBreak) aGraphic.getLegend());
                                         }
                                     }
                                     break;
-                                case PolylineBreak:
+                                case POLYLINE_BREAK:
                                     if (_frmPolylineSymbolSet != null) {
                                         if (_frmPolylineSymbolSet.isVisible()) {
                                             _frmPolylineSymbolSet.setPolylineBreak((PolylineBreak) aGraphic.getLegend());
                                         }
                                     }
                                     break;
-                                case PolygonBreak:
+                                case POLYGON_BREAK:
                                     if (_frmPolygonSymbolSet != null) {
                                         if (_frmPolygonSymbolSet.isVisible()) {
                                             _frmPolygonSymbolSet.setPolygonBreak((PolygonBreak) aGraphic.getLegend());
@@ -2174,9 +2174,9 @@ public class MapView extends JPanel implements IWebMapPanel {
                     //paintLayers();
                     this.repaintNew();
                 }
-                _mouseTool = MouseTools.SelectElements;
+                _mouseTool = MouseTools.SELECT_ELEMENTS;
                 break;
-            case Edit_MoveSelection:
+            case EDIT_MOVE_SELECTION:
                 VectorLayer slayer = (VectorLayer) this.getSelectedLayer();
                 List<Shape> selShapes = (List<Shape>) slayer.getSelectedShapes();
                 if (selShapes.size() > 0) {
@@ -2190,9 +2190,9 @@ public class MapView extends JPanel implements IWebMapPanel {
                     slayer.getUndoManager().addEdit(edit);
                     this.fireUndoEditEvent(edit);
                 }
-                _mouseTool = MouseTools.Edit_Tool;
+                _mouseTool = MouseTools.EDIT_TOOL;
                 break;
-            case MoveSelection:
+            case MOVE_SELECTION:
                 if (_mouseDoubleClicked) {
                     _mouseDoubleClicked = false;
                 } else if (_selectedGraphics.size() > 0) {
@@ -2228,28 +2228,28 @@ public class MapView extends JPanel implements IWebMapPanel {
 
                                 //Show symbol form
                                 switch (aGraphic.getLegend().getBreakType()) {
-                                    case PointBreak:
+                                    case POINT_BREAK:
                                         if (_frmPointSymbolSet != null) {
                                             if (_frmPointSymbolSet.isVisible()) {
                                                 _frmPointSymbolSet.setPointBreak((PointBreak) aGraphic.getLegend());
                                             }
                                         }
                                         break;
-                                    case LabelBreak:
+                                    case LABEL_BREAK:
                                         if (_frmLabelSymbolSet != null) {
                                             if (_frmLabelSymbolSet.isVisible()) {
                                                 _frmLabelSymbolSet.setLabelBreak((LabelBreak) aGraphic.getLegend());
                                             }
                                         }
                                         break;
-                                    case PolylineBreak:
+                                    case POLYLINE_BREAK:
                                         if (_frmPolylineSymbolSet != null) {
                                             if (_frmPolylineSymbolSet.isVisible()) {
                                                 _frmPolylineSymbolSet.setPolylineBreak((PolylineBreak) aGraphic.getLegend());
                                             }
                                         }
                                         break;
-                                    case PolygonBreak:
+                                    case POLYGON_BREAK:
                                         if (_frmPolygonSymbolSet != null) {
                                             if (_frmPolygonSymbolSet.isVisible()) {
                                                 _frmPolygonSymbolSet.setPolygonBreak((PolygonBreak) aGraphic.getLegend());
@@ -2275,9 +2275,9 @@ public class MapView extends JPanel implements IWebMapPanel {
                     //paintLayers();
                     this.repaintNew();
                 }
-                _mouseTool = MouseTools.SelectElements;
+                _mouseTool = MouseTools.SELECT_ELEMENTS;
                 break;
-            case ResizeSelection:
+            case RESIZE_SELECTION:
                 Graphic aG = _selectedGraphics.get(0);
                 UndoableEdit edit = (new MapViewUndoRedo()).new ResizeGraphicEdit(this, aG, _resizeRectangle);
                 this.fireUndoEditEvent(edit);
@@ -2291,10 +2291,10 @@ public class MapView extends JPanel implements IWebMapPanel {
                 //paintLayers();
                 this.repaintNew();
 
-                _mouseTool = MouseTools.SelectElements;
+                _mouseTool = MouseTools.SELECT_ELEMENTS;
                 break;
-            case New_Rectangle:
-            case New_Ellipse:
+            case NEW_RECTANGLE:
+            case NEW_ELLIPSE:
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (Math.abs(e.getX() - _mouseDownPoint.x) < 2 || Math.abs(e.getY() - _mouseDownPoint.y) < 2) {
                         return;
@@ -2315,13 +2315,13 @@ public class MapView extends JPanel implements IWebMapPanel {
 
                     Graphic aGraphic = null;
                     switch (_mouseTool) {
-                        case New_Rectangle:
+                        case NEW_RECTANGLE:
                             RectangleShape aPGS = new RectangleShape();
                             points.add((PointD) points.get(0).clone());
                             aPGS.setPoints(points);
                             aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                             break;
-                        case New_Ellipse:
+                        case NEW_ELLIPSE:
                             EllipseShape aES = new EllipseShape();
                             aES.setPoints(points);
                             aGraphic = new Graphic(aES, (PolygonBreak) _defPolygonBreak.clone());
@@ -2339,8 +2339,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                     }
                 }
                 break;
-            case New_Freehand:
-            case SelectFeatures_Lasso:
+            case NEW_FREEHAND:
+            case SELECT_FEATURES_LASSO:
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     _startNewGraphic = true;
                     if (_graphicPoints.size() < 2) {
@@ -2354,7 +2354,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         points.add(new PointD(pXY[0], pXY[1]));
                     }
 
-                    if (_mouseTool == MouseTools.New_Freehand) {
+                    if (_mouseTool == MouseTools.NEW_FREEHAND) {
                         PolylineShape aPLS = new PolylineShape();
                         aPLS.setPoints(points);
                         Graphic aGraphic = new Graphic(aPLS, (PolylineBreak) _defPolylineBreak.clone());
@@ -2368,7 +2368,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         if (aMLayer == null) {
                             return;
                         }
-                        if (aMLayer.getLayerType() != LayerTypes.VectorLayer) {
+                        if (aMLayer.getLayerType() != LayerTypes.VECTOR_LAYER) {
                             return;
                         }
 
@@ -2384,8 +2384,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                     }
                 }
                 break;
-            case New_Circle:
-            case SelectFeatures_Circle:
+            case NEW_CIRCLE:
+            case SELECT_FEATURES_CIRCLE:
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getX() - _mouseDownPoint.x < 2 || e.getY() - _mouseDownPoint.y < 2) {
                         return;
@@ -2408,7 +2408,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
                     CircleShape aPGS = new CircleShape();
                     aPGS.setPoints(points);
-                    if (_mouseTool == MouseTools.New_Circle) {
+                    if (_mouseTool == MouseTools.NEW_CIRCLE) {
                         Graphic aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                         _graphicCollection.add(aGraphic);
                         //paintLayers();
@@ -2420,7 +2420,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         if (layer == null) {
                             return;
                         }
-                        if (layer.getLayerType() != LayerTypes.VectorLayer) {
+                        if (layer.getLayerType() != LayerTypes.VECTOR_LAYER) {
                             return;
                         }
 
@@ -2433,7 +2433,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     }
                 }
                 break;
-            case InEditingVertices:
+            case IN_EDITING_VERTICES:
                 Graphic graphic = _selectedGraphics.get(0);
                 double[] pXY = screenToProj((double) e.getX(), (double) e.getY());
                 edit = (new MapViewUndoRedo()).new MoveGraphicVerticeEdit(this, graphic,
@@ -2441,11 +2441,11 @@ public class MapView extends JPanel implements IWebMapPanel {
                 this.fireUndoEditEvent(edit);
                 graphic.verticeMoveUpdate(_editingVerticeIndex, pXY[0], pXY[1]);
 
-                _mouseTool = MouseTools.EditVertices;
+                _mouseTool = MouseTools.EDIT_VERTICES;
                 //paintLayers();
                 this.repaintNew();
                 break;
-            case Edit_InEditingVertices:
+            case EDIT_IN_EDITING_VERTICES:
                 VectorLayer layer = (VectorLayer) this.getSelectedLayer();
                 Shape eShape = layer.getEditingShape();
                 if (eShape != null) {
@@ -2465,14 +2465,14 @@ public class MapView extends JPanel implements IWebMapPanel {
                         this.repaintNew();
                     }
                 }
-                _mouseTool = MouseTools.Edit_FeatureVertices;
+                _mouseTool = MouseTools.EDIT_FEATURE_VERTICES;
                 break;
         }
     }
 
     private void showSymbolSetForm(ColorBreak aCB) {
         switch (aCB.getBreakType()) {
-            case PointBreak:
+            case POINT_BREAK:
                 PointBreak aPB = (PointBreak) aCB;
 
                 if (_frmPointSymbolSet == null) {
@@ -2483,7 +2483,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 _frmPointSymbolSet.setPointBreak(aPB);
                 _frmPointSymbolSet.setVisible(true);
                 break;
-            case LabelBreak:
+            case LABEL_BREAK:
                 LabelBreak aLB = (LabelBreak) aCB;
 
                 if (_frmLabelSymbolSet == null) {
@@ -2494,7 +2494,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 _frmLabelSymbolSet.setLabelBreak(aLB);
                 _frmLabelSymbolSet.setVisible(true);
                 break;
-            case PolylineBreak:
+            case POLYLINE_BREAK:
                 PolylineBreak aPLB = (PolylineBreak) aCB;
 
                 if (_frmPolylineSymbolSet == null) {
@@ -2505,7 +2505,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 _frmPolylineSymbolSet.setPolylineBreak(aPLB);
                 _frmPolylineSymbolSet.setVisible(true);
                 break;
-            case PolygonBreak:
+            case POLYGON_BREAK:
                 PolygonBreak aPGB = (PolygonBreak) aCB;
 
                 if (_frmPolygonSymbolSet == null) {
@@ -2524,7 +2524,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         if (clickTimes == 1) {
             if (e.getButton() == MouseEvent.BUTTON1) {
                 switch (_mouseTool) {
-                    case Identifer:
+                    case IDENTIFIER:
                         if (_selectedLayer < 0) {
                             return;
                         }
@@ -2532,12 +2532,12 @@ public class MapView extends JPanel implements IWebMapPanel {
                         if (aMLayer == null) {
                             return;
                         }
-                        if (aMLayer.getLayerType() == LayerTypes.ImageLayer) {
+                        if (aMLayer.getLayerType() == LayerTypes.IMAGE_LAYER) {
                             return;
                         }
 
                         PointF aPoint = new PointF(e.getX(), e.getY());
-                        if (aMLayer.getLayerType() == LayerTypes.VectorLayer) {
+                        if (aMLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                             VectorLayer aLayer = (VectorLayer) aMLayer;
                             List<Integer> selectedShapes = selectShapes(aLayer, aPoint, true, false);
                             if (selectedShapes.size() > 0) {
@@ -2596,7 +2596,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
                                 this.repaintOld();
                             }
-                        } else if (aMLayer.getLayerType() == LayerTypes.RasterLayer) {
+                        } else if (aMLayer.getLayerType() == LayerTypes.RASTER_LAYER) {
                             RasterLayer aRLayer = (RasterLayer) aMLayer;
                             int[] ijIdx = selectGridCell(aRLayer, aPoint);
                             if (ijIdx != null) {
@@ -2618,12 +2618,12 @@ public class MapView extends JPanel implements IWebMapPanel {
                             }
                         }
                         break;
-                    case Edit_DeleteRing:
+                    case EDIT_DELETE_RING:
                         aMLayer = this.getLayerByHandle(_selectedLayer);
                         if (aMLayer == null) {
                             return;
                         }
-                        if (aMLayer.getLayerType() != LayerTypes.VectorLayer) {
+                        if (aMLayer.getLayerType() != LayerTypes.VECTOR_LAYER) {
                             return;
                         }
 
@@ -2648,9 +2648,9 @@ public class MapView extends JPanel implements IWebMapPanel {
                 }
             } else if (e.getButton() == MouseEvent.BUTTON3) {
                 switch (_mouseTool) {
-                    case SelectElements:
-                    case MoveSelection:
-                    case ResizeSelection:
+                    case SELECT_ELEMENTS:
+                    case MOVE_SELECTION:
+                    case RESIZE_SELECTION:
                         if (_selectedGraphics.size() > 0) {
                             Graphic aGraphic = _selectedGraphics.get(0);
                             JPopupMenu jPopupMenu_Graphic = new JPopupMenu();
@@ -2704,7 +2704,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                             });
                             jPopupMenu_Graphic.add(jMenuItem_Remove);
 
-                            if (aGraphic.getLegend().getBreakType() == BreakTypes.PolylineBreak || aGraphic.getLegend().getBreakType() == BreakTypes.PolygonBreak) {
+                            if (aGraphic.getLegend().getBreakType() == BreakTypes.POLYLINE_BREAK || aGraphic.getLegend().getBreakType() == BreakTypes.POLYGON_BREAK) {
                                 JMenuItem jMenuItem_Reverse = new JMenuItem("Reverse");
                                 jMenuItem_Reverse.addActionListener(new ActionListener() {
                                     @Override
@@ -2725,7 +2725,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                     });
                                     jPopupMenu_Graphic.add(jMenuItem_Smooth);
                                 }
-                                if (aGraphic.getLegend().getBreakType() == BreakTypes.PolygonBreak) {
+                                if (aGraphic.getLegend().getBreakType() == BreakTypes.POLYGON_BREAK) {
                                     jPopupMenu_Graphic.add(new JSeparator());
                                     JMenuItem jMenuItem_Maskout = new JMenuItem("Set Maskout");
                                     if (((PolygonBreak) aGraphic.getLegend()).isMaskout()) {
@@ -2755,7 +2755,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                             jPopupMenu_Graphic.show(this, e.getX(), e.getY());
                         }
                         break;
-                    case EditVertices:
+                    case EDIT_VERTICES:
                         final Graphic graphic = _selectedGraphics.get(0);
                         Shape eShape = graphic.getShape();
                         _editingVerticeIndex = selectEditVertices(new Point(e.getX(), e.getY()), eShape,
@@ -2778,7 +2778,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                             jPopupMenu_Vertices.show(this, e.getX(), e.getY());
                         }
                         break;
-                    case Edit_FeatureVertices:
+                    case EDIT_FEATURE_VERTICES:
                         final VectorLayer selLayer = (VectorLayer) this.getSelectedLayer();
                         final Shape fShape = selLayer.getEditingShape();
                         if (fShape != null) {
@@ -2829,7 +2829,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                             }
                         }
                         break;
-                    case Edit_Tool:
+                    case EDIT_TOOL:
                         final VectorLayer sLayer = (VectorLayer) this.getSelectedLayer();
                         final Shape sShape = sLayer.getSelectedShapes().get(0);
                         if (sShape != null) {
@@ -2857,10 +2857,10 @@ public class MapView extends JPanel implements IWebMapPanel {
             }
         } else if (clickTimes == 2) {
             switch (_mouseTool) {
-                case SelectElements:
-                case MoveSelection:
-                case ResizeSelection:
-                    if (_mouseTool == MouseTools.MoveSelection) {
+                case SELECT_ELEMENTS:
+                case MOVE_SELECTION:
+                case RESIZE_SELECTION:
+                    if (_mouseTool == MouseTools.MOVE_SELECTION) {
                         _mouseDoubleClicked = true;
                     }
 
@@ -2899,7 +2899,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         showSymbolSetForm(aGraphic.getLegend());
                     }
                     break;
-                case Edit_NewFeature:
+                case EDIT_NEW_FEATURE:
                     if (!_startNewGraphic) {
                         _startNewGraphic = true;
                         _graphicPoints.remove(_graphicPoints.size() - 1);
@@ -2942,10 +2942,10 @@ public class MapView extends JPanel implements IWebMapPanel {
                         }
                     }
                     break;
-                case Edit_AddRing:
-                case Edit_FillRing:
-                case Edit_ReformFeature:
-                case Edit_SplitFeature:
+                case EDIT_ADD_RING:
+                case EDIT_FILL_RING:
+                case EDIT_REFORM_FEATURE:
+                case EDIT_SPLIT_FEATURE:
                     if (!_startNewGraphic) {
                         _startNewGraphic = true;
                         _graphicPoints.remove(_graphicPoints.size() - 1);
@@ -2959,8 +2959,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                         if (selLayer.getShapeType().isPolygon() || selLayer.getShapeType().isLine()) {
                             if (points.size() >= 2) {
                                 switch (this._mouseTool) {
-                                    case Edit_AddRing:
-                                    case Edit_FillRing:
+                                    case EDIT_ADD_RING:
+                                    case EDIT_FILL_RING:
                                         if (selLayer.getShapeType().isPolygon()) {
                                             PolygonShape aPGS = new PolygonShape();
                                             points.add((PointD) points.get(0).clone());
@@ -2968,7 +2968,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                             PolygonShape tPGS = (PolygonShape) selLayer.findShape_contains(aPGS);
                                             if (tPGS != null) {
                                                 int holeIdx = tPGS.addHole(points, 0);
-                                                if (this._mouseTool == MouseTools.Edit_FillRing) {
+                                                if (this._mouseTool == MouseTools.EDIT_FILL_RING) {
                                                     try {
                                                         selLayer.editAddShape(aPGS);
                                                         UndoableEdit edit = (new MapViewUndoRedo()).new FillRingEdit(this, selLayer,
@@ -2988,7 +2988,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                             }
                                         }
                                         break;
-                                    case Edit_ReformFeature:
+                                    case EDIT_REFORM_FEATURE:
                                         PolylineShape aPLS = new PolylineShape();
                                         aPLS.setPoints(points);
                                         Shape r = selLayer.findReformShape(aPLS);
@@ -3002,7 +3002,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                         //this.paintLayers();
                                         this.repaintNew();
                                         break;
-                                    case Edit_SplitFeature:
+                                    case EDIT_SPLIT_FEATURE:
                                         aPLS = new PolylineShape();
                                         aPLS.setPoints(points);
                                         r = selLayer.findShape_crosses(aPLS);
@@ -3028,12 +3028,12 @@ public class MapView extends JPanel implements IWebMapPanel {
                         }
                     }
                     break;
-                case New_Polyline:
-                case New_Polygon:
-                case New_Curve:
-                case New_CurvePolygon:
-                case New_Freehand:
-                case SelectFeatures_Polygon:
+                case NEW_POLYLINE:
+                case NEW_POLYGON:
+                case NEW_CURVE:
+                case NEW_CURVE_POLYGON:
+                case NEW_FREEHAND:
+                case SELECT_FEATURES_POLYGON:
                     if (!_startNewGraphic) {
                         _startNewGraphic = true;
                         //_graphicPoints.Add(new PointF(e.getX(), e.getY()));
@@ -3047,13 +3047,13 @@ public class MapView extends JPanel implements IWebMapPanel {
 
                         aGraphic = null;
                         switch (_mouseTool) {
-                            case New_Polyline:
-                            case New_Freehand:
+                            case NEW_POLYLINE:
+                            case NEW_FREEHAND:
                                 PolylineShape aPLS = new PolylineShape();
                                 aPLS.setPoints(points);
                                 aGraphic = new Graphic(aPLS, (PolylineBreak) _defPolylineBreak.clone());
                                 break;
-                            case New_Polygon:
+                            case NEW_POLYGON:
                                 if (points.size() > 2) {
                                     PolygonShape aPGS = new PolygonShape();
                                     points.add((PointD) points.get(0).clone());
@@ -3061,12 +3061,12 @@ public class MapView extends JPanel implements IWebMapPanel {
                                     aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                                 }
                                 break;
-                            case New_Curve:
+                            case NEW_CURVE:
                                 CurveLineShape aCLS = new CurveLineShape();
                                 aCLS.setPoints(points);
                                 aGraphic = new Graphic(aCLS, (PolylineBreak) _defPolylineBreak.clone());
                                 break;
-                            case New_CurvePolygon:
+                            case NEW_CURVE_POLYGON:
                                 if (points.size() > 2) {
                                     CurvePolygonShape aCPS = new CurvePolygonShape();
                                     points.add((PointD) points.get(0).clone());
@@ -3076,12 +3076,12 @@ public class MapView extends JPanel implements IWebMapPanel {
                                 break;
                         }
 
-                        if (_mouseTool == MouseTools.SelectFeatures_Polygon) {
+                        if (_mouseTool == MouseTools.SELECT_FEATURES_POLYGON) {
                             MapLayer layer = this.getLayerByHandle(_selectedLayer);
                             if (layer == null) {
                                 return;
                             }
-                            if (layer.getLayerType() != LayerTypes.VectorLayer) {
+                            if (layer.getLayerType() != LayerTypes.VECTOR_LAYER) {
                                 return;
                             }
 
@@ -3105,7 +3105,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         }
                     }
                     break;
-                case EditVertices:
+                case EDIT_VERTICES:
                     if (_selectedGraphics.size() > 0) {
                         Graphic graphic = _selectedGraphics.get(0);
                         Shape eShape = graphic.getShape();
@@ -3125,7 +3125,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         }
                     }
                     break;
-                case Edit_FeatureVertices:
+                case EDIT_FEATURE_VERTICES:
                     VectorLayer selLayer = (VectorLayer) this.getSelectedLayer();
                     Shape eShape = selLayer.getEditingShape();
                     if (eShape != null) {
@@ -3344,14 +3344,14 @@ public class MapView extends JPanel implements IWebMapPanel {
     void onKeyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_DELETE) {
             switch (_mouseTool) {
-                case SelectElements:
-                case CreateSelection:
+                case SELECT_ELEMENTS:
+                case CREATE_SELECTION:
                     removeSelectedGraphics();
                     _startNewGraphic = true;
                     //this.paintLayers();
                     this.repaintNew();
                     break;
-                case Edit_Tool:
+                case EDIT_TOOL:
                     VectorLayer layer = (VectorLayer) this.getSelectedLayer();
                     List<Shape> selShapes = (List<Shape>) layer.getSelectedShapes();
                     if (selShapes.size() > 0) {
@@ -3416,8 +3416,8 @@ public class MapView extends JPanel implements IWebMapPanel {
         int handle = getNewLayerHandle();
         aLayer.setHandle(handle);
         switch (aLayer.getLayerType()) {
-            case VectorLayer:
-            case RasterLayer:
+            case VECTOR_LAYER:
+            case RASTER_LAYER:
                 this.projectLayer(aLayer, false);
                 break;
         }
@@ -3445,8 +3445,8 @@ public class MapView extends JPanel implements IWebMapPanel {
         int handle = getNewLayerHandle();
         aLayer.setHandle(handle);
         switch (aLayer.getLayerType()) {
-            case VectorLayer:
-            case RasterLayer:
+            case VECTOR_LAYER:
+            case RASTER_LAYER:
                 this.projectLayer(aLayer);
                 break;
         }
@@ -3506,7 +3506,7 @@ public class MapView extends JPanel implements IWebMapPanel {
      */
     private void projectLayer(MapLayer layer) {
         switch (layer.getLayerType()) {
-            case VectorLayer:
+            case VECTOR_LAYER:
                 VectorLayer aLayer = (VectorLayer) layer;
                 boolean projectLabels = false;
                 if (aLayer.getLabelPoints().size() > 0) {
@@ -3517,7 +3517,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     GeoProjectionUtil.projectLayer(aLayer, _projection.getProjInfo(), projectLabels);
                 }
                 break;
-            case RasterLayer:
+            case RASTER_LAYER:
                 RasterLayer rLayer = (RasterLayer) layer;
                 if (!rLayer.getProjInfo().equals(_projection.getProjInfo())) {
                     GeoProjectionUtil.projectLayer(rLayer, _projection.getProjInfo());
@@ -3533,13 +3533,13 @@ public class MapView extends JPanel implements IWebMapPanel {
      */
     private void projectLayer(MapLayer layer, boolean projectLabels) {
         switch (layer.getLayerType()) {
-            case VectorLayer:
+            case VECTOR_LAYER:
                 VectorLayer aLayer = (VectorLayer) layer;
                 if (!aLayer.getProjInfo().equals(_projection.getProjInfo())) {
                     GeoProjectionUtil.projectLayer(aLayer, _projection.getProjInfo(), projectLabels);
                 }
                 break;
-            case RasterLayer:
+            case RASTER_LAYER:
                 RasterLayer rLayer = (RasterLayer) layer;
                 if (!rLayer.getProjInfo().equals(_projection.getProjInfo())) {
                     GeoProjectionUtil.projectLayer(rLayer, _projection.getProjInfo());
@@ -3777,7 +3777,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         VectorLayer bLayer;
         int lIdx = -1;
         for (int i = layers.size() - 1; i >= 0; i--) {
-            if (layers.get(i).getLayerType() == LayerTypes.VectorLayer) {
+            if (layers.get(i).getLayerType() == LayerTypes.VECTOR_LAYER) {
                 bLayer = (VectorLayer) layers.get(i);
                 switch (bLayer.getShapeType()) {
                     case POLYLINE:
@@ -3811,7 +3811,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         VectorLayer bLayer;
         int lIdx = -1;
         for (int i = layers.size() - 1; i >= 0; i--) {
-            if (layers.get(i).getLayerType() == LayerTypes.VectorLayer) {
+            if (layers.get(i).getLayerType() == LayerTypes.VECTOR_LAYER) {
                 bLayer = (VectorLayer) layers.get(i);
                 switch (bLayer.getShapeType()) {
                     case POLYGON:
@@ -3841,9 +3841,9 @@ public class MapView extends JPanel implements IWebMapPanel {
     public int getImageLayerIdx() {
         int lIdx = -1;
         for (int i = layers.size() - 1; i >= 0; i--) {
-            if (layers.get(i).getLayerType() == LayerTypes.ImageLayer
-                    || layers.get(i).getLayerType() == LayerTypes.RasterLayer
-                    || layers.get(i).getLayerType() == LayerTypes.WebMapLayer) {
+            if (layers.get(i).getLayerType() == LayerTypes.IMAGE_LAYER
+                    || layers.get(i).getLayerType() == LayerTypes.RASTER_LAYER
+                    || layers.get(i).getLayerType() == LayerTypes.WEB_MAP_LAYER) {
                 lIdx = i;
                 break;
             }
@@ -3859,7 +3859,7 @@ public class MapView extends JPanel implements IWebMapPanel {
      */
     public boolean hasWebMapLayer() {
         for (MapLayer layer : this.layers) {
-            if (layer.getLayerType() == LayerTypes.WebMapLayer) {
+            if (layer.getLayerType() == LayerTypes.WEB_MAP_LAYER) {
                 return true;
             }
         }
@@ -3894,7 +3894,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         if (this._dragMode) {
             switch (this._mouseTool) {
-                case Zoom_In:
+                case ZOOM_IN:
                     int aWidth = Math.abs(_mouseLastPos.x - _mouseDownPoint.x);
                     int aHeight = Math.abs(_mouseLastPos.y - _mouseDownPoint.y);
                     int aX = Math.min(_mouseLastPos.x, _mouseDownPoint.x);
@@ -3904,8 +3904,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                     g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f));
                     g2.draw(new Rectangle(aX, aY, aWidth, aHeight));
                     break;
-                case MoveSelection:
-                case Edit_MoveSelection:
+                case MOVE_SELECTION:
+                case EDIT_MOVE_SELECTION:
                     Rectangle rect = new Rectangle();
                     rect.x = _selectedRectangle.x + _mouseLastPos.x - _mouseDownPoint.x;
                     rect.y = _selectedRectangle.y + _mouseLastPos.y - _mouseDownPoint.y;
@@ -3918,34 +3918,34 @@ public class MapView extends JPanel implements IWebMapPanel {
                             10.0f, dash2, 0.0f));
                     g2.draw(rect);
                     break;
-                case ResizeSelection:
+                case RESIZE_SELECTION:
                     g2.setColor(Color.red);
                     float[] dashPattern = new float[]{2.0F, 1.0F};
                     g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
                             10.0f, dashPattern, 0.0f));
                     g2.draw(_resizeRectangle);
                     break;
-                case CreateSelection:
-                case New_Rectangle:
-                case New_Ellipse:
-                case SelectFeatures_Rectangle:
-                case Edit_Tool:
+                case CREATE_SELECTION:
+                case NEW_RECTANGLE:
+                case NEW_ELLIPSE:
+                case SELECT_FEATURES_RECTANGLE:
+                case EDIT_TOOL:
                     int sx = Math.min(_mouseDownPoint.x, _mouseLastPos.x);
                     int sy = Math.min(_mouseDownPoint.y, _mouseLastPos.y);
                     g2.setColor(this.getForeground());
                     g2.draw(new Rectangle(sx, sy, Math.abs(_mouseLastPos.x - _mouseDownPoint.x),
                             Math.abs(_mouseLastPos.y - _mouseDownPoint.y)));
                     break;
-                case New_Freehand:
-                case SelectFeatures_Lasso:
+                case NEW_FREEHAND:
+                case SELECT_FEATURES_LASSO:
                     List<PointF> points = new ArrayList<>(_graphicPoints);
                     points.add(new PointF(_mouseLastPos.x, _mouseLastPos.y));
                     g2.setColor(this.getForeground());
                     _graphicPoints.add(new PointF(_mouseLastPos.x, _mouseLastPos.y));
                     Draw.drawPolyline(points, g2);
                     break;
-                case New_Circle:
-                case SelectFeatures_Circle:
+                case NEW_CIRCLE:
+                case SELECT_FEATURES_CIRCLE:
                     int radius = (int) Math.sqrt(Math.pow(_mouseLastPos.x - _mouseDownPoint.x, 2)
                             + Math.pow(_mouseLastPos.y - _mouseDownPoint.y, 2));
                     g2.setColor(this.getForeground());
@@ -3953,8 +3953,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                     g2.drawOval(_mouseDownPoint.x - radius, _mouseDownPoint.y - radius,
                             radius * 2, radius * 2);
                     break;
-                case InEditingVertices:
-                case Edit_InEditingVertices:
+                case IN_EDITING_VERTICES:
+                case EDIT_IN_EDITING_VERTICES:
                     double[] sXY = projToScreen(_editingVertices.get(1).X, _editingVertices.get(1).Y);
                     g2.setColor(Color.black);
                     g2.drawLine((int) sXY[0], (int) sXY[1], _mouseLastPos.x, _mouseLastPos.y);
@@ -3973,19 +3973,19 @@ public class MapView extends JPanel implements IWebMapPanel {
         }
 
         switch (_mouseTool) {
-            case Edit_NewFeature:
-            case Edit_AddRing:
-            case Edit_FillRing:
-            case Edit_ReformFeature:
-            case Edit_SplitFeature:
+            case EDIT_NEW_FEATURE:
+            case EDIT_ADD_RING:
+            case EDIT_FILL_RING:
+            case EDIT_REFORM_FEATURE:
+            case EDIT_SPLIT_FEATURE:
                 VectorLayer selLayer = (VectorLayer) this.getSelectedLayer();
                 if (!_startNewGraphic) {
                     List<PointF> points = new ArrayList<>(_graphicPoints);
                     points.add(new PointF(_mouseLastPos.x, _mouseLastPos.y));
                     g.setColor(this.getForeground());
                     switch (_mouseTool) {
-                        case Edit_ReformFeature:
-                        case Edit_SplitFeature:
+                        case EDIT_REFORM_FEATURE:
+                        case EDIT_SPLIT_FEATURE:
                             Draw.drawPolyline(points, g2);
                             break;
                         default:
@@ -3999,11 +3999,11 @@ public class MapView extends JPanel implements IWebMapPanel {
                     }
                 }
                 break;
-            case New_Polyline:
-            case New_Polygon:
-            case New_Curve:
-            case New_CurvePolygon:
-            case SelectFeatures_Polygon:
+            case NEW_POLYLINE:
+            case NEW_POLYGON:
+            case NEW_CURVE:
+            case NEW_CURVE_POLYGON:
+            case SELECT_FEATURES_POLYGON:
                 //case New_Freehand:
                 if (!_startNewGraphic) {
                     //this.repaint();
@@ -4011,25 +4011,25 @@ public class MapView extends JPanel implements IWebMapPanel {
                     points.add(new PointF(_mouseLastPos.x, _mouseLastPos.y));
                     g.setColor(this.getForeground());
                     switch (_mouseTool) {
-                        case New_Polyline:
+                        case NEW_POLYLINE:
                             Draw.drawPolyline(points, g2);
                             break;
-                        case New_Polygon:
-                        case SelectFeatures_Polygon:
+                        case NEW_POLYGON:
+                        case SELECT_FEATURES_POLYGON:
                             points.add(points.get(0));
                             Draw.drawPolyline(points, g2);
                             break;
-                        case New_Curve:
+                        case NEW_CURVE:
                             Draw.drawCurveLine(points, g2);
                             break;
-                        case New_CurvePolygon:
+                        case NEW_CURVE_POLYGON:
                             points.add(points.get(0));
                             Draw.drawCurveLine(points, g2);
                             break;
                     }
                 }
                 break;
-            case Measurement:
+            case MEASUREMENT:
                 if (!_startNewGraphic) {
                     PointF[] fpoints = (PointF[]) _graphicPoints.toArray(new PointF[_graphicPoints.size()]);
                     PointF[] points = new PointF[fpoints.length + 1];
@@ -4060,7 +4060,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             if (this.getSelectedLayerHandle() >= 0) {
                 MapLayer aLayer = this.getSelectedLayer();
                 if (aLayer != null) {
-                    if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+                    if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                         VectorLayer vLayer = (VectorLayer) aLayer;
                         drawIdShape(g2, vLayer.getShapes().get(vLayer.getIdentiferShape()));
                     }
@@ -4411,7 +4411,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     }
                 }
                 switch (aLayer.getLayerType()) {
-                    case ImageLayer:
+                    case IMAGE_LAYER:
                         ImageLayer aImageLayer = (ImageLayer) aLayer;
                         drawImage(g, aImageLayer, 0, width, height);
                         if (_multiGlobalDraw) {
@@ -4423,7 +4423,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                             }
                         }
                         break;
-                    case RasterLayer:
+                    case RASTER_LAYER:
                         RasterLayer aRLayer = (RasterLayer) aLayer;
                         drawRasterLayer(g, aRLayer, 0);
                         if (_multiGlobalDraw) {
@@ -4435,11 +4435,11 @@ public class MapView extends JPanel implements IWebMapPanel {
                             }
                         }
                         break;
-                    case VectorLayer:
+                    case VECTOR_LAYER:
                         VectorLayer aVLayer = (VectorLayer) aLayer;
                         boolean isDraw = true;
                         switch (aVLayer.getLayerDrawType()) {
-                            case Vector:
+                            case VECTOR:
                                 if (aVLayer.getShape(0).getShapeType() == ShapeTypes.WIND_ARROW) {
                                     drawVectLayerWithLegendScheme(aVLayer, g, 0);
                                     if (this._multiGlobalDraw) {
@@ -4453,7 +4453,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                     isDraw = false;
                                 }
                                 break;
-                            case Barb:
+                            case BARB:
                                 if (aVLayer.getShape(0).getShapeType() == ShapeTypes.WIND_BARB) {
                                     drawBarbLayerWithLegendScheme(aVLayer, g, 0);
                                     if (this._multiGlobalDraw) {
@@ -4467,7 +4467,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                     isDraw = false;
                                 }
                                 break;
-                            case StationModel:
+                            case STATION_MODEL:
                                 if (aVLayer.getShape(0).getShapeType() == ShapeTypes.STATION_MODEL) {
                                     drawStationModelLayer(aVLayer, g, 0);
                                     if (this._multiGlobalDraw) {
@@ -4494,7 +4494,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                             }
                         }
                         break;
-                    case WebMapLayer:
+                    case WEB_MAP_LAYER:
                         WebMapLayer webLayer = (WebMapLayer) aLayer;
                         this.drawWebMapLayer(webLayer, g, width, height);
                         break;
@@ -4670,34 +4670,34 @@ public class MapView extends JPanel implements IWebMapPanel {
         java.awt.Shape oldRegion = g.getClip();
         for (MapLayer aLayer : layers) {
             if (aLayer.isVisible()) {
-                if (aLayer.isMaskout() && aLayer.getLayerType() != LayerTypes.WebMapLayer) {
+                if (aLayer.isMaskout() && aLayer.getLayerType() != LayerTypes.WEB_MAP_LAYER) {
                     setClipRegion(g);
                     if (oldRegion != null) {
                         g.clip(oldRegion);
                     }
                 }
                 switch (aLayer.getLayerType()) {
-                    case ImageLayer:
+                    case IMAGE_LAYER:
                         ImageLayer aImageLayer = (ImageLayer) aLayer;
                         drawImage(g, aImageLayer, 0, width, height);
                         break;
-                    case RasterLayer:
+                    case RASTER_LAYER:
                         RasterLayer aRLayer = (RasterLayer) aLayer;
                         drawRasterLayer(g, aRLayer, 0);
                         break;
-                    case VectorLayer:
+                    case VECTOR_LAYER:
                         VectorLayer aVLayer = (VectorLayer) aLayer;
                         switch (aLayer.getLayerDrawType()) {
-                            case Vector:
+                            case VECTOR:
                                 drawVectLayerWithLegendScheme(aVLayer, g, 0);
                                 break;
-                            case Barb:
+                            case BARB:
                                 drawBarbLayerWithLegendScheme(aVLayer, g, 0);
                                 break;
 //                                case WeatherSymbol:
 //                                    drawWeatherLayerWithLegendScheme(aLayer, g, 0);                                    
 //                                    break;
-                            case StationModel:
+                            case STATION_MODEL:
                                 drawStationModelLayer(aVLayer, g, 0);
                                 break;
                             default:
@@ -4705,7 +4705,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                 break;
                         }
                         break;
-                    case WebMapLayer:
+                    case WEB_MAP_LAYER:
                         WebMapLayer webLayer = (WebMapLayer) aLayer;
                         this.drawWebMapLayer(webLayer, g, width, height, tll);
                         break;
@@ -4814,7 +4814,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         double value;
         //g.setStroke(new BasicStroke(1));
         switch (aLS.getLegendType()) {
-            case SingleSymbol:
+            case SINGLE_SYMBOL:
                 ArrowBreak aPB = (ArrowBreak) aLS.getLegendBreaks().get(0);
                 aColor = aPB.getColor();
                 for (WindArrow aArraw : windArraws) {
@@ -4826,10 +4826,10 @@ public class MapView extends JPanel implements IWebMapPanel {
                     Draw.drawArraw(sPoint, aArraw, aPB, g, zoom);
                 }
                 break;
-            case UniqueValue:
+            case UNIQUE_VALUE:
 
                 break;
-            case GraduatedColor:
+            case GRADUATED_COLOR:
                 for (int w = 0; w < windArraws.size(); w++) {
                     WindArrow aArraw = windArraws.get(w);
                     shapeIdx = idxList.get(w);
@@ -4899,7 +4899,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         List<Extent> extentList = new ArrayList<>();
         Extent maxExtent = new Extent();
         Extent aExtent = new Extent();
-        if (aLS.getLegendType() == LegendType.SingleSymbol) {
+        if (aLS.getLegendType() == LegendType.SINGLE_SYMBOL) {
             PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(0);
             for (WindBarb aWB : windBarbs) {
                 aPoint = aWB.getPoint();
@@ -5389,7 +5389,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 //                    }
 //                }
 //                break;
-                case Streamline:
+                case STREAMLINE:
                     isStreamline = true;
                     break;
             }
@@ -5432,10 +5432,10 @@ public class MapView extends JPanel implements IWebMapPanel {
             case DOT:
                 dashPattern = new float[]{2.0f};
                 break;
-            case DASHDOT:
+            case DASH_DOT:
                 dashPattern = new float[]{10, 6, 2, 6};
                 break;
-            case DASHDOTDOT:
+            case DASH_DOT_DOT:
                 dashPattern = new float[]{10, 6, 2, 6, 2, 6};
                 break;
         }
@@ -5918,7 +5918,7 @@ public class MapView extends JPanel implements IWebMapPanel {
      */
     public WebMapLayer getWebMapLayer() {
         for (MapLayer layer : this.layers) {
-            if (layer.getLayerType() == LayerTypes.WebMapLayer) {
+            if (layer.getLayerType() == LayerTypes.WEB_MAP_LAYER) {
                 return (WebMapLayer) layer;
             }
         }
@@ -6032,7 +6032,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 sXY = projToScreen(points.get(i).X, points.get(i).Y, lonShift);
                 screenPoints[i] = new PointF((float) sXY[0], (float) sXY[1]);
             }
-            Draw.drawGrahpic(screenPoints, aGraphic, g, _mouseTool == MouseTools.EditVertices);
+            Draw.drawGrahpic(screenPoints, aGraphic, g, _mouseTool == MouseTools.EDIT_VERTICES);
 
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, rend);
         }
@@ -6122,7 +6122,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     PointBreak aPB = new PointBreak();
                     aPB.setOutlineColor(Color.red);
                     aPB.setSize(10);
-                    aPB.setStyle(PointStyle.Square);
+                    aPB.setStyle(PointStyle.SQUARE);
                     aPB.setDrawFill(false);
 
                     Draw.drawPoint(aPoint, aPB, g);
@@ -6190,7 +6190,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     PointBreak aPB = new PointBreak();
                     aPB.setOutlineColor(Color.red);
                     aPB.setSize(10);
-                    aPB.setStyle(PointStyle.Square);
+                    aPB.setStyle(PointStyle.SQUARE);
                     aPB.setDrawFill(false);
 
                     Draw.drawPoint(aPoint, aPB, g);
@@ -6255,10 +6255,10 @@ public class MapView extends JPanel implements IWebMapPanel {
             FontMetrics metrics = g.getFontMetrics(drawFont);
             Dimension labSize = new Dimension(metrics.stringWidth(LabelStr), metrics.getHeight());
             switch (aLB.getAlignType()) {
-                case Center:
+                case CENTER:
                     aPoint.X = (float) xy[0] - labSize.width / 2;
                     break;
-                case Left:
+                case LEFT:
                     aPoint.X = (float) xy[0] - labSize.width;
                     break;
             }
@@ -6863,7 +6863,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         aLayer.setExtent(lExt);
         aLayer.setLayerName("Map_LonLat");
         aLayer.setFileName("");
-        aLayer.setLayerDrawType(LayerDrawType.Map);
+        aLayer.setLayerDrawType(LayerDrawType.MAP);
         aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
         PolylineBreak aPLB = (PolylineBreak) aLayer.getLegendScheme().getLegendBreaks().get(0);
         aPLB.setStyle(LineStyles.DASH);
@@ -7078,7 +7078,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         aLayer.setExtent(lExt);
         aLayer.setLayerName("Map_LonLat");
         aLayer.setFileName("");
-        aLayer.setLayerDrawType(LayerDrawType.Map);
+        aLayer.setLayerDrawType(LayerDrawType.MAP);
         aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
         PolylineBreak aPLB = (PolylineBreak) aLayer.getLegendScheme().getLegendBreaks().get(0);
         aPLB.setStyle(LineStyles.DASH);
@@ -7617,7 +7617,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         switch (aShape.getShapeType()) {
             case POINT:
             case POINT_M:
-                if (legend.getBreakType() == BreakTypes.PointBreak) {
+                if (legend.getBreakType() == BreakTypes.POINT_BREAK) {
                     PointBreak aPB = (PointBreak) legend;
                     aPB.setSize(newRect.width);
                 }
@@ -7990,7 +7990,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         }
 
         for (MapLayer aLayer : layers) {
-            if (aLayer.getLayerType() == LayerTypes.VectorLayer && aLayer.isVisible()) {
+            if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER && aLayer.isVisible()) {
                 VectorLayer vLayer = (VectorLayer) aLayer;
                 for (Graphic aGraphic : vLayer.getLabelPoints()) {
                     if (aGraphic.getShape().isVisible()) {
@@ -8337,33 +8337,33 @@ public class MapView extends JPanel implements IWebMapPanel {
         Rectangle.Float ptRect = new Rectangle.Float(pt.X - limit, pt.Y - limit, 2F * limit, 2F * limit);
         if ((pt.X >= screen.x - limit && pt.X <= screen.x + limit) && (pt.Y >= screen.y - limit
                 && pt.Y <= screen.y + limit)) {
-            return Edge.TopLeft;
+            return Edge.TOP_LEFT;
         }
         if ((pt.X >= screen.x + screen.width - limit && pt.X <= screen.x + screen.width + limit)
                 && (pt.Y >= screen.y - limit && pt.Y <= screen.y + limit)) {
-            return Edge.TopRight;
+            return Edge.TOP_RIGHT;
         }
         if ((pt.X >= screen.x + screen.width - limit && pt.X <= screen.x + screen.width + limit)
                 && (pt.Y >= screen.y + screen.height - limit && pt.Y <= screen.y + screen.height + limit)) {
-            return Edge.BottomRight;
+            return Edge.BOTTOM_RIGHT;
         }
         if ((pt.X >= screen.x - limit && pt.X <= screen.x + limit) && (pt.Y >= screen.y + screen.height - limit
                 && pt.Y <= screen.y + screen.height + limit)) {
-            return Edge.BottomLeft;
+            return Edge.BOTTOM_LEFT;
         }
         if (ptRect.intersects(new Rectangle.Float(screen.x, screen.y, screen.width, 1F))) {
-            return Edge.Top;
+            return Edge.TOP;
         }
         if (ptRect.intersects(new Rectangle.Float(screen.x, screen.y, 1F, screen.height))) {
-            return Edge.Left;
+            return Edge.LEFT;
         }
         if (ptRect.intersects(new Rectangle.Float(screen.x, screen.y + screen.height, screen.width, 1F))) {
-            return Edge.Bottom;
+            return Edge.BOTTOM;
         }
         if (ptRect.intersects(new Rectangle.Float(screen.x + screen.width, screen.y, 1F, screen.height))) {
-            return Edge.Right;
+            return Edge.RIGHT;
         }
-        return Edge.None;
+        return Edge.NONE;
     }
 
     private PointD selectSnapVertice(Point aPoint, VectorLayer layer, int buffer) {
@@ -8794,7 +8794,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 aX = (float) sXY[0];
                 aY = (float) sXY[1];
                 switch (aGraphic.getLegend().getBreakType()) {
-                    case PointBreak:
+                    case POINT_BREAK:
                         PointBreak aPB = (PointBreak) aGraphic.getLegend();
                         int buffer = (int) aPB.getSize() + 2;
                         rect.x = (int) aX - buffer / 2;
@@ -8802,17 +8802,17 @@ public class MapView extends JPanel implements IWebMapPanel {
                         rect.width = buffer;
                         rect.height = buffer;
                         break;
-                    case LabelBreak:
+                    case LABEL_BREAK:
                         LabelBreak aLB = (LabelBreak) aGraphic.getLegend();
                         g.setFont(aLB.getFont());
                         //FontMetrics metrics = g.getFontMetrics(aLB.getFont());
                         //Dimension labSize = new Dimension(metrics.stringWidth(aLB.getText()), metrics.getHeight());
                         Dimension labSize = Draw.getStringDimension(aLB.getText(), g);
                         switch (aLB.getAlignType()) {
-                            case Center:
+                            case CENTER:
                                 aX = aX - labSize.width / 2;
                                 break;
-                            case Left:
+                            case LEFT:
                                 aX = aX - labSize.width;
                                 break;
                         }
@@ -8823,7 +8823,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         rect.width = (int) labSize.width;
                         rect.height = (int) labSize.height;
                         break;
-                    case ChartBreak:
+                    case CHART_BREAK:
                         ChartBreak aCB = (ChartBreak) aGraphic.getLegend();
                         rect = aCB.getDrawExtent(new PointF(aX, aY)).convertToRectangle();
                         break;
@@ -8893,7 +8893,7 @@ public class MapView extends JPanel implements IWebMapPanel {
     public void removeGraphic(Graphic aGraphic) {
         if (aGraphic.getClass().equals(ChartGraphic.class)) {
             for (MapLayer aLayer : layers) {
-                if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+                if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                     VectorLayer aVLayer = (VectorLayer) aLayer;
                     if (aVLayer.getChartPoints().contains((ChartGraphic) aGraphic)) {
                         aVLayer.getChartPoints().remove((ChartGraphic) aGraphic);
@@ -8905,7 +8905,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             _graphicCollection.remove(aGraphic);
         } else {
             for (MapLayer aLayer : layers) {
-                if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+                if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                     VectorLayer aVLayer = (VectorLayer) aLayer;
                     if (aVLayer.getLabelPoints().contains(aGraphic)) {
                         aVLayer.getLabelPoints().remove(aGraphic);
@@ -9613,8 +9613,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                 aLayer.setTransparency(Integer.parseInt(aVLayer.getAttributes().getNamedItem("TransparencyPerc").getNodeValue()));
                 aLayer.setAvoidCollision(Boolean.parseBoolean(aVLayer.getAttributes().getNamedItem("AvoidCollision").getNodeValue()));
                 aLayer.setExpanded(Boolean.parseBoolean(aVLayer.getAttributes().getNamedItem("Expanded").getNodeValue()));
-                aLayer.setLayerType(LayerTypes.valueOf(aVLayer.getAttributes().getNamedItem("LayerType").getNodeValue()));
-                aLayer.setLayerDrawType(LayerDrawType.valueOf(aVLayer.getAttributes().getNamedItem("LayerDrawType").getNodeValue()));
+                //aLayer.setLayerType(LayerTypes.valueOfBack(aVLayer.getAttributes().getNamedItem("LayerType").getNodeValue()));
+                aLayer.setLayerDrawType(LayerDrawType.valueOfBack(aVLayer.getAttributes().getNamedItem("LayerDrawType").getNodeValue()));
             } catch (DOMException | NumberFormatException e) {
             }
 
@@ -9670,7 +9670,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             aLabelSet.setLabelColor(ColorUtil.parseToColor(LabelNode.getAttributes().getNamedItem("LabelColor").getNodeValue()));
             aLabelSet.setDrawShadow(Boolean.parseBoolean(LabelNode.getAttributes().getNamedItem("DrawShadow").getNodeValue()));
             aLabelSet.setShadowColor(ColorUtil.parseToColor(LabelNode.getAttributes().getNamedItem("ShadowColor").getNodeValue()));
-            aLabelSet.setLabelAlignType(AlignType.valueOf(LabelNode.getAttributes().getNamedItem("AlignType").getNodeValue()));
+            aLabelSet.setLabelAlignType(AlignType.valueOfBack(LabelNode.getAttributes().getNamedItem("AlignType").getNodeValue()));
             aLabelSet.setYOffset(Integer.parseInt(LabelNode.getAttributes().getNamedItem("Offset").getNodeValue()));
             aLabelSet.setAvoidCollision(Boolean.parseBoolean(LabelNode.getAttributes().getNamedItem("AvoidCollision").getNodeValue()));
             aLabelSet.setAutoDecimal(Boolean.parseBoolean(LabelNode.getAttributes().getNamedItem("AutoDecimal").getNodeValue()));
@@ -9682,7 +9682,7 @@ public class MapView extends JPanel implements IWebMapPanel {
     private void loadChartSet(Node chartNode, ChartSet aChartSet) {
         try {
             aChartSet.setDrawCharts(Boolean.parseBoolean(chartNode.getAttributes().getNamedItem("DrawCharts").getNodeValue()));
-            aChartSet.setChartType(ChartTypes.valueOf(chartNode.getAttributes().getNamedItem("ChartType").getNodeValue()));
+            aChartSet.setChartType(ChartTypes.valueOfBack(chartNode.getAttributes().getNamedItem("ChartType").getNodeValue()));
             aChartSet.setFieldNames(new ArrayList<>(Arrays.asList(chartNode.getAttributes().getNamedItem("FieldNames").getNodeValue().split(","))));
             aChartSet.setXShift(Integer.parseInt(chartNode.getAttributes().getNamedItem("XShift").getNodeValue()));
             aChartSet.setYShift(Integer.parseInt(chartNode.getAttributes().getNamedItem("YShift").getNodeValue()));
@@ -9692,7 +9692,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             aChartSet.setMinValue(Float.parseFloat(chartNode.getAttributes().getNamedItem("MinValue").getNodeValue()));
             aChartSet.setBarWidth(Integer.parseInt(chartNode.getAttributes().getNamedItem("BarWidth").getNodeValue()));
             aChartSet.setAvoidCollision(Boolean.parseBoolean(chartNode.getAttributes().getNamedItem("AvoidCollision").getNodeValue()));
-            aChartSet.setAlignType(AlignType.valueOf(chartNode.getAttributes().getNamedItem("AlignType").getNodeValue()));
+            aChartSet.setAlignType(AlignType.valueOfBack(chartNode.getAttributes().getNamedItem("AlignType").getNodeValue()));
             aChartSet.setView3D(Boolean.parseBoolean(chartNode.getAttributes().getNamedItem("View3D").getNodeValue()));
             aChartSet.setThickness(Integer.parseInt(chartNode.getAttributes().getNamedItem("Thickness").getNodeValue()));
             aChartSet.setDrawLabel(Boolean.parseBoolean(chartNode.getAttributes().getNamedItem("DrawLabel").getNodeValue()));
@@ -9745,8 +9745,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                 aLayer.setLayerName(aILayer.getAttributes().getNamedItem("LayerName").getNodeValue());
                 aLayer.setVisible(Boolean.parseBoolean(aILayer.getAttributes().getNamedItem("Visible").getNodeValue()));
                 aLayer.setMaskout(Boolean.parseBoolean(aILayer.getAttributes().getNamedItem("IsMaskout").getNodeValue()));
-                aLayer.setLayerType(LayerTypes.valueOf(aILayer.getAttributes().getNamedItem("LayerType").getNodeValue()));
-                aLayer.setLayerDrawType(LayerDrawType.valueOf(aILayer.getAttributes().getNamedItem("LayerDrawType").getNodeValue()));
+                //aLayer.setLayerType(LayerTypes.valueOfBack(aILayer.getAttributes().getNamedItem("LayerType").getNodeValue()));
+                aLayer.setLayerDrawType(LayerDrawType.valueOfBack(aILayer.getAttributes().getNamedItem("LayerDrawType").getNodeValue()));
                 aLayer.setTransparency(Integer.parseInt(aILayer.getAttributes().getNamedItem("TransparencyPerc").getNodeValue()));
                 aLayer.setTransparencyColor(ColorUtil.parseToColor(aILayer.getAttributes().getNamedItem("TransparencyColor").getNodeValue()));
                 aLayer.setUseTransColor(Boolean.parseBoolean(aILayer.getAttributes().getNamedItem("SetTransColor").getNodeValue()));
@@ -9797,8 +9797,8 @@ public class MapView extends JPanel implements IWebMapPanel {
                 aLayer.setLayerName(aILayer.getAttributes().getNamedItem("LayerName").getNodeValue());
                 aLayer.setVisible(Boolean.parseBoolean(aILayer.getAttributes().getNamedItem("Visible").getNodeValue()));
                 aLayer.setMaskout(Boolean.parseBoolean(aILayer.getAttributes().getNamedItem("IsMaskout").getNodeValue()));
-                aLayer.setLayerType(LayerTypes.valueOf(aILayer.getAttributes().getNamedItem("LayerType").getNodeValue()));
-                aLayer.setLayerDrawType(LayerDrawType.valueOf(aILayer.getAttributes().getNamedItem("LayerDrawType").getNodeValue()));
+                //aLayer.setLayerType(LayerTypes.valueOfBack(aILayer.getAttributes().getNamedItem("LayerType").getNodeValue()));
+                aLayer.setLayerDrawType(LayerDrawType.valueOfBack(aILayer.getAttributes().getNamedItem("LayerDrawType").getNodeValue()));
                 aLayer.setTransparency(Integer.parseInt(aILayer.getAttributes().getNamedItem("TransparencyPerc").getNodeValue()));
                 aLayer.setTransparencyColor(ColorUtil.parseToColor(aILayer.getAttributes().getNamedItem("TransparencyColor").getNodeValue()));
                 aLayer.setUseTransColor(Boolean.parseBoolean(aILayer.getAttributes().getNamedItem("SetTransColor").getNodeValue()));
@@ -9842,8 +9842,8 @@ public class MapView extends JPanel implements IWebMapPanel {
             aLayer.setVisible(Boolean.parseBoolean(wmLayer.getAttributes().getNamedItem("Visible").getNodeValue()));
             aLayer.setWebMapProvider(WebMapProvider.valueOf(wmLayer.getAttributes().getNamedItem("WebMapProvider").getNodeValue()));
             aLayer.setMaskout(Boolean.parseBoolean(wmLayer.getAttributes().getNamedItem("IsMaskout").getNodeValue()));
-            aLayer.setLayerType(LayerTypes.valueOf(wmLayer.getAttributes().getNamedItem("LayerType").getNodeValue()));
-            aLayer.setLayerDrawType(LayerDrawType.valueOf(wmLayer.getAttributes().getNamedItem("LayerDrawType").getNodeValue()));
+            //aLayer.setLayerType(LayerTypes.valueOfBack(wmLayer.getAttributes().getNamedItem("LayerType").getNodeValue()));
+            aLayer.setLayerDrawType(LayerDrawType.valueOfBack(wmLayer.getAttributes().getNamedItem("LayerDrawType").getNodeValue()));
             aLayer.setTransparency(Integer.parseInt(wmLayer.getAttributes().getNamedItem("TransparencyPerc").getNodeValue()));
         } catch (DOMException | NumberFormatException e) {
         }

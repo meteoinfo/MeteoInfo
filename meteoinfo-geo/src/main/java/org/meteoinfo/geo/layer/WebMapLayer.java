@@ -144,9 +144,9 @@ public class WebMapLayer extends MapLayer {
      */
     public WebMapLayer() {
         super();
-        this.setLayerType(LayerTypes.WebMapLayer);
+        this._layerType = LayerTypes.WEB_MAP_LAYER;
         this.setShapeType(ShapeTypes.IMAGE);
-        this.setLayerDrawType(LayerDrawType.Image);
+        this.setLayerDrawType(LayerDrawType.IMAGE);
         this.setLayerName("OpenStreetMap");
         this.setExtent(new Extent(-2.0037508342789244E7, 2.0037508342789244E7, -1.8375854901481014E7, 1.8375854901481014E7));
         factory = new EmptyTileFactory();

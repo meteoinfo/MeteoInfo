@@ -58,14 +58,14 @@ import java.awt.geom.Line2D;
       */
      public LayoutScaleBar(LayoutMap layoutMap) {
          super();
-         this.setElementType(ElementType.LayoutScaleBar);
-         this.setResizeAbility(ResizeAbility.ResizeAll);
+         this.setElementType(ElementType.SCALE_BAR);
+         this.setResizeAbility(ResizeAbility.RESIZE_ALL);
 
          this.setWidth(200);
          this.setHeight(50);
          _layoutMap = layoutMap;
          _antiAlias = true;
-         _scaleBarType = ScaleBarType.SCALELINE_1;
+         _scaleBarType = ScaleBarType.SCALE_LINE_1;
          _drawNeatLine = false;
          _neatLineColor = Color.black;
          _neatLineSize = 1;
@@ -297,10 +297,10 @@ import java.awt.geom.Line2D;
 
          //Draw scale bar
          switch (_scaleBarType) {
-             case SCALELINE_1:
+             case SCALE_LINE_1:
                  drawScaleLine1(g, zoom, aFont, breakWidth, geoBreakWidth);
                  break;
-             case SCALELINE_2:
+             case SCALE_LINE_2:
                  drawScaleLine2(g, zoom, aFont, breakWidth, geoBreakWidth);
                  break;
              case ALTERNATING_BAR:

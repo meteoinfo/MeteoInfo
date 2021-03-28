@@ -108,7 +108,7 @@ public class VectorLayer extends MapLayer {
      */
     public VectorLayer(ShapeTypes shapeType) {
         super();
-        this.setLayerType(LayerTypes.VectorLayer);
+        this._layerType = LayerTypes.VECTOR_LAYER;
         this.setShapeType(shapeType);
         _avoidCollision = false;
         _attributeTable = new AttributeTable();
@@ -373,7 +373,7 @@ public class VectorLayer extends MapLayer {
         super.setLegendScheme(value);
         List<String> fieldNames = this._attributeTable.getTable().getColumnNames();
         switch (value.getLegendType()) {
-            case UniqueValue:
+            case UNIQUE_VALUE:
                 if (!fieldNames.contains(value.getFieldName())) {
                     LegendScheme ls = this.getLegendScheme();
                     ls.setFieldName(fieldNames.get(0));
@@ -384,13 +384,13 @@ public class VectorLayer extends MapLayer {
                     }
                 }
                 break;
-            case GraduatedColor:
+            case GRADUATED_COLOR:
                 if (!fieldNames.contains(value.getFieldName()) && !value.isGeometry()) {
                     String fName = "";
                     if (fieldNames.size() > 0) {
                         fName = fieldNames.get(0);
                     }
-                    LegendScheme ls = this.createLegendScheme(LegendType.SingleSymbol, fName);
+                    LegendScheme ls = this.createLegendScheme(LegendType.SINGLE_SYMBOL, fName);
                     super.setLegendScheme(ls);
                 }
                 break;
@@ -559,13 +559,13 @@ public class VectorLayer extends MapLayer {
         }
 
         switch (_chartSet.getChartType()) {
-            case BarChart:
+            case BAR_CHART:
                 minMax = MIMath.getMinMaxValue(minList, -9999.0);
                 _chartSet.setMinValue((float) minMax[0]);
                 minMax = MIMath.getMinMaxValue(maxList, -9999.0);
                 _chartSet.setMaxValue((float) minMax[1]);
                 break;
-            case PieChart:
+            case PIE_CHART:
                 minMax = MIMath.getMinMaxValue(sumList, -9999.0);
                 _chartSet.setMinValue((float) minMax[0]);
                 _chartSet.setMaxValue((float) minMax[1]);
@@ -2057,7 +2057,7 @@ public class VectorLayer extends MapLayer {
             }
 
             ColorBreak aCB = null;
-            if (this.getLegendScheme().getLegendType() == LegendType.SingleSymbol) {
+            if (this.getLegendScheme().getLegendType() == LegendType.SINGLE_SYMBOL) {
                 aCB = this.getLegendScheme().getLegendBreaks().get(0);
             } else if (this.getLegendScheme().getFieldName() != null) {
                 String vStr = getCellValue(this.getLegendScheme().getFieldName(), shapeIdx).toString().trim();
@@ -2122,10 +2122,10 @@ public class VectorLayer extends MapLayer {
     private ColorBreak getColorBreak(String vStr) {
         ColorBreak aCB = null;
         switch (this.getLegendScheme().getLegendType()) {
-            case SingleSymbol:
+            case SINGLE_SYMBOL:
                 aCB = this.getLegendScheme().getLegendBreaks().get(0);
                 break;
-            case UniqueValue:
+            case UNIQUE_VALUE:
                 for (int j = 0; j < this.getLegendScheme().getLegendBreaks().size(); j++) {
                     if (vStr.equals(this.getLegendScheme().getLegendBreaks().get(j).getStartValue().toString())) {
                         aCB = this.getLegendScheme().getLegendBreaks().get(j);
@@ -2133,7 +2133,7 @@ public class VectorLayer extends MapLayer {
                     }
                 }
                 break;
-            case GraduatedColor:
+            case GRADUATED_COLOR:
                 double value;
                 if ("".equals(vStr) || vStr == null) {
                     value = 0;
@@ -2196,11 +2196,11 @@ public class VectorLayer extends MapLayer {
                 String vStr;
                 PolylineBreak aPLB;
                 switch (this.getLegendScheme().getLegendType()) {
-                    case SingleSymbol:
+                    case SINGLE_SYMBOL:
                         aPLB = (PolylineBreak) this.getLegendScheme().getLegendBreaks().get(0);
                         aLP.setColor(aPLB.getColor());
                         break;
-                    case UniqueValue:
+                    case UNIQUE_VALUE:
                         vStr = getCellValue(_labelSet.getFieldName(), shapeIdx).toString();
                         for (int j = 0; j < this.getLegendScheme().getLegendBreaks().size(); j++) {
                             aPLB = (PolylineBreak) this.getLegendScheme().getLegendBreaks().get(j);
@@ -2209,7 +2209,7 @@ public class VectorLayer extends MapLayer {
                             }
                         }
                         break;
-                    case GraduatedColor:
+                    case GRADUATED_COLOR:
                         vStr = getCellValue(_labelSet.getFieldName(), shapeIdx).toString();
                         double value = Double.parseDouble(vStr);
                         int blNum = 0;
@@ -2842,7 +2842,7 @@ public class VectorLayer extends MapLayer {
     public void updateLegendIndexes() {
         LegendScheme ls = this.getLegendScheme();
         switch (ls.getLegendType()) {
-            case UniqueValue:
+            case UNIQUE_VALUE:
                 int shapeIdx = 0;
                 if (this.getField(ls.getFieldName()).isNumeric()) {
                     for (Shape aShape : this.getShapes()) {
@@ -2871,7 +2871,7 @@ public class VectorLayer extends MapLayer {
                     }
                 }
                 break;
-            case GraduatedColor:
+            case GRADUATED_COLOR:
                 if (!ls.isGeometry()) {
                     shapeIdx = 0;
                     int idx = -1;
@@ -2926,7 +2926,7 @@ public class VectorLayer extends MapLayer {
         min = aLS.getMinValue();
         max = aLS.getMaxValue();
         switch (aLT) {
-            case SingleSymbol:
+            case SINGLE_SYMBOL:
                 Color aColor = Color.black;
                 float size = 1.0F;
                 switch (aST) {
@@ -2951,7 +2951,7 @@ public class VectorLayer extends MapLayer {
 
                 aLS = LegendManage.createSingleSymbolLegendScheme(aST, aColor, size);
                 break;
-            case UniqueValue:
+            case UNIQUE_VALUE:
                 Color[] colors;
                 List<String> valueList = new ArrayList<>();
                 boolean isDateField = false;
@@ -2998,7 +2998,7 @@ public class VectorLayer extends MapLayer {
 
                 aLS.setFieldName(fieldName);
                 break;
-            case GraduatedColor:
+            case GRADUATED_COLOR:
                 double[] S = new double[this.getAttributeTable().getTable().getRows().size()];
                 for (int i = 0; i < S.length; i++) {
                     S[i] = Double.parseDouble(this.getAttributeTable().getTable().getRows().get(i).getValue(fieldName).toString());

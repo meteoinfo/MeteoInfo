@@ -632,7 +632,7 @@ public class DrawMeteoData {
      * @return Vector layer
      */
     public static VectorLayer createContourLayer(GridData gridData, String lName, String fieldName) {
-        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.UniqueValue, ShapeTypes.POLYLINE);
+        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.UNIQUE_VALUE, ShapeTypes.POLYLINE);
 
         return createContourLayer(gridData, ls, lName, fieldName, true);
     }
@@ -647,7 +647,7 @@ public class DrawMeteoData {
      * @return Vector layer
      */
     public static VectorLayer createContourLayer(GridData gridData, String lName, String fieldName, boolean isSmooth) {
-        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.UniqueValue, ShapeTypes.POLYLINE);
+        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.UNIQUE_VALUE, ShapeTypes.POLYLINE);
 
         return createContourLayer(gridData, ls, lName, fieldName, isSmooth);
     }
@@ -739,7 +739,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(lName);
         ls.setFieldName(fieldName);
         aLayer.setLegendScheme(ls);
-        aLayer.setLayerDrawType(LayerDrawType.Contour);
+        aLayer.setLayerDrawType(LayerDrawType.CONTOUR);
 
         aLayer.getLabelSet().setDrawLabels(true);
         aLayer.getLabelSet().setDrawShadow(true);
@@ -824,7 +824,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(lName);
         ls.setFieldName(fieldName);
         aLayer.setLegendScheme(ls);
-        aLayer.setLayerDrawType(LayerDrawType.Contour);
+        aLayer.setLayerDrawType(LayerDrawType.CONTOUR);
 
         aLayer.getLabelSet().setDrawLabels(true);
         aLayer.getLabelSet().setDrawShadow(true);
@@ -847,7 +847,7 @@ public class DrawMeteoData {
      * @return Vector layer
      */
     public static VectorLayer createShadedLayer(GridData gridData, String lName, String fieldName) {
-        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GraduatedColor, ShapeTypes.POLYGON);
+        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GRADUATED_COLOR, ShapeTypes.POLYGON);
 
         return createShadedLayer(gridData, ls, lName, fieldName, true);
     }
@@ -862,7 +862,7 @@ public class DrawMeteoData {
      * @return Vector layer
      */
     public static VectorLayer createShadedLayer(GridData gridData, String lName, String fieldName, boolean isSmooth) {
-        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GraduatedColor, ShapeTypes.POLYGON);
+        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GRADUATED_COLOR, ShapeTypes.POLYGON);
 
         return createShadedLayer(gridData, ls, lName, fieldName, isSmooth);
     }
@@ -1011,7 +1011,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(lName);
         ls.setFieldName(fieldName + "_Low");
         aLayer.setLegendScheme(ls);
-        aLayer.setLayerDrawType(LayerDrawType.Shaded);
+        aLayer.setLayerDrawType(LayerDrawType.SHADED);
 //        for (org.meteoinfo.legend.ColorBreak cb : aLayer.getLegendScheme().getLegendBreaks()){
 //            System.out.println(cb.getColor().getAlpha());
 //        }
@@ -1028,7 +1028,7 @@ public class DrawMeteoData {
      * @return Vector layer
      */
     public static VectorLayer createGridFillLayer(GridData gridData, String lName, String fieldName) {
-        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GraduatedColor, ShapeTypes.POLYGON);
+        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GRADUATED_COLOR, ShapeTypes.POLYGON);
 
         return createGridFillLayer(gridData, ls, lName, fieldName);
     }
@@ -1094,7 +1094,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(lName);
         aLS.setFieldName(fieldName);
         aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.POLYGON));
-        aLayer.setLayerDrawType(LayerDrawType.GridFill);
+        aLayer.setLayerDrawType(LayerDrawType.GRID_FILL);
 
         return aLayer;
     }
@@ -1177,7 +1177,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(lName);
         ls.setFieldName(fieldName);
         aLayer.setLegendScheme(ls.convertTo(ShapeTypes.POLYGON));
-        aLayer.setLayerDrawType(LayerDrawType.GridFill);
+        aLayer.setLayerDrawType(LayerDrawType.GRID_FILL);
 
         return aLayer;
     }
@@ -1191,7 +1191,7 @@ public class DrawMeteoData {
      * @return Vector layer
      */
     public static VectorLayer createGridPointLayer(GridData gridData, String lName, String fieldName) {
-        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GraduatedColor, ShapeTypes.POINT);
+        LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
 
         return createGridPointLayer(gridData, ls, lName, fieldName);
     }
@@ -1237,7 +1237,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(lName);
         aLS.setFieldName(fieldName);
         aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.POINT));
-        aLayer.setLayerDrawType(LayerDrawType.GridPoint);
+        aLayer.setLayerDrawType(LayerDrawType.GRID_POINT);
 
         return aLayer;
     }
@@ -1287,7 +1287,7 @@ public class DrawMeteoData {
     public static VectorLayer createGridVectorLayer(GridData uData, GridData vData, GridData gridData,
                                                     String lName, boolean isUV) {
         LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData,
-                LegendType.GraduatedColor, ShapeTypes.POINT);
+                LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
         PointBreak aPB;
         for (int i = 0; i < ls.getBreakNum(); i++) {
             aPB = (PointBreak) ls.getLegendBreaks().get(i);
@@ -1421,7 +1421,7 @@ public class DrawMeteoData {
             }
         }
         aLayer.setLegendScheme(nls);
-        aLayer.setLayerDrawType(LayerDrawType.Vector);
+        aLayer.setLayerDrawType(LayerDrawType.VECTOR);
 
         return aLayer;
     }
@@ -1471,7 +1471,7 @@ public class DrawMeteoData {
     public static VectorLayer createGridBarbLayer(GridData uData, GridData vData, GridData gridData,
                                                   String lName, boolean isUV) {
         LegendScheme ls = LegendManage.createLegendSchemeFromGridData(gridData,
-                LegendType.GraduatedColor, ShapeTypes.POINT);
+                LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
         PointBreak aPB;
         for (int i = 0; i < ls.getBreakNum(); i++) {
             aPB = (PointBreak) ls.getLegendBreaks().get(i);
@@ -1597,7 +1597,7 @@ public class DrawMeteoData {
             }
         }
         aLayer.setLegendScheme(ls);
-        aLayer.setLayerDrawType(LayerDrawType.Barb);
+        aLayer.setLayerDrawType(LayerDrawType.BARB);
 
         return aLayer;
     }
@@ -1714,7 +1714,7 @@ public class DrawMeteoData {
         if (aLS.getShapeType() != ShapeTypes.POLYLINE)
             aLS = aLS.convertTo(ShapeTypes.POLYLINE);
         aLayer.setLegendScheme(aLS);
-        aLayer.setLayerDrawType(LayerDrawType.Streamline);
+        aLayer.setLayerDrawType(LayerDrawType.STREAMLINE);
 
         return aLayer;
     }
@@ -1768,7 +1768,7 @@ public class DrawMeteoData {
         aExtent.maxX = XBR;
         aExtent.maxY = aImageLayer.getWorldFilePara().yUL;
         aImageLayer.setExtent(aExtent);
-        aImageLayer.setLayerDrawType(LayerDrawType.Image);
+        aImageLayer.setLayerDrawType(LayerDrawType.IMAGE);
         aImageLayer.setMaskout(true);
 
         return aImageLayer;
@@ -1788,7 +1788,7 @@ public class DrawMeteoData {
             List<Number> values = gridData.getUniqueValues();
             ls = LegendManage.createUniqValueLegendScheme(values, ShapeTypes.POLYGON);
         } else {
-            ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GraduatedColor, ShapeTypes.POLYGON);
+            ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GRADUATED_COLOR, ShapeTypes.POLYGON);
         }
 
         return createRasterLayer(gridData, lName, ls);
@@ -1808,7 +1808,7 @@ public class DrawMeteoData {
             List<Number> values = gridData.getUniqueValues();
             ls = LegendManage.createUniqValueLegendScheme(values, ShapeTypes.POLYGON);
         } else {
-            ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GraduatedColor, ShapeTypes.POLYGON);
+            ls = LegendManage.createLegendSchemeFromGridData(gridData, LegendType.GRADUATED_COLOR, ShapeTypes.POLYGON);
         }
 
         return createRasterLayer(gridData, lName, ls);
@@ -1829,7 +1829,7 @@ public class DrawMeteoData {
         aRLayer.setLegendScheme(aLS.convertTo(ShapeTypes.IMAGE));
         aRLayer.setLayerName(LName);
         aRLayer.setVisible(true);
-        aRLayer.setLayerDrawType(LayerDrawType.Raster);
+        aRLayer.setLayerDrawType(LayerDrawType.RASTER);
         aRLayer.setMaskout(true);
 
         return aRLayer;
@@ -1850,7 +1850,7 @@ public class DrawMeteoData {
         aRLayer.setLegendScheme(aLS.convertTo(ShapeTypes.IMAGE));
         aRLayer.setLayerName(LName);
         aRLayer.setVisible(true);
-        aRLayer.setLayerDrawType(LayerDrawType.Raster);
+        aRLayer.setLayerDrawType(LayerDrawType.RASTER);
         aRLayer.setMaskout(true);
 
         return aRLayer;
@@ -1870,7 +1870,7 @@ public class DrawMeteoData {
         aRLayer.setPalette(paletteFile);
         aRLayer.setLayerName(LName);
         aRLayer.setVisible(true);
-        aRLayer.setLayerDrawType(LayerDrawType.Raster);
+        aRLayer.setLayerDrawType(LayerDrawType.RASTER);
         aRLayer.setMaskout(true);
 
         return aRLayer;
@@ -1885,7 +1885,7 @@ public class DrawMeteoData {
      * @return Vector layer
      */
     public static VectorLayer createSTPointLayer(StationData stationData, String lName, String fieldName) {
-        LegendScheme ls = LegendManage.createLegendSchemeFromStationData(stationData, LegendType.GraduatedColor, ShapeTypes.POINT);
+        LegendScheme ls = LegendManage.createLegendSchemeFromStationData(stationData, LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
 
         return createSTPointLayer(stationData, ls, lName, fieldName);
     }
@@ -1943,7 +1943,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(lName);
         aLS.setFieldName(fieldName);
         aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.POINT));
-        aLayer.setLayerDrawType(LayerDrawType.StationPoint);
+        aLayer.setLayerDrawType(LayerDrawType.STATION_POINT);
 
         return aLayer;
     }
@@ -1991,7 +1991,7 @@ public class DrawMeteoData {
         aLS.setFieldName(fieldName);
         aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.POINT));
         //aLayer.setAvoidCollision(true);
-        aLayer.setLayerDrawType(LayerDrawType.StationPoint);
+        aLayer.setLayerDrawType(LayerDrawType.STATION_POINT);
 
         return aLayer;
     }
@@ -2051,7 +2051,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(lName);
         aLS.setFieldName("ID");
         aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.POINT));
-        aLayer.setLayerDrawType(LayerDrawType.StationPoint);
+        aLayer.setLayerDrawType(LayerDrawType.STATION_POINT);
 
         return aLayer;
     }
@@ -2101,7 +2101,7 @@ public class DrawMeteoData {
         aLS.setFieldName("ID");
         aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.POINT));
         //aLayer.setAvoidCollision(true);
-        aLayer.setLayerDrawType(LayerDrawType.StationPoint);
+        aLayer.setLayerDrawType(LayerDrawType.STATION_POINT);
 
         return aLayer;
     }
@@ -2211,7 +2211,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(layerName);
         aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.POINT));
         //aLayer.setAvoidCollision(true);
-        aLayer.setLayerDrawType(LayerDrawType.StationPoint);
+        aLayer.setLayerDrawType(LayerDrawType.STATION_POINT);
 
         return aLayer;
     }
@@ -2228,7 +2228,7 @@ public class DrawMeteoData {
      */
     public static VectorLayer createSTVectorLayer(StationData uData, StationData vData, StationData stData,
                                                   String layerName, boolean isUV) {
-        LegendScheme ls = LegendManage.createLegendSchemeFromStationData(stData, LegendType.GraduatedColor, ShapeTypes.POINT);
+        LegendScheme ls = LegendManage.createLegendSchemeFromStationData(stData, LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
         for (int i = 0; i < ls.getLegendBreaks().size(); i++) {
             PointBreak aPB = (PointBreak) ls.getLegendBreaks().get(i);
             aPB.setSize(10);
@@ -2322,7 +2322,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(layerName);
         aLS.setFieldName(columnName);
         aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.POINT));
-        aLayer.setLayerDrawType(LayerDrawType.Vector);
+        aLayer.setLayerDrawType(LayerDrawType.VECTOR);
 
         return aLayer;
     }
@@ -2432,7 +2432,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(layerName);
         aLS.setFieldName(columnName);
         aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.POINT));
-        aLayer.setLayerDrawType(LayerDrawType.Vector);
+        aLayer.setLayerDrawType(LayerDrawType.VECTOR);
 
         return aLayer;
     }
@@ -2537,7 +2537,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(layerName);
         aLS.setFieldName(columnName);
         aLayer.setLegendScheme(aLS.convertTo(ShapeTypes.POINT));
-        aLayer.setLayerDrawType(LayerDrawType.Barb);
+        aLayer.setLayerDrawType(LayerDrawType.BARB);
 
         return aLayer;
     }
@@ -2639,7 +2639,7 @@ public class DrawMeteoData {
             }
         }
         aLayer.setLegendScheme(ls);
-        aLayer.setLayerDrawType(LayerDrawType.Vector);
+        aLayer.setLayerDrawType(LayerDrawType.VECTOR);
 
         return aLayer;
     }
@@ -2656,7 +2656,7 @@ public class DrawMeteoData {
      */
     public static VectorLayer createSTBarbLayer(StationData uData, StationData vData, StationData stData,
                                                 String layerName, boolean isUV) {
-        LegendScheme ls = LegendManage.createLegendSchemeFromStationData(stData, LegendType.GraduatedColor, ShapeTypes.POINT);
+        LegendScheme ls = LegendManage.createLegendSchemeFromStationData(stData, LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
         for (int i = 0; i < ls.getLegendBreaks().size(); i++) {
             PointBreak aPB = (PointBreak) ls.getLegendBreaks().get(i);
             aPB.setSize(10);
@@ -2756,7 +2756,7 @@ public class DrawMeteoData {
             }
         }
         aLayer.setLegendScheme(ls);
-        aLayer.setLayerDrawType(LayerDrawType.Barb);
+        aLayer.setLayerDrawType(LayerDrawType.BARB);
 
         return aLayer;
     }
@@ -2856,7 +2856,7 @@ public class DrawMeteoData {
             }
         }
         aLayer.setLegendScheme(ls);
-        aLayer.setLayerDrawType(LayerDrawType.Barb);
+        aLayer.setLayerDrawType(LayerDrawType.BARB);
 
         return aLayer;
     }
@@ -2981,7 +2981,7 @@ public class DrawMeteoData {
         aLS.setFieldName("");
         aLayer.setLegendScheme(aLS);
         aLayer.setAvoidCollision(true);
-        aLayer.setLayerDrawType(LayerDrawType.StationModel);
+        aLayer.setLayerDrawType(LayerDrawType.STATION_MODEL);
 
         return aLayer;
     }
@@ -3071,7 +3071,7 @@ public class DrawMeteoData {
         aLayer.setLayerName(layerName);
         aLS.setFieldName(columnName);
         aLayer.setLegendScheme(aLS);
-        aLayer.setLayerDrawType(LayerDrawType.StationPoint);
+        aLayer.setLayerDrawType(LayerDrawType.STATION_POINT);
 
         return aLayer;
     }
@@ -3086,10 +3086,10 @@ public class DrawMeteoData {
      */
     public static LegendScheme createWeatherLegendScheme(List<Integer> wList, int size, Color color) {
         LegendScheme aLS = new LegendScheme(ShapeTypes.POINT);
-        aLS.setLegendType(LegendType.UniqueValue);
+        aLS.setLegendType(LegendType.UNIQUE_VALUE);
         for (int w : wList) {
             PointBreak aPB = new PointBreak();
-            aPB.setMarkerType(MarkerType.Character);
+            aPB.setMarkerType(MarkerType.CHARACTER);
             aPB.setSize(size);
             aPB.setColor(color);
             aPB.setFontName("Weather");
@@ -3170,11 +3170,11 @@ public class DrawMeteoData {
      */
     public static LegendScheme createCloudLegendScheme(int size, Color color) {
         LegendScheme aLS = new LegendScheme(ShapeTypes.POINT);
-        aLS.setLegendType(LegendType.UniqueValue);
+        aLS.setLegendType(LegendType.UNIQUE_VALUE);
         int[] clouds = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         for (int w : clouds) {
             PointBreak aPB = new PointBreak();
-            aPB.setMarkerType(MarkerType.Character);
+            aPB.setMarkerType(MarkerType.CHARACTER);
             aPB.setSize(size);
             aPB.setColor(color);
             aPB.setFontName("Weather");

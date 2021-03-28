@@ -82,8 +82,8 @@ public class LayoutLegend extends LayoutElement {
      */
     public LayoutLegend(MapLayout mapLayout, LayoutMap layoutMap) {
         super();
-        this.setElementType(ElementType.LayoutLegend);
-        this.setResizeAbility(ResizeAbility.ResizeAll);
+        this.setElementType(ElementType.LEGEND);
+        this.setResizeAbility(ResizeAbility.RESIZE_ALL);
 
         _mapLayout = mapLayout;
         _layoutMap = layoutMap;
@@ -95,8 +95,8 @@ public class LayoutLegend extends LayoutElement {
         });
         _isAntiAlias = true;
         this.forceDrawOutline = true;
-        _layerUpdateType = LayerUpdateTypes.FirstMeteoLayer;
-        _legendStyle = LegendStyles.Normal;
+        _layerUpdateType = LayerUpdateTypes.FIRST_METEO_LAYER;
+        _legendStyle = LegendStyles.NORMAL;
         _title = "";
         _drawNeatLine = false;
         _neatLineColor = Color.black;
@@ -118,12 +118,12 @@ public class LayoutLegend extends LayoutElement {
         }
 
         switch (_layerUpdateType) {
-            case FirstExpandedLayer:
+            case FIRST_EXPANDED_LAYER:
                 for (int i = 0; i < _layoutMap.getMapFrame().getMapView().getLayerNum(); i++) {
                     MapLayer aLayer = _layoutMap.getMapFrame().getMapView().getLayers().
                             get(_layoutMap.getMapFrame().getMapView().getLayerNum() - 1 - i);
                     if (aLayer.hasLegendScheme()) {
-                        if (aLayer.isVisible() && aLayer.isExpanded() && aLayer.getLegendScheme().getLegendType() != LegendType.SingleSymbol) {
+                        if (aLayer.isVisible() && aLayer.isExpanded() && aLayer.getLegendScheme().getLegendType() != LegendType.SINGLE_SYMBOL) {
                             this.setVisible(true);
                             this.setLegendLayer(aLayer);
                             break;
@@ -131,13 +131,13 @@ public class LayoutLegend extends LayoutElement {
                     }
                 }
                 break;
-            case FirstMeteoLayer:
+            case FIRST_METEO_LAYER:
                 for (int i = 0; i < _layoutMap.getMapFrame().getMapView().getLayerNum(); i++) {
                     MapLayer aLayer = _layoutMap.getMapFrame().getMapView().getLayers().
                             get(_layoutMap.getMapFrame().getMapView().getLayerNum() - 1 - i);
                     if (aLayer.hasLegendScheme()) {
-                        if (aLayer.isVisible() && aLayer.getLayerDrawType() != LayerDrawType.Map
-                                && aLayer.getLegendScheme().getLegendType() != LegendType.SingleSymbol) {
+                        if (aLayer.isVisible() && aLayer.getLayerDrawType() != LayerDrawType.MAP
+                                && aLayer.getLegendScheme().getLegendType() != LegendType.SINGLE_SYMBOL) {
                             this.setVisible(true);
                             this.setLegendLayer(aLayer);
                             break;
@@ -145,7 +145,7 @@ public class LayoutLegend extends LayoutElement {
                     }
                 }
                 break;
-            case LastAddedLayer:
+            case LAST_ADDED_LAYER:
                 if (_layoutMap.getMapFrame().getMapView().getLastAddedLayer().hasLegendScheme()) {
                     this.setVisible(true);
                     this.setLegendLayer(_layoutMap.getMapFrame().getMapView().getLastAddedLayer());
@@ -438,7 +438,7 @@ public class LayoutLegend extends LayoutElement {
             return;
         }
 
-        if (_legendLayer.getLayerType() == LayerTypes.ImageLayer) {
+        if (_legendLayer.getLayerType() == LayerTypes.IMAGE_LAYER) {
             return;
         }
 
@@ -460,21 +460,21 @@ public class LayoutLegend extends LayoutElement {
 
         int gap = this.getTickGap(g);
         switch (_legendStyle) {
-            case Bar_Horizontal:
+            case BAR_HORIZONTAL:
                 if (gap > 1) {
                     drawHorizontalBarLegend_Ex(g, zoom);
                 } else {
                     drawHorizontalBarLegend(g, zoom);
                 }
                 break;
-            case Bar_Vertical:
+            case BAR_VERTICAL:
                 if (gap > 1) {
                     drawVerticalBarLegend_Ex(g, zoom);
                 } else {
                     drawVerticalBarLegend(g, zoom);
                 }
                 break;
-            case Normal:
+            case NORMAL:
                 drawNormalLegend(g, zoom);
                 break;
         }
@@ -499,10 +499,10 @@ public class LayoutLegend extends LayoutElement {
         aPoint.X = 5;
         aPoint.Y += aCB.getHeight();
         switch (aCB.getChartType()) {
-            case BarChart:
+            case BAR_CHART:
                 Draw.drawBarChartSymbol(aPoint, aCB, g, true);
                 break;
-            case PieChart:
+            case PIE_CHART:
                 if (this.drawChartBreaks) {
                     Draw.drawPieChartSymbol(aPoint, aCB, g, null);
                 } else {
@@ -526,7 +526,7 @@ public class LayoutLegend extends LayoutElement {
 
     private void drawNormalLegend(Graphics2D g, float zoom) {
         boolean drawChart = false;
-        if (_legendLayer.getLayerType() == LayerTypes.VectorLayer) {
+        if (_legendLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             if (((VectorLayer) _legendLayer).getChartSet().isDrawCharts()) {
                 drawChart = true;
             }
@@ -658,7 +658,7 @@ public class LayoutLegend extends LayoutElement {
         double len;
         int n = this._legendLayer.getLegendScheme().getBreakNum();
         int nn;
-        if (this.getLegendStyle() == LegendStyles.Bar_Horizontal) {
+        if (this.getLegendStyle() == LegendStyles.BAR_HORIZONTAL) {
             len = this.getWidth();
             int labLen = this.getLabelWidth(g);
             nn = (int) ((len * 0.8) / labLen);
@@ -718,7 +718,7 @@ public class LayoutLegend extends LayoutElement {
                     DrawShape = aPB.isDrawShape();
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
-                    if (aLS.getLegendType() == LegendType.UniqueValue) {
+                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = aPB.getCaption();
                     } else if (!order) {
                         caption = DataConvert.removeTailingZeros(aPB.getEndValue().toString());
@@ -731,7 +731,7 @@ public class LayoutLegend extends LayoutElement {
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.getDrawPolyline();
                     FillColor = aPLB.getColor();
-                    if (aLS.getLegendType() == LegendType.UniqueValue) {
+                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = aPLB.getCaption();
                     } else if (!order) {
                         caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());
@@ -744,7 +744,7 @@ public class LayoutLegend extends LayoutElement {
                     DrawShape = aPGB.isDrawShape();
                     DrawFill = aPGB.isDrawFill();
                     FillColor = aPGB.getColor();
-                    if (aLS.getLegendType() == LegendType.UniqueValue) {
+                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = aPGB.getCaption();
                     } else if (!order) {
                         caption = DataConvert.removeTailingZeros(aPGB.getEndValue().toString());
@@ -757,7 +757,7 @@ public class LayoutLegend extends LayoutElement {
                     DrawShape = true;
                     DrawFill = true;
                     FillColor = aCB.getColor();
-                    if (aLS.getLegendType() == LegendType.UniqueValue) {
+                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = aCB.getCaption();
                     } else if (!order) {
                         caption = DataConvert.removeTailingZeros(aCB.getEndValue().toString());
@@ -770,7 +770,7 @@ public class LayoutLegend extends LayoutElement {
             aP.X = width / 2;
             aP.Y = i * height + height / 2;
 
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 if (DrawShape) {
                     if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
@@ -878,7 +878,7 @@ public class LayoutLegend extends LayoutElement {
         List<Integer> labelIdxs = new ArrayList<>();
         int sIdx = (bNum % tickGap) / 2;
         int labNum = bNum - 1;
-        if (aLS.getLegendType() == LegendType.UniqueValue) {
+        if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
             labNum += 1;
         }
         while (sIdx < labNum) {
@@ -943,7 +943,7 @@ public class LayoutLegend extends LayoutElement {
             aP.X = width / 2;
             aP.Y = i * height + height / 2;
 
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 if (DrawShape) {
                     if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
@@ -1014,7 +1014,7 @@ public class LayoutLegend extends LayoutElement {
 
         //Draw neatline
         g.setColor(Color.black);
-        if (aLS.getLegendType() == LegendType.UniqueValue) {
+        if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
             g.draw(new Rectangle.Float(0, 0, this._vBarWidth, this._hBarHeight * bNum));
         } else {
             Polygon p = new Polygon();
@@ -1043,7 +1043,7 @@ public class LayoutLegend extends LayoutElement {
                 idx = bNum - i - 1;
             }
             ColorBreak cb = aLS.getLegendBreaks().get(idx);
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 caption = cb.getCaption();
             } else {
                 caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
@@ -1052,7 +1052,7 @@ public class LayoutLegend extends LayoutElement {
             aP.X = _vBarWidth / 2;
             aP.Y = aP.Y - _hBarHeight;
 
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 if (labelIdxs.contains(idx)) {
                     sP.X = aP.X + _vBarWidth / 2 + 5;
                     sP.Y = aP.Y;
@@ -1108,7 +1108,7 @@ public class LayoutLegend extends LayoutElement {
                     DrawShape = aPB.isDrawShape();
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
-                    if (aLS.getLegendType() == LegendType.UniqueValue) {
+                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = aPB.getCaption();
                     } else {
                         caption = DataConvert.removeTailingZeros(aPB.getEndValue().toString());
@@ -1119,7 +1119,7 @@ public class LayoutLegend extends LayoutElement {
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                     DrawShape = aPLB.getDrawPolyline();
                     FillColor = aPLB.getColor();
-                    if (aLS.getLegendType() == LegendType.UniqueValue) {
+                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = aPLB.getCaption();
                     } else {
                         caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());
@@ -1130,7 +1130,7 @@ public class LayoutLegend extends LayoutElement {
                     DrawShape = aPGB.isDrawShape();
                     DrawFill = aPGB.isDrawFill();
                     FillColor = aPGB.getColor();
-                    if (aLS.getLegendType() == LegendType.UniqueValue) {
+                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = aPGB.getCaption();
                     } else {
                         caption = DataConvert.removeTailingZeros(aPGB.getEndValue().toString());
@@ -1141,7 +1141,7 @@ public class LayoutLegend extends LayoutElement {
                     DrawShape = true;
                     DrawFill = true;
                     FillColor = aCB.getColor();
-                    if (aLS.getLegendType() == LegendType.UniqueValue) {
+                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = aCB.getCaption();
                     } else {
                         caption = DataConvert.removeTailingZeros(aCB.getEndValue().toString());
@@ -1152,7 +1152,7 @@ public class LayoutLegend extends LayoutElement {
             aP.X = i * width + width / 2;
             aP.Y = height / 2;
 
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 if (DrawShape) {
                     if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i).clone();
@@ -1261,7 +1261,7 @@ public class LayoutLegend extends LayoutElement {
         List<Integer> labelIdxs = new ArrayList<>();
         int sIdx = (bNum % tickGap) / 2;
         int labNum = bNum - 1;
-        if (aLS.getLegendType() == LegendType.UniqueValue) {
+        if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
             labNum += 1;
         }
         while (sIdx < labNum) {
@@ -1308,7 +1308,7 @@ public class LayoutLegend extends LayoutElement {
             aP.X = i * width + width / 2;
             aP.Y = height / 2;
 
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 if (DrawShape) {
                     if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i).clone();
@@ -1379,7 +1379,7 @@ public class LayoutLegend extends LayoutElement {
 
         //Draw neatline
         g.setColor(Color.black);
-        if (aLS.getLegendType() == LegendType.UniqueValue) {
+        if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
             g.draw(new Rectangle.Float(0, 0, width * bNum, height));
         } else {
             float extendw = width;
@@ -1406,7 +1406,7 @@ public class LayoutLegend extends LayoutElement {
         for (int i = 0; i < bNum; i++) {
             idx = i;
             ColorBreak cb = aLS.getLegendBreaks().get(idx);
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 caption = cb.getCaption();
             } else {
                 caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
@@ -1415,7 +1415,7 @@ public class LayoutLegend extends LayoutElement {
             aP.X += width;
             aP.Y = height / 2;
 
-            if (aLS.getLegendType() == LegendType.UniqueValue) {
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 if (labelIdxs.contains(idx)) {
                     sP.X = aP.X;
                     sP.Y = aP.Y + height / 2 + 5;
@@ -1450,7 +1450,7 @@ public class LayoutLegend extends LayoutElement {
         Dimension aSF;
         int bNum = aLS.getBreakNum();
         FontMetrics metrics = g.getFontMetrics(_font);
-        if (_legendStyle == LegendStyles.Normal) {
+        if (_legendStyle == LegendStyles.NORMAL) {
             aSF = new Dimension(metrics.stringWidth(_title), metrics.getHeight());
             width = aSF.width;
         } else if (aLS.getLegendBreaks().get(bNum - 1).isNoData()) {
@@ -1460,7 +1460,7 @@ public class LayoutLegend extends LayoutElement {
             switch (aLS.getShapeType()) {
                 case POINT:
                     PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(i);
-                    if (aLS.getLegendType() == LegendType.GraduatedColor && _legendStyle != LegendStyles.Normal) {
+                    if (aLS.getLegendType() == LegendType.GRADUATED_COLOR && _legendStyle != LegendStyles.NORMAL) {
                         caption = DataConvert.removeTailingZeros(aPB.getEndValue().toString());
                     } else {
                         caption = aPB.getCaption();
@@ -1468,7 +1468,7 @@ public class LayoutLegend extends LayoutElement {
                     break;
                 case POLYLINE:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
-                    if (aLS.getLegendType() == LegendType.GraduatedColor && _legendStyle != LegendStyles.Normal) {
+                    if (aLS.getLegendType() == LegendType.GRADUATED_COLOR && _legendStyle != LegendStyles.NORMAL) {
                         caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());
                     } else {
                         caption = aPLB.getCaption();
@@ -1476,7 +1476,7 @@ public class LayoutLegend extends LayoutElement {
                     break;
                 case POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i);
-                    if (aLS.getLegendType() == LegendType.GraduatedColor && _legendStyle != LegendStyles.Normal) {
+                    if (aLS.getLegendType() == LegendType.GRADUATED_COLOR && _legendStyle != LegendStyles.NORMAL) {
                         caption = DataConvert.removeTailingZeros(aPGB.getEndValue().toString());
                     } else {
                         caption = aPGB.getCaption();
@@ -1484,7 +1484,7 @@ public class LayoutLegend extends LayoutElement {
                     break;
                 case IMAGE:
                     ColorBreak aCB = aLS.getLegendBreaks().get(i);
-                    if (aLS.getLegendType() == LegendType.GraduatedColor && _legendStyle != LegendStyles.Normal) {
+                    if (aLS.getLegendType() == LegendType.GRADUATED_COLOR && _legendStyle != LegendStyles.NORMAL) {
                         caption = DataConvert.removeTailingZeros(aCB.getEndValue().toString());
                     } else {
                         caption = aCB.getCaption();
@@ -1494,8 +1494,8 @@ public class LayoutLegend extends LayoutElement {
 
             boolean isValid = true;
             switch (aLS.getLegendType()) {
-                case GraduatedColor:
-                    if (_legendStyle != LegendStyles.Normal) {
+                case GRADUATED_COLOR:
+                    if (_legendStyle != LegendStyles.NORMAL) {
                         if (i == bNum - 1) {
                             isValid = false;
                         }
@@ -1510,11 +1510,11 @@ public class LayoutLegend extends LayoutElement {
             }
         }
 
-        if (_legendStyle == LegendStyles.Normal) {
-            if (_legendLayer.getLayerType() == LayerTypes.VectorLayer) {
+        if (_legendStyle == LegendStyles.NORMAL) {
+            if (_legendLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                 if (((VectorLayer) _legendLayer).getChartSet().isDrawCharts()) {
                     ChartBreak aCB = ((ChartBreak) ((VectorLayer) _legendLayer).getChartPoints().get(0).getLegend()).getSampleChartBreak();
-                    if (aCB.getChartType() == ChartTypes.BarChart) {
+                    if (aCB.getChartType() == ChartTypes.BAR_CHART) {
                         LegendScheme ls = aCB.getLegendScheme();
                         for (ColorBreak cb : ls.getLegendBreaks()) {
                             float labwidth = metrics.stringWidth(cb.getCaption());
@@ -1551,7 +1551,7 @@ public class LayoutLegend extends LayoutElement {
      * Update legend control size
      */
     public void updateLegendSize() {
-        if (this._legendStyle != LegendStyles.Normal) {
+        if (this._legendStyle != LegendStyles.NORMAL) {
             return;
         }
 
@@ -1572,7 +1572,7 @@ public class LayoutLegend extends LayoutElement {
             int h = this.getHeight();
             int nw, nh;
             switch (_legendStyle) {
-                case Bar_Vertical:
+                case BAR_VERTICAL:
                     nw = 10 + getLabelWidth(g) + 5;
                     nh = bNum * 20;
                     if (nw > w) {
@@ -1582,7 +1582,7 @@ public class LayoutLegend extends LayoutElement {
                         this.setHeight(bNum * 20);
                     }
                     break;
-                case Bar_Horizontal:
+                case BAR_HORIZONTAL:
                     nw = bNum * 30;
                     nh = 30;
                     if (nw > w) {
@@ -1592,7 +1592,7 @@ public class LayoutLegend extends LayoutElement {
                         this.setHeight(bNum * 20);
                     }
                     break;
-                case Normal:
+                case NORMAL:
                     int aHeight = getBreakHeight(g);
                     int colWidth = aHeight * 2 + getLabelWidth(g) + 15;
                     this.setWidth(colWidth * _columnNum);
@@ -1610,7 +1610,7 @@ public class LayoutLegend extends LayoutElement {
 
                     this.setHeight((int) (rowNums[0] * (aHeight + _breakSpace)
                             + getTitleHeight(g) + _breakSpace * 2 + aHeight / 2 + 5));
-                    if (_legendLayer.getLayerType() == LayerTypes.VectorLayer) {
+                    if (_legendLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                         VectorLayer aLayer = (VectorLayer) _legendLayer;
                         if (aLayer.getChartSet().isDrawCharts()) {
                             ChartBreak aCB = ((ChartBreak) aLayer.getChartPoints().get(0).getLegend()).getSampleChartBreak();
@@ -1651,7 +1651,7 @@ public class LayoutLegend extends LayoutElement {
     public static List<String> getLayerNames() {
         List<String> layerNames = new ArrayList<>();
         for (MapLayer aLayer : _layoutMap.getMapFrame().getMapView().getLayers()) {
-            if (aLayer.getLayerType() == LayerTypes.VectorLayer || aLayer.getLayerType() == LayerTypes.RasterLayer) {
+            if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER || aLayer.getLayerType() == LayerTypes.RASTER_LAYER) {
                 layerNames.add(aLayer.getLayerName());
             }
         }

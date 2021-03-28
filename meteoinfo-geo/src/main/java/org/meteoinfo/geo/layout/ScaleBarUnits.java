@@ -19,36 +19,13 @@ package org.meteoinfo.geo.layout;
  * @author Yaqiang Wang
  */
 public enum ScaleBarUnits {
-    /// <summary>
-    /// Kilometers
-    /// </summary>
+
     KILOMETERS,
-    /// <summary>
-    /// Meters
-    /// </summary>
     METERS,
-    /// <summary>
-    /// Centimeters
-    /// </summary>
     CENTIMETERS,
-    /// <summary>
-    /// Millimeters
-    /// </summary>
     MILLIMETERS,
-    /// <summary>
-    /// Miles
-    /// </summary>
     MILES,
-    /// <summary>
-    /// Yards
-    /// </summary>
     YARDS,
-    /// <summary>
-    /// Feet
-    /// </summary>
     FEET,
-    /// <summary>
-    /// Inches
-    /// </summary>
     INCHES
 }

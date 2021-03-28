@@ -295,7 +295,7 @@ public class FrmAddXYData extends javax.swing.JDialog {
 
                 //New layer
                 VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
-                aLayer.setLayerDrawType(LayerDrawType.Map);
+                aLayer.setLayerDrawType(LayerDrawType.MAP);
                 aLayer.setLayerName(aFile.getName());
                 aLayer.setFileName(fileName);
                 aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.black, 5));

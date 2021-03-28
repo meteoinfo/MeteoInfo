@@ -19,12 +19,6 @@ package org.meteoinfo.geo.layout;
  * @author Yaqiang Wang
  */
 public enum NorthArrowType {
-    /// <summary>
-    /// North arrow 1
-    /// </summary>
-    NORTHARROW_1,
-    /// <summary>
-    /// North arrow 2
-    /// </summary>
-    NORTHARROW_2,
+    NORTH_ARROW_1,
+    NORTH_ARROW_2,
 }

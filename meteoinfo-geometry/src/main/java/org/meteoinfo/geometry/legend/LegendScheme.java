@@ -47,7 +47,7 @@ package org.meteoinfo.geometry.legend;
      // <editor-fold desc="Variables">
 
      private String fieldName = "";
-     private LegendType legendType = LegendType.SingleSymbol;
+     private LegendType legendType = LegendType.SINGLE_SYMBOL;
      private ShapeTypes shapeType;
      private List<ColorBreak> legendBreaks;
      private boolean hasNoData;
@@ -112,13 +112,13 @@ package org.meteoinfo.geometry.legend;
          this.legendBreaks = lbs;
          ColorBreak lb = lbs.get(0);
          switch (lb.getBreakType()){
-             case PointBreak:
+             case POINT_BREAK:
                  this.shapeType = ShapeTypes.POINT;
                  break;
-             case PolylineBreak:
+             case POLYLINE_BREAK:
                  this.shapeType = ShapeTypes.POLYLINE;
                  break;
-             case PolygonBreak:
+             case POLYGON_BREAK:
                  this.shapeType = ShapeTypes.POLYGON;
                  break;
              default:
@@ -126,12 +126,12 @@ package org.meteoinfo.geometry.legend;
                  break;
          }
          if (lbs.size() == 1)
-             this.legendType = LegendType.SingleSymbol;
+             this.legendType = LegendType.SINGLE_SYMBOL;
          else {
              if (lbs.get(0).getStartValue() == lbs.get(0).getEndValue())
-                 this.legendType = LegendType.UniqueValue;
+                 this.legendType = LegendType.UNIQUE_VALUE;
              else
-                 this.legendType = LegendType.GraduatedColor;
+                 this.legendType = LegendType.GRADUATED_COLOR;
          }
      }
      // </editor-fold>
@@ -179,7 +179,7 @@ package org.meteoinfo.geometry.legend;
       */
      public void setLegendType(LegendType lt) {
          legendType = lt;
-         if (lt == LegendType.UniqueValue)
+         if (lt == LegendType.UNIQUE_VALUE)
              this.updateUniqueValueMap();
      }
 
@@ -207,22 +207,22 @@ package org.meteoinfo.geometry.legend;
       * @return The break type
       */
      public BreakTypes getBreakType() {
-         BreakTypes breakType = BreakTypes.ColorBreak;
+         BreakTypes breakType = BreakTypes.COLOR_BREAK;
          switch (this.shapeType) {
              case POINT:
              case POINT_M:
              case POINT_Z:
-                 breakType = BreakTypes.PointBreak;
+                 breakType = BreakTypes.POINT_BREAK;
                  break;
              case POLYLINE:
              case POLYLINE_M:
              case POLYLINE_Z:
-                 breakType = BreakTypes.PolylineBreak;
+                 breakType = BreakTypes.POLYLINE_BREAK;
                  break;
              case POLYGON:
              case POLYGON_M:
              case POLYGON_Z:
-                 breakType = BreakTypes.PolygonBreak;
+                 breakType = BreakTypes.POLYGON_BREAK;
                  break;
          }
          return breakType;
@@ -262,7 +262,7 @@ package org.meteoinfo.geometry.legend;
       */
      public void setLegendBreaks(List<ColorBreak> breaks) {
          legendBreaks = breaks;
-         if (this.legendType == LegendType.UniqueValue)
+         if (this.legendType == LegendType.UNIQUE_VALUE)
              this.updateUniqueValueMap();
      }
 
@@ -395,7 +395,7 @@ package org.meteoinfo.geometry.legend;
       */
      public void addLegendBreak(ColorBreak lb){
          this.legendBreaks.add(lb);
-         if (this.legendType == LegendType.UniqueValue)
+         if (this.legendType == LegendType.UNIQUE_VALUE)
              this.updateUniqueValueMap();
      }
 
@@ -405,7 +405,7 @@ package org.meteoinfo.geometry.legend;
       */
      public void addLegendBreak(List<ColorBreak> lb){
          this.legendBreaks.addAll(lb);
-         if (this.legendType == LegendType.UniqueValue)
+         if (this.legendType == LegendType.UNIQUE_VALUE)
              this.updateUniqueValueMap();
      }
 
@@ -430,9 +430,9 @@ package org.meteoinfo.geometry.legend;
       */
      public ColorBreak findLegendBreak(Number v){
          switch (this.legendType) {
-             case SingleSymbol:
+             case SINGLE_SYMBOL:
                  return this.legendBreaks.get(0);
-             case UniqueValue:
+             case UNIQUE_VALUE:
                  if (this.uniqueValueMap == null || this.uniqueValueMap.size() != this.legendBreaks.size())
                      this.updateUniqueValueMap();
                  if (this.uniqueValueMap.containsKey(v)) {
@@ -1099,7 +1099,7 @@ package org.meteoinfo.geometry.legend;
          if (LSNode.getAttributes().getNamedItem("FieldName") != null) {
              fieldName = LSNode.getAttributes().getNamedItem("FieldName").getNodeValue();
          }
-         legendType = LegendType.valueOf(LSNode.getAttributes().getNamedItem("LegendType").getNodeValue());
+         legendType = LegendType.valueOfBack(LSNode.getAttributes().getNamedItem("LegendType").getNodeValue());
          ShapeTypes aShapeType = ShapeTypes.valueOfBack(LSNode.getAttributes().getNamedItem("ShapeType").getNodeValue());
 
          //BreakNum = Convert.ToInt32(LSNode.Attributes["BreakNum"].InnerText);
@@ -1136,8 +1136,8 @@ package org.meteoinfo.geometry.legend;
                              aPB.setNoData(Boolean.parseBoolean(brk.getAttributes().getNamedItem("IsNoData").getNodeValue()));
                              aPB.setOutlineColor(ColorUtil.parseToColor(brk.getAttributes().getNamedItem("OutlineColor").getNodeValue()));
                              aPB.setSize(Float.parseFloat(brk.getAttributes().getNamedItem("Size").getNodeValue()));
-                             aPB.setStyle(PointStyle.valueOf(brk.getAttributes().getNamedItem("Style").getNodeValue()));
-                             aPB.setMarkerType(MarkerType.valueOf(brk.getAttributes().getNamedItem("MarkerType").getNodeValue()));
+                             aPB.setStyle(PointStyle.valueOfBack(brk.getAttributes().getNamedItem("Style").getNodeValue()));
+                             aPB.setMarkerType(MarkerType.valueOfBack(brk.getAttributes().getNamedItem("MarkerType").getNodeValue()));
                              aPB.setFontName(brk.getAttributes().getNamedItem("FontName").getNodeValue());
                              aPB.setCharIndex(Integer.parseInt(brk.getAttributes().getNamedItem("CharIndex").getNodeValue()));
                              aPB.setImagePath(brk.getAttributes().getNamedItem("ImagePath").getNodeValue());
@@ -1164,10 +1164,10 @@ package org.meteoinfo.geometry.legend;
                              aPLB.setColor(ColorUtil.parseToColor(brk.getAttributes().getNamedItem("Color").getNodeValue()));
                              aPLB.setDrawPolyline(Boolean.parseBoolean(brk.getAttributes().getNamedItem("DrawShape").getNodeValue()));
                              aPLB.setWidth(Float.parseFloat(brk.getAttributes().getNamedItem("Size").getNodeValue()));
-                             aPLB.setStyle(LineStyles.valueOf(brk.getAttributes().getNamedItem("Style").getNodeValue().toUpperCase()));
+                             aPLB.setStyle(LineStyles.valueOfBack(brk.getAttributes().getNamedItem("Style").getNodeValue().toUpperCase()));
                              aPLB.setDrawSymbol(Boolean.parseBoolean(brk.getAttributes().getNamedItem("DrawSymbol").getNodeValue()));
                              aPLB.setSymbolSize(Float.parseFloat(brk.getAttributes().getNamedItem("SymbolSize").getNodeValue()));
-                             aPLB.setSymbolStyle(PointStyle.valueOf(brk.getAttributes().getNamedItem("SymbolStyle").getNodeValue()));
+                             aPLB.setSymbolStyle(PointStyle.valueOfBack(brk.getAttributes().getNamedItem("SymbolStyle").getNodeValue()));
                              aPLB.setSymbolColor(ColorUtil.parseToColor(brk.getAttributes().getNamedItem("SymbolColor").getNodeValue()));
                              aPLB.setSymbolInterval(Integer.parseInt(brk.getAttributes().getNamedItem("SymbolInterval").getNodeValue()));
                              if (brk.getAttributes().getNamedItem("FillSymbol") != null) {
@@ -1357,7 +1357,7 @@ package org.meteoinfo.geometry.legend;
              File aFile = new File(filePath);
              sr = new BufferedReader(new FileReader(aFile));
              this.shapeType = ShapeTypes.IMAGE;
-             this.legendType = LegendType.UniqueValue;
+             this.legendType = LegendType.UNIQUE_VALUE;
              this.legendBreaks = new ArrayList<>();
              ColorBreak aCB;
              String[] dataArray;
@@ -1404,7 +1404,7 @@ package org.meteoinfo.geometry.legend;
              File aFile = new File(filePath);
              sr = new BufferedReader(new FileReader(aFile));
              this.shapeType = ShapeTypes.IMAGE;
-             this.legendType = LegendType.GraduatedColor;
+             this.legendType = LegendType.GRADUATED_COLOR;
              this.legendBreaks = new ArrayList<>();
              List<Color> colorList = new ArrayList<>();
              List<Integer> values = new ArrayList<>();

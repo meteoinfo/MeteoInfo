@@ -187,7 +187,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
         PDEF = new PDEFS();
         //ProjInfo = KnownCoordinateSystems.geographic.world.WGS1984;
         EarthWind = true;
-        this.setDataType(MeteoDataType.GrADS_Grid);
+        this.setDataType(MeteoDataType.GRADS_GRID);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -376,7 +376,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         //goto ERROR;
                     }
                     if (DTYPE.toUpperCase().equals("STATION")) {
-                        this.setDataType(MeteoDataType.GrADS_Station);
+                        this.setDataType(MeteoDataType.GRADS_STATION);
                     }
                     Attribute attr = new Attribute("data_type", this.DTYPE);
                     this.addAttribute(attr);
@@ -909,7 +909,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         }
                         aVar.setDimension(this.getYDimension());
                         aVar.setDimension(this.getXDimension());
-                        if (this.getDataType() == MeteoDataType.GrADS_Station) {
+                        if (this.getDataType() == MeteoDataType.GRADS_STATION) {
                             aVar.setStation(true);
                         }
                         aVar.setFillValue(this.getMissingValue());

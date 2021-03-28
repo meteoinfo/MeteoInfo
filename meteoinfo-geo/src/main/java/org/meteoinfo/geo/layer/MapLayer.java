@@ -24,14 +24,14 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
   *
   * @author Yaqiang Wang
   */
- public class MapLayer implements Cloneable {
+ public abstract class MapLayer implements Cloneable {
      // <editor-fold desc="Variables">
  
-     private LayerTypes _layerType;
-     private ShapeTypes _shapeType;
-     private int _handle;
-     private String _layerName;
-     private String _fileName;
+     protected LayerTypes _layerType;
+     protected ShapeTypes _shapeType;
+     protected int _handle;
+     protected String _layerName;
+     protected String _fileName;
      protected ProjectionInfo _projInfo;
      private Extent _extent;
      private boolean _visible;
@@ -58,7 +58,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
          _isMaskout = false;
          _expanded = false;
          _transparencyPerc = 0;
-         _layerDrawType = LayerDrawType.Map;
+         _layerDrawType = LayerDrawType.MAP;
          _tag = "";
          _visibleScale = new VisibleScale();
      }
@@ -72,15 +72,6 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
       */
      public LayerTypes getLayerType() {
          return _layerType;
-     }
- 
-     /**
-      * Set layer type
-      *
-      * @param lt Layer type
-      */
-     public void setLayerType(LayerTypes lt) {
-         _layerType = lt;
      }
  
      /**

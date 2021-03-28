@@ -1055,7 +1055,7 @@ public class Draw {
     public static void drawPoint(PointStyle aPS, PointF aP, Color color, Color outlineColor,
             float aSize, Boolean drawOutline, Boolean drawFill, Graphics2D g) {
         PointBreak aPB = new PointBreak();
-        aPB.setMarkerType(MarkerType.Simple);
+        aPB.setMarkerType(MarkerType.SIMPLE);
         aPB.setStyle(aPS);
         aPB.setColor(color);
         aPB.setOutlineColor(outlineColor);
@@ -1080,13 +1080,13 @@ public class Draw {
             if (aP.X >= clip.x && aP.X <= clip.x + clip.width && aP.Y >= clip.y
                     && aP.Y <= clip.y + clip.height) {
                 switch (aPB.getMarkerType()) {
-                    case Simple:
+                    case SIMPLE:
                         drawPoint_Simple(aP, aPB, g);
                         break;
-                    case Character:
+                    case CHARACTER:
                         drawPoint_Character(aP, aPB, g);
                         break;
-                    case Image:
+                    case IMAGE:
                         drawPoint_Image(aP, aPB, g);
                         break;
                 }
@@ -1094,13 +1094,13 @@ public class Draw {
             g.setClip(clip);
         } else {
             switch (aPB.getMarkerType()) {
-                case Simple:
+                case SIMPLE:
                     drawPoint_Simple(aP, aPB, g);
                     break;
-                case Character:
+                case CHARACTER:
                     drawPoint_Character(aP, aPB, g);
                     break;
-                case Image:
+                case IMAGE:
                     drawPoint_Image(aP, aPB, g);
                     break;
             }
@@ -1116,13 +1116,13 @@ public class Draw {
      */
     public static void drawMapPoint(PointF aP, PointBreak aPB, Graphics2D g) {
         switch (aPB.getMarkerType()) {
-            case Simple:
+            case SIMPLE:
                 drawPoint_Simple(aP, aPB, g);
                 break;
-            case Character:
+            case CHARACTER:
                 drawPoint_Character(aP, aPB, g);
                 break;
-            case Image:
+            case IMAGE:
                 drawPoint_Image(aP, aPB, g);
                 break;
         }
@@ -1154,7 +1154,7 @@ public class Draw {
         GeneralPath path = new GeneralPath();
 
         switch (aPB.getStyle()) {
-            case Circle:
+            case CIRCLE:
                 aP.X = aP.X - aSize / 2.f;
                 aP.Y = aP.Y - aSize / 2.f;
                 Ellipse2D ellipse = new Ellipse2D.Float(aP.X, aP.Y, aSize, aSize);
@@ -1190,7 +1190,7 @@ public class Draw {
                     g.draw(ellipse);
                 }
                 break;
-            case Square:
+            case SQUARE:
                 aP.X = aP.X - aSize / 2.f;
                 aP.Y = aP.Y - aSize / 2.f;
                 Rectangle2D rect = new Rectangle2D.Float(aP.X, aP.Y, aSize, aSize);
@@ -1206,7 +1206,7 @@ public class Draw {
                     //g.drawRect((int) aP.X, (int) aP.Y, (int) aSize, (int) aSize);
                 }
                 break;
-            case Diamond:
+            case DIAMOND:
                 xPoints = new int[4];
                 yPoints = new int[4];
                 xPoints[0] = (int) (aP.X - aSize / 2);
@@ -1227,7 +1227,7 @@ public class Draw {
                     g.drawPolygon(xPoints, yPoints, xPoints.length);
                 }
                 break;
-            case UpTriangle:
+            case UP_TRIANGLE:
                 xPoints = new int[3];
                 yPoints = new int[3];
                 xPoints[0] = (int) aP.X;
@@ -1246,7 +1246,7 @@ public class Draw {
                     g.drawPolygon(xPoints, yPoints, xPoints.length);
                 }
                 break;
-            case DownTriangle:
+            case DOWN_TRIANGLE:
                 xPoints = new int[3];
                 yPoints = new int[3];
                 xPoints[0] = (int) aP.X;
@@ -1265,7 +1265,7 @@ public class Draw {
                     g.drawPolygon(xPoints, yPoints, xPoints.length);
                 }
                 break;
-            case XCross:
+            case X_CROSS:
                 path.moveTo(aP.X - aSize / 2, aP.Y - aSize / 2);
                 path.lineTo(aP.X + aSize / 2, aP.Y + aSize / 2);
                 path.moveTo(aP.X - aSize / 2, aP.Y + aSize / 2);
@@ -1277,7 +1277,7 @@ public class Draw {
                     g.draw(path);
                 }
                 break;
-            case Plus:
+            case PLUS:
                 path.moveTo(aP.X, aP.Y - aSize / 2);
                 path.lineTo(aP.X, aP.Y + aSize / 2);
                 path.moveTo(aP.X - aSize / 2, aP.Y);
@@ -1289,7 +1289,7 @@ public class Draw {
                     g.draw(path);
                 }
                 break;
-            case Minus:
+            case MINUS:
                 path.moveTo(aP.X - aSize / 2, aP.Y);
                 path.lineTo(aP.X + aSize / 2, aP.Y);
                 path.closePath();
@@ -1299,7 +1299,7 @@ public class Draw {
                     g.draw(path);
                 }
                 break;
-            case StarLines:
+            case STAR_LINES:
                 path.moveTo(aP.X - aSize / 2, aP.Y - aSize / 2);
                 path.lineTo(aP.X + aSize / 2, aP.Y + aSize / 2);
                 path.moveTo(aP.X - aSize / 2, aP.Y + aSize / 2);
@@ -1315,7 +1315,7 @@ public class Draw {
                     g.draw(path);
                 }
                 break;
-            case Star:
+            case STAR:
                 float vRadius = aSize / 2;
                 //Calculate 5 end points
                 PointF[] vPoints = new PointF[5];
@@ -1393,7 +1393,7 @@ public class Draw {
                     g.draw(ellipse);
                 }
                 break;
-            case Pentagon:
+            case PENTAGON:
                 vRadius = aSize / 2;
                 //Calculate 5 end points
                 xPoints = new int[5];
@@ -1414,7 +1414,7 @@ public class Draw {
                     g.drawPolygon(xPoints, yPoints, xPoints.length);
                 }
                 break;
-            case UpSemiCircle:
+            case UP_SEMI_CIRCLE:
                 aP.X = aP.X - aSize / 2;
                 aP.Y = aP.Y - aSize / 2;
                 if (drawFill) {
@@ -1427,7 +1427,7 @@ public class Draw {
                     g.draw(new Arc2D.Float(aP.X, aP.Y, aSize, aSize, 180, 180, Arc2D.CHORD));
                 }
                 break;
-            case DownSemiCircle:
+            case DOWN_SEMI_CIRCLE:
                 aP.X = aP.X - aSize / 2;
                 aP.Y = aP.Y - aSize / 2;
                 if (drawFill) {
@@ -1472,7 +1472,7 @@ public class Draw {
         GeneralPath path = new GeneralPath();
 
         switch (aPB.getStyle()) {
-            case Circle:
+            case CIRCLE:
                 aP.X = aP.X - aSize / 2;
                 aP.Y = aP.Y - aSize;
 
@@ -1486,7 +1486,7 @@ public class Draw {
                     g.drawOval((int) aP.X, (int) aP.Y, (int) aSize, (int) aSize);
                 }
                 break;
-            case Square:
+            case SQUARE:
                 aP.X = aP.X - aSize / 2;
                 aP.Y = aP.Y - aSize;
 
@@ -1500,7 +1500,7 @@ public class Draw {
                     g.drawRect((int) aP.X, (int) aP.Y, (int) aSize, (int) aSize);
                 }
                 break;
-            case Diamond:
+            case DIAMOND:
                 xPoints = new int[4];
                 yPoints = new int[4];
                 xPoints[0] = (int) (aP.X - aSize / 2);
@@ -1520,7 +1520,7 @@ public class Draw {
                     g.setStroke(new BasicStroke(outlineSize));
                     g.drawPolygon(xPoints, yPoints, xPoints.length);
                 }
-            case UpTriangle:
+            case UP_TRIANGLE:
                 xPoints = new int[3];
                 yPoints = new int[3];
                 xPoints[0] = (int) aP.X;
@@ -1911,10 +1911,10 @@ public class Draw {
         //FontMetrics metrics = g.getFontMetrics(aLB.getFont());
         //Dimension labSize = new Dimension(metrics.stringWidth(aLB.getText()), metrics.getHeight());
         switch (aLB.getAlignType()) {
-            case Center:
+            case CENTER:
                 aPoint.X = aPoint.X - (float) labSize.getWidth() / 2;
                 break;
-            case Left:
+            case LEFT:
                 aPoint.X = aPoint.X - (float) labSize.getWidth();
                 break;
         }
@@ -2402,7 +2402,7 @@ public class Draw {
         switch (aGraphic.getShape().getShapeType()) {
             case POINT:
                 switch (aGraphic.getLegend().getBreakType()) {
-                    case PointBreak:
+                    case POINT_BREAK:
                         drawPoint((PointF) points[0].clone(), (PointBreak) aGraphic.getLegend(), g);
                         int aSize = (int) ((PointBreak) aGraphic.getLegend()).getSize() / 2 + 2;
                         rect.x = (int) points[0].X - aSize;
@@ -2410,13 +2410,13 @@ public class Draw {
                         rect.width = aSize * 2;
                         rect.height = aSize * 2;
                         break;
-                    case LabelBreak:
+                    case LABEL_BREAK:
                         drawLabelPoint((PointF) points[0].clone(), (LabelBreak) aGraphic.getLegend(), g, rect);
                         break;
                 }
                 break;
             case POLYLINE:
-                if (aGraphic.getLegend().getBreakType() == BreakTypes.ColorBreakCollection) {
+                if (aGraphic.getLegend().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                     drawPolyline(points, (ColorBreakCollection) aGraphic.getLegend(), g);
                 } else {
                     drawPolyline(points, (PolylineBreak) aGraphic.getLegend(), g);
@@ -2456,7 +2456,7 @@ public class Draw {
                 g.draw(rect);
                 switch (aGraphic.getShape().getShapeType()) {
                     case POINT:
-                        if (aGraphic.getLegend().getBreakType() == BreakTypes.PointBreak) {
+                        if (aGraphic.getLegend().getBreakType() == BreakTypes.POINT_BREAK) {
                             drawSelectedCorners(g, rect);
                         }
                         break;
@@ -2847,10 +2847,10 @@ public class Draw {
             case DOT:
                 dashPattern = new float[]{2.0f};
                 break;
-            case DASHDOT:
+            case DASH_DOT:
                 dashPattern = new float[]{10, 6, 2, 6};
                 break;
-            case DASHDOTDOT:
+            case DASH_DOT_DOT:
                 dashPattern = new float[]{10, 6, 2, 6, 2, 6};
                 break;
         }
@@ -3053,12 +3053,12 @@ public class Draw {
                 float aSize = 16;
                 int i;
                 switch (aPLB.getStyle()) {
-                    case COLDFRONT:
+                    case COLD_FRONT:
                         if (pos != null) {
                             PointBreak aPB = new PointBreak();
                             aPB.setSize(aSize);
                             aPB.setColor(Color.blue);
-                            aPB.setStyle(PointStyle.UpTriangle);
+                            aPB.setStyle(PointStyle.UP_TRIANGLE);
                             aPB.setOutlineColor(Color.blue);
                             aPB.setDrawFill(true);
                             aPB.setDrawOutline(true);
@@ -3072,12 +3072,12 @@ public class Draw {
                         g.setStroke(new BasicStroke(aPLB.getWidth()));
                         drawPolyline(points, g);
                         break;
-                    case WARMFRONT:
+                    case WARM_FRONT:
                         if (pos != null) {
                             PointBreak aPB = new PointBreak();
                             aPB.setSize(aSize);
                             aPB.setColor(Color.red);
-                            aPB.setStyle(PointStyle.UpSemiCircle);
+                            aPB.setStyle(PointStyle.UP_SEMI_CIRCLE);
                             aPB.setOutlineColor(Color.red);
                             aPB.setDrawFill(true);
                             aPB.setDrawOutline(true);
@@ -3091,13 +3091,13 @@ public class Draw {
                         g.setStroke(new BasicStroke(aPLB.getWidth()));
                         drawPolyline(points, g);
                         break;
-                    case OCCLUDEDFRONT:
+                    case OCCLUDED_FRONT:
                         Color aColor = new Color(255, 0, 255);
                         if (pos != null) {
                             PointBreak aPB = new PointBreak();
                             aPB.setSize(aSize);
                             aPB.setColor(aColor);
-                            aPB.setStyle(PointStyle.UpTriangle);
+                            aPB.setStyle(PointStyle.UP_TRIANGLE);
                             aPB.setOutlineColor(aColor);
                             aPB.setDrawFill(true);
                             aPB.setDrawOutline(true);
@@ -3109,7 +3109,7 @@ public class Draw {
                             aPB = new PointBreak();
                             aPB.setSize(aSize);
                             aPB.setColor(aColor);
-                            aPB.setStyle(PointStyle.DownSemiCircle);
+                            aPB.setStyle(PointStyle.DOWN_SEMI_CIRCLE);
                             aPB.setOutlineColor(aColor);
                             aPB.setDrawFill(true);
                             aPB.setDrawOutline(true);
@@ -3123,12 +3123,12 @@ public class Draw {
                         g.setStroke(new BasicStroke(aPLB.getWidth()));
                         drawPolyline(points, g);
                         break;
-                    case STATIONARYFRONT:
+                    case STATIONARY_FRONT:
                         if (pos != null) {
                             PointBreak aPB = new PointBreak();
                             aPB.setSize(aSize);
                             aPB.setColor(Color.blue);
-                            aPB.setStyle(PointStyle.UpTriangle);
+                            aPB.setStyle(PointStyle.UP_TRIANGLE);
                             aPB.setOutlineColor(Color.blue);
                             aPB.setDrawFill(true);
                             aPB.setDrawOutline(true);
@@ -3140,7 +3140,7 @@ public class Draw {
                             aPB = new PointBreak();
                             aPB.setSize(aSize);
                             aPB.setColor(Color.red);
-                            aPB.setStyle(PointStyle.UpSemiCircle);
+                            aPB.setStyle(PointStyle.UP_SEMI_CIRCLE);
                             aPB.setOutlineColor(Color.red);
                             aPB.setDrawFill(true);
                             aPB.setDrawOutline(true);
@@ -3154,7 +3154,7 @@ public class Draw {
                         g.setStroke(new BasicStroke(aPLB.getWidth()));
                         drawPolyline(points, g);
                         break;
-                    case ARROWLINE:
+                    case ARROW_LINE:
                         g.setColor(aPLB.getColor());
                         g.setStroke(new BasicStroke(aPLB.getWidth()));
                         //float[] dashPattern = getDashPattern(aPLB.getStyle());
@@ -3290,12 +3290,12 @@ public class Draw {
             float aSize = 16;
             int i;
             switch (aPLB.getStyle()) {
-                case COLDFRONT:
+                case COLD_FRONT:
                     if (pos != null) {
                         PointBreak aPB = new PointBreak();
                         aPB.setSize(aSize);
                         aPB.setColor(Color.blue);
-                        aPB.setStyle(PointStyle.UpTriangle);
+                        aPB.setStyle(PointStyle.UP_TRIANGLE);
                         aPB.setOutlineColor(Color.blue);
                         aPB.setDrawFill(true);
                         aPB.setDrawOutline(true);
@@ -3309,12 +3309,12 @@ public class Draw {
                     g.setStroke(new BasicStroke(aPLB.getWidth()));
                     drawPolyline(points, g);
                     break;
-                case WARMFRONT:
+                case WARM_FRONT:
                     if (pos != null) {
                         PointBreak aPB = new PointBreak();
                         aPB.setSize(aSize);
                         aPB.setColor(Color.red);
-                        aPB.setStyle(PointStyle.UpSemiCircle);
+                        aPB.setStyle(PointStyle.UP_SEMI_CIRCLE);
                         aPB.setOutlineColor(Color.red);
                         aPB.setDrawFill(true);
                         aPB.setDrawOutline(true);
@@ -3328,13 +3328,13 @@ public class Draw {
                     g.setStroke(new BasicStroke(aPLB.getWidth()));
                     drawPolyline(points, g);
                     break;
-                case OCCLUDEDFRONT:
+                case OCCLUDED_FRONT:
                     Color aColor = new Color(255, 0, 255);
                     if (pos != null) {
                         PointBreak aPB = new PointBreak();
                         aPB.setSize(aSize);
                         aPB.setColor(aColor);
-                        aPB.setStyle(PointStyle.UpTriangle);
+                        aPB.setStyle(PointStyle.UP_TRIANGLE);
                         aPB.setOutlineColor(aColor);
                         aPB.setDrawFill(true);
                         aPB.setDrawOutline(true);
@@ -3346,7 +3346,7 @@ public class Draw {
                         aPB = new PointBreak();
                         aPB.setSize(aSize);
                         aPB.setColor(aColor);
-                        aPB.setStyle(PointStyle.DownSemiCircle);
+                        aPB.setStyle(PointStyle.DOWN_SEMI_CIRCLE);
                         aPB.setOutlineColor(aColor);
                         aPB.setDrawFill(true);
                         aPB.setDrawOutline(true);
@@ -3360,12 +3360,12 @@ public class Draw {
                     g.setStroke(new BasicStroke(aPLB.getWidth()));
                     drawPolyline(points, g);
                     break;
-                case STATIONARYFRONT:
+                case STATIONARY_FRONT:
                     if (pos != null) {
                         PointBreak aPB = new PointBreak();
                         aPB.setSize(aSize);
                         aPB.setColor(Color.blue);
-                        aPB.setStyle(PointStyle.UpTriangle);
+                        aPB.setStyle(PointStyle.UP_TRIANGLE);
                         aPB.setOutlineColor(Color.blue);
                         aPB.setDrawFill(true);
                         aPB.setDrawOutline(true);
@@ -3377,7 +3377,7 @@ public class Draw {
                         aPB = new PointBreak();
                         aPB.setSize(aSize);
                         aPB.setColor(Color.red);
-                        aPB.setStyle(PointStyle.UpSemiCircle);
+                        aPB.setStyle(PointStyle.UP_SEMI_CIRCLE);
                         aPB.setOutlineColor(Color.red);
                         aPB.setDrawFill(true);
                         aPB.setDrawOutline(true);
@@ -3450,11 +3450,11 @@ public class Draw {
             points[1] = aPoint;
             float lineWidth = 2.0f;
             switch (aPLB.getStyle()) {
-                case COLDFRONT:
+                case COLD_FRONT:
                     PointBreak aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(Color.blue);
-                    aPB.setStyle(PointStyle.UpTriangle);
+                    aPB.setStyle(PointStyle.UP_TRIANGLE);
                     aPB.setOutlineColor(Color.blue);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3465,11 +3465,11 @@ public class Draw {
                     g.setStroke(new BasicStroke(lineWidth));
                     drawPolyline(points, g);
                     break;
-                case WARMFRONT:
+                case WARM_FRONT:
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(Color.red);
-                    aPB.setStyle(PointStyle.UpSemiCircle);
+                    aPB.setStyle(PointStyle.UP_SEMI_CIRCLE);
                     aPB.setOutlineColor(Color.red);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3480,12 +3480,12 @@ public class Draw {
                     g.setStroke(new BasicStroke(lineWidth));
                     drawPolyline(points, g);
                     break;
-                case OCCLUDEDFRONT:
+                case OCCLUDED_FRONT:
                     Color aColor = new Color(255, 0, 255);
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(aColor);
-                    aPB.setStyle(PointStyle.UpTriangle);
+                    aPB.setStyle(PointStyle.UP_TRIANGLE);
                     aPB.setOutlineColor(aColor);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3493,7 +3493,7 @@ public class Draw {
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(aColor);
-                    aPB.setStyle(PointStyle.DownSemiCircle);
+                    aPB.setStyle(PointStyle.DOWN_SEMI_CIRCLE);
                     aPB.setOutlineColor(aColor);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3503,11 +3503,11 @@ public class Draw {
                     g.setStroke(new BasicStroke(lineWidth));
                     drawPolyline(points, g);
                     break;
-                case STATIONARYFRONT:
+                case STATIONARY_FRONT:
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(Color.blue);
-                    aPB.setStyle(PointStyle.UpTriangle);
+                    aPB.setStyle(PointStyle.UP_TRIANGLE);
                     aPB.setOutlineColor(Color.blue);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3515,7 +3515,7 @@ public class Draw {
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(Color.red);
-                    aPB.setStyle(PointStyle.UpSemiCircle);
+                    aPB.setStyle(PointStyle.UP_SEMI_CIRCLE);
                     aPB.setOutlineColor(Color.red);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3525,7 +3525,7 @@ public class Draw {
                     g.setStroke(new BasicStroke(lineWidth));
                     drawPolyline(points, g);
                     break;
-                case ARROWLINE:
+                case ARROW_LINE:
                     g.setColor(aPLB.getColor());
                     g.setStroke(new BasicStroke(lineWidth));
                     //float[] dashPattern = getDashPattern(aPLB.getStyle());
@@ -3599,11 +3599,11 @@ public class Draw {
             points[1] = aPoint;
             float lineWidth = 2.0f;
             switch (aPLB.getStyle()) {
-                case COLDFRONT:
+                case COLD_FRONT:
                     PointBreak aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(Color.blue);
-                    aPB.setStyle(PointStyle.UpTriangle);
+                    aPB.setStyle(PointStyle.UP_TRIANGLE);
                     aPB.setOutlineColor(Color.blue);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3614,11 +3614,11 @@ public class Draw {
                     g.setStroke(new BasicStroke(lineWidth));
                     drawPolyline(points, g);
                     break;
-                case WARMFRONT:
+                case WARM_FRONT:
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(Color.red);
-                    aPB.setStyle(PointStyle.UpSemiCircle);
+                    aPB.setStyle(PointStyle.UP_SEMI_CIRCLE);
                     aPB.setOutlineColor(Color.red);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3629,12 +3629,12 @@ public class Draw {
                     g.setStroke(new BasicStroke(lineWidth));
                     drawPolyline(points, g);
                     break;
-                case OCCLUDEDFRONT:
+                case OCCLUDED_FRONT:
                     Color aColor = new Color(255, 0, 255);
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(aColor);
-                    aPB.setStyle(PointStyle.UpTriangle);
+                    aPB.setStyle(PointStyle.UP_TRIANGLE);
                     aPB.setOutlineColor(aColor);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3642,7 +3642,7 @@ public class Draw {
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(aColor);
-                    aPB.setStyle(PointStyle.UpSemiCircle);
+                    aPB.setStyle(PointStyle.UP_SEMI_CIRCLE);
                     aPB.setOutlineColor(aColor);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3652,11 +3652,11 @@ public class Draw {
                     g.setStroke(new BasicStroke(lineWidth));
                     drawPolyline(points, g);
                     break;
-                case STATIONARYFRONT:
+                case STATIONARY_FRONT:
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(Color.blue);
-                    aPB.setStyle(PointStyle.UpTriangle);
+                    aPB.setStyle(PointStyle.UP_TRIANGLE);
                     aPB.setOutlineColor(Color.blue);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3664,7 +3664,7 @@ public class Draw {
                     aPB = new PointBreak();
                     aPB.setSize(14);
                     aPB.setColor(Color.red);
-                    aPB.setStyle(PointStyle.DownSemiCircle);
+                    aPB.setStyle(PointStyle.DOWN_SEMI_CIRCLE);
                     aPB.setOutlineColor(Color.red);
                     aPB.setDrawFill(true);
                     aPB.setDrawOutline(true);
@@ -3674,7 +3674,7 @@ public class Draw {
                     g.setStroke(new BasicStroke(lineWidth));
                     drawPolyline(points, g);
                     break;
-                case ARROWLINE:
+                case ARROW_LINE:
                     g.setColor(aPLB.getColor());
                     g.setStroke(new BasicStroke(lineWidth));
                     //float[] dashPattern = getDashPattern(aPLB.getStyle());
@@ -4248,10 +4248,10 @@ public class Draw {
      */
     public static void drawChartPoint(PointF aPoint, ChartBreak aCB, Graphics2D g) {
         switch (aCB.getChartType()) {
-            case BarChart:
+            case BAR_CHART:
                 drawBarChartSymbol(aPoint, aCB, g);
                 break;
-            case PieChart:
+            case PIE_CHART:
                 List<String> rStrs = null;
                 if (aCB.isDrawLabel()) {
                     List<Float> ratios = aCB.getPieRatios();

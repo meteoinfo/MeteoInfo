@@ -58,7 +58,7 @@ package org.meteoinfo.geometry.legend;
       */
      public ChartBreak(ChartTypes chartType) {
          super();
-         this.setBreakType(BreakTypes.ChartBreak);
+         this.setBreakType(BreakTypes.CHART_BREAK);
          _chartType = chartType;
          _chartData = new ArrayList<>();
          _xShift = 0;
@@ -67,7 +67,7 @@ package org.meteoinfo.geometry.legend;
          _maxSize = 50;
          _minSize = 10;
          _barWidth = 10;
-         _alignType = AlignType.Center;
+         _alignType = AlignType.CENTER;
          _view3D = false;
          _thickness = 5;
          _shpIdx = 0;
@@ -448,13 +448,13 @@ package org.meteoinfo.geometry.legend;
      public int getWidth() {
          int width = 0;
          switch (_chartType) {
-             case BarChart:
+             case BAR_CHART:
                  width = _barWidth * _chartData.size();
                  if (_view3D) {
                      width += _thickness;
                  }
                  break;
-             case PieChart:
+             case PIE_CHART:
                  if (_minSize == _maxSize) {
                      width = _maxSize;
                  } else if (_minSize == 0) {
@@ -477,10 +477,10 @@ package org.meteoinfo.geometry.legend;
      public int getHeight() {
          int height = 0;
          switch (_chartType) {
-             case BarChart:
+             case BAR_CHART:
                  height = Collections.max(getBarHeights());
                  break;
-             case PieChart:
+             case PIE_CHART:
                  if (_minSize == _maxSize) {
                      height = _maxSize;
                  } else if (_minSize == 0) {
@@ -585,14 +585,14 @@ package org.meteoinfo.geometry.legend;
          ChartBreak aCB = (ChartBreak) clone();
          int i;
          switch (aCB.getChartType()) {
-             case BarChart:
+             case BAR_CHART:
                  float min = aCB.getMaxValue() / aCB.getItemNum();
                  float dv = (aCB.getMaxValue() - min) / aCB.getItemNum();
                  for (i = 0; i < aCB.getItemNum(); i++) {
                      aCB.getChartData().set(i, min + dv * i);
                  }
                  break;
-             case PieChart:
+             case PIE_CHART:
                  //float sum = (aCB.getMaxValue() - aCB.getMinValue()) * 2 / 3;
                  float sum = aCB.getMaxValue();
                  float data = sum / aCB.getItemNum();
@@ -617,15 +617,15 @@ package org.meteoinfo.geometry.legend;
          int width = this.getWidth();
          int height = this.getHeight();
          switch (_alignType) {
-             case Center:
+             case CENTER:
                  aPoint.X -= width / 2;
                  aPoint.Y += height / 2;
                  break;
-             case Left:
+             case LEFT:
                  aPoint.X -= width;
                  aPoint.Y += height / 2;
                  break;
-             case Right:
+             case RIGHT:
                  aPoint.Y += height / 2;
                  break;
          }

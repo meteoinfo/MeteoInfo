@@ -174,9 +174,9 @@ public class FrmMain extends JFrame implements IApplication {
             public void nodeSelectedEvent(NodeSelectedEvent event) {
                 ItemNode selNode = _mapDocument.getSelectedNode();
                 switch (selNode.getNodeType()) {
-                    case LayerNode:
+                    case LAYER_NODE:
                         MapLayer layer = ((LayerNode) selNode).getMapLayer();
-                        if (layer.getLayerType() == LayerTypes.VectorLayer) {
+                        if (layer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                             if (!((VectorLayer) layer).isProjected()) {
                                 jToolBar_Edit.setEnabled(true);
                                 jButton_EditStartOrEnd.setEnabled(true);
@@ -216,7 +216,7 @@ public class FrmMain extends JFrame implements IApplication {
             @Override
             public void elementSelectedEvent(ElementSelectedEvent event) {
                 if (_mapLayout.getSelectedElements().size() > 0) {
-                    if (_mapLayout.getSelectedElements().get(0).getElementType() == ElementType.LayoutGraphic) {
+                    if (_mapLayout.getSelectedElements().get(0).getElementType() == ElementType.GRAPHIC) {
                         switch (((LayoutGraphic) _mapLayout.getSelectedElements().get(0)).getGraphic().getShape().getShapeType()) {
                             case POLYLINE:
                             case CURVE_LINE:
@@ -1906,7 +1906,7 @@ public class FrmMain extends JFrame implements IApplication {
             public void shapeSelectedEvent(ShapeSelectedEvent event) {
                 MapLayer selLayer = _mapView.getSelectedLayer();
                 if (selLayer != null) {
-                    if (selLayer.getLayerType() == LayerTypes.VectorLayer) {
+                    if (selLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                         if (((VectorLayer) selLayer).isEditing()) {
                             if (((VectorLayer) selLayer).hasSelectedShapes()) {
                                 jMenuItem_Cut.setEnabled(true);
@@ -2736,28 +2736,28 @@ public class FrmMain extends JFrame implements IApplication {
     }
 
     private void jMenuItem_AddRingActionPerformed(ActionEvent evt) {
-        _mapView.setMouseTool(MouseTools.Edit_AddRing);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_AddRing);
+        _mapView.setMouseTool(MouseTools.EDIT_ADD_RING);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_EDIT_ADD_RING);
     }
 
     private void jMenuItem_FillRingActionPerformed(ActionEvent evt) {
-        _mapView.setMouseTool(MouseTools.Edit_FillRing);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_FillRing);
+        _mapView.setMouseTool(MouseTools.EDIT_FILL_RING);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_EDIT_FILL_RING);
     }
 
     private void jMenuItem_DeleteRingActionPerformed(ActionEvent evt) {
-        _mapView.setMouseTool(MouseTools.Edit_DeleteRing);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_DeleteRing);
+        _mapView.setMouseTool(MouseTools.EDIT_DELETE_RING);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_EDIT_DELETE_RING);
     }
     
     private void jMenuItem_ReformFeatureActionPerformed(ActionEvent evt) {
-        _mapView.setMouseTool(MouseTools.Edit_ReformFeature);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_ReformFeature);
+        _mapView.setMouseTool(MouseTools.EDIT_REFORM_FEATURE);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_EDIT_REFORM_FEATURE);
     }
 
     private void jMenuItem_SplitFeatureActionPerformed(ActionEvent evt) {
-        _mapView.setMouseTool(MouseTools.Edit_SplitFeature);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_SplitFeature);
+        _mapView.setMouseTool(MouseTools.EDIT_SPLIT_FEATURE);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_EDIT_SPLIT_FEATURE);
     }
 
     private void jMenuItem_MergeFeatureActionPerformed(ActionEvent evt) {
@@ -2832,10 +2832,10 @@ public class FrmMain extends JFrame implements IApplication {
             return;
         }
 
-        if (_mapDocument.getSelectedNode().getNodeType() == NodeTypes.LayerNode) {
+        if (_mapDocument.getSelectedNode().getNodeType() == NodeTypes.LAYER_NODE) {
             LayerNode aLN = (LayerNode) _mapDocument.getSelectedNode();
             MapLayer aLayer = aLN.getMapFrame().getMapView().getLayerByHandle(aLN.getLayerHandle());
-            if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+            if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                 if (((VectorLayer) aLayer).getShapeNum() > 0) {
                     FrmAttriData aFrmData = new FrmAttriData();
                     aFrmData.setLayer((VectorLayer) aLayer);
@@ -2995,7 +2995,7 @@ public class FrmMain extends JFrame implements IApplication {
     private void jMenuItem_ClearSelectionActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         MapLayer aLayer = _mapDocument.getActiveMapFrame().getMapView().getSelectedLayer();
-        if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+        if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             ((VectorLayer) aLayer).clearSelectedShapes();
             for (Shape shape : ((VectorLayer) aLayer).getShapes()) {
                 shape.setVisible(true);
@@ -3136,8 +3136,8 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jButton_EditVerticesActionPerformed(java.awt.event.ActionEvent evt) {
         if (jButton_EditVertices.isSelected()) {
-            _mapView.setMouseTool(MouseTools.EditVertices);
-            _mapDocument.getMapLayout().setMouseMode(MouseMode.EditVertices);
+            _mapView.setMouseTool(MouseTools.EDIT_VERTICES);
+            _mapDocument.getMapLayout().setMouseMode(MouseMode.EDIT_VERTICES);
         } else {
             this.jButton_SelectElement.doClick();
         }
@@ -3151,80 +3151,80 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jButton_NewEllipseActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.New_Ellipse);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Ellipse);
+        _mapView.setMouseTool(MouseTools.NEW_ELLIPSE);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.NEW_ELLIPSE);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewCircleActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.New_Circle);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Circle);
+        _mapView.setMouseTool(MouseTools.NEW_CIRCLE);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.NEW_CIRCLE);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewRectangleActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.New_Rectangle);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Rectangle);
+        _mapView.setMouseTool(MouseTools.NEW_RECTANGLE);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.NEW_RECTANGLE);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewCurvePolygonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.New_CurvePolygon);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.New_CurvePolygon);
+        _mapView.setMouseTool(MouseTools.NEW_CURVE_POLYGON);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.NEW_CURVE_POLYGON);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewPolygonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.New_Polygon);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Polygon);
+        _mapView.setMouseTool(MouseTools.NEW_POLYGON);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.NEW_POLYGON);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewCurveActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.New_Curve);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Curve);
+        _mapView.setMouseTool(MouseTools.NEW_CURVE);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.NEW_CURVE);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewFreehandActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.New_Freehand);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Freehand);
+        _mapView.setMouseTool(MouseTools.NEW_FREEHAND);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.NEW_FREEHAND);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewPolylineActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.New_Polyline);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Polyline);
+        _mapView.setMouseTool(MouseTools.NEW_POLYLINE);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.NEW_POLYLINE);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewPointActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.New_Point);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Point);
+        _mapView.setMouseTool(MouseTools.NEW_POINT);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.NEW_POINT);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_NewLabelActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.New_Label);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.New_Label);
+        _mapView.setMouseTool(MouseTools.NEW_LABEL);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.NEW_LABEL);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
@@ -3312,10 +3312,10 @@ public class FrmMain extends JFrame implements IApplication {
             return;
         }
 
-        if (_mapDocument.getSelectedNode().getNodeType() == NodeTypes.LayerNode) {
+        if (_mapDocument.getSelectedNode().getNodeType() == NodeTypes.LAYER_NODE) {
             LayerNode aLN = (LayerNode) _mapDocument.getSelectedNode();
             MapLayer aMLayer = aLN.getMapFrame().getMapView().getLayerByHandle(aLN.getLayerHandle());
-            if (aMLayer.getLayerType() == LayerTypes.VectorLayer) {
+            if (aMLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                 VectorLayer aLayer = (VectorLayer) aMLayer;
                 if (aLayer.getShapeNum() > 0) {
                     FrmLabelSet aFrmLabel = new FrmLabelSet(this, false, _mapDocument.getActiveMapFrame().getMapView());
@@ -3329,9 +3329,9 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jButton_MeasurementActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.Measurement);
+        _mapView.setMouseTool(MouseTools.MEASUREMENT);
         //_mapDocument.getMapLayout().setMeasurementForm(_mapView.getMeasurementForm());
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Measurement);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_MEASUREMENT);
         if (this.jTabbedPane_Main.getSelectedIndex() == 0) {
             _mapView.showMeasurementForm();
         } else if (this.jTabbedPane_Main.getSelectedIndex() == 1) {
@@ -3341,32 +3341,32 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jButton_SelByRectangleActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.SelectFeatures_Rectangle);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_SelectFeatures_Rectangle);
+        _mapView.setMouseTool(MouseTools.SELECT_FEATURES_RECTANGLE);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_SELECT_FEATURES_RECTANGLE);
     }
 
     private void jButton_SelByPolygonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.SelectFeatures_Polygon);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_SelectFeatures_Polygon);
+        _mapView.setMouseTool(MouseTools.SELECT_FEATURES_POLYGON);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_SELECT_FEATURES_POLYGON);
     }
 
     private void jButton_SelByLassoActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.SelectFeatures_Lasso);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_SelectFeatures_Lasso);
+        _mapView.setMouseTool(MouseTools.SELECT_FEATURES_LASSO);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_SELECT_FEATURES_LASSO);
     }
 
     private void jButton_SelByCircleActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.SelectFeatures_Circle);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_SelectFeatures_Circle);
+        _mapView.setMouseTool(MouseTools.SELECT_FEATURES_CIRCLE);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_SELECT_FEATURES_CIRCLE);
     }
 
     private void jButton_IdentiferActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.Identifer);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Identifer);
+        _mapView.setMouseTool(MouseTools.IDENTIFIER);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_IDENTIFIER);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
@@ -3383,7 +3383,7 @@ public class FrmMain extends JFrame implements IApplication {
             return;
         }
 
-        if (_mapDocument.getSelectedNode().getNodeType() == NodeTypes.LayerNode) {
+        if (_mapDocument.getSelectedNode().getNodeType() == NodeTypes.LAYER_NODE) {
             MapFrame aMF = _mapDocument.getCurrentMapFrame();
             MapLayer aLayer = ((LayerNode) _mapDocument.getSelectedNode()).getMapLayer();
             if (aLayer != null) {
@@ -3423,32 +3423,32 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jButton_PanActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.Pan);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Pan);
+        _mapView.setMouseTool(MouseTools.PAN);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_PAN);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_ZoomOutActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.Zoom_Out);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_ZoomOut);
+        _mapView.setMouseTool(MouseTools.ZOOM_OUT);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_ZOOM_OUT);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_ZoomInActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.Zoom_In);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_ZoomIn);
+        _mapView.setMouseTool(MouseTools.ZOOM_IN);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_ZOOM_IN);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_SelectElementActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.SelectElements);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Select);
+        _mapView.setMouseTool(MouseTools.SELECT_ELEMENTS);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.SELECT);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
@@ -3549,7 +3549,7 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jButton_EditStartOrEndActionPerformed(ActionEvent evt) {
         ItemNode selNode = this._mapDocument.getSelectedNode();
-        if (selNode.getNodeType() != NodeTypes.LayerNode) {
+        if (selNode.getNodeType() != NodeTypes.LAYER_NODE) {
             return;
         }
 
@@ -3559,7 +3559,7 @@ public class FrmMain extends JFrame implements IApplication {
             return;
         }
 
-        if (selMapLayer.getLayerType() == LayerTypes.VectorLayer) {
+        if (selMapLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             VectorLayer layer = (VectorLayer) selMapLayer;
             if (selLayerNode.isEditing()) {
                 if (currentUndoManager.canUndo()) {
@@ -3644,16 +3644,16 @@ public class FrmMain extends JFrame implements IApplication {
     }
 
     private void jButton_EditToolActionPerformed(ActionEvent evt) {
-        _mapView.setMouseTool(MouseTools.Edit_Tool);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_Tool);
+        _mapView.setMouseTool(MouseTools.EDIT_TOOL);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_EDIT_TOOL);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
 
     private void jButton_EditNewFeatureActionPerformed(ActionEvent evt) {
         // TODO add your handling code here:
-        _mapView.setMouseTool(MouseTools.Edit_NewFeature);
-        _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_NewFeature);
+        _mapView.setMouseTool(MouseTools.EDIT_NEW_FEATURE);
+        _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_EDIT_NEW_FEATURE);
 
         setCurrentTool((JToggleButton) evt.getSource());
     }
@@ -3683,12 +3683,12 @@ public class FrmMain extends JFrame implements IApplication {
 
         if (jButton_EditFeatureVertices.isSelected()) {
             layer.setEditingShape(layer.getSelectedShapes().get(0));
-            _mapView.setMouseTool(MouseTools.Edit_FeatureVertices);
-            _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_FeatureVertices);
+            _mapView.setMouseTool(MouseTools.EDIT_FEATURE_VERTICES);
+            _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_EDIT_FEATURE_VERTICES);
         } else {
             layer.clearEditingShape();
-            _mapView.setMouseTool(MouseTools.Edit_Tool);
-            _mapDocument.getMapLayout().setMouseMode(MouseMode.Map_Edit_Tool);
+            _mapView.setMouseTool(MouseTools.EDIT_TOOL);
+            _mapDocument.getMapLayout().setMouseMode(MouseMode.MAP_EDIT_TOOL);
         }
 
         if (this.jTabbedPane_Main.getSelectedIndex() == 0) {

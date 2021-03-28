@@ -41,12 +41,12 @@ public class LabelBreak extends ColorBreak {
 
     public LabelBreak() {
         super();
-        this.setBreakType(BreakTypes.LabelBreak);
+        this.setBreakType(BreakTypes.LABEL_BREAK);
         _text = "";
         _angle = 0;
         this.setColor(Color.black);        
         _font = new Font(GlobalUtil.getDefaultFontName(), Font.PLAIN, 7);
-        _alignType = AlignType.Center;
+        _alignType = AlignType.CENTER;
         _yShift = 0;
     }
     // </editor-fold>

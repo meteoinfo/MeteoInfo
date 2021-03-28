@@ -1222,7 +1222,7 @@ public class Plot3D extends Plot {
                     projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
                     points[i] = new PointF(projection.x, projection.y);
                 }
-                if (pb.getBreakType() == BreakTypes.ColorBreakCollection)
+                if (pb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION)
                     Draw.drawPolyline(points, (ColorBreakCollection)pb, g);
                 else
                     Draw.drawPolyline(points, (PolylineBreak)pb, g);

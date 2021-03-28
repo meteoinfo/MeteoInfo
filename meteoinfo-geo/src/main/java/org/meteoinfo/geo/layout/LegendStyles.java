@@ -18,17 +18,12 @@ package org.meteoinfo.geo.layout;
  * @author Yaqiang
  */
 public enum LegendStyles {
-    /// <summary>
-    /// vertical bar
-    /// </summary>
 
-    Bar_Vertical,
-    /// <summary>
-    /// horizontal bar
-    /// </summary>
-    Bar_Horizontal,
-    /// <summary>
-    /// normal
-    /// </summary>
-    Normal
+    BAR_VERTICAL,
+    BAR_HORIZONTAL,
+    NORMAL;
+
+    public static LegendStyles valueOfBack(String value) {
+        return LegendStyles.valueOf(value.toUpperCase());
+    }
 }

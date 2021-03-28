@@ -19,17 +19,9 @@ package org.meteoinfo.geo.layout;
  * @author Yaqiang Wang
  */
 public enum ScaleBarType {
-    /// <summary>
-    /// Scale line1
-    /// </summary>
 
-    SCALELINE_1,
-    /// <summary>
-    /// Scale line 2
-    /// </summary>
-    SCALELINE_2,
-    /// <summary>
-    /// Alternating scale bar
-    /// </summary>
+    SCALE_LINE_1,
+    SCALE_LINE_2,
+    // Alternating scale bar
     ALTERNATING_BAR
 }

@@ -18,21 +18,9 @@ package org.meteoinfo.geo.layout;
  * @author Yaqiang Wang
  */
 public enum LayerUpdateTypes {
-    /// <summary>
-    /// Not update
-    /// </summary>
 
-    NotUpdate,
-    /// <summary>
-    /// First meteorological layer
-    /// </summary>
-    FirstMeteoLayer,
-    /// <summary>
-    /// Last added layer
-    /// </summary>
-    LastAddedLayer,
-    /// <summary>
-    /// First expanded layer
-    /// </summary>
-    FirstExpandedLayer
+    NOT_UPDATE,
+    FIRST_METEO_LAYER,
+    LAST_ADDED_LAYER,
+    FIRST_EXPANDED_LAYER;
 }

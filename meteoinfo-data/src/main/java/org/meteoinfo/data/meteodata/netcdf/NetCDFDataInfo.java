@@ -87,7 +87,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * Constructor
      */
     public NetCDFDataInfo() {
-        this.setDataType(MeteoDataType.NetCDF);
+        this.setDataType(MeteoDataType.NETCDF);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

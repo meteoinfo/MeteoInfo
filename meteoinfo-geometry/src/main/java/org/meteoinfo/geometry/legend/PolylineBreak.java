@@ -42,13 +42,13 @@ public class PolylineBreak extends ColorBreak {
      */
     public PolylineBreak() {
         super();
-        this.breakType = BreakTypes.PolylineBreak;
+        this.breakType = BreakTypes.POLYLINE_BREAK;
         width = 1.0f;
         style = LineStyles.SOLID;
         drawPolyline = true;
         drawSymbol = false;
         symbolSize = 8.0f;
-        symbolStyle = PointStyle.UpTriangle;
+        symbolStyle = PointStyle.UP_TRIANGLE;
         symbolColor = this.color;
         symbolFillColor = symbolColor;
         fillSymbol = false;
@@ -271,8 +271,8 @@ public class PolylineBreak extends ColorBreak {
             case SOLID:
             case DASH:
             case DOT:
-            case DASHDOT:
-            case DASHDOTDOT:
+            case DASH_DOT:
+            case DASH_DOT_DOT:
                 return true;
             default:
                 return false;

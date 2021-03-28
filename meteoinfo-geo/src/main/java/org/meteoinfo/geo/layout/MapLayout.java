@@ -183,13 +183,13 @@ import org.xml.sax.SAXException;
      private PolygonBreak _defPolygonBreak = new PolygonBreak();
      private final int _xShift = 0;
      private final int _yShift = 0;
-     private MouseMode _mouseMode = MouseMode.Default;
+     private MouseMode _mouseMode = MouseMode.DEFAULT;
      private List<LayoutElement> _selectedElements = new ArrayList<>();
      private Rectangle _selectedRectangle = new Rectangle();
      private final Point _mouseDownPos = new Point(0, 0);
      private Point _mouseLastPos = new Point(0, 0);
      private final Point _mouseDownPoint = new Point(0, 0);
-     private Edge _resizeSelectedEdge = Edge.None;
+     private Edge _resizeSelectedEdge = Edge.NONE;
      private boolean _startNewGraphic = true;
      private List<PointF> _graphicPoints = new ArrayList<>();
      private final List<PointD> _editingVertices = new ArrayList<>();
@@ -501,7 +501,7 @@ import org.xml.sax.SAXException;
              }
 
              switch (_mouseMode) {
-                 case Map_Pan:
+                 case MAP_PAN:
                      Rectangle mapRect = pageToScreen(_currentLayoutMap.getBounds());
                      _tempImage = new BufferedImage(mapRect.width - 2,
                              mapRect.height - 2, BufferedImage.TYPE_INT_ARGB);
@@ -511,22 +511,22 @@ import org.xml.sax.SAXException;
                      tg.drawImage(_layoutBitmap, -mapRect.x - 1, -mapRect.y - 1, this);
                      tg.dispose();
                      break;
-                 case Select:
+                 case SELECT:
                      List<LayoutElement> tempGraphics = selectElements(pageP, _selectedElements, 3);
                      if (tempGraphics.size() > 0) {
                          _selectedRectangle = (Rectangle) _selectedElements.get(0).getBounds().clone();
                          _selectedRectangle = pageToScreen(_selectedRectangle);
-                         if (_resizeSelectedEdge == Edge.None) {
-                             _mouseMode = MouseMode.MoveSelection;
+                         if (_resizeSelectedEdge == Edge.NONE) {
+                             _mouseMode = MouseMode.MOVE_SELECTION;
                          } else {
-                             _mouseMode = MouseMode.ResizeSelected;
+                             _mouseMode = MouseMode.RESIZE_SELECTED;
                          }
                      } else {
-                         _mouseMode = MouseMode.CreateSelection;
+                         _mouseMode = MouseMode.CREATE_SELECTION;
                      }
 
                      break;
-                 case New_Point:
+                 case NEW_POINT:
                      PointShape aPS = new PointShape();
                      aPS.setPoint(new PointD(pageP.x, pageP.y));
                      Graphic aGraphic = new Graphic(aPS, (PointBreak) _defPointBreak.clone());
@@ -537,7 +537,7 @@ import org.xml.sax.SAXException;
                      UndoableEdit edit = (new MapLayoutUndoRedo()).new AddElementEdit(this, aLayoutGraphic);
                      this.fireUndoEditEvent(edit);
                      break;
-                 case New_Label:
+                 case NEW_LABEL:
                      aPS = new PointShape();
                      aPS.setPoint(new PointD(pageP.x, pageP.y));
                      aGraphic = new Graphic(aPS, (LabelBreak) _defLabelBreak.clone());
@@ -548,29 +548,29 @@ import org.xml.sax.SAXException;
                      edit = (new MapLayoutUndoRedo()).new AddElementEdit(this, aLayoutGraphic);
                      this.fireUndoEditEvent(edit);
                      break;
-                 case New_Polyline:
-                 case New_Polygon:
-                 case New_Curve:
-                 case New_CurvePolygon:
-                 case New_Freehand:
-                 case Map_SelectFeatures_Polygon:
-                 case Map_SelectFeatures_Lasso:
+                 case NEW_POLYLINE:
+                 case NEW_POLYGON:
+                 case NEW_CURVE:
+                 case NEW_CURVE_POLYGON:
+                 case NEW_FREEHAND:
+                 case MAP_SELECT_FEATURES_POLYGON:
+                 case MAP_SELECT_FEATURES_LASSO:
                      if (_startNewGraphic) {
                          _graphicPoints = new ArrayList<>();
                          _startNewGraphic = false;
                      }
                      _graphicPoints.add(new PointF(e.getX(), e.getY()));
                      break;
-                 case EditVertices:
+                 case EDIT_VERTICES:
                      if (_selectedElements.size() > 0) {
                          _editingVerticeIndex = selectEditVertices(pageP, ((LayoutGraphic) _selectedElements.get(0)).getGraphic().getShape(),
                                  _editingVertices);
                          if (_editingVerticeIndex >= 0) {
-                             _mouseMode = MouseMode.InEditingVertices;
+                             _mouseMode = MouseMode.IN_EDITING_VERTICES;
                          }
                      }
                      break;
-                 case Map_Measurement:
+                 case MAP_MEASUREMENT:
                      if (_frmMeasure == null) {
                          break;
                      }
@@ -588,7 +588,7 @@ import org.xml.sax.SAXException;
                              case Feature:
                                  MapLayer aMLayer = _currentLayoutMap.getMapFrame().getMapView().getSelectedLayer();
                                  if (aMLayer != null) {
-                                     if (aMLayer.getLayerType() == LayerTypes.VectorLayer) {
+                                     if (aMLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                                          VectorLayer aLayer = (VectorLayer) aMLayer;
                                          if (aLayer.getShapeType() != ShapeTypes.POINT) {
                                              PointF mapP = pageToScreen(_currentLayoutMap.getLeft(), _currentLayoutMap.getTop());
@@ -639,7 +639,7 @@ import org.xml.sax.SAXException;
              }
          } else if (e.getButton() == MouseEvent.BUTTON3) {
              switch (_mouseMode) {
-                 case Map_Measurement:
+                 case MAP_MEASUREMENT:
                      if (_frmMeasure.isVisible()) {
                          switch (_frmMeasure.getMeasureType()) {
                              case Length:
@@ -676,7 +676,7 @@ import org.xml.sax.SAXException;
          //this.setCursor(Cursor.getDefaultCursor());
 
          switch (_mouseMode) {
-             case Map_ZoomIn:
+             case MAP_ZOOM_IN:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
                              getImage(this.getClass().getResource("/images/zoom_in_32x32x32.png")), new Point(8, 8), "Zoom In"));
@@ -685,7 +685,7 @@ import org.xml.sax.SAXException;
                      this.repaintOld();
                  }
                  break;
-             case Map_Pan:
+             case MAP_PAN:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
                              getImage(this.getClass().getResource("/images/Pan_Open_32x32x32.png")), new Point(8, 8), "Pan"));
@@ -736,76 +736,76 @@ import org.xml.sax.SAXException;
                      g.draw(mapRect);
                  }
                  break;
-             case Map_SelectFeatures_Rectangle:
+             case MAP_SELECT_FEATURES_RECTANGLE:
                  //this.repaint();
                  this.repaintOld();
                  break;
-             case MoveSelection:
+             case MOVE_SELECTION:
                  this.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                  //this.repaint();
                  this.repaintOld();
                  break;
-             case ResizeSelected:
+             case RESIZE_SELECTED:
                  LayoutElement oElement = _selectedElements.get(0);
                  switch (oElement.getResizeAbility()) {
-                     case SameWidthHeight:
+                     case SAME_WIDTH_HEIGHT:
                          switch (_resizeSelectedEdge) {
-                             case TopLeft:
+                             case TOP_LEFT:
                                  _selectedRectangle.x += deltaX;
                                  _selectedRectangle.y += deltaX;
                                  _selectedRectangle.width -= deltaX;
                                  _selectedRectangle.height -= deltaX;
                                  break;
-                             case BottomRight:
+                             case BOTTOM_RIGHT:
                                  _selectedRectangle.width += deltaX;
                                  _selectedRectangle.height += deltaX;
                                  break;
-                             case TopRight:
+                             case TOP_RIGHT:
                                  _selectedRectangle.y += deltaY;
                                  _selectedRectangle.width -= deltaY;
                                  _selectedRectangle.height -= deltaY;
                                  break;
-                             case BottomLeft:
+                             case BOTTOM_LEFT:
                                  _selectedRectangle.x += deltaX;
                                  _selectedRectangle.width -= deltaX;
                                  _selectedRectangle.height -= deltaX;
                                  break;
                          }
                          break;
-                     case ResizeAll:
+                     case RESIZE_ALL:
                          switch (_resizeSelectedEdge) {
-                             case TopLeft:
+                             case TOP_LEFT:
                                  _selectedRectangle.x += deltaX;
                                  _selectedRectangle.y += deltaY;
                                  _selectedRectangle.width -= deltaX;
                                  _selectedRectangle.height -= deltaY;
                                  break;
-                             case BottomRight:
+                             case BOTTOM_RIGHT:
                                  _selectedRectangle.width += deltaX;
                                  _selectedRectangle.height += deltaY;
                                  break;
-                             case Top:
+                             case TOP:
                                  _selectedRectangle.y += deltaY;
                                  _selectedRectangle.height -= deltaY;
                                  break;
-                             case Bottom:
+                             case BOTTOM:
                                  _selectedRectangle.height += deltaY;
                                  break;
-                             case TopRight:
+                             case TOP_RIGHT:
                                  _selectedRectangle.y += deltaY;
                                  _selectedRectangle.width += deltaX;
                                  _selectedRectangle.height -= deltaY;
                                  break;
-                             case BottomLeft:
+                             case BOTTOM_LEFT:
                                  _selectedRectangle.x += deltaX;
                                  _selectedRectangle.width -= deltaX;
                                  _selectedRectangle.height += deltaY;
                                  break;
-                             case Left:
+                             case LEFT:
                                  _selectedRectangle.x += deltaX;
                                  _selectedRectangle.width -= deltaX;
                                  break;
-                             case Right:
+                             case RIGHT:
                                  _selectedRectangle.width += deltaX;
                                  break;
                          }
@@ -814,17 +814,17 @@ import org.xml.sax.SAXException;
                  //this.repaint();
                  this.repaintOld();
                  break;
-             case New_Rectangle:
-             case New_Ellipse:
-             case New_Freehand:
-             case New_Circle:
-             case Map_SelectFeatures_Polygon:
-             case Map_SelectFeatures_Lasso:
-             case Map_SelectFeatures_Circle:
+             case NEW_RECTANGLE:
+             case NEW_ELLIPSE:
+             case NEW_FREEHAND:
+             case NEW_CIRCLE:
+             case MAP_SELECT_FEATURES_POLYGON:
+             case MAP_SELECT_FEATURES_LASSO:
+             case MAP_SELECT_FEATURES_CIRCLE:
                  //this.repaint();
                  this.repaintOld();
                  break;
-             case InEditingVertices:
+             case IN_EDITING_VERTICES:
                  //this.repaint();
                  this.repaintOld();
                  break;
@@ -848,31 +848,31 @@ import org.xml.sax.SAXException;
          //this.setCursor(Cursor.getDefaultCursor());
 
          switch (_mouseMode) {
-             case Map_ZoomIn:
+             case MAP_ZOOM_IN:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
                              getImage(this.getClass().getResource("/images/zoom_in_32x32x32.png")), new Point(8, 8), "Zoom In"));
                  }
                  break;
-             case Map_ZoomOut:
+             case MAP_ZOOM_OUT:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
                              getImage(this.getClass().getResource("/images/zoom_out_32x32x32.png")), new Point(8, 8), "Zoom Out"));
                  }
                  break;
-             case Map_Pan:
+             case MAP_PAN:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
                              getImage(this.getClass().getResource("/images/Pan_Open_32x32x32.png")), new Point(8, 8), "Pan"));
                  }
                  break;
-             case Map_Identifer:
+             case MAP_IDENTIFIER:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
                              getImage(this.getClass().getResource("/images/identifer_32x32x32.png")), new Point(8, 8), "Identifer"));
                  }
                  break;
-             case Map_SelectFeatures_Rectangle:
+             case MAP_SELECT_FEATURES_RECTANGLE:
                  //case Map_SelectFeatures_Polygon:
                  //case Map_SelectFeatures_Lasso:
                  //case Map_SelectFeatures_Circle:
@@ -880,7 +880,7 @@ import org.xml.sax.SAXException;
                      this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                  }
                  break;
-             case Select:
+             case SELECT:
                  if (_selectedElements.size() > 0) {
                      List<LayoutElement> tempElements = selectElements(pageP, _selectedElements, 3);
                      if (tempElements.size() > 0) {
@@ -888,14 +888,14 @@ import org.xml.sax.SAXException;
                          Rectangle aRect = (Rectangle) _selectedElements.get(0).getBounds().clone();
                          _resizeSelectedEdge = intersectElementEdge(aRect, new PointF(pageP.x, pageP.y), 3F);
                          switch (_selectedElements.get(0).getResizeAbility()) {
-                             case SameWidthHeight:
+                             case SAME_WIDTH_HEIGHT:
                                  switch (_resizeSelectedEdge) {
-                                     case TopLeft:
-                                     case BottomRight:
+                                     case TOP_LEFT:
+                                     case BOTTOM_RIGHT:
                                          this.setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
                                          break;
-                                     case TopRight:
-                                     case BottomLeft:
+                                     case TOP_RIGHT:
+                                     case BOTTOM_LEFT:
                                          this.setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
                                          break;
                                      default:
@@ -903,25 +903,25 @@ import org.xml.sax.SAXException;
                                          break;
                                  }
                                  break;
-                             case ResizeAll:
+                             case RESIZE_ALL:
                                  switch (_resizeSelectedEdge) {
-                                     case TopLeft:
-                                     case BottomRight:
+                                     case TOP_LEFT:
+                                     case BOTTOM_RIGHT:
                                          this.setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
                                          break;
-                                     case Top:
-                                     case Bottom:
+                                     case TOP:
+                                     case BOTTOM:
                                          this.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
                                          break;
-                                     case TopRight:
-                                     case BottomLeft:
+                                     case TOP_RIGHT:
+                                     case BOTTOM_LEFT:
                                          this.setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
                                          break;
-                                     case Left:
-                                     case Right:
+                                     case LEFT:
+                                     case RIGHT:
                                          this.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
                                          break;
-                                     case None:
+                                     case NONE:
                                          this.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                                          break;
                                  }
@@ -938,21 +938,21 @@ import org.xml.sax.SAXException;
                  }
 
                  break;
-             case MoveSelection:
+             case MOVE_SELECTION:
                  break;
-             case ResizeSelected:
+             case RESIZE_SELECTED:
                  break;
-             case New_Polyline:
-             case New_Polygon:
-             case New_Curve:
-             case New_CurvePolygon:
-             case Map_SelectFeatures_Polygon:
+             case NEW_POLYLINE:
+             case NEW_POLYGON:
+             case NEW_CURVE:
+             case NEW_CURVE_POLYGON:
+             case MAP_SELECT_FEATURES_POLYGON:
                  if (!_startNewGraphic) {
                      //this.repaint();
                      this.repaintOld();
                  }
                  break;
-             case EditVertices:
+             case EDIT_VERTICES:
                  if (_selectedElements.size() > 0) {
                      _editingVerticeIndex = selectEditVertices(pageP, ((LayoutGraphic) _selectedElements.get(0)).getGraphic().getShape(),
                              _editingVertices);
@@ -966,7 +966,7 @@ import org.xml.sax.SAXException;
                      }
                  }
                  break;
-             case Map_Measurement:
+             case MAP_MEASUREMENT:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                  }
@@ -1039,7 +1039,7 @@ import org.xml.sax.SAXException;
          double MinX, MaxX, MinY, MaxY, ZoomF;
          Point pageP = screenToPage(e.getX(), e.getY());
          switch (_mouseMode) {
-             case Map_ZoomIn:
+             case MAP_ZOOM_IN:
                  MinX = Math.min(e.getX(), _mouseDownPoint.x);
                  MinY = Math.min(e.getY(), _mouseDownPoint.y);
                  MaxX = Math.max(e.getX(), _mouseDownPoint.x);
@@ -1071,7 +1071,7 @@ import org.xml.sax.SAXException;
                      _currentLayoutMap.getMapFrame().getMapView().zoomToExtentScreen(MinX, MaxX, MinY, MaxY, _zoom);
                  }
                  break;
-             case Map_ZoomOut:
+             case MAP_ZOOM_OUT:
                  if (e.getButton() == MouseEvent.BUTTON1) {
                      ZoomF = 1.5;
                  } else {
@@ -1090,7 +1090,7 @@ import org.xml.sax.SAXException;
                      _currentLayoutMap.getMapFrame().getMapView().zoomToExtentScreen(MinX, MaxX, MinY, MaxY, _zoom);
                  }
                  break;
-             case Map_Pan:
+             case MAP_PAN:
                  if (e.getButton() == MouseEvent.BUTTON1) {
                      int deltaX = e.getX() - _mouseDownPoint.x;
                      int deltaY = e.getY() - _mouseDownPoint.y;
@@ -1107,7 +1107,7 @@ import org.xml.sax.SAXException;
 
          if (e.getButton() == MouseEvent.BUTTON1) {
              switch (_mouseMode) {
-                 case Map_SelectFeatures_Rectangle:
+                 case MAP_SELECT_FEATURES_RECTANGLE:
                      if (_currentLayoutMap.getMapFrame().getMapView().getSelectedLayerHandle() < 0) {
                          return;
                      }
@@ -1115,7 +1115,7 @@ import org.xml.sax.SAXException;
                      if (aMLayer == null) {
                          return;
                      }
-                     if (aMLayer.getLayerType() != LayerTypes.VectorLayer) {
+                     if (aMLayer.getLayerType() != LayerTypes.VECTOR_LAYER) {
                          return;
                      }
 
@@ -1142,7 +1142,7 @@ import org.xml.sax.SAXException;
                      //this.paintGraphics();
                      this.repaintNew();
                      break;
-                 case CreateSelection:
+                 case CREATE_SELECTION:
                      //Remove selected graphics
                      for (LayoutElement aElement : _selectedElements) {
                          aElement.setSelected(false);
@@ -1163,17 +1163,17 @@ import org.xml.sax.SAXException;
                              _selectedElements.remove(_selectedElements.size() - 1);
                          }
                          _selectedElements.get(0).setSelected(true);
-                         if (_selectedElements.get(0).getElementType() == ElementType.LayoutMap) {
+                         if (_selectedElements.get(0).getElementType() == ElementType.MAP) {
                              setActiveMapFrame(((LayoutMap) _selectedElements.get(0)).getMapFrame());
                          }
                      }
                      this.fireElementSelectedEvent();
 
-                     _mouseMode = MouseMode.Select;
+                     _mouseMode = MouseMode.SELECT;
                      //this.paintGraphics();
                      this.repaintNew();
                      break;
-                 case MoveSelection:
+                 case MOVE_SELECTION:
                      //Select elements
                      if (Math.abs(e.getX() - _mouseDownPoint.x) < 2 && Math.abs(e.getY() - _mouseDownPoint.y) < 2) {
                          LayoutElement aElement = _selectedElements.get(0);
@@ -1193,7 +1193,7 @@ import org.xml.sax.SAXException;
                              _selectedElements.clear();
                              _selectedElements.add(aElement);
                              _selectedElements.get(0).setSelected(true);
-                             if (_selectedElements.get(0).getElementType() == ElementType.LayoutMap) {
+                             if (_selectedElements.get(0).getElementType() == ElementType.MAP) {
                                  setActiveMapFrame(((LayoutMap) _selectedElements.get(0)).getMapFrame());
                              }
                          }
@@ -1210,12 +1210,12 @@ import org.xml.sax.SAXException;
                          this.fireUndoEditEvent(edit);
                      }
 
-                     _mouseMode = MouseMode.Select;
+                     _mouseMode = MouseMode.SELECT;
                      //this.paintGraphics();
                      this.repaintNew();
                      break;
-                 case ResizeSelected:
-                     _mouseMode = MouseMode.Select;
+                 case RESIZE_SELECTED:
+                     _mouseMode = MouseMode.SELECT;
                      LayoutElement oElement = _selectedElements.get(0);
                      if (_selectedRectangle.width < 3) {
                          _selectedRectangle.width = 3;
@@ -1236,8 +1236,8 @@ import org.xml.sax.SAXException;
                      //this.paintGraphics();
                      this.repaintNew();
                      break;
-                 case New_Rectangle:
-                 case New_Ellipse:
+                 case NEW_RECTANGLE:
+                 case NEW_ELLIPSE:
                      if (e.getButton() == MouseEvent.BUTTON1) {
                          if (e.getX() - _mouseDownPoint.x < 2 || e.getY() - _mouseDownPoint.y < 2) {
                              return;
@@ -1257,13 +1257,13 @@ import org.xml.sax.SAXException;
 
                          Graphic aGraphic = null;
                          switch (_mouseMode) {
-                             case New_Rectangle:
+                             case NEW_RECTANGLE:
                                  RectangleShape aPGS = new RectangleShape();
                                  points.add((PointD) points.get(0).clone());
                                  aPGS.setPoints(points);
                                  aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                                  break;
-                             case New_Ellipse:
+                             case NEW_ELLIPSE:
                                  EllipseShape aES = new EllipseShape();
                                  aES.setPoints(points);
                                  aGraphic = new Graphic(aES, (PolygonBreak) _defPolygonBreak.clone());
@@ -1283,7 +1283,7 @@ import org.xml.sax.SAXException;
                          }
                      }
                      break;
-                 case New_Freehand:
+                 case NEW_FREEHAND:
                      if (e.getButton() == MouseEvent.BUTTON1) {
                          _startNewGraphic = true;
                          if (_graphicPoints.size() < 2) {
@@ -1307,7 +1307,7 @@ import org.xml.sax.SAXException;
                          this.fireUndoEditEvent(edit);
                      }
                      break;
-                 case New_Circle:
+                 case NEW_CIRCLE:
                      if (e.getButton() == MouseEvent.BUTTON1) {
                          if (e.getX() - _mouseDownPoint.x < 2 || e.getY() - _mouseDownPoint.y < 2) {
                              return;
@@ -1338,13 +1338,13 @@ import org.xml.sax.SAXException;
                          this.fireUndoEditEvent(edit);
                      }
                      break;
-                 case InEditingVertices:
+                 case IN_EDITING_VERTICES:
                      LayoutGraphic lg = (LayoutGraphic) _selectedElements.get(0);
                      edit = (new MapLayoutUndoRedo()).new MoveGraphicVerticeEdit(this, lg, _editingVerticeIndex,
                              pageP.x, pageP.y);
                      this.fireUndoEditEvent(edit);
                      lg.verticeEditUpdate(_editingVerticeIndex, pageP.x, pageP.y);
-                     _mouseMode = MouseMode.EditVertices;
+                     _mouseMode = MouseMode.EDIT_VERTICES;
                      //this.paintGraphics();
                      this.repaintNew();
                      break;
@@ -1358,18 +1358,18 @@ import org.xml.sax.SAXException;
              Point pageP = screenToPage(e.getX(), e.getY());
              if (e.getButton() == MouseEvent.BUTTON1) {
                  switch (_mouseMode) {
-                     case Map_Identifer:
+                     case MAP_IDENTIFIER:
                          MapLayer aMLayer = _currentLayoutMap.getMapFrame().getMapView().getSelectedLayer();
                          if (aMLayer == null) {
                              return;
                          }
-                         if (aMLayer.getLayerType() == LayerTypes.ImageLayer) {
+                         if (aMLayer.getLayerType() == LayerTypes.IMAGE_LAYER) {
                              return;
                          }
 
                          PointF mapP = pageToScreen(_currentLayoutMap.getLeft(), _currentLayoutMap.getTop());
                          PointF aPoint = new PointF(e.getX() - mapP.X, e.getY() - mapP.Y);
-                         if (aMLayer.getLayerType() == LayerTypes.VectorLayer) {
+                         if (aMLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                              VectorLayer aLayer = (VectorLayer) aMLayer;
                              List<Integer> selectedShapes = _currentLayoutMap.getMapFrame().getMapView().selectShapes(aLayer, aPoint);
                              if (selectedShapes.size() > 0) {
@@ -1423,7 +1423,7 @@ import org.xml.sax.SAXException;
                                  //Rectangle rect = getElementViewExtent(_currentLayoutMap);
                                  //_currentLayoutMap.getMapFrame().getMapView().drawIdShape(this.createGraphics(), aLayer.getShapes().get(shapeIdx), rect);
                              }
-                         } else if (aMLayer.getLayerType() == LayerTypes.RasterLayer) {
+                         } else if (aMLayer.getLayerType() == LayerTypes.RASTER_LAYER) {
                              RasterLayer aRLayer = (RasterLayer) aMLayer;
                              int[] ijIdx = _currentLayoutMap.getMapFrame().getMapView().selectGridCell(aRLayer, aPoint);
                              if (ijIdx != null) {
@@ -1486,7 +1486,7 @@ import org.xml.sax.SAXException;
  //                        }
  //                        break;
                  }
-             } else if (e.getButton() == MouseEvent.BUTTON3 && _mouseMode == MouseMode.Select) {
+             } else if (e.getButton() == MouseEvent.BUTTON3 && _mouseMode == MouseMode.SELECT) {
                  if (_selectedElements.isEmpty()) {
                      return;
                  }
@@ -1543,15 +1543,15 @@ import org.xml.sax.SAXException;
                  jPopupMenu_Element.add(jMenuItem_Remove);
 
                  switch (_mouseMode) {
-                     case Select:
-                     case MoveSelection:
-                     case ResizeSelected:
+                     case SELECT:
+                     case MOVE_SELECTION:
+                     case RESIZE_SELECTED:
                          if (_selectedElements.size() > 0) {
                              LayoutElement aElement = _selectedElements.get(0);
                              if (MIMath.pointInRectangle(pageP, aElement.getBounds())) {
-                                 if (aElement.getElementType() == ElementType.LayoutGraphic) {
+                                 if (aElement.getElementType() == ElementType.GRAPHIC) {
                                      Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
-                                     if (aGraphic.getLegend().getBreakType() == BreakTypes.PolylineBreak || aGraphic.getLegend().getBreakType() == BreakTypes.PolygonBreak) {
+                                     if (aGraphic.getLegend().getBreakType() == BreakTypes.POLYLINE_BREAK || aGraphic.getLegend().getBreakType() == BreakTypes.POLYGON_BREAK) {
                                          JMenuItem jMenuItem_Reverse = new JMenuItem("Reverse");
                                          jMenuItem_Reverse.addActionListener(new ActionListener() {
                                              @Override
@@ -1595,9 +1595,9 @@ import org.xml.sax.SAXException;
          } else if (clickTimes == 2) {
              Point pageP = screenToPage(e.getX(), e.getY());
              switch (_mouseMode) {
-                 case Select:
-                 case MoveSelection:
-                 case ResizeSelected:
+                 case SELECT:
+                 case MOVE_SELECTION:
+                 case RESIZE_SELECTED:
                      if (_selectedElements.isEmpty()) {
                          return;
                      }
@@ -1619,23 +1619,23 @@ import org.xml.sax.SAXException;
                      //this.paintGraphics();
                      this.repaintNew();
 
-                     if (aElement.getElementType() == ElementType.LayoutGraphic) {
+                     if (aElement.getElementType() == ElementType.GRAPHIC) {
                          Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
                          showSymbolSetForm(aGraphic);
                      } else {
                          FrmProperty aFrmProperty = new FrmProperty((JFrame) SwingUtilities.getWindowAncestor(this), true, false);
                          Object object = aElement;
                          switch (aElement.getElementType()) {
-                             case LayoutLegend:
+                             case LEGEND:
                                  object = ((LayoutLegend) aElement).new LayoutLegendBean();
                                  break;
-                             case LayoutMap:
+                             case MAP:
                                  object = ((LayoutMap) aElement).new LayoutMapBean();
                                  break;
-                             case LayoutNorthArraw:
+                             case NORTH_ARROW:
                                  object = ((LayoutNorthArrow) aElement).new LayoutNorthArrowBean();
                                  break;
-                             case LayoutScaleBar:
+                             case SCALE_BAR:
                                  object = ((LayoutScaleBar) aElement).new LayoutScaleBarBean();
                                  break;
                          }
@@ -1644,20 +1644,20 @@ import org.xml.sax.SAXException;
                          aFrmProperty.setLocationRelativeTo(this);
                          aFrmProperty.setVisible(true);
                      }
-                     setMouseMode(MouseMode.Select);
+                     setMouseMode(MouseMode.SELECT);
                      this.fireElementSelectedEvent();
                      break;
-                 case New_Polyline:
-                 case New_Polygon:
-                 case New_Curve:
-                 case New_CurvePolygon:
-                 case New_Freehand:
-                 case Map_SelectFeatures_Polygon:
+                 case NEW_POLYLINE:
+                 case NEW_POLYGON:
+                 case NEW_CURVE:
+                 case NEW_CURVE_POLYGON:
+                 case NEW_FREEHAND:
+                 case MAP_SELECT_FEATURES_POLYGON:
                      if (!_startNewGraphic) {
                          _startNewGraphic = true;
                          _graphicPoints.remove(_graphicPoints.size() - 1);
 
-                         if (_mouseMode == MouseMode.Map_SelectFeatures_Polygon) {
+                         if (_mouseMode == MouseMode.MAP_SELECT_FEATURES_POLYGON) {
                              PointF mapP = pageToScreen(_currentLayoutMap.getLeft(), _currentLayoutMap.getTop());
                              List<PointD> points = new ArrayList<>();
                              MapView currentMapView = _currentLayoutMap.getMapFrame().getMapView();
@@ -1670,7 +1670,7 @@ import org.xml.sax.SAXException;
                              if (aMLayer == null) {
                                  return;
                              }
-                             if (aMLayer.getLayerType() != LayerTypes.VectorLayer) {
+                             if (aMLayer.getLayerType() != LayerTypes.VECTOR_LAYER) {
                                  return;
                              }
 
@@ -1692,13 +1692,13 @@ import org.xml.sax.SAXException;
 
                              Graphic aGraphic = null;
                              switch (_mouseMode) {
-                                 case New_Polyline:
-                                 case New_Freehand:
+                                 case NEW_POLYLINE:
+                                 case NEW_FREEHAND:
                                      PolylineShape aPLS = new PolylineShape();
                                      aPLS.setPoints(points);
                                      aGraphic = new Graphic(aPLS, (PolylineBreak) _defPolylineBreak.clone());
                                      break;
-                                 case New_Polygon:
+                                 case NEW_POLYGON:
                                      if (points.size() > 2) {
                                          PolygonShape aPGS = new PolygonShape();
                                          points.add((PointD) points.get(0).clone());
@@ -1706,12 +1706,12 @@ import org.xml.sax.SAXException;
                                          aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                                      }
                                      break;
-                                 case New_Curve:
+                                 case NEW_CIRCLE:
                                      CurveLineShape aCLS = new CurveLineShape();
                                      aCLS.setPoints(points);
                                      aGraphic = new Graphic(aCLS, (PolylineBreak) _defPolylineBreak.clone());
                                      break;
-                                 case New_CurvePolygon:
+                                 case NEW_CURVE_POLYGON:
                                      if (points.size() > 2) {
                                          CurvePolygonShape aCPS = new CurvePolygonShape();
                                          points.add((PointD) points.get(0).clone());
@@ -1835,7 +1835,7 @@ import org.xml.sax.SAXException;
 
      private void showSymbolSetForm(ColorBreak aCB) {
          switch (aCB.getBreakType()) {
-             case PointBreak:
+             case POINT_BREAK:
                  PointBreak aPB = (PointBreak) aCB;
 
                  if (_frmPointSymbolSet == null) {
@@ -1846,7 +1846,7 @@ import org.xml.sax.SAXException;
                  _frmPointSymbolSet.setPointBreak(aPB);
                  _frmPointSymbolSet.setVisible(true);
                  break;
-             case LabelBreak:
+             case LABEL_BREAK:
                  LabelBreak aLB = (LabelBreak) aCB;
 
                  if (_frmLabelSymbolSet == null) {
@@ -1857,7 +1857,7 @@ import org.xml.sax.SAXException;
                  _frmLabelSymbolSet.setLabelBreak(aLB);
                  _frmLabelSymbolSet.setVisible(true);
                  break;
-             case PolylineBreak:
+             case POLYLINE_BREAK:
                  PolylineBreak aPLB = (PolylineBreak) aCB;
 
                  if (_frmPolylineSymbolSet == null) {
@@ -1868,7 +1868,7 @@ import org.xml.sax.SAXException;
                  _frmPolylineSymbolSet.setPolylineBreak(aPLB);
                  _frmPolylineSymbolSet.setVisible(true);
                  break;
-             case PolygonBreak:
+             case POLYGON_BREAK:
                  PolygonBreak aPGB = (PolygonBreak) aCB;
 
                  if (_frmPolygonSymbolSet == null) {
@@ -1886,7 +1886,7 @@ import org.xml.sax.SAXException;
          Shape shape = graphic.getShape();
          ColorBreak aCB = graphic.getLegend();
          switch (aCB.getBreakType()) {
-             case PointBreak:
+             case POINT_BREAK:
                  PointBreak aPB = (PointBreak) aCB;
 
                  if (_frmPointSymbolSet == null) {
@@ -1897,7 +1897,7 @@ import org.xml.sax.SAXException;
                  _frmPointSymbolSet.setPointBreak(aPB);
                  _frmPointSymbolSet.setVisible(true);
                  break;
-             case LabelBreak:
+             case LABEL_BREAK:
                  LabelBreak aLB = (LabelBreak) aCB;
 
                  if (_frmLabelSymbolSet == null) {
@@ -1908,7 +1908,7 @@ import org.xml.sax.SAXException;
                  _frmLabelSymbolSet.setLabelBreak(aLB);
                  _frmLabelSymbolSet.setVisible(true);
                  break;
-             case PolylineBreak:
+             case POLYLINE_BREAK:
                  PolylineBreak aPLB = (PolylineBreak) aCB;
 
                  if (_frmPolylineSymbolSet == null) {
@@ -1919,7 +1919,7 @@ import org.xml.sax.SAXException;
                  _frmPolylineSymbolSet.setPolylineBreak(aPLB);
                  _frmPolylineSymbolSet.setVisible(true);
                  break;
-             case PolygonBreak:
+             case POLYGON_BREAK:
                  PolygonBreak aPGB = (PolygonBreak) aCB;
 
                  if (_frmPolygonSymbolSet == null) {
@@ -1930,7 +1930,7 @@ import org.xml.sax.SAXException;
                  _frmPolygonSymbolSet.setPolygonBreak(aPGB);
                  _frmPolygonSymbolSet.setVisible(true);
                  break;
-             case VectorBreak:
+             case VECTOR_BREAK:
                  WindArrow wa = (WindArrow) shape;
                  //VectorBreak vb = (VectorBreak) aCB;
                  Object[] lens = {5, 10, 15, 20, 25, 30};
@@ -1946,7 +1946,7 @@ import org.xml.sax.SAXException;
      }
 
      void onKeyPressed(KeyEvent e) {
-         if (_mouseMode == MouseMode.Select) {
+         if (_mouseMode == MouseMode.SELECT) {
              switch (e.getKeyCode()) {
                  case KeyEvent.VK_DELETE:
                      onRemoveElementClick();
@@ -2149,25 +2149,25 @@ import org.xml.sax.SAXException;
      public void setMouseMode(MouseMode mm) {
          _mouseMode = mm;
          switch (_mouseMode) {
-             case New_Label:
-             case New_Point:
-             case New_Polyline:
-             case New_Polygon:
-             case New_Rectangle:
-             case New_Circle:
-             case New_Curve:
-             case New_CurvePolygon:
-             case New_Ellipse:
-             case New_Freehand:
+             case NEW_LABEL:
+             case NEW_POINT:
+             case NEW_POLYLINE:
+             case NEW_POLYGON:
+             case NEW_RECTANGLE:
+             case NEW_CIRCLE:
+             case NEW_CURVE:
+             case NEW_CURVE_POLYGON:
+             case NEW_ELLIPSE:
+             case NEW_FREEHAND:
                  this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                  break;
-             case Map_Measurement:
+             case MAP_MEASUREMENT:
                  this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                  break;
-             case Map_SelectFeatures_Rectangle:
-             case Map_SelectFeatures_Polygon:
-             case Map_SelectFeatures_Lasso:
-             case Map_SelectFeatures_Circle:
+             case MAP_SELECT_FEATURES_RECTANGLE:
+             case MAP_SELECT_FEATURES_POLYGON:
+             case MAP_SELECT_FEATURES_LASSO:
+             case MAP_SELECT_FEATURES_CIRCLE:
                  this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                  this._tempImage = GlobalUtil.deepCopy(this._layoutBitmap);
                  break;
@@ -2294,7 +2294,7 @@ import org.xml.sax.SAXException;
      public List<LayoutMap> getLayoutMaps() {
          List<LayoutMap> layoutMaps = new ArrayList<>();
          for (LayoutElement aLE : _layoutElements) {
-             if (aLE.getElementType() == ElementType.LayoutMap) {
+             if (aLE.getElementType() == ElementType.MAP) {
                  layoutMaps.add((LayoutMap) aLE);
              }
          }
@@ -2511,7 +2511,7 @@ import org.xml.sax.SAXException;
              Rectangle rect = new Rectangle();
              float dash1[] = {2.0f};
              switch (this._mouseMode) {
-                 case Map_ZoomIn:
+                 case MAP_ZOOM_IN:
                      rect.width = Math.abs(_mouseLastPos.x - _mouseDownPoint.x);
                      rect.height = Math.abs(_mouseLastPos.y - _mouseDownPoint.y);
                      rect.x = Math.min(_mouseLastPos.x, _mouseDownPoint.x);
@@ -2521,7 +2521,7 @@ import org.xml.sax.SAXException;
                      g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f));
                      g2.draw(rect);
                      break;
-                 case MoveSelection:
+                 case MOVE_SELECTION:
                      rect.x = _selectedRectangle.x + _mouseLastPos.x - _mouseDownPoint.x;
                      rect.y = _selectedRectangle.y + _mouseLastPos.y - _mouseDownPoint.y;
                      rect.width = _selectedRectangle.width;
@@ -2530,31 +2530,31 @@ import org.xml.sax.SAXException;
                      g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f));
                      g2.draw(rect);
                      break;
-                 case ResizeSelected:
+                 case RESIZE_SELECTED:
                      g2.setColor(Color.red);
                      g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f));
                      g2.draw(_selectedRectangle);
                      break;
-                 case CreateSelection:
-                 case New_Rectangle:
-                 case New_Ellipse:
-                 case Map_SelectFeatures_Rectangle:
+                 case CREATE_SELECTION:
+                 case NEW_RECTANGLE:
+                 case NEW_ELLIPSE:
+                 case MAP_SELECT_FEATURES_RECTANGLE:
                      int sx = Math.min(_mouseDownPoint.x, _mouseLastPos.x);
                      int sy = Math.min(_mouseDownPoint.y, _mouseLastPos.y);
                      g2.setColor(this.getForeground());
                      g2.draw(new Rectangle(sx, sy, Math.abs(_mouseLastPos.x - _mouseDownPoint.x),
                              Math.abs(_mouseLastPos.y - _mouseDownPoint.y)));
                      break;
-                 case New_Freehand:
-                 case Map_SelectFeatures_Lasso:
+                 case NEW_FREEHAND:
+                 case MAP_SELECT_FEATURES_LASSO:
                      List<PointF> points = new ArrayList<>(_graphicPoints);
                      points.add(new PointF(_mouseLastPos.x, _mouseLastPos.y));
                      g2.setColor(this.getForeground());
                      _graphicPoints.add(new PointF(_mouseLastPos.x, _mouseLastPos.y));
                      Draw.drawPolyline(points, g2);
                      break;
-                 case New_Circle:
-                 case Map_SelectFeatures_Circle:
+                 case NEW_CIRCLE:
+                 case MAP_SELECT_FEATURES_CIRCLE:
                      int radius = (int) Math.sqrt(Math.pow(_mouseLastPos.x - _mouseDownPoint.x, 2)
                              + Math.pow(_mouseLastPos.y - _mouseDownPoint.y, 2));
                      g2.setColor(this.getForeground());
@@ -2562,7 +2562,7 @@ import org.xml.sax.SAXException;
                      g2.drawOval(_mouseDownPoint.x - radius, _mouseDownPoint.y - radius,
                              radius * 2, radius * 2);
                      break;
-                 case InEditingVertices:
+                 case IN_EDITING_VERTICES:
                      PointF p1 = pageToScreen((float) _editingVertices.get(1).X, (float) _editingVertices.get(1).Y);
                      PointF p2 = pageToScreen((float) _editingVertices.get(2).X, (float) _editingVertices.get(2).Y);
                      g2.setColor(Color.black);
@@ -2581,34 +2581,34 @@ import org.xml.sax.SAXException;
          }
 
          switch (this._mouseMode) {
-             case New_Polyline:
-             case New_Polygon:
-             case New_Curve:
-             case New_CurvePolygon:
-             case Map_SelectFeatures_Polygon:
+             case NEW_POLYLINE:
+             case NEW_POLYGON:
+             case NEW_CURVE:
+             case NEW_CURVE_POLYGON:
+             case MAP_SELECT_FEATURES_POLYGON:
                  if (!_startNewGraphic) {
                      List<PointF> points = new ArrayList<>(_graphicPoints);
                      points.add(new PointF(_mouseLastPos.x, _mouseLastPos.y));
                      g2.setColor(this.getForeground());
                      switch (_mouseMode) {
-                         case New_Polyline:
+                         case NEW_POLYLINE:
                              Draw.drawPolyline(points, g2);
                              break;
-                         case New_Polygon:
+                         case NEW_POLYGON:
                              points.add(points.get(0));
                              Draw.drawPolyline(points, g2);
                              break;
-                         case New_Curve:
+                         case NEW_CURVE:
                              Draw.drawCurveLine(points, g2);
                              break;
-                         case New_CurvePolygon:
+                         case NEW_CURVE_POLYGON:
                              points.add(points.get(0));
                              Draw.drawCurveLine(points, g2);
                              break;
                      }
                  }
                  break;
-             case Map_Measurement:
+             case MAP_MEASUREMENT:
                  if (!_startNewGraphic) {
                      //Draw graphic
                      //g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -2642,7 +2642,7 @@ import org.xml.sax.SAXException;
                  int selLayerHandle = this._currentLayoutMap.getMapFrame().getMapView().getSelectedLayerHandle();
                  if (selLayerHandle >= 0) {
                      MapLayer aLayer = this._currentLayoutMap.getMapFrame().getMapView().getLayerByHandle(selLayerHandle);
-                     if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+                     if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                          VectorLayer vLayer = (VectorLayer) aLayer;
                          Rectangle rect = getElementViewExtent(_currentLayoutMap);
                          this._currentLayoutMap.getMapFrame().getMapView().drawIdShape(g2, vLayer.getShapes().get(vLayer.getIdentiferShape()), rect);
@@ -2857,7 +2857,7 @@ import org.xml.sax.SAXException;
              }
 
              if (aElement.isSelected()) {
-                 if (_mouseMode == MouseMode.EditVertices) {
+                 if (_mouseMode == MouseMode.EDIT_VERTICES) {
                      LayoutGraphic aLG = (LayoutGraphic) aElement;
                      List<PointD> points = (List<PointD>) aLG.getGraphic().getShape().getPoints();
                      drawSelectedVertices(g, points);
@@ -2869,10 +2869,10 @@ import org.xml.sax.SAXException;
                      g.draw(aRect);
 
                      switch (aElement.getResizeAbility()) {
-                         case SameWidthHeight:
+                         case SAME_WIDTH_HEIGHT:
                              drawSelectedConers(g, aElement);
                              break;
-                         case ResizeAll:
+                         case RESIZE_ALL:
                              drawSelectedConers(g, aElement);
                              drawSelectedEdgeCenters(g, aElement);
                              break;
@@ -3308,7 +3308,7 @@ import org.xml.sax.SAXException;
       */
      public void addElement(LayoutElement aElement) {
          _layoutElements.add(aElement);
-         if (aElement.getElementType() == ElementType.LayoutMap) {
+         if (aElement.getElementType() == ElementType.MAP) {
              final LayoutMap aLM = (LayoutMap) aElement;
              aLM.addMapViewUpdatedListener(new IMapViewUpdatedListener() {
                  @Override
@@ -3332,7 +3332,7 @@ import org.xml.sax.SAXException;
       */
      public void removeElement(LayoutElement aElement) {
          switch (aElement.getElementType()) {
-             case LayoutMap:
+             case MAP:
                  if (this.getLayoutMaps().size() == 1) {
                      JOptionPane.showMessageDialog(this, "There is at least one layout map!");
                      return;
@@ -3342,19 +3342,19 @@ import org.xml.sax.SAXException;
                  for (int i = 0; i < _layoutElements.size(); i++) {
                      LayoutElement aLE = _layoutElements.get(i);
                      switch (aLE.getElementType()) {
-                         case LayoutLegend:
+                         case LEGEND:
                              if (((LayoutLegend) aLE).getLayoutMap() == aLM) {
                                  _layoutElements.remove(aLE);
                                  i -= 1;
                              }
                              break;
-                         case LayoutScaleBar:
+                         case SCALE_BAR:
                              if (((LayoutScaleBar) aLE).getLayoutMap() == aLM) {
                                  _layoutElements.remove(aLE);
                                  i -= 1;
                              }
                              break;
-                         case LayoutNorthArraw:
+                         case NORTH_ARROW:
                              if (((LayoutNorthArrow) aLE).getLayoutMap() == aLM) {
                                  _layoutElements.remove(aLE);
                                  i -= 1;
@@ -3456,7 +3456,7 @@ import org.xml.sax.SAXException;
          aLL.setTop(top);
          if (aLM.getMapFrame().getMapView().getLayerNum() > 0) {
              for (MapLayer aLayer : aLM.getMapFrame().getMapView().getLayers()) {
-                 if (aLayer.getLayerType() != LayerTypes.ImageLayer) {
+                 if (aLayer.getLayerType() != LayerTypes.IMAGE_LAYER) {
                      aLL.setLegendLayer(aLayer);
                  }
              }
@@ -3525,7 +3525,7 @@ import org.xml.sax.SAXException;
      public List<LayoutGraphic> getLayoutGraphics() {
          List<LayoutGraphic> graphics = new ArrayList<>();
          for (LayoutElement aLE : _layoutElements) {
-             if (aLE.getElementType() == ElementType.LayoutGraphic) {
+             if (aLE.getElementType() == ElementType.GRAPHIC) {
                  graphics.add((LayoutGraphic) aLE);
              }
          }
@@ -3542,7 +3542,7 @@ import org.xml.sax.SAXException;
          List<LayoutGraphic> texts = new ArrayList<>();
          List<LayoutGraphic> graphics = getLayoutGraphics();
          for (LayoutGraphic aLG : graphics) {
-             if (aLG.getGraphic().getLegend().getBreakType() == BreakTypes.LabelBreak) {
+             if (aLG.getGraphic().getLegend().getBreakType() == BreakTypes.LABEL_BREAK) {
                  texts.add(aLG);
              }
          }
@@ -3575,7 +3575,7 @@ import org.xml.sax.SAXException;
      public List<LayoutLegend> getLegends() {
          List<LayoutLegend> legends = new ArrayList<>();
          for (LayoutElement aLE : _layoutElements) {
-             if (aLE.getElementType() == ElementType.LayoutLegend) {
+             if (aLE.getElementType() == ElementType.LEGEND) {
                  legends.add((LayoutLegend) aLE);
              }
          }
@@ -3631,7 +3631,7 @@ import org.xml.sax.SAXException;
       */
      public boolean hasLegendElement() {
          for (LayoutElement aLE : _layoutElements) {
-             if (aLE.getElementType() == ElementType.LayoutLegend) {
+             if (aLE.getElementType() == ElementType.LEGEND) {
                  return true;
              }
          }
@@ -3767,30 +3767,30 @@ import org.xml.sax.SAXException;
      private static Edge intersectElementEdge(Rectangle screen, PointF pt, float limit) {
          Rectangle.Float ptRect = new Rectangle.Float(pt.X - limit, pt.Y - limit, 2F * limit, 2F * limit);
          if ((pt.X >= screen.x - limit && pt.X <= screen.x + limit) && (pt.Y >= screen.y - limit && pt.Y <= screen.y + limit)) {
-             return Edge.TopLeft;
+             return Edge.TOP_LEFT;
          }
          if ((pt.X >= screen.x + screen.width - limit && pt.X <= screen.x + screen.width + limit) && (pt.Y >= screen.y - limit && pt.Y <= screen.y + limit)) {
-             return Edge.TopRight;
+             return Edge.TOP_RIGHT;
          }
          if ((pt.X >= screen.x + screen.width - limit && pt.X <= screen.x + screen.width + limit) && (pt.Y >= screen.y + screen.height - limit && pt.Y <= screen.y + screen.height + limit)) {
-             return Edge.BottomRight;
+             return Edge.BOTTOM_RIGHT;
          }
          if ((pt.X >= screen.x - limit && pt.X <= screen.x + limit) && (pt.Y >= screen.y + screen.height - limit && pt.Y <= screen.y + screen.height + limit)) {
-             return Edge.BottomLeft;
+             return Edge.BOTTOM_LEFT;
          }
          if (ptRect.intersects(new Rectangle.Float(screen.x, screen.y, screen.width, 1F))) {
-             return Edge.Top;
+             return Edge.TOP;
          }
          if (ptRect.intersects(new Rectangle.Float(screen.x, screen.y, 1F, screen.height))) {
-             return Edge.Left;
+             return Edge.LEFT;
          }
          if (ptRect.intersects(new Rectangle.Float(screen.x, screen.y + screen.height, screen.width, 1F))) {
-             return Edge.Bottom;
+             return Edge.BOTTOM;
          }
          if (ptRect.intersects(new Rectangle.Float(screen.x + screen.width, screen.y, 1F, screen.height))) {
-             return Edge.Right;
+             return Edge.RIGHT;
          }
-         return Edge.None;
+         return Edge.NONE;
      }
      // </editor-fold>
 
@@ -3872,22 +3872,22 @@ import org.xml.sax.SAXException;
          Element layoutElements = doc.createElement("LayoutElements");
          for (LayoutElement aElement : _layoutElements) {
              switch (aElement.getElementType()) {
-                 case LayoutMap:
+                 case MAP:
                      addLayoutMapElement(doc, layoutElements, (LayoutMap) aElement);
                      break;
-                 case LayoutIllustration:
+                 case ILLUSTRATION:
                      //AddIllustrationElement(ref doc, layoutElements, (LayoutIllustrationMap)aElement);
                      break;
-                 case LayoutLegend:
+                 case LEGEND:
                      addLayoutLegendElement(doc, layoutElements, (LayoutLegend) aElement);
                      break;
-                 case LayoutGraphic:
+                 case GRAPHIC:
                      addLayoutGraphicElement(doc, layoutElements, (LayoutGraphic) aElement);
                      break;
-                 case LayoutScaleBar:
+                 case SCALE_BAR:
                      addLayoutScaleBarElement(doc, layoutElements, (LayoutScaleBar) aElement);
                      break;
-                 case LayoutNorthArraw:
+                 case NORTH_ARROW:
                      addLayoutNorthArrowElement(doc, layoutElements, (LayoutNorthArrow) aElement);
                      break;
              }
@@ -4269,26 +4269,26 @@ import org.xml.sax.SAXException;
              }
              ElementType aType = ElementType.valueOf(elementNode.getAttributes().getNamedItem("ElementType").getNodeValue());
              switch (aType) {
-                 case LayoutIllustration:
+                 case ILLUSTRATION:
                      break;
-                 case LayoutLegend:
+                 case LEGEND:
                      LayoutLegend aLL = loadLayoutLegendElement(elementNode);
                      addElement(aLL);
                      break;
-                 case LayoutGraphic:
+                 case GRAPHIC:
                      LayoutGraphic aLG = loadLayoutGraphicElement(elementNode);
                      if (aLG.getGraphic().getShape().getShapeType() == ShapeTypes.WIND_ARROW) {
                          ((WindArrow) aLG.getGraphic().getShape()).angle = 270;
                      }
                      addElement(aLG);
                      break;
-                 case LayoutScaleBar:
+                 case SCALE_BAR:
                      LayoutScaleBar aLSB = loadLayoutScaleBarElement(elementNode);
                      if (aLSB != null) {
                          addElement(aLSB);
                      }
                      break;
-                 case LayoutNorthArraw:
+                 case NORTH_ARROW:
                      LayoutNorthArrow aLNA = loadLayoutNorthArrowElement(elementNode);
                      if (aLNA != null) {
                          addElement(aLNA);
@@ -4341,7 +4341,7 @@ import org.xml.sax.SAXException;
          }
 
          try {
-             aLL.setLegendStyle(LegendStyles.valueOf(layoutLegend.getAttributes().getNamedItem("LegendStyle").getNodeValue()));
+             aLL.setLegendStyle(LegendStyles.valueOfBack(layoutLegend.getAttributes().getNamedItem("LegendStyle").getNodeValue()));
              aLL.setBackColor(ColorUtil.parseToColor(layoutLegend.getAttributes().getNamedItem("BackColor").getNodeValue()));
              aLL.setDrawNeatLine(Boolean.parseBoolean(layoutLegend.getAttributes().getNamedItem("DrawNeatLine").getNodeValue()));
              aLL.setNeatLineColor(ColorUtil.parseToColor(layoutLegend.getAttributes().getNamedItem("NeatLineColor").getNodeValue()));

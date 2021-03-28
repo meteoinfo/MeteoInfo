@@ -176,7 +176,7 @@ public class FigureDockable extends DefaultSingleCDockable {
             public void actionPerformed(ActionEvent e) {
                 IChartPanel cp = FigureDockable.this.getCurrentFigure();
                 if (cp != null) {
-                    cp.setMouseMode(MouseMode.IDENTIFER);
+                    cp.setMouseMode(MouseMode.IDENTIFIER);
                 }
             }
         });

@@ -19,8 +19,23 @@ package org.meteoinfo.geo.layer;
  * @author Yaqiang Wang
  */
 public enum LayerTypes {
-    VectorLayer,
-    ImageLayer,
-    RasterLayer,
-    WebMapLayer
+    VECTOR_LAYER,
+    IMAGE_LAYER,
+    RASTER_LAYER,
+    WEB_MAP_LAYER;
+
+    public static LayerTypes valueOfBack(String value) {
+        switch (value.toUpperCase()) {
+            case "VECTORLAYER":
+                return LayerTypes.VECTOR_LAYER;
+            case "IMAGELAYER":
+                return LayerTypes.IMAGE_LAYER;
+            case "RASTERLAYER":
+                return LayerTypes.RASTER_LAYER;
+            case "WEBMAPLAYER":
+                return LayerTypes.WEB_MAP_LAYER;
+            default:
+                return LayerTypes.valueOf(value.toUpperCase());
+        }
+    }
 }

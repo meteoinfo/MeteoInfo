@@ -298,7 +298,7 @@ public class MapDataManage {
 
         aLayer.setLayerName(new File(aFile).getName());
         aLayer.setFileName(aFile);
-        aLayer.setLayerDrawType(LayerDrawType.Map);
+        aLayer.setLayerDrawType(LayerDrawType.MAP);
         aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
         aLayer.setVisible(true);
 
@@ -348,7 +348,7 @@ public class MapDataManage {
         aExtent.maxX = XBR;
         aExtent.maxY = aImageLayer.getWorldFilePara().yUL;
         aImageLayer.setExtent(aExtent);
-        aImageLayer.setLayerDrawType(LayerDrawType.Image);
+        aImageLayer.setLayerDrawType(LayerDrawType.IMAGE);
         aImageLayer.setMaskout(true);
 
         return aImageLayer;
@@ -394,7 +394,7 @@ public class MapDataManage {
         data.xArray = dataInfo.getXDimension().getValues();
         data.yArray = dataInfo.getYDimension().getValues();
         data.missingValue = dataInfo.getMissingValue();
-        LegendScheme aLS = LegendManage.createLegendSchemeFromGridData(data, LegendType.GraduatedColor,
+        LegendScheme aLS = LegendManage.createLegendSchemeFromGridData(data, LegendType.GRADUATED_COLOR,
                 ShapeTypes.IMAGE);
         RasterLayer aLayer = DrawMeteoData.createRasterLayer(data, new File(fileName).getName(), aLS);
         aLayer.setFileName(fileName);
@@ -429,7 +429,7 @@ public class MapDataManage {
         SurferGridDataInfo dataInfo = new SurferGridDataInfo();
         dataInfo.readDataInfo(fileName);
         GridData gData = dataInfo.getGridData_LonLat(0, "var", 0);
-        LegendScheme aLS = LegendManage.createLegendSchemeFromGridData(gData, LegendType.GraduatedColor,
+        LegendScheme aLS = LegendManage.createLegendSchemeFromGridData(gData, LegendType.GRADUATED_COLOR,
                 ShapeTypes.IMAGE);
         RasterLayer aLayer = DrawMeteoData.createRasterLayer(gData, new File(fileName).getName(), aLS);
         aLayer.setFileName(fileName);
@@ -485,7 +485,7 @@ public class MapDataManage {
                     }
                     aLayer.setLayerName(file.getName());
                     aLayer.setFileName(fileName);
-                    aLayer.setLayerDrawType(LayerDrawType.Map);
+                    aLayer.setLayerDrawType(LayerDrawType.MAP);
                     aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.black, 5));
                     aLayer.setVisible(true);
                     IsTrue = true;
@@ -516,7 +516,7 @@ public class MapDataManage {
                     }
                     aLayer.setLayerName(file.getName());
                     aLayer.setFileName(fileName);
-                    aLayer.setLayerDrawType(LayerDrawType.Map);
+                    aLayer.setLayerDrawType(LayerDrawType.MAP);
                     aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
                     aLayer.setVisible(true);
                     IsTrue = true;
@@ -549,7 +549,7 @@ public class MapDataManage {
                     }
                     aLayer.setLayerName(file.getName());
                     aLayer.setFileName(fileName);
-                    aLayer.setLayerDrawType(LayerDrawType.Map);
+                    aLayer.setLayerDrawType(LayerDrawType.MAP);
                     aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, new Color(255, 251, 195), 1.0F));
                     aLayer.setVisible(true);
                     IsTrue = true;

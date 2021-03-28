@@ -40,7 +40,7 @@ public class FrmConvexhull extends javax.swing.JDialog {
         this.jComboBox_SubjectLayer.removeAllItems();
         for (int i = 0; i < mapView.getLayerNum(); i++) {
             MapLayer layer = mapView.getLayers().get(i);
-            if (layer.getLayerType() == LayerTypes.VectorLayer) {
+            if (layer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                 this._vLayers.add((VectorLayer) layer);
                 this.jComboBox_SubjectLayer.addItem(layer.getLayerName());
             }

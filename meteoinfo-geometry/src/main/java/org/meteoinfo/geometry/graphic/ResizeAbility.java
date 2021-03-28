@@ -20,7 +20,7 @@ package org.meteoinfo.geometry.graphic;
  */
 public enum ResizeAbility {
 
-    None,
-    SameWidthHeight,
-    ResizeAll;
+    NONE,
+    SAME_WIDTH_HEIGHT,
+    RESIZE_ALL;
 }

@@ -13,7 +13,9 @@
  */
 package org.meteoinfo.geometry.legend;
 
-/**
+ import org.meteoinfo.geometry.shape.Line;
+
+ /**
  * Line style enum
  *
  * @author Yaqiang Wang
@@ -23,11 +25,32 @@ public enum LineStyles {
     SOLID,
     DASH,
     DOT,
-    DASHDOT,
-    DASHDOTDOT,
-    ARROWLINE,
-    COLDFRONT,
-    WARMFRONT,
-    OCCLUDEDFRONT,
-    STATIONARYFRONT
+    DASH_DOT,
+    DASH_DOT_DOT,
+    ARROW_LINE,
+    COLD_FRONT,
+    WARM_FRONT,
+    OCCLUDED_FRONT,
+    STATIONARY_FRONT;
+
+    public static LineStyles valueOfBack(String value) {
+        switch (value.toUpperCase()) {
+            case "DASHDOT":
+                return LineStyles.DASH_DOT;
+            case "DASHDOTDOT":
+                return LineStyles.DASH_DOT_DOT;
+            case "ARROWLINE":
+                return LineStyles.ARROW_LINE;
+            case "COLDFRONT":
+                return LineStyles.COLD_FRONT;
+            case "WARMFRONT":
+                return LineStyles.WARM_FRONT;
+            case "OCCLUDEDFRONT":
+                return LineStyles.OCCLUDED_FRONT;
+            case "STATIONARY_FRONT":
+                return LineStyles.STATIONARY_FRONT;
+            default:
+                return LineStyles.valueOf(value.toUpperCase());
+        }
+    }
 }

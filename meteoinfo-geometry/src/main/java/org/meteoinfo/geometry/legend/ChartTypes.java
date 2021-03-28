@@ -20,9 +20,26 @@ package org.meteoinfo.geometry.legend;
  */
 public enum ChartTypes {
 
-    WindVector,
-    WindBarb,
-    StationModel,
-    BarChart,
-    PieChart
+    WIND_VECTOR,
+    WIND_BARB,
+    STATION_MODEL,
+    BAR_CHART,
+    PIE_CHART;
+
+    public static ChartTypes valueOfBack(String value) {
+        switch (value.toUpperCase()) {
+            case "WINDVECTOR":
+                return ChartTypes.WIND_VECTOR;
+            case "WINDBARB":
+                return ChartTypes.WIND_BARB;
+            case "STATIONMODEL":
+                return ChartTypes.STATION_MODEL;
+            case "BARCHART":
+                return ChartTypes.BAR_CHART;
+            case "PIECHART":
+                return ChartTypes.PIE_CHART;
+            default:
+                return ChartTypes.valueOf(value.toUpperCase());
+        }
+    }
 }

@@ -94,7 +94,7 @@ class MILayer(object):
         
         :returns: (*boolean*) Is VectorLayer or not.
         '''
-        return self.layer.getLayerType() == LayerTypes.VectorLayer
+        return self.layer.getLayerType() == LayerTypes.VECTOR_LAYER
         
     def get_encoding(self):
         '''
@@ -173,11 +173,11 @@ class MILayer(object):
         :param fieldname: (*string*) Field name.
         '''
         if ltype == 'single':
-            ltype = LegendType.SingleSymbol
+            ltype = LegendType.SINGLE_SYMBOL
         elif ltype == 'unique':
-            ltype = LegendType.UniqueValue
+            ltype = LegendType.UNIQUE_VALUE
         elif ltyp == 'graduate':
-            ltype = LegendType.GraduatedColor
+            ltype = LegendType.GRADUATED_COLOR
         else:
             raise ValueError(ltype)
         self.layer.updateLegendScheme(ltype, fieldname)

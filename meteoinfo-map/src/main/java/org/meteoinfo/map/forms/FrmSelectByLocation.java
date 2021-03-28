@@ -39,7 +39,7 @@ public class FrmSelectByLocation extends javax.swing.JDialog {
 
         _frmMain = (FrmMain) parent;
         for (MapLayer aLayer : _frmMain.getMapDocument().getActiveMapFrame().getMapView().getLayers()) {
-            if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+            if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                 _vLayers.add((VectorLayer) aLayer);
             }
         }

@@ -48,7 +48,7 @@ public class LayerNode extends ItemNode {
         _mapLayer = aLayer;
         this.setText(aLayer.getLayerName());
         this.setChecked(aLayer.isVisible());
-        this.setNodeType(NodeTypes.LayerNode);
+        this.setNodeType(NodeTypes.LAYER_NODE);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -157,7 +157,7 @@ public class LayerNode extends ItemNode {
      */
     public void setEditing(boolean value){
         editing = value;
-        if (this._mapLayer.getLayerType() == LayerTypes.VectorLayer)
+        if (this._mapLayer.getLayerType() == LayerTypes.VECTOR_LAYER)
             ((VectorLayer)this._mapLayer).setEditing(value);
     }
     // </editor-fold>
@@ -184,8 +184,8 @@ public class LayerNode extends ItemNode {
         }
         
         switch (_mapLayer.getLayerType()) {
-            case VectorLayer:
-            case RasterLayer:
+            case VECTOR_LAYER:
+            case RASTER_LAYER:
                 _legendNodes.clear();
                 LegendNode aTN;
                 for (int i = 0; i < aLS.getBreakNum(); i++) {
@@ -197,7 +197,7 @@ public class LayerNode extends ItemNode {
                     }
                 }
 
-                if (_mapLayer.getLayerType() == LayerTypes.VectorLayer) {
+                if (_mapLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                     VectorLayer aLayer = (VectorLayer) _mapLayer;
                     if (aLayer.getChartSet().isDrawCharts() && aLayer.getChartPoints().size() > 0) {
                         LegendNode aLN = new LegendNode();

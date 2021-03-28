@@ -45,7 +45,7 @@ package org.meteoinfo.geometry.legend;
       * Constructor
       */
      public ColorBreak() {
-         breakType = BreakTypes.ColorBreak;
+         breakType = BreakTypes.COLOR_BREAK;
          color = Color.BLACK;
          isNoData = false;
          drawShape = true;

@@ -37,7 +37,7 @@ public class FrmPointSymbolSet extends javax.swing.JDialog {
     private PointBreak _pointBreak = null;
     private boolean isLoading = false;
     private String[] _imagePaths = null;
-    private MarkerType _markerType = MarkerType.Simple;
+    private MarkerType _markerType = MarkerType.SIMPLE;
 
     /**
      * Creates new form FrmPointSymbolSet
@@ -112,19 +112,19 @@ public class FrmPointSymbolSet extends javax.swing.JDialog {
 
         _pointBreak.setMarkerType(_markerType);
         switch (_markerType) {
-            case Character:
+            case CHARACTER:
                 _pointBreak.setCharIndex(this.symbolControl1.getSelectedCell());
                 break;
-            case Image:
+            case IMAGE:
                 _pointBreak.setImagePath(_imagePaths[this.symbolControl1.getSelectedCell()]);
                 break;
-            case Simple:
+            case SIMPLE:
                 _pointBreak.setStyle(PointStyle.values()[this.symbolControl1.getSelectedCell()]);
                 break;
         }
         if (_parent.getClass() == LegendView.class) {
             ((LegendView) _parent).setLegendBreak_MarkerType(_markerType);
-            if (_pointBreak.getMarkerType() == MarkerType.Image) {
+            if (_pointBreak.getMarkerType() == MarkerType.IMAGE) {
                 ((LegendView) _parent).setLegendBreak_Image(_imagePaths[this.symbolControl1.getSelectedCell()]);
             } else {
                 ((LegendView) _parent).setLegendBreak_MarkerIndex(this.symbolControl1.getSelectedCell());
@@ -485,17 +485,17 @@ public class FrmPointSymbolSet extends javax.swing.JDialog {
         }
 
         switch (MarkerType.valueOf(this.jComboBox_MarkerType.getSelectedItem().toString())) {
-            case Simple:
+            case SIMPLE:
                 updateSimpleTab();
-                _markerType = MarkerType.Simple;
+                _markerType = MarkerType.SIMPLE;
                 break;
-            case Character:
+            case CHARACTER:
                 updateCharacterTab();
-                _markerType = MarkerType.Character;
+                _markerType = MarkerType.CHARACTER;
                 break;
-            case Image:
+            case IMAGE:
                 updateImageTab();
-                _markerType = MarkerType.Image;
+                _markerType = MarkerType.IMAGE;
                 break;
         }
 
@@ -585,7 +585,7 @@ public class FrmPointSymbolSet extends javax.swing.JDialog {
     }
 
     private void updateSimpleTab() {
-        this.symbolControl1.setMarkerType(MarkerType.Simple);
+        this.symbolControl1.setMarkerType(MarkerType.SIMPLE);
         this.symbolControl1.setSymbolNumber(PointStyle.values().length);
         this.jLabel_FontFamily.setEnabled(false);
         this.jComboBox_FontFamily.removeAllItems();
@@ -598,7 +598,7 @@ public class FrmPointSymbolSet extends javax.swing.JDialog {
     }
 
     private void updateCharacterTab() {
-        this.symbolControl1.setMarkerType(MarkerType.Character);
+        this.symbolControl1.setMarkerType(MarkerType.CHARACTER);
         this.symbolControl1.setSymbolNumber(256);
         this.jLabel_FontFamily.setEnabled(true);
         this.jComboBox_FontFamily.setEditable(true);
@@ -622,7 +622,7 @@ public class FrmPointSymbolSet extends javax.swing.JDialog {
     }
 
     private void updateImageTab() {
-        this.symbolControl1.setMarkerType(MarkerType.Image);
+        this.symbolControl1.setMarkerType(MarkerType.IMAGE);
         this.jLabel_FontFamily.setEnabled(false);
         this.jComboBox_FontFamily.removeAllItems();
         this.jComboBox_FontFamily.setEditable(false);

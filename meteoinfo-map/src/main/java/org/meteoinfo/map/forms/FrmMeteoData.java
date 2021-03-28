@@ -1015,7 +1015,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
             switch (_meteoDataInfo.getDataType()) {
                 case MICAPS_7:
-                case HYSPLIT_Traj:
+                case HYSPLIT_TRAJ:
                     this.jButton_Animator.setEnabled(true);
                     this.jButton_CreateAnimatorFile.setEnabled(true);
                     break;
@@ -1024,14 +1024,14 @@ public class FrmMeteoData extends javax.swing.JDialog {
             //Set CHB_ColorVar visible
             java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("bundle/Bundle_FrmMeteoData");
             switch (_2DDrawType) {
-                case Vector:
-                case Barb:
+                case VECTOR:
+                case BARB:
                     this.jCheckBox_ColorVar.setText(bundle.getString("FrmMeteoData.jCheckBox_ColorVar.text"));
                     this.jCheckBox_ColorVar.setVisible(true);
                     this.jCheckBox_ColorVar.setSelected(this.windColor);
                     break;
-                case Contour:
-                case Shaded:
+                case CONTOUR:
+                case SHADED:
                     this.jCheckBox_ColorVar.setText(bundle.getString("FrmMeteoData.jCheckBox_Smooth.text"));
                     this.jCheckBox_ColorVar.setVisible(true);
                     this.jCheckBox_ColorVar.setSelected(this.smooth);
@@ -1334,7 +1334,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
         switch (_meteoDataInfo.getDataType()) {
             case MICAPS_7:
-            case HYSPLIT_Traj:
+            case HYSPLIT_TRAJ:
                 MICAPS7DataInfo aM7DataInfo = (MICAPS7DataInfo) _meteoDataInfo.getDataInfo();
                 List<List<Object>> trajPoints = aM7DataInfo.getATrajData(this.jComboBox_Time.getSelectedIndex());
                 Graphics2D g = (Graphics2D) _parent.getMapDocument().getActiveMapFrame().getMapView().getGraphics();
@@ -1345,7 +1345,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
                     List<Object> pList = trajPoints.get(i);
                     PointBreak aPB = new PointBreak();
-                    aPB.setStyle(PointStyle.Circle);
+                    aPB.setStyle(PointStyle.CIRCLE);
                     aPB.setColor(Color.red);
                     aPB.setOutlineColor(Color.black);
                     aPB.setSize(10);
@@ -1508,10 +1508,10 @@ public class FrmMeteoData extends javax.swing.JDialog {
         // TODO add your handling code here:
         if (_meteoDataInfo.isStationData() || _meteoDataInfo.isSWATHData()) {
             switch (_2DDrawType) {
-                case Contour:
-                case Shaded:
-                case Grid_Point:
-                case Raster:
+                case CONTOUR:
+                case SHADED:
+                case GRID_POINT:
+                case RASTER:
                     JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
                     FrmInterpolate frmInter = new FrmInterpolate(frame, true);
                     frmInter.setParameters(this._interpolationSetting);
@@ -1523,7 +1523,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                         _useSameGridInterSet = true;
                     }
                     break;
-                case Weather_Symbol:
+                case WEATHER_SYMBOL:
                     Object[] possibleValues = {"All Weather", "SDS", "SDS, Haze", "Smoke", "Haze", "Mist", "Smoke, Haze, Mist", "Fog"};
                     Object selectedValue = JOptionPane.showInputDialog(null,
                             "Choose one", "Input", JOptionPane.INFORMATION_MESSAGE,
@@ -1536,20 +1536,20 @@ public class FrmMeteoData extends javax.swing.JDialog {
                         this._lastAddedLayerHandle = this._parent.getMapDocument().getActiveMapFrame().addLayer(layer);
                     }
                     break;
-                case Vector:
-                case Barb:
-                case Streamline:
+                case VECTOR:
+                case BARB:
+                case STREAMLINE:
                     this.meteoUVSet.setUV(false);
                     this.setMeteoUV();
                     break;
             }
         } else if (_meteoDataInfo.isGridData()) {
             switch (_2DDrawType) {
-                case Contour:
-                case Grid_Fill:
-                case Grid_Point:
-                case Shaded:
-                case Raster:
+                case CONTOUR:
+                case GRID_FILL:
+                case GRID_POINT:
+                case SHADED:
+                case RASTER:
 //                        frmGridViewSet aFrmGVS = new frmGridViewSet();
 //                        aFrmGVS.SetParameters(m_IfInterpolateGrid);
 //                        if (aFrmGVS.ShowDialog() == DialogResult.OK)
@@ -1557,7 +1557,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
 //                            m_IfInterpolateGrid = aFrmGVS.GetParameters();
 //                        }
                     break;
-                case Streamline:
+                case STREAMLINE:
                     String strmDen = JOptionPane.showInputDialog("Streamline density", 4);
                     int den = Integer.parseInt(strmDen);
                     if (den < 1 || den > 10) {
@@ -1566,8 +1566,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
                         _strmDensity = den;
                     }
                     break;
-                case Vector:
-                case Barb:
+                case VECTOR:
+                case BARB:
                     this.setMeteoUV();
                     break;
             }
@@ -1663,12 +1663,12 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
     private void jCheckBox_ColorVarActionPerformed(java.awt.event.ActionEvent evt) {
         switch (_2DDrawType) {
-            case Vector:
-            case Barb:
+            case VECTOR:
+            case BARB:
                 this.windColor = this.jCheckBox_ColorVar.isSelected();
                 break;
-            case Contour:
-            case Shaded:
+            case CONTOUR:
+            case SHADED:
                 this.smooth = this.jCheckBox_ColorVar.isSelected();
                 break;
         }
@@ -1677,8 +1677,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
     private void jCheckBox_Big_EndianActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         switch (_meteoDataInfo.getDataType()) {
-            case GrADS_Grid:
-            case GrADS_Station:
+            case GRADS_GRID:
+            case GRADS_STATION:
                 GrADSDataInfo aDataInfo = (GrADSDataInfo) _meteoDataInfo.getDataInfo();
                 aDataInfo.setBigEndian(this.jCheckBox_Big_Endian.isSelected());
                 break;
@@ -2263,8 +2263,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
         int i;
         DataInfo aDataInfo = _meteoDataInfo.getDataInfo();
         switch (_meteoDataInfo.getDataType()) {
-            case GrADS_Grid:
-            case GrADS_Station:
+            case GRADS_GRID:
+            case GRADS_STATION:
                 this.jCheckBox_Big_Endian.setVisible(true);
                 this.jCheckBox_Big_Endian.setSelected(((GrADSDataInfo) aDataInfo).isBigEndian());
                 break;
@@ -2273,7 +2273,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 break;
         }
         String dataType = _meteoDataInfo.getDataType().toString();
-        if (_meteoDataInfo.getDataType() == MeteoDataType.NetCDF) {
+        if (_meteoDataInfo.getDataType() == MeteoDataType.NETCDF) {
             dataType = ((NetCDFDataInfo) _meteoDataInfo.getDataInfo()).getFileTypeId();
         }
         this.setTitle(this.getTitle().split("-")[0].trim() + " - " + dataType);
@@ -2288,7 +2288,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         this.jButton_NexTime.setEnabled(false);
         this.jButton_Setting.setEnabled(true);
         switch (_meteoDataInfo.getDataType()) {
-            case HYSPLIT_Traj:
+            case HYSPLIT_TRAJ:
                 this.jButton_SectionPlot.setEnabled(false);
                 break;
         }
@@ -2299,38 +2299,38 @@ public class FrmMeteoData extends javax.swing.JDialog {
         //Set draw type
         this.jComboBox_DrawType.removeAllItems();
         if (_meteoDataInfo.isGridData()) {
-            this.jComboBox_DrawType.addItem(DrawType2D.Raster.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.Contour.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.Shaded.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.Grid_Fill.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.Grid_Point.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.Vector.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.Barb.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.Streamline.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.RASTER.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.CONTOUR.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.SHADED.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.GRID_FILL.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.GRID_POINT.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.VECTOR.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.BARB.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.STREAMLINE.toString());
         } else if (_meteoDataInfo.isStationData()) {
             switch (_meteoDataInfo.getDataType()) {
-                case HYSPLIT_Particle:
-                    this.jComboBox_DrawType.addItem(DrawType2D.Station_Point.toString());
+                case HYSPLIT_PARTICLE:
+                    this.jComboBox_DrawType.addItem(DrawType2D.STATION_POINT.toString());
                     break;
                 default:
-                    this.jComboBox_DrawType.addItem(DrawType2D.Station_Point.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.Station_Info.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.Weather_Symbol.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.Station_Model.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.Vector.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.Barb.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.Contour.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.Shaded.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.Streamline.toString());
+                    this.jComboBox_DrawType.addItem(DrawType2D.STATION_POINT.toString());
+                    this.jComboBox_DrawType.addItem(DrawType2D.STATION_INFO.toString());
+                    this.jComboBox_DrawType.addItem(DrawType2D.WEATHER_SYMBOL.toString());
+                    this.jComboBox_DrawType.addItem(DrawType2D.STATION_MODEL.toString());
+                    this.jComboBox_DrawType.addItem(DrawType2D.VECTOR.toString());
+                    this.jComboBox_DrawType.addItem(DrawType2D.BARB.toString());
+                    this.jComboBox_DrawType.addItem(DrawType2D.CONTOUR.toString());
+                    this.jComboBox_DrawType.addItem(DrawType2D.SHADED.toString());
+                    this.jComboBox_DrawType.addItem(DrawType2D.STREAMLINE.toString());
                     break;
             }
         } else if (_meteoDataInfo.isSWATHData()) {
-            this.jComboBox_DrawType.addItem(DrawType2D.Raster.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.Station_Point.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.RASTER.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.STATION_POINT.toString());
         } else {
-            this.jComboBox_DrawType.addItem(DrawType2D.Traj_Line.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.Traj_Point.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.Traj_StartPoint.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.TRAJECTORY_LINE.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.TRAJECTORY_POINT.toString());
+            this.jComboBox_DrawType.addItem(DrawType2D.TRAJECTORY_START_POINT.toString());
         }
         this.jComboBox_DrawType.setSelectedIndex(0);
 
@@ -2490,7 +2490,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         }
 
         if (_useSameLegendScheme) {
-            if (_legendScheme.getLegendType() == LegendType.GraduatedColor) {
+            if (_legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
                 double[] maxmin = new double[2];
                 boolean hasUndef = _gridData.getMaxMinValue(maxmin);
                 double minValue = maxmin[1];
@@ -2530,7 +2530,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         }
 
         if (_useSameLegendScheme) {
-            if (_legendScheme.getLegendType() == LegendType.GraduatedColor) {
+            if (_legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
                 double[] maxmin = new double[2];
                 boolean hasUndef = _gridData.getMaxMinValue(maxmin);
                 double minValue = maxmin[1];
@@ -2583,12 +2583,12 @@ public class FrmMeteoData extends javax.swing.JDialog {
         }
 
         switch (_2DDrawType) {
-            case Station_Point:
-            case Vector:
-            case Barb:
-            case Weather_Symbol:
-            case Station_Model:
-            case Station_Info:
+            case STATION_POINT:
+            case VECTOR:
+            case BARB:
+            case WEATHER_SYMBOL:
+            case STATION_MODEL:
+            case STATION_INFO:
                 if (!_useSameLegendScheme) {
                     createLegendScheme_Station();
                 }
@@ -2606,7 +2606,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         DataInfo aDataInfo = _meteoDataInfo.getDataInfo();
         VectorLayer aLayer = null;
         switch (_2DDrawType) {
-            case Traj_Line:
+            case TRAJECTORY_LINE:
                 aLayer = ((TrajDataInfo) aDataInfo).createTrajLineLayer();
 //                PolylineBreak aPLB;
 //                for (int i = 0; i < aLayer.getLegendScheme().getBreakNum(); i++) {
@@ -2615,13 +2615,13 @@ public class FrmMeteoData extends javax.swing.JDialog {
 //                }
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer(aLayer);
                 break;
-            case Traj_StartPoint:
+            case TRAJECTORY_START_POINT:
                 aLayer = ((TrajDataInfo) aDataInfo).createTrajStartPointLayer();
                 PointBreak aPB = (PointBreak) aLayer.getLegendScheme().getLegendBreaks().get(0);
-                aPB.setStyle(PointStyle.UpTriangle);
+                aPB.setStyle(PointStyle.UP_TRIANGLE);
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer(aLayer);
                 break;
-            case Traj_Point:
+            case TRAJECTORY_POINT:
                 aLayer = ((TrajDataInfo) aDataInfo).createTrajPointLayer();
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer(aLayer);
                 break;
@@ -2632,24 +2632,24 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
     private void createLegendScheme_Grid() {
         switch (_2DDrawType) {
-            case Contour:
+            case CONTOUR:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.UniqueValue, ShapeTypes.POLYLINE);
+                        LegendType.UNIQUE_VALUE, ShapeTypes.POLYLINE);
                 break;
-            case Shaded:
-            case Grid_Fill:
+            case SHADED:
+            case GRID_FILL:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.POLYGON);
+                        LegendType.GRADUATED_COLOR, ShapeTypes.POLYGON);
                 break;
-            case Grid_Point:
+            case GRID_POINT:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.POINT);
+                        LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
                 break;
-            case Vector:
-            case Barb:
+            case VECTOR:
+            case BARB:
                 if (this.jCheckBox_ColorVar.isSelected()) {
                     _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                            LegendType.GraduatedColor, ShapeTypes.POINT);
+                            LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
                     PointBreak aPB;
                     for (int i = 0; i < _legendScheme.getBreakNum(); i++) {
                         aPB = (PointBreak) _legendScheme.getLegendBreaks().get(i);
@@ -2659,12 +2659,12 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.blue, 10);
                 }
                 break;
-            case Streamline:
+            case STREAMLINE:
                 _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.blue, 1);
                 _legendScheme.setLegendBreak(0, new StreamlineBreak((PolylineBreak)_legendScheme.getLegendBreak(0)));
                 break;
-            case Raster:
-                _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData, LegendType.GraduatedColor,
+            case RASTER:
+                _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData, LegendType.GRADUATED_COLOR,
                         ShapeTypes.IMAGE);
                 break;
         }
@@ -2672,36 +2672,36 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
     private LegendScheme createLegendScheme_Station() {
         switch (_2DDrawType) {
-            case Station_Point:
+            case STATION_POINT:
                 _legendScheme = LegendManage.createLegendSchemeFromStationData(_stationData,
-                        LegendType.GraduatedColor, ShapeTypes.POINT);
+                        LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
                 if (_meteoDataInfo.getDataType() == MeteoDataType.HDF) {
                     for (int i = 0; i < _legendScheme.getBreakNum(); i++) {
                         ((PointBreak) _legendScheme.getLegendBreaks().get(i)).setDrawOutline(false);
                     }
                 }
                 break;
-            case Grid_Point:
+            case GRID_POINT:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.POINT);
+                        LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
                 break;
-            case Contour:
+            case CONTOUR:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.UniqueValue, ShapeTypes.POLYLINE);
+                        LegendType.UNIQUE_VALUE, ShapeTypes.POLYLINE);
                 break;
-            case Shaded:
+            case SHADED:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
-                        LegendType.GraduatedColor, ShapeTypes.POLYGON);
+                        LegendType.GRADUATED_COLOR, ShapeTypes.POLYGON);
                 break;
-            case Raster:
-                _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData, LegendType.GraduatedColor,
+            case RASTER:
+                _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData, LegendType.GRADUATED_COLOR,
                         ShapeTypes.IMAGE);
                 break;
-            case Vector:
-            case Barb:
+            case VECTOR:
+            case BARB:
                 if (this.jCheckBox_ColorVar.isSelected()) {
                     _legendScheme = LegendManage.createLegendSchemeFromStationData(_stationData,
-                            LegendType.GraduatedColor, ShapeTypes.POINT);
+                            LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
                     for (int i = 0; i < _legendScheme.getLegendBreaks().size(); i++) {
                         PointBreak aPB = (PointBreak) _legendScheme.getLegendBreaks().get(i);
                         aPB.setSize(10);
@@ -2710,17 +2710,17 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.blue, 10);
                 }
                 break;
-            case Streamline:
+            case STREAMLINE:
                 _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.blue, 1);
                 _legendScheme.setLegendBreak(0, new StreamlineBreak((PolylineBreak)_legendScheme.getLegendBreak(0)));
                 break;
-            case Weather_Symbol:
+            case WEATHER_SYMBOL:
                 _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.blue, 12);
                 break;
-            case Station_Model:
+            case STATION_MODEL:
                 _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.blue, 12);
                 break;
-            case Station_Info:
+            case STATION_INFO:
                 _legendScheme = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.red, 8);
                 break;
         }
@@ -2739,7 +2739,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
     }
 
     private MapLayer drawMeteoMap_Grid(boolean isNew, LegendScheme aLS, String fieldName) {
-        MapLayer aLayer = new MapLayer();
+        MapLayer aLayer = null;
         //VectorLayer aLayer = new VectorLayer(ShapeTypes.Point);
         String varName = this.jComboBox_Variable.getSelectedItem().toString();
 //            if (CHB_NewVariable.Checked)
@@ -2784,7 +2784,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
         //Create layer
         switch (_2DDrawType) {
-            case Contour:
+            case CONTOUR:
                 lName = "Contour_" + lName;
                 //LegendManage.setContoursAndColors(aLS, _cValues, _cColors);
                 aLayer = DrawMeteoData.createContourLayer(_gridData, aLS, lName, fieldName, smooth);
@@ -2793,22 +2793,22 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     ((VectorLayer) aLayer).addLabelsContourDynamic(_parent.getMapDocument().getActiveMapFrame().getMapView().getViewExtent());
                 }
                 break;
-            case Shaded:
+            case SHADED:
                 lName = "Shaded_" + lName;
                 //LegendManage.setContoursAndColors(aLS, _cValues, _cColors);
                 aLayer = DrawMeteoData.createShadedLayer(_gridData, aLS, lName, fieldName, smooth);
                 break;
-            case Grid_Fill:
+            case GRID_FILL:
                 lName = "GridFill_" + lName;
                 //LegendManage.SetContoursAndColors(aLS, ref _cValues, ref _cColors);
                 aLayer = DrawMeteoData.createGridFillLayer(_gridData, aLS, lName, fieldName);
                 break;
-            case Grid_Point:
+            case GRID_POINT:
                 lName = "GridPoint_" + lName;
                 //LegendManage.SetContoursAndColors(aLS, ref _cValues, ref _cColors);
                 aLayer = DrawMeteoData.createGridPointLayer(_gridData, aLS, lName, fieldName);
                 break;
-            case Vector:
+            case VECTOR:
                 GridData[] uvData = getUVGridData();
                 if (uvData != null) {
                     GridData uData = uvData[0];
@@ -2825,7 +2825,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     ifAddLayer = false;
                 }
                 break;
-            case Streamline:
+            case STREAMLINE:
                 uvData = getUVGridData();
                 if (uvData != null) {
                     GridData uData = uvData[0];
@@ -2841,7 +2841,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     ifAddLayer = false;
                 }
                 break;
-            case Barb:
+            case BARB:
                 uvData = getUVGridData();
                 if (uvData != null) {
                     GridData uData = uvData[0];
@@ -2857,7 +2857,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     ifAddLayer = false;
                 }
                 break;
-            case Raster:
+            case RASTER:
                 lName = "Raster_" + lName;
 //                    if (_meteoDataInfo.getDataType() == MeteoDataType.MICAPS_13)
 //                    {
@@ -2874,13 +2874,13 @@ public class FrmMeteoData extends javax.swing.JDialog {
         }
 
         aLayer.setProjInfo(_meteoDataInfo.getProjectionInfo());
-        if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+        if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             VectorLayer aVLayer = (VectorLayer) aLayer;
             aVLayer.setMaskout(true);
             if (aVLayer.getShapeType() == ShapeTypes.POLYGON) {
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolygonLayer(aVLayer);
             } else {
-                if (_2DDrawType == DrawType2D.Vector || _2DDrawType == DrawType2D.Barb) {
+                if (_2DDrawType == DrawType2D.VECTOR || _2DDrawType == DrawType2D.BARB) {
                     _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().addWindLayer(aVLayer,
                             _meteoDataInfo.EarthWind);
                 } else {
@@ -2897,7 +2897,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
     public MapLayer drawMeteoMap_Station(boolean isNew, LegendScheme aLS, String fieldName) {
         boolean hasNoData = _hasUndefData;
-        MapLayer aLayer = new MapLayer();
+        MapLayer aLayer = null;
         //String LNameS = this.jComboBox_Level.getSelectedItem().toString() + "_" + this.jComboBox_Time.getSelectedItem().toString();
         String LNameM = this.jComboBox_Variable.getSelectedItem().toString() + "_";
         String LName = LNameM;
@@ -2906,52 +2906,52 @@ public class FrmMeteoData extends javax.swing.JDialog {
         }
         boolean ifAddLayer = true;
         switch (_2DDrawType) {
-            case Station_Point:
+            case STATION_POINT:
                 LegendManage.setContoursAndColors(aLS, _cValues, _cColors);
                 LName = "StationPoint_" + LName;
                 aLayer = DrawMeteoData.createSTPointLayer(_stationData, aLS, LName, fieldName);
                 switch (_meteoDataInfo.getDataType()) {
-                    case HYSPLIT_Particle:
-                    case NetCDF:
+                    case HYSPLIT_PARTICLE:
+                    case NETCDF:
                         for (ColorBreak cb : aLayer.getLegendScheme().getLegendBreaks()) {
                             ((PointBreak) cb).setDrawOutline(false);
                         }
                 }
                 break;
-            case Grid_Point:
+            case GRID_POINT:
                 LegendManage.setContoursAndColors(aLS, _cValues, _cColors);
                 LName = "GridPoint_" + LName;
                 aLayer = DrawMeteoData.createGridPointLayer(_gridData, aLS, LName, fieldName);
                 break;
-            case Contour:
+            case CONTOUR:
                 LegendManage.setContoursAndColors(aLS, _cValues, _cColors);
                 LName = "Contour_" + LName;
                 aLayer = DrawMeteoData.createContourLayer(_gridData, aLS, LName, fieldName, smooth);
                 break;
-            case Shaded:
+            case SHADED:
                 LegendManage.setContoursAndColors(aLS, _cValues, _cColors);
                 LName = "Shaded_" + LName;
                 aLayer = DrawMeteoData.createShadedLayer(_gridData, aLS, LName, fieldName, smooth);
                 break;
-            case Raster:
+            case RASTER:
                 LName = "Raster_" + LName;
                 aLayer = DrawMeteoData.createRasterLayer(_gridData, LName, aLS);
                 break;
-            case Vector:
-            case Barb:
-            case Streamline:
+            case VECTOR:
+            case BARB:
+            case STREAMLINE:
                 StationData[] stUVData = this.getUVStationData();
                 if (stUVData != null) {
                     StationData stUData = stUVData[0];
                     StationData stVData = stUVData[1];
                     switch (_2DDrawType) {
-                        case Vector:
-                        case Barb:
+                        case VECTOR:
+                        case BARB:
                             if (this.windColor) {
                                 LegendManage.setContoursAndColors(aLS, _cValues, _cColors);
                             }
 
-                            if (_2DDrawType == DrawType2D.Vector) {
+                            if (_2DDrawType == DrawType2D.VECTOR) {
                                 LName = "Vector_" + LName;
                                 if (this.windColor) {
                                     aLayer = DrawMeteoData.createSTVectorLayer(stUData, stVData, _stationData,
@@ -2971,7 +2971,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                                 }
                             }
                             break;
-                        case Streamline:
+                        case STREAMLINE:
                             StationData nstUData;
                             StationData nstVData;
                             if (_meteoDataInfo.getMeteoUVSet().isUV()) {
@@ -2993,13 +2993,13 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     ifAddLayer = false;
                 }
                 break;
-            case Weather_Symbol:
+            case WEATHER_SYMBOL:
                 LName = "Weather_" + LName;
 //                aLayer = DrawMeteoData.createWeatherSymbolLayer(_stationData,
 //                        _meteoDataDrawSet.getWeatherType(), LName);
                 aLayer = DrawMeteoData.createWeatherSymbolLayer(_stationData, this.weatherString, LName);
                 break;
-            case Station_Model:
+            case STATION_MODEL:
                 StationModelData stationModelData = _meteoDataInfo.getStationModelData();
                 LName = "StationModel_" + LName;
                 boolean isSurface = true;
@@ -3008,9 +3008,9 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 }
                 aLayer = DrawMeteoData.createStationModelLayer(stationModelData, aLS, LName, isSurface);
                 break;
-            case Station_Info:
+            case STATION_INFO:
                 StationInfoData stInfoData;
-                if (_meteoDataInfo.getDataType() == MeteoDataType.GrADS_Station) {
+                if (_meteoDataInfo.getDataType() == MeteoDataType.GRADS_STATION) {
                     stInfoData = _meteoDataInfo.getStationInfoData(this.jComboBox_Time.getSelectedIndex());
                 } else {
                     stInfoData = _meteoDataInfo.getStationInfoData();
@@ -3031,7 +3031,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
         aLayer.setMaskout(true);
         aLayer.setProjInfo(_meteoDataInfo.getProjectionInfo());
-        if (aLayer.getLayerType() == LayerTypes.VectorLayer) {
+        if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             if (ifAddLayer) {
                 if (aLayer.getShapeType() == ShapeTypes.POLYGON) {
                     _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolygonLayer(aLayer);

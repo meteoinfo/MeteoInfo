@@ -623,7 +623,7 @@ package org.meteoinfo.geometry.graphic;
                  case CHART_BREAK:
                      ChartBreak aChB = new ChartBreak(ChartTypes.BAR_CHART);
                      try {
-                         ChartTypes chartType = ChartTypes.valueOf(legendNode.getAttributes().getNamedItem("ChartType").getNodeValue());
+                         ChartTypes chartType = ChartTypes.valueOfBack(legendNode.getAttributes().getNamedItem("ChartType").getNodeValue());
                          aChB = new ChartBreak(chartType);
                          aChB.setShapeIndex(Integer.parseInt(legendNode.getAttributes().getNamedItem("ShapeIndex").getNodeValue()));
                          List<Float> cData = new ArrayList<Float>();

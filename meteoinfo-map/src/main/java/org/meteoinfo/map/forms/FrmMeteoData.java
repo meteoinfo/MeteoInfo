@@ -1666,6 +1666,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
             case VECTOR:
             case BARB:
                 this.windColor = this.jCheckBox_ColorVar.isSelected();
+                this._useSameLegendScheme = false;
                 break;
             case CONTOUR:
             case SHADED:

@@ -1059,7 +1059,10 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                     for (String fn : aLayer.getFieldNames()) {
                         this.jComboBox_Field.addItem(fn);
                     }
-                    this.jComboBox_Field.setSelectedItem("<None>");
+                    if (createLegend)
+                        this.jComboBox_Field.setSelectedItem("<None>");
+                    else
+                        this.jComboBox_Field.setSelectedItem(this._legendScheme.getFieldName());
                     break;
                 case GRADUATED_COLOR:
                     this.jComboBox_Field.setEnabled(true);
@@ -1078,7 +1081,10 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                             this.jComboBox_Field.addItem("Geometry_Z");
                             break;
                     }
-                    this.jComboBox_Field.setSelectedItem("<None>");
+                    if (createLegend)
+                        this.jComboBox_Field.setSelectedItem("<None>");
+                    else
+                        this.jComboBox_Field.setSelectedItem(this._legendScheme.getFieldName());
                     break;
             }
         }
@@ -1231,6 +1237,11 @@ public class FrmLayerProperty extends javax.swing.JDialog {
 
             //ShowLegendScheme(_legendScheme);
             //DataGridView1.Refresh();
+            switch (this._mapLayer.getLayerDrawType()) {
+                case VECTOR:
+                    _legendScheme.asArrow();
+                    break;
+            }
             legendView1.setLegendScheme(_legendScheme);
             legendView1.repaint();
         }
@@ -1279,11 +1290,10 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         this._ifCreateLegendScheme = false;
         this._isLoading = true;
         update();
-        this._ifCreateLegendScheme = true;
-        this._isLoading = false;
-
         if (this.jComboBox_LegendType.isEnabled() && this._legendScheme != null)
             this.setFieldByLegendType((LegendType)this.jComboBox_LegendType.getSelectedItem(), false);
+        this._ifCreateLegendScheme = true;
+        this._isLoading = false;
     }
 
     /**

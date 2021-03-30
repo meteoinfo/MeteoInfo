@@ -58,7 +58,7 @@ import java.awt.geom.Line2D;
       */
      public LayoutScaleBar(LayoutMap layoutMap) {
          super();
-         this.setElementType(ElementType.SCALE_BAR);
+         this.setElementType(ElementType.LAYOUT_SCALE_BAR);
          this.setResizeAbility(ResizeAbility.RESIZE_ALL);
 
          this.setWidth(200);

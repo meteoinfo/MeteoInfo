@@ -1163,7 +1163,7 @@ import org.xml.sax.SAXException;
                              _selectedElements.remove(_selectedElements.size() - 1);
                          }
                          _selectedElements.get(0).setSelected(true);
-                         if (_selectedElements.get(0).getElementType() == ElementType.MAP) {
+                         if (_selectedElements.get(0).getElementType() == ElementType.LAYOUT_MAP) {
                              setActiveMapFrame(((LayoutMap) _selectedElements.get(0)).getMapFrame());
                          }
                      }
@@ -1193,7 +1193,7 @@ import org.xml.sax.SAXException;
                              _selectedElements.clear();
                              _selectedElements.add(aElement);
                              _selectedElements.get(0).setSelected(true);
-                             if (_selectedElements.get(0).getElementType() == ElementType.MAP) {
+                             if (_selectedElements.get(0).getElementType() == ElementType.LAYOUT_MAP) {
                                  setActiveMapFrame(((LayoutMap) _selectedElements.get(0)).getMapFrame());
                              }
                          }
@@ -1549,7 +1549,7 @@ import org.xml.sax.SAXException;
                          if (_selectedElements.size() > 0) {
                              LayoutElement aElement = _selectedElements.get(0);
                              if (MIMath.pointInRectangle(pageP, aElement.getBounds())) {
-                                 if (aElement.getElementType() == ElementType.GRAPHIC) {
+                                 if (aElement.getElementType() == ElementType.LAYOUT_GRAPHIC) {
                                      Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
                                      if (aGraphic.getLegend().getBreakType() == BreakTypes.POLYLINE_BREAK || aGraphic.getLegend().getBreakType() == BreakTypes.POLYGON_BREAK) {
                                          JMenuItem jMenuItem_Reverse = new JMenuItem("Reverse");
@@ -1619,23 +1619,23 @@ import org.xml.sax.SAXException;
                      //this.paintGraphics();
                      this.repaintNew();
 
-                     if (aElement.getElementType() == ElementType.GRAPHIC) {
+                     if (aElement.getElementType() == ElementType.LAYOUT_GRAPHIC) {
                          Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
                          showSymbolSetForm(aGraphic);
                      } else {
                          FrmProperty aFrmProperty = new FrmProperty((JFrame) SwingUtilities.getWindowAncestor(this), true, false);
                          Object object = aElement;
                          switch (aElement.getElementType()) {
-                             case LEGEND:
+                             case LAYOUT_LEGEND:
                                  object = ((LayoutLegend) aElement).new LayoutLegendBean();
                                  break;
-                             case MAP:
+                             case LAYOUT_MAP:
                                  object = ((LayoutMap) aElement).new LayoutMapBean();
                                  break;
-                             case NORTH_ARROW:
+                             case LAYOUT_NORTH_ARROW:
                                  object = ((LayoutNorthArrow) aElement).new LayoutNorthArrowBean();
                                  break;
-                             case SCALE_BAR:
+                             case LAYOUT_SCALE_BAR:
                                  object = ((LayoutScaleBar) aElement).new LayoutScaleBarBean();
                                  break;
                          }
@@ -2294,7 +2294,7 @@ import org.xml.sax.SAXException;
      public List<LayoutMap> getLayoutMaps() {
          List<LayoutMap> layoutMaps = new ArrayList<>();
          for (LayoutElement aLE : _layoutElements) {
-             if (aLE.getElementType() == ElementType.MAP) {
+             if (aLE.getElementType() == ElementType.LAYOUT_MAP) {
                  layoutMaps.add((LayoutMap) aLE);
              }
          }
@@ -3308,7 +3308,7 @@ import org.xml.sax.SAXException;
       */
      public void addElement(LayoutElement aElement) {
          _layoutElements.add(aElement);
-         if (aElement.getElementType() == ElementType.MAP) {
+         if (aElement.getElementType() == ElementType.LAYOUT_MAP) {
              final LayoutMap aLM = (LayoutMap) aElement;
              aLM.addMapViewUpdatedListener(new IMapViewUpdatedListener() {
                  @Override
@@ -3332,7 +3332,7 @@ import org.xml.sax.SAXException;
       */
      public void removeElement(LayoutElement aElement) {
          switch (aElement.getElementType()) {
-             case MAP:
+             case LAYOUT_MAP:
                  if (this.getLayoutMaps().size() == 1) {
                      JOptionPane.showMessageDialog(this, "There is at least one layout map!");
                      return;
@@ -3342,19 +3342,19 @@ import org.xml.sax.SAXException;
                  for (int i = 0; i < _layoutElements.size(); i++) {
                      LayoutElement aLE = _layoutElements.get(i);
                      switch (aLE.getElementType()) {
-                         case LEGEND:
+                         case LAYOUT_LEGEND:
                              if (((LayoutLegend) aLE).getLayoutMap() == aLM) {
                                  _layoutElements.remove(aLE);
                                  i -= 1;
                              }
                              break;
-                         case SCALE_BAR:
+                         case LAYOUT_SCALE_BAR:
                              if (((LayoutScaleBar) aLE).getLayoutMap() == aLM) {
                                  _layoutElements.remove(aLE);
                                  i -= 1;
                              }
                              break;
-                         case NORTH_ARROW:
+                         case LAYOUT_NORTH_ARROW:
                              if (((LayoutNorthArrow) aLE).getLayoutMap() == aLM) {
                                  _layoutElements.remove(aLE);
                                  i -= 1;
@@ -3525,7 +3525,7 @@ import org.xml.sax.SAXException;
      public List<LayoutGraphic> getLayoutGraphics() {
          List<LayoutGraphic> graphics = new ArrayList<>();
          for (LayoutElement aLE : _layoutElements) {
-             if (aLE.getElementType() == ElementType.GRAPHIC) {
+             if (aLE.getElementType() == ElementType.LAYOUT_GRAPHIC) {
                  graphics.add((LayoutGraphic) aLE);
              }
          }
@@ -3575,7 +3575,7 @@ import org.xml.sax.SAXException;
      public List<LayoutLegend> getLegends() {
          List<LayoutLegend> legends = new ArrayList<>();
          for (LayoutElement aLE : _layoutElements) {
-             if (aLE.getElementType() == ElementType.LEGEND) {
+             if (aLE.getElementType() == ElementType.LAYOUT_LEGEND) {
                  legends.add((LayoutLegend) aLE);
              }
          }
@@ -3631,7 +3631,7 @@ import org.xml.sax.SAXException;
       */
      public boolean hasLegendElement() {
          for (LayoutElement aLE : _layoutElements) {
-             if (aLE.getElementType() == ElementType.LEGEND) {
+             if (aLE.getElementType() == ElementType.LAYOUT_LEGEND) {
                  return true;
              }
          }
@@ -3872,22 +3872,22 @@ import org.xml.sax.SAXException;
          Element layoutElements = doc.createElement("LayoutElements");
          for (LayoutElement aElement : _layoutElements) {
              switch (aElement.getElementType()) {
-                 case MAP:
+                 case LAYOUT_MAP:
                      addLayoutMapElement(doc, layoutElements, (LayoutMap) aElement);
                      break;
-                 case ILLUSTRATION:
+                 case LAYOUT_ILLUSTRATION:
                      //AddIllustrationElement(ref doc, layoutElements, (LayoutIllustrationMap)aElement);
                      break;
-                 case LEGEND:
+                 case LAYOUT_LEGEND:
                      addLayoutLegendElement(doc, layoutElements, (LayoutLegend) aElement);
                      break;
-                 case GRAPHIC:
+                 case LAYOUT_GRAPHIC:
                      addLayoutGraphicElement(doc, layoutElements, (LayoutGraphic) aElement);
                      break;
-                 case SCALE_BAR:
+                 case LAYOUT_SCALE_BAR:
                      addLayoutScaleBarElement(doc, layoutElements, (LayoutScaleBar) aElement);
                      break;
-                 case NORTH_ARROW:
+                 case LAYOUT_NORTH_ARROW:
                      addLayoutNorthArrowElement(doc, layoutElements, (LayoutNorthArrow) aElement);
                      break;
              }
@@ -4267,28 +4267,28 @@ import org.xml.sax.SAXException;
              if (elementNode.getNodeType() != Node.ELEMENT_NODE) {
                  continue;
              }
-             ElementType aType = ElementType.valueOf(elementNode.getAttributes().getNamedItem("ElementType").getNodeValue());
+             ElementType aType = ElementType.valueOfBack(elementNode.getAttributes().getNamedItem("ElementType").getNodeValue());
              switch (aType) {
-                 case ILLUSTRATION:
+                 case LAYOUT_ILLUSTRATION:
                      break;
-                 case LEGEND:
+                 case LAYOUT_LEGEND:
                      LayoutLegend aLL = loadLayoutLegendElement(elementNode);
                      addElement(aLL);
                      break;
-                 case GRAPHIC:
+                 case LAYOUT_GRAPHIC:
                      LayoutGraphic aLG = loadLayoutGraphicElement(elementNode);
                      if (aLG.getGraphic().getShape().getShapeType() == ShapeTypes.WIND_ARROW) {
                          ((WindArrow) aLG.getGraphic().getShape()).angle = 270;
                      }
                      addElement(aLG);
                      break;
-                 case SCALE_BAR:
+                 case LAYOUT_SCALE_BAR:
                      LayoutScaleBar aLSB = loadLayoutScaleBarElement(elementNode);
                      if (aLSB != null) {
                          addElement(aLSB);
                      }
                      break;
-                 case NORTH_ARROW:
+                 case LAYOUT_NORTH_ARROW:
                      LayoutNorthArrow aLNA = loadLayoutNorthArrowElement(elementNode);
                      if (aLNA != null) {
                          addElement(aLNA);
@@ -4353,7 +4353,7 @@ import org.xml.sax.SAXException;
              String fontName = layoutLegend.getAttributes().getNamedItem("FontName").getNodeValue();
              float fontSize = Float.parseFloat(layoutLegend.getAttributes().getNamedItem("FontSize").getNodeValue());
              aLL.setFont(new Font(fontName, Font.PLAIN, (int) fontSize));
-             aLL.setLayerUpdateType(LayerUpdateTypes.valueOf(layoutLegend.getAttributes().getNamedItem("LayerUpdateType").getNodeValue()));
+             aLL.setLayerUpdateType(LayerUpdateTypes.valueOfBack(layoutLegend.getAttributes().getNamedItem("LayerUpdateType").getNodeValue()));
              aLL.setColumnNumber(Integer.parseInt(layoutLegend.getAttributes().getNamedItem("ColumnNumber").getNodeValue()));
              aLL.setDrawBackColor(Boolean.parseBoolean(layoutLegend.getAttributes().getNamedItem("DrawBackColor").getNodeValue()));
              aLL.setDrawChartBreaks(Boolean.parseBoolean(layoutLegend.getAttributes().getNamedItem("DrawChartBreaks").getNodeValue()));
@@ -4375,7 +4375,7 @@ import org.xml.sax.SAXException;
          }
 
          try {
-             aLSB.setScaleBarType(ScaleBarType.valueOf(layoutScaleBar.getAttributes().getNamedItem("ScaleBarType").getNodeValue()));
+             aLSB.setScaleBarType(ScaleBarType.valueOfBack(layoutScaleBar.getAttributes().getNamedItem("ScaleBarType").getNodeValue()));
              aLSB.setBackColor(ColorUtil.parseToColor(layoutScaleBar.getAttributes().getNamedItem("BackColor").getNodeValue()));
              aLSB.setForeColor(ColorUtil.parseToColor(layoutScaleBar.getAttributes().getNamedItem("ForeColor").getNodeValue()));
              aLSB.setDrawNeatLine(Boolean.parseBoolean(layoutScaleBar.getAttributes().getNamedItem("DrawNeatLine").getNodeValue()));

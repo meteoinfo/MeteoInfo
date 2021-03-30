@@ -23,5 +23,16 @@ public enum ScaleBarType {
     SCALE_LINE_1,
     SCALE_LINE_2,
     // Alternating scale bar
-    ALTERNATING_BAR
+    ALTERNATING_BAR;
+
+    public static ScaleBarType valueOfBack(String value) {
+        switch (value.toUpperCase()) {
+            case "SCALELINE_1":
+                return ScaleBarType.SCALE_LINE_1;
+            case "SCALELINE_2":
+                return ScaleBarType.SCALE_LINE_2;
+            default:
+                return ScaleBarType.valueOf(value.toUpperCase());
+        }
+    }
 }

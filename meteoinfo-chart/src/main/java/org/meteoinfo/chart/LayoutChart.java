@@ -28,7 +28,7 @@ public class LayoutChart extends LayoutElement {
      */
     public LayoutChart() {
         super();
-        this.setElementType(ElementType.CHART);
+        this.setElementType(ElementType.LAYOUT_CHART);
         this.setResizeAbility(ResizeAbility.RESIZE_ALL);
         this.setWidth(200);
         this.setHeight(150);

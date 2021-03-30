@@ -19,11 +19,32 @@ package org.meteoinfo.geo.layout;
  */
 public enum ElementType {
 
-    MAP,
-    ILLUSTRATION,
-    LEGEND,
-    GRAPHIC,
-    SCALE_BAR,
-    NORTH_ARROW,
-    CHART;
+    LAYOUT_MAP,
+    LAYOUT_ILLUSTRATION,
+    LAYOUT_LEGEND,
+    LAYOUT_GRAPHIC,
+    LAYOUT_SCALE_BAR,
+    LAYOUT_NORTH_ARROW,
+    LAYOUT_CHART;
+
+    public static ElementType valueOfBack(String value) {
+        switch (value.toUpperCase()) {
+            case "LAYOUTMAP":
+                return ElementType.LAYOUT_MAP;
+            case "LAYOUTILLUSTRATION":
+                return ElementType.LAYOUT_ILLUSTRATION;
+            case "LAYOUTLEGEND":
+                return ElementType.LAYOUT_LEGEND;
+            case "LAYOUTGRAPHIC":
+                return ElementType.LAYOUT_GRAPHIC;
+            case "LAYOUTSCALEBAR":
+                return ElementType.LAYOUT_SCALE_BAR;
+            case "LAYOUTNORTHARRAW":
+                return ElementType.LAYOUT_NORTH_ARROW;
+            case "LAYOUTCHART":
+                return ElementType.LAYOUT_CHART;
+            default:
+                return ElementType.valueOf(value.toUpperCase());
+        }
+    }
 }

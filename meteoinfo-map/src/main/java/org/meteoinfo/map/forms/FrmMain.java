@@ -216,7 +216,7 @@ public class FrmMain extends JFrame implements IApplication {
             @Override
             public void elementSelectedEvent(ElementSelectedEvent event) {
                 if (_mapLayout.getSelectedElements().size() > 0) {
-                    if (_mapLayout.getSelectedElements().get(0).getElementType() == ElementType.GRAPHIC) {
+                    if (_mapLayout.getSelectedElements().get(0).getElementType() == ElementType.LAYOUT_GRAPHIC) {
                         switch (((LayoutGraphic) _mapLayout.getSelectedElements().get(0)).getGraphic().getShape().getShapeType()) {
                             case POLYLINE:
                             case CURVE_LINE:

@@ -69,7 +69,7 @@ public class LayoutGraphic extends LayoutElement {
      */
     public LayoutGraphic(Graphic aGraphic, MapLayout aMapLayout) {
         super();
-        this.setElementType(ElementType.GRAPHIC);
+        this.setElementType(ElementType.LAYOUT_GRAPHIC);
         this.setResizeAbility(ResizeAbility.RESIZE_ALL);
 
         _mapLayout = aMapLayout;
@@ -96,7 +96,7 @@ public class LayoutGraphic extends LayoutElement {
      */
     public LayoutGraphic(Graphic aGraphic, MapLayout aMapLayout, LayoutMap aLayoutMap) {
         super();
-        this.setElementType(ElementType.GRAPHIC);
+        this.setElementType(ElementType.LAYOUT_GRAPHIC);
         this.setResizeAbility(ResizeAbility.RESIZE_ALL);
 
         _mapLayout = aMapLayout;

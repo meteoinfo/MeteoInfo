@@ -49,7 +49,7 @@ public class LayoutNorthArrow extends LayoutElement {
      */
     public LayoutNorthArrow(LayoutMap layoutMap) {
         super();
-        this.setElementType(ElementType.NORTH_ARROW);
+        this.setElementType(ElementType.LAYOUT_NORTH_ARROW);
         this.setResizeAbility(ResizeAbility.RESIZE_ALL);
 
         this.setWidth(50);

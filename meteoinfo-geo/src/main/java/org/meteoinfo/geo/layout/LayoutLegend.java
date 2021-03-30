@@ -82,7 +82,7 @@ public class LayoutLegend extends LayoutElement {
      */
     public LayoutLegend(MapLayout mapLayout, LayoutMap layoutMap) {
         super();
-        this.setElementType(ElementType.LEGEND);
+        this.setElementType(ElementType.LAYOUT_LEGEND);
         this.setResizeAbility(ResizeAbility.RESIZE_ALL);
 
         _mapLayout = mapLayout;

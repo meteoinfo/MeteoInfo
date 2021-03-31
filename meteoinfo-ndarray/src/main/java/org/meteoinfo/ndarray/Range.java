@@ -438,7 +438,7 @@ if(false) {// Original version
    * @param i index of the element
    * @return the i-th element of a range, no check
    */
-  private int elementNC(int i) {
+  public int elementNC(int i) {
     return first + i * stride;
   }
 

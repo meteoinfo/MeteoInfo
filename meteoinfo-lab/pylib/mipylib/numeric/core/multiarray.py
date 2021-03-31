@@ -239,12 +239,10 @@ class NDArray(object):
             return None
         
         if not isinstance(indices, tuple):
-            inds = []
-            inds.append(indices)
-            indices = inds
+            indices = [indices]
             
         if len(indices) < self.ndim:
-            for i in range(self.ndim - len(indices)):
+            for _ in range(self.ndim - len(indices)):
                 indices.append(slice(None))
         
         if self.ndim == 0:

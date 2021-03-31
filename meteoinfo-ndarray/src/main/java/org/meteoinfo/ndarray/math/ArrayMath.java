@@ -4739,6 +4739,28 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array setSection_Mix(Array a, List<Object> ranges, Number v) {
+        MixIterator mixIterator = new MixIterator(a, ranges);
+        Index index = a.getIndex();
+        int[] current;
+        while (mixIterator.hasNext()) {
+            mixIterator.next();
+            current = mixIterator.getCurrentCounter();
+            index.set(current);
+            a.setObject(index, v);
+        }
+
+        return a;
+    }
+
+    /**
+     * Set section
+     *
+     * @param a Array a
+     * @param ranges Ranges
+     * @param v Number value
+     * @return Result array
+     */
+    public static Array setSection_Mix_Bak(Array a, List<Object> ranges, Number v) {
         Array r = Array.factory(a.getDataType(), a.getShape());
         int n = a.getRank();
         IndexIterator iter = r.getIndexIterator();
@@ -4783,6 +4805,30 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array setSection_Mix(Array a, List<Object> ranges, Array v) {
+        MixIterator mixIterator = new MixIterator(a, ranges);
+        Index index = a.getIndex();
+        Index vIndex = v.getIndex();
+        int[] current;
+        while (mixIterator.hasNext()) {
+            mixIterator.next();
+            current = mixIterator.getCurrentCounter();
+            index.set(current);
+            a.setObject(index, v.getObject(vIndex));
+            vIndex.incr();
+        }
+
+        return a;
+    }
+
+    /**
+     * Set section
+     *
+     * @param a Array a
+     * @param ranges Ranges
+     * @param v Array value
+     * @return Result array
+     */
+    public static Array setSection_Mix_Bak(Array a, List<Object> ranges, Array v) {
         Array r = Array.factory(a.getDataType(), a.getShape());
         int n = a.getRank();
         IndexIterator iter = r.getIndexIterator();

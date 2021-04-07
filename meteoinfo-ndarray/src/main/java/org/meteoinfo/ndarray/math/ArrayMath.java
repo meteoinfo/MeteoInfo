@@ -4739,12 +4739,13 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array setSection_Mix(Array a, List<Object> ranges, Number v) {
-        MixIterator mixIterator = new MixIterator(a, ranges);
+        MixIterator iterator = new MixIterator(a, ranges);
+        //ListIterator iterator = new ListIterator(a, ranges);
         Index index = a.getIndex();
         int[] current;
-        while (mixIterator.hasNext()) {
-            mixIterator.next();
-            current = mixIterator.getCurrentCounter();
+        while (iterator.hasNext()) {
+            iterator.next();
+            current = iterator.getCurrentCounter();
             index.set(current);
             a.setObject(index, v);
         }

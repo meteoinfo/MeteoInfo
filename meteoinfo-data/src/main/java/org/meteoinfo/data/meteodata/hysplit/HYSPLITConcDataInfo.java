@@ -65,11 +65,11 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
     
     /**
      * Constructor
-     * @param bigendian Big endian or not
+     * @param bigEndian Big endian or not
      */
-    public HYSPLITConcDataInfo(boolean bigendian){
+    public HYSPLITConcDataInfo(boolean bigEndian){
         this();
-        if (bigendian)
+        if (bigEndian)
             this.byteOrder = ByteOrder.BIG_ENDIAN;
         else
             this.byteOrder = ByteOrder.LITTLE_ENDIAN;
@@ -297,7 +297,8 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
                 } else {
                     year = 1900 + year;
                 }
-                aDateTime = LocalDateTime.of(year, sampleTimes[1], sampleTimes[2], sampleTimes[3], 0, 0);
+                aDateTime = LocalDateTime.of(year, sampleTimes[1], sampleTimes[2],
+                        sampleTimes[3], sampleTimes[4], 0);
                 sample_start.add(aDateTime);
 
                 //Record #7
@@ -317,7 +318,8 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
                 } else {
                     year = 1900 + year;
                 }
-                aDateTime = LocalDateTime.of(year, sampleTimes[1], sampleTimes[2], sampleTimes[3], 0, 0);
+                aDateTime = LocalDateTime.of(year, sampleTimes[1], sampleTimes[2],
+                        sampleTimes[3], sampleTimes[4], 0);
                 sample_stop.add(aDateTime);
 
                 //Record 8;

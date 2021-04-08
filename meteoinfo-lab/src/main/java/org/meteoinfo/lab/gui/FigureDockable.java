@@ -353,6 +353,15 @@ public class FigureDockable extends DefaultSingleCDockable {
         if (this.tabbedPanel.getTabCount() > 0) {
             JScrollPane sp = new JScrollPane(cp);
             this.tabbedPanel.setComponentAt(this.tabbedPanel.getSelectedIndex(), sp);
+
+            ButtonTabComponent btc = (ButtonTabComponent) this.tabbedPanel.getTabComponentAt(this.tabbedPanel.getSelectedIndex());
+            JButton button = btc.getTabButton();
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    removeFigure(cp);
+                }
+            });
         }
     }
 

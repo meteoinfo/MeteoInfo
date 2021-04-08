@@ -151,6 +151,35 @@ public class GridArray {
      * @param xdata X data
      * @param ydata Y data
      * @param missingValue Missing value
+     * @param projInfo Projection info
+     */
+    public GridArray(Array array, Array xdata, Array ydata, Number missingValue, ProjectionInfo projInfo) {
+        int yn = (int) ydata.getSize();
+        int xn = (int) xdata.getSize();
+        this.setData(array);
+
+        this.xArray = new double[xn];
+        this.yArray = new double[yn];
+        IndexIterator iter = xdata.getIndexIterator();
+        for (int i = 0; i < xn; i++) {
+            this.xArray[i] = iter.getDoubleNext();
+        }
+        iter = ydata.getIndexIterator();
+        for (int i = 0; i < yn; i++) {
+            this.yArray[i] = iter.getDoubleNext();
+        }
+
+        this.missingValue = missingValue.doubleValue();
+        this.projInfo = projInfo;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param array Data array
+     * @param xdata X data
+     * @param ydata Y data
+     * @param missingValue Missing value
      */
     public GridArray(Array array, Array xdata, Array ydata, Number missingValue) {
         int yn = (int) ydata.getSize();

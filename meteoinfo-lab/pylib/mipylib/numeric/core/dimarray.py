@@ -732,9 +732,10 @@ class DimArray(NDArray):
         else:
             return False
                    
-    def asgriddata(self):
-        xdata = self.dims[1].getDimValue()
-        ydata = self.dims[0].getDimValue()
+    def asgriddata(self, xdata=None, ydata=None):
+        if xdata is None or ydata is None:
+            xdata = self.dimvalue(1)
+            ydata = self.dimvalue(0)
         data = self.array
         if xdata[1] < xdata[0]:
             xdata = xdata[::-1]
@@ -742,12 +743,13 @@ class DimArray(NDArray):
         if ydata[1] < ydata[0]:
             ydata = ydata[::-1]
             data = self.array[::-1,:]
-        gdata = GridData(data._array, xdata, ydata, self.fill_value, self.proj)
+        gdata = GridData(data._array, xdata._array, ydata._array, self.fill_value, self.proj)
         return PyGridData(gdata)
         
-    def asgridarray(self):
-        xdata = self.dims[1].getDimValue()
-        ydata = self.dims[0].getDimValue()
+    def asgridarray(self, xdata=None, ydata=None):
+        if xdata is None or ydata is None:
+            xdata = self.dimvalue(1)
+            ydata = self.dimvalue(0)
         data = self.array
         if xdata[1] < xdata[0]:
             xdata = xdata[::-1]
@@ -755,7 +757,7 @@ class DimArray(NDArray):
         if ydata[1] < ydata[0]:
             ydata = ydata[::-1]
             data = self.array[::-1,:]
-        gdata = GridArray(data._array, xdata, ydata, self.fill_value, self.proj)
+        gdata = GridArray(data._array, xdata._array, ydata._array, self.fill_value, self.proj)
         return gdata
         
     def sum(self, axis=None):

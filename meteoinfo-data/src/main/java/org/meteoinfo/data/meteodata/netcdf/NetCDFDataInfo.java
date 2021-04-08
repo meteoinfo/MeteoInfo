@@ -568,6 +568,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             for (ucar.nc2.Variable aVar : ncVariables) {
                 if (aVar.getShortName().equals("_HDFEOS_CRS")) {
                     pVar = aVar;
+                    break;
                 }
             }
 
@@ -595,9 +596,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 ucar.nc2.Attribute ulAtt = pVar.findAttributeIgnoreCase("UpperLeftPointMtrs");
                 ucar.nc2.Attribute lrAtt = pVar.findAttributeIgnoreCase("LowerRightMtrs");
                 double xmin = ulAtt.getValues().getDouble(0);
-                double ymax = ulAtt.getValues().getDouble(1);
+                double ymin = ulAtt.getValues().getDouble(1);
                 double xmax = lrAtt.getValues().getDouble(0);
-                double ymin = lrAtt.getValues().getDouble(1);
+                double ymax = lrAtt.getValues().getDouble(1);
                 if (proj.contains("GCTP_GEO")) {
                     if (Math.abs(xmax) > 1000000) {
                         xmin = xmin / 1000000;
@@ -607,9 +608,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
                 if (ymin > ymax) {
-                    double temp = ymax;
-                    ymax = ymin;
-                    ymin = temp;
+//                    double temp = ymax;
+//                    ymax = ymin;
+//                    ymin = temp;
                     if (this._fileTypeId.equals("HDF5-EOS")) {
                         this.setYReverse(true);
                     }

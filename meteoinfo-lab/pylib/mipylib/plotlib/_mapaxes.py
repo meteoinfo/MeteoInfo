@@ -1223,6 +1223,10 @@ class MapAxes(Axes):
                 rgbdata = rgbd
             else:
                 rgbdata = rgbdata.asarray()        
+            if x[1] < x[0]:
+                x = x[::-1]
+            if y[1] < y[0]:
+                y = y[::-1]
             extent = [x[0],x[-1],y[0],y[-1]]
             igraphic = GraphicFactory.createImage(rgbdata, extent)
             x = plotutil.getplotdata(x)

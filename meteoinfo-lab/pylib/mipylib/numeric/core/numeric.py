@@ -2562,42 +2562,46 @@ def asmiarray(data):
         return array(data)       
         
 def asgriddata(data, x=None, y=None, fill_value=-9999.0):
-    if x is None:    
-        if isinstance(data, PyGridData):
-            return data
-        elif isinstance(data, DimArray):
-            return data.asgriddata()
-        elif isinstance(data, NDArray):
-            if x is None:
-                x = arange(0, data.shape[1])
-            if y is None:
-                y = arange(0, data.shape[0])
-            gdata = GridData(data._array, x._array, y._array, fill_value)
-            return PyGridData(gdata)
-        else:
-            return None
-    else:
-        gdata = GridData(data.asarray(), x.asarray(), y.asarray(), fill_value)
+    if isinstance(data, PyGridData):
+        return data
+    elif isinstance(data, DimArray):
+        return data.asgriddata()
+    elif isinstance(data, NDArray):
+        if x is None:
+            x = arange(0, data.shape[1])
+        if y is None:
+            y = arange(0, data.shape[0])
+        if x[1] < x[0]:
+            x = x[::-1]
+            data = data[:,::-1]
+        if y[1] < y[0]:
+            y = y[::-1]
+            data = data[::-1,:]
+        gdata = GridData(data._array, x._array, y._array, fill_value)
         return PyGridData(gdata)
+    else:
+        return None
         
 def asgridarray(data, x=None, y=None, fill_value=-9999.0):
-    if x is None:    
-        if isinstance(data, PyGridData):
-            return data.data.toGridArray()
-        elif isinstance(data, DimArray):
-            return data.asgridarray()
-        elif isinstance(data, NDArray):
-            if x is None:
-                x = arange(0, data.shape[1])
-            if y is None:
-                y = arange(0, data.shape[0])
-            gdata = GridArray(data._array, x._array, y._array, fill_value)
-            return gdata
-        else:
-            return None
-    else:
-        gdata = GridArray(data.asarray(), x.asarray(), y.asarray(), fill_value)
+    if isinstance(data, PyGridData):
+        return data.data.toGridArray()
+    elif isinstance(data, DimArray):
+        return data.asgridarray()
+    elif isinstance(data, NDArray):
+        if x is None:
+            x = arange(0, data.shape[1])
+        if y is None:
+            y = arange(0, data.shape[0])
+        if x[1] < x[0]:
+            x = x[::-1]
+            data = data[:,::-1]
+        if y[1] < y[0]:
+            y = y[::-1]
+            data = data[::-1,:]
+        gdata = GridArray(data._array, x._array, y._array, fill_value)
         return gdata
+    else:
+        return None
         
 def asstationdata(data, x, y, fill_value=-9999.0):
     stdata = StationData(data.asarray(), x.asarray(), y.asarray(), fill_value)

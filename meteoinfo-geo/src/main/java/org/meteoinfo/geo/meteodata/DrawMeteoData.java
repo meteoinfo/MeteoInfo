@@ -1743,6 +1743,9 @@ public class DrawMeteoData {
      * @return Image layer
      */
     public static ImageLayer createImageLayer(Array x, Array y, BufferedImage image, String layerName) {
+        x = x.copyIfView();
+        y = y.copyIfView();
+
         ImageLayer aImageLayer = new ImageLayer();
         aImageLayer.setImage(image);
         aImageLayer.setLayerName(layerName);

@@ -385,6 +385,22 @@ class DimArray(NDArray):
     def __rshift__(self, other):
         r = super(DimArray, self).__rshift__(other)
         return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    @property
+    def array(self):
+        """
+        Get NDArray object
+        :return: NDArray object
+        """
+        return NDArray(self._array)
+
+    @array.setter
+    def array(self, value):
+        """
+        Set NDArray object
+        :param value: NDArray object
+        """
+        self._array = value._array
     
     def member_names(self):
         '''
@@ -719,13 +735,27 @@ class DimArray(NDArray):
     def asgriddata(self):
         xdata = self.dims[1].getDimValue()
         ydata = self.dims[0].getDimValue()
-        gdata = GridData(self._array, xdata, ydata, self.fill_value, self.proj)
+        data = self.array
+        if xdata[1] < xdata[0]:
+            xdata = xdata[::-1]
+            data = self.array[:,::-1]
+        if ydata[1] < ydata[0]:
+            ydata = ydata[::-1]
+            data = self.array[::-1,:]
+        gdata = GridData(data._array, xdata, ydata, self.fill_value, self.proj)
         return PyGridData(gdata)
         
     def asgridarray(self):
         xdata = self.dims[1].getDimValue()
         ydata = self.dims[0].getDimValue()
-        gdata = GridArray(self._array, xdata, ydata, self.fill_value, self.proj)
+        data = self.array
+        if xdata[1] < xdata[0]:
+            xdata = xdata[::-1]
+            data = self.array[:,::-1]
+        if ydata[1] < ydata[0]:
+            ydata = ydata[::-1]
+            data = self.array[::-1,:]
+        gdata = GridArray(data._array, xdata, ydata, self.fill_value, self.proj)
         return gdata
         
     def sum(self, axis=None):

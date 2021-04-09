@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\hdf">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\grads">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Run\emips\run_meic"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
@@ -13,22 +12,23 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\omi"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\trmm"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contourf_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\moon.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\hy_conc_minutes.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\hdf\GW1AM2_grid.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\grads\test_contour.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contourf_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\moon.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\traj\hy_conc_minutes.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\hdf\GW1AM2_grid.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\grads\test_contour.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1362,788"/>
+  <Startup MainFormLocation="-4,2" MainFormSize="1361,774"/>
 </MeteoInfo>

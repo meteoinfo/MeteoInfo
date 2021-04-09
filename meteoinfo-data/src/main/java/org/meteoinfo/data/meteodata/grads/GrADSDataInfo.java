@@ -334,7 +334,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                 }
             }
             isReadLine = true;
-            dataArray = aLine.split("\\s+");
+            dataArray = aLine.split("(\\s*,\\s*|\\s+)");
             String hStr = dataArray[0].toUpperCase();
             switch (hStr) {
                 case "DSET":
@@ -639,9 +639,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             if (line.isEmpty()) {
                                 continue;
                             }
-                            dataArray = line.split("\\s+");
+                            dataArray = line.split("\\s+|,");
                             if (this.isKeyWord(dataArray[0])) {
-                                dataArray = aLine.split("\\s+");
+                                dataArray = aLine.split("\\s+|,");
 //                    if (dataArray.length > ZDEF.ZNum + 3) {
 //                        errorStr = "ZDEF is wrong! Please check the ctl file!";
 //                        //goto ERROR;
@@ -670,7 +670,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                     } else {
                         ZDEF.ZNum = dataArray.length - 3;
                         ZDEF.ZLevels = new float[ZDEF.ZNum];
+                        String v;
                         for (i = 0; i < ZDEF.ZNum; i++) {
+                            v = dataArray[3 + i].trim();
                             ZDEF.ZLevels[i] = Float.parseFloat(dataArray[3 + i]);
                             values.add(Double.parseDouble(dataArray[3 + i]));
                         }

@@ -582,6 +582,28 @@ public class Index implements Cloneable {
     }
 
     /**
+     * Set the current index from the 1D "current index" currIndex =
+     * stride[0]*current[0] + ...
+     *
+     * @param currIndex set to this value
+     */
+    public void setCurrentIndex(int currIndex) {
+        int[] cc = new int[rank];
+        int len;
+        for (int ii = 0; ii < rank; ii++) { // general rank
+            len = 1;
+            for (int i = ii + 1; i < rank; i++) {
+                len *= shape[i];
+            }
+            cc[ii] = currIndex / len;
+            currIndex -= len * cc[ii];
+            if (currIndex == 0)
+                break;
+        }
+        set(cc); // transfer to subclass fields
+    }
+
+    /**
      * Increment the current element by 1. Used by IndexIterator. General rank,
      * with subclass specialization. Vlen skipped.
      *

@@ -10,6 +10,7 @@ from org.meteoinfo.ndarray import Array, Range, MAMath, Complex, Dimension
 import datetime
 
 import _dtype
+from ._base import flatiter
 
 # The encapsulate class of Array
 class NDArray(object):
@@ -20,10 +21,7 @@ class NDArray(object):
         self._array = array
         self.ndim = array.getRank()
         s = array.getShape()
-        s1 = []
-        for i in range(len(s)):
-            s1.append(s[i])
-        self._shape = tuple(s1)
+        self._shape = tuple(s)
         self.dtype = _dtype.dtype.fromjava(array.getDataType())
         self.size = int(self._array.getSize())
         self.iterator = array.getIndexIterator()
@@ -51,7 +49,7 @@ class NDArray(object):
             nvalue[idx] = int(self._array.getSize() / l)
             value = tuple(nvalue)
         self._shape = value
-        self.__init__(self._array.reshape(value))
+        self.__init__(self._array.reshapeNoCopy(value))
 
     shape = property(get_shape, set_shape)
 
@@ -82,7 +80,7 @@ class NDArray(object):
         if len(indices) < self.ndim:
             if isinstance(indices, tuple):
                 indices = list(indices)
-            for i in range(self.ndim - len(indices)):
+            for _ in range(self.ndim - len(indices)):
                 indices.append(slice(None))
 
         allint = True
@@ -299,6 +297,7 @@ class NDArray(object):
             else:
                 r = ArrayMath.setSection_Mix(self._array, ranges, value)
         self._array = r
+        self.iterator = self._array.getIndexIterator()
 
     def __value_other(self, other):
         if isinstance(other, NDArray):
@@ -437,8 +436,6 @@ class NDArray(object):
         """
         provide iteration over the values of the array
         """
-        #self.idx = -1
-        self.iterator = self._array.getIndexIterator()
         return self
 
     def next(self):
@@ -446,10 +443,6 @@ class NDArray(object):
             return self.iterator.getObjectNext()
         else:
             raise StopIteration()
-        # self.idx += 1
-        # if self.idx >= self.size:
-        # raise StopIteration()
-        # return self._array.getObject(self.idx)
 
     def copy(self):
         '''
@@ -524,7 +517,7 @@ class NDArray(object):
         '''
         return ArrayMath.containsNaN(self._array)
 
-    def getsize(self):
+    def getsize(self, name='size'):
         if name == 'size':
             sizestr = str(self.shape[0])
             if self.ndim > 1:
@@ -868,7 +861,7 @@ class NDArray(object):
         if not idx is None:
             shape[idx] = self.size / n
 
-        r = NDArray(self._array.reshape(shape))
+        r = NDArray(self._array.reshapeNoCopy(shape))
         r.base = self.get_base()
         return r
 
@@ -930,13 +923,30 @@ class NDArray(object):
 
     I = property(inv)
 
+    @property
+    def flat(self):
+        """
+        A 1-D iterator over the array.
+        :return: 1-D iterator over the array.
+        """
+        return flatiter(self)
+
+    @flat.setter
+    def flat(self, value):
+        """
+        flat setter.
+        :param value: The setting value.
+        """
+        self.flat[:] = value
+
     def flatten(self):
         '''
         Return a copy of the array collapsed into one dimension.
 
         :returns: (*NDArray*) A copy of the input array, flattened to one dimension.
         '''
-        r = self.reshape(int(self._array.getSize()))
+        shape = [self.size]
+        r = NDArray(self._array.reshape(shape))
         return r
 
     def ravel(self):
@@ -945,7 +955,8 @@ class NDArray(object):
 
         :returns: (*NDArray*) A copy of the input array, flattened to one dimension.
         '''
-        r = self.reshape(int(self._array.getSize()))
+        shape = [self.size]
+        r = NDArray(self._array.reshape(shape))
         return r
 
     def repeat(self, repeats, axis=None):

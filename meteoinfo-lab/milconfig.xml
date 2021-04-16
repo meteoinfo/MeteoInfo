@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\array">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\himawari"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\omi"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\geotiff">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\trmm"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
@@ -14,8 +10,12 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,12 +23,14 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\moon.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\xmeans_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\array\flat.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotif_rgb.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contourf_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\moon.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\xmeans_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\array\flat.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotif_rgb.py"/>
     </RecentFiles>
   </File>
   <Font>

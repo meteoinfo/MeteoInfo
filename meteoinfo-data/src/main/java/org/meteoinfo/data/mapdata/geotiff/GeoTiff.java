@@ -1142,7 +1142,12 @@ public class GeoTiff {
                     case 8:
                         for (int i = 0; i < stripNum; i++) {
                             stripOffset = stripOffsetTag.value[i];
+                            stripSize = stripSizeTag.value[i];
                             buffer = testReadData(stripOffset, stripSize);
+                            if (cDecoder != null){
+                                buffer = ByteBuffer.wrap(cDecoder.decode(buffer.array(), byteOrder));
+                                buffer.order(byteOrder);
+                            }
                             for (int j = 0; j < width * rowNum; j++) {
                                 for (int k = 0; k < samplesPerPixel; k++) {
                                     r.setInt(idx, DataConvert.byte2Int(buffer.get()));
@@ -1154,7 +1159,12 @@ public class GeoTiff {
                     case 16:
                         for (int i = 0; i < stripNum; i++) {
                             stripOffset = stripOffsetTag.value[i];
+                            stripSize = stripSizeTag.value[i];
                             buffer = testReadData(stripOffset, stripSize);
+                            if (cDecoder != null){
+                                buffer = ByteBuffer.wrap(cDecoder.decode(buffer.array(), byteOrder));
+                                buffer.order(byteOrder);
+                            }
                             for (int j = 0; j < width * rowNum; j++) {
                                 for (int k = 0; k < samplesPerPixel; k++) {
                                     if (dataType == DataType.FLOAT) {

@@ -35,8 +35,8 @@
     <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.2-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="meteoinfo-dataframe" />
     <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.4.1" level="project" />
-    <orderEntry type="library" name="Maven: com.formdev:flatlaf:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.formdev:flatlaf:1.1.2" level="project" />
+    <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:1.1.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.formdev:svgSalamander:1.1.2.4" level="project" />
     <orderEntry type="module" module-name="meteoinfo-ui" />
     <orderEntry type="module" module-name="meteoinfo-common" />

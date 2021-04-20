@@ -71,11 +71,6 @@
             <version>0.1</version>
         </dependency>
         <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-            <version>5.5.7</version>
-        </dependency>
-        <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-util</artifactId>
             <version>2.0.2</version>

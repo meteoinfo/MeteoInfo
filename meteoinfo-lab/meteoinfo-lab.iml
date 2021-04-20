@@ -48,6 +48,7 @@
     <orderEntry type="library" name="Maven: com.formdev:flatlaf:1.1.2" level="project" />
     <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:1.1.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.formdev:svgSalamander:1.1.2.4" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.13.2" level="project" />
     <orderEntry type="module" module-name="meteoinfo-ui" />
     <orderEntry type="module" module-name="meteoinfo-common" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:30.1.1-jre" level="project" />
@@ -65,7 +66,6 @@
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-cyrillic:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.12.0" level="project" />
     <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:0.1" level="project" />
-    <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.7" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-util:2.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.netbeans:openide-lookup:1.9-patched-1.0" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-emf:2.4" level="project" />

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="default.mip" Type="projectfile">
   <MapFrames>
-    <MapFrame Active="true" DrawGridLabel="true" DrawGridLine="false" DrawNeatLine="true" Expanded="true" GridFontName="Arial" GridFontSize="12" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH" GridXDelt="10.0" GridXOrigin="-180.0" GridYDelt="10.0" GridYOrigin="-90.0" Height="404" Left="48" Name="New Map Frame" NeatLineColor="0xff000000" NeatLineSize="1.0" Order="0" Top="30" Width="592">
-      <Extents xMax="206.0308406134691" xMin="-65.65287803122104" yMax="97.6217947425226" yMin="-43.42568327648168"/>
+    <MapFrame Active="true" DrawGridLabel="true" DrawGridLine="false" DrawNeatLine="true" Expanded="true" GridFontName="Arial" GridFontSize="12" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH" GridXDelt="10.0" GridXOrigin="-180.0" GridYDelt="10.0" GridYOrigin="-90.0" Height="364" Left="48" Name="New Map Frame" NeatLineColor="0xff000000" NeatLineSize="1.0" Order="0" Top="30" Width="776">
+      <Extents xMax="180.0" xMin="-180.0" yMax="83.62359619140625" yMin="-90.0"/>
       <MapProperty BackColor="0xffffffff" ForeColor="0xff000000" HighSpeedWheelZoom="true" MultiGlobalDraw="true" PointSmoothingMode="true" SelectColor="0xff66ffff" SmoothingMode="false" XYScaleFactor="1.0"/>
       <GridLine DrawGridLine="false" DrawGridTickLine="false" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH"/>
       <MaskOut MaskLayer="china.shp" SetMaskLayer="false"/>
@@ -69,14 +69,14 @@
       </Graphics>
     </MapFrame>
   </MapFrames>
-  <Layout BackColor="0xffffffff" ForeColor="0xff000000" Landscape="true" PaperSizeHeight="750" PaperSizeName="Custom" PaperSizeWidth="500" SmoothingMode="false">
+  <Layout BackColor="0xffffffff" ForeColor="0xff000000" Landscape="true" PaperSizeHeight="900" PaperSizeName="Custom" PaperSizeWidth="500" SmoothingMode="false">
     <LayoutElements>
-      <LayoutMap DrawBackColor="false" DrawDegreeSymbol="false" DrawGridLabel="true" DrawGridLine="false" DrawNeatLine="true" ElementType="LAYOUT_MAP" GridFontName="Arial" GridFontSize="12" GridLabelPosition="LEFT_BOTTOM" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH" GridXDelt="10.0" GridXOrigin="-180.0" GridYDelt="10.0" GridYOrigin="-90.0" Height="404" Left="48" NeatLineColor="0xff000000" NeatLineSize="1.0" Top="30" Width="592"/>
-      <LayoutGraphic ElementType="LAYOUT_GRAPHIC" Height="67" IsTitle="false" Left="654" Top="53" Width="48">
+      <LayoutMap DrawBackColor="false" DrawDegreeSymbol="false" DrawGridLabel="true" DrawGridLine="false" DrawNeatLine="true" ElementType="LAYOUT_MAP" GridFontName="Arial" GridFontSize="12" GridLabelPosition="LEFT_BOTTOM" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH" GridXDelt="10.0" GridXOrigin="-180.0" GridYDelt="10.0" GridYOrigin="-90.0" Height="364" Left="48" NeatLineColor="0xff000000" NeatLineSize="1.0" Top="30" Width="776"/>
+      <LayoutGraphic ElementType="LAYOUT_GRAPHIC" Height="67" IsTitle="false" Left="754" Top="136" Width="48">
         <Graphic>
           <Shape Selected="false" ShapeType="POINT" Visible="true">
             <Points>
-              <Point X="654.0" Y="96.0"/>
+              <Point X="754.0" Y="179.0"/>
             </Points>
           </Shape>
           <Legend Angle="0.0" Color="0xff000000" FontBold="false" FontName="Verdana" FontSize="18" LegendType="LABEL_BREAK" Text="Text&#10;Line2&#10;Line3" YShift="0.0"/>

@@ -65,6 +65,6 @@
     <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-ps:2.4" level="project" />
-    <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.7" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.13.2" level="project" />
   </component>
 </module>

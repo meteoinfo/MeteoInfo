@@ -3006,29 +3006,18 @@ import org.xml.sax.SAXException;
                  out.close();
              }
          } else if (aFile.endsWith(".eps")) {
-             int width = this.getPaperWidth();
-             int height = this.getPaperHeight();
- //            EPSGraphics2D g = new EPSGraphics2D(0.0, 0.0, width, height);
- //            paintGraphics(g);
- //            FileOutputStream file = new FileOutputStream(aFile);
- //            try {
- //                file.write(g.getBytes());
- //            } finally {
- //                file.close();
- //                g.dispose();
- //            }
-
+             int width = this._pageBounds.width;
+             int height = this._pageBounds.height;
              Properties p = new Properties();
              p.setProperty("PageSize", "A5");
              VectorGraphics g = new PSGraphics2D(new File(aFile), new Dimension(width, height));
-             //g.setProperties(p);
              g.startExport();
              this.paintGraphics(g);
              g.endExport();
              g.dispose();
          } else if (aFile.endsWith(".pdf")) {
-             int width = this.getPaperWidth();
-             int height = this.getPaperHeight();
+             int width = this._pageBounds.width;
+             int height = this._pageBounds.height;
              try {
                  com.itextpdf.text.Document document = new com.itextpdf.text.Document(new com.itextpdf.text.Rectangle(width, height));
                  PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(aFile));
@@ -3044,10 +3033,9 @@ import org.xml.sax.SAXException;
                  e.printStackTrace();
              }
          } else if (aFile.endsWith(".emf")) {
-             int width = this.getPaperWidth();
-             int height = this.getPaperHeight();
+             int width = this._pageBounds.width;
+             int height = this._pageBounds.height;
              VectorGraphics g = new EMFGraphics2D(new File(aFile), new Dimension(width, height));
-             //g.setProperties(p);
              g.startExport();
              this.paintGraphics(g);
              g.endExport();

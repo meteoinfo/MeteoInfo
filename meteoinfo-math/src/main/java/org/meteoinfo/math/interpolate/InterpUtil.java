@@ -83,6 +83,21 @@ public class InterpUtil {
     }
 
     /**
+     * Get Kriging interpolation 1D class
+     * @param x X array
+     * @param y Y array
+     * @param beta Beta value
+     * @return Kriging interpolation 1D class
+     */
+    public static KrigingInterpolation1D getKriging1D(Array x, Array y, double beta) {
+        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray_Double(x);
+        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray_Double(y);
+        KrigingInterpolation1D krigingInterpolation1D = new KrigingInterpolation1D(xd, yd, beta);
+
+        return krigingInterpolation1D;
+    }
+
+    /**
      * Make interpolation function for grid data
      *
      * @param x X data
@@ -135,6 +150,34 @@ public class InterpUtil {
      */
     public static double evaluate(UnivariateFunction func, Number x) {
         return func.value(x.doubleValue());
+    }
+
+    /**
+     * Compute the value of the function
+     *
+     * @param func The function
+     * @param x Input data
+     * @return Function value
+     */
+    public static double evaluate(KrigingInterpolation1D func, Number x) {
+        return func.interpolate(x.doubleValue());
+    }
+
+    /**
+     * Compute the value of the function
+     *
+     * @param func The function
+     * @param x Input data
+     * @return Function value
+     */
+    public static Array evaluate(KrigingInterpolation1D func, Array x) {
+        Array r = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator xIter = x.getIndexIterator();
+        for (int i = 0; i < r.getSize(); i++) {
+            r.setDouble(i, func.interpolate(xIter.getDoubleNext()));
+        }
+
+        return r;
     }
 
     /**
@@ -1926,6 +1969,49 @@ public class InterpUtil {
                     }
                     ii += 1;
                 }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolation with Kriging2D method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X grid X array
+     * @param Y grid Y array
+     * @param beta Beta
+     * @return interpolated grid data
+     */
+    public static Array gridDataKriging(Array x_s, Array y_s, Array a,
+                                        Array X, Array Y, double beta) {
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray_Double(x_s);
+        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray_Double(y_s);
+        double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
+
+        int rowNum, colNum, pNum;
+        colNum = (int)X.getSize();
+        rowNum = (int)Y.getSize();
+        pNum = (int)x_s.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{rowNum, colNum});
+        int i, j;
+        double w, gx, gy, v;
+        boolean match;
+
+        //Construct Kriging2D interpolation
+        KrigingInterpolation2D ki2d = new KrigingInterpolation2D(xd, yd, ad, beta);
+
+        //---- Do interpolation
+        for (i = 0; i < rowNum; i++) {
+            gy = Y.getDouble(i);
+            for (j = 0; j < colNum; j++) {
+                gx = X.getDouble(j);
+                r.setDouble(i * colNum + j, ki2d.interpolate(gx, gy));
             }
         }
 

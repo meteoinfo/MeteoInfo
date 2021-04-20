@@ -24,14 +24,18 @@ class interp1d(object):
     :param x: (*array_like*) A 1-D array of real values.
     :param y: (*array_like*) A 1-D array of real values. The length of y must be equal to the length of x.
     :param kind: (*boolean*) Specifies the kind of interpolation as a string (‘linear’, 
-        ‘cubic’,‘akima’,‘divided’,‘loess’,‘neville’). Default is ‘linear’.
+        ‘cubic’,‘akima’,‘divided’,‘loess’,‘neville’,'kriging'). Default is ‘linear’.
     '''
-    def __init__(self, x, y, kind='linear'):        
+    def __init__(self, x, y, kind='linear', **kwargs):
         if isinstance(x, list):
             x = np.array(x)
         if isinstance(y, list):
             y = np.array(y)
-        self._func = InterpUtil.getInterpFunc(x.asarray(), y.asarray(), kind)
+        if kind == 'kriging':
+            beta = kwargs.pop('beta', 1.5)
+            self._func = InterpUtil.getKriging1D(x.asarray(), y.asarray(), beta)
+        else:
+            self._func = InterpUtil.getInterpFunc(x.asarray(), y.asarray(), kind)
 
     def __call__(self, x):
         '''
@@ -278,6 +282,9 @@ def griddata(points, values, xi=None, **kwargs):
         return NDArray(r[0]), x_g, y_g, NDArray(r[1])
     elif method == 'surface':
         r = InterpUtil.interpolation_Surface(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray())
+    elif method == 'kriging':
+        beta = kwargs.pop('beta', 1.5)
+        r = InterpUtil.gridDataKriging(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(), beta)
     else:
         return None
 

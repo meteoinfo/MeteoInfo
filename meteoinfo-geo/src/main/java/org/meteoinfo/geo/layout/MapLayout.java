@@ -2870,10 +2870,10 @@ import org.xml.sax.SAXException;
 
                      switch (aElement.getResizeAbility()) {
                          case SAME_WIDTH_HEIGHT:
-                             drawSelectedConers(g, aElement);
+                             drawSelectedCorners(g, aElement);
                              break;
                          case RESIZE_ALL:
-                             drawSelectedConers(g, aElement);
+                             drawSelectedCorners(g, aElement);
                              drawSelectedEdgeCenters(g, aElement);
                              break;
                      }
@@ -2901,7 +2901,7 @@ import org.xml.sax.SAXException;
          }
      }
 
-     private void drawSelectedConers(Graphics2D g, LayoutElement aElement) {
+     private void drawSelectedCorners(Graphics2D g, LayoutElement aElement) {
          Rectangle elementRect = pageToScreen(aElement.getBounds());
          int size = 6;
          Rectangle rect = new Rectangle(elementRect.x - size / 2, elementRect.y - size / 2, size, size);

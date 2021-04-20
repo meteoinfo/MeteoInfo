@@ -221,6 +221,17 @@ import javax.swing.event.EventListenerList;
      }
 
      /**
+      * Set bounds rectangle
+      * @param value Bounds rectangle
+      */
+     public void setBounds(Rectangle value) {
+         this._left = value.x;
+         this._top = value.y;
+         this._width = value.width;
+         this._height = value.height;
+     }
+
+     /**
       * Get element type
       *
       * @return The element type

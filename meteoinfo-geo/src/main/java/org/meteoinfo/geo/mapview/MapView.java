@@ -8805,19 +8805,18 @@ public class MapView extends JPanel implements IWebMapPanel {
                     case LABEL_BREAK:
                         LabelBreak aLB = (LabelBreak) aGraphic.getLegend();
                         g.setFont(aLB.getFont());
-                        //FontMetrics metrics = g.getFontMetrics(aLB.getFont());
-                        //Dimension labSize = new Dimension(metrics.stringWidth(aLB.getText()), metrics.getHeight());
-                        Dimension labSize = Draw.getStringDimension(aLB.getText(), g);
+                        Dimension labSize = Draw.getStringDimension(aLB.getTexts(), aLB.getLineSpace(), g);
                         switch (aLB.getAlignType()) {
                             case CENTER:
                                 aX = aX - labSize.width / 2;
                                 break;
-                            case LEFT:
+                            case RIGHT:
                                 aX = aX - labSize.width;
                                 break;
                         }
+                        Dimension dim = Draw.getStringDimension(aLB.getTexts().get(0), g);
                         aY -= aLB.getYShift();
-                        aY -= labSize.height / 3;
+                        aY -= dim.height / 2;
                         rect.x = (int) aX;
                         rect.y = (int) aY;
                         rect.width = (int) labSize.width;

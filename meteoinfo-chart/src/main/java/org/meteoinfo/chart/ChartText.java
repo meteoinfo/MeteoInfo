@@ -142,9 +142,7 @@ public class ChartText extends Shape {
      * @param value Text
      */
     public void setText(String value) {
-        text = new ArrayList<>();
-        String[] lines = value.split("\n");
-        this.text.addAll(Arrays.asList(lines));
+        this.text = Arrays.asList(value.split("\n"));
     }
 
     /**

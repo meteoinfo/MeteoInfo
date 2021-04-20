@@ -13,10 +13,7 @@
  */
 package org.meteoinfo.geo.layout;
 
-import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointD;
-import org.meteoinfo.common.PointF;
+import org.meteoinfo.common.*;
 import org.meteoinfo.geo.drawing.Draw;
 import org.meteoinfo.geometry.graphic.ResizeAbility;
 import org.meteoinfo.geometry.legend.*;
@@ -260,7 +257,7 @@ public class LayoutGraphic extends LayoutElement {
                     BufferedImage image = new BufferedImage(_mapLayout.getPageBounds().width, _mapLayout.getPageBounds().height, BufferedImage.TYPE_INT_ARGB);
                     Graphics2D g = (Graphics2D)image.getGraphics();
                     g.setFont(aLB.getFont());
-                    Dimension aSF = Draw.getStringDimension(aLB.getText(), g);
+                    Dimension aSF = Draw.getStringDimension(aLB.getTexts(), aLB.getLineSpace(), g);
                     //FontMetrics metrics = image.getGraphics().getFontMetrics(aLB.getFont());
                     //Dimension aSF = new Dimension(metrics.stringWidth(aLB.getText()), metrics.getHeight());
                     this.setLeft(this.getLeft() - (int) (aSF.width / 2));
@@ -383,6 +380,7 @@ public class LayoutGraphic extends LayoutElement {
                     aLB.setFont(new Font(font.getFontName(), font.getStyle(), (int) (font.getSize() * zoom)));
                     Rectangle rect = new Rectangle();
                     Draw.drawLabelPoint(aPoint, aLB, g, rect);
+                    this.setBounds(rect);
                     aLB.setFont(font);
                 }
                 break;
@@ -471,7 +469,7 @@ public class LayoutGraphic extends LayoutElement {
             double minX = aExtent.minX;
             double minY = aExtent.minY;
             if (_graphic.getShape().getShapeType() == ShapeTypes.POINT) {
-                minX -= this.getWidth() / 2;
+                //minX -= this.getWidth() / 2;
                 if (_graphic.getLegend().getBreakType() == BreakTypes.POINT_BREAK)
                     minY -= this.getHeight() / 2;
                 else if (_graphic.getLegend().getBreakType() == BreakTypes.LABEL_BREAK)

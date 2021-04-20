@@ -289,6 +289,27 @@ public class Draw {
     }
 
     /**
+     * Get dimension of the string list
+     * @param text The string list
+     * @param lineSpace Line space
+     * @param g Graphics2D
+     * @return Dimension
+     */
+    public static Dimension getStringDimension(List<String> text, int lineSpace, Graphics2D g) {
+        int width = 0, height = 0;
+        for (String line : text) {
+            Dimension dim = Draw.getStringDimension(line, g);
+            if (width < dim.width) {
+                width = dim.width;
+            }
+            height += dim.height + lineSpace;
+        }
+        height -= lineSpace;
+
+        return new Dimension(width, height);
+    }
+
+    /**
      * Draw string
      *
      * @param g Graphics2D
@@ -1907,22 +1928,24 @@ public class Draw {
     public static void drawLabelPoint(PointF aPoint, LabelBreak aLB, Graphics2D g, Rectangle rect) {
         g.setColor(aLB.getColor());
         g.setFont(aLB.getFont());
-        Dimension labSize = Draw.getStringDimension(aLB.getText(), g);
-        //FontMetrics metrics = g.getFontMetrics(aLB.getFont());
-        //Dimension labSize = new Dimension(metrics.stringWidth(aLB.getText()), metrics.getHeight());
-        switch (aLB.getAlignType()) {
-            case CENTER:
-                aPoint.X = aPoint.X - (float) labSize.getWidth() / 2;
-                break;
-            case LEFT:
-                aPoint.X = aPoint.X - (float) labSize.getWidth();
-                break;
-        }
+        Dimension labSize = Draw.getStringDimension(aLB.getTexts(), aLB.getLineSpace(), g);
         aLB.setYShift((float) labSize.getHeight() / 2);
         aPoint.Y -= aLB.getYShift();
         aPoint.X += aLB.getXShift();
         float inx = aPoint.X;
         float iny = aPoint.Y;
+
+        XAlign xAlign = XAlign.LEFT;
+        switch (aLB.getAlignType()) {
+            case CENTER:
+                inx = inx - (float) labSize.getWidth() / 2;
+                xAlign = XAlign.CENTER;
+                break;
+            case RIGHT:
+                inx = inx - (float) labSize.getWidth();
+                xAlign = XAlign.RIGHT;
+                break;
+        }
 
         AffineTransform tempTrans = g.getTransform();
         if (aLB.getAngle() != 0) {
@@ -1935,11 +1958,19 @@ public class Draw {
             aPoint.Y = 0;
         }
 
-        //g.drawString(aLB.getText(), aPoint.X, aPoint.Y + metrics.getHeight() / 2);
-        Draw.drawString(g, aLB.getText(), aPoint.X, aPoint.Y + labSize.height / 2);
+        float x = aPoint.X;
+        float y = aPoint.Y;
+        Dimension dim = new Dimension();
+        for (String str : aLB.getTexts()) {
+            dim = Draw.getStringDimension(str, g);
+            Draw.drawString(g, x, y, str, xAlign, YAlign.CENTER, false);
+            y += dim.height;
+            y += aLB.getLineSpace();
+        }
+        //Draw.drawString(g, aLB.getText(), aPoint.X, aPoint.Y + labSize.height / 2);
 
-        rect.x = (int) aPoint.X;
-        rect.y = (int) aPoint.Y - labSize.height / 2;
+        rect.x = (int) inx;
+        rect.y = (int) iny - dim.height / 2;
         rect.width = (int) labSize.getWidth();
         rect.height = (int) labSize.getHeight();
 

@@ -125,6 +125,24 @@ public class InterpUtil {
     }
 
     /**
+     * Make interpolation function for grid data
+     *
+     * @param x X data
+     * @param y Y data
+     * @param z Z data
+     * @param kind Specifies the kind of interpolation as a string.
+     * @return Interpolation function
+     */
+    public static KrigingInterpolation2D getKriging2D(Array x, Array y, Array z, double beta) {
+        double[] xd = (double[]) ArrayUtil.copyToNDJavaArray_Double(x);
+        double[] yd = (double[]) ArrayUtil.copyToNDJavaArray_Double(y);
+        double[] zd = (double[]) ArrayUtil.copyToNDJavaArray_Double(z);
+        KrigingInterpolation2D krigingInterpolation2D = new KrigingInterpolation2D(xd, yd, zd, beta);
+
+        return krigingInterpolation2D;
+    }
+
+    /**
      * Compute the value of the function
      *
      * @param func The function
@@ -209,6 +227,37 @@ public class InterpUtil {
      */
     public static double evaluate(BivariateFunction func, Number x, Number y) {
         return func.value(x.doubleValue(), y.doubleValue());
+    }
+
+    /**
+     * Compute the value of the function
+     *
+     * @param func The function
+     * @param x Input x data
+     * @param y Input y data
+     * @return Function value
+     */
+    public static Array evaluate(KrigingInterpolation2D func, Array x, Array y) {
+        Array r = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        for (int i = 0; i < r.getSize(); i++) {
+            r.setDouble(i, func.interpolate(xIter.getDoubleNext(), yIter.getDoubleNext()));
+        }
+
+        return r;
+    }
+
+    /**
+     * Compute the value of the function
+     *
+     * @param func The function
+     * @param x Input x data
+     * @param y Input y data
+     * @return Function value
+     */
+    public static double evaluate(KrigingInterpolation2D func, Number x, Number y) {
+        return func.interpolate(x.doubleValue(), y.doubleValue());
     }
 
     /**

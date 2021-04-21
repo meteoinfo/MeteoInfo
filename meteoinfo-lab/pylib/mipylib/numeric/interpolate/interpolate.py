@@ -67,16 +67,26 @@ class interp2d(object):
     :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
     :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
     :param kind: (*boolean*) Specifies the kind of interpolation as a string (‘linear’, 
-        ‘nearest’). Default is ‘linear’.
+        ‘nearest’, 'kriging'). Default is ‘linear’.
     '''
-    def __init__(self, x, y, z, kind='linear'):
+    def __init__(self, x, y, z, kind='linear', **kwargs):
         if isinstance(x, list):
             x = np.array(x)
         if isinstance(y, list):
             y = np.array(y)
         if isinstance(z, list):
             z = np.array(z)
-        self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.T.asarray(), kind)
+        if kind == 'kriging':
+            if z.ndim == 2:
+                if x.ndim == 1:
+                    x, y = np.meshgrid(x, y)
+                x = x.reshape(-1)
+                y = y.reshape(-1)
+                z = z.reshape(-1)
+            beta = kwargs.pop('beta', 1.5)
+            self._func = InterpUtil.getKriging2D(x.asarray(), y.asarray(), z.asarray(), beta)
+        else:
+            self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.T.asarray(), kind)
         
     def __call__(self, x, y):
         '''

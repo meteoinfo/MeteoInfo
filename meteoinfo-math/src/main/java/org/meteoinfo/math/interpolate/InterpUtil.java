@@ -17,6 +17,8 @@ import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
 //import org.meteoinfo.shape.PolygonShape;
+import smile.interpolation.KrigingInterpolation1D;
+import smile.interpolation.KrigingInterpolation2D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,7 +132,7 @@ public class InterpUtil {
      * @param x X data
      * @param y Y data
      * @param z Z data
-     * @param kind Specifies the kind of interpolation as a string.
+     * @param beta Beta value
      * @return Interpolation function
      */
     public static KrigingInterpolation2D getKriging2D(Array x, Array y, Array z, double beta) {

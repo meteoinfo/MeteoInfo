@@ -584,8 +584,8 @@ def eof(x, svd=False, transform=False):
     if has_nan:
         _EOF = np.ones(x.shape) * np.nan
         _PC = np.ones(x.shape) * np.nan
-        _EOF[valid_idx,:] = -EOF
-        _PC[valid_idx,:] = -PC
+        _EOF[valid_idx,:] = EOF
+        _PC[valid_idx,:] = PC
         return _EOF, E, _PC
     else:
         return EOF, E, PC

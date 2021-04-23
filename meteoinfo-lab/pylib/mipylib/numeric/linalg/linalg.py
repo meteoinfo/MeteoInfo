@@ -83,7 +83,7 @@ def solve_triangular(a, b, lower=False):
     x = LinalgUtil.solve(a.asarray(), b.asarray())
     return NDArray(x)
     
-def cholesky(a):
+def cholesky(a, lower=True):
     '''
     Cholesky decomposition.
     
@@ -98,6 +98,8 @@ def cholesky(a):
     a : (M, M) array_like
         Hermitian (symmetric if all elements are real), positive-definite
         input matrix.
+    lower : bool
+        Return lower or upper triangle matrix. Default is lower.
         
     Returns
     -------
@@ -105,7 +107,7 @@ def cholesky(a):
         Upper or lower-triangular Cholesky factor of `a`.  Returns a
         matrix object if `a` is a matrix object.
     '''
-    r = LinalgUtil.cholesky(a.asarray())
+    r = LinalgUtil.cholesky(a.asarray(), lower)
     return NDArray(r)
     
 def lu(a):
@@ -199,8 +201,8 @@ def svd(a):
         Unitary matrix having right singular vectors as rows.
         Of shape ``(N,N)``.
     '''
-    #r = LinalgUtil.svd(a.asarray())
-    r = LinalgUtil.svd_EJML(a.asarray())
+    r = LinalgUtil.svd(a.asarray())
+    #r = LinalgUtil.svd_EJML(a.asarray())
     U = NDArray(r[0])
     s = NDArray(r[1])
     Vh = NDArray(r[2])

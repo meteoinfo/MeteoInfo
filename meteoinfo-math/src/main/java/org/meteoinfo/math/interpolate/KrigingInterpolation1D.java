@@ -19,6 +19,10 @@ package org.meteoinfo.math.interpolate;
 
 import org.apache.commons.math3.linear.*;
 import org.meteoinfo.math.MathEx;
+import org.ojalgo.matrix.Primitive64Matrix;
+import org.ojalgo.matrix.decomposition.SingularValue;
+import org.ojalgo.matrix.store.MatrixStore;
+import org.ojalgo.matrix.store.Primitive64Store;
 
 /**
  * Kriging interpolation for the data points irregularly distributed in space.
@@ -76,27 +80,26 @@ public class KrigingInterpolation1D implements Interpolation {
         int n = x.length;
         double[] yv = new double[n + 1];
 
-        RealMatrix v = new Array2DRowRealMatrix(n + 1, n + 1);
-        //v.uplo(UPLO.LOWER);
+        Primitive64Store v = Primitive64Store.FACTORY.make(n + 1, n + 1);
         for (int i = 0; i < n; i++) {
             yv[i] = y[i];
 
             for (int j = i; j < n; j++) {
                 double var = variogram(Math.abs(x[i] - x[j]));
-                v.setEntry(i, j, var);
-                v.setEntry(j, i, var);
+                v.set(i, j, var);
+                v.set(j, i, var);
             }
-            v.setEntry(n, i, 1.0);
-            v.setEntry(i, n, 1.0);
+            v.set(n, i, 1.0);
+            v.set(i, n, 1.0);
         }
 
         yv[n] = 0.0;
-        v.setEntry(n, n, 0.0);
+        v.set(n, n, 0.0);
 
-        DecompositionSolver solver = new SingularValueDecomposition(v).getSolver();
-        RealVector constants = new ArrayRealVector(yv, false);
-        RealVector solution = solver.solve(constants);
-        yvi = solution.toArray();
+        SingularValue<Double> tmpSVD = SingularValue.make(v);
+        tmpSVD.decompose(v);
+        MatrixStore<Double> solution = tmpSVD.getSolution(Primitive64Store.FACTORY.column(yv));
+        yvi = solution.toRawCopy1D();
     }
 
     @Override

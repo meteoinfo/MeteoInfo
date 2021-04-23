@@ -798,7 +798,7 @@ class NDArray(object):
         """
         if isinstance(other, list):
             other = array(other)
-        r = ArrayMath.dot(self._array, other._array)
+        r = LinalgUtil.dot(self._array, other._array)
         return NDArray(r)
 
     def aslist(self):

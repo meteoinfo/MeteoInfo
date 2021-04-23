@@ -2305,6 +2305,7 @@ def quiver(*args, **kwargs):
     :param z: (*array_like*) Optional, 2-D z value array.
     :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
         vectors to draw, in increasing order.
+    :param color: (*color*) Set single color.
     :param cmap: (*string*) Color map string.
     :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
     :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.

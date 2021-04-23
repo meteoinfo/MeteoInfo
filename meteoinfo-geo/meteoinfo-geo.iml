@@ -33,6 +33,12 @@
     <orderEntry type="library" name="Maven: org.ejml:ejml-fdense:0.40" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-cdense:0.40" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-fsparse:0.40" level="project" />
+    <orderEntry type="library" name="Maven: org.ojalgo:ojalgo:48.4.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.haifengl:smile-interpolation:2.6.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.haifengl:smile-math:2.6.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:0.3.10-1.5.4" level="project" />
     <orderEntry type="module" module-name="meteoinfo-geometry" />
     <orderEntry type="module" module-name="meteoinfo-ui" />
     <orderEntry type="library" name="Maven: com.toedter:jcalendar:1.4" level="project" />
@@ -42,7 +48,7 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-imaging:1.0-alpha1" level="project" />
     <orderEntry type="module" module-name="meteoinfo-data" />
     <orderEntry type="module" module-name="meteoinfo-projection" />
-    <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.2" level="project" />
     <orderEntry type="module" module-name="meteoinfo-dataframe" />
     <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.meteothink:wContour:1.7.0" level="project" />

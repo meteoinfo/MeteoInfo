@@ -18,6 +18,7 @@ from org.meteoinfo.data import GridData, GridArray, StationData, DataMath, Table
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
 from org.meteoinfo.ndarray import Array, Dimension
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
+from org.meteoinfo.math.linalg import LinalgUtil
 from org.python.core import PyComplex
 
 import _dtype
@@ -1887,7 +1888,7 @@ def dot(a, b):
         a = array(a)
     if isinstance(b, list):
         b = array(b)
-    r = ArrayMath.dot(a.asarray(), b.asarray())
+    r = LinalgUtil.dot(a.asarray(), b.asarray())
     return NDArray(r)
     
 def vdot(a, b):

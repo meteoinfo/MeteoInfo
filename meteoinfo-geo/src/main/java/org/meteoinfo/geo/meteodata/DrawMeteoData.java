@@ -18,9 +18,7 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.data.*;
-import org.meteoinfo.data.meteodata.StationInfoData;
-import org.meteoinfo.data.meteodata.StationModel;
-import org.meteoinfo.data.meteodata.StationModelData;
+import org.meteoinfo.data.meteodata.*;
 import org.meteoinfo.dataframe.DataFrame;
 import org.meteoinfo.geo.drawing.ContourDraw;
 import org.meteoinfo.geo.drawing.Draw;
@@ -36,6 +34,7 @@ import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
 import org.meteoinfo.ndarray.math.ArrayUtil;
+import org.meteoinfo.table.DataTable;
 import org.meteoinfo.table.Field;
 import wcontour.global.PolyLine;
 import wcontour.global.Polygon;
@@ -3302,6 +3301,283 @@ public class DrawMeteoData {
         layer.setLayerName("Mesh_Layer");
         ls.setFieldName(fieldName);
         layer.setLegendScheme(ls.convertTo(ShapeTypes.POLYGON));
+
+        return layer;
+    }
+
+    /**
+     * Create trajectory line layer
+     * @param trajDataInfo ITrajDataInfo
+     * @return Trajectory line layer
+     */
+    public static VectorLayer createTrajLineLayer(ITrajDataInfo trajDataInfo) {
+        List<DataTable> dataTables = trajDataInfo.getDataTables();
+        List<TrajectoryInfo> trajInfoList = trajDataInfo.getTrajInfoList();
+        String xVarName = trajDataInfo.getXVarName();
+        String yVarName = trajDataInfo.getYVarName();
+        String zVarName = trajDataInfo.getZVarName();
+        ShapeTypes shapeType = zVarName == null ? ShapeTypes.POLYLINE : ShapeTypes.POLYLINE_Z;
+
+        VectorLayer layer = new VectorLayer(shapeType);
+        layer.editAddField(new Field("TrajIndex", DataType.INT));
+        layer.editAddField(new Field("TrajName", DataType.STRING));
+        layer.editAddField(new Field("TrajID", DataType.STRING));
+        layer.editAddField(new Field("TrajCenter", DataType.STRING));
+        layer.editAddField(new Field("StartDate", DataType.DATE));
+        layer.editAddField(new Field("StartLon", DataType.DOUBLE));
+        layer.editAddField(new Field("StartLat", DataType.DOUBLE));
+        layer.editAddField(new Field("StartHeight", DataType.DOUBLE));
+
+        int trajIdx = 0;
+        if (shapeType == ShapeTypes.POLYLINE) {
+            double x, y;
+            for (DataTable dataTable : dataTables) {
+                TrajectoryInfo trajInfo = trajInfoList.get(trajIdx);
+                List<PointD> points = new ArrayList<>();
+                for (int i = 0; i < dataTable.getRowCount(); i++) {
+                    x = Double.parseDouble(dataTable.getValue(i, xVarName).toString());
+                    y = Double.parseDouble(dataTable.getValue(i, yVarName).toString());
+                    points.add(new PointD(x, y));
+                }
+                PolylineShape polylineShape = new PolylineShape();
+                polylineShape.setPoints(points);
+                int shapeNum = layer.getShapeNum();
+                try {
+                    if (layer.editInsertShape(polylineShape, shapeNum)) {
+                        layer.editCellValue("TrajIndex", shapeNum, trajIdx + 1);
+                        layer.editCellValue("TrajName", shapeNum, trajInfo.trajName);
+                        layer.editCellValue("TrajID", shapeNum, trajInfo.trajID);
+                        layer.editCellValue("TrajCenter", shapeNum, trajInfo.trajCenter);
+                        layer.editCellValue("StartDate", shapeNum, trajInfo.startTime);
+                        layer.editCellValue("StartLat", shapeNum, trajInfo.startLat);
+                        layer.editCellValue("StartLon", shapeNum, trajInfo.startLon);
+                        layer.editCellValue("StartHeight", shapeNum, trajInfo.startHeight);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                trajIdx += 1;
+            }
+        } else {
+            double x, y, z;
+            for (DataTable dataTable : dataTables) {
+                TrajectoryInfo trajInfo = trajInfoList.get(trajIdx);
+                List<PointZ> points = new ArrayList<>();
+                for (int i = 0; i < dataTable.getRowCount(); i++) {
+                    x = Double.parseDouble(dataTable.getValue(i, xVarName).toString());
+                    y = Double.parseDouble(dataTable.getValue(i, yVarName).toString());
+                    z = Double.parseDouble(dataTable.getValue(i, zVarName).toString());
+                    points.add(new PointZ(x, y, z));
+                }
+                PolylineZShape polylineShape = new PolylineZShape();
+                polylineShape.setPoints(points);
+                int shapeNum = layer.getShapeNum();
+                try {
+                    if (layer.editInsertShape(polylineShape, shapeNum)) {
+                        layer.editCellValue("TrajIndex", shapeNum, trajIdx + 1);
+                        layer.editCellValue("TrajName", shapeNum, trajInfo.trajName);
+                        layer.editCellValue("TrajID", shapeNum, trajInfo.trajID);
+                        layer.editCellValue("TrajCenter", shapeNum, trajInfo.trajCenter);
+                        layer.editCellValue("StartDate", shapeNum, trajInfo.startTime);
+                        layer.editCellValue("StartLat", shapeNum, trajInfo.startLat);
+                        layer.editCellValue("StartLon", shapeNum, trajInfo.startLon);
+                        layer.editCellValue("StartHeight", shapeNum, trajInfo.startHeight);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                trajIdx += 1;
+            }
+        }
+
+        layer.setLayerName("Trajectory_Lines");
+        layer.setLayerDrawType(LayerDrawType.TRAJECTORY_LINE);
+        layer.setVisible(true);
+        layer.updateLegendScheme(LegendType.UNIQUE_VALUE, "TrajID");
+
+        return layer;
+    }
+
+    /**
+     * Create trajectory line layer
+     * @param trajDataInfo ITrajDataInfo
+     * @param varName Variation name
+     * @return Trajectory line layer
+     */
+    public static VectorLayer createTrajLineLayer(ITrajDataInfo trajDataInfo, String varName) {
+        List<DataTable> dataTables = trajDataInfo.getDataTables();
+        List<TrajectoryInfo> trajInfoList = trajDataInfo.getTrajInfoList();
+        String xVarName = trajDataInfo.getXVarName();
+        String yVarName = trajDataInfo.getYVarName();
+        String zVarName = trajDataInfo.getZVarName();
+
+        VectorLayer layer = new VectorLayer(ShapeTypes.POLYLINE_Z);
+        layer.editAddField(new Field("TrajIndex", DataType.INT));
+        layer.editAddField(new Field("TrajName", DataType.STRING));
+        layer.editAddField(new Field("TrajID", DataType.STRING));
+        layer.editAddField(new Field("TrajCenter", DataType.STRING));
+        layer.editAddField(new Field("StartDate", DataType.DATE));
+        layer.editAddField(new Field("StartLon", DataType.DOUBLE));
+        layer.editAddField(new Field("StartLat", DataType.DOUBLE));
+        layer.editAddField(new Field("StartHeight", DataType.DOUBLE));
+
+        int trajIdx = 0;
+        double x, y, z, m;
+        for (DataTable dataTable : dataTables) {
+            TrajectoryInfo trajInfo = trajInfoList.get(trajIdx);
+            List<PointZ> points = new ArrayList<>();
+            for (int i = 0; i < dataTable.getRowCount(); i++) {
+                x = Double.parseDouble(dataTable.getValue(i, xVarName).toString());
+                y = Double.parseDouble(dataTable.getValue(i, yVarName).toString());
+                if (zVarName == null)
+                    z = 0;
+                else
+                    z = Double.parseDouble(dataTable.getValue(i, zVarName).toString());
+                m = Double.parseDouble(dataTable.getValue(i, varName).toString());
+                points.add(new PointZ(x, y, z, m));
+            }
+            PolylineZShape polylineShape = new PolylineZShape();
+            polylineShape.setPoints(points);
+            int shapeNum = layer.getShapeNum();
+            try {
+                if (layer.editInsertShape(polylineShape, shapeNum)) {
+                    layer.editCellValue("TrajIndex", shapeNum, trajIdx + 1);
+                    layer.editCellValue("TrajName", shapeNum, trajInfo.trajName);
+                    layer.editCellValue("TrajID", shapeNum, trajInfo.trajID);
+                    layer.editCellValue("TrajCenter", shapeNum, trajInfo.trajCenter);
+                    layer.editCellValue("StartDate", shapeNum, trajInfo.startTime);
+                    layer.editCellValue("StartLat", shapeNum, trajInfo.startLat);
+                    layer.editCellValue("StartLon", shapeNum, trajInfo.startLon);
+                    layer.editCellValue("StartHeight", shapeNum, trajInfo.startHeight);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            trajIdx += 1;
+        }
+
+        layer.setLayerName("Trajectory_Lines");
+        layer.setLayerDrawType(LayerDrawType.TRAJECTORY_LINE);
+        layer.setVisible(true);
+        layer.updateLegendScheme(LegendType.UNIQUE_VALUE, "TrajID");
+
+        return layer;
+    }
+
+    public static VectorLayer createTrajPointLayer(ITrajDataInfo trajDataInfo) {
+        List<DataTable> dataTables = trajDataInfo.getDataTables();
+        List<Variable> variables = trajDataInfo.getVariables();
+        String xVarName = trajDataInfo.getXVarName();
+        String yVarName = trajDataInfo.getYVarName();
+        String zVarName = trajDataInfo.getZVarName();
+
+        VectorLayer layer = new VectorLayer(ShapeTypes.POINT_Z);
+        layer.editAddField(new Field("TrajID", DataType.INT));
+        for (Variable variable : variables) {
+            layer.editAddField(new Field(variable.getName(), variable.getDataType()));
+        }
+
+        int trajIdx = 0;
+        double x, y, z;
+        for (DataTable dataTable : dataTables) {
+            for (int i = 0; i < dataTable.getRowCount(); i++) {
+                x = Double.parseDouble(dataTable.getValue(i, xVarName).toString());
+                y = Double.parseDouble(dataTable.getValue(i, yVarName).toString());
+                if (zVarName == null)
+                    z = 0;
+                else
+                    z = Double.parseDouble(dataTable.getValue(i, zVarName).toString());
+                PointZ point = new PointZ(x, y, z);
+                PointZShape pointZShape = new PointZShape();
+                pointZShape.setPoint(point);
+                int shapeNum = layer.getShapeNum();
+                try {
+                    if (layer.editInsertShape(pointZShape, shapeNum)) {
+                        layer.editCellValue("TrajID", shapeNum, trajIdx + 1);
+                        for (Variable variable : variables) {
+                            layer.editCellValue(variable.getName(), shapeNum, dataTable.getValue(i, variable.getName()));
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            trajIdx += 1;
+        }
+
+        layer.setLayerName("Trajectory_Points");
+        layer.setLayerDrawType(LayerDrawType.TRAJECTORY_POINT);
+        layer.setVisible(true);
+        LegendScheme aLS = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.red, 5.0F);
+        aLS.setFieldName("TrajID");
+        layer.setLegendScheme(aLS);
+
+        return layer;
+    }
+
+    /**
+     * Create trajectory start point layer
+     * @param trajDataInfo ITrajDataInfo
+     * @return Trajectory start point layer
+     */
+    public static VectorLayer createTrajStartPointLayer(ITrajDataInfo trajDataInfo) {
+        List<DataTable> dataTables = trajDataInfo.getDataTables();
+        List<TrajectoryInfo> trajInfoList = trajDataInfo.getTrajInfoList();
+        String xVarName = trajDataInfo.getXVarName();
+        String yVarName = trajDataInfo.getYVarName();
+        String zVarName = trajDataInfo.getZVarName();
+
+        VectorLayer layer = new VectorLayer(ShapeTypes.POINT_Z);
+        layer.editAddField(new Field("TrajIndex", DataType.INT));
+        layer.editAddField(new Field("TrajName", DataType.STRING));
+        layer.editAddField(new Field("TrajID", DataType.STRING));
+        layer.editAddField(new Field("TrajCenter", DataType.STRING));
+        layer.editAddField(new Field("StartDate", DataType.DATE));
+        layer.editAddField(new Field("StartLon", DataType.DOUBLE));
+        layer.editAddField(new Field("StartLat", DataType.DOUBLE));
+        layer.editAddField(new Field("StartHeight", DataType.DOUBLE));
+
+        int trajIdx = 0;
+        double x, y, z;
+        for (DataTable dataTable : dataTables) {
+            TrajectoryInfo trajInfo = trajInfoList.get(trajIdx);
+            List<PointZ> points = new ArrayList<>();
+            x = Double.parseDouble(dataTable.getValue(0, xVarName).toString());
+            y = Double.parseDouble(dataTable.getValue(0, yVarName).toString());
+            if (zVarName == null)
+                z = 0;
+            else
+                z = Double.parseDouble(dataTable.getValue(0, zVarName).toString());
+            PointZShape pointZShape = new PointZShape();
+            pointZShape.setPoint(new PointZ(x, y, z));
+            int shapeNum = layer.getShapeNum();
+            try {
+                if (layer.editInsertShape(pointZShape, shapeNum)) {
+                    layer.editCellValue("TrajIndex", shapeNum, trajIdx + 1);
+                    layer.editCellValue("TrajName", shapeNum, trajInfo.trajName);
+                    layer.editCellValue("TrajID", shapeNum, trajInfo.trajID);
+                    layer.editCellValue("TrajCenter", shapeNum, trajInfo.trajCenter);
+                    layer.editCellValue("StartDate", shapeNum, trajInfo.startTime);
+                    layer.editCellValue("StartLat", shapeNum, trajInfo.startLat);
+                    layer.editCellValue("StartLon", shapeNum, trajInfo.startLon);
+                    layer.editCellValue("StartHeight", shapeNum, trajInfo.startHeight);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            trajIdx += 1;
+        }
+
+        layer.setLayerName("Trajectory_Start_Points");
+        layer.setLayerDrawType(LayerDrawType.TRAJECTORY_POINT);
+        layer.setVisible(true);
+        LegendScheme aLS = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.black, 8.0F);
+        aLS.setFieldName("TrajID");
+        layer.setLegendScheme(aLS);
 
         return layer;
     }

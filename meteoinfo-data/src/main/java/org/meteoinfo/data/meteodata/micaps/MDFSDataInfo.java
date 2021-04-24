@@ -121,7 +121,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     zDim.setValues(new float[]{level});
                     this.setZDimension(zDim);
                     this.addDimension(zDim);
-                    Dimension stDim = new Dimension(DimensionType.Other);
+                    Dimension stDim = new Dimension(DimensionType.OTHER);
                     stDim.setName("station");
                     float[] values = new float[numStation];
                     for (int i = 0; i < numStation; i++) {

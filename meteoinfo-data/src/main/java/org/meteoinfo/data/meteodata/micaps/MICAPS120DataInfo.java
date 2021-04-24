@@ -122,7 +122,7 @@ public class MICAPS120DataInfo extends DataInfo implements IStationDataInfo {
                 stNum += 1;
             }
             
-            Dimension stdim = new Dimension(DimensionType.Other);
+            Dimension stdim = new Dimension(DimensionType.OTHER);
             stdim.setShortName("station");
             values = new double[stNum];
             for (int i = 0; i < stNum; i++){

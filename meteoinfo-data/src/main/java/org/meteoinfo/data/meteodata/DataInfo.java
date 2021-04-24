@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.data.meteodata;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;

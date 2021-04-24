@@ -80,7 +80,7 @@ import org.meteoinfo.data.meteodata.Attribute;
              this.bandNum = this.geoTiff.getBandNum();
              Dimension bDim = null;
              if (this.bandNum > 1){
-                 bDim = new Dimension(DimensionType.Other);
+                 bDim = new Dimension(DimensionType.OTHER);
                  bDim.setValues(new double[this.bandNum]);
                  this.addDimension(bDim);
              }

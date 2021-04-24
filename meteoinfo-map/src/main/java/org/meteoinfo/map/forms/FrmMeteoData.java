@@ -2456,7 +2456,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
             aLayer = drawStation(fieldName);
             _useSameLegendScheme = true;
         } else if (_meteoDataInfo.isTrajData()) {
-            aLayer = drawTraj();
+            aLayer = drawTraj(fieldName);
             this.jButton_DrawSetting.setEnabled(false);
             this.jButton_NexTime.setEnabled(false);
             this.jButton_PreTime.setEnabled(false);
@@ -2603,27 +2603,22 @@ public class FrmMeteoData extends javax.swing.JDialog {
         }
     }
 
-    private MapLayer drawTraj() {
+    private MapLayer drawTraj(String varName) {
         DataInfo aDataInfo = _meteoDataInfo.getDataInfo();
         VectorLayer aLayer = null;
         switch (_2DDrawType) {
             case TRAJECTORY_LINE:
-                aLayer = ((TrajDataInfo) aDataInfo).createTrajLineLayer();
-//                PolylineBreak aPLB;
-//                for (int i = 0; i < aLayer.getLegendScheme().getBreakNum(); i++) {
-//                    aPLB = (PolylineBreak) aLayer.getLegendScheme().getLegendBreaks().get(i);
-//                    aPLB.setSize(2);
-//                }
+                aLayer = DrawMeteoData.createTrajLineLayer((ITrajDataInfo) aDataInfo, varName);
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer(aLayer);
                 break;
             case TRAJECTORY_START_POINT:
-                aLayer = ((TrajDataInfo) aDataInfo).createTrajStartPointLayer();
+                aLayer = DrawMeteoData.createTrajStartPointLayer((ITrajDataInfo) aDataInfo);
                 PointBreak aPB = (PointBreak) aLayer.getLegendScheme().getLegendBreaks().get(0);
                 aPB.setStyle(PointStyle.UP_TRIANGLE);
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer(aLayer);
                 break;
             case TRAJECTORY_POINT:
-                aLayer = ((TrajDataInfo) aDataInfo).createTrajPointLayer();
+                aLayer = DrawMeteoData.createTrajPointLayer((ITrajDataInfo) aDataInfo);
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer(aLayer);
                 break;
         }

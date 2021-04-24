@@ -38,9 +38,9 @@ public enum DimensionType {
         /// <summary>
         /// Xtrack dimension - for HDF EOS swath data
         /// </summary>
-        Xtrack,
+        X_TRACK,
         /// <summary>
         /// Other dimension
         /// </summary>
-        Other
+        OTHER
 }

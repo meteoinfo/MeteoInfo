@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
  * General Public License for more details.
  */
-package org.meteoinfo.data.meteodata.hysplit;
+package org.meteoinfo.data.meteodata;
 
 import java.time.LocalDateTime;
 

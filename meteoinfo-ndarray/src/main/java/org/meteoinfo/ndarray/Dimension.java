@@ -53,7 +53,7 @@ public class Dimension {
     public Dimension(String name, int len) {
         this.name = name;
         this.length = len;
-        _dimType = DimensionType.Other;
+        _dimType = DimensionType.OTHER;
         _dimValue = new ArrayList<>();
     }
 

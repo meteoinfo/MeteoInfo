@@ -774,7 +774,7 @@ public class Variable {
      * @param reverse If is reverse
      */
     public void setDimension(String tstr, List<Number> values, boolean reverse) {
-        DimensionType dType = DimensionType.Other;
+        DimensionType dType = DimensionType.OTHER;
         switch (tstr) {
             case "X":
                 dType = DimensionType.X;
@@ -804,7 +804,7 @@ public class Variable {
      * @param reverse If is reverse
      */
     public void setDimension(String tstr, List<Number> values, boolean reverse, int index) {
-        DimensionType dType = DimensionType.Other;
+        DimensionType dType = DimensionType.OTHER;
         switch (tstr) {
             case "X":
                 dType = DimensionType.X;
@@ -835,7 +835,7 @@ public class Variable {
             return;
         }
 
-        if (aDim.getDimType() == DimensionType.Other) {
+        if (aDim.getDimType() == DimensionType.OTHER) {
             this.addDimension(aDim);
         } else {
             boolean hasDim = false;
@@ -922,7 +922,7 @@ public class Variable {
     public boolean hasXtrackDimension() {
         boolean has = false;
         for (int i = 0; i < getDimNumber(); i++) {
-            if (((Dimension) this.getDimension(i)).getDimType() == DimensionType.Xtrack) {
+            if (((Dimension) this.getDimension(i)).getDimType() == DimensionType.X_TRACK) {
                 has = true;
                 break;
             }
@@ -1048,7 +1048,7 @@ public class Variable {
         if (this.getDimNumber() > var.getDimNumber()) {
             for (int i = var.getDimNumber(); i < this.getDimNumber(); i++) {
                 Dimension dim = (Dimension) this.getDimension(i);
-                if (dim.getDimType() == DimensionType.Other) {
+                if (dim.getDimType() == DimensionType.OTHER) {
                     return dim;
                 }
             }
@@ -1152,7 +1152,7 @@ public class Variable {
      * @param values Dimension values
      */
     public void addDimension(String tstr, List<Number> values) {
-        DimensionType dType = DimensionType.Other;
+        DimensionType dType = DimensionType.OTHER;
         switch (tstr) {
             case "X":
                 dType = DimensionType.X;

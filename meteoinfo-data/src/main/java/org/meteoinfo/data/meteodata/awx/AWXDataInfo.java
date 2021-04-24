@@ -342,7 +342,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                     VarList.add("LastRow");
                     VarList.add("LastCol");
                     VarList.add("BrightTemp");
-                    Dimension stdim = new Dimension(DimensionType.Other);
+                    Dimension stdim = new Dimension(DimensionType.OTHER);
                     double[] values = new double[this._numDataRecord];
                     stdim.setValues(values);
                     this.addDimension(stdim);

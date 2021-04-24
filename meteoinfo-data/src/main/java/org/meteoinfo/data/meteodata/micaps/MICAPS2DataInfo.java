@@ -128,7 +128,7 @@ public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo {
             Dimension zdim = new Dimension(DimensionType.Z);
             zdim.setValues(new double[]{level});
             this.setZDimension(zdim);
-            Dimension stdim = new Dimension(DimensionType.Other);
+            Dimension stdim = new Dimension(DimensionType.OTHER);
             stdim.setShortName("station");
             values = new double[stNum];
             for (i = 0; i < stNum; i++){

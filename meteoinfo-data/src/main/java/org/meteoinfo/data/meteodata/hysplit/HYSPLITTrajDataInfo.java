@@ -16,10 +16,7 @@ package org.meteoinfo.data.meteodata.hysplit;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.util.JDateUtil;
-import org.meteoinfo.data.meteodata.Attribute;
-import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.data.meteodata.MeteoDataType;
-import org.meteoinfo.data.meteodata.Variable;
+import org.meteoinfo.data.meteodata.*;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 
@@ -50,7 +47,7 @@ import org.meteoinfo.ndarray.Section;
  *
  * @author yaqiang
  */
-public class HYSPLITTrajDataInfo extends DataInfo {
+public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
 
     // <editor-fold desc="Variables">
     /// <summary>
@@ -73,7 +70,7 @@ public class HYSPLITTrajDataInfo extends DataInfo {
     /// <summary>
     /// Information list of trajectories
     /// </summary>
-    public List<TrajectoryInfo> trajInfos;
+    private List<TrajectoryInfo> trajInfoList;
     /// <summary>
     /// Number of variables
     /// </summary>
@@ -96,17 +93,43 @@ public class HYSPLITTrajDataInfo extends DataInfo {
     }
 
     private void initVariables() {
-        trajInfos = new ArrayList<>();
+        trajInfoList = new ArrayList<>();
         varNames = new ArrayList<>();
         trajNum = 0;
         inVarNames = new String[]{"time", "run_hour", "lat", "lon", "height"};
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
+    @Override
+    public String getXVarName() {
+        return "lon";
+    }
+
+    @Override
+    public String getYVarName() {
+        return "lat";
+    }
+
+    @Override
+    public String getZVarName() {
+        return "height";
+    }
+
+    @Override
+    public String getTVarName() {
+        return "time";
+    }
+
+    @Override
+    public List<TrajectoryInfo> getTrajInfoList() {
+        return this.trajInfoList;
+    }
+
     /**
      * Get data table list
      * @return Data table list
      */
+    @Override
     public List<DataTable> getDataTables(){
         return this.dataTables;
     }
@@ -162,7 +185,7 @@ public class HYSPLITTrajDataInfo extends DataInfo {
                 aTrajInfo.startLat = Float.parseFloat(dataArray[4]);
                 aTrajInfo.startLon = Float.parseFloat(dataArray[5]);
                 aTrajInfo.startHeight = Float.parseFloat(dataArray[6]);
-                trajInfos.add(aTrajInfo);
+                trajInfoList.add(aTrajInfo);
             }
             Dimension tdim = new Dimension(DimensionType.T);
             tdim.setValues(times);
@@ -176,20 +199,7 @@ public class HYSPLITTrajDataInfo extends DataInfo {
             for (i = 0; i < varNum; i++) {
                 varNames.add(dataArray[i + 1]);
             }
-            //Trajectory end point number
-//            endPointNum = 0;
-//            while (true) {
-//                aLine = sr.readLine();
-//                if (aLine == null) {
-//                    break;
-//                }
-//                if (aLine.isEmpty()) {
-//                    continue;
-//                }
-//                endPointNum += 1;
-//            }
             sr.close();
-            //endPointNum = endPointNum / this.trajNum;
             
             //Read data table list
             this.dataTables = this.readTable();
@@ -201,11 +211,11 @@ public class HYSPLITTrajDataInfo extends DataInfo {
             }
 
             //Dimensions
-            Dimension trajDim = new Dimension(DimensionType.Other);
+            Dimension trajDim = new Dimension(DimensionType.OTHER);
             trajDim.setName("trajectory");
             trajDim.setLength(this.trajNum);
             this.addDimension(trajDim);
-            Dimension obsDim = new Dimension(DimensionType.Other);
+            Dimension obsDim = new Dimension(DimensionType.OTHER);
             obsDim.setName("obs");
             obsDim.setLength(this.endPointNum);
             this.addDimension(obsDim);
@@ -214,6 +224,17 @@ public class HYSPLITTrajDataInfo extends DataInfo {
             for (String vName : this.inVarNames) {
                 Variable var = new Variable();
                 var.setName(vName);
+                switch (vName) {
+                    case "time":
+                        var.setDataType(DataType.DATE);
+                        break;
+                    case "run_hour":
+                        var.setDataType(DataType.INT);
+                        break;
+                    default:
+                        var.setDataType(DataType.FLOAT);
+                        break;
+                }
                 var.addDimension(trajDim);
                 var.addDimension(obsDim);
                 var.addAttribute("long_name", vName);
@@ -222,6 +243,7 @@ public class HYSPLITTrajDataInfo extends DataInfo {
             for (String vName : this.varNames) {
                 Variable var = new Variable();
                 var.setName(vName);
+                var.setDataType(DataType.FLOAT);
                 var.addDimension(trajDim);
                 var.addDimension(obsDim);
                 var.addAttribute("long_name", vName);
@@ -271,7 +293,7 @@ public class HYSPLITTrajDataInfo extends DataInfo {
         }
         dataInfo += System.getProperty("line.separator") + System.getProperty("line.separator") + "Trajectories:";
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
-        for (TrajectoryInfo aTrajInfo : trajInfos) {
+        for (TrajectoryInfo aTrajInfo : trajInfoList) {
             dataInfo += System.getProperty("line.separator") + "  " + format.format(aTrajInfo.startTime)
                     + "  " + String.valueOf(aTrajInfo.startLat) + "  " + String.valueOf(aTrajInfo.startLon)
                     + "  " + String.valueOf(aTrajInfo.startHeight);
@@ -371,7 +393,7 @@ public class HYSPLITTrajDataInfo extends DataInfo {
         }
 
         try {
-            BufferedReader sr = new BufferedReader(new FileReader(new File(this.getFileName())));
+            BufferedReader sr = new BufferedReader(new FileReader(this.getFileName()));
             String aLine;
             String[] dataArray, tempArray;
             int i;

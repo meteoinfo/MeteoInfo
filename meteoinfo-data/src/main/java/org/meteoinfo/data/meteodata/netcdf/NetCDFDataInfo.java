@@ -313,7 +313,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             for (ucar.nc2.Dimension dim : ncDimensions) {
                 Dimension ndim = NCUtil.convertDimension(dim);
                 if (dim.getShortName().equals("nXtrack")) {
-                    ndim.setDimType(DimensionType.Xtrack);
+                    ndim.setDimType(DimensionType.X_TRACK);
                 }
                 this.dimensions.add(ndim);
             }
@@ -363,7 +363,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         nvar.addDimension(ndim);
                     } else {
                         Dimension ndim = NCUtil.convertDimension(dim);
-                        ndim.setDimType(DimensionType.Other);
+                        ndim.setDimType(DimensionType.OTHER);
                         nvar.addDimension(ndim);
                     }
                 }
@@ -1133,7 +1133,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     continue;
                 }
                 Dimension dim = this.dimensions.get(idx);
-                if (dim.getDimType() != DimensionType.Other) {
+                if (dim.getDimType() != DimensionType.OTHER) {
                     continue;
                 }
 
@@ -1578,7 +1578,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
     private DimensionType getDimType(ucar.nc2.Variable aVar) {
         String sName;
-        DimensionType dimType = DimensionType.Other;
+        DimensionType dimType = DimensionType.OTHER;
         if (_fileTypeId.equals("HDF5-EOS")) {
             sName = aVar.getShortName().toLowerCase();
             switch (sName) {
@@ -1618,7 +1618,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         break;
                 }
             }
-            if (dimType == DimensionType.Other) {
+            if (dimType == DimensionType.OTHER) {
                 if (aVar.findAttributeIgnoreCase("long_name") != null) {
                     ucar.nc2.Attribute axisAtt = aVar.findAttributeIgnoreCase("long_name");
                     sName = axisAtt.getStringValue().trim().toLowerCase();
@@ -1651,7 +1651,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
             }
-            if (dimType == DimensionType.Other) {
+            if (dimType == DimensionType.OTHER) {
                 if (aVar.findAttributeIgnoreCase("axis") != null) {
                     ucar.nc2.Attribute axisAtt = aVar.findAttributeIgnoreCase("axis");
                     sName = axisAtt.getStringValue().trim().toLowerCase();
@@ -1671,22 +1671,22 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
             }
-            if (dimType == DimensionType.Other) {
+            if (dimType == DimensionType.OTHER) {
                 if (aVar.findAttributeIgnoreCase("GRIB_level_type") != null) {
                     dimType = DimensionType.Z;
                 }
             }
-            if (dimType == DimensionType.Other) {
+            if (dimType == DimensionType.OTHER) {
                 if (aVar.findAttributeIgnoreCase("Grib2_level_type") != null) {
                     dimType = DimensionType.Z;
                 }
             }
-            if (dimType == DimensionType.Other) {
+            if (dimType == DimensionType.OTHER) {
                 if (aVar.findAttributeIgnoreCase("hybrid_layer") != null) {
                     dimType = DimensionType.Z;
                 }
             }
-            if (dimType == DimensionType.Other) {
+            if (dimType == DimensionType.OTHER) {
                 if (aVar.findAttributeIgnoreCase("unitsCategory") != null) {
                     sName = aVar.findAttributeIgnoreCase("unitsCategory").getStringValue().trim().toLowerCase();
                     switch (sName) {
@@ -1699,7 +1699,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
             }
-            if (dimType == DimensionType.Other) {
+            if (dimType == DimensionType.OTHER) {
                 String vName = aVar.getShortName().toLowerCase();
                 switch (vName) {
                     case "lon":
@@ -2964,7 +2964,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                                 size[i] = 1;
                             }
                             break;
-                        case Xtrack:
+                        case X_TRACK:
                             origin[i] = levelIdx;
                             size[i] = dim.getLength();
                             break;

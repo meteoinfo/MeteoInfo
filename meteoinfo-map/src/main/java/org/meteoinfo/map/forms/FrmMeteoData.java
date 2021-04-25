@@ -2576,7 +2576,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                         - aGDP.dataExtent.minX) / aGDP.xNum * 2));
                 _useSameGridInterSet = true;
                 if (_meteoDataInfo.isSWATHData()) {
-                    _interpolationSetting.setInterpolationMethod(InterpolationMethods.AssignPointToGrid);
+                    _interpolationSetting.setInterpolationMethod(InterpolationMethods.ASSIGN_POINT_GRID);
                     aGDP.xNum = 1000;
                     aGDP.yNum = 1000;
                 }
@@ -2897,7 +2897,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         //String LNameS = this.jComboBox_Level.getSelectedItem().toString() + "_" + this.jComboBox_Time.getSelectedItem().toString();
         String LNameM = this.jComboBox_Variable.getSelectedItem().toString() + "_";
         String LName = LNameM;
-        if (_interpolationSetting.getInterpolationMethod() == InterpolationMethods.IDW_Neighbors) {
+        if (_interpolationSetting.getInterpolationMethod() == InterpolationMethods.IDW_NEIGHBORS) {
             hasNoData = false;
         }
         boolean ifAddLayer = true;

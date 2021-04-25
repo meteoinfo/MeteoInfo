@@ -18,22 +18,11 @@ package org.meteoinfo.geo.analysis;
  * @author yaqiang
  */
 public enum InterpolationMethods {
-    /// <summary>
-    /// IDW radius
-    /// </summary>
-
-    IDW_Radius,
-    /// <summary>
-    /// IDV neighbors
-    /// </summary>
-    IDW_Neighbors,
-    /// <summary>
-    /// Cressman analysis
-    /// </summary>
-    Cressman,
-    /// <summary>
-    /// Assign point to grid
-    /// </summary>
-    AssignPointToGrid,
+    IDW_RADIUS,
+    IDW_NEIGHBORS,
+    CRESSMAN,
+    BARNES,
+    KRIGING,
+    ASSIGN_POINT_GRID,
     
 }

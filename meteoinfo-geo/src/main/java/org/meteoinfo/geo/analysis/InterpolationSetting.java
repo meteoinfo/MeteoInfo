@@ -30,7 +30,8 @@ public class InterpolationSetting {
     private int _minPointNum;
     private double _radius;
     private double _missingValue = -9999.0;
-    private List<Double> _radList;    //For cressman analysis
+    private List<Double> _radList;    //For cressman and barnes analysis
+    private double beta = 1.5;    //For kriging interpolation
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -40,7 +41,7 @@ public class InterpolationSetting {
     public InterpolationSetting() {
         _gridDataPara.xNum = 50;
         _gridDataPara.yNum = 50;
-        _gridInterMethod = InterpolationMethods.IDW_Radius;
+        _gridInterMethod = InterpolationMethods.IDW_RADIUS;
         _minPointNum = 1;
         _radius = 1;
         _radList = new ArrayList<>();
@@ -221,6 +222,22 @@ public class InterpolationSetting {
      */
     public void setRadiusList(List<Double> value) {
         _radList = value;
+    }
+
+    /**
+     * Get beta value
+     * @return Beta value
+     */
+    public double getBeta() {
+        return this.beta;
+    }
+
+    /**
+     * Set beta value
+     * @param value Beta value
+     */
+    public void setBeta(double value) {
+        this.beta = value;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

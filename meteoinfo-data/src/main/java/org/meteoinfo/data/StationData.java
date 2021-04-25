@@ -183,6 +183,20 @@ import org.meteoinfo.projection.Reproject;
      }
 
      /**
+      * Get station data array
+      *
+      * @return Station data array
+      */
+     public double[] getStData() {
+         double[] y = new double[getStNum()];
+         for (int i = 0; i < getStNum(); i++) {
+             y[i] = data[i][2];
+         }
+
+         return y;
+     }
+
+     /**
       * Set data array
       *
       * @param value Data array
@@ -1009,7 +1023,7 @@ import org.meteoinfo.projection.Reproject;
      // </editor-fold>
 
      /**
-      * Filte station data by radius and extent
+      * Filter station data by radius and extent
       *
       * @param radius Radius
       * @param aExtent Data extent
@@ -1043,6 +1057,36 @@ import org.meteoinfo.projection.Reproject;
 
          this.setData(discretedData);
          stations = nstations;
+     }
+
+     /**
+      * Delete missing values
+      */
+     public void delMissingValue() {
+         double[][] discreteData;
+         List<double[]> disDataList = new ArrayList<double[]>();
+         List<String> nStations = new ArrayList<String>();
+         int i;
+         for (i = 0; i < this.getStNum(); i++) {
+             if (MIMath.doubleEquals(data[i][2], missingValue)) {
+                 continue;
+             } else {
+                 disDataList.add(new double[]{data[i][0], data[i][1], data[i][2]});
+                 nStations.add(this.stations.get(i));
+             }
+         }
+
+         discreteData = new double[disDataList.size()][3];
+         i = 0;
+         for (double[] disData : disDataList) {
+             discreteData[i][0] = disData[0];
+             discreteData[i][1] = disData[1];
+             discreteData[i][2] = disData[2];
+             i += 1;
+         }
+
+         this.setData(discreteData);
+         stations = nStations;
      }
      // </editor-fold>
      // <editor-fold desc="Statictics">

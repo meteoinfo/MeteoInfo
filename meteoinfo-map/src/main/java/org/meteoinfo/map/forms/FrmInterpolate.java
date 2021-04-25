@@ -359,19 +359,26 @@ public class FrmInterpolate extends javax.swing.JDialog {
         
         InterpolationMethods method = InterpolationMethods.valueOf(this.jComboBox_Methods.getSelectedItem().toString());
         switch (method) {
-            case IDW_Radius:
+            case IDW_RADIUS:
                 this.jTextField_Radius.setEnabled(true);
                 this.jTextField_MinNum.setEnabled(true);
+                this.jTextField_MinNum.setText(String.valueOf(this._interpSetting.getMinPointNum()));
+                this.jLabel_MinNum.setText("MinNum:");
                 this.jTextField_Radius.setText(String.valueOf(this._interpSetting.getRadius()));                
                 break;
-            case IDW_Neighbors:
+            case IDW_NEIGHBORS:
                 this.jTextField_Radius.setEnabled(false);
                 this.jTextField_MinNum.setEnabled(true);
+                this.jTextField_MinNum.setText(String.valueOf(this._interpSetting.getMinPointNum()));
+                this.jLabel_MinNum.setText("MinNum:");
                 this.jTextField_Radius.setText(String.valueOf(this._interpSetting.getRadius()));                
                 break;
-            case Cressman:
+            case CRESSMAN:
+            case BARNES:
                 this.jTextField_Radius.setEnabled(true);
-                this.jTextField_MinNum.setEnabled(false);                
+                this.jTextField_MinNum.setEnabled(false);
+                this.jTextField_MinNum.setText(String.valueOf(this._interpSetting.getMinPointNum()));
+                this.jLabel_MinNum.setText("MinNum:");
                 String radStr = "";
                 for (int i = 0; i < this._interpSetting.getRadiusList().size(); i++) {
                     radStr = radStr + String.valueOf(this._interpSetting.getRadiusList().get(i)) + ";";
@@ -379,6 +386,12 @@ public class FrmInterpolate extends javax.swing.JDialog {
                 
                 radStr = radStr.substring(0, radStr.length() - 1);
                 this.jTextField_Radius.setText(radStr);
+                break;
+            case KRIGING:
+                this.jTextField_Radius.setEnabled(false);
+                this.jTextField_MinNum.setEnabled(true);
+                this.jLabel_MinNum.setText("Beta:");
+                this.jTextField_MinNum.setText(String.valueOf(this._interpSetting.getBeta()));
                 break;
         }
     }//GEN-LAST:event_jComboBox_MethodsActionPerformed
@@ -410,13 +423,16 @@ public class FrmInterpolate extends javax.swing.JDialog {
         setXYSize();
         
         this.jComboBox_Methods.removeAllItems();
-        this.jComboBox_Methods.addItem(InterpolationMethods.IDW_Radius.toString());
-        this.jComboBox_Methods.addItem(InterpolationMethods.IDW_Neighbors.toString());
-        this.jComboBox_Methods.addItem(InterpolationMethods.Cressman.toString());
-        this.jComboBox_Methods.addItem(InterpolationMethods.AssignPointToGrid.toString());
-        this.jComboBox_Methods.setSelectedItem(this._interpSetting.getInterpolationMethod().toString());
+        this.jComboBox_Methods.addItem(InterpolationMethods.IDW_RADIUS);
+        this.jComboBox_Methods.addItem(InterpolationMethods.IDW_NEIGHBORS);
+        this.jComboBox_Methods.addItem(InterpolationMethods.CRESSMAN);
+        this.jComboBox_Methods.addItem(InterpolationMethods.BARNES);
+        this.jComboBox_Methods.addItem(InterpolationMethods.KRIGING);
+        this.jComboBox_Methods.addItem(InterpolationMethods.ASSIGN_POINT_GRID);
+        this.jComboBox_Methods.setSelectedItem(this._interpSetting.getInterpolationMethod());
         switch (this._interpSetting.getInterpolationMethod()) {
-            case Cressman:
+            case CRESSMAN:
+            case BARNES:
                 String radStr = "";
                 for (int i = 0; i < this._interpSetting.getRadiusList().size(); i++) {
                     radStr = radStr + String.valueOf(this._interpSetting.getRadiusList().get(i)) + ";";
@@ -428,14 +444,17 @@ public class FrmInterpolate extends javax.swing.JDialog {
                 this.jTextField_MissingValue.setText(String.valueOf(this._interpSetting.getMissingValue()));
                 this.jTextField_MissingValue.setEnabled(false);
                 break;
-            case IDW_Neighbors:
-            case IDW_Radius:
+            case IDW_NEIGHBORS:
+            case IDW_RADIUS:
                 this.jTextField_Radius.setText(((Double) this._interpSetting.getRadius()).toString());
                 this.jTextField_MinNum.setText(String.valueOf(this._interpSetting.getMinPointNum()));
                 this.jTextField_MissingValue.setText(String.valueOf(this._interpSetting.getMissingValue()));
                 this.jTextField_MissingValue.setEnabled(false);
                 break;
-            case AssignPointToGrid:
+            case KRIGING:
+                this.jTextField_MinNum.setText(String.valueOf(this._interpSetting.getBeta()));
+                break;
+            case ASSIGN_POINT_GRID:
                 
                 break;
         }
@@ -458,9 +477,10 @@ public class FrmInterpolate extends javax.swing.JDialog {
         InterpolationSetting interpSetting = new InterpolationSetting();
         interpSetting.setGridDataSetting(aGDP);
         
-        interpSetting.setInterpolationMethod(InterpolationMethods.valueOf(this.jComboBox_Methods.getSelectedItem().toString()));
+        interpSetting.setInterpolationMethod((InterpolationMethods) this.jComboBox_Methods.getSelectedItem());
         switch (interpSetting.getInterpolationMethod()) {
-            case Cressman:
+            case CRESSMAN:
+            case BARNES:
                 if (!this.jTextField_Radius.getText().isEmpty()) {
                     String[] radStrs = this.jTextField_Radius.getText().split(";");
                     List<Double> radList = new ArrayList<Double>();
@@ -474,10 +494,13 @@ public class FrmInterpolate extends javax.swing.JDialog {
                 
                 interpSetting.setMinPointNum(Integer.parseInt(this.jTextField_MinNum.getText()));
                 break;
-            case IDW_Neighbors:
-            case IDW_Radius:
+            case IDW_NEIGHBORS:
+            case IDW_RADIUS:
                 interpSetting.setRadius(Double.parseDouble(this.jTextField_Radius.getText()));
                 interpSetting.setMinPointNum(Integer.parseInt(this.jTextField_MinNum.getText()));
+                break;
+            case KRIGING:
+                interpSetting.setBeta(Double.parseDouble(this.jTextField_MinNum.getText()));
                 break;
         }
         

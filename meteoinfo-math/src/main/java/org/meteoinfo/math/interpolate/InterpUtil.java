@@ -633,6 +633,190 @@ public class InterpUtil {
      * @param v_s scatter value array
      * @param X x array
      * @param Y y array
+     * @param radList radii list
+     * @param kappa A falloff parameter that controls the width of the Gaussian
+     * function
+     * @param gamma The smoothing parameter, is constrained to be between 0.2
+     * and 1.0
+     * @return result grid data
+     */
+    public static double[][] barnes(double[] x_s, double[] y_s, double[] v_s, double[] X, double[] Y,
+                               List<Double> radList, double kappa, double gamma) {
+        int xNum = X.length;
+        int yNum = Y.length;
+        int pNum = x_s.length;
+        double[][] r = new double[yNum][xNum];
+        int irad = radList.size();
+        int i, j;
+
+        //Loop through each stn report and convert stn lat/lon to grid coordinates
+        double xMin = X[0];
+        double xMax;
+        double yMin = Y[0];
+        double yMax;
+        double xDelt = X[1] - X[0];
+        double yDelt = Y[1] - Y[0];
+        double x, y;
+        double sum, wSum, w;
+        double[][] stationData = new double[pNum][5];
+        for (i = 0; i < pNum; i++) {
+            x = x_s[i];
+            y = y_s[i];
+            stationData[i][0] = x;
+            stationData[i][1] = y;
+            stationData[i][2] = v_s[i];
+            stationData[i][3] = (x - xMin) / xDelt;
+            stationData[i][4] = (y - yMin) / yDelt;
+        }
+
+        //Construct K-D tree
+        KDTree.Euclidean<double[]> kdTree = new KDTree.Euclidean<>(2);
+        for (i = 0; i < pNum; i++) {
+            if (!Double.isNaN(stationData[i][2]))
+                kdTree.addPoint(new double[]{stationData[i][0], stationData[i][1]}, stationData[i]);
+        }
+
+        double HITOP = -999900000000000000000.0;
+        double HIBOT = 999900000000000000000.0;
+        double[][] TOP = new double[yNum][xNum];
+        double[][] BOT = new double[yNum][xNum];
+        for (i = 0; i < yNum; i++) {
+            for (j = 0; j < xNum; j++) {
+                TOP[i][j] = HITOP;
+                BOT[i][j] = HIBOT;
+            }
+        }
+
+        //Initial grid values are average of station reports within the first radius
+        double val, sx, sy, sxi, syi;
+        double rad;
+        int stNum;
+        if (radList.size() > 0) {
+            rad = radList.get(0).doubleValue();
+        } else {
+            rad = 4;
+        }
+        for (i = 0; i < yNum; i++) {
+            y = Y[i];
+            for (j = 0; j < xNum; j++) {
+                x = X[j];
+                stNum = 0;
+                sum = 0;
+                wSum = 0;
+                ArrayList<double[]> neighbours = kdTree.ballSearch(new double[]{x, y}, rad * rad);
+                for (double[] station : neighbours) {
+                    val = station[2];
+                    sx = station[0];
+                    sy = station[1];
+                    double dis = Math.pow(sx - x, 2) + Math.pow(sy - y, 2);
+                    w = Math.exp(-dis / (4 * kappa));
+                    wSum += w;
+                    sum += w * val;
+                    stNum += 1;
+                    if (TOP[i][j] < val) {
+                        TOP[i][j] = val;
+                    }
+                    if (BOT[i][j] > val) {
+                        BOT[i][j] = val;
+                    }
+                }
+                if (stNum == 0) {
+                    r[i][j] = Double.NaN;
+                } else {
+                    r[i][j] = sum / stNum;
+                }
+            }
+        }
+
+        //Perform the objective analysis
+        for (int p = 0; p < irad; p++) {
+            rad = radList.get(p).doubleValue();
+            for (i = 0; i < yNum; i++) {
+                y = Y[i];
+                for (j = 0; j < xNum; j++) {
+                    if (Double.isNaN(r[i][j])) {
+                        continue;
+                    }
+
+                    x = X[j];
+                    sum = 0;
+                    wSum = 0;
+                    ArrayList<double[]> neighbours = kdTree.ballSearch(new double[]{x, y}, rad * rad);
+                    for (double[] station : neighbours) {
+                        val = station[2];
+                        sx = station[0];
+                        sy = station[1];
+                        sxi = station[3];
+                        syi = station[4];
+
+                        if (sxi < 0 || sxi >= xNum - 1 || syi < 0 || syi >= yNum - 1) {
+                            continue;
+                        }
+
+                        double dis = Math.pow(sx - x, 2) + Math.pow(sy - y, 2);
+                        int i1 = (int) syi;
+                        int j1 = (int) sxi;
+                        int i2 = i1 + 1;
+                        int j2 = j1 + 1;
+                        double a = r[i1][j1];
+                        double b = r[i1][j2];
+                        double c = r[i2][j1];
+                        double d = r[i2][j2];
+                        List<Double> dList = new ArrayList<>();
+                        if (!Double.isNaN(a)) {
+                            dList.add(a);
+                        }
+                        if (!Double.isNaN(b)) {
+                            dList.add(b);
+                        }
+                        if (!Double.isNaN(c)) {
+                            dList.add(c);
+                        }
+                        if (Double.isNaN(d)) {
+                            dList.add(d);
+                        }
+
+                        double calVal;
+                        if (dList.isEmpty()) {
+                            continue;
+                        } else if (dList.size() == 1) {
+                            calVal = dList.get(0);
+                        } else if (dList.size() <= 3) {
+                            double aSum = 0;
+                            for (double dd : dList) {
+                                aSum += dd;
+                            }
+                            calVal = aSum / dList.size();
+                        } else {
+                            double x1val = a + (c - a) * (syi - i1);
+                            double x2val = b + (d - b) * (syi - i1);
+                            calVal = x1val + (x2val - x1val) * (sxi - j1);
+                        }
+                        double eVal = val - calVal;
+                        w = Math.exp(-dis / (4 * kappa * gamma));
+                        sum += eVal * w;
+                        wSum += w;
+                    }
+                    if (wSum >= 0.000001) {
+                        double aData = r[i][j] + sum / wSum;
+                        r[i][j] = Math.max(BOT[i][j], Math.min(TOP[i][j], aData));
+                    }
+                }
+            }
+        }
+
+        //Return
+        return r;
+    }
+
+    /**
+     * Barnes analysis
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param v_s scatter value array
+     * @param X x array
+     * @param Y y array
      * @param kappa A falloff parameter that controls the width of the Gaussian
      * function
      * @param gamma The smoothing parameter, is constrained to be between 0.2
@@ -764,6 +948,33 @@ public class InterpUtil {
 
         //Return
         return r;
+    }
+
+    /**
+     * Kriging interpolation
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param v_s scatter value array
+     * @param X x array
+     * @param Y y array
+     * @param beta Beta value
+     * @return result grid data
+     */
+    public static double[][] kriging(double[] x_s, double[] y_s, double[] v_s, double[] X, double[] Y,
+                                    double beta) {
+        KrigingInterpolation2D krigingInterpolation2D = new KrigingInterpolation2D(x_s,
+                y_s, v_s, beta);
+        int ny = Y.length;
+        int nx = X.length;
+        double[][] gData = new double[ny][nx];
+        for (int i = 0; i < ny; i++) {
+            for (int j = 0; j < nx; j++) {
+                gData[i][j] = krigingInterpolation2D.interpolate(X[j], Y[i]);
+            }
+        }
+
+        return gData;
     }
 
     /**

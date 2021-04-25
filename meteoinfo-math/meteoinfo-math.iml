@@ -36,7 +36,37 @@
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-interpolation:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-math:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp-platform:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:android-arm:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:android-arm64:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:android-x86:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:android-x86_64:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:ios-arm64:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:ios-x86_64:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:linux-armhf:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:linux-arm64:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:linux-ppc64le:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:linux-x86:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:linux-x86_64:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:macosx-x86_64:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:windows-x86:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:windows-x86_64:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas-platform:0.3.10-1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:android-arm:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:android-arm64:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:android-x86:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:android-x86_64:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:ios-arm64:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:ios-x86_64:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:linux-x86:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:linux-x86_64:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:linux-armhf:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:linux-arm64:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:linux-ppc64le:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:macosx-x86_64:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:windows-x86:0.3.10-1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas:windows-x86_64:0.3.10-1.5.4" level="project" />
   </component>
 </module>

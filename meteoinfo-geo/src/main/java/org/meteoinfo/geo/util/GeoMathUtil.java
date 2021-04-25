@@ -10,6 +10,8 @@ import org.meteoinfo.geo.analysis.GeoComputation;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.geo.analysis.InterpolationSetting;
+import org.meteoinfo.math.interpolate.InterpUtil;
+import smile.interpolation.KrigingInterpolation2D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -240,21 +242,39 @@ public class GeoMathUtil {
          X = values.get(0);
          Y = values.get(1);
          switch (interSet.getInterpolationMethod()) {
-             case IDW_Radius:
+             case IDW_RADIUS:
                  stationData.filterData_Radius(interSet.getRadius(), interSet.getGridDataSetting().dataExtent);
                  aGridData = interpolate_Radius(stationData.data,
                          X, Y, interSet.getMinPointNum(), interSet.getRadius(), stationData.missingValue);
                  break;
-             case IDW_Neighbors:
+             case IDW_NEIGHBORS:
                  stationData.filterData_Radius(interSet.getRadius(), interSet.getGridDataSetting().dataExtent);
                  aGridData = interpolate_Neighbor(stationData.data, X, Y,
                          interSet.getMinPointNum(), stationData.missingValue);
                  break;
-             case Cressman:
+             case CRESSMAN:
                  stationData.filterData_Radius(0, interSet.getGridDataSetting().dataExtent);
                  aGridData = interpolate_Cressman(stationData.data, X, Y, interSet.getRadiusList(), stationData.missingValue);
                  break;
-             case AssignPointToGrid:
+             case BARNES:
+                 stationData.filterData_Radius(0, interSet.getGridDataSetting().dataExtent);
+                 double[][] gData = InterpUtil.barnes(stationData.getX(), stationData.getY(), stationData.getStData(),
+                         X, Y, interSet.getRadiusList(), 1., 1.);
+                 aGridData = new GridData();
+                 aGridData.xArray = X;
+                 aGridData.yArray = Y;
+                 aGridData.data = gData;
+                 break;
+             case KRIGING:
+                 stationData.filterData_Radius(0, interSet.getGridDataSetting().dataExtent);
+                 gData = InterpUtil.kriging(stationData.getX(), stationData.getY(), stationData.getStData(),
+                         X, Y, interSet.getBeta());
+                 aGridData = new GridData();
+                 aGridData.xArray = X;
+                 aGridData.yArray = Y;
+                 aGridData.data = gData;
+                 break;
+             case ASSIGN_POINT_GRID:
                  stationData.filterData_Radius(0, interSet.getGridDataSetting().dataExtent);
                  aGridData = interpolate_Assign(stationData.data, X, Y, stationData.missingValue);
                  break;

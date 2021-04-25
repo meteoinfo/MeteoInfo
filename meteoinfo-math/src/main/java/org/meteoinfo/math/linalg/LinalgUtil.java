@@ -176,6 +176,10 @@ public class LinalgUtil {
      */
     public static Array[] eigen(Array a) {
         Matrix ma = MatrixUtil.arrayToMatrix(a);
+        boolean isSymmetric = MatrixUtil.isSymmetric(ma);
+        if (isSymmetric) {
+            ma.uplo(UPLO.LOWER);
+        }
         Matrix.EVD evd = ma.eigen(false, true, false);
         Array Wa;
         if (evd.wi == null) {

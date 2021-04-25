@@ -1,5 +1,6 @@
 package org.meteoinfo.math.matrix;
 
+import org.apache.commons.math3.util.FastMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Complex;
 import org.meteoinfo.ndarray.DataType;
@@ -9,6 +10,10 @@ import smile.math.matrix.DMatrix;
 import smile.math.matrix.SymmMatrix;
 
 public class MatrixUtil {
+
+    /** Exponent offset in IEEE754 representation. */
+    private static final long EXPONENT_OFFSET = 1023L;
+    public static final double EPSILON = Double.longBitsToDouble((EXPONENT_OFFSET - 53L) << 52);
 
     /**
      * Convert matrix to array
@@ -133,5 +138,30 @@ public class MatrixUtil {
         SymmMatrix ma = new SymmMatrix(UPLO.LOWER, (double[][]) ArrayUtil.copyToNDJavaArray_Double(a));
 
         return ma;
+    }
+
+    /**
+     * Checks whether a matrix is symmetric, within a given relative tolerance.
+     * @param matrix The matrix
+     * @return If the matrix is symmetric
+     */
+    public static boolean isSymmetric(Matrix matrix) {
+        final int rows = matrix.m;
+        if (rows != matrix.n) {
+            return false;
+        }
+
+        final double relativeTolerance = 10 * matrix.m * matrix.n * EPSILON;
+        for (int i = 0; i < rows; i++) {
+            for (int j = i + 1; j < rows; j++) {
+                final double mij = matrix.get(i, j);
+                final double mji = matrix.get(j, i);
+                if (FastMath.abs(mij - mji) >
+                        FastMath.max(FastMath.abs(mij), FastMath.abs(mji)) * relativeTolerance) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

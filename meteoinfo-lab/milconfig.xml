@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\interpolate">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\linalg">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
@@ -11,22 +10,27 @@
     <RecentFolder Folder="D:\Run\emips\run_meic"/>
     <RecentFolder Folder="D:\Run\emips"/>
     <RecentFolder Folder="D:\Run\emips\run_cams"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_kriging.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\eof_elnino.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_barnes.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\eig.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\eig_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_kriging.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\eof_elnino.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_barnes.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\eig.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\eig_1.py"/>
     </RecentFiles>
   </File>
   <Font>

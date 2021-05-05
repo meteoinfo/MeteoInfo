@@ -155,17 +155,30 @@ public class Clustering {
         int[][] ICLASS = calculation(DATA, LN, disType);
 
         //Write clustering result to output file
-        BufferedWriter sw = new BufferedWriter(new FileWriter(outFile));
-        aLine = "Time,Height";
-        for (i = 2; i <= LN; i++) {
+        saveClassResult(ICLASS, flags, outFile);
+    }
+
+    /**
+     * Save class results
+     * @param data Class data
+     * @param flags Trajectory flags
+     * @param fileName Output file name
+     * @throws IOException
+     */
+    public static void saveClassResult(int[][] data, List<String> flags, String fileName) throws IOException {
+        int N = data.length;
+        int LN = data[0].length;
+        BufferedWriter sw = new BufferedWriter(new FileWriter(fileName));
+        String aLine = "Time,Height";
+        for (int i = 2; i <= LN; i++) {
             aLine = aLine + "," + String.valueOf(i) + "CL";
         }
         sw.write(aLine);
         sw.newLine();
-        for (i = 0; i <= N - 1; i++) {
+        for (int i = 0; i <= N - 1; i++) {
             aLine = flags.get(i);
-            for (j = 0; j <= LN - 2; j++) {
-                aLine = aLine + "," + String.valueOf(ICLASS[i][j]);
+            for (int j = 0; j <= LN - 2; j++) {
+                aLine = aLine + "," + String.valueOf(data[i][j]);
             }
             sw.write(aLine);
             sw.newLine();

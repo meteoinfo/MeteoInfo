@@ -1,13 +1,13 @@
 <component name="libraryTable">
-  <library name="Maven: org.scilab.forge:jlatexmath:1.0.7">
+  <library name="Maven: org.ejml:ejml-zdense:0.40">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/scilab/forge/jlatexmath/1.0.7/jlatexmath-1.0.7.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ejml/ejml-zdense/0.40/ejml-zdense-0.40.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/scilab/forge/jlatexmath/1.0.7/jlatexmath-1.0.7-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ejml/ejml-zdense/0.40/ejml-zdense-0.40-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/scilab/forge/jlatexmath/1.0.7/jlatexmath-1.0.7-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ejml/ejml-zdense/0.40/ejml-zdense-0.40-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

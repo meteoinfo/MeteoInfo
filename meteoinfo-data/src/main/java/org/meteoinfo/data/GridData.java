@@ -105,20 +105,20 @@ public class GridData {
      * Constructor
      *
      * @param xStart xArray start
-     * @param xDelt xArray delt
+     * @param xDelta xArray delt
      * @param xNum xArray number
      * @param yStart yArray start
-     * @param yDelt yArray delt
+     * @param yDelta yArray delt
      * @param yNum yArray number
      */
-    public GridData(double xStart, double xDelt, int xNum, double yStart, double yDelt, int yNum) {
+    public GridData(double xStart, double xDelta, int xNum, double yStart, double yDelta, int yNum) {
         xArray = new double[xNum];
         yArray = new double[yNum];
         for (int i = 0; i < xNum; i++) {
-            xArray[i] = BigDecimalUtil.add(xStart, BigDecimalUtil.mul(xDelt, i));
+            xArray[i] = BigDecimalUtil.add(xStart, BigDecimalUtil.mul(xDelta, i));
         }
         for (int i = 0; i < yNum; i++) {
-            yArray[i] = BigDecimalUtil.add(yStart, BigDecimalUtil.mul(yDelt, i));
+            yArray[i] = BigDecimalUtil.add(yStart, BigDecimalUtil.mul(yDelta, i));
         }
 
         missingValue = -9999;
@@ -214,7 +214,50 @@ public class GridData {
         }
 
         this.missingValue = missingValue.doubleValue();
-        this.projInfo = KnownCoordinateSystems.geographic.world.WGS1984;;
+        this.projInfo = KnownCoordinateSystems.geographic.world.WGS1984;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param array Data array
+     * @param xdata X data
+     * @param ydata Y data
+     * @param missingValue Missing value
+     */
+    public GridData(Array array, Array xdata, Array ydata, Number missingValue, ProjectionInfo projInfo) {
+        int yn = (int) ydata.getSize();
+        int xn = (int) xdata.getSize();
+        this.data = new double[yn][xn];
+        IndexIterator iter = array.getIndexIterator();
+        int idx = 0;
+        while (iter.hasNext()) {
+            double val = iter.getDoubleNext();
+            if (java.lang.Double.isNaN(val)) {
+                data[idx / xn][idx % xn] = missingValue.doubleValue();
+            } else {
+                data[idx / xn][idx % xn] = val;
+            }
+            idx += 1;
+        }
+
+        this.xArray = new double[xn];
+        this.yArray = new double[yn];
+        iter = xdata.getIndexIterator();
+        int i = 0;
+        while(iter.hasNext()) {
+            this.xArray[i] = iter.getDoubleNext();
+            i++;
+        }
+        iter = ydata.getIndexIterator();
+        i = 0;
+        while(iter.hasNext()) {
+            this.yArray[i] = iter.getDoubleNext();
+            i++;
+        }
+
+        this.missingValue = missingValue.doubleValue();
+        this.projInfo = projInfo;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

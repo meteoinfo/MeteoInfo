@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="Maven: org.jogamp.jogl:jogl-all:natives-linux-i586:2.3.2">
+  <library name="Maven: org.jogamp.jogl:jogl-all:natives-android-aarch64:2.3.2">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jogamp/jogl/jogl-all/2.3.2/jogl-all-2.3.2-natives-linux-i586.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jogamp/jogl/jogl-all/2.3.2/jogl-all-2.3.2-natives-android-aarch64.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/org/jogamp/jogl/jogl-all/2.3.2/jogl-all-2.3.2-javadoc.jar!/" />

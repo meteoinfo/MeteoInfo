@@ -484,7 +484,7 @@ class Axes3D(Axes):
 
     def grid(self, b, **kwargs):
         """
-        Turn the aexs grids on or off.
+        Turn the axes grids on or off.
 
         :param b: If b is *None* and *len(kwargs)==0* , toggle the grid state. If *kwargs*
             are supplied, it is assumed that you want a grid and *b* is thus set to *True* .

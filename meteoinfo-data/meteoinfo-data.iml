@@ -11,6 +11,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="meteoinfo-geometry" />
     <orderEntry type="module" module-name="meteoinfo-table" />
     <orderEntry type="module" module-name="meteoinfo-ndarray" />
     <orderEntry type="module" module-name="meteoinfo-common" />

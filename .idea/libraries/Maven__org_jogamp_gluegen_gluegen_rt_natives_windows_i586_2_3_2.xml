@@ -1,13 +1,13 @@
 <component name="libraryTable">
-  <library name="Maven: org.bytedeco:javacpp:linux-armhf:1.5.4">
+  <library name="Maven: org.jogamp.gluegen:gluegen-rt:natives-windows-i586:2.3.2">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/javacpp/1.5.4/javacpp-1.5.4-linux-armhf.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jogamp/gluegen/gluegen-rt/2.3.2/gluegen-rt-2.3.2-natives-windows-i586.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/javacpp/1.5.4/javacpp-1.5.4-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jogamp/gluegen/gluegen-rt/2.3.2/gluegen-rt-2.3.2-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/javacpp/1.5.4/javacpp-1.5.4-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jogamp/gluegen/gluegen-rt/2.3.2/gluegen-rt-2.3.2-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

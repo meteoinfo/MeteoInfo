@@ -210,6 +210,57 @@ public class Clustering {
     /**
      * Clustering calculation
      *
+     * @param trajData Trajectory data array
+     * @param LN Level number
+     * @param disType Distant define type: Euclidean or Angle
+     * @throws IOException
+     */
+    public static Array calculate(Array xData, Array yData,  int LN, DistanceType disType) throws IOException {
+        xData = xData.copyIfView();
+        yData = yData.copyIfView();
+
+        int[] shape = xData.getShape();
+        int n = shape[0];
+        int pn = shape[1];
+        int m = pn * 2;
+        double[][] DATA = new double[n][m];
+        for (int row = 0; row < n; row++) {
+            int col = 0;
+            for (int i = 0; i < pn; i++) {
+                DATA[row][col] = yData.getDouble(row * pn + i);
+                col += 1;
+                DATA[row][col] = xData.getDouble(row * pn + i);
+                col += 1;
+            }
+        }
+
+        //Clustering calculation
+        int[][] ICLASS = calculation(DATA, LN, disType);
+
+        int[] rData = Stream.of(ICLASS).flatMapToInt(IntStream::of).toArray();
+        Array r = Array.factory(DataType.INT, new int[]{ICLASS.length, ICLASS[0].length},
+                rData);
+
+        return r;
+    }
+
+    /**
+     * Clustering calculation
+     *
+     * @param trajData Trajectory data array
+     * @param LN Level number
+     * @param disType Distant type: Euclidean or Angle
+     * @throws IOException
+     */
+    public static Array calculate(Array xData, Array yData,  int LN, String disType) throws IOException {
+        DistanceType distanceType = DistanceType.valueOf(disType.toUpperCase());
+
+        return calculate(xData, yData, LN, distanceType);
+    }
+
+    /**
+     * Clustering calculation
+     *
      * @param DATA Input data array
      * @param outFile Output file
      * @param LN Level number

@@ -377,18 +377,14 @@ public class MICAPS13DataInfo extends DataInfo implements IGridDataInfo {
 
     @Override
     public GridData getGridData_LonLat(int timeIdx, String varName, int levelIdx) {
-        GridData gridData = new GridData();
         double[][] gData = new double[_yNum][_xNum];
         for (int i = 0; i < _yNum; i++) {
             for (int j = 0; j < _xNum; j++) {
                 gData[i][j] = DataConvert.byte2Int(_imageBytes[i * _xNum + j]);
             }
         }
-        gridData.data = gData;
-        gridData.xArray = this.getXDimension().getValues();
-        gridData.yArray = this.getYDimension().getValues();
 
-        return gridData;
+        return new GridData(gData, this.getXDimension().getValues(), this.getYDimension().getValues());
     }
 
     @Override

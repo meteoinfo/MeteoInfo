@@ -183,9 +183,9 @@ import org.meteoinfo.data.meteodata.Attribute;
      @Override
      public GridData getGridData_LonLat(int timeIdx, String varName, int levelIdx) {
          GridData gdata = this.geoTiff.getGridData_Value();
-         gdata.xArray = this.getXDimension().getValues();
-         gdata.yArray = this.getYDimension().getValues();
-         gdata.projInfo = this.getProjectionInfo();
+         gdata.setXArray(this.getXDimension().getValues());
+         gdata.setYArray(this.getYDimension().getValues());
+         gdata.setProjInfo(this.getProjectionInfo());
 
          return gdata;
      }

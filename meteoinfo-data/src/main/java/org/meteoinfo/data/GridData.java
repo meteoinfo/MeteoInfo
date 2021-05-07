@@ -15,6 +15,7 @@ package org.meteoinfo.data;
 
 import java.io.BufferedReader;
 
+import org.locationtech.proj4j.datum.Grid;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
@@ -31,14 +32,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 import org.meteoinfo.common.ResampleMethods;
+import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
 //import org.meteoinfo.geoprocess.analysis.ResampleMethods;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.ndarray.Array;
@@ -58,35 +64,28 @@ public class GridData {
     /**
      * Grid data
      */
-    public double[][] data;
+    protected double[][] data;
     /// <summary>
     /// x coordinate array
     /// </summary>
-    public double[] xArray;
+    protected double[] xArray;
     /// <summary>
     /// y coordinate array
     /// </summary>
-    public double[] yArray;
+    protected double[] yArray;
     /// <summary>
     /// Undef data
     /// </summary>
-    public double missingValue;
+    protected double missingValue = -9999;
     /**
      * Projection information
      */
-    public ProjectionInfo projInfo = null;
-    public String fieldName = "Data";
+    protected ProjectionInfo projInfo = null;
+    protected String fieldName = "Data";
     private boolean _xStag = false;
     private boolean _yStag = false;
     // </editor-fold>
     // <editor-fold desc="Constructor">
-
-    /**
-     * Constructor
-     */
-    public GridData() {
-        missingValue = -9999;
-    }
 
     /**
      * Constructor
@@ -99,6 +98,96 @@ public class GridData {
         yArray = aGridData.yArray.clone();
         missingValue = aGridData.missingValue;
         data = new double[yArray.length][xArray.length];
+    }
+
+    /**
+     * Constructor
+     * @param data Data array
+     * @param xArray X array
+     * @param yArray Y array
+     * @param missingValue Missing value
+     * @param projInfo Projection info
+     */
+    public GridData(double[][] data, double[] xArray, double[] yArray, double missingValue,
+                    ProjectionInfo projInfo) {
+        this.data = data;
+        this.xArray = xArray;
+        this.yArray = yArray;
+        this.missingValue = missingValue;
+        this.projInfo = projInfo;
+
+        if (this.getYDelta() < 0) {
+            this.yArray = IntStream.range(0, this.yArray.length)
+                    .mapToDouble(i -> this.yArray[this.yArray.length - 1 - i])
+                    .toArray();
+            this.yReverse();
+        }
+
+        if (this.getXDelta() < 0) {
+            this.xArray = IntStream.range(0, this.xArray.length)
+                    .mapToDouble(i -> this.xArray[this.xArray.length - 1 - i])
+                    .toArray();
+            this.xReverse();
+        }
+    }
+
+    /**
+     * Constructor
+     * @param data Data array
+     * @param xArray X array
+     * @param yArray Y array
+     * @param missingValue Missing value
+     */
+    public GridData(double[][] data, double[] xArray, double[] yArray, double missingValue) {
+        this(data, xArray, yArray, missingValue, null);
+    }
+
+    /**
+     * Constructor
+     * @param data Data array
+     * @param xArray X array
+     * @param yArray Y array
+     * @param missingValue Missing value
+     * @param projInfo Projection info
+     */
+    public GridData(double[][] data, double[] xArray, double[] yArray, ProjectionInfo projInfo) {
+        this(data, xArray, yArray, -9999, projInfo);
+    }
+
+    /**
+     * Constructor
+     * @param data Data array
+     * @param xArray X array
+     * @param yArray Y array
+     */
+    public GridData(double[][] data, double[] xArray, double[] yArray) {
+        this(data, xArray, yArray, -9999, null);
+    }
+
+    /**
+     * Constructor
+     * @param yNum Y number
+     * @param xNum X number
+     */
+    public GridData(int yNum, int xNum) {
+        this(new double[yNum][xNum], new double[xNum], new double[yNum]);
+        this.xArray = new double[xNum];
+        for (int i = 0; i < xNum; i++) {
+            xArray[i] = i;
+        }
+        this.yArray = new double[yNum];
+        for (int i = 0; i < yNum; i++) {
+            yArray[i] = i;
+        }
+    }
+
+    /**
+     * Constructor
+     * @param xArray Y array
+     * @param yArray X array
+     */
+    public GridData(double[] xArray, double[] yArray) {
+        this(new double[yArray.length][xArray.length], xArray, yArray);
     }
 
     /**
@@ -263,6 +352,86 @@ public class GridData {
     // <editor-fold desc="Get Set Methods">
 
     /**
+     * Get data array
+     * @return Data array
+     */
+    public double[][] getData() {
+        return this.data;
+    }
+
+    /**
+     * Get x array
+     * @return X array
+     */
+    public double[] getXArray() {
+        return this.xArray;
+    }
+
+    /**
+     * Set x array
+     * @param value X array
+     */
+    public void setXArray(double[] value) {
+        this.xArray = value;
+    }
+
+    /**
+     * Get y array
+     * @return Y array
+     */
+    public double[] getYArray() {
+        return this.yArray;
+    }
+
+    /**
+     * Set y array
+     * @param value Y array
+     */
+    public void setYArray(double[] value) {
+        this.yArray = value;
+    }
+
+    /**
+     * Get missing value
+     * @return Missing value
+     */
+    public double getDoubleMissingValue() {
+        return this.missingValue;
+    }
+
+    /**
+     * Get projection
+     * @return Projection
+     */
+    public ProjectionInfo getProjInfo() {
+        return this.projInfo;
+    }
+
+    /**
+     * Set projection
+     * @param value Projection
+     */
+    public void setProjInfo(ProjectionInfo value) {
+        this.projInfo = value;
+    }
+
+    /**
+     * Get field name
+     * @return Field name
+     */
+    public String getFieldName() {
+        return this.fieldName;
+    }
+
+    /**
+     * Set field name
+     * @param value Field name
+     */
+    public void setFieldName(String value) {
+        this.fieldName = value;
+    }
+
+    /**
      * Get xArray number
      *
      * @return xArray number
@@ -281,20 +450,20 @@ public class GridData {
     }
 
     /**
-     * Get xArray delt
+     * Get xArray delta
      *
-     * @return xArray delt
+     * @return xArray delta
      */
-    public double getXDelt() {
+    public double getXDelta() {
         return xArray[1] - xArray[0];
     }
 
     /**
-     * Get yArray delt
+     * Get yArray delta
      *
-     * @return yArray delt
+     * @return yArray delta
      */
-    public double getYDelt() {
+    public double getYDelta() {
         return yArray[1] - yArray[0];
     }
 
@@ -320,7 +489,7 @@ public class GridData {
      */
     public boolean isGlobal() {
         boolean isGlobal = false;
-        if (MIMath.doubleEquals(xArray[getXNum() - 1] + getXDelt() - xArray[0], 360.0)) {
+        if (MIMath.doubleEquals(xArray[getXNum() - 1] + getXDelta() - xArray[0], 360.0)) {
             isGlobal = true;
         }
 
@@ -372,6 +541,26 @@ public class GridData {
      */
     public Number getValue(int i, int j) {
         return data[i][j];
+    }
+
+    /**
+     * Set value
+     * @param i I index
+     * @param j J index
+     * @param v Value
+     */
+    public void setValue(int i, int j, Number v) {
+        this.data[i][j] = v.doubleValue();
+    }
+
+    /**
+     * Set value
+     * @param i I index
+     * @param j J index
+     * @param v Value
+     */
+    public void setValue(int i, int j, double v) {
+        this.data[i][j] = v;
     }
 
     /**
@@ -613,8 +802,8 @@ public class GridData {
         }
 
         //Get x/y index
-        double DX = this.getXDelt();
-        double DY = this.getYDelt();
+        double DX = this.getXDelta();
+        double DY = this.getYDelta();
         int xIdx = 0, yIdx = 0;
         xIdx = (int) ((x - xArray[0]) / DX);
         yIdx = (int) ((y - yArray[0]) / DY);
@@ -808,8 +997,8 @@ public class GridData {
 
         int xNum = this.getXNum();
         int yNum = this.getYNum();
-        double axdelt = this.getXDelt();
-        double aydelt = this.getYDelt();
+        double axdelt = this.getXDelta();
+        double aydelt = this.getYDelta();
         int sXidx = 0;
         int eXidx = xNum - 1;
         int sYidx = 0;
@@ -829,8 +1018,8 @@ public class GridData {
 
         GridData cGrid = (GridData) this.clone();
         int xidx, yidx;
-        double bxdelt = bGrid.getXDelt();
-        double bydelt = bGrid.getYDelt();
+        double bxdelt = bGrid.getXDelta();
+        double bydelt = bGrid.getYDelta();
         for (int i = sYidx; i <= eYidx; i++) {
             for (int j = sXidx; j <= eXidx; j++) {
                 xidx = (int) ((xArray[j] - bGrid.xArray[0]) / bxdelt);
@@ -864,8 +1053,8 @@ public class GridData {
 
         int xNum = this.getXNum();
         int yNum = this.getYNum();
-        double axdelt = this.getXDelt();
-        double aydelt = this.getYDelt();
+        double axdelt = this.getXDelta();
+        double aydelt = this.getYDelta();
         int sXidx = 0;
         int eXidx = xNum - 1;
         int sYidx = 0;
@@ -885,8 +1074,8 @@ public class GridData {
 
         GridData cGrid = (GridData) this.clone();
         int xidx, yidx;
-        double bxdelt = bGrid.getXDelt();
-        double bydelt = bGrid.getYDelt();
+        double bxdelt = bGrid.getXDelta();
+        double bydelt = bGrid.getYDelta();
         for (int i = sYidx; i <= eYidx; i++) {
             for (int j = sXidx; j <= eXidx; j++) {
                 xidx = (int) ((xArray[j] - bGrid.xArray[0]) / bxdelt);
@@ -1425,7 +1614,7 @@ public class GridData {
             newX[i] = xArray[i];
         }
 
-        newX[xNum] = newX[xNum - 1] + getXDelt();
+        newX[xNum] = newX[xNum - 1] + getXDelta();
         for (i = 0; i < yNum; i++) {
             for (j = 0; j < xNum; j++) {
                 newGriddata[i][j] = data[i][j];
@@ -1505,9 +1694,6 @@ public class GridData {
             return null;
         }
 
-        GridData aGridData = new GridData();
-        aGridData.projInfo = projInfo;
-        aGridData.missingValue = missingValue;
         int sXidx = 0, eXidx = xNum - 1, sYidx = 0, eYidx = yNum - 1;
 
         //Get start x
@@ -1577,18 +1763,16 @@ public class GridData {
             newY[i - sYidx] = yArray[i];
         }
 
-        aGridData.xArray = newX;
-        aGridData.yArray = newY;
-
         double[][] newData = new double[newYNum][newXNum];
         for (i = sYidx; i <= eYidx; i++) {
             for (int j = sXidx; j <= eXidx; j++) {
                 newData[i - sYidx][j - sXidx] = data[i][j];
             }
         }
-        aGridData.data = newData;
 
-        return aGridData;
+        GridData gridData = new GridData(newData, newX, newY, this.missingValue, this.projInfo);
+
+        return gridData;
     }
 
     /**
@@ -1601,9 +1785,6 @@ public class GridData {
      * @return Extracted grid data
      */
     public GridData extract(int sXIdx, int sYIdx, int xNum, int yNum) {
-        GridData aGridData = new GridData();
-        aGridData.projInfo = projInfo;
-        aGridData.missingValue = missingValue;
         int eXIdx = sXIdx + xNum - 1, eYIdx = sYIdx + yNum - 1;
         double[] newX = new double[xNum];
         int i;
@@ -1616,18 +1797,14 @@ public class GridData {
             newY[i - sYIdx] = yArray[i];
         }
 
-        aGridData.xArray = newX;
-        aGridData.yArray = newY;
-
         double[][] newData = new double[yNum][xNum];
         for (i = sYIdx; i <= eYIdx; i++) {
             for (int j = sXIdx; j <= eXIdx; j++) {
                 newData[i - sYIdx][j - sXIdx] = data[i][j];
             }
         }
-        aGridData.data = newData;
 
-        return aGridData;
+        return new GridData(newData, newX, newY, this.missingValue, this.projInfo);
     }
 
     /**
@@ -1642,9 +1819,6 @@ public class GridData {
      * @return Extracted grid data
      */
     public GridData extract(int sXIdx, int eXIdx, int xstep, int sYIdx, int eYIdx, int ystep) {
-        GridData aGridData = new GridData();
-        aGridData.projInfo = projInfo;
-        aGridData.missingValue = missingValue;
         int xNum = (eXIdx - sXIdx) / xstep;
         int yNum = (eYIdx - sYIdx) / ystep;
         double[] newX = new double[xNum];
@@ -1661,9 +1835,6 @@ public class GridData {
             idx += 1;
         }
 
-        aGridData.xArray = newX;
-        aGridData.yArray = newY;
-
         double[][] newData = new double[yNum][xNum];
         int yidx = 0;
         for (i = sYIdx; i < eYIdx; i += ystep) {
@@ -1674,9 +1845,8 @@ public class GridData {
             }
             yidx += 1;
         }
-        aGridData.data = newData;
 
-        return aGridData;
+        return new GridData(newData, newX, newY, this.missingValue, this.projInfo);
     }
 
     /**
@@ -1713,29 +1883,27 @@ public class GridData {
         int xNum = (getXNum() + skipJ - 1) / skipJ;
         int i, j, idxI, idxJ;
 
-        GridData gdata = new GridData();
-        gdata.missingValue = missingValue;
-        gdata.xArray = new double[xNum];
-        gdata.yArray = new double[yNum];
-        gdata.data = new double[yNum][xNum];
+        double[] xArray = new double[xNum];
+        double[] yArray = new double[yNum];
+        double[][] data = new double[yNum][xNum];
 
         for (i = 0; i < yNum; i++) {
             idxI = i * skipI;
-            gdata.yArray[i] = yArray[idxI];
+            yArray[i] = yArray[idxI];
         }
         for (j = 0; j < xNum; j++) {
             idxJ = j * skipJ;
-            gdata.xArray[j] = xArray[idxJ];
+            xArray[j] = xArray[idxJ];
         }
         for (i = 0; i < yNum; i++) {
             idxI = i * skipI;
             for (j = 0; j < xNum; j++) {
                 idxJ = j * skipJ;
-                gdata.data[i][j] = data[idxI][idxJ];
+                data[i][j] = data[idxI][idxJ];
             }
         }
 
-        return gdata;
+        return new GridData(data, xArray, yArray, this.missingValue, this.projInfo);
     }
 
     /**
@@ -1755,8 +1923,8 @@ public class GridData {
 
         //Get x/y index
         int xIdx = 0, yIdx = 0;
-        xIdx = (int) ((x - xArray[0]) / this.getXDelt());
-        yIdx = (int) ((y - yArray[0]) / this.getYDelt());
+        xIdx = (int) ((x - xArray[0]) / this.getXDelta());
+        yIdx = (int) ((y - yArray[0]) / this.getYDelta());
         if (xIdx == xnum - 1) {
             xIdx = xnum - 2;
         }
@@ -1810,7 +1978,7 @@ public class GridData {
         }
 
         //Get x/y index
-        double xdelta = this.getXDelt();
+        double xdelta = this.getXDelta();
         int xIdx = (int) ((x - xmin) / xdelta);
         int yIdx = 0;
         int i;
@@ -1958,7 +2126,7 @@ public class GridData {
      * @return Minimum x of the grid border
      */
     public double getBorderXMin() {
-        return this.getXMin() - this.getXDelt() / 2;
+        return this.getXMin() - this.getXDelta() / 2;
     }
 
     /**
@@ -1967,7 +2135,7 @@ public class GridData {
      * @return Maximum x of the grid border
      */
     public double getBorderXMax() {
-        return this.getXMax() + this.getXDelt() / 2;
+        return this.getXMax() + this.getXDelta() / 2;
     }
 
     /**
@@ -1976,7 +2144,7 @@ public class GridData {
      * @return Minimum y of the grid border
      */
     public double getBorderYMin() {
-        return this.getYMin() - this.getYDelt() / 2;
+        return this.getYMin() - this.getYDelta() / 2;
     }
 
     /**
@@ -1985,7 +2153,7 @@ public class GridData {
      * @return Maximum y of the grid border
      */
     public double getBorderYMax() {
-        return this.getYMax() + this.getYDelt() / 2;
+        return this.getYMax() + this.getYDelta() / 2;
     }
 
     /**
@@ -2000,8 +2168,8 @@ public class GridData {
         int yidx = -1;
         if (x >= this.getBorderXMin() && x <= this.getBorderXMax()) {
             if (y >= this.getBorderYMin() && y <= this.getBorderYMax()) {
-                xidx = (int) ((x - this.getBorderXMin()) / this.getXDelt());
-                yidx = (int) ((y - this.getBorderYMin()) / this.getYDelt());
+                xidx = (int) ((x - this.getBorderXMin()) / this.getXDelta());
+                yidx = (int) ((y - this.getBorderYMin()) / this.getYDelta());
             }
         }
         if (xidx >= this.getXNum() || yidx >= this.getYNum()) {
@@ -2073,7 +2241,7 @@ public class GridData {
             sw.newLine();
             sw.write("YLLCENTER " + String.valueOf(yArray[0]));
             sw.newLine();
-            sw.write("CELLSIZE " + String.valueOf(this.getXDelt()));
+            sw.write("CELLSIZE " + String.valueOf(this.getXDelta()));
             sw.newLine();
             sw.write("NODATA_VALUE " + String.valueOf(this.missingValue));
             sw.newLine();
@@ -2140,9 +2308,9 @@ public class GridData {
             sw.newLine();
             sw.write("ulymap " + String.valueOf(yArray[yArray.length - 1]));
             sw.newLine();
-            sw.write("xdim " + String.valueOf(this.getXDelt()));
+            sw.write("xdim " + String.valueOf(this.getXDelta()));
             sw.newLine();
-            sw.write("ydim " + String.valueOf(this.getYDelt()));
+            sw.write("ydim " + String.valueOf(this.getYDelta()));
             sw.newLine();
 
             sw.flush();
@@ -2460,8 +2628,8 @@ public class GridData {
                 } else if (y < yArray[0] || y > yArray[yArray.length - 1]) {
                     newdata[i][j] = missingValue;
                 } else {
-                    xIdx = (int) ((x - xArray[0]) / getXDelt());
-                    yIdx = (int) ((y - yArray[0]) / getYDelt());
+                    xIdx = (int) ((x - xArray[0]) / getXDelta());
+                    yIdx = (int) ((y - yArray[0]) / getYDelta());
                     newdata[i][j] = data[yIdx][xIdx];
                 }
             }
@@ -2532,13 +2700,8 @@ public class GridData {
                 newY[i] = (this.yArray[(i - 1) / 2] + this.yArray[(i - 1) / 2 + 1]) / 2;
             }
         }
-        GridData gdata = new GridData();
-        gdata.data = newData;
-        gdata.xArray = newX;
-        gdata.yArray = newY;
-        gdata.missingValue = this.missingValue;
 
-        return gdata;
+        return new GridData(newData, newX, newY, this.missingValue, this.projInfo);
     }
 
     /**
@@ -2835,8 +2998,8 @@ public class GridData {
                     } else if (y < yArray[0] || y > yArray[yArray.length - 1]) {
                         newdata[i][j] = missingValue;
                     } else {
-                        xIdx = (int) ((x - xArray[0]) / getXDelt());
-                        yIdx = (int) ((y - yArray[0]) / getYDelt());
+                        xIdx = (int) ((x - xArray[0]) / getXDelta());
+                        yIdx = (int) ((y - yArray[0]) / getYDelta());
                         newdata[i][j] = data[yIdx][xIdx];
                     }
                 } catch (Exception e) {
@@ -3003,7 +3166,7 @@ public class GridData {
     public GridData unStagger_X() {
         int xn = this.getXNum();
         int yn = this.getYNum();
-        double dx = this.getXDelt();
+        double dx = this.getXDelta();
         int xn_us = xn - 1;
         int i, j;
         GridData usData = new GridData(this);
@@ -3029,7 +3192,7 @@ public class GridData {
     public GridData unStagger_Y() {
         int xn = this.getXNum();
         int yn = this.getYNum();
-        double dy = this.getYDelt();
+        double dy = this.getYDelta();
         int yn_us = yn - 1;
         int i, j;
         GridData usData = new GridData(this);
@@ -3106,7 +3269,19 @@ public class GridData {
          * @param xNum X number
          */
         public Byte(int yNum, int xNum) {
+            super(yNum, xNum);
             data = new byte[yNum][xNum];
+            missingValue = -9999;
+        }
+
+        /**
+         * Constructor
+         * @param xArray Y array
+         * @param yArray X array
+         */
+        public Byte(double[] xArray, double[] yArray) {
+            super(xArray, yArray);
+            data = new byte[yArray.length][xArray.length];
             missingValue = -9999;
         }
 
@@ -3245,7 +3420,19 @@ public class GridData {
          * @param xNum X number
          */
         public Integer(int yNum, int xNum) {
+            super(yNum, xNum);
             data = new int[yNum][xNum];
+            missingValue = -9999;
+        }
+
+        /**
+         * Constructor
+         * @param xArray Y array
+         * @param yArray X array
+         */
+        public Integer(double[] xArray, double[] yArray) {
+            super(xArray, yArray);
+            data = new int[yArray.length][xArray.length];
             missingValue = -9999;
         }
 
@@ -3357,8 +3544,20 @@ public class GridData {
          * @param xNum X number
          */
         public Double(int yNum, int xNum) {
+            super(yNum, xNum);
             data = new double[yNum][xNum];
             missingValue = -9999.0;
+        }
+
+        /**
+         * Constructor
+         * @param xArray Y array
+         * @param yArray X array
+         */
+        public Double(double[] xArray, double[] yArray) {
+            super(xArray, yArray);
+            data = new double[yArray.length][xArray.length];
+            missingValue = -9999;
         }
 
         /**
@@ -3430,7 +3629,19 @@ public class GridData {
          * @param xNum X number
          */
         public Float(int yNum, int xNum) {
+            super(yNum, xNum);
             data = new float[yNum][xNum];
+            missingValue = -9999;
+        }
+
+        /**
+         * Constructor
+         * @param xArray Y array
+         * @param yArray X array
+         */
+        public Float(double[] xArray, double[] yArray) {
+            super(xArray, yArray);
+            data = new float[yArray.length][xArray.length];
             missingValue = -9999;
         }
 

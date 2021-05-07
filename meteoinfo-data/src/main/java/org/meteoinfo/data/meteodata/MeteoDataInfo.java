@@ -1064,7 +1064,7 @@ public class MeteoDataInfo {
             MathParser mathParser = new MathParser(this);
             try {
                 GridData gridData = (GridData) mathParser.evaluate(varName);
-                gridData.projInfo = this.getProjectionInfo();
+                gridData.setProjInfo(this.getProjectionInfo());
                 return gridData;
             } catch (ParseException | IOException ex) {
                 Logger.getLogger(MeteoDataInfo.class.getName()).log(Level.SEVERE, null, ex);
@@ -1072,8 +1072,8 @@ public class MeteoDataInfo {
             }
         } else {
             GridData gridData = this.getGridData();
-            gridData.projInfo = this.getProjectionInfo();
-            gridData.fieldName = varName;
+            gridData.setProjInfo(this.getProjectionInfo());
+            gridData.setFieldName(varName);
             return gridData;
         }
     }
@@ -1119,7 +1119,7 @@ public class MeteoDataInfo {
         }
 
         if (gdata != null) {
-            gdata.projInfo = this.getProjectionInfo();
+            gdata.setProjInfo(this.getProjectionInfo());
         }
 
         return gdata;
@@ -1218,7 +1218,7 @@ public class MeteoDataInfo {
         GridData gData = this.getGridData(varName);
         GridData tData = new GridData(gData);
         //tData.missingValue = -9999.0;
-        tData = tData.setValue(tData.missingValue);
+        tData = tData.setValue(tData.getDoubleMissingValue());
         int xnum = gData.getXNum();
         int ynum = gData.getYNum();
         LocalDateTime date = this.getDataInfo().getTimes().get(0);
@@ -1231,9 +1231,9 @@ public class MeteoDataInfo {
             }
             for (int i = 0; i < ynum; i++) {
                 for (int j = 0; j < xnum; j++) {
-                    if (gData.data[i][j] >= threshold) {
-                        if (MIMath.doubleEquals(tData.data[i][j], tData.missingValue)) {
-                            tData.data[i][j] = hour;
+                    if (gData.getData()[i][j] >= threshold) {
+                        if (MIMath.doubleEquals(tData.getDoubleValue(i, j), tData.getDoubleMissingValue())) {
+                            tData.setValue(i, j, hour);
                         }
                     }
                 }

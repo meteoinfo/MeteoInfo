@@ -894,13 +894,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             theData = unpackARLGridData(dataBytes, xNum, yNum, aDL);
 
-            GridData gridData = new GridData();
-            gridData.data = theData;
-            gridData.missingValue = missingValue;
-            gridData.xArray = X;
-            gridData.yArray = Y;
-
-            return gridData;
+            return new GridData(theData, X, Y, missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -950,16 +944,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             br.close();
 
-            GridData gridData = new GridData();
-            gridData.data = newGridData;
-            gridData.missingValue = missingValue;
-            gridData.xArray = Y;
-            gridData.yArray = new double[tNum];
+            double[] yArray = new double[tNum];
             for (int i = 0; i < tNum; i++) {
-                gridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
-            return gridData;
+            return new GridData(newGridData, Y, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -1009,16 +999,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             br.close();
 
-            GridData gridData = new GridData();
-            gridData.data = newGridData;
-            gridData.missingValue = missingValue;
-            gridData.xArray = X;
-            gridData.yArray = new double[tNum];
+            double[] yArray = new double[tNum];
             for (int i = 0; i < tNum; i++) {
-                gridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
-            return gridData;
+            return new GridData(newGridData, X, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -1067,16 +1053,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             br.close();
 
-            GridData gridData = new GridData();
-            gridData.data = newGridData;
-            gridData.missingValue = missingValue;
-            gridData.xArray = Y;
-            gridData.yArray = new double[lNum];
+            double[] yArray = new double[lNum];
             for (int i = 0; i < lNum; i++) {
-                gridData.yArray[i] = var.getLevels().get(i);
+                yArray[i] = var.getLevels().get(i);
             }
 
-            return gridData;
+            return new GridData(newGridData, Y, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -1125,16 +1107,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             br.close();
 
-            GridData gridData = new GridData();
-            gridData.data = newGridData;
-            gridData.missingValue = missingValue;
-            gridData.xArray = X;
-            gridData.yArray = new double[lNum];
+            double[] yArray = new double[lNum];
             for (int i = 0; i < lNum; i++) {
-                gridData.yArray[i] = var.getLevels().get(i);
+                yArray[i] = var.getLevels().get(i);
             }
 
-            return gridData;
+            return new GridData(newGridData, X, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -1187,19 +1165,16 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             br.close();
 
-            GridData gridData = new GridData();
-            gridData.data = newGridData;
-            gridData.missingValue = missingValue;
-            gridData.xArray = new double[tNum];
+            double[] xArray = new double[tNum];
             for (int i = 0; i < tNum; i++) {
-                gridData.xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
-            gridData.yArray = new double[lNum];
+            double[] yArray = new double[lNum];
             for (int i = 0; i < lNum; i++) {
-                gridData.yArray[i] = var.getLevels().get(i);
+                yArray[i] = var.getLevels().get(i);
             }
 
-            return gridData;
+            return new GridData(newGridData, xArray, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -1219,12 +1194,10 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             double[][] gridData;
             double aValue;
 
-            GridData aGridData = new GridData();
-            aGridData.missingValue = missingValue;
-            aGridData.xArray = new double[this.getTimeNum()];
-            aGridData.yArray = new double[1];
-            aGridData.yArray[0] = 0;
-            aGridData.data = new double[1][this.getTimeNum()];
+            double[] xArray = new double[this.getTimeNum()];
+            double[] yArray = new double[1];
+            yArray[0] = 0;
+            double[][] data = new double[1][this.getTimeNum()];
 
             //Update level and variable index
             Variable aVar = this.getVariable(varName);
@@ -1251,13 +1224,13 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 gridData = unpackARLGridData(dataBytes, xNum, yNum, aDL);
 
                 aValue = gridData[latIdx][lonIdx];
-                aGridData.xArray[t] = JDateUtil.toOADate(this.getTimes().get(t));
-                aGridData.data[0][t] = aValue;
+                xArray[t] = JDateUtil.toOADate(this.getTimes().get(t));
+                data[0][t] = aValue;
             }
 
             br.close();
 
-            return aGridData;
+            return new GridData(data, xArray, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -1278,12 +1251,10 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             double[][] gridData;
             double aValue;
 
-            GridData aGridData = new GridData();
-            aGridData.missingValue = missingValue;
-            aGridData.xArray = new double[lNum];
-            aGridData.yArray = new double[1];
-            aGridData.yArray[0] = 0;
-            aGridData.data = new double[1][lNum];
+            double[] xArray = new double[lNum];
+            double[] yArray = new double[1];
+            yArray[0] = 0;
+            double[][] data = new double[1][lNum];
 
             br.seek(timeIdx * recsPerTime * recLen);
             br.seek(br.getFilePointer() + indexLen);
@@ -1306,13 +1277,13 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 br.read(dataBytes);
                 gridData = unpackARLGridData(dataBytes, xNum, yNum, aDL);
                 aValue = gridData[latIdx][lonIdx];
-                aGridData.xArray[i] = levels.get(levIdx);
-                aGridData.data[0][i] = aValue;
+                xArray[i] = levels.get(levIdx);
+                data[0][i] = aValue;
             }
 
             br.close();
 
-            return aGridData;
+            return new GridData(data, xArray, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -1331,12 +1302,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             double[][] gridData;
             double aValue;
 
-            GridData aGridData = new GridData();
-            aGridData.missingValue = missingValue;
-            aGridData.xArray = X;
-            aGridData.yArray = new double[1];
-            aGridData.yArray[0] = 0;
-            aGridData.data = new double[1][X.length];
+            double[] yArray = new double[1];
+            double[][] data = new double[1][X.length];
 
             //Update level and variable index
             Variable aVar = this.getVariable(varName);
@@ -1363,12 +1330,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             for (i = 0; i < xNum; i++) {
                 aValue = gridData[latIdx][i];
-                aGridData.data[0][i] = aValue;
+                data[0][i] = aValue;
             }
 
             br.close();
 
-            return aGridData;
+            return new GridData(data, X, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -1387,12 +1354,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             double[][] gridData;
             double aValue;
 
-            GridData aGridData = new GridData();
-            aGridData.missingValue = missingValue;
-            aGridData.xArray = Y;
-            aGridData.yArray = new double[1];
-            aGridData.yArray[0] = 0;
-            aGridData.data = new double[1][Y.length];
+            double[] yArray = new double[1];
+            double[][] data = new double[1][Y.length];
 
             //Update level and variable index
             Variable aVar = this.getVariable(varName);
@@ -1419,12 +1382,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             for (i = 0; i < yNum; i++) {
                 aValue = gridData[i][lonIdx];
-                aGridData.data[0][i] = aValue;
+                data[0][i] = aValue;
             }
 
             br.close();
 
-            return aGridData;
+            return new GridData(data, Y, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -1984,7 +1947,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     private byte[] packARLGridData(GridData gridData, DataLabel aDL) {
         int nx = gridData.getXNum();
         int ny = gridData.getYNum();
-        double var1 = gridData.data[0][0];
+        double var1 = gridData.getDoubleValue(0, 0);
         double rold = var1;
         double rmax = 0.0;
         int i, j;
@@ -1992,10 +1955,10 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
         for (i = 0; i < ny; i++) {
             for (j = 0; j < nx; j++) {
                 //Compute max difference between elements along row
-                rmax = Math.max(Math.abs(gridData.data[i][j] - rold), rmax);
-                rold = gridData.data[i][j];
+                rmax = Math.max(Math.abs(gridData.getDoubleValue(i, j) - rold), rmax);
+                rold = gridData.getDoubleValue(i, j);
             }
-            rold = gridData.data[i][0];
+            rold = gridData.getDoubleValue(i, 0);
         }
 
         double sexp = 0.0;
@@ -2021,7 +1984,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
         for (j = 0; j < ny; j++) {
             VOLD = rcol;
             for (i = 0; i < nx; i++) {
-                ival = (int) ((gridData.data[j][i] - VOLD) * SCALE + 127.5);
+                ival = (int) ((gridData.getDoubleValue(j, i) - VOLD) * SCALE + 127.5);
                 dataBytes[INDX] = (byte) ival;
                 VOLD = (float) (ival - 127) / SCALE + VOLD;
                 if (i == 0) {

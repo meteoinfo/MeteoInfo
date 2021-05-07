@@ -298,9 +298,6 @@ public class MM5IMDataInfo extends DataInfo implements IGridDataInfo {
                 }
             }
 
-            GridData gridData = new GridData();
-            gridData.data = theData;
-            gridData.missingValue = this.getMissingValue();
             double[] X = new double[dh.idim];
             for (i = 0; i < dh.idim; i++) {
                 X[i] = dh.startlon + dh.deltalon * i;
@@ -309,10 +306,8 @@ public class MM5IMDataInfo extends DataInfo implements IGridDataInfo {
             for (i = 0; i < dh.jdim; i++) {
                 Y[i] = dh.startlat + dh.deltalat * (dh.jdim - 1 - i);
             }
-            gridData.xArray = X;
-            gridData.yArray = Y;
 
-            return gridData;
+            return new GridData(theData, X, Y, this.getMissingValue());
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MM5IMDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -445,7 +440,7 @@ public class MM5IMDataInfo extends DataInfo implements IGridDataInfo {
         int i, j, k;
         for (i = 0; i < yn; i++) {
             for (j = 0; j < xn; j++) {
-                bytes = DataConvert.float2Bytes((float) gridData.data[yn - 1 -i][j], _byteOrder);
+                bytes = DataConvert.float2Bytes((float) gridData.getValue(yn - 1 -i, j), _byteOrder);
                 for (k = 0; k < 4; k++) {
                     dataBytes[start + k] = bytes[k];
                 }

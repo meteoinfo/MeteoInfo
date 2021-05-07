@@ -532,13 +532,8 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
             }
         }
 
-        GridData gridData = new GridData();
-        gridData.data = data;
-        gridData.xArray = this.getXDimension().getValues();
-        gridData.yArray = this.getYDimension().getValues();
-        gridData.missingValue = this.getMissingValue();
-
-        return gridData;
+        return new GridData(data, this.getXDimension().getValues(), this.getYDimension().getValues(),
+                this.missingValue);
     }
 
     @Override

@@ -2076,15 +2076,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.xArray = nvar.getXDimension().getValues();
-            aGridData.yArray = nvar.getYDimension().getValues();
-            aGridData.setMissingValue(missingValue);
-
-            if (this.isYReverse()) {
-                aGridData.yReverse();
-            }
+            GridData aGridData = new GridData(gridData, nvar.getXDimension().getValues(),
+                    nvar.getYDimension().getValues(), missingValue);
 
             if (this._convention == Conventions.WRFOUT) {
                 if (nvar.getName().equals("U")) {
@@ -2179,15 +2172,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.xArray = nvar.getYDimension().getValues();
-            aGridData.yArray = nvar.getTDimension().getValues();
-            aGridData.missingValue = missingValue;
-
-            if (this.isYReverse()) {
-                aGridData.xReverse();
-            }
+            GridData aGridData = new GridData(gridData, nvar.getYDimension().getValues(),
+                    nvar.getTDimension().getValues(), missingValue);
 
             return aGridData;
         } catch (IOException | ucar.ma2.InvalidRangeException ex) {
@@ -2271,11 +2257,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.xArray = nvar.getYDimension().getValues();
-            aGridData.yArray = nvar.getTDimension().getValues();
-            aGridData.missingValue = missingValue;
+            GridData aGridData = new GridData(gridData, nvar.getXDimension().getValues(),
+                    nvar.getTDimension().getValues(), missingValue);
 
             return aGridData;
         } catch (IOException | ucar.ma2.InvalidRangeException ex) {
@@ -2361,15 +2344,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.xArray = nvar.getYDimension().getValues();
-            aGridData.yArray = nvar.getZDimension().getValues();
-            aGridData.missingValue = missingValue;
-
-            if (this.isYReverse()) {
-                aGridData.xReverse();
-            }
+            GridData aGridData = new GridData(gridData, nvar.getYDimension().getValues(),
+                    nvar.getZDimension().getValues(), missingValue);
 
             return aGridData;
         } catch (IOException | ucar.ma2.InvalidRangeException ex) {
@@ -2454,11 +2430,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.xArray = nvar.getXDimension().getValues();
-            aGridData.yArray = nvar.getZDimension().getValues();
-            aGridData.missingValue = missingValue;
+            GridData aGridData = new GridData(gridData, nvar.getXDimension().getValues(),
+                    nvar.getZDimension().getValues(), missingValue);
 
             return aGridData;
         } catch (IOException | ucar.ma2.InvalidRangeException ex) {
@@ -2548,11 +2521,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.xArray = nvar.getTDimension().getValues();
-            aGridData.yArray = nvar.getZDimension().getValues();
-            aGridData.missingValue = missingValue;
+            GridData aGridData = new GridData(gridData, nvar.getTDimension().getValues(),
+                    nvar.getZDimension().getValues(), missingValue);
 
             return aGridData;
         } catch (IOException | ucar.ma2.InvalidRangeException ex) {
@@ -2633,11 +2603,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.xArray = nvar.getTDimension().getValues();
-            aGridData.yArray = new double[1];
-            aGridData.missingValue = missingValue;
+            GridData aGridData = new GridData(gridData, nvar.getTDimension().getValues(),
+                    new double[1], missingValue);
 
             return aGridData;
         } catch (IOException | ucar.ma2.InvalidRangeException ex) {
@@ -2718,11 +2685,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.xArray = nvar.getZDimension().getValues();
-            aGridData.yArray = new double[1];
-            aGridData.missingValue = missingValue;
+            GridData aGridData = new GridData(gridData, nvar.getZDimension().getValues(),
+                    new double[1], missingValue);
 
             return aGridData;
         } catch (IOException | ucar.ma2.InvalidRangeException ex) {
@@ -2803,11 +2767,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.xArray = nvar.getXDimension().getValues();
-            aGridData.yArray = new double[1];
-            aGridData.missingValue = missingValue;
+            GridData aGridData = new GridData(gridData, nvar.getXDimension().getValues(),
+                    new double[1], missingValue);
 
             return aGridData;
         } catch (IOException | ucar.ma2.InvalidRangeException ex) {
@@ -2888,11 +2849,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.xArray = nvar.getYDimension().getValues();
-            aGridData.yArray = new double[1];
-            aGridData.missingValue = missingValue;
+            GridData aGridData = new GridData(gridData, nvar.getYDimension().getValues(),
+                    new double[1], missingValue);
 
             return aGridData;
         } catch (IOException | ucar.ma2.InvalidRangeException ex) {
@@ -3378,12 +3336,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
         }
 
-        GridData aGridData = new GridData();
-        aGridData.data = gridData;
-        aGridData.xArray = xdim.getValues();
-        aGridData.yArray = ydim.getValues();
-
-        return aGridData;
+        return new GridData(gridData, xdim.getValues(), ydim.getValues());
     }
 
     /**
@@ -3393,7 +3346,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return NetCDF array 2D
      */
     public static Array gridToArray2D(GridData gData) {
-        Array a = Array.factory(gData.data);
+        Array a = Array.factory(gData.getData());
         int[] shape = new int[2];
         shape[0] = gData.getYNum();
         shape[1] = gData.getXNum();
@@ -3409,7 +3362,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return NetCDF array 3D
      */
     public static Array gridToArray3D(GridData gData) {
-        Array a = Array.factory(gData.data);
+        Array a = Array.factory(gData.getData());
         int[] shape = new int[3];
         shape[0] = 1;
         shape[1] = gData.getYNum();
@@ -3426,7 +3379,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return NetCDF array 4D
      */
     public static Array gridToArray4D(GridData gData) {
-        Array a = Array.factory(gData.data);
+        Array a = Array.factory(gData.getData());
         int[] shape = new int[4];
         shape[0] = 1;
         shape[1] = 1;

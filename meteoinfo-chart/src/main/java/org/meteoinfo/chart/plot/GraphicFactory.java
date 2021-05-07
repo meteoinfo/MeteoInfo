@@ -3138,15 +3138,15 @@ public class GraphicFactory {
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
-        int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
-        double[] x = gridData.xArray;
-        double[] y = gridData.yArray;
-        if (gridData.getXDelt() < 0)
+        int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
+        double[] x = gridData.getXArray();
+        double[] y = gridData.getYArray();
+        if (gridData.getXDelta() < 0)
             ArrayUtils.reverse(x);
-        if (gridData.getYDelt() < 0)
+        if (gridData.getYDelta() < 0)
             ArrayUtils.reverse(y);
-        Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, x, y, gridData.missingValue, S1);
+        Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
+                cValues, x, y, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
@@ -3227,15 +3227,15 @@ public class GraphicFactory {
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
-        int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
-        double[] x = gridData.xArray;
-        double[] y = gridData.yArray;
-        if (gridData.getXDelt() < 0)
+        int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
+        double[] x = gridData.getXArray();
+        double[] y = gridData.getYArray();
+        if (gridData.getXDelta() < 0)
             ArrayUtils.reverse(x);
-        if (gridData.getYDelt() < 0)
+        if (gridData.getYDelta() < 0)
             ArrayUtils.reverse(y);
-        Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, x, y, gridData.missingValue, S1);
+        Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
+                cValues, x, y, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
@@ -3319,15 +3319,15 @@ public class GraphicFactory {
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
 
-        int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
-        double[] xArray = gridData.xArray;
-        double[] yArray = gridData.yArray;
-        if (gridData.getXDelt() < 0)
+        int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
+        double[] xArray = gridData.getXArray();
+        double[] yArray = gridData.getYArray();
+        if (gridData.getXDelta() < 0)
             ArrayUtils.reverse(xArray);
-        if (gridData.getYDelt() < 0)
+        if (gridData.getYDelta() < 0)
             ArrayUtils.reverse(yArray);
-        Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, xArray, yArray, gridData.missingValue, S1);
+        Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
+                cValues, xArray, yArray, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
 
         if (ContourLines.isEmpty()) {
@@ -3431,22 +3431,22 @@ public class GraphicFactory {
         maxData = maxmin[0];
         minData = maxmin[1];
 
-        int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
-        double[] xArray = gridData.xArray;
-        double[] yArray = gridData.yArray;
-        if (gridData.getXDelt() < 0)
+        int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
+        double[] xArray = gridData.getXArray();
+        double[] yArray = gridData.getYArray();
+        if (gridData.getXDelta() < 0)
             ArrayUtils.reverse(xArray);
-        if (gridData.getYDelt() < 0)
+        if (gridData.getYDelta() < 0)
             ArrayUtils.reverse(yArray);
-        Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, xArray, yArray, gridData.missingValue, S1);
+        Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
+                cValues, xArray, yArray, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
         List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
         if (isSmooth) {
             contourLines = Contour.smoothLines(contourLines);
         }
-        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
+        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.getData(), contourLines, borders, cValues);
 
         double v;
         ColorBreak cbb = ls.findLegendBreak(0);
@@ -3692,22 +3692,22 @@ public class GraphicFactory {
         maxData = maxmin[0];
         minData = maxmin[1];
 
-        int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
-        double[] xArray = gridData.xArray;
-        double[] yArray = gridData.yArray;
-        if (gridData.getXDelt() < 0)
+        int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
+        double[] xArray = gridData.getXArray();
+        double[] yArray = gridData.getYArray();
+        if (gridData.getXDelta() < 0)
             ArrayUtils.reverse(xArray);
-        if (gridData.getYDelt() < 0)
+        if (gridData.getYDelta() < 0)
             ArrayUtils.reverse(yArray);
-        Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, xArray, yArray, gridData.missingValue, S1);
+        Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
+                cValues, xArray, yArray, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
         List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
         if (isSmooth) {
             contourLines = Contour.smoothLines(contourLines);
         }
-        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
+        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.getData(), contourLines, borders, cValues);
 
         double v;
         ColorBreak cbb;
@@ -3854,22 +3854,22 @@ public class GraphicFactory {
         maxData = maxmin[0];
         minData = maxmin[1];
 
-        int[][] S1 = new int[gridData.data.length][gridData.data[0].length];
-        double[] xArray = gridData.xArray;
-        double[] yArray = gridData.yArray;
-        if (gridData.getXDelt() < 0)
+        int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
+        double[] xArray = gridData.getXArray();
+        double[] yArray = gridData.getYArray();
+        if (gridData.getXDelta() < 0)
             ArrayUtils.reverse(xArray);
-        if (gridData.getYDelt() < 0)
+        if (gridData.getYDelta() < 0)
             ArrayUtils.reverse(yArray);
-        Object[] cbs = ContourDraw.tracingContourLines(gridData.data,
-                cValues, xArray, yArray, gridData.missingValue, S1);
+        Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
+                cValues, xArray, yArray, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
         List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
 
         if (isSmooth) {
             contourLines = Contour.smoothLines(contourLines);
         }
-        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.data, contourLines, borders, cValues);
+        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(gridData.getData(), contourLines, borders, cValues);
 
         double v;
         ColorBreak cbb;

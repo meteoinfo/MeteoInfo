@@ -77,7 +77,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
     private MeteoDataInfo _meteoDataInfo = new MeteoDataInfo();
     private MeteoUVSet meteoUVSet = new MeteoUVSet();
     DrawType2D _2DDrawType;
-    private GridData _gridData = new GridData();
+    private GridData _gridData;
     private StationData _stationData = new StationData();
     boolean _useSameLegendScheme = false;
     boolean _useSameGridInterSet = false;
@@ -1049,7 +1049,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
             viewGridData();
         } else if (_meteoDataInfo.isStationData()) {
             viewStationData();
-            if (_gridData.xArray != null && _gridData.yArray != null) {
+            if (_gridData.getXArray() != null && _gridData.getYArray() != null) {
                 if (_gridData.getXNum() > 0 && _gridData.getYNum() > 0) {
                     viewGridData();
                 }
@@ -1062,11 +1062,11 @@ public class FrmMeteoData extends javax.swing.JDialog {
             return;
         }
 
-        if (_gridData.data == null) {
+        if (_gridData.getData() == null) {
             return;
         }
 
-        if (_gridData.data.length == 0) {
+        if (_gridData.getYNum() == 0) {
             return;
         }
 

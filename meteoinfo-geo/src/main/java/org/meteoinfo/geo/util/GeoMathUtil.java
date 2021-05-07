@@ -29,22 +29,24 @@ public class GeoMathUtil {
         int yNum = gridData.getYNum();
 
         GridData cGrid = new GridData(gridData);
+        double[] xArray = gridData.getXArray();
+        double[] yArray = gridData.getYArray();
         for (int i = 0; i < yNum; i++) {
-            if (gridData.yArray[i] >= aPGS.getExtent().minY && gridData.yArray[i] <= aPGS.getExtent().maxY) {
+            if (yArray[i] >= aPGS.getExtent().minY && yArray[i] <= aPGS.getExtent().maxY) {
                 for (int j = 0; j < xNum; j++) {
-                    if (gridData.xArray[j] >= aPGS.getExtent().minX && gridData.xArray[j] <= aPGS.getExtent().maxX) {
-                        if (GeoComputation.pointInPolygon(aPGS, new PointD(gridData.xArray[j], gridData.yArray[i]))) {
-                            cGrid.data[i][j] = gridData.data[i][j];
+                    if (xArray[j] >= aPGS.getExtent().minX && xArray[j] <= aPGS.getExtent().maxX) {
+                        if (GeoComputation.pointInPolygon(aPGS, new PointD(xArray[j], yArray[i]))) {
+                            cGrid.setValue(i, j, gridData.getDoubleValue(i, j));
                         } else {
-                            cGrid.data[i][j] = gridData.missingValue;
+                            cGrid.setValue(i, j, gridData.getDoubleMissingValue());
                         }
                     } else {
-                        cGrid.data[i][j] = gridData.missingValue;
+                        cGrid.setValue(i, j, gridData.getDoubleMissingValue());
                     }
                 }
             } else {
                 for (int j = 0; j < xNum; j++) {
-                    cGrid.data[i][j] = gridData.missingValue;
+                    cGrid.setValue(i, j, gridData.getDoubleMissingValue());
                 }
             }
         }
@@ -64,12 +66,14 @@ public class GeoMathUtil {
         int yNum = gridData.getYNum();
 
         GridData cGrid = new GridData(gridData);
+        double[] xArray = gridData.getXArray();
+        double[] yArray = gridData.getYArray();
         for (int i = 0; i < yNum; i++) {
             for (int j = 0; j < xNum; j++) {
-                if (GeoComputation.pointInPolygons(polygons, new PointD(gridData.xArray[j], gridData.yArray[i]))) {
-                    cGrid.data[i][j] = gridData.data[i][j];
+                if (GeoComputation.pointInPolygons(polygons, new PointD(xArray[j], yArray[i]))) {
+                    cGrid.setValue(i, j, gridData.getDoubleValue(i, j));
                 } else {
-                    cGrid.data[i][j] = gridData.missingValue;
+                    cGrid.setValue(i, j, gridData.getDoubleMissingValue());
                 }
             }
         }
@@ -92,22 +96,24 @@ public class GeoMathUtil {
         int xNum = gridData.getXNum();
         int yNum = gridData.getYNum();
         GridData cGrid = new GridData(gridData);
+        double[] xArray = gridData.getXArray();
+        double[] yArray = gridData.getYArray();
         for (int i = 0; i < yNum; i++) {
-            if (gridData.yArray[i] >= maskLayer.getExtent().minY && gridData.yArray[i] <= maskLayer.getExtent().maxY) {
+            if (yArray[i] >= maskLayer.getExtent().minY && yArray[i] <= maskLayer.getExtent().maxY) {
                 for (int j = 0; j < xNum; j++) {
-                    if (gridData.xArray[j] >= maskLayer.getExtent().minX && gridData.xArray[j] <= maskLayer.getExtent().maxX) {
-                        if (GeoComputation.pointInPolygonLayer(maskLayer, new PointD(gridData.xArray[j], gridData.yArray[i]), false)) {
-                            cGrid.data[i][j] = gridData.data[i][j];
+                    if (xArray[j] >= maskLayer.getExtent().minX && xArray[j] <= maskLayer.getExtent().maxX) {
+                        if (GeoComputation.pointInPolygonLayer(maskLayer, new PointD(xArray[j], yArray[i]), false)) {
+                            cGrid.setValue(i, j, gridData.getDoubleValue(i, j));
                         } else {
-                            cGrid.data[i][j] = gridData.missingValue;
+                            cGrid.setValue(i, j, gridData.getDoubleMissingValue());
                         }
                     } else {
-                        cGrid.data[i][j] = gridData.missingValue;
+                        cGrid.setValue(i, j, gridData.getDoubleMissingValue());
                     }
                 }
             } else {
                 for (int j = 0; j < xNum; j++) {
-                    cGrid.data[i][j] = gridData.missingValue;
+                    cGrid.setValue(i, j, gridData.getDoubleMissingValue());
                 }
             }
         }
@@ -260,19 +266,13 @@ public class GeoMathUtil {
                  stationData.filterData_Radius(0, interSet.getGridDataSetting().dataExtent);
                  double[][] gData = InterpUtil.barnes(stationData.getX(), stationData.getY(), stationData.getStData(),
                          X, Y, interSet.getRadiusList(), 1., 1.);
-                 aGridData = new GridData();
-                 aGridData.xArray = X;
-                 aGridData.yArray = Y;
-                 aGridData.data = gData;
+                 aGridData = new GridData(gData, X, Y);
                  break;
              case KRIGING:
                  stationData.filterData_Radius(0, interSet.getGridDataSetting().dataExtent);
                  gData = InterpUtil.kriging(stationData.getX(), stationData.getY(), stationData.getStData(),
                          X, Y, interSet.getBeta());
-                 aGridData = new GridData();
-                 aGridData.xArray = X;
-                 aGridData.yArray = Y;
-                 aGridData.data = gData;
+                 aGridData = new GridData(gData, X, Y);
                  break;
              case ASSIGN_POINT_GRID:
                  stationData.filterData_Radius(0, interSet.getGridDataSetting().dataExtent);
@@ -299,13 +299,7 @@ public class GeoMathUtil {
          double[][] dataArray;
          dataArray = wcontour.Interpolate.interpolation_IDW_Radius(S, X, Y, minPNum, radius, missingValue);
 
-         GridData gridData = new GridData();
-         gridData.data = dataArray;
-         gridData.missingValue = missingValue;
-         gridData.xArray = X;
-         gridData.yArray = Y;
-
-         return gridData;
+         return new GridData(dataArray, X, Y, missingValue);
      }
 
      /**
@@ -346,13 +340,7 @@ public class GeoMathUtil {
      public static GridData interpolate_Neighbor(double[][] S, double[] X, double[] Y, int pNum, double missingValue) {
          double[][] dataArray = wcontour.Interpolate.interpolation_IDW_Neighbor(S, X, Y, pNum, missingValue);
 
-         GridData gridData = new GridData();
-         gridData.data = dataArray;
-         gridData.missingValue = missingValue;
-         gridData.xArray = X;
-         gridData.yArray = Y;
-
-         return gridData;
+         return new GridData(dataArray, X, Y, missingValue);
      }
 
      /**
@@ -392,13 +380,7 @@ public class GeoMathUtil {
              List<Double> radList, double missingValue) {
          double[][] dataArray = wcontour.Interpolate.cressman(S, X, Y, missingValue, radList);
 
-         GridData gridData = new GridData();
-         gridData.data = dataArray;
-         gridData.missingValue = missingValue;
-         gridData.xArray = X;
-         gridData.yArray = Y;
-
-         return gridData;
+         return new GridData(dataArray, X, Y, missingValue);
      }
 
      /**
@@ -441,13 +423,7 @@ public class GeoMathUtil {
      public static GridData interpolate_Assign(double[][] S, double[] X, double[] Y, double missingValue) {
          double[][] dataArray = wcontour.Interpolate.assignPointToGrid(S, X, Y, missingValue);
 
-         GridData gridData = new GridData();
-         gridData.data = dataArray;
-         gridData.missingValue = missingValue;
-         gridData.xArray = X;
-         gridData.yArray = Y;
-
-         return gridData;
+         return new GridData(dataArray, X, Y, missingValue);
      }
 
      /**

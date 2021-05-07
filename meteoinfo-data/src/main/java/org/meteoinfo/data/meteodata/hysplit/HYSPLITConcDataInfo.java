@@ -799,13 +799,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
                 }
             }
 
-            GridData gridData = new GridData();
-            gridData.data = newDataArray;
-            gridData.xArray = newX;
-            gridData.yArray = this.getYDimension().getValues();
-            gridData.missingValue = this.getMissingValue();
-
-            return gridData;
+            return new GridData(newDataArray, newX, this.getYDimension().getValues(), this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(ASCIIGridDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;

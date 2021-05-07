@@ -883,11 +883,11 @@ public class FrmSectionPlot extends javax.swing.JFrame {
             return;
         }
 
-        if (_gridData.data == null) {
+        if (_gridData.getData() == null) {
             return;
         }
 
-        if (_gridData.data.length == 0) {
+        if (_gridData.getData().length == 0) {
             return;
         }
         
@@ -1966,12 +1966,12 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         setXYCoords(_gridData);
 
         if (this.jCheckBox_YReverse.isVisible() && this.jCheckBox_YReverse.isSelected()) {
-            double[][] aGD = (double[][]) _gridData.data.clone();
+            double[][] aGD = (double[][]) _gridData.getData().clone();
             int yn = _gridData.getYNum();
             int xn = _gridData.getXNum();
             for (int i = 0; i < yn; i++) {
                 for (int j = 0; j < xn; j++) {
-                    _gridData.data[i][j] = aGD[yn - i - 1][j];
+                    _gridData.setValue(i, j, aGD[yn - i - 1][j]);
                 }
             }
         }
@@ -2033,50 +2033,41 @@ public class FrmSectionPlot extends javax.swing.JFrame {
     }
 
     private void setXYCoords(GridData aGridData) {
-        if (aGridData == null) {
-            aGridData = new GridData();
-        }
         int i;
         int xNum = 0, yNum = 0;
         switch (_plotDimension) {
             case Time_Lon:
                 xNum = this.jComboBox_Lon1.getItemCount();
                 yNum = this.jComboBox_Time1.getItemCount();
-                aGridData.xArray = new double[xNum];
-                aGridData.yArray = new double[yNum];
                 break;
             case Time_Lat:
                 xNum = this.jComboBox_Lat1.getItemCount();
                 yNum = this.jComboBox_Time1.getItemCount();
-                aGridData.xArray = new double[xNum];
-                aGridData.yArray = new double[yNum];
                 break;
             case Level_Lat:
                 xNum = this.jComboBox_Lat1.getItemCount();
                 yNum = this.jComboBox_Level1.getItemCount();
-                aGridData.xArray = new double[xNum];
-                aGridData.yArray = new double[yNum];
                 break;
             case Level_Lon:
                 xNum = this.jComboBox_Lon1.getItemCount();
                 yNum = this.jComboBox_Level1.getItemCount();
-                aGridData.xArray = new double[xNum];
-                aGridData.yArray = new double[yNum];
                 break;
             case Level_Time:
                 xNum = this.jComboBox_Time1.getItemCount();
                 yNum = this.jComboBox_Level1.getItemCount();
-                aGridData.xArray = new double[xNum];
-                aGridData.yArray = new double[yNum];
                 break;
         }
 
+        double[] xArray = new double[xNum];
+        double[] yArray = new double[yNum];
         for (i = 0; i < xNum; i++) {
-            aGridData.xArray[i] = i;
+            xArray[i] = i;
         }
         for (i = 0; i < yNum; i++) {
-            aGridData.yArray[i] = i;
+            yArray[i] = i;
         }
+        aGridData.setXArray(xArray);
+        aGridData.setYArray(yArray);
     }
 
     private void zoomToExtent(Extent aExtent) {

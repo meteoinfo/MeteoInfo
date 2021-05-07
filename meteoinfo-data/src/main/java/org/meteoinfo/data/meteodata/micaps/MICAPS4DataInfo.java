@@ -428,13 +428,8 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
                 }
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = newGridData;
-            aGridData.xArray = this.getXDimension().getValues();
-            aGridData.yArray = this.getYDimension().getValues();
-            aGridData.missingValue = this.getMissingValue();
-
-            return aGridData;
+            return new GridData(newGridData, this.getXDimension().getValues(),
+                    this.getYDimension().getValues(), this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(MICAPS4DataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;

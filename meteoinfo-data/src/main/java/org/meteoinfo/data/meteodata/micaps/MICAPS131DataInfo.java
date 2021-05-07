@@ -383,7 +383,6 @@ public class MICAPS131DataInfo extends DataInfo implements IGridDataInfo {
             br.read(bytes);
             br.close();
 
-            GridData gridData = new GridData();
             double[][] gData = new double[yNum][xNum];
             if (dataByteNum == 1) {
                 for (int i = 0; i < yNum; i++) {
@@ -400,9 +399,7 @@ public class MICAPS131DataInfo extends DataInfo implements IGridDataInfo {
                     }
                 }
             }
-            gridData.data = gData;
-            gridData.xArray = this.getXDimension().getValues();
-            gridData.yArray = this.getYDimension().getValues();
+            GridData gridData = new GridData(gData, this.getXDimension().getValues(), this.getYDimension().getValues());
 
             return gridData;
         } catch (IOException e) {

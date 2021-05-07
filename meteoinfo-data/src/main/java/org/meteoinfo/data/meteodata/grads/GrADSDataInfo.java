@@ -1511,24 +1511,23 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
      */
     @Override
     public GridData getGridData_LonLat(int timeIdx, String varName, int levelIdx) {
-        GridData gridData = new GridData();
         try {
             int varIdx = this.getVariableIndex(varName);
-            gridData.data = readGrADSData_Grid_LonLat(timeIdx, varIdx, levelIdx);
+            double[][] data = readGrADSData_Grid_LonLat(timeIdx, varIdx, levelIdx);
+            GridData gridData = new GridData(data, X, Y, this.missingValue);
+            if (OPTIONS.yrev) {
+                gridData.yReverse();
+            }
+
+            return gridData;
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        gridData.xArray = X;
-        gridData.yArray = Y;
-        gridData.missingValue = this.getMissingValue();
 
-        if (OPTIONS.yrev) {
-            gridData.yReverse();
-        }
-
-        return gridData;
+        return null;
     }
 
     /**
@@ -1679,16 +1678,12 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                 br.close();
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.missingValue = this.getMissingValue();
-            aGridData.xArray = Y;
-            aGridData.yArray = new double[this.getTimeNum()];
+            double[] yArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                aGridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
-            return aGridData;
+            return new GridData(gridData, Y, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1773,16 +1768,12 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                 br.close();
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.missingValue = this.getMissingValue();
-            aGridData.xArray = X;
-            aGridData.yArray = new double[this.getTimeNum()];
+            double[] yArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                aGridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
-            return aGridData;
+            return new GridData(gridData, X, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1840,17 +1831,12 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             }
             br.close();
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.missingValue = this.getMissingValue();
-            aGridData.xArray = Y;
             double[] levels = new double[VARDEF.getVars().get(varIdx).getLevelNum()];
             for (i = 0; i < levels.length; i++) {
                 levels[i] = ZDEF.ZLevels[i];
             }
-            aGridData.yArray = levels;
 
-            return aGridData;
+            return new GridData(gridData, Y, levels, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1908,17 +1894,12 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             }
             br.close();
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.missingValue = this.getMissingValue();
-            aGridData.xArray = X;
             double[] levels = new double[VARDEF.getVars().get(varIdx).getLevelNum()];
             for (i = 0; i < levels.length; i++) {
                 levels[i] = ZDEF.ZLevels[i];
             }
-            aGridData.yArray = levels;
 
-            return aGridData;
+            return new GridData(gridData, X, levels, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2006,20 +1987,16 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                 br.close();
             }
 
-            GridData aGridData = new GridData();
-            aGridData.data = gridData;
-            aGridData.missingValue = this.getMissingValue();
-            aGridData.xArray = new double[this.getTimeNum()];
+            double[] xArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                aGridData.xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
             double[] levels = new double[VARDEF.getVars().get(varIdx).getLevelNum()];
             for (i = 0; i < levels.length; i++) {
                 levels[i] = ZDEF.ZLevels[i];
             }
-            aGridData.yArray = levels;
 
-            return aGridData;
+            return new GridData(gridData, xArray, levels, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2035,12 +2012,10 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             byte[] aBytes = new byte[4];
             float aValue;
 
-            GridData aGridData = new GridData();
-            aGridData.missingValue = this.getMissingValue();
-            aGridData.xArray = new double[TDEF.getTimeNum()];
-            aGridData.yArray = new double[1];
-            aGridData.yArray[0] = 0;
-            aGridData.data = new double[1][TDEF.getTimeNum()];
+            double[] xArray = new double[TDEF.getTimeNum()];
+            double[] yArray = new double[1];
+            yArray[0] = 0;
+            double[][] data = new double[1][TDEF.getTimeNum()];
 
             if (OPTIONS.template) {
                 for (t = 0; t < TDEF.getTimeNum(); t++) {
@@ -2071,8 +2046,8 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
                     br.read(aBytes);
                     aValue = DataConvert.bytes2Float(aBytes, _byteOrder);
-                    aGridData.xArray[t] = JDateUtil.toOADate(TDEF.times.get(t));
-                    aGridData.data[0][t] = aValue;
+                    xArray[t] = JDateUtil.toOADate(TDEF.times.get(t));
+                    data[0][t] = aValue;
 
                     br.close();
                 }
@@ -2101,14 +2076,14 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
                     br.read(aBytes);
                     aValue = DataConvert.bytes2Float(aBytes, _byteOrder);
-                    aGridData.xArray[t] = JDateUtil.toOADate(TDEF.times.get(t));
-                    aGridData.data[0][t] = aValue;
+                    xArray[t] = JDateUtil.toOADate(TDEF.times.get(t));
+                    data[0][t] = aValue;
                 }
 
                 br.close();
             }
 
-            return aGridData;
+            return new GridData(data, xArray, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2133,12 +2108,10 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             byte[] aBytes = new byte[4];
             float aValue;
 
-            GridData aGridData = new GridData();
-            aGridData.missingValue = this.getMissingValue();
-            aGridData.xArray = new double[ZDEF.ZNum];
-            aGridData.yArray = new double[1];
-            aGridData.yArray[0] = 0;
-            aGridData.data = new double[1][ZDEF.ZNum];
+            double[] xArray = new double[ZDEF.ZNum];
+            double[] yArray = new double[1];
+            yArray[0] = 0;
+            double[][] data = new double[1][ZDEF.ZNum];
 
             br.seek(FILEHEADER + tIdx * RecLenPerTime);
 
@@ -2161,13 +2134,13 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
                 br.read(aBytes);
                 aValue = DataConvert.bytes2Float(aBytes, _byteOrder);
-                aGridData.xArray[i] = ZDEF.ZLevels[i];
-                aGridData.data[0][i] = aValue;
+                xArray[i] = ZDEF.ZLevels[i];
+                data[0][i] = aValue;
             }
 
             br.close();
 
-            return aGridData;
+            return new GridData(data, xArray, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2191,12 +2164,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             byte[] aBytes = new byte[4];
             float aValue;
 
-            GridData aGridData = new GridData();
-            aGridData.missingValue = this.getMissingValue();
-            aGridData.xArray = X;
-            aGridData.yArray = new double[1];
-            aGridData.yArray[0] = 0;
-            aGridData.data = new double[1][X.length];
+            double[] yArray = new double[1];
+            yArray[0] = 0;
+            double[][] data = new double[1][X.length];
 
             br.seek(FILEHEADER + tIdx * RecLenPerTime);
             for (i = 0; i < varIdx; i++) {
@@ -2215,12 +2185,12 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             for (i = 0; i < XNum; i++) {
                 br.read(aBytes);
                 aValue = DataConvert.bytes2Float(aBytes, _byteOrder);
-                aGridData.data[0][i] = aValue;
+                data[0][i] = aValue;
             }
 
             br.close();
 
-            return aGridData;
+            return new GridData(data, X, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2244,12 +2214,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             byte[] aBytes = new byte[4];
             float aValue;
 
-            GridData aGridData = new GridData();
-            aGridData.missingValue = this.getMissingValue();
-            aGridData.xArray = Y;
-            aGridData.yArray = new double[1];
-            aGridData.yArray[0] = 0;
-            aGridData.data = new double[1][Y.length];
+            double[] yArray = new double[1];
+            yArray[0] = 0;
+            double[][] data = new double[1][Y.length];
 
             br.seek(FILEHEADER + tIdx * RecLenPerTime);
             for (i = 0; i < varIdx; i++) {
@@ -2269,12 +2236,12 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                 br.seek(aPosition + i * XNum * 4 + lonIdx * 4);
                 br.read(aBytes);
                 aValue = DataConvert.bytes2Float(aBytes, _byteOrder);
-                aGridData.data[0][i] = aValue;
+                data[0][i] = aValue;
             }
 
             br.close();
 
-            return aGridData;
+            return new GridData(data, Y, yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2291,9 +2258,6 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
      */
     public GridData getGridData_Station(int vIdx, String stID) {
         try {
-            GridData gData = new GridData();
-            gData.missingValue = this.getMissingValue();
-
             RandomAccessFile br = new RandomAccessFile(DSET, "r");
             int i, stNum, tNum;
             STDataHead aSTDH = new STDataHead();
@@ -2307,17 +2271,17 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             }
             byte[] aBytes;
 
-            gData.xArray = new double[this.getTimeNum()];
+            double[] xArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                gData.xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
-            gData.yArray = new double[aVar.getLevelNum()];
+            double[] yArray = new double[aVar.getLevelNum()];
             for (i = 0; i < aVar.getLevelNum(); i++) {
-                gData.yArray[i] = i + 1;
+                yArray[i] = i + 1;
             }
 
-            gData.data = new double[aVar.getLevelNum()][this.getTimeNum()];
+            double[][] data = new double[aVar.getLevelNum()][this.getTimeNum()];
 
             stNum = 0;
             tNum = 0;
@@ -2365,7 +2329,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             for (i = 0; i < aSTDH.NLev - aSTDH.Flag; i++) {
                                 br.skipBytes(4 + vIdx * 4);
                                 aBytes = getByteArray(br, 4);
-                                gData.data[i][tNum] = DataConvert.bytes2Float(aBytes, _byteOrder);
+                                data[i][tNum] = DataConvert.bytes2Float(aBytes, _byteOrder);
                                 br.skipBytes((uVarNum - vIdx - 1) * 4);
                             }
                         } else {
@@ -2387,7 +2351,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
             br.close();
 
-            return gData;
+            return new GridData(data, xArray, yArray, this.missingValue);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -2760,7 +2724,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
      */
     public void writeGridData(GridData gridData) {
         try {
-            writeGrADSData_Grid(_bw, gridData.data);
+            writeGrADSData_Grid(_bw, gridData.getData());
         } catch (IOException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }

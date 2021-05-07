@@ -710,15 +710,15 @@ public class GeoTiff {
             }
 
             //gData.data = values;
-            gData.xArray = X;
-            gData.yArray = Y;
+            gData.setXArray(X);
+            gData.setYArray(Y);
 
             //Projection
             String projStr = getProjection();
             if (projStr != null) {
-                gData.projInfo = ProjectionInfo.factory(projStr);
+                gData.setProjInfo(ProjectionInfo.factory(projStr));
             } else {
-                gData.projInfo = KnownCoordinateSystems.geographic.world.WGS1984;
+                gData.setProjInfo(KnownCoordinateSystems.geographic.world.WGS1984);
             }
 
             return gData;

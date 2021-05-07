@@ -294,13 +294,8 @@ import org.meteoinfo.data.meteodata.Attribute;
 
              sr.close();
 
-             GridData aGridData = new GridData();
-             aGridData.data = theData;
-             aGridData.xArray = this.getXDimension().getValues();
-             aGridData.yArray = this.getYDimension().getValues();
-             aGridData.missingValue = this.getMissingValue();
-
-             return aGridData;
+             return new GridData(theData, this.getXDimension().getValues(),
+                     this.getYDimension().getValues(), this.missingValue);
          } catch (IOException ex) {
              Logger.getLogger(SurferGridDataInfo.class.getName()).log(Level.SEVERE, null, ex);
              return null;

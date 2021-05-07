@@ -41,38 +41,13 @@
           <VisibleScale EnableMaxVisScale="false" EnableMinVisScale="false" MaxVisScale="0.0" MinVisScale="0.0"/>
         </Layer>
       </GroupLayer>
-      <Graphics>
-        <Graphic>
-          <Shape Selected="false" ShapeType="POINT" Visible="true">
-            <Points>
-              <Point X="106.39914497430632" Y="55.56145018191728"/>
-            </Points>
-          </Shape>
-          <Legend Angle="0.0" Color="0xff0033cc" FontBold="false" FontName="Arial" FontSize="20" LegendType="LABEL_BREAK" Text="Text&#10;Line2&#10;Line3" YShift="33.5"/>
-        </Graphic>
-        <Graphic>
-          <Shape Selected="true" ShapeType="POINT" Visible="true">
-            <Points>
-              <Point X="77.38859672823503" Y="55.89738587600925"/>
-            </Points>
-          </Shape>
-          <Legend Angle="0.0" Color="0xffff0000" FontBold="false" FontName="Verdana" FontSize="20" LegendType="LABEL_BREAK" Text="Text" YShift="10.5"/>
-        </Graphic>
-        <Graphic>
-          <Shape Selected="false" ShapeType="POINT" Visible="true">
-            <Points>
-              <Point X="94.77296447753906" Y="49.94377517700195"/>
-            </Points>
-          </Shape>
-          <Legend Angle="0.0" CharIndex="0" Color="0xff000000" DrawFill="true" DrawOutline="true" FontName="Arial" ImagePath="" LegendType="POINT_BREAK" MarkerType="SIMPLE" OutlineColor="0xff000000" Size="10.0" Style="CIRCLE"/>
-        </Graphic>
-      </Graphics>
+      <Graphics/>
     </MapFrame>
   </MapFrames>
   <Layout BackColor="0xffffffff" ForeColor="0xff000000" Landscape="true" PaperSizeHeight="900" PaperSizeName="Custom" PaperSizeWidth="500" SmoothingMode="false">
     <LayoutElements>
       <LayoutMap DrawBackColor="false" DrawDegreeSymbol="false" DrawGridLabel="true" DrawGridLine="false" DrawNeatLine="true" ElementType="LAYOUT_MAP" GridFontName="Arial" GridFontSize="12" GridLabelPosition="LEFT_BOTTOM" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH" GridXDelt="10.0" GridXOrigin="-180.0" GridYDelt="10.0" GridYOrigin="-90.0" Height="364" Left="48" NeatLineColor="0xff000000" NeatLineSize="1.0" Top="30" Width="776"/>
-      <LayoutGraphic ElementType="LAYOUT_GRAPHIC" Height="67" IsTitle="false" Left="754" Top="136" Width="48">
+      <LayoutGraphic ElementType="LAYOUT_GRAPHIC" Height="67" IsTitle="false" Left="730" Top="135" Width="48">
         <Graphic>
           <Shape Selected="false" ShapeType="POINT" Visible="true">
             <Points>

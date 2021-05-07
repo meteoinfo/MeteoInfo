@@ -74,10 +74,10 @@ public class LegendManage {
         //Generate lengendscheme  
         if (aLT == LegendType.UNIQUE_VALUE) {
             aLS = createUniqValueLegendScheme(CValues, colors,
-                    aST, MinData, MaxData, hasUndef, aGridData.missingValue);
+                    aST, MinData, MaxData, hasUndef, aGridData.getDoubleMissingValue());
         } else {
             aLS = createGraduatedLegendScheme(CValues, colors,
-                    aST, MinData, MaxData, hasUndef, aGridData.missingValue);
+                    aST, MinData, MaxData, hasUndef, aGridData.getDoubleMissingValue());
         }
 
         return aLS;
@@ -1311,7 +1311,7 @@ public class LegendManage {
         boolean hasUndef = gdata.getMaxMinValue(maxmin);
         double min = maxmin[1];
         double max = maxmin[0];
-        return createLegendScheme(min, max, interval, legendType, shapeType, hasUndef, gdata.missingValue);
+        return createLegendScheme(min, max, interval, legendType, shapeType, hasUndef, gdata.getDoubleMissingValue());
     }
 
     /**
@@ -1329,7 +1329,7 @@ public class LegendManage {
         boolean hasUndef = gdata.getMaxMinValue(maxmin);
         double min = maxmin[1];
         double max = maxmin[0];
-        return createLegendScheme(min, max, n, legendType, shapeType, hasUndef, gdata.missingValue);
+        return createLegendScheme(min, max, n, legendType, shapeType, hasUndef, gdata.getDoubleMissingValue());
     }
 
     /**
@@ -1348,7 +1348,7 @@ public class LegendManage {
         boolean hasUndef = gdata.getMaxMinValue(maxmin);
         double min = maxmin[1];
         double max = maxmin[0];
-        return createLegendScheme(min, max, n, ct, legendType, shapeType, hasUndef, gdata.missingValue);
+        return createLegendScheme(min, max, n, ct, legendType, shapeType, hasUndef, gdata.getDoubleMissingValue());
     }
 
     /**

@@ -556,8 +556,8 @@ public class FrmOneDim extends javax.swing.JFrame {
                 double[] xvs = new double[itemCount];
                 double[] yvs = new double[itemCount];
                 for (int i = 0; i < itemCount; i++) {
-                    xvs[i] = gData.xArray[i];
-                    yvs[i] = gData.data[0][i];
+                    xvs[i] = gData.getXArray()[i];
+                    yvs[i] = gData.getData()[0][i];
                 }
                 if (this.isSamePlotDim && this._chartPanel.getChart() != null) {
                     XY1DPlot plot = (XY1DPlot) this._chartPanel.getChart().getPlot();
@@ -596,7 +596,7 @@ public class FrmOneDim extends javax.swing.JFrame {
                 } else {
                     XYListDataset dataset = new XYListDataset();
                     dataset.addSeries(seriesKey, xvs, yvs);
-                    dataset.setMissingValue(gData.missingValue);
+                    dataset.setMissingValue(gData.getDoubleMissingValue());
 
                     String title = varName + "_" + this.jComboBox_PlotDim.getSelectedItem().toString() + " Graph";
                     PlotOrientation po = PlotOrientation.VERTICAL;
@@ -679,12 +679,12 @@ public class FrmOneDim extends javax.swing.JFrame {
         double[] xvs = new double[itemCount];
         double[] yvs = new double[itemCount];
         for (int i = 0; i < itemCount; i++) {
-            xvs[i] = gData.xArray[i];
-            yvs[i] = gData.data[0][i];
+            xvs[i] = gData.getXArray()[i];
+            yvs[i] = gData.getDoubleValue(0, i);
         }
         XYListDataset dataset = new XYListDataset();
         dataset.addSeries(seriesKey, xvs, yvs);
-        dataset.setMissingValue(gData.missingValue);
+        dataset.setMissingValue(gData.getDoubleMissingValue());
 
         String title = varName + "_" + this.jComboBox_PlotDim.getSelectedItem().toString() + " Graph";
         PlotOrientation po = PlotOrientation.VERTICAL;

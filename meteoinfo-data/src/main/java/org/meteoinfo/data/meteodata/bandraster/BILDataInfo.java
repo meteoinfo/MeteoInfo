@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.locationtech.proj4j.datum.Grid;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
@@ -471,11 +472,9 @@ import org.meteoinfo.data.meteodata.Attribute;
      private GridData getGridData_BIL(int varIdx) {
          try {
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
-             GridData gData = new GridData();
-             gData.xArray = this.getXDimension().getValues();
-             gData.yArray = this.getYDimension().getValues();
-             gData.missingValue = this.getMissingValue();
-             gData.data = new double[_nrows][_ncols];
+             double[] xArray = this.getXDimension().getValues();
+             double[] yArray = this.getYDimension().getValues();
+             double[][] data = new double[_nrows][_ncols];
 
              br.seek(this._skipbytes);
              int i, j;
@@ -496,12 +495,12 @@ import org.meteoinfo.data.meteodata.Attribute;
                      System.arraycopy(byteData, start, bytes, 0, nbytes);
                      start += nbytes;
                      if (this._pixeltype.toLowerCase().equals("float")) {
-                         gData.data[_nrows - 1 - i][j] = DataConvert.bytes2Float(bytes, _byteOrder);
+                         data[_nrows - 1 - i][j] = DataConvert.bytes2Float(bytes, _byteOrder);
                      } else {
                          if (nbytes >= 2) {
-                             gData.data[_nrows - 1 - i][j] = DataConvert.bytes2Int(bytes, _byteOrder);
+                             data[_nrows - 1 - i][j] = DataConvert.bytes2Int(bytes, _byteOrder);
                          } else {
-                             gData.data[_nrows - 1 - i][j] = DataConvert.byte2Int(bytes[0]);
+                             data[_nrows - 1 - i][j] = DataConvert.byte2Int(bytes[0]);
                          }
                      }
                  }
@@ -509,7 +508,7 @@ import org.meteoinfo.data.meteodata.Attribute;
              }
 
              br.close();
-             return gData;
+             return new GridData(data, xArray, yArray, this.missingValue, this.projInfo);
          } catch (FileNotFoundException ex) {
              Logger.getLogger(BILDataInfo.class.getName()).log(Level.SEVERE, null, ex);
          } catch (IOException ex) {
@@ -522,11 +521,9 @@ import org.meteoinfo.data.meteodata.Attribute;
      private GridData getGridData_BIL_Int(int varIdx) {
          try {
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
-             GridData.Integer gData = new GridData.Integer(_nrows, _ncols);
-             gData.xArray = this.getXDimension().getValues();
-             gData.yArray = this.getYDimension().getValues();
-             //gData.missingValue = this.getMissingValue();
-             //gData.data = new double[_nrows][_ncols];
+             double[] xArray = this.getXDimension().getValues();
+             double[] yArray = this.getYDimension().getValues();
+             GridData.Integer gData = new GridData.Integer(xArray, yArray);
 
              br.seek(this._skipbytes);
              int i, j;
@@ -569,11 +566,8 @@ import org.meteoinfo.data.meteodata.Attribute;
      private GridData getGridData_BIL_Byte(int varIdx) {
          try {
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
-             GridData.Byte gData = new GridData.Byte(_nrows, _ncols);
-             gData.xArray = this.getXDimension().getValues();
-             gData.yArray = this.getYDimension().getValues();
-             //gData.missingValue = this.getMissingValue();
-             //gData.data = new double[_nrows][_ncols];
+             GridData.Byte gData = new GridData.Byte(this.getXDimension().getValues(),
+                     this.getYDimension().getValues());
 
              br.seek(this._skipbytes);
              int i, j;
@@ -605,11 +599,9 @@ import org.meteoinfo.data.meteodata.Attribute;
      private GridData getGridData_BIP(int varIdx) {
          try {
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
-             GridData gData = new GridData();
-             gData.xArray = this.getXDimension().getValues();
-             gData.yArray = this.getYDimension().getValues();
-             gData.missingValue = this.getMissingValue();
-             gData.data = new double[_nrows][_ncols];
+             double[] xArray = this.getXDimension().getValues();
+             double[] yArray = this.getYDimension().getValues();
+             double[][] data = new double[_nrows][_ncols];
 
              br.seek(this._skipbytes);
              int i, j;
@@ -625,12 +617,12 @@ import org.meteoinfo.data.meteodata.Attribute;
                      bytes = new byte[nbytes];
                      br.read(bytes);
                      if (this._pixeltype.toLowerCase().equals("float")) {
-                         gData.data[_nrows - 1 - i][j] = DataConvert.bytes2Float(bytes, _byteOrder);
+                         data[_nrows - 1 - i][j] = DataConvert.bytes2Float(bytes, _byteOrder);
                      } else {
                          if (nbytes >= 2) {
-                             gData.data[_nrows - 1 - i][j] = DataConvert.bytes2Int(bytes, _byteOrder);
+                             data[_nrows - 1 - i][j] = DataConvert.bytes2Int(bytes, _byteOrder);
                          } else {
-                             gData.data[_nrows - 1 - i][j] = DataConvert.byte2Int(bytes[0]);
+                             data[_nrows - 1 - i][j] = DataConvert.byte2Int(bytes[0]);
                          }
                      }
                  }
@@ -640,7 +632,7 @@ import org.meteoinfo.data.meteodata.Attribute;
              }
 
              br.close();
-             return gData;
+             return new GridData(data, xArray, yArray, this.missingValue, this.projInfo);
          } catch (FileNotFoundException ex) {
              Logger.getLogger(BILDataInfo.class.getName()).log(Level.SEVERE, null, ex);
          } catch (IOException ex) {
@@ -653,11 +645,9 @@ import org.meteoinfo.data.meteodata.Attribute;
      private GridData getGridData_BSQ(int varIdx) {
          try {
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
-             GridData gData = new GridData();
-             gData.xArray = this.getXDimension().getValues();
-             gData.yArray = this.getYDimension().getValues();
-             gData.missingValue = this.getMissingValue();
-             gData.data = new double[_nrows][_ncols];
+             double[] xArray = this.getXDimension().getValues();
+             double[] yArray = this.getYDimension().getValues();
+             double[][] data = new double[_nrows][_ncols];
 
              br.seek(this._skipbytes);
              int i, j;
@@ -677,12 +667,12 @@ import org.meteoinfo.data.meteodata.Attribute;
                      System.arraycopy(byteData, start, bytes, 0, nbytes);
                      start += nbytes;
                      if (this._pixeltype.toLowerCase().equals("float")) {
-                         gData.data[_nrows - 1 - i][j] = DataConvert.bytes2Float(bytes, _byteOrder);
+                         data[_nrows - 1 - i][j] = DataConvert.bytes2Float(bytes, _byteOrder);
                      } else {
                          if (nbytes >= 2) {
-                             gData.data[_nrows - 1 - i][j] = DataConvert.bytes2Int(bytes, _byteOrder);
+                             data[_nrows - 1 - i][j] = DataConvert.bytes2Int(bytes, _byteOrder);
                          } else {
-                             gData.data[_nrows - 1 - i][j] = DataConvert.byte2Int(bytes[0]);
+                             data[_nrows - 1 - i][j] = DataConvert.byte2Int(bytes[0]);
                          }
                      }
                  }
@@ -690,7 +680,7 @@ import org.meteoinfo.data.meteodata.Attribute;
              }
 
              br.close();
-             return gData;
+             return new GridData(data, xArray, yArray, this.missingValue, this.projInfo);
          } catch (FileNotFoundException ex) {
              Logger.getLogger(BILDataInfo.class.getName()).log(Level.SEVERE, null, ex);
          } catch (IOException ex) {
@@ -703,11 +693,9 @@ import org.meteoinfo.data.meteodata.Attribute;
      private GridData getGridData_BSQ_Int(int varIdx) {
          try {
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
-             GridData.Integer gData = new GridData.Integer(_nrows, _ncols);
-             gData.xArray = this.getXDimension().getValues();
-             gData.yArray = this.getYDimension().getValues();
-             //gData.missingValue = this.getMissingValue();
-             //gData.data = new double[_nrows][_ncols];
+             double[] xArray = this.getXDimension().getValues();
+             double[] yArray = this.getYDimension().getValues();
+             GridData.Integer gData = new GridData.Integer(xArray, yArray);
 
              br.seek(this._skipbytes);
              int i, j;
@@ -751,11 +739,9 @@ import org.meteoinfo.data.meteodata.Attribute;
      private GridData getGridData_BSQ_Byte(int varIdx) {
          try {
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
-             GridData.Byte gData = new GridData.Byte(_nrows, _ncols);
-             gData.xArray = this.getXDimension().getValues();
-             gData.yArray = this.getYDimension().getValues();
-             //gData.missingValue = this.getMissingValue();
-             //gData.data = new double[_nrows][_ncols];
+             double[] xArray = this.getXDimension().getValues();
+             double[] yArray = this.getYDimension().getValues();
+             GridData.Byte gData = new GridData.Byte(xArray, yArray);
 
              br.seek(this._skipbytes);
              int i, j;

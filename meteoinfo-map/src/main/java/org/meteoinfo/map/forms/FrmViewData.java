@@ -63,7 +63,7 @@ public class FrmViewData extends javax.swing.JFrame {
 
         for (int i = 0; i < yNum; i++) {
             for (int j = 0; j < xNum; j++) {
-                tData[i][j] = String.format(dFormat, gData.data[i][j]);
+                tData[i][j] = String.format(dFormat, gData.getDoubleValue(i, j));
             }
         }
 
@@ -305,7 +305,7 @@ public class FrmViewData extends javax.swing.JFrame {
                     fileName = fileName + "." + extent;
                 }
 
-                ProjectionInfo projInfo = ((GridData) _data).projInfo;
+                ProjectionInfo projInfo = ((GridData) _data).getProjInfo();
                 if (projInfo.isLonLat()) {
                     try {
                         ((GridData) _data).toStation(inFile, fileName);

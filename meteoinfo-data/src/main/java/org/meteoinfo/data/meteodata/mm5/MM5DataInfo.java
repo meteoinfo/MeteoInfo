@@ -823,13 +823,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
                 }
             }
 
-            GridData gridData = new GridData();
-            gridData.data = theData;
-            gridData.missingValue = this.getMissingValue();
-            gridData.xArray = xdim.getValues();
-            gridData.yArray = ydim.getValues();
-
-            return gridData;
+            return new GridData(theData, xdim.getValues(), ydim.getValues(), this.missingValue);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MM5IMDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -867,13 +861,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
             }
         }
 
-        GridData gridData = new GridData();
-        gridData.data = theData;
-        gridData.missingValue = this.getMissingValue();
-        gridData.xArray = xdim.getValues();
-        gridData.yArray = ydim.getValues();
-
-        return gridData;
+        return new GridData(theData, xdim.getValues(), ydim.getValues(), this.missingValue);
     }
 
     @Override
@@ -912,16 +900,12 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
 
             br.close();
 
-            GridData gridData = new GridData();
-            gridData.data = theData;
-            gridData.missingValue = this.getMissingValue();
-            gridData.xArray = ydim.getValues();
-            gridData.yArray = new double[tNum];
+            double[] yArray = new double[tNum];
             for (i = 0; i < tNum; i++) {
-                gridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
-            return gridData;
+            return new GridData(theData, ydim.getValues(), yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(MM5DataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -968,16 +952,12 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
 
             br.close();
 
-            GridData gridData = new GridData();
-            gridData.data = theData;
-            gridData.missingValue = this.getMissingValue();
-            gridData.xArray = xdim.getValues();
-            gridData.yArray = new double[tNum];
+            double[] yArray = new double[tNum];
             for (i = 0; i < tNum; i++) {
-                gridData.yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
             }
 
-            return gridData;
+            return new GridData(theData, xdim.getValues(), yArray, this.missingValue);
         } catch (IOException ex) {
             Logger.getLogger(MM5DataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;

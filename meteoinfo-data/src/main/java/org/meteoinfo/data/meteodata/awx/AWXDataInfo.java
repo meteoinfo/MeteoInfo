@@ -808,7 +808,6 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
 
         //Get grid data
         int i, j;
-        GridData gridData = new GridData();
         double[] x = new double[_numLonGrid];
         double[] y = new double[_numLatGrid];
         double xDelt = (_lrLongitude - _ulLongitude) / _numLonGrid;
@@ -820,8 +819,6 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
         for (i = 0; i < _numLatGrid; i++) {
             y[i] = _lrLatitude + yDelt * i;
         }
-        gridData.xArray = x;
-        gridData.yArray = y;
 
         double[][] gData = new double[_numLatGrid][_numLonGrid];
         int bi = 0;
@@ -842,9 +839,8 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                 bi += _byteGridData;
             }
         }
-        gridData.data = gData;
 
-        return gridData;
+        return new GridData(gData, x, y);
     }
 
     private GridData getGridData_1() throws IOException {
@@ -852,7 +848,6 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
 
         //Get grid data
         int i, j;
-        GridData gridData = new GridData();
         int xNum = (int) _width;
         int yNum = (int) _height;
         double[] x = new double[xNum];
@@ -864,8 +859,6 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
         for (i = 0; i < yNum; i++) {
             y[i] = _yLB + _yDelt * i;
         }
-        gridData.xArray = x;
-        gridData.yArray = y;
 
         double[][] gData = new double[yNum][xNum];
         for (i = 0; i < yNum; i++) {
@@ -873,9 +866,8 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                 gData[yNum - i - 1][j] = DataConvert.byte2Int(imageBytes[i * xNum + j]);
             }
         }
-        gridData.data = gData;
 
-        return gridData;
+        return new GridData(gData, x, y);
     }
 
     /**

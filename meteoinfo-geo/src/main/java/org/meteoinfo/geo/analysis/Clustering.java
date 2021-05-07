@@ -11,6 +11,7 @@ import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.math.ArrayUtil;
+import ucar.nc2.util.IO;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -106,14 +107,14 @@ public class Clustering {
      * @param trajLayers Trajectory layers
      * @param outFile Output file
      * @param N Row number - trajectory number
-     * @param M Column number - 2 times of point number
+     * @param M Column number - point number
      * @param LN Level number
      * @param interval Point interval
      * @param disType Distant define type: Euclidean or Angle
      * @throws IOException
      */
     public static void calculate(List<VectorLayer> trajLayers, String outFile, int N, int M, int LN, int interval, DistanceType disType) throws IOException {        
-        double[][] DATA = new double[N][M];
+        double[][] DATA = new double[N][M * 2];
 
         //---- Get data array           
         String aLine;
@@ -141,9 +142,9 @@ public class Clustering {
                 for (j = 0; j < aPLZ.getPointNum(); j++) {
                     if (j % interval == 0) {
                         aPoint = (PointZ) aPLZ.getPoints().get(j);
-                        DATA[row][col] = aPoint.Y;
-                        col += 1;
                         DATA[row][col] = aPoint.X;
+                        col += 1;
+                        DATA[row][col] = aPoint.Y;
                         col += 1;
                     }
                 }
@@ -153,6 +154,65 @@ public class Clustering {
 
         //Clustering calculation
         int[][] ICLASS = calculation(DATA, LN, disType);
+
+        //Write clustering result to output file
+        saveClassResult(ICLASS, flags, outFile);
+    }
+
+    /**
+     * Clustering calculation
+     *
+     * @param trajLayers Trajectory layers
+     * @param outFile Output file
+     * @param N Row number - trajectory number
+     * @param M Column number - point number
+     * @param LN Level number
+     * @param interval Point interval
+     * @throws IOException
+     */
+    public static void calculate3D(List<VectorLayer> trajLayers, String outFile, int N, int M, int LN, int interval) throws IOException {
+        double[][] DATA = new double[N][M * 3];
+
+        //---- Get data array
+        String aLine;
+        int i;
+        int j;
+        int row;
+        int col;
+        List<String> flags = new ArrayList<>();    //Date time and height
+        LocalDateTime aDate;
+
+        row = 0;
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
+        for (VectorLayer layer : trajLayers) {
+            PointZ aPoint;
+            int sNum = layer.getShapeNum();
+            for (i = 0; i < sNum; i++) {
+                aDate = (LocalDateTime) layer.getCellValue("Date", i);
+                int hour = Integer.parseInt(layer.getCellValue("Hour", i).toString());
+                aDate = aDate.withHour(hour);
+                aLine = format.format(aDate);
+                String height = layer.getCellValue("Height", i).toString();
+                flags.add(aLine + "," + height);
+                PolylineZShape aPLZ = (PolylineZShape) layer.getShapes().get(i);
+                col = 0;
+                for (j = 0; j < aPLZ.getPointNum(); j++) {
+                    if (j % interval == 0) {
+                        aPoint = (PointZ) aPLZ.getPoints().get(j);
+                        DATA[row][col] = aPoint.X;
+                        col += 1;
+                        DATA[row][col] = aPoint.Y;
+                        col += 1;
+                        DATA[row][col] = aPoint.Z;
+                        col += 1;
+                    }
+                }
+                row += 1;
+            }
+        }
+
+        //Clustering calculation
+        int[][] ICLASS = calculation(DATA, LN, null, true);
 
         //Write clustering result to output file
         saveClassResult(ICLASS, flags, outFile);
@@ -210,7 +270,8 @@ public class Clustering {
     /**
      * Clustering calculation
      *
-     * @param trajData Trajectory data array
+     * @param xData X data array
+     * @param yData Y data array
      * @param LN Level number
      * @param disType Distant define type: Euclidean or Angle
      * @throws IOException
@@ -227,9 +288,9 @@ public class Clustering {
         for (int row = 0; row < n; row++) {
             int col = 0;
             for (int i = 0; i < pn; i++) {
-                DATA[row][col] = yData.getDouble(row * pn + i);
-                col += 1;
                 DATA[row][col] = xData.getDouble(row * pn + i);
+                col += 1;
+                DATA[row][col] = yData.getDouble(row * pn + i);
                 col += 1;
             }
         }
@@ -247,7 +308,8 @@ public class Clustering {
     /**
      * Clustering calculation
      *
-     * @param trajData Trajectory data array
+     * @param xData X data array
+     * @param yData Y data array
      * @param LN Level number
      * @param disType Distant type: Euclidean or Angle
      * @throws IOException
@@ -261,6 +323,58 @@ public class Clustering {
     /**
      * Clustering calculation
      *
+     * @param xData X data array
+     * @param yData Y data array
+     * @param LN Level number
+     * @throws IOException
+     */
+    public static Array calculate(Array xData, Array yData,  int LN) throws IOException {
+        return calculate(xData, yData, LN, DistanceType.EUCLIDEAN);
+    }
+
+    /**
+     * Clustering calculation
+     *
+     * @param xData X data array
+     * @param yData Y data array
+     * @param zData Z data array
+     * @param LN Level number
+     * @throws IOException
+     */
+    public static Array calculate3D(Array xData, Array yData, Array zData, int LN) throws IOException {
+        xData = xData.copyIfView();
+        yData = yData.copyIfView();
+
+        int[] shape = xData.getShape();
+        int n = shape[0];
+        int pn = shape[1];
+        int m = pn * 3;
+        double[][] DATA = new double[n][m];
+        for (int row = 0; row < n; row++) {
+            int col = 0;
+            for (int i = 0; i < pn; i++) {
+                DATA[row][col] = xData.getDouble(row * pn + i);
+                col += 1;
+                DATA[row][col] = yData.getDouble(row * pn + i);
+                col += 1;
+                DATA[row][col] = zData.getDouble(row * pn + i);
+                col += 1;
+            }
+        }
+
+        //Clustering calculation
+        int[][] ICLASS = calculation(DATA, LN, null, true);
+
+        int[] rData = Stream.of(ICLASS).flatMapToInt(IntStream::of).toArray();
+        Array r = Array.factory(DataType.INT, new int[]{ICLASS.length, ICLASS[0].length},
+                rData);
+
+        return r;
+    }
+
+    /**
+     * Clustering calculation
+     *
      * @param DATA Input data array
      * @param outFile Output file
      * @param LN Level number
@@ -268,32 +382,8 @@ public class Clustering {
      * @throws IOException
      */
     public static void calculation(double[][] DATA, String outFile, int LN, DistanceType disType) throws IOException {
-        int N = DATA.length;
-        int M = DATA[0].length;
-        double[] CRIT = new double[N];
-        double[] MEMBR = new double[N];
-        double[] CRITVAL = new double[LN];
-        int[] IA = new int[N];
-        int[] IB = new int[N];
-        int[][] ICLASS = new int[N][LN];
-        int[] HVALS = new int[LN];
-        int[] IORDER = new int[LN];
-        int[] HEIGHT = new int[LN];
-        int[] NN = new int[N];
-        double[] DISNN = new double[N];
-        double[] D = new double[N * (N - 1) / 2];
-        boolean[] FLAG = new boolean[N];
-
-        //---- IN ABOVE, 18=N, 16=M, 9=LEV, 153=N(N-1)/2
-
-
-        //---- Call HC
-        int LEN = (N * (N - 1)) / 2;
-        int IOPT = 1;
-        HC(N, M, IOPT, DATA, IA, IB, CRIT, MEMBR, NN, DISNN, FLAG, D, disType);
-
-        //---- Call HCASS
-        HCASS(N, IA, IB, CRIT, LN, ICLASS, HVALS, IORDER, CRITVAL, HEIGHT);
+        int[][] ICLASS = calculation(DATA, LN, disType);
+        int N = ICLASS.length;
 
         //---- Write output file
         BufferedWriter sw = new BufferedWriter(new FileWriter(new File(outFile)));
@@ -313,10 +403,6 @@ public class Clustering {
             sw.newLine();
         }
         sw.close();
-
-        //---- Call HCDEN
-        //Call HCDEN(LEV, IORDER, HEIGHT, CRITVAL)
-
     }
 
     /**
@@ -328,6 +414,19 @@ public class Clustering {
      * @return Clustering result array
      */
     public static int[][] calculation(double[][] DATA, int LN, DistanceType disType) {
+        return calculation(DATA, LN, disType, false);
+    }
+
+    /**
+     * Clustering calculation
+     *
+     * @param DATA Input data array
+     * @param LN Level number
+     * @param disType Distant define type: Euclidean or Angle
+     * @param is3D 3D clustering or not
+     * @return Clustering result array
+     */
+    public static int[][] calculation(double[][] DATA, int LN, DistanceType disType, boolean is3D) {
         //double[,] DATA = new double[N, M];
         int N = DATA.length;
         int M = DATA[0].length;
@@ -342,7 +441,6 @@ public class Clustering {
         int[] HEIGHT = new int[LN];
         int[] NN = new int[N];
         double[] DISNN = new double[N];
-        double[] D = new double[N * (N - 1) / 2];
         boolean[] FLAG = new boolean[N];
 
         //---- IN ABOVE, 18=N, 16=M, 9=LEV, 153=N(N-1)/2
@@ -351,7 +449,14 @@ public class Clustering {
         //---- Call HC
         //int LEN = (N * (N - 1)) / 2;
         int IOPT = 1;
-        HC(N, M, IOPT, DATA, IA, IB, CRIT, MEMBR, NN, DISNN, FLAG, D, disType);
+        //---- Construct dissimilarity matrix
+        double[] DISS;
+        if (is3D) {
+            DISS = calDistance3D(IOPT, DATA);
+        } else {
+            DISS = calDistance(IOPT, DATA, disType);
+        }
+        HC(N, IOPT, DATA, IA, IB, CRIT, MEMBR, NN, DISNN, FLAG, DISS, disType);
 
         //---- Call HCASS
         HCASS(N, IA, IB, CRIT, LN, ICLASS, HVALS, IORDER, CRITVAL, HEIGHT);
@@ -362,46 +467,15 @@ public class Clustering {
         return ICLASS;
     }
 
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    //                                                            C
-    //  HIERARCHICAL CLUSTERING using (user-specified) criterion. C
-    //                                                            C
-    //  Parameters:                                               C
-    //                                                            C
-    //  DATA(N,M)         input data matrix,                      C
-    //  DISS(LEN)         dissimilarities in lower half diagonal  C
-    //                    storage; LEN = N.N-1/2,                 C
-    //  IOPT              clustering criterion to be used,        C
-    //  IA, IB, CRIT      history of agglomerations; dimensions   C
-    //                    N, first N-1 locations only used,       C
-    //  MEMBR, NN, DISNN  vectors of length N, used to store      C 
-    //                    cluster cardinalities, current nearest  C
-    //                    neighbour, and the dissimilarity assoc. C
-    //                    with the latter.                        C
-    //  FLAG              boolean indicator of agglomerable obj./ C
-    //                    clusters.                               C
-    //                                                            C
-    //  F. Murtagh, ESA/ESO/STECF, Garching, February 1986.       C
-    //                                                            C
-    //------------------------------------------------------------C
-    private static void HC(int N, int M, int IOPT, double[][] DATA, int[] IA, int[] IB, double[] CRIT, double[] MEMBR,
-            int[] NN, double[] DISNN, boolean[] FLAG, double[] DISS, DistanceType DISTYPE) {
-        double INF = 1.0 * (Math.pow(10, 20));
+    private static double[] calDistance(int IOPT, double[][] DATA, DistanceType distanceType) {
+        int N = DATA.length;
+        int M = DATA[0].length;
         int i;
         int j;
         int k;
-
-        //---- Initializations
-        for (i = 0; i <= N - 1; i++) {
-            MEMBR[i] = 1.0;
-            FLAG[i] = true;
-        }
-        int NCL = N;
-
-        //---- Construct dissimilarity matrix
         int IND;
-
-        if (DISTYPE == DistanceType.ANGLE) {
+        double[] DISS = new double[N * (N - 1) / 2];
+        if (distanceType == DistanceType.ANGLE) {
             double X0;
             double Y0;
             double ANGLE;
@@ -472,7 +546,77 @@ public class Clustering {
             //Next
         }
 
+        return DISS;
+    }
+
+    private static double[] calDistance3D(int IOPT, double[][] DATA) {
+        int N = DATA.length;
+        int M = DATA[0].length;
+        int i;
+        int j;
+        int k;
+        int IND;
+        double[] DISS = new double[N * (N - 1) / 2];
+        for (i = 0; i <= N - 2; i++) {
+            for (j = i + 1; j <= N - 1; j++) {
+                IND = IOFFSET(N, i + 1, j + 1);
+                DISS[IND] = 0.0;
+                for (k = 0; k <= M / 3 - 1; k++) {
+                    DISS[IND] = DISS[IND] + Math.pow((DATA[i][2 * k] - DATA[j][2 * k]), 2) +
+                            Math.pow((DATA[i][2 * k + 1] - DATA[j][2 * k + 1]), 2) +
+                            Math.pow((DATA[i][2 * k + 2] - DATA[j][2 * k + 2]), 2);
+                }
+                DISS[IND] = Math.sqrt(DISS[IND]);
+                if (IOPT == 1) {
+                    DISS[IND] = DISS[IND] / 2;
+                }
+                //---- (Above is done for the case of the min. var. method
+                //---- where merging criteria are defined in terms of variances
+                //---- rather than distances.)
+            }
+        }
+
+        return DISS;
+    }
+
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //                                                            C
+    //  HIERARCHICAL CLUSTERING using (user-specified) criterion. C
+    //                                                            C
+    //  Parameters:                                               C
+    //                                                            C
+    //  DATA(N,M)         input data matrix,                      C
+    //  DISS(LEN)         dissimilarities in lower half diagonal  C
+    //                    storage; LEN = N.N-1/2,                 C
+    //  IOPT              clustering criterion to be used,        C
+    //  IA, IB, CRIT      history of agglomerations; dimensions   C
+    //                    N, first N-1 locations only used,       C
+    //  MEMBR, NN, DISNN  vectors of length N, used to store      C 
+    //                    cluster cardinalities, current nearest  C
+    //                    neighbour, and the dissimilarity assoc. C
+    //                    with the latter.                        C
+    //  FLAG              boolean indicator of agglomerable obj./ C
+    //                    clusters.                               C
+    //                                                            C
+    //  F. Murtagh, ESA/ESO/STECF, Garching, February 1986.       C
+    //                                                            C
+    //------------------------------------------------------------C
+    private static void HC(int N, int IOPT, double[][] DATA, int[] IA, int[] IB, double[] CRIT, double[] MEMBR,
+            int[] NN, double[] DISNN, boolean[] FLAG, double[] DISS, DistanceType DISTYPE) {
+        double INF = 1.0 * (Math.pow(10, 20));
+        int i;
+        int j;
+        int k;
+
+        //---- Initializations
+        for (i = 0; i <= N - 1; i++) {
+            MEMBR[i] = 1.0;
+            FLAG[i] = true;
+        }
+        int NCL = N;
+
         //---- Carry out an agglomeration - first create list of NNs
+        int IND;
         double DMIN;
         int JM = 0;
         for (i = 0; i <= N - 2; i++) {

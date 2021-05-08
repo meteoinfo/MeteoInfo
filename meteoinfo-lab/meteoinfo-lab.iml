@@ -11,6 +11,16 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../toolbox/miml_dev/miml/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../../toolbox/miml_dev/miml/lib" recursive="false" />
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="meteoinfo-chart" />
     <orderEntry type="module" module-name="meteoinfo-geo" />
     <orderEntry type="module" module-name="meteoinfo-math" />
@@ -138,15 +148,5 @@
     <orderEntry type="library" name="Maven: de.sciss:docking-frames-core:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.19" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.19" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../toolbox/miml_dev/miml/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/../../toolbox/miml_dev/miml/lib" recursive="false" />
-      </library>
-    </orderEntry>
   </component>
 </module>

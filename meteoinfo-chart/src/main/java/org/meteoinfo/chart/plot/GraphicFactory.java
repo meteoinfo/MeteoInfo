@@ -1709,7 +1709,7 @@ public class GraphicFactory {
      *
      * @param layer The layer
      * @param offset Offset of z axis.
-     * @param xshift X shift - to shift the grahpics in x direction, normally
+     * @param xshift X shift - to shift the graphics in x direction, normally
      * for map in 180 - 360 degree east
      * @return Graphics
      */

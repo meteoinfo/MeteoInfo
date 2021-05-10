@@ -1889,18 +1889,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
             List<PolygonZ> polygonZS = (List<PolygonZ>) shape.getPolygons();
             for (int i = 0; i < polygonZS.size(); i++) {
                 PolygonZ polygonZ = (PolygonZ) shape.getPolygons().get(i);
-                if (polygonZ instanceof TessPolygon) {
-                    drawTessPolygon(gl, (TessPolygon) polygonZ, pb);
-                } else {
-                    if (GeometryUtil.isConvex(polygonZ)) {
-                        drawConvexPolygon(gl, polygonZ, pb);
+                if (pb.isDrawFill()) {
+                    if (polygonZ instanceof TessPolygon) {
+                        drawTessPolygon(gl, (TessPolygon) polygonZ, pb);
                     } else {
-                        TessPolygon tessPolygon = new TessPolygon(polygonZ);
-                        drawTessPolygon(gl, tessPolygon, pb);
-                        polygonZS.set(i, tessPolygon);
+                        if (GeometryUtil.isConvex(polygonZ)) {
+                            drawConvexPolygon(gl, polygonZ, pb);
+                        } else {
+                            TessPolygon tessPolygon = new TessPolygon(polygonZ);
+                            drawTessPolygon(gl, tessPolygon, pb);
+                            polygonZS.set(i, tessPolygon);
+                        }
                     }
+                } else {
+                    drawPolygon(gl, polygonZ, pb);
                 }
-            }
+             }
         }
     }
 

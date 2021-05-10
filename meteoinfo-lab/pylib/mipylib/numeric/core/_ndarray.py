@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 NDArray class - multiple dimensional array
 """
@@ -61,6 +62,14 @@ class NDArray(object):
             return self
         else:
             return self.base.get_base()
+
+    @property
+    def itemsize(self):
+        """
+        Length of one array element in bytes.
+        :return: (*int*) item size.
+        """
+        return self.dtype.itemsize
 
     def __len__(self):
         return self._shape[0]
@@ -1030,3 +1039,16 @@ class NDArray(object):
                     gdata.saveAsMICAPS4File(fname, desc, date, hours, level, smooth, boldvalue)
                 else:
                     gdata.saveAsMICAPS4File(fname, desc, date, hours, level, smooth, boldvalue, proj)
+
+    def tofile(self, fn, sep="", format="%s"):
+        """
+        Write array to a file as text or binary (default).
+        :param fn: (*str*) File name.
+        :param sep: (*str*) Separator between array items for text output. If “” (empty), a binary file is
+            written.
+        :param format: (*str*) Format string for text file output.
+        """
+        if sep:
+            ArrayUtil.saveASCIIFile(fn, self._array, 80, format, sep)
+        else:
+            ArrayUtil.saveBinFile(fn, self._array, 'little_endian', False, False)

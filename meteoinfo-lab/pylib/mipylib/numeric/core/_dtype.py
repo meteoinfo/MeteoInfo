@@ -39,6 +39,14 @@ class DataType(object):
             self._dtype = JDataType.OBJECT
 
     @property
+    def itemsize(self):
+        """
+        The element size of this data-type object.
+        :return: (*int*) size
+        """
+        return self._dtype.getSize()
+
+    @property
     def num(self):
         """
         A unique number for each of the different built-in types.

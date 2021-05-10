@@ -6,7 +6,10 @@ from . import numeric
 from numeric import *
 from . import fromnumeric
 from fromnumeric import *
+from . import _io
+from _io import *
 
 __all__ = ['NDArray','DimArray','PyTableData','dtype','dimension','normalize_axis_index']
 __all__ += numeric.__all__
 __all__ += fromnumeric.__all__
+__all__ += _io.__all__

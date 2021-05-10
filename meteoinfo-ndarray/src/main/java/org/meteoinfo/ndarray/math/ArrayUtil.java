@@ -22,6 +22,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Level;
@@ -51,13 +53,6 @@ public class ArrayUtil {
      */
     public static Array readASCIIFile(String fileName, String delimiter, int headerLines, String dataType,
                                       List<Integer> shape, boolean readFirstCol) throws UnsupportedEncodingException, FileNotFoundException, IOException {
-        BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-        if (headerLines > 0) {
-            for (int i = 0; i < headerLines; i++) {
-                sr.readLine();
-            }
-        }
-
         DataType dt = DataType.DOUBLE;
         if (dataType != null) {
             if (dataType.contains("%")) {
@@ -65,13 +60,38 @@ public class ArrayUtil {
             }
             dt = ArrayUtil.toDataType(dataType);
         }
+        return readASCIIFile(fileName, delimiter, headerLines, dt, shape, readFirstCol);
+    }
+
+    /**
+     * Read ASCII data file to an array
+     *
+     * @param fileName File name
+     * @param delimiter Delimiter
+     * @param headerLines Headerline number
+     * @param dataType Data type
+     * @param shape Shape
+     * @param readFirstCol Read first column data or not
+     * @return Result array
+     * @throws UnsupportedEncodingException
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static Array readASCIIFile(String fileName, String delimiter, int headerLines, DataType dataType,
+                                      List<Integer> shape, boolean readFirstCol) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+        BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+        if (headerLines > 0) {
+            for (int i = 0; i < headerLines; i++) {
+                sr.readLine();
+            }
+        }
 
         int i;
         int[] ss = new int[shape.size()];
         for (i = 0; i < shape.size(); i++) {
             ss[i] = shape.get(i);
         }
-        Array a = Array.factory(dt, ss);
+        Array a = Array.factory(dataType, ss);
 
         String[] dataArray;
         i = 0;
@@ -110,6 +130,58 @@ public class ArrayUtil {
         sr.close();
 
         return a;
+    }
+
+    /**
+     * Read ASCII data file to an array
+     *
+     * @param fileName File name
+     * @param dataType Data type
+     * @param count Number of items to read
+     * @param delimiter Delimiter
+     * @return Result array
+     * @throws UnsupportedEncodingException
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static Array readASCIIFile(String fileName, DataType dataType, int count,
+                                      String delimiter) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+        if (delimiter == null || delimiter.equals(" ")) {
+            delimiter = "\\s+";
+        } else {
+            delimiter = Pattern.quote(delimiter);
+        }
+
+        List<String> dataList = new ArrayList<>();
+        BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+        String[] dataArray;
+        String line = sr.readLine();
+        while (line != null) {
+            line = line.trim();
+            if (line.isEmpty()) {
+                line = sr.readLine();
+                continue;
+            }
+            dataArray = line.split(delimiter);
+            dataList.addAll(Arrays.asList(dataArray));
+            if (count > 0 && dataList.size() >= count) {
+                if (dataList.size() > count)
+                    dataList = dataList.subList(0, count);
+                break;
+            }
+
+            line = sr.readLine();
+        }
+        sr.close();
+
+        count = count > 0 ? count : dataList.size();
+
+        Array r = Array.factory(dataType, new int[]{count});
+        for (int i = 0; i < dataList.size(); i++) {
+            r.setString(i, dataList.get(i));
+        }
+
+        return r;
     }
 
     /**
@@ -444,6 +516,100 @@ public class ArrayUtil {
                     bytes = new byte[(int) r.getSize() * 8];
                     db = new byte[8];
                     ins.read(bytes);
+                    while (iter.hasNext()) {
+                        System.arraycopy(bytes, start, db, 0, 8);
+                        iter.setDoubleNext(DataTypeUtil.bytes2Double(db, bOrder));
+                        start += 8;
+                    }
+                    break;
+            }
+            ins.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ArrayUtil.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ArrayUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return r;
+    }
+
+    /**
+     * Read array from a binary file
+     *
+     * @param fn Binary file name
+     * @param dataType Data type
+     * @param count Number of items to read. -1 means all items (i.e., the complete file)
+     * @param offset Offset bytes
+     * @return Result array
+     */
+    public static Array readBinFile(String fn, DataType dataType, int count, int offset) throws IOException {
+        return readBinFile(fn, dataType, count, offset, "little_endian");
+    }
+
+    /**
+     * Read array from a binary file
+     *
+     * @param fn Binary file name
+     * @param dataType Data type
+     * @param count Number of items to read. -1 means all items (i.e., the complete file)
+     * @param offset Offset bytes
+     * @param byteOrder Byte order
+     * @return Result array
+     */
+    public static Array readBinFile(String fn, DataType dataType, int count, int offset,
+                                    String byteOrder) throws IOException {
+        ByteOrder bOrder = ByteOrder.LITTLE_ENDIAN;
+        if (byteOrder.equalsIgnoreCase("big_endian")) {
+            bOrder = ByteOrder.BIG_ENDIAN;
+        }
+
+        if (count < 0) {
+            long size = Files.size(Paths.get(fn));
+            count = (int)((size - offset) / dataType.getSize());
+        }
+
+        Array r = Array.factory(dataType, new int[]{count});
+        IndexIterator iter = r.getIndexIterator();
+        try {
+            DataInputStream ins = new DataInputStream(new FileInputStream(fn));
+            ins.skip(offset);
+            byte[] bytes;
+            byte[] db;
+            int start = 0;
+            bytes = new byte[(int)r.getSize() * dataType.getSize()];
+            ins.read(bytes);
+            switch (dataType) {
+                case BYTE:
+                    for (int i = 0; i < r.getSize(); i++) {
+                        r.setByte(i, bytes[i]);
+                    }
+                    break;
+                case SHORT:
+                    db = new byte[2];
+                    while (iter.hasNext()) {
+                        System.arraycopy(bytes, start, db, 0, 2);
+                        iter.setShortNext(DataTypeUtil.bytes2Short(db, bOrder));
+                        start += 2;
+                    }
+                    break;
+                case INT:
+                    db = new byte[4];
+                    while (iter.hasNext()) {
+                        System.arraycopy(bytes, start, db, 0, 4);
+                        iter.setIntNext(DataTypeUtil.bytes2Int(db, bOrder));
+                        start += 4;
+                    }
+                    break;
+                case FLOAT:
+                    db = new byte[4];
+                    while (iter.hasNext()) {
+                        System.arraycopy(bytes, start, db, 0, 4);
+                        iter.setFloatNext(DataTypeUtil.bytes2Float(db, bOrder));
+                        start += 4;
+                    }
+                    break;
+                case DOUBLE:
+                    db = new byte[8];
                     while (iter.hasNext()) {
                         System.arraycopy(bytes, start, db, 0, 8);
                         iter.setDoubleNext(DataTypeUtil.bytes2Double(db, bOrder));

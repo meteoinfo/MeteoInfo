@@ -655,24 +655,14 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
 
     public void addText(ChartText text, boolean isLonLat) {
         if (isLonLat) {
-            if (this.getMapView().getProjection().isLonLatMap()) {
-                super.addText(text);
-            } else {
-                PointShape ps = new PointShape();
-                PointD lonlatp = new PointD(text.getX(), text.getY());
-                PointD xyp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
+            if (!this.getMapView().getProjection().isLonLatMap()) {
+                PointD xyp = Reproject.reprojectPoint(text.getX(), text.getY(), KnownCoordinateSystems.geographic.world.WGS1984,
                         this.getMapView().getProjection().getProjInfo());
-                ps.setPoint(xyp);
-                LabelBreak lb = new LabelBreak();
-                lb.setText(text.getText());
-                lb.setFont(text.getFont());
-                lb.setColor(text.getColor());
-                Graphic aGraphic = new Graphic(ps, lb);
-                this.getMapView().addGraphic(aGraphic);
+                text.setX(xyp.X);
+                text.setY(xyp.Y);
             }
-        } else {
-            super.addText(text);
         }
+        super.addText(text);
     }
 
     /**

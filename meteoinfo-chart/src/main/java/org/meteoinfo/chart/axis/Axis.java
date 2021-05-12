@@ -849,6 +849,9 @@ public class Axis implements Cloneable {
             this.tickLabels.add(new ChartText(String.valueOf(v)));
         }
         this.autoTick = false;
+        if (this.tickLocations.size() > 1) {
+            this.tickDeltaValue = this.tickLocations.get(1) - this.tickLocations.get(0);
+        }
     }
 
     /**
@@ -867,6 +870,9 @@ public class Axis implements Cloneable {
             this.tickLabels.add(new ChartText(tick));
         }
         this.autoTick = false;
+        if (this.tickLocations.size() > 1) {
+            this.tickDeltaValue = this.tickLocations.get(1) - this.tickLocations.get(0);
+        }
     }
 
     /**

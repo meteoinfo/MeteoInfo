@@ -760,13 +760,7 @@ class Axes(object):
         if not axistype is None:
             self.set_xaxis_type(axistype, timetickformat)
             self.axes.setAutoExtent()
-        tickfontname = kwargs.pop('tickfontname', 'Arial')
-        tickfontsize = kwargs.pop('tickfontsize', 14)
-        tickbold = kwargs.pop('tickbold', False)
-        if tickbold:
-            font = Font(tickfontname, Font.BOLD, tickfontsize)
-        else:
-            font = Font(tickfontname, Font.PLAIN, tickfontsize)
+
         location = kwargs.pop('location', 'both')
         if location == 'top':
             locs = [Location.TOP]
@@ -778,8 +772,18 @@ class Axes(object):
         if self.axestype == '3d':
             axislist.append(self.axes.getXAxis())
         else:
-            for loc in locs:    
+            for loc in locs:
                 axislist.append(self.axes.getAxis(loc))
+
+        tick_font = axislist[0].getTickLabelFont()
+        tickfontname = kwargs.pop('tickfontname', tick_font.getFontName())
+        tickfontsize = kwargs.pop('tickfontsize', tick_font.getSize())
+        tickbold = kwargs.pop('tickbold', tick_font.isBold())
+        if tickbold:
+            font = Font(tickfontname, Font.BOLD, tickfontsize)
+        else:
+            font = Font(tickfontname, Font.PLAIN, tickfontsize)
+
         for axis in axislist:
             if not visible is None:
                 axis.setVisible(visible)
@@ -860,13 +864,7 @@ class Axes(object):
         if not axistype is None:
             self.set_yaxis_type(axistype, timetickformat)
             self.axes.updateDrawExtent()
-        tickfontname = kwargs.pop('tickfontname', 'Arial')
-        tickfontsize = kwargs.pop('tickfontsize', 14)
-        tickbold = kwargs.pop('tickbold', False)
-        if tickbold:
-            font = Font(tickfontname, Font.BOLD, tickfontsize)
-        else:
-            font = Font(tickfontname, Font.PLAIN, tickfontsize)
+
         location = kwargs.pop('location', 'both')
         if location == 'left':
             locs = [Location.LEFT]
@@ -878,8 +876,18 @@ class Axes(object):
         if self.axestype == '3d':
             axislist.append(self.axes.getYAxis())
         else:
-            for loc in locs:    
+            for loc in locs:
                 axislist.append(self.axes.getAxis(loc))
+
+        tick_font = axislist[0].getTickLabelFont()
+        tickfontname = kwargs.pop('tickfontname', tick_font.getFontName())
+        tickfontsize = kwargs.pop('tickfontsize', tick_font.getSize())
+        tickbold = kwargs.pop('tickbold', tick_font.isBold())
+        if tickbold:
+            font = Font(tickfontname, Font.BOLD, tickfontsize)
+        else:
+            font = Font(tickfontname, Font.PLAIN, tickfontsize)
+
         for axis in axislist:
             if not visible is None:
                 axis.setVisible(visible)

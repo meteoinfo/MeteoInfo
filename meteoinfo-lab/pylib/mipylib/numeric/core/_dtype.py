@@ -47,6 +47,14 @@ class DataType(object):
         return self._dtype.getSize()
 
     @property
+    def byteorder(self):
+        """
+        A character indicating the byte-order of this data-type object.
+        :return: (*str*) Byte order.
+        """
+        return '>'
+
+    @property
     def num(self):
         """
         A unique number for each of the different built-in types.

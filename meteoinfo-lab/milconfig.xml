@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart\axis">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\spatial"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\regression"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\text"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\kmeans_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_kriging_lcc.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\axis\axis_minortick_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\axis\axis_minortick_test.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar_cylinder_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero_mono-color.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\kmeans_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_kriging_lcc.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\axis\axis_minortick_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\axis\axis_minortick_test.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar_cylinder_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero_mono-color.py"/>
     </RecentFiles>
   </File>
   <Font>

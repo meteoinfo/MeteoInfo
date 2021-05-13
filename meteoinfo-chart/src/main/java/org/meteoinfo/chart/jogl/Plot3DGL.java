@@ -990,6 +990,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColorMaterial(GL2.GL_FRONT, GL2.GL_DIFFUSE);
             //gl.glColorMaterial(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE);
             gl.glEnable(GL2.GL_COLOR_MATERIAL);
+            //double side normalize
+            //gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
         }
     }
 
@@ -2705,16 +2707,37 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     void drawCircle(GL2 gl, float z, float radius, PolygonBreak bb) {
+        drawCircle(gl, z, radius, bb, false);
+    }
+
+    void drawCircle(GL2 gl, float z, float radius, PolygonBreak bb, boolean clockwise) {
         int points = 100;
+        List<float[]> vertex = new ArrayList<>();
+        double angle = 0.0;
+        if (clockwise) {
+            for (int i = points - 1; i >= 0; i--) {
+                angle = 2 * Math.PI * i / points;
+                vertex.add(new float[]{(float) Math.cos(angle) * radius, (float) Math.sin(angle) * radius, z});
+            }
+        } else {
+            for (int i = 0; i < points; i++) {
+                angle = 2 * Math.PI * i / points;
+                vertex.add(new float[]{(float) Math.cos(angle) * radius, (float) Math.sin(angle) * radius, z});
+            }
+        }
 
         if (bb.isDrawFill()) {
             float[] rgba = bb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_TRIANGLE_FAN);
-            double angle = 0.0;
+            if (this.lighting.isEnable()) {
+                int ii = points / 4;
+                float[] normal;
+                normal = JOGLUtil.normalize(vertex.get(0), vertex.get(ii), vertex.get(ii * 2));
+                gl.glNormal3fv(normal, 0);
+            }
             for(int i =0; i < points;i++){
-                angle = 2 * Math.PI * i / points;
-                gl.glVertex3f((float)Math.cos(angle) * radius, (float)Math.sin(angle) * radius, z);
+                gl.glVertex3f(vertex.get(i)[0], vertex.get(i)[1], vertex.get(i)[2]);
             }
             gl.glEnd();
         }
@@ -2724,10 +2747,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glLineWidth(bb.getOutlineSize() * this.dpiScale);
             gl.glBegin(GL2.GL_LINE_LOOP);
-            double angle = 0.0;
             for (int i = 0; i < points; i++) {
-                angle = 2 * Math.PI * i / points;
-                gl.glVertex3f((float) Math.cos(angle) * radius, (float) Math.sin(angle) * radius, z);
+                gl.glVertex3f(vertex.get(i)[0], vertex.get(i)[1], vertex.get(i)[2]);
             }
             gl.glEnd();
         }
@@ -2798,6 +2819,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             glu.gluCylinder(cone_obj, cylinder.getRadius(), cylinder.getRadius(), height, 100, 1);
             bb.setDrawOutline(false);
             this.drawCircle(gl, (float) height, (float) cylinder.getRadius(), bb);
+            this.drawCircle(gl, 0.f, (float) cylinder.getRadius(), bb, true);
 
             gl.glPopAttrib(); // GL_CULL_FACE
             gl.glPopMatrix();

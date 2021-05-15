@@ -669,7 +669,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      * Add point graphic
      *
      * @param lat Latitude
-     * @param lon Lontitude
+     * @param lon Longitude
      * @param pb Point break
      */
     public void addPoint(double lat, double lon, PointBreak pb) {

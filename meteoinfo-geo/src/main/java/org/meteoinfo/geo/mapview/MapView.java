@@ -6258,7 +6258,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 case CENTER:
                     aPoint.X = (float) xy[0] - labSize.width / 2;
                     break;
-                case LEFT:
+                case RIGHT:
                     aPoint.X = (float) xy[0] - labSize.width;
                     break;
             }

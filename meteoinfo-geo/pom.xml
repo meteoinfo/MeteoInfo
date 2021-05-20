@@ -88,12 +88,12 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>1.1.2</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf-extras</artifactId>
-            <version>1.1.2</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.freehep</groupId>

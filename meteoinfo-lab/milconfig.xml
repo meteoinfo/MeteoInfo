@@ -20,13 +20,11 @@
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\kmeans_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_kriging_lcc.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar_cylinder_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero_mono-color.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\kmeans_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_kriging_lcc.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar_cylinder_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero_mono-color.py"/>
     </RecentFiles>
@@ -36,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1356,781"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1387,872"/>
 </MeteoInfo>

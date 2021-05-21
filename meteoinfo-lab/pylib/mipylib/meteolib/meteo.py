@@ -532,12 +532,12 @@ def flowfun(u, v):
 
     return psi, phi
     
-def eof(x, svd=False, transform=False):
+def eof(x, svd=True, transform=False):
     '''
     Empirical Orthogonal Function (EOF) analysis to finds both time series and spatial patterns.
     
     :param x: (*array_like*) Input 2-D array with space-time field.
-    :param svd: (*boolean*) Using SVD or eigen method.
+    :param svd: (*boolean*) Using SVD or eigen method. Default is `True`.
     :param transform: (*boolean*) Do space-time transform or not. This transform will speed up
         the computation if the space location number is much more than time stamps. Only valid
         when ``svd=False``.
@@ -605,12 +605,12 @@ def varimax(x, normalize=False, tol=1e-10, it_max=1000):
     p, nc = x.shape
     TT = np.eye(nc)
     d = 0
-    for i in range(it_max):
+    for _ in range(it_max):
         z = np.dot(x, TT)
         B = np.dot(x.T, (z**3 - np.dot(z, np.diag(np.squeeze(np.dot(np.ones((1,p)), (z**2))))) / p))
         U, S, Vh = np.linalg.svd(B)
         TT = np.dot(U, Vh)        
-        d2 = d;
+        d2 = d
         d = np.sum(S)
         # End if exceeded tolerance.
         if d < d2 * (1 + tol):

@@ -27,6 +27,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +35,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.meteoinfo.geo.mapdata.MapDataManage;
+import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.ndarray.Index;
 
@@ -49,6 +51,8 @@ public class RasterLayer extends ImageLayer {
     private GridArray _originGridData = null;
     private boolean _isProjected = false;
     private List<Color> _colors;
+    private double missingValue = Double.NaN;
+    private Color missingColor = Color.white;
     //private InterpolationMode _interpMode = InterpolationMode.NearestNeighbor;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -115,6 +119,38 @@ public class RasterLayer extends ImageLayer {
      */
     public void setProjected(boolean istrue) {
         _isProjected = istrue;
+    }
+
+    /**
+     * Get missing value
+     * @return Missing value
+     */
+    public double getMissingValue() {
+        return this.missingValue;
+    }
+
+    /**
+     * Set missing value
+     * @param value Missing value
+     */
+    public void setMissingValue(double value) {
+        this.missingValue = value;
+    }
+
+    /**
+     * Get missing value color
+     * @return Missing value color
+     */
+    public Color getMissingColor() {
+        return this.missingColor;
+    }
+
+    /**
+     * Set missing value color
+     * @param value Missing value color
+     */
+    public void setMissingColor(Color value) {
+        this.missingColor = value;
     }
 
 //        public InterpolationMode InterpMode
@@ -192,7 +228,7 @@ public class RasterLayer extends ImageLayer {
         breakNum = als.getBreakNum();
         double[] breakValue = new double[breakNum];
         Color[] breakColor = new Color[breakNum];
-        Color undefColor = new Color(255, 255, 255, 0);
+        Color undefColor = this.missingColor;
         Color defaultColor = als.getLegendBreaks().get(breakNum - 1).getColor();
         Color color;
         for (int i = 0; i < breakNum; i++) {
@@ -206,20 +242,49 @@ public class RasterLayer extends ImageLayer {
             }
         }
         BufferedImage aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        double oneValue;
-        Color oneColor;
+        double value;
+
+        Array data = gdata.getData().copyIfView();
+        double[] values = als.getValues();
+        int n = values.length;
+        int idx;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                //oneValue = gdata.data[i][j];
-                oneValue = gdata.getDoubleValue(i, j);
-                if (Double.isNaN(oneValue) || MIMath.doubleEquals(oneValue, gdata.missingValue)) {
-                    oneColor = undefColor;
+                value = data.getDouble(i * width + j);
+                if (Double.isNaN(value) || MIMath.doubleEquals(value, gdata.missingValue)) {
+                    color = undefColor;
                 } else {
-                    oneColor = als.findLegendBreak(oneValue).getColor();
+                    idx = Arrays.binarySearch(values, value);
+                    if (idx < 0) {
+                        if (idx == -1)
+                            idx = 0;
+                        else if (idx == -n - 1)
+                            idx = n - 1;
+                        else
+                            idx = -idx - 2;
+                    } else if (idx == n - 1)
+                        idx = n - 2;
+
+                    color = als.getLegendBreak(idx).getColor();
                 }
-                aImage.setRGB(j, height - i - 1, oneColor.getRGB());
+                aImage.setRGB(j, height - i - 1, color.getRGB());
             }
         }
+
+        /*for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                //oneValue = gdata.data[i][j];
+                value = gdata.getDoubleValue(i, j);
+                if (Double.isNaN(value) || MIMath.doubleEquals(value, gdata.missingValue)) {
+                    color = undefColor;
+                } else {
+                    color = als.findLegendBreak(value).getColor();
+                }
+                //data[idx++] = oneColor.getRGB();
+                aImage.setRGB(j, height - i - 1, color.getRGB());
+            }
+        }*/
+        //aImage.setRGB(0, 0, width, height, rgb, 0, width);
 
         return aImage;
     }

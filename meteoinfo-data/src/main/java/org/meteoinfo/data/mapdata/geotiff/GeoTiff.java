@@ -953,11 +953,6 @@ public class GeoTiff {
         } else {
             shape = new int[]{height, width, samplesPerPixel};
         }
-//        if (samplesPerPixel == 1) {
-//            shape = new int[]{width, height};
-//        } else {
-//            shape = new int[]{width, height, samplesPerPixel};
-//        }
         DataType dataType = DataType.INT;
         IFDEntry sampleFormatTag = findTag(Tag.SampleFormat);
         int sampleFormat = 0;
@@ -1011,7 +1006,7 @@ public class GeoTiff {
                             tileIdx = i * hTileNum + j;
                             tileOffset = tileOffsetTag.value[tileIdx];
                             tileSize = tileSizeTag.value[tileIdx];
-                            buffer = testReadData(tileOffset, tileSize);
+                            buffer = testReadData(tileOffset, tileSize, cDecoder);
                             for (int h = 0; h < tileHeight; h++) {
                                 vIdx = i * tileHeight + h;
                                 if (vIdx == height) {
@@ -1020,16 +1015,23 @@ public class GeoTiff {
                                 for (int w = 0; w < tileWidth; w++) {
                                     hIdx = j * tileWidth + w;
                                     if (hIdx == width) {
+                                        buffer.get(new byte[tileWidth - w]);
                                         break;
                                     }
                                     index.set0(vIdx);
                                     index.set1(hIdx);
                                     if (samplesPerPixel == 1) {
-                                        r.setInt(index, DataConvert.byte2Int(buffer.get()));
+                                        if (sampleFormat == 2)
+                                            r.setInt(index, buffer.get());
+                                        else
+                                            r.setInt(index, Byte.toUnsignedInt(buffer.get()));
                                     } else {
                                         for (int k = 0; k < samplesPerPixel; k++) {
                                             index.set2(k);
-                                            r.setInt(index, DataConvert.byte2Int(buffer.get()));
+                                            if (sampleFormat == 2)
+                                                r.setInt(index, buffer.get());
+                                            else
+                                                r.setInt(index, Byte.toUnsignedInt(buffer.get()));
                                         }
                                     }
                                 }
@@ -1043,7 +1045,7 @@ public class GeoTiff {
                             tileIdx = i * hTileNum + j;
                             tileOffset = tileOffsetTag.value[tileIdx];
                             tileSize = tileSizeTag.value[tileIdx];
-                            buffer = testReadData(tileOffset, tileSize);
+                            buffer = testReadData(tileOffset, tileSize, cDecoder);
                             for (int h = 0; h < tileHeight; h++) {
                                 vIdx = i * tileHeight + h;
                                 if (vIdx == height) {
@@ -1079,16 +1081,12 @@ public class GeoTiff {
                             if (tileSize == 0)
                                 continue;
 
-                            buffer = testReadData(tileOffset, tileSize);
-                            if (cDecoder != null){
-                                buffer = ByteBuffer.wrap(cDecoder.decode(buffer.array(), byteOrder));
-                                if (buffer.limit() < size){
-                                    ByteBuffer nbuffer = ByteBuffer.allocate(size);
-                                    nbuffer.put(buffer.array());
-                                    buffer = nbuffer;
-                                    ((Buffer)buffer).position(0);
-                                }
-                                buffer.order(byteOrder);
+                            buffer = testReadData(tileOffset, tileSize, cDecoder);
+                            if (buffer.limit() < size){
+                                ByteBuffer nbuffer = ByteBuffer.allocate(size);
+                                nbuffer.put(buffer.array());
+                                buffer = nbuffer;
+                                ((Buffer)buffer).position(0);
                             }
                             for (int h = 0; h < tileHeight; h++) {
                                 vIdx = i * tileHeight + h;
@@ -1143,11 +1141,7 @@ public class GeoTiff {
                         for (int i = 0; i < stripNum; i++) {
                             stripOffset = stripOffsetTag.value[i];
                             stripSize = stripSizeTag.value[i];
-                            buffer = testReadData(stripOffset, stripSize);
-                            if (cDecoder != null){
-                                buffer = ByteBuffer.wrap(cDecoder.decode(buffer.array(), byteOrder));
-                                buffer.order(byteOrder);
-                            }
+                            buffer = testReadData(stripOffset, stripSize, cDecoder);
                             for (int j = 0; j < width * rowNum; j++) {
                                 for (int k = 0; k < samplesPerPixel; k++) {
                                     r.setInt(idx, DataConvert.byte2Int(buffer.get()));
@@ -1160,11 +1154,7 @@ public class GeoTiff {
                         for (int i = 0; i < stripNum; i++) {
                             stripOffset = stripOffsetTag.value[i];
                             stripSize = stripSizeTag.value[i];
-                            buffer = testReadData(stripOffset, stripSize);
-                            if (cDecoder != null){
-                                buffer = ByteBuffer.wrap(cDecoder.decode(buffer.array(), byteOrder));
-                                buffer.order(byteOrder);
-                            }
+                            buffer = testReadData(stripOffset, stripSize, cDecoder);
                             for (int j = 0; j < width * rowNum; j++) {
                                 for (int k = 0; k < samplesPerPixel; k++) {
                                     if (dataType == DataType.FLOAT) {
@@ -1181,11 +1171,7 @@ public class GeoTiff {
                         for (int i = 0; i < stripNum; i++) {
                             stripOffset = stripOffsetTag.value[i];
                             stripSize = stripSizeTag.value[i];
-                            buffer = testReadData(stripOffset, stripSize);
-                            if (cDecoder != null){
-                                buffer = ByteBuffer.wrap(cDecoder.decode(buffer.array(), byteOrder));
-                                buffer.order(byteOrder);
-                            }
+                            buffer = testReadData(stripOffset, stripSize, cDecoder);
                             for (int j = 0; j < width * rowNum; j++) {
                                 for (int k = 0; k < samplesPerPixel; k++) {
                                     r.setFloat(idx, buffer.getFloat());
@@ -1217,9 +1203,30 @@ public class GeoTiff {
         this.channel.read(buffer);
         ((Buffer)buffer).flip();
 
-//        for (int i = 0; i < size / 4; i++) {
-//            System.out.println(i + ": " + buffer.getFloat());
-//        }
+        return buffer;
+    }
+
+    /**
+     * Test read data
+     *
+     * @param offset Offset
+     * @param size Size
+     * @param cDecoder Compression decoder
+     * @throws IOException
+     */
+    private ByteBuffer testReadData(int offset, int size, CompressionDecoder cDecoder) throws IOException {
+        this.channel.position(offset);
+        ByteBuffer buffer = ByteBuffer.allocate(size);
+        buffer.order(this.byteOrder);
+
+        this.channel.read(buffer);
+        ((Buffer)buffer).flip();
+
+        if (cDecoder != null){
+            buffer = ByteBuffer.wrap(cDecoder.decode(buffer.array(), byteOrder));
+            buffer.order(byteOrder);
+        }
+
         return buffer;
     }
 

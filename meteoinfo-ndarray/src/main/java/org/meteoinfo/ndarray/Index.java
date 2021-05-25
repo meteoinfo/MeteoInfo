@@ -359,6 +359,30 @@ public class Index implements Cloneable {
     }
 
     /**
+     * Reshape a new index
+     * @param shape New shape
+     * @return New index
+     */
+    Index reshape(int[] shape) {
+        boolean canReshape = true;
+        for (int s : this.stride) {
+            if (s > 1) {
+                canReshape = false;
+            }
+        }
+        if (!canReshape) {
+            return null;
+        }
+
+        Index newIndex = Index.factory(shape);
+        newIndex.offset = this.offset;
+        newIndex.size = this.size;
+        newIndex.fastIterator = this.fastIterator;
+        newIndex.precalc(); // any subclass-specific optimizations
+        return newIndex;
+    }
+
+    /**
      * Create a new Index based on current one by eliminating any dimensions
      * with length one.
      *

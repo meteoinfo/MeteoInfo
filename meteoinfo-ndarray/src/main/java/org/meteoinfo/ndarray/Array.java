@@ -1104,11 +1104,12 @@ public abstract class Array {
      * @throws IllegalArgumentException new shape is not conformable
      */
     public Array reshapeNoCopy(int[] shape) {
-        Array result = factory(this.getDataType(), shape, getStorage());
-        if (result.getSize() != getSize()) {
-            throw new IllegalArgumentException("reshape arrays must have same total size");
+        Index newIndex = this.indexCalc.reshape(shape);
+        if (newIndex == null) {
+            return reshape(shape);
+        } else {
+            return createView(newIndex);
         }
-        return result;
     }
     
     /**

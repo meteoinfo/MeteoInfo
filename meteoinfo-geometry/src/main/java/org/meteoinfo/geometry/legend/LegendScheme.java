@@ -489,6 +489,33 @@ package org.meteoinfo.geometry.legend;
      }
 
      /**
+      * Get legend values
+      * @return Legend values
+      */
+     public double[] getValues() {
+         List<Double> values = new ArrayList<>();
+         ColorBreak cb;
+         for (int i = 0; i < legendBreaks.size(); i++) {
+             cb = legendBreaks.get(i);
+             if (!cb.isNoData()) {
+                if (values.isEmpty()) {
+                    values.add(Double.parseDouble(cb.getStartValue().toString()));
+                    values.add(Double.parseDouble(cb.getEndValue().toString()));
+                } else {
+                    values.add(Double.parseDouble(cb.getEndValue().toString()));
+                }
+             }
+         }
+
+         double[] vs = new double[values.size()];
+         for (int i = 0; i < values.size(); i++) {
+             vs[i] = values.get(i);
+         }
+
+         return vs;
+     }
+
+     /**
       * Get color list
       *
       * @return Color list

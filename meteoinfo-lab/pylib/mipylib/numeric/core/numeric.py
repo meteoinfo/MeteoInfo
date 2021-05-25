@@ -2587,7 +2587,7 @@ def asgridarray(data, x=None, y=None, fill_value=-9999.0):
     if isinstance(data, PyGridData):
         return data.data.toGridArray()
     elif isinstance(data, DimArray):
-        return data.asgridarray(x, y)
+        return data.asgridarray(x, y, fill_value)
     elif isinstance(data, NDArray):
         if x is None:
             x = arange(0, data.shape[1])

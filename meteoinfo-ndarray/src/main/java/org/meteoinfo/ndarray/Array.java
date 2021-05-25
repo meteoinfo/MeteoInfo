@@ -1452,10 +1452,16 @@ public abstract class Array {
     public String toString() {
         StringBuilder sbuff = new StringBuilder();
         IndexIterator ii = getIndexIterator();
+        int i = 0;
         while (ii.hasNext()) {
             Object data = ii.getObjectNext();
             sbuff.append(data);
             sbuff.append(" ");
+            i += 1;
+            if (i > 1000) {
+                sbuff.append("...");
+                break;
+            }
         }
         return sbuff.toString();
     }

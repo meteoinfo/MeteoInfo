@@ -436,6 +436,12 @@ public class ShapeFileManage {
             
             bytes = new byte[ContentLength * 2];
             br.read(bytes);
+
+            if (ContentLength < 40) {
+                System.out.println(String.format("Too short content length of %d at shape %d", ContentLength, i + 1));
+                continue;
+            }
+
             buffer = ByteBuffer.wrap(bytes);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             aShapeType = buffer.getInt();

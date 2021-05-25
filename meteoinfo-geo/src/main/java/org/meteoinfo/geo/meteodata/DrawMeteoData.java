@@ -1785,7 +1785,7 @@ public class DrawMeteoData {
     }
 
     /**
-     * Create reaster layer
+     * Create raster layer
      *
      * @param gridData Grid data
      * @param lName Layer name
@@ -1805,7 +1805,7 @@ public class DrawMeteoData {
     }
 
     /**
-     * Create reaster layer
+     * Create raster layer
      *
      * @param gridData Grid data
      * @param lName Layer name
@@ -1825,7 +1825,7 @@ public class DrawMeteoData {
     }
 
     /**
-     * Create reaster layer
+     * Create raster layer
      *
      * @param gridData Grid data
      * @param LName Layer name
@@ -1846,7 +1846,7 @@ public class DrawMeteoData {
     }
 
     /**
-     * Create reaster layer
+     * Create raster layer
      *
      * @param gridData Grid data
      * @param LName Layer name

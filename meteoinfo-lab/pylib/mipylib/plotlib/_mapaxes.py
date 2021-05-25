@@ -1197,7 +1197,7 @@ class MapAxes(Axes):
                 x = rgbdata.dimvalue(1)
                 y = rgbdata.dimvalue(0)
             else:
-                gdata = np.asgridarray(args[0])
+                gdata = np.asgridarray(args[0], fill_value=fill_value)
                 args = args[1:]
         elif n <=4:
             x = args[0]
@@ -1253,7 +1253,9 @@ class MapAxes(Axes):
                 if cb.isNoData():
                     cb.setColor(plotutil.getcolor(fill_color))
 
-            layer = DrawMeteoData.createRasterLayer(gdata, 'layer', ls) 
+            layer = DrawMeteoData.createRasterLayer(gdata, 'layer', ls)
+            if not fill_color is None:
+                layer.setMissingColor(plotutil.getcolor(fill_color))
                             
         proj = kwargs.pop('proj', None)
         if not proj is None:

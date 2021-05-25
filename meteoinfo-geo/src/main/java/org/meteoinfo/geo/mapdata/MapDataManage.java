@@ -193,9 +193,19 @@ public class MapDataManage {
      * @throws FileNotFoundException
      */
     public static VectorLayer readMapFile_ShapeFile(String fn) throws IOException, FileNotFoundException, Exception {
-        String encoding = IOUtil.encodingDetectShp(fn);
-        if (encoding.equals("ISO8859_1")) {
-            encoding = "UTF-8";
+        String cpgfilepath = fn.replaceFirst(fn.substring(fn.lastIndexOf(".")), ".cpg");
+        File cpgFile = new File(cpgfilepath);
+        String encoding;
+        if (cpgFile.exists()){
+            BufferedReader sr = new BufferedReader(new FileReader(cpgFile));
+            String ec = sr.readLine().trim();
+            sr.close();
+            encoding = ec;
+        } else {
+            encoding = IOUtil.encodingDetectShp(fn);
+            if (encoding.equals("ISO8859_1")) {
+                encoding = "UTF-8";
+            }
         }
 
         return readMapFile_ShapeFile(fn, encoding);

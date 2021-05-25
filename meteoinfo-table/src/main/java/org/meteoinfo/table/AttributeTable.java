@@ -392,7 +392,7 @@ public final class AttributeTable implements Cloneable {
                 _dataTable.addRow(readTableRowFromBytes(row));
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
-                _dataTable.addRow(_dataTable.newRow());
+                //_dataTable.addRow(_dataTable.newRow());
             }
         }
         //_dataTable.EndLoadData();

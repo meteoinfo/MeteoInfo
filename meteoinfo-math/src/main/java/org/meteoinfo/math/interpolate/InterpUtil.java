@@ -11,16 +11,15 @@ import org.apache.commons.math3.analysis.interpolation.*;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.meteoinfo.common.PointD;
 //import org.meteoinfo.geoprocess.GeoComputation;
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.math.spatial.KDTree;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.IndexIterator;
 //import org.meteoinfo.shape.PolygonShape;
 import smile.interpolation.KrigingInterpolation1D;
 import smile.interpolation.KrigingInterpolation2D;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -2275,6 +2274,316 @@ public class InterpUtil {
                 gx = X.getDouble(j);
                 r.setDouble(i * colNum + j, ki2d.interpolate(gx, gy));
             }
+        }
+
+        return r;
+    }
+
+    /**
+     * Get value index in a dimension array
+     *
+     * @param dim Dimension array
+     * @param v The value
+     * @return value index
+     */
+    public static int getDimIndex(Array dim, Number v) {
+        dim = dim.copyIfView();
+        switch (dim.getDataType()) {
+            case BYTE:
+                return Arrays.binarySearch((byte[]) dim.getStorage(), v.byteValue());
+            case INT:
+                return Arrays.binarySearch((int[]) dim.getStorage(), v.intValue());
+            case SHORT:
+                return Arrays.binarySearch((short[]) dim.getStorage(), v.shortValue());
+            case LONG:
+                return Arrays.binarySearch((long[]) dim.getStorage(), v.longValue());
+            case FLOAT:
+                return Arrays.binarySearch((float[]) dim.getStorage(), v.floatValue());
+            case DOUBLE:
+                return Arrays.binarySearch((double[]) dim.getStorage(), v.doubleValue());
+        }
+
+        int n = (int) dim.getSize();
+        if (v.doubleValue() < dim.getDouble(0) || v.doubleValue() > dim.getDouble(n - 1)) {
+            return -1;
+        }
+
+        int idx = n - 1;
+        for (int i = 1; i < n; i++) {
+            if (v.doubleValue() < dim.getDouble(i)) {
+                idx = i - 1;
+                break;
+            }
+        }
+        return idx;
+    }
+
+    /**
+     * Get grid array x/y value index
+     * @param xdim X coordinate array
+     * @param ydim Y coordinate array
+     * @param x X value
+     * @param y Y value
+     * @return X/Y index
+     */
+    public static int[] gridIndex(Array xdim, Array ydim, double x, double y) {
+        if (xdim.getRank() == 1) {
+            int xn = (int) xdim.getSize();
+            int yn = (int) ydim.getSize();
+            int xIdx = getDimIndex(xdim, x);
+            if (xIdx == -1 || xIdx == -(xn + 1)) {
+                return null;
+            } else if (xIdx < 0) {
+                xIdx = -xIdx - 2;
+            }
+
+            int yIdx = getDimIndex(ydim, y);
+            if (yIdx == -1 || yIdx == -(yn + 1)) {
+                return null;
+            } else if (yIdx < 0) {
+                yIdx = -yIdx - 2;
+            }
+
+            if (xIdx == xn - 1) {
+                xIdx = xn - 2;
+            }
+            if (yIdx == yn - 1) {
+                yIdx = yn - 2;
+            }
+
+            return new int[]{yIdx, xIdx};
+        } else {
+            int xIdx = -1, yIdx = -1;
+            int[] shape = xdim.getShape();
+            int yn = shape[0];
+            int xn = shape[1];
+            Index index = new Index2D(shape);
+            double x1, x2, y1, y2;
+            for (int i = 0; i < yn - 1; i++) {
+                for (int j = 0; j < xn - 1; j++) {
+                    index = index.set(i, j);
+                    y1 = ydim.getDouble(index);
+                    index = index.set(i+1, j);
+                    y2 = ydim.getDouble(index);
+                    if (y >= y1 && y < y2) {
+                        index = index.set(i, j);
+                        x1 = xdim.getDouble(index);
+                        index = index.set(i, j+1);
+                        x2 = xdim.getDouble(index);
+                        if (x >= x1 && x < x2) {
+                            yIdx = i;
+                            xIdx = j;
+                        }
+                    }
+                }
+            }
+
+            if (yIdx >= 0 && xIdx >= 0)
+                return new int[]{yIdx, xIdx};
+            else
+                return null;
+        }
+    }
+
+    /**
+     * Get grid array x/y value index
+     * @param xdim X coordinate array
+     * @param ydim Y coordinate array
+     * @param x X value
+     * @param y Y value
+     * @return X/Y index
+     */
+    public static int[] gridIndex(double[][] xdim, double[][] ydim, double x, double y) {
+        int xIdx = -1, yIdx = -1;
+        int yn = xdim.length;
+        int xn = xdim[0].length;
+        for (int i = 0; i < yn - 1; i++) {
+            for (int j = 0; j < xn - 1; j++) {
+                if (y >= ydim[i][j] && y < ydim[i+1][j]) {
+                    if (x >= xdim[i][j] && x < xdim[i][j+1]) {
+                        yIdx = i;
+                        xIdx = j;
+                    }
+                }
+            }
+        }
+
+        if (yIdx >= 0 && xIdx >= 0)
+            return new int[]{yIdx, xIdx};
+        else
+            return null;
+    }
+
+    private static double bilinear(Array data, Index dindex, Array xdim, Array ydim, double x, double y) {
+        xdim = xdim.copyIfView();
+        ydim = ydim.copyIfView();
+
+        double iValue = Double.NaN;
+        int[] xyIdx = gridIndex(xdim, ydim, x, y);
+        if (xyIdx == null) {
+            return iValue;
+        }
+
+        int i1 = xyIdx[0];
+        int j1 = xyIdx[1];
+        int i2 = i1 + 1;
+        int j2 = j1 + 1;
+        Index index = data.getIndex();
+        int n = index.getRank();
+        for (int i = 0; i < n - 2; i++) {
+            index.setDim(i, dindex.getCurrentCounter()[i]);
+        }
+        index.setDim(n - 2, i1);
+        index.setDim(n - 1, j1);
+        double a = data.getDouble(index);
+        index.setDim(n - 1, j2);
+        double b = data.getDouble(index);
+        index.setDim(n - 2, i2);
+        index.setDim(n - 1, j1);
+        double c = data.getDouble(index);
+        index.setDim(n - 2, i2);
+        index.setDim(n - 1, j2);
+        double d = data.getDouble(index);
+        List<Double> dList = new ArrayList<>();
+        if (!Double.isNaN(a)) {
+            dList.add(a);
+        }
+        if (!Double.isNaN(b)) {
+            dList.add(b);
+        }
+        if (!Double.isNaN(c)) {
+            dList.add(c);
+        }
+        if (!Double.isNaN(d)) {
+            dList.add(d);
+        }
+
+        if (dList.isEmpty()) {
+            return iValue;
+        } else if (dList.size() == 1) {
+            iValue = dList.get(0);
+        } else if (dList.size() <= 3) {
+            double aSum = 0;
+            for (double dd : dList) {
+                aSum += dd;
+            }
+            iValue = aSum / dList.size();
+        } else {
+            double dx = xdim.getDouble(j1 + 1) - xdim.getDouble(j1);
+            double dy = ydim.getDouble(i1 + 1) - ydim.getDouble(i1);
+            double x1val = a + (c - a) * (y - ydim.getDouble(i1)) / dy;
+            double x2val = b + (d - b) * (y - ydim.getDouble(i1)) / dy;
+            iValue = x1val + (x2val - x1val) * (x - xdim.getDouble(j1)) / dx;
+        }
+
+        return iValue;
+    }
+
+    private static double nearest(Array data, Index dindex, Array xdim, Array ydim, double x, double y) {
+        xdim = xdim.copyIfView();
+        ydim = ydim.copyIfView();
+
+        int[] xyIdx = gridIndex(xdim, ydim, x, y);
+        if (xyIdx == null) {
+            return Double.NaN;
+        }
+
+        int i1 = xyIdx[0];
+        int j1 = xyIdx[1];
+        int i2 = i1 + 1;
+        int j2 = j1 + 1;
+
+        double x1 = xdim.getDouble(j1);
+        double x2 = xdim.getDouble(j2);
+        double y1 = ydim.getDouble(i1);
+        double y2 = ydim.getDouble(i2);
+        int ii = (x - x1) < (x2 - x) ? i1 : i2;
+        int jj = (y - y1) < (y2 - y) ? j1 : j2;
+
+
+        Index index = data.getIndex();
+        int n = index.getRank();
+        for (int i = 0; i < n - 2; i++) {
+            index.setDim(i, dindex.getCurrentCounter()[i]);
+        }
+        index.setDim(n - 2, ii);
+        index.setDim(n - 1, jj);
+        double v = data.getDouble(index);
+
+        return v;
+    }
+
+    /**
+     * Interpolates from a rectilinear grid to another rectilinear grid using
+     * bilinear interpolation.
+     *
+     * @param a The sample array
+     * @param X X coordinate of the sample array
+     * @param Y Y coordinate of the sample array
+     * @param newX X coordinate of the query points
+     * @param newY Y coordinate of the query points
+     * @return Resampled array
+     */
+    public static Array linint2(Array a, Array X, Array Y, Array newX, Array newY) {
+        int xn = (int) newX.getSize();
+        int yn = (int) newY.getSize();
+        int[] shape = a.getShape();
+        int n = shape.length;
+        shape[n - 1] = xn;
+        shape[n - 2] = yn;
+        double x, y, v;
+        Array r = Array.factory(DataType.DOUBLE, shape);
+
+        Index index = r.getIndex();
+        int[] counter;
+        int yi, xi;
+        for (int k = 0; k < r.getSize(); k++) {
+            counter = index.getCurrentCounter();
+            yi = counter[n - 2];
+            xi = counter[n - 1];
+            y = newY.getDouble(yi);
+            x = newX.getDouble(xi);
+            v = bilinear(a, index, X, Y, x, y);
+            r.setDouble(index, v);
+            index.incr();
+        }
+
+        return r;
+    }
+
+    /**
+     * Interpolates from a rectilinear grid to another rectilinear grid using
+     * nearest interpolation.
+     *
+     * @param a The sample array
+     * @param X X coordinate of the sample array
+     * @param Y Y coordinate of the sample array
+     * @param newX X coordinate of the query points
+     * @param newY Y coordinate of the query points
+     * @return Resampled array
+     */
+    public static Array nearestint2(Array a, Array X, Array Y, Array newX, Array newY) {
+        int xn = (int) newX.getSize();
+        int yn = (int) newY.getSize();
+        int[] shape = a.getShape();
+        int n = shape.length;
+        shape[n - 1] = xn;
+        shape[n - 2] = yn;
+        double x, y, v;
+        Array r = Array.factory(DataType.DOUBLE, shape);
+
+        Index index = r.getIndex();
+        int[] counter;
+        int yi, xi;
+        for (int k = 0; k < r.getSize(); k++) {
+            counter = index.getCurrentCounter();
+            yi = counter[n - 2];
+            xi = counter[n - 1];
+            y = newY.getDouble(yi);
+            x = newX.getDouble(xi);
+            v = nearest(a, index, X, Y, x, y);
+            r.setDouble(index, v);
+            index.incr();
         }
 
         return r;

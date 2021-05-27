@@ -6,7 +6,7 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.math.interpolate import InterpUtil
+from org.meteoinfo.math.interpolate import InterpUtil, RectLinearInterpolator, RectNearestInterpolator
 from org.meteoinfo.ndarray.math import ArrayUtil
 from org.meteoinfo.geometry.geoprocess import GeometryUtil
 
@@ -14,7 +14,8 @@ from ..core import NDArray
 from ..core import numeric as np
 
 __all__ = [
-    'interp1d','interp2d','linint2','RectBivariateSpline','griddata'
+    'interp1d','interp2d','linint2','nearestint2','RectBivariateSpline','RectInterpLinear',
+    'RectInterpNearest','griddata'
     ]
 
 class interp1d(object):
@@ -149,6 +150,86 @@ class RectBivariateSpline(object):
         else:
             return NDArray(r)
 
+class RectInterpLinear(object):
+    '''
+    Bivariate linear interpolation over a rectangular mesh.
+
+    Can be used for both smoothing and interpolating data.
+
+    :param x: (*array_like*) 1-D arrays of x coordinate in strictly ascending order.
+    :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
+    :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
+    '''
+    def __init__(self, x, y, z):
+        if isinstance(x, list):
+            x = np.array(x)
+        if isinstance(y, list):
+            y = np.array(y)
+        if isinstance(z, list):
+            z = np.array(z)
+        self._func = RectLinearInterpolator(x.asarray(), y.asarray(), z.asarray())
+
+    def __call__(self, x, y):
+        '''
+        Evaluate the interpolate vlaues.
+
+        :param x: (*array_like*) X to evaluate the interpolant at.
+        :param y: (*array_like*) Y to evaluate the interpolant at.
+        '''
+        if isinstance(x, list):
+            x = np.array(x)
+        if isinstance(x, NDArray):
+            x = x.asarray()
+        if isinstance(y, list):
+            y = np.array(y)
+        if isinstance(y, NDArray):
+            y = y.asarray()
+        r = self._func.interpolate(x, y)
+        if isinstance(r, float):
+            return r
+        else:
+            return NDArray(r)
+
+class RectInterpNearest(object):
+    '''
+    Bivariate nearest interpolation over a rectangular mesh.
+
+    Can be used for both smoothing and interpolating data.
+
+    :param x: (*array_like*) 1-D arrays of x coordinate in strictly ascending order.
+    :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
+    :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
+    '''
+    def __init__(self, x, y, z):
+        if isinstance(x, list):
+            x = np.array(x)
+        if isinstance(y, list):
+            y = np.array(y)
+        if isinstance(z, list):
+            z = np.array(z)
+        self._func = RectNearestInterpolator(x.asarray(), y.asarray(), z.asarray())
+
+    def __call__(self, x, y):
+        '''
+        Evaluate the interpolate vlaues.
+
+        :param x: (*array_like*) X to evaluate the interpolant at.
+        :param y: (*array_like*) Y to evaluate the interpolant at.
+        '''
+        if isinstance(x, list):
+            x = np.array(x)
+        if isinstance(x, NDArray):
+            x = x.asarray()
+        if isinstance(y, list):
+            y = np.array(y)
+        if isinstance(y, NDArray):
+            y = y.asarray()
+        r = self._func.interpolate(x, y)
+        if isinstance(r, float):
+            return r
+        else:
+            return NDArray(r)
+
 def linint2(*args, **kwargs):
     """
     Interpolates from a rectilinear grid to another rectilinear grid using bilinear interpolation.
@@ -179,6 +260,38 @@ def linint2(*args, **kwargs):
     xq = np.array(xq)._array
     yq = np.array(yq)._array
     r = ArrayUtil.linint2(z, x, y, xq, yq)
+    return NDArray(r)
+
+def nearestint2(*args, **kwargs):
+    """
+    Interpolates from a rectilinear grid to another rectilinear grid using nearest interpolation.
+
+    :param x: (*array_like*) X coordinate array of the sample data (one dimension).
+    :param y: (*array_like*) Y coordinate array of the sample data (one dimension).
+    :param z: (*array_like*) Value array of the sample data (muti-dimension, last two dimensions are y and x).
+    :param xq: (*array_like*) X coordinate array of the query data (one dimension).
+    :param yq: (*array_like*) Y coordinate array of the query data (one dimension).
+
+    :returns: (*array_like*) Interpolated array.
+    """
+    if len(args) == 3:
+        z = args[0]
+        x = z.dimvalue(z.ndim - 1)
+        y = z.dimvalue(z.ndim - 2)
+        xq = args[1]
+        yq = args[2]
+    else:
+        x = args[0]
+        y = args[1]
+        z = args[2]
+        xq = args[3]
+        yq = args[4]
+    x = np.array(x)._array
+    y = np.array(y)._array
+    z = np.array(z)._array
+    xq = np.array(xq)._array
+    yq = np.array(yq)._array
+    r = InterpUtil.nearestint2(z, x, y, xq, yq)
     return NDArray(r)
 
 def griddata(points, values, xi=None, **kwargs):

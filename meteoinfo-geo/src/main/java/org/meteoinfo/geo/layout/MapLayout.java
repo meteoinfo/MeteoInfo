@@ -1935,7 +1935,7 @@ import org.xml.sax.SAXException;
                  //VectorBreak vb = (VectorBreak) aCB;
                  Object[] lens = {5, 10, 15, 20, 25, 30};
                  Object lenObj = JOptionPane.showInputDialog((JFrame) SwingUtilities.getWindowAncestor(this),
-                         "Select wind speed:", "Selection", JOptionPane.PLAIN_MESSAGE, null, lens, (int) wa.length);
+                         "Select wind speed:", (int) wa.length);
                  if (lenObj != null) {
                      wa.length = Integer.parseInt(lenObj.toString());
                      //this.paintGraphics();

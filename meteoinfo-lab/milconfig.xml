@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\interpolate">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\text"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\classification">
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\metrics"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\preprocessing"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_persistence"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\regression"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\kmeans_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotiff_dem.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\geoshow\geoshow_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\interp2d_nearest.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\lda_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\regression\gpr_1.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\kmeans_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotiff_dem.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\geoshow\geoshow_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\interp2d_nearest.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\lda_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\regression\gpr_1.py"/>
     </RecentFiles>
   </File>
   <Font>

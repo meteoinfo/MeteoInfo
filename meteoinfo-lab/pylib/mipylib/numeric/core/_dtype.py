@@ -1,7 +1,7 @@
 from org.meteoinfo.ndarray import DataType as JDataType
 
 __all__ = [
-    'byte','char','int','integer','int32','int16','short','int64','long','float','float64',
+    'byte','char','int','integer','int32','int16','short','int64','long','float','float32','float64',
     'double','str','string','complex','date','datetime'
     ]
 
@@ -148,6 +148,7 @@ class dtype(DataType):
     int64 = DataType('long')
     long = DataType('long')
     float = DataType('float')
+    float32 = DataType('float')
     float64 = DataType('double')
     double = DataType('double')
     str = DataType('string')
@@ -184,6 +185,7 @@ short = DataType('short')
 int64 = DataType('long')
 long = DataType('long')
 float = DataType('float')
+float32 = DataType('float')
 float64 = DataType('double')
 double = DataType('double')
 str = DataType('string')

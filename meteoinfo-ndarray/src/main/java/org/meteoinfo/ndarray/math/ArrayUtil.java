@@ -2157,6 +2157,70 @@ public class ArrayUtil {
     }
 
     /**
+     * Find indices where elements should be inserted to maintain order.
+     * @param a Input array
+     * @param v Value
+     * @param left Left side or right side
+     * @return indices
+     */
+    public static int searchSorted(Array a, Number v, boolean left) {
+        int idx = -1;
+        switch (a.getDataType()) {
+            case BYTE:
+                idx = Arrays.binarySearch((byte[]) a.getStorage(), v.byteValue());
+                break;
+            case INT:
+                idx = Arrays.binarySearch((int[]) a.getStorage(), v.intValue());
+                break;
+            case SHORT:
+                idx = Arrays.binarySearch((short[]) a.getStorage(), v.shortValue());
+                break;
+            case LONG:
+                idx = Arrays.binarySearch((long[]) a.getStorage(), v.longValue());
+                break;
+            case FLOAT:
+                idx = Arrays.binarySearch((float[]) a.getStorage(), v.floatValue());
+                break;
+            case DOUBLE:
+                idx = Arrays.binarySearch((double[]) a.getStorage(), v.doubleValue());
+                break;
+        }
+
+        if (idx >= 0) {
+            if (!left)
+                idx += 1;
+        } else {
+            if (idx == -1)
+                idx = 0;
+            else if (idx == -(a.getSize() + 1))
+                idx = (int)a.getSize();
+            else {
+                idx = -idx - 2;
+            }
+        }
+
+        return idx;
+    }
+
+    /**
+     * Find indices where elements should be inserted to maintain order.
+     * @param a Input array
+     * @param v Value array
+     * @param left Left side or right side
+     * @return indices
+     */
+    public static Array searchSorted(Array a, Array v, boolean left) {
+        a = a.copyIfView();
+        v = v.copyIfView();
+        Array idx = Array.factory(DataType.INT, v.getShape());
+        for (int i = 0; i < idx.getSize(); i++) {
+            idx.setInt(i, searchSorted(a, v.getDouble(i), left));
+        }
+
+        return idx;
+    }
+
+    /**
      * Find the unique elements of an array.
      *
      * @param a Array a

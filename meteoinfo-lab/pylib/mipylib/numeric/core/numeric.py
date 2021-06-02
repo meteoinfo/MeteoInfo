@@ -45,7 +45,7 @@ __all__ = [
     'interpn','isarray','isfinite','isinf','isnan','linspace','log','log10',
     'logical_not','logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum',
     'monthname','moveaxis','newaxis','nonzero','ones','ones_like','pol2cart','power','radians','ravel',
-    'reshape','repeat','roll','rolling_mean','rot90','sin','shape','smooth5','smooth9','sort','squeeze','argsort',
+    'reshape','repeat','roll','rolling_mean','rot90','sign','sin','shape','smooth5','smooth9','sort','squeeze','argsort',
     'split','sqrt','square','std','sum','swapaxes','tan','tile','transpose','trapz','vdot','unique',
     'unravel_index','var','vstack','where','zeros','zeros_like'
     ]

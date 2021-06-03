@@ -216,6 +216,48 @@ public class LinalgUtil {
     }
 
     /**
+     * Compute the determinant of an array
+     * @param a The matrix array
+     * @return Determinant
+     */
+    public static double det(Array a) {
+        Matrix ma = MatrixUtil.arrayToMatrix(a);
+        Matrix.LU lu = ma.lu();
+        return lu.det();
+    }
+
+    /**
+     * Compute the sign and (natural) logarithm of the determinant of an array.
+     * @param a The matrix array
+     * @return Sign and determinant
+     */
+    public static double[] sLogDet(Array a) {
+        Matrix ma = MatrixUtil.arrayToMatrix(a);
+        Matrix.LU lu = ma.lu();
+        int m = lu.lu.nrows();
+        int n = lu.lu.ncols();
+
+        if (m != n) {
+            throw new IllegalArgumentException(String.format("The matrix is not square: %d x %d", m, n));
+        }
+
+        double d = 0.0;
+        for (int j = 0; j < n; j++) {
+            d += Math.log(Math.abs(lu.lu.get(j, j)));
+        }
+
+        int changeSign = 0;
+        for (int j = 0; j < n; j++){
+            if (j+1 != lu.ipiv[j]) {
+                changeSign += 1;
+            }
+        }
+        int sign = changeSign % 2 > 0 ? -1 : 1;
+
+        return new double[]{sign, d};
+    }
+
+    /**
      * Not correct at present !!!
      *
      * @param a

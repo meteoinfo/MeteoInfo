@@ -12,7 +12,7 @@ from org.meteoinfo.math.stats import StatsUtil
 from ..core import NDArray
 
 __all__ = [
-    'solve','cholesky','det','lu','qr', 'svd','eig','inv','lstsq','solve_triangular'
+    'solve','cholesky','det','lu','qr', 'svd','eig','inv','lstsq','slogdet','solve_triangular'
     ]
 
 class LinAlgError(Exception):
@@ -175,7 +175,7 @@ def qr(a):
     r = NDArray(r[1])
     return q, r
 
-def svd(a):
+def svd(a, full_matrices=True):
     '''
     Singular Value Decomposition.
     
@@ -188,6 +188,9 @@ def svd(a):
     ----------
     a : (M, N) array_like
         Matrix to decompose.
+    full_matrices: bool, optional
+        If True (default), u and vh have the shapes (..., M, M) and (..., N, N), respectively.
+        Otherwise, the shapes are (..., M, K) and (..., K, N), respectively, where K = min(M, N).
         
     Returns
     -------
@@ -206,6 +209,14 @@ def svd(a):
     U = NDArray(r[0])
     s = NDArray(r[1])
     Vh = NDArray(r[2])
+    if not full_matrices:
+        m, n = a.shape
+        if m != n:
+            k = min(m, n)
+            if k == m:
+                Vh = Vh[:k,:].copy()
+            else:
+                U = U[:,:k].copy()
     return U, s, Vh
     
 def eig(a):
@@ -285,5 +296,15 @@ def det(a):
     det : (...) array_like
         Determinant of `a`.
     '''
-    r = LinalgUtil.determinantOfMatrix(a.asarray())
+    #r = LinalgUtil.determinantOfMatrix(a.asarray())
+    r = LinalgUtil.det(a.asarray())
     return r
+
+def slogdet(a):
+    """
+    Compute the sign and (natural) logarithm of the determinant of an array.
+    :param a: (*array_like*) Input array, has to be a square 2-D array.
+    :return: Sign and logarithm of the determinant.
+    """
+    r = LinalgUtil.sLogDet(a.asarray())
+    return r[0], r[1]

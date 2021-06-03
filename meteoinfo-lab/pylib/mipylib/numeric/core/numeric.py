@@ -35,14 +35,14 @@ nan = Double.NaN
 newaxis = None
 
 __all__ = [
-    'pi','e','inf','nan','acos','absolute','all','any','arange','arange1',
+    'pi','e','inf','nan','acos','abs','absolute','all','allclose','any','arange','arange1',
     'argmin','argmax','array','array_split','asanyarray','asarray','asgridarray','asgriddata','asin',
     'asmiarray','asstationdata','atleast_1d','atleast_2d','atan','atan2','ave_month','average','histogram',
     'broadcast_to','cdiff','ceil','concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag',
     'diff','dim_array','datatable','dot','empty','empty_like','exp','eye','flatnonzero',
     'floor','fmax','fmin','full',
     'hcurl','hdivg','hstack','identity','interp2d',
-    'interpn','isarray','isfinite','isinf','isnan','linspace','log','log10',
+    'interpn','isarray','isclose','isfinite','isinf','isnan','linspace','log','log10',
     'logical_not','logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum',
     'monthname','moveaxis','newaxis','nonzero','ones','ones_like','pol2cart','power','radians','ravel',
     'reshape','repeat','roll','rolling_mean','rot90','sign','sin','shape','smooth5','smooth9','sort','squeeze','argsort',
@@ -584,6 +584,17 @@ def absolute(x):
     else:
         return abs(x)
 
+def abs(x):
+    """
+    Calculate the absolute value element-wise.
+
+    :param x: (*array_like*) Input array.
+
+    :returns: An array containing the absolute value of each element in x.
+        For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
+    """
+    return absolute(x)
+
 def ceil(x):
     '''
     Return the ceiling of the input, element-wise.
@@ -1013,6 +1024,50 @@ def all(x, axis=None):
         if axis < 0:
             axis += x.ndim
         return NDArray(ArrayMath.all(x._array, axis))
+
+def isclose(a, b, rtol=1e-05, atol=1e-08, equal_nan=False):
+    """
+    Returns a boolean array where two arrays are element-wise equal within a tolerance.
+    :param a: (*array_like*) Input array a.
+    :param b: (*array_like*) Input array b.
+    :param rtol: (*float*) The relative tolerance parameter.
+    :param atol: (*float*) The absolute tolerance parameter.
+    :param equal_nan: (*bool*) Whether to compare NaN’s as equal. If True, NaN’s in a will be considered
+        equal to NaN’s in b in the output array.
+    :return: (*array*) Returns a boolean array of where a and b are equal within the given tolerance.
+        If both a and b are scalars, returns a single boolean value.
+    """
+    if isinstance(a, (list, tuple)):
+        a = array(a)
+
+    if isinstance(b, (list, tuple)):
+        b = array(b)
+
+    if isinstance(a, NDArray):
+        a = a.asarray()
+
+    if isinstance(b, NDArray):
+        b = b.asarray()
+
+    r = ArrayMath.isClose(a, b, rtol, atol, equal_nan)
+    if isinstance(r, numbers.Number):
+        return r
+    else:
+        return NDArray(r)
+
+def allclose(a, b, rtol=1e-05, atol=1e-08, equal_nan=False):
+    """
+    Returns True if two arrays are element-wise equal within a tolerance.
+    :param a: (*array_like*) Input array a.
+    :param b: (*array_like*) Input array b.
+    :param rtol: (*float*) The relative tolerance parameter.
+    :param atol: (*float*) The absolute tolerance parameter.
+    :param equal_nan: (*bool*) Whether to compare NaN’s as equal. If True, NaN’s in a will be considered
+        equal to NaN’s in b in the output array.
+    :return: (*bool*) Returns True if the two arrays are equal within the given
+        tolerance; False otherwise.
+    """
+    return all(isclose(a, b, rtol, atol, equal_nan))
 
 def sum(x, axis=None):
     """

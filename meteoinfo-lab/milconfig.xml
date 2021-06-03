@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\classification">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\metrics"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml\decomposition">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\preprocessing"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_persistence"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\regression"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\special"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\decomposition"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\lda_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\regression\gpr_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\special\gamma.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\decomposition\pca_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\knn.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\decomposition\pca_iris.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\lda_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\regression\gpr_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\special\gamma.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\decomposition\pca_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\knn.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\decomposition\pca_iris.py"/>
     </RecentFiles>
   </File>
   <Font>

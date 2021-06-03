@@ -2750,6 +2750,72 @@ public class ArrayMath {
     }
 
     /**
+     * Returns a boolean where two number are equal within a tolerance.
+     * @param a Number a.
+     * @param b Number b.
+     * @param rTol The relative tolerance parameter
+     * @param aTol The absolute tolerance parameter
+     * @return Result boolean
+     */
+    public static boolean isClose(Number a, Number b, double rTol, double aTol) {
+        return isClose(a, b, rTol, aTol, false);
+    }
+
+    /**
+     * Returns a boolean where two number are equal within a tolerance.
+     * @param a Number a.
+     * @param b Number b.
+     * @param rTol The relative tolerance parameter
+     * @param aTol The absolute tolerance parameter
+     * @param equalNaN Whether to compare NaN’s as equal
+     * @return Result boolean
+     */
+    public static boolean isClose(Number a, Number b, double rTol, double aTol, boolean equalNaN) {
+        if (equalNaN) {
+            if (Double.isNaN(a.doubleValue()) && Double.isNaN(b.doubleValue())) {
+                return true;
+            }
+        }
+        return Math.abs(a.doubleValue() - b.doubleValue()) <= aTol + rTol * Math.abs(b.doubleValue());
+    }
+
+    /**
+     * Returns a boolean array where two arrays are element-wise equal within a tolerance.
+     * @param a Input array a.
+     * @param b Input array b.
+     * @param rTol The relative tolerance parameter
+     * @param aTol The absolute tolerance parameter
+     * @return Result array
+     */
+    public static Array isClose(Array a, Array b, double rTol, double aTol) {
+        return isClose(a, b, rTol, aTol, false);
+    }
+
+    /**
+     * Returns a boolean array where two arrays are element-wise equal within a tolerance.
+     * @param a Input array a.
+     * @param b Input array b.
+     * @param rTol The relative tolerance parameter
+     * @param aTol The absolute tolerance parameter
+     * @param equalNaN Whether to compare NaN’s as equal
+     * @return Result array
+     */
+    public static Array isClose(Array a, Array b, double rTol, double aTol, boolean equalNaN) {
+        a = a.copyIfView();
+        b = b.copyIfView();
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+        for (int i = 0; i < a.getSize(); i++) {
+            if (isClose(a.getDouble(i), b.getDouble(i), rTol, aTol, equalNaN)) {
+                r.setBoolean(i, true);
+            } else {
+                r.setBoolean(i, false);
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Test element-wise for positive or negative infinity.
      *
      * @param a Array a

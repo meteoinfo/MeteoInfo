@@ -682,7 +682,7 @@ public class GeoTiff {
             IFDEntry heightIFD = this.findTag(Tag.ImageLength);
             int width = widthIFD.value[0];
             int height = heightIFD.value[0];
-            GridData.Integer gData = new GridData.Integer(height, width);
+            GridData.Integer gData = new GridData().new Integer(height, width);
             int[] values1d = readData(width, height);
             //int[][] values = new int[height][width];
             for (int i = 0; i < height; i++) {
@@ -740,7 +740,7 @@ public class GeoTiff {
             IFDEntry heightIFD = this.findTag(Tag.ImageLength);
             int width = widthIFD.value[0];
             int height = heightIFD.value[0];
-            GridData.Integer gData = new GridData.Integer(height, width);
+            GridData.Integer gData = new GridData().new Integer(height, width);
             int[] values1d = readData(width, height);
             //int[][] values = new int[height][width];
             for (int i = 0; i < height; i++) {

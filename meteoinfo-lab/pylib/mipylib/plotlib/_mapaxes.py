@@ -1222,13 +1222,15 @@ class MapAxes(Axes):
                     rgbd.append(d.asarray())
                 rgbdata = rgbd
             else:
-                rgbdata = rgbdata.asarray()        
+                rgbdata = rgbdata.asarray()
+            y_reverse = False
             if x[1] < x[0]:
                 x = x[::-1]
             if y[1] < y[0]:
                 y = y[::-1]
+                y_reverse = True
             extent = [x[0],x[-1],y[0],y[-1]]
-            igraphic = GraphicFactory.createImage(rgbdata, extent)
+            igraphic = GraphicFactory.createImage(rgbdata, extent, y_reverse)
             x = plotutil.getplotdata(x)
             y = plotutil.getplotdata(y)
             layer = DrawMeteoData.createImageLayer(x, y, igraphic, 'layer_image')

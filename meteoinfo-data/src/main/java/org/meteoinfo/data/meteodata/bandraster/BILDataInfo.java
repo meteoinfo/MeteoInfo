@@ -523,7 +523,7 @@ import org.meteoinfo.data.meteodata.Attribute;
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
              double[] xArray = this.getXDimension().getValues();
              double[] yArray = this.getYDimension().getValues();
-             GridData.Integer gData = new GridData.Integer(xArray, yArray);
+             GridData.Integer gData = new GridData().new Integer(xArray, yArray);
 
              br.seek(this._skipbytes);
              int i, j;
@@ -566,7 +566,7 @@ import org.meteoinfo.data.meteodata.Attribute;
      private GridData getGridData_BIL_Byte(int varIdx) {
          try {
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
-             GridData.Byte gData = new GridData.Byte(this.getXDimension().getValues(),
+             GridData.Byte gData = new GridData().new Byte(this.getXDimension().getValues(),
                      this.getYDimension().getValues());
 
              br.seek(this._skipbytes);
@@ -695,7 +695,7 @@ import org.meteoinfo.data.meteodata.Attribute;
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
              double[] xArray = this.getXDimension().getValues();
              double[] yArray = this.getYDimension().getValues();
-             GridData.Integer gData = new GridData.Integer(xArray, yArray);
+             GridData.Integer gData = new GridData().new Integer(xArray, yArray);
 
              br.seek(this._skipbytes);
              int i, j;
@@ -741,7 +741,7 @@ import org.meteoinfo.data.meteodata.Attribute;
              RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
              double[] xArray = this.getXDimension().getValues();
              double[] yArray = this.getYDimension().getValues();
-             GridData.Byte gData = new GridData.Byte(xArray, yArray);
+             GridData.Byte gData = new GridData().new Byte(xArray, yArray);
 
              br.seek(this._skipbytes);
              int i, j;

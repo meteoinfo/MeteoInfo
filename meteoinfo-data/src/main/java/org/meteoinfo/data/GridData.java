@@ -19,7 +19,6 @@ import org.locationtech.proj4j.datum.Grid;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
-//import org.meteoinfo.geoprocess.GeoComputation;
 
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -43,7 +42,6 @@ import org.meteoinfo.common.ResampleMethods;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.ndarray.Dimension;
 import org.meteoinfo.ndarray.DimensionType;
-//import org.meteoinfo.geoprocess.analysis.ResampleMethods;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -86,6 +84,13 @@ public class GridData {
     private boolean _yStag = false;
     // </editor-fold>
     // <editor-fold desc="Constructor">
+
+    /**
+     * Constructor
+     */
+    public GridData() {
+
+    }
 
     /**
      * Constructor
@@ -3257,7 +3262,7 @@ public class GridData {
     /**
      * GridData.Integer class
      */
-    public static class Byte extends GridData {
+    public class Byte extends GridData {
 
         private byte[][] data;
         private int missingValue;
@@ -3408,7 +3413,7 @@ public class GridData {
     /**
      * GridData.Integer class
      */
-    public static class Integer extends GridData {
+    public class Integer extends GridData {
 
         private final int[][] data;
         private int missingValue;
@@ -3532,7 +3537,7 @@ public class GridData {
     /**
      * GridData.Double class
      */
-    public static class Double extends GridData {
+    public class Double extends GridData {
 
         private double[][] data;
         private double missingValue;
@@ -3617,7 +3622,7 @@ public class GridData {
     /**
      * GridData.Integer class
      */
-    public static class Float extends GridData {
+    public class Float extends GridData {
 
         private float[][] data;
         private float missingValue;

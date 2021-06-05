@@ -2555,10 +2555,22 @@ public class GraphicFactory {
      * Create image by RGB data array
      *
      * @param data RGB data array list
-     * @param extent Exent
+     * @param extent Extent
      * @return Image graphic
      */
     public static Graphic createImage(List<Array> data, List<Number> extent) {
+        return createImage(data, extent, false);
+    }
+
+    /**
+     * Create image by RGB data array
+     *
+     * @param data RGB data array list
+     * @param extent Extent
+     * @param yReverse Y coordinate reverse or not
+     * @return Image graphic
+     */
+    public static Graphic createImage(List<Array> data, List<Number> extent, boolean yReverse) {
         int width, height;
         width = data.get(0).getShape()[1];
         height = data.get(0).getShape()[0];
@@ -2589,7 +2601,10 @@ public class GraphicFactory {
                         } else {
                             color = new Color(r, g, b, a);
                         }
-                        aImage.setRGB(j, height - i - 1, color.getRGB());
+                        if (yReverse)
+                            aImage.setRGB(j, i, color.getRGB());
+                        else
+                            aImage.setRGB(j, height - i - 1, color.getRGB());
                     }
                 }
             } else {
@@ -2603,7 +2618,10 @@ public class GraphicFactory {
                         } else {
                             color = new Color(r, g, b);
                         }
-                        aImage.setRGB(j, height - i - 1, color.getRGB());
+                        if (yReverse)
+                            aImage.setRGB(j, i, color.getRGB());
+                        else
+                            aImage.setRGB(j, height - i - 1, color.getRGB());
                     }
                 }
             }
@@ -2624,7 +2642,10 @@ public class GraphicFactory {
                         } else {
                             color = new Color(r, g, b, a);
                         }
-                        aImage.setRGB(j, height - i - 1, color.getRGB());
+                        if (yReverse)
+                            aImage.setRGB(j, i, color.getRGB());
+                        else
+                            aImage.setRGB(j, height - i - 1, color.getRGB());
                     }
                 }
             } else {
@@ -2638,7 +2659,10 @@ public class GraphicFactory {
                         } else {
                             color = new Color(r, g, b);
                         }
-                        aImage.setRGB(j, height - i - 1, color.getRGB());
+                        if (yReverse)
+                            aImage.setRGB(j, i, color.getRGB());
+                        else
+                            aImage.setRGB(j, height - i - 1, color.getRGB());
                     }
                 }
             }

@@ -12,6 +12,7 @@ import math
 import mipylib.miutil as miutil
 import numbers
 import operator
+import __builtin__
 from java.lang import Math, Double
 from java.util import Calendar
 from org.meteoinfo.data import GridData, GridArray, StationData, DataMath, TableData, TableUtil
@@ -582,7 +583,7 @@ def absolute(x):
     if isinstance(x, NDArray):
         return x.abs()
     else:
-        return abs(x)
+        return __builtin__.abs(x)
 
 def abs(x):
     """

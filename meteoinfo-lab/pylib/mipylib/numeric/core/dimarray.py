@@ -31,7 +31,7 @@ def dimension(value, name='null', type=None):
     """
     if isinstance(value, NDArray):
         value = value.aslist()
-    dtype = DimensionType.Other
+    dtype = DimensionType.OTHER
     if not type is None:
         if type.upper() == 'X':
             dtype = DimensionType.X

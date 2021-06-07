@@ -841,7 +841,7 @@ class DataFrame(object):
         format = kwargs.pop('format', None)
         skiprows = kwargs.pop('skiprows', 0)
         skipfooter = kwargs.pop('skipfooter', 0)
-        encoding = kwargs.pop('encoding', 'UTF8')
+        encoding = kwargs.pop('encoding', None)
         names = kwargs.pop('names', None)
         header = kwargs.pop('header', 0)
         index_col = kwargs.pop('index_col', -1)

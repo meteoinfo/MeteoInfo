@@ -16,6 +16,7 @@ import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.util.DataTypeUtil;
+import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.*;
 import java.time.format.DateTimeFormatter;
@@ -2001,6 +2002,10 @@ public class DataFrame implements Iterable {
      */
     public static DataFrame readTable(String fileName, String delimiter, int skipRows, String formatSpec, String encoding,
             int indexCol, String indexFormat, List<String> names, Integer header, int skipFooter) throws FileNotFoundException, IOException, Exception {
+        if (encoding == null) {
+            encoding = UniversalDetector.detectCharset(new File(fileName));
+        }
+
         BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), encoding));
         if (skipRows > 0) {
             for (int i = 0; i < skipRows; i++) {
@@ -2009,10 +2014,16 @@ public class DataFrame implements Iterable {
         }
 
         String title = sr.readLine().trim();
-        if (encoding.equals("UTF8")) {
-            if (title.startsWith("\uFEFF")) {
-                title = title.substring(1);
-            }
+        switch (encoding) {
+            case "UTF8":
+            case "UTF-8":
+            case "UTF-16BE":
+            case "UTF-16LE":
+            case "UTF-32BE":
+            case "UTF-32LE":
+                if (title.startsWith("\uFEFF")) {
+                    title = title.substring(1);
+                }
         }
         String[] titleArray1 = GlobalUtil.split(title, delimiter);
         List<String> titleArray = new ArrayList(Arrays.asList(titleArray1));
@@ -2260,6 +2271,10 @@ public class DataFrame implements Iterable {
     public static DataFrame readTable(String fileName, String delimiter, int skipRows, String formatSpec, String encoding,
             int indexCol, String indexFormat, List<String> names, Integer header, int skipFooter,
             List<Object> usecolsin) throws FileNotFoundException, IOException, Exception {
+        if (encoding == null) {
+            encoding = UniversalDetector.detectCharset(new File(fileName));
+        }
+
         BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), encoding));
         if (skipRows > 0) {
             for (int i = 0; i < skipRows; i++) {
@@ -2268,11 +2283,18 @@ public class DataFrame implements Iterable {
         }
 
         String title = sr.readLine().trim();
-        if (encoding.equals("UTF8")) {
-            if (title.startsWith("\uFEFF")) {
-                title = title.substring(1);
-            }
+        switch (encoding) {
+            case "UTF8":
+            case "UTF-8":
+            case "UTF-16BE":
+            case "UTF-16LE":
+            case "UTF-32BE":
+            case "UTF-32LE":
+                if (title.startsWith("\uFEFF")) {
+                    title = title.substring(1);
+                }
         }
+
         String[] titleArray1 = GlobalUtil.split(title, delimiter);
         List<Integer> usecols = new ArrayList<>();
         if (usecolsin.get(0) instanceof Integer) {

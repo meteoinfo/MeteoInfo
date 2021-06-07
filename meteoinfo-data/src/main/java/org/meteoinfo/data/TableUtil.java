@@ -5,11 +5,7 @@
  */
 package org.meteoinfo.data;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -23,6 +19,7 @@ import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
+import org.mozilla.universalchardet.UniversalDetector;
 
 /**
  *
@@ -44,6 +41,10 @@ public class TableUtil {
      */
     public static TableData readASCIIFile(String fileName, String delimiter, int headerLines, String formatSpec, String encoding,
         boolean readVarNames) throws FileNotFoundException, IOException, Exception {
+        if (encoding == null) {
+            encoding = UniversalDetector.detectCharset(new File(fileName));
+        }
+
         TableData tableData = new TableData();
 
         BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), encoding));
@@ -54,11 +55,18 @@ public class TableUtil {
         }
 
         String title = sr.readLine().trim();
-        if (encoding.equals("UTF8")) {
-            if (title.startsWith("\uFEFF")) {
-                title = title.substring(1);
-            }
+        switch (encoding) {
+            case "UTF8":
+            case "UTF-8":
+            case "UTF-16BE":
+            case "UTF-16LE":
+            case "UTF-32BE":
+            case "UTF-32LE":
+                if (title.startsWith("\uFEFF")) {
+                    title = title.substring(1);
+                }
         }
+
         String[] titleArray = GlobalUtil.split(title, delimiter);
         int colNum = titleArray.length;
         if (headerLines == -1 || !readVarNames) {
@@ -209,6 +217,10 @@ public class TableUtil {
      */
     public static TableData readASCIIFile(String fileName, String delimiter, int headerLines, String formatSpec, String encoding,
         boolean readVarNames, List<Object> usecolsin) throws FileNotFoundException, IOException, Exception {
+        if (encoding == null) {
+            encoding = UniversalDetector.detectCharset(new File(fileName));
+        }
+
         TableData tableData = new TableData();
 
         BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), encoding));
@@ -219,11 +231,18 @@ public class TableUtil {
         }
 
         String title = sr.readLine().trim();
-        if (encoding.equals("UTF8")) {
-            if (title.startsWith("\uFEFF")) {
-                title = title.substring(1);
-            }
+        switch (encoding) {
+            case "UTF8":
+            case "UTF-8":
+            case "UTF-16BE":
+            case "UTF-16LE":
+            case "UTF-32BE":
+            case "UTF-32LE":
+                if (title.startsWith("\uFEFF")) {
+                    title = title.substring(1);
+                }
         }
+
         String[] titleArray1 = GlobalUtil.split(title, delimiter);
         List<Integer> usecols = new ArrayList<>();
         if (usecolsin.get(0) instanceof Integer) {

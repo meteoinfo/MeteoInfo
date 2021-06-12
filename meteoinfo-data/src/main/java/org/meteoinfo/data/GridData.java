@@ -1894,17 +1894,17 @@ public class GridData {
 
         for (i = 0; i < yNum; i++) {
             idxI = i * skipI;
-            yArray[i] = yArray[idxI];
+            yArray[i] = this.yArray[idxI];
         }
         for (j = 0; j < xNum; j++) {
             idxJ = j * skipJ;
-            xArray[j] = xArray[idxJ];
+            xArray[j] = this.xArray[idxJ];
         }
         for (i = 0; i < yNum; i++) {
             idxI = i * skipI;
             for (j = 0; j < xNum; j++) {
                 idxJ = j * skipJ;
-                data[i][j] = data[idxI][idxJ];
+                data[i][j] = this.data[idxI][idxJ];
             }
         }
 

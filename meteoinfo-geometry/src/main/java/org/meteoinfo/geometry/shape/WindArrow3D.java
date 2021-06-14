@@ -94,6 +94,7 @@ public class WindArrow3D extends PointZShape {
         aWA.scale = scale;
         aWA.setPoint(this.getPoint());
         aWA.setValue(this.getValue());
+        aWA.setLegendIndex(this.getLegendIndex());
         
         return aWA;
     }

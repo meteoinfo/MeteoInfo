@@ -64,6 +64,7 @@ public class WindArrow extends PointShape {
         aWA.angle = angle;
         aWA.setPoint(this.getPoint());
         aWA.setValue(this.getValue());
+        aWA.setLegendIndex(this.getLegendIndex());
         
         return aWA;
     }

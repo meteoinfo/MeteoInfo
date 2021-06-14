@@ -58,6 +58,7 @@ public class WeatherSymbol extends PointShape {
         aWS.weather = weather;
         aWS.setPoint(this.getPoint());
         aWS.setValue(this.getValue());
+        aWS.setLegendIndex(this.getLegendIndex());
 
         return aWS;
     }

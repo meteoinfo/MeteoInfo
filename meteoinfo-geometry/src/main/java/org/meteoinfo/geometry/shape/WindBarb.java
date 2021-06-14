@@ -68,6 +68,7 @@ public class WindBarb extends PointShape {
         aWB.windSpeesLine = windSpeesLine;
         aWB.setPoint(this.getPoint());
         aWB.setValue(this.getValue());
+        aWB.setLegendIndex(this.getLegendIndex());
 
         return aWB;
     }

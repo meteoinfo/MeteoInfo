@@ -556,36 +556,7 @@ class Axes3DGL(Axes3D):
         
         :returns: Graphics.
         '''
-        warnings.warn("plot_layer is deprecated", DeprecationWarning)
-        ls = kwargs.pop('symbolspec', None)
-        offset = kwargs.pop('offset', 0)
-        xshift = kwargs.pop('xshift', 0)
-        layer = layer.layer
-        if layer.getLayerType() == LayerTypes.VECTOR_LAYER:
-            if ls is None:
-                ls = layer.getLegendScheme()
-                if len(kwargs) > 0 and layer.getLegendScheme().getBreakNum() == 1:
-                    lb = layer.getLegendScheme().getLegendBreaks().get(0)
-                    btype = lb.getBreakType()
-                    geometry = 'point'
-                    if btype == BreakTypes.POLYLINE_BREAK:
-                        geometry = 'line'
-                    elif btype == BreakTypes.POLYGON_BREAK:
-                        geometry = 'polygon'
-                    lb, isunique = plotutil.getlegendbreak(geometry, **kwargs)
-                    ls.getLegendBreaks().set(0, lb)
-
-            plotutil.setlegendscheme(ls, **kwargs)
-            layer.setLegendScheme(ls)                    
-            graphics = GraphicFactory.createGraphicsFromLayer(layer, offset, xshift)
-        else:
-            interpolation = kwargs.pop('interpolation', None)
-            graphics = JOGLUtil.createTexture(self.figure.getGL2(), layer, offset, xshift, interpolation)
-        
-        visible = kwargs.pop('visible', True)
-        if visible:
-            self.add_graphic(graphics)
-        return graphics
+        return self.geoshow(layer, **kwargs)
 
     def slice(self, *args, **kwargs):
         '''

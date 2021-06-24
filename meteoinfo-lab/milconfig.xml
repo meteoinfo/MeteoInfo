@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\wind">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\himawari"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\linalg">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\decomposition"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
@@ -16,19 +14,23 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\lda_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\mnist_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\quiverm_proj.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\eof_function_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\reof_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\classification\lda_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\mnist_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\quiverm_proj.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\eof_function_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\reof_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +38,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1343,772"/>
 </MeteoInfo>

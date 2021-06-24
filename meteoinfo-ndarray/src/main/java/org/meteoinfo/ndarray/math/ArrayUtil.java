@@ -5,14 +5,10 @@
  */
 package org.meteoinfo.ndarray.math;
 
-//import org.meteoinfo.geoprocess.GeoComputation;
-
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.io.EndianDataOutputStream;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.common.util.JDateUtil;
-//import org.meteoinfo.math.spatial.KDTree;
-//import org.meteoinfo.math.spatial.KDTree.SearchResult;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.ndarray.util.DataTypeUtil;

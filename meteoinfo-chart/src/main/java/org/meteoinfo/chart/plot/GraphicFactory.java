@@ -5306,6 +5306,7 @@ public class GraphicFactory {
                 graphics.add(new Graphic(shape, cb));
             }
         } else {
+            data = data.copyIfView();
             for (PolyLine line : streamlines) {
                 PolylineZShape shape = new PolylineZShape();
                 List<PointZ> points = new ArrayList<>();
@@ -5426,6 +5427,7 @@ public class GraphicFactory {
                 graphics.add(new Graphic(shape, cb));
             }
         } else {
+            data = data.copyIfView();
             for (PolyLine line : streamlines) {
                 PolylineZShape shape = new PolylineZShape();
                 List<PointZ> points = new ArrayList<>();

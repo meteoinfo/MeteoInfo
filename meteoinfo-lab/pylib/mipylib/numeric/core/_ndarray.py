@@ -542,7 +542,7 @@ class NDArray(object):
 
         :returns: (*array*) Converted array.
         '''
-        if not isinstance(dtype, _dtype.dtype):
+        if not isinstance(dtype, _dtype.DataType):
             dtype = _dtype.dtype(dtype)
         if dtype.kind == 'i':
             r = NDArray(ArrayUtil.toInteger(self._array))

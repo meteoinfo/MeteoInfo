@@ -15,6 +15,7 @@ from mipylib.dataframe.dataframe import DataFrame
 import mipylib.miutil as miutil
 import mipylib.numeric as np
 from mipylib.numeric.core._dtype import DataType
+from .ncutil import to_dtype
 
 import datetime
 
@@ -460,8 +461,7 @@ class DimDataFile(object):
         '''
         if isinstance(value, (list, tuple)):
             value = np.array(value)
-        if isinstance(value, np.NDArray):
-            value = NCUtil.convertArray(value._array)
+
         if isinstance(variable, DimVariable):
             if self.access == 'c':
                 ncvariable = variable.ncvariable
@@ -473,6 +473,13 @@ class DimDataFile(object):
                 ncvariable = self.dataset.getDataInfo().findNCVariable(variable.name)
         else:
             ncvariable = variable
+
+        if isinstance(value, np.NDArray):
+            dtype = to_dtype(ncvariable.getDataType())
+            if value.dtype != dtype:
+                value = value.astype(dtype)
+            value = NCUtil.convertArray(value._array)
+
         if origin is None:
             self.ncfile.write(ncvariable, value)
         else:

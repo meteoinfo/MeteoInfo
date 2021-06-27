@@ -839,7 +839,8 @@ def dimension(dimvalue, dimname='null', dimtype=None):
     dim.setShortName(dimname)
     return dim
     
-def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=False):
+def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=False,
+            version='netcdf3'):
     """
     Write a netCDF data file from an array.
     
@@ -850,6 +851,7 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
     :param attrs: (*dict*) Variable attributes.
     :param gattrs: (*dict*) Global attributes.
     :param largefile: (*boolean*) Create netCDF as large file or not.
+    :param version: (*str*) NetCDF version [netcdf3 | netcdf4].
     """
     if dims is None:
         if isinstance(data, DimArray):
@@ -862,7 +864,7 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
                 dims.append(dimension(dimvalue, dimname))
 
     #New netCDF file
-    ncfile = addfile(fn, 'c', largefile=largefile)
+    ncfile = addfile(fn, 'c', largefile=largefile, version=version)
     #Add dimensions
     ncdims = []
     for dim in dims:    
@@ -916,10 +918,10 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
             tt = miutil.nums2dates(dim.getDimValue())
             hours = []
             for t in tt:
-                hours.append((t - sst).total_seconds() // 3600)
+                hours.append((int)((t - sst).total_seconds() // 3600))
             ncfile.write(dimvar, np.array(hours))
         else:
-            ncfile.write(dimvar, np.array(dim.getDimValue()))
+            ncfile.write(dimvar, np.array(dim.getDimValue()).astype('float'))
     ncfile.write(var, data)
     #Close netCDF file
     ncfile.close()

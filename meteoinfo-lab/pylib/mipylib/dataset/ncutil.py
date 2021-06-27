@@ -6,12 +6,13 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
-from ucar.ma2 import Array
+from ucar.ma2 import Array, DataType
 
 from mipylib.numeric.core import NDArray
+from mipylib.numeric.core._dtype import fromjava
 
 __all__ = [
-    'convert_array'
+    'convert_array', 'to_dtype'
     ]
 
 def convert_array(a):
@@ -26,3 +27,12 @@ def convert_array(a):
         return NDArray(NCUtil.convertArray(a))
     else:
         return NCUtil.convertArray(a._array)
+
+def to_dtype(datatype):
+    """
+    Convert NC DataType to milab dtype.
+    :param datatype: (*DataType*) NC DataType
+    :return: (*dtype*) milab dtype.
+    """
+    midtype = NCUtil.convertDataType(datatype)
+    return fromjava(midtype)

@@ -9,6 +9,7 @@ from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from org.meteoinfo.ndarray import DimensionType, Dimension
 from ucar.ma2 import DataType as NCDataType
 from ucar.nc2 import Attribute as NCAttribute
+from ucar.nc2 import Variable as NCVariable
 from dimvariable import DimVariable, TDimVariable
 from mipylib.geolib.milayer import MILayer, MIXYListData
 from mipylib.dataframe.dataframe import DataFrame
@@ -471,10 +472,12 @@ class DimDataFile(object):
                     ncvariable = variable.name
             else:
                 ncvariable = self.dataset.getDataInfo().findNCVariable(variable.name)
+        elif isinstance(variable, basestring):
+            ncvariable = self.ncfile.findVariable(variable)
         else:
             ncvariable = variable
 
-        if isinstance(value, np.NDArray):
+        if isinstance(value, np.NDArray) and isinstance(ncvariable, NCVariable):
             dtype = to_dtype(ncvariable.getDataType())
             if value.dtype != dtype:
                 value = value.astype(dtype)

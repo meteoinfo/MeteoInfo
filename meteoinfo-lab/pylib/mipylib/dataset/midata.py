@@ -666,7 +666,7 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
         #print 'Variable: ' + var.name
         if var.variable.hasNullDimension():
             continue
-        if var.dtype == DataType.STRUCTURE:
+        if var.dtype._dtype == DataType.STRUCTURE:
             continue
         if len(var.dims) == 0:
             continue

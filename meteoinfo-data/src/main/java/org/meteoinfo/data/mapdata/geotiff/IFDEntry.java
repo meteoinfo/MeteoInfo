@@ -25,8 +25,9 @@ public class IFDEntry implements Comparable{
 
     protected Tag tag;
     protected FieldType type;
-    protected int count;
+    protected long count;
     protected int[] value;
+    protected long[] valueL;
     protected double[] valueD;
     protected String valueS;
     protected List<GeoKey> geokeys = null;
@@ -52,7 +53,7 @@ public class IFDEntry implements Comparable{
      * @param type Field type
      * @param count Count
      */
-    IFDEntry(Tag tag, FieldType type, int count) {
+    IFDEntry(Tag tag, FieldType type, long count) {
         this.tag = tag;
         this.type = type;
         this.count = count;
@@ -217,7 +218,7 @@ public class IFDEntry implements Comparable{
                 sbuf.append(new StringBuilder().append(this.valueD[i]).append(" ").toString());
             }
         } else {
-            int n = Math.min(this.count, 30);
+            long n = Math.min(this.count, 30);
             for (int i = 0; i < n; i++) {
                 sbuf.append(new StringBuilder().append(this.value[i]).append(" ").toString());
             }

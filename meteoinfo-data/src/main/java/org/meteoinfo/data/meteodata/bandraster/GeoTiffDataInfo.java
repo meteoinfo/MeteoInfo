@@ -24,15 +24,10 @@ import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.mapdata.geotiff.GeoTiff;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
-import org.meteoinfo.ndarray.Dimension;
-import org.meteoinfo.ndarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.IndexIterator;
-import org.meteoinfo.ndarray.InvalidRangeException;
-import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.data.meteodata.Attribute;
 
  /**
@@ -149,10 +144,13 @@ import org.meteoinfo.data.meteodata.Attribute;
      @Override
      public Array read(String varName, int[] origin, int[] size, int[] stride) {
          try {
-             Array array = read(varName);
-             array = ArrayMath.section(array, origin, size, stride);
+             Section section = new Section(origin, size, stride);
+             int rangeIdx = 0;
+             Range yRange = section.getRange(rangeIdx++);
+             Range xRange = section.getRange(rangeIdx);
+             Array array = this.geoTiff.readArray(yRange, xRange);
              return array;
-         } catch (InvalidRangeException ex) {
+         } catch (InvalidRangeException | IOException ex) {
              Logger.getLogger(GeoTiffDataInfo.class.getName()).log(Level.SEVERE, null, ex);
              return null;
          }

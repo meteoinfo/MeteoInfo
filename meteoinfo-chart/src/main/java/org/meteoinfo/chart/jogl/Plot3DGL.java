@@ -3019,6 +3019,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     @Override
     public void init(GLAutoDrawable drawable) {
+        //drawable.getContext().makeCurrent();
         gl = drawable.getGL().getGL2();
         //Background
         //gl.glClearColor(1f, 1f, 1f, 1.0f);

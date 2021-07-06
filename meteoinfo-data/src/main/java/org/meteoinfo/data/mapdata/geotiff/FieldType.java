@@ -33,6 +33,9 @@ public class FieldType {
     public static final FieldType SRATIONAL = new FieldType("SRATIONAL", 10, 8);
     public static final FieldType FLOAT = new FieldType("FLOAT", 11, 4);
     public static final FieldType DOUBLE = new FieldType("DOUBLE", 12, 8);
+    public static final FieldType LONG8 = new FieldType("LONG8", 16, 8);
+    public static final FieldType SLONG8 = new FieldType("SLONG8", 17, 8);
+    public static final FieldType IDF8 = new FieldType("IFD8", 18, 8);
     String name;
     int code;
     int size;
@@ -64,7 +67,10 @@ public class FieldType {
      * @return Field type
      */
     static FieldType get(int code) {
-        return types[code];
+        if (code >= types.length)
+            return null;
+        else
+            return types[code];
     }
 
     /**

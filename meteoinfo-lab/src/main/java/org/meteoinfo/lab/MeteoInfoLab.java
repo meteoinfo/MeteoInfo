@@ -132,7 +132,7 @@ public class MeteoInfoLab {
                 getInputArguments().toString().contains("jdwp");
         String path, toolboxPath, miPath;
         if (isDebug) {
-            path = "D:/MyProgram/java/MeteoInfoDev/MeteoInfo/MeteoInfoLab/pylib";
+            path = "D:/MyProgram/java/MeteoInfoDev/MeteoInfo/meteoinfo-lab/pylib";
             toolboxPath = "D:/MyProgram/java/MeteoInfoDev/toolbox";
             miPath = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo";
         } else {

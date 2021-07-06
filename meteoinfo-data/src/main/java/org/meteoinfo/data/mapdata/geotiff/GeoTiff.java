@@ -13,6 +13,8 @@
  */
 package org.meteoinfo.data.mapdata.geotiff;
 
+import org.locationtech.proj4j.CRSFactory;
+import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.data.GridData;
 import java.io.ByteArrayOutputStream;
@@ -34,13 +36,11 @@ import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.mapdata.geotiff.compression.CompressionDecoder;
 import org.meteoinfo.data.mapdata.geotiff.compression.DeflateCompression;
 import org.meteoinfo.data.mapdata.geotiff.compression.LZWCompression;
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.Index;
 
 /**
  *
@@ -54,6 +54,7 @@ public class GeoTiff {
     private FileChannel channel;
     private List<IFDEntry> tags = new ArrayList();
     private ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
+    private boolean bigTiff = false;
     private boolean readonly;
     private boolean showBytes = false;
     private boolean debugRead = false;
@@ -402,9 +403,9 @@ public class GeoTiff {
 
         buffer.putShort((short) ifd.tag.getCode());
         buffer.putShort((short) ifd.type.code);
-        buffer.putInt(ifd.count);
+        buffer.putInt((int)ifd.count);
 
-        int size = ifd.count * ifd.type.size;
+        int size = (int)ifd.count * ifd.type.size;
         if (size <= 4) {
             int done = writeValues(buffer, ifd);
             for (int k = 0; k < 4 - done; k++) {
@@ -519,7 +520,7 @@ public class GeoTiff {
         }
         this.readonly = true;
 
-        int nextOffset = readHeader(this.channel);
+        long nextOffset = readHeader(this.channel);
         while (nextOffset > 0) {
             nextOffset = readIFD(this.channel, nextOffset);
             parseGeoInfo();
@@ -778,42 +779,51 @@ public class GeoTiff {
         if (geoKeyDirectoryTag != null) {
             GeoKey gtModelTypeGeoKey = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GTModelTypeGeoKey);
             if (gtModelTypeGeoKey.value() == 1) {
-                GeoKey projCoordTrans = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjCoordTrans);
-                GeoKey projStdParallel1 = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjStdParallel1);
-                double lat_1 = projStdParallel1 == null ? 0 : projStdParallel1.valueD(0);
-                GeoKey projStdParallel2 = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjStdParallel2);
-                double lat_2 = projStdParallel2 == null ? 0 :projStdParallel2.valueD(0);
-                GeoKey projCenterLong = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjNatOriginLong);
-                if (projCenterLong == null){
-                    projCenterLong = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjCenterLong);
-                }
-                double lon_0 = projCenterLong == null ? 0 : projCenterLong.valueD(0);
-                GeoKey projNatOriginLat = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjNatOriginLat);
-                double lat_0 = projNatOriginLat == null ? 0 : projNatOriginLat.valueD(0);
-                GeoKey projFalseEasting = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjFalseEasting);
-                double x_0 = projFalseEasting == null ? 0 : projFalseEasting.valueD(0);
-                GeoKey projFalseNorthing = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjFalseNorthing);
-                double y_0 = projFalseNorthing == null ? 0 : projFalseNorthing.valueD(0);
-                GeoKey projScaleAtNatOrigin = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.ProjScaleAtNatOriginGeoKey);
-                double k_0 = projScaleAtNatOrigin == null ? 1 : projScaleAtNatOrigin.valueD(0);
-                switch (projCoordTrans.value()) {
-                    case 1:    //Transverse Mercator
-                        projStr = "+proj=tmerc"
-                                + "+lat_0=" + String.valueOf(lat_0)
-                                + "+lon_0=" + String.valueOf(lon_0)
-                                + "+k_0=" + String.valueOf(k_0)
-                                + "+x_0=" + String.valueOf(x_0)
-                                + "+y_0=" + String.valueOf(y_0);
-                        break;
-                    case 11:    //AlbersEqualArea
-                        projStr = "+proj=aea"
-                                + "+lat_1=" + String.valueOf(lat_1)
-                                + "+lat_2=" + String.valueOf(lat_2)
-                                + "+lon_0=" + String.valueOf(lon_0)
-                                + "+lat_0=" + String.valueOf(lat_0)
-                                + "+x_0=" + String.valueOf(x_0)
-                                + "+y_0=" + String.valueOf(y_0);
-                        break;
+                GeoKey projCSType = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.ProjectedCSTypeGeoKey);
+                if (projCSType == null) {
+                    GeoKey projCoordTrans = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjCoordTrans);
+                    GeoKey projStdParallel1 = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjStdParallel1);
+                    double lat_1 = projStdParallel1 == null ? 0 : projStdParallel1.valueD(0);
+                    GeoKey projStdParallel2 = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjStdParallel2);
+                    double lat_2 = projStdParallel2 == null ? 0 : projStdParallel2.valueD(0);
+                    GeoKey projCenterLong = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjNatOriginLong);
+                    if (projCenterLong == null) {
+                        projCenterLong = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjCenterLong);
+                    }
+                    double lon_0 = projCenterLong == null ? 0 : projCenterLong.valueD(0);
+                    GeoKey projNatOriginLat = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjNatOriginLat);
+                    double lat_0 = projNatOriginLat == null ? 0 : projNatOriginLat.valueD(0);
+                    GeoKey projFalseEasting = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjFalseEasting);
+                    double x_0 = projFalseEasting == null ? 0 : projFalseEasting.valueD(0);
+                    GeoKey projFalseNorthing = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjFalseNorthing);
+                    double y_0 = projFalseNorthing == null ? 0 : projFalseNorthing.valueD(0);
+                    GeoKey projScaleAtNatOrigin = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.ProjScaleAtNatOriginGeoKey);
+                    double k_0 = projScaleAtNatOrigin == null ? 1 : projScaleAtNatOrigin.valueD(0);
+                    switch (projCoordTrans.value()) {
+                        case 1:    //Transverse Mercator
+                            projStr = "+proj=tmerc"
+                                    + "+lat_0=" + String.valueOf(lat_0)
+                                    + "+lon_0=" + String.valueOf(lon_0)
+                                    + "+k_0=" + String.valueOf(k_0)
+                                    + "+x_0=" + String.valueOf(x_0)
+                                    + "+y_0=" + String.valueOf(y_0);
+                            break;
+                        case 11:    //AlbersEqualArea
+                            projStr = "+proj=aea"
+                                    + "+lat_1=" + String.valueOf(lat_1)
+                                    + "+lat_2=" + String.valueOf(lat_2)
+                                    + "+lon_0=" + String.valueOf(lon_0)
+                                    + "+lat_0=" + String.valueOf(lat_0)
+                                    + "+x_0=" + String.valueOf(x_0)
+                                    + "+y_0=" + String.valueOf(y_0);
+                            break;
+                    }
+                } else {
+                    CRSFactory crsFactory = new CRSFactory();
+                    int csType = projCSType.value(0);
+                    String crsName = String.format("EPSG:%d", csType);
+                    CoordinateReferenceSystem crs = crsFactory.createFromName(crsName);
+                    projStr = crs.getParameterString();
                 }
             }
         }
@@ -898,7 +908,7 @@ public class GeoTiff {
         } else {
             IFDEntry stripOffsetTag = findTag(Tag.StripOffsets);
             if (stripOffsetTag != null) {
-                int stripNum = stripOffsetTag.count;
+                int stripNum = (int)stripOffsetTag.count;
                 int stripOffset;
                 IFDEntry stripSizeTag = findTag(Tag.StripByteCounts);
                 int stripSize = stripSizeTag.value[0];
@@ -988,7 +998,7 @@ public class GeoTiff {
         ByteBuffer buffer;
         if (tileOffsetTag != null) {
             Index index = r.getIndex();
-            int tileOffset;
+            long tileOffset;
             IFDEntry tileSizeTag = findTag(Tag.TileByteCounts);
             IFDEntry tileLengthTag = findTag(Tag.TileLength);
             IFDEntry tileWidthTag = findTag(Tag.TileWidth);
@@ -1004,7 +1014,7 @@ public class GeoTiff {
                     for (int i = 0; i < vTileNum; i++) {
                         for (int j = 0; j < hTileNum; j++) {
                             tileIdx = i * hTileNum + j;
-                            tileOffset = tileOffsetTag.value[tileIdx];
+                            tileOffset = tileOffsetTag.valueL[tileIdx];
                             tileSize = tileSizeTag.value[tileIdx];
                             buffer = testReadData(tileOffset, tileSize, cDecoder);
                             for (int h = 0; h < tileHeight; h++) {
@@ -1043,7 +1053,7 @@ public class GeoTiff {
                     for (int i = 0; i < vTileNum; i++) {
                         for (int j = 0; j < hTileNum; j++) {
                             tileIdx = i * hTileNum + j;
-                            tileOffset = tileOffsetTag.value[tileIdx];
+                            tileOffset = tileOffsetTag.valueL[tileIdx];
                             tileSize = tileSizeTag.value[tileIdx];
                             buffer = testReadData(tileOffset, tileSize, cDecoder);
                             for (int h = 0; h < tileHeight; h++) {
@@ -1076,7 +1086,7 @@ public class GeoTiff {
                     for (int i = 0; i < vTileNum; i++) {
                         for (int j = 0; j < hTileNum; j++) {
                             tileIdx = i * hTileNum + j;
-                            tileOffset = tileOffsetTag.value[tileIdx];
+                            tileOffset = tileOffsetTag.valueL[tileIdx];
                             tileSize = tileSizeTag.value[tileIdx];
                             if (tileSize == 0)
                                 continue;
@@ -1128,7 +1138,7 @@ public class GeoTiff {
         } else {
             IFDEntry stripOffsetTag = findTag(Tag.StripOffsets);
             if (stripOffsetTag != null) {
-                int stripNum = stripOffsetTag.count;
+                int stripNum = (int)stripOffsetTag.count;
                 int stripOffset;
                 IFDEntry stripSizeTag = findTag(Tag.StripByteCounts);
                 int stripSize = stripSizeTag.value[0];
@@ -1191,6 +1201,318 @@ public class GeoTiff {
     /**
      * Test read data
      *
+     * @param yRange Y range
+     * @param xRange X range
+     * @return Data
+     * @throws IOException
+     */
+    public Array readArray(Range yRange, Range xRange) throws IOException, InvalidRangeException {
+        IFDEntry widthIFD = this.findTag(Tag.ImageWidth);
+        IFDEntry heightIFD = this.findTag(Tag.ImageLength);
+        int width = widthIFD.value[0];
+        int height = heightIFD.value[0];
+        int nx = xRange.length();
+        int ny = yRange.length();
+        if (width == nx && height == ny) {
+            return readArray();
+        }
+
+        IFDEntry samplesPerPixelTag = findTag(Tag.SamplesPerPixel);
+        int samplesPerPixel = samplesPerPixelTag.value[0];    //Number of bands
+        IFDEntry bitsPerSampleTag = findTag(Tag.BitsPerSample);
+        int bitsPerSample = bitsPerSampleTag.value[0];
+        int[] shape;
+        if (samplesPerPixel == 1) {
+            shape = new int[]{ny, nx};
+        } else {
+            shape = new int[]{ny, nx, samplesPerPixel};
+        }
+        DataType dataType = DataType.INT;
+        IFDEntry sampleFormatTag = findTag(Tag.SampleFormat);
+        int sampleFormat = 0;
+        if (sampleFormatTag != null) {
+            sampleFormat = sampleFormatTag.value[0];
+        }
+        switch (bitsPerSample) {
+            case 32:
+                switch (sampleFormat) {
+                    case 3:
+                        dataType = DataType.FLOAT;
+                        break;
+                }
+                break;
+        }
+        Array r = Array.factory(dataType, shape);
+        IFDEntry compressionTag = findTag(Tag.Compression);
+        CompressionDecoder cDecoder = null;
+        if (compressionTag != null){
+            int compression = compressionTag.value[0];
+            if (compression > 1){
+                switch (compression) {
+                    case 5:
+                        cDecoder = new LZWCompression();
+                        break;
+                    case 8:
+                        cDecoder = new DeflateCompression();
+                        break;
+                }
+            }
+        }
+
+        IFDEntry tileOffsetTag = findTag(Tag.TileOffsets);
+        ByteBuffer buffer;
+        if (tileOffsetTag != null) {
+            Index index = r.getIndex();
+            long tileOffset;
+            IFDEntry tileSizeTag = findTag(Tag.TileByteCounts);
+            IFDEntry tileLengthTag = findTag(Tag.TileLength);
+            IFDEntry tileWidthTag = findTag(Tag.TileWidth);
+            int tileWidth = tileWidthTag.value[0];
+            int tileHeight = tileLengthTag.value[0];
+            int hTileNum = (width + tileWidth - 1) / tileWidth;
+            int vTileNum = (height + tileHeight - 1) / tileHeight;
+            int tileSize;
+            //System.out.println("tileOffset =" + tileOffset + " tileSize=" + tileSize);
+            int tileIdx, vIdx, hIdx;
+            switch (bitsPerSample) {
+                case 8:
+                    for (int i = 0; i < vTileNum; i++) {
+                        for (int j = 0; j < hTileNum; j++) {
+                            tileIdx = i * hTileNum + j;
+                            tileOffset = tileOffsetTag.valueL[tileIdx];
+                            tileSize = tileSizeTag.value[tileIdx];
+                            buffer = testReadData(tileOffset, tileSize, cDecoder);
+                            for (int h = 0; h < tileHeight; h++) {
+                                vIdx = i * tileHeight + h;
+                                if (vIdx == height) {
+                                    break;
+                                }
+                                if (!yRange.contains(vIdx)) {
+                                    buffer.position(buffer.position() + tileWidth * samplesPerPixel);
+                                    continue;
+                                }
+                                vIdx = yRange.index(vIdx);
+                                index.set0(vIdx);
+                                for (int w = 0; w < tileWidth; w++) {
+                                    hIdx = j * tileWidth + w;
+                                    if (hIdx == width) {
+                                        buffer.get(new byte[tileWidth - w]);
+                                        break;
+                                    }
+                                    if (!xRange.contains(hIdx)) {
+                                        buffer.position(buffer.position() + samplesPerPixel);
+                                        continue;
+                                    }
+                                    hIdx = xRange.index(hIdx);
+                                    index.set1(hIdx);
+                                    if (samplesPerPixel == 1) {
+                                        if (sampleFormat == 2)
+                                            r.setInt(index, buffer.get());
+                                        else
+                                            r.setInt(index, Byte.toUnsignedInt(buffer.get()));
+                                    } else {
+                                        for (int k = 0; k < samplesPerPixel; k++) {
+                                            index.set2(k);
+                                            if (sampleFormat == 2)
+                                                r.setInt(index, buffer.get());
+                                            else
+                                                r.setInt(index, Byte.toUnsignedInt(buffer.get()));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 16:
+                    for (int i = 0; i < vTileNum; i++) {
+                        for (int j = 0; j < hTileNum; j++) {
+                            tileIdx = i * hTileNum + j;
+                            tileOffset = tileOffsetTag.valueL[tileIdx];
+                            tileSize = tileSizeTag.value[tileIdx];
+                            buffer = testReadData(tileOffset, tileSize, cDecoder);
+                            for (int h = 0; h < tileHeight; h++) {
+                                vIdx = i * tileHeight + h;
+                                if (vIdx == height) {
+                                    break;
+                                }
+                                if (!yRange.contains(vIdx)) {
+                                    buffer.position(buffer.position() + tileWidth * samplesPerPixel * 2);
+                                    continue;
+                                }
+                                vIdx = yRange.index(vIdx);
+                                index.set0(vIdx);
+                                for (int w = 0; w < tileWidth; w++) {
+                                    hIdx = j * tileWidth + w;
+                                    if (hIdx == width) {
+                                        break;
+                                    }
+                                    if (!xRange.contains(hIdx)) {
+                                        buffer.position(buffer.position() + samplesPerPixel * 2);
+                                        continue;
+                                    }
+                                    hIdx = xRange.index(hIdx);
+                                    index.set1(hIdx);
+                                    if (samplesPerPixel == 1) {
+                                        r.setInt(index, buffer.getShort());
+                                    } else {
+                                        for (int k = 0; k < samplesPerPixel; k++) {
+                                            index.set2(k);
+                                            r.setInt(index, buffer.getShort());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 32:
+                    int size = tileHeight * tileWidth * 4;
+                    for (int i = 0; i < vTileNum; i++) {
+                        for (int j = 0; j < hTileNum; j++) {
+                            tileIdx = i * hTileNum + j;
+                            tileOffset = tileOffsetTag.valueL[tileIdx];
+                            tileSize = tileSizeTag.value[tileIdx];
+                            if (tileSize == 0)
+                                continue;
+
+                            buffer = testReadData(tileOffset, tileSize, cDecoder);
+                            if (buffer.limit() < size){
+                                ByteBuffer nbuffer = ByteBuffer.allocate(size);
+                                nbuffer.put(buffer.array());
+                                buffer = nbuffer;
+                                ((Buffer)buffer).position(0);
+                            }
+                            for (int h = 0; h < tileHeight; h++) {
+                                vIdx = i * tileHeight + h;
+                                if (vIdx == height) {
+                                    break;
+                                }
+                                if (!yRange.contains(vIdx)) {
+                                    buffer.position(buffer.position() + tileWidth * samplesPerPixel * 4);
+                                    continue;
+                                }
+                                vIdx = yRange.index(vIdx);
+                                index.set0(vIdx);
+                                for (int w = 0; w < tileWidth; w++) {
+                                    hIdx = j * tileWidth + w;
+                                    if (hIdx == width) {
+                                        buffer.get(new byte[(tileWidth - w) * 4]);
+                                        break;
+                                    }
+                                    if (!xRange.contains(hIdx)) {
+                                        buffer.position(buffer.position() + samplesPerPixel * 40);
+                                        continue;
+                                    }
+                                    hIdx = xRange.index(hIdx);
+                                    index.set1(hIdx);
+                                    if (samplesPerPixel == 1) {
+                                        if (dataType == DataType.FLOAT) {
+                                            r.setFloat(index, buffer.getFloat());
+                                        } else {
+                                            r.setInt(index, buffer.getInt());
+                                        }
+                                    } else {
+                                        for (int k = 0; k < samplesPerPixel; k++) {
+                                            index.set2(k);
+                                            if (dataType == DataType.FLOAT) {
+                                                r.setFloat(index, buffer.getFloat());
+                                            } else {
+                                                r.setInt(index, buffer.getInt());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            IFDEntry stripOffsetTag = findTag(Tag.StripOffsets);
+            if (stripOffsetTag != null) {
+                IndexIterator iter = r.getIndexIterator();
+                Index index = Index.factory(new int[]{height, width});
+                int stripNum = (int)stripOffsetTag.count;
+                int stripOffset;
+                IFDEntry stripSizeTag = findTag(Tag.StripByteCounts);
+                int stripSize = stripSizeTag.value[0];
+                IFDEntry rowsPerStripTag = findTag(Tag.RowsPerStrip);
+                int rowNum = rowsPerStripTag.value[0];
+                //System.out.println("stripOffset =" + stripOffset + " stripSize=" + stripSize);
+                int[] counter;
+                switch (bitsPerSample) {
+                    case 8:
+                        for (int i = 0; i < stripNum; i++) {
+                            stripOffset = stripOffsetTag.value[i];
+                            stripSize = stripSizeTag.value[i];
+                            buffer = testReadData(stripOffset, stripSize, cDecoder);
+                            for (int j = 0; j < width * rowNum; j++) {
+                                counter = index.getCurrentCounter();
+                                if (yRange.contains(counter[0]) && xRange.contains(counter[1])) {
+                                    for (int k = 0; k < samplesPerPixel; k++) {
+                                        iter.setIntNext(DataConvert.byte2Int(buffer.get()));
+                                    }
+                                } else {
+                                    buffer.position(buffer.position() + samplesPerPixel);
+                                }
+                                index.incr();
+                            }
+                        }
+                        break;
+                    case 16:
+                        for (int i = 0; i < stripNum; i++) {
+                            stripOffset = stripOffsetTag.value[i];
+                            stripSize = stripSizeTag.value[i];
+                            buffer = testReadData(stripOffset, stripSize, cDecoder);
+                            for (int j = 0; j < width * rowNum; j++) {
+                                counter = index.getCurrentCounter();
+                                if (yRange.contains(counter[0]) && xRange.contains(counter[1])) {
+                                    for (int k = 0; k < samplesPerPixel; k++) {
+                                        if (dataType == DataType.FLOAT) {
+                                            iter.setFloatNext(buffer.getShort());
+                                        } else {
+                                            iter.setIntNext(buffer.getShort());
+                                        }
+                                    }
+                                } else {
+                                    buffer.position(buffer.position() + samplesPerPixel * 2);
+                                }
+                                index.incr();
+                            }
+                        }
+                        break;
+                    case 32:
+                        for (int i = 0; i < stripNum; i++) {
+                            stripOffset = stripOffsetTag.value[i];
+                            stripSize = stripSizeTag.value[i];
+                            buffer = testReadData(stripOffset, stripSize, cDecoder);
+                            for (int j = 0; j < width * rowNum; j++) {
+                                counter = index.getCurrentCounter();
+                                if (yRange.contains(counter[0]) && xRange.contains(counter[1])) {
+                                    for (int k = 0; k < samplesPerPixel; k++) {
+                                        iter.setFloatNext(buffer.getFloat());
+                                    }
+                                } else {
+                                    buffer.position(buffer.position() + samplesPerPixel * 4);
+                                }
+                                index.incr();
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+
+        r = ArrayMath.flip(r, 0);
+        return r;
+    }
+
+    /**
+     * Test read data
+     *
      * @param offset Offset
      * @param size Size
      * @throws IOException
@@ -1214,7 +1536,7 @@ public class GeoTiff {
      * @param cDecoder Compression decoder
      * @throws IOException
      */
-    private ByteBuffer testReadData(int offset, int size, CompressionDecoder cDecoder) throws IOException {
+    private ByteBuffer testReadData(long offset, int size, CompressionDecoder cDecoder) throws IOException {
         this.channel.position(offset);
         ByteBuffer buffer = ByteBuffer.allocate(size);
         buffer.order(this.byteOrder);
@@ -1234,15 +1556,16 @@ public class GeoTiff {
      * Read header
      *
      * @param channel File channel
-     * @return Int
+     * @return next offset
      * @throws IOException
      */
-    private int readHeader(FileChannel channel) throws IOException {
-        channel.position(0L);
+    private long readHeader(FileChannel channel) throws IOException {
+        channel.position(0);
 
         ByteBuffer buffer = ByteBuffer.allocate(8);
-        channel.read(buffer);
-        ((Buffer)buffer).flip();
+        int n = channel.read(buffer);
+        assert n == 8;
+        buffer.flip();
         if (this.showHeaderBytes) {
             printBytes(System.out, "header", buffer, 4);
             buffer.rewind();
@@ -1253,8 +1576,25 @@ public class GeoTiff {
             this.byteOrder = ByteOrder.LITTLE_ENDIAN;
         }
         buffer.order(this.byteOrder);
-        ((Buffer)buffer).position(4);
-        int firstIFD = buffer.getInt();
+
+        buffer.position(2);
+        int version = buffer.getShort();
+        if (version == 43) {
+            this.bigTiff = true;
+        }
+
+        long firstIFD;
+        buffer.position(4);
+        if (this.bigTiff) {
+            int size = buffer.getShort();
+            buffer = ByteBuffer.allocate(size);
+            buffer.order(this.byteOrder);
+            channel.read(buffer);
+            buffer.flip();
+            firstIFD = buffer.getLong();
+        }  else {
+            firstIFD = buffer.getInt();
+        }
         if (this.debugRead) {
             System.out.println(" firstIFD == " + firstIFD);
         }
@@ -1267,46 +1607,48 @@ public class GeoTiff {
      *
      * @param channel File channel
      * @param start Start
-     * @return Int
+     * @return next offset
      * @throws IOException
      */
-    private int readIFD(FileChannel channel, int start) throws IOException {
+    private long readIFD(FileChannel channel, long start) throws IOException {
         channel.position(start);
 
-        ByteBuffer buffer = ByteBuffer.allocate(2);
+        ByteBuffer buffer = this.bigTiff ? ByteBuffer.allocate(8) : ByteBuffer.allocate(2);
         buffer.order(this.byteOrder);
 
         int n = channel.read(buffer);
-        ((Buffer)buffer).flip();
+        buffer.flip();
         if (this.showBytes) {
             printBytes(System.out, "IFD", buffer, 2);
             buffer.rewind();
         }
-        short nentries = buffer.getShort();
+        long nEntries = this.bigTiff ? buffer.getLong() : buffer.getShort();
         if (this.debugRead) {
-            System.out.println(" nentries = " + nentries);
+            System.out.println(" nentries = " + nEntries);
         }
 
-        start += 2;
-        for (int i = 0; i < nentries; i++) {
+        start += (this.bigTiff ? 8 : 2);
+        int sizeEntry = this.bigTiff ? 20 : 12;
+        for (int i = 0; i < nEntries; i++) {
             IFDEntry ifd = readIFDEntry(channel, start);
             if (this.debugRead) {
                 System.out.println(i + " == " + ifd);
             }
 
-            this.tags.add(ifd);
-            start += 12;
+            if (ifd != null)
+                this.tags.add(ifd);
+            start += sizeEntry;
         }
 
         if (this.debugRead) {
             System.out.println(" looking for nextIFD at pos == " + channel.position() + " start = " + start);
         }
         channel.position(start);
-        buffer = ByteBuffer.allocate(4);
+        buffer = this.bigTiff ? ByteBuffer.allocate(8) : ByteBuffer.allocate(4);
         buffer.order(this.byteOrder);
         n = channel.read(buffer);
-        ((Buffer)buffer).flip();
-        int nextIFD = buffer.getInt();
+        buffer.flip();
+        long nextIFD = this.bigTiff ? buffer.getLong() : buffer.getInt();
         if (this.debugRead) {
             System.out.println(" nextIFD == " + nextIFD);
         }
@@ -1321,44 +1663,49 @@ public class GeoTiff {
      * @return IFDEntry
      * @throws IOException
      */
-    private IFDEntry readIFDEntry(FileChannel channel, int start) throws IOException {
+    private IFDEntry readIFDEntry(FileChannel channel, long start) throws IOException {
         if (this.debugRead) {
             System.out.println("readIFDEntry starting position to " + start);
         }
 
         channel.position(start);
-        ByteBuffer buffer = ByteBuffer.allocate(12);
+        ByteBuffer buffer = this.bigTiff ? ByteBuffer.allocate(20) : ByteBuffer.allocate(12);
         buffer.order(this.byteOrder);
         channel.read(buffer);
-        ((Buffer)buffer).flip();
+        buffer.flip();
         if (this.showBytes) {
-            printBytes(System.out, "IFDEntry bytes", buffer, 12);
+            printBytes(System.out, "IFDEntry bytes", buffer, buffer.limit());
         }
 
-        ((Buffer)buffer).position(0);
+        buffer.position(0);
         int code = readUShortValue(buffer);
         Tag tag = Tag.get(code);
         if (tag == null) {
             tag = new Tag(code);
         }
-        FieldType type = FieldType.get(readUShortValue(buffer));
-        int count = buffer.getInt();
+        int typeCode = readUShortValue(buffer);
+        FieldType type = FieldType.get(typeCode);
+        if (type == null) {
+            return null;
+        }
+        long count = this.bigTiff ? buffer.getLong() : buffer.getInt();
 
         IFDEntry ifd = new IFDEntry(tag, type, count);
 
-        if (ifd.count * ifd.type.size <= 4) {
+        int size = this.bigTiff ? 8 : 4;
+        if (ifd.count * ifd.type.size <= size) {
             readValues(buffer, ifd);
         } else {
-            int offset = buffer.getInt();
+            long offset = this.bigTiff ? buffer.getLong() : buffer.getInt();
             if (this.debugRead) {
                 System.out.println("position to " + offset);
             }
             channel.position(offset);
-            ByteBuffer vbuffer = ByteBuffer.allocate(ifd.count * ifd.type.size);
-            vbuffer.order(this.byteOrder);
-            channel.read(vbuffer);
-            ((Buffer)vbuffer).flip();
-            readValues(vbuffer, ifd);
+            ByteBuffer vBuffer = ByteBuffer.allocate((int)ifd.count * ifd.type.size);
+            vBuffer.order(this.byteOrder);
+            channel.read(vBuffer);
+            vBuffer.flip();
+            readValues(vBuffer, ifd);
         }
 
         return ifd;
@@ -1374,30 +1721,42 @@ public class GeoTiff {
         if (ifd.type == FieldType.ASCII) {
             ifd.valueS = readSValue(buffer, ifd);
         } else if (ifd.type == FieldType.RATIONAL) {
-            ifd.value = new int[ifd.count * 2];
+            ifd.value = new int[(int)ifd.count * 2];
             for (int i = 0; i < ifd.count * 2; i++) {
                 ifd.value[i] = readIntValue(buffer, ifd);
             }
         } else if (ifd.type == FieldType.FLOAT) {
-            ifd.valueD = new double[ifd.count];
+            ifd.valueD = new double[(int)ifd.count];
             for (int i = 0; i < ifd.count; i++) {
                 ifd.valueD[i] = buffer.getFloat();
             }
         } else if (ifd.type == FieldType.DOUBLE) {
-            ifd.valueD = new double[ifd.count];
+            ifd.valueD = new double[(int)ifd.count];
             for (int i = 0; i < ifd.count; i++) {
                 ifd.valueD[i] = buffer.getDouble();
             }
-        } else {
-            ifd.value = new int[ifd.count];
+        } else if (ifd.type == FieldType.LONG8) {
+            ifd.valueL = new long[(int)ifd.count];
             for (int i = 0; i < ifd.count; i++) {
-                ifd.value[i] = readIntValue(buffer, ifd);
+                ifd.valueL[i] = readLongValue(buffer, ifd);
+            }
+        } else {
+            if (ifd.tag == Tag.TileOffsets) {
+                ifd.valueL = new long[(int)ifd.count];
+                for (int i = 0; i < ifd.count; i++) {
+                    ifd.valueL[i] = readIntValue(buffer, ifd);
+                }
+            } else {
+                ifd.value = new int[(int) ifd.count];
+                for (int i = 0; i < ifd.count; i++) {
+                    ifd.value[i] = readIntValue(buffer, ifd);
+                }
             }
         }
     }
 
     /**
-     * Read int vlaue
+     * Read int value
      *
      * @param buffer ByteBuffer
      * @param ifd IFDEntry
@@ -1420,7 +1779,23 @@ public class GeoTiff {
     }
 
     /**
-     * Read short vlaue
+     * Read long value
+     *
+     * @param buffer ByteBuffer
+     * @param ifd IFDEntry
+     * @return Long value
+     */
+    private long readLongValue(ByteBuffer buffer, IFDEntry ifd) {
+        switch (ifd.type.code) {
+            case 16:
+            case 17:
+                return buffer.getLong();
+        }
+        return 0;
+    }
+
+    /**
+     * Read unsigned short value
      *
      * @param buffer ByteBuffer
      * @return Short value
@@ -1430,14 +1805,24 @@ public class GeoTiff {
     }
 
     /**
-     * Read string vlaue
+     * Read unsigned long value
+     *
+     * @param buffer ByteBuffer
+     * @return Long value
+     */
+    private long readULongValue(ByteBuffer buffer) {
+        return buffer.getLong() & 0x0FFFFFFFF;
+    }
+
+    /**
+     * Read string value
      *
      * @param buffer ByteBuffer
      * @param ifd IFDEntry
      * @return String value
      */
     private String readSValue(ByteBuffer buffer, IFDEntry ifd) {
-        byte[] dst = new byte[ifd.count];
+        byte[] dst = new byte[(int)ifd.count];
         buffer.get(dst);
         return new String(dst);
     }

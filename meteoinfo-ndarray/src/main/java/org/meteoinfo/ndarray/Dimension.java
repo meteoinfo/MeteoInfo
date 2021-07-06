@@ -429,7 +429,8 @@ public class Dimension {
      * @return Extracted dimension
      */
     public Dimension extract(int first, int last, int stride) {
-        Dimension dim = new Dimension(this.getShortName(), this.getLength(), this._dimType);
+        int n = (last - first) / stride + 1;
+        Dimension dim = new Dimension(this.getShortName(), n, this._dimType);
         dim.setDimId(this._dimId);
         //dim.setReverse(this.reverse);
         if (this._dimValue.size() > last) {

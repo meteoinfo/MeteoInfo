@@ -217,6 +217,10 @@ public class IFDEntry implements Comparable{
             for (int i = 0; i < this.count; i++) {
                 sbuf.append(new StringBuilder().append(this.valueD[i]).append(" ").toString());
             }
+        } else if ((this.type == FieldType.LONG8) || (this.type == FieldType.SLONG8)) {
+            for (int i = 0; i < this.count; i++) {
+                sbuf.append(new StringBuilder().append(this.valueL[i]).append(" ").toString());
+            }
         } else {
             long n = Math.min(this.count, 30);
             for (int i = 0; i < n; i++) {

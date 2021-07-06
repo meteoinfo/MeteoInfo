@@ -52,7 +52,7 @@ public class GeoTiff {
     private String filename;
     private RandomAccessFile file;
     private FileChannel channel;
-    private List<IFDEntry> tags = new ArrayList();
+    private List<IFD> directories = new ArrayList();
     private ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
     private boolean bigTiff = false;
     private boolean readonly;
@@ -104,19 +104,21 @@ public class GeoTiff {
     /**
      * Add tag
      *
-     * @param ifd IFDEntry
+     * @param ifd IFD
+     * @param tag Tag
      */
-    void addTag(IFDEntry ifd) {
-        this.tags.add(ifd);
+    void addTag(IFD ifd, IFDEntry tag) {
+        ifd.addTag(tag);
     }
 
     /**
      * Delete tag
      *
-     * @param ifd IFDEntry
+     * @param ifd IFD
+     * @param tag Tag
      */
-    void deleteTag(IFDEntry ifd) {
-        this.tags.remove(ifd);
+    void deleteTag(IFD ifd, IFDEntry tag) {
+        ifd.deleteTag(tag);
     }
 
     /**
@@ -128,9 +130,9 @@ public class GeoTiff {
      * @param yInc Y inc
      */
     void setTransform(double xStart, double yStart, double xInc, double yInc) {
-        addTag(new IFDEntry(Tag.ModelTiepointTag, FieldType.DOUBLE).setValue(new double[]{0.0D, 0.0D, 0.0D, xStart, yStart, 0.0D}));
+        addTag(this.directories.get(0), new IFDEntry(Tag.ModelTiepointTag, FieldType.DOUBLE).setValue(new double[]{0.0D, 0.0D, 0.0D, xStart, yStart, 0.0D}));
 
-        addTag(new IFDEntry(Tag.ModelPixelScaleTag, FieldType.DOUBLE).setValue(new double[]{xInc, yInc, 0.0D}));
+        addTag(this.directories.get(0), new IFDEntry(Tag.ModelPixelScaleTag, FieldType.DOUBLE).setValue(new double[]{xInc, yInc, 0.0D}));
     }
 
     /**
@@ -208,12 +210,12 @@ public class GeoTiff {
             }
         }
 
-        addTag(new IFDEntry(Tag.GeoKeyDirectoryTag, FieldType.SHORT).setValue(values));
+        addTag(this.directories.get(0), new IFDEntry(Tag.GeoKeyDirectoryTag, FieldType.SHORT).setValue(values));
         if (extra_doubles > 0) {
-            addTag(new IFDEntry(Tag.GeoDoubleParamsTag, FieldType.DOUBLE).setValue(dvalues));
+            addTag(this.directories.get(0), new IFDEntry(Tag.GeoDoubleParamsTag, FieldType.DOUBLE).setValue(dvalues));
         }
         if (extra_chars > 0) {
-            addTag(new IFDEntry(Tag.GeoAsciiParamsTag, FieldType.ASCII).setValue(new String(cvalues)));
+            addTag(this.directories.get(0), new IFDEntry(Tag.GeoAsciiParamsTag, FieldType.ASCII).setValue(new String(cvalues)));
         }
     }
 
@@ -290,7 +292,7 @@ public class GeoTiff {
 
         writeGeoKeys();
 
-        Collections.sort(this.tags);
+        Collections.sort(this.directories.get(0).getTags());
         int start = 0;
         if (imageNumber == 1) {
             start = writeHeader(this.channel);
@@ -304,7 +306,10 @@ public class GeoTiff {
             ((Buffer)buffer).flip();
             this.channel.write(buffer);
         }
-        writeIFD(this.channel, this.firstIFD);
+
+        for (IFD ifd : this.directories) {
+            writeIFD(ifd, this.channel, this.firstIFD);
+        }
     }
 
     /**
@@ -335,7 +340,7 @@ public class GeoTiff {
      * @throws IOException
      */
     public void initTags() throws IOException {
-        this.tags = new ArrayList();
+        this.directories = new ArrayList();
         this.geokeys = new ArrayList();
     }
 
@@ -360,20 +365,20 @@ public class GeoTiff {
      * @param start Start
      * @throws IOException
      */
-    private void writeIFD(FileChannel channel, int start) throws IOException {
+    private void writeIFD(IFD ifd, FileChannel channel, int start) throws IOException {
         channel.position(start);
 
         ByteBuffer buffer = ByteBuffer.allocate(2);
-        int n = this.tags.size();
+        int n = ifd.getTagNum();
         buffer.putShort((short) n);
         ((Buffer)buffer).flip();
         channel.write(buffer);
 
         start += 2;
-        this.startOverflowData = (start + 12 * this.tags.size() + 4);
+        this.startOverflowData = (start + 12 * n + 4);
         this.nextOverflowData = this.startOverflowData;
 
-        for (IFDEntry elem : this.tags) {
+        for (IFDEntry elem : ifd.getTags()) {
             writeIFDEntry(channel, elem, start);
             start += 12;
         }
@@ -533,16 +538,12 @@ public class GeoTiff {
      * @param tag Tag
      * @return IFDEntry
      */
+    IFDEntry findTag(IFD ifd, Tag tag) {
+        return ifd.findTag(tag);
+    }
+
     IFDEntry findTag(Tag tag) {
-        if (tag == null) {
-            return null;
-        }
-        for (IFDEntry ifd : this.tags) {
-            if (ifd.tag == tag) {
-                return ifd;
-            }
-        }
-        return null;
+        return this.directories.get(0).findTag(tag);
     }
 
     /**
@@ -1629,16 +1630,18 @@ public class GeoTiff {
 
         start += (this.bigTiff ? 8 : 2);
         int sizeEntry = this.bigTiff ? 20 : 12;
+        IFD ifd = new IFD();
         for (int i = 0; i < nEntries; i++) {
-            IFDEntry ifd = readIFDEntry(channel, start);
+            IFDEntry tag = readIFDEntry(channel, start);
             if (this.debugRead) {
-                System.out.println(i + " == " + ifd);
+                System.out.println(i + " == " + tag);
             }
 
-            if (ifd != null)
-                this.tags.add(ifd);
+            if (tag != null)
+                ifd.addTag(tag);
             start += sizeEntry;
         }
+        this.directories.add(ifd);
 
         if (this.debugRead) {
             System.out.println(" looking for nextIFD at pos == " + channel.position() + " start = " + start);
@@ -1912,9 +1915,11 @@ public class GeoTiff {
      */
     public void showInfo(PrintStream out) {
         out.println("Geotiff file= " + this.filename);
-        for (int i = 0; i < this.tags.size(); i++) {
-            IFDEntry ifd = (IFDEntry) this.tags.get(i);
-            out.println(i + " IFDEntry == " + ifd);
+        for (IFD ifd : this.directories) {
+            for (int i = 0; i < ifd.getTagNum(); i++) {
+                IFDEntry tag = ifd.getTag(i);
+                out.println(i + " IFDEntry == " + tag);
+            }
         }
     }
 

@@ -5,9 +5,14 @@
  */
 package org.meteoinfo.chart.jogl;
 
+import com.jogamp.newt.Display;
+import com.jogamp.newt.NewtFactory;
+import com.jogamp.newt.Screen;
+import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
+import junit.framework.Assert;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
 import org.meteoinfo.common.Extent3D;
@@ -366,9 +371,12 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @return View image
      */
     public BufferedImage paintViewImage(int width, int height) {
-        final GLProfile glp = GLProfile.get(GLProfile.GL2);
+        GLProfile.initSingleton();
+        this.paintGraphics();
+
+        //final GLProfile glp = GLProfile.get(GLProfile.GL2);
+        final GLProfile glp = GLProfile.getDefault();
         GLCapabilities caps = new GLCapabilities(glp);
-        caps.setHardwareAccelerated(true);
         caps.setDoubleBuffered(false);
         caps.setAlphaBits(8);
         caps.setRedBits(8);
@@ -385,6 +393,62 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
 
         BufferedImage image = this.plot3DGL.getScreenImage();
         drawable.destroy();
+
+        return image;
+    }
+
+    /**
+     * Paint view image
+     *
+     * @param width Image width
+     * @param height Image height
+     * @return View image
+     */
+    public BufferedImage paintViewImage_bak(int width, int height) {
+        this.paintGraphics();
+        GLProfile.initSingleton();
+
+        //final GLProfile glp = GLProfile.get(GLProfile.GL2);
+        final GLProfile glp = GLProfile.getDefault();
+        GLCapabilities caps = new GLCapabilities(glp);
+        caps.setHardwareAccelerated(true);
+        caps.setDoubleBuffered(false);
+        caps.setAlphaBits(8);
+        caps.setRedBits(8);
+        caps.setBlueBits(8);
+        caps.setGreenBits(8);
+        caps.setOnscreen(false);
+        caps.setPBuffer(true);
+        GLDrawableFactory factory = GLDrawableFactory.getFactory(glp);
+        final Display display = NewtFactory.createDisplay(null); // local display
+        Assert.assertNotNull(display);
+        final Screen screen  = NewtFactory.createScreen(display, 0); // screen 0
+        Assert.assertNotNull(screen);
+        final com.jogamp.newt.Window window = NewtFactory.createWindow(screen, caps);
+        Assert.assertNotNull(window);
+        window.setSize(width, height);
+        final GLWindow glWindow = GLWindow.create(window);
+        Assert.assertNotNull(glWindow);
+        glWindow.setVisible(true);
+
+        glWindow.addGLEventListener(this.plot3DGL);
+        this.plot3DGL.setDoScreenShot(true);
+        glWindow.display();
+
+        BufferedImage image = this.plot3DGL.getScreenImage();
+
+        if(null!=glWindow) {
+            glWindow.destroy();
+        }
+        if(null!=window) {
+            window.destroy();
+        }
+        if(null!=screen) {
+            screen.destroy();
+        }
+        if(null!=display) {
+            display.destroy();
+        }
 
         return image;
     }

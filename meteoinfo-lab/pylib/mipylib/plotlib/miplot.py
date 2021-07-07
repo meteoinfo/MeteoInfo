@@ -35,6 +35,7 @@ batchmode = False
 isinteractive = False
 g_figure = None
 g_axes = None
+g_form = None
 
 __all__ = [
     'gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis',
@@ -1184,7 +1185,16 @@ def glfigure(bgcolor='w', newfig=True, **kwargs):
     """
     global g_figure
     g_figure = GLFigure(**kwargs)
-    if not batchmode:
+    if batchmode:
+        #pass
+        global g_form
+        g_form = ChartForm(g_figure)
+        g_figure.paintGraphics()
+        g_form.setSize(600, 500)
+        g_form.setLocationRelativeTo(None)
+        g_form.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
+        #g_form.setVisible(True)
+    else:
         show(newfig)
         
     return g_figure
@@ -1575,12 +1585,7 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
     if fname.endswith('.eps') or fname.endswith('.pdf'):
         dpi = None
         
-    if dpi != None:
-        if (not width is None) and (not height is None):
-            g_figure.saveImage(fname, dpi, width, height, sleep)
-        else:
-            g_figure.saveImage(fname, dpi, sleep)
-    else:
+    if dpi is None:
         if (not width is None) and (not height is None):
             g_figure.saveImage(fname, width, height, sleep)
         else:
@@ -1588,6 +1593,15 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
                 g_figure.saveImage(fname)
             else:
                 g_figure.saveImage(fname, sleep)
+    else:
+        if (not width is None) and (not height is None):
+            g_figure.saveImage(fname, dpi, width, height, sleep)
+        else:
+            g_figure.saveImage(fname, dpi, sleep)
+
+    if isinstance(g_figure, GLFigure):
+        if not g_form is None:
+            g_form.dispose()
         
 def savefig_jpeg(fname, width=None, height=None, dpi=None):
     """

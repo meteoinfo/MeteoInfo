@@ -165,7 +165,6 @@ public class MeteoInfoLab {
             interp.execfile(fn);
         } catch (Exception e) {
             e.printStackTrace();
-            //System.exit(0);
         } finally {
             System.exit(0);
         }

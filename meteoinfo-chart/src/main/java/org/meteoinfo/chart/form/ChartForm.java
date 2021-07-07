@@ -6,7 +6,9 @@
 package org.meteoinfo.chart.form;
 
 import org.meteoinfo.chart.ChartPanel;
+import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
+import org.meteoinfo.chart.jogl.GLChartPanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,18 +20,21 @@ import java.awt.image.BufferedImage;
  */
 public class ChartForm extends javax.swing.JFrame {
 
-    private ChartPanel chartPanel;
+    private IChartPanel chartPanel;
     
     /**
      * Creates new form ChartForm
      * @param chartPanel Chart panel
      */
-    public ChartForm(ChartPanel chartPanel) {
+    public ChartForm(IChartPanel chartPanel) {
         initComponents();
         
         this.chartPanel = chartPanel;
         this.chartPanel.setMouseMode(MouseMode.ZOOM_IN);
-        this.getContentPane().add(this.chartPanel, BorderLayout.CENTER);
+        if (this.chartPanel instanceof ChartPanel)
+            this.getContentPane().add((ChartPanel)this.chartPanel, BorderLayout.CENTER);
+        else
+            this.getContentPane().add((GLChartPanel) this.chartPanel, BorderLayout.CENTER);
         
         BufferedImage image = null;
         try {

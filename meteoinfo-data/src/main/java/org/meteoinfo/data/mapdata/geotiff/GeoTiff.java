@@ -543,7 +543,14 @@ public class GeoTiff {
     }
 
     IFDEntry findTag(Tag tag) {
-        return this.directories.get(0).findTag(tag);
+        IFDEntry ifdEntry = null;
+        for (IFD ifd : this.directories) {
+            ifdEntry = ifd.findTag(tag);
+            if (ifdEntry != null) {
+                break;
+            }
+        }
+        return ifdEntry;
     }
 
     /**
@@ -568,6 +575,47 @@ public class GeoTiff {
         } else {
             IFDEntry modelTiePointTag = findTag(Tag.ModelTiepointTag);
             IFDEntry modelPixelScaleTag = findTag(Tag.ModelPixelScaleTag);
+            minLon = modelTiePointTag.valueD[3];
+            maxLat = modelTiePointTag.valueD[4];
+            xdelta = modelPixelScaleTag.valueD[0];
+            ydelta = modelPixelScaleTag.valueD[1];
+        }
+        for (int i = 0; i < width; i++) {
+            X[i] = BigDecimalUtil.add(minLon, BigDecimalUtil.mul(xdelta, i));
+        }
+        for (int i = 0; i < height; i++) {
+            Y[height - i - 1] = BigDecimalUtil.sub(maxLat, BigDecimalUtil.mul(ydelta, i));
+        }
+
+        List<double[]> xy = new ArrayList<>();
+        xy.add(X);
+        xy.add(Y);
+
+        return xy;
+    }
+
+    /**
+     * Read X/Y coordinates
+     *
+     * @return X/Y coordinates
+     */
+    public List<double[]> readXY(IFD ifd) {
+        IFDEntry widthIFD = ifd.findTag(Tag.ImageWidth);
+        IFDEntry heightIFD = ifd.findTag(Tag.ImageLength);
+        int width = widthIFD.value[0];
+        int height = heightIFD.value[0];
+        double[] X = new double[width];
+        double[] Y = new double[height];
+        double minLon, maxLat, xdelta, ydelta;
+        IFDEntry modelTransformationTag = this.findTag(Tag.ModelTransformationTag);
+        if (modelTransformationTag != null){
+            minLon = modelTransformationTag.valueD[3];
+            maxLat = modelTransformationTag.valueD[7];
+            xdelta = modelTransformationTag.valueD[0];
+            ydelta = -modelTransformationTag.valueD[5];
+        } else {
+            IFDEntry modelTiePointTag = this.findTag(Tag.ModelTiepointTag);
+            IFDEntry modelPixelScaleTag = this.findTag(Tag.ModelPixelScaleTag);
             minLon = modelTiePointTag.valueD[3];
             maxLat = modelTiePointTag.valueD[4];
             xdelta = modelPixelScaleTag.valueD[0];
@@ -1630,7 +1678,7 @@ public class GeoTiff {
 
         start += (this.bigTiff ? 8 : 2);
         int sizeEntry = this.bigTiff ? 20 : 12;
-        IFD ifd = new IFD();
+        IFD ifd = new IFD(this.channel, this.byteOrder);
         for (int i = 0; i < nEntries; i++) {
             IFDEntry tag = readIFDEntry(channel, start);
             if (this.debugRead) {

@@ -242,7 +242,7 @@ public class ArrayDouble extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public String getString(Index i) {
-        return String.valueOf(storageD[i.currentElement()]);
+        return String.format("%.8f", storageD[i.currentElement()]);
     }
 
     /**
@@ -344,7 +344,7 @@ public class ArrayDouble extends Array {
     }
 
     public String getString(int index) {
-        return String.valueOf(storageD[index]);
+        return String.format("%.8f", storageD[index]);
     }
 
     public void setString(int index, String value) {

@@ -8,8 +8,11 @@ from . import fromnumeric
 from fromnumeric import *
 from . import _io
 from _io import *
+from . import umath
+from umath import *
 
 __all__ = ['NDArray','DimArray','PyTableData','dtype','dimension','normalize_axis_index']
 __all__ += numeric.__all__
 __all__ += fromnumeric.__all__
+__all__ += umath.__all__
 __all__ += _io.__all__

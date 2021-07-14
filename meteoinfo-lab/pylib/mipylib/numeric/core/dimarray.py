@@ -325,6 +325,30 @@ class DimArray(NDArray):
     def __rdiv__(self, other):
         r = super(DimArray, self).__rdiv__(other)
         return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def __floordiv__(self, other):
+        r = super(DimArray, self).__floordiv__(other)
+        return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def __rfloordiv__(self, other):
+        r = super(DimArray, self).__rfloordiv__(other)
+        return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def __mod__(self, other):
+        r = super(DimArray, self).__mod__(other)
+        return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def __rmod__(self, other):
+        r = super(DimArray, self).__rmod__(other)
+        return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def __divmod__(self, other):
+        r = super(DimArray, self).__divmod__(other)
+        return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def __rdivmod__(self, other):
+        r = super(DimArray, self).__rdivmod__(other)
+        return DimArray(r, self.dims, self.fill_value, self.proj)
         
     def __pow__(self, other):
         r = super(DimArray, self).__pow__(other)

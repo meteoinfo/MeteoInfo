@@ -2609,6 +2609,34 @@ public class ArrayUtil {
 
     // </editor-fold>
     // <editor-fold desc="Resample/Interpolate">
+
+    /**
+     * Broadcast shape list to a new shape
+     * @param shapes The shape list
+     * @return Result shape
+     */
+    public static int[] broadcastShapes(List<List<Integer>> shapes) {
+        int ndim = 0;
+        for (List<Integer> shape : shapes) {
+            if (ndim < shape.size())
+                ndim = shape.size();
+        }
+
+        int[] newShape = new int[ndim];
+        int nn;
+        for (List<Integer> shape : shapes) {
+            nn = shape.size();
+            for (int n : shape) {
+                if (newShape[ndim - nn] < n) {
+                    newShape[ndim - nn] = n;
+                }
+                nn -= 1;
+            }
+        }
+
+        return newShape;
+    }
+
     /**
      * Broadcast array to a new shape
      *

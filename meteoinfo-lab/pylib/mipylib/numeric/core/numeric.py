@@ -36,7 +36,7 @@ nan = Double.NaN
 newaxis = None
 
 __all__ = [
-    'pi','e','inf','nan','acos','abs','absolute','all','allclose','any','arange','arange1',
+    'pi','e','inf','nan','acos','abs','all','allclose','any','arange','arange1',
     'argmin','argmax','array','array_split','asanyarray','asarray','asgridarray','asgriddata','asin',
     'asmiarray','asstationdata','atleast_1d','atleast_2d','atan','atan2','ave_month','average','histogram',
     'broadcast_to','cdiff','ceil','concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag',
@@ -115,7 +115,7 @@ def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
 
     if a.ndim < ndmin:
         shape = []
-        for i in range(ndmin - a.ndim):
+        for _ in range(ndmin - a.ndim):
             shape.append(1)
         shape.extend(a.shape)
         a = a.reshape(shape)
@@ -569,22 +569,6 @@ def rand(*args):
     else:
         return NDArray(ArrayUtil.rand(args))
         
-def absolute(x):
-    '''
-    Calculate the absolute value element-wise.
-    
-    :param x: (*array_like*) Input array.
-    
-    :returns: An array containing the absolute value of each element in x. 
-        For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
-    '''
-    if isinstance(x, list):
-        x = array(x)
-    if isinstance(x, NDArray):
-        return x.abs()
-    else:
-        return __builtin__.abs(x)
-
 def abs(x):
     """
     Calculate the absolute value element-wise.

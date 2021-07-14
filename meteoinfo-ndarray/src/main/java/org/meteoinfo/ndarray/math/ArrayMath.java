@@ -1690,39 +1690,37 @@ public class ArrayMath {
         int broadcast = broadcastCheck(a, b);
         switch (broadcast) {
             case 0:
-                Array r = Array.factory(DataType.INT, a.getShape());
+                Array r = Array.factory(DataType.DOUBLE, a.getShape());
                 if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
-                    int va,
-                     vb;
+                    double va, vb;
                     for (int i = 0; i < r.getSize(); i++) {
-                        va  = a.getInt(i);
-                        vb = b.getInt(i);
-                        if (va  == Integer.MIN_VALUE || vb == Integer.MIN_VALUE) {
-                            r.setInt(i, Integer.MIN_VALUE);
+                        va  = a.getDouble(i);
+                        vb = b.getDouble(i);
+                        if (Double.isNaN(va) || Double.isNaN(vb)) {
+                            r.setDouble(i, Double.NaN);
                         } else {
-                            r.setInt(i, va  / vb);
+                            r.setDouble(i, va  / vb);
                         }
                     }
                 } else {
                     IndexIterator iterR = r.getIndexIterator();
                     IndexIterator iterA = a.getIndexIterator();
                     IndexIterator iterB = b.getIndexIterator();
-                    int va,
-                     vb;
+                    double va, vb;
                     while (iterA.hasNext()) {
-                        va  = iterA.getIntNext();
-                        vb = iterB.getIntNext();
-                        if (va  == Integer.MIN_VALUE || vb == Integer.MIN_VALUE) {
-                            iterR.setIntNext(Integer.MIN_VALUE);
+                        va  = iterA.getDoubleNext();
+                        vb = iterB.getDoubleNext();
+                        if (Double.isNaN(va) || Double.isNaN(vb)) {
+                            iterR.setDoubleNext(Double.NaN);
                         } else {
-                            iterR.setIntNext(va  / vb);
+                            iterR.setDoubleNext(va  / vb);
                         }
                     }
                 }
                 return r;
             case 1:
                 int[] shape = broadcast(a, b);
-                r = Array.factory(DataType.INT, shape);
+                r = Array.factory(DataType.DOUBLE, shape);
                 Index index = r.getIndex();
                 Index aindex = a.getIndex();
                 Index bindex = b.getIndex();
@@ -1733,10 +1731,10 @@ public class ArrayMath {
                 for (int i = 0; i < r.getSize(); i++) {
                     current = index.getCurrentCounter();
                     setIndex(aindex, bindex, current, n, na, nb);
-                    if (a.getInt(aindex) == Integer.MIN_VALUE || b.getInt(bindex) == Integer.MIN_VALUE) {
-                        r.setInt(i, Integer.MIN_VALUE);
+                    if (Double.isNaN(a.getDouble(aindex)) || Double.isNaN(b.getDouble(bindex))) {
+                        r.setDouble(i, Double.NaN);
                     } else {
-                        r.setInt(i, a.getInt(aindex) / b.getInt(bindex));
+                        r.setDouble(i, a.getDouble(aindex) / b.getDouble(bindex));
                     }
                     index.incr();
                 }
@@ -1747,21 +1745,21 @@ public class ArrayMath {
     }
 
     private static Array divInt(Array a, int b) {
-        Array r = Array.factory(DataType.INT, a.getShape());
+        Array r = Array.factory(DataType.DOUBLE, a.getShape());
         if (a.getIndexPrivate().isFastIterator()) {
             for (int i = 0; i < r.getSize(); i++) {
-                r.setInt(i, a.getInt(i) / b);
+                r.setDouble(i, a.getDouble(i) / b);
             }
         } else {
             IndexIterator iterR = r.getIndexIterator();
             IndexIterator iterA = a.getIndexIterator();
-            int v;
+            double v;
             while (iterA.hasNext()) {
-                v = iterA.getIntNext();
-                if (v == Integer.MIN_VALUE) {
-                    iterR.setIntNext(Integer.MIN_VALUE);
+                v = iterA.getDoubleNext();
+                if (Double.isNaN(v)) {
+                    iterR.setDoubleNext(Double.NaN);
                 } else {
-                    iterR.setIntNext(v / b);
+                    iterR.setDoubleNext(v / b);
                 }
             }
         }
@@ -1770,21 +1768,21 @@ public class ArrayMath {
     }
 
     private static Array divInt(int b, Array a) {
-        Array r = Array.factory(DataType.INT, a.getShape());
+        Array r = Array.factory(DataType.DOUBLE, a.getShape());
         if (a.getIndexPrivate().isFastIterator()) {
             for (int i = 0; i < r.getSize(); i++) {
-                r.setInt(i, b / a.getInt(i));
+                r.setDouble(i, b / a.getDouble(i));
             }
         } else {
             IndexIterator iterR = r.getIndexIterator();
             IndexIterator iterA = a.getIndexIterator();
-            int v;
+            double v;
             while (iterA.hasNext()) {
-                v = iterA.getIntNext();
-                if (v == Integer.MIN_VALUE) {
-                    iterR.setIntNext(Integer.MIN_VALUE);
+                v = iterA.getDoubleNext();
+                if (Double.isNaN(v)) {
+                    iterR.setDoubleNext(Double.NaN);
                 } else {
-                    iterR.setIntNext(b / v);
+                    iterR.setDoubleNext(b / v);
                 }
             }
         }
@@ -2142,6 +2140,787 @@ public class ArrayMath {
             IndexIterator iterA = a.getIndexIterator();
             while (iterA.hasNext()) {
                 iterR.setComplexNext(b.divide(iterA.getComplexNext()));
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Array mod
+     *
+     * @param a Array a
+     * @param b Array b
+     * @return Result array
+     */
+    public static Array mod(Array a, Array b) {
+        DataType type = ArrayMath.commonType(a.getDataType(), b.getDataType());
+        switch (type) {
+            case SHORT:
+            case INT:
+            case BOOLEAN:
+                return ArrayMath.modInt(a, b);
+            case FLOAT:
+                return ArrayMath.modFloat(a, b);
+            case DOUBLE:
+                return ArrayMath.modDouble(a, b);
+        }
+        return null;
+    }
+
+    /**
+     * Array mod
+     *
+     * @param a Array a
+     * @param b Number b
+     * @return Result array
+     */
+    public static Array mod(Array a, Number b) {
+        DataType bType = ArrayMath.getDataType(b);
+        DataType type = ArrayMath.commonType(a.getDataType(), bType);
+        switch (type) {
+            case SHORT:
+            case INT:
+            case BOOLEAN:
+                return ArrayMath.modInt(a, b.intValue());
+            case FLOAT:
+                return ArrayMath.modFloat(a, b.floatValue());
+            case DOUBLE:
+                return ArrayMath.modDouble(a, b.doubleValue());
+        }
+        return null;
+    }
+
+    /**
+     * Array mod
+     *
+     * @param a Array a
+     * @param b Number b
+     * @return Result array
+     */
+    public static Array mod(Number b, Array a) {
+        DataType bType = ArrayMath.getDataType(b);
+        DataType type = ArrayMath.commonType(a.getDataType(), bType);
+        switch (type) {
+            case SHORT:
+            case INT:
+            case BOOLEAN:
+                return ArrayMath.modInt(b.intValue(), a);
+            case FLOAT:
+                return ArrayMath.modFloat(b.floatValue(), a);
+            case DOUBLE:
+                return ArrayMath.modDouble(b.doubleValue(), a);
+        }
+        return null;
+    }
+
+    private static int mod(int a, int b) {
+        return a - Math.floorDiv(a, b) * b;
+    }
+
+    private static float mod(float a, float b) {
+        return a - (float)Math.floor(a / b) * b;
+    }
+
+    private static double mod(double a, double b) {
+        return a - Math.floor(a / b) * b;
+    }
+
+    private static Array modInt(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.INT, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    int va, vb;
+                    for (int i = 0; i < r.getSize(); i++) {
+                        va  = a.getInt(i);
+                        vb = b.getInt(i);
+                        if (va  == Integer.MIN_VALUE || vb == Integer.MIN_VALUE) {
+                            r.setInt(i, Integer.MIN_VALUE);
+                        } else {
+                            r.setInt(i, mod(va, vb));
+                        }
+                    }
+                } else {
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    int va, vb;
+                    while (iterA.hasNext()) {
+                        va  = iterA.getIntNext();
+                        vb = iterB.getIntNext();
+                        if (va  == Integer.MIN_VALUE || vb == Integer.MIN_VALUE) {
+                            iterR.setIntNext(Integer.MIN_VALUE);
+                        } else {
+                            iterR.setIntNext(mod(va, vb));
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.INT, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                int va, vb;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    va = a.getInt(aindex);
+                    vb = b.getInt(bindex);
+                    if (va == Integer.MIN_VALUE || vb == Integer.MIN_VALUE) {
+                        r.setInt(i, Integer.MIN_VALUE);
+                    } else {
+                        r.setInt(i, mod(va, vb));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array modInt(Array a, int b) {
+        Array r = Array.factory(DataType.INT, a.getShape());
+        int v;
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                v = a.getInt(i);
+                r.setInt(i, mod(v, b));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            while (iterA.hasNext()) {
+                v = iterA.getIntNext();
+                if (v == Integer.MIN_VALUE) {
+                    iterR.setIntNext(Integer.MIN_VALUE);
+                } else {
+                    iterR.setIntNext(mod(v, b));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array modInt(int b, Array a) {
+        Array r = Array.factory(DataType.INT, a.getShape());
+        int v;
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                v = a.getInt(i);
+                r.setInt(i, mod(b, v));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            while (iterA.hasNext()) {
+                v = iterA.getIntNext();
+                if (v == Integer.MIN_VALUE) {
+                    iterR.setIntNext(Integer.MIN_VALUE);
+                } else {
+                    iterR.setIntNext(mod(b, v));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array modFloat(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.FLOAT, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    float va, vb;
+                    for (int i = 0; i < r.getSize(); i++) {
+                        va  = a.getFloat(i);
+                        vb = b.getFloat(i);
+                        if (Float.isNaN(va) || Float.isNaN(vb)) {
+                            r.setFloat(i, Float.NaN);
+                        } else {
+                            r.setFloat(i, mod(va, vb));
+                        }
+                    }
+                } else {
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    float va, vb;
+                    while (iterA.hasNext()) {
+                        va  = iterA.getFloatNext();
+                        vb = iterB.getFloatNext();
+                        if (Float.isNaN(va) || Float.isNaN(vb)) {
+                            iterR.setFloatNext(Float.NaN);
+                        } else {
+                            iterR.setFloatNext(mod(va, vb));
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.FLOAT, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    if (Float.isNaN(a.getFloat(aindex)) || Float.isNaN(b.getFloat(bindex))) {
+                        r.setFloat(i, Float.NaN);
+                    } else {
+                        r.setFloat(i, mod(a.getFloat(aindex), b.getFloat(bindex)));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array modFloat(Array a, float b) {
+        Array r = Array.factory(DataType.FLOAT, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setFloat(i, mod(a.getFloat(i), b));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            float v;
+            while (iterA.hasNext()) {
+                v = iterA.getFloatNext();
+                if (Float.isNaN(v)) {
+                    iterR.setFloatNext(v);
+                } else {
+                    iterR.setFloatNext(mod(v, b));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array modFloat(float b, Array a) {
+        Array r = Array.factory(DataType.FLOAT, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setFloat(i, mod(b, a.getFloat(i)));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            float v;
+            while (iterA.hasNext()) {
+                v = iterA.getFloatNext();
+                if (Float.isNaN(v)) {
+                    iterR.setFloatNext(v);
+                } else {
+                    iterR.setFloatNext(mod(b, v));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array modDouble(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.DOUBLE, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    double va, vb;
+                    for (int i = 0; i < r.getSize(); i++) {
+                        va  = a.getDouble(i);
+                        vb = b.getDouble(i);
+                        if (Double.isNaN(va) || Double.isNaN(vb)) {
+                            r.setDouble(i, Double.NaN);
+                        } else {
+                            r.setDouble(i, mod(va, vb));
+                        }
+                    }
+                } else {
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    double va,
+                            vb;
+                    while (iterA.hasNext()) {
+                        va  = iterA.getDoubleNext();
+                        vb = iterB.getDoubleNext();
+                        if (Double.isNaN(va) || Double.isNaN(vb)) {
+                            iterR.setDoubleNext(Double.NaN);
+                        } else {
+                            iterR.setDoubleNext(mod(va, vb));
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.DOUBLE, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    if (Double.isNaN(a.getDouble(aindex)) || Double.isNaN(b.getDouble(bindex))) {
+                        r.setDouble(i, Double.NaN);
+                    } else {
+                        r.setDouble(i, mod(a.getDouble(aindex), b.getDouble(bindex)));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array modDouble(Array a, double b) {
+        Array r = Array.factory(DataType.DOUBLE, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setDouble(i, mod(a.getDouble(i), b));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            double v;
+            while (iterA.hasNext()) {
+                v = iterA.getDoubleNext();
+                if (Double.isNaN(v)) {
+                    iterR.setDoubleNext(Double.NaN);
+                } else {
+                    iterR.setDoubleNext(mod(v, b));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array modDouble(double b, Array a) {
+        Array r = Array.factory(DataType.DOUBLE, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setDouble(i, mod(b, a.getDouble(i)));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            double v;
+            while (iterA.hasNext()) {
+                v = iterA.getDoubleNext();
+                if (Double.isNaN(v)) {
+                    iterR.setDoubleNext(Double.NaN);
+                } else {
+                    iterR.setDoubleNext(mod(b, v));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Array mod
+     *
+     * @param a Array a
+     * @param b Array b
+     * @return Result array
+     */
+    public static Array floorDiv(Array a, Array b) {
+        DataType type = ArrayMath.commonType(a.getDataType(), b.getDataType());
+        switch (type) {
+            case SHORT:
+            case INT:
+            case BOOLEAN:
+                return ArrayMath.floorDivInt(a, b);
+            case FLOAT:
+                return ArrayMath.floorDivFloat(a, b);
+            case DOUBLE:
+                return ArrayMath.floorDivDouble(a, b);
+        }
+        return null;
+    }
+
+    /**
+     * Array floor divide
+     *
+     * @param a Array a
+     * @param b Number b
+     * @return Result array
+     */
+    public static Array floorDiv(Array a, Number b) {
+        DataType bType = ArrayMath.getDataType(b);
+        DataType type = ArrayMath.commonType(a.getDataType(), bType);
+        switch (type) {
+            case SHORT:
+            case INT:
+            case BOOLEAN:
+                return ArrayMath.floorDivInt(a, b.intValue());
+            case FLOAT:
+                return ArrayMath.floorDivFloat(a, b.floatValue());
+            case DOUBLE:
+                return ArrayMath.floorDivDouble(a, b.doubleValue());
+        }
+        return null;
+    }
+
+    /**
+     * Array floor divide
+     *
+     * @param a Array a
+     * @param b Number b
+     * @return Result array
+     */
+    public static Array floorDiv(Number b, Array a) {
+        DataType bType = ArrayMath.getDataType(b);
+        DataType type = ArrayMath.commonType(a.getDataType(), bType);
+        switch (type) {
+            case SHORT:
+            case INT:
+            case BOOLEAN:
+                return ArrayMath.floorDivInt(b.intValue(), a);
+            case FLOAT:
+                return ArrayMath.floorDivFloat(b.floatValue(), a);
+            case DOUBLE:
+                return ArrayMath.floorDivDouble(b.doubleValue(), a);
+        }
+        return null;
+    }
+
+    private static Array floorDivInt(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.INT, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    int va,
+                            vb;
+                    for (int i = 0; i < r.getSize(); i++) {
+                        va  = a.getInt(i);
+                        vb = b.getInt(i);
+                        if (va  == Integer.MIN_VALUE || vb == Integer.MIN_VALUE) {
+                            r.setInt(i, Integer.MIN_VALUE);
+                        } else {
+                            r.setInt(i, Math.floorDiv(va, vb));
+                        }
+                    }
+                } else {
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    int va, vb;
+                    while (iterA.hasNext()) {
+                        va  = iterA.getIntNext();
+                        vb = iterB.getIntNext();
+                        if (va  == Integer.MIN_VALUE || vb == Integer.MIN_VALUE) {
+                            iterR.setIntNext(Integer.MIN_VALUE);
+                        } else {
+                            iterR.setIntNext(Math.floorDiv(va, vb));
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.INT, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    if (a.getInt(aindex) == Integer.MIN_VALUE || b.getInt(bindex) == Integer.MIN_VALUE) {
+                        r.setInt(i, Integer.MIN_VALUE);
+                    } else {
+                        r.setInt(i, Math.floorDiv(a.getInt(aindex), b.getInt(bindex)));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array floorDivInt(Array a, int b) {
+        Array r = Array.factory(DataType.INT, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setInt(i, Math.floorDiv(a.getInt(i), b));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            int v;
+            while (iterA.hasNext()) {
+                v = iterA.getIntNext();
+                if (v == Integer.MIN_VALUE) {
+                    iterR.setIntNext(Integer.MIN_VALUE);
+                } else {
+                    iterR.setIntNext(Math.floorDiv(v, b));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array floorDivInt(int b, Array a) {
+        Array r = Array.factory(DataType.INT, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setInt(i, Math.floorDiv(b, a.getInt(i)));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            int v;
+            while (iterA.hasNext()) {
+                v = iterA.getIntNext();
+                if (v == Integer.MIN_VALUE) {
+                    iterR.setIntNext(Integer.MIN_VALUE);
+                } else {
+                    iterR.setIntNext(Math.floorDiv(b, v));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array floorDivFloat(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.DOUBLE, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    float va,
+                            vb;
+                    for (int i = 0; i < r.getSize(); i++) {
+                        va  = a.getFloat(i);
+                        vb = b.getFloat(i);
+                        if (Float.isNaN(va) || Float.isNaN(vb)) {
+                            r.setDouble(i, Double.NaN);
+                        } else {
+                            r.setDouble(i, Math.floor(va  / vb));
+                        }
+                    }
+                } else {
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    float va, vb;
+                    while (iterA.hasNext()) {
+                        va  = iterA.getFloatNext();
+                        vb = iterB.getFloatNext();
+                        if (Float.isNaN(va) || Float.isNaN(vb)) {
+                            iterR.setDoubleNext(Double.NaN);
+                        } else {
+                            iterR.setDoubleNext(Math.floor(va  / vb));
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.DOUBLE, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    if (Float.isNaN(a.getFloat(aindex)) || Float.isNaN(b.getFloat(bindex))) {
+                        r.setDouble(i, Double.NaN);
+                    } else {
+                        r.setDouble(i, Math.floor(a.getFloat(aindex) / b.getFloat(bindex)));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array floorDivFloat(Array a, float b) {
+        Array r = Array.factory(DataType.DOUBLE, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setDouble(i, Math.floor(a.getFloat(i) / b));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            float v;
+            while (iterA.hasNext()) {
+                v = iterA.getFloatNext();
+                if (Float.isNaN(v)) {
+                    iterR.setDoubleNext(v);
+                } else {
+                    iterR.setDoubleNext(Math.floor(v / b));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array floorDivFloat(float b, Array a) {
+        Array r = Array.factory(DataType.DOUBLE, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setDouble(i, Math.floor(b / a.getFloat(i)));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            float v;
+            while (iterA.hasNext()) {
+                v = iterA.getFloatNext();
+                if (Float.isNaN(v)) {
+                    iterR.setDoubleNext(Double.NaN);
+                } else {
+                    iterR.setDoubleNext(Math.floor(b / v));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array floorDivDouble(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.DOUBLE, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    double va, vb;
+                    for (int i = 0; i < r.getSize(); i++) {
+                        va  = a.getDouble(i);
+                        vb = b.getDouble(i);
+                        if (Double.isNaN(va) || Double.isNaN(vb)) {
+                            r.setDouble(i, Double.NaN);
+                        } else {
+                            r.setDouble(i, Math.floor(va / vb));
+                        }
+                    }
+                } else {
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    double va,
+                            vb;
+                    while (iterA.hasNext()) {
+                        va  = iterA.getDoubleNext();
+                        vb = iterB.getDoubleNext();
+                        if (Double.isNaN(va) || Double.isNaN(vb)) {
+                            iterR.setDoubleNext(Double.NaN);
+                        } else {
+                            iterR.setDoubleNext(Math.floor(va / vb));
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.DOUBLE, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    if (Double.isNaN(a.getDouble(aindex)) || Double.isNaN(b.getDouble(bindex))) {
+                        r.setDouble(i, Double.NaN);
+                    } else {
+                        r.setDouble(i, Math.floor(a.getDouble(aindex) / b.getDouble(bindex)));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array floorDivDouble(Array a, double b) {
+        Array r = Array.factory(DataType.DOUBLE, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setDouble(i, Math.floor(a.getDouble(i) / b));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            double v;
+            while (iterA.hasNext()) {
+                v = iterA.getDoubleNext();
+                if (Double.isNaN(v)) {
+                    iterR.setDoubleNext(Double.NaN);
+                } else {
+                    iterR.setDoubleNext(Math.floor(v / b));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array floorDivDouble(double b, Array a) {
+        Array r = Array.factory(DataType.DOUBLE, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setDouble(i, Math.floor(b / a.getDouble(i)));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            double v;
+            while (iterA.hasNext()) {
+                v = iterA.getDoubleNext();
+                if (Double.isNaN(v)) {
+                    iterR.setDoubleNext(Double.NaN);
+                } else {
+                    iterR.setDoubleNext(Math.floor(b / v));
+                }
             }
         }
 
@@ -3966,6 +4745,10 @@ public class ArrayMath {
         return r;
     }
 
+    private static int sign(double v) {
+        return (int)Math.signum(v);
+    }
+
     /**
      * Returns an element-wise indication of the sign of a number. The sign
      * function returns -1 if x less than 0, 0 if x==0, 1 if x bigger than 0.
@@ -3975,16 +4758,16 @@ public class ArrayMath {
      * @return The sign of x array
      */
     public static Array sign(Array x) {
-        Array r = Array.factory(DataType.FLOAT, x.getShape());
+        Array r = Array.factory(x.getDataType(), x.getShape());
         if (x.getIndexPrivate().isFastIterator()) {
             for (int i = 0; i < r.getSize(); i++) {
-                r.setFloat(i, Math.signum(x.getFloat(i)));
+                r.setObject(i, sign(x.getDouble(i)));
             }
         } else {
             IndexIterator iterX = x.getIndexIterator();
             IndexIterator iterR = r.getIndexIterator();
             while (iterX.hasNext()) {
-                iterR.setFloatNext(Math.signum(iterX.getFloatNext()));
+                iterR.setObjectNext(sign(iterX.getDoubleNext()));
             }
         }
 

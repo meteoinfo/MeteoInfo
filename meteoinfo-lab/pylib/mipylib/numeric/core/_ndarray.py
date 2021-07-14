@@ -364,6 +364,40 @@ class NDArray(object):
             raise ValueError('Dimension missmatch, can not broadcast!')
         return NDArray(r)
 
+    def __floordiv__(self, other):
+        other = NDArray.__value_other(self, other)
+        r = ArrayMath.floorDiv(self._array, other)
+        if r is None:
+            raise ValueError('Dimension missmatch, can not broadcast!')
+        return NDArray(r)
+
+    def __rfloordiv__(self, other):
+        other = NDArray.__value_other(self, other)
+        r = ArrayMath.floorDiv(other, self._array)
+        if r is None:
+            raise ValueError('Dimension missmatch, can not broadcast!')
+        return NDArray(r)
+
+    def __mod__(self, other):
+        other = NDArray.__value_other(self, other)
+        r = ArrayMath.mod(self._array, other)
+        if r is None:
+            raise ValueError('Dimension missmatch, can not broadcast!')
+        return NDArray(r)
+
+    def __rmod__(self, other):
+        other = NDArray.__value_other(self, other)
+        r = ArrayMath.mod(other, self._array)
+        if r is None:
+            raise ValueError('Dimension missmatch, can not broadcast!')
+        return NDArray(r)
+
+    def __divmod__(self, other):
+        return self.__floordiv__(other), self.__mod__(other)
+
+    def __rdivmod__(self, other):
+        return self.__rfloordiv__(other), self.__rmod__(other)
+
     def __pow__(self, other):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.pow(self._array, other)

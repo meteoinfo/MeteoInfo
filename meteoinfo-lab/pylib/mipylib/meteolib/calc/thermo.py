@@ -1,6 +1,7 @@
 """Contains a collection of thermodynamic calculations."""
 
 from .. import constants
+from .tools import _remove_nans
 import mipylib.numeric as np
 
 __all__ = [

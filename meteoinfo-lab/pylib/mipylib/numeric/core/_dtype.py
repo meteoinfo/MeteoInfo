@@ -135,6 +135,34 @@ class DataType(object):
         elif self.name == 'date' or self.name == 'datetime':
             return 'M'
 
+    @staticmethod
+    def from_char(c):
+        """
+        Create DataType from char.
+        :param c: (*str*) Char string.
+        :return: The DataType
+        """
+        if c == 'b' or c == 'bool':
+            return DataType('boolean')
+        elif c == 'h':
+            return DataType('short')
+        elif c == 'l' or c == 'int':
+            return DataType('int')
+        elif c == 'q':
+            return DataType('long')
+        elif c == 'f' or c == 'float':
+            return DataType('float')
+        elif c == 'd':
+            return DataType('double')
+        elif c == 'U':
+            return DataType('string')
+        elif c == 'D':
+            return DataType('complex')
+        elif c == 'M':
+            return DataType('date')
+        else:
+            return DataType('object')
+
 class dtype(DataType):
     byte = DataType('byte')
     char = DataType('char')

@@ -446,9 +446,15 @@ def full(shape, fill_value, dtype=None):
     else:
         shapelist = shape
     if isinstance(dtype, basestring):
-        dtype = _dtype.DataType(dtype)._dtype
+        dtype = _dtype.DataType.from_char(dtype)._dtype
 
-    return NDArray(ArrayUtil.full(shapelist, fill_value, dtype))
+    if isinstance(fill_value, (list, tuple)):
+        fill_value = array(fill_value)
+
+    if isinstance(fill_value, NDArray):
+        return NDArray(ArrayUtil.full(shapelist, fill_value.asarray(), dtype))
+    else:
+        return NDArray(ArrayUtil.full(shapelist, fill_value, dtype))
     
 def identity(n, dtype='float'):
     '''
@@ -578,7 +584,12 @@ def abs(x):
     :returns: An array containing the absolute value of each element in x.
         For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
     """
-    return absolute(x)
+    if isinstance(x, list):
+        x = array(x)
+    if isinstance(x, NDArray):
+        return x.abs()
+    else:
+        return __builtin__.abs(x)
 
 def ceil(x):
     '''

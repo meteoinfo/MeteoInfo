@@ -1028,6 +1028,39 @@ public class ArrayUtil {
     }
 
     /**
+     * Return a new array of given shape and type, filled with fill value.
+     *
+     * @param shape Shape
+     * @param fillValue Fill value array
+     * @param dtype Data type
+     * @return Array Result array
+     */
+    public static Array full(List<Integer> shape, Array fillValue, DataType dtype) {
+        fillValue = fillValue.copyIfView();
+
+        int[] ashape = new int[shape.size()];
+        for (int i = 0; i < shape.size(); i++) {
+            ashape[i] = shape.get(i);
+        }
+        if (dtype == null) {
+            dtype = fillValue.getDataType();
+        }
+        Array a = Array.factory(dtype, ashape);
+
+        int idx = 0;
+        int len = (int) fillValue.getSize();
+        for (int i = 0; i < a.getSize(); i++) {
+            a.setObject(i, fillValue.getObject(idx));
+            idx += 1;
+            if (idx == len) {
+                idx = 0;
+            }
+        }
+
+        return a;
+    }
+
+    /**
      * Get ones array
      *
      * @param n Number

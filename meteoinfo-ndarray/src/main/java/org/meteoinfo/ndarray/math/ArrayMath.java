@@ -7620,6 +7620,8 @@ public class ArrayMath {
                 while (iterA.hasNext()) {
                     if (iterB.getBooleanNext()) {
                         iterA.setObjectNext(iterV.getObjectNext());
+                    } else {
+                        iterA.next();
                     }
                 }
             }
@@ -7638,6 +7640,72 @@ public class ArrayMath {
                 while (iterA.hasNext()) {
                     if (iterB.getIntNext() == 1) {
                         iterA.setObjectNext(iterV.getObjectNext());
+                    } else {
+                        iterA.next();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Change elements of an array based on conditional and input values.
+     *
+     * @param a Array a
+     * @param b Array b - 0/1 data
+     * @param value Value array
+     */
+    public static void place(Array a, Array b, Array value) {
+        value = value.copyIfView();
+        int idx = 0;
+        int len = (int) value.getSize();
+        if (b.getDataType() == DataType.BOOLEAN) {
+            if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()
+                    && value.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    if (b.getBoolean(i)) {
+                        a.setObject(i, value.getObject(idx));
+                        idx += 1;
+                        if (idx == len)
+                            idx = 0;
+                    }
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterB = b.getIndexIterator();
+                while (iterA.hasNext()) {
+                    if (iterB.getBooleanNext()) {
+                        iterA.setObjectNext(value.getObject(idx));
+                        idx += 1;
+                        if (idx == len)
+                            idx = 0;
+                    } else {
+                        iterA.next();
+                    }
+                }
+            }
+        } else {
+            if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()
+                    && value.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    if (b.getInt(i) == 1) {
+                        a.setObject(i, value.getObject(idx));
+                        idx += 1;
+                        if (idx == len)
+                            idx = 0;
+                    }
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterB = b.getIndexIterator();
+                while (iterA.hasNext()) {
+                    if (iterB.getIntNext() == 1) {
+                        iterA.setObjectNext(value.getObject(idx));
+                        idx += 1;
+                        if (idx == len)
+                            idx = 0;
+                    } else {
+                        iterA.next();
                     }
                 }
             }

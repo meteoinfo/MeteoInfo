@@ -5327,6 +5327,34 @@ public class ArrayMath {
     }
 
     /**
+     * Extract 1D array by boolean array
+     * @param a The data array
+     * @param condition The boolean array
+     * @return Extracted array
+     */
+    public static Array take(Array a, Array condition) {
+        List rr = new ArrayList();
+        IndexIterator aIter = a.getIndexIterator();
+        IndexIterator cIter = condition.getIndexIterator();
+        boolean b;
+        while(aIter.hasNext()) {
+            if (cIter.getBooleanNext()) {
+                rr.add(aIter.getObjectNext());
+            } else {
+                aIter.next();
+            }
+        }
+
+        int n = rr.size();
+        Array r = Array.factory(a.getDataType(), new int[]{n});
+        for (int i = 0; i < n; i++) {
+            r.setObject(i, rr.get(i));
+        }
+
+        return r;
+    }
+
+    /**
      * Take elements from an array along an axis.
      *
      * @param a The array

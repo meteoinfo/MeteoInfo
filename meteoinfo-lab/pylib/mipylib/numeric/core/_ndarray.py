@@ -81,6 +81,10 @@ class NDArray(object):
         return ArrayUtil.convertToString(self._array)
 
     def __getitem__(self, indices):
+        if isinstance(indices, NDArray):
+            r = ArrayMath.take(self._array, indices._array)
+            return NDArray(r)
+
         if not isinstance(indices, tuple):
             inds = []
             inds.append(indices)

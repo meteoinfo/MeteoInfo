@@ -20,13 +20,11 @@
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotif_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\bar\bar_hatch.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\fixed_point.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotif_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\bar\bar_hatch.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\fixed_point.py"/>
     </RecentFiles>
@@ -36,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1382,788"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

@@ -7763,6 +7763,7 @@ public class ArrayMath {
         Number n = new Double(v);
         switch (dt) {
             case INT:
+            case BOOLEAN:
                 return n.intValue();
             case FLOAT:
                 return n.floatValue();

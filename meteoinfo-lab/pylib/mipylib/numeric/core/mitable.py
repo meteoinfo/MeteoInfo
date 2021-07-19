@@ -12,7 +12,7 @@ from org.meteoinfo.ndarray.math import ArrayUtil
 from org.meteoinfo.ndarray import Range, DataType
 from java.time import LocalDateTime
 
-from multiarray import NDArray
+from ._ndarray import NDArray
 import mipylib.miutil as miutil
 
 

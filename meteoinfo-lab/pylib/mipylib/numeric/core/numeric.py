@@ -25,7 +25,7 @@ from org.python.core import PyComplex
 import _dtype
 from dimarray import PyGridData, DimArray, PyStationData
 from mitable import PyTableData
-from multiarray import NDArray
+from ._ndarray import NDArray
 from org.meteoinfo.lab.util import JythonUtil
 
 # Global variables
@@ -48,7 +48,7 @@ __all__ = [
     'monthname','moveaxis','newaxis','ones','ones_like','pol2cart','power','radians',
     'reshape','repeat','roll','rolling_mean','rot90','sign','sin','shape','smooth5','smooth9','sort','squeeze','argsort',
     'split','sqrt','square','std','sum','swapaxes','take','tan','tile','transpose','trapz','vdot','unique',
-    'unravel_index','var','vstack','where','zeros','zeros_like'
+    'unravel_index','var','vstack','zeros','zeros_like'
     ]
 
 def isgriddata(gdata):
@@ -1676,18 +1676,6 @@ def flatnonzero(a):
     r = ArrayUtil.flatNonZero(a.asarray())
 
     return NDArray(r)
-    
-def where(condition):
-    '''
-    Return elements, either from x or y, depending on condition.
-
-    If only condition is given, return condition.nonzero().
-    
-    :param condition: (*array_like*) Input array.
-    
-    :returns: (*tuple*) Indices of elements that are non-zero.
-    '''
-    return nonzero(condition)
 
 def logical_not(arr):
     '''

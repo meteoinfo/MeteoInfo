@@ -16,6 +16,7 @@ package org.meteoinfo.ndarray;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -570,6 +571,13 @@ public class Dimension {
         }*/
 
         return idx;
+    }
+
+    /**
+     * Reverse the dimension values
+     */
+    public void reverse() {
+        Collections.reverse(this._dimValue);
     }
 
     @Override

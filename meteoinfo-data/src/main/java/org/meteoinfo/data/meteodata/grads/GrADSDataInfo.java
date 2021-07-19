@@ -43,6 +43,7 @@ import java.nio.ByteOrder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -323,6 +324,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
         //Set dufault value
         DESCRIPTOR = aFile;
         boolean isReadLine = true;
+        boolean isNotPath = false;
         Dimension zDim;
         Dimension eDim = null;
         this.addAttribute(new Attribute("data_format", "GrADS binary"));
@@ -339,7 +341,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             switch (hStr) {
                 case "DSET":
                     DSET = dataArray[1];
-                    boolean isNotPath = false;
+                    isNotPath = false;
                     if (!DSET.contains("/") && !DSET.contains("\\")) {
                         isNotPath = true;
                     }
@@ -361,11 +363,8 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                     if (!new File(DSET).isFile()) {
                         if (DSET.substring(0, 2).equals("./") || DSET.substring(0, 2).equals(".\\")) {
                             DSET = aDir + File.separator + DSET.substring(2);
-                        } else {
-                            errorStr = "The data file is not exist!" + System.getProperty("line.separator") + DSET;
-                            System.out.println(errorStr);
                         }
-                        //goto ERROR;
+                        isNotPath = !new File(DSET).isFile();
                     }
                     break;
                 case "DTYPE":
@@ -614,6 +613,9 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             YDEF.Y[i] = BigDecimalUtil.add(min, BigDecimalUtil.mul(i, delta));
                             values.add(YDEF.Y[i]);
                         }
+                        if (this.OPTIONS.yrev)
+                            Collections.reverse(values);
+
                         Dimension yDim = new Dimension(DimensionType.Y);
                         yDim.setShortName("Y");
                         yDim.setValues(values);
@@ -934,6 +936,11 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
         } while (aLine != null);
 
         sr.close();
+
+        if (isNotPath && !this.OPTIONS.template) {
+            errorStr = "The data file is not exist!" + System.getProperty("line.separator") + DSET;
+            System.out.println(errorStr);
+        }
 
         //Set X/Y coordinate
         if (isLatLon) {

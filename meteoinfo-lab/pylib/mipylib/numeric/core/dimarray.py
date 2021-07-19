@@ -11,7 +11,7 @@ from org.meteoinfo.geometry.geoprocess import GeometryUtil
 from org.meteoinfo.common import ResampleMethods
 from org.meteoinfo.common import PointD
 from org.meteoinfo.ndarray import Array, Range, MAMath, DataType, Dimension, DimensionType
-from multiarray import NDArray
+from ._ndarray import NDArray
 import math
 import datetime
 import numbers

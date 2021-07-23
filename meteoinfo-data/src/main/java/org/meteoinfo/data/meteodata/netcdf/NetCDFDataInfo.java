@@ -930,11 +930,15 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         if (lon_0.isEmpty()) {
             lon_0 = getGlobalAttStr("CEN_LON");
         }
+        String lat_0 = getGlobalAttStr("MOAD_CEN_LAT");
+        if (lat_0.isEmpty()) {
+            lat_0 = getGlobalAttStr("CEN_LAT");
+        }
         switch (mapProj) {
             case 1:    //Lambert conformal
                 projStr = "+proj=lcc"
                         + "+lon_0=" + lon_0
-                        + "+lat_0=" + getGlobalAttStr("CEN_LAT")
+                        + "+lat_0=" + getGlobalAttStr("MOAD_CEN_LAT")
                         + "+lat_1=" + getGlobalAttStr("TRUELAT1")
                         + "+lat_2=" + getGlobalAttStr("TRUELAT2");
                 break;
@@ -946,17 +950,16 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 projStr = "+proj=stere"
                         + "+lon_0=" + lon_0
                         + "+lat_0=" + lat0;
-                String stPs = getGlobalAttStr("CEN_LAT");
-                //projStr += "+lat_ts=" + stPs;                                    
-                double k0 = ProjectionInfo.calScaleFactorFromStandardParallel(Double.parseDouble(stPs));
+                double k0 = ProjectionInfo.calScaleFactorFromStandardParallel(Double.parseDouble(lat_0));
                 projStr += "+k=" + String.valueOf(k0);
                 break;
             case 3:    //Mercator
                 projStr = "+proj=merc"
-                        + "+lat_ts=" + getGlobalAttStr("CEN_LAT")
+                        + "+lat_ts=" + lat_0
                         + "+lon_0=" + lon_0;
                 break;
         }
+        projStr += "+a=6370000+b=6370000";
 
         ProjectionInfo projInfo = ProjectionInfo.factory(projStr);
         //double clon = Double.parseDouble(this.getGlobalAttStr("CEN_LON"));

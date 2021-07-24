@@ -73,6 +73,18 @@ public class Transform {
         return (v - zmin) / (zmax - zmin) * 2. - 1.0;
     }
 
+    public float transformXDis(float len) {
+        return transform_x(len) - transform_x(0.0f);
+    }
+
+    public float transformYDis(float len) {
+        return transform_y(len) - transform_y(0);
+    }
+
+    public float[] transform(float x, float y, float z) {
+        return new float[] {transform_x(x), transform_y(y), transform_z(z)};
+    }
+
     public float[] transformf(PointZ p) {
         return new float[]{transform_x((float) p.X), transform_y((float) p.Y), transform_z((float) p.Z)};
     }

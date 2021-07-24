@@ -5,6 +5,7 @@
  */
 package org.meteoinfo.chart.jogl;
 
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
@@ -15,6 +16,7 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import org.joml.Matrix4f;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.jogl.tessellator.Primitive;
@@ -40,11 +42,17 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.jogamp.opengl.GL.*;
+import static com.jogamp.opengl.GL2ES2.GL_TEXTURE_3D;
+import static com.jogamp.opengl.GL2ES2.GL_TEXTURE_WRAP_R;
+import static com.jogamp.opengl.GL2ES3.GL_TEXTURE_BASE_LEVEL;
 
 /**
  *
@@ -72,6 +80,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private float xmin, xmax = 1.0f, ymin;
     private float ymax = 1.0f, zmin, zmax = 1.0f;
     private Transform transform = new Transform();
+    private boolean clipPlane = true;
 
     private Color boxColor = Color.getHSBColor(0f, 0f, 0.95f);
     //private Color lineBoxColor = new Color(220, 220, 220);
@@ -82,14 +91,15 @@ public class Plot3DGL extends Plot implements GLEventListener {
     int viewport[] = new int[4];
     float mvmatrix[] = new float[16];
     float projmatrix[] = new float[16];
+    Matrix4f viewProjMatrix = new Matrix4f();
 
     private float angleX = -45.0f;
     private float angleY = 45.0f;
     private float scaleX = 1.0f;
     private float scaleY = 1.0f;
     private float scaleZ = 1.0f;
-    private float distanceX = 0.0f;
-    private float distanceY = 0.0f;
+    private float shiftX = 0.0f;
+    private float shiftY = 0.0f;
     TessCallback tessCallback;
     private int width;
     private int height;
@@ -234,6 +244,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
         yAxis.setMinMaxValue(ymin, ymax);
         zAxis.setMinMaxValue(zmin, zmax);
         this.transform.setExtent(this.extent);
+    }
+
+    /**
+     * Get aspect ratio
+     * @return Aspect ratio
+     */
+    public float getAspectRatio() {
+        return (float) this.width / this.height;
     }
 
     /**
@@ -414,6 +432,38 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param value Scale z
      */
     public void setScaleZ(float value) { this.scaleZ = value; }
+
+    /**
+     * Get shift x
+     * @return Shift x
+     */
+    public float getShiftX() {
+        return this.shiftX;
+    }
+
+    /**
+     * Set shift x
+     * @param value Shift x
+     */
+    public void setShiftX(float value) {
+        this.shiftX = value;
+    }
+
+    /**
+     * Get shift y
+     * @return Shift y
+     */
+    public float getShiftY() {
+        return this.shiftY;
+    }
+
+    /**
+     * Set shift y
+     * @param value Shift y
+     */
+    public void setShiftY(float value) {
+        this.shiftY = value;
+    }
 
     /**
      * Get title
@@ -895,7 +945,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             }
         }
 
-        gl.glScalef(scaleX, scaleY, scaleZ);
+        //gl.glScalef(scaleX, scaleY, scaleZ);
 
         gl.glRotatef(angleX, 1.0f, 0.0f, 0.0f);
         gl.glRotatef(angleY, 0.0f, 0.0f, 1.0f);
@@ -913,35 +963,35 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.setLight(gl);
 
         //Draw graphics
-        float s = 1.01f;
-        //gl.glClipPlanef(GL2.GL_CLIP_PLANE0, new float[]{1, 0, 0, s}, 0);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{1, 0, 0, s}, 0);
-        gl.glEnable(GL2.GL_CLIP_PLANE0);
-        //gl.glClipPlanef(GL2.GL_CLIP_PLANE1, new float[]{-1, 0, 0, s}, 0);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[]{-1, 0, 0, s}, 0);
-        gl.glEnable(GL2.GL_CLIP_PLANE1);
-        //gl.glClipPlanef(GL2.GL_CLIP_PLANE2, new float[]{0, -1, 0, s}, 0);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[]{0, -1, 0, s}, 0);
-        gl.glEnable(GL2.GL_CLIP_PLANE2);
-        //gl.glClipPlanef(GL2.GL_CLIP_PLANE3, new float[]{0, 1, 0, s}, 0);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[]{0, 1, 0, s}, 0);
-        gl.glEnable(GL2.GL_CLIP_PLANE3);
-        //gl.glClipPlanef(GL2.GL_CLIP_PLANE4, new float[]{0, 0, 1, s}, 0);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE4, new double[]{0, 0, 1, s}, 0);
-        gl.glEnable(GL2.GL_CLIP_PLANE4);
-        //gl.glClipPlanef(GL2.GL_CLIP_PLANE5, new float[]{0, 0, -1, s}, 0);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE5, new double[]{0, 0, -1, s}, 0);
-        gl.glEnable(GL2.GL_CLIP_PLANE5);
+        if (this.clipPlane) {
+            float s = 1.01f;
+            gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{1, 0, 0, s}, 0);
+            gl.glEnable(GL2.GL_CLIP_PLANE0);
+            gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[]{-1, 0, 0, s}, 0);
+            gl.glEnable(GL2.GL_CLIP_PLANE1);
+            gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[]{0, -1, 0, s}, 0);
+            gl.glEnable(GL2.GL_CLIP_PLANE2);
+            gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[]{0, 1, 0, s}, 0);
+            gl.glEnable(GL2.GL_CLIP_PLANE3);
+            gl.glClipPlane(GL2.GL_CLIP_PLANE4, new double[]{0, 0, 1, s}, 0);
+            gl.glEnable(GL2.GL_CLIP_PLANE4);
+            gl.glClipPlane(GL2.GL_CLIP_PLANE5, new double[]{0, 0, -1, s}, 0);
+            gl.glEnable(GL2.GL_CLIP_PLANE5);
+        }
+
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
             drawGraphics(gl, graphic);
         }
-        gl.glDisable(GL2.GL_CLIP_PLANE0);
-        gl.glDisable(GL2.GL_CLIP_PLANE1);
-        gl.glDisable(GL2.GL_CLIP_PLANE2);
-        gl.glDisable(GL2.GL_CLIP_PLANE3);
-        gl.glDisable(GL2.GL_CLIP_PLANE4);
-        gl.glDisable(GL2.GL_CLIP_PLANE5);
+
+        if (this.clipPlane) {
+            gl.glDisable(GL2.GL_CLIP_PLANE0);
+            gl.glDisable(GL2.GL_CLIP_PLANE1);
+            gl.glDisable(GL2.GL_CLIP_PLANE2);
+            gl.glDisable(GL2.GL_CLIP_PLANE3);
+            gl.glDisable(GL2.GL_CLIP_PLANE4);
+            gl.glDisable(GL2.GL_CLIP_PLANE5);
+        }
 
         //Draw text
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
@@ -1017,6 +1067,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     /**
+     * Get if clip plane
+     * @return Boolean
+     */
+    public boolean isClipPlane() {
+        return this.clipPlane;
+    }
+
+    /**
+     * Set if clip plane
+     * @param value Boolean
+     */
+    public void setClipPlane(boolean value) {
+        this.clipPlane = value;
+    }
+
+    /**
      * Draws the base plane. The base plane is the x-y plane.
      *
      * @param g the graphics context to draw.
@@ -1036,10 +1102,18 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glEnd();
     }
 
+    private Matrix4f toMatrix(float[] data) {
+        Matrix4f matrix4f = new Matrix4f();
+        matrix4f.set(data);
+        return matrix4f;
+    }
+
     private void updateMatrix(GL2 gl) {
         gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
         gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
         gl.glGetFloatv(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
+        viewProjMatrix = toMatrix(projmatrix).
+                mul(toMatrix(mvmatrix));
     }
 
     private float[] toScreen(float vx, float vy, float vz) {
@@ -1620,6 +1694,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 this.drawIsosurface(gl, (IsosurfaceGraphics) graphic);
             } else if (graphic instanceof ParticleGraphics) {
                 this.drawParticles(gl, (ParticleGraphics) graphic);
+            } else if (graphic instanceof VolumeGraphics) {
+                try {
+                    this.drawVolume(gl, (VolumeGraphics) graphic);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else {
                 boolean isDraw = true;
                 if (graphic instanceof GraphicCollection3D) {
@@ -1755,6 +1835,130 @@ public class Plot3DGL extends Plot implements GLEventListener {
             }
             gl.glEnd();
         }
+    }
+
+    private int getTextureID(GL2 gl) {
+        IntBuffer intBuffer = IntBuffer.allocate(1);
+        gl.glGenTextures(1, intBuffer);
+        return intBuffer.get(0);
+    }
+
+    private void drawVolume(GL2 gl, VolumeGraphics volume) throws IOException {
+
+        gl.glActiveTexture(GL_TEXTURE1);
+        gl.glBindTexture(GL_TEXTURE_2D, getTextureID(gl));
+        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, Buffers.newDirectByteBuffer(volume.colors));
+
+        int idData = getTextureID(gl);
+        gl.glActiveTexture(GL_TEXTURE0);
+        gl.glBindTexture(GL_TEXTURE_3D, idData);
+        gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
+        gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        final Program program = new Program(new File("resources\\shaders\\test"));
+        program.init(gl);
+        IntBuffer intBuffer = IntBuffer.allocate(1);
+        gl.glGenBuffers(1, intBuffer);
+        int vertexBuffer = intBuffer.get(0);
+        gl.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        float[] vertexBufferData = volume.getVertexBufferData(this.transform);
+        gl.glBufferData(GL_ARRAY_BUFFER, vertexBufferData.length * Float.BYTES, Buffers.newDirectFloatBuffer(vertexBufferData), GL_STATIC_DRAW);
+        program.allocateUniform(gl, "MVP", (gl2, loc) -> {
+            //gl2.glUniformMatrix4fv(loc, 1, false, this.camera.getViewProjectionMatrix().get(Buffers.newDirectFloatBuffer(16)));
+            gl2.glUniformMatrix4fv(loc, 1, false, this.viewProjMatrix.get(Buffers.newDirectFloatBuffer(16)));
+        });
+        program.allocateUniform(gl, "iV", (gl2, loc) -> {
+            //gl2.glUniformMatrix4fv(loc, 1, false, this.camera.getViewMatrix().invert().get(Buffers.newDirectFloatBuffer(16)));
+            gl2.glUniformMatrix4fv(loc, 1, false, toMatrix(this.mvmatrix).invert().get(Buffers.newDirectFloatBuffer(16)));
+        });
+        program.allocateUniform(gl, "iP", (gl2, loc) -> {
+            //gl2.glUniformMatrix4fv(loc, 1, false, this.camera.getProjectionMatrix().invert().get(Buffers.newDirectFloatBuffer(16)));
+            gl2.glUniformMatrix4fv(loc, 1, false, toMatrix(this.projmatrix).invert().get(Buffers.newDirectFloatBuffer(16)));
+        });
+        program.allocateUniform(gl, "zScale", (gl2, loc) -> {
+            gl2.glUniform1f(loc, volume.getScale(2));
+        });
+        program.allocateUniform(gl, "xyScale", (gl2, loc) -> {
+            gl2.glUniform1f(loc, this.scaleX);
+            //gl2.glUniform1f(loc, 1.0f);
+        });
+        program.allocateUniform(gl, "xShift", (gl2, loc) -> {
+            gl2.glUniform1f(loc, this.transform.transformXDis(this.shiftX));
+        });
+        program.allocateUniform(gl, "yShift", (gl2, loc) -> {
+            gl2.glUniform1f(loc, this.transform.transformYDis(this.shiftY));
+        });
+        program.allocateUniform(gl, "viewSize", (gl2, loc) -> {
+            gl2.glUniform2f(loc, this.width, this.height);
+        });
+        int sampleCount = 512;
+        program.allocateUniform(gl, "depthSampleCount", (gl2, loc) -> {
+            gl2.glUniform1i(loc, sampleCount);
+        });
+        program.allocateUniform(gl, "tex", (gl2, loc) -> {
+            gl2.glUniform1i(loc, 0);
+        });
+        program.allocateUniform(gl, "colorMap", (gl2, loc) -> {
+            gl2.glUniform1i(loc, 1);
+        });
+        float[] aabbMin = volume.getAabbMin();
+        float[] aabbMax = volume.getAabbMax();
+        program.allocateUniform(gl, "aabbMin", (gl2, loc) -> {
+            gl2.glUniform3f(loc, aabbMin[0], aabbMin[1], aabbMin[2]);
+        });
+        program.allocateUniform(gl, "aabbMax", (gl2, loc) -> {
+            gl2.glUniform3f(loc, aabbMax[0], aabbMax[1], aabbMax[2]);
+        });
+
+        program.use(gl);
+        program.setUniforms(gl);
+
+        gl.glActiveTexture(GL_TEXTURE1);
+        gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, volume.getColorNum(), 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                Buffers.newDirectByteBuffer(volume.colors).rewind());
+
+        gl.glActiveTexture(GL_TEXTURE0);
+        gl.glBindTexture(GL_TEXTURE_3D, idData);
+        gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        gl.glTexImage3D(
+                GL_TEXTURE_3D,  // target
+                0,              // level
+                GL_LUMINANCE,        // internalformat
+                volume.getWidth(),           // width
+                volume.getHeight(),           // height
+                volume.getDepth(),           // depth
+                0,              // border
+                GL_LUMINANCE,         // format
+                GL_UNSIGNED_BYTE,       // type
+                volume.buffer.rewind()           // pixel
+        );
+
+        // 1st attribute buffer : vertices
+        gl.glEnableVertexAttribArray(0);
+        gl.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        gl.glVertexAttribPointer(
+                0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+                3,                  // size
+                GL_FLOAT,           // type
+                false,           // normalized?
+                3 * 4,                  // stride
+                0            // array buffer offset
+        );
+
+        // Draw the triangle !
+        gl.glDrawArrays(GL_TRIANGLES, 0, vertexBufferData.length / 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
+        gl.glDisableVertexAttribArray(0);
+
+        Program.destroyAllPrograms(gl);
+        gl.glUseProgram(0);
     }
 
     private void drawLineString(GL2 gl, Graphic graphic) {
@@ -3014,7 +3218,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     @Override
     public void dispose(GLAutoDrawable drawable) {
-        //gl = null;
+        Program.destroyAllPrograms(gl);
     }
 
     @Override
@@ -3057,7 +3261,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         //glu.gluPerspective(45.0f, h, 1.0, 20.0);
         float v = 2.0f;
-        gl.glOrthof(-v, v, -v, v, -v, v);
+        gl.glOrthof(-v, v, -v, v, -5, 5);
         //glu.gluLookAt(0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);        
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();

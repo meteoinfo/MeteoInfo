@@ -132,6 +132,7 @@
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-solaris-i586:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-amd64:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-i586:2.3.2" level="project" />
+    <orderEntry type="library" name="Maven: org.joml:joml:1.9.25" level="project" />
     <orderEntry type="module" module-name="meteoinfo-console" />
     <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.2" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.1.1" level="project" />

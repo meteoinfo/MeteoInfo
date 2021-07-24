@@ -21,7 +21,7 @@ import warnings
 
 import plotutil
 from ._axes3d import Axes3D
-from mipylib.numeric.core import NDArray
+from mipylib.numeric.core import NDArray, DimArray
 import mipylib.numeric as np
 from mipylib import migl
 from mipylib.geolib import migeo
@@ -83,6 +83,9 @@ class Axes3DGL(Axes3D):
         antialias = kwargs.pop('antialias', None)
         if not antialias is None:
             self.axes.setAntialias(antialias)
+        clip_plane = kwargs.pop('clip_plane', None)
+        if not clip_plane is None:
+            self.axes.setClipPlane(clip_plane)
         
     def _set_plot(self, plot):
         '''
@@ -1144,6 +1147,59 @@ class Axes3DGL(Axes3D):
             s = kwargs.pop('size', None)
         if not s is None:
             graphics.setPointSize(s)
+        visible = kwargs.pop('visible', True)
+        if visible:
+            self.add_graphic(graphics)
+        return graphics
+
+    def volumeplot(self, *args, **kwargs):
+        '''
+        creates a three-dimensional volume plot
+
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param z: (*array_like*) Optional. Z coordinate array.
+        :param data: (*array_like*) 3D data array.
+        :param s: (*float*) Point size.
+        :param cmap: (*string*) Color map string.
+        :param vmin: (*float*) Minimum value for particle plotting.
+        :param vmax: (*float*) Maximum value for particle plotting.
+        :param alpha_min: (*float*) Minimum alpha value.
+        :param alpha_max: (*float*) Maximum alpha value.
+
+        :returns: Legend
+        '''
+        if len(args) <= 3:
+            data = args[0]
+            if isinstance(data, DimArray):
+                x = data.dimvalue(2)
+                y = data.dimvalue(1)
+                z = data.dimvalue(0)
+            else:
+                nz = data.shape[0]
+                ny = data.shape[1]
+                nx = data.shape[2]
+                x = np.arange(nx)
+                y = np.arange(ny)
+                z = np.arange(nz)
+            args = args[1:]
+        else:
+            x = args[0]
+            y = args[1]
+            z = args[2]
+            data = args[3]
+            args = args[4:]
+        vmin = kwargs.pop('vmin', data.min())
+        vmax = kwargs.pop('vmax', data.max())
+        if vmin >= vmax:
+            raise ValueError("Minimum value larger than maximum value")
+
+        cmap = plotutil.getcolormap(**kwargs)
+        alpha_min = kwargs.pop('alpha_min', 0.0)
+        alpha_max = kwargs.pop('alpha_max', 1.0)
+        graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), cmap, \
+                                      alpha_min, alpha_max)
+
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

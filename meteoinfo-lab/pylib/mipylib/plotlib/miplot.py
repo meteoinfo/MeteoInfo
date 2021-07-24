@@ -49,7 +49,7 @@ __all__ = [
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
     'semilogx','semilogy','set','show','slice3','stationmodel','stem','stem3','step','streamplot','streamplot3',
     'streamplotm','streamslice','subplot','subplots','suptitle',
-    'surf','taylor_diagram','text','text3','title','twinx','twiny','violinplot','weatherspec','xaxis',
+    'surf','taylor_diagram','text','text3','title','twinx','twiny','violinplot','volumeplot','weatherspec','xaxis',
     'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
     'isinteractive'
     ]
@@ -3143,6 +3143,34 @@ def particles(*args, **kwargs):
             g_axes = axes3dgl()
 
     r = g_axes.particles(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+def volumeplot(*args, **kwargs):
+    '''
+    creates a three-dimensional volume plot
+
+    :param x: (*array_like*) Optional. X coordinate array.
+    :param y: (*array_like*) Optional. Y coordinate array.
+    :param z: (*array_like*) Optional. Z coordinate array.
+    :param data: (*array_like*) 3D data array.
+    :param s: (*float*) Point size.
+    :param cmap: (*string*) Color map string.
+    :param vmin: (*float*) Minimum value for particle plotting.
+    :param vmax: (*float*) Maximum value for particle plotting.
+    :param alpha_min: (*float*) Minimum alpha value.
+    :param alpha_max: (*float*) Maximum alpha value.
+
+    :returns: Legend
+    '''
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
+
+    r = g_axes.volumeplot(*args, **kwargs)
     draw_if_interactive()
     return r
     

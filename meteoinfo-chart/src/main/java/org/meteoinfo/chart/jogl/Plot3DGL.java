@@ -1863,7 +1863,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-        final Program program = new Program(new File("resources\\shaders\\test"));
+        final Program program = new Program(new File("resources\\shaders\\volume"));
         program.init(gl);
         IntBuffer intBuffer = IntBuffer.allocate(1);
         gl.glGenBuffers(1, intBuffer);

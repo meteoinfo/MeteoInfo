@@ -1,6 +1,8 @@
 package org.meteoinfo.chart.jogl;
 
 import java.io.File;
+import java.io.InputStream;
+import java.util.Scanner;
 
 public class Utils {
     public static File getFilePath(File file) throws NullPointerException {
@@ -16,5 +18,18 @@ public class Utils {
 
         }
         return file;
+    }
+
+    /**
+     * Loads the resource.
+     *
+     * @param fileName of the resource to load.
+     * @return content of the resource converted to UTF-8 text.
+     * @throws Exception when an error occurs loading resource.
+     */
+    public static String loadResource(String fileName) throws Exception {
+        try (InputStream in = Utils.class.getResourceAsStream(fileName)) {
+            return new Scanner(in, "UTF-8").useDelimiter("\\A").next();
+        }
     }
 }

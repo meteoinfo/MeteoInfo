@@ -34,7 +34,7 @@ public class Program {
 
     public Program(File file) throws IOException {
         this.name = null;
-        file = Utils.getFilePath(file);
+        //file = Utils.getFilePath(file);
         final File directory = file.isDirectory() ? file : new File(file.getParent());
         final String mask = file.isDirectory() ? "" : file.getName();
         for (final File tmpFile : directory.listFiles()) {
@@ -67,9 +67,24 @@ public class Program {
 
     Program(String name, File vertexShaderFile, File fragmentShaderFile) throws IOException {
         this.name = name;
-        shaderCode.put(GL_VERTEX_SHADER, Files.readAllLines(Paths.get(Utils.getFilePath(vertexShaderFile).getAbsolutePath())).stream().collect(Collectors.joining("\n")));
-        shaderCode.put(GL_FRAGMENT_SHADER, Files.readAllLines(Paths.get(Utils.getFilePath(fragmentShaderFile).getAbsolutePath())).stream().collect(Collectors.joining("\n")));
+        //shaderCode.put(GL_VERTEX_SHADER, Files.readAllLines(Paths.get(Utils.getFilePath(vertexShaderFile).getAbsolutePath())).stream().collect(Collectors.joining("\n")));
+        //shaderCode.put(GL_FRAGMENT_SHADER, Files.readAllLines(Paths.get(Utils.getFilePath(fragmentShaderFile).getAbsolutePath())).stream().collect(Collectors.joining("\n")));
+        try {
+            String vertexShaderCode = Utils.loadResource(vertexShaderFile
+                    .getPath());
+            String fragmentShaderCode = Utils.loadResource(fragmentShaderFile
+                    .getPath());
+            shaderCode.put(GL_VERTEX_SHADER, vertexShaderCode);
+            shaderCode.put(GL_FRAGMENT_SHADER, fragmentShaderCode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    Program(String name, String vertexShaderCode, String fragmentShaderCode) {
+        this.name = name;
+        shaderCode.put(GL_VERTEX_SHADER, vertexShaderCode);
+        shaderCode.put(GL_FRAGMENT_SHADER, fragmentShaderCode);
     }
 
     public void init(GL2 gl) {

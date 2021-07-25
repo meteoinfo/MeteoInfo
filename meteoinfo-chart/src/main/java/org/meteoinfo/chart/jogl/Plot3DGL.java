@@ -1697,7 +1697,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             } else if (graphic instanceof VolumeGraphics) {
                 try {
                     this.drawVolume(gl, (VolumeGraphics) graphic);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
@@ -1843,7 +1843,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return intBuffer.get(0);
     }
 
-    private void drawVolume(GL2 gl, VolumeGraphics volume) throws IOException {
+    private void drawVolume(GL2 gl, VolumeGraphics volume) throws Exception {
 
         gl.glActiveTexture(GL_TEXTURE1);
         gl.glBindTexture(GL_TEXTURE_2D, getTextureID(gl));
@@ -1863,8 +1863,15 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-        final Program program = new Program(new File("resources\\shaders\\volume"));
-        program.init(gl);
+        String vertexShaderCode = Utils.loadResource("/shaders/volume/volume.vert");
+        String fragmentShaderCode = Utils.loadResource("/shaders/volume/volume.frag");
+        final Program program = new Program("volume", vertexShaderCode, fragmentShaderCode);
+        try {
+            program.init(gl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         IntBuffer intBuffer = IntBuffer.allocate(1);
         gl.glGenBuffers(1, intBuffer);
         int vertexBuffer = intBuffer.get(0);

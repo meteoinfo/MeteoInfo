@@ -86,7 +86,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     //private Color lineBoxColor = new Color(220, 220, 220);
 
     private boolean boxed, mesh, scaleBox, displayXY, displayZ,
-            drawBoundingBox, hideOnDrag;
+            drawBoundingBox, hideOnDrag, drawBase;
 
     int viewport[] = new int[4];
     float mvmatrix[] = new float[16];
@@ -135,6 +135,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.boxed = true;
         this.gridLine = new GridLine(true);
         //this.displayGrids = true;
+        this.drawBase = true;
         this.displayXY = true;
         this.displayZ = true;
         this.drawBoundingBox = false;
@@ -289,6 +290,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
     public void setLineBoxColor(Color value) {
         this.lineBoxColor = value;
     }*/
+
+    /**
+     * Get if draw base rectangle
+     * @return Boolean
+     */
+    public boolean isDrawBase() {
+        return this.drawBase;
+    }
+
+    /**
+     * Set if draw base rectangle
+     * @param value Boolean
+     */
+    public void setDrawBase(boolean value) {
+        this.drawBase = value;
+    }
 
     /**
      * Get if draw bounding box or not
@@ -1179,7 +1196,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawBoxGridsTicksLabels(GL2 gl) {
-        this.drawBase(gl);
+        if (this.drawBase)
+            this.drawBase(gl);
 
         float[] rgba;
         //Draw box

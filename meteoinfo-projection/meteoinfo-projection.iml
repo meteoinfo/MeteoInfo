@@ -27,6 +27,6 @@
     <orderEntry type="module" module-name="meteoinfo-ui" />
     <orderEntry type="library" name="Maven: com.toedter:jcalendar:1.4" level="project" />
     <orderEntry type="library" name="Maven: org.locationtech.jts:jts-core:1.17.0" level="project" />
-    <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.3" level="project" />
   </component>
 </module>

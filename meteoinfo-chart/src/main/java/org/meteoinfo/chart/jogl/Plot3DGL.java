@@ -973,7 +973,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glColor3f(0.0f, 0.0f, 0.0f);
 
         //Draw box
-        drawBoxGridsTicksLabels(gl);
+        drawBoxGrids(gl);
 
         //Draw title
         this.drawTitle();
@@ -1033,6 +1033,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (this.lighting.isEnable()) {
             this.lighting.stop(gl);
         }
+
+        //Draw axis
+        this.drawAxis(gl);
 
         //Draw legend
         gl.glPopMatrix();
@@ -1199,7 +1202,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return n / nn + 1;
     }
 
-    private void drawBoxGridsTicksLabels(GL2 gl) {
+    private void drawBoxGrids(GL2 gl) {
         if (this.drawBase)
             this.drawBase(gl);
 
@@ -1254,7 +1257,157 @@ public class Plot3DGL extends Plot implements GLEventListener {
             }
         }
 
+        //Draw grid lines
+        float x, y, v;
+        int skip;
+        XAlign xAlign;
+        YAlign yAlign;
+        Rectangle2D rect;
+        float strWidth, strHeight;
+        if (this.displayXY) {
+            if (this.angleY >= 90 && this.angleY < 270) {
+                y = 1.0f;
+            } else {
+                y = -1.0f;
+            }
+
+            this.xAxis.updateTickLabels();
+            List<ChartText> tlabs = this.xAxis.getTickLabels();
+            float axisLen = this.toScreenLength(-1.0f, y, -1.0f, 1.0f, y, -1.0f);
+            skip = getLabelGap(this.xAxis.getTickLabelFont(), tlabs, axisLen);
+            for (int i = 0; i < this.xAxis.getTickValues().length; i += skip) {
+                v = (float) this.xAxis.getTickValues()[i];
+                if (v < xmin || v > xmax) {
+                    continue;
+                }
+                v = this.transform.transform_x(v);
+                if (i == tlabs.size()) {
+                    break;
+                }
+
+                //Draw grid line
+                if (this.gridLine.isDrawXLine() && (v != -1.0f && v != 1.0f)) {
+                    rgba = this.gridLine.getColor().getRGBComponents(null);
+                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
+                    gl.glBegin(GL2.GL_LINES);
+                    gl.glVertex3f(v, y, -1.0f);
+                    gl.glVertex3f(v, -y, -1.0f);
+                    gl.glEnd();
+                    if (this.displayZ && this.boxed) {
+                        gl.glBegin(GL2.GL_LINES);
+                        gl.glVertex3f(v, -y, -1.0f);
+                        gl.glVertex3f(v, -y, 1.0f);
+                        gl.glEnd();
+                    }
+                }
+            }
+
+            ////////////////////////////////////////////
+            //y grid line
+            if (this.angleY >= 180 && this.angleY < 360) {
+                x = 1.0f;
+            } else {
+                x = -1.0f;
+            }
+
+            this.yAxis.updateTickLabels();
+            tlabs = this.yAxis.getTickLabels();
+            axisLen = this.toScreenLength(x, -1.0f, -1.0f, x, 1.0f, -1.0f);
+            skip = getLabelGap(this.yAxis.getTickLabelFont(), tlabs, axisLen);
+            for (int i = 0; i < this.yAxis.getTickValues().length; i += skip) {
+                v = (float) this.yAxis.getTickValues()[i];
+                if (v < ymin || v > ymax) {
+                    continue;
+                }
+                v = this.transform.transform_y(v);
+                if (i == tlabs.size()) {
+                    break;
+                }
+
+                //Draw grid line
+                if (this.gridLine.isDrawYLine() && (v != -1.0f && v != 1.0f)) {
+                    rgba = this.gridLine.getColor().getRGBComponents(null);
+                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
+                    gl.glBegin(GL2.GL_LINES);
+                    gl.glVertex3f(x, v, -1.0f);
+                    gl.glVertex3f(-x, v, -1.0f);
+                    gl.glEnd();
+                    if (this.displayZ && this.boxed) {
+                        gl.glBegin(GL2.GL_LINES);
+                        gl.glVertex3f(-x, v, -1.0f);
+                        gl.glVertex3f(-x, v, 1.0f);
+                        gl.glEnd();
+                    }
+                }
+            }
+        }
+
+        //Draw z axis
+        if (this.displayZ) {
+            //z axis line
+            if (this.angleY < 90) {
+                x = -1.0f;
+                y = 1.0f;
+            } else if (this.angleY < 180) {
+                x = 1.0f;
+                y = 1.0f;
+            } else if (this.angleY < 270) {
+                x = 1.0f;
+                y = -1.0f;
+            } else {
+                x = -1.0f;
+                y = -1.0f;
+            }
+
+            this.zAxis.updateTickLabels();
+            List<ChartText> tlabs = this.zAxis.getTickLabels();
+            float axisLen = this.toScreenLength(x, y, -1.0f, x, y, 1.0f);
+            skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
+            for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
+                v = (float) this.zAxis.getTickValues()[i];
+                if (v < zmin || v > zmax) {
+                    continue;
+                }
+                v = this.transform.transform_z(v);
+                if (i == tlabs.size()) {
+                    break;
+                }
+
+                //Draw grid line
+                if (this.gridLine.isDrawZLine() && this.boxed && (v != -1.0f && v != 1.0f)) {
+                    rgba = this.gridLine.getColor().getRGBComponents(null);
+                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
+                    gl.glBegin(GL2.GL_LINE_STRIP);
+                    gl.glVertex3f(x, y, v);
+                    if (x < 0) {
+                        if (y > 0) {
+                            gl.glVertex3f(-x, y, v);
+                            gl.glVertex3f(-x, -y, v);
+                        } else {
+                            gl.glVertex3f(x, -y, v);
+                            gl.glVertex3f(-x, -y, v);
+                        }
+                    } else {
+                        if (y > 0) {
+                            gl.glVertex3f(x, -y, v);
+                            gl.glVertex3f(-x, -y, v);
+                        } else {
+                            gl.glVertex3f(-x, y, v);
+                            gl.glVertex3f(-x, -y, v);
+                        }
+                    }
+                    gl.glEnd();
+                }
+            }
+        }
+    }
+
+    void drawAxis(GL2 gl) {
         //Draw axis
+        float[] rgba;
         float x, y, v;
         int skip;
         XAlign xAlign;
@@ -1263,7 +1416,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         float strWidth, strHeight;
         if (this.displayXY) {
             //Draw x/y axis lines
-            //x axis line            
+            //x axis line
             if (this.angleY >= 90 && this.angleY < 270) {
                 y = 1.0f;
             } else {
@@ -1306,23 +1459,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     break;
                 }
 
-                //Draw grid line
-                if (this.gridLine.isDrawXLine() && (v != -1.0f && v != 1.0f)) {
-                    rgba = this.gridLine.getColor().getRGBComponents(null);
-                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
-                    gl.glBegin(GL2.GL_LINES);
-                    gl.glVertex3f(v, y, -1.0f);
-                    gl.glVertex3f(v, -y, -1.0f);
-                    gl.glEnd();
-                    if (this.displayZ && this.boxed) {
-                        gl.glBegin(GL2.GL_LINES);
-                        gl.glVertex3f(v, -y, -1.0f);
-                        gl.glVertex3f(v, -y, 1.0f);
-                        gl.glEnd();
-                    }
-                }
-
                 //Draw tick line
                 rgba = this.xAxis.getLineColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -1332,7 +1468,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glVertex3f(v, y1, -1.0f);
                 gl.glEnd();
 
-                //Draw tick label                
+                //Draw tick label
                 rect = drawString(gl, tlabs.get(i), v, y1, -1.0f, xAlign, yAlign);
                 if (strWidth < rect.getWidth()) {
                     strWidth = (float) rect.getWidth();
@@ -1399,23 +1535,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     break;
                 }
 
-                //Draw grid line
-                if (this.gridLine.isDrawYLine() && (v != -1.0f && v != 1.0f)) {
-                    rgba = this.gridLine.getColor().getRGBComponents(null);
-                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
-                    gl.glBegin(GL2.GL_LINES);
-                    gl.glVertex3f(x, v, -1.0f);
-                    gl.glVertex3f(-x, v, -1.0f);
-                    gl.glEnd();
-                    if (this.displayZ && this.boxed) {
-                        gl.glBegin(GL2.GL_LINES);
-                        gl.glVertex3f(-x, v, -1.0f);
-                        gl.glVertex3f(-x, v, 1.0f);
-                        gl.glEnd();
-                    }
-                }
-
                 //Draw tick line
                 rgba = this.yAxis.getLineColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -1425,7 +1544,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glVertex3f(x1, v, -1.0f);
                 gl.glEnd();
 
-                //Draw tick label                
+                //Draw tick label
                 rect = drawString(gl, tlabs.get(i), x1, v, -1.0f, xAlign, yAlign);
                 if (strWidth < rect.getWidth()) {
                     strWidth = (float) rect.getWidth();
@@ -1507,33 +1626,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     break;
                 }
 
-                //Draw grid line
-                if (this.gridLine.isDrawZLine() && this.boxed && (v != -1.0f && v != 1.0f)) {
-                    rgba = this.gridLine.getColor().getRGBComponents(null);
-                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
-                    gl.glBegin(GL2.GL_LINE_STRIP);
-                    gl.glVertex3f(x, y, v);
-                    if (x < 0) {
-                        if (y > 0) {
-                            gl.glVertex3f(-x, y, v);
-                            gl.glVertex3f(-x, -y, v);
-                        } else {
-                            gl.glVertex3f(x, -y, v);
-                            gl.glVertex3f(-x, -y, v);
-                        }
-                    } else {
-                        if (y > 0) {
-                            gl.glVertex3f(x, -y, v);
-                            gl.glVertex3f(-x, -y, v);
-                        } else {
-                            gl.glVertex3f(-x, y, v);
-                            gl.glVertex3f(-x, -y, v);
-                        }
-                    }
-                    gl.glEnd();
-                }
-
                 //Draw tick line
                 rgba = this.zAxis.getLineColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -1543,7 +1635,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glVertex3f(x1, y1, v);
                 gl.glEnd();
 
-                //Draw tick label                
+                //Draw tick label
                 rect = drawString(gl, tlabs.get(i), x1, y1, v, xAlign, yAlign, -this.tickSpace, 0);
                 if (strWidth < rect.getWidth()) {
                     strWidth = (float) rect.getWidth();

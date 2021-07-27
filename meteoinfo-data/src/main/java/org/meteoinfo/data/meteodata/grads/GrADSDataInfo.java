@@ -354,13 +354,17 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             DSET = aDir + File.separator + DSET;
                         }
 
-                        if (!new File(DSET).isFile()) {
+                        if (new File(DSET).isFile()) {
+                            isNotPath = false;
+                        } else {
                             DSET = dataArray[1];
                             DSET = theFile.getParent() + "/"
                                     + DSET.substring(1, DSET.length());
                         }
                     }
-                    if (!new File(DSET).isFile()) {
+                    if (new File(DSET).isFile()) {
+                        isNotPath = false;
+                    } else {
                         if (DSET.substring(0, 2).equals("./") || DSET.substring(0, 2).equals(".\\")) {
                             DSET = aDir + File.separator + DSET.substring(2);
                         }

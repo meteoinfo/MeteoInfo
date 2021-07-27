@@ -42,6 +42,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -1054,11 +1055,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
             this.lighting.start(gl);
             //keep material colors
-            gl.glColorMaterial(GL2.GL_FRONT, GL2.GL_DIFFUSE);
-            //gl.glColorMaterial(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE);
+            //gl.glColorMaterial(GL_FRONT_AND_BACK, GL2.GL_DIFFUSE);
+            gl.glColorMaterial(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE);
             gl.glEnable(GL2.GL_COLOR_MATERIAL);
             //double side normalize
-            //gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
+            gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
+            //gl.glEnable(GL2.GL_AUTO_NORMAL);
+            //gl.glEnable(GL2.GL_NORMALIZE);
+            //gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, FloatBuffer.wrap(this.lighting.mat_diffuse));
         }
     }
 
@@ -2536,7 +2540,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         p4 = transform.transformf(surface.getVertex(i, j + 1));
                         gl.glBegin(GL2.GL_QUADS);
                         if (usingLight) {
-                            float[] normal = JOGLUtil.normalize(p3, p2, p1);
+                            float[] normal = JOGLUtil.normalize(p1, p2, p3);
                             gl.glNormal3fv(normal, 0);
                         }
                         rgba = surface.getRGBA(i, j);
@@ -2563,7 +2567,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         p4 = transform.transformf(surface.getVertex(i, j + 1));
                         gl.glBegin(GL2.GL_QUADS);
                         if (usingLight) {
-                            float[] normal = JOGLUtil.normalize(p3, p2, p1);
+                            float[] normal = JOGLUtil.normalize(p1, p2, p3);
                             gl.glNormal3fv(normal, 0);
                         }
                         rgba = surface.getRGBA(i, j);

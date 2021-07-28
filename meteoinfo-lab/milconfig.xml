@@ -22,13 +22,11 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution\mnist_cnn.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_grapes_typhoon_streamplot3.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_elev.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution\mnist_cnn.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot_grapes_typhoon_streamplot3.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_elev.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1444,852"/>
 </MeteoInfo>

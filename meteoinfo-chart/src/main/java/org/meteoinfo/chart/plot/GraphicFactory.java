@@ -4997,12 +4997,14 @@ public class GraphicFactory {
      * @param cdata Value array
      * @param density Streamline density
      * @param ls The legend scheme
+     * @param minPoints Minimum point number of streamline
+     * @param loopLimit Limit loop number
      * @return
      */
     public static GraphicCollection3D createStreamlines3D(Array xdata, Array ydata, Array zdata,
                                                           Array udata, Array vdata, Array wdata,
                                                           Array cdata, int density, LegendScheme ls,
-                                                          int minPoints) {
+                                                          int minPoints, int loopLimit) {
         GraphicCollection3D graphics = new GraphicCollection3D();
         double[][][] u = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(udata);
         double[][][] v = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(vdata);
@@ -5013,7 +5015,7 @@ public class GraphicFactory {
             double[] z = (double[]) ArrayUtil.copyToNDJavaArray_Double(zdata);
 
             if (cdata == null) {
-                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, null, x, y, z, density);
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, null, x, y, z, density, loopLimit);
                 ColorBreak cb = ls.getLegendBreak(0);
                 for (PolyLine3D line : streamLines) {
                     if (line.PointList.size() < minPoints)
@@ -5029,7 +5031,7 @@ public class GraphicFactory {
                 }
             } else {
                 double[][][] m = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(cdata);
-                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, m, x, y, z, density);
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, m, x, y, z, density, loopLimit);
                 ColorBreak cb;
                 double mm;
                 for (PolyLine3D line : streamLines) {
@@ -5054,7 +5056,7 @@ public class GraphicFactory {
             double[][][] z = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(zdata);
 
             if (cdata == null) {
-                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, null, x, y, z, density);
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, null, x, y, z, density, loopLimit);
                 ColorBreak cb = ls.getLegendBreak(0);
                 for (PolyLine3D line : streamLines) {
                     if (line.PointList.size() < minPoints)
@@ -5070,7 +5072,7 @@ public class GraphicFactory {
                 }
             } else {
                 double[][][] m = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(cdata);
-                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, m, x, y, z, density);
+                List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, m, x, y, z, density, loopLimit);
                 ColorBreak cb;
                 double mm;
                 for (PolyLine3D line : streamLines) {
@@ -5106,13 +5108,18 @@ public class GraphicFactory {
      * @param cdata Value array
      * @param density Streamline density
      * @param ls The legend scheme
+     * @param minPoints Minimum point number of streamline
+     * @param loopLimit Limit loop number
+     * @param startX Start x coordinates
+     * @param startY Start y coordinates
+     * @param startZ Start z coordinates
      * @return
      */
     public static GraphicCollection3D createStreamlines3D(Array xdata, Array ydata, Array zdata,
                                                           Array udata, Array vdata, Array wdata,
                                                           Array cdata, int density, LegendScheme ls,
-                                                          int minPoints, Array startX, Array startY,
-                                                          Array startZ) {
+                                                          int minPoints, int loopLimit, Array startX,
+                                                          Array startY, Array startZ) {
         GraphicCollection3D graphics = new GraphicCollection3D();
         double[][][] u = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(udata);
         double[][][] v = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(vdata);
@@ -5127,7 +5134,7 @@ public class GraphicFactory {
 
             if (cdata == null) {
                 List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, null, x, y, z, density,
-                        sX, sY, sZ);
+                        sX, sY, sZ, loopLimit);
                 ColorBreak cb = ls.getLegendBreak(0);
                 for (PolyLine3D line : streamLines) {
                     if (line.PointList.size() < minPoints)
@@ -5144,7 +5151,7 @@ public class GraphicFactory {
             } else {
                 double[][][] m = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(cdata);
                 List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, m, x, y, z, density,
-                        sX, sY, sZ);
+                        sX, sY, sZ, loopLimit);
                 ColorBreak cb;
                 double mm;
                 for (PolyLine3D line : streamLines) {
@@ -5170,7 +5177,7 @@ public class GraphicFactory {
 
             if (cdata == null) {
                 List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, null, x, y, z, density,
-                        sX, sY, sZ);
+                        sX, sY, sZ, loopLimit);
                 ColorBreak cb = ls.getLegendBreak(0);
                 for (PolyLine3D line : streamLines) {
                     if (line.PointList.size() < minPoints)
@@ -5187,7 +5194,7 @@ public class GraphicFactory {
             } else {
                 double[][][] m = (double[][][]) ArrayUtil.copyToNDJavaArray_Double(cdata);
                 List<PolyLine3D> streamLines = Contour.tracingStreamline3D(u, v, w, m, x, y, z, density,
-                        sX, sY, sZ);
+                        sX, sY, sZ, loopLimit);
                 ColorBreak cb;
                 double mm;
                 for (PolyLine3D line : streamLines) {

@@ -367,16 +367,17 @@ class Axes3DGL(Axes3D):
             cdata = plotutil.getplotdata(cdata)
 
         min_points = kwargs.pop('min_points', 3)
+        nloop = kwargs.pop('nloop', 1000)
         start_x = kwargs.pop('start_x', None)
         start_y = kwargs.pop('start_y', None)
         start_z = kwargs.pop('start_z', None)
         if start_x is None or start_y is None or start_z is None:
-            graphics = GraphicFactory.createStreamlines3D(x, y, z, u, v, w, cdata, density, ls, min_points)
+            graphics = GraphicFactory.createStreamlines3D(x, y, z, u, v, w, cdata, density, ls, min_points, nloop)
         else:
             start_x = np.asarray(start_x).flatten()
             start_y = np.asarray(start_y).flatten()
             start_z = np.asarray(start_z).flatten()
-            graphics = GraphicFactory.createStreamlines3D(x, y, z, u, v, w, cdata, density, ls, min_points,
+            graphics = GraphicFactory.createStreamlines3D(x, y, z, u, v, w, cdata, density, ls, min_points, nloop,
                                                           start_x._array, start_y._array, start_z._array)
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:

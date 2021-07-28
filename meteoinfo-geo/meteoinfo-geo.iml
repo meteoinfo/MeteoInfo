@@ -82,7 +82,7 @@
     <orderEntry type="module" module-name="meteoinfo-dataframe" />
     <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.github.albfernandez:juniversalchardet:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.meteothink:wContour:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: org.meteothink:wContour:1.7.1" level="project" />
     <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:0.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.12.0" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath:1.0.7" level="project" />

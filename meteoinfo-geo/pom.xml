@@ -68,7 +68,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>wContour</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.1</version>
         </dependency>
         <dependency>
             <groupId>com.l2fprod</groupId>

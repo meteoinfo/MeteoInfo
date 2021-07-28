@@ -87,7 +87,7 @@
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.3" level="project" />
     <orderEntry type="library" name="Maven: org.mozilla.intl:chardet:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.toedter:jcalendar:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.meteothink:wContour:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: org.meteothink:wContour:1.7.1" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-greek:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-cyrillic:1.0.7" level="project" />

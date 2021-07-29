@@ -562,7 +562,7 @@ public class JOGLUtil {
      * @param xa X coordinates
      * @param ya Y coordinates
      * @param za Z coordinates
-     * @param ls LegendScheme
+     * @param colorMap ColorMap
      * @param alphaMin Min alpha
      * @param alphaMax Max alpha
      * @return Particles
@@ -575,6 +575,41 @@ public class JOGLUtil {
         za = za.copyIfView();
 
         VolumeGraphics graphics = new VolumeGraphics(data, colorMap);
+        graphics.opacityNodes[0] = alphaMin;
+        graphics.opacityNodes[1] = alphaMax;
+        graphics.updateColors();
+
+        Extent3D extent3D = new Extent3D();
+        extent3D.minX = xa.getDouble(0);
+        extent3D.maxX = xa.getDouble((int)xa.getSize() - 1);
+        extent3D.minY = ya.getDouble(0);
+        extent3D.maxY = ya.getDouble((int)ya.getSize() - 1);
+        extent3D.minZ = za.getDouble(0);
+        extent3D.maxZ = za.getDouble((int)za.getSize() - 1);
+        graphics.setExtent(extent3D);
+
+        return graphics;
+    }
+
+    /**
+     * Create volume graphics
+     * @param data 3d data array
+     * @param xa X coordinates
+     * @param ya Y coordinates
+     * @param za Z coordinates
+     * @param ls LegendScheme
+     * @param alphaMin Min alpha
+     * @param alphaMax Max alpha
+     * @return Particles
+     */
+    public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, LegendScheme ls,
+                                           float alphaMin, float alphaMax) {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        VolumeGraphics graphics = new VolumeGraphics(data, ls);
         graphics.opacityNodes[0] = alphaMin;
         graphics.opacityNodes[1] = alphaMax;
         graphics.updateColors();

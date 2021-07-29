@@ -16,6 +16,8 @@ package org.meteoinfo.common;
 import org.meteoinfo.common.util.BigDecimalUtil;
 
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -853,6 +855,29 @@ public class MIMath {
     }
 
     /**
+     * Create values by interval
+     *
+     * @param min Miminum value
+     * @param max Maximum value
+     * @param interval Interval value
+     * @param n Value number
+     * @return Value array
+     */
+    public static double[] getIntervalValues(double min, double max, double interval, int n) {
+        double[] cValues;
+        min = BigDecimalUtil.add(min, interval);
+        double mod = BigDecimalUtil.mod(min, interval);
+        min = BigDecimalUtil.sub(min, mod);
+
+        cValues = new double[n];
+        for (int i = 0; i < n; i++) {
+            cValues[i] = BigDecimalUtil.add(min, BigDecimalUtil.mul(i, interval));
+        }
+
+        return cValues;
+    }
+
+    /**
      * Get interval values
      *
      * @param min Minimum value
@@ -873,13 +898,17 @@ public class MIMath {
         eStr = String.format("%1$E", range);
         aD = Integer.parseInt(eStr.substring(0, 1));
         aE = (int) Math.floor(Math.log10(range));
+        int ln = -1;
         while (n > aD) {
             aD = aD * 10;
             aE = aE - 1;
+            ln += 1;
         }
-        double interval = BigDecimalUtil.mul((int) (aD / n), Math.pow(10, aE));
+        BigDecimal b = new BigDecimal(range / Math.pow(10, aE) / n);
+        double bb = b.setScale(ln, RoundingMode.HALF_UP).doubleValue();
+        double interval = BigDecimalUtil.mul(bb, Math.pow(10, aE));
 
-        return getIntervalValues(min, max, interval);
+        return getIntervalValues(min, max, interval, n);
     }
 
     /**

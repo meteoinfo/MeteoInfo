@@ -1196,9 +1196,23 @@ class Axes3DGL(Axes3D):
             raise ValueError("Minimum value larger than maximum value")
 
         cmap = plotutil.getcolormap(**kwargs)
+        if len(args) > 0:
+            level_arg = args[0]
+            if isinstance(level_arg, int):
+                cn = level_arg
+                ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap)
+            else:
+                if isinstance(level_arg, NDArray):
+                    level_arg = level_arg.aslist()
+                ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
+        else:
+            cn = cmap.getColorCount() - 1
+            ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap)
+        plotutil.setlegendscheme(ls, **kwargs)
+
         alpha_min = kwargs.pop('alpha_min', 0.0)
         alpha_max = kwargs.pop('alpha_max', 1.0)
-        graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), cmap, \
+        graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
                                       alpha_min, alpha_max)
 
         visible = kwargs.pop('visible', True)

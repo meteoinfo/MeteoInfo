@@ -13,6 +13,7 @@ import org.meteoinfo.ndarray.math.ArrayMath;
 
 import java.awt.*;
 import java.nio.Buffer;
+import java.util.List;
 
 import static org.joml.Math.clamp;
 
@@ -93,6 +94,37 @@ public class VolumeGraphics extends GraphicCollection3D {
         this.setSingleLegend(false);
     }
 
+    /**
+     * Constructor
+     * @param value Value array - 3D
+     * @param ls LegendScheme
+     */
+    public VolumeGraphics(Array value, LegendScheme ls) {
+        value = value.copyIfView();
+        int[] shape = value.getShape();
+        this.depth = shape[0];
+        this.height = shape[1];
+        this.width = shape[2];
+        this.data = new byte[width * height * depth];
+        List<Color> oColors = ls.getColors();
+        int n = oColors.size();
+        for (int i = 0; i < value.getSize(); i++) {
+            data[i] = (byte)((int)(ls.legendBreakIndex(value.getDouble(i)) * 255.0 / n));
+        }
+        buffer = Buffers.newDirectByteBuffer(data);
+
+        originalColors = new byte[n * 3];
+        for (int i = 0; i < n; i++) {
+            int color = oColors.get(i).getRGB();
+            originalColors[i * 3 + 0] = (byte) ((color >> 16) & 0xff);
+            originalColors[i * 3 + 1] = (byte) ((color >> 8) & 0xff);
+            originalColors[i * 3 + 2] = (byte) ((color) & 0xff);
+        }
+
+        this.setLegendScheme(ls);
+        this.setSingleLegend(false);
+    }
+
     public void updateColors() {
         final float cRange = colorRange[1] - colorRange[0];
         final float min = opacityLevels[0] * opacityLevels[0];
@@ -101,7 +133,7 @@ public class VolumeGraphics extends GraphicCollection3D {
         int n = this.originalColors.length / 3;
         colors = new byte[n * 4];
         for (int i = 0; i < n; i++) {
-            float px = ((float) i) / 255;
+            float px = ((float) i) / n;
             float a;
             if (px <= opacityNodes[0]) {
                 a = opacityNodes[0];

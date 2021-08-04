@@ -366,7 +366,7 @@ public class Index implements Cloneable {
     Index reshape(int[] shape) {
         boolean canReshape = true;
         for (int s : this.stride) {
-            if (s > 1) {
+            if (s != 1) {
                 canReshape = false;
             }
         }

@@ -1516,20 +1516,18 @@ public class ArrayUtil {
         for (int i = 0; i < ndim; i++) {
             r.add(new ArrayList<Integer>());
         }
-        Index index = a.getIndex();
+
         IndexIterator iterA = a.getIndexIterator();
         int[] counter;
         double v;
         while (iterA.hasNext()) {
             v = iterA.getDoubleNext();
             if (!Double.isNaN(v) && v != 0) {
-                counter = index.getCurrentCounter();
+                counter = iterA.getCurrentCounter();
                 for (int j = 0; j < ndim; j++) {
                     r.get(j).add(counter[j]);
                 }
             }
-            index.incr();
-            //iterA.next();
         }
 
         if (r.get(0).isEmpty()) {

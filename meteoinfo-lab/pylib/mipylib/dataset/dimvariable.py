@@ -60,7 +60,10 @@ class DimVariable(object):
         
     def __str__(self):
         if self.variable is None:
-            return 'None'
+            if self.ncvariable is None:
+                return 'None'
+            else:
+                return self.ncvariable.toString()
             
         r = str(self.dtype) + ' ' + self.name + '('
         for dim in self.dims:

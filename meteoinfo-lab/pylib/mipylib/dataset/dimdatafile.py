@@ -363,13 +363,17 @@ class DimDataFile(object):
         :param attrs: (*dict*) Attributes.
         '''
         dt = self.__getdatatype(datatype)
-        if isinstance(dims[0], Dimension):
-            ncdims = []
-            for dim in dims:
-                ncdims.append(self.ncfile.findDimension(dim.getName()))
-            var = DimVariable(ncvariable=self.ncfile.addVariable(group, varname, dt, ncdims))
+        if len(dims) > 0:
+            if isinstance(dims[0], Dimension):
+                ncdims = []
+                for dim in dims:
+                    ncdims.append(self.ncfile.findDimension(dim.getName()))
+                var = DimVariable(ncvariable=self.ncfile.addVariable(group, varname, dt, ncdims))
+            else:
+                var = DimVariable(ncvariable=self.ncfile.addVariable(group, varname, dt, dims))
         else:
             var = DimVariable(ncvariable=self.ncfile.addVariable(group, varname, dt, dims))
+
         if not attrs is None:
             for key in attrs:
                 var.addattr(key, attrs[key])

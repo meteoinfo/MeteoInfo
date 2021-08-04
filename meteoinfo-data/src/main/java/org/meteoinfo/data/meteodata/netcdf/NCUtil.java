@@ -84,6 +84,7 @@ public class NCUtil {
                 ncArray = (ucar.ma2.Array)((ArrayStructure)array).getArrayObject();
                 break;
             default:
+                array = array.copyIfView();
                 ncArray = ucar.ma2.Array.factory(convertDataType(array.getDataType()), array.getShape(), array.getStorage());
                 break;
         }

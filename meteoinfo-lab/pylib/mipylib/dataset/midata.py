@@ -485,7 +485,8 @@ def readtable(filename, **kwargs):
     :param headerlines: (*int*) Lines to skip at beginning of the file. Default is ``0``. The line
         after the skip lines will be read as variable names of the table. the ``headerlines`` should set
         as ``-1`` if there is no field name line at beginning of the file.
-    :param encoding: (*string*) Character encoding scheme associated with the file. Default is ``UTF8``.
+    :param encoding: (*string*) Character encoding scheme associated with the file. Default is ``None`` that the function
+        will check the encoding automatically.
     :param varnames: (*string*) Specified variable names for the readed table. Default is ``None``, means
         the variable names should be read from the file.
     :param readvarnames: (*boolean*) Read variable names or not. Default is ``True``.
@@ -500,7 +501,7 @@ def readtable(filename, **kwargs):
     delimiter = kwargs.pop('delimiter', None)
     format = kwargs.pop('format', None)
     headerlines = kwargs.pop('headerlines', 0)
-    encoding = kwargs.pop('encoding', 'UTF8')
+    encoding = kwargs.pop('encoding', None)
     readvarnames = kwargs.pop('readvarnames', True)
     readrownames = kwargs.pop('readrownames', False)
     usecols = kwargs.pop('usecols', None)

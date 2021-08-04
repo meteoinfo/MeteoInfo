@@ -483,6 +483,7 @@ class NDArray(object):
         """
         provide iteration over the values of the array
         """
+        self.iterator = self._array.getIndexIterator()
         return self
 
     def next(self):

@@ -81,7 +81,7 @@ class NDArray(object):
         return ArrayUtil.convertToString(self._array)
 
     def __getitem__(self, indices):
-        if isinstance(indices, NDArray):
+        if isinstance(indices, NDArray) and indices.dtype == _dtype.bool:
             r = ArrayMath.take(self._array, indices._array)
             return NDArray(r)
 

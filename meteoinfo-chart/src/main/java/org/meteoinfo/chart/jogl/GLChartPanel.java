@@ -375,12 +375,9 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @return View image
      */
     public BufferedImage paintViewImage(int width, int height) {
-        GLProfile.initSingleton();
-        this.paintGraphics();
-
-        //final GLProfile glp = GLProfile.get(GLProfile.GL2);
-        final GLProfile glp = GLProfile.getDefault();
+        final GLProfile glp = GLProfile.get(GLProfile.GL2);
         GLCapabilities caps = new GLCapabilities(glp);
+        caps.setHardwareAccelerated(true);
         caps.setDoubleBuffered(false);
         caps.setAlphaBits(8);
         caps.setRedBits(8);

@@ -545,7 +545,7 @@ class Axes3DGL(Axes3D):
             graphics = GraphicFactory.createGraphicsFromLayer(layer, offset, xshift)
         else:
             interpolation = kwargs.pop('interpolation', None)
-            graphics = JOGLUtil.createTexture(self.figure.getGL2(), layer, offset, xshift, interpolation)
+            graphics = JOGLUtil.createTexture(layer, offset, xshift, interpolation)
 
         visible = kwargs.pop('visible', True)
         if visible:

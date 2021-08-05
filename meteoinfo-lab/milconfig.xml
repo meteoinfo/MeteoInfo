@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
   <Path OpenPath="D:\Working\MIScript\cuace_dust\py\mm5">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\data_process"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython"/>
+    <RecentFolder Folder="D:\Working\MIScript"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution\mnist_cnn.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\mm5tonc_lcc.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\test_nc-2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\test\sx_3d_rh_slice.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_cuace_3d_particles_relief_loop_gif.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution\mnist_cnn.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\mm5tonc_lcc.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\test_nc-2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\test\sx_3d_rh_slice.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\plot_cuace_3d_particles_relief_loop_gif.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1410,816"/>
 </MeteoInfo>

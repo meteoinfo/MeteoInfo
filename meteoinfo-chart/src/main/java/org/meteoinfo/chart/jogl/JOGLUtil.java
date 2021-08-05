@@ -159,7 +159,7 @@ public class JOGLUtil {
      * @return Graphics
      * @throws IOException
      */
-    public static GraphicCollection createTexture(GL2 gl, ImageLayer layer, double offset, double xshift,
+    public static GraphicCollection createTexture(ImageLayer layer, double offset, double xshift,
             String interpolation) throws IOException {
         GraphicCollection3D graphics = new GraphicCollection3D();
         graphics.setFixZ(true);

@@ -82,6 +82,24 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         this.sampleBuffers = cap.getSampleBuffers();
     }
 
+
+    /**
+     * Create GLCapabilities
+     * @param doubleBuffered Double buffered
+     * @param sampleBuffers Sample buffers
+     * @param numSamples Number samples
+     * @return GLCapabilities
+     */
+    public static GLCapabilities createCapabilities(boolean doubleBuffered, boolean sampleBuffers, int numSamples) {
+        GLProfile profile = GLProfile.get(GLProfile.GL2);
+        GLCapabilities cap = new GLCapabilities(profile);
+        cap.setDoubleBuffered(doubleBuffered);
+        cap.setSampleBuffers(sampleBuffers);
+        cap.setNumSamples(numSamples);
+
+        return cap;
+    }
+
     /**
      * Constructor
      *

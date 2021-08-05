@@ -65,7 +65,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
     //private final OutputDockable outputDock;
     private final EditorDockable editorDock;
-    private final ConsoleDockable consoleDock;
+    private ConsoleDockable consoleDock = null;
     private final FigureDockable figuresDock;
     private final VariableDockable variableDock;
     private final FileDockable fileDock;
@@ -139,13 +139,22 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         System.out.println("Editor and Console panels...");
         CGrid grid = new CGrid(control);
 
-        consoleDock = new ConsoleDockable(this, this.startupPath, "Console", "Console");
-        consoleDock.getConsole().setFont(this.options.getTextFont());
+        System.out.println("New console dock...");
+        try {
+            consoleDock = new ConsoleDockable(this, this.startupPath, "Console", "Console");
+            consoleDock.getConsole().setFont(this.options.getTextFont());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        System.out.println("New editor dock...");
         this.editorDock = new EditorDockable(this, "Editor", "Editor");
         this.editorDock.setInterp(this.consoleDock.getInterpreter());
+        System.out.println("Add new text editor...");
         this.editorDock.addNewTextEditor("New file");
+        System.out.println("Open Jython files...");
         this.editorDock.openFiles(this.options.getOpenedFiles());
+        System.out.println("Set text font...");
         this.editorDock.setTextFont(this.options.getTextFont());
 
         //Load toolbox applications        

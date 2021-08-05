@@ -53,10 +53,12 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         //System.out.println(console.getFont());
         console.setPreferredSize(new Dimension(600, 400));
         console.println(new ImageIcon(this.getClass().getResource("/images/jython_small_c.png")));
+        System.out.println("Initialize console...");
         this.initializeConsole(console, parent.getCurrentFolder());
         JIntrospect nameComplete = new JIntrospect(this.interp);
         console.setNameCompletion(nameComplete);
 
+        System.out.println("Set title icon...");
         this.setTitleIcon(new FlatSVGIcon("org/meteoinfo/lab/icons/console.svg"));
 
         this.getContentPane().add(console, BorderLayout.CENTER);
@@ -118,6 +120,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("New Jython interpreter...");
         interp = new PythonInteractiveInterpreter(console);
         interp.setConsoleColors(consoleColors);
         String path = this.startupPath + File.separator + "pylib";
@@ -128,6 +131,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             miPath = miPath.substring(1);
         }
 
+        System.out.println("New interpreter thread...");
         //this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         new Thread(interp).start();
         try {
@@ -135,17 +139,26 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             interp.exec("import sys");
             interp.exec("import os");
             interp.exec("import datetime");
+            System.out.println("Append path: " + path);
             interp.exec("sys.path.append('" + path + "')");
+            System.out.println("Run milab.py ...");
             interp.execfile_(path + "/milab.py");
+            System.out.println("Set isinteractive...");
             interp.exec("mipylib.plotlib.miplot.isinteractive = True");
+            System.out.println("Set milapp...");
             interp.exec("mipylib.migl.milapp = milapp");
+            System.out.println("Set mifolder: " + miPath);
             interp.exec("mipylib.migl.mifolder = '" + miPath + "'");
             currentPath = currentPath.replace("\\", "/");
+            System.out.println("Set currentfolder: " + currentPath);
             interp.exec("mipylib.migl.currentfolder = u'" + currentPath + "'");
+            System.out.println("Append path: " + toolboxPath);
             interp.exec("sys.path.append('" + toolboxPath + "')");
             if (isDebug) {
+                System.out.println("Run milab_debug.py ...");
                 interp.execfile_(path + "/milab_debug.py");
             }
+            System.out.println("Interpreter done...");
         } catch (Exception e) {
             System.out.println(e.toString());
             e.printStackTrace();

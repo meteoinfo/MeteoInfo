@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.data.meteodata.grads;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.List;
      public String TDelt;
      public int DeltaValue;
      public String unit;
+     public Duration duration;
      /// <summary>
      /// Time array
      /// </summary>

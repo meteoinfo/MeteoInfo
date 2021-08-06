@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteOrder;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -755,18 +756,21 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         LocalDateTime sTime = TDEF.STime;
                         switch (tStr) {
                             case "mn":
+                                TDEF.duration = Duration.ofMinutes(iNum);
                                 for (i = 0; i < tnum; i++) {
                                     TDEF.times.add(sTime);
                                     sTime = sTime.plusMinutes(iNum);
                                 }
                                 break;
                             case "hr":
+                                TDEF.duration = Duration.ofHours(iNum);
                                 for (i = 0; i < tnum; i++) {
                                     TDEF.times.add(sTime);
                                     sTime = sTime.plusHours(iNum);
                                 }
                                 break;
                             case "dy":
+                                TDEF.duration = Duration.ofDays(iNum);
                                 for (i = 0; i < tnum; i++) {
                                     TDEF.times.add(sTime);
                                     sTime = sTime.plusDays(iNum);
@@ -774,12 +778,14 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                                 break;
                             case "mo":
                             case "mon":
+                                TDEF.duration = Duration.ofDays(30 * iNum);
                                 for (i = 0; i < tnum; i++) {
                                     TDEF.times.add(sTime);
                                     sTime = sTime.plusMonths(iNum);
                                 }
                                 break;
                             case "yr":
+                                TDEF.duration = Duration.ofDays(365 * iNum);
                                 for (i = 0; i < tnum; i++) {
                                     TDEF.times.add(sTime);
                                     sTime = sTime.plusYears(iNum);
@@ -1190,8 +1196,24 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     private Object[] getFilePath_Template(int timeIdx) {
         String filePath;
         File file = new File(DSET);
+        if (file.isFile()) {
+            return new Object[]{file.getAbsolutePath(), 0};
+        }
+
         String path = file.getParent();
         String fn = file.getName();
+
+        if (fn.contains("%f")) {
+            int hours = (int) TDEF.duration.toHours();
+            if (fn.contains("%f2")) {
+                fn = fn.replace("%f2", String.format("%02d", timeIdx * hours));
+            } else if (fn.contains("%f3")) {
+                fn = fn.replace("%f3", String.format("%03d", timeIdx * hours));
+            }
+            filePath = path + File.separator + fn;
+            return new Object[] {filePath, 0};
+        }
+
         LocalDateTime time = this.getTimes().get(timeIdx);
         DateTimeFormatter format;
         String tStr = "year";

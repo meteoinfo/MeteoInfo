@@ -120,7 +120,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("New Jython interpreter...");
+        //System.out.println("New Jython interpreter...");
         interp = new PythonInteractiveInterpreter(console);
         interp.setConsoleColors(consoleColors);
         String path = this.startupPath + File.separator + "pylib";
@@ -131,7 +131,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             miPath = miPath.substring(1);
         }
 
-        System.out.println("New interpreter thread...");
+        //System.out.println("New interpreter thread...");
         //this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         new Thread(interp).start();
         try {
@@ -143,9 +143,9 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             interp.exec("sys.path.append('" + path + "')");
             System.out.println("Run milab.py ...");
             interp.execfile_(path + "/milab.py");
-            System.out.println("Set isinteractive...");
+            //System.out.println("Set isinteractive...");
             interp.exec("mipylib.plotlib.miplot.isinteractive = True");
-            System.out.println("Set milapp...");
+            //System.out.println("Set milapp...");
             interp.exec("mipylib.migl.milapp = milapp");
             System.out.println("Set mifolder: " + miPath);
             interp.exec("mipylib.migl.mifolder = '" + miPath + "'");

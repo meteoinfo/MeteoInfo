@@ -115,7 +115,7 @@ public class PrimitiveTessellator {
         glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
         glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
         glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
-        //glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
+        glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
         glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
 
         glu.gluTessBeginPolygon(tobj, null);

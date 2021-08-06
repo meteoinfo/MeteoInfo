@@ -577,12 +577,16 @@ class NDArray(object):
         '''
         Convert to another data type.
 
-        :param dtype: (*string*) Data type.
+        :param dtype: (*str or DataType*) Data type.
 
         :returns: (*array*) Converted array.
         '''
         if not isinstance(dtype, _dtype.DataType):
             dtype = _dtype.dtype(dtype)
+
+        if self.dtype == dtype:
+            return self.copy()
+
         if dtype.kind == 'i':
             r = NDArray(ArrayUtil.toInteger(self._array))
         elif dtype.kind == 'f':

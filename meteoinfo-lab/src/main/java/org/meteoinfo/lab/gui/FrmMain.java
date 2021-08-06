@@ -139,7 +139,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         System.out.println("Editor and Console panels...");
         CGrid grid = new CGrid(control);
 
-        System.out.println("New console dock...");
+        //System.out.println("New console dock...");
         consoleDock = new ConsoleDockable(this, this.startupPath, "Console", "Console");
         consoleDock.getConsole().setFont(this.options.getTextFont());
 

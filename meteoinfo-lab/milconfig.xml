@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\micaps">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
@@ -13,24 +11,22 @@
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution\mnist_cnn.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\test\sx_3d_rh_slice.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\heart.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\micaps\mdfs_5.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_AGRI_L1_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\convolution\mnist_cnn.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\test\sx_3d_rh_slice.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\heart.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\micaps\mdfs_5.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_AGRI_L1_1.py"/>
     </RecentFiles>
   </File>
   <Font>

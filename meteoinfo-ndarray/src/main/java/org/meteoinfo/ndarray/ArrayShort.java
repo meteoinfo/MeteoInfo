@@ -292,7 +292,7 @@ public class ArrayShort extends Array {
     public void setDate(Index i, LocalDateTime value) { throw new ForbiddenConversionException(); }
 
     public Object getObject(Index i) {
-        return storage[i.currentElement()]; // Short
+        return isUnsigned() ? getInt(i) : getShort(i);
     }
 
     public void setObject(Index i, Object value) {
@@ -392,7 +392,7 @@ public class ArrayShort extends Array {
     public void setDate(int index, LocalDateTime value) { throw new ForbiddenConversionException(); }
 
     public Object getObject(int index) {
-        return getShort(index);
+        return isUnsigned() ? getInt(index) : getShort(index);
     }
 
     public void setObject(int index, Object value) {

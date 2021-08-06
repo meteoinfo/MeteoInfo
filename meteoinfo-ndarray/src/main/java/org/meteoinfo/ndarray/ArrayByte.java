@@ -286,7 +286,7 @@ public class ArrayByte extends Array {
     public void setDate(Index i, LocalDateTime value) { throw new ForbiddenConversionException(); }
 
     public Object getObject(Index i) {
-        return storage[i.currentElement()];
+        return isUnsigned() ? getShort(i) : getByte(i);
     }
 
     public void setObject(Index i, Object value) {
@@ -387,7 +387,7 @@ public class ArrayByte extends Array {
     public void setDate(int index, LocalDateTime value) { throw new ForbiddenConversionException(); }
 
     public Object getObject(int index) {
-        return getByte(index);
+        return isUnsigned() ? getShort(index) : getByte(index);
     }
 
     public void setObject(int index, Object value) {

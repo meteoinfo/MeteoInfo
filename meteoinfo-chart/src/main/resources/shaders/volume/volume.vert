@@ -1,6 +1,9 @@
-#version 330 core
+#if __VERSION__ >= 130
+    #define attribute in
+    #define varying out
+#endif
 
-layout(location = 0) in vec3 coordinates;
+attribute vec3 coordinates;
 uniform mat4 MVP;
 
 void main() {

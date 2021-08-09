@@ -1,4 +1,10 @@
-#version 330 core
+#if __VERSION__ >= 130
+    #define varying in
+    out vec4 mgl_FragColor;
+#else
+    #define mgl_FragColor gl_FragColor
+#endif
+
 uniform vec2 viewSize;
 uniform mat4 iV;
 uniform mat4 iP;
@@ -11,12 +17,9 @@ uniform float xyScale;
 uniform vec3 aabbMin;
 uniform vec3 aabbMax;
 
-out vec4 color;
-
-
 vec3 aabb[2] = vec3[2](
-vec3(-1.0, -1.0, -1.0),
-vec3(1.0, 1.0, 1.0)
+    vec3(-1.0, -1.0, -1.0),
+    vec3(1.0, 1.0, 1.0)
 );
 
 struct Ray {
@@ -63,8 +66,8 @@ Ray CreateCameraRay(vec2 uv)
 	From: https://github.com/hpicgs/cgsee/wiki/Ray-Box-Intersection-on-the-GPU
 */
 void intersect(
-in Ray ray, in vec3 aabb[2],
-out float tmin, out float tmax
+    in Ray ray, in vec3 aabb[2],
+    out float tmin, out float tmax
 ){
     float tymin, tymax, tzmin, tzmax;
     tmin = (aabb[ray.sign[0]].x - ray.origin.x) * ray.inv_direction.x;
@@ -116,5 +119,5 @@ void main(){
     }
     pxColor = texture(colorMap, vec2(px, 0.0));
 
-    color =pxColor;
+    mgl_FragColor = pxColor;
 }

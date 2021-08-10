@@ -2269,15 +2269,15 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
             if (tessPolygon.hasHole()) {
                 List<PointZ> newPList;
-                gl.glBegin(GL2.GL_LINE_STRIP);
                 for (int h = 0; h < tessPolygon.getHoleLines().size(); h++) {
+                    gl.glBegin(GL2.GL_LINE_STRIP);
                     newPList = (List<PointZ>) tessPolygon.getHoleLines().get(h);
                     for (int j = 0; j < newPList.size(); j++) {
                         p = newPList.get(j);
                         gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
                     }
+                    gl.glEnd();
                 }
-                gl.glEnd();
             }
             gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
         }

@@ -5,7 +5,11 @@
  */
 package org.meteoinfo.chart.jogl;
 
-import com.jogamp.opengl.GL2;
+import com.jogamp.newt.Display;
+import com.jogamp.newt.NewtFactory;
+import com.jogamp.newt.Screen;
+import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.*;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.jogl.mc.MarchingCubes;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
@@ -20,18 +24,29 @@ import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.shape.ImageShape;
 import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.math.ArrayUtil;
+import org.w3c.dom.Element;
 
+import javax.imageio.*;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
  * @author yaqiang
  */
 public class JOGLUtil {
@@ -131,7 +146,7 @@ public class JOGLUtil {
         }
     }
 
-    public static void drawTriangle(final GL2 gl, final float[]x0, final float[] x1,
+    public static void drawTriangle(final GL2 gl, final float[] x0, final float[] x1,
                                     final float[] x2) {
         //subdivide(gl, x0, x1, x2, GL2.GL_TRIANGLES);
         recordItem(gl, x0, x1, x2, GL2.GL_TRIANGLES);
@@ -150,17 +165,17 @@ public class JOGLUtil {
     /**
      * Create Texture
      *
-     * @param gl GL2
-     * @param layer Image layer
-     * @param offset Offset of z axis
-     * @param xshift X shift - to shift the grahpics in x direction, normally
-     * for map in 180 - 360 degree east
+     * @param gl            GL2
+     * @param layer         Image layer
+     * @param offset        Offset of z axis
+     * @param xshift        X shift - to shift the grahpics in x direction, normally
+     *                      for map in 180 - 360 degree east
      * @param interpolation Interpolation
      * @return Graphics
      * @throws IOException
      */
     public static GraphicCollection createTexture(ImageLayer layer, double offset, double xshift,
-            String interpolation) throws IOException {
+                                                  String interpolation) throws IOException {
         GraphicCollection3D graphics = new GraphicCollection3D();
         graphics.setFixZ(true);
         graphics.setZDir("z");
@@ -219,18 +234,18 @@ public class JOGLUtil {
     /**
      * Create slice graphics
      *
-     * @param data Data array - 3D
-     * @param xa X coordinate array - 1D
-     * @param ya Y coordinate array - 1D
-     * @param za Z coordinate array - 1D
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
      * @param xSlice X slice list
      * @param ySlice Y slice list
      * @param zSlice Z slice list
-     * @param ls Legend scheme
+     * @param ls     Legend scheme
      * @return Surface graphics
      */
     public static List<SurfaceGraphics> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
-                                        List<Number> ySlice, List<Number> zSlice, LegendScheme ls) throws InvalidRangeException {
+                                              List<Number> ySlice, List<Number> zSlice, LegendScheme ls) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
@@ -242,8 +257,8 @@ public class JOGLUtil {
         double x, y, z;
 
         //X slices
-        dim1 = (int)za.getSize();
-        dim2 = (int)ya.getSize();
+        dim1 = (int) za.getSize();
+        dim2 = (int) ya.getSize();
         for (int s = 0; s < xSlice.size(); s++) {
             x = xSlice.get(s).doubleValue();
             Array r = ArrayUtil.slice(data, 2, xa, x);
@@ -265,8 +280,8 @@ public class JOGLUtil {
         }
 
         //Y slices
-        dim1 = (int)za.getSize();
-        dim2 = (int)xa.getSize();
+        dim1 = (int) za.getSize();
+        dim2 = (int) xa.getSize();
         for (int s = 0; s < ySlice.size(); s++) {
             y = ySlice.get(s).doubleValue();
             Array r = ArrayUtil.slice(data, 1, ya, y);
@@ -288,8 +303,8 @@ public class JOGLUtil {
         }
 
         //Z slices
-        dim1 = (int)ya.getSize();
-        dim2 = (int)xa.getSize();
+        dim1 = (int) ya.getSize();
+        dim2 = (int) xa.getSize();
         for (int s = 0; s < zSlice.size(); s++) {
             z = zSlice.get(s).doubleValue();
             Array r = ArrayUtil.slice(data, 0, za, z);
@@ -316,16 +331,16 @@ public class JOGLUtil {
     /**
      * Create isosurface graphics
      *
-     * @param data 3d data array
-     * @param x X coordinates
-     * @param y Y coordinates
-     * @param z Z coordinates
+     * @param data     3d data array
+     * @param x        X coordinates
+     * @param y        Y coordinates
+     * @param z        Z coordinates
      * @param isoLevel iso level
-     * @param pb Polygon break
+     * @param pb       Polygon break
      * @return Graphics
      */
     public static GraphicCollection isosurface(Array data, Array x, Array y, Array z,
-            float isoLevel, PolygonBreak pb) {
+                                               float isoLevel, PolygonBreak pb) {
         x = x.copyIfView();
         y = y.copyIfView();
         z = z.copyIfView();
@@ -352,17 +367,17 @@ public class JOGLUtil {
     /**
      * Create isosurface graphics
      *
-     * @param data 3d data array
-     * @param x X coordinates
-     * @param y Y coordinates
-     * @param z Z coordinates
+     * @param data     3d data array
+     * @param x        X coordinates
+     * @param y        Y coordinates
+     * @param z        Z coordinates
      * @param isoLevel iso level
-     * @param pb Polygon break
+     * @param pb       Polygon break
      * @param nThreads Thread number
      * @return Graphics
      */
     public static GraphicCollection isosurface(final Array data, final Array x, final Array y, final Array z,
-            final float isoLevel, PolygonBreak pb, int nThreads) {
+                                               final float isoLevel, PolygonBreak pb, int nThreads) {
         // TIMER
         ArrayList<Thread> threads = new ArrayList<>();
         final ArrayList<ArrayList<float[]>> results = new ArrayList<>();
@@ -437,14 +452,15 @@ public class JOGLUtil {
 
     /**
      * Create particle graphics
-     * @param data 3d data array
-     * @param xa X coordinates
-     * @param ya Y coordinates
-     * @param za Z coordinates
-     * @param ls LegendScheme
+     *
+     * @param data     3d data array
+     * @param xa       X coordinates
+     * @param ya       Y coordinates
+     * @param za       Z coordinates
+     * @param ls       LegendScheme
      * @param alphaMin Min alpha
      * @param alphaMax Max alpha
-     * @param density Point density
+     * @param density  Point density
      * @return Particles
      */
     public static GraphicCollection particles(Array data, Array xa, Array ya, Array za, LegendScheme ls,
@@ -545,11 +561,11 @@ public class JOGLUtil {
 
         Extent3D extent3D = new Extent3D();
         extent3D.minX = xa.getDouble(0);
-        extent3D.maxX = xa.getDouble((int)xa.getSize() - 1);
+        extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
         extent3D.minY = ya.getDouble(0);
-        extent3D.maxY = ya.getDouble((int)ya.getSize() - 1);
+        extent3D.maxY = ya.getDouble((int) ya.getSize() - 1);
         extent3D.minZ = za.getDouble(0);
-        extent3D.maxZ = za.getDouble((int)za.getSize() - 1);
+        extent3D.maxZ = za.getDouble((int) za.getSize() - 1);
         graphics.setExtent(extent3D);
         graphics.setLegendScheme(ls);
 
@@ -558,17 +574,18 @@ public class JOGLUtil {
 
     /**
      * Create volume graphics
-     * @param data 3d data array
-     * @param xa X coordinates
-     * @param ya Y coordinates
-     * @param za Z coordinates
+     *
+     * @param data     3d data array
+     * @param xa       X coordinates
+     * @param ya       Y coordinates
+     * @param za       Z coordinates
      * @param colorMap ColorMap
      * @param alphaMin Min alpha
      * @param alphaMax Max alpha
      * @return Particles
      */
     public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, ColorMap colorMap,
-                                              float alphaMin, float alphaMax) {
+                                           float alphaMin, float alphaMax) {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
@@ -581,11 +598,11 @@ public class JOGLUtil {
 
         Extent3D extent3D = new Extent3D();
         extent3D.minX = xa.getDouble(0);
-        extent3D.maxX = xa.getDouble((int)xa.getSize() - 1);
+        extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
         extent3D.minY = ya.getDouble(0);
-        extent3D.maxY = ya.getDouble((int)ya.getSize() - 1);
+        extent3D.maxY = ya.getDouble((int) ya.getSize() - 1);
         extent3D.minZ = za.getDouble(0);
-        extent3D.maxZ = za.getDouble((int)za.getSize() - 1);
+        extent3D.maxZ = za.getDouble((int) za.getSize() - 1);
         graphics.setExtent(extent3D);
 
         return graphics;
@@ -593,11 +610,12 @@ public class JOGLUtil {
 
     /**
      * Create volume graphics
-     * @param data 3d data array
-     * @param xa X coordinates
-     * @param ya Y coordinates
-     * @param za Z coordinates
-     * @param ls LegendScheme
+     *
+     * @param data     3d data array
+     * @param xa       X coordinates
+     * @param ya       Y coordinates
+     * @param za       Z coordinates
+     * @param ls       LegendScheme
      * @param alphaMin Min alpha
      * @param alphaMax Max alpha
      * @return Particles
@@ -616,13 +634,304 @@ public class JOGLUtil {
 
         Extent3D extent3D = new Extent3D();
         extent3D.minX = xa.getDouble(0);
-        extent3D.maxX = xa.getDouble((int)xa.getSize() - 1);
+        extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
         extent3D.minY = ya.getDouble(0);
-        extent3D.maxY = ya.getDouble((int)ya.getSize() - 1);
+        extent3D.maxY = ya.getDouble((int) ya.getSize() - 1);
         extent3D.minZ = za.getDouble(0);
-        extent3D.maxZ = za.getDouble((int)za.getSize() - 1);
+        extent3D.maxZ = za.getDouble((int) za.getSize() - 1);
         graphics.setExtent(extent3D);
 
         return graphics;
+    }
+
+    /**
+     * Paint view image
+     *
+     * @param plot3DGL Plot3DGL
+     * @param width Image width
+     * @param height Image height
+     * @return View image
+     */
+    public static BufferedImage paintViewImage(Plot3DGL plot3DGL, int width, int height) {
+        final GLProfile glp = GLProfile.get(GLProfile.GL2);
+        GLCapabilities caps = new GLCapabilities(glp);
+        caps.setHardwareAccelerated(true);
+        caps.setDoubleBuffered(false);
+        caps.setAlphaBits(8);
+        caps.setRedBits(8);
+        caps.setBlueBits(8);
+        caps.setGreenBits(8);
+        caps.setOnscreen(false);
+        caps.setPBuffer(true);
+        GLDrawableFactory factory = GLDrawableFactory.getFactory(glp);
+        GLOffscreenAutoDrawable drawable = factory.createOffscreenAutoDrawable(null, caps, null,
+                width, height);
+        drawable.addGLEventListener(plot3DGL);
+        plot3DGL.setDoScreenShot(true);
+        drawable.display();
+
+        BufferedImage image = plot3DGL.getScreenImage();
+        drawable.destroy();
+
+        return image;
+    }
+
+    /**
+     * Paint view image
+     *
+     * @param plot3DGL Plot3DGL
+     * @param width    Image width
+     * @param height   Image height
+     * @return View image
+     */
+    public static BufferedImage paintViewImage_bak(Plot3DGL plot3DGL, int width, int height) {
+        final GLProfile glp = GLProfile.get(GLProfile.GL2);
+        //final GLProfile glp = GLProfile.getDefault();
+        GLCapabilities caps = new GLCapabilities(glp);
+        caps.setHardwareAccelerated(true);
+        caps.setDoubleBuffered(false);
+        caps.setAlphaBits(8);
+        caps.setRedBits(8);
+        caps.setBlueBits(8);
+        caps.setGreenBits(8);
+        caps.setOnscreen(false);
+        caps.setPBuffer(true);
+
+        final Display display = NewtFactory.createDisplay(null); // local display
+        final Screen screen = NewtFactory.createScreen(display, 0); // screen 0
+        final com.jogamp.newt.Window window = NewtFactory.createWindow(screen, caps);
+        window.setSize(width, height);
+        final GLWindow glWindow = GLWindow.create(window);
+        glWindow.setVisible(true);
+
+        glWindow.addGLEventListener(plot3DGL);
+        plot3DGL.setDoScreenShot(true);
+        glWindow.display();
+
+        BufferedImage image = plot3DGL.getScreenImage();
+
+        if (null != glWindow) {
+            glWindow.destroy();
+        }
+        if (null != window) {
+            window.destroy();
+        }
+        if (null != screen) {
+            screen.destroy();
+        }
+        if (null != display) {
+            display.destroy();
+        }
+
+        return image;
+    }
+
+    /**
+     * Paint view image
+     *
+     * @param plot3DGL Plot3DGL
+     * @param width    Image width
+     * @param height   Image height
+     * @param dpi      Image dpi
+     * @return View image
+     */
+    public static BufferedImage paintViewImage(Plot3DGL plot3DGL, int width, int height, int dpi) {
+        double scaleFactor = dpi / 72.0;
+        width = (int) (width * scaleFactor);
+        height = (int) (height * scaleFactor);
+        plot3DGL.setDpiScale((float) scaleFactor);
+        BufferedImage image = paintViewImage(plot3DGL, width, height);
+        plot3DGL.setDpiScale(1);
+        return image;
+    }
+
+    /**
+     * Save image file
+     *
+     * @param fn     File path
+     * @param width  Image width
+     * @param height Image height
+     * @throws InterruptedException
+     */
+    public static void saveImage(Plot3DGL plot3DGL, String fn, int width, int height) throws InterruptedException {
+        BufferedImage image = paintViewImage(plot3DGL, width, height);
+        if (image != null) {
+            String extension = fn.substring(fn.lastIndexOf('.') + 1);
+            try {
+                ImageIO.write(image, extension, new File(fn));
+            } catch (IOException ex) {
+                Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    /**
+     * Save image file
+     *
+     * @param fn     File path
+     * @param width  Image width
+     * @param height Image height
+     * @throws InterruptedException
+     */
+    public static void saveImage_bak(Plot3DGL plot3DGL, String fn, int width, int height) throws InterruptedException {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                BufferedImage image = paintViewImage(plot3DGL, width, height);
+                if (image != null) {
+                    String extension = fn.substring(fn.lastIndexOf('.') + 1);
+                    try {
+                        ImageIO.write(image, extension, new File(fn));
+                    } catch (IOException ex) {
+                        Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Save image file
+     *
+     * @param plot3DGL Plot3DGL
+     * @param fn       File path
+     * @param width    Image width
+     * @param height   Image height
+     * @param dpi      Image dpi
+     * @throws InterruptedException
+     */
+    public static void saveImage(Plot3DGL plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
+        String formatName = fn.substring(fn.lastIndexOf('.') + 1);
+        if (formatName.equals("jpg")) {
+            formatName = "jpeg";
+            saveImage_Jpeg(plot3DGL, fn, width, height, dpi);
+            return;
+        }
+
+        BufferedImage image = paintViewImage(plot3DGL, width, height, dpi);
+
+        if (image != null) {
+            try {
+                File output = new File(fn);
+                output.delete();
+                for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext(); ) {
+                    ImageWriter writer = iw.next();
+                    ImageWriteParam writeParam = writer.getDefaultWriteParam();
+                    ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
+                    IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+                    if (metadata == null) {
+                        metadata = writer.getDefaultImageMetadata(typeSpecifier, null);
+                    }
+                    if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+                        continue;
+                    }
+
+                    ImageUtil.setDPI(metadata, dpi);
+
+                    final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
+                    try {
+                        writer.setOutput(stream);
+                        writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
+                    } finally {
+                        stream.close();
+                    }
+                    break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Save image file
+     *
+     * @param plot3DGL Plot3DGL
+     * @param fn       File path
+     * @param width    Image width
+     * @param height   Image height
+     * @param dpi      Image dpi
+     * @throws InterruptedException
+     */
+    public static void saveImage_bak(Plot3DGL plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                String formatName = fn.substring(fn.lastIndexOf('.') + 1);
+                if (formatName.equals("jpg")) {
+                    formatName = "jpeg";
+                    saveImage_Jpeg(plot3DGL, fn, width, height, dpi);
+                    return;
+                }
+
+                BufferedImage image = paintViewImage(plot3DGL, width, height, dpi);
+
+                if (image != null) {
+                    try {
+                        File output = new File(fn);
+                        output.delete();
+                        for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext(); ) {
+                            ImageWriter writer = iw.next();
+                            ImageWriteParam writeParam = writer.getDefaultWriteParam();
+                            ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
+                            IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+                            if (metadata == null) {
+                                metadata = writer.getDefaultImageMetadata(typeSpecifier, null);
+                            }
+                            if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+                                continue;
+                            }
+
+                            ImageUtil.setDPI(metadata, dpi);
+
+                            final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
+                            try {
+                                writer.setOutput(stream);
+                                writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
+                            } finally {
+                                stream.close();
+                            }
+                            break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private static void saveImage_Jpeg(Plot3DGL plot3DGL, String file, int width, int height, int dpi) {
+        BufferedImage bufferedImage = paintViewImage(plot3DGL, width, height, dpi);
+
+        if (bufferedImage != null) {
+            try {
+                // Image writer
+                ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
+                ImageOutputStream ios = ImageIO.createImageOutputStream(new File(file));
+                imageWriter.setOutput(ios);
+
+                // Compression
+                JPEGImageWriteParam jpegParams = (JPEGImageWriteParam) imageWriter.getDefaultWriteParam();
+                jpegParams.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+                jpegParams.setCompressionQuality(0.85f);
+
+                // Metadata (dpi)
+                IIOMetadata data = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(bufferedImage), jpegParams);
+                Element tree = (Element) data.getAsTree("javax_imageio_jpeg_image_1.0");
+                Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
+                jfif.setAttribute("Xdensity", Integer.toString(dpi));
+                jfif.setAttribute("Ydensity", Integer.toString(dpi));
+                jfif.setAttribute("resUnits", "1"); // density is dots per inch
+                data.setFromTree("javax_imageio_jpeg_image_1.0", tree);
+
+                // Write and clean up
+                imageWriter.write(null, new IIOImage(bufferedImage, null, data), jpegParams);
+                ios.close();
+                imageWriter.dispose();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

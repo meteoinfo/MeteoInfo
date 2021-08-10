@@ -17,6 +17,7 @@ from mipylib.numeric.core import NDArray, DimArray
 
 from org.meteoinfo.chart import Location
 from org.meteoinfo.chart.plot import Plot2D, MapPlot, Plot3D
+from org.meteoinfo.chart.jogl import JOGLUtil
 from org.meteoinfo.geo.meteodata import DrawMeteoData
 from org.meteoinfo.image import AnimatedGifEncoder
 from org.meteoinfo.geo.legend import LegendManage
@@ -1186,13 +1187,13 @@ def glfigure(bgcolor='w', newfig=True, **kwargs):
     global g_figure
     g_figure = GLFigure(**kwargs)
     if batchmode:
-        #pass
-        global g_form
-        g_form = ChartForm(g_figure)
-        g_figure.paintGraphics()
-        g_form.setSize(600, 500)
-        g_form.setLocationRelativeTo(None)
-        g_form.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
+        pass
+        # global g_form
+        # g_form = ChartForm(g_figure)
+        # g_figure.paintGraphics()
+        # g_form.setSize(600, 500)
+        # g_form.setLocationRelativeTo(None)
+        # g_form.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
         #g_form.setVisible(True)
     else:
         show(newfig)
@@ -1421,13 +1422,15 @@ def axes3dgl(*args, **kwargs):
     :returns: The axes.
     """
     global g_axes
-               
-    if g_figure is None or isinstance(g_figure, Figure):
-        glfigure(**kwargs)
-        
+
     ax = Axes3DGL(*args, **kwargs)
-    g_figure.set_axes(ax)
     g_axes = ax
+
+    if not batchmode:
+        if g_figure is None or isinstance(g_figure, Figure):
+            glfigure(**kwargs)
+        g_figure.set_axes(ax)
+
     draw_if_interactive()
     return ax
     
@@ -1582,22 +1585,35 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
     :param dpi: (*int*) Optional, figure resolution.
     :param sleep: (*int*) Optional, sleep seconds. For web map tiles loading.
     """
-    if fname.endswith('.eps') or fname.endswith('.pdf'):
-        dpi = None
-        
-    if dpi is None:
-        if (not width is None) and (not height is None):
-            g_figure.saveImage(fname, width, height, sleep)
+    global g_axes
+    global g_figure
+
+    if batchmode and isinstance(g_axes, Axes3DGL):
+        if width is None:
+            width = g_figure.getWidth() if not g_figure is None else 600
+        if height is None:
+            height = g_figure.getHeight() if not g_figure is None else 400
+        if dpi is None:
+            JOGLUtil.saveImage(g_axes.axes, fname, width, height)
         else:
-            if sleep is None:
-                g_figure.saveImage(fname)
-            else:
-                g_figure.saveImage(fname, sleep)
+            JOGLUtil.saveImage(g_axes.axes, fname, width, height, dpi)
     else:
-        if (not width is None) and (not height is None):
-            g_figure.saveImage(fname, dpi, width, height, sleep)
+        if fname.endswith('.eps') or fname.endswith('.pdf'):
+            dpi = None
+
+        if dpi is None:
+            if (not width is None) and (not height is None):
+                g_figure.saveImage(fname, width, height, sleep)
+            else:
+                if sleep is None:
+                    g_figure.saveImage(fname)
+                else:
+                    g_figure.saveImage(fname, sleep)
         else:
-            g_figure.saveImage(fname, dpi, sleep)
+            if (not width is None) and (not height is None):
+                g_figure.saveImage(fname, dpi, width, height, sleep)
+            else:
+                g_figure.saveImage(fname, dpi, sleep)
 
     if isinstance(g_figure, GLFigure):
         if not g_form is None:

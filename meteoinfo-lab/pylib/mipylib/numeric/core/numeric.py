@@ -38,7 +38,8 @@ newaxis = None
 __all__ = [
     'pi','e','inf','nan','acos','abs','all','allclose','any','arange','arange1',
     'argmin','argmax','array','array_split','asanyarray','asarray','asgridarray','asgriddata','asin',
-    'asmiarray','asstationdata','atleast_1d','atleast_2d','atan','atan2','ave_month','average','histogram',
+    'asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan','arctan2','atan2','ave_month',
+    'average','histogram',
     'broadcast_to','cdiff','ceil','concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag',
     'diff','dim_array','datatable','dot','empty','empty_like','exp','eye','flatnonzero',
     'floor','fmax','fmin','full',
@@ -859,6 +860,32 @@ def atan(x):
             return cmath.atan(x)
         else:
             return math.atan(x)
+
+def arctan(x):
+    """
+    Trigonometric inverse tangent, element-wise.
+
+    The inverse of tan, so that if ``y = tan(x)`` then ``x = atan(y)``.
+
+    :param x: (*array_like*) Input values, ``atan`` is applied to each element of *x*.
+
+    :returns: (*array_like*) Out has the same shape as *x*. Its real part is in
+        ``[-pi/2, pi/2]`` .
+
+    Examples::
+
+        >>> arctan([0, 1])
+        array([0.0, 0.7853982])
+    """
+    if isinstance(x, list):
+        return array(x).atan()
+    elif isinstance(x, NDArray):
+        return x.atan()
+    else:
+        if isinstance(x, complex):
+            return cmath.atan(x)
+        else:
+            return math.atan(x)
         
 def atan2(x1, x2):
     """
@@ -877,6 +904,32 @@ def atan2(x1, x2):
         >>> atan2(y, x) * 180 / pi
         array([-135.00000398439022, -45.000001328130075, 45.000001328130075, 135.00000398439022])
     """    
+    if isinstance(x1, NDArray):
+        r = NDArray(ArrayMath.atan2(x1._array, x2._array))
+        if isinstance(x1, DimArray):
+            return DimArray(r, x1.dims, x1.fill_value, x1.proj)
+        else:
+            return r
+    else:
+        return math.atan2(x1, x2)
+
+def arctan2(x1, x2):
+    """
+    Element-wise arc tangent of ``x1/x2`` choosing the quadrant correctly.
+
+    :param x1: (*array_like*) *y*-coordinates.
+    :param x2: (*array_like*) *x*-coordinates. *x2* must be broadcastable to match the
+        shape of *x1* or vice versa.
+
+    :returns: (*array_like*) Array of angles in radians, in the range ``[-pi, pi]`` .
+
+    Examples::
+
+        >>> x = array([-1, +1, +1, -1])
+        >>> y = array([-1, -1, +1, +1])
+        >>> arctan2(y, x) * 180 / pi
+        array([-135.00000398439022, -45.000001328130075, 45.000001328130075, 135.00000398439022])
+    """
     if isinstance(x1, NDArray):
         r = NDArray(ArrayMath.atan2(x1._array, x2._array))
         if isinstance(x1, DimArray):

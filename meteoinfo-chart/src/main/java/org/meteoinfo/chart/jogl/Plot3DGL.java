@@ -66,11 +66,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private Color background = Color.white;
     private boolean doScreenShot;
     private BufferedImage screenImage;
-    private GL2 gl;
+    //private GL2 gl;
     private final GLU glu = new GLU();
     private final GLUT glut = new GLUT();
     private int startList = 2;
-    private final GraphicCollection3D graphics;
+    private GraphicCollection3D graphics;
     private Extent3D extent;
     private ChartText title;
     private GridLine gridLine;
@@ -185,6 +185,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
      */
     public GraphicCollection3D getGraphics() {
         return this.graphics;
+    }
+
+    /**
+     * Set graphics
+     * @param value The graphics
+     */
+    public void setGraphics(GraphicCollection3D value) {
+        this.graphics = value;
     }
 
     /**
@@ -921,7 +929,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
-        //final GL2 gl = drawable.getGL().getGL2();
+        final GL2 gl = drawable.getGL().getGL2();
         float[] rgba = this.background.getRGBComponents(null);
         if (this.background == Color.black)
             rgba[3] = 0.f;
@@ -2770,7 +2778,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             return;
         }
 
-        int idTexture = texture.getTextureObject();
+        int idTexture = texture.getTextureObject(gl);
         List<PointZ> coords = ishape.getCoords();
 
         gl.glColor3f(1f, 1f, 1f);
@@ -2797,6 +2805,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex3f(transform.transform_x((float) coords.get(3).X), transform.transform_y((float) coords.get(3).Y), transform.transform_z((float) coords.get(3).Z));
         gl.glEnd();
+        gl.glFlush();
 
         // Unbinding the texture
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
@@ -3339,13 +3348,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     @Override
     public void dispose(GLAutoDrawable drawable) {
+        GL2 gl = drawable.getGL().getGL2();
         Program.destroyAllPrograms(gl);
     }
 
     @Override
     public void init(GLAutoDrawable drawable) {
         //drawable.getContext().makeCurrent();
-        gl = drawable.getGL().getGL2();
+        GL2 gl = drawable.getGL().getGL2();
         //Background
         //gl.glClearColor(1f, 1f, 1f, 1.0f);
         gl.glEnable(GL2.GL_POINT_SMOOTH);
@@ -3369,7 +3379,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.height = height;
         this.positionArea = this.getPositionArea(new Rectangle2D.Double(0, 0, width, height));
 
-        //final GL2 gl = drawable.getGL().getGL2();
+        final GL2 gl = drawable.getGL().getGL2();
         //gl.glTranslatef(0f, 0f, 5f);
         if (height <= 0) {
             height = 1;
@@ -3400,6 +3410,38 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return null;
     }
 
+    /**
+     * Clone
+     * @return Cloned Plot3DGL
+     */
+    public Object clone() {
+        Plot3DGL plot3DGL = new Plot3DGL();
+        plot3DGL.graphics = this.graphics;
+        plot3DGL.angleX = this.angleX;
+        plot3DGL.angleY = this.angleY;
+        plot3DGL.background = this.background;
+        plot3DGL.sampleBuffers = this.sampleBuffers;
+        plot3DGL.antialias = this.antialias;
+        plot3DGL.boxColor = this.boxColor;
+        plot3DGL.boxed = this.boxed;
+        plot3DGL.clipPlane = this.clipPlane;
+        plot3DGL.displayXY = this.displayXY;
+        plot3DGL.displayZ = this.displayZ;
+        plot3DGL.dpiScale = this.dpiScale;
+        plot3DGL.drawBase = this.drawBase;
+        plot3DGL.drawBoundingBox = this.drawBoundingBox;
+        plot3DGL.setExtent((Extent3D) this.extent.clone());
+        plot3DGL.gridLine = this.gridLine;
+        plot3DGL.legends = this.legends;
+        plot3DGL.hideOnDrag = this.hideOnDrag;
+        plot3DGL.lighting = this.lighting;
+        plot3DGL.title = this.title;
+        plot3DGL.shiftX = this.shiftX;
+        plot3DGL.shiftY = this.shiftY;
+
+        return plot3DGL;
+    }
+
     public static void main(String[] args) {
 
         final GLProfile gp = GLProfile.get(GLProfile.GL2);
@@ -3415,6 +3457,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         //gc.animator_start();
     }
+
     // </editor-fold>
 
     public static class TessCallback extends com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter {

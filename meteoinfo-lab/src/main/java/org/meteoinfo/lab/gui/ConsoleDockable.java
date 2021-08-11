@@ -160,7 +160,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             }
             System.out.println("Interpreter done...");
         } catch (Exception e) {
-            System.out.println(e.toString());
+            System.out.println(e);
             e.printStackTrace();
         }
     }

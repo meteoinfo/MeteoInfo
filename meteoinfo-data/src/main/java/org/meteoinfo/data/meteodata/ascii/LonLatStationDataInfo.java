@@ -23,12 +23,7 @@ import org.meteoinfo.data.meteodata.StationInfoData;
 import org.meteoinfo.data.meteodata.StationModelData;
 import org.meteoinfo.data.meteodata.Variable;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,9 +31,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.meteoinfo.data.meteodata.MeteoDataType;
-import org.meteoinfo.common.io.FileCharsetDetector;
+//import org.meteoinfo.common.io.FileCharsetDetector;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.mozilla.universalchardet.UniversalDetector;
 
  /**
   *
@@ -71,9 +67,8 @@ import org.meteoinfo.data.meteodata.Attribute;
          BufferedReader sr = null;
          try {
              this.setFileName(fileName);
-             FileCharsetDetector chardet = new FileCharsetDetector();
-             String charset = chardet.guestFileEncoding(this.getFileName());
-             sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), charset));
+             String encoding = UniversalDetector.detectCharset(new File(fileName));
+             sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), encoding));
              String[] dataArray, fieldArray;
              String aLine = sr.readLine().trim();    //Title
              delimiter = GlobalUtil.getDelimiter(aLine);
@@ -161,9 +156,8 @@ import org.meteoinfo.data.meteodata.Attribute;
      public StationData getStationData(int timeIdx, String varName, int levelIdx) {
          try {
              List<String[]> dataList = new ArrayList<>();
-             FileCharsetDetector chardet = new FileCharsetDetector();
-             String charset = chardet.guestFileEncoding(this.getFileName());
-             BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(this.getFileName()), charset));
+             String encoding = UniversalDetector.detectCharset(new File(fileName));
+             BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(this.getFileName()), encoding));
              sr.readLine();
              String line = sr.readLine();
              while (line != null) {
@@ -254,9 +248,8 @@ import org.meteoinfo.data.meteodata.Attribute;
      public StationInfoData getStationInfoData(int timeIdx, int levelIdx) {
          BufferedReader sr = null;
          try {
-             FileCharsetDetector chardet = new FileCharsetDetector();
-             String charset = chardet.guestFileEncoding(this.getFileName());
-             sr = new BufferedReader(new InputStreamReader(new FileInputStream(this.getFileName()), charset));
+             String encoding = UniversalDetector.detectCharset(new File(fileName));
+             sr = new BufferedReader(new InputStreamReader(new FileInputStream(this.getFileName()), encoding));
              List<List<String>> dataList = new ArrayList<>();
              sr.readLine();
              String line = sr.readLine();

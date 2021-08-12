@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\test">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map">
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\MeteoInfo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\test\sx_3d_rh_slice.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\add_layer_field.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\add_circle.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\test\sx_3d_rh_slice.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\add_layer_field.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\add_circle.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -17,5 +23,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-4,2" MainFormSize="1326,786"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1390,790"/>
 </MeteoInfo>

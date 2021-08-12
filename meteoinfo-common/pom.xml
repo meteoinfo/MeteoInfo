@@ -11,24 +11,11 @@
 
     <artifactId>meteoinfo-common</artifactId>
 
-    <repositories>
-        <repository>
-            <id>ebi</id>
-            <name>ebiRepo</name>
-            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>30.1.1-jre</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mozilla.intl</groupId>
-            <artifactId>chardet</artifactId>
-            <version>1.0</version>
         </dependency>
     </dependencies>
 

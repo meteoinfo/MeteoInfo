@@ -22,7 +22,6 @@
     <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:3.8.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.5.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.3" level="project" />
-    <orderEntry type="library" name="Maven: org.mozilla.intl:chardet:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-experimental:0.40" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-core:0.40" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-ddense:0.40" level="project" />

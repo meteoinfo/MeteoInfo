@@ -5,8 +5,6 @@
  */
 package org.meteoinfo.common.io;
 
-import org.meteoinfo.common.io.FileCharsetDetector;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,19 +50,6 @@ public class IOUtil {
 
         return code;
 
-    }
-
-    /**
-     * Guess file encoding
-     *
-     * @param filePath The file path
-     * @return Guessed encoding
-     * @throws IOException
-     */
-    public static String guessFileEncoding(String filePath) throws IOException {
-        FileCharsetDetector fcd = new FileCharsetDetector();
-        String encoding = fcd.guestFileEncoding(filePath);
-        return encoding;
     }
 
     /**

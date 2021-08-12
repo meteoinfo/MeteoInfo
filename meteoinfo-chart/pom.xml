@@ -32,11 +32,6 @@
             <name>boundlessgeo</name>
             <url>http://repo.boundlessgeo.com/main/</url>
         </repository>
-        <repository>
-            <id>ebi</id>
-            <name>ebiRepo</name>
-            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
-        </repository>
     </repositories>
 
     <dependencies>

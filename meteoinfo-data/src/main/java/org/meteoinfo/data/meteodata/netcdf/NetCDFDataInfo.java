@@ -36,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -532,6 +533,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     break;
                 }
             }
+            if (aAtts.getShortName().toUpperCase().equals("MAP_PROJ_CHAR")) {
+                isWRFOUT = true;
+                break;
+            }
         }
 
         if (isIOAPI) {
@@ -921,11 +926,24 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     private ProjectionInfo getProjection_WRFOUT() {
         String projStr = this.getProjectionInfo().toProj4String();
         String pstr = this.getGlobalAttStr("MAP_PROJ");
+        int mapProj;
         if (pstr.isEmpty()) {
-            return this.getProjectionInfo();
+            pstr = this.getGlobalAttStr("MAP_PROJ_CHAR");
+            if (pstr.isEmpty())
+                return this.getProjectionInfo();
+            else {
+                switch (pstr.toUpperCase()) {
+                    case "LAMBERT CONFORMAL":
+                        mapProj = 1;
+                        break;
+                    default:
+                        return this.getProjectionInfo();
+                }
+            }
+        } else {
+            mapProj = Integer.parseInt(pstr);
         }
 
-        int mapProj = Integer.parseInt(pstr);
         String lon_0 = getGlobalAttStr("STAND_LON");
         if (lon_0.isEmpty()) {
             lon_0 = getGlobalAttStr("CEN_LON");
@@ -938,7 +956,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             case 1:    //Lambert conformal
                 projStr = "+proj=lcc"
                         + "+lon_0=" + lon_0
-                        + "+lat_0=" + getGlobalAttStr("MOAD_CEN_LAT")
+                        + "+lat_0=" + lat_0
                         + "+lat_1=" + getGlobalAttStr("TRUELAT1")
                         + "+lat_2=" + getGlobalAttStr("TRUELAT2");
                 break;
@@ -1333,7 +1351,13 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         int dimLen, i;
         double orgLon, orgLat, orgX, orgY;
         Dimension xDim = this.findDimension("west_east");
+        if (xDim == null) {
+            xDim = this.findDimension("COL");
+        }
         Dimension yDim = this.findDimension("south_north");
+        if (yDim == null) {
+            yDim = this.findDimension("ROW");
+        }
         if (xDim != null && yDim != null) {
             xDim.setDimType(DimensionType.X);
             yDim.setDimType(DimensionType.Y);

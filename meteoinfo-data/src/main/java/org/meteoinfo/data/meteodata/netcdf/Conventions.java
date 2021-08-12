@@ -18,17 +18,10 @@ package org.meteoinfo.data.meteodata.netcdf;
  * @author yaqiang
  */
 public enum Conventions {
-    /// <summary>
-    /// Climate and Forecast (CF) Metadata Conventions
-    /// </summary>
-
-    CF,
-    /// <summary>
-    /// CMAQ Model 3 IOAPI Conventions
-    /// </summary>
+    // Climate and Forecast (CF) Metadata Conventions
+     CF,
+    // CMAQ Model 3 IOAPI Conventions
     IOAPI,
-    /// <summary>
-    /// WRF Out Coventions
-    /// </summary>
+    // WRF Out Coventions
     WRFOUT
 }

@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.geometry.graphic;
 
+import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
@@ -33,8 +34,8 @@ import java.util.NoSuchElementException;
 public class GraphicCollection extends Graphic implements Iterator {
 
     // <editor-fold desc="Variables">
-    private List<Graphic> graphics = new ArrayList<>();
-    private Extent _extent = new Extent();
+    protected List<Graphic> graphics = new ArrayList<>();
+    protected Extent _extent = new Extent();
     protected boolean singleLegend = true;
     private int index;
     private LabelSet labelSet;
@@ -681,6 +682,22 @@ public class GraphicCollection extends Graphic implements Iterator {
         cgraphics.setLegendScheme((LegendScheme) this.getLegendScheme().clone());
 
         return cgraphics;
+    }
+
+    /**
+     * X coordinate shift
+     * @param xs X shift value
+     */
+    public GraphicCollection xShift(double xs) {
+        for (Graphic g : this.graphics) {
+            for (PointD p : g.getShape().getPoints()) {
+                p.X += xs;
+            }
+            g.setExtent(g.getExtent().shift(xs, 0));
+        }
+        this._extent.shift(xs, 0);
+
+        return this;
     }
     // </editor-fold>
 }

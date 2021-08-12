@@ -5,6 +5,9 @@
  */
 package org.meteoinfo.chart.plot3d;
 
+import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.PointD;
+import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 
 import java.util.List;
@@ -177,5 +180,21 @@ public class GraphicCollection3D extends GraphicCollection{
      */
     public void setUsingLight(boolean value) {
         this.usingLight = value;
+    }
+
+    /**
+     * X coordinate shift
+     * @param xs X shift value
+     */
+    public GraphicCollection xShift(double xs) {
+        for (Graphic g : this.graphics) {
+            for (PointD p : g.getShape().getPoints()) {
+                p.X += xs;
+            }
+            g.setExtent(((Extent3D) g.getExtent()).shift(xs, 0, 0));
+        }
+        this._extent.shift(xs, 0);
+
+        return this;
     }
 }

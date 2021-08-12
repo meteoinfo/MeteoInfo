@@ -86,9 +86,7 @@ class NDArray(object):
             return NDArray(r)
 
         if not isinstance(indices, tuple):
-            inds = []
-            inds.append(indices)
-            indices = inds
+            indices = [indices]
 
         if len(indices) < self.ndim:
             if isinstance(indices, tuple):

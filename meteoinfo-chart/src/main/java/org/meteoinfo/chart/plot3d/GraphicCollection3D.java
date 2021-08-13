@@ -11,6 +11,7 @@ import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -185,8 +186,9 @@ public class GraphicCollection3D extends GraphicCollection{
     /**
      * X coordinate shift
      * @param xs X shift value
+     * @return Shifted result
      */
-    public GraphicCollection xShift(double xs) {
+    public GraphicCollection3D xShift(double xs) {
         for (Graphic g : this.graphics) {
             for (PointD p : g.getShape().getPoints()) {
                 p.X += xs;
@@ -196,5 +198,50 @@ public class GraphicCollection3D extends GraphicCollection{
         this._extent.shift(xs, 0);
 
         return this;
+    }
+
+    /**
+     * X random shift
+     * @param exponent Exponent
+     * @return Shifted result
+     */
+    public GraphicCollection3D xRandomShift(int exponent) {
+        Random r = new Random();
+        for (Graphic g : this.graphics) {
+            for (PointD p : g.getShape().getPoints()) {
+                p.X += (1 - r.nextDouble()) * Math.pow(10, exponent);
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * Y random shift
+     * @param exponent Exponent
+     * @return Shifted result
+     */
+    public GraphicCollection3D yRandomShift(int exponent) {
+        Random r = new Random();
+        for (Graphic g : this.graphics) {
+            for (PointD p : g.getShape().getPoints()) {
+                p.Y += (1 - r.nextDouble()) * Math.pow(10, exponent);
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * X or Y random shift
+     * @param exponent Exponent
+     * @return Shifted result
+     */
+    public GraphicCollection3D randomShift(int exponent) {
+        if (this.zdir.equals("x")) {
+            return this.xRandomShift(exponent);
+        } else {
+            return this.yRandomShift(exponent);
+        }
     }
 }

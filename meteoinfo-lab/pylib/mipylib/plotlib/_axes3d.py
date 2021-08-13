@@ -1174,6 +1174,10 @@ class Axes3D(Axes):
                 sepoint)
         else:
             igraphic = GraphicFactory.createContourPolygons(gdata.data, offset, zdir, ls, smooth)
+        random_shift = kwargs.pop('random_shift', None)
+        if not random_shift is None:
+            igraphic = igraphic.randomShift(random_shift)
+
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(igraphic)

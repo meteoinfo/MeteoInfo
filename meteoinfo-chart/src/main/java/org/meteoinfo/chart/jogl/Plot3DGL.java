@@ -2228,7 +2228,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     if (polygonZ instanceof TessPolygon) {
                         drawTessPolygon(gl, (TessPolygon) polygonZ, pb);
                     } else {
-                        if (GeometryUtil.isConvex(polygonZ)) {
+                        if (polygonZ.getOutLine().size() <= 5) {
                             drawConvexPolygon(gl, polygonZ, pb);
                         } else {
                             TessPolygon tessPolygon = new TessPolygon(polygonZ);

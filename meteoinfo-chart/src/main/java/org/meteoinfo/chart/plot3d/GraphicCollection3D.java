@@ -7,9 +7,19 @@ package org.meteoinfo.chart.plot3d;
 
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.geometry.shape.PolygonZ;
+import org.meteoinfo.geometry.shape.PolygonZShape;
+import org.meteoinfo.geometry.shape.Shape;
 
+import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
@@ -243,5 +253,63 @@ public class GraphicCollection3D extends GraphicCollection{
         } else {
             return this.yRandomShift(exponent);
         }
+    }
+
+    /**
+     * Save to file
+     * @param fileName The file name
+     * @throws IOException
+     */
+    public void saveFile(String fileName) throws IOException {
+        File file = new File(fileName);
+        BufferedWriter sw = new BufferedWriter(new FileWriter(file));
+        sw.write("Polygons");
+        sw.newLine();
+        sw.write(String.valueOf(this.graphics.size()));
+        sw.newLine();
+        for (Graphic g : this.graphics) {
+            Shape shape = g.getShape();
+            switch (shape.getShapeType()) {
+                case POLYGON_Z:
+                    sw.write("Polygon");
+                    sw.newLine();
+                    PolygonZShape polygonZShape = (PolygonZShape) shape;
+                    PolygonZ polygonZ = (PolygonZ) polygonZShape.getPolygons().get(0);
+                    sw.write("Color");
+                    sw.newLine();
+                    Color color = g.getLegend().getColor();
+                    sw.write(String.valueOf(color.getRGB()));
+                    sw.newLine();
+                    sw.write("Outline");
+                    sw.newLine();
+                    sw.write(String.valueOf(polygonZ.getOutLine().size()));
+                    sw.newLine();
+                    for (PointZ p : (List<PointZ>)polygonZ.getOutLine()) {
+                        sw.write(String.valueOf(p.X) + "," + String.valueOf(p.Y) +
+                                "," + String.valueOf(p.Z));
+                        sw.newLine();
+                    }
+                    sw.write(String.valueOf(polygonZ.getHoleLineNumber()));
+                    sw.newLine();
+                    if (polygonZ.hasHole()) {
+                        for (int i = 0; i < polygonZ.getHoleLineNumber(); i++) {
+                            List<PointZ> pointZS = (List<PointZ>) polygonZ.getHoleLine(i);
+                            sw.write("Hole");
+                            sw.newLine();
+                            sw.write(String.valueOf(pointZS.size()));
+                            sw.newLine();
+                            for (PointZ p : pointZS) {
+                                sw.write(String.valueOf(p.X) + "," + String.valueOf(p.Y) +
+                                        "," + String.valueOf(p.Z));
+                                sw.newLine();
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+
+        sw.flush();
+        sw.close();
     }
 }

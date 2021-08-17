@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.chart.jogl;
+package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.common.Extent3D;

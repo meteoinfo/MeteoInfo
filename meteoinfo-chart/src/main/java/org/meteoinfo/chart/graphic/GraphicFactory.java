@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.chart.plot;
+package org.meteoinfo.chart.graphic;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.chart.ChartText;
@@ -3457,6 +3457,427 @@ public class GraphicFactory {
         graphics.setLegendScheme(ls);
 
         return graphics;
+    }
+
+    /**
+     * Create contour slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xSlice X slice list
+     * @param ySlice Y slice list
+     * @param zSlice Z slice list
+     * @param ls     Legend scheme
+     * @param isSmooth Smooth contour lines or not
+     * @return Contour slice graphics
+     */
+    public static List<GraphicCollection3D> contourSlice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+                                              List<Number> ySlice, List<Number> zSlice, LegendScheme ls,
+                                                         boolean isSmooth) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        List<GraphicCollection3D> sgs = new ArrayList<>();
+
+        int dim1, dim2;
+        double x, y, z;
+
+        Object[] ccs = LegendManage.getContoursAndColors(ls);
+        double[] cValues = (double[]) ccs[0];
+        double[] xx = (double[])ArrayUtil.copyToNDJavaArray_Double(xa);
+        double[] yy = (double[])ArrayUtil.copyToNDJavaArray_Double(ya);
+        double[] zz = (double[])ArrayUtil.copyToNDJavaArray_Double(za);
+
+        //X slices
+        dim1 = (int) za.getSize();
+        dim2 = (int) ya.getSize();
+        for (int s = 0; s < xSlice.size(); s++) {
+            x = xSlice.get(s).doubleValue();
+            Array r = ArrayUtil.slice(data, 2, xa, x);
+            if (r != null) {
+                double[][] grid = (double[][]) ArrayUtil.copyToNDJavaArray_Double(r);
+                int[][] S1 = new int[dim1][dim2];
+                Object[] cbs = ContourDraw.tracingContourLines(grid,
+                        cValues, yy, zz, Double.NaN, S1);
+                List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+
+                if (contourLines.isEmpty()) {
+                    continue;
+                }
+
+                if (isSmooth) {
+                    contourLines = Contour.smoothLines(contourLines);
+                }
+
+                GraphicCollection3D graphics = new GraphicCollection3D();
+                ColorBreak cb;
+                for (PolyLine line : contourLines) {
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (wcontour.global.PointD p : line.PointList) {
+                        points.add(new PointZ(x, p.X, p.Y));
+                    }
+                    shape.setPoints(points);
+                    shape.setValue(line.Value);
+                    //shape.setExtent(GeometryUtil.getPointsExtent(points));
+                    cb = ls.findLegendBreak(line.Value);
+                    graphics.add(new Graphic(shape, cb));
+                }
+                graphics.setLegendScheme(ls);
+                sgs.add(graphics);
+            }
+        }
+
+        //Y slices
+        dim1 = (int) za.getSize();
+        dim2 = (int) xa.getSize();
+        for (int s = 0; s < ySlice.size(); s++) {
+            y = ySlice.get(s).doubleValue();
+            Array r = ArrayUtil.slice(data, 1, ya, y);
+            if (r != null) {
+                double[][] grid = (double[][]) ArrayUtil.copyToNDJavaArray_Double(r);
+                int[][] S1 = new int[dim1][dim2];
+                Object[] cbs = ContourDraw.tracingContourLines(grid,
+                        cValues, xx, zz, Double.NaN, S1);
+                List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+
+                if (contourLines.isEmpty()) {
+                    continue;
+                }
+
+                if (isSmooth) {
+                    contourLines = Contour.smoothLines(contourLines);
+                }
+
+                GraphicCollection3D graphics = new GraphicCollection3D();
+                ColorBreak cb;
+                for (PolyLine line : contourLines) {
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (wcontour.global.PointD p : line.PointList) {
+                        points.add(new PointZ(p.X, y, p.Y));
+                    }
+                    shape.setPoints(points);
+                    shape.setValue(line.Value);
+                    //shape.setExtent(GeometryUtil.getPointsExtent(points));
+                    cb = ls.findLegendBreak(line.Value);
+                    graphics.add(new Graphic(shape, cb));
+                }
+                graphics.setLegendScheme(ls);
+                sgs.add(graphics);
+            }
+        }
+
+        //Z slices
+        dim1 = (int) ya.getSize();
+        dim2 = (int) xa.getSize();
+        for (int s = 0; s < zSlice.size(); s++) {
+            z = zSlice.get(s).doubleValue();
+            Array r = ArrayUtil.slice(data, 0, za, z);
+            if (r != null) {
+                double[][] grid = (double[][]) ArrayUtil.copyToNDJavaArray_Double(r);
+                int[][] S1 = new int[dim1][dim2];
+                Object[] cbs = ContourDraw.tracingContourLines(grid,
+                        cValues, xx, yy, Double.NaN, S1);
+                List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+
+                if (contourLines.isEmpty()) {
+                    continue;
+                }
+
+                if (isSmooth) {
+                    contourLines = Contour.smoothLines(contourLines);
+                }
+
+                GraphicCollection3D graphics = new GraphicCollection3D();
+                ColorBreak cb;
+                for (PolyLine line : contourLines) {
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (wcontour.global.PointD p : line.PointList) {
+                        points.add(new PointZ(p.X, p.Y, z));
+                    }
+                    shape.setPoints(points);
+                    shape.setValue(line.Value);
+                    //shape.setExtent(GeometryUtil.getPointsExtent(points));
+                    cb = ls.findLegendBreak(line.Value);
+                    graphics.add(new Graphic(shape, cb));
+                }
+                graphics.setLegendScheme(ls);
+                sgs.add(graphics);
+            }
+        }
+
+        return sgs;
+    }
+
+    /**
+     * Create contour polygon slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xSlice X slice list
+     * @param ySlice Y slice list
+     * @param zSlice Z slice list
+     * @param ls     Legend scheme
+     * @param isSmooth Smooth contour lines or not
+     * @return Contour polygon slice graphics
+     */
+    public static List<GraphicCollection3D> contourfSlice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+                                                         List<Number> ySlice, List<Number> zSlice, LegendScheme ls,
+                                                         boolean isSmooth) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        List<GraphicCollection3D> sgs = new ArrayList<>();
+
+        int dim1, dim2;
+        double x, y, z;
+
+        Object[] ccs = LegendManage.getContoursAndColors(ls);
+        double[] cValues = (double[]) ccs[0];
+        double[] xx = (double[])ArrayUtil.copyToNDJavaArray_Double(xa);
+        double[] yy = (double[])ArrayUtil.copyToNDJavaArray_Double(ya);
+        double[] zz = (double[])ArrayUtil.copyToNDJavaArray_Double(za);
+        double missingValue = -9999.0;
+
+        //X slices
+        dim1 = (int) za.getSize();
+        dim2 = (int) ya.getSize();
+        for (int s = 0; s < xSlice.size(); s++) {
+            x = xSlice.get(s).doubleValue();
+            Array r = ArrayUtil.slice(data, 2, xa, x);
+            if (r != null) {
+                double minData = ArrayMath.getMinimum(r);
+                double maxData = ArrayMath.getMaximum(r);
+                double[][] grid = (double[][]) ArrayUtil.copyToNDJavaArray_Double(r, missingValue);
+                int[][] S1 = new int[dim1][dim2];
+                Object[] cbs = ContourDraw.tracingContourLines(grid,
+                        cValues, yy, zz, missingValue, S1);
+                List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+
+                if (contourLines.isEmpty()) {
+                    continue;
+                }
+
+                List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
+
+                if (isSmooth) {
+                    contourLines = Contour.smoothLines(contourLines);
+                }
+                List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(grid, contourLines, borders, cValues);
+
+                GraphicCollection3D graphics = new GraphicCollection3D();
+                ColorBreak cb;
+                for (wcontour.global.Polygon polygon : contourPolygons) {
+                    PolygonZShape shape = new PolygonZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (wcontour.global.PointD p : polygon.OutLine.PointList) {
+                        points.add(new PointZ(x, p.X, p.Y));
+                    }
+                    if (!GeoComputation.isClockwise(points)) {
+                        Collections.reverse(points);
+                    }
+                    shape.setPoints(points);
+                    shape.lowValue = polygon.LowValue;
+                    shape.highValue = polygon.HighValue;
+                    //shape.setExtent(GeometryUtil.getPointsExtent(points));
+                    if (polygon.HasHoles()) {
+                        for (PolyLine holeLine : polygon.HoleLines) {
+                            points = new ArrayList<>();
+                            for (wcontour.global.PointD p : holeLine.PointList) {
+                                points.add(new PointZ(x, p.X, p.Y));
+                            }
+                            shape.addHole(points, 0);
+                        }
+                    }
+                    int valueIdx = Arrays.binarySearch(cValues, polygon.LowValue);
+                    if (valueIdx < 0) {
+                        valueIdx = -valueIdx;
+                    }
+                    //int valueIdx = findIndex(cValues, v);
+                    if (valueIdx == cValues.length - 1) {
+                        shape.highValue = maxData;
+                    } else {
+                        shape.highValue = cValues[valueIdx + 1];
+                    }
+                    if (!polygon.IsHighCenter && polygon.HighValue == polygon.LowValue) {
+                        shape.highValue = polygon.LowValue;
+                        if (valueIdx == 0) {
+                            shape.lowValue = minData;
+                        } else {
+                            shape.lowValue = cValues[valueIdx - 1];
+                        }
+                    }
+                    cb = ls.findLegendBreak(shape.lowValue);
+                    graphics.add(new Graphic(shape, cb));
+                }
+                graphics.setLegendScheme(ls);
+                sgs.add(graphics);
+            }
+        }
+
+        //Y slices
+        dim1 = (int) za.getSize();
+        dim2 = (int) xa.getSize();
+        for (int s = 0; s < ySlice.size(); s++) {
+            y = ySlice.get(s).doubleValue();
+            Array r = ArrayUtil.slice(data, 1, ya, y);
+            if (r != null) {
+                double minData = ArrayMath.getMinimum(r);
+                double maxData = ArrayMath.getMaximum(r);
+                double[][] grid = (double[][]) ArrayUtil.copyToNDJavaArray_Double(r, missingValue);
+                int[][] S1 = new int[dim1][dim2];
+                Object[] cbs = ContourDraw.tracingContourLines(grid,
+                        cValues, xx, zz, missingValue, S1);
+                List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+
+                if (contourLines.isEmpty()) {
+                    continue;
+                }
+
+                List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
+
+                if (isSmooth) {
+                    contourLines = Contour.smoothLines(contourLines);
+                }
+                List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(grid, contourLines, borders, cValues);
+
+                GraphicCollection3D graphics = new GraphicCollection3D();
+                ColorBreak cb;
+                for (wcontour.global.Polygon polygon : contourPolygons) {
+                    PolygonZShape shape = new PolygonZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (wcontour.global.PointD p : polygon.OutLine.PointList) {
+                        points.add(new PointZ(p.X, y, p.Y));
+                    }
+                    if (!GeoComputation.isClockwise(points)) {
+                        Collections.reverse(points);
+                    }
+                    shape.setPoints(points);
+                    shape.lowValue = polygon.LowValue;
+                    shape.highValue = polygon.HighValue;
+                    //shape.setExtent(GeometryUtil.getPointsExtent(points));
+                    if (polygon.HasHoles()) {
+                        for (PolyLine holeLine : polygon.HoleLines) {
+                            points = new ArrayList<>();
+                            for (wcontour.global.PointD p : holeLine.PointList) {
+                                points.add(new PointZ(p.X, y, p.Y));
+                            }
+                            shape.addHole(points, 0);
+                        }
+                    }
+                    int valueIdx = Arrays.binarySearch(cValues, polygon.LowValue);
+                    if (valueIdx < 0) {
+                        valueIdx = -valueIdx;
+                    }
+                    //int valueIdx = findIndex(cValues, v);
+                    if (valueIdx == cValues.length - 1) {
+                        shape.highValue = maxData;
+                    } else {
+                        shape.highValue = cValues[valueIdx + 1];
+                    }
+                    if (!polygon.IsHighCenter && polygon.HighValue == polygon.LowValue) {
+                        shape.highValue = polygon.LowValue;
+                        if (valueIdx == 0) {
+                            shape.lowValue = minData;
+                        } else {
+                            shape.lowValue = cValues[valueIdx - 1];
+                        }
+                    }
+                    cb = ls.findLegendBreak(shape.lowValue);
+                    graphics.add(new Graphic(shape, cb));
+                }
+                graphics.setLegendScheme(ls);
+                sgs.add(graphics);
+            }
+        }
+
+        //Z slices
+        dim1 = (int) ya.getSize();
+        dim2 = (int) xa.getSize();
+        for (int s = 0; s < zSlice.size(); s++) {
+            z = zSlice.get(s).doubleValue();
+            Array r = ArrayUtil.slice(data, 0, za, z);
+            if (r != null) {
+                double minData = ArrayMath.getMinimum(r);
+                double maxData = ArrayMath.getMaximum(r);
+                double[][] grid = (double[][]) ArrayUtil.copyToNDJavaArray_Double(r, missingValue);
+                int[][] S1 = new int[dim1][dim2];
+                Object[] cbs = ContourDraw.tracingContourLines(grid,
+                        cValues, xx, yy, missingValue, S1);
+                List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+
+                if (contourLines.isEmpty()) {
+                    continue;
+                }
+
+                List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
+
+                if (isSmooth) {
+                    contourLines = Contour.smoothLines(contourLines);
+                }
+                List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(grid, contourLines, borders, cValues);
+
+                GraphicCollection3D graphics = new GraphicCollection3D();
+                ColorBreak cb;
+                for (wcontour.global.Polygon polygon : contourPolygons) {
+                    PolygonZShape shape = new PolygonZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (wcontour.global.PointD p : polygon.OutLine.PointList) {
+                        points.add(new PointZ(p.X, p.Y, z));
+                    }
+                    if (!GeoComputation.isClockwise(points)) {
+                        Collections.reverse(points);
+                    }
+                    shape.setPoints(points);
+                    shape.lowValue = polygon.LowValue;
+                    shape.highValue = polygon.HighValue;
+                    //shape.setExtent(GeometryUtil.getPointsExtent(points));
+                    if (polygon.HasHoles()) {
+                        for (PolyLine holeLine : polygon.HoleLines) {
+                            points = new ArrayList<>();
+                            for (wcontour.global.PointD p : holeLine.PointList) {
+                                points.add(new PointZ(p.X, p.Y, z));
+                            }
+                            shape.addHole(points, 0);
+                        }
+                    }
+                    int valueIdx = Arrays.binarySearch(cValues, polygon.LowValue);
+                    if (valueIdx < 0) {
+                        valueIdx = -valueIdx;
+                    }
+                    //int valueIdx = findIndex(cValues, v);
+                    if (valueIdx == cValues.length - 1) {
+                        shape.highValue = maxData;
+                    } else {
+                        shape.highValue = cValues[valueIdx + 1];
+                    }
+                    if (!polygon.IsHighCenter && polygon.HighValue == polygon.LowValue) {
+                        shape.highValue = polygon.LowValue;
+                        if (valueIdx == 0) {
+                            shape.lowValue = minData;
+                        } else {
+                            shape.lowValue = cValues[valueIdx - 1];
+                        }
+                    }
+                    cb = ls.findLegendBreak(shape.lowValue);
+                    graphics.add(new Graphic(shape, cb));
+                }
+                graphics.setLegendScheme(ls);
+                sgs.add(graphics);
+            }
+        }
+
+        return sgs;
     }
 
     /**

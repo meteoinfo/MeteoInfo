@@ -10,7 +10,8 @@ import os
 import numbers
 
 from org.meteoinfo.chart import ChartScaleBar, ChartNorthArrow
-from org.meteoinfo.chart.plot import MapPlot, GraphicFactory
+from org.meteoinfo.chart.plot import MapPlot
+from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.geo.meteodata import DrawMeteoData
 from org.meteoinfo.geo.mapview import MapView
 from org.meteoinfo.geometry.legend import BreakTypes, LegendScheme, LegendType

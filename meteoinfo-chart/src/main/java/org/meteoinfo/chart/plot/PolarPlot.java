@@ -6,6 +6,7 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.chart.Margin;
+import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geo.drawing.Draw;
 import org.meteoinfo.geometry.graphic.Graphic;

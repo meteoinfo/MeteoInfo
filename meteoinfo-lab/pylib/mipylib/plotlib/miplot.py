@@ -41,7 +41,7 @@ __all__ = [
     'gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis',
     'axism','bar','bar3','barh','barbs','barbsm','bgcolor','box',
     'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
-    'contourfm','contourm','delfig','draw','draw_if_interactive','errorbar',
+    'contourfm','contourm','contourfslice','contourslice','delfig','draw','draw_if_interactive','errorbar',
     'figure','glfigure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow',
     'get_figure','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','isosurface','legend','left_title','lighting','loglog','makecolors',
@@ -3094,6 +3094,56 @@ def slice3(*args, **kwargs):
             g_axes = axes3dgl()
 
     r = g_axes.slice(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+def contourslice(*args, **kwargs):
+    '''
+    Volume slice contours
+    :param x: (*array_like*) Optional. X coordinate array.
+    :param y: (*array_like*) Optional. Y coordinate array.
+    :param z: (*array_like*) Optional. Z coordinate array.
+    :param data: (*array_like*) 3D data array.
+    :param xslice: (*list*) X slice locations.
+    :param yslice: (*list*) Y slice locations.
+    :param zslice: (*list*) Z slice locations.
+    :param cmap: (*string*) Color map string.
+    :param smooth: (*bool*) Smooth contour lines or not.
+    :return: Contour slice graphics
+    '''
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
+
+    r = g_axes.contourslice(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+def contourfslice(*args, **kwargs):
+    '''
+    Volume slice contour polygons
+    :param x: (*array_like*) Optional. X coordinate array.
+    :param y: (*array_like*) Optional. Y coordinate array.
+    :param z: (*array_like*) Optional. Z coordinate array.
+    :param data: (*array_like*) 3D data array.
+    :param xslice: (*list*) X slice locations.
+    :param yslice: (*list*) Y slice locations.
+    :param zslice: (*list*) Z slice locations.
+    :param cmap: (*string*) Color map string.
+    :param smooth: (*bool*) Smooth contour lines or not.
+    :return: Contour polygon slice graphics
+    '''
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
+
+    r = g_axes.contourfslice(*args, **kwargs)
     draw_if_interactive()
     return r
 

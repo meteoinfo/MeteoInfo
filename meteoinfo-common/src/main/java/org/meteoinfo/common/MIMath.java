@@ -904,6 +904,8 @@ public class MIMath {
             aE = aE - 1;
             ln += 1;
         }
+        if (ln == -1)
+            ln = 0;
         BigDecimal b = new BigDecimal(range / Math.pow(10, aE) / n);
         double bb = b.setScale(ln, RoundingMode.HALF_UP).doubleValue();
         double interval = BigDecimalUtil.mul(bb, Math.pow(10, aE));

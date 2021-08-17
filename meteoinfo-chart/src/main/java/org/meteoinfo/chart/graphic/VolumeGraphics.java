@@ -1,6 +1,7 @@
-package org.meteoinfo.chart.jogl;
+package org.meteoinfo.chart.graphic;
 
 import com.jogamp.common.nio.Buffers;
+import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
@@ -18,13 +19,13 @@ import java.util.List;
 import static org.joml.Math.clamp;
 
 public class VolumeGraphics extends GraphicCollection3D {
-    static Buffer buffer = null;
+    public static Buffer buffer = null;
     final int width;
     final int height;
     final int depth;
     final byte[] data;
     final float[] scale = new float[]{1, 1, 1};
-    static byte[] colors;
+    public static byte[] colors;
     private byte[] originalColors;
     public static float[] opacityLevels = new float[]{0, 1};
     public static float[] opacityNodes = new float[]{0f, 1f};

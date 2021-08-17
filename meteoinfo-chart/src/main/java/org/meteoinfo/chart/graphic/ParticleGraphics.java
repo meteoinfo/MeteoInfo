@@ -1,4 +1,4 @@
-package org.meteoinfo.chart.jogl;
+package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 
@@ -9,9 +9,9 @@ public class ParticleGraphics extends GraphicCollection3D {
     /**
      * Inner Particle class
      */
-    static class Particle {
-        float x, y, z;    //position
-        float[] rgba;    //color
+    public static class Particle {
+        public float x, y, z;    //position
+        public float[] rgba;    //color
     }
 
     private float pointSize;

@@ -6,7 +6,8 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.chart.plot import Plot3D, GraphicFactory
+from org.meteoinfo.chart.plot import Plot3D
+from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.chart import ChartText3D
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
 from org.meteoinfo.geo.legend import LegendManage

@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\satellite\FY">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\netcdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
@@ -12,21 +8,25 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\test\sx_3d_rh_slice.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contourfsclice_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_DSD_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_8.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volumeplot_2.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\test\sx_3d_rh_slice.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contourfsclice_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_DSD_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\traj_8.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volumeplot_2.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1404,800"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

@@ -17,18 +17,21 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.graphic.IsosurfaceGraphics;
 import org.meteoinfo.chart.graphic.ParticleGraphics;
 import org.meteoinfo.chart.graphic.SurfaceGraphics;
 import org.meteoinfo.chart.graphic.VolumeGraphics;
+import org.meteoinfo.chart.jogl.pipe.Pipe;
+import org.meteoinfo.chart.jogl.pipe.PipeShape;
 import org.meteoinfo.chart.jogl.tessellator.Primitive;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.plot.GridLine;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.PlotType;
-import org.meteoinfo.chart.plot3d.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.Dataset;
@@ -50,6 +53,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -1809,6 +1813,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawGraphics(GL2 gl, Graphic graphic) {
+        boolean lightEnabled = this.lighting.isEnable();
+        if (graphic instanceof GraphicCollection3D) {
+            boolean usingLight = lightEnabled && ((GraphicCollection3D)graphic).isUsingLight();
+            if (lightEnabled && !((GraphicCollection3D)graphic).isUsingLight()) {
+                this.lighting.stop(gl);
+            }
+        }
+
         if (graphic.getNumGraphics() == 1) {
             Graphic gg = graphic.getGraphicN(0);
             this.drawGraphic(gl, gg);
@@ -1838,13 +1850,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     }
                 }
                 if (isDraw) {
-                    boolean lightEnabled = this.lighting.isEnable();
-                    if (graphic instanceof GraphicCollection3D) {
-                        boolean usingLight = lightEnabled && ((GraphicCollection3D)graphic).isUsingLight();
-                        if (lightEnabled && !((GraphicCollection3D)graphic).isUsingLight()) {
-                            this.lighting.stop(gl);
-                        }
-                    }
                     switch (graphic.getGraphicN(0).getShape().getShapeType()) {
                         case POINT_Z:
                             this.drawPoints(gl, graphic);
@@ -1856,12 +1861,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
                             }
                             break;
                     }
-                    if (graphic instanceof GraphicCollection3D) {
-                        if (lightEnabled && !((GraphicCollection3D)graphic).isUsingLight()) {
-                            this.lighting.start(gl);
-                        }
-                    }
                 }
+            }
+        }
+        if (graphic instanceof GraphicCollection3D) {
+            if (lightEnabled && !((GraphicCollection3D)graphic).isUsingLight()) {
+                this.lighting.start(gl);
             }
         }
     }
@@ -1880,15 +1885,31 @@ public class Plot3DGL extends Plot implements GLEventListener {
             case POLYLINE_Z:
                 ColorBreak cb = graphic.getLegend();
                 if (cb instanceof StreamlineBreak) {
-                    this.drawStreamline(gl, graphic);
+                    if (shape instanceof PipeShape) {
+                        this.drawPipeStreamline(gl, graphic);
+                    } else {
+                        this.drawStreamline(gl, graphic);
+                    }
                 } else if (cb instanceof ColorBreakCollection) {
                     if (((ColorBreakCollection) cb).get(0) instanceof StreamlineBreak) {
-                        this.drawStreamline(gl, graphic);
+                        if (shape instanceof PipeShape) {
+                            this.drawPipeStreamline(gl, graphic);
+                        } else {
+                            this.drawStreamline(gl, graphic);
+                        }
+                    } else {
+                        if (shape instanceof PipeShape) {
+                            this.drawPipe(gl, graphic);
+                        } else {
+                            this.drawLineString(gl, graphic);
+                        }
+                    }
+                } else {
+                    if (shape instanceof PipeShape) {
+                        this.drawPipe(gl, graphic);
                     } else {
                         this.drawLineString(gl, graphic);
                     }
-                } else {
-                    this.drawLineString(gl, graphic);
                 }
                 break;
             case POLYGON:
@@ -2131,6 +2152,59 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
     }
 
+    private void drawPipe(GL2 gl, Graphic graphic) {
+        if (extent.intersects(graphic.getExtent())) {
+            PipeShape shape = (PipeShape) graphic.getShape();
+            ColorBreak cb = graphic.getLegend();
+            shape.transform(transform);
+            Pipe pipe = shape.getPipe();
+            int count = pipe.getContourCount();
+            if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
+                ColorBreakCollection cbc = (ColorBreakCollection) cb;
+                float[] rgba;
+                for (int i = 0; i < count - 1; i++) {
+                    PolylineBreak plb = (PolylineBreak) cbc.get(i);
+                    rgba = plb.getColor().getRGBComponents(null);
+                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    Vector<Vector3f> c1 = pipe.getContour(i);
+                    Vector<Vector3f> c2 = pipe.getContour(i+1);
+                    Vector<Vector3f> n1 = pipe.getNormal(i);
+                    Vector<Vector3f> n2 = pipe.getNormal(i+1);
+                    gl.glBegin(GL_TRIANGLE_STRIP);
+                    for(int j = 0; j < (int)c2.size(); ++j)
+                    {
+                        gl.glNormal3fv(JOGLUtil.toArray(n2.get(j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(c2.get(j)), 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(n1.get(j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(c1.get(j)), 0);
+                    }
+                    gl.glEnd();
+                }
+                gl.glEnd();
+            } else {
+                PolylineBreak pb = (PolylineBreak) cb;
+                float[] rgba = pb.getColor().getRGBComponents(null);
+                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                for(int i = 0; i < count - 1; i++)
+                {
+                    Vector<Vector3f> c1 = pipe.getContour(i);
+                    Vector<Vector3f> c2 = pipe.getContour(i+1);
+                    Vector<Vector3f> n1 = pipe.getNormal(i);
+                    Vector<Vector3f> n2 = pipe.getNormal(i+1);
+                    gl.glBegin(GL_TRIANGLE_STRIP);
+                    for(int j = 0; j < (int)c2.size(); ++j)
+                    {
+                        gl.glNormal3fv(JOGLUtil.toArray(n2.get(j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(c2.get(j)), 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(n1.get(j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(c1.get(j)), 0);
+                    }
+                    gl.glEnd();
+                }
+            }
+        }
+    }
+
     private void drawStreamline(GL2 gl, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
@@ -2213,6 +2287,94 @@ public class Plot3DGL extends Plot implements GLEventListener {
                                         transform.transform_z((float) pp.Z)};
                                 drawArrow(gl, p, p1, slb);
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void drawPipeStreamline(GL2 gl, Graphic graphic) {
+        if (extent.intersects(graphic.getExtent())) {
+            PipeShape shape = (PipeShape) graphic.getShape();
+            ColorBreak cb = graphic.getLegend();
+            shape.transform(transform);
+            Pipe pipe = shape.getPipe();
+            int count = pipe.getContourCount();
+            if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
+                ColorBreakCollection cbc = (ColorBreakCollection) cb;
+                float[] rgba;
+                for (int i = 0; i < count - 1; i++) {
+                    StreamlineBreak plb = (StreamlineBreak) cbc.get(i);
+                    rgba = plb.getColor().getRGBComponents(null);
+                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    Vector<Vector3f> c1 = pipe.getContour(i);
+                    Vector<Vector3f> c2 = pipe.getContour(i+1);
+                    Vector<Vector3f> n1 = pipe.getNormal(i);
+                    Vector<Vector3f> n2 = pipe.getNormal(i+1);
+                    gl.glBegin(GL_TRIANGLE_STRIP);
+                    for(int j = 0; j < (int)c2.size(); ++j)
+                    {
+                        gl.glNormal3fv(JOGLUtil.toArray(n2.get(j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(c2.get(j)), 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(n1.get(j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(c1.get(j)), 0);
+                    }
+                    gl.glEnd();
+                }
+
+                //Draw arrow
+                Vector<Vector3f> path = pipe.getPath();
+                StreamlineBreak slb = (StreamlineBreak) cbc.get(0);
+                int interval = slb.getInterval();
+                if (slb.getArrowHeadLength() > 0 || slb.getArrowHeadWidth() > 0) {
+                    float[] p2, p1;
+                    Vector3f pp;
+                    for (int i = 0; i < path.size(); i++) {
+                        slb = (StreamlineBreak) cbc.get(i);
+                        pp = path.get(i);
+                        p2 = new float[]{pp.x, pp.y, pp.z};
+                        if (i > 0 && i % interval == 0) {
+                            pp = path.get(i - 1);
+                            p1 = new float[]{pp.x, pp.y, pp.z};
+                            drawArrow(gl, p2, p1, slb);
+                        }
+                    }
+                }
+            } else {
+                StreamlineBreak slb = (StreamlineBreak) cb;
+                int interval = slb.getInterval() * 3;
+                float[] rgba = slb.getColor().getRGBComponents(null);
+                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                for(int i = 0; i < count - 1; i++)
+                {
+                    Vector<Vector3f> c1 = pipe.getContour(i);
+                    Vector<Vector3f> c2 = pipe.getContour(i+1);
+                    Vector<Vector3f> n1 = pipe.getNormal(i);
+                    Vector<Vector3f> n2 = pipe.getNormal(i+1);
+                    gl.glBegin(GL_TRIANGLE_STRIP);
+                    for(int j = 0; j < (int)c2.size(); ++j)
+                    {
+                        gl.glNormal3fv(JOGLUtil.toArray(n2.get(j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(c2.get(j)), 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(n1.get(j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(c1.get(j)), 0);
+                    }
+                    gl.glEnd();
+                }
+
+                //Draw arrow
+                Vector<Vector3f> path = pipe.getPath();
+                if (slb.getArrowHeadLength() > 0 || slb.getArrowHeadWidth() > 0) {
+                    float[] p2, p1;
+                    Vector3f pp;
+                    for (int i = 0; i < path.size(); i++) {
+                        pp = path.get(i);
+                        p2 = new float[]{pp.x, pp.y, pp.z};
+                        if (i > 0 && i % interval == 0) {
+                            pp = path.get(i - 1);
+                            p1 = new float[]{pp.x, pp.y, pp.z};
+                            drawArrow(gl, p2, p1, slb);
                         }
                     }
                 }

@@ -7,7 +7,7 @@ package org.meteoinfo.chart.graphic;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.chart.ChartText;
-import org.meteoinfo.chart.plot3d.GraphicCollection3D;
+import org.meteoinfo.chart.jogl.pipe.PipeShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
@@ -614,6 +614,23 @@ public class GraphicFactory {
         }
 
         return gc;
+    }
+
+    /**
+     * LineString 3D to pipe graphics
+     * @param lines LineStrings
+     * @param radius Radius
+     * @param steps Steps
+     * @return Pipe graphics
+     */
+    public static GraphicCollection3D lineString3DToPipe(GraphicCollection3D lines, float radius,
+                                                         int steps) {
+        for (Graphic graphic : lines.getGraphics()) {
+            PolylineZShape shape = (PolylineZShape) graphic.getShape();
+            PipeShape pipeShape = new PipeShape(shape, radius, steps);
+            graphic.setShape(pipeShape);
+        }
+        return lines;
     }
 
     /**

@@ -5,7 +5,6 @@
  */
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;

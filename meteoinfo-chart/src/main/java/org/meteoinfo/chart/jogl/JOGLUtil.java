@@ -10,13 +10,14 @@ import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Screen;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
+import org.joml.Vector3f;
 import org.meteoinfo.chart.graphic.IsosurfaceGraphics;
 import org.meteoinfo.chart.graphic.ParticleGraphics;
 import org.meteoinfo.chart.graphic.SurfaceGraphics;
 import org.meteoinfo.chart.graphic.VolumeGraphics;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.jogl.mc.MarchingCubes;
-import org.meteoinfo.chart.plot3d.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
@@ -938,5 +939,14 @@ public class JOGLUtil {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Convert Vector3f to float array
+     * @param v The Vector3f
+     * @return Float array
+     */
+    public static float[] toArray(Vector3f v) {
+        return new float[]{v.x, v.y, v.z};
     }
 }

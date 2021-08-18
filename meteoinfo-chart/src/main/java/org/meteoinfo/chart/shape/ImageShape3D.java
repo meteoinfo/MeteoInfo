@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.chart.plot3d;
+package org.meteoinfo.chart.shape;
 
 import org.meteoinfo.geometry.shape.ImageShape;
 

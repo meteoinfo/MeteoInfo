@@ -617,6 +617,14 @@ class Axes3D(Axes):
         else:
             mdata = plotutil.getplotdata(mvalues)
             graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, mdata, ls)
+
+        #Pipe
+        pipe = kwargs.pop('pipe', False)
+        if pipe:
+            radius = kwargs.pop('radius', 0.02)
+            steps = kwargs.pop('steps', 48)
+            graphics = GraphicFactory.lineString3DToPipe(graphics, radius, steps)
+
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)
@@ -1414,6 +1422,10 @@ class Axes3D(Axes):
         else:
             interpolation = kwargs.pop('interpolation', None)
             graphics = GraphicFactory.createImage(layer, offset, xshift, interpolation)
+
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            graphics.setUsingLight(lighting)
 
         visible = kwargs.pop('visible', True)
         if visible:

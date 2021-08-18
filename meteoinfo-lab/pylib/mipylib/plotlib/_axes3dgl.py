@@ -358,7 +358,7 @@ class Axes3DGL(Axes3D):
         if not kwargs.has_key('headwidth'):
             kwargs['headwidth'] = 1
         if not kwargs.has_key('headlength'):
-            kwargs['headlength'] = 2.5
+            kwargs['headlength'] = 2.5 * kwargs['headwidth']
         for i in range(ls.getBreakNum()):
             lb = plotutil.line2stream(ls.getLegendBreak(i), **kwargs)
             ls.setLegendBreak(i, lb)
@@ -382,6 +382,14 @@ class Axes3DGL(Axes3D):
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:
             graphics.setUsingLight(lighting)
+
+        #Pipe
+        pipe = kwargs.pop('pipe', False)
+        if pipe:
+            radius = kwargs.pop('radius', 0.02)
+            steps = kwargs.pop('steps', 48)
+            graphics = GraphicFactory.lineString3DToPipe(graphics, radius, steps)
+
         self.add_graphic(graphics)
 
         return graphics
@@ -546,6 +554,10 @@ class Axes3DGL(Axes3D):
         else:
             interpolation = kwargs.pop('interpolation', None)
             graphics = JOGLUtil.createTexture(layer, offset, xshift, interpolation)
+
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            graphics.setUsingLight(lighting)
 
         visible = kwargs.pop('visible', True)
         if visible:

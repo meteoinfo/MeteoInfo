@@ -2,7 +2,6 @@ package org.meteoinfo.chart.graphic;
 
 import com.jogamp.common.nio.Buffers;
 import org.meteoinfo.chart.jogl.Transform;
-import org.meteoinfo.chart.plot3d.GraphicCollection3D;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;

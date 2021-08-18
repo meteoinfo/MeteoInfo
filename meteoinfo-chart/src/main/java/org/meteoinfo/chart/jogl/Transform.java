@@ -1,7 +1,10 @@
 package org.meteoinfo.chart.jogl;
 
+import org.joml.Vector3f;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.geometry.shape.PointZ;
+
+import java.nio.FloatBuffer;
 
 public class Transform {
     private float xmin, xmax = 1.0f, ymin;
@@ -49,6 +52,23 @@ public class Transform {
         this.zmax = (float) extent3D.maxZ;
     }
 
+    public boolean equals(Transform other) {
+        if (this.xmin != other.xmin)
+            return false;
+        if (this.xmax != other.xmax)
+            return false;
+        if (this.ymin != other.ymin)
+            return false;
+        if (this.ymax != other.ymax)
+            return false;
+        if (this.zmin != other.zmin)
+            return false;
+        if (this.zmax != other.zmax)
+            return false;
+
+        return true;
+    }
+
     public float transform_x(float v) {
         return (v - xmin) / (xmax - xmin) * 2.f - 1.0f;
     }
@@ -91,5 +111,17 @@ public class Transform {
 
     public double[] transform(PointZ p) {
         return new double[]{transform_x(p.X), transform_y(p.Y), transform_z(p.Z)};
+    }
+
+    public float[] transform(Vector3f p) {
+        return transform(p.x, p.y, p.z);
+    }
+
+    /**
+     * Clone
+     * @return Cloned transform
+     */
+    public Object clone() {
+        return new Transform(xmin, xmax, ymin, ymax, zmin, zmax);
     }
 }

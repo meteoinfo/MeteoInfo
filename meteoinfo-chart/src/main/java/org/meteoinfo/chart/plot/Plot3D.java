@@ -8,7 +8,7 @@ package org.meteoinfo.chart.plot;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LogAxis;
-import org.meteoinfo.chart.plot3d.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.DataMath;

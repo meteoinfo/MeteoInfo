@@ -5,12 +5,18 @@
  */
 package org.meteoinfo.chart.graphic;
 
+import org.joml.Vector3f;
+import org.meteoinfo.chart.jogl.Transform;
+import org.meteoinfo.chart.jogl.pipe.Pipe;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.ShapeTypes;
+
+import java.util.List;
+import java.util.Vector;
 
 /**
  *
@@ -22,6 +28,9 @@ public class SurfaceGraphics extends GraphicCollection3D {
     private boolean faceInterp;
     private boolean edgeInterp;
     private boolean mesh;
+    private Transform transform;
+    private Vector3f[][] tVertices;
+    private Vector3f[][] normals;
     
     /**
      * Constructor
@@ -77,6 +86,26 @@ public class SurfaceGraphics extends GraphicCollection3D {
      */
     public PointZ getVertex(int i, int j) {
         return this.vertices[i][j];
+    }
+
+    /**
+     * Get transformed vertex
+     * @param i Index i
+     * @param j Index j
+     * @return Transformed vertex
+     */
+    public Vector3f getTVertex(int i, int j) {
+        return this.tVertices[i][j];
+    }
+
+    /**
+     * Get vertex normal
+     * @param i Index i
+     * @param j Index j
+     * @return Vertex normal
+     */
+    public Vector3f getNormal(int i, int j) {
+        return this.normals[i][j];
     }
 
     /**
@@ -219,5 +248,52 @@ public class SurfaceGraphics extends GraphicCollection3D {
             return this.legendScheme;
         }
     }
- 
+
+    /**
+     * Transform
+     * @param transform The transform
+     */
+    public void transform(Transform transform) {
+        if (this.transform != null) {
+            if (this.transform.equals(transform))
+                return;
+        }
+        this.transform = (Transform) transform.clone();
+
+        int dim1 = this.getDim1();
+        int dim2 = this.getDim2();
+        this.tVertices = new Vector3f[dim1][dim2];
+        PointZ p;
+        for (int i = 0; i < dim1; i++) {
+            for (int j = 0; j < dim2; j++) {
+                p = vertices[i][j];
+                tVertices[i][j] = new Vector3f(transform.transform_x((float)p.X), transform.transform_y((float)p.Y),
+                        transform.transform_z((float)p.Z));
+            }
+        }
+
+        //Calculate normals
+        this.normals = new Vector3f[dim1][dim2];
+        Vector3f v, left, right, up, down;
+        Vector3f normal, nLeftUp, nLeftDown, nRightUp, nRightDown;
+        for (int i = 0; i < dim1; i++) {
+            for (int j = 0; j < dim2; j++) {
+                v = tVertices[i][j];
+                left = j > 0 ? tVertices[i][j - 1] : null;
+                right = j < dim2 - 1 ? tVertices[i][j + 1] : null;
+                down = i > 0 ? tVertices[i - 1][j] : null;
+                up = i < dim1 - 1 ? tVertices[i + 1][j] : null;
+                nLeftUp = (left == null || up == null) ? new Vector3f() :
+                        left.sub(v, new Vector3f()).cross(up.sub(v, new Vector3f()));
+                nLeftDown = (left == null || down == null) ? new Vector3f() :
+                        down.sub(v, new Vector3f()).cross(left.sub(v, new Vector3f()));
+                nRightUp = (right == null || up == null) ? new Vector3f() :
+                        up.sub(v, new Vector3f()).cross(right.sub(v, new Vector3f()));
+                nRightDown = (right == null || down == null) ? new Vector3f() :
+                        right.sub(v, new Vector3f()).cross(down.sub(v, new Vector3f()));
+                normal = nLeftUp.add(nLeftDown).add(nRightUp).add(nRightDown).normalize();
+                this.normals[i][j] = normal;
+            }
+        }
+    }
 }

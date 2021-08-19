@@ -2728,6 +2728,126 @@ public class Plot3DGL extends Plot implements GLEventListener {
         int dim1 = surface.getDim1();
         int dim2 = surface.getDim2();
         float[] rgba;
+        Vector3f p;
+        boolean lightEnabled = this.lighting.isEnable();
+        boolean usingLight = lightEnabled && surface.isUsingLight();
+        if (lightEnabled && !surface.isUsingLight()) {
+            this.lighting.stop(gl);
+        }
+
+        surface.transform(transform);
+        if (pgb.isDrawOutline()) {
+            gl.glLineWidth(pgb.getOutlineSize() * this.dpiScale);
+            if (surface.isEdgeInterp()) {
+                for (int i = 0; i < dim1; i++) {
+                    gl.glBegin(GL2.GL_LINE_STRIP);
+                    for (int j = 0; j < dim2; j++) {
+                        rgba = surface.getEdgeRGBA(i, j);
+                        gl.glColor4fv(rgba, 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j)), 0);
+                    }
+                    gl.glEnd();
+                }
+                for (int j = 0; j < dim2; j++) {
+                    gl.glBegin(GL2.GL_LINE_STRIP);
+                    for (int i = 0; i < dim1; i++) {
+                        rgba = surface.getEdgeRGBA(i, j);
+                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j)), 0);
+                    }
+                    gl.glEnd();
+                }
+            } else {
+                float[] vertex;
+                for (int i = 0; i < dim1; i++) {
+                    p = surface.getTVertex(i, 0);
+                    vertex = JOGLUtil.toArray(p);
+                    for (int j = 0; j < dim2 - 1; j++) {
+                        rgba = surface.getEdgeRGBA(i, j);
+                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                        gl.glBegin(GL2.GL_LINES);
+                        gl.glVertex3fv(vertex, 0);
+                        p = surface.getTVertex(i, j + 1);
+                        vertex = JOGLUtil.toArray(p);
+                        gl.glVertex3fv(vertex, 0);
+                        gl.glEnd();
+                    }
+                }
+                for (int j = 0; j < dim2; j++) {
+                    p = surface.getTVertex(0, j);
+                    vertex = JOGLUtil.toArray(p);
+                    for (int i = 0; i < dim1 - 1; i++) {
+                        p = surface.getTVertex(i, j);
+                        rgba = surface.getEdgeRGBA(i, j);
+                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                        gl.glBegin(GL2.GL_LINES);
+                        gl.glVertex3fv(vertex, 0);
+                        p = surface.getTVertex(i + 1, j);
+                        vertex = JOGLUtil.toArray(p);
+                        gl.glVertex3fv(vertex, 0);
+                        gl.glEnd();
+                    }
+                }
+            }
+        }
+
+        if (pgb.isDrawFill()) {
+            gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+            gl.glPolygonOffset(1.0f, 1.0f);
+            if (surface.isFaceInterp()) {
+                for (int i = 0; i < dim1 - 1; i++) {
+                    for (int j = 0; j < dim2 - 1; j++) {
+                        gl.glBegin(GL2.GL_QUADS);
+                        rgba = surface.getRGBA(i, j);
+                        gl.glColor4fv(rgba, 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j)), 0);
+                        rgba = surface.getRGBA(i + 1, j);
+                        gl.glColor4fv(rgba, 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j)), 0);
+                        rgba = surface.getRGBA(i + 1, j + 1);
+                        gl.glColor4fv(rgba, 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j + 1)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j + 1)), 0);
+                        rgba = surface.getRGBA(i, j + 1);
+                        gl.glColor4fv(rgba, 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j + 1)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j + 1)), 0);
+                        gl.glEnd();
+                    }
+                }
+            } else {
+                for (int i = 0; i < dim1 - 1; i++) {
+                    for (int j = 0; j < dim2 - 1; j++) {
+                        gl.glBegin(GL2.GL_QUADS);
+                        rgba = surface.getRGBA(i, j);
+                        gl.glColor4fv(rgba, 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j)), 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j)), 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j + 1)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j + 1)), 0);
+                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j + 1)), 0);
+                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j + 1)), 0);
+                        gl.glEnd();
+                    }
+                }
+            }
+            gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
+        }
+
+        if (lightEnabled && !surface.isUsingLight()) {
+            this.lighting.start(gl);
+        }
+    }
+
+    private void drawSurface_bak(GL2 gl, SurfaceGraphics surface) {
+        PolygonBreak pgb = (PolygonBreak) surface.getLegendBreak(0, 0);
+        int dim1 = surface.getDim1();
+        int dim2 = surface.getDim2();
+        float[] rgba;
         PointZ p;
         boolean lightEnabled = this.lighting.isEnable();
         boolean usingLight = lightEnabled && surface.isUsingLight();

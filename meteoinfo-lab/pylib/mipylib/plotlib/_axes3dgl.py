@@ -210,8 +210,8 @@ class Axes3DGL(Axes3D):
         :param y: (*array_like*) Input y data.
         :param z: (*array_like*) Input z data.
         :param width: (*float*) Bar width.
-        :param cylinder: (*bool*) Is sylinder bar or rectangle bar.
-        :param bottom: (*bool*) Color of the points. Or z vlaues.
+        :param cylinder: (*bool*) Is cylinder bar or rectangle bar.
+        :param bottom: (*bool*) Color of the points. Or z values.
         :param color: (*Color*) Optional, the color of the bar faces.
         :param edgecolor: (*Color*) Optional, the color of the bar edge. Default is black color.
             Edge line will not be plotted if ``edgecolor`` is ``None``.
@@ -221,9 +221,9 @@ class Axes3DGL(Axes3D):
         :param hatchsize: (*int*) Hatch size. Default is None (8).
         :param bgcolor: (*Color*) Background color, only valid with hatch.
         :param barswidth: (*float*) Bars width (0 - 1), only used for automatic bar with plot
-            (only one argument widthout ``width`` augument). Defaul is 0.8.
+            (only one argument without ``width`` argument). Default is 0.8.
 
-        :returns: Points legend break.
+        :returns: Bar 3D graphics.
         """
         #Add data series
         label = kwargs.pop('label', 'S_0')
@@ -298,6 +298,7 @@ class Axes3DGL(Axes3D):
         :param v: (*array_like*) V component of the arrow vectors (wind field).
         :param w: (*array_like*) W component of the arrow vectors (wind field).
         :param density: (*int*) Streamline density. Default is 4.
+
         :return: Streamlines
         """
         ls = kwargs.pop('symbolspec', None)
@@ -408,6 +409,7 @@ class Axes3DGL(Axes3D):
         :param yslice: (*list*) Y slice locations.
         :param zslice: (*list*) Z slice locations.
         :param density: (*int*) Streamline density. Default is 4.
+
         :return: Streamline slices
         """
         ls = kwargs.pop('symbolspec', None)
@@ -577,6 +579,7 @@ class Axes3DGL(Axes3D):
     def slice(self, *args, **kwargs):
         '''
         Volume slice planes
+
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) Optional. Z coordinate array.
@@ -585,7 +588,8 @@ class Axes3DGL(Axes3D):
         :param yslice: (*list*) Y slice locations.
         :param zslice: (*list*) Z slice locations.
         :param cmap: (*string*) Color map string.
-        :return:
+
+        :return: Slice plane graphics.
         '''
         if len(args) <= 3:
             x = args[0].dimvalue(2)
@@ -723,6 +727,7 @@ class Axes3DGL(Axes3D):
     def contourslice(self, *args, **kwargs):
         '''
         Volume slice contours
+
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) Optional. Z coordinate array.
@@ -943,7 +948,7 @@ class Axes3DGL(Axes3D):
         :param cmap: (*string*) Color map string.
         :param lighting: (*bool*) Using light or not.
 
-        :returns: Legend
+        :returns: 3D surface graphic
         '''
         if len(args) <= 2:
             x = args[0].dimvalue(1)
@@ -1315,14 +1320,13 @@ class Axes3DGL(Axes3D):
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) Optional. Z coordinate array.
         :param data: (*array_like*) 3D data array.
-        :param s: (*float*) Point size.
         :param cmap: (*string*) Color map string.
         :param vmin: (*float*) Minimum value for particle plotting.
         :param vmax: (*float*) Maximum value for particle plotting.
         :param alpha_min: (*float*) Minimum alpha value.
         :param alpha_max: (*float*) Maximum alpha value.
 
-        :returns: Legend
+        :returns: Volumeplot graphic
         '''
         if len(args) <= 3:
             data = args[0]

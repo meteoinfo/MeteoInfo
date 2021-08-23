@@ -645,7 +645,7 @@ class Axes3D(Axes):
         :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level
             points to draw, in increasing order.
         
-        :returns: Points legend break.
+        :returns: Point 3D graphics.
         """        
         #Add data series
         label = kwargs.pop('label', 'S_0')
@@ -744,7 +744,7 @@ class Axes3D(Axes):
         :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
             points to draw, in increasing order.
         
-        :returns: Points legend break.
+        :returns: Stem graphics.
         """        
         #Add data series
         label = kwargs.pop('label', 'S_0')
@@ -860,7 +860,7 @@ class Axes3D(Axes):
         :param boxed: (*boolean*) Draw boxed or not.
         :param mesh: (*boolean*) Draw mesh line or not.
 
-        :returns: Legend
+        :returns: Mesh graphics
         '''
         if len(args) == 1:
             x = args[0].dimvalue(1)
@@ -1309,8 +1309,10 @@ class Axes3D(Axes):
             vectors to draw, in increasing order.
         :param cmap: (*string*) Color map string.
         :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-        :param length: (*float*) The length of each quiver, default to 1.0, the unit is 
+        :param scale: (*float*) The length scale of each quiver, default to 1.0, the unit is
             the same with the axes.
+        :param headwidth: (*float*) Arrow head width, default is 1.
+        :param headlength: (*float*) Arrow head length, default is 2.5.
         
         :returns: (*Graphic list*) Created quiver graphics.
         """
@@ -1375,9 +1377,14 @@ class Axes3D(Axes):
 
     def geoshow(self, layer, **kwargs):
         '''
-        Plot a layer in 3D axes.
+        Plot a layer map in 3D axes.
 
-        :param layer: (*MILayer*) The layer to be plotted.
+        :param layer: (*str or MILayer*) The layer to be plotted.
+        :param offset: (*float*) Location on z axis.
+        :param xshift: (*float*) X coordinate shift.
+        :param facecolor: (*color*) Face color.
+        :param edgecolor: (*color*) Edge color.
+        :param linewidth: (*float*) Line width.
 
         :returns: Graphics.
         '''
@@ -1514,6 +1521,8 @@ class Axes3D(Axes):
         :param z: (*float*) Z coordinate.
         :param s: (*string*) Text string.
         :param zdir: Z direction.
+
+        :return: 3D text graphics
         '''
         fontname = kwargs.pop('fontname', 'Arial')
         fontsize = kwargs.pop('fontsize', 14)

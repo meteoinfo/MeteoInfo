@@ -3315,7 +3315,7 @@ class Axes(object):
         :param Y: (*float*) The location y of the key.
         :param U: (*float*) The length of the key.
         :param label: (*string*) A string with the length and units of the key.
-        :param coordinates=['axes'|'figure'|'data']: (*string*) Coordinate system and units for 
+        :param coordinates=['axes'|'figure'|'data']: (*string*) Default: 'axes'. Coordinate system and units for
             *X, Y*. 'axes' and 'figure' are normalized coordinate system with 0,0 in the lower left and 
             1,1 in the upper right, 'data' are the axes data coordinates (used for the locations of the 
             vectors in the quiver plot itself).
@@ -3336,15 +3336,18 @@ class Axes(object):
             wa.setLayer(Q.layer)
         else:
             wa.setLayer(Q)
-        X = args[1]
-        Y = args[2]
-        wa.setX(X)
-        wa.setY(Y)
-        U = args[3]
-        wa.setLength(U)
+        x = args[1]
+        y = args[2]
+        wa.setX(x)
+        wa.setY(y)
+        u = args[3]
+        wa.setLength(u)
         if len(args) == 5:
             label = args[4]
             wa.setLabel(label)
+
+        coordinates = kwargs.pop('coordinates', 'axes')
+        wa.setCoordinates(coordinates)
         arrowbreak, isunique = plotutil.getlegendbreak('point', **kwargs)
         arrowbreak = plotutil.point2arrow(arrowbreak, **kwargs)
         wa.setArrowBreak(arrowbreak)

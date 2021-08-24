@@ -478,7 +478,8 @@ public class Chart {
                 if (plot instanceof MapPlot) {
                     ((MapPlot) plot).setAntialias(this.antiAlias);
                 }
-                plot.draw(g, plotArea);
+                //plot.draw(g, plotArea);
+                plot.draw(g, area);
             }
         }
 

@@ -804,12 +804,7 @@ public abstract class AbstractPlot2D extends Plot {
         this.drawLegend(g, area, graphArea);
 
         //Draw wind arrow - quiverkey
-        if (this.getWindArrow() != null) {
-            ChartWindArrow wa = this.getWindArrow();
-            float x = (float) (area.getWidth() * wa.getX());
-            float y = (float) (area.getHeight() * (1 - wa.getY()));
-            wa.draw(g, x, y);
-        }
+        this.drawWindArrow(g, area, graphArea);
     }
 
     /**
@@ -1276,6 +1271,29 @@ public abstract class AbstractPlot2D extends Plot {
                 break;
         }
         legend.draw(g, new PointF(x, y));
+    }
+
+    private void drawWindArrow(Graphics2D g, Rectangle2D area, Rectangle2D graphArea) {
+        if (this.getWindArrow() != null) {
+            ChartWindArrow wa = this.getWindArrow();
+            float x = 0, y = 0;
+            switch (wa.getCoordinate()) {
+                case FIGURE:
+                    x = (float) (area.getX() + area.getWidth() * wa.getX());
+                    y = (float) (area.getY() + area.getHeight() * (1 - wa.getY()));
+                    break;
+                case AXES:
+                    x = (float) (graphArea.getX() + graphArea.getWidth() * wa.getX());
+                    y = (float) (graphArea.getY() + graphArea.getHeight() * (1 - wa.getY()));
+                    break;
+                case DATA:
+                    double[] xy = this.projToScreen(wa.getX(), wa.getY(), graphArea);
+                    x = (float) (graphArea.getX() + xy[0]);
+                    y = (float) (graphArea.getY() + xy[1]);
+                    break;
+            }
+            wa.draw(g, x, y);
+        }
     }
 
     /**

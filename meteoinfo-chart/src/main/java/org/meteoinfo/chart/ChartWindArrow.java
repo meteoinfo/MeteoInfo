@@ -34,6 +34,7 @@ public class ChartWindArrow {
     private Color labelColor;
     private float x;
     private float y;
+    private CoordinateType coordinates;
     private String label;
     private int labelSep;
     private Object layer;
@@ -52,6 +53,7 @@ public class ChartWindArrow {
         this.windArrow = new WindArrow();
         this.windArrow.angle = 270;
         this.windArrow.length = 20;
+        this.coordinates = CoordinateType.AXES;
         this.arrowBreak = new ArrowBreak();
         this.font = new Font("Arial", Font.PLAIN, 12);
         //this.color = Color.black;
@@ -233,6 +235,31 @@ public class ChartWindArrow {
      */
     public void setY(float value) {
         this.y = value;
+    }
+
+    /**
+     * Get coordinates
+     * @return Coordinates
+     */
+    public CoordinateType getCoordinate() {
+        return this.coordinates;
+    }
+
+    /**
+     * Set coordinates
+     * @param value Coordinates
+     */
+    public void setCoordinates(CoordinateType value) {
+        this.coordinates = value;
+    }
+
+    /**
+     * Set coordinates
+     *
+     * @param value Coordinates
+     */
+    public void setCoordinates(String value) {
+        this.coordinates = CoordinateType.valueOf(value.toUpperCase());
     }
 
     /**

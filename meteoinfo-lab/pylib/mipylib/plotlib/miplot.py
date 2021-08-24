@@ -47,7 +47,7 @@ __all__ = [
     'grid','gridshow','gridshowm','hist','imshow','imshowm','isosurface','legend','left_title','lighting','loglog','makecolors',
     'makelegend','makesymbolspec','masklayer','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
-    'semilogx','semilogy','set','show','slice3','stationmodel','stem','stem3','step','streamplot','streamplot3',
+    'semilogx','semilogy','show','slice3','stationmodel','stem','stem3','step','streamplot','streamplot3',
     'streamplotm','streamslice','subplot','subplots','suptitle',
     'surf','taylor_diagram','text','text3','title','twinx','twiny','violinplot','volumeplot','weatherspec','xaxis',
     'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
@@ -2127,27 +2127,27 @@ def colorbar(mappable=None, **kwargs):
     cax.colorbar(mappable, **kwargs)
     draw_if_interactive()
 
-def set(obj, **kwargs):
-    '''
-    Set properties to an object. Used to change the plot parameters.
-    '''
-    if isinstance(obj, Axes):
-        xminortick = kwargs.pop('xminortick', None)
-        if not xminortick is None:
-            locs = [Location.BOTTOM, Location.TOP]
-            for loc in locs:
-                axis = obj.axes.getAxis(loc)
-                axis.setMinorTickVisible(xminortick)
-        yminortick = kwargs.pop('yminortick', None)
-        if not yminortick is None:
-            locs = [Location.LEFT, Location.RIGHT]
-            for loc in locs:
-                axis = obj.axes.getAxis(loc)
-                axis.setMinorTickVisible(yminortick)
-        tickin = kwargs.pop('tickin', None)
-        if not tickin is None:
-            obj.axes.setInsideTick(tickin)
-    draw_if_interactive()
+# def set(obj, **kwargs):
+#     '''
+#     Set properties to an object. Used to change the plot parameters.
+#     '''
+#     if isinstance(obj, Axes):
+#         xminortick = kwargs.pop('xminortick', None)
+#         if not xminortick is None:
+#             locs = [Location.BOTTOM, Location.TOP]
+#             for loc in locs:
+#                 axis = obj.axes.getAxis(loc)
+#                 axis.setMinorTickVisible(xminortick)
+#         yminortick = kwargs.pop('yminortick', None)
+#         if not yminortick is None:
+#             locs = [Location.LEFT, Location.RIGHT]
+#             for loc in locs:
+#                 axis = obj.axes.getAxis(loc)
+#                 axis.setMinorTickVisible(yminortick)
+#         tickin = kwargs.pop('tickin', None)
+#         if not tickin is None:
+#             obj.axes.setInsideTick(tickin)
+#     draw_if_interactive()
 
 def imshow(*args, **kwargs):
     """

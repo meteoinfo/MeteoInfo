@@ -2,10 +2,13 @@
 multiarray module
 """
 
+from org.meteoinfo.ndarray.math import ArrayMath
+
+from ._ndarray import NDArray
 from .fromnumeric import nonzero
 from ._exceptions import AxisError
 
-__all__ = ['normalize_axis_index','where']
+__all__ = ['normalize_axis_index','where','bincount']
 
 def normalize_axis_index(axis, ndim, msg_prefix=None):
     """
@@ -41,3 +44,20 @@ def where(condition):
     :returns: (*tuple*) Indices of elements that are non-zero.
     '''
     return nonzero(condition)
+
+def bincount(x, weights=None, minlength=0):
+    """
+    Count number of occurrences of each value in array of non-negative ints.
+
+    :param x: (*array_like*) 1 dimension, nonnegative ints array.
+    :param weights: (*array_like*) Optional, weights, array of the same shape as x.
+    :param minlength: (*int*) A minimum number of bins for the output array.
+
+    :return: The result of binning the input array. The length of out is equal to ``max(x)+1``.
+    """
+    if weights is None:
+        r = ArrayMath.binCount(x._array)
+    else:
+        r = ArrayMath.binCount(x._array, weights._array)
+
+    return NDArray(r)

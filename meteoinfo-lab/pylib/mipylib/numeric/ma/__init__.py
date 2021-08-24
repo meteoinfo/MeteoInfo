@@ -1,1 +1,3 @@
-from .core import masked_array, MaskedArray
+from .core import *
+
+__all__ = core.__all__

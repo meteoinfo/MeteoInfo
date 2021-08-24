@@ -6462,6 +6462,46 @@ public class ArrayMath {
     }
 
     /**
+     * Count number of occurrences of each value in array of non-negative ints
+     *
+     * @param a The array
+     * @return The result of binning the input array
+     */
+    public static Array binCount(Array a) {
+        int max = (int) getMaximum(a);
+        Array r = Array.factory(DataType.INT, new int[]{max + 1});
+        IndexIterator iter = a.getIndexIterator();
+        int i;
+        while (iter.hasNext()) {
+            i = iter.getIntNext();
+            r.setInt(i, r.getInt(i) + 1);
+        }
+
+        return r;
+    }
+
+    /**
+     * Count number of occurrences of each value in array of non-negative ints
+     *
+     * @param a The array
+     * @param weights The weights
+     * @return The result of binning the input array
+     */
+    public static Array binCount(Array a, Array weights) {
+        int max = (int) getMaximum(a);
+        Array r = Array.factory(DataType.DOUBLE, new int[]{max + 1});
+        IndexIterator iter = a.getIndexIterator();
+        IndexIterator wIter = weights.getIndexIterator();
+        int i;
+        while (iter.hasNext()) {
+            i = iter.getIntNext();
+            r.setDouble(i, r.getDouble(i) + wIter.getDoubleNext());
+        }
+
+        return r;
+    }
+
+    /**
      * Produce array
      *
      * @param a Array a

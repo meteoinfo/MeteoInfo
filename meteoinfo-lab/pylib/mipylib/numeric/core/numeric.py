@@ -91,12 +91,16 @@ def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
               [3.0, 4.0]])
     """
     if isinstance(object, NDArray):
-        a = object
+        if copy:
+            a = object.copy()
+        else:
+            a = object
     elif isinstance(object, Array):
         a = NDArray(object)
     elif isinstance(object, PyComplex):
         a = NDArray(JythonUtil.toComplexArray(object))
     else:
+        a = None
         if isinstance(object, (list, tuple)):
             if len(object) > 0:
                 if isinstance(object[0], datetime.datetime):
@@ -109,10 +113,12 @@ def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
 
         if isinstance(dtype, basestring):
             dtype = _dtype.DataType(dtype)
+
         if not dtype is None:
             dtype = dtype._dtype
 
-        a = NDArray(ArrayUtil.array(object, dtype))
+        if a is None:
+            a = NDArray(ArrayUtil.array(object, dtype))
 
     if a.ndim < ndmin:
         shape = []
@@ -162,7 +168,7 @@ def datatable(data=None):
     '''
     return PyTableData(data)   
     
-def arange(*args):
+def arange(*args, **kwargs):
     """
     Return evenly spaced values within a given interval
     
@@ -204,7 +210,12 @@ def arange(*args):
         start = args[0]
         stop = args[1]
         step = args[2]
-    return NDArray(ArrayUtil.arrayRange(start, stop, step))
+    r = NDArray(ArrayUtil.arrayRange(start, stop, step))
+    dtype = kwargs.pop('dtype', None)
+    if not dtype is None:
+        r = r.astype(dtype)
+
+    return r
     
 def arange1(start, num=50, step=1):
     """
@@ -1663,7 +1674,7 @@ def isinf(x):
     '''
     Test element-wise for positive or negative infinity.
 
-    :param a: (*array_like*) Input array.
+    :param x: (*array_like*) Input array.
 
     :returns: (*array*) True where x is positive or negative infinity, false otherwise. This is a scalar if x
         is a scalar.
@@ -1671,15 +1682,15 @@ def isinf(x):
     if isinstance(x, (list, tuple)):
         x = array(x)
     if isarray(x):
-        return ArrayMath.isInfinite(x._array)
+        return NDArray(ArrayMath.isInfinite(x._array))
     else:
-        return Double.isInfinite(a)
+        return Double.isInfinite(x)
 
 def isfinite(x):
     '''
     Test element-wise for finiteness (not infinity or not Not a Number).
 
-    :param a: (*array_like*) Input array.
+    :param x: (*array_like*) Input array.
 
     :returns: (*array*) True where x is not positive infinity, negative infinity, or NaN; false otherwise. This is a
         scalar if x is a scalar.
@@ -1687,9 +1698,9 @@ def isfinite(x):
     if isinstance(x, (list, tuple)):
         x = array(x)
     if isarray(x):
-        return ArrayMath.isFinite(x._array)
+        return NDArray(ArrayMath.isFinite(x._array))
     else:
-        return Double.isFinite(a)
+        return Double.isFinite(x)
 
 def delnan(a):
     '''

@@ -24,6 +24,7 @@ import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.MAMath;
 import org.meteoinfo.ndarray.Range;
+import smile.math.special.Erf;
 
 /**
  *
@@ -123,7 +124,59 @@ public class StatsUtil {
      * @param y Y data
      * @return Kendall's tau correlation.
      */
-    public static double kendalltau(Array x, Array y) {
+    public static double[] kendalltau(Array x, Array y) {
+        x = x.copyIfView();
+        y = y.copyIfView();
+
+        int is = 0, n2 = 0, n1 = 0, n = (int) x.getSize();
+        double aa, a2, a1;
+        for (int j = 0; j < n - 1; j++) {
+            for (int k = j + 1; k < n; k++) {
+                a1 = x.getDouble(j) - x.getDouble(k);
+                a2 = y.getDouble(j) - y.getDouble(k);
+                aa = a1 * a2;
+                if (aa != 0.0) {
+                    ++n1;
+                    ++n2;
+                    if (aa > 0)
+                        ++is;
+                    else
+                        --is;
+
+                } else {
+                    if (a1 != 0.0) ++n1;
+                    if (a2 != 0.0) ++n2;
+                }
+            }
+        }
+
+        double tau = is / (Math.sqrt(n1) * Math.sqrt(n2));
+
+        // Kendall test is non-parametric as it does not rely on any
+        // assumptions on the distributions of X or Y or the distribution
+        // of (X,Y).
+
+        // Under the null hypothesis of independence of X and Y, the sampling
+        // distribution of tau has an expected value of zero. The precise
+        // distribution cannot be characterized in terms of common distributions,
+        // but may be calculated exactly for small samples. For larger samples,
+        // it is common to use an approximation to the normal distribution,
+        // with mean zero and variance sqrt(2(2n+5)/9n(n-1)).
+        double var = (4.0 * n + 10.0) / (9.0 * n * (n - 1.0));
+        double z = tau / Math.sqrt(var);
+        double pvalue = Erf.erfcc(Math.abs(z) / 1.4142136);
+
+        return new double[]{tau, pvalue};
+    }
+
+    /**
+     * Calculates Kendall's tau, a correlation measure for ordinal data.
+     *
+     * @param x X data
+     * @param y Y data
+     * @return Kendall's tau correlation.
+     */
+    public static double kendalltau_bak(Array x, Array y) {
         double[] xd = (double[]) ArrayUtil.copyToNDJavaArray_Double(x);
         double[] yd = (double[]) ArrayUtil.copyToNDJavaArray_Double(y);
         KendallsCorrelation kc = new KendallsCorrelation();
@@ -233,7 +286,7 @@ public class StatsUtil {
      * @param y Y data
      * @return Spearman's rank correlation
      */
-    public static Array spearmanr(Array x, Array y) {
+    public static double[] spearmanr(Array x, Array y) {
         x = x.copyIfView();
         y = y.copyIfView();
 
@@ -253,7 +306,7 @@ public class StatsUtil {
         }
         RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
         SpearmansCorrelation cov = new SpearmansCorrelation(matrix);
-        RealMatrix mcov = cov.getCorrelationMatrix();
+        /*RealMatrix mcov = cov.getCorrelationMatrix();
         m = mcov.getColumnDimension();
         n = mcov.getRowDimension();
         Array r = Array.factory(DataType.DOUBLE, new int[]{m, n});
@@ -261,9 +314,11 @@ public class StatsUtil {
             for (int j = 0; j < n; j++) {
                 r.setDouble(i * n + j, mcov.getEntry(i, j));
             }
-        }
+        }*/
+        double r = cov.getCorrelationMatrix().getEntry(0, 1);
+        double pValue =cov.getRankCorrelation().getCorrelationPValues().getEntry(0, 1);
 
-        return r;
+        return new double[]{r, pValue};
     }
 
     /**

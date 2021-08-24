@@ -11,11 +11,41 @@ from org.meteoinfo.ndarray.math import ArrayMath
 from org.meteoinfo.ndarray import Array
 
 from ..core import numeric as np
+from collections import namedtuple
+import warnings
 
 __all__ = [
     'chi2_contingency','chisquare','covariance','cov','pearsonr','spearmanr','kendalltau',
     'linregress','mlinregress','percentile','ttest_1samp', 'ttest_ind','ttest_rel','taylor_stats'
     ]
+
+def _contains_nan(a, nan_policy='propagate'):
+    policies = ['propagate', 'raise', 'omit']
+    if nan_policy not in policies:
+        raise ValueError("nan_policy must be one of {%s}" %
+                         ', '.join("'%s'" % s for s in policies))
+    try:
+        # Calling np.sum to avoid creating a huge array into memory
+        # e.g. np.isnan(a).any()
+        contains_nan = a.contains_nan()
+    except TypeError:
+        # This can happen when attempting to sum things which are not
+        # numbers (e.g. as in the function `mode`). Try an alternative method:
+        try:
+            contains_nan = np.nan in set(a.ravel())
+        except TypeError:
+            # Don't know what to do. Fall back to omitting nan values and
+            # issue a warning.
+            contains_nan = False
+            nan_policy = 'omit'
+            warnings.warn("The input array could not be properly "
+                          "checked for nan values. nan values "
+                          "will be ignored.", RuntimeWarning)
+
+    if contains_nan and nan_policy == 'raise':
+        raise ValueError("The input contains nan values")
+
+    return contains_nan, nan_policy
 
 def covariance(x, y, bias=False):
     '''
@@ -102,9 +132,11 @@ def pearsonr(x, y, axis=None):
     else:
         r = StatsUtil.pearsonr(x.asarray(), y.asarray(), axis)
         return np.array(r[0]), np.array(r[1])
-    
-def kendalltau(x, y):
-    '''
+
+KendalltauResult = namedtuple('KendalltauResult', ('correlation', 'pvalue'))
+
+def kendalltau(x, y, nan_policy='propagate', method='auto', variant='b'):
+    """
     Calculates Kendall's tau, a correlation measure for ordinal data.
     
     Kendall's tau is a measure of the correspondence between two rankings.
@@ -115,6 +147,17 @@ def kendalltau(x, y):
     
     :param x: (*array_like*) x data array.
     :param y: (*array_like*) y data array.
+    :param non_policy: (*str*) {'auto', 'asymptotic', 'exact'}, optional
+        Defines which method is used to calculate the p-value [5]_.
+        The following options are available (default is 'auto'):
+          * 'auto': selects the appropriate method based on a trade-off
+            between speed and accuracy
+          * 'asymptotic': uses a normal approximation valid for large samples
+          * 'exact': computes the exact p-value, but can only be used if no ties
+            are present. As the sample size increases, the 'exact' computation
+            time may grow and the result may lose some precision.
+    :param variant: (*str*) {'b', 'c'}, optional
+        Defines which variant of Kendall's tau is returned. Default is 'b'.
     
     :returns: Correlation.
     
@@ -137,13 +180,39 @@ def kendalltau(x, y):
     .. [4] Peter M. Fenwick, "A new data structure for cumulative frequency
            tables", Software: Practice and Experience, Vol. 24, No. 3,
            pp. 327-336, 1994.
-    '''
-    if isinstance(x, list):
-        x = np.array(x)
-    if isinstance(y, list):
-        y = np.array(y)
+    .. [5] Maurice G. Kendall, "Rank Correlation Methods" (4th Edition),
+           Charles Griffin & Co., 1970.
+    """
+    x = np.asarray(x).ravel()
+    y = np.asarray(y).ravel()
+
+    # if x.size != y.size:
+    #     raise ValueError("All inputs to `kendalltau` must be of the same "
+    #                      f"size, found x-size {x.size} and y-size {y.size}")
+    # elif not x.size or not y.size:
+    #     # Return NaN if arrays are empty
+    #     return KendalltauResult(np.nan, np.nan)
+    #
+    # # check both x and y
+    # cnx, npx = _contains_nan(x, nan_policy)
+    # cny, npy = _contains_nan(y, nan_policy)
+    # contains_nan = cnx or cny
+    # if npx == 'omit' or npy == 'omit':
+    #     nan_policy = 'omit'
+    # elif contains_nan and nan_policy == 'omit':
+    #     x = ma.masked_invalid(x)
+    #     y = ma.masked_invalid(y)
+    #     if variant == 'b':
+    #         return mstats_basic.kendalltau(x, y, method=method, use_ties=True)
+    #     else:
+    #         raise ValueError("Only variant 'b' is supported for masked arrays")
+    #
+    # if isinstance(x, list):
+    #     x = np.array(x)
+    # if isinstance(y, list):
+    #     y = np.array(y)
     r = StatsUtil.kendalltau(x.asarray(), y.asarray())
-    return r
+    return r[0], r[1]
 
 def spearmanr(m, y=None, axis=0):
     '''
@@ -181,7 +250,7 @@ def spearmanr(m, y=None, axis=0):
         if axis == 1 and y.ndim == 2:
             y = y.T
         r = StatsUtil.spearmanr(m.asarray(), y.asarray())
-        return np.array(r)
+        return r[0], r[1]
         
 def linregress(x, y, outvdn=False):
     '''

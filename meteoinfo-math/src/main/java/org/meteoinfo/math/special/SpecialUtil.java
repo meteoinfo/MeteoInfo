@@ -1,5 +1,6 @@
 package org.meteoinfo.math.special;
 
+import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.special.Gamma;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.meteoinfo.ndarray.Array;
@@ -83,5 +84,57 @@ public class SpecialUtil {
         }
 
         return y;
+    }
+
+    /**
+     * Returns the error function of complex argument.
+     * It is defined as 2/sqrt(pi)*integral(exp(-t**2), t=0..z).
+     * @param x Value
+     * @return Error function
+     */
+    public static double erf(double x) {
+        return Erf.erf(x);
+    }
+
+    /**
+     * Returns the error function of complex argument.
+     * It is defined as 2/sqrt(pi)*integral(exp(-t**2), t=0..z).
+     * @param x Value array
+     * @return Error function
+     */
+    public static Array erf(Array x) {
+        Array r = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator rIter = r.getIndexIterator();
+        while(xIter.hasNext()) {
+            rIter.setDoubleNext(Erf.erf(xIter.getDoubleNext()));
+        }
+
+        return r;
+    }
+
+    /**
+     * Complementary error function, 1 - erf(x)
+     * @param x Value
+     * @return Complementary error function
+     */
+    public static double erfc(double x) {
+        return Erf.erfc(x);
+    }
+
+    /**
+     * Complementary error function, 1 - erf(x)
+     * @param x Value array
+     * @return Complementary error function
+     */
+    public static Array erfc(Array x) {
+        Array r = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator rIter = r.getIndexIterator();
+        while(xIter.hasNext()) {
+            rIter.setDoubleNext(Erf.erfc(xIter.getDoubleNext()));
+        }
+
+        return r;
     }
 }

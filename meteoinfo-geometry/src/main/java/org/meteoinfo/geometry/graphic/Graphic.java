@@ -90,7 +90,6 @@ package org.meteoinfo.geometry.graphic;
      public void setLegend(ColorBreak legend) {
          _legend = legend;
          updateResizeAbility();
-         updateResizeAbility();
      }
 
      /**

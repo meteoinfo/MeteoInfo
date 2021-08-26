@@ -10,6 +10,7 @@ import numbers
 
 from org.meteoinfo.data.mapdata.geotiff import GeoTiff
 from org.meteoinfo.geometry.shape import ShapeUtil, PolygonShape
+from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.geometry.legend import BreakTypes
 from org.meteoinfo.geometry.geoprocess import GeoComputation, GeometryUtil
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
@@ -315,8 +316,8 @@ def maskout(data, mask, x=None, y=None):
     :returns: (*array_like*) Maskouted data array.
     """
     if mask is None:
-        return data        
-    elif isinstance(mask, (NDArray, DimArray)):
+        return data
+    elif isinstance(mask, NDArray):
         r = ArrayMath.maskout(data.asarray(), mask.asarray())
         if isinstance(data, DimArray):
             return DimArray(r, data.dims, data.fill_value, data.proj)
@@ -330,8 +331,14 @@ def maskout(data, mask, x=None, y=None):
         else:
             return None
 
-    if not isinstance(mask, (list, ArrayList)):
+    if not isinstance(mask, (list, tuple, ArrayList)):
+        if isinstance(mask, Graphic):
+            mask = mask.getShape()
         mask = [mask]
+    else:
+        for i in range(len(mask)):
+            if isinstance(mask[i], Graphic):
+                mask[i] = mask[i].getShape()
         
     if data.ndim == 2 and x.ndim == 1 and y.ndim == 1:
         x, y = np.meshgrid(x, y)

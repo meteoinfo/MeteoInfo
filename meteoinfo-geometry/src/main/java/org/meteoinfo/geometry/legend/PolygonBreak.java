@@ -42,6 +42,7 @@ package org.meteoinfo.geometry.legend;
       */
      public PolygonBreak() {
          super();
+         this.color = Color.cyan;
          this.breakType = BreakTypes.POLYGON_BREAK;
          outlineColor = Color.black;
          outlineSize = 1.0f;

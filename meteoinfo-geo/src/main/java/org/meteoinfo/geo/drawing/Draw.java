@@ -14,6 +14,7 @@
 package org.meteoinfo.geo.drawing;
 
 import org.meteoinfo.common.*;
+import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.geoprocess.Spline;
 import org.meteoinfo.common.colors.ColorUtil;
@@ -2459,7 +2460,11 @@ public class Draw {
                 drawPolygonShape(pgs, (PolygonBreak) aGraphic.getLegend(), g);
                 break;
             case RECTANGLE:
-                drawPolygon(points, (PolygonBreak) aGraphic.getLegend(), g);
+                //drawPolygon(points, (PolygonBreak) aGraphic.getLegend(), g);
+                Extent extent = GeometryUtil.getExtent(points);
+                drawRectangle(new PointF((float)extent.minX, (float)extent.minY),
+                        (float)extent.getWidth(), (float)extent.getHeight(),
+                        (PolygonBreak) aGraphic.getLegend(), g);
                 break;
             case CURVE_LINE:
                 drawCurveLine(points, (PolylineBreak) aGraphic.getLegend(), g);

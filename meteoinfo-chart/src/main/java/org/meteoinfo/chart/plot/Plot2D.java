@@ -323,6 +323,12 @@ public class Plot2D extends AbstractPlot2D {
                     case RECTANGLE:
                         this.drawRectangle(g, (RectangleShape) shape, (PolygonBreak) cb, false, area);
                         break;
+                    case CIRCLE:
+                        this.drawCircle(g, (CircleShape) shape, (PolygonBreak) cb, false, area);
+                        break;
+                    case ELLIPSE:
+                        this.drawEllipse(g, (EllipseShape) shape, (PolygonBreak) cb, false, area);
+                        break;
                     case ARC:
                         this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb, area);
                         break;
@@ -872,6 +878,96 @@ public class Plot2D extends AbstractPlot2D {
             g.setStroke(pen);
             g.setColor(aPGB.getOutlineColor());
             g.draw(rshape);
+        }
+    }
+
+    private void drawCircle(Graphics2D g, CircleShape rs, PolygonBreak aPGB,
+                               boolean isSelected, Rectangle2D area) {
+        Extent extent = rs.getExtent();
+        double[] sXY;
+        sXY = projToScreen(extent.minX, extent.minY + extent.getHeight(), area);
+        double x = sXY[0];
+        double y = sXY[1];
+        double width = this.projXLength(extent.getWidth(), area);
+        java.awt.Shape shape = new Ellipse2D.Double(x, y, width, width);
+
+        if (aPGB.isDrawFill()) {
+            Color aColor = aPGB.getColor();
+            if (isSelected) {
+                aColor = this.getSelectedColor();
+            }
+            if (aPGB.isUsingHatchStyle()) {
+                int size = aPGB.getStyleSize();
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
+                g.setPaint(new TexturePaint(bi, rect));
+                g.fill(shape);
+            } else {
+                g.setColor(aColor);
+                g.fill(shape);
+            }
+        } else if (isSelected) {
+            g.setColor(this.getSelectedColor());
+            g.fill(shape);
+        }
+
+        if (aPGB.isDrawOutline()) {
+            BasicStroke pen = new BasicStroke(aPGB.getOutlineSize());
+            g.setStroke(pen);
+            g.setColor(aPGB.getOutlineColor());
+            g.draw(shape);
+        }
+    }
+
+    private void drawEllipse(Graphics2D g, EllipseShape rs, PolygonBreak aPGB,
+                            boolean isSelected, Rectangle2D area) {
+        Extent extent = rs.getExtent();
+        double[] sXY;
+        sXY = projToScreen(extent.minX, extent.minY + extent.getHeight(), area);
+        double x = sXY[0];
+        double y = sXY[1];
+        double width = this.projXLength(extent.getWidth(), area);
+        double height = this.projYLength(extent.getHeight(), area);
+        java.awt.Shape shape = new Ellipse2D.Double(x, y, width, height);
+
+        AffineTransform atf = g.getTransform();
+        if (rs.getAngle() != 0) {
+            AffineTransform newATF = (AffineTransform) atf.clone();
+            newATF.translate(x + width / 2, y + height / 2);
+            newATF.rotate(Math.toRadians(rs.getAngle()));
+            g.setTransform(newATF);
+            shape = new Ellipse2D.Double(-width * 0.5, -height * 0.5, width, height);
+        }
+
+        if (aPGB.isDrawFill()) {
+            Color aColor = aPGB.getColor();
+            if (isSelected) {
+                aColor = this.getSelectedColor();
+            }
+            if (aPGB.isUsingHatchStyle()) {
+                int size = aPGB.getStyleSize();
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
+                g.setPaint(new TexturePaint(bi, rect));
+                g.fill(shape);
+            } else {
+                g.setColor(aColor);
+                g.fill(shape);
+            }
+        } else if (isSelected) {
+            g.setColor(this.getSelectedColor());
+            g.fill(shape);
+        }
+
+        if (aPGB.isDrawOutline()) {
+            BasicStroke pen = new BasicStroke(aPGB.getOutlineSize());
+            g.setStroke(pen);
+            g.setColor(aPGB.getOutlineColor());
+            g.draw(shape);
+        }
+
+        if (rs.getAngle() != 0) {
+            g.setTransform(atf);
         }
     }
     

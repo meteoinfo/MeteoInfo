@@ -1494,6 +1494,67 @@ public class GraphicFactory {
     }
 
     /**
+     * Create a polygon
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param pgb PolygonBreak
+     * @return Graphic
+     */
+    public static Graphic createPolygon(Array xa, Array ya, PolygonBreak pgb) {
+        double x, y;
+        int n = (int) xa.getSize();
+        PolygonShape pgs;
+        PointD p;
+        List<PointD> points = new ArrayList<>();
+        IndexIterator xIter = xa.getIndexIterator();
+        IndexIterator yIter = ya.getIndexIterator();
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            p = new PointD(x, y);
+            points.add(p);
+        }
+        if (points.size() > 2) {
+            pgs = new PolygonShape();
+            pgs.setPoints(points);
+            Graphic graphic = new Graphic(pgs, pgb);
+            return graphic;
+        }
+        return null;
+    }
+
+    /**
+     * Create a polygon
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param pgb PolygonBreak
+     * @return Graphic
+     */
+    public static Graphic createPolygon(Array xy, PolygonBreak pgb) {
+        double x, y;
+        int n = xy.getShape()[0];
+        PolygonShape pgs;
+        PointD p;
+        List<PointD> points = new ArrayList<>();
+        IndexIterator iter = xy.getIndexIterator();
+        while (iter.hasNext()){
+            x = iter.getDoubleNext();
+            y = iter.getDoubleNext();
+            p = new PointD(x, y);
+            points.add(p);
+        }
+        if (points.size() > 2) {
+            pgs = new PolygonShape();
+            pgs.setPoints(points);
+            Graphic graphic = new Graphic(pgs, pgb);
+            return graphic;
+        }
+        return null;
+    }
+
+    /**
      * Add polygons
      *
      * @param xa X coordinate array

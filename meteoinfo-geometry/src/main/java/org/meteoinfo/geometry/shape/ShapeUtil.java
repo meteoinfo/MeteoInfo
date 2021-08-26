@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.IndexIterator;
 
 /**
  *
@@ -299,6 +302,63 @@ public class ShapeUtil {
         ps.setPoints(points);
 
         return ps;
+    }
+
+    /**
+     * Create a polygon
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @return PolygonShape
+     */
+    public static PolygonShape createPolygon(Array xa, Array ya) {
+        double x, y;
+        int n = (int) xa.getSize();
+        PolygonShape pgs;
+        PointD p;
+        List<PointD> points = new ArrayList<>();
+        IndexIterator xIter = xa.getIndexIterator();
+        IndexIterator yIter = ya.getIndexIterator();
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            p = new PointD(x, y);
+            points.add(p);
+        }
+        if (points.size() > 2) {
+            pgs = new PolygonShape();
+            pgs.setPoints(points);
+            return pgs;
+        }
+        return null;
+    }
+
+    /**
+     * Create a polygon
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @return PolygonShape
+     */
+    public static PolygonShape createPolygonShape(Array xy) {
+        double x, y;
+        int n = xy.getShape()[0];
+        PolygonShape pgs;
+        PointD p;
+        List<PointD> points = new ArrayList<>();
+        IndexIterator iter = xy.getIndexIterator();
+        while (iter.hasNext()){
+            x = iter.getDoubleNext();
+            y = iter.getDoubleNext();
+            p = new PointD(x, y);
+            points.add(p);
+        }
+        if (points.size() > 2) {
+            pgs = new PolygonShape();
+            pgs.setPoints(points);
+            return pgs;
+        }
+        return null;
     }
     
     /**

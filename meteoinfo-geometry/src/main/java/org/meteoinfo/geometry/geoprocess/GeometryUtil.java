@@ -13,6 +13,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointF;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.ndarray.*;
 
@@ -142,11 +143,12 @@ public class GeometryUtil {
         double minz = p.Z;
         double maxz = p.Z;
         for (int i = 1; i < points.length; i++) {
+            p = points[i];
             if (minx > p.X) {
-                minx = p.M;
+                minx = p.X;
             }
             if (maxx < p.X) {
-                maxx = p.M;
+                maxx = p.X;
             }
             if (miny > p.Y) {
                 miny = p.Y;
@@ -169,6 +171,43 @@ public class GeometryUtil {
         extent.maxY = maxy;
         extent.minZ = minz;
         extent.maxZ = maxz;
+
+        return extent;
+    }
+
+    /**
+     * Get extent of the points
+     *
+     * @param points
+     * @return Extent
+     */
+    public static Extent getExtent(PointF[] points) {
+        PointF p = points[0];
+        double minx = p.X;
+        double maxx = p.X;
+        double miny = p.Y;
+        double maxy = p.Y;
+        for (int i = 1; i < points.length; i++) {
+            p = points[i];
+            if (minx > p.X) {
+                minx = p.X;
+            }
+            if (maxx < p.X) {
+                maxx = p.X;
+            }
+            if (miny > p.Y) {
+                miny = p.Y;
+            }
+            if (maxy < p.Y) {
+                maxy = p.Y;
+            }
+        }
+
+        Extent extent = new Extent();
+        extent.minX = minx;
+        extent.maxX = maxx;
+        extent.minY = miny;
+        extent.maxY = maxy;
 
         return extent;
     }

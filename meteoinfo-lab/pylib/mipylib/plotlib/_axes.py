@@ -929,6 +929,15 @@ class Axes(object):
         Reverse y axis.
         '''
         self.axes.getYAxis().setInverse(True)
+
+    def add_patch(self, patch):
+        """
+        Add a patch.
+
+        :param patch: (*Graphic*) The patch to be added.
+        """
+        self.axes.addGraphic(patch)
+        self.axes.setAutoExtent()
     
     def add_graphic(self, graphic):
         '''

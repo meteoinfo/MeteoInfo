@@ -27,6 +27,7 @@ public class RectangleShape extends PolygonShape {
     private boolean round = false;
     private double roundX = 0;
     private double roundY = 0;
+    private double angle = 0;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -99,6 +100,22 @@ public class RectangleShape extends PolygonShape {
     public void setRoundY(double value){
         this.roundY = value;
         this.round = true;
+    }
+
+    /**
+     * Get angle
+     * @return Angle
+     */
+    public double getAngle() {
+        return this.angle;
+    }
+
+    /**
+     * Set angle
+     * @param value Angle
+     */
+    public void setAngle(double value) {
+        this.angle = value;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

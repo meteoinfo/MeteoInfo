@@ -734,7 +734,7 @@ public class ArrayUtil {
                 }
             }
             if (dt == null)
-                dt = ArrayUtil.objectsToType((List) d0);
+                dt = ArrayUtil.objectsToType(data);
             int ndim = dims.size();
             int[] shape = dims.stream().mapToInt(Integer::valueOf).toArray();
             Array a = Array.factory(dt, shape);
@@ -1472,11 +1472,16 @@ public class ArrayUtil {
         }
         short new_sz, sz = -1;
         DataType dataType = DataType.INT;
+        DataType dType;
         for (final Object o : objects) {
-            final DataType _type = ArrayMath.getDataType(o);
-            new_sz = ArrayMath.typeToNBytes(_type);
+            if (o instanceof List) {
+                dType = objectsToType((List) o);
+            } else {
+                dType = ArrayMath.getDataType(o);
+            }
+            new_sz = ArrayMath.typeToNBytes(dType);
             if (new_sz > sz) {
-                dataType = _type;
+                dataType = dType;
                 sz = new_sz;
             }
         }

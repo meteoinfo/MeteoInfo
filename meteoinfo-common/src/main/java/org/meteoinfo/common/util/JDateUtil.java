@@ -480,8 +480,41 @@ public class JDateUtil {
      * @return LocalDateTime
      */
     public static LocalDateTime parseDateTime(String dtStr, DateTimeFormatter formatter) {
+        TemporalAccessor parsed = formatter.parse(dtStr);
+        LocalDate datePart;
+        LocalTime timePart;
+        ZoneOffset zoneOffset;
+        long epochDay = 0, nanoSeconds = 0;
+        int offsetSeconds = 0;
+
+        // get different parsed parts
+        if (parsed.isSupported(ChronoField.EPOCH_DAY)) {
+            epochDay = parsed.getLong(ChronoField.EPOCH_DAY);
+        }
+        if (parsed.isSupported(ChronoField.NANO_OF_DAY)) {
+            nanoSeconds = parsed.getLong(ChronoField.NANO_OF_DAY);
+        }
+        if (parsed.isSupported(ChronoField.OFFSET_SECONDS)) {
+            offsetSeconds = parsed.get(ChronoField.OFFSET_SECONDS);
+        }
+
+        zoneOffset = ZoneOffset.ofTotalSeconds(offsetSeconds);
+        datePart = LocalDate.ofEpochDay(epochDay);
+        timePart = LocalTime.ofNanoOfDay(nanoSeconds);
+
+        return OffsetDateTime.of(datePart, timePart, zoneOffset).toLocalDateTime();
+    }
+
+    /**
+     * Parse string to LocalDateTime
+     * @param dtStr The string
+     * @param formatter DateTimeFormatter
+     * @return LocalDateTime
+     */
+    public static LocalDateTime parseDateTime_bak(String dtStr, DateTimeFormatter formatter) {
         TemporalAccessor ta = formatter.parse(dtStr);
         if (ta.isSupported(ChronoField.HOUR_OF_DAY))
+
             return LocalDateTime.from(ta);
         else {
             if (ta.isSupported(ChronoField.DAY_OF_MONTH))

@@ -12,6 +12,7 @@ import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.util.DataTypeUtil;
 
 import java.text.DecimalFormat;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -22,6 +23,7 @@ public class Column {
     protected String name;
     protected DataType dataType;
     protected String format;
+    protected DateTimeFormatter dateTimeFormatter;
     protected int formatLen;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -106,6 +108,9 @@ public class Column {
      */
     public void setFormat(String value){
         this.format = value;
+        if (this.dataType == DataType.DATE) {
+            this.dateTimeFormatter = DateTimeFormatter.ofPattern(value);
+        }
     }
     
     /**
@@ -249,8 +254,15 @@ public class Column {
     public String toString(Object o){
         if (format == null)
             return o.toString();
-        else
-            return String.format(format, o);
+        else {
+            if (this.dataType == DataType.DATE) {
+                if (this.dateTimeFormatter == null) {
+                    this.dateTimeFormatter = DateTimeFormatter.ofPattern(this.format);
+                }
+                return ((LocalDateTime) o).format(this.dateTimeFormatter);
+            } else
+                return String.format(format, o);
+        }
     }
     
     /**

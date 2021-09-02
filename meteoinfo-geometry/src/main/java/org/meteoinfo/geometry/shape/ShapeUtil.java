@@ -120,6 +120,30 @@ public class ShapeUtil {
 
         return shapes;
     }
+
+    /**
+     * Create a polyline shape
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @return Polyline shape
+     */
+    public static PolylineShape createPolylineShape(Array x, Array y) {
+        double xx, yy;
+        List<PointD> points = new ArrayList<>();
+        PolylineShape pls;
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        while (xIter.hasNext()){
+            xx = xIter.getDoubleNext();
+            yy = yIter.getDoubleNext();
+            points.add(new PointD(xx, yy));
+        }
+        pls = new PolylineShape();
+        pls.setPoints(points);
+
+        return pls;
+    }
     
     /**
      * Create polyline shapes

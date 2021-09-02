@@ -1614,7 +1614,7 @@ public class GeoTiff {
         ByteBuffer buffer = ByteBuffer.allocate(8);
         int n = channel.read(buffer);
         assert n == 8;
-        buffer.flip();
+        ((Buffer)buffer).flip();
         if (this.showHeaderBytes) {
             printBytes(System.out, "header", buffer, 4);
             buffer.rewind();
@@ -1639,7 +1639,7 @@ public class GeoTiff {
             buffer = ByteBuffer.allocate(size);
             buffer.order(this.byteOrder);
             channel.read(buffer);
-            buffer.flip();
+            ((Buffer)buffer).flip();
             firstIFD = buffer.getLong();
         }  else {
             firstIFD = buffer.getInt();
@@ -1666,7 +1666,7 @@ public class GeoTiff {
         buffer.order(this.byteOrder);
 
         int n = channel.read(buffer);
-        buffer.flip();
+        ((Buffer)buffer).flip();
         if (this.showBytes) {
             printBytes(System.out, "IFD", buffer, 2);
             buffer.rewind();
@@ -1698,7 +1698,7 @@ public class GeoTiff {
         buffer = this.bigTiff ? ByteBuffer.allocate(8) : ByteBuffer.allocate(4);
         buffer.order(this.byteOrder);
         n = channel.read(buffer);
-        buffer.flip();
+        ((Buffer)buffer).flip();
         long nextIFD = this.bigTiff ? buffer.getLong() : buffer.getInt();
         if (this.debugRead) {
             System.out.println(" nextIFD == " + nextIFD);
@@ -1723,7 +1723,7 @@ public class GeoTiff {
         ByteBuffer buffer = this.bigTiff ? ByteBuffer.allocate(20) : ByteBuffer.allocate(12);
         buffer.order(this.byteOrder);
         channel.read(buffer);
-        buffer.flip();
+        ((Buffer)buffer).flip();
         if (this.showBytes) {
             printBytes(System.out, "IFDEntry bytes", buffer, buffer.limit());
         }
@@ -1755,7 +1755,7 @@ public class GeoTiff {
             ByteBuffer vBuffer = ByteBuffer.allocate((int)ifd.count * ifd.type.size);
             vBuffer.order(this.byteOrder);
             channel.read(vBuffer);
-            vBuffer.flip();
+            ((Buffer)vBuffer).flip();
             readValues(vBuffer, ifd);
         }
 

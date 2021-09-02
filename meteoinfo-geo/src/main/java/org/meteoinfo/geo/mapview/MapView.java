@@ -4357,13 +4357,13 @@ public class MapView extends JPanel implements IWebMapPanel {
         drawProjectedMap(g, this.getWidth(), this.getHeight());
     }
 
-    private void drawProjectedMap(Graphics2D g, int width, int heigth) {
-        this.drawProjectedMap(g, width, heigth, tileLoadListener);
+    private void drawProjectedMap(Graphics2D g, int width, int height) {
+        this.drawProjectedMap(g, width, height, tileLoadListener);
     }
 
-    private void drawProjectedMap(Graphics2D g, int width, int heigth, TileLoadListener tll) {
+    private void drawProjectedMap(Graphics2D g, int width, int height, TileLoadListener tll) {
         //Draw layers
-        drawProjectedLayers(g, width, heigth, tll);
+        drawProjectedLayers(g, width, height, tll);
 
         //Draw lon/lat
         if (_drawGridLine) {
@@ -5715,46 +5715,31 @@ public class MapView extends JPanel implements IWebMapPanel {
         if (this.fixMapScale) {
             layer.setWebMapScale(this._scaleX);
             layer.setZoom(this.zoomLevel);
-        } else {            
-            zoomLevel = layer.getZoom();
+        } else {
             double webMapScale = layer.getWebMapScale();
             if (!MIMath.doubleEquals(_scaleX, webMapScale)) {
                 int minZoom = layer.getTileFactory().getInfo().getMinimumZoomLevel();
                 int maxZoom = layer.getTileFactory().getInfo().getMaximumZoomLevel();
-                //int totalZoom = layer.getTileFactory().getInfo().getTotalMapZoom();
-                int nzoom = minZoom;
-                double scale;
+                int newZoom = minZoom;
+                double scale = webMapScale;
                 for (int i = maxZoom; i >= minZoom; i--) {
-                    //int z = totalZoom - i;
-                    //double res = GeoUtil.getResolution(z, geoCenter.Y);
-                    //double scale = 1.0 / res;
-                    //layer.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X), i);
                     layer.setZoom(i);
                     scale = getWebMapScale(layer, i, width, height);
-                    if (_scaleX < scale || MIMath.doubleEquals(_scaleX, scale)) {
-                        this.setScale(scale, width, height);
-                        nzoom = i;
-                        webMapScale = scale;
-                        layer.setWebMapScale(webMapScale);
+                    if (_scaleX < scale) {
+                        newZoom = i;
+                        if (_scaleX < webMapScale) {
+                            if (i < maxZoom) {
+                                newZoom = i + 1;
+                                scale = getWebMapScale(layer, newZoom, width, height);
+                            }
+                        }
                         break;
                     }
                 }
-
-                boolean addOne = false;
-                if (zoomLevel == minZoom) {
-                    addOne = true;
-                } else if (nzoom < maxZoom) {
-                    addOne = true;
-                }
-                if (addOne) {
-                    zoomLevel = nzoom + 1;
-                    webMapScale = getWebMapScale(layer, zoomLevel, width, height);
-                    this.setScale(webMapScale, width, height);
-                    layer.setWebMapScale(webMapScale);
-                    layer.setZoom(zoomLevel);
-                } else {
-                    zoomLevel = nzoom;
-                }
+                this.setScale(scale, width, height);
+                layer.setWebMapScale(scale);
+                layer.setZoom(newZoom);
+                zoomLevel = newZoom;
             }   
             this.fixMapScale = true;
         }
@@ -5901,9 +5886,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         PointD p2 = Reproject.reprojectPoint(new PointD(pos2.getLongitude(), pos2.getLatitude()),
                 KnownCoordinateSystems.geographic.world.WGS1984, this.getProjection().getProjInfo());
         if (pos2.getLongitude() - pos1.getLongitude() < 360.0) {
-            double xlen = p2.X - p1.X;
-//        if (pos2.getLongitude() - pos1.getLongitude() > 360)
-//            xlen += 2.0037497210840166E7 * 2;
+            double xlen = Math.abs(p2.X - p1.X);
             return (double) width / xlen;
         } else {
             double ylen = Math.abs(p2.Y - p1.Y);

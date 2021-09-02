@@ -196,9 +196,9 @@ public class WebMapLayer extends MapLayer {
         }
 
         //if(zoom >= 0 && zoom <= 15 && zoom != this.zoom) {
-        int oldzoom = this.zoom;
+        int oldZoom = this.zoom;
         Point2D oldCenter = getCenter();
-        Dimension oldMapSize = getTileFactory().getMapSize(oldzoom);
+        Dimension oldMapSize = getTileFactory().getMapSize(oldZoom);
         this.zoom = zoom;
         //this.firePropertyChange("zoom", oldzoom, zoom);
 
@@ -327,8 +327,8 @@ public class WebMapLayer extends MapLayer {
      */
     public void setTileFactory(TileFactory factory) {
         this.factory = factory;
-        this.setZoom(factory.getInfo().getDefaultZoomLevel());
-        this.setCenterPosition(new GeoPosition(0, 0));
+        //this.setZoom(factory.getInfo().getDefaultZoomLevel());
+        //this.setCenterPosition(new GeoPosition(0, 0));
     }
     
     /**

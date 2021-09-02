@@ -55,7 +55,7 @@ public class TileFactoryInfo {
     private String zparam;
     private boolean xr2l = true;
     private boolean yt2b = true;
-    private int defaultZoomLevel;
+    private int defaultZoomLevel = 1;
     /**
      * A name for this info.
      */

@@ -1214,6 +1214,9 @@ public abstract class AbstractPlot2D extends Plot {
                     this.drawLegendScheme(legend, g, graphArea);
                 }
             }
+            if (rendering == null) {
+                rendering = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
+            }
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, rendering);
         }
     }

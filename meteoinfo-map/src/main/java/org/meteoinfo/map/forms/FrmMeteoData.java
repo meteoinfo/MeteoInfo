@@ -23,16 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
+import javax.swing.*;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.extras.FlatSVGUtils;
@@ -76,7 +67,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
     private final List<MeteoDataInfo> _dataInfoList;
     private MeteoDataInfo _meteoDataInfo = new MeteoDataInfo();
     private MeteoUVSet meteoUVSet = new MeteoUVSet();
-    DrawType2D _2DDrawType;
+    //DrawType2D _2DDrawType;
     private GridData _gridData;
     private StationData _stationData = new StationData();
     boolean _useSameLegendScheme = false;
@@ -936,21 +927,23 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
             //Set times
             //Lab_Time.Text = Resources.GlobalResource.ResourceManager.GetString("Time_Text");
-            this.jComboBox_Time.removeAllItems();
+            //this.jComboBox_Time.removeAllItems();
             if (var.getTDimension() != null) {
                 DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 List<LocalDateTime> times = var.getTimes();
+                DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
                 for (i = 0; i < times.size(); i++) {
-                    this.jComboBox_Time.addItem(sdf.format(times.get(i)));
+                    comboBoxModel.addElement(sdf.format(times.get(i)));
                 }
+                this.jComboBox_Time.setModel(comboBoxModel);
                 if (this.jComboBox_Time.getItemCount() > _meteoDataInfo.getTimeIndex()) {
                     this.jComboBox_Time.setSelectedIndex(_meteoDataInfo.getTimeIndex());
                 }
             }
 
             //Set levels
-            this.jComboBox_Level.removeAllItems();
             if (var.getZDimension() == null) {
+                this.jComboBox_Level.removeAllItems();
                 if (this._meteoDataInfo.isSWATHData()) {
                     Variable lonvar = _meteoDataInfo.getDataInfo().getVariable("longitude");
                     org.meteoinfo.ndarray.Dimension ldim = var.getLevelDimension(lonvar);
@@ -970,9 +963,11 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     this.jComboBox_Level.setSelectedIndex(0);
                 }
             } else {
+                DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
                 for (i = 0; i < var.getZDimension().getLength(); i++) {
-                    this.jComboBox_Level.addItem(String.valueOf(var.getZDimension().getDimValue().get(i)));
+                    comboBoxModel.addElement(String.valueOf(var.getZDimension().getDimValue().get(i)));
                 }
+                this.jComboBox_Level.setModel(comboBoxModel);
                 if (this.jComboBox_Level.getItemCount() > _meteoDataInfo.getLevelIndex()) {
                     this.jComboBox_Level.setSelectedIndex(_meteoDataInfo.getLevelIndex());
                 }
@@ -1003,7 +998,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
     private void jComboBox_DrawTypeActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         if (this.jComboBox_DrawType.getItemCount() > 0) {
-            _2DDrawType = DrawType2D.valueOf(this.jComboBox_DrawType.getSelectedItem().toString());
+            this._meteoDataInfo.setDrawType2D((DrawType2D) this.jComboBox_DrawType.getSelectedItem());
             this.jButton_Draw.setEnabled(true);
             _useSameLegendScheme = false;
 
@@ -1023,7 +1018,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
 
             //Set CHB_ColorVar visible
             java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("bundle/Bundle_FrmMeteoData");
-            switch (_2DDrawType) {
+            switch (this._meteoDataInfo.getDrawType2D()) {
                 case VECTOR:
                 case BARB:
                     this.jCheckBox_ColorVar.setText(bundle.getString("FrmMeteoData.jCheckBox_ColorVar.text"));
@@ -1507,7 +1502,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
     private void jButton_SettingActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         if (_meteoDataInfo.isStationData() || _meteoDataInfo.isSWATHData()) {
-            switch (_2DDrawType) {
+            switch (this._meteoDataInfo.getDrawType2D()) {
                 case CONTOUR:
                 case SHADED:
                 case GRID_POINT:
@@ -1544,7 +1539,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     break;
             }
         } else if (_meteoDataInfo.isGridData()) {
-            switch (_2DDrawType) {
+            switch (this._meteoDataInfo.getDrawType2D()) {
                 case CONTOUR:
                 case GRID_FILL:
                 case GRID_POINT:
@@ -1662,7 +1657,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
     }
 
     private void jCheckBox_ColorVarActionPerformed(java.awt.event.ActionEvent evt) {
-        switch (_2DDrawType) {
+        switch (this._meteoDataInfo.getDrawType2D()) {
             case VECTOR:
             case BARB:
                 this.windColor = this.jCheckBox_ColorVar.isSelected();
@@ -2298,42 +2293,47 @@ public class FrmMeteoData extends javax.swing.JDialog {
         updateProjection();
 
         //Set draw type
-        this.jComboBox_DrawType.removeAllItems();
+        //this.jComboBox_DrawType.removeAllItems();
+        DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
         if (_meteoDataInfo.isGridData()) {
-            this.jComboBox_DrawType.addItem(DrawType2D.RASTER.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.CONTOUR.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.SHADED.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.GRID_FILL.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.GRID_POINT.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.VECTOR.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.BARB.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.STREAMLINE.toString());
+            comboBoxModel.addElement(DrawType2D.RASTER);
+            comboBoxModel.addElement(DrawType2D.CONTOUR);
+            comboBoxModel.addElement(DrawType2D.SHADED);
+            comboBoxModel.addElement(DrawType2D.GRID_FILL);
+            comboBoxModel.addElement(DrawType2D.GRID_POINT);
+            comboBoxModel.addElement(DrawType2D.VECTOR);
+            comboBoxModel.addElement(DrawType2D.BARB);
+            comboBoxModel.addElement(DrawType2D.STREAMLINE);
         } else if (_meteoDataInfo.isStationData()) {
             switch (_meteoDataInfo.getDataType()) {
                 case HYSPLIT_PARTICLE:
-                    this.jComboBox_DrawType.addItem(DrawType2D.STATION_POINT.toString());
+                    comboBoxModel.addElement(DrawType2D.STATION_POINT);
                     break;
                 default:
-                    this.jComboBox_DrawType.addItem(DrawType2D.STATION_POINT.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.STATION_INFO.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.WEATHER_SYMBOL.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.STATION_MODEL.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.VECTOR.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.BARB.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.CONTOUR.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.SHADED.toString());
-                    this.jComboBox_DrawType.addItem(DrawType2D.STREAMLINE.toString());
+                    comboBoxModel.addElement(DrawType2D.STATION_POINT);
+                    comboBoxModel.addElement(DrawType2D.STATION_INFO);
+                    comboBoxModel.addElement(DrawType2D.WEATHER_SYMBOL);
+                    comboBoxModel.addElement(DrawType2D.STATION_MODEL);
+                    comboBoxModel.addElement(DrawType2D.VECTOR);
+                    comboBoxModel.addElement(DrawType2D.BARB);
+                    comboBoxModel.addElement(DrawType2D.CONTOUR);
+                    comboBoxModel.addElement(DrawType2D.SHADED);
+                    comboBoxModel.addElement(DrawType2D.STREAMLINE);
                     break;
             }
         } else if (_meteoDataInfo.isSWATHData()) {
-            this.jComboBox_DrawType.addItem(DrawType2D.RASTER.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.STATION_POINT.toString());
+            comboBoxModel.addElement(DrawType2D.RASTER);
+            comboBoxModel.addElement(DrawType2D.STATION_POINT);
         } else {
-            this.jComboBox_DrawType.addItem(DrawType2D.TRAJECTORY_LINE.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.TRAJECTORY_POINT.toString());
-            this.jComboBox_DrawType.addItem(DrawType2D.TRAJECTORY_START_POINT.toString());
+            comboBoxModel.addElement(DrawType2D.TRAJECTORY_LINE);
+            comboBoxModel.addElement(DrawType2D.TRAJECTORY_POINT);
+            comboBoxModel.addElement(DrawType2D.TRAJECTORY_START_POINT);
         }
-        this.jComboBox_DrawType.setSelectedIndex(0);
+        this.jComboBox_DrawType.setModel(comboBoxModel);
+        if (this._meteoDataInfo.getDrawType2D() == null) {
+            this._meteoDataInfo.setDrawType2D((DrawType2D) this.jComboBox_DrawType.getItemAt(0));
+        }
+        this.jComboBox_DrawType.setSelectedItem(this._meteoDataInfo.getDrawType2D());
 
         //Set vars
         _isLoading = true;
@@ -2583,7 +2583,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
             }
         }
 
-        switch (_2DDrawType) {
+        switch (this._meteoDataInfo.getDrawType2D()) {
             case STATION_POINT:
             case VECTOR:
             case BARB:
@@ -2606,7 +2606,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
     private MapLayer drawTraj(String varName) {
         DataInfo aDataInfo = _meteoDataInfo.getDataInfo();
         VectorLayer aLayer = null;
-        switch (_2DDrawType) {
+        switch (this._meteoDataInfo.getDrawType2D()) {
             case TRAJECTORY_LINE:
                 aLayer = DrawMeteoData.createTrajLineLayer((ITrajDataInfo) aDataInfo, varName);
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer(aLayer);
@@ -2627,7 +2627,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
     }
 
     private void createLegendScheme_Grid() {
-        switch (_2DDrawType) {
+        switch (this._meteoDataInfo.getDrawType2D()) {
             case CONTOUR:
                 _legendScheme = LegendManage.createLegendSchemeFromGridData(_gridData,
                         LegendType.UNIQUE_VALUE, ShapeTypes.POLYLINE);
@@ -2667,7 +2667,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
     }
 
     private LegendScheme createLegendScheme_Station() {
-        switch (_2DDrawType) {
+        switch (this._meteoDataInfo.getDrawType2D()) {
             case STATION_POINT:
                 _legendScheme = LegendManage.createLegendSchemeFromStationData(_stationData,
                         LegendType.GRADUATED_COLOR, ShapeTypes.POINT);
@@ -2779,7 +2779,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         }
 
         //Create layer
-        switch (_2DDrawType) {
+        switch (this._meteoDataInfo.getDrawType2D()) {
             case CONTOUR:
                 lName = "Contour_" + lName;
                 //LegendManage.setContoursAndColors(aLS, _cValues, _cColors);
@@ -2876,11 +2876,15 @@ public class FrmMeteoData extends javax.swing.JDialog {
             if (aVLayer.getShapeType() == ShapeTypes.POLYGON) {
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolygonLayer(aVLayer);
             } else {
-                if (_2DDrawType == DrawType2D.VECTOR || _2DDrawType == DrawType2D.BARB) {
-                    _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().addWindLayer(aVLayer,
-                            _meteoDataInfo.EarthWind);
-                } else {
-                    _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer(aVLayer);
+                switch (this._meteoDataInfo.getDrawType2D()) {
+                    case VECTOR:
+                    case BARB:
+                        _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().addWindLayer(aVLayer,
+                                _meteoDataInfo.EarthWind);
+                        break;
+                    default:
+                        _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer(aVLayer);
+                        break;
                 }
             }
         } else {
@@ -2901,7 +2905,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
             hasNoData = false;
         }
         boolean ifAddLayer = true;
-        switch (_2DDrawType) {
+        switch (this._meteoDataInfo.getDrawType2D()) {
             case STATION_POINT:
                 LegendManage.setContoursAndColors(aLS, _cValues, _cColors);
                 LName = "StationPoint_" + LName;
@@ -2940,14 +2944,14 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 if (stUVData != null) {
                     StationData stUData = stUVData[0];
                     StationData stVData = stUVData[1];
-                    switch (_2DDrawType) {
+                    switch (this._meteoDataInfo.getDrawType2D()) {
                         case VECTOR:
                         case BARB:
                             if (this.windColor) {
                                 LegendManage.setContoursAndColors(aLS, _cValues, _cColors);
                             }
 
-                            if (_2DDrawType == DrawType2D.VECTOR) {
+                            if (this._meteoDataInfo.getDrawType2D() == DrawType2D.VECTOR) {
                                 LName = "Vector_" + LName;
                                 if (this.windColor) {
                                     aLayer = DrawMeteoData.createSTVectorLayer(stUData, stVData, _stationData,

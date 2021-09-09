@@ -21,12 +21,12 @@
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\map\topology\difference_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_map.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourfm_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\map\topology\difference_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_map.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourfm_2.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1419,795"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693"/>
 </MeteoInfo>

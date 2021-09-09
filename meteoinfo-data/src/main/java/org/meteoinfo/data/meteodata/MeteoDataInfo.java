@@ -67,6 +67,7 @@ public class MeteoDataInfo {
     private int _levelIdx;
     private int _latIdx;
     private int _lonIdx;
+    private DrawType2D drawType2D;
     /// <summary>
     /// Is Lont/Lat
     /// </summary>
@@ -265,6 +266,22 @@ public class MeteoDataInfo {
      */
     public void setLatIndex(int value) {
         _latIdx = value;
+    }
+
+    /**
+     * Get DrawType2D
+     * @return DrawType2D
+     */
+    public DrawType2D getDrawType2D() {
+        return this.drawType2D;
+    }
+
+    /**
+     * Set DrawType2D
+     * @param value DrawType2D
+     */
+    public void setDrawType2D(DrawType2D value) {
+        this.drawType2D = value;
     }
 
     /**

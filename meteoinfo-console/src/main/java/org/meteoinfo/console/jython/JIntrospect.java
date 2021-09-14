@@ -53,7 +53,11 @@ public class JIntrospect implements NameCompletion {
         PyObject module = importer.__call__(Py.newString(base));
         if (targetComponents.length > 1) {
             for (int i = 1; i < targetComponents.length; i++) {
-                module = module.__getattr__(targetComponents[i]);
+                try {
+                    module = module.__getattr__(targetComponents[i]);
+                } catch (Exception e) {
+                    return new ArrayList<>();
+                }
             }
         }
         PyList plist = (PyList) module.__dir__();

@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\contour">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io">
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython"/>
+    <RecentFolder Folder="D:\Working\MIScript"/>
+    <RecentFolder Folder="D:\Working\MIScript\mywork"/>
+    <RecentFolder Folder="D:\Working\MIScript\mywork\emission\MEIC"/>
+    <RecentFolder Folder="D:\Working\MIScript\mywork\emission"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_selection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\topology\difference_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourfm_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\classifer_iris.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\addfiles_datetime_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\addfiles_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_sombrero.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\topology\difference_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourfm_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\classifer_iris.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\addfiles_datetime_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\addfiles_1.py"/>
     </RecentFiles>
   </File>
   <Font>

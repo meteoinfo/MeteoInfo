@@ -839,10 +839,10 @@ class DimDataFiles(list):
         '''
         idx = 0
         for tt in self.times:
-            if t >= tt:
+            if t <= tt:
                 break
             idx += 1
-        return idx
+        return idx if idx < self.tnum else idx - 1
     
     def gettime(self, idx):
         '''

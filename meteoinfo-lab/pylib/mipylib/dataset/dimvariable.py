@@ -18,6 +18,7 @@ from org.meteoinfo.ndarray import DataType
 import mipylib.numeric as np
 import mipylib.miutil as miutil
 import datetime
+import numbers
 
 # Dimension variable
 class DimVariable(object):
@@ -591,13 +592,11 @@ class TDimVariable(object):
         
     def __getitem__(self, indices):
         if not isinstance(indices, tuple):
-            inds = []
-            inds.append(indices)
-            indices = inds
+            indices = [indices]
 
         if len(indices) < self.ndim:
             indices = list(indices)
-            for i in range(self.ndim - len(indices)):
+            for _ in range(self.ndim - len(indices)):
                 indices.append(slice(None))
             indices = tuple(indices)
 
@@ -606,31 +605,37 @@ class TDimVariable(object):
             return None
         
         k = indices[0]
+        t_list = None
         if isinstance(k, int):
+            if k < 0:
+                k = self.tnum + k
             sidx = k
             eidx = k
             step = 1
+        elif isinstance(k, datetime.datetime):
+            sidx = self.dataset.timeindex(k)
+            eidx = sidx
+            step = 1
         elif isinstance(k, slice):
             sidx = 0 if k.start is None else k.start
+            if isinstance(sidx, datetime.datetime):
+                sidx = self.dataset.timeindex(sidx)
             if sidx < 0:
                 sidx = self.tnum + sidx
             eidx = self.tnum if k.stop is None else k.stop
+            if isinstance(eidx, datetime.datetime):
+                eidx = self.dataset.timeindex(eidx) + 1
             if eidx < 0:
                 eidx = self.tnum + eidx
             eidx -= 1
             step = 1 if k.step is None else k.step
         elif isinstance(k, list):
-            sidx = self.dataset.timeindex(k[0])
-            if len(k) == 1:
-                eidx = sidx
-                step = 1
-            else:
-                eidx = self.dataset.timeindex(k[1])
-                if len(k) == 3:
-                    tt = self.dataset.timeindex(k[0] + k[3])
-                    step = tt - sidx
+            t_list = []
+            for t in k:
+                if isinstance(t, datetime.datetime):
+                    t_list.append(self.dataset.timeindex(t))
                 else:
-                    step = 1
+                    t_list.append(t)
         
         sfidx = self.dataset.datafileindex(sidx)
         si = sidx
@@ -639,7 +644,10 @@ class TDimVariable(object):
         fidx = sfidx
         aa = None
         var = None
-        for i in range(sidx, eidx + 1, step):
+        if t_list is None:
+            t_list = range(sidx, eidx + 1, step)
+
+        for i in t_list:
             times.append(miutil.date2num(self.dataset.gettime(i)))
             fidx = self.dataset.datafileindex(i) 
             if fidx > sfidx:
@@ -706,6 +714,9 @@ class TDimVariable(object):
         if isinstance(data, np.DimArray):
             return data
         else:
+            if isinstance(aa, numbers.Number):
+                return aa
+
             dims = aa.dims
             dims[0].setDimValues(times)
             r = np.DimArray(data, dims, aa.fill_value, aa.proj)

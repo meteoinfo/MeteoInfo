@@ -636,80 +636,89 @@ class TDimVariable(object):
                     t_list.append(self.dataset.timeindex(t))
                 else:
                     t_list.append(t)
-        
-        sfidx = self.dataset.datafileindex(sidx)
-        si = sidx
-        isfirst = True
-        times = []
-        fidx = sfidx
-        aa = None
-        var = None
-        if t_list is None:
-            t_list = range(sidx, eidx + 1, step)
 
-        for i in t_list:
-            times.append(miutil.date2num(self.dataset.gettime(i)))
-            fidx = self.dataset.datafileindex(i) 
-            if fidx > sfidx:
-                ei = i - step
+        times = []
+        data = None
+        if t_list is None:
+            sfidx = self.dataset.datafileindex(sidx)
+            si = sidx
+            aa = None
+            for i in range(sidx, eidx + 1, step):
+                times.append(miutil.date2num(self.dataset.gettime(i)))
+                fidx = self.dataset.datafileindex(i)
+                if fidx > sfidx:
+                    ei = i - step
+                    ddf = self.dataset[sfidx]
+                    var = ddf[self.name]
+                    ii, ssi = self.dataset.dftindex(si)
+                    ii, eei = self.dataset.dftindex(ei)
+                    eei += 1
+                    nindices = list(indices)
+                    nindices[0] = slice(ssi, eei, step)
+                    nindices = tuple(nindices)
+                    aa = var.__getitem__(nindices)
+                    if si == ei:
+                        if isinstance(aa, np.DimArray):
+                            aa.addtdim(self.dataset.gettime(si))
+                        else:
+                            aa = np.array([aa])
+                            aa = np.DimArray(aa)
+                            aa.addtdim(self.dataset.gettime(si))
+                    if data is None:
+                        data = aa
+                    else:
+                        data = np.concatenate([data, aa])
+                    si = i
+                    sfidx = fidx
+
+            if si < eidx + 1:
+                ei = eidx + 1 - step
                 ddf = self.dataset[sfidx]
                 var = ddf[self.name]
                 ii, ssi = self.dataset.dftindex(si)
                 ii, eei = self.dataset.dftindex(ei)
                 eei += 1
-                nindices = list(indices)                
+                nindices = list(indices)
                 nindices[0] = slice(ssi, eei, step)
                 nindices = tuple(nindices)
                 aa = var.__getitem__(nindices)
-                if si == ei:
+                if si == ei and eidx != sidx:
                     if isinstance(aa, np.DimArray):
                         aa.addtdim(self.dataset.gettime(si))
                     else:
                         aa = np.array([aa])
                         aa = np.DimArray(aa)
                         aa.addtdim(self.dataset.gettime(si))
-                if isfirst:
+                if data is None:
                     data = aa
-                    isfirst = False
                 else:
                     data = np.concatenate([data, aa])
-                si = i
-                sfidx = fidx
-                
-        if si < eidx + 1:            
-            ei = eidx + 1 - step
-            ddf = self.dataset[sfidx]
-            var = ddf[self.name]
-            ii, ssi = self.dataset.dftindex(si)
-            ii, eei = self.dataset.dftindex(ei)
-            eei += 1
-            nindices = list(indices)
-            nindices[0] = slice(ssi, eei, step)
-            nindices = tuple(nindices)
-            aa = var.__getitem__(nindices)
-            if si == ei and eidx != sidx:
-                if isinstance(aa, np.DimArray):
-                    aa.addtdim(self.dataset.gettime(si))
+
+            if aa is None:
+                sfidx = self.dataset.datafileindex(sidx)
+                ddf = self.dataset[sfidx]
+                var = ddf[self.name]
+                ii, ssi = self.dataset.dftindex(sidx)
+                nindices = list(indices)
+                nindices[0] = slice(ssi, ssi, step)
+                nindices = tuple(nindices)
+                aa = var.__getitem__(nindices)
+                return aa
+        else:
+            for i in t_list:
+                times.append(miutil.date2num(self.dataset.gettime(i)))
+                fidx, ssi = self.dataset.dftindex(i)
+                ddf = self.dataset[fidx]
+                var = ddf[self.name]
+                nindices = list(indices)
+                nindices[0] = ssi
+                nindices = tuple(nindices)
+                aa = var.__getitem__(nindices)
+                aa.addtdim(self.dataset.gettime(i))
+                if data is None:
+                    data = aa
                 else:
-                    aa = np.array([aa])
-                    aa = np.DimArray(aa)
-                    aa.addtdim(self.dataset.gettime(si))
-            if isfirst:
-                data = aa
-                isfirst = False
-            else:
-                data = np.concatenate([data, aa])
-        
-        if aa is None:
-            sfidx = self.dataset.datafileindex(sidx)
-            ddf = self.dataset[sfidx]
-            var = ddf[self.name]
-            ii, ssi = self.dataset.dftindex(sidx)
-            nindices = list(indices)
-            nindices[0] = slice(ssi, ssi, step)
-            nindices = tuple(nindices)
-            aa = var.__getitem__(nindices)            
-            return aa
+                    data = np.concatenate([data, aa])
                 
         if isinstance(data, np.DimArray):
             return data

@@ -224,7 +224,7 @@ class MapAxes(Axes):
         
         :param x: (*float*) The location x of the scale bar.
         :param y: (*float*) The location y of the scale bar.
-        :param bartype: (*string*) Scale bar type ['scaleline_1' | 'scaleline_2' | 'alternating_bar'].
+        :param bartype: (*string*) Scale bar type ['scale_line_1' | 'scale_line_2' | 'alternating_bar'].
         :param width: (*float*) The width of the scale bar with pixel unit.
         :param height: (*float*) The height of the scale bar with pixel unit.
         :param color: (*Color*) The color of the scale bar.

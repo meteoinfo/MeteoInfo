@@ -1370,7 +1370,7 @@ class Axes3DGL(Axes3D):
 
         alpha_min = kwargs.pop('alpha_min', 0.0)
         alpha_max = kwargs.pop('alpha_max', 1.0)
-        graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), cmap, \
+        graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
                                       alpha_min, alpha_max)
 
         visible = kwargs.pop('visible', True)

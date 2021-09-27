@@ -1337,7 +1337,7 @@ public class GeoTiff {
                                     break;
                                 }
                                 if (!yRange.contains(vIdx)) {
-                                    buffer.position(buffer.position() + tileWidth * samplesPerPixel);
+                                    ((Buffer)buffer).position(((Buffer)buffer).position() + tileWidth * samplesPerPixel);
                                     continue;
                                 }
                                 vIdx = yRange.index(vIdx);
@@ -1349,7 +1349,7 @@ public class GeoTiff {
                                         break;
                                     }
                                     if (!xRange.contains(hIdx)) {
-                                        buffer.position(buffer.position() + samplesPerPixel);
+                                        ((Buffer)buffer).position(((Buffer)buffer).position() + samplesPerPixel);
                                         continue;
                                     }
                                     hIdx = xRange.index(hIdx);
@@ -1386,7 +1386,7 @@ public class GeoTiff {
                                     break;
                                 }
                                 if (!yRange.contains(vIdx)) {
-                                    buffer.position(buffer.position() + tileWidth * samplesPerPixel * 2);
+                                    ((Buffer)buffer).position(((Buffer)buffer).position() + tileWidth * samplesPerPixel * 2);
                                     continue;
                                 }
                                 vIdx = yRange.index(vIdx);
@@ -1397,7 +1397,7 @@ public class GeoTiff {
                                         break;
                                     }
                                     if (!xRange.contains(hIdx)) {
-                                        buffer.position(buffer.position() + samplesPerPixel * 2);
+                                        ((Buffer)buffer).position(((Buffer)buffer).position() + samplesPerPixel * 2);
                                         continue;
                                     }
                                     hIdx = xRange.index(hIdx);
@@ -1438,7 +1438,7 @@ public class GeoTiff {
                                     break;
                                 }
                                 if (!yRange.contains(vIdx)) {
-                                    buffer.position(buffer.position() + tileWidth * samplesPerPixel * 4);
+                                    ((Buffer)buffer).position(((Buffer)buffer).position() + tileWidth * samplesPerPixel * 4);
                                     continue;
                                 }
                                 vIdx = yRange.index(vIdx);
@@ -1450,7 +1450,7 @@ public class GeoTiff {
                                         break;
                                     }
                                     if (!xRange.contains(hIdx)) {
-                                        buffer.position(buffer.position() + samplesPerPixel * 40);
+                                        ((Buffer)buffer).position(((Buffer)buffer).position() + samplesPerPixel * 40);
                                         continue;
                                     }
                                     hIdx = xRange.index(hIdx);
@@ -1505,7 +1505,7 @@ public class GeoTiff {
                                         iter.setIntNext(DataConvert.byte2Int(buffer.get()));
                                     }
                                 } else {
-                                    buffer.position(buffer.position() + samplesPerPixel);
+                                    ((Buffer)buffer).position(((Buffer)buffer).position() + samplesPerPixel);
                                 }
                                 index.incr();
                             }
@@ -1527,7 +1527,7 @@ public class GeoTiff {
                                         }
                                     }
                                 } else {
-                                    buffer.position(buffer.position() + samplesPerPixel * 2);
+                                    ((Buffer)buffer).position(((Buffer)buffer).position() + samplesPerPixel * 2);
                                 }
                                 index.incr();
                             }
@@ -1545,7 +1545,7 @@ public class GeoTiff {
                                         iter.setFloatNext(buffer.getFloat());
                                     }
                                 } else {
-                                    buffer.position(buffer.position() + samplesPerPixel * 4);
+                                    ((Buffer)buffer).position(((Buffer)buffer).position() + samplesPerPixel * 4);
                                 }
                                 index.incr();
                             }
@@ -1626,14 +1626,14 @@ public class GeoTiff {
         }
         buffer.order(this.byteOrder);
 
-        buffer.position(2);
+        ((Buffer)buffer).position(2);
         int version = buffer.getShort();
         if (version == 43) {
             this.bigTiff = true;
         }
 
         long firstIFD;
-        buffer.position(4);
+        ((Buffer)buffer).position(4);
         if (this.bigTiff) {
             int size = buffer.getShort();
             buffer = ByteBuffer.allocate(size);
@@ -1728,7 +1728,7 @@ public class GeoTiff {
             printBytes(System.out, "IFDEntry bytes", buffer, buffer.limit());
         }
 
-        buffer.position(0);
+        ((Buffer)buffer).position(0);
         int code = readUShortValue(buffer);
         Tag tag = Tag.get(code);
         if (tag == null) {

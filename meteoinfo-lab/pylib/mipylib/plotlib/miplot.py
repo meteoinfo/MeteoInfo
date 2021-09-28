@@ -48,7 +48,7 @@ __all__ = [
     'makelegend','makesymbolspec','masklayer','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
     'semilogx','semilogy','show','slice3','stationmodel','stem','stem3','step','streamplot','streamplot3',
-    'streamplotm','streamslice','subplot','subplots','suptitle',
+    'streamplotm','streamslice','subplot','subplots','suptitle','supxlabel','supylabel',
     'surf','taylor_diagram','text','text3','title','twinx','twiny','violinplot','volumeplot','weatherspec','xaxis',
     'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
     'isinteractive'
@@ -1676,17 +1676,14 @@ def clf():
     if g_figure.getChart() is None:
         return
     
-    g_figure.getChart().setTitle(None)
-    g_figure.getChart().clearPlots()
-    g_figure.getChart().clearTexts()
+    g_figure.getChart().clearAll()
     global g_axes
     g_axes = None
     draw_if_interactive()
 
-# Clear last layer    
 def cll():
     '''
-    Clear last added layer or plot object.
+    Clear last added plot object.
     '''
     if not g_axes is None:
         if isinstance(g_axes, MapAxes):
@@ -1734,7 +1731,35 @@ def suptitle(label, fontname=None, fontsize=14, bold=True, color='black'):
     r = g_figure.set_title(label, fontname, fontsize, bold, color)
     draw_if_interactive()
     return r
-    
+
+def supxlabel(label, **kwargs):
+    """
+    Set the x label of the figure.
+
+    :param label: (*string*) Label string.
+    :param fontname: (*string*) Font name. Default is ``Arial`` .
+    :param fontsize: (*int*) Font size. Default is ``14`` .
+    :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
+    :param color: (*color*) Label string color. Default is ``black`` .
+    """
+    r = g_figure.set_xlabel(label, **kwargs)
+    draw_if_interactive()
+    return r
+
+def supylabel(label, **kwargs):
+    """
+    Set the y label of the figure.
+
+    :param label: (*string*) Label string.
+    :param fontname: (*string*) Font name. Default is ``Arial`` .
+    :param fontsize: (*int*) Font size. Default is ``14`` .
+    :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
+    :param color: (*color*) Label string color. Default is ``black`` .
+    """
+    r = g_figure.set_ylabel(label, **kwargs)
+    draw_if_interactive()
+    return r
+
 def left_title(label, fontname=None, fontsize=14, bold=False, color='black', **kwargs):
     """
     Set a left sub title of the current axes.

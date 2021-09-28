@@ -702,10 +702,47 @@ class Figure(ChartPanel):
             font = Font(fontname, Font.PLAIN, fontsize)
         c = plotutil.getcolor(color)
         ctitle = ChartText(label, font)
+        ctitle.setXAlign('center')
         ctitle.setUseExternalFont(exfont)
         ctitle.setColor(c)
         self.getChart().setTitle(ctitle)
         return ctitle
+
+    def set_xlabel(self, label, **kwargs):
+        """
+        Set the x label of the figure.
+
+        :param label: (*string*) Label string.
+        :param fontname: (*string*) Font name. Default is ``Arial`` .
+        :param fontsize: (*int*) Font size. Default is ``14`` .
+        :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
+        :param color: (*color*) Label string color. Default is ``black`` .
+        """
+        if not kwargs.has_key('xalign'):
+            kwargs['xalign'] = 'center'
+        if not kwargs.has_key('yalign'):
+            kwargs['yalign'] = 'top'
+        ctext = plotutil.text(0, 0, label, **kwargs)
+        self.getChart().setXLabel(ctext)
+
+    def set_ylabel(self, label, **kwargs):
+        """
+        Set the y label of the figure.
+
+        :param label: (*string*) Label string.
+        :param fontname: (*string*) Font name. Default is ``Arial`` .
+        :param fontsize: (*int*) Font size. Default is ``14`` .
+        :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
+        :param color: (*color*) Label string color. Default is ``black`` .
+        """
+        if not kwargs.has_key('xalign'):
+            kwargs['xalign'] = 'center'
+        if not kwargs.has_key('yalign'):
+            kwargs['yalign'] = 'bottom'
+        if not kwargs.has_key('rotation'):
+            kwargs['rotation'] = 90
+        ctext = plotutil.text(0, 0, label, **kwargs)
+        self.getChart().setYLabel(ctext)
         
     def set_antialias(self, b=None, symbol=None):
         """

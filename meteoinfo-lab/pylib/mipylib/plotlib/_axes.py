@@ -1327,7 +1327,7 @@ class Axes(object):
         :param x: (*array_like*) Input x data.
         :param y: (*array_like*) Input y data.
         :param s: (*int*) Size of points.
-        :param c: (*Color or array*) Color of the points. Or z vlaues.
+        :param c: (*Color or array*) Color of the points. Or z values.
         :param alpha: (*int*) The alpha blending value, between 0 (transparent) and 1 (opaque).
         :param marker: (*string*) Marker of the points.
         :param label: (*string*) Label of the points series.
@@ -1346,7 +1346,9 @@ class Axes(object):
             y = args[1]
 
         s = kwargs.pop('s', 8)
-        c = kwargs.pop('c', 'b')
+        c = kwargs.pop('c', None)
+        if c is None:
+            c = kwargs.pop('facecolor', 'b')
 
         #Add data series
         label = kwargs.pop('label', 'S_0')

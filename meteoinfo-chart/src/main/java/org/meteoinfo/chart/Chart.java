@@ -40,6 +40,8 @@ public class Chart {
     private int columnNum;
     private ChartText title;
     private ChartText subTitle;
+    private ChartText xLabel;
+    private ChartText yLabel;
     private List<ChartText> texts;
     private ChartLegend legend;
     private Color background;
@@ -283,6 +285,38 @@ public class Chart {
     }
 
     /**
+     * Get super x label
+     * @return Super x label
+     */
+    public ChartText getXLabel() {
+        return this.xLabel;
+    }
+
+    /**
+     * Set super x label
+     * @param value Super x label
+     */
+    public void setXLabel(ChartText value) {
+        this.xLabel = value;
+    }
+
+    /**
+     * Get super y label
+     * @return Super y label
+     */
+    public ChartText getYLabel() {
+        return this.yLabel;
+    }
+
+    /**
+     * Set super y label
+     * @param value Super y label
+     */
+    public void setYLabel(ChartText value) {
+        this.yLabel = value;
+    }
+
+    /**
      * Get background
      *
      * @return Background
@@ -427,33 +461,29 @@ public class Chart {
             g.fill(new Rectangle2D.Double(0, 0, area.getWidth(), area.getHeight()));
         }
 
+        //Get plot area
+        plotArea = this.getPlotArea(g, area);
+
         //Draw title
         float y = 5;
         if (title != null) {
-            g.setColor(title.getColor());
-            g.setFont(title.getFont());
             float x = (float) area.getWidth() / 2;
-            //y -= this.title.getHeight(g) - 5;
-            //FontMetrics metrics = g.getFontMetrics(title.getFont());
-            //x -= metrics.stringWidth(title.getText()) / 2;
-            //y += metrics.getHeight();
-            int i = 0;
-            for (String text : title.getTexts()) {
-                Dimension dim = Draw.getStringDimension(text, g);
-                if (i == 0) {
-                    y += dim.getHeight();
-                }
-                Draw.drawString(g, text, x - dim.width / 2, y);
-                g.setFont(title.getFont());
-                y += dim.height + title.getLineSpace();
-                i += 1;
-            }
+            y += title.getDimension(g).height;
+            title.draw(g, x, y);
             y += 5;
         }
 
+        //Draw x/y label
+        if (this.xLabel != null) {
+            xLabel.draw(g, (int)(plotArea.getX() + plotArea.getWidth() / 2),
+                    (int)(plotArea.getMaxY() + 5));
+        }
+        if (this.yLabel != null) {
+            yLabel.draw(g, (int)(plotArea.getX() - 5),
+                    (int)(plotArea.getY() + plotArea.getHeight() / 2));
+        }
+
         //Draw plot
-        plotArea = this.getPlotArea(g, area);
-        //plotArea = area;
         if (plotArea.getWidth() < 20 || plotArea.getHeight() < 20) {
             g.setTransform(oldMatrix);
             g.setClip(oldRegion);
@@ -520,22 +550,7 @@ public class Chart {
         for (ChartText text : this.texts) {
             x = (float) (area.getWidth() * text.getX());
             y = (float) (area.getHeight() * (1 - text.getY()));
-            Dimension dim = Draw.getStringDimension(text.getText(), g);
-            Rectangle.Double rect = new Rectangle.Double(x, y, dim.getWidth(), dim.getHeight());
-            if (text.isFill()) {
-                g.setColor(text.getBackground());
-                g.fill(rect);
-            }
-            if (text.isDrawNeatline()) {
-                g.setColor(text.getNeatlineColor());
-                Stroke oldStroke = g.getStroke();
-                g.setStroke(new BasicStroke(text.getNeatlineSize()));
-                g.draw(rect);
-                g.setStroke(oldStroke);
-            }
-            g.setFont(text.getFont());
-            g.setColor(text.getColor());
-            Draw.drawString(g, text.getText(), x, y);
+            text.draw(g, x, y);
         }
     }
     
@@ -548,7 +563,13 @@ public class Chart {
         int bottom = edge;
         if (this.title != null) {
             top += this.title.getTrueDimension(g).height + 12;
-        }        
+        }
+        if (this.xLabel != null) {
+            bottom += this.xLabel.getTrueDimension(g).height + 10;
+        }
+        if (this.yLabel != null) {
+            left += this.yLabel.getTrueDimension(g).height + 10;
+        }
         pArea.setRect(left, top, area.getWidth() - left - right, area.getHeight() - top - bottom);
 
         return pArea;
@@ -807,6 +828,17 @@ public class Chart {
      */
     public void clearTexts() {
         this.texts.clear();
+    }
+
+    /**
+     * Clear all chart components
+     */
+    public void clearAll() {
+        this.title = null;
+        this.xLabel = null;
+        this.yLabel = null;
+        this.clearTexts();
+        this.clearPlots();
     }
 
     /**

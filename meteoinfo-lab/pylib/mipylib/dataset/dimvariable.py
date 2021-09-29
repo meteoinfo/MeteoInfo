@@ -60,22 +60,19 @@ class DimVariable(object):
         return len
         
     def __str__(self):
-        if self.variable is None:
-            if self.ncvariable is None:
-                return 'None'
-            else:
-                return self.ncvariable.toString()
-            
-        r = str(self.dtype) + ' ' + self.name + '('
-        for dim in self.dims:
-            dimname = dim.getShortName()
-            if dimname is None:
-                dimname = 'null'
-            r = r + dimname + ','
-        r = r[:-1] + '):'
-        attrs = self.variable.getAttributes()
-        for attr in attrs:
-            r = r + '\n\t' + self.name + ': ' + attr.toString()
+        r = str(self.dtype) + ' ' + 'None' if self.name is None else self.name + '('
+        if self.dims is None:
+            r = r + '):'
+        else:
+            for dim in self.dims:
+                dimname = dim.getShortName()
+                if dimname is None:
+                    dimname = 'null'
+                r = r + dimname + ','
+            r = r[:-1] + '):'
+        if not self.attributes is None:
+            for attr in self.attributes:
+                r = r + '\n\t' + self.name + ': ' + attr.toString()
         return r
         
     def __repr__(self):
@@ -448,11 +445,10 @@ class DimVariable(object):
         self.dims[idx].setReverse(reverse)
         
     def addattr(self, attrname, attrvalue):
-        if self.ncvariable is None:
-            if self.attributes is None:
-                self.attributes = []
-            self.attributes.append(Attribute(attrname, attrvalue))
-        else:
+        if self.attributes is None:
+            self.attributes = []
+        self.attributes.append(Attribute(attrname, attrvalue))
+        if not self.ncvariable is None:
             if isinstance(attrvalue, np.NDArray):
                 attrvalue = NCUtil.convertArray(attrvalue._array)
             self.ncvariable.addAttribute(NCAttribute(attrname, attrvalue))

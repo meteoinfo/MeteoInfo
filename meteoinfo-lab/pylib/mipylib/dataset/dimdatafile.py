@@ -16,7 +16,7 @@ from mipylib.dataframe.dataframe import DataFrame
 import mipylib.miutil as miutil
 import mipylib.numeric as np
 from mipylib.numeric.core._dtype import DataType
-from .ncutil import to_dtype
+from .ncutil import convert_variable, to_dtype
 
 import datetime
 
@@ -30,12 +30,21 @@ class DimDataFile(object):
     def __init__(self, dataset=None, access='r', ncfile=None, arldata=None, bufrdata=None):
         self.dataset = dataset
         self.access = access
-        if not dataset is None:
+        self.ncfile = ncfile
+        self._variables = []
+        if dataset is None:
+            if not ncfile is None:
+                self.filename = ncfile.getLocation()
+                for v in ncfile.getVariables():
+                    self._variables.append(DimVariable(convert_variable(v)))
+                self.nvar = len(self._variables)
+        else:
             self.filename = dataset.getFileName()
+            for v in dataset.getDataInfo().getVariables():
+                self._variables.append(DimVariable(v))
             self.nvar = dataset.getDataInfo().getVariableNum()
             self.fill_value = dataset.getMissingValue()
             self.proj = dataset.getProjectionInfo()
-        self.ncfile = ncfile
         self.arldata = arldata
         self.bufrdata = bufrdata
         
@@ -121,11 +130,7 @@ class DimDataFile(object):
         '''
         Get all variables.
         '''
-        vars = []
-        for var in self.dataset.getDataInfo().getVariables():
-            vars.append(DimVariable(var))
-            
-        return vars
+        return self._variables
         
     def varnames(self):
         '''

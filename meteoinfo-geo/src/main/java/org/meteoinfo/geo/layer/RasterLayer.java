@@ -259,6 +259,8 @@ public class RasterLayer extends ImageLayer {
                     if (als.getLegendType() == LegendType.UNIQUE_VALUE) {
                         if (idx < 0 || idx >= n)
                             color = undefColor;
+                        else
+                            color = als.getLegendBreak(idx).getColor();
                     } else {
                         if (idx < 0) {
                             if (idx == -1)
@@ -269,9 +271,9 @@ public class RasterLayer extends ImageLayer {
                                 idx = -idx - 2;
                         } else if (idx == n - 1)
                             idx = n - 2;
-                    }
 
-                    color = als.getLegendBreak(idx).getColor();
+                        color = als.getLegendBreak(idx).getColor();
+                    }
                 }
                 aImage.setRGB(j, height - i - 1, color.getRGB());
             }

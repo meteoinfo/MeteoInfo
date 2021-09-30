@@ -499,8 +499,12 @@ package org.meteoinfo.geometry.legend;
              cb = legendBreaks.get(i);
              if (!cb.isNoData()) {
                 if (values.isEmpty()) {
-                    values.add(Double.parseDouble(cb.getStartValue().toString()));
-                    values.add(Double.parseDouble(cb.getEndValue().toString()));
+                    if (this.legendType == LegendType.UNIQUE_VALUE)
+                        values.add(Double.parseDouble(cb.getEndValue().toString()));
+                    else {
+                        values.add(Double.parseDouble(cb.getStartValue().toString()));
+                        values.add(Double.parseDouble(cb.getEndValue().toString()));
+                    }
                 } else {
                     values.add(Double.parseDouble(cb.getEndValue().toString()));
                 }

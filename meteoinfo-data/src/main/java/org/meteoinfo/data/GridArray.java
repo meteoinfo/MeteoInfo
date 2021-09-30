@@ -21,9 +21,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 
 import org.meteoinfo.common.Extent;
@@ -508,6 +510,9 @@ public class GridArray {
         int vdNum = 0;
         for (int i = 0; i < getYNum(); i++) {
             for (int j = 0; j < getXNum(); j++) {
+                if (Double.isNaN(this.getValue(i, j).doubleValue())) {
+                    continue;
+                }
                 if (MIMath.doubleEquals(this.getValue(i, j).doubleValue(), missingValue)) {
                     continue;
                 }
@@ -520,6 +525,7 @@ public class GridArray {
                 vdNum += 1;
             }
         }
+        values = values.stream().sorted().collect(Collectors.toList());
 
         return values;
     }

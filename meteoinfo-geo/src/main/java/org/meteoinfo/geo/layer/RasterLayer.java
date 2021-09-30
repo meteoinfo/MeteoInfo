@@ -21,6 +21,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.geometry.legend.LegendType;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.Color;
 import java.awt.RenderingHints;
@@ -255,15 +256,20 @@ public class RasterLayer extends ImageLayer {
                     color = undefColor;
                 } else {
                     idx = Arrays.binarySearch(values, value);
-                    if (idx < 0) {
-                        if (idx == -1)
-                            idx = 0;
-                        else if (idx == -n - 1)
-                            idx = n - 1;
-                        else
-                            idx = -idx - 2;
-                    } else if (idx == n - 1)
-                        idx = n - 2;
+                    if (als.getLegendType() == LegendType.UNIQUE_VALUE) {
+                        if (idx < 0 || idx >= n)
+                            color = undefColor;
+                    } else {
+                        if (idx < 0) {
+                            if (idx == -1)
+                                idx = 0;
+                            else if (idx == -n - 1)
+                                idx = n - 1;
+                            else
+                                idx = -idx - 2;
+                        } else if (idx == n - 1)
+                            idx = n - 2;
+                    }
 
                     color = als.getLegendBreak(idx).getColor();
                 }

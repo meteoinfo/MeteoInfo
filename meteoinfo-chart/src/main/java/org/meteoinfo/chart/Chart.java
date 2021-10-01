@@ -568,7 +568,7 @@ public class Chart {
             bottom += this.xLabel.getTrueDimension(g).height + 10;
         }
         if (this.yLabel != null) {
-            left += this.yLabel.getTrueDimension(g).height + 10;
+            left += this.yLabel.getTrueDimension(g).width + 10;
         }
         pArea.setRect(left, top, area.getWidth() - left - right, area.getHeight() - top - bottom);
 

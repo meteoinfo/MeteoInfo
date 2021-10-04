@@ -458,7 +458,6 @@ class DimVariable(object):
         if not self.ncvariable is None:
             if isinstance(attrvalue, np.NDArray):
                 attrvalue = NCUtil.convertArray(attrvalue._array)
-            print(attrvalue)
             ncattr = NCAttribute(attrname, attrvalue)
             self.ncvariable.addAttribute(ncattr)
         return attr

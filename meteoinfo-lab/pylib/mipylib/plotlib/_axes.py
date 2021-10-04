@@ -1103,12 +1103,12 @@ class Axes(object):
                         xx = np.zeros(ydata.shape)
                         xx[:,:] = xdata
                         xdata = xx
-                    if ydata.islondim(0):
-                        xaxistype = 'lon'
-                    elif ydata.islatdim(0):
-                        xaxistype = 'lat'
-                    elif ydata.istimedim(0):
-                        xaxistype = 'time'
+                    # if ydata.islondim(0):
+                    #     xaxistype = 'lon'
+                    # elif ydata.islatdim(0):
+                    #     xaxistype = 'lat'
+                    # elif ydata.istimedim(0):
+                    #     xaxistype = 'time'
                 else:
                     xdata = np.arange(ydata.shape[-1])
                     if ydata.ndim == 2:
@@ -2108,12 +2108,12 @@ class Axes(object):
             if isinstance(a, DimArray):
                 y = a.dimvalue(0)
                 x = a.dimvalue(1)
-                if args[0].islondim(1):
-                    xaxistype = 'lon'
-                elif args[0].islatdim(1):
-                    xaxistype = 'lat'
-                elif args[0].istimedim(1):
-                    xaxistype = 'time'
+                # if args[0].islondim(1):
+                #     xaxistype = 'lon'
+                # elif args[0].islatdim(1):
+                #     xaxistype = 'lat'
+                # elif args[0].istimedim(1):
+                #     xaxistype = 'time'
             else:
                 x = np.arange(a.shape[1])
                 y = np.arange(a.shape[0])
@@ -2240,12 +2240,12 @@ class Axes(object):
             if isinstance(a, DimArray):
                 y = a.dimvalue(0)
                 x = a.dimvalue(1)
-                if args[0].islondim(1):
-                    xaxistype = 'lon'
-                elif args[0].islatdim(1):
-                    xaxistype = 'lat'
-                elif args[0].istimedim(1):
-                    xaxistype = 'time'
+                # if args[0].islondim(1):
+                #     xaxistype = 'lon'
+                # elif args[0].islatdim(1):
+                #     xaxistype = 'lat'
+                # elif args[0].istimedim(1):
+                #     xaxistype = 'time'
             else:
                 x = np.arange(a.shape[1])
                 y = np.arange(a.shape[0])
@@ -2327,13 +2327,13 @@ class Axes(object):
             isrgb = True
         else:
             gdata = np.asgridarray(X)
-            if isinstance(X, DimArray):
-                if X.islondim(1):
-                    xaxistype = 'lon'
-                elif X.islatdim(1):
-                    xaxistype = 'lat'
-                elif X.istimedim(1):
-                    xaxistype = 'time'
+            # if isinstance(X, DimArray):
+            #     if X.islondim(1):
+            #         xaxistype = 'lon'
+            #     elif X.islatdim(1):
+            #         xaxistype = 'lat'
+            #     elif X.istimedim(1):
+            #         xaxistype = 'time'
         args = args[1:]   
         
         extent = kwargs.pop('extent', extent)
@@ -3254,12 +3254,12 @@ class Axes(object):
             if isinstance(u, DimArray):
                 x = u.dimvalue(1)
                 y = u.dimvalue(0)
-                if args[0].islondim(1):
-                    xaxistype = 'lon'
-                elif args[0].islatdim(1):
-                    xaxistype = 'lat'
-                elif args[0].istimedim(1):
-                    xaxistype = 'time'
+                # if args[0].islondim(1):
+                #     xaxistype = 'lon'
+                # elif args[0].islatdim(1):
+                #     xaxistype = 'lat'
+                # elif args[0].istimedim(1):
+                #     xaxistype = 'time'
             else:
                 x = np.arange(u.shape[1])
                 y = np.arange(u.shape[0])

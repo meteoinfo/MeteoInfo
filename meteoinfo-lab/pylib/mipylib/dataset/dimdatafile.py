@@ -32,13 +32,7 @@ class DimDataFile(object):
         self.access = access
         self.ncfile = ncfile
         self._variables = []
-        if dataset is None:
-            if not ncfile is None:
-                self.filename = ncfile.getLocation()
-                for v in ncfile.getVariables():
-                    self._variables.append(DimVariable(convert_variable(v)))
-                self.nvar = len(self._variables)
-        else:
+        if not dataset is None:
             self.filename = dataset.getFileName()
             for v in dataset.getDataInfo().getVariables():
                 self._variables.append(DimVariable(v))
@@ -391,12 +385,13 @@ class DimDataFile(object):
         '''
         self.ncfile.create()
 
-    def nc_define(self, dims, gattrs, vars):
+    def nc_define(self, dims, gattrs, vars, write_dimvars=True):
         '''
         Define dimensions, global attributes, variables of the netcdf file
         :param dims: (*list of Dimension*) The dimensions
         :param gattrs: (*list of Attribute*) The global attributes
         :param vars: (*list of DimVariable*) The variables
+        :param write_dimvars: (*bool*) Write dimension variables value or not. Default is ``True``
         '''
         #Add dimensions
         ncdims = []
@@ -450,16 +445,17 @@ class DimDataFile(object):
         self.ncfile.create()
 
         #Write dimension variable data
-        for dimvar, dim in zip(dimvars, wdims):
-            if dim.getDimType() == DimensionType.T:
-                sst = datetime.datetime(1900,1,1)
-                tt = miutil.nums2dates(dim.getDimValue())
-                hours = []
-                for t in tt:
-                    hours.append((t - sst).total_seconds() // 3600)
-                self.write(dimvar, np.array(hours))
-            else:
-                self.write(dimvar, np.array(dim.getDimValue()))
+        if write_dimvars:
+            for dimvar, dim in zip(dimvars, wdims):
+                if dim.getDimType() == DimensionType.T:
+                    sst = datetime.datetime(1900,1,1)
+                    tt = miutil.nums2dates(dim.getDimValue())
+                    hours = []
+                    for t in tt:
+                        hours.append((t - sst).total_seconds() // 3600)
+                    self.write(dimvar, np.array(hours))
+                else:
+                    self.write(dimvar, np.array(dim.getDimValue()))
         
     def write(self, variable, value, origin=None):
         '''

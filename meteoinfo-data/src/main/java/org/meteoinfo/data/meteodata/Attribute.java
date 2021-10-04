@@ -283,6 +283,13 @@ public class Attribute {
         return getNumericValue(index);
     }
 
+    public Object getValue() {
+        if (this.isString())
+            return this.svalue;
+        else
+            return this.values;
+    }
+
     /**
      * The value is String or not
      *

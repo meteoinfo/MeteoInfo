@@ -43,7 +43,7 @@ class DimVariable(object):
             self.dtype = ncvariable.getDataType()
             self.dims = ncvariable.getDimensions()
             self.ndim = len(self.dims)
-            self.attributes = ncvariable.getAttributes()
+            self.attributes = list(ncvariable.getAttributes())
         else:
             self.name = None
             self.dtype = None
@@ -447,11 +447,21 @@ class DimVariable(object):
     def addattr(self, attrname, attrvalue):
         if self.attributes is None:
             self.attributes = []
-        self.attributes.append(Attribute(attrname, attrvalue))
+        if isinstance(attrvalue, Array):
+            attrvalue = np.NDArray(attrvalue)
+        if isinstance(attrvalue, np.NDArray):
+            if attrvalue.size == 1:
+                attrvalue = attrvalue[0]
+        attr = Attribute(attrname, attrvalue)
+        self.attributes.append(attr)
+
         if not self.ncvariable is None:
             if isinstance(attrvalue, np.NDArray):
                 attrvalue = NCUtil.convertArray(attrvalue._array)
-            self.ncvariable.addAttribute(NCAttribute(attrname, attrvalue))
+            print(attrvalue)
+            ncattr = NCAttribute(attrname, attrvalue)
+            self.ncvariable.addAttribute(ncattr)
+        return attr
 
 class StructureArray(object):
 

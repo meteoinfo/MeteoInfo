@@ -406,30 +406,31 @@ class DimDataFile(object):
         #Add dimension variables
         dimvars = []
         wdims = []
-        for dim,midim in zip(ncdims,dims):
-            dimtype = midim.getDimType()
-            dimname = dim.getShortName()
-            if dimtype == DimensionType.T:
-                var = self.addvar(dimname, 'int', [dim])
-                var.addattr('units', 'hours since 1900-01-01 00:00:0.0')
-                var.addattr('long_name', 'Time')
-                var.addattr('standard_name', 'time')
-                var.addattr('axis', 'T')
-                tvar = var
-            elif dimtype == DimensionType.Z:
-                var = self.addvar(dimname, 'float', [dim])
-                var.addattr('axis', 'Z')
-            elif dimtype == DimensionType.Y:
-                var = self.addvar(dimname, 'float', [dim])
-                var.addattr('axis', 'Y')
-            elif dimtype == DimensionType.X:
-                var = self.addvar(dimname, 'float', [dim])
-                var.addattr('axis', 'X')
-            else:
-                var = None
-            if not var is None:
-                dimvars.append(var)
-                wdims.append(midim)
+        if write_dimvars:
+            for dim,midim in zip(ncdims,dims):
+                dimtype = midim.getDimType()
+                dimname = dim.getShortName()
+                if dimtype == DimensionType.T:
+                    var = self.addvar(dimname, 'int', [dim])
+                    var.addattr('units', 'hours since 1900-01-01 00:00:0.0')
+                    var.addattr('long_name', 'Time')
+                    var.addattr('standard_name', 'time')
+                    var.addattr('axis', 'T')
+                    tvar = var
+                elif dimtype == DimensionType.Z:
+                    var = self.addvar(dimname, 'float', [dim])
+                    var.addattr('axis', 'Z')
+                elif dimtype == DimensionType.Y:
+                    var = self.addvar(dimname, 'float', [dim])
+                    var.addattr('axis', 'Y')
+                elif dimtype == DimensionType.X:
+                    var = self.addvar(dimname, 'float', [dim])
+                    var.addattr('axis', 'X')
+                else:
+                    var = None
+                if not var is None:
+                    dimvars.append(var)
+                    wdims.append(midim)
 
         #Add variables
         for v in vars:

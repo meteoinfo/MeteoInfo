@@ -688,11 +688,34 @@ public class ArrayUtil {
         } else if (d0 instanceof String) {
             if (dt == null)
                 dt = DataType.STRING;
-            Array a = Array.factory(dt, new int[]{data.size()});
-            for (int i = 0; i < data.size(); i++) {
-                a.setString(i, (String)data.get(i));
+            if (dt == DataType.CHAR) {
+                int strLen = 1;
+                int len;
+                for (int i = 0; i < data.size(); i++) {
+                    len = ((String) data.get(i)).length();
+                    if (len > strLen)
+                        strLen = len;
+                }
+                if (strLen == 1) {
+                    Array a = Array.factory(dt, new int[]{data.size()});
+                    for (int i = 0; i < data.size(); i++) {
+                        a.setChar(i, ((String) data.get(i)).charAt(0));
+                    }
+                    return a;
+                } else {
+                    Array a = Array.factory(dt, new int[]{data.size(), strLen});
+                    for (int i = 0; i < data.size(); i++) {
+                        a.setString(i, (String) data.get(i));
+                    }
+                    return a;
+                }
+            } else {
+                Array a = Array.factory(dt, new int[]{data.size()});
+                for (int i = 0; i < data.size(); i++) {
+                    a.setString(i, (String) data.get(i));
+                }
+                return a;
             }
-            return a;
         } else if (d0 instanceof Boolean) {
             Array a = Array.factory(DataType.BOOLEAN, new int[]{data.size()});
             //Array a = new ArrayBoolean(new int[]{data.size()});

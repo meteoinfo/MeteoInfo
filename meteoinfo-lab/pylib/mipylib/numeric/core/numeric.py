@@ -46,7 +46,7 @@ __all__ = [
     'hcurl','hdivg','hstack','identity','interp2d',
     'interpn','isarray','isclose','isfinite','isinf','isnan','linspace','log','log10',
     'logical_not','logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum',
-    'monthname','moveaxis','newaxis','ones','ones_like','pol2cart','power','radians',
+    'monthname','moveaxis','newaxis','ones','ones_like','peaks','pol2cart','power','radians',
     'reshape','repeat','roll','rolling_mean','rot90','sign','sin','shape','smooth5','smooth9','sort','squeeze','argsort',
     'split','sqrt','square','std','sum','swapaxes','take','tan','tile','transpose','trapz','vdot','unique',
     'unravel_index','var','vstack','zeros','zeros_like'
@@ -2872,7 +2872,37 @@ def cart2pol(x, y):
         y = array(y)
         r = ArrayMath.cartesianToPolar(x._array, y._array)
         return NDArray(r[0]), NDArray(r[1])
-    
+
+def peaks(*args, **kwargs):
+    """
+    Peaks function.
+
+    :param x: (*int or array*) X coordinate array.
+    :param y: (*array*) Y coordinate array.
+    :param output_xy: (*bool*) Output x, y or not. Default is ``False``.
+
+    :return: (*array*) Peaks function result array.
+    """
+    n = len(args)
+    if n == 1:
+        x = args[0]
+        if isinstance(x, int):
+            x = linspace(-3, 3, x)
+        x, y = meshgrid(x, x)
+    else:
+        x = args[0]
+        y = args[1]
+        if x.ndim == 1:
+            x, y = meshgrid(x, y)
+
+    z = 3*(1-x)**2*exp(-(x**2) - (y+1)**2) - 10*(x/5. - x**3 - y**5)*exp(-x**2-y**2) - 1./3*exp(-(x+1)**2 - y**2)
+
+    output_xy = kwargs.pop('output_xy', False)
+    if output_xy:
+        return x, y, z
+    else:
+        return z
+
 def addtimedim(infn, outfn, t, tunit='hours'):
     '''
     Add a time dimension to a netCDF data file.

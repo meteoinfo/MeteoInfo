@@ -232,6 +232,23 @@ class MILayer(object):
         else:
             for shape, field in zip(shapes, fields):
                 self.layer.editAddShape(shape, field)
+
+    def copy(self):
+        """
+        Copy the layer.
+
+        :return: (*MILayer*) Copied layer.
+        """
+        return MILayer(layer=self.layer.clone())
+
+    def move(self, xshift=0, yshift=0):
+        """
+        Move shapes.
+
+        :param xshift: (*float*) X shift.
+        :param yshift: (*float*) Y shift.
+        """
+        self.layer.move(xshift, yshift)
                     
     def addlabels(self, fieldname, **kwargs):
         '''

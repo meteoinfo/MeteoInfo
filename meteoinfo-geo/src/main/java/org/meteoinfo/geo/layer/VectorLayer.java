@@ -3026,6 +3026,17 @@ public class VectorLayer extends MapLayer {
     }
 
     /**
+     * Move the shapes
+     * @param xShift X shift
+     * @param yShift Y shift
+     */
+    public void move(double xShift, double yShift) {
+        for (Shape shape : this._shapeList) {
+            shape.move(xShift, yShift);
+        }
+    }
+
+    /**
      * Clone VectorLayer object
      *
      * @return VectorLayer object

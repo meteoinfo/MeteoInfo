@@ -1042,16 +1042,6 @@ class NDArray(object):
         r = ArrayMath.take(self._array, indices._array, axis)
         return NDArray(r)
 
-    def asdimarray(self, x, y, fill_value=-9999.0):
-        dims = []
-        ydim = Dimension(DimensionType.Y)
-        ydim.setDimValues(y.aslist())
-        dims.append(ydim)
-        xdim = Dimension(DimensionType.X)
-        xdim.setDimValues(x.aslist())
-        dims.append(xdim)
-        return DimArray(self, dims, fill_value)
-
     def join(self, b, dimidx):
         r = ArrayMath.join(self._array, b._array, dimidx)
         return NDArray(r)

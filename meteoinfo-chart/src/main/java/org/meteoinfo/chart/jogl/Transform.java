@@ -1,12 +1,15 @@
 package org.meteoinfo.chart.jogl;
 
 import org.joml.Vector3f;
+import org.meteoinfo.chart.AspectType;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.geometry.shape.PointZ;
 
+import javax.swing.*;
 import java.nio.FloatBuffer;
 
 public class Transform {
+    private AspectType aspectType = AspectType.AUTO;
     private float xmin, xmax = 1.0f, ymin;
     private float ymax = 1.0f, zmin, zmax = 1.0f;
 
@@ -27,12 +30,7 @@ public class Transform {
      * @param zmax Maximum z
      */
     public Transform(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) {
-        this.xmin = xmin;
-        this.xmax = xmax;
-        this.ymin = ymin;
-        this.ymax = ymax;
-        this.zmin = zmin;
-        this.zmax = zmax;
+        this.setExtent(xmin, xmax, ymin, ymax, zmin, zmax);
     }
 
     /**
@@ -44,15 +42,57 @@ public class Transform {
     }
 
     public void setExtent(Extent3D extent3D) {
-        this.xmin = (float) extent3D.minX;
-        this.xmax = (float) extent3D.maxX;
-        this.ymin = (float) extent3D.minY;
-        this.ymax = (float) extent3D.maxY;
-        this.zmin = (float) extent3D.minZ;
-        this.zmax = (float) extent3D.maxZ;
+        setExtent((float) extent3D.minX, (float) extent3D.maxX, (float) extent3D.minY,
+                  (float) extent3D.maxY, (float) extent3D.minZ, (float) extent3D.maxZ);
+    }
+
+    public void setExtent(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) {
+        this.xmin = xmin;
+        this.xmax = xmax;
+        this.ymin = ymin;
+        this.ymax = ymax;
+        this.zmin = zmin;
+        this.zmax = zmax;
+
+        if (this.aspectType != AspectType.AUTO) {
+            float xRange = xmax - xmin;
+            float yRange = ymax - ymin;
+            float zRange = zmax - zmin;
+            float maxXYRange = xRange > yRange ? xRange : yRange;
+            float xRatio = xRange / maxXYRange;
+            float yRatio = yRange / maxXYRange;
+            if (this.aspectType == AspectType.EQUAL) {
+                float maxRange = zRange > maxXYRange ? zRange : maxXYRange;
+                xRatio = xRange / maxRange;
+                yRatio = yRange / maxRange;
+                float zRatio = zRange / maxRange;
+                if (zRatio != 1) {
+                    this.zmin = zmin / zRatio;
+                    this.zmax = zmax / zRatio;
+                }
+            }
+            if (xRatio != 1) {
+                this.xmin = xmin / xRatio;
+                this.xmax = xmax / xRatio;
+            }
+            if (yRatio != 1) {
+                this.ymin = ymin / yRatio;
+                this.ymax = ymax / yRatio;
+            }
+        }
+    }
+
+    public AspectType getAspectType() {
+        return this.aspectType;
+    }
+
+    public void setAspectType(AspectType value) {
+        this.aspectType = value;
     }
 
     public boolean equals(Transform other) {
+        if (this.aspectType != other.aspectType)
+            return false;
         if (this.xmin != other.xmin)
             return false;
         if (this.xmax != other.xmax)

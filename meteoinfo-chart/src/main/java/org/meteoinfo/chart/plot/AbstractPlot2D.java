@@ -47,8 +47,8 @@ public abstract class AbstractPlot2D extends Plot {
     private List<ChartLegend> legends;
     private List<ChartText> texts;
     private ChartWindArrow windArrow;
-    private boolean autoAspect = true;
-    private double aspect = 1;
+    protected AspectType aspectType = AspectType.AUTO;
+    protected double aspect = 1;
     protected boolean clip = true;
 
     // </editor-fold>
@@ -596,21 +596,21 @@ public abstract class AbstractPlot2D extends Plot {
     }
 
     /**
-     * Get is auto aspect or not
+     * Get aspect type
      *
-     * @return Boolean
+     * @return Aspect type
      */
-    public boolean isAutoAspect() {
-        return this.autoAspect;
+    public AspectType getAspectType() {
+        return this.aspectType;
     }
 
     /**
-     * Set is auto aspect or not
+     * Set aspect type
      *
-     * @param value Boolean
+     * @param value Aspect type
      */
-    public void setAutoAspect(boolean value) {
-        this.autoAspect = value;
+    public void setAspectType(AspectType value) {
+        this.aspectType = value;
     }
 
     /**
@@ -933,7 +933,7 @@ public abstract class AbstractPlot2D extends Plot {
      */
     @Override
     public Rectangle2D getPositionArea() {
-        if (this.autoAspect) {
+        if (this.aspectType == AspectType.AUTO) {
             return super.getPositionArea();
         } else {
             Rectangle2D plotArea = super.getPositionArea();

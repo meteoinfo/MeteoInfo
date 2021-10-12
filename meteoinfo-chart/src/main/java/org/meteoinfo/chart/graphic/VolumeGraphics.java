@@ -62,16 +62,16 @@ public class VolumeGraphics extends GraphicCollection3D {
      * Constructor
      * @param value Value array - 3D
      * @param colorMap Color map
+     * @param vMin Minimum value
+     * @param vMax Maximum value
      */
-    public VolumeGraphics(Array value, ColorMap colorMap) {
+    public VolumeGraphics(Array value, ColorMap colorMap, double vMin, double vMax) {
         value = value.copyIfView();
         int[] shape = value.getShape();
         this.depth = shape[0];
         this.height = shape[1];
         this.width = shape[2];
         this.data = new byte[width * height * depth];
-        double vMax = ArrayMath.max(value).doubleValue();
-        double vMin = ArrayMath.min(value).doubleValue();
         double range = vMax - vMin;
         for (int i = 0; i < value.getSize(); i++) {
             data[i] = (byte) ((int) ((value.getDouble(i) - vMin) / range * 255));

@@ -5,6 +5,7 @@
  */
 package org.meteoinfo.chart.plot;
 
+import org.meteoinfo.chart.AspectType;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.common.*;
@@ -51,7 +52,7 @@ public class PolarPlot extends Plot2D {
      */
     public PolarPlot() {
         super();
-        this.setAutoAspect(false);
+        this.aspectType = AspectType.EQUAL;
         GridLine gl = this.getGridLine();
         gl.setDrawXLine(true);
         gl.setDrawYLine(true);

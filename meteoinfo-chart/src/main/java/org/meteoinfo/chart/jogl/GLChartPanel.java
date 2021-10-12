@@ -299,8 +299,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                 }
                 extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
                 this.plot3DGL.setExtent(extent);
-                this.plot3DGL.setShiftX(this.plot3DGL.getShiftX() + (float) extent.getWidth() * dx);
-                this.plot3DGL.setShiftY(this.plot3DGL.getShiftY() + (float) extent.getHeight() * dy);
+                //this.plot3DGL.setShiftX(this.plot3DGL.getShiftX() + (float) extent.getWidth() * dx);
+                //this.plot3DGL.setShiftY(this.plot3DGL.getShiftY() + (float) extent.getHeight() * dy);
                 this.repaint();
                 break;
             case ROTATE:
@@ -316,8 +316,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                     }
                     extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
                     this.plot3DGL.setExtent(extent);
-                    this.plot3DGL.setShiftX(this.plot3DGL.getShiftX() + (float) extent.getWidth() * dx);
-                    this.plot3DGL.setShiftY(this.plot3DGL.getShiftY() + (float) extent.getHeight() * dy);
+                    //this.plot3DGL.setShiftX(this.plot3DGL.getShiftX() + (float) extent.getWidth() * dx);
+                    //this.plot3DGL.setShiftY(this.plot3DGL.getShiftY() + (float) extent.getHeight() * dy);
                 } else {
                     size = e.getComponent().getSize();
 
@@ -357,8 +357,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         double dy = extent.getHeight() * zoomF;
         extent = extent.extend(dx, dy, 0);
         this.plot3DGL.setExtent(extent);
-        this.plot3DGL.setScaleX(this.plot3DGL.getScaleX() + zoomF);
-        this.plot3DGL.setScaleY(this.plot3DGL.getScaleY() + zoomF);
+        //this.plot3DGL.setScaleX(this.plot3DGL.getScaleX() + zoomF);
+        //this.plot3DGL.setScaleY(this.plot3DGL.getScaleY() + zoomF);
         //this.plot3DGL.setScaleZ(zoomF);
         this.repaint();
     }

@@ -71,7 +71,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     public MapPlot() {
         super();
         this.antialias = false;
-        this.setAutoAspect(false);
+        this.aspectType = AspectType.EQUAL;
         try {
             this.setXAxis(new LonLatAxis("Longitude", true));
             this.setYAxis(new LonLatAxis("Latitude", false));
@@ -906,7 +906,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     @Override
     public Rectangle2D getPositionArea(Rectangle2D area) {
         Rectangle2D plotArea = super.getPositionArea(area);
-        if (!this.isAutoAspect()) {
+        if (this.aspectType != AspectType.AUTO) {
             MapView mv = this.mapFrame.getMapView();
             mv.setViewExtent((Extent) this.getDrawExtent().clone());
             Extent extent = mv.getViewExtent();
@@ -926,59 +926,6 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         return plotArea;
     }
 
-//    @Override
-//    public void drawGraph(Graphics2D g, Rectangle2D area) {
-//        MapView mapView = this.mapFrame.getMapView();
-//        mapView.setViewExtent(this.getDrawExtent());
-//        Extent extent = mapView.getViewExtent();
-//        double width = extent.getWidth();
-//        double height = extent.getHeight();
-//        double scaleFactor = mapView.getXYScaleFactor();
-//        if (width / height / scaleFactor > area.getWidth() / area.getHeight()){
-//            double h = area.getWidth() * height * scaleFactor / width;
-//            double delta = area.getHeight() - h;
-//            area.setRect(area.getX(), area.getY() + delta / 2, area.getWidth(), h);
-//        } else {
-//            double w = width * area.getHeight() / height / scaleFactor;
-//            double delta = area.getWidth() - w;
-//            area.setRect(area.getX() + delta / 2, area.getY(), w, area.getHeight());
-//        }
-//        mapView.paintGraphics(g, area);
-//    }
-//    /**
-//     * Set draw extent
-//     *
-//     * @param extent Extent
-//     */
-//    @Override
-//    public void setDrawExtent(Extent extent) {
-//        if (this.isLonLatMap()){
-//            super.updateDrawExtent();
-//        } else {            
-//            ((ProjLonLatAxis)this.getAxis(Location.BOTTOM)).setX_Y(extent.minY);
-//            ((ProjLonLatAxis)this.getAxis(Location.TOP)).setX_Y(extent.maxY);
-//            ((ProjLonLatAxis)this.getAxis(Location.LEFT)).setX_Y(extent.minX);
-//            ((ProjLonLatAxis)this.getAxis(Location.RIGHT)).setX_Y(extent.maxX);
-//            super.setDrawExtent(extent);
-//        }
-//    }
-//    
-//    /**
-//     * Update draw extent
-//     */
-//    @Override
-//    public void updateDrawExtent(){
-//        if (this.isLonLatMap()){
-//            super.updateDrawExtent();
-//        } else {
-//            Extent extent = this.getDrawExtent();
-//            ((ProjLonLatAxis)this.getAxis(Location.BOTTOM)).setX_Y(extent.minY);
-//            ((ProjLonLatAxis)this.getAxis(Location.TOP)).setX_Y(extent.maxY);
-//            ((ProjLonLatAxis)this.getAxis(Location.LEFT)).setX_Y(extent.minX);
-//            ((ProjLonLatAxis)this.getAxis(Location.RIGHT)).setX_Y(extent.maxX);
-//            super.updateDrawExtent();
-//        }
-//    }
     @Override
     void drawAxis(Graphics2D g, Rectangle2D area) {
         if (this.mapFrame.getMapView().getProjection().isLonLatMap()) {

@@ -5,6 +5,7 @@
  */
 package org.meteoinfo.chart.plot;
 
+import org.meteoinfo.chart.AspectType;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.geo.drawing.Draw;
 import org.meteoinfo.geometry.graphic.Graphic;
@@ -32,7 +33,7 @@ public class PiePlot extends Plot2D {
      */
     public PiePlot(){
         super();
-        this.setAutoAspect(false);
+        this.aspectType = AspectType.EQUAL;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

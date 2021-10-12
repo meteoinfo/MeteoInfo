@@ -7,7 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.chart import Location, ChartWindArrow, ChartText, LegendPosition, \
-    ChartLegend, ChartColorBar
+    ChartLegend, ChartColorBar, AspectType
 from org.meteoinfo.chart.plot import Plot2D, PolarPlot, PlotOrientation
 from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.common import XAlign, YAlign
@@ -89,18 +89,18 @@ class Axes(object):
         bgcobj = kwargs.pop('bgcolor', None)        
         
         if aspect == 'equal':
-            self.axes.setAutoAspect(False)
+            self.axes.setAspectType(AspectType.EQUAL)
         else:
             if isinstance(aspect, (int, float)):
                 self.axes.setAspect(aspect)
-                self.axes.setAutoAspect(False)
-        if bottomaxis == False:
+                self.axes.setAspectType(AspectType.RATIO)
+        if not bottomaxis:
             b_axis.setVisible(False)
-        if leftaxis == False:
+        if not leftaxis:
             l_axis.setVisible(False)
-        if topaxis == False:
+        if not topaxis:
             t_axis.setVisible(False)
-        if rightaxis == False:
+        if not rightaxis:
             r_axis.setVisible(False)
         if xreverse:
             b_axis.setInverse(True)
@@ -2811,7 +2811,7 @@ class Axes(object):
         for graphic in graphics:
             self.add_graphic(graphic)
         self.axes.setAutoExtent()
-        self.axes.setAutoAspect(False)
+        self.axes.setAspectType(AspectType.EQUAL)
         self.axes.getAxis(Location.BOTTOM).setVisible(False)
         self.axes.getAxis(Location.LEFT).setVisible(False)
         self.axes.getAxis(Location.TOP).setVisible(False)

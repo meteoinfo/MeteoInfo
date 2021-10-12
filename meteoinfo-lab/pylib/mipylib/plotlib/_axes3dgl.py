@@ -7,6 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.chart.graphic import GraphicFactory
+from org.meteoinfo.chart import AspectType
 from org.meteoinfo.geometry.legend import BreakTypes, BarBreak
 from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
@@ -86,6 +87,9 @@ class Axes3DGL(Axes3D):
         clip_plane = kwargs.pop('clip_plane', None)
         if not clip_plane is None:
             self.axes.setClipPlane(clip_plane)
+        aspect = kwargs.pop('aspect', None)
+        if not aspect is None:
+            self.axes.setAspectType(AspectType.valueOf(aspect.upper()))
         
     def _set_plot(self, plot):
         '''
@@ -1358,6 +1362,8 @@ class Axes3DGL(Axes3D):
         if vmin >= vmax:
             raise ValueError("Minimum value larger than maximum value")
 
+        alpha_min = kwargs.pop('alpha_min', 0.0)
+        alpha_max = kwargs.pop('alpha_max', 1.0)
         cmap = plotutil.getcolormap(**kwargs)
         if len(args) > 0:
             level_arg = args[0]
@@ -1368,15 +1374,12 @@ class Axes3DGL(Axes3D):
                 if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
                 ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
+            plotutil.setlegendscheme(ls, **kwargs)
+            graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
+                                       alpha_min, alpha_max)
         else:
-            cn = cmap.getColorCount() - 1
-            ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap)
-        plotutil.setlegendscheme(ls, **kwargs)
-
-        alpha_min = kwargs.pop('alpha_min', 0.0)
-        alpha_max = kwargs.pop('alpha_max', 1.0)
-        graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
-                                      alpha_min, alpha_max)
+            graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), cmap, \
+                                       vmin, vmax, alpha_min, alpha_max)
 
         visible = kwargs.pop('visible', True)
         if visible:

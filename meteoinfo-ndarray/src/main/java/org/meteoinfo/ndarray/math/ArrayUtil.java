@@ -2801,11 +2801,25 @@ public class ArrayUtil {
     /**
      * Mesh grid
      *
+     * @param x X array - vector
+     * @return Result arrays - matrix
+     */
+    public static Array[] meshgrid(Array x) {
+        return meshgrid(new Array[]{x, x});
+    }
+
+    /**
+     * Mesh grid
+     *
      * @param xs X arrays
      * @return Result arrays - matrix
      */
     public static Array[] meshgrid(Array... xs) {
         int n = xs.length;
+        if (n == 1) {
+            xs = new Array[]{xs[0], xs[0]};
+            n = 2;
+        }
         int[] shape = new int[n];
         int i = 0;
         Array x;

@@ -586,18 +586,20 @@ public class JOGLUtil {
      * @param ya       Y coordinates
      * @param za       Z coordinates
      * @param colorMap ColorMap
+     * @param vMin Min value
+     * @param vMax Max value
      * @param alphaMin Min alpha
      * @param alphaMax Max alpha
      * @return Particles
      */
     public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, ColorMap colorMap,
-                                           float alphaMin, float alphaMax) {
+                                           double vMin, double vMax, float alphaMin, float alphaMax) {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        VolumeGraphics graphics = new VolumeGraphics(data, colorMap);
+        VolumeGraphics graphics = new VolumeGraphics(data, colorMap, vMin, vMax);
         graphics.opacityNodes[0] = alphaMin;
         graphics.opacityNodes[1] = alphaMax;
         graphics.updateColors();

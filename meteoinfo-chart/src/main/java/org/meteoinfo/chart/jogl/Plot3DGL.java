@@ -103,11 +103,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     private float angleX = -45.0f;
     private float angleY = 45.0f;
-    private float scaleX = 1.0f;
-    private float scaleY = 1.0f;
-    private float scaleZ = 1.0f;
-    private float shiftX = 0.0f;
-    private float shiftY = 0.0f;
+    private AspectType aspectType = AspectType.AUTO;
+
     TessCallback tessCallback;
     private int width;
     private int height;
@@ -431,74 +428,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     /**
-     * Get scale x
-     * @return Scale x
-     */
-    public float getScaleX() { return this.scaleX; }
-
-    /**
-     * Set scale x
-     * @param value Scale x
-     */
-    public void setScaleX(float value) { this.scaleX = value; }
-
-    /**
-     * Get scale y
-     * @return Scale y
-     */
-    public float getScaleY() { return this.scaleY; }
-
-    /**
-     * Set scale y
-     * @param value Scale y
-     */
-    public void setScaleY(float value) { this.scaleY = value; }
-
-    /**
-     * Get scale z
-     * @return Scale z
-     */
-    public float getScaleZ() { return this.scaleZ; }
-
-    /**
-     * Set scale z
-     * @param value Scale z
-     */
-    public void setScaleZ(float value) { this.scaleZ = value; }
-
-    /**
-     * Get shift x
-     * @return Shift x
-     */
-    public float getShiftX() {
-        return this.shiftX;
-    }
-
-    /**
-     * Set shift x
-     * @param value Shift x
-     */
-    public void setShiftX(float value) {
-        this.shiftX = value;
-    }
-
-    /**
-     * Get shift y
-     * @return Shift y
-     */
-    public float getShiftY() {
-        return this.shiftY;
-    }
-
-    /**
-     * Set shift y
-     * @param value Shift y
-     */
-    public void setShiftY(float value) {
-        this.shiftY = value;
-    }
-
-    /**
      * Get title
      *
      * @return Title
@@ -609,6 +538,23 @@ public class Plot3DGL extends Plot implements GLEventListener {
      */
     public Axis getZAxis() {
         return this.zAxis;
+    }
+
+    /**
+     * Get aspect type
+     * @return Aspect type
+     */
+    public AspectType getAspectType() {
+        return this.aspectType;
+    }
+
+    /**
+     * Set aspect type
+     * @param value Aspect type
+     */
+    public void setAspectType(AspectType value) {
+        this.aspectType = value;
+        this.transform.setAspectType(this.aspectType);
     }
 
     /**
@@ -1133,11 +1079,21 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
         gl.glBegin(GL2.GL_LINE_STRIP);
-        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+        float xMin = this.transform.transform_x(this.xmin);
+        float xMax = this.transform.transform_x(this.xmax);
+        float yMin = this.transform.transform_y(this.ymin);
+        float yMax = this.transform.transform_y(this.ymax);
+        float zMin = this.transform.transform_z(this.zmin);
+        gl.glVertex3f(xMin, yMax, zMin);
+        gl.glVertex3f(xMin, yMin, zMin);
+        gl.glVertex3f(xMax, yMin, zMin);
+        gl.glVertex3f(xMax, yMax, zMin);
+        gl.glVertex3f(xMin, yMax, zMin);
+        /*gl.glVertex3f(-1.0f, 1.0f, -1.0f);
         gl.glVertex3f(-1.0f, -1.0f, -1.0f);
         gl.glVertex3f(1.0f, -1.0f, -1.0f);
         gl.glVertex3f(1.0f, 1.0f, -1.0f);
-        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+        gl.glVertex3f(-1.0f, 1.0f, -1.0f);*/
         gl.glEnd();
     }
 
@@ -1221,6 +1177,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (this.drawBase)
             this.drawBase(gl);
 
+        float xMin = this.transform.transform_x(this.xmin);
+        float xMax = this.transform.transform_x(this.xmax);
+        float yMin = this.transform.transform_y(this.ymin);
+        float yMax = this.transform.transform_y(this.ymax);
+        float zMin = this.transform.transform_z(this.zmin);
+        float zMax = this.transform.transform_z(this.zmax);
         float[] rgba;
         //Draw box
         if (boxed) {
@@ -1229,22 +1191,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
-                gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-                gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-                gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-                gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-                gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+                gl.glVertex3f(xMin, yMax, zMin);
+                gl.glVertex3f(xMin, yMin, zMin);
+                gl.glVertex3f(xMin, yMin, zMax);
+                gl.glVertex3f(xMin, yMax, zMax);
+                gl.glVertex3f(xMin, yMax, zMin);
                 gl.glEnd();
             } else {
                 rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
-                gl.glVertex3f(1.0f, 1.0f, -1.0f);
-                gl.glVertex3f(1.0f, -1.0f, -1.0f);
-                gl.glVertex3f(1.0f, -1.0f, 1.0f);
-                gl.glVertex3f(1.0f, 1.0f, 1.0f);
-                gl.glVertex3f(1.0f, 1.0f, -1.0f);
+                gl.glVertex3f(xMax, yMax, zMin);
+                gl.glVertex3f(xMax, yMin, zMin);
+                gl.glVertex3f(xMax, yMin, zMax);
+                gl.glVertex3f(xMax, yMax, zMax);
+                gl.glVertex3f(xMax, yMax, zMin);
                 gl.glEnd();
             }
             if (this.angleY >= 90 && this.angleY < 270) {
@@ -1252,22 +1214,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(this.gridLine.getSize() * dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
-                gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-                gl.glVertex3f(1.0f, -1.0f, -1.0f);
-                gl.glVertex3f(1.0f, -1.0f, 1.0f);
-                gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-                gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+                gl.glVertex3f(xMin, yMin, zMin);
+                gl.glVertex3f(xMax, yMin, zMin);
+                gl.glVertex3f(xMax, yMin, zMax);
+                gl.glVertex3f(xMin, yMin, zMax);
+                gl.glVertex3f(xMin, yMin, zMin);
                 gl.glEnd();
             } else {
                 rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(this.gridLine.getSize() * dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
-                gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-                gl.glVertex3f(1.0f, 1.0f, -1.0f);
-                gl.glVertex3f(1.0f, 1.0f, 1.0f);
-                gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-                gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+                gl.glVertex3f(xMin, yMax, zMin);
+                gl.glVertex3f(xMax, yMax, zMin);
+                gl.glVertex3f(xMax, yMax, zMax);
+                gl.glVertex3f(xMin, yMax, zMax);
+                gl.glVertex3f(xMin, yMax, xMin);
                 gl.glEnd();
             }
         }
@@ -1281,9 +1243,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
         float strWidth, strHeight;
         if (this.displayXY) {
             if (this.angleY >= 90 && this.angleY < 270) {
-                y = 1.0f;
+                y = yMax;
             } else {
-                y = -1.0f;
+                y = yMin;
             }
 
             this.xAxis.updateTickLabels();
@@ -1306,13 +1268,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
                     gl.glBegin(GL2.GL_LINES);
-                    gl.glVertex3f(v, y, -1.0f);
-                    gl.glVertex3f(v, -y, -1.0f);
+                    gl.glVertex3f(v, y, zMin);
+                    gl.glVertex3f(v, -y, zMin);
                     gl.glEnd();
                     if (this.displayZ && this.boxed) {
                         gl.glBegin(GL2.GL_LINES);
-                        gl.glVertex3f(v, -y, -1.0f);
-                        gl.glVertex3f(v, -y, 1.0f);
+                        gl.glVertex3f(v, -y, zMin);
+                        gl.glVertex3f(v, -y, zMax);
                         gl.glEnd();
                     }
                 }
@@ -1321,9 +1283,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
             ////////////////////////////////////////////
             //y grid line
             if (this.angleY >= 180 && this.angleY < 360) {
-                x = 1.0f;
+                x = xMax;
             } else {
-                x = -1.0f;
+                x = xMin;
             }
 
             this.yAxis.updateTickLabels();
@@ -1346,13 +1308,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
                     gl.glBegin(GL2.GL_LINES);
-                    gl.glVertex3f(x, v, -1.0f);
-                    gl.glVertex3f(-x, v, -1.0f);
+                    gl.glVertex3f(x, v, zMin);
+                    gl.glVertex3f(-x, v, zMin);
                     gl.glEnd();
                     if (this.displayZ && this.boxed) {
                         gl.glBegin(GL2.GL_LINES);
-                        gl.glVertex3f(-x, v, -1.0f);
-                        gl.glVertex3f(-x, v, 1.0f);
+                        gl.glVertex3f(-x, v, zMin);
+                        gl.glVertex3f(-x, v, zMax);
                         gl.glEnd();
                     }
                 }
@@ -1363,22 +1325,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (this.displayZ) {
             //z axis line
             if (this.angleY < 90) {
-                x = -1.0f;
-                y = 1.0f;
+                x = xMin;
+                y = yMax;
             } else if (this.angleY < 180) {
-                x = 1.0f;
-                y = 1.0f;
+                x = xMax;
+                y = yMax;
             } else if (this.angleY < 270) {
-                x = 1.0f;
-                y = -1.0f;
+                x = xMax;
+                y = yMin;
             } else {
-                x = -1.0f;
-                y = -1.0f;
+                x = xMin;
+                y = yMin;
             }
 
             this.zAxis.updateTickLabels();
             List<ChartText> tlabs = this.zAxis.getTickLabels();
-            float axisLen = this.toScreenLength(x, y, -1.0f, x, y, 1.0f);
+            float axisLen = this.toScreenLength(x, y, zMin, x, y, zMax);
             skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
             for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
                 v = (float) this.zAxis.getTickValues()[i];
@@ -1391,7 +1353,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 }
 
                 //Draw grid line
-                if (this.gridLine.isDrawZLine() && this.boxed && (v != -1.0f && v != 1.0f)) {
+                if (this.gridLine.isDrawZLine() && this.boxed && (v != zMin && v != zMax)) {
                     rgba = this.gridLine.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
@@ -1421,6 +1383,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     void drawAxis(GL2 gl) {
+        float xMin = this.transform.transform_x(this.xmin);
+        float xMax = this.transform.transform_x(this.xmax);
+        float yMin = this.transform.transform_y(this.ymin);
+        float yMax = this.transform.transform_y(this.ymax);
+        float zMin = this.transform.transform_z(this.zmin);
+        float zMax = this.transform.transform_z(this.zmax);
+
         //Draw axis
         float[] rgba;
         float x, y, v;
@@ -1433,23 +1402,23 @@ public class Plot3DGL extends Plot implements GLEventListener {
             //Draw x/y axis lines
             //x axis line
             if (this.angleY >= 90 && this.angleY < 270) {
-                y = 1.0f;
+                y = yMax;
             } else {
-                y = -1.0f;
+                y = yMin;
             }
             rgba = this.xAxis.getLineColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glLineWidth(this.xAxis.getLineWidth() * this.dpiScale);
             gl.glBegin(GL2.GL_LINES);
-            gl.glVertex3f(-1.0f, y, -1.0f);
-            gl.glVertex3f(1.0f, y, -1.0f);
+            gl.glVertex3f(xMin, y, zMin);
+            gl.glVertex3f(xMax, y, zMin);
             gl.glEnd();
 
             //x axis ticks
             float tickLen = this.xAxis.getTickLength() * this.lenScale;
             this.xAxis.updateTickLabels();
             List<ChartText> tlabs = this.xAxis.getTickLabels();
-            float axisLen = this.toScreenLength(-1.0f, y, -1.0f, 1.0f, y, -1.0f);
+            float axisLen = this.toScreenLength(xMin, y, zMin, xMax, y, zMin);
             skip = getLabelGap(this.xAxis.getTickLabelFont(), tlabs, axisLen);
             float y1 = y > 0 ? y + tickLen : y - tickLen;
             if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
@@ -1479,12 +1448,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(this.xAxis.getLineWidth() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINES);
-                gl.glVertex3f(v, y, -1.0f);
-                gl.glVertex3f(v, y1, -1.0f);
+                gl.glVertex3f(v, y, zMin);
+                gl.glVertex3f(v, y1, zMin);
                 gl.glEnd();
 
                 //Draw tick label
-                rect = drawString(gl, tlabs.get(i), v, y1, -1.0f, xAlign, yAlign);
+                rect = drawString(gl, tlabs.get(i), v, y1, zMin, xAlign, yAlign);
                 if (strWidth < rect.getWidth()) {
                     strWidth = (float) rect.getWidth();
                 }
@@ -1497,34 +1466,34 @@ public class Plot3DGL extends Plot implements GLEventListener {
             ChartText label = this.xAxis.getLabel();
             if (label != null) {
                 strWidth += this.tickSpace;
-                float angle = this.toScreenAngle(-1.0f, y, -1.0f, 1.0f, y, -1.0f);
+                float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
                 angle = y < 0 ? 270 - angle : 90 - angle;
                 float yShift = Math.min(-strWidth, -strWidth);
                 if (this.angleX <= -120) {
                     yShift = -yShift;
                 }
-                drawString(gl, label, 0.0f, y1, -1.0f, XAlign.CENTER, yAlign, angle, 0, yShift);
+                drawString(gl, label, 0.0f, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
             }
 
             ////////////////////////////////////////////
             //y axis line
             if (this.angleY >= 180 && this.angleY < 360) {
-                x = 1.0f;
+                x = xMax;
             } else {
-                x = -1.0f;
+                x = xMin;
             }
             rgba = this.yAxis.getLineColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glLineWidth(this.yAxis.getLineWidth() * this.dpiScale);
             gl.glBegin(GL2.GL_LINES);
-            gl.glVertex3f(x, -1.0f, -1.0f);
-            gl.glVertex3f(x, 1.0f, -1.0f);
+            gl.glVertex3f(x, yMin, zMin);
+            gl.glVertex3f(x, yMax, zMin);
             gl.glEnd();
 
             //y axis ticks
             this.yAxis.updateTickLabels();
             tlabs = this.yAxis.getTickLabels();
-            axisLen = this.toScreenLength(x, -1.0f, -1.0f, x, 1.0f, -1.0f);
+            axisLen = this.toScreenLength(x, yMin, zMin, x, yMax, zMin);
             skip = getLabelGap(this.yAxis.getTickLabelFont(), tlabs, axisLen);
             tickLen = this.yAxis.getTickLength() * this.lenScale;
             float x1 = x > 0 ? x + tickLen : x - tickLen;
@@ -1555,12 +1524,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(this.yAxis.getLineWidth() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINES);
-                gl.glVertex3f(x, v, -1.0f);
-                gl.glVertex3f(x1, v, -1.0f);
+                gl.glVertex3f(x, v, zMin);
+                gl.glVertex3f(x1, v, zMin);
                 gl.glEnd();
 
                 //Draw tick label
-                rect = drawString(gl, tlabs.get(i), x1, v, -1.0f, xAlign, yAlign);
+                rect = drawString(gl, tlabs.get(i), x1, v, zMin, xAlign, yAlign);
                 if (strWidth < rect.getWidth()) {
                     strWidth = (float) rect.getWidth();
                 }
@@ -1573,13 +1542,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
             label = this.yAxis.getLabel();
             if (label != null) {
                 strWidth += this.tickSpace;
-                float angle = this.toScreenAngle(x, -1.0f, -1.0f, x, 1.0f, -1.0f);
+                float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, xMin);
                 angle = x > 0 ? 270 - angle : 90 - angle;
                 float yShift = Math.min(-strWidth, -strWidth);
                 if (this.angleX <= -120) {
                     yShift = -yShift;
                 }
-                drawString(gl, label, x1, 0.0f, -1.0f, XAlign.CENTER, yAlign, angle, 0, yShift);
+                drawString(gl, label, x1, 0.0f, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
             }
         }
 
@@ -1587,30 +1556,30 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (this.displayZ) {
             //z axis line
             if (this.angleY < 90) {
-                x = -1.0f;
-                y = 1.0f;
+                x = xMin;
+                y = yMax;
             } else if (this.angleY < 180) {
-                x = 1.0f;
-                y = 1.0f;
+                x = xMax;
+                y = yMax;
             } else if (this.angleY < 270) {
-                x = 1.0f;
-                y = -1.0f;
+                x = xMax;
+                y = yMin;
             } else {
-                x = -1.0f;
-                y = -1.0f;
+                x = xMin;
+                y = yMin;
             }
             rgba = this.zAxis.getLineColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
             gl.glBegin(GL2.GL_LINES);
-            gl.glVertex3f(x, y, -1.0f);
-            gl.glVertex3f(x, y, 1.0f);
+            gl.glVertex3f(x, y, zMin);
+            gl.glVertex3f(x, y, zMax);
             gl.glEnd();
 
             //z axis ticks
             this.zAxis.updateTickLabels();
             List<ChartText> tlabs = this.zAxis.getTickLabels();
-            float axisLen = this.toScreenLength(x, y, -1.0f, x, y, 1.0f);
+            float axisLen = this.toScreenLength(x, y, zMin, x, y, zMax);
             skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
             float x1 = x;
             float y1 = y;
@@ -2035,19 +2004,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
         program.allocateUniform(gl, "iP", (gl2, loc) -> {
             //gl2.glUniformMatrix4fv(loc, 1, false, this.camera.getProjectionMatrix().invert().get(Buffers.newDirectFloatBuffer(16)));
             gl2.glUniformMatrix4fv(loc, 1, false, toMatrix(this.projmatrix).invert().get(Buffers.newDirectFloatBuffer(16)));
-        });
-        program.allocateUniform(gl, "zScale", (gl2, loc) -> {
-            gl2.glUniform1f(loc, volume.getScale(2));
-        });
-        program.allocateUniform(gl, "xyScale", (gl2, loc) -> {
-            gl2.glUniform1f(loc, this.scaleX);
-            //gl2.glUniform1f(loc, 1.0f);
-        });
-        program.allocateUniform(gl, "xShift", (gl2, loc) -> {
-            gl2.glUniform1f(loc, this.transform.transformXDis(this.shiftX));
-        });
-        program.allocateUniform(gl, "yShift", (gl2, loc) -> {
-            gl2.glUniform1f(loc, this.transform.transformYDis(this.shiftY));
         });
         program.allocateUniform(gl, "viewSize", (gl2, loc) -> {
             gl2.glUniform2f(loc, this.width, this.height);
@@ -3721,8 +3677,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
         plot3DGL.hideOnDrag = this.hideOnDrag;
         plot3DGL.lighting = this.lighting;
         plot3DGL.title = this.title;
-        plot3DGL.shiftX = this.shiftX;
-        plot3DGL.shiftY = this.shiftY;
 
         return plot3DGL;
     }

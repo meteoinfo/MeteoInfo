@@ -12,8 +12,6 @@ uniform mat4 iP;
 uniform sampler3D tex;
 uniform sampler2D colorMap;
 uniform int depthSampleCount;
-uniform float zScale;
-uniform float xyScale;
 uniform vec3 aabbMin;
 uniform vec3 aabbMax;
 
@@ -47,21 +45,19 @@ Ray CreateCameraRay(vec2 uv)
 {
     float near = -5.0f;
     float far = 5.0f;
+
     // Transform the camera origin to world space
     float zv = 1000.0f;
     vec3 direction = (iP * vec4(uv, far, 1.0f)).xyz;
-    //vec3 origin = (iV* vec4(0.0f, 0.0f, zv, 1.0f)).xyz;
     vec3 origin = (iP * vec4(uv, 0.0f, 1.0f)).xyz;
     origin = (iV * vec4(origin.xyz, 1.0f)).xyz;
 
-    // Invert the perspective projection of the view-space position
-    //vec3 direction = (iP * vec4(uv, zv * 0.2f / xyScale, 1.0f)).xyz;
-    //vec3 direction = (iP * vec4(uv, far + near, far - near)).xyz;
     // Transform the direction from camera to world space and normalize
     direction = (iV* vec4(direction, 0.0f)).xyz;
     direction = normalize(direction);
     return makeRay(origin, direction);
 }
+
 /*
 	From: https://github.com/hpicgs/cgsee/wiki/Ray-Box-Intersection-on-the-GPU
 */
@@ -90,7 +86,6 @@ void main(){
     intersect(ray, aabb, tmin, tmax);
     if (tmax < tmin){
         discard;
-        return;
     }
     vec3 start = (ray.origin.xyz + tmin*ray.direction.xyz - aabb[0])/(aabb[1]-aabb[0]);
     vec3 end = (ray.origin.xyz + tmax*ray.direction.xyz - aabb[0])/(aabb[1]-aabb[0]);

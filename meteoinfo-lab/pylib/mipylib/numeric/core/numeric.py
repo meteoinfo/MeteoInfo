@@ -37,19 +37,18 @@ newaxis = None
 
 __all__ = [
     'pi','e','inf','nan','acos','abs','all','allclose','any','arange','arange1',
-    'argmin','argmax','array','array_split','asanyarray','asarray','asgridarray','asgriddata','asin',
-    'asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan','arctan2','atan2','ave_month',
-    'average','histogram',
-    'broadcast_to','cdiff','ceil','concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag',
-    'diff','dim_array','datatable','dot','empty','empty_like','exp','eye','flatnonzero',
-    'floor','fmax','fmin','full',
-    'hcurl','hdivg','hstack','identity','interp2d',
-    'interpn','isarray','isclose','isfinite','isinf','isnan','linspace','log','log10',
-    'logical_not','logspace','magnitude','max','maximum','mean','median','meshgrid','min','minimum',
-    'monthname','moveaxis','newaxis','ones','ones_like','peaks','pol2cart','power','radians',
-    'reshape','repeat','roll','rolling_mean','rot90','sign','sin','shape','smooth5','smooth9','sort','squeeze','argsort',
-    'split','sqrt','square','std','sum','swapaxes','take','tan','tile','transpose','trapz','vdot','unique',
-    'unravel_index','var','vstack','zeros','zeros_like'
+    'argmin','argmax','argsort','array','array_split','asanyarray','asarray','asgridarray',
+    'asgriddata','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
+    'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
+    'concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag','diff',
+    'dim_array','datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
+    'fmax','fmin','full','hcurl','hdivg','hstack','identity','interp2d','interpn','isarray',
+    'isclose','isfinite','isinf','isnan','linspace','log','log10','logical_not','logspace',
+    'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
+    'moveaxis','newaxis','ones','ones_like','peaks','pol2cart','power','radians','reshape',
+    'repeat','roll','rolling_mean','rot90','sign','sin','shape','smooth5','smooth9','sort',
+    'sphere','squeeze','split','sqrt','square','std','sum','swapaxes','take','tan','tile',
+    'transpose','trapz','vdot','unique','unravel_index','var','vstack','zeros','zeros_like'
     ]
 
 def isgriddata(gdata):
@@ -2176,6 +2175,20 @@ def meshgrid_bak(*args):
     ya = y.asarray()
     ra = ArrayUtil.meshgrid(xa, ya)
     return NDArray(ra[0]), NDArray(ra[1])
+
+def sphere(n=20):
+    """
+    Create sphere surface coordinate x,y,z array with a radius equal to 1.
+
+    :param n: (*int*) The sphere has n*n faces. Default is 20.
+    :return: (*array tuple*) the x-, y-, and z- coordinates as three (n+1)*(n+1) matrices.
+    """
+    u, v = meshgrid(linspace(0, 2 * pi, n + 1), linspace(0, pi, n + 1))
+    x = cos(u) * sin(v)
+    y = sin(u) * sin(v)
+    z = cos(v)
+
+    return x, y, z
     
 def broadcast_to(a, shape):
     """

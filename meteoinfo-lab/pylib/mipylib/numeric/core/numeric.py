@@ -40,12 +40,12 @@ __all__ = [
     'argmin','argmax','argsort','array','array_split','asanyarray','asarray','asgridarray',
     'asgriddata','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
-    'concatenate','corrcoef','cos','cumsum','degrees','delete','delnan','diag','diff',
+    'concatenate','corrcoef','cos','cumsum','cylinder','degrees','delete','delnan','diag','diff',
     'dim_array','datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','identity','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','linspace','log','log10','logical_not','logspace',
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
-    'moveaxis','newaxis','ones','ones_like','peaks','pol2cart','power','radians','reshape',
+    'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reshape',
     'repeat','roll','rolling_mean','rot90','sign','sin','shape','smooth5','smooth9','sort',
     'sphere','squeeze','split','sqrt','square','std','sum','swapaxes','take','tan','tile',
     'transpose','trapz','vdot','unique','unravel_index','var','vstack','zeros','zeros_like'
@@ -1994,6 +1994,21 @@ def vdot(a, b):
         b = b.flatten()
     return ArrayMath.vdot(a.asarray(), b.asarray())
 
+def outer(a, b):
+    """
+    Compute the outer product of two vectors.
+
+    :param a: (*array_like*) First input vector.
+    :param b: (*array_like*) Second input vector.
+    :return: (*array*) Outer product - 2D array. ``out[i, j] = a[i] * b[j]``.
+    """
+    if isinstance(a, (list, tuple)):
+        a = array(a)
+    if isinstance(b, (list, tuple)):
+        b = array(b)
+    r = ArrayMath.outer(a._array, b._array)
+    return NDArray(r)
+
 def shape(a):
     '''
     Return the shape of an array.
@@ -2188,6 +2203,28 @@ def sphere(n=20):
     y = sin(u) * sin(v)
     z = cos(v)
 
+    return x, y, z
+
+def cylinder(r=1, n=20):
+    """
+    Create cylinder x,y,z coordinate array.
+
+    :param r: (*scalar or array*) The function treats each element in r as a radius at equally
+        spaced heights along the unit height of the cylinder.
+    :param n: (*int*) The sphere has m*n faces. Default is 20.
+    :return:
+    """
+    theta = linspace(0, 2 * pi, n + 1)
+    if isinstance(r, numbers.Number):
+        r = array([r, r])
+    elif isinstance(r, (list, tuple)):
+        r = array(r)
+
+    x = outer(r, cos(theta))
+    y = outer(r, sin(theta))
+    z = linspace(0, 1., len(r))
+    z = z[:,newaxis]
+    z = z.repeat(n + 1, axis=1)
     return x, y, z
     
 def broadcast_to(a, shape):
@@ -2892,7 +2929,7 @@ def peaks(*args, **kwargs):
 
     :param x: (*int or array*) X coordinate array.
     :param y: (*array*) Y coordinate array.
-    :param output_xy: (*bool*) Output x, y or not. Default is ``False``.
+    :param output_xy: (*bool*) Output x, y or not. Default is ``True``.
 
     :return: (*array*) Peaks function result array.
     """
@@ -2910,7 +2947,7 @@ def peaks(*args, **kwargs):
 
     z = 3*(1-x)**2*exp(-(x**2) - (y+1)**2) - 10*(x/5. - x**3 - y**5)*exp(-x**2-y**2) - 1./3*exp(-(x+1)**2 - y**2)
 
-    output_xy = kwargs.pop('output_xy', False)
+    output_xy = kwargs.pop('output_xy', True)
     if output_xy:
         return x, y, z
     else:

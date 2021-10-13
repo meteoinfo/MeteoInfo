@@ -8,6 +8,7 @@ package org.meteoinfo.ndarray.math;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.ndarray.*;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -4864,6 +4865,32 @@ public class ArrayMath {
             IndexIterator iterB = a.getIndexIterator();
             while (iterA.hasNext()) {
                 r += iterA.getDoubleNext() * iterB.getDoubleNext();
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Compute the outer product of two vectors.
+     *
+     * @param a Vector a
+     * @param b Vector b
+     * @return The outer product
+     */
+    public static Array outer(Array a, Array b) {
+        a = a.copyIfView();
+        b = b.copyIfView();
+
+        int na = (int) a.getSize();
+        int nb = (int) b.getSize();
+        DataType dt = commonType(a.getDataType(), b.getDataType());
+        Array r = Array.factory(dt, new int[]{na, nb});
+        int idx = 0;
+        for (int i = 0; i < na; i++) {
+            for (int j = 0; j < nb; j++) {
+                r.setObject(idx, a.getDouble(i) * b.getDouble(j));
+                idx += 1;
             }
         }
 

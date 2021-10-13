@@ -197,8 +197,10 @@ def getcolormap(**kwargs):
             cmap = ColorMap(cs)
     else:
         cmapstr = kwargs.pop('cmap', 'matlab_jet')
-        if cmapstr is None:
-            cmapstr = 'matlab_jet'
+        reverse = False
+        if len(cmapstr) > 2 and cmapstr[-2:] == '_r':
+            cmapstr = cmapstr[:-2]
+            reverse = True
         fn = cmapstr + '.rgb'
         fn = os.path.join(migl.get_cmap_folder(), fn)
         if not os.path.exists(fn):
@@ -209,7 +211,7 @@ def getcolormap(**kwargs):
         else:
             alpha = (int)(alpha * 255)
             cmap = ColorUtil.loadColorMap(fn, alpha)
-    reverse = kwargs.pop('cmapreverse', False)
+    reverse = kwargs.pop('cmapreverse', reverse)
     if reverse:
         cmap.reverse()
     return cmap

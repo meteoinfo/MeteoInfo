@@ -1115,6 +1115,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //Get screen coordinates
         float coord[] = new float[4];// x, y;// returned xy 2d coords        
         glu.gluProject(vx, vy, vz, mvmatrix, 0, projmatrix, 0, viewport, 0, coord, 0);
+        if (viewport[0] != 0)
+            coord[0] -= viewport[0];
+        if (viewport[1] != 0)
+            coord[1] -= viewport[1];
 
         return coord;
     }
@@ -3627,7 +3631,24 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
 
         final float h = (float) width / (float) height;
-        gl.glViewport(0, 0, width, height);
+        switch (this.aspectType) {
+            case EQUAL:
+                if (h > 1) {
+                    int diff = width - height;
+                    gl.glViewport(diff / 2, 0, width - diff, height);
+                    this.width = width - diff;
+                } else if (h < 1) {
+                    int diff = height - width;
+                    gl.glViewport(0, diff / 2, width, height - diff);
+                    this.height = height - diff;
+                } else {
+                    gl.glViewport(0, 0, width, height);
+                }
+                break;
+            default:
+                gl.glViewport(0, 0, width, height);
+                break;
+        }
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 

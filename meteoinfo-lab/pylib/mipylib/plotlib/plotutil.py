@@ -182,6 +182,7 @@ def getcolors(cs, alpha=None):
 def getcolormap(**kwargs):
     colors = kwargs.pop('colors', None)
     issingle = False
+    reverse = False
     if colors is None:
         colors = kwargs.pop('color', None)
         issingle = True
@@ -197,7 +198,6 @@ def getcolormap(**kwargs):
             cmap = ColorMap(cs)
     else:
         cmapstr = kwargs.pop('cmap', 'matlab_jet')
-        reverse = False
         if len(cmapstr) > 2 and cmapstr[-2:] == '_r':
             cmapstr = cmapstr[:-2]
             reverse = True

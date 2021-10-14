@@ -440,7 +440,7 @@ class DimDataFile(object):
                 var.addattr('name', v.name)
             else:
                 for attr in v.attributes:
-                    var.addattr(attr.getName(), attr.getStringValue())
+                    var.addattr(attr.getName(), attr.getValue())
 
         #Create netCDF file
         self.ncfile.create()

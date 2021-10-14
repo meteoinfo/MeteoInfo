@@ -1,7 +1,7 @@
 from org.meteoinfo.ndarray import DataType as JDataType
 
 __all__ = [
-    'byte','char','int','integer','int32','int16','short','int64','long','float','float32','float64',
+    'byte','char','int','integer','int32','int16','short','int64','uint','long','float','float32','float64',
     'double','str','string','complex','date','datetime'
     ]
 
@@ -9,6 +9,7 @@ _dtype_dict = dict(byte = JDataType.BYTE,
     char = JDataType.CHAR,
     boolean = JDataType.BOOLEAN,
     int = JDataType.INT,
+    uint = JDataType.UINT,
     short = JDataType.SHORT,
     long = JDataType.LONG,
     float = JDataType.FLOAT,
@@ -99,7 +100,7 @@ class DataType(object):
             return 'b'
         elif self.name == 'int16' or self.name == 'short':
             return 'h'
-        elif self.name == 'int' or self.name == 'integer' or self.name == 'int32':
+        elif self.name == 'int' or self.name == 'integer' or self.name == 'int32' or self.name == 'uint':
             return 'l'
         elif self.name == 'int64' or self.name == 'long':
             return 'q'
@@ -124,7 +125,7 @@ class DataType(object):
         if self.name == 'bool' or self.name == 'boolean':
             return 'b'
         elif self.name == 'int' or self.name == 'integer' or self.name == 'int32' or self.name == 'int16' or \
-            self.name == 'short' or self.name == 'int64' or self.name == 'long':
+            self.name == 'uint' or self.name == 'short' or self.name == 'int64' or self.name == 'long':
             return 'i'
         elif self.name == 'float' or self.name == 'float64' or self.name == 'double':
             return 'f'
@@ -169,6 +170,7 @@ class dtype(DataType):
     bool = DataType('boolean')
     boolean = DataType('boolean')
     int = DataType('int')
+    uint = DataType('uint')
     integer = DataType('int')
     int32 = DataType('int')
     int16 = DataType('short')
@@ -211,6 +213,7 @@ int32 = DataType('int')
 int16 = DataType('short')
 short = DataType('short')
 int64 = DataType('long')
+uint = DataType('uint')
 long = DataType('long')
 float = DataType('float')
 float32 = DataType('float')

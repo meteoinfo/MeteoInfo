@@ -447,12 +447,19 @@ class DimVariable(object):
     def addattr(self, attrname, attrvalue):
         if self.attributes is None:
             self.attributes = []
+
         if isinstance(attrvalue, Array):
             attrvalue = np.NDArray(attrvalue)
+
         if isinstance(attrvalue, np.NDArray):
             if attrvalue.size == 1:
                 attrvalue = attrvalue[0]
-        attr = Attribute(attrname, attrvalue)
+                attr = Attribute(attrname, attrvalue)
+            else:
+                attr = Attribute(attrname, attrvalue._array)
+        else:
+            attr = Attribute(attrname, attrvalue)
+
         self.attributes.append(attr)
 
         if not self.ncvariable is None:

@@ -1127,12 +1127,12 @@ class Axes(object):
                         xx = np.zeros(ydata.shape)
                         xx[:,:] = xdata
                         xdata = xx
-                    if ydata.islondim(0):
-                        xaxistype = 'lon'
-                    elif ydata.islatdim(0):
-                        xaxistype = 'lat'
-                    elif ydata.istimedim(0):
-                        xaxistype = 'time'
+                    # if ydata.islondim(0):
+                    #     xaxistype = 'lon'
+                    # elif ydata.islatdim(0):
+                    #     xaxistype = 'lat'
+                    # elif ydata.istimedim(0):
+                    #     xaxistype = 'time'
                 else:
                     xdata = np.arange(ydata.shape[-1])
                     if ydata.ndim == 2:
@@ -1663,7 +1663,10 @@ class Axes(object):
             line.setCaption(label)
         else:
             line = plotutil.getplotstyle(fmt, label, **kwargs)
-        eline = line.clone()
+        if isinstance(line, PolylineBreak):
+            eline = line.clone()
+        else:
+            eline = PolylineBreak()
         eline.setDrawSymbol(False)
         eline.setStyle(LineStyles.SOLID)
         if not ecolor is None:

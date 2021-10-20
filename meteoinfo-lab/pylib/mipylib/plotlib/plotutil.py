@@ -344,6 +344,8 @@ def getplotstyle(style, caption, **kwargs):
         c = getcolor(color)
     else:
         c, style = getcolor_style(style)
+        if kwargs.has_key('color'):
+            c = getcolor(kwargs.pop('color'))
     lineStyle, style = getlinestyle_1(style)
     pointStyle = getpointstyle(style)    
     if not pointStyle is None:

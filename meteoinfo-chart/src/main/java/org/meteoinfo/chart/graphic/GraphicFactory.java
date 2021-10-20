@@ -755,7 +755,7 @@ public class GraphicFactory {
      * @return LineString graphics
      */
     public static GraphicCollection createErrorLineString(Array xdata, Array ydata, Array xErrorLeft,
-                                                          Array xErrorRight, Array yErrorBottom, Array yErrorUp, PolylineBreak cb, PolylineBreak ecb, float capSize) {
+                                                          Array xErrorRight, Array yErrorBottom, Array yErrorUp, ColorBreak cb, PolylineBreak ecb, float capSize) {
         GraphicCollection gc = new GraphicCollection();
         PolylineShape pls;
         CapPolylineShape epls;
@@ -828,7 +828,8 @@ public class GraphicFactory {
         }
         gc.setSingleLegend(false);
         PolylineBreak lb = (PolylineBreak) ecb.clone();
-        lb.setDrawSymbol(cb.getDrawSymbol());
+        if (cb instanceof PolylineBreak)
+            lb.setDrawSymbol(((PolylineBreak)cb).getDrawSymbol());
         gc.setLegendBreak(lb);
 
         return gc;

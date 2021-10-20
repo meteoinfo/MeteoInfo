@@ -349,7 +349,7 @@ def getplotstyle(style, caption, **kwargs):
     lineStyle, style = getlinestyle_1(style)
     pointStyle = getpointstyle(style)    
     if not pointStyle is None:
-        fill = kwargs.pop('fill', True)        
+        fill = kwargs.pop('fill', True)
         if lineStyle is None:           
             pb = PointBreak()
             pb.setCaption(caption)
@@ -365,6 +365,7 @@ def getplotstyle(style, caption, **kwargs):
             edgecolor = kwargs.pop('edgecolor', pb.getColor())
             edgecolor = getcolor(edgecolor)
             pb.setOutlineColor(edgecolor)
+            setpointlegendbreak(pb, **kwargs)
             return pb
         else:
             plb = PolylineBreak()
@@ -871,6 +872,9 @@ def setpointlegendbreak(lb, **kwargs):
         lb.setColor(color)
     if kwargs.has_key('size'):
         size = kwargs['size']
+        lb.setSize(size)
+    if kwargs.has_key('markersize'):
+        size = kwargs['markersize']
         lb.setSize(size)
     if kwargs.has_key('edgecolor'):
         ecobj = kwargs['edgecolor']

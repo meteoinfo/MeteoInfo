@@ -54,6 +54,23 @@ public class PolylineBreak extends ColorBreak {
         fillSymbol = false;
         symbolInterval = 1;
     }
+
+    /**
+     * Create a PolylineBreak from a PointBreak
+     * @param pb The PointBreak
+     * @return The PolylineBreak
+     */
+    public static PolylineBreak of(PointBreak pb) {
+        PolylineBreak plb = new PolylineBreak();
+        plb.setDrawSymbol(true);
+        plb.setFillSymbol(pb.drawFill);
+        plb.setSymbolFillColor(pb.color);
+        plb.setSymbolColor(pb.color);
+        plb.setSymbolSize(pb.size);
+        plb.setSymbolStyle(pb.style);
+
+        return plb;
+    }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
 
@@ -281,6 +298,20 @@ public class PolylineBreak extends ColorBreak {
 
     // </editor-fold>
     // <editor-fold desc="Methods">
+
+    /**
+     * Set symbol by a PointBreak
+     * @param pb The PointBreak
+     */
+    public void setSymbol(PointBreak pb) {
+        this.drawSymbol = true;
+        this.fillSymbol = pb.drawFill;
+        this.symbolColor = pb.color;
+        this.symbolFillColor = pb.color;
+        this.symbolSize = pb.size;
+        this.symbolStyle = pb.style;
+    }
+
     /**
      * Get property object
      *

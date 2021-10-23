@@ -830,6 +830,10 @@ public class GraphicFactory {
         PolylineBreak lb = (PolylineBreak) ecb.clone();
         if (cb instanceof PolylineBreak)
             lb.setDrawSymbol(((PolylineBreak)cb).getDrawSymbol());
+        else {
+            lb.setSymbol((PointBreak) cb);
+            lb.setCaption(cb.getCaption());
+        }
         gc.setLegendBreak(lb);
 
         return gc;

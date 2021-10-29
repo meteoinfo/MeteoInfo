@@ -429,7 +429,6 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        cControl1 = new bibliothek.gui.dock.common.CControl();
         jPanel_Toolbar = new javax.swing.JPanel();
         jToolBar_Editor = new javax.swing.JToolBar();
         jButton_NewFile = new javax.swing.JButton();
@@ -1404,7 +1403,6 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private bibliothek.gui.dock.common.CControl cControl1;
     private javax.swing.JButton jButton_CurrentFolder;
     private javax.swing.JButton jButton_NewFile;
     private javax.swing.JButton jButton_OpenFile;

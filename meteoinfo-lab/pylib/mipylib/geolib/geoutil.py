@@ -35,10 +35,10 @@ def makeshapes(x, y, shape_type=None, z=None, m=None):
         y = np.asarray(y)._array
         if not z is None:            
             if m is None:
-                m = np.zeros(len(z))._array
+                m = np.zeros(len(z))
             else:
-                m = np.asarray(m)._array
-            z = np.asarray(z)._array
+                m = np.asarray(m)
+            z = np.asarray(z)
         if isinstance(shape_type, basestring):
             try:
                 shape_type = ShapeTypes.valueOf(shape_type)

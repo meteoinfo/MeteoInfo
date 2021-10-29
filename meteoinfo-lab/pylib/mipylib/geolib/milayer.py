@@ -32,6 +32,10 @@ class MILayer(object):
                 print('shapetype must be specified!')
             else:
                 shapetype = shapetype.upper()
+                if shapetype == 'LINE':
+                    shapetype = 'POLYLINE'
+                elif shapetype == 'LINE_Z':
+                    shapetype = 'POLYLINE_Z'
                 try:
                     type = ShapeTypes.valueOf(shapetype)
                 except:

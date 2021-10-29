@@ -53,7 +53,10 @@ def vorticity(u, v, x=None, y=None):
         y = np.array(y)
 
     r = MeteoMath.vorticity(u.asarray(), v.asarray(), x.asarray(), y.asarray())
-    return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
+    if isinstance(u, DimArray):
+        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
+    else:
+        return NDArray(r)
 
 def divergence(u, v, x=None, y=None):
     '''

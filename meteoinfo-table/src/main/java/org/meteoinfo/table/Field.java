@@ -101,8 +101,11 @@ import org.meteoinfo.ndarray.DataType;
                  this.setDataType(DataType.FLOAT);
                  break;
              case 'N':
-                 if (fNumDec == 0 && fLen <= 11){
-                     this.setDataType(DataType.INT);
+                 if (fNumDec == 0 && fLen <= 9){
+                     if (fLen <= 9)
+                        this.setDataType(DataType.INT);
+                     else
+                        this.setDataType(DataType.LONG);
                  }
                  else
                      this.setDataType(DataType.DOUBLE);

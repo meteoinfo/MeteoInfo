@@ -471,6 +471,9 @@ public final class AttributeTable implements Cloneable {
                             case INT:
                                 tempObject = Integer.parseInt(tempStr.trim());
                                 break;
+                            case LONG:
+                                tempObject = Long.parseLong(tempStr.trim());
+                                break;
                             case FLOAT:
                                 tempObject = Float.parseFloat(tempStr);
                                 break;

@@ -337,7 +337,8 @@ package org.meteoinfo.geo.mapdata;
       */
      public void setLayer(VectorLayer aLayer) {
          _layer = aLayer;
-         _dataTable = _layer.getAttributeTable().getTable().cloneTable_Field();
+         //_dataTable = _layer.getAttributeTable().getTable().cloneTable_Field();
+         _dataTable = _layer.getAttributeTable().getTable();
          this.setTitle("Attribute Data - " + _layer.getLayerName());
          DataTableModel dataTableModel = new DataTableModel(_dataTable);
          this.jTable1.setModel(dataTableModel);

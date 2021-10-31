@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="config.xml" Type="configurefile">
-  <Path OpenPath="D:\Temp\image"/>
+  <Path OpenPath="D:\Temp\Map\HydroRIVERS_v10_as_shp\HydroRIVERS_v10_as_shp"/>
   <Font>
     <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
     <LegendFont FontName="宋体" FontSize="12"/>
@@ -8,5 +8,5 @@
   <ScriptLanguage Language="Jython"/>
   <LookFeel LafDecorated="true" Name="FlatLightLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,693" ShowMeteoDataDlg="true"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685" ShowMeteoDataDlg="true"/>
 </MeteoInfo>

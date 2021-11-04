@@ -220,13 +220,13 @@ class Axes(object):
         :param aspect: (*string or number*) Axes aspect ['equal' | 'auto'].
         '''
         if aspect == 'equal':
-            self.axes.setAutoAspect(False)
+            self.axes.setAspectType(AspectType.EQUAL)
         else:
             if isinstance(aspect, (int, float)):
                 self.axes.setAspect(aspect)
-                self.axes.setAutoAspect(False)
+                self.axes.setAspectType(AspectType.RATIO)
             else:
-                self.axes.setAutoAspect(True)
+                self.axes.setAspectType(AspectType.AUTO)
 
     def set_clip(self, clip):
         '''

@@ -92,6 +92,10 @@ package org.meteoinfo.ui.util;
          if (weatherFont != null) {
              GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(weatherFont);
          }
+         Font yaHeiFont = getYaheiHybridFont();
+         if (yaHeiFont != null) {
+             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(yaHeiFont);
+         }
      }
 
      /**
@@ -117,6 +121,23 @@ package org.meteoinfo.ui.util;
      public static Font getWeatherFont() {
          Font font = null;
          InputStream is = FontUtil.class.getResourceAsStream("/fonts/WeatherSymbol.ttf");
+         try {
+             font = Font.createFont(Font.TRUETYPE_FONT, is);
+         } catch (FontFormatException | IOException ex) {
+             Logger.getLogger(FontUtil.class.getName()).log(Level.SEVERE, null, ex);
+         }
+
+         return font;
+     }
+
+     /**
+      * Get yahei consolas hybrid font
+      *
+      * @return Yahei consolas hybrid font
+      */
+     public static Font getYaheiHybridFont() {
+         Font font = null;
+         InputStream is = FontUtil.class.getResourceAsStream("/fonts/YaheiHybrid.ttf");
          try {
              font = Font.createFont(Font.TRUETYPE_FONT, is);
          } catch (FontFormatException | IOException ex) {

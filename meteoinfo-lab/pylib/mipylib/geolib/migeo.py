@@ -434,6 +434,7 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
     :param x_0: (*float*) False easting.
     :param y_0: (*float*) False northing.
     :param h: (*float*) Height from earth surface.
+    :param zone: (*int*) Projection zone - used in UTM or other projection with zone setting.
     
     :returns: (*ProjectionInfo*) ProjectionInfo object.
     """
@@ -442,40 +443,67 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
     
     if proj == 'longlat' and len(kwargs) == 0:
         return KnownCoordinateSystems.geographic.world.WGS1984
-        
-    origin = kwargs.pop('origin', (0, 0, 0))    
-    lat_0 = origin[0]
-    lon_0 = origin[1]
+
+    projstr = '+proj=' + proj
+
+    lat_0 = None
+    lon_0 = None
+    origin = kwargs.pop('origin', None)
+    if not origin is None:
+        lat_0 = origin[0]
+        lon_0 = origin[1]
+
     lat_0 = kwargs.pop('lat_0', lat_0)
+    if not lat_0 is None:
+        projstr = projstr + ' +lat_0=' + str(lat_0)
+
     lon_0 = kwargs.pop('lon_0', lon_0)
-    lat_ts = kwargs.pop('truescalelat', 0)
+    if not lon_0 is None:
+        projstr = projstr + ' +lon_0=' + str(lon_0)
+
+    lat_ts = kwargs.pop('truescalelat', None)
     lat_ts = kwargs.pop('lat_ts', lat_ts)
-    k = kwargs.pop('scalefactor', 1)
+    if not lat_ts is None:
+        projstr = projstr + ' +lat_ts=' + str(lat_ts)
+
+    k = kwargs.pop('scalefactor', None)
     k = kwargs.pop('k', k)
-    paralles = kwargs.pop('paralles', (30, 60))
-    lat_1 = paralles[0]
-    if len(paralles) == 2:
-        lat_2 = paralles[1]
-    else:
-        lat_2 = lat_1
+    if not k is None:
+        projstr = projstr + ' +k=' + str(k)
+
+    lat_1 = None
+    lat_2 = None
+    paralles = kwargs.pop('paralles', None)
+    if not paralles is None:
+        lat_1 = paralles[0]
+        if len(paralles) == 2:
+            lat_2 = paralles[1]
+        else:
+            lat_2 = lat_1
+
     lat_1 = kwargs.pop('lat_1', lat_1)
     lat_2 = kwargs.pop('lat_2', lat_2)
-    x_0 = kwargs.pop('falseeasting', 0)
-    y_0 = kwargs.pop('falsenorthing', 0)
+    if not lat_1 is None:
+        projstr = projstr + ' +lat_1=' + str(lat_2)
+    if not lat_2 is None:
+        projstr = projstr + ' +lat_1=' + str(lat_2)
+
+    x_0 = kwargs.pop('falseeasting', None)
+    y_0 = kwargs.pop('falsenorthing', None)
     x_0 = kwargs.pop('x_0', x_0)
     y_0 = kwargs.pop('y_0', y_0)
+    if not x_0 is None:
+        projstr = projstr + ' +x_0=' + str(x_0)
+    if not y_0 is None:
+        projstr = projstr + ' +y_0=' + str(y_0)
+
     h = kwargs.pop('h', None)
-    projstr = '+proj=' + proj \
-        + ' +lat_0=' + str(lat_0) \
-        + ' +lon_0=' + str(lon_0) \
-        + ' +lat_1=' + str(lat_1) \
-        + ' +lat_2=' + str(lat_2) \
-        + ' +lat_ts=' + str(lat_ts) \
-        + ' +k=' + str(k) \
-        + ' +x_0=' + str(x_0) \
-        + ' +y_0=' + str(y_0)
     if not h is None:
         projstr = projstr + ' +h=' + str(h)
+
+    zone = kwargs.pop('zone', None)
+    if not zone is None:
+        projstr = projstr + ' +zone=' + str(zone)
         
     return ProjectionInfo.factory(projstr) 
 

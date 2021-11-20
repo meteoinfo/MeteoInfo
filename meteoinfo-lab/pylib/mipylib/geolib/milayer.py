@@ -16,7 +16,7 @@ from org.meteoinfo.geometry.legend import LegendType
 from org.meteoinfo.projection import ProjectionUtil, KnownCoordinateSystems
 from org.meteoinfo.geometry.shape import PolygonShape, ShapeTypes
 from org.meteoinfo.geo.analysis import GeometryUtil
-
+from org.meteoinfo.geo.util import GeoProjectionUtil
 
 class MILayer(object):
     '''
@@ -434,7 +434,7 @@ class MILayer(object):
         
         :param toproj: (*ProjectionInfo*) The projection to be projected.
         '''
-        ProjectionUtil.projectLayer(self.layer, toproj)
+        GeoProjectionUtil.projectLayer(self.layer, toproj)
         
     def buffer(self, dist=0, merge=False):
         '''

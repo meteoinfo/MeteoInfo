@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\maskout">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\taylor"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\wind">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
@@ -16,17 +13,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\taylor"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\saturn.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\regression\image_drawer.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\maskout\maskout_lcc_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\windrose_data_func_map.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\saturn.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\regression\image_drawer.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\maskout\maskout_lcc_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\windrose_data_func_map.py"/>
     </RecentFiles>
   </File>
   <Font>

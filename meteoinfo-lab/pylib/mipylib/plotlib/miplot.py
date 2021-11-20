@@ -1069,42 +1069,6 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
     
     :returns: Polar axes and bars
     '''    
-    if not nwdbins in [4, 8, 16]:
-        print 'nwdbins must be 4, 8 or 16!'
-        raise ValueError(nwdbins)
-        
-    if isinstance(wd, list):
-        wd = np.array(wd)
-    if isinstance(ws, list):
-        ws = np.array(ws)
-    
-    wdbins = np.linspace(0.0, 2 * np.pi, nwdbins + 1)    
-    if wsbins is None:
-        wsbins = np.arange(0., ws.max(), 2.).tolist()
-        wsbins.append(100)
-        wsbins = np.array(wsbins)            
-    
-    dwdbins = np.degrees(wdbins)
-    dwdbins = dwdbins - 90
-    for i in range(len(dwdbins)):
-        if dwdbins[i] < 0:
-            dwdbins[i] += 360
-    for i in range(len(dwdbins)):
-        d = dwdbins[i]
-        d = 360 - d
-        dwdbins[i] = d
-    rwdbins = np.radians(dwdbins)
-        
-    N = len(wd)
-    wdN = nwdbins
-    wsN = len(wsbins) - 1
-    if colors is None:
-        colors = makecolors(wsN, cmap=cmap, alpha=alpha)
-    
-    wd = wd + 360./wdN/2
-    wd[wd>360] = wd - 360
-    rwd = np.radians(wd)    
-
     bottom = kwargs.pop('bottom', None)
     global g_axes
     if g_axes is None:
@@ -1112,52 +1076,12 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
     else:
         if not isinstance(g_axes, PolarAxes):
             g_axes = axes(polar=True, bottom=bottom)
-    
-    width = kwargs.pop('width', 0.5)
-    if width > 1:
-        width = 1
-    if width <= 0:
-        width = 0.2
-    theta = rwdbins[:-1]
-    width = 2. * width * np.pi / wdN
-        
-    bars = []
-    hhist = 0
-    rrmax = 0       
-    for i in range(wsN):
-        idx = np.where((ws>=wsbins[i]) * (ws<wsbins[i+1]))
-        if idx is None:
-            continue
-        print wsbins[i], wsbins[i+1]
-        s_wd = rwd[idx]
-        wdhist = np.histogram(s_wd, wdbins)[0].astype('float')
-        wdhist = wdhist / N
-        rrmax = max(rrmax, wdhist.max())
-        lab = '%s - %s' % (wsbins[i], wsbins[i+1])
-        bb = bar(theta, wdhist, width, bottom=hhist, color=colors[i], \
-            edgecolor='gray', label=lab, morepoints=True)[0]
-        bb.setStartValue(wsbins[i])
-        bb.setEndValue(wsbins[i+1])
-        bars.append(bb)
-        hhist = hhist + wdhist
-    
-    if rmax is None:
-        rmax = math.ceil(rrmax)
-    g_axes.set_rmax(rmax)
-    if not rtickloc is None:
-        g_axes.set_rtick_locations(rtickloc)
-    if not rticks is None:
-        g_axes.set_rticks(rticks)
-    g_axes.set_rtick_format('%')
-    g_axes.set_rlabel_position(rlabelpos)
-    g_axes.set_xtick_locations(np.arange(0., 360., 360./wdN))
-    step = 16 / nwdbins
-    if xticks is None:
-        xticks = ['E','ENE','NE','NNE','N','NNW','NW','WNW','W','WSW',\
-            'SW','SSW','S','SSE','SE','ESE']
-        xticks = xticks[::step]
-    g_axes.set_xticks(xticks)
-    draw_if_interactive()
+
+    bars = g_axes.windrose(wd, ws, nwdbins, wsbins, degree, colors, cmap, alpha,
+                           rmax, rtickloc, rticks, rlabelpos, xticks, **kwargs)
+    if not bars is None:
+        draw_if_interactive()
+
     return g_axes, bars
  
 def figure(bgcolor='w', figsize=None, newfig=True):

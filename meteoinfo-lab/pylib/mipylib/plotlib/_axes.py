@@ -26,6 +26,7 @@ from java.util import HashMap
 
 import numbers
 import datetime
+import math
 
 import mipylib.numeric as np
 from mipylib.numeric.core import DimArray, NDArray
@@ -3975,3 +3976,108 @@ class PolarAxes(Axes):
         sy = r[1] + rect.getY()
         sy = self.figure.get_size()[1] - sy
         return sx, sy
+
+    def windrose(self, wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='matlab_jet', \
+                 alpha=0.7, rmax=None, rtickloc=None, rticks=None, rlabelpos=60, xticks=None, **kwargs):
+        """
+        Plot windrose chart.
+
+        :param wd: (*array_like*) Wind direction.
+        :param ws: (*array_like*) Wind speed.
+        :param nwdbins: (*int*) Number of wind direction bins [4 | 8 | 16].
+        :param wsbins: (*array_like*) Wind speed bins.
+        :param degree: (*boolean*) The unit of wind direction is degree or radians.
+        :param colors: (*color list*) The colors.
+        :param cmap: (*string*) Color map.
+        :param alpha: (*float*) Color alpha (0 - 1).
+        :param rmax: (*float*) Radial maximum value.
+        :param rtickloc: (*list of float*) Radial tick locations.
+        :param rticks: (*list of string*) Radial ticks.
+        :param rlabelpos: (*float*) Radial label position in degree.
+        :param xticks: (*list of string*) X ticks.
+
+        :returns: Polar axes and bars
+        """
+        if not nwdbins in [4, 8, 16]:
+            print('nwdbins must be 4, 8 or 16!')
+            raise ValueError(nwdbins)
+
+        if isinstance(wd, list):
+            wd = np.array(wd)
+        if isinstance(ws, list):
+            ws = np.array(ws)
+
+        wdbins = np.linspace(0.0, 2 * np.pi, nwdbins + 1)
+        if wsbins is None:
+            wsbins = np.arange(0., ws.max(), 2.).tolist()
+            wsbins.append(100)
+            wsbins = np.array(wsbins)
+
+        dwdbins = np.degrees(wdbins)
+        dwdbins = dwdbins - 90
+        for i in range(len(dwdbins)):
+            if dwdbins[i] < 0:
+                dwdbins[i] += 360
+        for i in range(len(dwdbins)):
+            d = dwdbins[i]
+            d = 360 - d
+            dwdbins[i] = d
+        rwdbins = np.radians(dwdbins)
+
+        N = len(wd)
+        wdN = nwdbins
+        wsN = len(wsbins) - 1
+        if colors is None:
+            colors = plotutil.makecolors(wsN, cmap=cmap, alpha=alpha)
+
+        wd = wd + 360./wdN/2
+        wd[wd>360] = wd - 360
+        rwd = np.radians(wd)
+
+        width = kwargs.pop('width', 0.5)
+        if width > 1:
+            width = 1
+        if width <= 0:
+            width = 0.2
+        theta = rwdbins[:-1]
+        width = 2. * width * np.pi / wdN
+
+        bars = []
+        hhist = 0
+        rrmax = 0
+        for i in range(wsN):
+            idx = np.where((ws>=wsbins[i]) * (ws<wsbins[i+1]))
+            if idx is None:
+                continue
+            print(wsbins[i], wsbins[i+1])
+            s_wd = rwd[idx]
+            wdhist = np.histogram(s_wd, wdbins)[0].astype('float')
+            wdhist = wdhist / N
+            rrmax = max(rrmax, wdhist.max())
+            lab = '%s - %s' % (wsbins[i], wsbins[i+1])
+            bb = self.bar(theta, wdhist, width, bottom=hhist, color=colors[i], \
+                     edgecolor='gray', label=lab, morepoints=True)[0]
+            bb.setStartValue(wsbins[i])
+            bb.setEndValue(wsbins[i+1])
+            bars.append(bb)
+            hhist = hhist + wdhist
+
+        if rmax is None:
+            rmax = math.ceil(rrmax)
+        self.set_rmax(rmax)
+        if not rtickloc is None:
+            self.set_rtick_locations(rtickloc)
+        if not rticks is None:
+            self.set_rticks(rticks)
+        self.set_rtick_format('%')
+        self.set_rlabel_position(rlabelpos)
+        self.set_xtick_locations(np.arange(0., 360., 360./wdN))
+        step = 16 / nwdbins
+        if xticks is None:
+            xticks = ['E','ENE','NE','NNE','N','NNW','NW','WNW','W','WSW', \
+                      'SW','SSW','S','SSE','SE','ESE']
+            xticks = xticks[::step]
+        elif not xticks:
+            xticks = [''] * nwdbins
+        self.set_xticks(xticks)
+        return bars

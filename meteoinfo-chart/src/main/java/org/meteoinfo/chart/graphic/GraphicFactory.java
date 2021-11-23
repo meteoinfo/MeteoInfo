@@ -5423,9 +5423,9 @@ public class GraphicFactory {
      * @param ls Legend scheme
      * @return GraphicCollection
      */
-    public static GraphicCollection createArrows3D(Array xdata, Array ydata, Array zdata, Array udata,
+    public static GraphicCollection3D createArrows3D(Array xdata, Array ydata, Array zdata, Array udata,
             Array vdata, Array wdata, float scale, float headWidth, float headLength, Array cdata, LegendScheme ls) {
-        GraphicCollection gc = new GraphicCollection();
+        GraphicCollection3D gc = new GraphicCollection3D();
         ShapeTypes sts = ls.getShapeType();
         ls = ls.convertTo(ShapeTypes.POINT);
         if (sts != ShapeTypes.POINT) {

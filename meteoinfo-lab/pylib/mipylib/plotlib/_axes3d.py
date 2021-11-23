@@ -1370,6 +1370,10 @@ class Axes3D(Axes):
         igraphic = GraphicFactory.createArrows3D(x, y, z, u, v, w, scale, headwidth,
                                                  headlength, cdata, ls)
 
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            igraphic.setUsingLight(lighting)
+
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(igraphic)

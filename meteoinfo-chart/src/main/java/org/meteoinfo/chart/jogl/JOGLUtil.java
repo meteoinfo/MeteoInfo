@@ -31,6 +31,7 @@ import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.shape.ImageShape;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.image.ImageUtil;
+import org.meteoinfo.math.interpolate.RectNearestInterpolator3D;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.InvalidRangeException;
@@ -238,6 +239,39 @@ public class JOGLUtil {
     }
 
     /**
+     * Create surface graphics
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate array
+     * @param va Data array
+     * @param ls Legend scheme
+     * @return Surface graphics
+     */
+    public static SurfaceGraphics surface(Array xa, Array ya, Array za, Array va, LegendScheme ls) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+        va = va.copyIfView();
+
+        SurfaceGraphics graphics = new SurfaceGraphics();
+        int[] shape = xa.getShape();
+        int colNum = shape[1];
+        int rowNum = shape[0];
+        int idx;
+        PointZ[][] vertices = new PointZ[rowNum][colNum];
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                idx = i * colNum + j;
+                vertices[i][j] = new PointZ(xa.getDouble(idx), ya.getDouble(idx), za.getDouble(idx), va.getDouble(idx));
+            }
+        }
+        graphics.setVertices(vertices);
+        graphics.setLegendScheme(ls);
+        return graphics;
+    }
+
+    /**
      * Create slice graphics
      *
      * @param data   Data array - 3D
@@ -330,6 +364,53 @@ public class JOGLUtil {
                 sgs.add(graphics);
             }
         }
+
+        return sgs;
+    }
+
+    /**
+     * Create slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xSlice X slice list
+     * @param ySlice Y slice list
+     * @param zSlice Z slice list
+     * @param ls     Legend scheme
+     * @return Surface graphics
+     */
+    public static List<SurfaceGraphics> slice(Array data, Array xa, Array ya, Array za, Array xSlice,
+                                              Array ySlice, Array zSlice, LegendScheme ls) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+        xSlice = xSlice.copyIfView();
+        ySlice = ySlice.copyIfView();
+        zSlice = zSlice.copyIfView();
+
+        List<SurfaceGraphics> sgs = new ArrayList<>();
+
+        RectNearestInterpolator3D interpolator3D = new RectNearestInterpolator3D(xa, ya, za, data);
+        Array r = interpolator3D.interpolate(xSlice, ySlice, zSlice);
+        SurfaceGraphics graphics = new SurfaceGraphics();
+        int[] shape = r.getShape();
+        int colNum = shape[1];
+        int rowNum = shape[0];
+        int idx;
+        PointZ[][] vertices = new PointZ[rowNum][colNum];
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                idx = i * colNum + j;
+                vertices[i][j] = new PointZ(xSlice.getDouble(idx), ySlice.getDouble(idx),
+                        zSlice.getDouble(idx), r.getDouble(idx));
+            }
+        }
+        graphics.setVertices(vertices);
+        graphics.setLegendScheme(ls);
+        sgs.add(graphics);
 
         return sgs;
     }

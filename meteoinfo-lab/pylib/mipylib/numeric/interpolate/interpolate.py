@@ -6,7 +6,8 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.math.interpolate import InterpUtil, RectLinearInterpolator, RectNearestInterpolator
+from org.meteoinfo.math.interpolate import InterpUtil, RectLinearInterpolator, RectNearestInterpolator, \
+    RectNearestInterpolator3D, RectLinearInterpolator3D
 from org.meteoinfo.ndarray.math import ArrayUtil
 from org.meteoinfo.geometry.geoprocess import GeometryUtil
 
@@ -15,7 +16,7 @@ from ..core import numeric as np
 
 __all__ = [
     'interp1d','interp2d','linint2','nearestint2','RectBivariateSpline','RectInterpLinear',
-    'RectInterpNearest','griddata'
+    'RectInterpLinear3D','RectInterpNearest','RectInterpNearest3D','griddata'
     ]
 
 class interp1d(object):
@@ -40,9 +41,9 @@ class interp1d(object):
 
     def __call__(self, x):
         '''
-        Evaluate the interpolate vlaues.
+        Evaluate the interpolate values.
         
-        :param x: (*array_like*) Points to evaluate the interpolant at.
+        :param x: (*array_like*) Points to evaluate the interpolate at.
         '''
         if isinstance(x, list):
             x = np.array(x)
@@ -91,10 +92,10 @@ class interp2d(object):
         
     def __call__(self, x, y):
         '''
-        Evaluate the interpolate vlaues.
+        Evaluate the interpolate values.
         
-        :param x: (*array_like*) X to evaluate the interpolant at.
-        :param y: (*array_like*) Y to evaluate the interpolant at.
+        :param x: (*array_like*) X to evaluate the interpolate at.
+        :param y: (*array_like*) Y to evaluate the interpolate at.
         '''
         if isinstance(x, list):
             x = np.array(x)
@@ -131,10 +132,10 @@ class RectBivariateSpline(object):
 
     def __call__(self, x, y):
         '''
-        Evaluate the interpolate vlaues.
+        Evaluate the interpolate values.
         
-        :param x: (*array_like*) X to evaluate the interpolant at.
-        :param y: (*array_like*) Y to evaluate the interpolant at.
+        :param x: (*array_like*) X to evaluate the interpolate at.
+        :param y: (*array_like*) Y to evaluate the interpolate at.
         '''
         if isinstance(x, list):
             x = np.array(x)
@@ -171,10 +172,10 @@ class RectInterpLinear(object):
 
     def __call__(self, x, y):
         '''
-        Evaluate the interpolate vlaues.
+        Evaluate the interpolate values.
 
-        :param x: (*array_like*) X to evaluate the interpolant at.
-        :param y: (*array_like*) Y to evaluate the interpolant at.
+        :param x: (*array_like*) X to evaluate the interpolate at.
+        :param y: (*array_like*) Y to evaluate the interpolate at.
         '''
         if isinstance(x, list):
             x = np.array(x)
@@ -211,10 +212,10 @@ class RectInterpNearest(object):
 
     def __call__(self, x, y):
         '''
-        Evaluate the interpolate vlaues.
+        Evaluate the interpolate values.
 
-        :param x: (*array_like*) X to evaluate the interpolant at.
-        :param y: (*array_like*) Y to evaluate the interpolant at.
+        :param x: (*array_like*) X to evaluate the interpolate at.
+        :param y: (*array_like*) Y to evaluate the interpolate at.
         '''
         if isinstance(x, list):
             x = np.array(x)
@@ -225,6 +226,114 @@ class RectInterpNearest(object):
         if isinstance(y, NDArray):
             y = y.asarray()
         r = self._func.interpolate(x, y)
+        if isinstance(r, float):
+            return r
+        else:
+            return NDArray(r)
+
+class RectInterpNearest3D(object):
+    """
+    3D nearest interpolation over a rectangular mesh.
+
+    Can be used for both smoothing and interpolating data.
+
+    :param x: (*array_like*) 1-D arrays of x coordinate in strictly ascending order.
+    :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
+    :param z: (*array_like*) 1-D array of z coordinate in strictly ascending order.
+    :param v: (*array_like*) 3-D array of data with shape (z.size,y.size,x.size).
+    """
+    def __init__(self, x, y, z, v):
+        if isinstance(x, list):
+            x = np.array(x)
+        if x.ndim == 3:
+            x = x[0,0]
+        if isinstance(y, list):
+            y = np.array(y)
+        if y.ndim == 3:
+            y = y[0,:,0]
+        if isinstance(z, list):
+            z = np.array(z)
+        if z.ndim == 3:
+            z = z[:,0,0]
+        if isinstance(v, list):
+            v = np.array(v)
+        self._func = RectNearestInterpolator3D(x.asarray(), y.asarray(), z.asarray(), v.asarray())
+
+    def __call__(self, x, y, z):
+        """
+        Evaluate the interpolate values.
+
+        :param x: (*array_like*) X to evaluate the interpolate at.
+        :param y: (*array_like*) Y to evaluate the interpolate at.
+        :param z: (*array_like*) Z to evaluate the interpolate at.
+        """
+        if isinstance(x, list):
+            x = np.array(x)
+        if isinstance(x, NDArray):
+            x = x.asarray()
+        if isinstance(y, list):
+            y = np.array(y)
+        if isinstance(y, NDArray):
+            y = y.asarray()
+        if isinstance(z, list):
+            z = np.array(z)
+        if isinstance(z, NDArray):
+            z = z.asarray()
+        r = self._func.interpolate(x, y, z)
+        if isinstance(r, float):
+            return r
+        else:
+            return NDArray(r)
+
+class RectInterpLinear3D(object):
+    """
+    3D linear interpolation over a rectangular mesh.
+
+    Can be used for both smoothing and interpolating data.
+
+    :param x: (*array_like*) 1-D arrays of x coordinate in strictly ascending order.
+    :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
+    :param z: (*array_like*) 1-D array of z coordinate in strictly ascending order.
+    :param v: (*array_like*) 3-D array of data with shape (z.size,y.size,x.size).
+    """
+    def __init__(self, x, y, z, v):
+        if isinstance(x, list):
+            x = np.array(x)
+        if x.ndim == 3:
+            x = x[0,0]
+        if isinstance(y, list):
+            y = np.array(y)
+        if y.ndim == 3:
+            y = y[0,:,0]
+        if isinstance(z, list):
+            z = np.array(z)
+        if z.ndim == 3:
+            z = z[:,0,0]
+        if isinstance(v, list):
+            v = np.array(v)
+        self._func = RectLinearInterpolator3D(x.asarray(), y.asarray(), z.asarray(), v.asarray())
+
+    def __call__(self, x, y, z):
+        """
+        Evaluate the interpolate values.
+
+        :param x: (*array_like*) X to evaluate the interpolate at.
+        :param y: (*array_like*) Y to evaluate the interpolate at.
+        :param z: (*array_like*) Z to evaluate the interpolate at.
+        """
+        if isinstance(x, list):
+            x = np.array(x)
+        if isinstance(x, NDArray):
+            x = x.asarray()
+        if isinstance(y, list):
+            y = np.array(y)
+        if isinstance(y, NDArray):
+            y = y.asarray()
+        if isinstance(z, list):
+            z = np.array(z)
+        if isinstance(z, NDArray):
+            z = z.asarray()
+        r = self._func.interpolate(x, y, z)
         if isinstance(r, float):
             return r
         else:

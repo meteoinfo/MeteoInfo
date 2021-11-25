@@ -31,8 +31,8 @@ public class RectNearestInterpolator extends RectInterpolator{
         double x2 = xa.getDouble(j2);
         double y1 = ya.getDouble(i1);
         double y2 = ya.getDouble(i2);
-        int ii = (x - x1) < (x2 - x) ? i1 : i2;
-        int jj = (y - y1) < (y2 - y) ? j1 : j2;
+        int ii = (y - y1) < (y2 - y) ? i1 : i2;
+        int jj = (x - x1) < (x2 - x) ? j1 : j2;
 
 
         Index index = va.getIndex();

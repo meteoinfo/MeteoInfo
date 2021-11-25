@@ -646,8 +646,19 @@ class Axes3DGL(Axes3D):
         zslice = kwargs.pop('zslice', [])
         if isinstance(zslice, numbers.Number):
             zslice = [zslice]
-        graphics = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
-                                  yslice, zslice, ls)
+        if isinstance(xslice, NDArray):
+            graphics = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
+                                      xslice._array, yslice._array, zslice._array, ls)
+        else:
+            graphics = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
+                                      yslice, zslice, ls)
+
+        xy_slice = kwargs.pop('xy_slice', None)
+        if not xy_slice is None:
+            gg = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
+                                xy_slice, ls)
+            graphics.append(gg)
+
         if face_interp:
             for gg in graphics:
                 gg.setFaceInterp(face_interp)
@@ -976,20 +987,33 @@ class Axes3DGL(Axes3D):
         else:
             cn = None
         cmap = plotutil.getcolormap(**kwargs)
+        level_arg = None
+        C = None
         if len(args) > 0:
-            level_arg = args[0]
+            if isinstance(args[0], NDArray) and args[0].shape == z.shape:
+                C = args[0]
+                min = C.min()
+                max = C.max()
+                if len(args) > 1:
+                    level_arg = args[1]
+            else:
+                min = z.min()
+                max = z.max()
+                level_arg = C
+
+        if not level_arg is None:
             if isinstance(level_arg, int):
                 cn = level_arg
-                ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
+                ls = LegendManage.createLegendScheme(min, max, cn, cmap)
             else:
                 if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
-                ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
+                ls = LegendManage.createLegendScheme(min, max, level_arg, cmap)
         else:
             if cn is None:
-                ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
+                ls = LegendManage.createLegendScheme(min, max, cmap)
             else:
-                ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
+                ls = LegendManage.createLegendScheme(min, max, cn, cmap)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         facecolor = kwargs.pop('facecolor', None)
         face_interp = None
@@ -1000,7 +1024,11 @@ class Axes3DGL(Axes3D):
                     facecolor = plotutil.getcolor(facecolor)
                     ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, facecolor, 1)
         plotutil.setlegendscheme(ls, **kwargs)
-        graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), ls)
+        if C is None:
+            graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), ls)
+        else:
+            graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), C.asarray(), ls)
+
         if face_interp:
             graphics.setFaceInterp(face_interp)
         lighting = kwargs.pop('lighting', None)

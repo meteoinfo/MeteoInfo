@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -827,179 +829,179 @@ public class GridArray {
         }
     }
 
-//    /**
-//     * Save as MICAPS 4 data file
-//     * @param aFile File path
-//     * @param description Description
-//     * @param aTime Data time
-//     * @param hours Hours
-//     * @param level Levels
-//     * @param smooth Smooth coefficient
-//     * @param boldValue Bold value
-//     * @param floatFormat Float format
-//     * @throws IOException
-//     */
-//    public void saveAsMICAPS4File(String aFile, String description, LocalDateTime aTime, int hours, int level,
-//                                  float smooth, float boldValue, String floatFormat) throws IOException {
-//        //Get contour values
-//        double[] CValues;
-//        double undef = 9999;
-//        double[] maxmin = new double[2];
-//        this.getMaxMinValue(maxmin);
-//        double min = maxmin[1];
-//        double max = maxmin[0];
-//        CValues = LegendManage.createContourValues(min, max);
-//        double cDelt = 0;
-//        if (CValues.length > 1)
-//            cDelt = CValues[1] - CValues[0];
-//        if (floatFormat == null) {
-//            int dNum = MIMath.getDecimalNum(min);
-//            floatFormat = "%." + String.valueOf(dNum) + "f";
-//        }
-//
-//        //Write file
-//        DateTimeFormatter format = DateTimeFormatter.ofPattern("yy MM dd HH");
-//        BufferedWriter sw = new BufferedWriter(new FileWriter(new File(aFile)));
-//        sw.write("diamond 4 " + description);
-//        sw.newLine();
-//        String aLine = format.format(aTime) + " " + String.valueOf(hours) + " " + String.valueOf(level);
-//        sw.write(aLine);
-//        sw.newLine();
-//        aLine = String.valueOf(this.getXDelt()) + " " + String.valueOf(this.getYDelt()) + " "
-//                + String.valueOf(this.xArray[0]) + " " + String.valueOf(this.xArray[this.getXNum() - 1])
-//                + " " + String.valueOf(this.yArray[0]) + " " + String.valueOf(this.yArray[this.getYNum() - 1]);
-//        sw.write(aLine);
-//        sw.newLine();
-//        aLine = String.valueOf(this.getXNum()) + " " + String.valueOf(this.getYNum()) + " "
-//                + String.valueOf(cDelt) + " " + String.valueOf(CValues[0]) + " "
-//                + String.valueOf(CValues[CValues.length - 1]) + " " + String.valueOf(smooth) + " "
-//                + String.valueOf(boldValue);
-//        sw.write(aLine);
-//        sw.newLine();
-//        double value;
-//        for (int i = 0; i < this.getYNum(); i++) {
-//            for (int j = 0; j < this.getXNum(); j++) {
-//                value = this.getDoubleValue(i, j);
-//                if (Double.isNaN(value)) {
-//                    value = undef;
-//                } else if (MIMath.doubleEquals(value, this.missingValue)) {
-//                    value = undef;
-//                }
-//
-//                if (j == 0) {
-//                    aLine = String.format(floatFormat, value);
-//                } else {
-//                    aLine = aLine + " " + String.format(floatFormat, value);
-//                }
-//            }
-//            sw.write(aLine);
-//            sw.newLine();
-//        }
-//
-//        sw.close();
-//    }
-//
-//    /**
-//     * Save as MICAPS 4 data file
-//     * @param aFile File path
-//     * @param description Description
-//     * @param aTime Data time
-//     * @param hours Hours
-//     * @param level Levels
-//     * @param smooth Smooth coefficient
-//     * @param boldValue Bold value
-//     * @param floatFormat Float format
-//     * @param projInfo Projection info
-//     * @throws IOException
-//     */
-//    public void saveAsMICAPS4File(String aFile, String description, LocalDateTime aTime, int hours, int level,
-//            float smooth, float boldValue, String floatFormat, ProjectionInfo projInfo) throws IOException {
-//        //Get contour values
-//        double[] CValues;
-//        double undef = 9999;
-//
-//        double[] maxmin = new double[2];
-//        this.getMaxMinValue(maxmin);
-//        double min = maxmin[1];
-//        double max = maxmin[0];
-//        CValues = LegendManage.createContourValues(min, max);
-//        double cDelt = CValues[1] - CValues[0];
-//        if (floatFormat == null) {
-//            int dNum = MIMath.getDecimalNum(min);
-//            floatFormat = "%1$." + String.valueOf(dNum) + "f";
-//        }
-//
-//        //Write file
-//        DateTimeFormatter format = DateTimeFormatter.ofPattern("yy MM dd HH");
-//        BufferedWriter sw = new BufferedWriter(new FileWriter(new File(aFile)));
-//        sw.write("diamond 4 " + description);
-//        String aLine = format.format(aTime) + " " + String.valueOf(hours) + " " + String.valueOf(level);
-//        sw.write(aLine);
-//        sw.newLine();
-//
-//        double eCValue = CValues[CValues.length - 1];
-//        double xdelt = this.getXDelt();
-//        double ydelt = this.getYDelt();
-//        double sLon = this.xArray[0];
-//        double eLon = this.xArray[this.getXNum() - 1];
-//        double sLat = this.yArray[0];
-//        double eLat = this.yArray[this.getYNum() - 1];
-//        if (!projInfo.isLonLat()) {
-//            switch (projInfo.getProjectionName()) {
-//                case Lambert_Conformal_Conic:
-//                    eCValue = -1;
-//                    break;
-//                case Mercator:
-//                    eCValue = -2;
-//                    break;
-//                case North_Polar_Stereographic_Azimuthal:
-//                    eCValue = -3;
-//                    break;
-//            }
-//            ProjectionInfo toProj = KnownCoordinateSystems.geographic.world.WGS1984;
-//            double[][] points = new double[2][];
-//            points[0] = new double[]{sLon, sLat};
-//            points[1] = new double[]{eLon, eLat};
-//            Reproject.reprojectPoints(points, projInfo, toProj, 0, 2);
-//            xdelt = points[1][0];
-//            ydelt = points[0][1];
-//            sLon = points[0][0];
-//            sLat = points[0][1];
-//            eLon = points[1][0];
-//            eLat = points[1][1];
-//        }
-//        aLine = String.valueOf(xdelt) + " " + String.valueOf(ydelt) + " " + String.valueOf(sLon)
-//                + " " + String.valueOf(eLon) + " " + String.valueOf(sLat) + " " + String.valueOf(eLat);
-//        sw.write(aLine);
-//        sw.newLine();
-//        aLine = String.valueOf(this.getXNum()) + " " + String.valueOf(this.getYNum()) + " "
-//                + String.valueOf(cDelt) + " " + String.valueOf(CValues[0]) + " "
-//                + String.valueOf(eCValue) + " " + String.valueOf(smooth) + " "
-//                + String.valueOf(boldValue);
-//        sw.write(aLine);
-//        sw.newLine();
-//        double value;
-//        for (int i = 0; i < this.getYNum(); i++) {
-//            for (int j = 0; j < this.getXNum(); j++) {
-//                value = this.getDoubleValue(i, j);
-//                if (Double.isNaN(value)) {
-//                    value = undef;
-//                } else if (MIMath.doubleEquals(value, this.missingValue)) {
-//                    value = undef;
-//                }
-//
-//                if (j == 0) {
-//                    aLine = String.format(floatFormat, value);
-//                } else {
-//                    aLine = aLine + " " + String.format(floatFormat, value);
-//                }
-//            }
-//            sw.write(aLine);
-//            sw.newLine();
-//        }
-//
-//        sw.close();
-//    }
+    /**
+     * Save as MICAPS 4 data file
+     * @param aFile File path
+     * @param description Description
+     * @param aTime Data time
+     * @param hours Hours
+     * @param level Levels
+     * @param smooth Smooth coefficient
+     * @param boldValue Bold value
+     * @param floatFormat Float format
+     * @throws IOException
+     */
+    public void saveAsMICAPS4File(String aFile, String description, LocalDateTime aTime, int hours, int level,
+                                  float smooth, float boldValue, String floatFormat) throws IOException {
+        //Get contour values
+        double[] CValues;
+        double undef = 9999;
+        double[] maxmin = new double[2];
+        this.getMaxMinValue(maxmin);
+        double min = maxmin[1];
+        double max = maxmin[0];
+        CValues = MIMath.getIntervalValues(min, max);
+        double cDelt = 0;
+        if (CValues.length > 1)
+            cDelt = CValues[1] - CValues[0];
+        if (floatFormat == null) {
+            int dNum = MIMath.getDecimalNum(min);
+            floatFormat = "%." + String.valueOf(dNum) + "f";
+        }
+
+        //Write file
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yy MM dd HH");
+        BufferedWriter sw = new BufferedWriter(new FileWriter(new File(aFile)));
+        sw.write("diamond 4 " + description);
+        sw.newLine();
+        String aLine = format.format(aTime) + " " + String.valueOf(hours) + " " + String.valueOf(level);
+        sw.write(aLine);
+        sw.newLine();
+        aLine = String.valueOf(this.getXDelt()) + " " + String.valueOf(this.getYDelt()) + " "
+                + String.valueOf(this.xArray[0]) + " " + String.valueOf(this.xArray[this.getXNum() - 1])
+                + " " + String.valueOf(this.yArray[0]) + " " + String.valueOf(this.yArray[this.getYNum() - 1]);
+        sw.write(aLine);
+        sw.newLine();
+        aLine = String.valueOf(this.getXNum()) + " " + String.valueOf(this.getYNum()) + " "
+                + String.valueOf(cDelt) + " " + String.valueOf(CValues[0]) + " "
+                + String.valueOf(CValues[CValues.length - 1]) + " " + String.valueOf(smooth) + " "
+                + String.valueOf(boldValue);
+        sw.write(aLine);
+        sw.newLine();
+        double value;
+        for (int i = 0; i < this.getYNum(); i++) {
+            for (int j = 0; j < this.getXNum(); j++) {
+                value = this.getDoubleValue(i, j);
+                if (Double.isNaN(value)) {
+                    value = undef;
+                } else if (MIMath.doubleEquals(value, this.missingValue)) {
+                    value = undef;
+                }
+
+                if (j == 0) {
+                    aLine = String.format(floatFormat, value);
+                } else {
+                    aLine = aLine + " " + String.format(floatFormat, value);
+                }
+            }
+            sw.write(aLine);
+            sw.newLine();
+        }
+
+        sw.close();
+    }
+
+    /**
+     * Save as MICAPS 4 data file
+     * @param aFile File path
+     * @param description Description
+     * @param aTime Data time
+     * @param hours Hours
+     * @param level Levels
+     * @param smooth Smooth coefficient
+     * @param boldValue Bold value
+     * @param floatFormat Float format
+     * @param projInfo Projection info
+     * @throws IOException
+     */
+    public void saveAsMICAPS4File(String aFile, String description, LocalDateTime aTime, int hours, int level,
+            float smooth, float boldValue, String floatFormat, ProjectionInfo projInfo) throws IOException {
+        //Get contour values
+        double[] CValues;
+        double undef = 9999;
+
+        double[] maxmin = new double[2];
+        this.getMaxMinValue(maxmin);
+        double min = maxmin[1];
+        double max = maxmin[0];
+        CValues = MIMath.getIntervalValues(min, max);
+        double cDelt = CValues[1] - CValues[0];
+        if (floatFormat == null) {
+            int dNum = MIMath.getDecimalNum(min);
+            floatFormat = "%1$." + String.valueOf(dNum) + "f";
+        }
+
+        //Write file
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yy MM dd HH");
+        BufferedWriter sw = new BufferedWriter(new FileWriter(new File(aFile)));
+        sw.write("diamond 4 " + description);
+        String aLine = format.format(aTime) + " " + String.valueOf(hours) + " " + String.valueOf(level);
+        sw.write(aLine);
+        sw.newLine();
+
+        double eCValue = CValues[CValues.length - 1];
+        double xdelt = this.getXDelt();
+        double ydelt = this.getYDelt();
+        double sLon = this.xArray[0];
+        double eLon = this.xArray[this.getXNum() - 1];
+        double sLat = this.yArray[0];
+        double eLat = this.yArray[this.getYNum() - 1];
+        if (!projInfo.isLonLat()) {
+            switch (projInfo.getProjectionName()) {
+                case Lambert_Conformal_Conic:
+                    eCValue = -1;
+                    break;
+                case Mercator:
+                    eCValue = -2;
+                    break;
+                case North_Polar_Stereographic_Azimuthal:
+                    eCValue = -3;
+                    break;
+            }
+            ProjectionInfo toProj = KnownCoordinateSystems.geographic.world.WGS1984;
+            double[][] points = new double[2][];
+            points[0] = new double[]{sLon, sLat};
+            points[1] = new double[]{eLon, eLat};
+            Reproject.reprojectPoints(points, projInfo, toProj, 0, 2);
+            xdelt = points[1][0];
+            ydelt = points[0][1];
+            sLon = points[0][0];
+            sLat = points[0][1];
+            eLon = points[1][0];
+            eLat = points[1][1];
+        }
+        aLine = String.valueOf(xdelt) + " " + String.valueOf(ydelt) + " " + String.valueOf(sLon)
+                + " " + String.valueOf(eLon) + " " + String.valueOf(sLat) + " " + String.valueOf(eLat);
+        sw.write(aLine);
+        sw.newLine();
+        aLine = String.valueOf(this.getXNum()) + " " + String.valueOf(this.getYNum()) + " "
+                + String.valueOf(cDelt) + " " + String.valueOf(CValues[0]) + " "
+                + String.valueOf(eCValue) + " " + String.valueOf(smooth) + " "
+                + String.valueOf(boldValue);
+        sw.write(aLine);
+        sw.newLine();
+        double value;
+        for (int i = 0; i < this.getYNum(); i++) {
+            for (int j = 0; j < this.getXNum(); j++) {
+                value = this.getDoubleValue(i, j);
+                if (Double.isNaN(value)) {
+                    value = undef;
+                } else if (MIMath.doubleEquals(value, this.missingValue)) {
+                    value = undef;
+                }
+
+                if (j == 0) {
+                    aLine = String.format(floatFormat, value);
+                } else {
+                    aLine = aLine + " " + String.format(floatFormat, value);
+                }
+            }
+            sw.write(aLine);
+            sw.newLine();
+        }
+
+        sw.close();
+    }
 
     /**
      * Clone

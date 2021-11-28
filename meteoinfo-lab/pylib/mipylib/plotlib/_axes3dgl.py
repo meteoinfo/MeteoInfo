@@ -1017,6 +1017,8 @@ class Axes3DGL(Axes3D):
         cmap = plotutil.getcolormap(**kwargs)
         level_arg = None
         C = None
+        min = z.min()
+        max = z.max()
         if len(args) > 0:
             if isinstance(args[0], NDArray) and args[0].shape == z.shape:
                 C = args[0]
@@ -1025,8 +1027,6 @@ class Axes3DGL(Axes3D):
                 if len(args) > 1:
                     level_arg = args[1]
             else:
-                min = z.min()
-                max = z.max()
                 level_arg = C
 
         if not level_arg is None:
@@ -1042,6 +1042,7 @@ class Axes3DGL(Axes3D):
                 ls = LegendManage.createLegendScheme(min, max, cmap)
             else:
                 ls = LegendManage.createLegendScheme(min, max, cn, cmap)
+
         ls = ls.convertTo(ShapeTypes.POLYGON)
         facecolor = kwargs.pop('facecolor', None)
         face_interp = None

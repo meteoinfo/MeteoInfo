@@ -13,6 +13,7 @@ from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil
+from org.meteoinfo.math.interpolate import InterpolationMethod
 from javax.swing import WindowConstants
 from java.awt import Font, Color
 
@@ -500,6 +501,13 @@ class Axes3DGL(Axes3D):
                 zslice_index = [zslice_index]
             graphics = GraphicFactory.streamSlice(x, y, z, u, v, w, cdata, zslice_index, density, ls)
 
+        xyslice = kwargs.pop('xyslice', None)
+        if not xyslice is None:
+            method = kwargs.pop('method', 'nearest')
+            method = InterpolationMethod.valueOf(method.upper())
+            gg = GraphicFactory.streamSlice(x, y, z, u, v, w, cdata, xyslice, method, density, ls)
+            graphics.append(gg)
+
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:
             for gg in graphics:
@@ -653,10 +661,12 @@ class Axes3DGL(Axes3D):
             graphics = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
                                       yslice, zslice, ls)
 
-        xy_slice = kwargs.pop('xy_slice', None)
-        if not xy_slice is None:
+        xyslice = kwargs.pop('xyslice', None)
+        if not xyslice is None:
+            method = kwargs.pop('method', 'nearest')
+            method = InterpolationMethod.valueOf(method.upper())
             gg = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
-                                xy_slice, ls)
+                                xyslice, ls, method)
             graphics.append(gg)
 
         if face_interp:
@@ -801,6 +811,15 @@ class Axes3DGL(Axes3D):
         graphics = GraphicFactory.contourSlice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
                                   yslice, zslice, ls, smooth)
 
+        xyslice = kwargs.pop('xyslice', None)
+        if not xyslice is None:
+            method = kwargs.pop('method', 'nearest')
+            method = InterpolationMethod.valueOf(method.upper())
+            gg = GraphicFactory.contourSlice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
+                                              xyslice, method, ls, smooth)
+            if not gg is None:
+                graphics.append(gg)
+
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:
             for gg in graphics:
@@ -871,6 +890,15 @@ class Axes3DGL(Axes3D):
         smooth = kwargs.pop('smooth', True)
         graphics = GraphicFactory.contourfSlice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
                                                yslice, zslice, ls, smooth)
+
+        xyslice = kwargs.pop('xyslice', None)
+        if not xyslice is None:
+            method = kwargs.pop('method', 'nearest')
+            method = InterpolationMethod.valueOf(method.upper())
+            gg = GraphicFactory.contourfSlice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
+                                              xyslice, method, ls, smooth)
+            if not gg is None:
+                graphics.append(gg)
 
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:

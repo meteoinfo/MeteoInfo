@@ -2592,4 +2592,51 @@ public class InterpUtil {
 
         return r;
     }
+
+    /**
+     * Slice 3D array data by x/y cross-section
+     * @param xa X coordinate array - 1D
+     * @param ya Y coordinate array - 1D
+     * @param za Z coordinate array - 1D
+     * @param data Data array - 3D
+     * @param xySlice X/Y slice points - [x1, y1, x2, y2]
+     * @param method Interpolation method - nearest or linear
+     * @return x/y cross-section slice data array
+     */
+    public static Array[] sliceXY(Array xa, Array ya, Array za, Array data, List<Number> xySlice,
+                                InterpolationMethod method) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+        data = data.copyIfView();
+
+        RectInterpolator3D interpolator3D = RectInterpolator3D.factory(xa, ya, za, data, method);
+
+        double x1 = xySlice.get(0).doubleValue();
+        double y1 = xySlice.get(1).doubleValue();
+        double x2 = xySlice.get(2).doubleValue();
+        double y2 = xySlice.get(3).doubleValue();
+        if (x1 > x2) {
+            double temp = x2;
+            x2 = x1;
+            x1 = temp;
+            temp = y2;
+            y2 = y1;
+            y1 = temp;
+        }
+        double dx = xa.getDouble(1) - xa.getDouble(0);
+        double dy = ya.getDouble(1) - ya.getDouble(0);
+        int xn = dx == 0 ? 1 : (int) Math.ceil((x2 - x1) / dx);
+        int yn = dy == 0 ? 1 : (int) Math.ceil(Math.abs(y2 - y1) / dy);
+        int rn = Math.max(xn, yn);
+        Array xs = ArrayUtil.lineSpace(x1, x2, rn, true);
+        Array ys = ArrayUtil.lineSpace(y1, y2, rn, true);
+        int zn = (int)za.getSize();
+        Array xs2d = ArrayUtil.repeat(xs.reshape(new int[]{1, rn}), Arrays.asList(zn), 0);
+        Array ys2d = ArrayUtil.repeat(ys.reshape(new int[]{1, rn}), Arrays.asList(zn), 0);
+        Array zs2d = ArrayUtil.repeat(za.reshape(new int[]{zn, 1}), Arrays.asList(rn), 1);
+
+        Array r = interpolator3D.interpolate(xs2d, ys2d, zs2d);
+        return new Array[]{r, xs, ys, za, xs2d, ys2d, zs2d};
+    }
 }

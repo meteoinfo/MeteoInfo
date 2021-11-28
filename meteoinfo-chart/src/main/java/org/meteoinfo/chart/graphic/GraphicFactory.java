@@ -26,6 +26,8 @@ import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.math.interpolate.InterpUtil;
+import org.meteoinfo.math.interpolate.InterpolationMethod;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
@@ -3699,6 +3701,89 @@ public class GraphicFactory {
     }
 
     /**
+     * Create contour slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xySlice XY slice list
+     * @param method Interpolation method
+     * @param ls     Legend scheme
+     * @param isSmooth Smooth contour lines or not
+     * @return Contour slice graphics
+     */
+    public static GraphicCollection3D contourSlice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
+                                                    InterpolationMethod method, LegendScheme ls, boolean isSmooth) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        int dim1, dim2;
+        double x, y, z;
+
+        Object[] ccs = LegendManage.getContoursAndColors(ls);
+        double[] cValues = (double[]) ccs[0];
+        double[] zz = (double[])ArrayUtil.copyToNDJavaArray_Double(za);
+        double missingValue = -9999.0;
+
+        //XY slices
+        Array[] rxy = InterpUtil.sliceXY(xa, ya, za, data, xySlice, method);
+        Array r = rxy[0];
+        if (r != null) {
+            Array xs = rxy[1];
+            double[] xx = (double[])ArrayUtil.copyToNDJavaArray_Double(xs);
+            int[] rShape = r.getShape();
+            dim1 = rShape[0];
+            dim2 = rShape[1];
+            double x1 = xySlice.get(0).doubleValue();
+            double y1 = xySlice.get(1).doubleValue();
+            double x2 = xySlice.get(2).doubleValue();
+            double y2 = xySlice.get(3).doubleValue();
+
+            double minData = ArrayMath.getMinimum(r);
+            double maxData = ArrayMath.getMaximum(r);
+            double[][] grid = (double[][]) ArrayUtil.copyToNDJavaArray_Double(r, missingValue);
+            int[][] S1 = new int[dim1][dim2];
+            Object[] cbs = ContourDraw.tracingContourLines(grid,
+                    cValues, xx, zz, missingValue, S1);
+            List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+
+            if (!contourLines.isEmpty()) {
+                if (isSmooth) {
+                    contourLines = Contour.smoothLines(contourLines);
+                }
+
+                GraphicCollection3D graphics = new GraphicCollection3D();
+                ColorBreak cb;
+                PointZ pz;
+                for (PolyLine line : contourLines) {
+                    PolylineZShape shape = new PolylineZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (wcontour.global.PointD p : line.PointList) {
+                        x = p.X;
+                        y = p.Y;
+                        pz = new PointZ();
+                        pz.X = x;
+                        pz.Y = y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+                        pz.Z = y;
+                        points.add(pz);
+                    }
+                    shape.setPoints(points);
+                    shape.setValue(line.Value);
+                    cb = ls.findLegendBreak(line.Value);
+                    graphics.add(new Graphic(shape, cb));
+                }
+                graphics.setLegendScheme(ls);
+                return graphics;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Create contour polygon slice graphics
      *
      * @param data   Data array - 3D
@@ -3961,6 +4046,130 @@ public class GraphicFactory {
         }
 
         return sgs;
+    }
+
+    /**
+     * Create contour polygon slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xySlice XY slice list
+     * @param method Interpolation method
+     * @param ls     Legend scheme
+     * @param isSmooth Smooth contour lines or not
+     * @return Contour polygon slice graphics
+     */
+    public static GraphicCollection3D contourfSlice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
+                                                          InterpolationMethod method, LegendScheme ls, boolean isSmooth) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        int dim1, dim2;
+        double x, y, z;
+
+        Object[] ccs = LegendManage.getContoursAndColors(ls);
+        double[] cValues = (double[]) ccs[0];
+        double[] zz = (double[])ArrayUtil.copyToNDJavaArray_Double(za);
+        double missingValue = -9999.0;
+
+        //XY slices
+        Array[] rxy = InterpUtil.sliceXY(xa, ya, za, data, xySlice, method);
+        Array r = rxy[0];
+        if (r != null) {
+            Array xs = rxy[1];
+            double[] xx = (double[])ArrayUtil.copyToNDJavaArray_Double(xs);
+            int[] rShape = r.getShape();
+            dim1 = rShape[0];
+            dim2 = rShape[1];
+            double x1 = xySlice.get(0).doubleValue();
+            double y1 = xySlice.get(1).doubleValue();
+            double x2 = xySlice.get(2).doubleValue();
+            double y2 = xySlice.get(3).doubleValue();
+
+            double minData = ArrayMath.getMinimum(r);
+            double maxData = ArrayMath.getMaximum(r);
+            double[][] grid = (double[][]) ArrayUtil.copyToNDJavaArray_Double(r, missingValue);
+            int[][] S1 = new int[dim1][dim2];
+            Object[] cbs = ContourDraw.tracingContourLines(grid,
+                    cValues, xx, zz, missingValue, S1);
+            List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+
+            if (!contourLines.isEmpty()) {
+                List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
+
+                if (isSmooth) {
+                    contourLines = Contour.smoothLines(contourLines);
+                }
+                List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(grid, contourLines, borders, cValues);
+
+                GraphicCollection3D graphics = new GraphicCollection3D();
+                ColorBreak cb;
+                PointZ pz;
+                for (wcontour.global.Polygon polygon : contourPolygons) {
+                    PolygonZShape shape = new PolygonZShape();
+                    List<PointZ> points = new ArrayList<>();
+                    for (wcontour.global.PointD p : polygon.OutLine.PointList) {
+                        x = p.X;
+                        y = p.Y;
+                        pz = new PointZ();
+                        pz.X = x;
+                        pz.Y = y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+                        pz.Z = y;
+                        points.add(pz);
+                    }
+                    if (!GeoComputation.isClockwise(points)) {
+                        Collections.reverse(points);
+                    }
+                    shape.setPoints(points);
+                    shape.lowValue = polygon.LowValue;
+                    shape.highValue = polygon.HighValue;
+                    //shape.setExtent(GeometryUtil.getPointsExtent(points));
+                    if (polygon.HasHoles()) {
+                        for (PolyLine holeLine : polygon.HoleLines) {
+                            points = new ArrayList<>();
+                            for (wcontour.global.PointD p : holeLine.PointList) {
+                                x = p.X;
+                                y = p.Y;
+                                pz = new PointZ();
+                                pz.X = x;
+                                pz.Y = y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+                                pz.Z = y;
+                                points.add(pz);
+                            }
+                            shape.addHole(points, 0);
+                        }
+                    }
+                    int valueIdx = Arrays.binarySearch(cValues, polygon.LowValue);
+                    if (valueIdx < 0) {
+                        valueIdx = -valueIdx;
+                    }
+                    //int valueIdx = findIndex(cValues, v);
+                    if (valueIdx == cValues.length - 1) {
+                        shape.highValue = maxData;
+                    } else {
+                        shape.highValue = cValues[valueIdx + 1];
+                    }
+                    if (!polygon.IsHighCenter && polygon.HighValue == polygon.LowValue) {
+                        shape.highValue = polygon.LowValue;
+                        if (valueIdx == 0) {
+                            shape.lowValue = minData;
+                        } else {
+                            shape.lowValue = cValues[valueIdx - 1];
+                        }
+                    }
+                    cb = ls.findLegendBreak(shape.lowValue);
+                    graphics.add(new Graphic(shape, cb));
+                }
+                graphics.setLegendScheme(ls);
+                return graphics;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -5909,6 +6118,91 @@ public class GraphicFactory {
      * Trace streamlines
      * @param xa X coordinate array
      * @param ya Y coordinate array
+     * @param xySlice XY slice value - [x1,y1,x2,y2]
+     * @param ua U component
+     * @param va V component
+     * @param data Data array
+     * @param density Streamline density
+     * @param ls Legend scheme
+     * @return Streamlines
+     */
+    public static GraphicCollection3D streamLinesXY(Array xa, Array ya, List<Number> xySlice, Array ua,
+                                                  Array va, Array data, int density, LegendScheme ls) {
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        double[][] u = (double[][]) ArrayUtil.copyToNDJavaArray_Double(ua);
+        double[][] v = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va);
+        List<PolyLine> streamlines;
+        if (xa.getRank() == 1) {
+            double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xa);
+            double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ya);
+            streamlines = Contour.tracingStreamline(u, v,
+                    x, y, density);
+        } else {
+            xa = xa.copyIfView();
+            ya = ya.copyIfView();
+            double[][] x = (double[][]) ArrayUtil.copyToNDJavaArray_Double(xa);
+            double[][] y = (double[][]) ArrayUtil.copyToNDJavaArray_Double(ya);
+            streamlines = Contour.tracingStreamline(u, v,
+                    x, y, density);
+        }
+
+        int ny = u.length;
+        int nx = u[0].length;
+        ColorBreak cb = ls.getLegendBreak(0);
+        double x1 = xySlice.get(0).doubleValue();
+        double y1 = xySlice.get(1).doubleValue();
+        double x2 = xySlice.get(2).doubleValue();
+        double y2 = xySlice.get(3).doubleValue();
+        if (data == null) {
+            for (PolyLine line : streamlines) {
+                PolylineZShape shape = new PolylineZShape();
+                List<PointZ> points = new ArrayList<>();
+                PointZ p;
+                for (int j = 0; j < line.PointList.size(); j++) {
+                    p = new PointZ();
+                    p.X = (line.PointList.get(j)).X;
+                    p.Z = (line.PointList.get(j)).Y;
+                    p.Y = y1 + (y2 - y1) * (p.X - x1) / (x2 - x1);
+                    points.add(p);
+                }
+                shape.setPoints(points);
+                graphics.add(new Graphic(shape, cb));
+            }
+        } else {
+            data = data.copyIfView();
+            for (PolyLine line : streamlines) {
+                PolylineZShape shape = new PolylineZShape();
+                List<PointZ> points = new ArrayList<>();
+                PointZ p;
+                ColorBreakCollection cbs = new ColorBreakCollection();
+                for (int j = 0; j < line.PointList.size(); j++) {
+                    p = new PointZ();
+                    p.X = (line.PointList.get(j)).X;
+                    p.Z = (line.PointList.get(j)).Y;
+                    p.Y = y1 + (y2 - y1) * (p.X - x1) / (x2 - x1);
+                    int[] idx = ArrayUtil.gridIndex(xa, ya, p.X, p.Z);
+                    if (idx != null) {
+                        int yi = idx[0];
+                        int xi = idx[1];
+                        p.M = data.getDouble(yi * nx + xi);
+                    }
+                    cb = ls.findLegendBreak(p.M);
+                    cbs.add(cb);
+                    points.add(p);
+                }
+                shape.setPoints(points);
+                graphics.add(new Graphic(shape, cbs));
+            }
+        }
+        graphics.setLegendScheme(ls);
+
+        return graphics;
+    }
+
+    /**
+     * Trace streamlines
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
      * @param za Z coordinate value
      * @param ua U component
      * @param va V component
@@ -6079,9 +6373,7 @@ public class GraphicFactory {
      * @param va V component array
      * @param wa W component array
      * @param data Data array
-     * @param xSlice X slices
-     * @param ySlice Y slices
-     * @param zSlice Z slices
+     * @param zSliceIndex Z slice index list
      * @param density Streamline density
      * @param ls Legend scheme
      * @return Streamline slices graphics
@@ -6115,6 +6407,48 @@ public class GraphicFactory {
         }
 
         return sgs;
+    }
+
+    /**
+     * Create streamline slices in 3D axes
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate array
+     * @param ua U component array
+     * @param va V component array
+     * @param wa W component array
+     * @param data Data array
+     * @param xySlice XY slices - [x1,y1,x2,y2]
+     * @param method Interpolation method
+     * @param density Streamline density
+     * @param ls Legend scheme
+     * @return Streamline slices graphics
+     * @throws InvalidRangeException
+     */
+    public static GraphicCollection3D streamSlice(Array xa, Array ya, Array za, Array ua,
+                                                        Array va, Array wa, Array data, List<Number> xySlice,
+                                                        InterpolationMethod method, int density, LegendScheme ls) throws InvalidRangeException {
+        Array[] xyu = InterpUtil.sliceXY(xa, ya, za, ua, xySlice, method);
+        Array xua = xyu[0];
+        Array[] xyv = InterpUtil.sliceXY(xa, ya, za, va, xySlice, method);
+        Array xva = xyv[0];
+        Array[] wds = MeteoMath.uv2ds(xua, xva);
+        double x1 = xySlice.get(0).doubleValue();
+        double y1 = xySlice.get(1).doubleValue();
+        double x2 = xySlice.get(2).doubleValue();
+        double y2 = xySlice.get(3).doubleValue();
+        double angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+        Array wd = ArrayMath.add(wds[0], angle);
+        Array[] uv = MeteoMath.ds2uv(wd, wds[1]);
+        xua = uv[0];
+        Array[] xyw = InterpUtil.sliceXY(xa, ya, za, wa, xySlice, method);
+        Array xwa = xyw[0];
+        Array r = data == null ? null : InterpUtil.sliceXY(xa, ya, za, data, xySlice, method)[0];
+        Array yya = xyu[1];
+        Array zza = za.getRank() == 1 ? za : ArrayUtil.slice(za, 2, 0);
+        GraphicCollection3D graphics = streamLinesXY(yya, zza, xySlice, xua, xwa, r, density, ls);
+
+        return graphics;
     }
   
 //    /**

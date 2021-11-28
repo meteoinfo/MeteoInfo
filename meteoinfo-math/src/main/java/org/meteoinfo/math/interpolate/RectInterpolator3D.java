@@ -28,6 +28,24 @@ public abstract class RectInterpolator3D {
     }
 
     /**
+     * Factory method
+     * @param xa X coordinate array - 1D
+     * @param ya Y coordinate array - 1D
+     * @param za Z coordinate array - 1D
+     * @param va Value array - 3D or more than 3D
+     * @param method Interpolation method
+     * @return RectInterpolator3D
+     */
+    public static RectInterpolator3D factory(Array xa, Array ya, Array za, Array va,
+                                             InterpolationMethod method) {
+        if (method == InterpolationMethod.NEAREST) {
+            return new RectNearestInterpolator3D(xa, ya, za, va);
+        } else {
+            return new RectLinearInterpolator3D(xa, ya, za, va);
+        }
+    }
+
+    /**
      * Get value index in a dimension array
      *
      * @param dim Dimension array

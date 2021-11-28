@@ -31,6 +31,8 @@ import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.shape.ImageShape;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.image.ImageUtil;
+import org.meteoinfo.math.interpolate.InterpUtil;
+import org.meteoinfo.math.interpolate.InterpolationMethod;
 import org.meteoinfo.math.interpolate.RectNearestInterpolator3D;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
@@ -366,6 +368,49 @@ public class JOGLUtil {
         }
 
         return sgs;
+    }
+
+    /**
+     * Create xy slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xySlice XY slice list - [x1,y1,x2,y2]
+     * @param ls     Legend scheme
+     * @param method Interpolation method - nearest or linear
+     * @return Surface graphics
+     */
+    public static SurfaceGraphics slice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
+                                        LegendScheme ls, InterpolationMethod method) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        Array[] rxy = InterpUtil.sliceXY(xa, ya, za, data, xySlice, method);
+        Array r = rxy[0];
+        Array x2d = rxy[4];
+        Array y2d = rxy[5];
+        Array z2d = rxy[6];
+        SurfaceGraphics graphics = new SurfaceGraphics();
+        int[] shape = r.getShape();
+        int colNum = shape[1];
+        int rowNum = shape[0];
+        int idx;
+        PointZ[][] vertices = new PointZ[rowNum][colNum];
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                idx = i * colNum + j;
+                vertices[i][j] = new PointZ(x2d.getDouble(idx), y2d.getDouble(idx),
+                        z2d.getDouble(idx), r.getDouble(idx));
+            }
+        }
+        graphics.setVertices(vertices);
+        graphics.setLegendScheme(ls);
+
+        return graphics;
     }
 
     /**

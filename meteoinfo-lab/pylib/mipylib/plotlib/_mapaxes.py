@@ -474,12 +474,12 @@ class MapAxes(Axes):
         if islayer:    
             layer = layer.layer
             layer.setVisible(visible)
-            order = kwargs.pop('order', None)
+            zorder = kwargs.pop('zorder', None)
             if layer.getLayerType() == LayerTypes.IMAGE_LAYER:
-                if order is None:
+                if zorder is None:
                     self.add_layer(layer)
                 else:
-                    self.add_layer(layer, order)
+                    self.add_layer(layer, zorder)
             else:
                 #LegendScheme
                 ls = kwargs.pop('symbolspec', None)
@@ -501,10 +501,10 @@ class MapAxes(Axes):
                         layer.getLegendScheme().getLegendBreaks().set(0, lb)
                 else:
                     layer.setLegendScheme(ls)
-                if order is None:
+                if zorder is None:
                     self.add_layer(layer)
                 else:
-                    self.add_layer(layer, order)
+                    self.add_layer(layer, zorder)
                 #Labels        
                 labelfield = kwargs.pop('labelfield', None)
                 if not labelfield is None:

@@ -40,14 +40,14 @@ __all__ = [
     'argmin','argmax','argsort','array','array_split','asanyarray','asarray','asgridarray',
     'asgriddata','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
-    'concatenate','corrcoef','cos','cumsum','cylinder','degrees','delete','delnan','diag','diff',
+    'concatenate','corrcoef','cos','cosh','cumsum','cylinder','degrees','delete','delnan','diag','diff',
     'dim_array','datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','identity','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','linspace','log','log10','logical_not','logspace',
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reshape',
-    'repeat','roll','rolling_mean','rot90','sign','sin','shape','smooth5','smooth9','sort',
-    'sphere','squeeze','split','sqrt','square','std','sum','swapaxes','take','tan','tile',
+    'repeat','roll','rolling_mean','rot90','sign','sin','sinh','shape','smooth5','smooth9','sort',
+    'sphere','squeeze','split','sqrt','square','std','sum','swapaxes','take','tan','tanh','tile',
     'transpose','trapz','vdot','unique','unravel_index','var','vstack','zeros','zeros_like'
     ]
 
@@ -749,6 +749,24 @@ def sin(x):
             return cmath.sin(x)
         else:
             return math.sin(x)
+
+def sinh(x):
+    """
+    Hyperbolic sine, element-wise.
+
+    :param x: (*array_like*) Angle, in radians.
+
+    :returns: (*array_like*) The hyperbolic sine of each element of x.
+    """
+    if isinstance(x, list):
+        return array(x).sinh()
+    elif isinstance(x, NDArray):
+        return x.sinh()
+    else:
+        if isinstance(x, complex):
+            return cmath.sinh(x)
+        else:
+            return math.sinh(x)
     
 def cos(x):
     """
@@ -772,6 +790,24 @@ def cos(x):
             return cmath.cos(x)
         else:
             return math.cos(x)
+
+def cosh(x):
+    """
+    Hyperbolic cosine, element-wise.
+
+    :param x: (*array_like*) Angle, in radians.
+
+    :returns: (*array_like*) The hyperbolic cosine of each element of x.
+    """
+    if isinstance(x, list):
+        return array(x).cosh()
+    elif isinstance(x, NDArray):
+        return x.cosh()
+    else:
+        if isinstance(x, complex):
+            return cmath.cosh(x)
+        else:
+            return math.cosh(x)
         
 def tan(x):
     """
@@ -795,6 +831,24 @@ def tan(x):
             return cmath.tan(x)
         else:
             return math.tan(x)
+
+def tanh(x):
+    """
+    Hyperbolic tangent, element-wise.
+
+    :param x: (*array_like*) Angle, in radians.
+
+    :returns: (*array_like*) The hyperbolic tangent of each element of x.
+    """
+    if isinstance(x, list):
+        return array(x).tanh()
+    elif isinstance(x, NDArray):
+        return x.tanh()
+    else:
+        if isinstance(x, complex):
+            return cmath.tanh(x)
+        else:
+            return math.tanh(x)
         
 def asin(x):
     """

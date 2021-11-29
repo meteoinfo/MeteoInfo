@@ -982,13 +982,40 @@ class DimArray(NDArray):
         '''
         r = super(DimArray, self).sin()
         return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def sinh(self):
+        """
+        Calculate hyperbolic sin value.
+
+        :returns: (*DimArray*) Hyperbolic sin value array.
+        """
+        r = super(DimArray, self).sinh()
+        return DimArray(r, self.dims, self.fill_value, self.proj)
         
     def cos(self):
         r = super(DimArray, self).cos()
         return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def cosh(self):
+        """
+        Calculate hyperbolic cos value.
+
+        :returns: (*DimArray*) Hyperbolic cos value array.
+        """
+        r = super(DimArray, self).cosh()
+        return DimArray(r, self.dims, self.fill_value, self.proj)
         
     def tan(self):
         r = super(DimArray, self).tan()
+        return DimArray(r, self.dims, self.fill_value, self.proj)
+
+    def tanh(self):
+        """
+        Calculate hyperbolic tan value.
+
+        :returns: (*DimArray*) Hyperbolic tan value array.
+        """
+        r = super(DimArray, self).tanh()
         return DimArray(r, self.dims, self.fill_value, self.proj)
         
     def asin(self):

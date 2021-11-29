@@ -4985,6 +4985,45 @@ public class ArrayMath {
     }
 
     /**
+     * Hyperbolic sine function
+     *
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array sinh(Array a) {
+        Array r;
+        if (a.getDataType() == DataType.COMPLEX) {
+            r = Array.factory(DataType.COMPLEX, a.getShape());
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setComplex(i, a.getComplex(i).sinh());
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterA.hasNext()) {
+                    iterR.setComplexNext(iterA.getComplexNext().sinh());
+                }
+            }
+        } else {
+            r = Array.factory(a.getDataType() == DataType.DOUBLE ? DataType.DOUBLE : DataType.FLOAT, a.getShape());
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setDouble(i, Math.sinh(a.getDouble(i)));
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterA.hasNext()) {
+                    iterR.setDoubleNext(Math.sinh(iterA.getDoubleNext()));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Cosine function
      *
      * @param a Array a
@@ -5024,6 +5063,45 @@ public class ArrayMath {
     }
 
     /**
+     * Hyperbolic cosine function
+     *
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array cosh(Array a) {
+        Array r;
+        if (a.getDataType() == DataType.COMPLEX) {
+            r = Array.factory(DataType.COMPLEX, a.getShape());
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setComplex(i, a.getComplex(i).cosh());
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterA.hasNext()) {
+                    iterR.setComplexNext(iterA.getComplexNext().cosh());
+                }
+            }
+        } else {
+            r = Array.factory(a.getDataType() == DataType.DOUBLE ? DataType.DOUBLE : DataType.FLOAT, a.getShape());
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setDouble(i, Math.cosh(a.getDouble(i)));
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterA.hasNext()) {
+                    iterR.setDoubleNext(Math.cosh(iterA.getDoubleNext()));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Tangent function
      *
      * @param a Array a
@@ -5055,6 +5133,45 @@ public class ArrayMath {
                 IndexIterator iterR = r.getIndexIterator();
                 while (iterA.hasNext()) {
                     iterR.setDoubleNext(Math.tan(iterA.getDoubleNext()));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Hyperbolic tangent function
+     *
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array tanh(Array a) {
+        Array r;
+        if (a.getDataType() == DataType.COMPLEX) {
+            r = Array.factory(DataType.COMPLEX, a.getShape());
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setComplex(i, a.getComplex(i).tanh());
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterA.hasNext()) {
+                    iterR.setComplexNext(iterA.getComplexNext().tanh());
+                }
+            }
+        } else {
+            r = Array.factory(a.getDataType() == DataType.DOUBLE ? DataType.DOUBLE : DataType.FLOAT, a.getShape());
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setDouble(i, Math.tanh(a.getDouble(i)));
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterA.hasNext()) {
+                    iterR.setDoubleNext(Math.tanh(iterA.getDoubleNext()));
                 }
             }
         }

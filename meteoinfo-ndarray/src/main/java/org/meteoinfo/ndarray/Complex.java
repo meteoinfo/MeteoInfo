@@ -90,6 +90,11 @@ public class Complex extends org.apache.commons.math3.complex.Complex {
     public Complex cos(){
         return new Complex(super.cos());
     }
+
+    @Override
+    public Complex cosh() {
+        return new Complex(super.cosh());
+    }
     
     @Override
     public Complex log(){
@@ -119,6 +124,11 @@ public class Complex extends org.apache.commons.math3.complex.Complex {
     public Complex sin(){
         return new Complex(super.sin());        
     }
+
+    @Override
+    public Complex sinh() {
+        return new Complex(super.sinh());
+    }
     
     @Override
     public Complex sqrt(){
@@ -128,6 +138,11 @@ public class Complex extends org.apache.commons.math3.complex.Complex {
     @Override
     public Complex tan(){
         return new Complex(super.tan());
+    }
+
+    @Override
+    public Complex tanh() {
+        return new Complex(super.tanh());
     }
     
     @Override

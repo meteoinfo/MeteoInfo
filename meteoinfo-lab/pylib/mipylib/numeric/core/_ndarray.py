@@ -806,11 +806,20 @@ class NDArray(object):
     def sin(self):
         return NDArray(ArrayMath.sin(self._array))
 
+    def sinh(self):
+        return NDArray(ArrayMath.sinh(self._array))
+
     def cos(self):
         return NDArray(ArrayMath.cos(self._array))
 
+    def cosh(self):
+        return NDArray(ArrayMath.cosh(self._array))
+
     def tan(self):
         return NDArray(ArrayMath.tan(self._array))
+
+    def tanh(self):
+        return NDArray(ArrayMath.tanh(self._array))
 
     def asin(self):
         return NDArray(ArrayMath.asin(self._array))

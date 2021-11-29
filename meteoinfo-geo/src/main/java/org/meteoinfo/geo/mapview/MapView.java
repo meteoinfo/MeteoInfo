@@ -18,6 +18,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.commons.imaging.ImageReadException;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.geo.mapdata.MapDataManage;
@@ -9719,7 +9720,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         if (new File(aFile).exists()) {
             try {
                 aLayer = MapDataManage.readImageFile(aFile);
-            } catch (IOException ex) {
+            } catch (IOException | ImageReadException ex) {
                 Logger.getLogger(MapView.class.getName()).log(Level.SEVERE, null, ex);
             }
             try {

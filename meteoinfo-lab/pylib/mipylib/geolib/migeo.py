@@ -68,13 +68,13 @@ def shaperead(fn, encoding=None):
         raise
     
 def georead(fn):
-    '''
-    Returns a layer readed from a supported geo-data file.
+    """
+    Returns a layer read from a supported geo-data file.
     
     :param fn: (*string*) The supported geo-data file name (shape file, wmp, geotiff, image, bil...).
     
     :returns: (*MILayer*) The created layer.
-    '''
+    """
     if not os.path.exists(fn):
         fn = os.path.join(migl.get_map_folder(), fn)
         
@@ -89,7 +89,7 @@ def georead(fn):
         except:
             raise
     else:
-        print 'File not exists: ' + fn
+        print('File not exists: ' + fn)
         raise IOError
     
 def geotiffread(filename):

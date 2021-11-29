@@ -533,6 +533,28 @@ public class GeoTiff {
     }
 
     /**
+     * Check the tiff file is geotiff or not
+     * @param filename The tiff file name
+     * @return Is geotiff or not
+     */
+    public static boolean isGeoTiff(String filename) {
+        try {
+            GeoTiff geoTiff = new GeoTiff(filename);
+            geoTiff.read();
+            IFDEntry modelTransformationTag = geoTiff.findTag(Tag.ModelTransformationTag);
+            if (modelTransformationTag != null) {
+                return true;
+            } else {
+                IFDEntry modelTiePointTag = geoTiff.findTag(Tag.ModelTiepointTag);
+                return modelTiePointTag != null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
      * Find tag
      *
      * @param tag Tag
@@ -676,7 +698,14 @@ public class GeoTiff {
             int width = widthIFD.value[0];
             int height = heightIFD.value[0];
             GridArray gData = new GridArray();
-            gData.setData(readArray());
+            Array data = readArray();
+            if (data.getRank() == 3) {
+                int[] dShape = data.getShape();
+                int[] origin = new int[]{0, 0, 0};
+                int[] shape = new int[]{dShape[0], dShape[1], 1};
+                data = data.section(origin, shape);
+            }
+            gData.setData(data);
 
             //Grid data coordinate
             double[] X = new double[width];
@@ -714,7 +743,7 @@ public class GeoTiff {
             }
 
             return gData;
-        } catch (IOException ex) {
+        } catch (IOException | InvalidRangeException ex) {
             Logger.getLogger(GeoTiff.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }

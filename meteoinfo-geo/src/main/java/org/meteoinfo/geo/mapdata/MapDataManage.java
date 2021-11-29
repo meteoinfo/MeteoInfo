@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.geo.mapdata;
 
+import org.apache.commons.imaging.ImageReadException;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
@@ -33,6 +34,7 @@ import org.meteoinfo.geometry.legend.LegendType;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.projection.KnownCoordinateSystems;
@@ -80,7 +82,10 @@ public class MapDataManage {
                     mdt = MapDataType.IMAGE;
                     break;
                 case "tif":
-                    mdt = MapDataType.GEO_TIFF;
+                    if (GeoTiff.isGeoTiff(fileName))
+                        mdt = MapDataType.GEO_TIFF;
+                    else
+                        mdt = MapDataType.IMAGE;
                     break;
                 case "bil":
                 case "bip":
@@ -322,13 +327,13 @@ public class MapDataManage {
      * @return Image layer
      * @throws IOException
      */
-    public static ImageLayer readImageFile(String aFile) throws IOException {
+    public static ImageLayer readImageFile(String aFile) throws IOException, ImageReadException {
         String oEx = aFile.substring(aFile.lastIndexOf("."));
         String last = oEx.substring(oEx.length() - 1);
         String sEx = oEx.substring(0, oEx.length() - 2) + last;
         sEx = sEx + "w";
         String wFile = aFile.replace(oEx, sEx);
-        BufferedImage aImage = ImageIO.read(new File(aFile));
+        BufferedImage aImage = ImageUtil.imageLoad(aFile);
         ImageLayer aImageLayer = new ImageLayer();
         aImageLayer.setFileName(aFile);
         aImageLayer.setWorldFileName(wFile);

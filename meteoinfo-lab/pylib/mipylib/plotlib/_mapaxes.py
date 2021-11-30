@@ -475,6 +475,9 @@ class MapAxes(Axes):
             layer = layer.layer
             layer.setVisible(visible)
             zorder = kwargs.pop('zorder', None)
+            interpolation = kwargs.pop('interpolation', None)
+            if not interpolation is None:
+                layer.setInterpolation(interpolation)
             if layer.getLayerType() == LayerTypes.IMAGE_LAYER:
                 if zorder is None:
                     self.add_layer(layer)

@@ -5,6 +5,9 @@
  */
 package org.meteoinfo.chart.graphic;
 
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.pipe.Pipe;
@@ -15,6 +18,7 @@ import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Vector;
 
@@ -31,6 +35,8 @@ public class SurfaceGraphics extends GraphicCollection3D {
     private Transform transform;
     private Vector3f[][] tVertices;
     private Vector3f[][] normals;
+    private BufferedImage image;
+    private Texture texture;
     
     /**
      * Constructor
@@ -43,6 +49,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
         this.edgeInterp = false;
         this.mesh = false;
         this.usingLight = true;
+        this.image = null;
     }
     
     /**
@@ -184,6 +191,38 @@ public class SurfaceGraphics extends GraphicCollection3D {
     }
 
     /**
+     * Get image
+     * @return The image
+     */
+    public BufferedImage getImage() {
+        return this.image;
+    }
+
+    /**
+     * Set image
+     * @param value The image
+     */
+    public void setImage(BufferedImage value) {
+        this.image = value;
+    }
+
+    /**
+     * Get texture
+     * @return Texture
+     */
+    public Texture getTexture() {
+        return this.texture;
+    }
+
+    /**
+     * Set texture
+     * @param value Texture
+     */
+    public void setTexture(Texture value) {
+        this.texture = value;
+    }
+
+    /**
      * Check if the legend has multiple colors
      *
      * @return Multiple colors or not
@@ -295,5 +334,13 @@ public class SurfaceGraphics extends GraphicCollection3D {
                 this.normals[i][j] = normal;
             }
         }
+    }
+
+    /**
+     * Update texture from image
+     * @param gl The JOGL GL2 object
+     */
+    public void updateTexture(GL2 gl) {
+        this.texture = AWTTextureIO.newTexture(gl.getGLProfile(), this.image, true);
     }
 }

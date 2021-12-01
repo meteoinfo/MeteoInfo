@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\geoshow">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj\TrajStat"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\saturn.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_breather.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\image\imread_3.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\geoshow\georead_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_texturemap_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\calipso\CALIPSO_L2_AOD_3d_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow_image_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow_image_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\deep_learning\classification\saturn.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_breather.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\image\imread_3.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\geoshow\georead_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf_texturemap_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\calipso\CALIPSO_L2_AOD_3d_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow_image_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow_image_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +38,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1434,778"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

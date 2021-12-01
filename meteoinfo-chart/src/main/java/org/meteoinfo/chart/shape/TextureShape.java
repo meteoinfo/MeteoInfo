@@ -5,8 +5,10 @@
  */
 package org.meteoinfo.chart.shape;
 
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import org.meteoinfo.geometry.shape.ImageShape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 
@@ -80,5 +82,13 @@ public class TextureShape extends ImageShape{
      */
     public void loadTexture() throws IOException {
         this.texture = TextureIO.newTexture(new File(fileName), true);
+    }
+
+    /**
+     * Update texture from image
+     * @param gl The JOGL GL2 object
+     */
+    public void updateTexture(GL2 gl) {
+        this.texture = AWTTextureIO.newTexture(gl.getGLProfile(), this.image, true);
     }
 }

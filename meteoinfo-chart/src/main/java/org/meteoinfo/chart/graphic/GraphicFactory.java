@@ -2855,6 +2855,66 @@ public class GraphicFactory {
      *
      * @param gdata Grid data array
      * @param ls Legend scheme
+     * @return Image
+     */
+    public static BufferedImage createImage(Array gdata, LegendScheme ls) {
+        gdata = gdata.copyIfView();
+
+        int width, height, breakNum;
+        width = gdata.getShape()[1];
+        height = gdata.getShape()[0];
+        breakNum = ls.getBreakNum();
+        double[] breakValue = new double[breakNum];
+        Color[] breakColor = new Color[breakNum];
+        Color undefColor = Color.white;
+        for (int i = 0; i < breakNum; i++) {
+            breakValue[i] = Double.parseDouble(ls.getLegendBreaks().get(i).getEndValue().toString());
+            breakColor[i] = ls.getLegendBreaks().get(i).getColor();
+            if (ls.getLegendBreaks().get(i).isNoData()) {
+                undefColor = ls.getLegendBreaks().get(i).getColor();
+            }
+        }
+        Color defaultColor = breakColor[breakNum - 1];    //Last color
+        BufferedImage aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        double oneValue;
+        Color oneColor;
+        Index index = gdata.getIndex();
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                index.set(i, j);
+                oneValue = gdata.getDouble(index);
+                if (Double.isNaN(oneValue)) {
+                    oneColor = undefColor;
+                } else {
+                    oneColor = defaultColor;
+                    if (ls.getLegendType() == LegendType.GRADUATED_COLOR) {
+                        for (int k = 0; k < breakNum - 1; k++) {
+                            if (oneValue < breakValue[k]) {
+                                oneColor = breakColor[k];
+                                break;
+                            }
+                        }
+                    } else {
+                        for (int k = 0; k < breakNum - 1; k++) {
+                            if (oneValue == breakValue[k]) {
+                                oneColor = breakColor[k];
+                                break;
+                            }
+                        }
+                    }
+                }
+                aImage.setRGB(j, height - i - 1, oneColor.getRGB());
+            }
+        }
+
+        return aImage;
+    }
+
+    /**
+     * Create image
+     *
+     * @param gdata Grid data array
+     * @param ls Legend scheme
      * @param extent Extent
      * @return Image graphic
      */

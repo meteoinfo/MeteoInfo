@@ -16,9 +16,9 @@ import java.util.List;
  */
 public class ImageShape extends PointShape {
     // <editor-fold desc="Variables">
-    private BufferedImage image;
-    private Object interp;
-    private List<PointZ> coords;
+    protected BufferedImage image;
+    protected Object interp;
+    protected List<PointZ> coords;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**

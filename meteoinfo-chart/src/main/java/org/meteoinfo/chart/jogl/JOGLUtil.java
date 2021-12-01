@@ -191,6 +191,7 @@ public class JOGLUtil {
         graphics.setZValue(offset);
         TextureShape ishape = new TextureShape();
         ishape.setFileName(layer.getFileName());
+        ishape.setImage(layer.getImage());
         Extent extent = layer.getExtent();
         Extent3D ex3 = new Extent3D(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
         List<PointZ> coords = new ArrayList<>();

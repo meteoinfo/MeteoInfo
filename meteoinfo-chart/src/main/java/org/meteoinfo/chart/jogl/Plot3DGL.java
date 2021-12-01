@@ -2751,51 +2751,102 @@ public class Plot3DGL extends Plot implements GLEventListener {
             }
         }
 
-        if (pgb.isDrawFill()) {
-            gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
-            gl.glPolygonOffset(1.0f, 1.0f);
-            if (surface.isFaceInterp()) {
-                for (int i = 0; i < dim1 - 1; i++) {
-                    for (int j = 0; j < dim2 - 1; j++) {
-                        gl.glBegin(GL2.GL_QUADS);
-                        rgba = surface.getRGBA(i, j);
-                        gl.glColor4fv(rgba, 0);
-                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j)), 0);
-                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j)), 0);
-                        rgba = surface.getRGBA(i + 1, j);
-                        gl.glColor4fv(rgba, 0);
-                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j)), 0);
-                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j)), 0);
-                        rgba = surface.getRGBA(i + 1, j + 1);
-                        gl.glColor4fv(rgba, 0);
-                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j + 1)), 0);
-                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j + 1)), 0);
-                        rgba = surface.getRGBA(i, j + 1);
-                        gl.glColor4fv(rgba, 0);
-                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j + 1)), 0);
-                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j + 1)), 0);
-                        gl.glEnd();
+        BufferedImage image = surface.getImage();
+        if (image == null) {
+            if (pgb.isDrawFill()) {
+                gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+                gl.glPolygonOffset(1.0f, 1.0f);
+                if (surface.isFaceInterp()) {
+                    for (int i = 0; i < dim1 - 1; i++) {
+                        for (int j = 0; j < dim2 - 1; j++) {
+                            gl.glBegin(GL2.GL_QUADS);
+                            rgba = surface.getRGBA(i, j);
+                            gl.glColor4fv(rgba, 0);
+                            gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j)), 0);
+                            gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j)), 0);
+                            rgba = surface.getRGBA(i + 1, j);
+                            gl.glColor4fv(rgba, 0);
+                            gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j)), 0);
+                            gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j)), 0);
+                            rgba = surface.getRGBA(i + 1, j + 1);
+                            gl.glColor4fv(rgba, 0);
+                            gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j + 1)), 0);
+                            gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j + 1)), 0);
+                            rgba = surface.getRGBA(i, j + 1);
+                            gl.glColor4fv(rgba, 0);
+                            gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j + 1)), 0);
+                            gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j + 1)), 0);
+                            gl.glEnd();
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < dim1 - 1; i++) {
+                        for (int j = 0; j < dim2 - 1; j++) {
+                            gl.glBegin(GL2.GL_QUADS);
+                            rgba = surface.getRGBA(i, j);
+                            gl.glColor4fv(rgba, 0);
+                            gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j)), 0);
+                            gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j)), 0);
+                            gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j)), 0);
+                            gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j)), 0);
+                            gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j + 1)), 0);
+                            gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j + 1)), 0);
+                            gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j + 1)), 0);
+                            gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j + 1)), 0);
+                            gl.glEnd();
+                        }
                     }
                 }
-            } else {
-                for (int i = 0; i < dim1 - 1; i++) {
-                    for (int j = 0; j < dim2 - 1; j++) {
-                        gl.glBegin(GL2.GL_QUADS);
-                        rgba = surface.getRGBA(i, j);
-                        gl.glColor4fv(rgba, 0);
-                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j)), 0);
-                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j)), 0);
-                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j)), 0);
-                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j)), 0);
-                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j + 1)), 0);
-                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j + 1)), 0);
-                        gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j + 1)), 0);
-                        gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j + 1)), 0);
-                        gl.glEnd();
-                    }
+                gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
+            }
+        } else {
+            Texture texture = surface.getTexture();
+            if (texture == null) {
+                surface.updateTexture(gl);
+                texture = surface.getTexture();
+            }
+            int idTexture = texture.getTextureObject();
+
+            gl.glColor3f(1f, 1f, 1f);
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, idTexture);
+
+            // Texture parameterization
+            gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+            gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
+
+            // Draw image
+            gl.glBegin(GL2.GL_QUADS);
+            // Front Face
+            float float_x, float_y, float_xb, float_yb;
+            for (int i = 0; i < dim1 - 1; i++) {
+                for (int j = 0; j < dim2 - 1; j++) {
+                    float_y = (float) (i) / dim1;
+                    //float_y = 1.0f - (float) (i) / dim1;
+                    float_x = (float) (j) / dim2;
+                    float_yb = (float) (i + 1) / dim1;
+                    //float_yb = 1.0f - (float) (i + 1) / dim1;
+                    float_xb = (float) (j + 1) / dim2;
+                    gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j)), 0);
+                    gl.glTexCoord2f(float_x, float_y);
+                    gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j)), 0);
+
+                    gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j)), 0);
+                    gl.glTexCoord2f(float_x, float_yb);
+                    gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j)), 0);
+
+                    gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i + 1, j + 1)), 0);
+                    gl.glTexCoord2f(float_xb, float_yb);
+                    gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i + 1, j + 1)), 0);
+
+                    gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j + 1)), 0);
+                    gl.glTexCoord2f(float_xb, float_y);
+                    gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j + 1)), 0);
                 }
             }
-            gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
+            gl.glEnd();
+
+            // Unbinding the texture
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
         }
 
         if (lightEnabled && !surface.isUsingLight()) {
@@ -3012,12 +3063,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
         TextureShape ishape = (TextureShape) graphic.getShape();
         Texture texture = ishape.getTexture();
         if (texture == null) {
-            try {
+            ishape.updateTexture(gl);
+            texture = ishape.getTexture();
+            /*try {
                 ishape.loadTexture();
                 texture = ishape.getTexture();
             } catch (IOException ex) {
                 Logger.getLogger(Plot3DGL.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }*/
         }
         if (texture == null) {
             return;
@@ -3037,17 +3090,17 @@ public class Plot3DGL extends Plot implements GLEventListener {
         // Draw image
         gl.glBegin(GL2.GL_QUADS);
         // Front Face
-        gl.glTexCoord2f(0.0f, 0.0f);
-        //gl.glTexCoord2f(0.0f, 1.0f);
-        gl.glVertex3f(transform.transform_x((float) coords.get(0).X), transform.transform_y((float) coords.get(0).Y), transform.transform_z((float) coords.get(0).Z));
-        gl.glTexCoord2f(1.0f, 0.0f);
-        //gl.glTexCoord2f(1.0f, 1.0f);
-        gl.glVertex3f(transform.transform_x((float) coords.get(1).X), transform.transform_y((float) coords.get(1).Y), transform.transform_z((float) coords.get(1).Z));
-        gl.glTexCoord2f(1.0f, 1.0f);
-        //gl.glTexCoord2f(1.0f, 0.0f);
-        gl.glVertex3f(transform.transform_x((float) coords.get(2).X), transform.transform_y((float) coords.get(2).Y), transform.transform_z((float) coords.get(2).Z));
-        gl.glTexCoord2f(0.0f, 1.0f);
         //gl.glTexCoord2f(0.0f, 0.0f);
+        gl.glTexCoord2f(0.0f, 1.0f);
+        gl.glVertex3f(transform.transform_x((float) coords.get(0).X), transform.transform_y((float) coords.get(0).Y), transform.transform_z((float) coords.get(0).Z));
+        //gl.glTexCoord2f(1.0f, 0.0f);
+        gl.glTexCoord2f(1.0f, 1.0f);
+        gl.glVertex3f(transform.transform_x((float) coords.get(1).X), transform.transform_y((float) coords.get(1).Y), transform.transform_z((float) coords.get(1).Z));
+        //gl.glTexCoord2f(1.0f, 1.0f);
+        gl.glTexCoord2f(1.0f, 0.0f);
+        gl.glVertex3f(transform.transform_x((float) coords.get(2).X), transform.transform_y((float) coords.get(2).Y), transform.transform_z((float) coords.get(2).Z));
+        //gl.glTexCoord2f(0.0f, 1.0f);
+        gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex3f(transform.transform_x((float) coords.get(3).X), transform.transform_y((float) coords.get(3).Y), transform.transform_z((float) coords.get(3).Z));
         gl.glEnd();
         gl.glFlush();

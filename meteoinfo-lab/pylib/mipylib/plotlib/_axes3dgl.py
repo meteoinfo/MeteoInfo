@@ -12,10 +12,13 @@ from org.meteoinfo.geometry.legend import BreakTypes, BarBreak
 from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.geometry.shape import ShapeTypes
+from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
 from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil
 from org.meteoinfo.math.interpolate import InterpolationMethod
+from org.meteoinfo.image import ImageUtil
 from javax.swing import WindowConstants
 from java.awt import Font, Color
+from java.awt.image import BufferedImage
 
 import os
 import numbers
@@ -91,6 +94,12 @@ class Axes3DGL(Axes3D):
         aspect = kwargs.pop('aspect', None)
         if not aspect is None:
             self.axes.setAspectType(AspectType.valueOf(aspect.upper()))
+        axis = kwargs.pop('axis', True)
+        if not axis:
+            self.axes.setDrawBase(False)
+            self.axes.setBoxed(False)
+            self.axes.setDisplayXY(False)
+            self.axes.setDisplayZ(False)
         
     def _set_plot(self, plot):
         '''
@@ -568,6 +577,7 @@ class Axes3DGL(Axes3D):
         else:
             interpolation = kwargs.pop('interpolation', None)
             graphics = JOGLUtil.createTexture(layer, offset, xshift, interpolation)
+            #graphics = GraphicFactory.createImage(layer, offset, xshift, interpolation)
 
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:
@@ -1027,7 +1037,14 @@ class Axes3DGL(Axes3D):
                 if len(args) > 1:
                     level_arg = args[1]
             else:
-                level_arg = C
+                level_arg = args[0]
+
+        facecolor = kwargs.pop('facecolor', None)
+        if facecolor == 'texturemap':
+            cdata = kwargs.pop('cdata')
+            if isinstance(cdata, NDArray) and cdata.ndim == 2:
+                min = cdata.min()
+                max = cdata.max()
 
         if not level_arg is None:
             if isinstance(level_arg, int):
@@ -1044,12 +1061,25 @@ class Axes3DGL(Axes3D):
                 ls = LegendManage.createLegendScheme(min, max, cn, cmap)
 
         ls = ls.convertTo(ShapeTypes.POLYGON)
-        facecolor = kwargs.pop('facecolor', None)
+
         face_interp = None
+        image = None
         if not facecolor is None:
             face_interp = (facecolor == 'interp')
             if not face_interp:
-                if not facecolor in ['flat','texturemap','none']:
+                if facecolor == 'texturemap':
+                    if isinstance(cdata, NDArray):
+                        if cdata.ndim == 3:
+                            image = ImageUtil.createImage(cdata._array)
+                        else:
+                            image = GraphicFactory.createImage(cdata._array, ls)
+                    elif isinstance(cdata, BufferedImage):
+                        image = cdata
+                    elif isinstance(cdata, GraphicCollection):
+                        image = cdata.getGraphicN(0).getShape().getImage()
+                    else:
+                        image = cdata.getShape().getImage()
+                elif not facecolor in ['flat','none']:
                     facecolor = plotutil.getcolor(facecolor)
                     ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, facecolor, 1)
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1058,6 +1088,8 @@ class Axes3DGL(Axes3D):
         else:
             graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), C.asarray(), ls)
 
+        if not image is None:
+            graphics.setImage(image)
         if face_interp:
             graphics.setFaceInterp(face_interp)
         lighting = kwargs.pop('lighting', None)

@@ -1697,13 +1697,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
             XAlign xAlign, YAlign yAlign, float angle) {
-        return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy, vz, xAlign, yAlign, angle, 0, 0);
+        return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy, vz, xAlign, yAlign, angle,
+                (float)text.getXShift(), (float)text.getYShift());
     }
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
             XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
         return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy,
-                vz, xAlign, yAlign, angle, xShift, yShift);
+                vz, xAlign, yAlign, angle, (float)text.getXShift() + xShift, (float)text.getYShift() + yShift);
     }
 
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,

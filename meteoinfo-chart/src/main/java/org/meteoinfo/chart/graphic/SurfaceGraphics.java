@@ -6,6 +6,7 @@
 package org.meteoinfo.chart.graphic;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import org.joml.Vector3f;
@@ -37,6 +38,8 @@ public class SurfaceGraphics extends GraphicCollection3D {
     private Vector3f[][] normals;
     private BufferedImage image;
     private Texture texture;
+    private int textureID;
+    private GL2 gl;
     
     /**
      * Constructor
@@ -50,6 +53,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
         this.mesh = false;
         this.usingLight = true;
         this.image = null;
+        this.gl = null;
     }
     
     /**
@@ -223,6 +227,14 @@ public class SurfaceGraphics extends GraphicCollection3D {
     }
 
     /**
+     * Get texture id
+     * @return Texture id
+     */
+    public int getTextureID() {
+        return this.textureID;
+    }
+
+    /**
      * Check if the legend has multiple colors
      *
      * @return Multiple colors or not
@@ -341,6 +353,10 @@ public class SurfaceGraphics extends GraphicCollection3D {
      * @param gl The JOGL GL2 object
      */
     public void updateTexture(GL2 gl) {
-        this.texture = AWTTextureIO.newTexture(gl.getGLProfile(), this.image, true);
+        if (this.gl == null || !this.gl.equals(gl)) {
+            this.texture = AWTTextureIO.newTexture(gl.getGLProfile(), this.image, true);
+            this.textureID = this.texture.getTextureObject(gl);
+            this.gl = gl;
+        }
     }
 }

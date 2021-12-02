@@ -2800,12 +2800,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
             }
         } else {
-            Texture texture = surface.getTexture();
-            if (texture == null) {
-                surface.updateTexture(gl);
-                texture = surface.getTexture();
-            }
-            int idTexture = texture.getTextureObject();
+            surface.updateTexture(gl);
+            int idTexture = surface.getTextureID();
 
             gl.glColor3f(1f, 1f, 1f);
             gl.glBindTexture(GL2.GL_TEXTURE_2D, idTexture);
@@ -3061,22 +3057,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     private void drawTexture(GL2 gl, Graphic graphic) {
         TextureShape ishape = (TextureShape) graphic.getShape();
-        Texture texture = ishape.getTexture();
-        if (texture == null) {
-            ishape.updateTexture(gl);
-            texture = ishape.getTexture();
-            /*try {
-                ishape.loadTexture();
-                texture = ishape.getTexture();
-            } catch (IOException ex) {
-                Logger.getLogger(Plot3DGL.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
-        }
-        if (texture == null) {
-            return;
-        }
-
-        int idTexture = texture.getTextureObject(gl);
+        ishape.updateTexture(gl);
+        int idTexture = ishape.getTextureID();
         List<PointZ> coords = ishape.getCoords();
 
         gl.glColor3f(1f, 1f, 1f);

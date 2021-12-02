@@ -22,6 +22,8 @@ import java.io.IOException;
 public class TextureShape extends ImageShape{
     private Texture texture;
     private String fileName;
+    private int textureID;
+    private GL2 gl;
     
     /**
      * Constructor
@@ -53,6 +55,14 @@ public class TextureShape extends ImageShape{
      */
     public void setTexture(Texture value) {
         this.texture = value;
+    }
+
+    /**
+     * Get texture id
+     * @return Texture id
+     */
+    public int getTextureID() {
+        return this.textureID;
     }
     
     @Override
@@ -89,6 +99,10 @@ public class TextureShape extends ImageShape{
      * @param gl The JOGL GL2 object
      */
     public void updateTexture(GL2 gl) {
-        this.texture = AWTTextureIO.newTexture(gl.getGLProfile(), this.image, true);
+        if (this.gl == null || !this.gl.equals(gl)) {
+            this.texture = AWTTextureIO.newTexture(gl.getGLProfile(), this.image, true);
+            this.textureID = this.texture.getTextureObject(gl);
+            this.gl = gl;
+        }
     }
 }

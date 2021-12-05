@@ -37,6 +37,11 @@
       <option name="url" value="https://repo1.maven.org/maven2/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="jzy3d-snapshots" />
+      <option name="name" value="Jzy3d Snapshots" />
+      <option name="url" value="http://maven.jzy3d.org/snapshots/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="jboss.community" />
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
@@ -50,6 +55,11 @@
       <option name="id" value="central" />
       <option name="name" value="Maven Central" />
       <option name="url" value="http://repo1.maven.org/maven2/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jzy3d-releases" />
+      <option name="name" value="Jzy3d Releases" />
+      <option name="url" value="http://maven.jzy3d.org/releases/" />
     </remote-repository>
   </component>
 </project>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jogamp.gluegen:gluegen-rt-natives-linux-armv6hf:v2.4.0-rc4">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jogamp/gluegen/gluegen-rt-natives-linux-armv6hf/v2.4.0-rc4/gluegen-rt-natives-linux-armv6hf-v2.4.0-rc4.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jogamp/gluegen/gluegen-rt-natives-linux-armv6hf/v2.4.0-rc4/gluegen-rt-natives-linux-armv6hf-v2.4.0-rc4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jogamp/gluegen/gluegen-rt-natives-linux-armv6hf/v2.4.0-rc4/gluegen-rt-natives-linux-armv6hf-v2.4.0-rc4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

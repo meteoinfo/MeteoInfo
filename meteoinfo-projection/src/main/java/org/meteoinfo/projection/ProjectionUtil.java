@@ -21,6 +21,7 @@ import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 
+import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,9 +169,27 @@ public class ProjectionUtil {
                         minY = y;
                         minYI = i;
                     }
+                    if (Double.isNaN(minX)) {
+                        minX = x;
+                    }
+                    if (Double.isNaN(maxX)) {
+                        maxX = x;
+                    }
+                    if (Double.isNaN(maxY)) {
+                        maxY = y;
+                    }
                     if (i == minYI) {
                         if (y < minY) {
                             minY = y;
+                        }
+                        if (x < minX) {
+                            minX = x;
+                        }
+                        if (x > maxX) {
+                            maxX = x;
+                        }
+                        if (y > maxY) {
+                            maxY = y;
                         }
                     } else if (i > minYI) {
                         break;
@@ -196,9 +215,27 @@ public class ProjectionUtil {
                         maxY = y;
                         maxYI = i;
                     }
+                    if (Double.isNaN(maxX)) {
+                        maxX = x;
+                    }
+                    if (Double.isNaN(minX)) {
+                        minX = x;
+                    }
+                    if (Double.isNaN(minY)) {
+                        minY = y;
+                    }
                     if (i == maxYI) {
                         if (y > maxY) {
                             maxY = y;
+                        }
+                        if (x > maxX) {
+                            maxX = x;
+                        }
+                        if (x < minX) {
+                            minX = x;
+                        }
+                        if (y < minY) {
+                            minY = y;
                         }
                     } else if (i < maxYI) {
                         break;
@@ -224,9 +261,27 @@ public class ProjectionUtil {
                         minX = x;
                         minXI = j;
                     }
+                    if (Double.isNaN(minY)) {
+                        minY = y;
+                    }
+                    if (Double.isNaN(maxX)) {
+                        maxX = x;
+                    }
+                    if (Double.isNaN(maxY)) {
+                        maxY = y;
+                    }
                     if (j == minXI) {
                         if (x < minX) {
                             minX = x;
+                        }
+                        if (y < minY) {
+                            minY = y;
+                        }
+                        if (x > maxX) {
+                            maxX = x;
+                        }
+                        if (y > maxY) {
+                            maxY = y;
                         }
                     } else if (j > minXI) {
                         break;
@@ -252,9 +307,15 @@ public class ProjectionUtil {
                         maxX = x;
                         maxXI = j;
                     }
+                    if (Double.isNaN(maxY)) {
+                        maxY = y;
+                    }
                     if (j == maxXI) {
                         if (x > maxX) {
                             maxX = x;
+                        }
+                        if (y > maxY) {
+                            maxY = y;
                         }
                     } else if (j < maxXI) {
                         break;

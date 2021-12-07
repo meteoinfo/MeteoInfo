@@ -1209,6 +1209,10 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                 fn = fn.replace("%f2", String.format("%02d", timeIdx * hours));
             } else if (fn.contains("%f3")) {
                 fn = fn.replace("%f3", String.format("%03d", timeIdx * hours));
+            } else if (fn.contains("%fhn")) {
+                Duration duration = TDEF.duration.multipliedBy(timeIdx);
+                long seconds = duration.getSeconds();
+                fn = fn.replace("%fhn", String.format("%02d%02d", seconds / 3600, (seconds % 3600) / 60));
             }
             filePath = path + File.separator + fn;
             return new Object[] {filePath, 0};

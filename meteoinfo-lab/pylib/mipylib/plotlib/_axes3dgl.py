@@ -176,15 +176,15 @@ class Axes3DGL(Axes3D):
         Set lighting.
         
         :param enable: (*boolean*) Set lighting enable or not.
-        :param position: (*list of float*) Lighting position.
-        :param ambient: (*list of float*) Ambient light.
-        :param diffuse: (*list of float*) Diffuse light.
-        :param specular: (*list of float*) Specular light.
-        :param mat_ambient: (*list of float*) Material ambient light.
-        :param mat_diffuse: (*list of float*) Material diffuse light.
-        :param mat_specular: (*list of float*) Material specular light.
-        :param mat_emission: (*list of float*) Material emission light.
-        :param mat_shininess: (*float*) Material shininess (0 - 128).
+        :param position: (*list of float*) Lighting position. Default is [0,0,1,0].
+        :param ambient: (*list of float*) Ambient light. Default is [0.2,0.2,0.2,1].
+        :param diffuse: (*list of float*) Diffuse light.  Default is [1,1,1,1].
+        :param specular: (*list of float*) Specular light. Default is [1,1,1,1].
+        :param mat_ambient: (*list of float*) Material ambient light. Default is [0.2,0.2,0.2,1].
+        :param mat_diffuse: (*list of float*) Material diffuse light. Default is [0.8,0.8,0.8,1].
+        :param mat_specular: (*list of float*) Material specular light. Default is [0,0,0,1].
+        :param mat_emission: (*list of float*) Material emission light. Default is [0,0,0,1].
+        :param mat_shininess: (*float*) Material shininess (0 - 128). Default is 50.
         '''
         lighting = self.axes.getLighting()
         lighting.setEnable(enable)

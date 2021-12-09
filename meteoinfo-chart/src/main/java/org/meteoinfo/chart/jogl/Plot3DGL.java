@@ -1005,7 +1005,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         gl.glFlush();
 
-        //Do screen shot
+        //Do screen-shot
         if (this.doScreenShot) {
             AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
             this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);

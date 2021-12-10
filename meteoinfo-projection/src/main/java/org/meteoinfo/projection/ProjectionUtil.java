@@ -211,7 +211,7 @@ public class ProjectionUtil {
                         continue;
                     }
 
-                    if (Double.isNaN(maxY)) {
+                    if (Double.isNaN(maxY) | y > maxY) {
                         maxY = y;
                         maxYI = i;
                     }
@@ -257,7 +257,7 @@ public class ProjectionUtil {
                         continue;
                     }
 
-                    if (Double.isNaN(minX)) {
+                    if (Double.isNaN(minX) | x < minX) {
                         minX = x;
                         minXI = j;
                     }
@@ -303,7 +303,7 @@ public class ProjectionUtil {
                         continue;
                     }
 
-                    if (Double.isNaN(maxX)) {
+                    if (Double.isNaN(maxX) | x > maxX) {
                         maxX = x;
                         maxXI = j;
                     }

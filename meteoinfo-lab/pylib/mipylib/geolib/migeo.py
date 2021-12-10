@@ -32,7 +32,7 @@ from java.util import ArrayList
 __all__ = [
     'arrayinpolygon','circle','convert_encoding_dbf','distance','georead','geotiffread','gridarea',
     'maplayer','inpolygon','maskin','maskout','polyarea','polygon','rmaskin','rmaskout','shaperead',
-    'projinfo','project','projectxy','reproject'
+    'projinfo','project','projectxy','reproject','reproject_image'
     ]
 
 def shaperead(fn, encoding=None):   
@@ -609,4 +609,36 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
         yp = NDArray(yp)
     xp, yp = ArrayUtil.meshgrid(xp.asarray(), yp.asarray())
     r = Reproject.reproject(a.asarray(), x.aslist(), y.aslist(), xp, yp, fromproj, toproj, method)
-    return NDArray(r)    
+    return NDArray(r)
+
+def reproject_image(a, x, y, fromproj=None, xp=None, yp=None, toproj=None):
+    """
+    Project image data array
+
+    :param a: (*array_like*) Input image data array - 3D [ny,nx,n-channel].
+    :param x: (*array_like*) Input x coordinates.
+    :param y: (*array_like*) Input y coordinates.
+    :param fromproj: (*ProjectionInfo*) Input projection.
+    :param xp: (*array_like*) Projected x coordinates.
+    :param yp: (*array_like*) Projected y coordinates.
+    :param toproj: (*ProjectionInfo*) Output projection.
+
+    :returns: (*NDArray*) Projected array
+    """
+    if fromproj is None:
+        fromproj = KnownCoordinateSystems.geographic.world.WGS1984
+
+    if toproj is None:
+        toproj = KnownCoordinateSystems.geographic.world.WGS1984
+
+    if xp is None or yp is None:
+        pr = Reproject.reprojectImage(a.asarray(), x.asarray(), y.asarray(), fromproj, toproj)
+        return NDArray(pr[0]), NDArray(pr[1]), NDArray(pr[2])
+
+    if isinstance(xp, (list, tuple)):
+        xp = NDArray(xp)
+    if isinstance(yp, (list, tuple)):
+        yp = NDArray(yp)
+    xp, yp = ArrayUtil.meshgrid(xp.asarray(), yp.asarray())
+    r = Reproject.reprojectImage(a.asarray(), x.asarray(), y.asarray(), xp, yp, fromproj, toproj)
+    return NDArray(r)

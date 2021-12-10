@@ -134,7 +134,7 @@ public class Reproject {
      * @param fromProj From projection
      * @param toProj To projection
      * @param method Resample method
-     * @return Porjected grid data
+     * @return Projected grid data
      * @throws InvalidRangeException
      */
     public static Object[] reproject(Array data, List<Number> xx, List<Number> yy, ProjectionInfo fromProj,
@@ -528,5 +528,128 @@ public class Reproject {
         }
 
         return new Array[]{rx, ry};
+    }
+
+    /**
+     * Reproject image data array
+     *
+     * @param data Data array of image - 3D, [ny,nx,3]
+     * @param x X array
+     * @param y Y array
+     * @param rx Result x array
+     * @param ry Result y array
+     * @param fromProj From projection
+     * @param toProj To projection
+     * @return Result arrays
+     * @throws InvalidRangeException
+     */
+    public static Array reprojectImage(Array data, Array x, Array y, Array rx, Array ry,
+                                  ProjectionInfo fromProj, ProjectionInfo toProj) throws InvalidRangeException {
+        data = data.copyIfView();
+        x = x.copyIfView();
+        y = y.copyIfView();
+        rx = rx.copyIfView();
+        ry = ry.copyIfView();
+
+        int[] shape = rx.getShape();
+        int ny = shape[0];
+        int nx = shape[1];
+        int[] newShape = new int[]{ny, nx, data.getShape()[2]};
+        Array r = Array.factory(data.getDataType(), newShape);
+
+        int n = ny * nx;
+        double[][] points = new double[n][];
+        for (int i = 0; i < n; i++) {
+            points[i] = new double[]{rx.getDouble(i), ry.getDouble(i)};
+        }
+        if (!fromProj.equals(toProj)) {
+            Reproject.reprojectPoints(points, toProj, fromProj, 0, points.length);
+        }
+
+        double minX = x.getDouble(0);
+        double maxX = x.getDouble((int)x.getSize() - 1);
+        double minY = y.getDouble(0);
+        double maxY = y.getDouble((int)y.getSize() - 1);
+        double dx = x.getDouble(1) - minX;
+        double dy = y.getDouble(1) - minY;
+        double xx, yy;
+        int xi, yi, ii;
+        int idx = 0;
+        Index3D index = (Index3D) data.getIndex();
+        for (int i = 0; i < ny; i++) {
+            for (int j = 0; j < nx; j++) {
+                ii = i * nx + j;
+                xx = points[ii][0];
+                yy = points[ii][1];
+                if (xx < minX || xx > maxX)
+                    xi = -1;
+                else
+                    xi = (int)((xx - minX) / dx);
+                if (yy < minY || yy > maxY)
+                    yi = -1;
+                else
+                    yi = (int)((yy - minY) / dy);
+
+                if (xi >= 0 && yi >= 0) {
+                    index.set(yi, xi, 0);
+                    r.setObject(idx, data.getObject(index));
+                    idx += 1;
+                    index.set2(1);
+                    r.setObject(idx, data.getObject(index));
+                    idx += 1;
+                    index.set2(2);
+                    r.setObject(idx, data.getObject(index));
+                    idx += 1;
+                } else {
+                    r.setObject(idx, 255);
+                    idx += 1;
+                    r.setObject(idx, 255);
+                    idx += 1;
+                    r.setObject(idx, 255);
+                    idx += 1;
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Reproject image data array
+     *
+     * @param data Data array of image - 3D, [ny,nx,3]
+     * @param x X array
+     * @param y Y array
+     * @param rx Result x array
+     * @param ry Result y array
+     * @param fromProj From projection
+     * @param toProj To projection
+     * @return Result arrays
+     * @throws InvalidRangeException
+     */
+    public static Object[] reprojectImage(Array data, Array x, Array y, ProjectionInfo fromProj,
+                                       ProjectionInfo toProj) throws InvalidRangeException {
+        Extent extent = ProjectionUtil.getProjectionExtent(fromProj, toProj, x, y);
+
+        int nx = (int) x.getSize();
+        int ny = (int) y.getSize();
+        double dx = (extent.maxX - extent.minX) / (nx - 1);
+        double dy = (extent.maxY - extent.minY) / (ny - 1);
+        int i;
+        Array rx = Array.factory(DataType.DOUBLE, new int[]{nx});
+        Array ry = Array.factory(DataType.DOUBLE, new int[]{ny});
+        for (i = 0; i < nx; i++) {
+            rx.setDouble(i, extent.minX + i * dx);
+        }
+
+        for (i = 0; i < ny; i++) {
+            ry.setDouble(i, extent.minY + i * dy);
+        }
+
+        Array[] rr = ArrayUtil.meshgrid(rx, ry);
+
+        Array r = reprojectImage(data, x, y, rr[0], rr[1], fromProj, toProj);
+
+        return new Object[]{r, rx, ry};
     }
 }

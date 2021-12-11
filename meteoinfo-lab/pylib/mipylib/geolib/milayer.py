@@ -515,6 +515,18 @@ class MILayer(object):
         """
         self.layer.saveAsKMLFile(fn)
 
+    def savebil(self, fn, proj=None):
+        """
+        Save layer as bil file.
+
+        :param fn: (*str*) Bil file name.
+        :param proj: (*ProjectionInfo*) Projection. Default is None.
+        """
+        if proj is None:
+            self.layer.saveFile(fn)
+        else:
+            self.layer.saveFile(fn, proj)
+
 
 class MIXYListData():
     def __init__(self, data=None):

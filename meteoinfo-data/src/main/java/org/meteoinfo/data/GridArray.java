@@ -786,7 +786,7 @@ public class GridArray {
     public void saveAsBILFile(String fileName) throws IOException {
         try {
             //Save data file
-            DataOutputStream outs = new DataOutputStream(new FileOutputStream(new File(fileName)));
+            DataOutputStream outs = new DataOutputStream(new FileOutputStream(fileName));
             int xn = this.getXNum();
             int yn = this.getYNum();
             for (int i = 0; i < yn; i++) {

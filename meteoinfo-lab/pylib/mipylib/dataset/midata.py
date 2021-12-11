@@ -845,7 +845,7 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
     """
     Write a netCDF data file from an array.
     
-    :param: fn: (*string*) netCDF data file path.
+    :param fn: (*string*) netCDF data file path.
     :param data: (*array_like*) A numeric array variable of any dimensionality.
     :param varname: (*string*) Variable name.
     :param dims: (*list of dimensions*) Dimension list.

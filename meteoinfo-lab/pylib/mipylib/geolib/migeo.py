@@ -15,6 +15,7 @@ from org.meteoinfo.geometry.legend import BreakTypes
 from org.meteoinfo.geometry.geoprocess import GeoComputation, GeometryUtil
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.geo.mapdata import MapDataManage
+from org.meteoinfo.geo.util import GeoIOUtil
 from org.meteoinfo.table import AttributeTable
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.projection import ProjectionInfo
@@ -30,7 +31,7 @@ import mipylib.numeric as np
 from java.util import ArrayList
 
 __all__ = [
-    'arrayinpolygon','circle','convert_encoding_dbf','distance','georead','geotiffread','gridarea',
+    'arrayinpolygon','bilwrite','circle','convert_encoding_dbf','distance','georead','geotiffread','gridarea',
     'maplayer','inpolygon','maskin','maskout','polyarea','polygon','rmaskin','rmaskout','shaperead',
     'projinfo','project','projectxy','reproject','reproject_image'
     ]
@@ -98,7 +99,7 @@ def geotiffread(filename):
     
     :param filename: (*string*) The GeoTiff file name.
     
-    :returns: (*NDArray*) Readed data array.
+    :returns: (*NDArray*) Read data array.
     '''
     geotiff = GeoTiff(filename)
     geotiff.read()
@@ -642,3 +643,15 @@ def reproject_image(a, x, y, fromproj=None, xp=None, yp=None, toproj=None):
     xp, yp = ArrayUtil.meshgrid(xp.asarray(), yp.asarray())
     r = Reproject.reprojectImage(a.asarray(), x.asarray(), y.asarray(), xp, yp, fromproj, toproj)
     return NDArray(r)
+
+def bilwrite(fn, data, x, y, proj=projinfo()):
+    """
+    Write a bil file from a 2D array.
+
+    :param fn: (*str*) The output file name.
+    :param data: (*array*) The 2D data array.
+    :param x: (*array*) The x coordinate array - 1D.
+    :param y: (*array*) The y coordinate array - 1D.
+    :param proj: (*ProjectionInfo*) The projection. Default is long_lat projection.
+    """
+    GeoIOUtil.saveAsBILFile(fn, data.asarray(), x.asarray(), y.asarray(), proj)

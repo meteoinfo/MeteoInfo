@@ -460,6 +460,7 @@ public class GeoProjectionUtil {
 
             oLayer.setGridData(project(oLayer.getGridData(), oLayer.getProjInfo(), toProj));
             oLayer.updateImage(oLayer.getLegendScheme());
+            oLayer.setProjInfo(toProj);
         } catch (InvalidRangeException ex) {
             Logger.getLogger(GeoProjectionUtil.class.getName()).log(Level.SEVERE, null, ex);
         }

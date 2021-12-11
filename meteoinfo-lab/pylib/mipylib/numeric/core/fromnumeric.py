@@ -77,8 +77,8 @@ def searchsorted(a, v, side='left', sorter=None):
     :param a: (*array_like*) Input 1-D array. If sorter is None, then it must be sorted in ascending order,
         otherwise sorter must be an array of indices that sort it.
     :param v: (*array_like*) Values to insert into a.
-    :param side: (*str*) [left | right], default is 'left'. If ‘left’, the index of the first suitable location found is given.
-        If ‘right’, return the last such index. If there is no suitable index, return either 0 or N (where N
+    :param side: (*str*) [left | right], default is `left`. If `left`, the index of the first suitable location found is given.
+        If `right`, return the last such index. If there is no suitable index, return either 0 or N (where N
         is the length of a).
     :param sorter: (*array_like*) Optional array of integer indices that sort array a into ascending order.
         They are typically the result of argsort.
@@ -86,6 +86,8 @@ def searchsorted(a, v, side='left', sorter=None):
     """
     if isinstance(a, (list, tuple)):
         a = array(a).asarray()
+    elif isinstance(a, NDArray):
+        a = a.asarray()
 
     if isinstance(v, (list, tuple)):
         v = array(v).asarray()

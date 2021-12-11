@@ -486,7 +486,7 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
     if not lat_1 is None:
         projstr = projstr + ' +lat_1=' + str(lat_2)
     if not lat_2 is None:
-        projstr = projstr + ' +lat_1=' + str(lat_2)
+        projstr = projstr + ' +lat_2=' + str(lat_2)
 
     x_0 = kwargs.pop('falseeasting', None)
     y_0 = kwargs.pop('falsenorthing', None)

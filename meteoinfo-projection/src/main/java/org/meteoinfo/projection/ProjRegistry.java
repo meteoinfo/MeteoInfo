@@ -50,7 +50,7 @@ public class ProjRegistry {
                 Datum.HERMANNSKOGEL,
                 Datum.IRE65,
                 Datum.NZGD49,
-                Datum.OSEB36
+                Datum.OSGB36
             };
 
     public Datum getDatum(String code) {

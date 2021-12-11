@@ -567,11 +567,11 @@ public class Reproject {
         }
 
         double minX = x.getDouble(0);
-        double maxX = x.getDouble((int)x.getSize() - 1);
+        double maxX = x.getDouble((int) x.getSize() - 1);
         double minY = y.getDouble(0);
-        double maxY = y.getDouble((int)y.getSize() - 1);
-        double dx = x.getDouble(1) - minX;
-        double dy = y.getDouble(1) - minY;
+        double maxY = y.getDouble((int) y.getSize() - 1);
+        double dx = (maxX - minX) / ((int) x.getSize() - 1);
+        double dy = (maxY - minY) / ((int) y.getSize() - 1);
         double xx, yy;
         int xi, yi, ii;
         int idx = 0;

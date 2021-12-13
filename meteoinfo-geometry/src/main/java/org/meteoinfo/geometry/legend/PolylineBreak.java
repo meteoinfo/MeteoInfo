@@ -137,7 +137,7 @@ public class PolylineBreak extends ColorBreak {
      *
      * @return Boolean
      */
-    public boolean getDrawPolyline() {
+    public boolean isDrawPolyline() {
         return drawPolyline;
     }
 
@@ -155,7 +155,7 @@ public class PolylineBreak extends ColorBreak {
      *
      * @return Boolean
      */
-    public boolean getDrawSymbol() {
+    public boolean isDrawSymbol() {
         return drawSymbol;
     }
 
@@ -166,6 +166,14 @@ public class PolylineBreak extends ColorBreak {
      */
     public void setDrawSymbol(boolean isTrue) {
         drawSymbol = isTrue;
+    }
+
+    /**
+     * Get is draw symbol outline or not
+     * @return Draw symbol outline or not
+     */
+    public boolean isDrawSymbolOutline() {
+        return this.symbolColor != null;
     }
 
     /**

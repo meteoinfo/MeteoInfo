@@ -5057,7 +5057,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 continue;
             }
 
-            if (aPLB.getDrawPolyline()) {
+            if (aPLB.isDrawPolyline()) {
                 drawLonLatPolylineShape(g, aPLS, aPLB, LonShift);
             }
         }
@@ -5405,7 +5405,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 }
 
                 PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(aPLS.getLegendIndex());
-                if (aPLB.getDrawPolyline() || aPLB.getDrawSymbol()) {
+                if (aPLB.isDrawPolyline() || aPLB.isDrawSymbol()) {
                     drawPolylineShape(g, aPLS, aPLB, LonShift, isStreamline);
                 }
             }
@@ -5473,7 +5473,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         g.setStroke(pen);
 
         List<PointF> drawPs = new ArrayList<>();
-        if (aPLB.getDrawPolyline()) {
+        if (aPLB.isDrawPolyline()) {
             for (Polyline aline : aPLS.getPolylines()) {
                 double[] sXY;
                 PointF[] Points = new PointF[aline.getPointList().size()];
@@ -5525,7 +5525,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         }
 
         //Draw symbol            
-        if (aPLB.getDrawSymbol()) {
+        if (aPLB.isDrawSymbol()) {
             Object rend = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             for (int i = 0; i < drawPs.size(); i++) {
@@ -5590,7 +5590,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     path.reset();
                     path.moveTo(sXY[0], sXY[1]);
                     //Draw symbol            
-                    if (aPLB.getDrawSymbol()) {
+                    if (aPLB.isDrawSymbol()) {
                         Object rend = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
                         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                         for (int j = 0; j < drawPs.size(); j++) {

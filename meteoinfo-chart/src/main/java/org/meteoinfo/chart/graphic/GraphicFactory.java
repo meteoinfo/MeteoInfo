@@ -831,7 +831,7 @@ public class GraphicFactory {
         gc.setSingleLegend(false);
         PolylineBreak lb = (PolylineBreak) ecb.clone();
         if (cb instanceof PolylineBreak)
-            lb.setDrawSymbol(((PolylineBreak)cb).getDrawSymbol());
+            lb.setDrawSymbol(((PolylineBreak)cb).isDrawSymbol());
         else {
             lb.setSymbol((PointBreak) cb);
             lb.setCaption(cb.getCaption());
@@ -1171,12 +1171,12 @@ public class GraphicFactory {
                 ps = new PointShape();
                 ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
                 graphics.add(new Graphic(ps, cbs.get(0)));
-                LegendScheme ls = new LegendScheme();
-                ls.setLegendBreaks(cbs);
-                ls.setLegendType(LegendType.SINGLE_SYMBOL);
-                ls.setShapeType(ShapeTypes.POINT);
-                graphics.setLegendScheme(ls);
             }
+            LegendScheme ls = new LegendScheme();
+            ls.setLegendBreaks(cbs);
+            ls.setLegendType(LegendType.SINGLE_SYMBOL);
+            ls.setShapeType(ShapeTypes.POINT);
+            graphics.setLegendScheme(ls);
         }
         return graphics;
     }

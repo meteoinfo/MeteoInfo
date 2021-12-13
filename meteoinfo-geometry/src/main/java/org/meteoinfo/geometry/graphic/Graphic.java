@@ -447,7 +447,7 @@ package org.meteoinfo.geometry.graphic;
                  //legendType.InnerText = "PolylineBreak";
                  size.setValue(String.valueOf(aPLB.getWidth()));
                  style.setValue(aPLB.getStyle().toString());
-                 drawSymbol.setValue(String.valueOf(aPLB.getDrawSymbol()));
+                 drawSymbol.setValue(String.valueOf(aPLB.isDrawSymbol()));
                  symbolSize.setValue(String.valueOf(aPLB.getSymbolSize()));
                  symbolStyle.setValue(String.valueOf(aPLB.getSymbolStyle()));
                  symbolColor.setValue(ColorUtil.toHexEncoding(aPLB.getSymbolColor()));

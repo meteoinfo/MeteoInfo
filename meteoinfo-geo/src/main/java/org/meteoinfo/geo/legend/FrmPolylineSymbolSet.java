@@ -513,7 +513,7 @@ import javax.swing.JColorChooser;
          this.jLabel_Color.setBackground(_polylineBreak.getColor());
          this.jSpinner_Size.setValue(_polylineBreak.getWidth());
          this.jCheckBox_DrawShape.setSelected(_polylineBreak.isDrawShape());
-         this.jCheckBox_DrawPointSymbol.setSelected(_polylineBreak.getDrawSymbol());
+         this.jCheckBox_DrawPointSymbol.setSelected(_polylineBreak.isDrawSymbol());
          this.jSpinner_SymbolSize.setValue(_polylineBreak.getSymbolSize());
          this.jLabel_SymbolColor.setBackground(_polylineBreak.getSymbolColor());
          this.jSpinner_SymbolInterval.setValue(_polylineBreak.getSymbolInterval());

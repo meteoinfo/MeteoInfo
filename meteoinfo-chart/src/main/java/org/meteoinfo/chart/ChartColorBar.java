@@ -449,7 +449,7 @@ public class ChartColorBar extends ChartLegend {
                     break;
                 case POLYLINE:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
-                    DrawShape = aPLB.getDrawPolyline();
+                    DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
                     break;
                 case POLYGON:
@@ -775,7 +775,7 @@ public class ChartColorBar extends ChartLegend {
                     break;
                 case POLYLINE:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
-                    DrawShape = aPLB.getDrawPolyline();
+                    DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
                     break;
                 case POLYGON:

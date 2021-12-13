@@ -1348,8 +1348,6 @@ class Axes(object):
 
         s = kwargs.pop('s', 8)
         c = kwargs.pop('c', None)
-        if c is None:
-            c = kwargs.pop('facecolor', 'b')
 
         #Add data series
         label = kwargs.pop('label', 'S_0')
@@ -1358,6 +1356,10 @@ class Axes(object):
         
         #Set plot data styles
         pb, isunique = plotutil.getlegendbreak('point', **kwargs)
+        if c is None:
+            c = pb.getColor()
+            if c is None:
+                c = 'b'
         pb.setCaption(label)
         #pstyle = plotutil.getpointstyle(marker)    
         #pb.setStyle(pstyle)

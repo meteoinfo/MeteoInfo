@@ -729,7 +729,7 @@ public class LayoutLegend extends LayoutElement {
                 case POLYLINE:
                 case POLYLINE_Z:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
-                    DrawShape = aPLB.getDrawPolyline();
+                    DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
                     if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = aPLB.getCaption();
@@ -923,7 +923,7 @@ public class LayoutLegend extends LayoutElement {
                 case POLYLINE:
                 case POLYLINE_Z:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
-                    DrawShape = aPLB.getDrawPolyline();
+                    DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
                     break;
                 case POLYGON:
@@ -1117,7 +1117,7 @@ public class LayoutLegend extends LayoutElement {
                 case POLYLINE:
                 case POLYLINE_Z:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
-                    DrawShape = aPLB.getDrawPolyline();
+                    DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
                     if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                         caption = aPLB.getCaption();
@@ -1288,7 +1288,7 @@ public class LayoutLegend extends LayoutElement {
                 case POLYLINE:
                 case POLYLINE_Z:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
-                    DrawShape = aPLB.getDrawPolyline();
+                    DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
                     break;
                 case POLYGON:

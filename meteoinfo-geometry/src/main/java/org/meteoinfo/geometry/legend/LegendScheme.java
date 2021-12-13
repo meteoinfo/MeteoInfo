@@ -959,7 +959,7 @@ package org.meteoinfo.geometry.legend;
                      drawShape.setValue(String.valueOf(aPLB.isDrawShape()));
                      size.setValue(String.valueOf(aPLB.getWidth()));
                      style.setValue(aPLB.getStyle().toString());
-                     drawSymbol.setValue(String.valueOf(aPLB.getDrawSymbol()));
+                     drawSymbol.setValue(String.valueOf(aPLB.isDrawSymbol()));
                      symbolSize.setValue(String.valueOf(aPLB.getSymbolSize()));
                      symbolStyle.setValue(aPLB.getSymbolStyle().toString());
                      symbolColor.setValue(ColorUtil.toHexEncoding(aPLB.getSymbolColor()));

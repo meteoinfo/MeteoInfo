@@ -2930,7 +2930,7 @@ public class Draw {
         drawPolyline(points, g);
 
         //Draw symbol            
-        if (alb.getDrawSymbol()) {
+        if (alb.isDrawSymbol()) {
             Object rend = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             Rectangle clip = g.getClipBounds();
@@ -2942,7 +2942,7 @@ public class Draw {
                     if (p.X >= clip.x && p.X <= clip.x + clip.width && p.Y >= clip.y && p.Y <= clip.y + clip.height) {
                         if (i % alb.getSymbolInterval() == 0) {
                             drawPoint(alb.getSymbolStyle(), p, alb.getSymbolFillColor(), alb.getSymbolColor(),
-                                    alb.getSymbolSize(), true, alb.isFillSymbol(), g);
+                                    alb.getSymbolSize(), alb.isDrawSymbolOutline(), alb.isFillSymbol(), g);
                         }
                     }
                 }
@@ -2952,7 +2952,7 @@ public class Draw {
                     if (i % alb.getSymbolInterval() == 0) {
                         p = new PointF(points[i].X, points[i].Y);
                         drawPoint(alb.getSymbolStyle(), p, alb.getSymbolFillColor(), alb.getSymbolColor(),
-                                alb.getSymbolSize(), true, alb.isFillSymbol(), g);
+                                alb.getSymbolSize(), alb.isDrawSymbolOutline(), alb.isFillSymbol(), g);
                     }
                 }
             }
@@ -3004,7 +3004,7 @@ public class Draw {
         }
 
         //Draw symbol            
-        if (alb.getDrawSymbol()) {
+        if (alb.isDrawSymbol()) {
             Object rend = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             Rectangle clip = g.getClipBounds();
@@ -3016,7 +3016,7 @@ public class Draw {
                     if (p.X >= clip.x && p.X <= clip.x + clip.width && p.Y >= clip.y && p.Y <= clip.y + clip.height) {
                         if (i % alb.getSymbolInterval() == 0) {
                             drawPoint(alb.getSymbolStyle(), p, alb.getSymbolFillColor(), alb.getSymbolColor(),
-                                    alb.getSymbolSize(), true, alb.isFillSymbol(), g);
+                                    alb.getSymbolSize(), alb.isDrawSymbolOutline(), alb.isFillSymbol(), g);
                         }
                     }
                 }
@@ -3026,7 +3026,7 @@ public class Draw {
                     if (i % alb.getSymbolInterval() == 0) {
                         p = new PointF(points[i].X, points[i].Y);
                         drawPoint(alb.getSymbolStyle(), p, alb.getSymbolFillColor(), alb.getSymbolColor(),
-                                alb.getSymbolSize(), true, alb.isFillSymbol(), g);
+                                alb.getSymbolSize(), alb.isDrawSymbolOutline(), alb.isFillSymbol(), g);
                     }
                 }
             }
@@ -3054,7 +3054,7 @@ public class Draw {
                 drawPolyline(points, g);
 
                 //Draw symbol            
-                if (aPLB.getDrawSymbol()) {
+                if (aPLB.isDrawSymbol()) {
                     Object rend = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     Rectangle clip = g.getClipBounds();
@@ -3066,7 +3066,7 @@ public class Draw {
                             if (p.X >= clip.x && p.X <= clip.x + clip.width && p.Y >= clip.y && p.Y <= clip.y + clip.height) {
                                 if (i % aPLB.getSymbolInterval() == 0) {
                                     drawPoint(aPLB.getSymbolStyle(), p, aPLB.getSymbolFillColor(), aPLB.getSymbolColor(),
-                                            aPLB.getSymbolSize(), true, aPLB.isFillSymbol(), g);
+                                            aPLB.getSymbolSize(), aPLB.isDrawSymbolOutline(), aPLB.isFillSymbol(), g);
                                 }
                             }
                         }
@@ -3076,7 +3076,7 @@ public class Draw {
                             if (i % aPLB.getSymbolInterval() == 0) {
                                 p = new PointF(points[i].X, points[i].Y);
                                 drawPoint(aPLB.getSymbolStyle(), p, aPLB.getSymbolFillColor(), aPLB.getSymbolColor(),
-                                        aPLB.getSymbolSize(), true, aPLB.isFillSymbol(), g);
+                                        aPLB.getSymbolSize(), aPLB.isDrawSymbolOutline(), aPLB.isFillSymbol(), g);
                             }
                         }
                     }
@@ -3249,12 +3249,12 @@ public class Draw {
                 path.reset();
                 path.moveTo(p.X, p.Y);
                 //Draw symbol            
-                if (aPLB.getDrawSymbol()) {
+                if (aPLB.isDrawSymbol()) {
                     Object rend = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     for (int j = 0; j < drawPs.size(); j++) {
                         Draw.drawPoint(aPLB.getSymbolStyle(), p, aPLB.getSymbolFillColor(), aPLB.getSymbolColor(),
-                                aPLB.getSymbolSize(), true, aPLB.isFillSymbol(), g);
+                                aPLB.getSymbolSize(), aPLB.isDrawSymbolOutline(), aPLB.isFillSymbol(), g);
                     }
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, rend);
                 }
@@ -3283,7 +3283,7 @@ public class Draw {
             }
 
             //Draw symbol            
-            if (aPLB.getDrawSymbol()) {
+            if (aPLB.isDrawSymbol()) {
                 Object rend = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -3299,7 +3299,7 @@ public class Draw {
                             }
                             if (i % aPLB.getSymbolInterval() == 0) {
                                 drawPoint(aPLB.getSymbolStyle(), p, aPLB.getSymbolFillColor(), aPLB.getSymbolColor(),
-                                        aPLB.getSymbolSize(), true, aPLB.isFillSymbol(), g);
+                                        aPLB.getSymbolSize(), aPLB.isDrawSymbolOutline(), aPLB.isFillSymbol(), g);
                             }
                         }
                     }
@@ -3313,7 +3313,7 @@ public class Draw {
                         if (i % aPLB.getSymbolInterval() == 0) {
                             p = new PointF(points[i].X, points[i].Y);
                             drawPoint(aPLB.getSymbolStyle(), p, aPLB.getSymbolFillColor(), aPLB.getSymbolColor(),
-                                    aPLB.getSymbolSize(), true, aPLB.isFillSymbol(), g);
+                                    aPLB.getSymbolSize(), aPLB.isDrawSymbolOutline(), aPLB.isFillSymbol(), g);
                         }
                     }
                 }
@@ -3464,15 +3464,15 @@ public class Draw {
             float[] dashPattern = getDashPattern(aPLB.getStyle());
             g.setStroke(new BasicStroke(aPLB.getWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f));
 
-            if (aPLB.getDrawPolyline()) {
+            if (aPLB.isDrawPolyline()) {
                 drawPolyline(points, g);
             }
             g.setStroke(new BasicStroke());
 
             //Draw symbol
-            if (aPLB.getDrawSymbol()) {
-                drawPoint(aPLB.getSymbolStyle(), points[1], aPLB.getSymbolFillColor(), aPLB.getSymbolColor(), aPLB.getSymbolSize(), true, aPLB.isFillSymbol(), g);
-                drawPoint(aPLB.getSymbolStyle(), points[2], aPLB.getSymbolFillColor(), aPLB.getSymbolColor(), aPLB.getSymbolSize(), true, aPLB.isFillSymbol(), g);
+            if (aPLB.isDrawSymbol()) {
+                drawPoint(aPLB.getSymbolStyle(), points[1], aPLB.getSymbolFillColor(), aPLB.getSymbolColor(), aPLB.getSymbolSize(), aPLB.isDrawSymbolOutline(), aPLB.isFillSymbol(), g);
+                drawPoint(aPLB.getSymbolStyle(), points[2], aPLB.getSymbolFillColor(), aPLB.getSymbolColor(), aPLB.getSymbolSize(), aPLB.isDrawSymbolOutline(), aPLB.isFillSymbol(), g);
             }
         } else {
             PointF[] points = new PointF[2];
@@ -3614,14 +3614,14 @@ public class Draw {
             float[] dashPattern = getDashPattern(aPLB.getStyle());
             g.setStroke(new BasicStroke(aPLB.getWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f));
 
-            if (aPLB.getDrawPolyline()) {
+            if (aPLB.isDrawPolyline()) {
                 drawPolyline(points, g);
             }
             g.setStroke(new BasicStroke());
 
             //Draw symbol
-            if (aPLB.getDrawSymbol()) {
-                drawPoint(aPLB.getSymbolStyle(), aP, aPLB.getSymbolFillColor(), aPLB.getSymbolColor(), aPLB.getSymbolSize(), true, aPLB.isFillSymbol(), g);
+            if (aPLB.isDrawSymbol()) {
+                drawPoint(aPLB.getSymbolStyle(), aP, aPLB.getSymbolFillColor(), aPLB.getSymbolColor(), aPLB.getSymbolSize(), aPLB.isDrawSymbolOutline(), aPLB.isFillSymbol(), g);
             }
         } else {
             PointF[] points = new PointF[2];

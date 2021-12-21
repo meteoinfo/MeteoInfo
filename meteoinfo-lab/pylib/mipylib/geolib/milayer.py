@@ -499,7 +499,7 @@ class MILayer(object):
             fn = self.layer.getFileName()
             
         if fn.strip() == '':
-            print 'File name is needed to save the layer!'
+            print('File name is needed to save the layer!')
             raise IOError
         else:
             if encoding is None:

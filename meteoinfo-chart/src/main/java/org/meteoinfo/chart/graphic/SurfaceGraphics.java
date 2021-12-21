@@ -318,8 +318,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
         for (int i = 0; i < dim1; i++) {
             for (int j = 0; j < dim2; j++) {
                 p = vertices[i][j];
-                tVertices[i][j] = new Vector3f(transform.transform_x((float)p.X), transform.transform_y((float)p.Y),
-                        transform.transform_z((float)p.Z));
+                tVertices[i][j] = new Vector3f(transform.transform((float)p.X, (float)p.Y, (float)p.Z));
             }
         }
 

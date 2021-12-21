@@ -335,6 +335,15 @@ public class GraphicCollection extends Graphic implements Iterator {
     }
 
     /**
+     * Set a graphic
+     * @param idx The index
+     * @param graphic The graphic
+     */
+    public void setGraphicN(int idx, Graphic graphic) {
+        this.graphics.set(idx, graphic);
+    }
+
+    /**
      * Remove a graphic
      *
      * @param aGraphic The graphic

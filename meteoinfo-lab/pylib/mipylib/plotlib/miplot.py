@@ -26,7 +26,7 @@ from org.meteoinfo.chart.form import ChartForm
 from org.meteoinfo.geometry.shape import ShapeTypes
 from ._axes import Axes, PolarAxes
 from ._axes3d import Axes3D
-from ._axes3dgl import Axes3DGL
+from ._axes3dgl import Axes3DGL, EarthAxes3D
 from ._figure import Figure
 from ._glfigure import GLFigure
 from ._mapaxes import MapAxes
@@ -1326,7 +1326,11 @@ def axes3d(*args, **kwargs):
     """
     opengl = kwargs.pop('opengl', True)
     if opengl:
-        return axes3dgl(*args, **kwargs)
+        earth = kwargs.pop('earth', False)
+        if earth:
+            return axes3d_earth(*args, **kwargs)
+        else:
+            return axes3dgl(*args, **kwargs)
     else:
         kwargs['axestype'] = '3d'
         return axes(*args, **kwargs)
@@ -1340,6 +1344,25 @@ def axes3dgl(*args, **kwargs):
     global g_axes
 
     ax = Axes3DGL(*args, **kwargs)
+    g_axes = ax
+
+    if not batchmode:
+        if g_figure is None or isinstance(g_figure, Figure):
+            glfigure(**kwargs)
+        g_figure.set_axes(ax)
+
+    draw_if_interactive()
+    return ax
+
+def axes3d_earth(*args, **kwargs):
+    """
+    Add an earth 3d axes with JOGL to the figure.
+
+    :returns: The axes.
+    """
+    global g_axes
+
+    ax = EarthAxes3D(*args, **kwargs)
     g_axes = ax
 
     if not batchmode:

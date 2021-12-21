@@ -1015,6 +1015,19 @@ public class ArrayUtil {
      * @param dtype Data type
      * @return Array Result array
      */
+    public static Array zeros(int[] shape, DataType dtype) {
+        Array a = Array.factory(dtype, shape);
+
+        return a;
+    }
+
+    /**
+     * Get zero array
+     *
+     * @param shape Shape
+     * @param dtype Data type
+     * @return Array Result array
+     */
     public static Array empty(List<Integer> shape, DataType dtype) {
         int[] ashape = new int[shape.size()];
         for (int i = 0; i < shape.size(); i++) {

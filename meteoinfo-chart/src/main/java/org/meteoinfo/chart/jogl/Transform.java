@@ -9,9 +9,9 @@ import javax.swing.*;
 import java.nio.FloatBuffer;
 
 public class Transform {
-    private AspectType aspectType = AspectType.AUTO;
-    private float xmin, xmax = 1.0f, ymin;
-    private float ymax = 1.0f, zmin, zmax = 1.0f;
+    protected AspectType aspectType = AspectType.AUTO;
+    protected float xmin, xmax = 1.0f, ymin;
+    protected float ymax = 1.0f, zmin, zmax = 1.0f;
 
     /**
      * Constructor
@@ -46,6 +46,15 @@ public class Transform {
                   (float) extent3D.maxY, (float) extent3D.minZ, (float) extent3D.maxZ);
     }
 
+    /**
+     * Set extent
+     * @param xmin X minimum
+     * @param xmax X Maximum
+     * @param ymin Y minimum
+     * @param ymax Y maximum
+     * @param zmin Z minimum
+     * @param zmax Z maximum
+     */
     public void setExtent(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) {
         this.xmin = xmin;
         this.xmax = xmax;
@@ -57,11 +66,11 @@ public class Transform {
         if (this.aspectType != AspectType.AUTO) {
             float xRange = xmax - xmin;
             float yRange = ymax - ymin;
-            float zRange = zmax - zmin;
             float maxXYRange = xRange > yRange ? xRange : yRange;
             float xRatio = xRange / maxXYRange;
             float yRatio = yRange / maxXYRange;
             if (this.aspectType == AspectType.EQUAL) {
+                float zRange = (zmax - zmin);
                 float maxRange = zRange > maxXYRange ? zRange : maxXYRange;
                 xRatio = xRange / maxRange;
                 yRatio = yRange / maxRange;

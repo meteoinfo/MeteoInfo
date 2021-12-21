@@ -13,7 +13,7 @@ from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
-from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil
+from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil, EarthPlot3D
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
 from javax.swing import WindowConstants
@@ -31,7 +31,7 @@ import mipylib.numeric as np
 from mipylib import migl
 from mipylib.geolib import migeo
 
-__all__ = ['Axes3DGL']
+__all__ = ['Axes3DGL','EarthAxes3D']
 
 class Axes3DGL(Axes3D):
     
@@ -79,6 +79,9 @@ class Axes3DGL(Axes3D):
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
         self.axes.setAxisTickFont(font)
+        orthographic = kwargs.pop('orthographic', None)
+        if not orthographic is None:
+            self.axes.setOrthographic(orthographic)
         rotation = kwargs.pop('rotation', None)
         if not rotation is None:
             self.axes.setAngleY(rotation)
@@ -94,6 +97,9 @@ class Axes3DGL(Axes3D):
         aspect = kwargs.pop('aspect', None)
         if not aspect is None:
             self.axes.setAspectType(AspectType.valueOf(aspect.upper()))
+        distance = kwargs.pop('distance', None)
+        if not distance is None:
+            self.axes.setDistance(distance)
         axis = kwargs.pop('axis', True)
         if not axis:
             self.axes.setDrawBase(False)
@@ -166,10 +172,38 @@ class Axes3DGL(Axes3D):
 
     def set_antialias(self, antialias):
         '''
-        Set antialias
+        Set antialias.
         :param antialias: (*bool*) Antialias or not.
         '''
         self.axes.setAntialias(antialias)
+
+    def get_orthographic(self):
+        """
+        Get orthographic.
+        :return: (*bool*) Orthographic or not.
+        """
+        return self.axes.isOrthographic()
+
+    def set_orthographic(self, orthographic):
+        """
+        Set orthographic.
+        :param orthographic: (*bool*) Orthographic or not.
+        """
+        self.axes.setOrthographic(orthographic)
+
+    def get_distance(self):
+        """
+        Get camera distance.
+        :return: (*float*) Camera distance.
+        """
+        return self.axes.getDistance()
+
+    def set_distance(self, dis):
+        """
+        Set camera distance.
+        :param dis: (*float*) Camera distance.
+        """
+        self.axes.setDistance(dis)
         
     def set_lighting(self, enable=True, **kwargs):
         '''
@@ -1484,5 +1518,38 @@ class Axes3DGL(Axes3D):
         form.setLocationRelativeTo(None)
         form.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
         form.setVisible(True)
-        
+
+class EarthAxes3D(Axes3DGL):
+    """
+    Earth spherical 3D axes.
+    """
+
+    def __init__(self, *args, **kwargs):
+        kwargs['aspect'] = 'equal'
+        if not kwargs.has_key('bgcolor'):
+            kwargs['bgcolor'] = 'k'
+        kwargs['clip_plane'] = False
+        kwargs['axis'] = False
+        if not kwargs.has_key('distance'):
+            kwargs['distance'] = 500
+        super(EarthAxes3D, self).__init__(*args, **kwargs)
+
+        image = kwargs.pop('image', 'world_topo.jpg')
+        self.axes.earthImage(os.path.join(migl.get_map_folder(), image))
+
+    def _set_plot(self, plot):
+        """
+        Set plot.
+
+        :param plot: (*EarthPlot3D*) Plot.
+        """
+        if plot is None:
+            self.axes = EarthPlot3D()
+        else:
+            self.axes = plot
+
+    @property
+    def axestype(self):
+        return '3d_Earth'
+
 ####################################################

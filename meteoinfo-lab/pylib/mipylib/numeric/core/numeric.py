@@ -2245,17 +2245,18 @@ def meshgrid_bak(*args):
     ra = ArrayUtil.meshgrid(xa, ya)
     return NDArray(ra[0]), NDArray(ra[1])
 
-def sphere(n=20):
+def sphere(n=20, radius=1):
     """
     Create sphere surface coordinate x,y,z array with a radius equal to 1.
 
     :param n: (*int*) The sphere has n*n faces. Default is 20.
+    :param radius: (*float*) The sphere radius. Default is 1.
     :return: (*array tuple*) the x-, y-, and z- coordinates as three (n+1)*(n+1) matrices.
     """
     u, v = meshgrid(linspace(0, 2 * pi, n + 1), linspace(0, pi, n + 1))
-    x = cos(u) * sin(v)
-    y = sin(u) * sin(v)
-    z = cos(v)
+    x = cos(u) * sin(v) * radius
+    y = sin(u) * sin(v) * radius
+    z = cos(v) * radius
 
     return x, y, z
 

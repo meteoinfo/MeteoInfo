@@ -35,6 +35,14 @@ public class Extent3D extends Extent{
         minZ = zMin;
         maxZ = zMax;
     }
+
+    /**
+     * Get Z axis length
+     * @return Z axis length
+     */
+    public double getZLength() {
+        return this.maxZ - this.minZ;
+    }
     
     /**
      * Get is 3D or not

@@ -321,8 +321,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                 } else {
                     size = e.getComponent().getSize();
 
-                    float thetaY = 360.0f * ((float) (x - this.mouseLastPos.x) / size.width);
-                    float thetaX = 360.0f * ((float) (this.mouseLastPos.y - y) / size.height);
+                    float thetaY = 180.0f * ((float) (x - this.mouseLastPos.x) / size.width);
+                    float thetaX = 180.0f * ((float) (this.mouseLastPos.y - y) / size.height);
 
                     float elevation = this.plot3DGL.getAngleX() - thetaX;
                     if (elevation > 0) {
@@ -355,11 +355,10 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         float zoomF = e.getWheelRotation() / 10.0f;
         double dx = extent.getWidth() * zoomF;
         double dy = extent.getHeight() * zoomF;
-        extent = extent.extend(dx, dy, 0);
+        double dz = extent.getZLength() * zoomF;
+        extent = extent.extend(dx, dy, dy);
         this.plot3DGL.setExtent(extent);
-        //this.plot3DGL.setScaleX(this.plot3DGL.getScaleX() + zoomF);
-        //this.plot3DGL.setScaleY(this.plot3DGL.getScaleY() + zoomF);
-        //this.plot3DGL.setScaleZ(zoomF);
+
         this.repaint();
     }
 

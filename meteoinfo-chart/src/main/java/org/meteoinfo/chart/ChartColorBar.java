@@ -260,6 +260,7 @@ public class ChartColorBar extends ChartLegend {
      */
     public void setTickColor(Color value) {
         this.tickColor = value;
+        this.tickLabelColor = value;
     }
 
     /**

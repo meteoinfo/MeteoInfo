@@ -1535,7 +1535,11 @@ class EarthAxes3D(Axes3DGL):
         super(EarthAxes3D, self).__init__(*args, **kwargs)
 
         image = kwargs.pop('image', 'world_topo.jpg')
-        self.axes.earthImage(os.path.join(migl.get_map_folder(), image))
+        if not image is None:
+            if not os.path.exists(image):
+                image = os.path.join(migl.get_map_folder(), image)
+            if os.path.exists(image):
+                self.axes.earthImage(image)
 
     def _set_plot(self, plot):
         """
@@ -1551,5 +1555,15 @@ class EarthAxes3D(Axes3DGL):
     @property
     def axestype(self):
         return '3d_Earth'
+
+    def earth_image(self, image):
+        """
+        Set earth surface image.
+        :param image: (*str*) Earth image file path.
+        """
+        if not os.path.exists(image):
+            image = os.path.join(migl.get_map_folder(), image)
+        if os.path.exists(image):
+            self.axes.earthImage(image)
 
 ####################################################

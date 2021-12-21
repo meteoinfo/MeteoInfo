@@ -1952,7 +1952,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawPoint(GL2 gl, Graphic graphic) {
-        if (extent.intersects(graphic.getExtent())) {
+        boolean isDraw = true;
+        if (this.clipPlane)
+            isDraw = extent.intersects(graphic.getExtent());
+
+        if (isDraw) {
             PointZShape shape = (PointZShape) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegend();
             float[] rgba = pb.getColor().getRGBComponents(null);
@@ -2112,7 +2116,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawLineString(GL2 gl, Graphic graphic) {
-        if (extent.intersects(graphic.getExtent())) {
+        boolean isDraw = true;
+        if (this.clipPlane)
+            isDraw = extent.intersects(graphic.getExtent());
+
+        if (isDraw) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
             ColorBreak cb = graphic.getLegend();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
@@ -2150,7 +2158,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawPipe(GL2 gl, Graphic graphic) {
-        if (extent.intersects(graphic.getExtent())) {
+        boolean isDraw = true;
+        if (this.clipPlane)
+            isDraw = extent.intersects(graphic.getExtent());
+
+        if (isDraw) {
             PipeShape shape = (PipeShape) graphic.getShape();
             ColorBreak cb = graphic.getLegend();
             shape.transform(transform);
@@ -2203,7 +2215,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawStreamline(GL2 gl, Graphic graphic) {
-        if (extent.intersects(graphic.getExtent())) {
+        boolean isDraw = true;
+        if (this.clipPlane)
+            isDraw = extent.intersects(graphic.getExtent());
+
+        if (isDraw) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
             ColorBreak cb = graphic.getLegend();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
@@ -2282,7 +2298,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawPipeStreamline(GL2 gl, Graphic graphic) {
-        if (extent.intersects(graphic.getExtent())) {
+        boolean isDraw = true;
+        if (this.clipPlane)
+            isDraw = extent.intersects(graphic.getExtent());
+
+        if (isDraw) {
             PipeShape shape = (PipeShape) graphic.getShape();
             ColorBreak cb = graphic.getLegend();
             shape.transform(transform);
@@ -2370,12 +2390,16 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawPolygonShape(GL2 gl, Graphic graphic) {
-        if (extent.intersects(graphic.getExtent())) {
+        boolean isDraw = true;
+        if (this.clipPlane)
+            isDraw = extent.intersects(graphic.getExtent());
+
+        if (isDraw) {
             PolygonZShape shape = (PolygonZShape) graphic.getShape();
             PolygonBreak pb = (PolygonBreak) graphic.getLegend();
             List<PolygonZ> polygonZS = (List<PolygonZ>) shape.getPolygons();
             for (int i = 0; i < polygonZS.size(); i++) {
-                PolygonZ polygonZ = (PolygonZ) shape.getPolygons().get(i);
+                PolygonZ polygonZ = polygonZS.get(i);
                 if (pb.isDrawFill()) {
                     if (polygonZ instanceof TessPolygon) {
                         drawTessPolygon(gl, (TessPolygon) polygonZ, pb);
@@ -2600,7 +2624,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
         PointZ p;
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
-            if (extent.intersects(gg.getExtent())) {
+            boolean isDraw = true;
+            if (this.clipPlane)
+                isDraw = extent.intersects(gg.getExtent());
+
+            if (isDraw) {
                 PolygonZShape shape = (PolygonZShape) gg.getShape();
                 PolygonBreak pb = (PolygonBreak) gg.getLegend();
                 for (PolygonZ poly : (List<PolygonZ>) shape.getPolygons()) {
@@ -2640,7 +2668,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
         PointZ p;
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
-            if (extent.intersects(gg.getExtent())) {
+            boolean isDraw = true;
+            if (this.clipPlane)
+                isDraw = extent.intersects(gg.getExtent());
+
+            if (isDraw) {
                 PolygonZShape shape = (PolygonZShape) gg.getShape();
                 PolygonBreak pb = (PolygonBreak) gg.getLegend();
                 for (PolygonZ poly : (List<PolygonZ>) shape.getPolygons()) {
@@ -2843,12 +2875,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
             float float_x, float_y, float_xb, float_yb;
             for (int i = 0; i < dim1 - 1; i++) {
                 for (int j = 0; j < dim2 - 1; j++) {
-                    float_y = (float) (i) / dim1;
+                    float_y = (float) (i) / (dim1 - 1);
                     //float_y = 1.0f - (float) (i) / dim1;
-                    float_x = (float) (j) / dim2;
-                    float_yb = (float) (i + 1) / dim1;
+                    float_x = (float) (j) / (dim2 - 1);
+                    float_yb = (float) (i + 1) / (dim1 - 1);
                     //float_yb = 1.0f - (float) (i + 1) / dim1;
-                    float_xb = (float) (j + 1) / dim2;
+                    float_xb = (float) (j + 1) / (dim2 - 1);
                     gl.glNormal3fv(JOGLUtil.toArray(surface.getNormal(i, j)), 0);
                     gl.glTexCoord2f(float_x, float_y);
                     gl.glVertex3fv(JOGLUtil.toArray(surface.getTVertex(i, j)), 0);
@@ -3224,7 +3256,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     void drawWindArrow(GL2 gl, Graphic graphic) {
-        if (extent.intersects(graphic.getExtent())) {
+        boolean isDraw = true;
+        if (this.clipPlane)
+            isDraw = extent.intersects(graphic.getExtent());
+
+        if (isDraw) {
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegend();
             PointZ sp = (PointZ) shape.getPoint();
@@ -3398,7 +3434,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     void drawCubic(GL2 gl, Graphic graphic) {
-        if (extent.intersects(graphic.getExtent())) {
+        boolean isDraw = true;
+        if (this.clipPlane)
+            isDraw = extent.intersects(graphic.getExtent());
+
+        if (isDraw) {
             CubicShape cubic = (CubicShape) graphic.getShape();
             BarBreak bb = (BarBreak) graphic.getLegend();
             List<PointZ> ps = cubic.getPoints();
@@ -3441,7 +3481,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     void drawCylinder(GL2 gl, Graphic graphic) {
-        if (extent.intersects(graphic.getExtent())) {
+        boolean isDraw = true;
+        if (this.clipPlane)
+            isDraw = extent.intersects(graphic.getExtent());
+
+        if (isDraw) {
             CylinderShape cylinder = (CylinderShape) graphic.getShape();
             BarBreak bb = (BarBreak) graphic.getLegend();
             List<PointZ> ps = cylinder.getPoints();

@@ -1,8 +1,13 @@
 package org.meteoinfo.chart.jogl;
 
 import org.meteoinfo.chart.graphic.*;
+import org.meteoinfo.chart.jogl.tessellator.Primitive;
+import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.geometry.shape.PolygonZ;
+import org.meteoinfo.geometry.shape.PolygonZShape;
 import org.meteoinfo.geometry.shape.Shape;
 
 import java.util.ArrayList;
@@ -21,9 +26,9 @@ public class SphericalTransform {
     public static float[] transform(float lon, float lat, float alt) {
         double u = Math.toRadians(lon);
         double v = Math.toRadians(lat);
-        float x = (float) (Math.cos(u) * Math.cos(v)) * radius;
-        float y = (float) (Math.sin(u) * Math.cos(v)) * radius;
-        float z = (float) Math.sin(v) * radius + alt;
+        float x = (float) (Math.cos(u) * Math.cos(v)) * (radius + alt);
+        float y = (float) (Math.sin(u) * Math.cos(v)) * (radius + alt);
+        float z = (float) Math.sin(v) * (radius + alt);
 
         return new float[]{x, y, z};
     }
@@ -68,11 +73,34 @@ public class SphericalTransform {
             for (int i = 0; i < graphics.getNumGraphics(); i++) {
                 Graphic gg = graphics.getGraphicN(i);
                 Shape shape = gg.getGraphicN(0).getShape();
-                List<PointZ> points = (List<PointZ>) shape.getPoints();
-                for (int j = 0; j < points.size(); j++) {
-                    points.set(j, transform(points.get(j)));
+                boolean isTess = false;
+                if (shape instanceof PolygonZShape) {
+                    PolygonBreak pb = (PolygonBreak) gg.getGraphicN(0).getLegend();
+                    isTess = pb.isDrawFill();
                 }
-                shape.setPoints(points);
+                if (isTess) {
+                    PolygonZShape polygonZShape = (PolygonZShape) shape;
+                    List<PolygonZ> polygonZS = (List<PolygonZ>) polygonZShape.getPolygons();
+                    for (int j = 0; j < polygonZS.size(); j++) {
+                        PolygonZ polygonZ = polygonZS.get(j);
+                        TessPolygon tessPolygon = new TessPolygon(polygonZ);
+                        for (Primitive primitive : tessPolygon.getPrimitives()) {
+                            for (int k = 0; k < primitive.vertices.size(); k++) {
+                                primitive.vertices.set(k, transform(primitive.vertices.get(k)));
+                            }
+                        }
+                        polygonZS.set(j, tessPolygon);
+                    }
+                } else {
+                    List<PointZ> points = (List<PointZ>) shape.getPoints();
+                    for (int j = 0; j < points.size(); j++) {
+                        points.set(j, transform(points.get(j)));
+                    }
+                    if (shape instanceof PolygonZShape)
+                        ((PolygonZShape) shape).setPoints_keep(points);
+                    else
+                        shape.setPoints(points);
+                }
                 gg.setShape(shape);
                 graphics.setGraphicN(i, gg);
             }

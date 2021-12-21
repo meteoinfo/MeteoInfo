@@ -190,6 +190,16 @@ public class PolygonShape extends Shape implements Cloneable {
         this.setExtent(GeometryUtil.getPointsExtent(_points));
         updatePolygons();
     }
+
+    /**
+     * Set points and keep the polygons
+     * @param points The points
+     */
+    public void setPoints_keep(List<? extends PointD> points){
+        _points = points;
+        this.setExtent(GeometryUtil.getPointsExtent(_points));
+        updatePolygons_keep();
+    }
     
     /**
      * Set points and keep the polygons

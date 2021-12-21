@@ -35,8 +35,8 @@ public class EarthPlot3D extends Plot3DGL {
     public EarthPlot3D() {
         super();
         this.angleY = 160;
-        earthSurface(50);
-        addGraphic(this.surface);
+        //earthSurface(50);
+        //addGraphic(this.surface);
     }
 
     // </editor-fold>
@@ -81,7 +81,7 @@ public class EarthPlot3D extends Plot3DGL {
     public SurfaceGraphics earthSurface(int n) {
         Array lon = ArrayUtil.lineSpace(-180.f, 180.f, n + 1, true);
         Array lat = ArrayUtil.lineSpace(-90.f, 90.f, n + 1, true);
-        lat = lat.flip(0);
+        lat = lat.flip(0).copy();
         Array[] lonlat = ArrayUtil.meshgrid(lon, lat);
         lon = lonlat[0];
         lat = lonlat[1];
@@ -102,9 +102,11 @@ public class EarthPlot3D extends Plot3DGL {
      */
     public void earthImage(String imageFile) throws IOException, ImageReadException {
         BufferedImage image = ImageUtil.imageLoad(imageFile);
-        if (this.surface != null) {
-            this.surface.setImage(image);
+        if (this.surface == null) {
+            this.earthSurface(50);
+            this.addGraphic(this.surface);
         }
+        this.surface.setImage(image);
     }
     // </editor-fold>
 }

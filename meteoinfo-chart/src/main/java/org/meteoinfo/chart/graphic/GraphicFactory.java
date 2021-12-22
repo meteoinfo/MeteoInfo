@@ -2279,9 +2279,9 @@ public class GraphicFactory {
      * @param bbs Bar breaks
      * @return Bar graphics
      */
-    public static GraphicCollection createBars3D(Array xdata, Array ydata, Array zdata, boolean autoWidth,
+    public static GraphicCollection3D createBars3D(Array xdata, Array ydata, Array zdata, boolean autoWidth,
             Array widths, Array bottom, List<BarBreak> bbs) {
-        GraphicCollection graphics = new GraphicCollection();
+        GraphicCollection3D graphics = new GraphicCollection3D();
         int n = (int) xdata.getSize();
         double x, y, z;
         BarBreak bb = bbs.get(0);
@@ -2343,9 +2343,9 @@ public class GraphicFactory {
      * @param bbs Bar breaks
      * @return Bar graphics
      */
-    public static GraphicCollection createCylinderBars3D(Array xdata, Array ydata, Array zdata, boolean autoWidth,
+    public static GraphicCollection3D createCylinderBars3D(Array xdata, Array ydata, Array zdata, boolean autoWidth,
                                                  Array widths, Array bottom, List<BarBreak> bbs) {
-        GraphicCollection graphics = new GraphicCollection();
+        GraphicCollection3D graphics = new GraphicCollection3D();
         int n = (int) xdata.getSize();
         double x, y, z;
         BarBreak bb = bbs.get(0);

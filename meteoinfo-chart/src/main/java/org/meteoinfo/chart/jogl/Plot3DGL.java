@@ -2862,6 +2862,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
             surface.updateTexture(gl);
             int idTexture = surface.getTextureID();
 
+            gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+            gl.glPolygonOffset(1.0f, 1.0f);
+
             gl.glColor3f(1f, 1f, 1f);
             gl.glBindTexture(GL2.GL_TEXTURE_2D, idTexture);
 
@@ -2902,6 +2905,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
             // Unbinding the texture
             gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+
+            gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
         }
 
         if (lightEnabled && !surface.isUsingLight()) {

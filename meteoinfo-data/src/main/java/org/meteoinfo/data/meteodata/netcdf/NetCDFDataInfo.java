@@ -1372,6 +1372,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
             _xVar = ncfile.findVariable("XLONG");
             if (_xVar == null) {
+                _xVar = ncfile.findVariable("XLON");
+            }
+            if (_xVar == null) {
                 _xVar = ncfile.findVariable("XLONG_M");
             }
 
@@ -1527,6 +1530,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 int tNum = tDim.getLength();
                 List<LocalDateTime> times = new ArrayList<>();
                 ucar.nc2.Dimension tsDim = ncfile.findDimension("DateStrLen");
+                if (tsDim == null) {
+                    tsDim = ncfile.findDimension("Times_len");
+                }
                 int strLen = tsDim.getLength();
                 char[] charData = new char[tNum * strLen];
                 Array tArray = NCUtil.convertArray(aVarS.read());
@@ -1539,7 +1545,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
                     String tStr;
                     DateTimeFormatter format;
-                    if (strLen == 19)
+                    if (strLen >= 19)
                         format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss");
                     else
                         format = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
@@ -1551,6 +1557,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         tStr = timeStr.toString();
                         if (tStr.contains("0000-00-00")) {
                             tStr = "0001-01-01_00:00:00";
+                        }
+                        if (tStr.length() > 19) {
+                            tStr = tStr.substring(0, 19);
                         }
                         times.add(LocalDateTime.parse(tStr, format));
                     }

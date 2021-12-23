@@ -63,7 +63,17 @@ public class SphericalTransform {
             surfaceGraphics.setVertices(vertices);
             return surfaceGraphics;
         } else if (graphic instanceof IsosurfaceGraphics) {
-            return graphic;
+            IsosurfaceGraphics isosurfaceGraphics = (IsosurfaceGraphics) graphic;
+            List<PointZ[]> triangles = new ArrayList<>();
+            for (PointZ[] triangle : isosurfaceGraphics.getTriangles()) {
+                PointZ[] t = new PointZ[3];
+                for (int i = 0; i < 3; i++) {
+                    t[i] = transform(triangle[i]);
+                }
+                triangles.add(t);
+            }
+            isosurfaceGraphics.setTriangles(triangles);
+            return isosurfaceGraphics;
         } else if (graphic instanceof ParticleGraphics) {
             return graphic;
         } else if (graphic instanceof VolumeGraphics) {

@@ -42,6 +42,7 @@ public class IsosurfaceGraphics extends GraphicCollection3D {
      */
     public void setTriangles(List<PointZ[]> value) {
         this.triangles = value;
+        updateExtent();
     }
     
     /**
@@ -55,5 +56,19 @@ public class IsosurfaceGraphics extends GraphicCollection3D {
             this.setExtent(extent);
         else
             this.setExtent(MIMath.getLagerExtent(extent, this.getExtent()));
+    }
+
+    /**
+     * Update extent
+     */
+    public void updateExtent() {
+        Extent3D extent;
+        for (int i = 0; i < this.triangles.size(); i++) {
+            extent = GeometryUtil.getExtent(this.triangles.get(i));
+            if (i == 0)
+                this.setExtent(extent);
+            else
+                this.setExtent(MIMath.getLagerExtent(extent, this.getExtent()));
+        }
     }
 }

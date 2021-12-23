@@ -1115,6 +1115,11 @@ class Axes3D(Axes):
                 sepoint)
         else:
             igraphic = GraphicFactory.createContourLines(gdata.data, offset, zdir, ls, smooth)
+
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            igraphic.setUsingLight(lighting)
+
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(igraphic)

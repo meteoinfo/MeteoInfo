@@ -3155,9 +3155,9 @@ def particles(*args, **kwargs):
     :param cmap: (*string*) Color map string.
     :param vmin: (*float*) Minimum value for particle plotting.
     :param vmax: (*float*) Maximum value for particle plotting.
-    :param alpha_min: (*float*) Minimum alpha value.
-    :param alpha_max: (*float*) Maximum alpha value.
-    :param density: (*int*) Particle density value.
+    :param alpha_min: (*float*) Minimum alpha value. Default is 0.1.
+    :param alpha_max: (*float*) Maximum alpha value. Default is 0.6.
+    :param density: (*int*) Particle density value. Default is 2.
 
     :returns: Legend
     '''

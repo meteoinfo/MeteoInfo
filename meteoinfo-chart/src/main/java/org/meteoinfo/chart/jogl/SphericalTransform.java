@@ -12,6 +12,7 @@ import org.meteoinfo.geometry.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SphericalTransform {
     public static float radius = 6371.f;
@@ -45,6 +46,21 @@ public class SphericalTransform {
     }
 
     /**
+     * Transform spherical coordinates to normal 3D coordinates
+     * @param p Input particle
+     * @return Transformed particle
+     */
+    public static ParticleGraphics.Particle transform(ParticleGraphics.Particle p) {
+        float[] xyz = transform((float)p.x, (float)p.y, (float)p.x);
+
+        p.x = xyz[0];
+        p.y = xyz[1];
+        p.z = xyz[2];
+
+        return p;
+    }
+
+    /**
      * Transform a graphic
      * @param graphic The graphic
      * @return Transformed graphic
@@ -75,7 +91,13 @@ public class SphericalTransform {
             isosurfaceGraphics.setTriangles(triangles);
             return isosurfaceGraphics;
         } else if (graphic instanceof ParticleGraphics) {
-            return graphic;
+            ParticleGraphics particleGraphics = (ParticleGraphics) graphic;
+            for (Map.Entry<Integer, List> map : particleGraphics.getParticleList()) {
+                for (ParticleGraphics.Particle p : (List<ParticleGraphics.Particle>)map.getValue()) {
+                    transform(p);
+                }
+            }
+            return particleGraphics;
         } else if (graphic instanceof VolumeGraphics) {
             return graphic;
         } else {

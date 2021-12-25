@@ -36,6 +36,7 @@ public class GraphicCollection3D extends GraphicCollection{
     protected boolean allTriangle;
     protected boolean allConvexPolygon;
     protected boolean usingLight;
+    protected boolean sphere;
     
     /**
      * Constructor
@@ -49,6 +50,7 @@ public class GraphicCollection3D extends GraphicCollection{
         allTriangle = false;
         allConvexPolygon = false;
         usingLight = true;
+        sphere = false;
     }
     
     /**
@@ -190,6 +192,22 @@ public class GraphicCollection3D extends GraphicCollection{
      */
     public void setUsingLight(boolean value) {
         this.usingLight = value;
+    }
+
+    /**
+     * Get is render point as sphere or not
+     * @return Render point as sphere or not
+     */
+    public boolean isSphere() {
+        return this.sphere;
+    }
+
+    /**
+     * Set is render point as sphere or not
+     * @param value Render point as sphere or not
+     */
+    public void setSphere(boolean value) {
+        this.sphere = value;
     }
 
     /**

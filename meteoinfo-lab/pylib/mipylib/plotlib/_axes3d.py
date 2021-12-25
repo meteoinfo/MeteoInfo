@@ -625,6 +625,10 @@ class Axes3D(Axes):
             steps = kwargs.pop('steps', 48)
             graphics = GraphicFactory.lineString3DToPipe(graphics, radius, steps)
 
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            graphics.setUsingLight(lighting)
+
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)
@@ -722,7 +726,11 @@ class Axes3D(Axes):
                         pbs.append(npb)
             #Create graphics
             graphics = GraphicFactory.createPoints3D(xdata, ydata, zdata, pbs)
-        
+
+        sphere = kwargs.pop('sphere', None)
+        if not sphere is None:
+            graphics.setSphere(sphere)
+
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

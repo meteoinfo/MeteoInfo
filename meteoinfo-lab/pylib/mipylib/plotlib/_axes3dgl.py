@@ -1566,4 +1566,39 @@ class EarthAxes3D(Axes3DGL):
         if os.path.exists(image):
             self.axes.earthImage(image)
 
+    def lonlat(self, lon_delta=30, lat_delta=30, npoints=50, offset=10, **kwargs):
+        """
+        Draw longitude and latitude lines.
+
+        :param lon_delta: (*float*) Longitude delta. Default is 30.
+        :param lat_delta: (*float*) Latitude delta. Default is 30.
+        :param npoints: (*int*) Number of points in one longitude/latitude line. Default is 50.
+        :param offset: (*float*) Altitude offset from earth surface. Default is 10.
+
+        :return: Longitude and latitude lines.
+        """
+        nlon = (int)(360. / lon_delta)
+        lons = np.zeros([nlon, npoints])
+        lats = np.zeros([nlon, npoints])
+        alts = np.zeros([nlon, npoints]) + offset
+        lat = np.linspace(-90., 90., npoints)
+        idx = 0
+        for i in np.arange(0., 360., lon_delta):
+            lons[idx] = np.full(npoints, i)
+            lats[idx] = lat
+            idx += 1
+        self.plot(lons, lats, alts, **kwargs)
+
+        nlat = (int)(180. / lat_delta)
+        lons = np.zeros([nlat, npoints])
+        lats = np.zeros([nlat, npoints])
+        alts = np.zeros([nlat, npoints]) + offset
+        lon = np.linspace(-180., 180., npoints)
+        idx = 0
+        for i in np.arange(-90., 90., lat_delta):
+            lats[idx] = np.full(npoints, i)
+            lons[idx] = lon
+            idx += 1
+        self.plot(lons, lats, alts, **kwargs)
+
 ####################################################

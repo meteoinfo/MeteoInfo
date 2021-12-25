@@ -266,6 +266,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     /**
+     * Get the extent of all graphics
+     * @return The extent of all graphics
+     */
+    public Extent3D getGraphicExtent() {
+        return (Extent3D) this.graphics.getExtent();
+    }
+
+    /**
      * Get aspect ratio
      * @return Aspect ratio
      */
@@ -1861,7 +1869,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 if (isDraw) {
                     switch (graphic.getGraphicN(0).getShape().getShapeType()) {
                         case POINT_Z:
-                            this.drawPoints(gl, graphic);
+                            if (((GraphicCollection3D) graphic).isSphere()) {
+                                this.drawSpheres(gl, graphic);
+                            } else {
+                                this.drawPoints(gl, graphic);
+                            }
                             break;
                         default:
                             for (int i = 0; i < graphic.getNumGraphics(); i++) {
@@ -1982,6 +1994,36 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glVertex3fv(transform.transform((float) p.X, (float) p.Y, (float) p.Z), 0);
         }
         gl.glEnd();
+    }
+
+    private void drawSphere(GL2 gl, Graphic graphic) {
+        boolean isDraw = true;
+        if (this.clipPlane)
+            isDraw = extent.intersects(graphic.getExtent());
+
+        if (isDraw) {
+            PointZShape shape = (PointZShape) graphic.getShape();
+            PointBreak pb = (PointBreak) graphic.getLegend();
+            float[] rgba = pb.getColor().getRGBComponents(null);
+            gl.glColor4fv(rgba, 0);
+            gl.glPushMatrix();
+            PointZ p = (PointZ) shape.getPoint();
+            float[] xyz = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            gl.glTranslated(xyz[0], xyz[1], xyz[2]);
+            GLUquadric sphere = glu.gluNewQuadric();
+            glu.gluQuadricDrawStyle(sphere, GLU.GLU_FILL);
+            glu.gluQuadricNormals(sphere, GLU.GLU_FLAT);
+            glu.gluQuadricOrientation(sphere, GLU.GLU_OUTSIDE);
+            glu.gluSphere(sphere, pb.getSize() * 0.005 * this.dpiScale, 16, 16);
+            glu.gluDeleteQuadric(sphere);
+            gl.glPopMatrix();
+        }
+    }
+
+    private void drawSpheres(GL2 gl, Graphic graphic) {
+        for (Graphic gg : graphic.getGraphics()) {
+            drawSphere(gl, gg);
+        }
     }
 
     private void drawParticles(GL2 gl, ParticleGraphics particles) {

@@ -299,8 +299,6 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                 }
                 extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
                 this.plot3DGL.setExtent(extent);
-                //this.plot3DGL.setShiftX(this.plot3DGL.getShiftX() + (float) extent.getWidth() * dx);
-                //this.plot3DGL.setShiftY(this.plot3DGL.getShiftY() + (float) extent.getHeight() * dy);
                 this.repaint();
                 break;
             case ROTATE:
@@ -316,8 +314,6 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                     }
                     extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
                     this.plot3DGL.setExtent(extent);
-                    //this.plot3DGL.setShiftX(this.plot3DGL.getShiftX() + (float) extent.getWidth() * dx);
-                    //this.plot3DGL.setShiftY(this.plot3DGL.getShiftY() + (float) extent.getHeight() * dy);
                 } else {
                     size = e.getComponent().getSize();
 
@@ -355,8 +351,12 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         float zoomF = e.getWheelRotation() / 10.0f;
         double dx = extent.getWidth() * zoomF;
         double dy = extent.getHeight() * zoomF;
-        double dz = extent.getZLength() * zoomF;
-        extent = extent.extend(dx, dy, dy);
+        if (e.isShiftDown() && !(this.plot3DGL instanceof EarthPlot3D)) {
+            extent = extent.extend(dx, dy, 0);
+        } else {
+            double dz = extent.getZLength() * zoomF;
+            extent = extent.extend(dx, dy, dz);
+        }
         this.plot3DGL.setExtent(extent);
 
         this.repaint();
@@ -665,7 +665,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      */
     @Override
     public void onUndoZoomClick() {
-
+        this.plot3DGL.setExtent(this.plot3DGL.getGraphicExtent());
+        this.repaint();
     }
 
     /**

@@ -8,7 +8,7 @@ package org.meteoinfo.data.mapdata.webmap;
  *
  * @author yaqiang
  */
-public class ArcGISImageInfo extends TileFactoryInfo {
+public class GeoQMapInfo extends TileFactoryInfo {
     // <editor-fold desc="Variables">
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -16,17 +16,18 @@ public class ArcGISImageInfo extends TileFactoryInfo {
     /**
      * Constructor
      */
-    public ArcGISImageInfo() {
-        super("ArcGISImage", 0, 18, 19,
+    public GeoQMapInfo() {
+        super("GeoQMap", 0, 18, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_Imagery_World_2D/MapServer/tile/%1$d/%2$d/%3$d",
+                "http://cache1.arcgisonline.cn/arcgis/rest/services/ChinaOnlineCommunity/MapServer/tile/%1$d/%2$d/%3$d",
                 "x", "y", "z");
     }
 //    // </editor-fold>
 //    // <editor-fold desc="Get Set Methods">
+    
 //    // </editor-fold>
 //    // <editor-fold desc="Methods">
-
+    
     @Override
     public String getTileUrl(int x, int y, int zoom) {
         zoom = this.getTotalMapZoom() - zoom;

@@ -24,6 +24,10 @@ public enum WebMapProvider {
     ASatelliteMap,
     AHybridMap,
     TencentMap,
+    GeoQMap,
+    GeoQGrayMap,
+    GeoQBlueMap,
+    GeoQWarmMap,
     //BaiduMap,
     //BaiduSatelliteMap,
     //OviMap,
@@ -36,6 +40,6 @@ public enum WebMapProvider {
     CMA_CVA_MAP,
     CMA_VEC_MAP,
     CMA_IMG_MAP
-    //ArcGISImage,
+    //ArcGISImage
     //Custom
 }

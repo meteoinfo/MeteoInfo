@@ -468,6 +468,18 @@ public class WebMapLayer extends MapLayer {
             case TencentMap:
                 info = new TencentMapInfo();
                 break;
+            case GeoQMap:
+                info = new GeoQMapInfo();
+                break;
+            case GeoQGrayMap:
+                info = new GeoQGrayMapInfo();
+                break;
+            case GeoQBlueMap:
+                info = new GeoQBlueMapInfo();
+                break;
+            case GeoQWarmMap:
+                info = new GeoQWarmMapInfo();
+                break;
             case CMA_CVA_MAP:
                 info = new CMACvaMapInfo();
                 break;
@@ -479,7 +491,7 @@ public class WebMapLayer extends MapLayer {
                 break;
 //            case ArcGISImage:
 //                info = new ArcGISImageInfo();
-//                break;                
+//                break;
         }
 
         if (info != null) {

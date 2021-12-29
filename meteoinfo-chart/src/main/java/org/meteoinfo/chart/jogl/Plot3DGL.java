@@ -49,6 +49,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,12 +74,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected Color background = Color.white;
     protected boolean doScreenShot;
     protected BufferedImage screenImage;
-    //private GL2 gl;
+    protected GL2 gl;
     protected final GLU glu = new GLU();
     protected final GLUT glut = new GLUT();
     protected int startList = 2;
     protected GraphicCollection3D graphics;
     protected Extent3D extent;
+    protected Extent3D drawExtent;
     protected ChartText title;
     protected GridLine gridLine;
     protected List<ChartLegend> legends;
@@ -101,8 +103,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected float projmatrix[] = new float[16];
     protected Matrix4f viewProjMatrix = new Matrix4f();
 
-    protected float angleX = -45.0f;
-    protected float angleY = 45.0f;
+    protected float angleX;
+    protected float angleY;
+    protected float headAngle;
+    protected float pitchAngle;
     protected AspectType aspectType = AspectType.AUTO;
 
     protected TessCallback tessCallback;
@@ -151,6 +155,17 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.dpiScale = 1;
         this.orthographic = true;
         this.distance = 5.f;
+        this.initAngles();
+    }
+
+    /**
+     * Initialize angles
+     */
+    public void initAngles() {
+        this.angleX = -45.f;
+        this.angleY = 45.f;
+        this.headAngle = 0.f;
+        this.pitchAngle = 0.f;
     }
 
     // </editor-fold>
@@ -237,13 +252,25 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return this.screenImage;
     }
 
+    public Extent3D getExtent() {
+        return this.extent;
+    }
+
+    /**
+     * Set extent
+     * @param value Extent
+     */
+    public void setExtent(Extent3D value) {
+        this.extent = value;
+    }
+
     /**
      * Get extent
      *
      * @return Extent
      */
-    public Extent3D getExtent() {
-        return this.extent;
+    public Extent3D getDrawExtent() {
+        return this.drawExtent;
     }
 
     /**
@@ -251,18 +278,18 @@ public class Plot3DGL extends Plot implements GLEventListener {
      *
      * @param value Extent
      */
-    public void setExtent(Extent3D value) {
-        this.extent = value;
-        xmin = (float) extent.minX;
-        xmax = (float) extent.maxX;
-        ymin = (float) extent.minY;
-        ymax = (float) extent.maxY;
-        zmin = (float) extent.minZ;
-        zmax = (float) extent.maxZ;
+    public void setDrawExtent(Extent3D value) {
+        this.drawExtent = value;
+        xmin = (float) drawExtent.minX;
+        xmax = (float) drawExtent.maxX;
+        ymin = (float) drawExtent.minY;
+        ymax = (float) drawExtent.maxY;
+        zmin = (float) drawExtent.minZ;
+        zmax = (float) drawExtent.maxZ;
         xAxis.setMinMaxValue(xmin, xmax);
         yAxis.setMinMaxValue(ymin, ymax);
         zAxis.setMinMaxValue(zmin, zmax);
-        this.transform.setExtent(this.extent);
+        this.transform.setExtent(this.drawExtent);
     }
 
     /**
@@ -438,6 +465,38 @@ public class Plot3DGL extends Plot implements GLEventListener {
      */
     public void setAngleY(float value) {
         this.angleY = value;
+    }
+
+    /**
+     * Get head angle
+     * @return Head angle
+     */
+    public float getHeadAngle() {
+        return this.headAngle;
+    }
+
+    /**
+     * Set head angle
+     * @param value Head angle
+     */
+    public void setHeadAngle(float value) {
+        this.headAngle = value;
+    }
+
+    /**
+     * Get pitch angle
+     * @return Pitch angle
+     */
+    public float getPitchAngle() {
+        return this.pitchAngle;
+    }
+
+    /**
+     * Set pitch angle
+     * @param value Pitch angle
+     */
+    public void setPitchAngle(float value) {
+        this.pitchAngle = value;
     }
 
     /**
@@ -875,7 +934,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     private void updateExtent() {
         this.extent = new Extent3D(xmin, xmax, ymin, ymax, zmin, zmax);
-        this.transform.setExtent(this.extent);
+        this.drawExtent = (Extent3D) this.extent.clone();
+        this.transform.setExtent(this.drawExtent);
     }
 
     /**
@@ -900,7 +960,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (!ex.is3D()) {
             ex = ex.to3D();
         }
-        this.setExtent((Extent3D) ex);
+        this.extent = (Extent3D) ex;
+        this.setDrawExtent((Extent3D) this.extent.clone());
     }
 
     /**
@@ -971,6 +1032,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         gl.glRotatef(angleX, 1.0f, 0.0f, 0.0f);
         gl.glRotatef(angleY, 0.0f, 0.0f, 1.0f);
+        if (headAngle != 0) {
+            gl.glRotatef(headAngle, 0.0f, 1.0f, 0.0f);
+        }
 
         this.updateMatrix(gl);
 
@@ -1056,7 +1120,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
     }
 
-    private void setLight(GL2 gl) {
+    protected void setLight(GL2 gl) {
         //Set lighting
         if (this.lighting.isEnable()) {
 
@@ -1146,12 +1210,67 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return matrix4f;
     }
 
-    private void updateMatrix(GL2 gl) {
+    protected void updateMatrix(GL2 gl) {
         gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
         gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
         gl.glGetFloatv(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
         viewProjMatrix = toMatrix(projmatrix).
                 mul(toMatrix(mvmatrix));
+    }
+
+    /**
+     * Get 3D coordinates from screen 2D coordinates
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @return 3D coordinates
+     */
+    public Vector3f unProject(float x, float y) {
+        if (this.gl == null) {
+            return new Vector3f();
+        }
+
+        y = viewport[3] - y;
+        FloatBuffer buffer = FloatBuffer.allocate(4);
+        gl.glReadPixels((int)x, (int)y, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT, buffer);
+        float z = buffer.get();
+        float[] out = new float[4];
+        glu.gluUnProject(
+                x,
+                y,
+                z,
+                mvmatrix, 0,
+                projmatrix, 0,
+                viewport, 0,
+                out, 0
+        );
+
+        return new Vector3f(out[0], out[1], out[2]);
+    }
+
+    /**
+     * Get 3D coordinates from screen 2D coordinates
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param gl GL2
+     * @return 3D coordinates
+     */
+    public Vector3f unProject(float x, float y, GL2 gl) {
+        y = viewport[3] - y;
+        FloatBuffer buffer = FloatBuffer.allocate(4);
+        gl.glReadPixels((int)x, (int)y, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT, buffer);
+        float z = buffer.get();
+        float[] out = new float[4];
+        glu.gluUnProject(
+                x,
+                y,
+                z,
+                mvmatrix, 0,
+                projmatrix, 0,
+                viewport, 0,
+                out, 0
+        );
+
+        return new Vector3f(out[0], out[1], out[2]);
     }
 
     private float[] toScreen(float vx, float vy, float vz) {
@@ -1220,7 +1339,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return n / nn + 1;
     }
 
-    private void drawBoxGrids(GL2 gl) {
+    protected void drawBoxGrids(GL2 gl) {
         if (this.drawBase)
             this.drawBase(gl);
 
@@ -1829,7 +1948,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
     }
 
-    private void drawGraphics(GL2 gl, Graphic graphic) {
+    protected void drawGraphics(GL2 gl, Graphic graphic) {
         boolean lightEnabled = this.lighting.isEnable();
         if (graphic instanceof GraphicCollection3D) {
             boolean usingLight = lightEnabled && ((GraphicCollection3D)graphic).isUsingLight();
@@ -1955,7 +2074,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
     }
 
-    private void drawText(GL2 gl, ChartText3D text) {
+    protected void drawText(GL2 gl, ChartText3D text) {
         float[] xyz = this.transform.transform((float) text.getX(), (float) text.getY(), (float) text.getZ());
         float x = xyz[0];
         float y = xyz[1];
@@ -1966,7 +2085,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawPoint(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
-            isDraw = extent.intersects(graphic.getExtent());
+            isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
             PointZShape shape = (PointZShape) graphic.getShape();
@@ -1999,7 +2118,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawSphere(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
-            isDraw = extent.intersects(graphic.getExtent());
+            isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
             PointZShape shape = (PointZShape) graphic.getShape();
@@ -2160,7 +2279,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawLineString(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
-            isDraw = extent.intersects(graphic.getExtent());
+            isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
@@ -2202,7 +2321,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawPipe(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
-            isDraw = extent.intersects(graphic.getExtent());
+            isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
             PipeShape shape = (PipeShape) graphic.getShape();
@@ -2259,7 +2378,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawStreamline(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
-            isDraw = extent.intersects(graphic.getExtent());
+            isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
@@ -2342,7 +2461,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawPipeStreamline(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
-            isDraw = extent.intersects(graphic.getExtent());
+            isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
             PipeShape shape = (PipeShape) graphic.getShape();
@@ -2434,7 +2553,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     private void drawPolygonShape(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
-            isDraw = extent.intersects(graphic.getExtent());
+            isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
             PolygonZShape shape = (PolygonZShape) graphic.getShape();
@@ -2668,7 +2787,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             Graphic gg = graphic.getGraphicN(i);
             boolean isDraw = true;
             if (this.clipPlane)
-                isDraw = extent.intersects(gg.getExtent());
+                isDraw = drawExtent.intersects(gg.getExtent());
 
             if (isDraw) {
                 PolygonZShape shape = (PolygonZShape) gg.getShape();
@@ -2712,7 +2831,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             Graphic gg = graphic.getGraphicN(i);
             boolean isDraw = true;
             if (this.clipPlane)
-                isDraw = extent.intersects(gg.getExtent());
+                isDraw = drawExtent.intersects(gg.getExtent());
 
             if (isDraw) {
                 PolygonZShape shape = (PolygonZShape) gg.getShape();
@@ -3305,7 +3424,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     void drawWindArrow(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
-            isDraw = extent.intersects(graphic.getExtent());
+            isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
@@ -3483,7 +3602,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     void drawCubic(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
-            isDraw = extent.intersects(graphic.getExtent());
+            isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
             CubicShape cubic = (CubicShape) graphic.getShape();
@@ -3530,7 +3649,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     void drawCylinder(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
-            isDraw = extent.intersects(graphic.getExtent());
+            isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
             CylinderShape cylinder = (CylinderShape) graphic.getShape();
@@ -3607,6 +3726,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             float barHeight = lHeight / bNum;
 
             //Draw color bar
+            gl.glDepthFunc(GL.GL_ALWAYS);
             float yy = y;
             float[] rgba;
             for (int i = 0; i < bNum; i++) {
@@ -3718,6 +3838,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         break;
                 }
             }
+            gl.glDepthFunc(GL2.GL_LEQUAL);
         }
     }
 
@@ -3758,6 +3879,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.drawable = drawable;
         //drawable.getContext().makeCurrent();
         GL2 gl = drawable.getGL().getGL2();
+        this.gl = gl;
         //Background
         //gl.glClearColor(1f, 1f, 1f, 1.0f);
         gl.glEnable(GL2.GL_POINT_SMOOTH);
@@ -3848,7 +3970,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         plot3DGL.dpiScale = this.dpiScale;
         plot3DGL.drawBase = this.drawBase;
         plot3DGL.drawBoundingBox = this.drawBoundingBox;
-        plot3DGL.setExtent((Extent3D) this.extent.clone());
+        plot3DGL.setDrawExtent((Extent3D) this.drawExtent.clone());
         plot3DGL.gridLine = this.gridLine;
         plot3DGL.legends = this.legends;
         plot3DGL.hideOnDrag = this.hideOnDrag;

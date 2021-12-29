@@ -13,6 +13,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
 import junit.framework.Assert;
+import org.joml.Vector3f;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
 import org.meteoinfo.common.Extent3D;
@@ -291,54 +292,92 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                 Dimension size = e.getComponent().getSize();
                 float dx = (float) (x - this.mouseLastPos.x) / size.width;
                 float dy = (float) (this.mouseLastPos.y - y) / size.height;
-                Extent3D extent = this.plot3DGL.getExtent();
+                Extent3D extent = this.plot3DGL.getDrawExtent();
                 float rotation = this.plot3DGL.getAngleY();
-                if (rotation <90 || rotation > 270) {
+                if (rotation < 90 || rotation > 270) {
                     dx = -dx;
                     dy = -dy;
                 }
                 extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
-                this.plot3DGL.setExtent(extent);
+                this.plot3DGL.setDrawExtent(extent);
                 this.repaint();
                 break;
             case ROTATE:
-                if (e.isShiftDown()) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    if (e.isShiftDown()) {
+                        size = e.getComponent().getSize();
+                        dx = (float) (x - this.mouseLastPos.x) / size.width;
+                        dy = (float) (this.mouseLastPos.y - y) / size.height;
+                        extent = this.plot3DGL.getDrawExtent();
+                        rotation = this.plot3DGL.getAngleY();
+                        if (rotation < 90 || rotation > 270) {
+                            dx = -dx;
+                            dy = -dy;
+                        }
+                        extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
+                        this.plot3DGL.setDrawExtent(extent);
+                    } else {
+                        size = e.getComponent().getSize();
+
+                        float thetaY = 180.0f * ((float) (x - this.mouseLastPos.x) / size.width);
+                        float thetaX = 180.0f * ((float) (this.mouseLastPos.y - y) / size.height);
+
+                        if (this.plot3DGL instanceof EarthPlot3D) {
+                            float ratio = (float) (this.plot3DGL.getDrawExtent().getWidth() / this.plot3DGL.getExtent().getWidth());
+                            thetaY *= ratio;
+                            thetaX *= ratio;
+                        }
+
+                        float elevation = this.plot3DGL.getAngleX() - thetaX;
+                        if (elevation > 0) {
+                            elevation = 0;
+                        }
+                        if (elevation < -180) {
+                            elevation = -180;
+                        }
+                        this.plot3DGL.setAngleX(elevation);
+
+                        rotation = this.plot3DGL.getAngleY() + thetaY;
+                        if (rotation >= 360) {
+                            rotation -= 360;
+                        }
+                        if (rotation < 0) {
+                            rotation += 360;
+                        }
+                        this.plot3DGL.setAngleY(rotation);
+                    }
+                    this.repaint();
+                } else if (SwingUtilities.isRightMouseButton(e)) {
                     size = e.getComponent().getSize();
-                    dx = (float) (x - this.mouseLastPos.x) / size.width;
-                    dy = (float) (this.mouseLastPos.y - y) / size.height;
-                    extent = this.plot3DGL.getExtent();
-                    rotation = this.plot3DGL.getAngleY();
-                    if (rotation <90 || rotation > 270) {
-                        dx = -dx;
-                        dy = -dy;
+                    float shift = 180.0f * ((float) (this.mouseLastPos.x - x) / size.width);
+                    if (!(this.plot3DGL instanceof EarthPlot3D)) {
+                        shift = -shift;
                     }
-                    extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
-                    this.plot3DGL.setExtent(extent);
-                } else {
-                    size = e.getComponent().getSize();
+                    float head = this.plot3DGL.getHeadAngle() + shift;
+                    if (head >= 360) {
+                        head -= 360;
+                    } else if (head < 0) {
+                        head += 360;
+                    }
+                    if (head < 1)
+                        head = 0;
+                    else if (head > 359)
+                        head = 0;
+                    this.plot3DGL.setHeadAngle(head);
 
-                    float thetaY = 180.0f * ((float) (x - this.mouseLastPos.x) / size.width);
-                    float thetaX = 180.0f * ((float) (this.mouseLastPos.y - y) / size.height);
-
-                    float elevation = this.plot3DGL.getAngleX() - thetaX;
-                    if (elevation > 0) {
-                        elevation = 0;
+                    if (this.plot3DGL instanceof EarthPlot3D) {
+                        shift = 180.0f * ((float) (this.mouseLastPos.y - y) / size.height);
+                        float pitch = this.plot3DGL.getPitchAngle() + shift;
+                        if (pitch > 0) {
+                            pitch = 0;
+                        }
+                        if (pitch < -90) {
+                            pitch = -90;
+                        }
+                        this.plot3DGL.setPitchAngle(pitch);
                     }
-                    if (elevation < -180) {
-                        elevation = -180;
-                    }
-                    this.plot3DGL.setAngleX(elevation);
-
-                    rotation = this.plot3DGL.getAngleY() + thetaY;
-                    if (rotation >= 360) {
-                        rotation -= 360;
-                    }
-                    if (rotation < 0) {
-                        rotation += 360;
-                    }
-                    this.plot3DGL.setAngleY(rotation);
+                    this.repaint();
                 }
-                this.repaint();
                 break;
         }
         mouseLastPos.x = x;
@@ -346,7 +385,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     }
 
     void onMouseWheelMoved(MouseWheelEvent e) {
-        Extent3D extent = this.plot3DGL.getExtent();
+        Extent3D extent = this.plot3DGL.getDrawExtent();
         //float zoomF = 1 + e.getWheelRotation() / 10.0f;
         float zoomF = e.getWheelRotation() / 10.0f;
         double dx = extent.getWidth() * zoomF;
@@ -357,7 +396,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
             double dz = extent.getZLength() * zoomF;
             extent = extent.extend(dx, dy, dz);
         }
-        this.plot3DGL.setExtent(extent);
+        this.plot3DGL.setDrawExtent(extent);
 
         this.repaint();
     }
@@ -665,7 +704,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      */
     @Override
     public void onUndoZoomClick() {
-        this.plot3DGL.setExtent(this.plot3DGL.getGraphicExtent());
+        this.plot3DGL.setDrawExtent(this.plot3DGL.getExtent());
+        this.plot3DGL.initAngles();
         this.repaint();
     }
 

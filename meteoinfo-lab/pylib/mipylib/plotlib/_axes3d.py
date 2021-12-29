@@ -15,6 +15,7 @@ from org.meteoinfo.geometry.legend import BreakTypes, PolylineBreak
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.geo.layer import LayerTypes
+from org.meteoinfo.common import Extent3D
 
 from ._axes import Axes
 from mipylib.numeric.core import NDArray, DimArray
@@ -265,6 +266,27 @@ class Axes3D(Axes):
         if isinstance(zmax, datetime.datetime):
             zmax = miutil.date2num(zmax)    
         self.axes.setZMinMax(zmin, zmax)
+
+    def axis(self, limits):
+        """
+        Sets the min and max of the x,y, axes, with ``[xmin, xmax, ymin, ymax, zmin, zmax]`` .
+
+        :param limits: (*list*) Min and max of the x,y,z axes.
+        """
+        if len(limits) == 6:
+            xmin = limits[0]
+            xmax = limits[1]
+            ymin = limits[2]
+            ymax = limits[3]
+            zmin = limits[4]
+            zmax = limits[5]
+            extent = Extent3D(xmin, xmax, ymin, ymax, zmin, zmax)
+            self.axes.setDrawExtent(extent)
+            self.axes.setExtent(extent.clone())
+            return True
+        else:
+            print('The limits parameter must be a list with 4 elements: xmin, xmax, ymin, ymax!')
+            return None
 
     def set_zlabel(self, label, **kwargs):
         """

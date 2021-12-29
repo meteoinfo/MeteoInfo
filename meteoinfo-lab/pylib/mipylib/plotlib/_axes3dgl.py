@@ -154,6 +154,38 @@ class Axes3DGL(Axes3D):
         '''
         self.axes.setAngleX(elevation)
 
+    def get_head(self):
+        """
+        Get head angle.
+
+        :return: (*float*) Head angle
+        """
+        return self.axes.getHeadAngle()
+
+    def set_head(self, head):
+        """
+        Set head angle.
+
+        :param head: (*float*) Head angle
+        """
+        self.axes.setHeadAngle(head)
+
+    def get_pitch(self):
+        """
+        Get pitch angle.
+
+        :return: (*float*) Pitch angle
+        """
+        return self.axes.gePitchAngle()
+
+    def set_pitch(self, pitch):
+        """
+        Set pitch angle.
+
+        :param pitch: (*float*) Pitch angle
+        """
+        self.axes.setPitchAngle(pitch)
+
     def set_background(self, color):
         '''
         Set background color.

@@ -234,8 +234,5 @@ public class EarthPlot3D extends Plot3DGL {
         }
     }
 
-    private float getScale() {
-        return (float) (this.extent.getWidth() / this.drawExtent.getWidth());
-    }
     // </editor-fold>
 }

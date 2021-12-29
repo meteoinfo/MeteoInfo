@@ -319,13 +319,13 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                     } else {
                         size = e.getComponent().getSize();
 
-                        float thetaY = 180.0f * ((float) (x - this.mouseLastPos.x) / size.width);
+                        float thetaY = 360.0f * ((float) (x - this.mouseLastPos.x) / size.width);
                         float thetaX = 180.0f * ((float) (this.mouseLastPos.y - y) / size.height);
 
                         if (this.plot3DGL instanceof EarthPlot3D) {
-                            float ratio = (float) (this.plot3DGL.getDrawExtent().getWidth() / this.plot3DGL.getExtent().getWidth());
-                            thetaY *= ratio;
-                            thetaX *= ratio;
+                            float scale = this.plot3DGL.getScale();
+                            thetaY /= scale;
+                            thetaX /= scale;
                         }
 
                         float elevation = this.plot3DGL.getAngleX() - thetaX;
@@ -349,11 +349,12 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
                     this.repaint();
                 } else if (SwingUtilities.isRightMouseButton(e)) {
                     size = e.getComponent().getSize();
-                    float shift = 180.0f * ((float) (this.mouseLastPos.x - x) / size.width);
-                    if (!(this.plot3DGL instanceof EarthPlot3D)) {
-                        shift = -shift;
+                    float shift = 360.0f * ((float) (this.mouseLastPos.x - x) / size.width);
+                    if (this.plot3DGL instanceof EarthPlot3D) {
+                        float scale = this.plot3DGL.getScale();
+                        shift /= -scale;
                     }
-                    float head = this.plot3DGL.getHeadAngle() + shift;
+                    float head = this.plot3DGL.getHeadAngle() - shift;
                     if (head >= 360) {
                         head -= 360;
                     } else if (head < 0) {

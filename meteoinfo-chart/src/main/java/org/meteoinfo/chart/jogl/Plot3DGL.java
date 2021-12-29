@@ -3868,6 +3868,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return ls;
     }
 
+    /**
+     * Get extent scale - extent / draw extent
+     * @return Extent scale
+     */
+    public float getScale() {
+        return (float) (this.extent.getWidth() / this.drawExtent.getWidth());
+    }
+
     @Override
     public void dispose(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();

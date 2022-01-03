@@ -285,7 +285,7 @@ class Axes3D(Axes):
             self.axes.setExtent(extent.clone())
             return True
         else:
-            print('The limits parameter must be a list with 4 elements: xmin, xmax, ymin, ymax!')
+            print('The limits parameter must be a list with 6 elements: xmin, xmax, ymin, ymax, zmin, zmax!')
             return None
 
     def set_zlabel(self, label, **kwargs):

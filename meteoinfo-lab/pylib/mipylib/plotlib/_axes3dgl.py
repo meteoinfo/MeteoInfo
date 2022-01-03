@@ -16,6 +16,7 @@ from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
 from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil, EarthPlot3D
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
+from org.meteoinfo.common import Extent3D
 from javax.swing import WindowConstants
 from java.awt import Font, Color
 from java.awt.image import BufferedImage
@@ -1632,5 +1633,25 @@ class EarthAxes3D(Axes3DGL):
             lons[idx] = lon
             idx += 1
         self.plot(lons, lats, alts, **kwargs)
+
+    def axis(self, limits):
+        """
+        Sets the min and max of the x,y, axes, with ``[xmin, xmax, ymin, ymax, zmin, zmax]`` .
+
+        :param limits: (*list*) Min and max of the x,y,z axes.
+        """
+        if len(limits) == 6:
+            xmin = limits[0]
+            xmax = limits[1]
+            ymin = limits[2]
+            ymax = limits[3]
+            zmin = limits[4]
+            zmax = limits[5]
+            extent = Extent3D(xmin, xmax, ymin, ymax, zmin, zmax)
+            self.axes.setDrawExtent(extent)
+            return True
+        else:
+            print('The limits parameter must be a list with 6 elements: xmin, xmax, ymin, ymax, zmin, zmax!')
+            return None
 
 ####################################################

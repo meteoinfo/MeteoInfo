@@ -13,6 +13,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
 import junit.framework.Assert;
+import org.apache.commons.imaging.ImageWriteException;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
@@ -550,10 +551,11 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
             public void run() {
                 BufferedImage image = GLChartPanel.this.paintViewImage();
                 if (image != null) {
-                    String extension = fn.substring(fn.lastIndexOf('.') + 1);
+                    //String extension = fn.substring(fn.lastIndexOf('.') + 1);
                     try {
-                        ImageIO.write(image, extension, new File(fn));
-                    } catch (IOException ex) {
+                        //ImageIO.write(image, extension, new File(fn));
+                        ImageUtil.imageSave(image, fn);
+                    } catch (IOException | ImageWriteException ex) {
                         Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -575,10 +577,11 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
             public void run() {
                 BufferedImage image = GLChartPanel.this.paintViewImage(width, height);
                 if (image != null) {
-                    String extension = fn.substring(fn.lastIndexOf('.') + 1);
+                    //String extension = fn.substring(fn.lastIndexOf('.') + 1);
                     try {
-                        ImageIO.write(image, extension, new File(fn));
-                    } catch (IOException ex) {
+                        //ImageIO.write(image, extension, new File(fn));
+                        ImageUtil.imageSave(image, fn);
+                    } catch (IOException | ImageWriteException ex) {
                         Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -612,6 +615,38 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      * @throws InterruptedException
      */
     public void saveImage(String fn, int dpi, int width, int height, Integer sleep) throws InterruptedException, IOException {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                BufferedImage image = GLChartPanel.this.paintViewImage(width, height, dpi);
+                if (image != null) {
+                    try {
+                        if (sleep != null) {
+                            Thread.sleep(sleep * 1000);
+                        }
+
+                        ImageUtil.imageSave(image, fn, dpi);
+                    } catch (ImageWriteException | InterruptedException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                GLChartPanel.this.plot3DGL.reshape(GLChartPanel.this, 0, 0,
+                        GLChartPanel.this.getWidth(), GLChartPanel.this.getHeight());
+            }
+        });
+    }
+
+    /**
+     * Save image file
+     * @param fn File path
+     * @param dpi Image dpi
+     * @param width Image width
+     * @param height Image height
+     * @param sleep Sleep seconds
+     * @throws InterruptedException
+     */
+    public void saveImage_bak(String fn, int dpi, int width, int height, Integer sleep) throws InterruptedException, IOException {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

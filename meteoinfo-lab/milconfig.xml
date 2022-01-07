@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\model_persistence"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
@@ -16,17 +15,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d_earth"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d_earth\streamslice_pitch.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d_earth\CALIPSO_L1_3d_axis.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\convexhull.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d_earth\streamslice_pitch.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d_earth\CALIPSO_L1_3d_axis.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\convexhull.py"/>
     </RecentFiles>
   </File>
   <Font>

@@ -1516,7 +1516,7 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
     
     :param fname: (*string*) A string containing a path to a filename. The output format
         is deduced from the extention of the filename. Supported format: 'png', 'bmp',
-        'jpg', 'eps' and 'pdf'.
+        'jpg', 'gif', 'tif', 'eps' and 'pdf'.
     :param width: (*int*) Optional, width of the output figure with pixel units. Default
         is None, the output figure size is same as *figures* window.
     :param height: (*int*) Optional, height of the output figure with pixel units. Default

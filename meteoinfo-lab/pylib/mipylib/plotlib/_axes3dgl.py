@@ -177,7 +177,7 @@ class Axes3DGL(Axes3D):
 
         :return: (*float*) Pitch angle
         """
-        return self.axes.gePitchAngle()
+        return self.axes.getPitchAngle()
 
     def set_pitch(self, pitch):
         """

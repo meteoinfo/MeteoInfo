@@ -10,6 +10,7 @@ import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Screen;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
+import org.apache.commons.imaging.ImageWriteException;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.graphic.IsosurfaceGraphics;
 import org.meteoinfo.chart.graphic.ParticleGraphics;
@@ -891,38 +892,14 @@ public class JOGLUtil {
     public static void saveImage(Plot3DGL plot3DGL, String fn, int width, int height) throws InterruptedException {
         BufferedImage image = paintViewImage(plot3DGL, width, height);
         if (image != null) {
-            String extension = fn.substring(fn.lastIndexOf('.') + 1);
+            //String extension = fn.substring(fn.lastIndexOf('.') + 1);
             try {
-                ImageIO.write(image, extension, new File(fn));
-            } catch (IOException ex) {
+                //ImageIO.write(image, extension, new File(fn));
+                ImageUtil.imageSave(image, fn);
+            } catch (IOException | ImageWriteException ex) {
                 Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-
-    /**
-     * Save image file
-     *
-     * @param fn     File path
-     * @param width  Image width
-     * @param height Image height
-     * @throws InterruptedException
-     */
-    public static void saveImage_bak(Plot3DGL plot3DGL, String fn, int width, int height) throws InterruptedException {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                BufferedImage image = paintViewImage(plot3DGL, width, height);
-                if (image != null) {
-                    String extension = fn.substring(fn.lastIndexOf('.') + 1);
-                    try {
-                        ImageIO.write(image, extension, new File(fn));
-                    } catch (IOException ex) {
-                        Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        });
     }
 
     /**
@@ -936,6 +913,28 @@ public class JOGLUtil {
      * @throws InterruptedException
      */
     public static void saveImage(Plot3DGL plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
+        BufferedImage image = paintViewImage(plot3DGL, width, height, dpi);
+
+        if (image != null) {
+            try {
+                ImageUtil.imageSave(image, fn, dpi);
+            } catch (ImageWriteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Save image file
+     *
+     * @param plot3DGL Plot3DGL
+     * @param fn       File path
+     * @param width    Image width
+     * @param height   Image height
+     * @param dpi      Image dpi
+     * @throws InterruptedException
+     */
+    public static void saveImage_bak(Plot3DGL plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
         String formatName = fn.substring(fn.lastIndexOf('.') + 1);
         if (formatName.equals("jpg")) {
             formatName = "jpeg";
@@ -976,64 +975,6 @@ public class JOGLUtil {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Save image file
-     *
-     * @param plot3DGL Plot3DGL
-     * @param fn       File path
-     * @param width    Image width
-     * @param height   Image height
-     * @param dpi      Image dpi
-     * @throws InterruptedException
-     */
-    public static void saveImage_bak(Plot3DGL plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                String formatName = fn.substring(fn.lastIndexOf('.') + 1);
-                if (formatName.equals("jpg")) {
-                    formatName = "jpeg";
-                    saveImage_Jpeg(plot3DGL, fn, width, height, dpi);
-                    return;
-                }
-
-                BufferedImage image = paintViewImage(plot3DGL, width, height, dpi);
-
-                if (image != null) {
-                    try {
-                        File output = new File(fn);
-                        output.delete();
-                        for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext(); ) {
-                            ImageWriter writer = iw.next();
-                            ImageWriteParam writeParam = writer.getDefaultWriteParam();
-                            ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
-                            IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
-                            if (metadata == null) {
-                                metadata = writer.getDefaultImageMetadata(typeSpecifier, null);
-                            }
-                            if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
-                                continue;
-                            }
-
-                            ImageUtil.setDPI(metadata, dpi);
-
-                            final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
-                            try {
-                                writer.setOutput(stream);
-                                writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
-                            } finally {
-                                stream.close();
-                            }
-                            break;
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
     }
 
     private static void saveImage_Jpeg(Plot3DGL plot3DGL, String file, int width, int height, int dpi) {

@@ -18,7 +18,9 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.ImageWriteException;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.geo.mapdata.MapDataManage;
@@ -6580,7 +6582,28 @@ public class MapView extends JPanel implements IWebMapPanel {
             g.endExport();
             g.dispose();
         } else {
-            String extension = aFile.substring(aFile.lastIndexOf('.') + 1);
+            ImageFormats imageFormat = ImageUtil.getImageFormat(aFile);
+            BufferedImage image = this._mapBitmap;
+            switch (imageFormat) {
+                case JPEG:
+                    image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+                    Graphics2D g = image.createGraphics();
+                    if (this.getBackground() != null) {
+                        g.setColor(this.getBackground());
+                        g.fillRect(0, 0, image.getWidth(), image.getHeight());
+                    }
+                    paintGraphics(g);
+                    g.dispose();
+                    break;
+            }
+
+            try {
+                ImageUtil.imageSave(image, aFile);
+            } catch (ImageWriteException e) {
+                e.printStackTrace();
+            }
+
+            /*String extension = aFile.substring(aFile.lastIndexOf('.') + 1);
             if (extension.equalsIgnoreCase("bmp") || extension.equalsIgnoreCase("jpg")) {
                 BufferedImage bi;
                 if (extension.equalsIgnoreCase("bmp")) {
@@ -6603,7 +6626,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 }
             } else {
                 ImageIO.write(this._mapBitmap, extension, new File(aFile));
-            }
+            }*/
         }
     }
     
@@ -6624,21 +6647,23 @@ public class MapView extends JPanel implements IWebMapPanel {
 
             int width = this.getWidth();
             int height = this.getHeight();
-            String formatName = fileName.substring(fileName.lastIndexOf('.') + 1);
+            ImageFormats imageFormat = ImageUtil.getImageFormat(fileName);
+            /*String formatName = fileName.substring(fileName.lastIndexOf('.') + 1);
             if (formatName.equals("jpg")) {
                 formatName = "jpeg";
                 saveImage_Jpeg(fileName, width, height, dpi);
                 return;
-            }
+            }*/
 
             double scaleFactor = dpi / 72.0;
-            BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_ARGB);
+            int imageType = imageFormat == ImageFormats.JPEG ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+            BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), imageType);
             Graphics2D g = image.createGraphics();
             AffineTransform at = g.getTransform();
             at.scale(scaleFactor, scaleFactor);
             g.setTransform(at);
             paintGraphics(g);
-            for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
+            /*for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
                 ImageWriter writer = iw.next();
                 ImageWriteParam writeParam = writer.getDefaultWriteParam();
                 ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
@@ -6657,8 +6682,14 @@ public class MapView extends JPanel implements IWebMapPanel {
                     stream.close();
                 }
                 break;
-            }
+            }*/
             g.dispose();
+
+            try {
+                ImageUtil.imageSave(image, fileName, dpi);
+            } catch (ImageWriteException e) {
+                e.printStackTrace();
+            }
         }
     }
     

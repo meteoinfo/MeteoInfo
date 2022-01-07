@@ -70,6 +70,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.DefaultTableModel;
+
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.ImageWriteException;
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
@@ -1111,7 +1114,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
     public void saveImage(String aFile) {
         try {
             saveImage(aFile, null);
-        } catch (PrintException | IOException | InterruptedException ex) {
+        } catch (PrintException | IOException | InterruptedException | ImageWriteException ex) {
             Logger.getLogger(ChartPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -1125,7 +1128,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @throws javax.print.PrintException
      * @throws java.lang.InterruptedException
      */
-    public void saveImage(String aFile, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException {
+    public void saveImage(String aFile, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException, ImageWriteException {
         int w, h;
         if (this.chartSize == null) {
             w = this.getWidth();
@@ -1148,7 +1151,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @throws javax.print.PrintException
      * @throws java.lang.InterruptedException
      */
-    public void saveImage(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException {
+    public void saveImage(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException, ImageWriteException {
         if (aFile.endsWith(".ps")) {
             DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
             String mimeType = "application/postscript";
@@ -1213,30 +1216,17 @@ public class ChartPanel extends JPanel implements IChartPanel{
             g.endExport();
             g.dispose();
         } else {
-            //String extension = aFile.substring(aFile.lastIndexOf('.') + 1);
-            //ImageIO.write(this.mapBitmap, extension, new File(aFile));
-
-            String extension = aFile.substring(aFile.lastIndexOf('.') + 1);
-            BufferedImage aImage;
-            if (extension.equalsIgnoreCase("bmp")) {
-                aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            } else {
-                aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            }
-            Graphics2D g = aImage.createGraphics();
+            ImageFormats imageFormat = ImageUtil.getImageFormat(aFile);
+            int imageType = imageFormat == ImageFormats.JPEG ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+            BufferedImage image = new BufferedImage(width, height, imageType);
+            Graphics2D g = image.createGraphics();
             paintGraphics(g, width, height);
 
             if (sleep != null) {
                 Thread.sleep(sleep * 1000);
             }
 
-            if (extension.equalsIgnoreCase("jpg")) {
-                BufferedImage newImage = new BufferedImage(aImage.getWidth(), aImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-                newImage.createGraphics().drawImage(aImage, 0, 0, Color.BLACK, null);
-                ImageIO.write(newImage, extension, new File(aFile));
-            } else {
-                ImageIO.write(aImage, extension, new File(aFile));
-            }
+            ImageUtil.imageSave(image, aFile);
         }
     }
 
@@ -1547,6 +1537,43 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @throws java.lang.InterruptedException
      */
     public void saveImage(String fileName, int dpi, int width, int height, Integer sleep) throws IOException, InterruptedException {
+        File output = new File(fileName);
+        output.delete();
+
+        ImageFormats imageFormat = ImageUtil.getImageFormat(fileName);
+        double scaleFactor = dpi / 72.0;
+        int imageType = imageFormat == ImageFormats.JPEG ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+        BufferedImage image = new BufferedImage((int) (width * scaleFactor), (int) (height * scaleFactor), imageType);
+        Graphics2D g = image.createGraphics();
+        AffineTransform at = g.getTransform();
+        at.scale(scaleFactor, scaleFactor);
+        g.setTransform(at);
+        paintGraphics(g, width, height);
+        g.dispose();
+
+        if (sleep != null) {
+            Thread.sleep(sleep * 1000);
+        }
+
+        try {
+            ImageUtil.imageSave(image, fileName, dpi);
+        } catch (ImageWriteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Save image
+     *
+     * @param fileName File name
+     * @param dpi DPI
+     * @param width Width
+     * @param height Height
+     * @param sleep Sleep seconds for web map layer
+     * @throws IOException
+     * @throws java.lang.InterruptedException
+     */
+    public void saveImage_bak(String fileName, int dpi, int width, int height, Integer sleep) throws IOException, InterruptedException {
         File output = new File(fileName);
         output.delete();
 

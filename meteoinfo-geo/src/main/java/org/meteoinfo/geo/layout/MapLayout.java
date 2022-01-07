@@ -18,6 +18,8 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.ImageWriteException;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
@@ -3041,20 +3043,17 @@ import org.xml.sax.SAXException;
              g.endExport();
              g.dispose();
          } else {
-             String extension = aFile.substring(aFile.lastIndexOf('.') + 1);
-             BufferedImage aImage;
-             if (extension.equalsIgnoreCase("bmp"))
-                 aImage = new BufferedImage(_pageBounds.width, _pageBounds.height, BufferedImage.TYPE_INT_RGB);
-             else
-                 aImage = new BufferedImage(_pageBounds.width, _pageBounds.height, BufferedImage.TYPE_INT_ARGB);
-             Graphics2D g = aImage.createGraphics();
+             ImageFormats imageFormat = ImageUtil.getImageFormat(aFile);
+             int imageType = imageFormat == ImageFormats.JPEG ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+             BufferedImage image = new BufferedImage(_pageBounds.width, _pageBounds.height, imageType);
+             Graphics2D g = image.createGraphics();
              paintGraphics(g);
-             if (extension.equalsIgnoreCase("jpg")) {
-                 BufferedImage newImage = new BufferedImage(aImage.getWidth(), aImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-                 newImage.createGraphics().drawImage(aImage, 0, 0, Color.BLACK, null);
-                 ImageIO.write(newImage, extension, new File(aFile));
-             } else {
-                 ImageIO.write(aImage, extension, new File(aFile));
+             g.dispose();
+
+             try {
+                 ImageUtil.imageSave(image, aFile);
+             } catch (ImageWriteException e) {
+                 e.printStackTrace();
              }
          }
      }
@@ -3076,21 +3075,23 @@ import org.xml.sax.SAXException;
 
              int width = _pageBounds.width;
              int height = _pageBounds.height;
-             String formatName = fileName.substring(fileName.lastIndexOf('.') + 1);
+             ImageFormats imageFormat = ImageUtil.getImageFormat(fileName);
+             /*String formatName = fileName.substring(fileName.lastIndexOf('.') + 1);
              if (formatName.equals("jpg")) {
                  formatName = "jpeg";
                  saveImage_Jpeg(fileName, width, height, dpi);
                  return;
-             }
+             }*/
 
              double scaleFactor = dpi / 72.0;
-             BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_ARGB);
+             int imageType = imageFormat == ImageFormats.JPEG ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+             BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), imageType);
              Graphics2D g = image.createGraphics();
              AffineTransform at = g.getTransform();
              at.scale(scaleFactor, scaleFactor);
              g.setTransform(at);
              paintGraphics(g);
-             for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
+             /*for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
                  ImageWriter writer = iw.next();
                  ImageWriteParam writeParam = writer.getDefaultWriteParam();
                  ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
@@ -3109,8 +3110,14 @@ import org.xml.sax.SAXException;
                      stream.close();
                  }
                  break;
-             }
+             }*/
              g.dispose();
+
+             try {
+                 ImageUtil.imageSave(image, fileName, dpi);
+             } catch (ImageWriteException e) {
+                 e.printStackTrace();
+             }
          }
      }
 

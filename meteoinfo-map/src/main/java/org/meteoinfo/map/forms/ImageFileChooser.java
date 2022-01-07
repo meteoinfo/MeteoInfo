@@ -67,6 +67,7 @@ public class ImageFileChooser extends JFileChooser {
                             case "jpg":
                             case "bmp":
                             case "gif":
+                            case "tif":
                                 panel.setVisible(true);
                                 break;
                             default:

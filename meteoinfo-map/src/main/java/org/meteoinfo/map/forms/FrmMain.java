@@ -3247,9 +3247,9 @@ public class FrmMain extends JFrame implements IApplication {
         fileExts = new String[]{"bmp"};
         mapFileFilter = new GenericFileFilter(fileExts, "Bitmap Image (*.bmp)");
         aDlg.addChoosableFileFilter(mapFileFilter);
-//        fileExts = new String[]{"tif"};
-//        mapFileFilter = new GenericFileFilter(fileExts, "Tiff Image (*.tif)");
-//        aDlg.addChoosableFileFilter(mapFileFilter);
+        fileExts = new String[]{"tif"};
+        mapFileFilter = new GenericFileFilter(fileExts, "Tiff Image (*.tif)");
+        aDlg.addChoosableFileFilter(mapFileFilter);
         fileExts = new String[]{"eps"};
         mapFileFilter = new GenericFileFilter(fileExts, "EPS file (*.eps)");
         aDlg.addChoosableFileFilter(mapFileFilter);

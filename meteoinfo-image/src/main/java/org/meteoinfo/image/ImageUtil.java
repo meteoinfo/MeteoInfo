@@ -6,19 +6,29 @@
 package org.meteoinfo.image;
 
 import org.apache.commons.imaging.*;
+import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.*;
+import org.w3c.dom.Element;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -181,14 +191,8 @@ public class ImageUtil {
      * @throws ImageWriteException 
      */
     public static void imageSave(Array data, String fileName) throws IOException, ImageWriteException{
-        String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-        BufferedImage image = createImage(data);  
-        ImageFormat format = getImageFormat(extension);
-        if (format == ImageFormats.JPEG){
-            ImageIO.write(image, extension, new File(fileName));
-        } else {
-            Imaging.writeImage(image, new File(fileName), format, null);       
-        }
+        BufferedImage image = createImage(data);
+        imageSave(image, fileName);
     }
     
     /**
@@ -199,17 +203,78 @@ public class ImageUtil {
      * @throws ImageWriteException 
      */
     public static void imageSave(BufferedImage image, String fileName) throws IOException, ImageWriteException{
-        String extension = fileName.substring(fileName.lastIndexOf('.') + 1); 
-        ImageFormat format = getImageFormat(extension);
-        if (format == ImageFormats.JPEG){
-            ImageIO.write(image, extension, new File(fileName));
-        } else {
-            Imaging.writeImage(image, new File(fileName), format, null);       
+        ImageFormats format = getImageFormat(fileName);
+        switch (format) {
+            case JPEG:
+                ImageIO.write(image, "jpg", new File(fileName));
+                break;
+            default:
+                Imaging.writeImage(image, new File(fileName), format, null);
+                break;
         }
     }
-    
-    private static ImageFormat getImageFormat(String ext){
-        ImageFormat format = ImageFormats.PNG;
+
+    /**
+     * Save image into a file
+     * @param image Image
+     * @param fileName Output image file name
+     * @throws IOException
+     * @throws ImageWriteException
+     */
+    public static void imageSave(BufferedImage image, String fileName, int dpi) throws IOException, ImageWriteException{
+        ImageFormats format = getImageFormat(fileName);
+        switch (format) {
+            case JPEG:
+                try {
+                    // Image writer
+                    ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
+                    ImageOutputStream ios = ImageIO.createImageOutputStream(new File(fileName));
+                    imageWriter.setOutput(ios);
+
+                    // Compression
+                    JPEGImageWriteParam jpegParams = (JPEGImageWriteParam) imageWriter.getDefaultWriteParam();
+                    jpegParams.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+                    jpegParams.setCompressionQuality(0.85f);
+
+                    // Metadata (dpi)
+                    IIOMetadata data = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(image), jpegParams);
+                    Element tree = (Element) data.getAsTree("javax_imageio_jpeg_image_1.0");
+                    Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
+                    jfif.setAttribute("Xdensity", Integer.toString(dpi));
+                    jfif.setAttribute("Ydensity", Integer.toString(dpi));
+                    jfif.setAttribute("resUnits", "1"); // density is dots per inch
+                    data.setFromTree("javax_imageio_jpeg_image_1.0", tree);
+
+                    // Write and clean up
+                    imageWriter.write(null, new IIOImage(image, null, data), jpegParams);
+                    ios.close();
+                    imageWriter.dispose();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case BMP:
+            case PNG:
+            case TIFF:
+                final Map<String, Object> params = new HashMap<String, Object>();
+                params.put(ImagingConstants.PARAM_KEY_PIXEL_DENSITY,
+                        PixelDensity.createFromPixelsPerInch(dpi, dpi));
+                Imaging.writeImage(image, new File(fileName), format, params);
+                break;
+            default:
+                Imaging.writeImage(image, new File(fileName), format, null);
+                break;
+        }
+    }
+
+    /**
+     * Get image format
+     * @param fileName The file name
+     * @return Image format
+     */
+    public static ImageFormats getImageFormat(String fileName){
+        String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
+        ImageFormats format = ImageFormats.PNG;
         switch(ext.toLowerCase()){
             case "gif":
                 format = ImageFormats.GIF;

@@ -1000,8 +1000,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         gl.glShadeModel(GL2.GL_SMOOTH);
 
-        gl.glEnable(GL2.GL_BLEND);
-        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+        //gl.glEnable(GL2.GL_BLEND);
+        //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE);
 
         if (this.antialias) {
@@ -2165,6 +2165,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawVolume(GL2 gl, VolumeGraphics volume) throws Exception {
+        gl.glEnable(GL2.GL_BLEND);
+        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glDisable(GL_DEPTH_TEST);
 
         gl.glActiveTexture(GL_TEXTURE1);
         gl.glBindTexture(GL_TEXTURE_2D, getTextureID(gl));
@@ -2185,7 +2188,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
         String vertexShaderCode = Utils.loadResource("/shaders/volume/volume.vert");
-        String fragmentShaderCode = Utils.loadResource("/shaders/volume/volume.frag");
+        String fragmentShaderCode;
+        if (this.orthographic) {
+            fragmentShaderCode = Utils.loadResource("/shaders/volume/volume.frag");
+        } else {
+            fragmentShaderCode = Utils.loadResource("/shaders/volume/volume_perspective.frag");
+        }
         final Program program = new Program("volume", vertexShaderCode, fragmentShaderCode);
         try {
             program.init(gl);
@@ -2274,6 +2282,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         Program.destroyAllPrograms(gl);
         gl.glUseProgram(0);
+        gl.glDisable(GL_BLEND);
+        gl.glEnable(GL_DEPTH_TEST);
     }
 
     private void drawLineString(GL2 gl, Graphic graphic) {
@@ -3932,12 +3942,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     break;
             }
         } else {
+            float near = 0.1f;
+            float far = 1000.0f;
             switch (this.aspectType) {
                 case EQUAL:
-                    glu.gluPerspective(45.0f, h, 1.0, 20.0);
+                    glu.gluPerspective(45.0f, h, near, far);
                     break;
                 default:
-                    glu.gluPerspective(45.0f, 1.0f, 1.0, 20.0);
+                    glu.gluPerspective(45.0f, 1.0f, near, far);
                     break;
             }
             glu.gluLookAt(0.0f, 0.0f, distance, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);

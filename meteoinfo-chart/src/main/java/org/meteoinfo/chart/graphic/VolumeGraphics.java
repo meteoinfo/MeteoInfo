@@ -161,6 +161,10 @@ public class VolumeGraphics extends GraphicCollection3D {
             colors[i * 4 + 1] = (byte) Math.round(g * 255);
             colors[i * 4 + 2] = (byte) Math.round(b * 255);
             colors[i * 4 + 3] = (byte) Math.round(a * 255);
+
+            Color color = this.legendScheme.getLegendBreak(i).getColor();
+            color = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(a * 255));
+            this.legendScheme.getLegendBreak(i).setColor(color);
         }
     }
 

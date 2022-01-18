@@ -4,6 +4,7 @@ import org.meteoinfo.chart.graphic.VolumeGraphics;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -102,7 +103,9 @@ public class VolumeTest {
         VolumeGraphics graphics = test.createGraphics();
         JFrame frame = new JFrame("Volume Test");
         Plot3DGL plot = new Plot3DGL();
+        plot.setOrthographic(false);
         plot.setClipPlane(false);
+        //plot.setBackground(Color.black);
         GLChartPanel canvas = new GLChartPanel(plot);
         plot.addGraphic(graphics);
         frame.getContentPane().add(canvas);

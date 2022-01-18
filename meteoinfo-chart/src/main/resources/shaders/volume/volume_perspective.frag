@@ -43,17 +43,15 @@ Ray makeRay(vec3 origin, vec3 direction) {
 }
 Ray CreateCameraRay(vec2 uv)
 {
-    //float near = -5.0f;
-    float far = 5.0f;
-
     // Transform the camera origin to world space
-    //float zv = 1000.0f;
-    //vec3 direction = (iP * vec4(uv, far, 1.0f)).xyz;
-    vec3 origin = (iP * vec4(uv, 0.0f, 1.0f)).xyz;
-    origin = (iV * vec4(origin.xyz, 1.0f)).xyz;
+    //vec3 origin = (iV* vec4(0.0f, 0.0f, -100.0f, 1.0f)).xyz;
+    //vec3 origin = (iV* vec4(0.0f, 0.0f, 10.0f, 1.0f)).xyz;
+    vec3 origin = (iP * vec4(0.0f, 0.0f, 0.0f, -5.0f)).xyz;
+    //vec3 origin = (iP * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz;
+    origin = (iV * vec4(origin, 0.0f)).xyz;
 
     // Invert the perspective projection of the view-space position
-    vec3 direction = (iP * vec4(uv, far, 1.0f)).xyz;
+    vec3 direction = (iP * vec4(uv, 0.0f, 1.0f)).xyz;
     // Transform the direction from camera to world space and normalize
     direction = (iV* vec4(direction, 0.0f)).xyz;
     direction = normalize(direction);
@@ -80,13 +78,14 @@ void intersect(
 
 
 void main(){
-    vec2 vUV = 2.0 * (gl_FragCoord.xy + vec2(0.5, 0.5)) / viewSize - 1.0;
+    vec2 vUV = 2.0 * gl_FragCoord.xy / viewSize - 1.0;
+    //vec2 vUV = 2.0 * (gl_FragCoord.xy + vec2(0.5, 0.5)) / viewSize - 1.0;
     Ray ray = CreateCameraRay(vUV);
     vec3 aabb[2] = vec3[2](aabbMin, aabbMax);
     float tmin = 0.0;
     float tmax = 0.0;
     intersect(ray, aabb, tmin, tmax);
-    if (tmax < tmin){
+    if (tmax <= tmin){
         discard;
         return;
     }

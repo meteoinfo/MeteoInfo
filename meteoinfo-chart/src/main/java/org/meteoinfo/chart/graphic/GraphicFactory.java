@@ -9,6 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.jogl.pipe.PipeShape;
 import org.meteoinfo.common.*;
+import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.XYListDataset;
@@ -18,6 +19,7 @@ import org.meteoinfo.geo.drawing.Draw;
 import org.meteoinfo.geo.layer.ImageLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.graphic.ImageGraphic;
@@ -3063,45 +3065,74 @@ public class GraphicFactory {
         int width, height, breakNum;
         width = gdata.getXNum();
         height = gdata.getYNum();
-        breakNum = ls.getBreakNum();
-        double[] breakValue = new double[breakNum];
-        Color[] breakColor = new Color[breakNum];
-        Color undefColor = Color.white;
-        for (int i = 0; i < breakNum; i++) {
-            breakValue[i] = Double.parseDouble(ls.getLegendBreaks().get(i).getEndValue().toString());
-            breakColor[i] = ls.getLegendBreaks().get(i).getColor();
-            if (ls.getLegendBreaks().get(i).isNoData()) {
-                undefColor = ls.getLegendBreaks().get(i).getColor();
-            }
-        }
-        Color defaultColor = breakColor[breakNum - 1];    //Last color
         BufferedImage aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        double oneValue;
-        Color oneColor;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                oneValue = gdata.getDoubleValue(i, j);
-                if (Double.isNaN(oneValue) || MIMath.doubleEquals(oneValue, gdata.missingValue)) {
-                    oneColor = undefColor;
+        if (ls.getColorMap() == null) {
+            breakNum = ls.getValidBreakNum();
+            double[] breakValue = new double[breakNum];
+            Color[] breakColor = new Color[breakNum];
+            Color undefColor = Color.white;
+            int idx = 0;
+            for (ColorBreak cb : ls.getLegendBreaks()) {
+                if (cb.isNoData()) {
+                    undefColor = cb.getColor();
                 } else {
-                    oneColor = defaultColor;
-                    if (ls.getLegendType() == LegendType.GRADUATED_COLOR) {
-                        for (int k = 0; k < breakNum - 1; k++) {
-                            if (oneValue < breakValue[k]) {
-                                oneColor = breakColor[k];
-                                break;
-                            }
-                        }
+                    breakValue[idx] = Double.parseDouble(cb.getEndValue().toString());
+                    breakColor[idx] = cb.getColor();
+                    idx += 1;
+                }
+            }
+            Color defaultColor = breakColor[breakNum - 1];    //Last color
+            double oneValue;
+            Color oneColor;
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    oneValue = gdata.getDoubleValue(i, j);
+                    if (Double.isNaN(oneValue) || MIMath.doubleEquals(oneValue, gdata.missingValue)) {
+                        oneColor = undefColor;
                     } else {
-                        for (int k = 0; k < breakNum - 1; k++) {
-                            if (oneValue == breakValue[k]) {
-                                oneColor = breakColor[k];
-                                break;
+                        oneColor = defaultColor;
+                        if (ls.getLegendType() == LegendType.GRADUATED_COLOR) {
+                            for (int k = 0; k < breakNum - 1; k++) {
+                                if (oneValue < breakValue[k]) {
+                                    oneColor = breakColor[k];
+                                    break;
+                                }
+                            }
+                        } else {
+                            for (int k = 0; k < breakNum - 1; k++) {
+                                if (oneValue == breakValue[k]) {
+                                    oneColor = breakColor[k];
+                                    break;
+                                }
                             }
                         }
                     }
+                    aImage.setRGB(j, height - i - 1, oneColor.getRGB());
                 }
-                aImage.setRGB(j, height - i - 1, oneColor.getRGB());
+            }
+        } else {
+            ColorMap colorMap = ls.getColorMap();
+            int n = colorMap.getColorCount();
+            Normalize normalize = ls.getNormalize();
+            double v;
+            Color fillColor = colorMap.getFillColor();
+            Color color;
+            int idx;
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    v = gdata.getDoubleValue(i, j);
+                    if (Double.isNaN(v) || MIMath.doubleEquals(v, gdata.missingValue)) {
+                        color = fillColor;
+                    } else {
+                        idx = (int) (normalize.apply(v).floatValue() * n);
+                        if (idx < 0)
+                            idx = 0;
+                        else if (idx >= n)
+                            idx = n - 1;
+                        color = colorMap.getColor(idx);
+                    }
+                    aImage.setRGB(j, height - i - 1, color.getRGB());
+                }
             }
         }
 

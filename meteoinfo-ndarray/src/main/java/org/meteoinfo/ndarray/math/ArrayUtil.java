@@ -2263,7 +2263,7 @@ public class ArrayUtil {
             else if (idx == -(a.getSize() + 1))
                 idx = (int)a.getSize();
             else {
-                idx = -idx - 2;
+                idx = -idx - 1;
             }
         }
 

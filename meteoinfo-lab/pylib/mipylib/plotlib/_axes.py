@@ -17,6 +17,7 @@ from org.meteoinfo.geometry.legend import BarBreak, PolygonBreak, PolylineBreak,
     PointBreak, LineStyles, PointStyle, LegendScheme, LegendType
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
+from org.meteoinfo.geometry.colors import ExtendType
 from org.meteoinfo.common import MIMath, Extent
 from org.meteoinfo.geo.layer import MapLayer
 
@@ -32,6 +33,7 @@ import mipylib.numeric as np
 from mipylib.numeric.core import DimArray, NDArray
 from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
+import colors
 import mipylib.miutil as miutil
 
 __all__ = ['Axes','PolarAxes']
@@ -2114,12 +2116,6 @@ class Axes(object):
             if isinstance(a, DimArray):
                 y = a.dimvalue(0)
                 x = a.dimvalue(1)
-                # if args[0].islondim(1):
-                #     xaxistype = 'lon'
-                # elif args[0].islatdim(1):
-                #     xaxistype = 'lat'
-                # elif args[0].istimedim(1):
-                #     xaxistype = 'time'
             else:
                 x = np.arange(a.shape[1])
                 y = np.arange(a.shape[0])
@@ -2129,21 +2125,27 @@ class Axes(object):
             y = args[1]
             a = args[2]
             args = args[3:]
+
+        vmin = kwargs.pop('vmin', a.min())
+        vmax = kwargs.pop('vmax', a.max())
         if ls is None:
             if len(args) > 0:
                 level_arg = args[0]
                 if isinstance(level_arg, int):
                     cn = level_arg
-                    ls = LegendManage.createLegendScheme(a.min(), a.max(), cn, cmap)
+                    ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap)
                 else:
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
-                    ls = LegendManage.createLegendScheme(a.min(), a.max(), level_arg, cmap)
+                    ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
             else:    
-                ls = LegendManage.createLegendScheme(a.min(), a.max(), cmap)
+                ls = LegendManage.createLegendScheme(vmin, vmax, cmap)
             ls = ls.convertTo(ShapeTypes.POLYLINE)
             plotutil.setlegendscheme(ls, **kwargs)
-        
+
+        # norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
+        # ls.setNormalize(norm._norm)
+        # ls.setColorMap(cmap)
         smooth = kwargs.pop('smooth', True)
         if x.ndim == 2 and y.ndim == 2:
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
@@ -2246,12 +2248,6 @@ class Axes(object):
             if isinstance(a, DimArray):
                 y = a.dimvalue(0)
                 x = a.dimvalue(1)
-                # if args[0].islondim(1):
-                #     xaxistype = 'lon'
-                # elif args[0].islatdim(1):
-                #     xaxistype = 'lat'
-                # elif args[0].istimedim(1):
-                #     xaxistype = 'time'
             else:
                 x = np.arange(a.shape[1])
                 y = np.arange(a.shape[0])
@@ -2260,24 +2256,29 @@ class Axes(object):
             x = args[0]
             y = args[1]
             a = args[2]
-            #gdata = np.asgriddata(a, x, y, fill_value)
             args = args[3:]
+
+        vmin = kwargs.pop('vmin', a.min())
+        vmax = kwargs.pop('vmax', a.max())
         if ls is None:
             if len(args) > 0:
                 level_arg = args[0]
                 if isinstance(level_arg, int):
                     cn = level_arg
-                    ls = LegendManage.createLegendScheme(a.min(), a.max(), cn, cmap)
+                    ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap)
                 else:
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
-                    ls = LegendManage.createLegendScheme(a.min(), a.max(), level_arg, cmap)
+                    ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
             else:    
-                ls = LegendManage.createLegendScheme(a.min(), a.max(), cmap)
+                ls = LegendManage.createLegendScheme(vmin, vmax, cmap)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
+        # norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
+        # ls.setNormalize(norm._norm)
+        # ls.setColorMap(cmap)
         smooth = kwargs.pop('smooth', True)
         if x.ndim == 2 and y.ndim == 2:
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
@@ -2333,13 +2334,6 @@ class Axes(object):
             isrgb = True
         else:
             gdata = np.asgridarray(X)
-            # if isinstance(X, DimArray):
-            #     if X.islondim(1):
-            #         xaxistype = 'lon'
-            #     elif X.islatdim(1):
-            #         xaxistype = 'lat'
-            #     elif X.istimedim(1):
-            #         xaxistype = 'time'
         args = args[1:]   
         
         extent = kwargs.pop('extent', extent)
@@ -2359,6 +2353,8 @@ class Axes(object):
         else:
             ls = kwargs.pop('symbolspec', None)
             if ls is None:
+                vmin = kwargs.pop('vmin', gdata.min())
+                vmax = kwargs.pop('vmax', gdata.max())
                 if len(args) > 0:
                     level_arg = args[0]
                     if isinstance(level_arg, int):
@@ -2369,11 +2365,14 @@ class Axes(object):
                             level_arg = level_arg.aslist()
                         ls = LegendManage.createImageLegend(gdata, level_arg, cmap)
                 else:
-                    ls = plotutil.getlegendscheme(args, gdata.min(), gdata.max(), **kwargs)
+                    ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
+                    norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
+                    ls.setNormalize(norm._norm)
+                    ls.setColorMap(cmap)
                 ls = ls.convertTo(ShapeTypes.IMAGE)
                 plotutil.setlegendscheme(ls, **kwargs)
-                
             igraphic = GraphicFactory.createImage(gdata, ls, extent)
+
         interpolation = kwargs.pop('interpolation', None)
         if not interpolation is None:
             igraphic.getShape().setInterpolation(interpolation)
@@ -3517,6 +3516,8 @@ class Axes(object):
                 for lb in args[0]:
                     if isinstance(lb, Graphic):
                         lbs.append(lb.getLegend().clone())
+                    elif isinstance(lb, MILayer):
+                        lbs.extend(lb.legend().getLegendBreaks())
                     else:
                         lbs.append(lb)
                 if len(args) == 2:
@@ -3744,6 +3745,8 @@ class Axes(object):
             legend.setPlotOrientation(PlotOrientation.VERTICAL)
             legend.setPosition(LegendPosition.RIGHT_OUTSIDE)
         legend.setDrawNeatLine(False)
+        extend = kwargs.pop('extend', 'neither')
+        legend.setExtendType(extend)
         extendrect = kwargs.pop('extendrect', True)
         legend.setExtendRect(extendrect)
         extendfrac = kwargs.pop('extendfrac', None)
@@ -3801,6 +3804,8 @@ class Axes(object):
         if kwargs.has_key('edgesize'):
             edgesize = kwargs.pop('edgesize')
             legend.setNeatLineSize(edgesize)
+
+        return legend
 
 
 ###############################################

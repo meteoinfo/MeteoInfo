@@ -29,6 +29,7 @@ public class ColorMap {
     // <editor-fold desc="Variables">
     private Color[] colors;
     private String name = "";
+    private Color fillColor = Color.white;
     
     final static int GRADS_RAINBOW = 0;
     // </editor-fold>
@@ -107,6 +108,22 @@ public class ColorMap {
     public void setColors(Color[] value){
         this.colors = value;
     }
+
+    /**
+     * Get fill color
+     * @return Fill color
+     */
+    public Color getFillColor() {
+        return this.fillColor;
+    }
+
+    /**
+     * Set fill color
+     * @param value Fill color
+     */
+    public void setFillColor(Color value) {
+        this.fillColor = value;
+    }
     // </editor-fold>
     // <editor-fold desc="Methods">
     
@@ -138,6 +155,23 @@ public class ColorMap {
             Color c = ColorUtil.createColor(sc, ec, p);
             return c;
         }
+    }
+
+    /**
+     * convert normalized data value from the interval [0, 1] to the RGBA color
+     * @param value Normalized data value
+     * @return Mapped color
+     */
+    public Color map(double value) {
+        if (value < 0 || value > 1) {
+            return this.fillColor;
+        }
+
+        int idx = (int)(value * this.colors.length);
+        if (idx == this.colors.length) {
+            idx = this.colors.length - 1;
+        }
+        return this.colors[idx];
     }
     
     /**

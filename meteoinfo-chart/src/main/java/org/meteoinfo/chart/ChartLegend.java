@@ -13,10 +13,7 @@
  */
 package org.meteoinfo.chart;
 
-import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.PointF;
-import org.meteoinfo.common.XAlign;
-import org.meteoinfo.common.YAlign;
+import org.meteoinfo.common.*;
 import org.meteoinfo.geo.drawing.Draw;
 import com.l2fprod.common.beans.BaseBeanInfo;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
@@ -66,8 +63,8 @@ public class ChartLegend {
     private float breakSpace;
     private float topSpace;
     private float leftSpace;
-    protected double _vBarWidth;
-    protected double _hBarHeight;
+    protected float barWidth;
+    protected float barHeight;
     private int rowColNum = 1;
     private boolean autoRowColNum = true;
     private Dimension symbolDimension;
@@ -99,8 +96,8 @@ public class ChartLegend {
         breakSpace = 3;
         topSpace = 5;
         leftSpace = 5;
-        _vBarWidth = 10;
-        _hBarHeight = 10;
+        barWidth = 10;
+        barHeight = 10;
         this.labelLocation = "out";
         tickLabelFont = new Font("Arial", Font.PLAIN, 14);
         this.tickLabelColor = Color.black;

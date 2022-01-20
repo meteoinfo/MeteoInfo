@@ -463,7 +463,8 @@ public class Draw {
         // insert a border 
         icon.setInsets(new Insets(5, 5, 5, 5));
         icon.setForeground(g.getColor());
-        y = y - icon.getIconHeight() + (icon.getIconHeight() - icon.getTrueIconHeight()) * 0.6f;
+        x = x - 5;
+        y = y - icon.getIconHeight() + (icon.getIconHeight() - icon.getTrueIconHeight()) * 0.5f;
         //y = y - icon.getIconHeight() + size * 0.7f;
         //y = y - icon.getTrueIconHeight() * 1.f;
         Font font = g.getFont();

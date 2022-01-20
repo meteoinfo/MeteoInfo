@@ -18,6 +18,7 @@ package org.meteoinfo.geometry.legend;
  import org.meteoinfo.common.DataConvert;
  import org.meteoinfo.common.colors.ColorMap;
  import org.meteoinfo.common.colors.ColorUtil;
+ import org.meteoinfo.geometry.colors.Normalize;
  import org.meteoinfo.geometry.shape.ShapeTypes;
  import org.w3c.dom.*;
  import org.xml.sax.SAXException;
@@ -55,6 +56,8 @@ package org.meteoinfo.geometry.legend;
      private double maxValue;
      private double undef;
      private Map<Object, ColorBreak> uniqueValueMap;
+     private ColorMap colorMap;
+     private Normalize normalize;
      // </editor-fold>
      // <editor-fold desc="Constructor">
      /**
@@ -357,6 +360,25 @@ package org.meteoinfo.geometry.legend;
      }
 
      /**
+      * Get valid legend breaks number
+      *
+      * @return The valid legend breaks number
+      */
+     public int getValidBreakNum() {
+         if (this.hasNoData) {
+             int n = 0;
+             for (ColorBreak aCB : this.legendBreaks) {
+                 if (!aCB.isNoData()) {
+                     n += 1;
+                 }
+             }
+             return n;
+         } else {
+             return getBreakNum();
+         }
+     }
+
+     /**
       * Get visible legend breaks number
       *
       * @return The visible legend breaks number
@@ -386,6 +408,40 @@ package org.meteoinfo.geometry.legend;
          }
 
          return n;
+     }
+
+     /**
+      * Get color map
+      * @return Color map
+      */
+     public ColorMap getColorMap() {
+         return this.colorMap;
+     }
+
+     /**
+      * Set color map
+      * @param value Color map
+      */
+     public void setColorMap(ColorMap value) {
+         this.colorMap = value;
+     }
+
+     /**
+      * Get normalize
+      * @return Normalize
+      */
+     public Normalize getNormalize() {
+         return this.normalize;
+     }
+
+     /**
+      * Set normalize
+      * @param value Normalize
+      */
+     public void setNormalize(Normalize value) {
+         this.normalize = value;
+         this.minValue = normalize.getMinValue();
+         this.maxValue = normalize.getMaxValue();
      }
      // </editor-fold>
      // <editor-fold desc="Methods">

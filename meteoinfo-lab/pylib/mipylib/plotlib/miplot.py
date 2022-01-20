@@ -2096,8 +2096,9 @@ def colorbar(mappable=None, **kwargs):
     cax = kwargs.pop('cax', None)
     if cax is None:
         cax = g_axes
-    cax.colorbar(mappable, **kwargs)
+    cb = cax.colorbar(mappable, **kwargs)
     draw_if_interactive()
+    return cb
 
 # def set(obj, **kwargs):
 #     '''

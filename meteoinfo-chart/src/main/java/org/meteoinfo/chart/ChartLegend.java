@@ -636,7 +636,7 @@ public class ChartLegend {
     /**
      * Set symbol scale
      *
-     * @param value Symble scale
+     * @param value Symbol scale
      */
     public void setSymbolScale(float value) {
         double w = this.symbolDimension.getWidth() * value;

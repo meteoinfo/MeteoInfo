@@ -37,8 +37,8 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
 public class ChartColorBar extends ChartLegend {
 
     // <editor-fold desc="Variables">
-    private List<Double> tickLocations;
-    private List<ChartText> tickLabels;
+    private List<Double> tickLocations = new ArrayList<>();
+    private List<ChartText> tickLabels = new ArrayList<>();
     private boolean autoTick;
     private boolean insideTick;
     private float tickLength;
@@ -48,6 +48,8 @@ public class ChartColorBar extends ChartLegend {
     private boolean drawMinLabel;
     private boolean drawMaxLabel;
     private ExtendType extendType;
+    private boolean drawMinorTick;
+    protected int minorTickNum;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -59,10 +61,8 @@ public class ChartColorBar extends ChartLegend {
     public ChartColorBar(LegendScheme ls) {
         super(ls);
 
-        this.tickLocations = new ArrayList<>();
-        this.tickLabels = new ArrayList<>();
         this.autoTick = true;
-        this.insideTick = true;
+        this.insideTick = false;
         this.tickLength = 5;
         this.tickVisible = true;
         this.tickWidth = 1;
@@ -70,6 +70,8 @@ public class ChartColorBar extends ChartLegend {
         this.drawMinLabel = false;
         this.drawMaxLabel = false;
         this.extendType = ExtendType.NEITHER;
+        this.drawMinorTick = false;
+        this.minorTickNum = 5;
         this.setLegendScheme(ls);
     }
 
@@ -290,6 +292,7 @@ public class ChartColorBar extends ChartLegend {
             double[] tickValues;
             if (normalize instanceof LogNorm) {
                 tickValues = MIMath.getIntervalValues_Log(min, max);
+                this.drawMinorTick = true;
             } else {
                 tickValues = MIMath.getIntervalValues(min, max);
             }
@@ -368,8 +371,74 @@ public class ChartColorBar extends ChartLegend {
         this.extendType = ExtendType.valueOf(value.toUpperCase());
     }
 
+    /**
+     * Get whether draw minor ticks
+     * @return Whether draw minor ticks
+     */
+    public boolean isDrawMinorTick() {
+        return this.drawMinorTick;
+    }
+
+    /**
+     * Set whether draw minor ticks
+     * @param value Whether draw minor ticks
+     */
+    public void setDrawMinorTick(boolean value) {
+        this.drawMinorTick = value;
+    }
+
+    /**
+     * Get minor tick number
+     *
+     * @return Minor tick number
+     */
+    public int getMinorTickNum() {
+        return this.minorTickNum;
+    }
+
+    /**
+     * Set minor tick number
+     *
+     * @param value Minor tick number
+     */
+    public void setMinorTickNum(int value) {
+        this.minorTickNum = value;
+    }
+
     // </editor-fold>
     // <editor-fold desc="Method">
+    @Override
+    protected int getTickWidth(Graphics2D g) {
+        if (this.tickLabels.isEmpty()) {
+            return super.getTickWidth(g);
+        } else {
+            float tWidth = 0;
+            g.setFont(this.tickLabelFont);
+            for (ChartText ct : this.tickLabels) {
+                float labWidth = (float) Draw.getStringDimension(ct.getText(), this.tickLabelAngle, g).getWidth();
+                if (tWidth < labWidth)
+                    tWidth = labWidth;
+            }
+            return (int) tWidth;
+        }
+    }
+
+    @Override
+    protected int getTickHeight(Graphics2D g) {
+        if (this.tickLabels.isEmpty()) {
+            return super.getTickHeight(g);
+        } else {
+            float tHeight = 0;
+            g.setFont(this.tickLabelFont);
+            for (ChartText ct : this.tickLabels) {
+                float labHeight = (float) Draw.getStringDimension(ct.getText(), 90 - Math.abs(this.tickLabelAngle), g).getWidth();
+                if (tHeight < labHeight)
+                    tHeight = labHeight;
+            }
+            return (int) tHeight;
+        }
+    }
+
     /**
      * Draw legend
      *
@@ -514,7 +583,11 @@ public class ChartColorBar extends ChartLegend {
         }
         for (int i = 0; i < bNum; i++) {
             g.setColor(colors[i]);
-            Rectangle2D rect = new Rectangle2D.Float(aP.X - 1, aP.Y, barWidth + 1, barHeight);
+            Rectangle2D rect;
+            if (i == bNum - 1)
+                rect = new Rectangle2D.Float(aP.X - 1, aP.Y, barWidth + 2, barHeight);
+            else
+                rect = new Rectangle2D.Float(aP.X - 1, aP.Y, barWidth + 1, barHeight);
             g.fill(rect);
             aP.X += barWidth;
         }
@@ -598,6 +671,25 @@ public class ChartColorBar extends ChartLegend {
                 Draw.drawString(g, sP.X, sP.Y, label, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
             } else {
                 Draw.drawString(g, sP.X, sP.Y, label, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+            }
+
+            //Draw minor tick lines
+            if (this.drawMinorTick) {
+                if (i == this.tickLocations.size() - 1) {
+                    continue;
+                }
+                float minorTickLen = tickLen - 2;
+                double v1 = this.tickLocations.get(i);
+                double v2 = this.tickLocations.get(i + 1);
+                double step = (v2 - v1) / this.minorTickNum;
+                double v;
+                g.setColor(this.tickColor);
+                for (int j = 1; j < this.minorTickNum; j++) {
+                    v = v1 + step * j;
+                    sP.X = x_shift + minMaxWidth * normalize.apply(v).floatValue();
+                    sP.Y = aP.Y;
+                    this.drawTickLine(g, sP, minorTickLen, true, 0);
+                }
             }
         }
 
@@ -1009,7 +1101,11 @@ public class ChartColorBar extends ChartLegend {
         for (int i = 0; i < bNum; i++) {
             aP.Y -= barHeight;
             g.setColor(colors[i]);
-            Rectangle2D rect = new Rectangle2D.Float(aP.X, aP.Y, barWidth, barHeight + 1);
+            Rectangle2D rect;
+            if (i == bNum - 1)
+                rect = new Rectangle2D.Float(aP.X, aP.Y - 1, barWidth, barHeight + 2);
+            else
+                rect = new Rectangle2D.Float(aP.X, aP.Y, barWidth, barHeight + 1);
             g.fill(rect);
         }
         switch (this.extendType) {
@@ -1087,6 +1183,25 @@ public class ChartColorBar extends ChartLegend {
             String label = this.tickLabels.get(i).getText();
             g.setColor(this.tickLabelColor);
             Draw.drawString(g, sP.X, sP.Y, label, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+
+            //Draw minor tick lines
+            if (this.drawMinorTick) {
+                if (i == this.tickLocations.size() - 1) {
+                    continue;
+                }
+                float minorTickLen = tickLen - 2;
+                double v1 = this.tickLocations.get(i);
+                double v2 = this.tickLocations.get(i + 1);
+                double step = (v2 - v1) / this.minorTickNum;
+                double v;
+                g.setColor(this.tickColor);
+                for (int j = 1; j < this.minorTickNum; j++) {
+                    v = v1 + step * j;
+                    sP.X = aP.X;
+                    sP.Y = this.legendHeight - y_shift - minMaxHeight * normalize.apply(v).floatValue();
+                    this.drawTickLine(g, sP, minorTickLen, false, 0);
+                }
+            }
         }
 
         //Draw label

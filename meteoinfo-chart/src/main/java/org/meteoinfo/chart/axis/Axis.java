@@ -90,7 +90,7 @@ public class Axis implements Cloneable {
         this.tickColor = Color.black;
         this.tickStroke = new BasicStroke(1.0f);
         this.tickLength = 5;
-        this.insideTick = true;
+        this.insideTick = false;
         this.tickLabelFont = new Font("Arial", Font.PLAIN, 14);
         this.tickLabelColor = Color.black;
         this.tickLabelAngle = 0;
@@ -184,12 +184,26 @@ public class Axis implements Cloneable {
      * @param label Axis label
      * @param xAxis If is x axis
      * @param loc Location
-     * @param drawTickLabel If draw tick label
+     * @param drawTickLine Whether draw tick label
      */
-    public Axis(String label, boolean xAxis, Location loc, boolean drawTickLabel) {
+    public Axis(String label, boolean xAxis, Location loc, boolean drawTickLine) {
+        this(label, xAxis, loc, drawTickLine, drawTickLine);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param label Axis label
+     * @param xAxis If is x axis
+     * @param loc Location
+     * @param drawTickLine Whether draw tick lines
+     * @param drawTickLabel Whether draw tick labels
+     */
+    public Axis(String label, boolean xAxis, Location loc, boolean drawTickLine, boolean drawTickLabel) {
         this(label);
         this.xAxis = xAxis;
         this.location = loc;
+        this.drawTickLine = drawTickLine;
         this.drawTickLabel = drawTickLabel;
     }
 

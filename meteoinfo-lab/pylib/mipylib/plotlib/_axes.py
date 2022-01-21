@@ -115,11 +115,12 @@ class Axes(object):
             self.set_xaxis_type(xaxistype)
         bgcolor = plotutil.getcolor(bgcobj)
         self.axes.setBackground(bgcolor)
-        tickline = kwargs.pop('tickline', True)
-        b_axis.setDrawTickLine(tickline)
-        t_axis.setDrawTickLine(tickline)
-        l_axis.setDrawTickLine(tickline)
-        r_axis.setDrawTickLine(tickline)
+        tickline = kwargs.pop('tickline', None)
+        if not tickline is None:
+            b_axis.setDrawTickLine(tickline)
+            t_axis.setDrawTickLine(tickline)
+            l_axis.setDrawTickLine(tickline)
+            r_axis.setDrawTickLine(tickline)
         tickfontname = kwargs.pop('tickfontname', 'Arial')
         tickfontsize = kwargs.pop('tickfontsize', 14)
         tickbold = kwargs.pop('tickbold', False)
@@ -755,9 +756,9 @@ class Axes(object):
         tickwidth = kwargs.pop('tickwidth', None)
         ticklength = kwargs.pop('ticklength', None)
         ticklabel = kwargs.pop('ticklabel', None)
-        minortick = kwargs.pop('minortick', False)
-        minorticknum = kwargs.pop('minorticknum', 5)
-        tickin = kwargs.pop('tickin', True)
+        minortick = kwargs.pop('minortick', None)
+        minorticknum = kwargs.pop('minorticknum', None)
+        tickin = kwargs.pop('tickin', None)
         axistype = kwargs.pop('axistype', None)
         timetickformat = kwargs.pop('timetickformat', None)
         if not axistype is None:
@@ -812,9 +813,12 @@ class Axes(object):
                 axis.setTickLength(ticklength)
             if not ticklabel is None:
                 axis.setDrawTickLabel(ticklabel)
-            axis.setMinorTickVisible(minortick)
-            axis.setMinorTickNum(minorticknum)
-            axis.setInsideTick(tickin)
+            if not minortick is None:
+                axis.setMinorTickVisible(minortick)
+            if not minorticknum is None:
+                axis.setMinorTickNum(minorticknum)
+            if not tickin is None:
+                axis.setInsideTick(tickin)
             axis.setTickLabelFont(font)
         
     def yaxis(self, **kwargs):
@@ -859,9 +863,9 @@ class Axes(object):
         tickwidth = kwargs.pop('tickwidth', None)
         ticklength = kwargs.pop('ticklength', None)
         ticklabel = kwargs.pop('ticklabel', None)
-        minortick = kwargs.pop('minortick', False)
-        minorticknum = kwargs.pop('minorticknum', 5)
-        tickin = kwargs.pop('tickin', True)
+        minortick = kwargs.pop('minortick', None)
+        minorticknum = kwargs.pop('minorticknum', None)
+        tickin = kwargs.pop('tickin', None)
         axistype = kwargs.pop('axistype', None)
         timetickformat = kwargs.pop('timetickformat', None)
         if not axistype is None:
@@ -916,9 +920,12 @@ class Axes(object):
                 axis.setTickLength(ticklength)
             if not ticklabel is None:
                 axis.setDrawTickLabel(ticklabel)
-            axis.setMinorTickVisible(minortick)
-            axis.setMinorTickNum(minorticknum)
-            axis.setInsideTick(tickin)
+            if not minortick is None:
+                axis.setMinorTickVisible(minortick)
+            if not minorticknum is None:
+                axis.setMinorTickNum(minorticknum)
+            if not tickin is None:
+                axis.setInsideTick(tickin)
             axis.setTickLabelFont(font)
     
     def xreverse(self):
@@ -3676,6 +3683,8 @@ class Axes(object):
         :param yshift: (*float*) Y shift of the colorbar with pixel coordinate.
         :param vmintick: (*boolean*) Draw minimum value tick or not.
         :param vmaxtick: (*boolean*) Draw maximum value tick or not.
+        :param minortick: (*boolean*) Draw minor tick line or not.
+        :param minorticknum: (*int*) Minor tick line number between two adjacent major tick lines.
         """
         cmap = kwargs.pop('cmap', None)
         shrink = kwargs.pop('shrink', 1)
@@ -3804,6 +3813,9 @@ class Axes(object):
         if kwargs.has_key('edgesize'):
             edgesize = kwargs.pop('edgesize')
             legend.setNeatLineSize(edgesize)
+        minortick = kwargs.pop('minortick', None)
+        if not minortick is None:
+            legend.setDrawMinorTick(minortick)
 
         return legend
 

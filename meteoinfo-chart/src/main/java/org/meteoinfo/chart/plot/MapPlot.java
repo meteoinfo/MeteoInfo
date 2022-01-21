@@ -78,7 +78,9 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         } catch (CloneNotSupportedException ex) {
             Logger.getLogger(MapPlot.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.getAxis(Location.TOP).setDrawTickLine(false);
         this.getAxis(Location.TOP).setDrawTickLabel(false);
+        this.getAxis(Location.RIGHT).setDrawTickLine(false);
         this.getAxis(Location.RIGHT).setDrawTickLabel(false);
         this.setDrawNeatLine(true);
         this.getGridLine().setTop(true);

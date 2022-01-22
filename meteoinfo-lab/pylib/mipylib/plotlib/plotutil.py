@@ -181,19 +181,21 @@ def getcolors(cs, alpha=None):
     
 def getcolormap(**kwargs):
     colors = kwargs.pop('colors', None)
-    issingle = False
+    is_single = False
     reverse = False
     if colors is None:
         colors = kwargs.pop('color', None)
-        issingle = True
+        is_single = True
+
+    alpha = kwargs.pop('alpha', None)
     if not colors is None:
-        if issingle or isinstance(colors, str):
-            c = getcolor(colors)
+        if is_single or isinstance(colors, str):
+            c = getcolor(colors, alpha)
             cmap = ColorMap(c)
         else:
             cs = []
             for cc in colors:
-                c = getcolor(cc)
+                c = getcolor(cc, alpha)
                 cs.append(c)
             cmap = ColorMap(cs)
     else:
@@ -205,7 +207,7 @@ def getcolormap(**kwargs):
         fn = os.path.join(migl.get_cmap_folder(), fn)
         if not os.path.exists(fn):
             raise IOError('cmap file not exists: %s' % fn)
-        alpha = kwargs.pop('alpha', None)
+
         if alpha is None:
             cmap = ColorUtil.loadColorMap(fn)
         else:

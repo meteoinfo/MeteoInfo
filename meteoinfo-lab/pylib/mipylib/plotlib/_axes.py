@@ -17,7 +17,6 @@ from org.meteoinfo.geometry.legend import BarBreak, PolygonBreak, PolylineBreak,
     PointBreak, LineStyles, PointStyle, LegendScheme, LegendType
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
-from org.meteoinfo.geometry.colors import ExtendType
 from org.meteoinfo.common import MIMath, Extent
 from org.meteoinfo.geo.layer import MapLayer
 
@@ -3668,6 +3667,9 @@ class Axes(object):
         :param labelloc: (*string*) Label location ['in' | 'out' | 'top' | 'bottom' | 'left' | 'right'].
             Defaul is ``out``.
         :param newlegend: (*boolean*) Add a new legend or replace existing one.
+        :param extend: (*string*) {'neither', 'both', 'min', 'max'} If not 'neither', make pointed end(s)
+            for out-of- range values. These are set for a given colormap using the colormap set_under and
+            set_over methods.
         :param extendrect: (*boolean*) If ``True`` the minimum and maximum colorbar extensions will be
             rectangular (the default). If ``False`` the extensions will be triangular.
         :param extendfrac: [None | 'auto' | length] If set to *None*, both the minimum and maximum triangular

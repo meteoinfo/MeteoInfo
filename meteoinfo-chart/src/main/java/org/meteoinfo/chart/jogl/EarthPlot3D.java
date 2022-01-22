@@ -5,6 +5,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import org.apache.commons.imaging.ImageReadException;
 import org.joml.Vector3f;
+import org.meteoinfo.chart.ChartColorBar;
 import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
@@ -222,7 +223,13 @@ public class EarthPlot3D extends Plot3DGL {
         //Draw legend
         gl.glPopMatrix();
         this.updateMatrix(gl);
-        this.drawLegend(gl);
+        if (!this.legends.isEmpty()) {
+            ChartColorBar legend = (ChartColorBar) this.legends.get(0);
+            if (legend.getLegendScheme().getColorMap() == null)
+                this.drawLegend(gl, legend);
+            else
+                this.drawColorbar(gl, legend);
+        }
 
         gl.glFlush();
 

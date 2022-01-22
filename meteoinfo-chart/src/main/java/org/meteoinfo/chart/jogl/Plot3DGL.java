@@ -34,7 +34,10 @@ import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
+import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.data.Dataset;
+import org.meteoinfo.geometry.colors.BoundaryNorm;
+import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
@@ -1000,8 +1003,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         gl.glShadeModel(GL2.GL_SMOOTH);
 
-        //gl.glEnable(GL2.GL_BLEND);
-        //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glEnable(GL2.GL_BLEND);
+        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE);
 
         if (this.antialias) {
@@ -1108,7 +1111,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //Draw legend
         gl.glPopMatrix();
         this.updateMatrix(gl);
-        this.drawLegend(gl);
+        if (!this.legends.isEmpty()) {
+            ChartColorBar legend = (ChartColorBar) this.legends.get(0);
+            if (legend.getLegendScheme().getColorMap() == null)
+                this.drawLegend(gl, legend);
+            else
+                this.drawColorbar(gl, legend);
+        }
 
         gl.glFlush();
 
@@ -2165,8 +2174,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawVolume(GL2 gl, VolumeGraphics volume) throws Exception {
-        gl.glEnable(GL2.GL_BLEND);
-        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         gl.glDisable(GL_DEPTH_TEST);
 
         gl.glActiveTexture(GL_TEXTURE1);
@@ -2282,7 +2289,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         Program.destroyAllPrograms(gl);
         gl.glUseProgram(0);
-        gl.glDisable(GL_BLEND);
         gl.glEnable(GL_DEPTH_TEST);
     }
 
@@ -3689,167 +3695,293 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
     }
 
-    void drawLegend(GL2 gl) {
-        if (!this.legends.isEmpty()) {
-            ChartColorBar legend = (ChartColorBar) this.legends.get(0);
-            LegendScheme ls = legend.getLegendScheme();
-            int bNum = ls.getBreakNum();
-            if (ls.getLegendBreaks().get(bNum - 1).isNoData()) {
-                bNum -= 1;
+    void drawLegend(GL2 gl, ChartColorBar legend) {
+        LegendScheme ls = legend.getLegendScheme();
+        int bNum = ls.getBreakNum();
+        if (ls.getLegendBreaks().get(bNum - 1).isNoData()) {
+            bNum -= 1;
+        }
+
+        float x = 1.6f;
+        x += legend.getXShift() * this.lenScale;
+        float y = -1.0f;
+        float lHeight = 2.0f;
+        float lWidth = lHeight / legend.getAspect();
+        List<Integer> labelIdxs = new ArrayList<>();
+        List<String> tLabels = new ArrayList<>();
+        if (legend.isAutoTick()) {
+            float legendLen = this.toScreenLength(x, y, 0.0f, x, y + lHeight, 0.0f);
+            int tickGap = this.getLegendTickGap(legend, legendLen);
+            int sIdx = (bNum % tickGap) / 2;
+            int labNum = bNum - 1;
+            if (ls.getLegendType() == LegendType.UNIQUE_VALUE) {
+                labNum += 1;
+            } else if (legend.isDrawMinLabel()) {
+                sIdx = 0;
+                labNum = bNum;
             }
-
-            float x = 1.6f;
-            x += legend.getXShift() * this.lenScale;
-            float y = -1.0f;
-            float lHeight = 2.0f;
-            float lWidth = lHeight / legend.getAspect();
-            List<Integer> labelIdxs = new ArrayList<>();
-            List<String> tLabels = new ArrayList<>();
-            if (legend.isAutoTick()) {
-                float legendLen = this.toScreenLength(x, y, 0.0f, x, y + lHeight, 0.0f);
-                int tickGap = this.getLegendTickGap(legend, legendLen);
-                int sIdx = (bNum % tickGap) / 2;
-                int labNum = bNum - 1;
-                if (ls.getLegendType() == LegendType.UNIQUE_VALUE) {
-                    labNum += 1;
-                } else if (legend.isDrawMinLabel()) {
-                    sIdx = 0;
-                    labNum = bNum;
-                }
-                while (sIdx < labNum) {
-                    labelIdxs.add(sIdx);
-                    sIdx += tickGap;
-                }
-            } else {
-                int tickIdx;
-                for (int i = 0; i < bNum; i++) {
-                    ColorBreak cb = ls.getLegendBreaks().get(i);
-                    double v = Double.parseDouble(cb.getEndValue().toString());
-                    if (legend.getTickLocations().contains(v)) {
-                        labelIdxs.add(i);
-                        tickIdx = legend.getTickLocations().indexOf(v);
-                        tLabels.add(legend.getTickLabels().get(tickIdx).getText());
-                    }
-                }
+            while (sIdx < labNum) {
+                labelIdxs.add(sIdx);
+                sIdx += tickGap;
             }
-
-            float barHeight = lHeight / bNum;
-
-            //Draw color bar
-            gl.glDepthFunc(GL.GL_ALWAYS);
-            float yy = y;
-            float[] rgba;
+        } else {
+            int tickIdx;
             for (int i = 0; i < bNum; i++) {
-                //Fill color
-                rgba = ls.getLegendBreak(i).getColor().getRGBComponents(null);
-                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glBegin(GL2.GL_QUADS);
-                gl.glVertex2f(x, yy);
-                gl.glVertex2f(x + lWidth, yy);
-                gl.glVertex2f(x + lWidth, yy + barHeight);
-                gl.glVertex2f(x, yy + barHeight);
-                gl.glEnd();
-                yy += barHeight;
+                ColorBreak cb = ls.getLegendBreaks().get(i);
+                double v = Double.parseDouble(cb.getEndValue().toString());
+                if (legend.getTickLocations().contains(v)) {
+                    labelIdxs.add(i);
+                    tickIdx = legend.getTickLocations().indexOf(v);
+                    tLabels.add(legend.getTickLabels().get(tickIdx).getText());
+                }
             }
+        }
 
-            //Draw neatline
+        float barHeight = lHeight / bNum;
+
+        //Draw color bar
+        gl.glDepthFunc(GL.GL_ALWAYS);
+        float yy = y;
+        float[] rgba;
+        for (int i = 0; i < bNum; i++) {
+            //Fill color
+            rgba = ls.getLegendBreak(i).getColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glBegin(GL2.GL_QUADS);
+            gl.glVertex2f(x, yy);
+            gl.glVertex2f(x + lWidth, yy);
+            gl.glVertex2f(x + lWidth, yy + barHeight);
+            gl.glVertex2f(x, yy + barHeight);
+            gl.glEnd();
+            yy += barHeight;
+        }
+
+        //Draw neatline
+        rgba = legend.getTickColor().getRGBComponents(null);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.glLineWidth(legend.getNeatLineSize() * this.dpiScale);
+        gl.glBegin(GL2.GL_LINE_STRIP);
+        gl.glVertex2f(x, y);
+        gl.glVertex2f(x, y + lHeight);
+        gl.glVertex2f(x + lWidth, y + lHeight);
+        gl.glVertex2f(x + lWidth, y);
+        gl.glVertex2f(x, y);
+        gl.glEnd();
+
+        //Draw ticks
+        int idx = 0;
+        yy = y;
+        String caption;
+        float tickLen = legend.getTickLength() * this.lenScale;
+        float labelX = x + lWidth;
+        if (legend.isInsideTick()) {
+            if (tickLen > lWidth)
+                tickLen = lWidth;
+        } else {
+            labelX += tickLen;
+        }
+        float strWidth = 0;
+        Rectangle2D rect;
+        float xShift = this.tickSpace * this.dpiScale;
+        for (int i = 0; i < bNum; i++) {
+            if (labelIdxs.contains(i)) {
+                ColorBreak cb = ls.getLegendBreaks().get(i);
+                if (legend.isAutoTick()) {
+                    if (ls.getLegendType() == LegendType.UNIQUE_VALUE) {
+                        caption = cb.getCaption();
+                    } else {
+                        caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
+                    }
+                } else {
+                    caption = tLabels.get(idx);
+                }
+                if (ls.getLegendType() == LegendType.UNIQUE_VALUE) {
+                    rect = this.drawString(gl, caption, legend.getTickLabelFont(), legend.getTickLabelColor(),
+                            x + lWidth, yy + barHeight * 0.5f, 0, XAlign.LEFT, YAlign.CENTER, xShift, 0);
+                } else {
+                    rgba = legend.getTickColor().getRGBComponents(null);
+                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    gl.glLineWidth(legend.getTickWidth() * this.dpiScale);
+                    gl.glBegin(GL2.GL_LINES);
+                    if (legend.isInsideTick())
+                        gl.glVertex2f(x + lWidth - tickLen, yy + barHeight);
+                    else
+                        gl.glVertex2f(x + lWidth + tickLen, yy + barHeight);
+                    gl.glVertex2f(x + lWidth, yy + barHeight);
+                    gl.glEnd();
+                    rect = this.drawString(gl, caption, legend.getTickLabelFont(), legend.getTickLabelColor(),
+                            labelX, yy + barHeight, 0, XAlign.LEFT, YAlign.CENTER, xShift, 0);
+                }
+                if (strWidth < rect.getWidth())
+                    strWidth = (float) rect.getWidth();
+
+                idx += 1;
+            }
+            yy += barHeight;
+        }
+
+        //Draw label
+        ChartText label = legend.getLabel();
+        if (label != null) {
+            label.setColor(legend.getTickColor());
+            float sx, sy;
+            float yShift = this.tickSpace * this.dpiScale;
+            switch (legend.getLabelLocation()) {
+                case "top":
+                    sx = x + lWidth * 0.5f;
+                    sy = y + lHeight;
+                    drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 0, 0, yShift);
+                    break;
+                case "bottom":
+                    sx = x + lWidth * 0.5f;
+                    sy = y;
+                    yShift = -yShift;
+                    drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.TOP, 0, 0, yShift);
+                    break;
+                case "left":
+                case "in":
+                    sx = x;
+                    sy = y + lHeight * 0.5f;
+                    drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+                    break;
+                default:
+                    sx = labelX;
+                    sy = y + lHeight * 0.5f;
+                    yShift = -strWidth - yShift;
+                    drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.TOP, 90.f, 0, yShift);
+                    break;
+            }
+        }
+        gl.glDepthFunc(GL2.GL_LEQUAL);
+    }
+
+    void drawColorbar(GL2 gl, ChartColorBar legend) {
+        LegendScheme ls = legend.getLegendScheme();
+        ColorMap colorMap = ls.getColorMap();
+        Normalize normalize = ls.getNormalize();
+        int bNum = colorMap.getColorCount();
+        if (normalize instanceof BoundaryNorm) {
+            bNum = ((BoundaryNorm) normalize).getNRegions();
+        }
+
+        float x = 1.6f;
+        x += legend.getXShift() * this.lenScale;
+        float y = -1.0f;
+        float legendHeight = 2.0f;
+        float barWidth = legendHeight / legend.getAspect();
+        float minMaxHeight = legendHeight;
+        float y_shift = 0;
+        switch (legend.getExtendType()) {
+            case MIN:
+                minMaxHeight -= barWidth;
+                y_shift += barWidth;
+                break;
+            case MAX:
+                minMaxHeight -= barWidth;
+                break;
+            case BOTH:
+                minMaxHeight -= barWidth * 2;
+                y_shift += barWidth;
+                break;
+        }
+        float barHeight = minMaxHeight / bNum;
+
+        //Draw color bar
+        gl.glDepthFunc(GL.GL_ALWAYS);
+        float yy = y;
+        float[] rgba;
+        for (int i = 0; i < bNum; i++) {
+            //Fill color
+            rgba = ls.getLegendBreak(i).getColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glBegin(GL2.GL_QUADS);
+            gl.glVertex2f(x, yy);
+            gl.glVertex2f(x + barWidth, yy);
+            gl.glVertex2f(x + barWidth, yy + barHeight);
+            gl.glVertex2f(x, yy + barHeight);
+            gl.glEnd();
+            yy += barHeight;
+        }
+
+        //Draw neatline
+        rgba = legend.getTickColor().getRGBComponents(null);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.glLineWidth(legend.getNeatLineSize() * this.dpiScale);
+        gl.glBegin(GL2.GL_LINE_STRIP);
+        gl.glVertex2f(x, y);
+        gl.glVertex2f(x, y + legendHeight);
+        gl.glVertex2f(x + barWidth, y + legendHeight);
+        gl.glVertex2f(x + barWidth, y);
+        gl.glVertex2f(x, y);
+        gl.glEnd();
+
+        //Draw ticks
+        int idx = 0;
+        yy = y;
+        String caption;
+        float tickLen = legend.getTickLength() * this.lenScale;
+        float labelX = x + barWidth;
+        if (legend.isInsideTick()) {
+            if (tickLen > barWidth)
+                tickLen = barWidth;
+        } else {
+            labelX += tickLen;
+        }
+        float strWidth = 0;
+        Rectangle2D rect;
+        float xShift = this.tickSpace * this.dpiScale;
+        for (int i = 0; i < legend.getTickLocations().size(); i++) {
+            yy = y + minMaxHeight * normalize.apply(legend.getTickLocations().get(i)).floatValue();
+            String label = legend.getTickLabels().get(i).getText();
             rgba = legend.getTickColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(legend.getNeatLineSize() * this.dpiScale);
-            gl.glBegin(GL2.GL_LINE_STRIP);
-            gl.glVertex2f(x, y);
-            gl.glVertex2f(x, y + lHeight);
-            gl.glVertex2f(x + lWidth, y + lHeight);
-            gl.glVertex2f(x + lWidth, y);
-            gl.glVertex2f(x, y);
+            gl.glLineWidth(legend.getTickWidth() * this.dpiScale);
+            gl.glBegin(GL2.GL_LINES);
+            if (legend.isInsideTick())
+                gl.glVertex2f(x + barWidth - tickLen, yy);
+            else
+                gl.glVertex2f(x + barWidth + tickLen, yy);
+            gl.glVertex2f(x + barWidth, yy);
             gl.glEnd();
-
-            //Draw ticks
-            int idx = 0;
-            yy = y;
-            String caption;
-            float tickLen = legend.getTickLength() * this.lenScale;
-            float labelX = x + lWidth;
-            if (legend.isInsideTick()) {
-                if (tickLen > lWidth)
-                    tickLen = lWidth;
-            } else {
-                labelX += tickLen;
-            }
-            float strWidth = 0;
-            Rectangle2D rect;
-            float xShift = this.tickSpace * this.dpiScale;
-            for (int i = 0; i < bNum; i++) {
-                if (labelIdxs.contains(i)) {
-                    ColorBreak cb = ls.getLegendBreaks().get(i);
-                    if (legend.isAutoTick()) {
-                        if (ls.getLegendType() == LegendType.UNIQUE_VALUE) {
-                            caption = cb.getCaption();
-                        } else {
-                            caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
-                        }
-                    } else {
-                        caption = tLabels.get(idx);
-                    }
-                    if (ls.getLegendType() == LegendType.UNIQUE_VALUE) {
-                        rect = this.drawString(gl, caption, legend.getTickLabelFont(), legend.getTickLabelColor(),
-                                x + lWidth, yy + barHeight * 0.5f, 0, XAlign.LEFT, YAlign.CENTER, xShift, 0);
-                    } else {
-                        rgba = legend.getTickColor().getRGBComponents(null);
-                        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                        gl.glLineWidth(legend.getTickWidth() * this.dpiScale);
-                        gl.glBegin(GL2.GL_LINES);
-                        if (legend.isInsideTick())
-                            gl.glVertex2f(x + lWidth - tickLen, yy + barHeight);
-                        else
-                            gl.glVertex2f(x + lWidth + tickLen, yy + barHeight);
-                        gl.glVertex2f(x + lWidth, yy + barHeight);
-                        gl.glEnd();
-                        rect = this.drawString(gl, caption, legend.getTickLabelFont(), legend.getTickLabelColor(),
-                                labelX, yy + barHeight, 0, XAlign.LEFT, YAlign.CENTER, xShift, 0);
-                    }
-                    if (strWidth < rect.getWidth())
-                        strWidth = (float) rect.getWidth();
-
-                    idx += 1;
-                }
-                yy += barHeight;
-            }
-
-            //Draw label
-            ChartText label = legend.getLabel();
-            if (label != null) {
-                label.setColor(legend.getTickColor());
-                float sx, sy;
-                float yShift = this.tickSpace * this.dpiScale;
-                switch (legend.getLabelLocation()) {
-                    case "top":
-                        sx = x + lWidth * 0.5f;
-                        sy = y + lHeight;
-                        drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 0, 0, yShift);
-                        break;
-                    case "bottom":
-                        sx = x + lWidth * 0.5f;
-                        sy = y;
-                        yShift = -yShift;
-                        drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.TOP, 0, 0, yShift);
-                        break;
-                    case "left":
-                    case "in":
-                        sx = x;
-                        sy = y + lHeight * 0.5f;
-                        drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
-                        break;
-                    default:
-                        sx = labelX;
-                        sy = y + lHeight * 0.5f;
-                        yShift = -strWidth - yShift;
-                        drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.TOP, 90.f, 0, yShift);
-                        break;
-                }
-            }
-            gl.glDepthFunc(GL2.GL_LEQUAL);
+            rect = this.drawString(gl, label, legend.getTickLabelFont(), legend.getTickLabelColor(),
+                    labelX, yy, 0, XAlign.LEFT, YAlign.CENTER, xShift, 0);
+            if (strWidth < rect.getWidth())
+                strWidth = (float) rect.getWidth();
         }
+
+        //Draw label
+        ChartText label = legend.getLabel();
+        if (label != null) {
+            label.setColor(legend.getTickColor());
+            float sx, sy;
+            float yShift = this.tickSpace * this.dpiScale;
+            switch (legend.getLabelLocation()) {
+                case "top":
+                    sx = x + barWidth * 0.5f;
+                    sy = y + legendHeight;
+                    drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 0, 0, yShift);
+                    break;
+                case "bottom":
+                    sx = x + barWidth * 0.5f;
+                    sy = y;
+                    yShift = -yShift;
+                    drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.TOP, 0, 0, yShift);
+                    break;
+                case "left":
+                case "in":
+                    sx = x;
+                    sy = y + legendHeight * 0.5f;
+                    drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+                    break;
+                default:
+                    sx = labelX;
+                    sy = y + legendHeight * 0.5f;
+                    yShift = -strWidth - yShift;
+                    drawString(gl, label, sx, sy, 0.0f, XAlign.CENTER, YAlign.TOP, 90.f, 0, yShift);
+                    break;
+            }
+        }
+        gl.glDepthFunc(GL2.GL_LEQUAL);
     }
 
     /**

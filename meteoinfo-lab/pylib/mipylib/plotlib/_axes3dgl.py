@@ -26,6 +26,7 @@ import numbers
 import warnings
 
 import plotutil
+import colors
 from ._axes3d import Axes3D
 from mipylib.numeric.core import NDArray, DimArray
 import mipylib.numeric as np
@@ -1254,20 +1255,20 @@ class Axes3DGL(Axes3D):
             data = args[3]
             isovalue = args[4]
             args = args[5:]
-        cmap = plotutil.getcolormap(**kwargs)
-        cvalue = kwargs.pop('cvalue', None)
-        if not cvalue is None:
+        cdata = kwargs.pop('cdata', None)
+        if not cdata is None:
+            cmap = plotutil.getcolormap(**kwargs)
             if len(args) > 0:
                 level_arg = args[0]
                 if isinstance(level_arg, int):
                     cn = level_arg
-                    ls = LegendManage.createLegendScheme(data.min(), data.max(), cn, cmap)
+                    ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cn, cmap)
                 else:
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
-                    ls = LegendManage.createLegendScheme(data.min(), data.max(), level_arg, cmap)
+                    ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), level_arg, cmap)
             else:
-                ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
+                ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
             ls = ls.convertTo(ShapeTypes.POLYGON)
             edge = kwargs.pop('edge', True)
             kwargs['edge'] = edge
@@ -1488,8 +1489,8 @@ class Axes3DGL(Axes3D):
         :param cmap: (*string*) Color map string.
         :param vmin: (*float*) Minimum value for particle plotting.
         :param vmax: (*float*) Maximum value for particle plotting.
-        :param alpha_min: (*float*) Minimum alpha value.
-        :param alpha_max: (*float*) Maximum alpha value.
+        :param alpha_min: (*float*) Minimum alpha value. Default is 0.
+        :param alpha_max: (*float*) Maximum alpha value. Default is 1.
 
         :returns: Volumeplot graphic
         '''
@@ -1521,6 +1522,7 @@ class Axes3DGL(Axes3D):
         alpha_min = kwargs.pop('alpha_min', 0.0)
         alpha_max = kwargs.pop('alpha_max', 1.0)
         cmap = plotutil.getcolormap(**kwargs)
+        norm = kwargs.pop('norm', colors.Normalize(vmin, vmax, clip=True))
         if len(args) > 0:
             level_arg = args[0]
             if isinstance(level_arg, int):
@@ -1531,11 +1533,13 @@ class Axes3DGL(Axes3D):
                     level_arg = level_arg.aslist()
                 ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
             plotutil.setlegendscheme(ls, **kwargs)
+            ls.setNormalize(norm._norm)
+            ls.setColorMap(cmap)
             graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
                                        alpha_min, alpha_max)
         else:
             graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), cmap, \
-                                       vmin, vmax, alpha_min, alpha_max)
+                                       norm._norm, alpha_min, alpha_max)
 
         visible = kwargs.pop('visible', True)
         if visible:

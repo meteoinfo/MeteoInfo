@@ -6,6 +6,7 @@ import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.Array;
@@ -90,6 +91,43 @@ public class VolumeGraphics extends GraphicCollection3D {
 
         double[] values = MIMath.getIntervalValues(vMin, vMax, n - 1);
         LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, ShapeTypes.POLYGON, vMin, vMax);
+        this.setLegendScheme(ls);
+        this.setSingleLegend(false);
+    }
+
+    /**
+     * Constructor
+     * @param value Value array - 3D
+     * @param colorMap Color map
+     * @param norm Normalize
+     */
+    public VolumeGraphics(Array value, ColorMap colorMap, Normalize norm) {
+        value = value.copyIfView();
+        int[] shape = value.getShape();
+        this.depth = shape[0];
+        this.height = shape[1];
+        this.width = shape[2];
+        this.data = new byte[width * height * depth];
+        for (int i = 0; i < value.getSize(); i++) {
+            data[i] = (byte) ((int) (norm.apply(value.getDouble(i)).floatValue() * 255));
+        }
+        buffer = Buffers.newDirectByteBuffer(data);
+
+        Color[] oColors = colorMap.getColors();
+        int n = oColors.length;
+        originalColors = new byte[n * 3];
+        for (int i = 0; i < n; i++) {
+            int color = oColors[i].getRGB();
+            originalColors[i * 3 + 0] = (byte) ((color >> 16) & 0xff);
+            originalColors[i * 3 + 1] = (byte) ((color >> 8) & 0xff);
+            originalColors[i * 3 + 2] = (byte) ((color) & 0xff);
+        }
+
+        double[] values = MIMath.getIntervalValues(norm.getMinValue(), norm.getMaxValue(), n - 1);
+        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, ShapeTypes.POLYGON,
+                norm.getMinValue(), norm.getMaxValue());
+        ls.setColorMap(colorMap);
+        ls.setNormalize(norm);
         this.setLegendScheme(ls);
         this.setSingleLegend(false);
     }

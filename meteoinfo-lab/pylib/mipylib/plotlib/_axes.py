@@ -508,40 +508,44 @@ class Axes(object):
         :param timetickformat: (*string*) Time tick label format.
         '''
         ax = self.axes
+        b_axis = ax.getAxis(Location.BOTTOM)
+        t_axis = ax.getAxis(Location.TOP)
         if axistype == 'lon':
-            b_axis = LonLatAxis(ax.getAxis(Location.BOTTOM))
-            #b_axis.setLabel('Longitude')
+            if not isinstance(b_axis, LonLatAxis):
+                b_axis = LonLatAxis(b_axis)
             b_axis.setLongitude(True)
             ax.setAxis(b_axis, Location.BOTTOM)
-            t_axis = LonLatAxis(ax.getAxis(Location.TOP))
-            #t_axis.setLabel('Longitude')
+            if not isinstance(t_axis, LonLatAxis):
+                t_axis = LonLatAxis(t_axis)
             t_axis.setLongitude(True)
             ax.setAxis(t_axis, Location.TOP)
         elif axistype == 'lat':
-            b_axis = LonLatAxis(ax.getAxis(Location.BOTTOM))
-            #b_axis.setLabel('Latitude')
+            if not isinstance(b_axis, LonLatAxis):
+                b_axis = LonLatAxis(b_axis)
             b_axis.setLongitude(False)
             ax.setAxis(b_axis, Location.BOTTOM)
-            t_axis = LonLatAxis(ax.getAxis(Location.TOP))
-            #t_axis.setLabel('Latitude')
+            if not isinstance(t_axis, LonLatAxis):
+                t_axis = LonLatAxis(t_axis)
             t_axis.setLongitude(False)
             ax.setAxis(t_axis, Location.TOP)
         elif axistype == 'time':
-            b_axis = TimeAxis(ax.getAxis(Location.BOTTOM))
+            if not isinstance(b_axis, TimeAxis):
+                b_axis = TimeAxis(b_axis)
             ax.setAxis(b_axis, Location.BOTTOM)
-            t_axis = TimeAxis(ax.getAxis(Location.TOP))
+            if not isinstance(t_axis, TimeAxis):
+                t_axis = TimeAxis(t_axis)
             ax.setAxis(t_axis, Location.TOP)
             if not timetickformat is None:
-                ax.getAxis(Location.BOTTOM).setTimeFormat(timetickformat)
-                ax.getAxis(Location.TOP).setTimeFormat(timetickformat)
+                b_axis.setTimeFormat(timetickformat)
+                t_axis.setTimeFormat(timetickformat)
         elif axistype == 'log':
-            b_axis = LogAxis(ax.getAxis(Location.BOTTOM))
-            #b_axis.setLabel('Log')
-            b_axis.setMinorTickNum(10)
+            if not isinstance(b_axis, LogAxis):
+                b_axis = LogAxis(b_axis)
+                b_axis.setMinorTickNum(10)
             ax.setAxis(b_axis, Location.BOTTOM)
-            t_axis = LogAxis(ax.getAxis(Location.TOP))
-            #t_axis.setLabel('Log')
-            t_axis.setMinorTickNum(10)
+            if not isinstance(t_axis, LogAxis):
+                t_axis = LogAxis(t_axis)
+                t_axis.setMinorTickNum(10)
             ax.setAxis(t_axis, Location.TOP)   
         else:
             b_axis = Axis(ax.getAxis(Location.BOTTOM))
@@ -1717,8 +1721,11 @@ class Axes(object):
         :param hatchsize: (*int*) Hatch size. Default is None (8).
         :param bgcolor: (*Color*) Background color, only valid with hatch.
         :param barswidth: (*float*) Bars width (0 - 1), only used for automatic bar with plot
-            (only one argument widthout ``width`` augument). Defaul is 0.8.
-        :param morepoints: (*boolean*) More points in bar rectangle. Defaul is False.
+            (only one argument without ``width`` argument). Default is 0.8.
+        :param ecolor: (*Color*) The line color of the errorbars. Default is black.
+        :param elinewidth: (*float*) The line width of the errorbars.
+        :param capsize: (*float*) The length of the error bar caps in pixels. Default is 0.
+        :param morepoints: (*boolean*) More points in bar rectangle. Default is False.
         
         :returns: Bar legend break.
         
@@ -1778,6 +1785,8 @@ class Axes(object):
         bgcolor = plotutil.getcolor(bgcolor)
         ecolor = kwargs.pop('ecolor', 'k')
         ecolor = plotutil.getcolor(ecolor)
+        elinewidth = kwargs.pop('elinewidth', None)
+        capsize = kwargs.pop('capsize', None)
         morepoints = kwargs.pop('morepoints', False)
         barbreaks = []
         for color in colors:
@@ -1796,6 +1805,10 @@ class Axes(object):
                 if not hatchsize is None:
                     lb.setStyleSize(hatchsize)
             lb.setErrorColor(ecolor)
+            if not elinewidth is None:
+                lb.setErrorSize(elinewidth)
+            if not capsize is None:
+                lb.setCapSize(capsize)
             barbreaks.append(lb)
             
         #Create bar graphics

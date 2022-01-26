@@ -15,6 +15,7 @@ public class BarBreak extends PolygonBreak {
     // <editor-fold desc="Variables">
     private Color errorColor;
     private float errorSize;
+    private float capSize;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -24,6 +25,7 @@ public class BarBreak extends PolygonBreak {
         super();
         errorColor = Color.black;
         errorSize = 1.0f;
+        capSize = 0;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -57,6 +59,22 @@ public class BarBreak extends PolygonBreak {
      */
     public void setErrorSize(float value){
         this.errorSize = value;
+    }
+
+    /**
+     * Get cap size
+     * @return Cap size
+     */
+    public float getCapSize() {
+        return this.capSize;
+    }
+
+    /**
+     * Set cap size
+     * @param value Cap size
+     */
+    public void setCapSize(float value) {
+        this.capSize = value;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

@@ -32,6 +32,7 @@ from mipylib.numeric.core import NDArray, DimArray
 from mipylib.geolib.milayer import MILayer
 import mipylib.geolib.migeo as migeo
 import plotutil
+import colors
 import mipylib.migl as migl
 import mipylib.miutil as miutil
 
@@ -1239,8 +1240,10 @@ class MapAxes(Axes):
             y = plotutil.getplotdata(y)
             layer = DrawMeteoData.createImageLayer(x, y, igraphic, 'layer_image')
         else:
-            if len(args) > 0:
-                if ls is None:
+            if ls is None:
+                vmin = kwargs.pop('vmin', gdata.min())
+                vmax = kwargs.pop('vmax', gdata.max())
+                if len(args) > 0:
                     level_arg = args[0]
                     if isinstance(level_arg, int):
                         cn = level_arg
@@ -1249,9 +1252,11 @@ class MapAxes(Axes):
                         if isinstance(level_arg, NDArray):
                             level_arg = level_arg.aslist()
                         ls = LegendManage.createImageLegend(gdata, level_arg, cmap)
-            else:    
-                if ls is None:
+                else:
                     ls = LegendManage.createImageLegend(gdata, cmap)
+                    norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
+                    ls.setNormalize(norm._norm)
+                    ls.setColorMap(cmap)
             plotutil.setlegendscheme(ls, **kwargs)
             fill_color = kwargs.pop('fill_color', None)
             if not fill_color is None:

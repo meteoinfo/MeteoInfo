@@ -34,6 +34,7 @@ public class PolylineBreak extends ColorBreak {
     protected Color symbolFillColor;
     protected boolean fillSymbol;
     protected int symbolInterval;
+    protected float capSize;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -53,6 +54,7 @@ public class PolylineBreak extends ColorBreak {
         symbolFillColor = symbolColor;
         fillSymbol = false;
         symbolInterval = 1;
+        capSize = 0;
     }
 
     /**
@@ -302,6 +304,22 @@ public class PolylineBreak extends ColorBreak {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Get cap size
+     * @return Cap size
+     */
+    public float getCapSize() {
+        return this.capSize;
+    }
+
+    /**
+     * Set cap size
+     * @param value Cap size
+     */
+    public void setCapSize(float value) {
+        this.capSize = value;
     }
 
     // </editor-fold>

@@ -70,6 +70,7 @@ public class LonLatAxis extends Axis implements Cloneable {
         this.tickLabelColor = axis.tickLabelColor;
         this.tickLabelFont = axis.tickLabelFont;
         this.tickLength = axis.tickLength;
+        this.tickStroke = axis.tickStroke;
         this.visible = axis.visible;
         this.positionType = axis.positionType;
         this.position = axis.position;

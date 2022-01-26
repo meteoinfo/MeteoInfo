@@ -1953,6 +1953,7 @@ public class GraphicFactory {
         PolylineBreak ebreak = new PolylineBreak();
         ebreak.setColor(bb.getErrorColor());
         ebreak.setWidth(bb.getErrorSize());
+        float capeSize = bb.getCapSize();
         double width = widths.getDouble(0);
         if (autoWidth && xdata.getSize() > 1) {
             width = (xdata.getDouble(1) - xdata.getDouble(0)) * width;
@@ -2002,22 +2003,24 @@ public class GraphicFactory {
                 pList = new ArrayList<>();
                 pList.add(new PointD(x + width * 0.5, y - e));
                 pList.add(new PointD(x + width * 0.5, y + e));
-                PolylineShape pls = new PolylineShape();
+                CapPolylineShape pls = new CapPolylineShape();
                 pls.setPoints(pList);
+                pls.setCapLen(capeSize);
                 graphics.add(new Graphic(pls, ebreak));
-                //Add cap
+                /*//Add cap
+                double cape = capeSize == null ? width * 0.25 : capeSize * 0.5;
                 pList = new ArrayList<>();
-                pList.add(new PointD(x + width * 0.25, y - e));
-                pList.add(new PointD(x + width * 0.75, y - e));
+                pList.add(new PointD(x + width * 0.5 - cape, y - e));
+                pList.add(new PointD(x + width * 0.5 + cape, y - e));
                 pls = new PolylineShape();
                 pls.setPoints(pList);
                 graphics.add(new Graphic(pls, ebreak));
                 pList = new ArrayList<>();
-                pList.add(new PointD(x + width * 0.25, y + e));
-                pList.add(new PointD(x + width * 0.75, y + e));
+                pList.add(new PointD(x + width * 0.5 - cape, y + e));
+                pList.add(new PointD(x + width * 0.5 + cape, y + e));
                 pls = new PolylineShape();
                 pls.setPoints(pList);
-                graphics.add(new Graphic(pls, ebreak));
+                graphics.add(new Graphic(pls, ebreak));*/
             }
             i++;
         }

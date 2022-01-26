@@ -18,8 +18,10 @@ import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.GridArray;
+import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LegendType;
 import org.meteoinfo.geometry.shape.ShapeTypes;
@@ -222,77 +224,88 @@ public class RasterLayer extends ImageLayer {
         return image;
     }
 
-    private BufferedImage getImageFromGridData(GridArray gdata, LegendScheme als) {
+    private BufferedImage getImageFromGridData(GridArray gdata, LegendScheme ls) {
         int width, height, breakNum;
         width = gdata.getXNum();
         height = gdata.getYNum();
-        breakNum = als.getBreakNum();
-        double[] breakValue = new double[breakNum];
-        Color[] breakColor = new Color[breakNum];
-        Color undefColor = this.missingColor;
-        Color defaultColor = als.getLegendBreaks().get(breakNum - 1).getColor();
-        Color color;
-        for (int i = 0; i < breakNum; i++) {
-            breakValue[i] = Double.parseDouble(als.getLegendBreaks().get(i).getEndValue().toString());
-            color = als.getLegendBreaks().get(i).getColor();
-            breakColor[i] = color;
-            if (als.getLegendBreaks().get(i).isNoData()) {
-                undefColor = color;
-            } else {
-                defaultColor = color;
-            }
-        }
         BufferedImage aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        double value;
-
-        Array data = gdata.getData().copyIfView();
-        double[] values = als.getValues();
-        int n = values.length;
-        int idx;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                value = data.getDouble(i * width + j);
-                if (Double.isNaN(value) || MIMath.doubleEquals(value, gdata.missingValue)) {
-                    color = undefColor;
+        if (ls.getColorMap() == null) {
+            breakNum = ls.getBreakNum();
+            double[] breakValue = new double[breakNum];
+            Color[] breakColor = new Color[breakNum];
+            Color undefColor = this.missingColor;
+            Color defaultColor = ls.getLegendBreaks().get(breakNum - 1).getColor();
+            Color color;
+            for (int i = 0; i < breakNum; i++) {
+                breakValue[i] = Double.parseDouble(ls.getLegendBreaks().get(i).getEndValue().toString());
+                color = ls.getLegendBreaks().get(i).getColor();
+                breakColor[i] = color;
+                if (ls.getLegendBreaks().get(i).isNoData()) {
+                    undefColor = color;
                 } else {
-                    idx = Arrays.binarySearch(values, value);
-                    if (als.getLegendType() == LegendType.UNIQUE_VALUE) {
-                        if (idx < 0 || idx >= n)
-                            color = undefColor;
-                        else
-                            color = als.getLegendBreak(idx).getColor();
-                    } else {
-                        if (idx < 0) {
-                            if (idx == -1)
-                                idx = 0;
-                            else if (idx == -n - 1)
-                                idx = n - 1;
-                            else
-                                idx = -idx - 2;
-                        } else if (idx == n - 1)
-                            idx = n - 2;
-
-                        color = als.getLegendBreak(idx).getColor();
-                    }
+                    defaultColor = color;
                 }
-                aImage.setRGB(j, height - i - 1, color.getRGB());
+            }
+            double value;
+
+            Array data = gdata.getData().copyIfView();
+            double[] values = ls.getValues();
+            int n = values.length;
+            int idx;
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    value = data.getDouble(i * width + j);
+                    if (Double.isNaN(value) || MIMath.doubleEquals(value, gdata.missingValue)) {
+                        color = undefColor;
+                    } else {
+                        idx = Arrays.binarySearch(values, value);
+                        if (ls.getLegendType() == LegendType.UNIQUE_VALUE) {
+                            if (idx < 0 || idx >= n)
+                                color = undefColor;
+                            else
+                                color = ls.getLegendBreak(idx).getColor();
+                        } else {
+                            if (idx < 0) {
+                                if (idx == -1)
+                                    idx = 0;
+                                else if (idx == -n - 1)
+                                    idx = n - 1;
+                                else
+                                    idx = -idx - 2;
+                            } else if (idx == n - 1)
+                                idx = n - 2;
+
+                            color = ls.getLegendBreak(idx).getColor();
+                        }
+                    }
+                    aImage.setRGB(j, height - i - 1, color.getRGB());
+                }
+            }
+        } else {
+            ColorMap colorMap = ls.getColorMap();
+            int n = colorMap.getColorCount();
+            Normalize normalize = ls.getNormalize();
+            double v;
+            Color fillColor = colorMap.getFillColor();
+            Color color;
+            int idx;
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    v = gdata.getDoubleValue(i, j);
+                    if (Double.isNaN(v) || MIMath.doubleEquals(v, gdata.missingValue)) {
+                        color = fillColor;
+                    } else {
+                        idx = (int) (normalize.apply(v).floatValue() * n);
+                        if (idx < 0)
+                            idx = 0;
+                        else if (idx >= n)
+                            idx = n - 1;
+                        color = colorMap.getColor(idx);
+                    }
+                    aImage.setRGB(j, height - i - 1, color.getRGB());
+                }
             }
         }
-
-        /*for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                //oneValue = gdata.data[i][j];
-                value = gdata.getDoubleValue(i, j);
-                if (Double.isNaN(value) || MIMath.doubleEquals(value, gdata.missingValue)) {
-                    color = undefColor;
-                } else {
-                    color = als.findLegendBreak(value).getColor();
-                }
-                //data[idx++] = oneColor.getRGB();
-                aImage.setRGB(j, height - i - 1, color.getRGB());
-            }
-        }*/
-        //aImage.setRGB(0, 0, width, height, rgb, 0, width);
 
         return aImage;
     }

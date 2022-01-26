@@ -235,6 +235,7 @@ public class Axis implements Cloneable {
         this.tickLabelColor = axis.getTickLabelColor();
         this.tickLabelFont = axis.getTickLabelFont();
         this.tickLength = axis.getTickLength();
+        this.tickStroke = axis.tickStroke;
         this.visible = axis.isVisible();
         this.position = axis.getPosition();
         this.positionType = axis.getPositionType();

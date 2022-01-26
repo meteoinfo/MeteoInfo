@@ -481,8 +481,11 @@ def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
     :param hatchsize: (*int*) Hatch size. Default is None (8).
     :param bgcolor: (*Color*) Background color, only valid with hatch.
     :param barswidth: (*float*) Bars width (0 - 1), only used for automatic bar with plot
-        (only one argument widthout ``width`` augument). Defaul is 0.8.
-    :param morepoints: (*boolean*) More points in bar rectangle. Defaul is False.
+        (only one argument without ``width`` argument). Default is 0.8.
+    :param ecolor: (*Color*) The line color of the errorbars. Default is black.
+    :param elinewidth: (*float*) The line width of the errorbars.
+    :param capsize: (*float*) The length of the error bar caps in pixels. Default is 0.
+    :param morepoints: (*boolean*) More points in bar rectangle. Default is False.
     
     :returns: Bar legend break.
     
@@ -1326,7 +1329,11 @@ def axes3d(*args, **kwargs):
     """
     opengl = kwargs.pop('opengl', True)
     if opengl:
-        earth = kwargs.pop('earth', False)
+        projection = kwargs.pop('projection', None)
+        if projection is None:
+            earth = kwargs.pop('earth', False)
+        else:
+            earth = projection == 'earth'
         if earth:
             return axes3d_earth(*args, **kwargs)
         else:

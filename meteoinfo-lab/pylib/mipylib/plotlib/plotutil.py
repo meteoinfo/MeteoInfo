@@ -654,11 +654,13 @@ def point2arrow(pb, **kwargs):
     '''
     arrowbreak = ArrowBreak(pb)
     width = kwargs.pop('width', 1.)
-    arrowbreak.setWidth(width)
-    headwidth = kwargs.pop('headwidth', width * 5.)
-    arrowbreak.setHeadWidth(headwidth)
-    headlength = kwargs.pop('headlength', headwidth * 1.5)
-    arrowbreak.setHeadLength(headlength)
+    arrowbreak.initWidth(width)
+    headwidth = kwargs.pop('headwidth', None)
+    if not headwidth is None:
+        arrowbreak.setHeadWidth(headwidth)
+    headlength = kwargs.pop('headlength', None)
+    if not headlength is None:
+        arrowbreak.setHeadLength(headlength)
     overhang = kwargs.pop('overhang', None)
     if not overhang is None:
         arrowbreak.setOverhang(overhang)

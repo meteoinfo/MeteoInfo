@@ -15,6 +15,7 @@ public class ArrowBreak extends PointBreak {
     private float headWidth;
     private float headLength;
     private float overhang;
+    private boolean autoScale;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -23,10 +24,9 @@ public class ArrowBreak extends PointBreak {
     public ArrowBreak() {
         super();
         this.outlineColor = null;
-        this.width = 1;
-        this.headWidth = this.width * 5;
-        this.headLength = this.headWidth * 1.5f;
+        this.initWidth(1);
         this.overhang = 0;
+        this.autoScale = true;
     }
     
     /**
@@ -55,6 +55,7 @@ public class ArrowBreak extends PointBreak {
         this.headWidth = this.width * 5;
         this.headLength = this.headWidth * 1.5f;
         this.overhang = 0;
+        this.autoScale = true;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -121,7 +122,33 @@ public class ArrowBreak extends PointBreak {
     public void setOverhang(float value) {
         this.overhang = value;
     }
+
+    /**
+     * Get whether automatically scale the arrow size
+     * @return Whether automatically scale the arrow size
+     */
+    public boolean isAutoScale() {
+        return this.autoScale;
+    }
+
+    /**
+     * Set whether automatically scale the arrow size
+     * @param value Whether automatically scale the arrow size
+     */
+    public void setAutoScale(boolean value) {
+        this.autoScale = value;
+    }
     // </editor-fold>
     // <editor-fold desc="Methods">
+
+    /**
+     * Initialize width
+     * @param width Width
+     */
+    public void initWidth(float width) {
+        this.width = width;
+        this.headWidth = this.width * 5;
+        this.headLength = this.headWidth * 5 / 3;
+    }
     // </editor-fold>
 }

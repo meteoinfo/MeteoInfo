@@ -692,6 +692,7 @@ class Axes(object):
         ax2.axes.getAxis(Location.LEFT).setVisible(False)
         ax2.axes.getAxis(Location.TOP).setVisible(False)
         axis = ax2.axes.getAxis(Location.RIGHT)
+        axis.setDrawTickLine(True)
         axis.setDrawTickLabel(True)
         axis.setDrawLabel(True)
         return ax2
@@ -952,13 +953,17 @@ class Axes(object):
         self.axes.addGraphic(patch)
         self.axes.setAutoExtent()
     
-    def add_graphic(self, graphic):
+    def add_graphic(self, graphic, projection=None):
         '''
         Add a graphic
         
         :param graphic: (*Graphic*) The graphic to be added.
+        :param projection: (*Projection*) The projection
         '''
-        self.axes.addGraphic(graphic)
+        if projection is None:
+            self.axes.addGraphic(graphic)
+        else:
+            self.axes.addGraphic(graphic, projection)
 
     def get_graphics(self):
         '''

@@ -44,6 +44,8 @@ import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.math.meteo.MeteoMath;
+import org.meteoinfo.projection.ProjectionInfo;
+import org.meteoinfo.projection.ProjectionUtil;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -73,6 +75,7 @@ import static com.jogamp.opengl.GL2ES3.GL_TEXTURE_BASE_LEVEL;
 public class Plot3DGL extends Plot implements GLEventListener {
 
     // <editor-fold desc="Variables">
+    protected ProjectionInfo projInfo;
     protected boolean sampleBuffers = false;
     protected Color background = Color.white;
     protected boolean doScreenShot;
@@ -130,6 +133,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * Constructor
      */
     public Plot3DGL() {
+        this.projInfo = null;
         this.doScreenShot = false;
         this.legends = new ArrayList<>();
         //this.legends.add(new ChartColorBar(new LegendScheme(ShapeTypes.Polygon, 5)));
@@ -173,6 +177,21 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     // </editor-fold>
     // <editor-fold desc="GetSet">
+    /**
+     * Get projection info
+     * @return Projection info
+     */
+    public ProjectionInfo getProjInfo() {
+        return this.projInfo;
+    }
+
+    /**
+     * Set projection info
+     * @param value Projection info
+     */
+    public void setProjInfo(ProjectionInfo value) {
+        this.projInfo = value;
+    }
 
     /**
      * Get is sample buffers or not
@@ -965,6 +984,21 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
         this.extent = (Extent3D) ex;
         this.setDrawExtent((Extent3D) this.extent.clone());
+    }
+
+    /**
+     * Add a graphic
+     *
+     * @param graphic The graphic
+     * @param proj The graphic projection
+     */
+    public void addGraphic(Graphic graphic, ProjectionInfo proj) {
+        if (proj == null || proj.equals(this.projInfo)) {
+            addGraphic(graphic);
+        } else {
+            Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
+            addGraphic(nGraphic);
+        }
     }
 
     /**

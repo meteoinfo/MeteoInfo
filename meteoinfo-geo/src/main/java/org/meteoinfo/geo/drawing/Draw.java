@@ -631,7 +631,7 @@ public class Draw {
 
         g.setColor(aColor);
         g.draw(new Line2D.Float(sP.X, sP.Y, eP.X, eP.Y));
-        drawArraw(g, eP, angle);
+        drawArrow(g, eP, angle);
         return new Rectangle2D.Double(Math.min(sP.X, eP.X), Math.min(sP.Y, eP.Y),
                 Math.abs(eP.X - sP.X), Math.abs(eP.Y - sP.Y));
 
@@ -656,17 +656,17 @@ public class Draw {
      * Draw wind arrow
      *
      * @param sP Start point
-     * @param aArraw The arrow
+     * @param arrow The arrow
      * @param pb PointBreak
      * @param g Graphics2D
      * @param zoom Zoom
      * @return Border rectangle
      */
-    public static Rectangle2D drawArraw(PointF sP, WindArrow aArraw, ArrowBreak pb, Graphics2D g, double zoom) {
+    public static Rectangle2D drawArrow(PointF sP, WindArrow arrow, ArrowBreak pb, Graphics2D g, double zoom) {
         PointF eP = new PointF(0, 0);
         //PointF eP1 = new PointF(0, 0);
-        double len = aArraw.length;
-        double angle = aArraw.angle + 180;
+        double len = arrow.length;
+        double angle = arrow.angle + 180;
         if (angle >= 360) {
             angle -= 360;
         }
@@ -686,19 +686,23 @@ public class Draw {
         g.draw(new Line2D.Float(sP.X, sP.Y, eP.X, eP.Y));
         float headWidth = pb.getHeadWidth();
         float headLength = pb.getHeadLength();
+        if (len < headLength && pb.isAutoScale()) {
+            headWidth = headWidth * (float) len / headLength;
+            headLength = (float) len;
+        }
         drawArraw(g, eP, angle, headLength, headWidth, pb.getOverhang());
         return new Rectangle2D.Double(Math.min(sP.X, eP.X), Math.min(sP.Y, eP.Y),
                 Math.abs(eP.X - sP.X), Math.abs(eP.Y - sP.Y));
     }
 
     /**
-     * Draw arraw
+     * Draw arrow
      *
      * @param g Graphics2D
      * @param sP Start point
      * @param angle Angle
      */
-    public static void drawArraw(Graphics2D g, PointF sP, double angle) {
+    public static void drawArrow(Graphics2D g, PointF sP, double angle) {
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 5);
         Rectangle.Float rect = new Rectangle.Float(-4, -4, 8, 8);
         PointF[] pt = new PointF[5];

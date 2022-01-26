@@ -13,7 +13,7 @@ from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
-from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil, EarthPlot3D
+from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil, EarthPlot3D, MapPlot3D
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
 from org.meteoinfo.common import Extent3D
@@ -33,7 +33,7 @@ import mipylib.numeric as np
 from mipylib import migl
 from mipylib.geolib import migeo
 
-__all__ = ['Axes3DGL','EarthAxes3D']
+__all__ = ['Axes3DGL','MapAxes3D','EarthAxes3D']
 
 class Axes3DGL(Axes3D):
     
@@ -653,7 +653,8 @@ class Axes3DGL(Axes3D):
 
         visible = kwargs.pop('visible', True)
         if visible:
-            self.add_graphic(graphics)
+            projection = kwargs.pop('projection', migeo.projinfo())
+            self.add_graphic(graphics, projection)
         return graphics
         
     def plot_layer(self, layer, **kwargs):
@@ -1555,6 +1556,37 @@ class Axes3DGL(Axes3D):
         form.setLocationRelativeTo(None)
         form.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
         form.setVisible(True)
+
+class MapAxes3D(Axes3DGL):
+    """
+    Map 3D axes.
+    """
+    
+    def __init__(self, *args, **kwargs):
+        super(MapAxes3D, self).__init__(*args, **kwargs)
+
+        projection = kwargs.pop('projection', None)
+        if not projection is None:
+            self.axes.setProjInfo(projection)
+
+    def _set_plot(self, plot):
+        """
+        Set plot.
+
+        :param plot: (*EarthPlot3D*) Plot.
+        """
+        if plot is None:
+            self.axes = MapPlot3D()
+        else:
+            self.axes = plot
+
+    @property
+    def axestype(self):
+        return '3d_Map'
+
+    @property
+    def projection(self):
+        return self.axes.getProjInfo()
 
 class EarthAxes3D(Axes3DGL):
     """

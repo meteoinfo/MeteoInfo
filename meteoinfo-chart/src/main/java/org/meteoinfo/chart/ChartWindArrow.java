@@ -408,8 +408,7 @@ public class ChartWindArrow {
                 g.draw(rect);
             }
         }
-        //Draw.drawArraw(this.color, new PointF(x, y), this.windArrow, g, zoom);
-        Draw.drawArraw(new PointF(x, y), windArrow, arrowBreak, g, zoom);
+        Draw.drawArrow(new PointF(x, y), windArrow, arrowBreak, g, zoom);
         g.setColor(this.labelColor);
         Draw.drawString(g, this.label, x, y + dim.height + this.labelSep);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, rendering);

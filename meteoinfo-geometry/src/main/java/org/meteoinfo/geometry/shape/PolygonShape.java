@@ -284,7 +284,7 @@ public class PolygonShape extends Shape implements Cloneable {
      *
      * @param polygons polygon list
      */
-    public void setPolygons(List<Polygon> polygons) {
+    public void setPolygons(List<? extends Polygon> polygons) {
         _polygons = polygons;
         updatePartsPoints();
     }

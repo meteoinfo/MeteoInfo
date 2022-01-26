@@ -26,7 +26,7 @@ from org.meteoinfo.chart.form import ChartForm
 from org.meteoinfo.geometry.shape import ShapeTypes
 from ._axes import Axes, PolarAxes
 from ._axes3d import Axes3D
-from ._axes3dgl import Axes3DGL, EarthAxes3D
+from ._axes3dgl import Axes3DGL, MapAxes3D, EarthAxes3D
 from ._figure import Figure
 from ._glfigure import GLFigure
 from ._mapaxes import MapAxes
@@ -1329,15 +1329,18 @@ def axes3d(*args, **kwargs):
     """
     opengl = kwargs.pop('opengl', True)
     if opengl:
-        projection = kwargs.pop('projection', None)
+        projection = kwargs.get('projection', None)
         if projection is None:
             earth = kwargs.pop('earth', False)
-        else:
-            earth = projection == 'earth'
-        if earth:
+            if earth:
+                projection == 'earth'
+
+        if projection is None:
+            return axes3dgl(*args, **kwargs)
+        elif projection == 'earth':
             return axes3d_earth(*args, **kwargs)
         else:
-            return axes3dgl(*args, **kwargs)
+            return axes3d_map(*args, **kwargs)
     else:
         kwargs['axestype'] = '3d'
         return axes(*args, **kwargs)
@@ -1351,6 +1354,25 @@ def axes3dgl(*args, **kwargs):
     global g_axes
 
     ax = Axes3DGL(*args, **kwargs)
+    g_axes = ax
+
+    if not batchmode:
+        if g_figure is None or isinstance(g_figure, Figure):
+            glfigure(**kwargs)
+        g_figure.set_axes(ax)
+
+    draw_if_interactive()
+    return ax
+
+def axes3d_map(*args, **kwargs):
+    """
+    Add an map 3d axes with JOGL to the figure.
+
+    :returns: The axes.
+    """
+    global g_axes
+
+    ax = MapAxes3D(*args, **kwargs)
     g_axes = ax
 
     if not batchmode:

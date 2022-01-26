@@ -4826,7 +4826,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     sPoint.X = (float) xy[0];
                     sPoint.Y = (float) xy[1];
                     //Draw.drawArraw(aColor, sPoint, aArraw, g, zoom);
-                    Draw.drawArraw(sPoint, aArraw, aPB, g, zoom);
+                    Draw.drawArrow(sPoint, aArraw, aPB, g, zoom);
                 }
                 break;
             case UNIQUE_VALUE:
@@ -4843,7 +4843,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     sPoint.Y = (float) xy[1];
 
                     aPB = (ArrowBreak) aLS.getLegendBreak(aArraw.getLegendIndex());
-                    Draw.drawArraw(sPoint, aArraw, aPB, g, zoom);
+                    Draw.drawArrow(sPoint, aArraw, aPB, g, zoom);
 
                     /*String vStr = aLayer.getCellValue(aLS.getFieldName(), shapeIdx).toString().trim();
                     if (vStr.isEmpty()) {

@@ -405,7 +405,7 @@ public class GeoProjectionUtil {
 
         if (oLayer.getLabelPoints().size() > 0) {
             if (projectLabels) {
-                oLayer.setLabelPoints(ProjectionUtil.projectGraphics(oLayer.getLabelPoints(), fromProj, toProj));
+                oLayer.setLabelPoints(ProjectionUtil.projectGraphic(oLayer.getLabelPoints(), fromProj, toProj));
             } else {
                 oLayer.setLabelPoints(new ArrayList<>(oLayer.getLabelPoints()));
             }
@@ -639,7 +639,7 @@ public class GeoProjectionUtil {
         oLayer.getAttributeTable().setTable(aTable);
 
         if (oLayer.getLabelPoints().size() > 0) {
-            oLayer.setLabelPoints(ProjectionUtil.projectGraphics(oLayer.getLabelPoints(), fromProj, toProj));
+            oLayer.setLabelPoints(ProjectionUtil.projectGraphic(oLayer.getLabelPoints(), fromProj, toProj));
         }
     }
 

@@ -430,7 +430,7 @@ public class Plot2D extends AbstractPlot2D {
         double[] sXY = projToScreen(p.X, p.Y, area);
         PointF pf = new PointF((float) sXY[0], (float) sXY[1]);
         float zoom = aPB.getSize() / 10;
-        Draw.drawArraw(pf, aPS, aPB, g, zoom);
+        Draw.drawArrow(pf, aPS, aPB, g, zoom);
     }
 
     private void drawPolyline(Graphics2D g, PolylineShape aPLS, PointBreak aPB, Rectangle2D area) {

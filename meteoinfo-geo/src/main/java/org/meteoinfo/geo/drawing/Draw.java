@@ -663,8 +663,8 @@ public class Draw {
      * @return Border rectangle
      */
     public static Rectangle2D drawArrow(PointF sP, WindArrow arrow, ArrowBreak pb, Graphics2D g, double zoom) {
-        PointF eP = new PointF(0, 0);
-        //PointF eP1 = new PointF(0, 0);
+        PointF eP = new PointF(sP.X, sP.Y);
+        PointF eP1 = new PointF(0, 0);
         double len = arrow.length;
         double angle = arrow.angle + 180;
         if (angle >= 360) {
@@ -672,25 +672,37 @@ public class Draw {
         }
 
         len = len * zoom;
-
         eP.X = (int) (sP.X + len * Math.sin(angle * Math.PI / 180));
         eP.Y = (int) (sP.Y - len * Math.cos(angle * Math.PI / 180));
-
         if (angle == 90) {
             eP.Y = sP.Y;
         }
 
-        g.setColor(pb.getColor());
-        float width = pb.getWidth();
-        g.setStroke(new BasicStroke(width));
-        g.draw(new Line2D.Float(sP.X, sP.Y, eP.X, eP.Y));
         float headWidth = pb.getHeadWidth();
         float headLength = pb.getHeadLength();
-        if (len < headLength && pb.isAutoScale()) {
-            headWidth = headWidth * (float) len / headLength;
-            headLength = (float) len;
+        g.setColor(pb.getColor());
+        if (len > headLength) {
+            double tailLen = len - headLength;
+            eP1.X = (int) (sP.X + tailLen * Math.sin(angle * Math.PI / 180));
+            eP1.Y = (int) (sP.Y - tailLen * Math.cos(angle * Math.PI / 180));
+
+            if (angle == 90) {
+                eP1.Y = sP.Y;
+            }
+
+            float width = pb.getWidth();
+            g.setStroke(new BasicStroke(width));
+            g.draw(new Line2D.Float(sP.X, sP.Y, eP1.X, eP1.Y));
+            drawArraw(g, eP1, angle, headLength, headWidth, pb.getOverhang());
+        } else {
+            if (pb.isAutoScale()) {
+                if (len < 2)
+                    len = 2;
+                headWidth = headWidth * (float) len / headLength;
+                headLength = (float) len;
+            }
+            drawArraw(g, sP, angle, headLength, headWidth, pb.getOverhang());
         }
-        drawArraw(g, eP, angle, headLength, headWidth, pb.getOverhang());
         return new Rectangle2D.Double(Math.min(sP.X, eP.X), Math.min(sP.Y, eP.Y),
                 Math.abs(eP.X - sP.X), Math.abs(eP.Y - sP.Y));
     }

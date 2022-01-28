@@ -1333,7 +1333,7 @@ def axes3d(*args, **kwargs):
         if projection is None:
             earth = kwargs.pop('earth', False)
             if earth:
-                projection == 'earth'
+                projection = 'earth'
 
         if projection is None:
             return axes3dgl(*args, **kwargs)

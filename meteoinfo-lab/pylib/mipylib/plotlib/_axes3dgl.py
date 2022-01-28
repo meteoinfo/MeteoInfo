@@ -1542,6 +1542,9 @@ class Axes3DGL(Axes3D):
             graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), cmap, \
                                        norm._norm, alpha_min, alpha_max)
 
+        ray_casting = kwargs.pop('ray_casting', None)
+        if not ray_casting is None:
+            graphics.setRayCastingType(ray_casting)
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

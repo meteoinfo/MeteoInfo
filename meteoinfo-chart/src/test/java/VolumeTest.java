@@ -1,6 +1,7 @@
 import org.meteoinfo.chart.jogl.GLChartPanel;
 import org.meteoinfo.chart.jogl.Plot3DGL;
 import org.meteoinfo.chart.graphic.VolumeGraphics;
+import org.meteoinfo.chart.render.jogl.RayCastingType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -71,6 +72,8 @@ public class VolumeTest {
                 final float ratio = (px - opacityNodes[0]) / opacityNodeRange;
                 a = (min * (1 - ratio) + max * ratio);
             }
+            if (i < 100)
+                a = 0;
             int colorI = 0;
             if (px > colorRange[1] * 255) {
                 colorI = 255;
@@ -101,6 +104,7 @@ public class VolumeTest {
         test.readData();
         test.readColorMap();
         VolumeGraphics graphics = test.createGraphics();
+        graphics.setRayCastingType(RayCastingType.SPECULAR);
         JFrame frame = new JFrame("Volume Test");
         Plot3DGL plot = new Plot3DGL();
         plot.setOrthographic(false);

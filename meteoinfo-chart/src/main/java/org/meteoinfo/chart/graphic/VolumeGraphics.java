@@ -2,6 +2,7 @@ package org.meteoinfo.chart.graphic;
 
 import com.jogamp.common.nio.Buffers;
 import org.meteoinfo.chart.jogl.Transform;
+import org.meteoinfo.chart.render.jogl.RayCastingType;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;
@@ -19,19 +20,21 @@ import java.util.List;
 import static org.joml.Math.clamp;
 
 public class VolumeGraphics extends GraphicCollection3D {
-    public static Buffer buffer = null;
+    //public static Buffer buffer = null;
     final int width;
     final int height;
     final int depth;
     final byte[] data;
+    private byte[] normals;
     final float[] scale = new float[]{1, 1, 1};
-    public static byte[] colors;
+    private byte[] colors;
     private byte[] originalColors;
-    public static float[] opacityLevels = new float[]{0, 1};
-    public static float[] opacityNodes = new float[]{0f, 1f};
-    public static float[] colorRange = new float[]{0f, 1f};
+    private float[] opacityLevels = new float[]{0, 1};
+    private float[] opacityNodes = new float[]{0f, 1f};
+    private float[] colorRange = new float[]{0f, 1f};
     private float[] aabbMin = new float[]{-1, -1, -1};
     private float[] aabbMax = new float[]{1, 1, 1};
+    private RayCastingType rayCastingType = RayCastingType.MAX_VALUE;
 
     boolean hasChanges = true;
 
@@ -49,7 +52,7 @@ public class VolumeGraphics extends GraphicCollection3D {
         this.depth = depth;
 
         this.data = data;
-        this.buffer = Buffers.newDirectByteBuffer(this.data);
+        //this.buffer = Buffers.newDirectByteBuffer(this.data);
         this.colors = colors;
 
         Extent3D extent = new Extent3D();
@@ -77,7 +80,7 @@ public class VolumeGraphics extends GraphicCollection3D {
         for (int i = 0; i < value.getSize(); i++) {
             data[i] = (byte) ((int) ((value.getDouble(i) - vMin) / range * 255));
         }
-        buffer = Buffers.newDirectByteBuffer(data);
+        //buffer = Buffers.newDirectByteBuffer(data);
 
         Color[] oColors = colorMap.getColors();
         int n = oColors.length;
@@ -111,7 +114,7 @@ public class VolumeGraphics extends GraphicCollection3D {
         for (int i = 0; i < value.getSize(); i++) {
             data[i] = (byte) ((int) (norm.apply(value.getDouble(i)).floatValue() * 255));
         }
-        buffer = Buffers.newDirectByteBuffer(data);
+        //buffer = Buffers.newDirectByteBuffer(data);
 
         Color[] oColors = colorMap.getColors();
         int n = oColors.length;
@@ -149,7 +152,7 @@ public class VolumeGraphics extends GraphicCollection3D {
         for (int i = 0; i < value.getSize(); i++) {
             data[i] = (byte)((int)(ls.legendBreakIndex(value.getDouble(i)) * 255.0 / n));
         }
-        buffer = Buffers.newDirectByteBuffer(data);
+        //buffer = Buffers.newDirectByteBuffer(data);
 
         originalColors = new byte[n * 3];
         for (int i = 0; i < n; i++) {
@@ -239,6 +242,41 @@ public class VolumeGraphics extends GraphicCollection3D {
     }
 
     /**
+     * Get normals
+     * @return Normals
+     */
+    public byte[] getNormals() {
+        if (this.normals == null) {
+            this.calculateNormals();
+        }
+        return this.normals;
+    }
+
+    /**
+     * Get colors
+     * @return Colors
+     */
+    public byte[] getColors() {
+        return this.colors;
+    }
+
+    /**
+     * Set minimum alpha value
+     * @param value Minimum alpha value
+     */
+    public void setAlphaMin(float value) {
+        this.opacityNodes[0] = value;
+    }
+
+    /**
+     * Set maximum alpha value
+     * @param value Maximum alpha value
+     */
+    public void setAlphaMax(float value) {
+        this.opacityNodes[1] = value;
+    }
+
+    /**
      * Get scale
      * @return Scale
      */
@@ -265,6 +303,30 @@ public class VolumeGraphics extends GraphicCollection3D {
 
     public float[] getAabbMax() {
         return this.aabbMax;
+    }
+
+    /**
+     * Get ray casting type
+     * @return Ray casting type
+     */
+    public RayCastingType getRayCastingType() {
+        return this.rayCastingType;
+    }
+
+    /**
+     * Set ray casting type
+     * @param value Ray casting type
+     */
+    public void setRayCastingType(RayCastingType value) {
+        this.rayCastingType = value;
+    }
+
+    /**
+     * Set ray casting type
+     * @param value Ray casting type
+     */
+    public void setRayCastingType(String value) {
+        this.rayCastingType = RayCastingType.valueOf(value.toUpperCase());
     }
 
     final float[] vertexBufferData = new float[]{
@@ -370,5 +432,39 @@ public class VolumeGraphics extends GraphicCollection3D {
                 p7[0], p7[1], p7[2],
                 p6[0], p6[1], p6[2], //12
         };
+    }
+
+    /**
+     * Calculate normals
+     */
+    public void calculateNormals() {
+        this.normals = new byte[this.data.length * 3];
+        int xn, yn, zn, i1, i2;
+        int n = this.data.length;
+        for (int i = 0; i < n; i++) {
+            i1 = i - 1;
+            i2 = i + 1;
+            if (i1 < 0 || i2 >= n)
+                xn = 0;
+            else
+                xn = data[i1] - data[i2];
+            normals[i * 3] = (byte) (xn + 128);
+
+            i1 = i - width;
+            i2 = i + width;
+            if (i1 < 0 || i2 >= n)
+                yn = 0;
+            else
+                yn = data[i1] - data[i2];
+            normals[i * 3 + 1] = (byte) (yn + 128);
+
+            i1 = i - (width * height);
+            i2 = i + (width * height);
+            if (i1 < 0 || i2 >= n)
+                zn = 0;
+            else
+                zn = data[i1] - data[i2];
+            normals[i * 3 + 2] = (byte) (zn + 128);
+        }
     }
 }

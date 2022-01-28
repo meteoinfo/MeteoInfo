@@ -1,9 +1,12 @@
-#if __VERSION__ >= 130
+#version 330 core
+
+out vec4 mgl_FragColor;
+/*#if __VERSION__ >= 130
     #define varying in
     out vec4 mgl_FragColor;
 #else
     #define mgl_FragColor gl_FragColor
-#endif
+#endif*/
 
 uniform vec2 viewSize;
 uniform mat4 iV;
@@ -44,18 +47,19 @@ Ray makeRay(vec3 origin, vec3 direction) {
 Ray CreateCameraRay(vec2 uv)
 {
     // Transform the camera origin to world space
-    //vec3 origin = (iV* vec4(0.0f, 0.0f, -100.0f, 1.0f)).xyz;
-    //vec3 origin = (iV* vec4(0.0f, 0.0f, 10.0f, 1.0f)).xyz;
-    vec3 origin = (iP * vec4(0.0f, 0.0f, 0.0f, -5.0f)).xyz;
-    //vec3 origin = (iP * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz;
-    origin = (iV * vec4(origin, 0.0f)).xyz;
+    //vec4 origin = iP * vec4(0.0f, 0.0f, 5.0f, 1.0f);
+    vec4 origin = iP * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    origin = iV * origin;
+    origin = origin / origin.w;
 
     // Invert the perspective projection of the view-space position
-    vec3 direction = (iP * vec4(uv, 0.0f, 1.0f)).xyz;
+    //vec4 image = iP * vec4(uv, 0.0f, 1.0f);
+    vec4 image = iP * vec4(uv, 1.0f, 1.0f);
     // Transform the direction from camera to world space and normalize
-    direction = (iV* vec4(direction, 0.0f)).xyz;
-    direction = normalize(direction);
-    return makeRay(origin, direction);
+    image = iV * image;
+    image = image / image.w;
+    vec4 direction = normalize(origin - image);
+    return makeRay(origin.xyz, direction.xyz);
 }
 
 /*

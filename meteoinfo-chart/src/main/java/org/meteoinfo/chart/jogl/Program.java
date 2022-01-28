@@ -65,7 +65,7 @@ public class Program {
         }
     }
 
-    Program(String name, File vertexShaderFile, File fragmentShaderFile) throws IOException {
+    public Program(String name, File vertexShaderFile, File fragmentShaderFile) throws IOException {
         this.name = name;
         //shaderCode.put(GL_VERTEX_SHADER, Files.readAllLines(Paths.get(Utils.getFilePath(vertexShaderFile).getAbsolutePath())).stream().collect(Collectors.joining("\n")));
         //shaderCode.put(GL_FRAGMENT_SHADER, Files.readAllLines(Paths.get(Utils.getFilePath(fragmentShaderFile).getAbsolutePath())).stream().collect(Collectors.joining("\n")));
@@ -81,7 +81,7 @@ public class Program {
         }
     }
 
-    Program(String name, String vertexShaderCode, String fragmentShaderCode) {
+    public Program(String name, String vertexShaderCode, String fragmentShaderCode) {
         this.name = name;
         shaderCode.put(GL_VERTEX_SHADER, vertexShaderCode);
         shaderCode.put(GL_FRAGMENT_SHADER, fragmentShaderCode);

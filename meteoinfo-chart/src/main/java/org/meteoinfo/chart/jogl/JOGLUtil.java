@@ -729,8 +729,8 @@ public class JOGLUtil {
         za = za.copyIfView();
 
         VolumeGraphics graphics = new VolumeGraphics(data, colorMap, vMin, vMax);
-        graphics.opacityNodes[0] = alphaMin;
-        graphics.opacityNodes[1] = alphaMax;
+        graphics.setAlphaMin(alphaMin);
+        graphics.setAlphaMax(alphaMax);
         graphics.updateColors();
 
         Extent3D extent3D = new Extent3D();
@@ -765,8 +765,8 @@ public class JOGLUtil {
         za = za.copyIfView();
 
         VolumeGraphics graphics = new VolumeGraphics(data, colorMap, norm);
-        graphics.opacityNodes[0] = alphaMin;
-        graphics.opacityNodes[1] = alphaMax;
+        graphics.setAlphaMin(alphaMin);
+        graphics.setAlphaMax(alphaMax);
         graphics.updateColors();
 
         Extent3D extent3D = new Extent3D();
@@ -801,8 +801,8 @@ public class JOGLUtil {
         za = za.copyIfView();
 
         VolumeGraphics graphics = new VolumeGraphics(data, ls);
-        graphics.opacityNodes[0] = alphaMin;
-        graphics.opacityNodes[1] = alphaMax;
+        graphics.setAlphaMin(alphaMin);
+        graphics.setAlphaMax(alphaMax);
         graphics.updateColors();
 
         Extent3D extent3D = new Extent3D();

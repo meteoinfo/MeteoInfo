@@ -1,19 +1,26 @@
-#if __VERSION__ >= 130
-    #define varying in
-    out vec4 mgl_FragColor;
-#else
-    #define mgl_FragColor gl_FragColor
-#endif
+#version 330 core
+
+out vec4 mgl_FragColor;
 
 uniform vec2 viewSize;
 uniform mat4 iV;
 uniform mat4 iP;
 
 uniform sampler3D tex;
+uniform sampler3D normals;
 uniform sampler2D colorMap;
 uniform int depthSampleCount;
 uniform vec3 aabbMin;
 uniform vec3 aabbMax;
+
+uniform bool orthographic;
+
+uniform float brightness;
+
+vec3 ambientLight = vec3(0.34, 0.32, 0.32);
+vec3 directionalLight = vec3(0.5, 0.5, 0.5);
+vec3 lightVector = normalize(vec3(-1.0, -1.0, 1.0));
+vec3 specularColor = vec3(0.5, 0.5, 0.5);
 
 vec3 aabb[2] = vec3[2](
     vec3(-1.0, -1.0, -1.0),
@@ -41,9 +48,9 @@ Ray makeRay(vec3 origin, vec3 direction) {
         )
     );
 }
-Ray CreateCameraRay(vec2 uv)
+
+Ray createRayOrthographic(vec2 uv)
 {
-    //float near = -5.0f;
     float far = 5.0f;
 
     // Transform the camera origin to world space
@@ -55,6 +62,22 @@ Ray CreateCameraRay(vec2 uv)
     vec4 image = iP * vec4(uv, far, 1.0f);
     // Transform the direction from camera to world space and normalize
     image = iV* image;
+    vec4 direction = normalize(origin - image);
+    return makeRay(origin.xyz, direction.xyz);
+}
+
+Ray createRayPerspective(vec2 uv)
+{
+    // Transform the camera origin to world space
+    vec4 origin = iP * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    origin = iV * origin;
+    origin = origin / origin.w;
+
+    // Invert the perspective projection of the view-space position
+    vec4 image = iP * vec4(uv, 1.0f, 1.0f);
+    // Transform the direction from camera to world space and normalize
+    image = iV * image;
+    image = image / image.w;
     vec4 direction = normalize(origin - image);
     return makeRay(origin.xyz, direction.xyz);
 }
@@ -80,11 +103,18 @@ void intersect(
 
 void main(){
     vec2 vUV = 2.0 * (gl_FragCoord.xy + vec2(0.5, 0.5)) / viewSize - 1.0;
-    Ray ray = CreateCameraRay(vUV);
+    Ray ray;
+    if (orthographic) {
+        ray = createRayOrthographic(vUV);
+    } else {
+        ray = createRayPerspective(vUV);
+    }
     vec3 aabb[2] = vec3[2](aabbMin, aabbMax);
     float tmin = 0.0;
     float tmax = 0.0;
     intersect(ray, aabb, tmin, tmax);
+
+    vec4 value = vec4(0.0, 0.0, 0.0, 0.0);
     if (tmax < tmin){
         discard;
         return;
@@ -94,27 +124,53 @@ void main(){
 
     float len = distance(end, start);
     int sampleCount = int(float(depthSampleCount)*len);
-    vec3 increment = (end-start)/float(sampleCount);
-    float incLength = length(increment);
-    increment = normalize(increment);
-    vec3 pos = start;
+    //vec3 increment = (end-start)/float(sampleCount);
+    //float incLength = length(increment);
+    //increment = normalize(increment);
+    //vec3 pos = start;
 
+    float s = 0.0;
     float px = 0.0;
     vec4 pxColor = vec4(0.0, 0.0, 0.0, 0.0);
     vec3 texCo = vec3(0.0, 0.0, 0.0);
+    vec3 normal = vec3(0.0, 0.0, 0.0);
+    vec4 zero = vec4(0.0);
 
-    float last = 0.0;
     for(int count = 0; count < sampleCount; count++){
 
-        texCo = mix(start, end, float(count)/float(sampleCount));// - originOffset;
+        texCo = mix(end, start, float(count)/float(sampleCount));// - originOffset;
 
-        px = max(px, texture(tex, texCo).r);
+        //texCo = start + increment*float(count);
+        px = texture(tex, texCo).r;
 
-        if(px >= 0.99){
+
+        //px = length(texture(normals, texCo).xyz - 0.5);
+        //px = px * 1.5;
+
+        pxColor = texture(colorMap, vec2(px, 0.0));
+
+        normal = normalize(texture(normals, texCo).xyz - 0.5);
+        float directional = clamp(dot(normal, lightVector), 0.0, 1.0);
+
+        //vec3 R = -reflect(lightDirection, surfaceNormal);
+        //return pow(max(0.0, dot(viewDirection, R)), shininess);
+
+        float specular = max(dot(ray.direction.xyz, reflect(lightVector, normal)), 0.0);
+        specular = pow(specular, 3.0);
+
+        pxColor.rgb = ambientLight*pxColor.rgb + directionalLight*directional*pxColor.rgb + pxColor.a*specular*specularColor;
+
+
+        //value = mix(value, pxColor, px);
+        //value = (1.0-value.a)*pxColor + value;
+        //value = mix(pxColor, zero, value.a) + value;
+
+        value = value + pxColor - pxColor*value.a;
+
+        if(value.a >= 0.95){
             break;
         }
     }
-    pxColor = texture(colorMap, vec2(px, 0.0));
 
-    mgl_FragColor = pxColor;
+    mgl_FragColor = value * brightness;
 }

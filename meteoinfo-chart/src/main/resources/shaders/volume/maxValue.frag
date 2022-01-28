@@ -15,6 +15,8 @@ uniform int depthSampleCount;
 uniform vec3 aabbMin;
 uniform vec3 aabbMax;
 
+uniform bool orthographic;
+
 vec3 aabb[2] = vec3[2](
     vec3(-1.0, -1.0, -1.0),
     vec3(1.0, 1.0, 1.0)
@@ -41,9 +43,9 @@ Ray makeRay(vec3 origin, vec3 direction) {
         )
     );
 }
-Ray CreateCameraRay(vec2 uv)
+
+Ray createRayOrthographic(vec2 uv)
 {
-    //float near = -5.0f;
     float far = 5.0f;
 
     // Transform the camera origin to world space
@@ -55,6 +57,22 @@ Ray CreateCameraRay(vec2 uv)
     vec4 image = iP * vec4(uv, far, 1.0f);
     // Transform the direction from camera to world space and normalize
     image = iV* image;
+    vec4 direction = normalize(origin - image);
+    return makeRay(origin.xyz, direction.xyz);
+}
+
+Ray createRayPerspective(vec2 uv)
+{
+    // Transform the camera origin to world space
+    vec4 origin = iP * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    origin = iV * origin;
+    origin = origin / origin.w;
+
+    // Invert the perspective projection of the view-space position
+    vec4 image = iP * vec4(uv, 1.0f, 1.0f);
+    // Transform the direction from camera to world space and normalize
+    image = iV * image;
+    image = image / image.w;
     vec4 direction = normalize(origin - image);
     return makeRay(origin.xyz, direction.xyz);
 }
@@ -80,7 +98,12 @@ void intersect(
 
 void main(){
     vec2 vUV = 2.0 * (gl_FragCoord.xy + vec2(0.5, 0.5)) / viewSize - 1.0;
-    Ray ray = CreateCameraRay(vUV);
+    Ray ray;
+    if (orthographic) {
+        ray = createRayOrthographic(vUV);
+    } else {
+        ray = createRayPerspective(vUV);
+    }
     vec3 aabb[2] = vec3[2](aabbMin, aabbMax);
     float tmin = 0.0;
     float tmax = 0.0;
@@ -94,16 +117,16 @@ void main(){
 
     float len = distance(end, start);
     int sampleCount = int(float(depthSampleCount)*len);
-    vec3 increment = (end-start)/float(sampleCount);
-    float incLength = length(increment);
-    increment = normalize(increment);
-    vec3 pos = start;
+    //vec3 increment = (end-start)/float(sampleCount);
+    //float incLength = length(increment);
+    //increment = normalize(increment);
+    //vec3 pos = start;
 
     float px = 0.0;
     vec4 pxColor = vec4(0.0, 0.0, 0.0, 0.0);
     vec3 texCo = vec3(0.0, 0.0, 0.0);
 
-    float last = 0.0;
+    //float last = 0.0;
     for(int count = 0; count < sampleCount; count++){
 
         texCo = mix(start, end, float(count)/float(sampleCount));// - originOffset;

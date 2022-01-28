@@ -24,6 +24,9 @@ import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.math.ArrayUtil;
+import org.meteoinfo.projection.KnownCoordinateSystems;
+import org.meteoinfo.projection.ProjectionInfo;
+import org.meteoinfo.projection.ProjectionUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -42,6 +45,7 @@ public class EarthPlot3D extends Plot3DGL {
     public EarthPlot3D() {
         super();
 
+        this.projInfo = KnownCoordinateSystems.geographic.world.WGS1984;
         //earthSurface(50);
         //addGraphic(this.surface);
     }
@@ -91,6 +95,22 @@ public class EarthPlot3D extends Plot3DGL {
         }
         this.extent = (Extent3D) ex;
         this.setDrawExtent((Extent3D) this.extent.clone());
+    }
+
+    /**
+     * Add a graphic
+     *
+     * @param graphic The graphic
+     * @param proj The graphic projection
+     */
+    @Override
+    public void addGraphic(Graphic graphic, ProjectionInfo proj) {
+        if (! proj.equals(this.projInfo)) {
+            Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
+            addGraphic(nGraphic);
+        } else {
+            addGraphic(graphic);
+        }
     }
 
     /**

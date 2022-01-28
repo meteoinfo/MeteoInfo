@@ -714,6 +714,7 @@ class Axes(object):
         ax2.axes.getAxis(Location.LEFT).setVisible(False)
         ax2.axes.getAxis(Location.RIGHT).setVisible(False)
         axis = ax2.axes.getAxis(Location.TOP)
+        axis.setDrawTickLine(True)
         axis.setDrawTickLabel(True)
         axis.setDrawLabel(True)
         return ax2

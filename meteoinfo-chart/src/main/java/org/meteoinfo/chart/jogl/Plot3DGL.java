@@ -32,6 +32,8 @@ import org.meteoinfo.chart.plot.GridLine;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.render.jogl.RayCastingType;
+import org.meteoinfo.chart.render.jogl.VolumeRender;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
@@ -60,8 +62,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES2.GL_TEXTURE_3D;
@@ -126,6 +126,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected boolean orthographic;
     protected float distance;
     protected GLAutoDrawable drawable;
+
+    private VolumeRender volumeRender;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -993,7 +995,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param proj The graphic projection
      */
     public void addGraphic(Graphic graphic, ProjectionInfo proj) {
-        if (proj == null || proj.equals(this.projInfo)) {
+        if (this.projInfo == null || proj.equals(this.projInfo)) {
             addGraphic(graphic);
         } else {
             Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
@@ -2012,7 +2014,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 this.drawParticles(gl, (ParticleGraphics) graphic);
             } else if (graphic instanceof VolumeGraphics) {
                 try {
-                    this.drawVolume(gl, (VolumeGraphics) graphic);
+                    //this.drawVolume(gl, (VolumeGraphics) graphic);
+                    if (volumeRender == null)
+                        volumeRender = new VolumeRender(gl, (VolumeGraphics) graphic, this.transform);
+                    volumeRender.setTransform(this.transform);
+                    volumeRender.setOrthographic(this.orthographic);
+                    volumeRender.updateMatrix();
+                    volumeRender.draw();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -2216,7 +2224,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, Buffers.newDirectByteBuffer(volume.colors));
+        gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, Buffers.newDirectByteBuffer(volume.getColors()));
 
         int idData = getTextureID(gl);
         gl.glActiveTexture(GL_TEXTURE0);
@@ -2228,13 +2236,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-        String vertexShaderCode = Utils.loadResource("/shaders/volume/volume.vert");
-        String fragmentShaderCode;
-        if (this.orthographic) {
-            fragmentShaderCode = Utils.loadResource("/shaders/volume/volume.frag");
-        } else {
-            fragmentShaderCode = Utils.loadResource("/shaders/volume/volume_perspective.frag");
-        }
+        String vertexShaderCode = Utils.loadResource("/shaders/volume/vertex.vert");
+        String fragmentShaderCode = Utils.loadResource("/shaders/volume/maxValue.frag");
         final Program program = new Program("volume", vertexShaderCode, fragmentShaderCode);
         try {
             program.init(gl);
@@ -2248,6 +2251,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
         float[] vertexBufferData = volume.getVertexBufferData(this.transform);
         gl.glBufferData(GL_ARRAY_BUFFER, vertexBufferData.length * Float.BYTES, Buffers.newDirectFloatBuffer(vertexBufferData), GL_STATIC_DRAW);
+        program.allocateUniform(gl, "orthographic", (gl2, loc) -> {
+            gl2.glUniform1i(loc, this.orthographic ? 1 : 0);
+        });
         program.allocateUniform(gl, "MVP", (gl2, loc) -> {
             //gl2.glUniformMatrix4fv(loc, 1, false, this.camera.getViewProjectionMatrix().get(Buffers.newDirectFloatBuffer(16)));
             gl2.glUniformMatrix4fv(loc, 1, false, this.viewProjMatrix.get(Buffers.newDirectFloatBuffer(16)));
@@ -2287,7 +2293,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         gl.glActiveTexture(GL_TEXTURE1);
         gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, volume.getColorNum(), 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                Buffers.newDirectByteBuffer(volume.colors).rewind());
+                Buffers.newDirectByteBuffer(volume.getColors()).rewind());
 
         gl.glActiveTexture(GL_TEXTURE0);
         gl.glBindTexture(GL_TEXTURE_3D, idData);
@@ -2295,14 +2301,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glTexImage3D(
                 GL_TEXTURE_3D,  // target
                 0,              // level
-                GL_LUMINANCE,        // internalformat
+                GL_LUMINANCE,        // internal format
                 volume.getWidth(),           // width
                 volume.getHeight(),           // height
                 volume.getDepth(),           // depth
                 0,              // border
                 GL_LUMINANCE,         // format
                 GL_UNSIGNED_BYTE,       // type
-                volume.buffer.rewind()           // pixel
+                Buffers.newDirectByteBuffer(volume.getData()).rewind()           // pixel
         );
 
         // 1st attribute buffer : vertices

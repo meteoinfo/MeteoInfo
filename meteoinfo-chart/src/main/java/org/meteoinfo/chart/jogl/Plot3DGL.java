@@ -2016,7 +2016,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 try {
                     //this.drawVolume(gl, (VolumeGraphics) graphic);
                     if (volumeRender == null)
-                        volumeRender = new VolumeRender(gl, (VolumeGraphics) graphic, this.transform);
+                        volumeRender = new VolumeRender(gl, (VolumeGraphics) graphic);
+                    else
+                        volumeRender.updateShaders();
                     volumeRender.setTransform(this.transform);
                     volumeRender.setOrthographic(this.orthographic);
                     volumeRender.updateMatrix();
@@ -3930,9 +3932,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glDepthFunc(GL.GL_ALWAYS);
         float yy = y;
         float[] rgba;
+        Color[] colors = colorMap.getColors(bNum);
         for (int i = 0; i < bNum; i++) {
             //Fill color
-            rgba = ls.getLegendBreak(i).getColor().getRGBComponents(null);
+            rgba = colors[i].getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_QUADS);
             gl.glVertex2f(x, yy);
@@ -4128,6 +4131,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
+
+        //this.volumeRender = null;
     }
 
     /**

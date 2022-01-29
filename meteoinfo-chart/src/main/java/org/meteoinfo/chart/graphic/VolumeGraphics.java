@@ -2,6 +2,7 @@ package org.meteoinfo.chart.graphic;
 
 import com.jogamp.common.nio.Buffers;
 import org.meteoinfo.chart.jogl.Transform;
+import org.meteoinfo.chart.render.TransferFunction;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
@@ -29,12 +30,14 @@ public class VolumeGraphics extends GraphicCollection3D {
     final float[] scale = new float[]{1, 1, 1};
     private byte[] colors;
     private byte[] originalColors;
+    private TransferFunction transferFunction = new TransferFunction();
     private float[] opacityLevels = new float[]{0, 1};
     private float[] opacityNodes = new float[]{0f, 1f};
     private float[] colorRange = new float[]{0f, 1f};
     private float[] aabbMin = new float[]{-1, -1, -1};
     private float[] aabbMax = new float[]{1, 1, 1};
     private RayCastingType rayCastingType = RayCastingType.MAX_VALUE;
+    private float brightness = 1.0f;
 
     boolean hasChanges = true;
 
@@ -166,6 +169,10 @@ public class VolumeGraphics extends GraphicCollection3D {
         this.setSingleLegend(false);
     }
 
+    /*public void updateColors() {
+        this.colors = this.transferFunction.getColors(this.originalColors);
+    }*/
+
     public void updateColors() {
         final float cRange = colorRange[1] - colorRange[0];
         final float min = opacityLevels[0] * opacityLevels[0];
@@ -176,14 +183,15 @@ public class VolumeGraphics extends GraphicCollection3D {
         for (int i = 0; i < n; i++) {
             float px = ((float) i) / n;
             float a;
-            if (px <= opacityNodes[0]) {
+            a = this.transferFunction.getOpacity(px);
+            /*if (px <= opacityNodes[0]) {
                 a = opacityNodes[0];
             } else if (px > opacityNodes[1]) {
                 a = opacityNodes[1];
             } else {
                 final float ratio = (px - opacityNodes[0]) / opacityNodeRange;
                 a = (min * (1 - ratio) + max * ratio);
-            }
+            }*/
             int colorI = 0;
             if (px > colorRange[1] * 255) {
                 colorI = 255;
@@ -277,6 +285,23 @@ public class VolumeGraphics extends GraphicCollection3D {
     }
 
     /**
+     * Set transfer function
+     * @param value Transfer function
+     */
+    public void setTransferFunction(TransferFunction value) {
+        this.transferFunction = value;
+    }
+
+    /**
+     * Set transfer function
+     * @param opacityNodes Opacity nodes
+     * @param opacityLevels Opacity levels
+     */
+    public void setTransferFunction(List<Number> opacityNodes, List<Number> opacityLevels) {
+        this.transferFunction = new TransferFunction(opacityNodes, opacityLevels);
+    }
+
+    /**
      * Get scale
      * @return Scale
      */
@@ -319,6 +344,22 @@ public class VolumeGraphics extends GraphicCollection3D {
      */
     public void setRayCastingType(RayCastingType value) {
         this.rayCastingType = value;
+    }
+
+    /**
+     * Get brightness
+     * @return Brightness
+     */
+    public float getBrightness() {
+        return this.brightness;
+    }
+
+    /**
+     * Set brightness
+     * @param value Brightness
+     */
+    public void setBrightness(float value) {
+        this.brightness = value;
     }
 
     /**

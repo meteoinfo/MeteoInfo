@@ -1490,8 +1490,12 @@ class Axes3DGL(Axes3D):
         :param cmap: (*string*) Color map string.
         :param vmin: (*float*) Minimum value for particle plotting.
         :param vmax: (*float*) Maximum value for particle plotting.
+        :param ray_casting: (*str*) Ray casting algorithm ['max_value' | 'specular']. Default is 'max_value'.
+        :param brightness: (*float*) Volume brightness. Only valid with 'specular' ray casting. Default is 1.
         :param alpha_min: (*float*) Minimum alpha value. Default is 0.
         :param alpha_max: (*float*) Maximum alpha value. Default is 1.
+        :param opacity_nodes: (*list of float*) Opacity nodes. Default is None.
+        :param opacity_levels: (*list of float*) Opacity levels. Default is [0., 1.].
 
         :returns: Volumeplot graphic
         '''
@@ -1539,12 +1543,17 @@ class Axes3DGL(Axes3D):
             graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
                                        alpha_min, alpha_max)
         else:
+            opacity_nodes = kwargs.pop('opacity_nodes', None)
+            opacity_levels = kwargs.pop('opacity_levels', [0., 1.])
             graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), cmap, \
-                                       norm._norm, alpha_min, alpha_max)
+                                       norm._norm, opacity_nodes, opacity_levels)
 
         ray_casting = kwargs.pop('ray_casting', None)
         if not ray_casting is None:
             graphics.setRayCastingType(ray_casting)
+        brightness = kwargs.pop('brightness', None)
+        if not brightness is None:
+            graphics.setBrightness(brightness)
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

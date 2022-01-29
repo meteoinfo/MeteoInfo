@@ -87,6 +87,10 @@ public class Program {
         shaderCode.put(GL_FRAGMENT_SHADER, fragmentShaderCode);
     }
 
+    public Integer getProgramId() {
+        return programId;
+    }
+
     public void init(GL2 gl) {
         if (programId != null) {
             return;
@@ -132,7 +136,6 @@ public class Program {
 
     }
 
-
     public void destroy(GL2 gl) {
         if (programId != null) {
             for (final Map.Entry<Integer, Integer> shaderId : shaderIds.entrySet()) {
@@ -140,6 +143,7 @@ public class Program {
                 gl.glDeleteShader(shaderId.getValue());
             }
             gl.glDeleteProgram(programId);
+            programId = null;
         }
     }
 
@@ -167,6 +171,7 @@ public class Program {
         for (final Program program : programs) {
             program.destroy(gl);
         }
+        programs.clear();
     }
 
     public static void unUse(GL2 gl) {

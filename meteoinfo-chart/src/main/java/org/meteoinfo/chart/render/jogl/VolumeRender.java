@@ -21,7 +21,6 @@ import static com.jogamp.opengl.GL2ES3.GL_TEXTURE_BASE_LEVEL;
 public class VolumeRender extends JOGLGraphicRender {
 
     private VolumeGraphics volume;
-    private RayCastingType rayCastingType;
     private int colorTexture;
     private int volumeTexture;
     private int normalsTexture;
@@ -33,7 +32,6 @@ public class VolumeRender extends JOGLGraphicRender {
      */
     public VolumeRender(GL2 gl) {
         super(gl);
-        this.rayCastingType = RayCastingType.MAX_VALUE;
     }
 
     /**
@@ -43,7 +41,6 @@ public class VolumeRender extends JOGLGraphicRender {
      */
     public VolumeRender(GL2 gl, RayCastingType rayCastingType) {
         super(gl);
-        this.rayCastingType = rayCastingType;
     }
 
     /**
@@ -81,7 +78,6 @@ public class VolumeRender extends JOGLGraphicRender {
      */
     public void setVolume(VolumeGraphics value) {
         this.volume = value;
-        this.rayCastingType = this.volume.getRayCastingType();
         this.bindingTextures();
         try {
             this.compileShaders();
@@ -92,24 +88,18 @@ public class VolumeRender extends JOGLGraphicRender {
 
     /**
      * Get ray casting type
-     * @return Ray casting type
+     * @return
      */
     public RayCastingType getRayCastingType() {
-        return this.rayCastingType;
+        return this.volume == null ? RayCastingType.MAX_VALUE : this.volume.getRayCastingType();
     }
 
     /**
-     * Set ray casting type
-     * @param value Ray casting type
+     * Get brightness
+     * @return Brightness
      */
-    public void setRayCastingType(RayCastingType value) {
-        this.rayCastingType = value;
-        this.bindingTextures();
-        try {
-            this.compileShaders();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public float getBrightness() {
+        return this.volume == null ? 1.0f : this.volume.getBrightness();
     }
 
     void bindingTextures() {
@@ -136,7 +126,7 @@ public class VolumeRender extends JOGLGraphicRender {
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        gl.glActiveTexture(GL_TEXTURE0);
+        //gl.glActiveTexture(GL_TEXTURE0);
         gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         gl.glTexImage3D(
                 GL_TEXTURE_3D,  // target
@@ -152,7 +142,7 @@ public class VolumeRender extends JOGLGraphicRender {
         );
 
         //Normals 3D texture
-        switch (this.rayCastingType) {
+        switch (this.getRayCastingType()) {
             case SPECULAR:
                 this.normalsTexture = getTextureID();
                 gl.glActiveTexture(GL_TEXTURE2);
@@ -163,7 +153,7 @@ public class VolumeRender extends JOGLGraphicRender {
                 gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
                 gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                 gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-                gl.glActiveTexture(GL_TEXTURE2);
+                //gl.glActiveTexture(GL_TEXTURE2);
                 gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
                 gl.glTexImage3D(
                         GL_TEXTURE_3D,  // target
@@ -184,7 +174,7 @@ public class VolumeRender extends JOGLGraphicRender {
     void compileShaders() throws Exception {
         String vertexShaderCode = Utils.loadResource("/shaders/volume/vertex.vert");
         String fragmentShaderCode;
-        switch (this.rayCastingType) {
+        switch (this.getRayCastingType()) {
             case SPECULAR:
                 fragmentShaderCode = Utils.loadResource("/shaders/volume/specular.frag");
                 break;
@@ -193,10 +183,27 @@ public class VolumeRender extends JOGLGraphicRender {
                 break;
         }
         program = new Program("volume", vertexShaderCode, fragmentShaderCode);
-        program.init(gl);
+        //program.init(gl);
 
         //program.use(gl);
         //program.setUniforms(gl);
+    }
+
+    /**
+     * Update shaders
+     */
+    public void updateShaders() {
+        if (program == null) {
+            this.bindingTextures();
+            try {
+                compileShaders();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (program.getProgramId() == null) {
+            this.bindingTextures();
+            program.init(gl);
+        }
     }
 
     void setUniforms() {
@@ -228,12 +235,12 @@ public class VolumeRender extends JOGLGraphicRender {
         program.allocateUniform(gl, "colorMap", (gl2, loc) -> {
             gl2.glUniform1i(loc, 1);
         });
-        if (this.rayCastingType == RayCastingType.SPECULAR) {
+        if (this.getRayCastingType() == RayCastingType.SPECULAR) {
             program.allocateUniform(gl, "normals", (gl2, loc) -> {
                 gl2.glUniform1i(loc, 2);
             });
             program.allocateUniform(gl, "brightness", (gl2, loc) -> {
-                gl2.glUniform1f(loc, 1);
+                gl2.glUniform1f(loc, this.getBrightness());
             });
         }
         float[] aabbMin = volume.getAabbMin();
@@ -244,6 +251,8 @@ public class VolumeRender extends JOGLGraphicRender {
         program.allocateUniform(gl, "aabbMax", (gl2, loc) -> {
             gl2.glUniform3f(loc, aabbMax[0], aabbMax[1], aabbMax[2]);
         });
+
+        program.setUniforms(gl);
     }
 
     @Override
@@ -251,9 +260,10 @@ public class VolumeRender extends JOGLGraphicRender {
         try {
             //this.bindingTextures();
             //this.compileShaders();
-            setUniforms();
             program.use(gl);
-            program.setUniforms(gl);
+            setUniforms();
+            //program.use(gl);
+            //program.setUniforms(gl);
 
             IntBuffer intBuffer = IntBuffer.allocate(1);
             gl.glGenBuffers(1, intBuffer);

@@ -183,10 +183,6 @@ public class VolumeRender extends JOGLGraphicRender {
                 break;
         }
         program = new Program("volume", vertexShaderCode, fragmentShaderCode);
-        //program.init(gl);
-
-        //program.use(gl);
-        //program.setUniforms(gl);
     }
 
     /**

@@ -428,8 +428,8 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
     :param proj: (*string*) Projection name.
     :param lat_0: (*float*) Latitude of origin.
     :param lon_0: (*float*) Central meridian.
-    :param lat_1: (*float*) Latitude of first standard paralle.
-    :param lat_2: (*float*) Latitude of second standard paralle.
+    :param lat_1: (*float*) Latitude of first standard parallel.
+    :param lat_2: (*float*) Latitude of second standard parallel.
     :param lat_ts: (*float*) Latitude of true scale.
     :param k: (*float*) Scaling factor.
     :param x_0: (*float*) False easting.

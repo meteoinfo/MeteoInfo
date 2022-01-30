@@ -70,6 +70,10 @@ class Axes3DGL(Axes3D):
         if not bgcolor is None:
             bgcolor = plotutil.getcolor(bgcolor)
             self.axes.setBackground(bgcolor)
+        fgcolor = kwargs.pop('fgcolor', None)
+        if not fgcolor is None:
+            fgcolor = plotutil.getcolor(fgcolor)
+            self.axes.setForeground(fgcolor)
         units = kwargs.pop('units', None)
         if not units is None:
             self.axes.setUnits(units)

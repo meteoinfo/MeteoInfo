@@ -861,7 +861,7 @@ public class Axis implements Cloneable {
         this.tickLabels.clear();
         for (Number v : value) {
             this.tickLocations.add(v.doubleValue());
-            this.tickLabels.add(new ChartText(String.valueOf(v)));
+            this.tickLabels.add(new ChartText(String.valueOf(v), this.tickLabelFont, this.tickColor));
         }
         this.autoTick = false;
         if (this.tickLocations.size() > 1) {
@@ -882,7 +882,7 @@ public class Axis implements Cloneable {
             this.tickLocations.add(v);
             tick = String.valueOf(v);
             tick = DataConvert.removeTailingZeros(tick);
-            this.tickLabels.add(new ChartText(tick));
+            this.tickLabels.add(new ChartText(tick, this.tickLabelFont, this.tickColor));
         }
         this.autoTick = false;
         if (this.tickLocations.size() > 1) {
@@ -921,7 +921,7 @@ public class Axis implements Cloneable {
     public void setTickLabelText(List<String> value) {
         this.tickLabels = new ArrayList<>();
         for (String v : value) {
-            this.tickLabels.add(new ChartText(v));
+            this.tickLabels.add(new ChartText(v, this.tickLabelFont, this.tickColor));
         }
         this.autoTick = false;
     }
@@ -943,7 +943,7 @@ public class Axis implements Cloneable {
     public void setTickLabels_Number(List<Number> value) {
         this.tickLabels = new ArrayList<>();
         for (Number v : value) {
-            this.tickLabels.add(new ChartText(v.toString()));
+            this.tickLabels.add(new ChartText(v.toString(), this.tickLabelFont, this.tickColor));
         }
         this.autoTick = false;
     }
@@ -1235,7 +1235,7 @@ public class Axis implements Cloneable {
                 this.tickLocations.add(value);
                 lab = String.valueOf(value);
                 lab = DataConvert.removeTailingZeros(lab);
-                tls.add(new ChartText(lab, this.tickLabelFont));
+                tls.add(new ChartText(lab, this.tickLabelFont, this.tickColor));
             }
         } else {
             ChartText ct;
@@ -1247,6 +1247,7 @@ public class Axis implements Cloneable {
                 if (v >= this.minValue && v <= this.maxValue) {
                     ct = tickLabels.get(i);
                     ct.setFont(this.tickLabelFont);
+                    ct.setColor(this.tickColor);
                     tls.add(this.tickLabels.get(i));
                 }
             }
@@ -1457,6 +1458,9 @@ public class Axis implements Cloneable {
     public void setColor_All(Color c) {
         this.lineColor = c;
         this.tickColor = c;
+        for (ChartText chartText : this.tickLabels) {
+            chartText.setColor(c);
+        }
         this.tickLabelColor = c;
         if (this.label != null)
             this.label.setColor(c);

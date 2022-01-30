@@ -5,8 +5,6 @@
     #define mgl_FragColor gl_FragColor
 #endif
 
-out vec4 mgl_FragColor;
-
 uniform vec2 viewSize;
 uniform mat4 iV;
 uniform mat4 iP;

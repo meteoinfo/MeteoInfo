@@ -118,11 +118,41 @@ public class ChartText extends Shape {
      *
      * @param text Text
      * @param font Font
+     * @param color Color
+     */
+    public ChartText(String text, Font font, Color color) {
+        this();
+        this.text = new ArrayList<>();
+        String[] lines = text.split("\n");
+        this.text.addAll(Arrays.asList(lines));
+        this.font = font;
+        this.color = color;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param text Text
+     * @param font Font
      */
     public ChartText(List<String> text, Font font) {
         this();
         this.text = text;
         this.font = font;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param text Text
+     * @param font Font
+     * @param color Color
+     */
+    public ChartText(List<String> text, Font font, Color color) {
+        this();
+        this.text = text;
+        this.font = font;
+        this.color = color;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

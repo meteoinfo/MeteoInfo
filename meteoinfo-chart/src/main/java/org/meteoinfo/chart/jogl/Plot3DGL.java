@@ -225,6 +225,21 @@ public class Plot3DGL extends Plot implements GLEventListener {
      */
     public void setBackground(Color value) {
         this.background = value;
+        if (this.background == Color.black) {
+            setForeground(Color.white);
+        }
+    }
+
+    /**
+     * Set foreground color
+     * @param value Foreground color
+     */
+    public void setForeground(Color value) {
+        this.boxColor = value;
+        this.gridLine.setColor(value);
+        this.xAxis.setColor_All(value);
+        this.yAxis.setColor_All(value);
+        this.zAxis.setColor_All(value);
     }
 
     /**
@@ -1601,6 +1616,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
         float zMin = this.transform.transform_z(this.zmin);
         float zMax = this.transform.transform_z(this.zmax);
 
+        gl.glDepthFunc(GL.GL_ALWAYS);
+
         //Draw axis
         float[] rgba;
         float x, y, v;
@@ -1844,6 +1861,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
             }
         }
+        gl.glDepthFunc(GL2.GL_LEQUAL);
     }
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz, XAlign xAlign, YAlign yAlign) {

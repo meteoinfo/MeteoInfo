@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.meteothink</groupId>
     <artifactId>MeteoInfo</artifactId>
-    <version>3.2.8</version>
+    <version>3.3.0</version>
     <packaging>pom</packaging>
     
     <parent>

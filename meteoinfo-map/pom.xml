@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.meteothink</groupId>
         <artifactId>MeteoInfo</artifactId>
-        <version>3.2.8</version>
+        <version>3.3.0</version>
     </parent>
     <artifactId>meteoinfo-map</artifactId>
     <packaging>jar</packaging>

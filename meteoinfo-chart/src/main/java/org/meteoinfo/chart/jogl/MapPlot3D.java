@@ -51,7 +51,7 @@ public class MapPlot3D extends Plot3DGL {
         if (proj.equals(this.projInfo)) {
             super.addGraphic(graphic);
         } else {
-            Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
+            Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphic, proj, this.projInfo);
             super.addGraphic(nGraphic);
         }
     }

@@ -104,7 +104,7 @@ public class VolumeTest {
         test.readData();
         test.readColorMap();
         VolumeGraphics graphics = test.createGraphics();
-        graphics.setRayCastingType(RayCastingType.MAX_VALUE);
+        graphics.setRayCastingType(RayCastingType.SPECULAR);
         JFrame frame = new JFrame("Volume Test");
         Plot3DGL plot = new Plot3DGL();
         plot.setOrthographic(true);

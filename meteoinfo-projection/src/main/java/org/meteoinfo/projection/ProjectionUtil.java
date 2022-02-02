@@ -14,7 +14,9 @@
 package org.meteoinfo.projection;
 
 import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.shape.*;
@@ -525,7 +527,7 @@ public class ProjectionUtil {
      *
      * @param aPGS A polygon shape
      * @param fromProj From projection
-     * @param toProj To porjection
+     * @param toProj To projection
      * @return Projected polygon shape
      */
     public static PolygonShape projectPolygonShape(PolygonShape aPGS, ProjectionInfo fromProj, ProjectionInfo toProj) {
@@ -636,6 +638,86 @@ public class ProjectionUtil {
     }
 
     /**
+     * Project polygon shape - clip the polygon is necessary
+     *
+     * @param aPGS A polygon shape
+     * @param fromProj From projection
+     * @param toProj To projection
+     * @return Projected polygon shape
+     */
+    public static List<PolygonShape> projectClipPolygonShape(PolygonShape aPGS, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        double refLon = toProj.getCoordinateReferenceSystem().getProjection().getProjectionLongitudeDegrees();
+        refLon += 180;
+        if (refLon > 180) {
+            refLon = refLon - 360;
+        } else if (refLon < -180) {
+            refLon = refLon + 360;
+        }
+        float cutoff = toProj.getCutoff();
+
+        List<PolygonShape> pgsList = new ArrayList<>();
+        if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
+            switch (toProj.getProjectionName()) {
+                case Lambert_Conformal_Conic:
+                    if (aPGS.getExtent().minY < cutoff) {
+                        aPGS = GeoComputation.clipPolygonShape_Lat(aPGS, cutoff, true);
+                    }
+                    break;
+                case North_Polar_Stereographic_Azimuthal:
+                    if (aPGS.getExtent().minY < cutoff) {
+                        //continue;
+                        aPGS = GeoComputation.clipPolygonShape_Lat(aPGS, cutoff, true);
+                    }
+                    break;
+                case South_Polar_Stereographic_Azimuthal:
+                    if (aPGS.getExtent().maxY > cutoff) {
+                        //continue;
+                        aPGS = GeoComputation.clipPolygonShape_Lat(aPGS, cutoff, false);
+                    }
+                    break;
+                case Mercator:
+                    if (aPGS.getExtent().maxY > cutoff) {
+                        aPGS = GeoComputation.clipPolygonShape_Lat(aPGS, cutoff, false);
+                    }
+                    if (aPGS.getExtent().minY < -cutoff) {
+                        aPGS = GeoComputation.clipPolygonShape_Lat(aPGS, -cutoff, true);
+                    }
+                    break;
+            }
+            if (aPGS == null) {
+                return null;
+            }
+
+            if (aPGS.getExtent().minX <= refLon && aPGS.getExtent().maxX >= refLon) {
+                switch (toProj.getProjectionName()) {
+                    case North_Polar_Stereographic_Azimuthal:
+                    case South_Polar_Stereographic_Azimuthal:
+                        pgsList.add(aPGS);
+                        break;
+                    default:
+                        pgsList.add(GeoComputation.clipPolygonShape_Lon(aPGS, refLon));
+                        break;
+                }
+            } else {
+                pgsList.add(aPGS);
+            }
+        } else {
+            pgsList.add(aPGS);
+        }
+
+        List<PolygonShape> newPolygons = new ArrayList<>();
+        for (int i = 0; i < pgsList.size(); i++) {
+            aPGS = pgsList.get(i);
+            aPGS = projectPolygonShape(aPGS, fromProj, toProj);
+            if (aPGS != null) {
+                newPolygons.add(aPGS);
+            }
+        }
+
+        return newPolygons;
+    }
+
+    /**
      * Project graphic
      *
      * @param graphic The graphic
@@ -660,7 +742,37 @@ public class ProjectionUtil {
         }
     }
 
-    public static GraphicCollection projectGraphic(GraphicCollection aGCollection, ProjectionInfo fromProj, ProjectionInfo toProj) {
+    /**
+     * Project graphic
+     *
+     * @param graphic The graphic
+     * @param fromProj From projection
+     * @param toProj To projection
+     * @return Projected graphic
+     */
+    public static Graphic projectClipGraphic(Graphic graphic, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        if (graphic instanceof GraphicCollection) {
+            GraphicCollection newGCollection = new GraphicCollection();
+            for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
+                List<? extends Shape> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
+                if (shapes != null) {
+                    aGraphic.setShape(shapes.get(0));
+                    newGCollection.add(aGraphic);
+                }
+            }
+
+            return newGCollection;
+        } else {
+            List<? extends Shape> shapes = projectClipShape(graphic.getShape(), fromProj, toProj);
+            if (shapes != null) {
+                return new Graphic(shapes.get(0), graphic.getLegend());
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /*public static GraphicCollection projectGraphic(GraphicCollection aGCollection, ProjectionInfo fromProj, ProjectionInfo toProj) {
         GraphicCollection newGCollection = new GraphicCollection();
         for (Graphic aGraphic : aGCollection.getGraphics()) {
             aGraphic.setShape(projectShape(aGraphic.getShape(), fromProj, toProj));
@@ -670,7 +782,7 @@ public class ProjectionUtil {
         }
 
         return newGCollection;
-    }
+    }*/
 
     public static List<Graphic> projectGraphic(List<Graphic> graphics, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<Graphic> newGraphics = new ArrayList<>();
@@ -719,6 +831,40 @@ public class ProjectionUtil {
         }
 
         return newShape;
+    }
+
+    private static List<? extends Shape> projectClipShape(Shape shape, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        List<? extends Shape> shapes = null;
+        switch (shape.getShapeType()) {
+            case POINT:
+            case POINT_M:
+                //shapes = projectPointShape((PointShape) shape, fromProj, toProj);
+                break;
+            case POLYLINE:
+            case POLYLINE_M:
+                //shapes = projectPolylineShape((PolylineShape) shape, fromProj, toProj);
+                break;
+            case CURVE_LINE:
+                //shapes = projectCurvelineShape((CurveLineShape) shape, fromProj, toProj);
+                break;
+            case POLYGON:
+            case POLYGON_M:
+            case POLYGON_Z:
+            case RECTANGLE:
+                shapes = projectClipPolygonShape((PolygonShape) shape, fromProj, toProj);
+                break;
+            case CURVE_POLYGON:
+                //shapes = projectCurvePolygonShape((CurvePolygonShape) shape, fromProj, toProj);
+                break;
+            case CIRCLE:
+                //shapes = projectCircleShape((CircleShape) shape, fromProj, toProj);
+                break;
+            case ELLIPSE:
+                //shapes = projectEllipseShape((EllipseShape) shape, fromProj, toProj);
+                break;
+        }
+
+        return shapes;
     }
 
     private static CurveLineShape projectCurvelineShape(CurveLineShape aPLS, ProjectionInfo fromProj, ProjectionInfo toProj) {

@@ -23,6 +23,7 @@ import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1502,11 +1503,15 @@ public class GeoComputation {
                         Collections.reverse(clipPList);
                     }
 
-                    Polygon aPolygon = new Polygon();
-                    aPolygon.setOutLine(new ArrayList<>(clipPList));
-                    //aPolygon.setHoleLines(new ArrayList<List<PointD>>());
+                    try {
+                        Polygon aPolygon = inPolygon.getClass().getDeclaredConstructor().newInstance();
+                        aPolygon.setOutLine(new ArrayList<>(clipPList));
+                        //aPolygon.setHoleLines(new ArrayList<List<PointD>>());
 
-                    newPolygons.add(aPolygon);
+                        newPolygons.add(aPolygon);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -1921,10 +1926,14 @@ public class GeoComputation {
 
                         if (pIdx == i) {
                             if (aPList.size() > 0) {
-                                aPolygon = new Polygon();
-                                aPolygon.setOutLine(new ArrayList<>(aPList));
-                                //aPolygon.setHoleLines(new ArrayList<List<PointD>>());
-                                aPolygonList.add(aPolygon);
+                                try {
+                                    aPolygon = inPolygon.getClass().getDeclaredConstructor().newInstance();
+                                    aPolygon.setOutLine(new ArrayList<>(aPList));
+                                    //aPolygon.setHoleLines(new ArrayList<List<PointD>>());
+                                    aPolygonList.add(aPolygon);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                             break;
                         }
@@ -1992,11 +2001,15 @@ public class GeoComputation {
 
                         if (pIdx == i) {
                             if (aPList.size() > 0) {
-                                aPolygon = new Polygon();
-                                Collections.reverse(aPList);
-                                aPolygon.setOutLine(new ArrayList<>(aPList));
-                                //aPolygon.setHoleLines(new ArrayList<List<PointD>>());
-                                aPolygonList.add(aPolygon);
+                                try {
+                                    aPolygon = inPolygon.getClass().getDeclaredConstructor().newInstance();
+                                    Collections.reverse(aPList);
+                                    aPolygon.setOutLine(new ArrayList<>(aPList));
+                                    //aPolygon.setHoleLines(new ArrayList<List<PointD>>());
+                                    aPolygonList.add(aPolygon);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                             break;
                         }

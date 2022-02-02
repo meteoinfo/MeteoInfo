@@ -110,4 +110,16 @@ public class PolygonZShape extends PolygonShape {
             ((List<PolygonZ>)_polygons).add(aPolygon);
         }
     }
+
+    @Override
+    public PolygonShape valueClone() {
+        PolygonShape aPGS = new PolygonZShape();
+        aPGS.highValue = highValue;
+        aPGS.lowValue = lowValue;
+        aPGS.setVisible(this.isVisible());
+        aPGS.setSelected(this.isSelected());
+        aPGS.setLegendIndex(this.getLegendIndex());
+
+        return aPGS;
+    }
 }

@@ -55,7 +55,7 @@ public class GeoProjectionUtil {
      * @param yy Y array
      * @param fromProj From projection
      * @param toProj To projection
-     * @return Porjected grid data
+     * @return Projected grid data
      * @throws InvalidRangeException
      */
     public static Object[] reprojectGrid(Array data, Array xx, Array yy, ProjectionInfo fromProj,

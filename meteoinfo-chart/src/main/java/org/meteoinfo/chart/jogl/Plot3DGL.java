@@ -1104,19 +1104,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         //Draw graphics
         if (this.clipPlane) {
-            float s = 1.01f;
-            gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{1, 0, 0, s}, 0);
-            gl.glEnable(GL2.GL_CLIP_PLANE0);
-            gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[]{-1, 0, 0, s}, 0);
-            gl.glEnable(GL2.GL_CLIP_PLANE1);
-            gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[]{0, -1, 0, s}, 0);
-            gl.glEnable(GL2.GL_CLIP_PLANE2);
-            gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[]{0, 1, 0, s}, 0);
-            gl.glEnable(GL2.GL_CLIP_PLANE3);
-            gl.glClipPlane(GL2.GL_CLIP_PLANE4, new double[]{0, 0, 1, s}, 0);
-            gl.glEnable(GL2.GL_CLIP_PLANE4);
-            gl.glClipPlane(GL2.GL_CLIP_PLANE5, new double[]{0, 0, -1, s}, 0);
-            gl.glEnable(GL2.GL_CLIP_PLANE5);
+            enableClipPlane(gl);
         }
 
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
@@ -1125,12 +1113,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
 
         if (this.clipPlane) {
-            gl.glDisable(GL2.GL_CLIP_PLANE0);
-            gl.glDisable(GL2.GL_CLIP_PLANE1);
-            gl.glDisable(GL2.GL_CLIP_PLANE2);
-            gl.glDisable(GL2.GL_CLIP_PLANE3);
-            gl.glDisable(GL2.GL_CLIP_PLANE4);
-            gl.glDisable(GL2.GL_CLIP_PLANE5);
+            disableClipPlane(gl);
         }
 
         //Draw text
@@ -1178,6 +1161,31 @@ public class Plot3DGL extends Plot implements GLEventListener {
             this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
             this.doScreenShot = false;
         }
+    }
+
+    private void disableClipPlane(GL2 gl) {
+        gl.glDisable(GL2.GL_CLIP_PLANE0);
+        gl.glDisable(GL2.GL_CLIP_PLANE1);
+        gl.glDisable(GL2.GL_CLIP_PLANE2);
+        gl.glDisable(GL2.GL_CLIP_PLANE3);
+        gl.glDisable(GL2.GL_CLIP_PLANE4);
+        gl.glDisable(GL2.GL_CLIP_PLANE5);
+    }
+
+    private void enableClipPlane(GL2 gl) {
+        float s = 1.01f;
+        gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{1, 0, 0, s}, 0);
+        gl.glEnable(GL2.GL_CLIP_PLANE0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[]{-1, 0, 0, s}, 0);
+        gl.glEnable(GL2.GL_CLIP_PLANE1);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[]{0, -1, 0, s}, 0);
+        gl.glEnable(GL2.GL_CLIP_PLANE2);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[]{0, 1, 0, s}, 0);
+        gl.glEnable(GL2.GL_CLIP_PLANE3);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE4, new double[]{0, 0, 1, s}, 0);
+        gl.glEnable(GL2.GL_CLIP_PLANE4);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE5, new double[]{0, 0, -1, s}, 0);
+        gl.glEnable(GL2.GL_CLIP_PLANE5);
     }
 
     protected void setLight(GL2 gl) {
@@ -2032,6 +2040,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 this.drawParticles(gl, (ParticleGraphics) graphic);
             } else if (graphic instanceof VolumeGraphics) {
                 try {
+                    if (this.clipPlane)
+                        this.disableClipPlane(gl);
                     //this.drawVolume(gl, (VolumeGraphics) graphic);
                     if (volumeRender == null)
                         volumeRender = new VolumeRender(gl, (VolumeGraphics) graphic);
@@ -2041,6 +2051,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     volumeRender.setOrthographic(this.orthographic);
                     volumeRender.updateMatrix();
                     volumeRender.draw();
+                    if (this.clipPlane)
+                        this.enableClipPlane(gl);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -4149,8 +4161,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
-
-        //this.volumeRender = null;
     }
 
     /**

@@ -1992,6 +1992,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         y += yShift;
         textRenderer.draw(str, (int) x, (int) y);
         textRenderer.endRendering();
+        textRenderer.dispose();
         gl.glPopMatrix();
 
         return rect;

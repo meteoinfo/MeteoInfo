@@ -20,7 +20,8 @@ public class VolumeTest {
     byte[] colors = new byte[256 * 4];
 
     public void readData() throws IOException {
-        File file = new File("D:\\Temp\\image\\sagittal.png");
+        //File file = new File("src\\test\\resources\\sagittal.png");
+        File file = new File(VolumeTest.class.getResource("/sagittal.png").getFile());
         final BufferedImage bufferedImage = ImageIO.read(file);
         width = bufferedImage.getWidth() / 2;
         height = bufferedImage.getHeight() / 88;
@@ -44,7 +45,8 @@ public class VolumeTest {
     }
 
     public void readColorMap() throws IOException {
-        File file = new File("D:\\Temp\\image\\colors1.png");
+        //File file = new File("D:\\Temp\\image\\colors1.png");
+        File file = new File(VolumeTest.class.getResource("/colors1.png").getFile());
         final BufferedImage bufferedImage = ImageIO.read(file);
         final byte[] originalColors = new byte[256 * 3];
         float[] opacityLevels = new float[]{0, 1};

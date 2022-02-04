@@ -200,9 +200,21 @@ class Axes3D(Axes):
         '''
         Set draw bounding box or not.
         
-        :param db: (*boolean*) Draw bounding box or not.
+        :param bbox: (*boolean*) Draw bounding box or not.
         '''
         self.axes.setDrawBoundingBox(bbox)
+
+    def set_draw_axis(self, axis):
+        """
+        Set whether draw axis.
+
+        :param axis: (*bool*) Whether draw axis.
+        """
+        self.set_draw_base(axis)
+        self.set_draw_bbox(axis)
+        self.set_draw_box(axis)
+        self.set_draw_xy(axis)
+        self.set_draw_z(axis)
         
     def get_xlim(self):
         """

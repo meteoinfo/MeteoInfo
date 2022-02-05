@@ -127,10 +127,6 @@ void main(){
 
     float len = distance(end, start);
     int sampleCount = int(float(depthSampleCount)*len);
-    //vec3 increment = (end-start)/float(sampleCount);
-    //float incLength = length(increment);
-    //increment = normalize(increment);
-    //vec3 pos = start;
 
     float s = 0.0;
     float px = 0.0;

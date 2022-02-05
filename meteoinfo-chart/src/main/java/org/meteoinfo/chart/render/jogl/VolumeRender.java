@@ -175,6 +175,9 @@ public class VolumeRender extends JOGLGraphicRender {
         String vertexShaderCode = Utils.loadResource("/shaders/volume/vertex.vert");
         String fragmentShaderCode;
         switch (this.getRayCastingType()) {
+            case BASIC:
+                fragmentShaderCode = Utils.loadResource("/shaders/volume/basic.frag");
+                break;
             case SPECULAR:
                 fragmentShaderCode = Utils.loadResource("/shaders/volume/specular.frag");
                 break;
@@ -235,10 +238,10 @@ public class VolumeRender extends JOGLGraphicRender {
             program.allocateUniform(gl, "normals", (gl2, loc) -> {
                 gl2.glUniform1i(loc, 2);
             });
-            program.allocateUniform(gl, "brightness", (gl2, loc) -> {
-                gl2.glUniform1f(loc, this.getBrightness());
-            });
         }
+        program.allocateUniform(gl, "brightness", (gl2, loc) -> {
+            gl2.glUniform1f(loc, this.getBrightness());
+        });
         float[] aabbMin = volume.getAabbMin();
         float[] aabbMax = volume.getAabbMax();
         program.allocateUniform(gl, "aabbMin", (gl2, loc) -> {

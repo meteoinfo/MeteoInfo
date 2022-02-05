@@ -3217,8 +3217,9 @@ def volumeplot(*args, **kwargs):
     :param cmap: (*string*) Color map string.
     :param vmin: (*float*) Minimum value for particle plotting.
     :param vmax: (*float*) Maximum value for particle plotting.
-    :param ray_casting: (*str*) Ray casting algorithm ['max_value' | 'specular']. Default is 'max_value'.
-    :param brightness: (*float*) Volume brightness. Only valid with 'specular' ray casting. Default is 1.
+    :param ray_casting: (*str*) Ray casting algorithm ['basic' | 'max_value' | 'specular'].
+        Default is 'max_value'.
+    :param brightness: (*float*) Volume brightness. Default is 1.
     :param alpha_min: (*float*) Minimum alpha value.
     :param alpha_max: (*float*) Maximum alpha value.
     :param opacity_nodes: (*list of float*) Opacity nodes. Default is None.

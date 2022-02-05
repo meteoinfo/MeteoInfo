@@ -110,6 +110,8 @@ void main(){
     float tmin = 0.0;
     float tmax = 0.0;
     intersect(ray, aabb, tmin, tmax);
+
+    vec4 value = vec4(0.0, 0.0, 0.0, 0.0);
     if (tmax < tmin){
         discard;
         return;
@@ -119,27 +121,28 @@ void main(){
 
     float len = distance(end, start);
     int sampleCount = int(float(depthSampleCount)*len);
-    //vec3 increment = (end-start)/float(sampleCount);
-    //float incLength = length(increment);
-    //increment = normalize(increment);
-    //vec3 pos = start;
 
     float px = 0.0;
     vec4 pxColor = vec4(0.0, 0.0, 0.0, 0.0);
     vec3 texCo = vec3(0.0, 0.0, 0.0);
 
-    //float last = 0.0;
     for(int count = 0; count < sampleCount; count++){
 
-        texCo = mix(start, end, float(count)/float(sampleCount));// - originOffset;
+        texCo = mix(end, start, float(count) / float(sampleCount));// - originOffset;
 
-        px = max(px, texture(tex, texCo).r);
+        px = texture(tex, texCo).r;
 
-        if(px >= 0.99){
+        pxColor = texture(colorMap, vec2(px, 0.0));
+
+        px = px * px;
+
+        value = value + pxColor - pxColor * value.a;
+
+        if(value.a >= 0.95){
+            value.a = 1.0;
             break;
         }
     }
-    pxColor = texture(colorMap, vec2(px, 0.0));
 
-    mgl_FragColor = pxColor * brightness;
+    mgl_FragColor = value * brightness;
 }

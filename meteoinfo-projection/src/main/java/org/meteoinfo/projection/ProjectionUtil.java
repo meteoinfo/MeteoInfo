@@ -547,7 +547,7 @@ public class ProjectionUtil {
                             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                             if (!Double.isNaN(points[0][0]) || !Double.isInfinite(points[0][0]) ||
                                     !Double.isNaN(points[0][1]) || !Double.isInfinite(points[0][1])) {
-                                wPoint = new PointZ();
+                                //wPoint = new PointZ();
                                 wPoint.X = points[0][0];
                                 wPoint.Y = points[0][1];
                                 newPoints.add(wPoint);

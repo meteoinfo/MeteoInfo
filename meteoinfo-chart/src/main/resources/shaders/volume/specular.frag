@@ -25,11 +25,6 @@ vec3 directionalLight = vec3(0.5, 0.5, 0.5);
 vec3 lightVector = normalize(vec3(-1.0, -1.0, 1.0));
 vec3 specularColor = vec3(0.5, 0.5, 0.5);
 
-vec3 aabb[2] = vec3[2](
-    vec3(-1.0, -1.0, -1.0),
-    vec3(1.0, 1.0, 1.0)
-);
-
 struct Ray {
     vec3 origin;
     vec3 direction;
@@ -39,30 +34,30 @@ struct Ray {
 
 Ray makeRay(vec3 origin, vec3 direction) {
     vec3 inv_direction = vec3(1.0) / direction;
+    int sign[3];
+    sign[0] = inv_direction.x < 0.0 ? 1 : 0;
+    sign[1] = inv_direction.y < 0.0 ? 1 : 0;
+    sign[2] = inv_direction.z < 0.0 ? 1 : 0;
 
     return Ray(
         origin,
         direction,
         inv_direction,
-        int[3](
-            ((inv_direction.x < 0.0) ? 1 : 0),
-            ((inv_direction.y < 0.0) ? 1 : 0),
-            ((inv_direction.z < 0.0) ? 1 : 0)
-        )
+        sign
     );
 }
 
 Ray createRayOrthographic(vec2 uv)
 {
-    float far = 5.0f;
+    float far = 5.0;
 
     // Transform the camera origin to world space
-    vec4 origin = iP * vec4(uv, 0.0f, 1.0f);
+    vec4 origin = iP * vec4(uv, 0.0, 1.0);
     origin = iV * origin;
     origin = origin / origin.w;
 
     // Invert the perspective projection of the view-space position
-    vec4 image = iP * vec4(uv, far, 1.0f);
+    vec4 image = iP * vec4(uv, far, 1.0);
     // Transform the direction from camera to world space and normalize
     image = iV* image;
     vec4 direction = normalize(origin - image);
@@ -72,12 +67,12 @@ Ray createRayOrthographic(vec2 uv)
 Ray createRayPerspective(vec2 uv)
 {
     // Transform the camera origin to world space
-    vec4 origin = iP * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    vec4 origin = iP * vec4(0.0, 0.0, 0.0, 1.0);
     origin = iV * origin;
     origin = origin / origin.w;
 
     // Invert the perspective projection of the view-space position
-    vec4 image = iP * vec4(uv, 1.0f, 1.0f);
+    vec4 image = iP * vec4(uv, 1.0, 1.0);
     // Transform the direction from camera to world space and normalize
     image = iV * image;
     image = image / image.w;
@@ -85,9 +80,6 @@ Ray createRayPerspective(vec2 uv)
     return makeRay(origin.xyz, direction.xyz);
 }
 
-/*
-	From: https://github.com/hpicgs/cgsee/wiki/Ray-Box-Intersection-on-the-GPU
-*/
 void intersect(
     in Ray ray, in vec3 aabb[2],
     out float tmin, out float tmax
@@ -103,7 +95,6 @@ void intersect(
     tmax = min(min(tmax, tymax), tzmax);
 }
 
-
 void main(){
     vec2 vUV = 2.0 * (gl_FragCoord.xy + vec2(0.5, 0.5)) / viewSize - 1.0;
     Ray ray;
@@ -112,7 +103,9 @@ void main(){
     } else {
         ray = createRayPerspective(vUV);
     }
-    vec3 aabb[2] = vec3[2](aabbMin, aabbMax);
+    vec3 aabb[2];
+    aabb[0] = aabbMin;
+    aabb[1] = aabbMax;
     float tmin = 0.0;
     float tmax = 0.0;
     intersect(ray, aabb, tmin, tmax);
@@ -140,15 +133,15 @@ void main(){
         texCo = mix(end, start, float(count)/float(sampleCount));// - originOffset;
 
         //texCo = start + increment*float(count);
-        px = texture(tex, texCo).r;
+        px = texture3D(tex, texCo).r;
 
 
         //px = length(texture(normals, texCo).xyz - 0.5);
         //px = px * 1.5;
 
-        pxColor = texture(colorMap, vec2(px, 0.0));
+        pxColor = texture2D(colorMap, vec2(px, 0.0));
 
-        normal = normalize(texture(normals, texCo).xyz - 0.5);
+        normal = normalize(texture3D(normals, texCo).xyz - 0.5);
         float directional = clamp(dot(normal, lightVector), 0.0, 1.0);
 
         //vec3 R = -reflect(lightDirection, surfaceNormal);

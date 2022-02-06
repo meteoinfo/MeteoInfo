@@ -294,4 +294,16 @@ public class VolumeRender extends JOGLGraphicRender {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Dispose
+     */
+    public void dispose() {
+        gl.glDeleteTextures(2, new int[]{volumeTexture, colorTexture}, 0);
+        if (this.volume.getRayCastingType() == RayCastingType.SPECULAR) {
+            gl.glActiveTexture(GL_TEXTURE2);
+            gl.glBindTexture(GL_TEXTURE_3D, 0);
+            gl.glDeleteTextures(1, new int[]{normalsTexture}, 0);
+        }
+    }
 }

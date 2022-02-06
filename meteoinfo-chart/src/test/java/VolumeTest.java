@@ -109,7 +109,7 @@ public class VolumeTest {
         graphics.setRayCastingType(RayCastingType.SPECULAR);
         JFrame frame = new JFrame("Volume Test");
         Plot3DGL plot = new Plot3DGL();
-        plot.setOrthographic(true);
+        plot.setOrthographic(false);
         plot.setClipPlane(false);
         //plot.setBackground(Color.black);
         //plot.setForeground(Color.blue);

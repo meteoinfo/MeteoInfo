@@ -313,7 +313,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     /**
-     * Set extent
+     * Set draw extent
      *
      * @param value Extent
      */
@@ -2395,14 +2395,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 float[] rgba = pb.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(pb.getWidth() * this.dpiScale);
-                gl.glBegin(GL2.GL_LINE_STRIP);
                 for (Polyline line : shape.getPolylines()) {
+                    gl.glBegin(GL2.GL_LINE_STRIP);
                     List<PointZ> ps = (List<PointZ>) line.getPointList();
                     for (PointZ p : ps) {
                         gl.glVertex3fv(transform.transform((float) p.X, (float) p.Y, (float) p.Z), 0);
                     }
+                    gl.glEnd();
                 }
-                gl.glEnd();
             }
         }
     }
@@ -4095,6 +4095,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
     @Override
     public void dispose(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
+        /*if (this.volumeRender != null) {
+            this.volumeRender.dispose();
+        }*/
         Program.destroyAllPrograms(gl);
     }
 

@@ -1213,4 +1213,54 @@ public class MIMath {
         r[1] += y;
         return r;
     }
+
+    /**
+     * Get wind direction and wind speed from U/V
+     *
+     * @param u U component
+     * @param v V component
+     * @return Wind direction and wind speed
+     */
+    public static double[] uv2ds(double u, double v) {
+        double ws = Math.sqrt(u * u + v * v);
+        double wd;
+        if (ws == 0) {
+            wd = 0;
+        } else {
+            wd = Math.asin(u / ws) * 180 / Math.PI;
+            if (u <= 0 && v < 0) {
+                wd = 180.0 - wd;
+            } else if (u > 0 && v < 0) {
+                wd = 180.0 - wd;
+            } else if (u < 0 && v > 0) {
+                wd = 360.0 + wd;
+            }
+            wd += 180;
+            if (wd >= 360) {
+                wd -= 360;
+            }
+        }
+
+        return new double[]{wd, ws};
+    }
+
+    /**
+     * Get wind U/V components from wind direction and speed
+     *
+     * @param windDir Wind direction
+     * @param windSpeed Wind speed
+     * @return Wind U/V components
+     */
+    public static double[] ds2uv(double windDir, double windSpeed) {
+        double dir;
+        dir = windDir + 180;
+        if (dir > 360) {
+            dir = dir - 360;
+        }
+        dir = dir * Math.PI / 180;
+        double u = windSpeed * Math.sin(dir);
+        double v = windSpeed * Math.cos(dir);
+
+        return new double[]{u, v};
+    }
 }

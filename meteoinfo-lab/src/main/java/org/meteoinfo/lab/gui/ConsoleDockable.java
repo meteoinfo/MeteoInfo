@@ -315,9 +315,9 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                 IChartPanel cp = parent.getFigureDock().getCurrentFigure();
                 if (cp != null) {
                     cp.paintGraphics();
-                    if (cp instanceof GLChartPanel) {
+                    /*if (cp instanceof GLChartPanel) {
                         ((GLChartPanel) cp).display();
-                    }
+                    }*/
                 }
             }
         };

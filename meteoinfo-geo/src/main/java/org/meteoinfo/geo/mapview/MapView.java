@@ -7231,7 +7231,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     gridLabels.addAll(gLabels);
                 }
 
-                //Adjust for diferent projections
+                //Adjust for different projections
                 float refLon;
                 switch (_projection.getProjInfo().getProjectionName()) {
                     case Lambert_Conformal_Conic:

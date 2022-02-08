@@ -149,6 +149,28 @@ public class ProjectionUtil {
      *
      * @param fromProj From projection
      * @param toProj To projection
+     * @param extent Origin extent
+     * @param n X/Y number
+     * @return Extent
+     */
+    public static Extent getProjectionExtent(ProjectionInfo fromProj, ProjectionInfo toProj,
+                                             Extent extent, int n) {
+        double[] X = new double[n];
+        double[] Y = new double[n];
+        double dx = extent.getWidth() / (n - 1);
+        double dy = extent.getHeight() / (n - 1);
+        for (int i = 0; i < n; i++) {
+            X[i] = extent.minX + i * dx;
+            Y[i] = extent.minY + i * dy;
+        }
+        return getProjectionExtent(fromProj, toProj, X, Y);
+    }
+
+    /**
+     * Get projected extent
+     *
+     * @param fromProj From projection
+     * @param toProj To projection
      * @param X X coordinate
      * @param Y Y coordinate
      * @return Extent

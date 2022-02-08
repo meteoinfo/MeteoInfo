@@ -141,6 +141,7 @@ class NDArray(object):
         alllist = True
         isempty = False
         nshape = []
+        squeeze = False
         for i in range(0, self.ndim):
             k = indices[i]
             if isinstance(k, int):
@@ -150,6 +151,7 @@ class NDArray(object):
                 eidx = k
                 step = 1
                 alllist = False
+                squeeze = True
             elif isinstance(k, slice):
                 sidx = 0 if k.start is None else k.start
                 if sidx < 0:
@@ -197,7 +199,7 @@ class NDArray(object):
             return NDArray(r)
 
         if onlyrange:
-            r = ArrayMath.section(self._array, ranges)
+            r = ArrayMath.section(self._array, ranges, squeeze)
         else:
             if alllist:
                 r = ArrayMath.takeValues(self._array, ranges)

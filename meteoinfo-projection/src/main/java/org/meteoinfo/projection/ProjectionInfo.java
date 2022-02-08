@@ -38,6 +38,8 @@ package org.meteoinfo.projection;
   */
  public abstract class ProjectionInfo {
      // <editor-fold desc="Variables">
+     public final static ProjectionInfo LONG_LAT = factory(new CRSFactory().createFromParameters("WGS84",
+             "+title=long/lat:WGS84 +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees"));
 
      protected CoordinateReferenceSystem crs;
      protected PolygonShape boundary;

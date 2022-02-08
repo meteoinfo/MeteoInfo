@@ -200,7 +200,7 @@ public class VolumeRender extends JOGLGraphicRender {
                 e.printStackTrace();
             }
         } else if (program.getProgramId() == null) {
-            this.bindingTextures();
+            //this.bindingTextures();
             program.init(gl);
         }
     }

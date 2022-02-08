@@ -5471,6 +5471,24 @@ public class ArrayMath {
     }
 
     /**
+     * Section array
+     *
+     * @param a Array a
+     * @param ranges Ranges
+     * @param squeeze Squeeze
+     * @return Result array
+     * @throws InvalidRangeException
+     */
+    public static Array section(Array a, List<Range> ranges, boolean squeeze) throws InvalidRangeException {
+        Array r;
+        if (squeeze)
+            r = a.section(ranges);
+        else
+            r = a.sectionNoReduce(ranges);
+        return r;
+    }
+
+    /**
      * Extract 1D array by boolean array
      * @param a The data array
      * @param condition The boolean array

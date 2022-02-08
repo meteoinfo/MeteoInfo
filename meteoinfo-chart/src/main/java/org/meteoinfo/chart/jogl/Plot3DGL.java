@@ -971,7 +971,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     }
 
-    private void updateExtent() {
+    protected void updateExtent() {
         this.extent = new Extent3D(xmin, xmax, ymin, ymax, zmin, zmax);
         this.drawExtent = (Extent3D) this.extent.clone();
         this.transform.setExtent(this.drawExtent);
@@ -991,10 +991,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
     /**
      * Add a graphic
      *
-     * @param g Grahic
+     * @param graphic Graphic
      */
-    public void addGraphic(Graphic g) {
-        this.graphics.add(g);
+    public void addGraphic(Graphic graphic) {
+        this.graphics.add(graphic);
         Extent ex = this.graphics.getExtent();
         if (!ex.is3D()) {
             ex = ex.to3D();
@@ -1249,7 +1249,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param x used to retrieve x coordinates of drawn plane from this method.
      * @param y used to retrieve y coordinates of drawn plane from this method.
      */
-    private void drawBase(GL2 gl) {
+    protected void drawBase(GL2 gl) {
         float[] rgba = this.gridLine.getColor().getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
@@ -1341,7 +1341,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return new Vector3f(out[0], out[1], out[2]);
     }
 
-    private float[] toScreen(float vx, float vy, float vz) {
+    protected float[] toScreen(float vx, float vy, float vz) {
         //Get screen coordinates
         float coord[] = new float[4];// x, y;// returned xy 2d coords        
         glu.gluProject(vx, vy, vz, mvmatrix, 0, projmatrix, 0, viewport, 0, coord, 0);
@@ -1353,7 +1353,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return coord;
     }
 
-    private float toScreenLength(float x1, float y1, float z1, float x2, float y2, float z2) {
+    protected float toScreenLength(float x1, float y1, float z1, float x2, float y2, float z2) {
         float[] coord = toScreen(x1, y1, z1);
         float sx1 = coord[0];
         float sy1 = coord[1];
@@ -1364,7 +1364,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return (float) Math.sqrt(Math.pow(sx2 - sx1, 2) + Math.pow(sy2 - sy1, 2));
     }
 
-    private float toScreenAngle(float x1, float y1, float z1, float x2, float y2, float z2) {
+    protected float toScreenAngle(float x1, float y1, float z1, float x2, float y2, float z2) {
         float[] coord = toScreen(x1, y1, z1);
         float sx1 = coord[0];
         float sy1 = coord[1];
@@ -1375,7 +1375,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return (float) MeteoMath.uv2ds(sx2 - sx1, sy2 - sy1)[0];
     }
 
-    private int getLabelGap(Font font, List<ChartText> labels, double len) {
+    protected int getLabelGap(Font font, List<ChartText> labels, double len) {
         TextRenderer textRenderer = new TextRenderer(font);
         int n = labels.size();
         int nn;
@@ -1387,7 +1387,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return n / nn + 1;
     }
 
-    private int getLegendTickGap(ChartColorBar legend, double len) {
+    protected int getLegendTickGap(ChartColorBar legend, double len) {
         if (legend.getTickLabelAngle() != 0) {
             return 1;
         }
@@ -1407,10 +1407,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return n / nn + 1;
     }
 
-    protected void drawBoxGrids(GL2 gl) {
-        if (this.drawBase)
-            this.drawBase(gl);
-
+    protected void drawBox(GL2 gl) {
         float xMin = this.transform.transform_x(this.xmin);
         float xMax = this.transform.transform_x(this.xmax);
         float yMin = this.transform.transform_y(this.ymin);
@@ -1418,57 +1415,62 @@ public class Plot3DGL extends Plot implements GLEventListener {
         float zMin = this.transform.transform_z(this.zmin);
         float zMax = this.transform.transform_z(this.zmax);
         float[] rgba;
-        //Draw box
-        if (boxed) {
-            if (this.angleY >= 180 && this.angleY < 360) {
-                rgba = this.gridLine.getColor().getRGBComponents(null);
-                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
-                gl.glBegin(GL2.GL_LINE_STRIP);
-                gl.glVertex3f(xMin, yMax, zMin);
-                gl.glVertex3f(xMin, yMin, zMin);
-                gl.glVertex3f(xMin, yMin, zMax);
-                gl.glVertex3f(xMin, yMax, zMax);
-                gl.glVertex3f(xMin, yMax, zMin);
-                gl.glEnd();
-            } else {
-                rgba = this.gridLine.getColor().getRGBComponents(null);
-                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
-                gl.glBegin(GL2.GL_LINE_STRIP);
-                gl.glVertex3f(xMax, yMax, zMin);
-                gl.glVertex3f(xMax, yMin, zMin);
-                gl.glVertex3f(xMax, yMin, zMax);
-                gl.glVertex3f(xMax, yMax, zMax);
-                gl.glVertex3f(xMax, yMax, zMin);
-                gl.glEnd();
-            }
-            if (this.angleY >= 90 && this.angleY < 270) {
-                rgba = this.gridLine.getColor().getRGBComponents(null);
-                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.gridLine.getSize() * dpiScale);
-                gl.glBegin(GL2.GL_LINE_STRIP);
-                gl.glVertex3f(xMin, yMin, zMin);
-                gl.glVertex3f(xMax, yMin, zMin);
-                gl.glVertex3f(xMax, yMin, zMax);
-                gl.glVertex3f(xMin, yMin, zMax);
-                gl.glVertex3f(xMin, yMin, zMin);
-                gl.glEnd();
-            } else {
-                rgba = this.gridLine.getColor().getRGBComponents(null);
-                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.gridLine.getSize() * dpiScale);
-                gl.glBegin(GL2.GL_LINE_STRIP);
-                gl.glVertex3f(xMin, yMax, zMin);
-                gl.glVertex3f(xMax, yMax, zMin);
-                gl.glVertex3f(xMax, yMax, zMax);
-                gl.glVertex3f(xMin, yMax, zMax);
-                gl.glVertex3f(xMin, yMax, xMin);
-                gl.glEnd();
-            }
+        if (this.angleY >= 180 && this.angleY < 360) {
+            rgba = this.gridLine.getColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            gl.glVertex3f(xMin, yMax, zMin);
+            gl.glVertex3f(xMin, yMin, zMin);
+            gl.glVertex3f(xMin, yMin, zMax);
+            gl.glVertex3f(xMin, yMax, zMax);
+            gl.glVertex3f(xMin, yMax, zMin);
+            gl.glEnd();
+        } else {
+            rgba = this.gridLine.getColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            gl.glVertex3f(xMax, yMax, zMin);
+            gl.glVertex3f(xMax, yMin, zMin);
+            gl.glVertex3f(xMax, yMin, zMax);
+            gl.glVertex3f(xMax, yMax, zMax);
+            gl.glVertex3f(xMax, yMax, zMin);
+            gl.glEnd();
         }
+        if (this.angleY >= 90 && this.angleY < 270) {
+            rgba = this.gridLine.getColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glLineWidth(this.gridLine.getSize() * dpiScale);
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            gl.glVertex3f(xMin, yMin, zMin);
+            gl.glVertex3f(xMax, yMin, zMin);
+            gl.glVertex3f(xMax, yMin, zMax);
+            gl.glVertex3f(xMin, yMin, zMax);
+            gl.glVertex3f(xMin, yMin, zMin);
+            gl.glEnd();
+        } else {
+            rgba = this.gridLine.getColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glLineWidth(this.gridLine.getSize() * dpiScale);
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            gl.glVertex3f(xMin, yMax, zMin);
+            gl.glVertex3f(xMax, yMax, zMin);
+            gl.glVertex3f(xMax, yMax, zMax);
+            gl.glVertex3f(xMin, yMax, zMax);
+            gl.glVertex3f(xMin, yMax, xMin);
+            gl.glEnd();
+        }
+    }
 
-        //Draw grid lines
+    protected void drawXYGridLine(GL2 gl) {
+        float xMin = this.transform.transform_x(this.xmin);
+        float xMax = this.transform.transform_x(this.xmax);
+        float yMin = this.transform.transform_y(this.ymin);
+        float yMax = this.transform.transform_y(this.ymax);
+        float zMin = this.transform.transform_z(this.zmin);
+        float zMax = this.transform.transform_z(this.zmax);
+        float[] rgba;
         float x, y, v;
         int skip;
         XAlign xAlign;
@@ -1554,69 +1556,108 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 }
             }
         }
+    }
 
-        //Draw z axis
-        if (this.displayZ) {
-            //z axis line
-            if (this.angleY < 90) {
-                x = xMin;
-                y = yMax;
-            } else if (this.angleY < 180) {
-                x = xMax;
-                y = yMax;
-            } else if (this.angleY < 270) {
-                x = xMax;
-                y = yMin;
-            } else {
-                x = xMin;
-                y = yMin;
+    protected void drawZGridLine(GL2 gl) {
+        float xMin = this.transform.transform_x(this.xmin);
+        float xMax = this.transform.transform_x(this.xmax);
+        float yMin = this.transform.transform_y(this.ymin);
+        float yMax = this.transform.transform_y(this.ymax);
+        float zMin = this.transform.transform_z(this.zmin);
+        float zMax = this.transform.transform_z(this.zmax);
+        float[] rgba;
+        float x, y, v;
+        int skip;
+        XAlign xAlign;
+        YAlign yAlign;
+        Rectangle2D rect;
+        float strWidth, strHeight;
+        //z axis line
+        if (this.angleY < 90) {
+            x = xMin;
+            y = yMax;
+        } else if (this.angleY < 180) {
+            x = xMax;
+            y = yMax;
+        } else if (this.angleY < 270) {
+            x = xMax;
+            y = yMin;
+        } else {
+            x = xMin;
+            y = yMin;
+        }
+
+        this.zAxis.updateTickLabels();
+        List<ChartText> tlabs = this.zAxis.getTickLabels();
+        float axisLen = this.toScreenLength(x, y, zMin, x, y, zMax);
+        skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
+        for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
+            v = (float) this.zAxis.getTickValues()[i];
+            if (v < zmin || v > zmax) {
+                continue;
+            }
+            v = this.transform.transform_z(v);
+            if (i == tlabs.size()) {
+                break;
             }
 
-            this.zAxis.updateTickLabels();
-            List<ChartText> tlabs = this.zAxis.getTickLabels();
-            float axisLen = this.toScreenLength(x, y, zMin, x, y, zMax);
-            skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
-            for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
-                v = (float) this.zAxis.getTickValues()[i];
-                if (v < zmin || v > zmax) {
-                    continue;
-                }
-                v = this.transform.transform_z(v);
-                if (i == tlabs.size()) {
-                    break;
-                }
-
-                //Draw grid line
-                if (this.gridLine.isDrawZLine() && this.boxed && (v != zMin && v != zMax)) {
-                    rgba = this.gridLine.getColor().getRGBComponents(null);
-                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
-                    gl.glBegin(GL2.GL_LINE_STRIP);
-                    gl.glVertex3f(x, y, v);
-                    if (x < 0) {
-                        if (y > 0) {
-                            gl.glVertex3f(-x, y, v);
-                            gl.glVertex3f(-x, -y, v);
-                        } else {
-                            gl.glVertex3f(x, -y, v);
-                            gl.glVertex3f(-x, -y, v);
-                        }
+            //Draw grid line
+            if (this.gridLine.isDrawZLine() && this.boxed && (v != zMin && v != zMax)) {
+                rgba = this.gridLine.getColor().getRGBComponents(null);
+                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
+                gl.glBegin(GL2.GL_LINE_STRIP);
+                gl.glVertex3f(x, y, v);
+                if (x < 0) {
+                    if (y > 0) {
+                        gl.glVertex3f(-x, y, v);
+                        gl.glVertex3f(-x, -y, v);
                     } else {
-                        if (y > 0) {
-                            gl.glVertex3f(x, -y, v);
-                            gl.glVertex3f(-x, -y, v);
-                        } else {
-                            gl.glVertex3f(-x, y, v);
-                            gl.glVertex3f(-x, -y, v);
-                        }
+                        gl.glVertex3f(x, -y, v);
+                        gl.glVertex3f(-x, -y, v);
                     }
-                    gl.glEnd();
+                } else {
+                    if (y > 0) {
+                        gl.glVertex3f(x, -y, v);
+                        gl.glVertex3f(-x, -y, v);
+                    } else {
+                        gl.glVertex3f(-x, y, v);
+                        gl.glVertex3f(-x, -y, v);
+                    }
                 }
+                gl.glEnd();
             }
         }
     }
 
-    void drawAxis(GL2 gl) {
+    protected void drawGridLine(GL2 gl) {
+        //Draw x/y grid line
+        if (this.displayXY) {
+            this.drawXYGridLine(gl);
+        }
+
+        //Draw z grid line
+        if (this.displayZ) {
+            this.drawZGridLine(gl);
+        }
+    }
+
+    protected void drawBoxGrids(GL2 gl) {
+        //Draw base
+        if (this.drawBase) {
+            this.drawBase(gl);
+        }
+
+        //Draw box
+        if (this.boxed) {
+            this.drawBox(gl);
+        }
+
+        //Draw grid lines
+        this.drawGridLine(gl);
+    }
+
+    protected void drawAxis(GL2 gl) {
         float xMin = this.transform.transform_x(this.xmin);
         float xMax = this.transform.transform_x(this.xmax);
         float yMin = this.transform.transform_y(this.ymin);

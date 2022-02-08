@@ -6,6 +6,7 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.geometry.legend.LineStyles;
+import org.meteoinfo.geometry.legend.PolylineBreak;
 
 import java.awt.*;
 
@@ -15,26 +16,18 @@ import java.awt.*;
  */
 public class GridLine {
     // <editor-fold desc="Variables">
-    private Color color;
-    private float size;
-    private LineStyles style;
-    private boolean drawXLine;
-    private boolean drawYLine;
-    private boolean drawZLine;
-    private boolean top;
+    protected PolylineBreak lineBreak;
+    protected boolean drawXLine;
+    protected boolean drawYLine;
+    protected boolean drawZLine;
+    protected boolean top;
     // </editor-fold>    
     // <editor-fold desc="Constructor">
     /**
      * Constructor
      */
     public GridLine(){
-        this.color = Color.LIGHT_GRAY;
-        this.size = 1.0f;
-        this.style = LineStyles.DASH;
-        this.drawXLine = false;
-        this.drawYLine = false;
-        this.drawZLine = false;
-        this.top = false;
+        this(false);
     }
 
     /**
@@ -42,7 +35,10 @@ public class GridLine {
      * @param visible
      */
     public GridLine(boolean visible) {
-        this();
+        this.lineBreak = new PolylineBreak();
+        this.lineBreak.setColor(Color.LIGHT_GRAY);
+        this.lineBreak.setStyle(LineStyles.DASH);
+        this.top = false;
         this.drawXLine = visible;
         this.drawYLine = visible;
         this.drawZLine = visible;
@@ -54,7 +50,7 @@ public class GridLine {
      * @return Color
      */
     public Color getColor(){
-        return this.color;
+        return this.lineBreak.getColor();
     }
     
     /**
@@ -62,7 +58,7 @@ public class GridLine {
      * @param value Color
      */
     public void setColor(Color value){
-        this.color = value;
+        this.lineBreak.setColor(value);
     }
     
     /**
@@ -70,7 +66,7 @@ public class GridLine {
      * @return Size
      */
     public float getSize(){
-        return this.size;        
+        return this.lineBreak.getWidth();
     }
     
     /**
@@ -78,7 +74,7 @@ public class GridLine {
      * @param value Size
      */
     public void setSize(float value) {
-        this.size = value;
+        this.lineBreak.setWidth(value);
     }
     
     /**
@@ -86,7 +82,7 @@ public class GridLine {
      * @return Style
      */
     public LineStyles getStyle(){
-        return this.style;
+        return this.lineBreak.getStyle();
     }
     
     /**
@@ -94,7 +90,7 @@ public class GridLine {
      * @param value Style
      */
     public void setStyle(LineStyles value){
-        this.style = value;
+        this.lineBreak.setStyle(value);
     }
     
     /**

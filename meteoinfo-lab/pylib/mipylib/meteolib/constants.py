@@ -18,3 +18,4 @@ degCtoK = 273.15    # Temperature offset between K and C (deg C)
 g = 9.8             # Gravitational acceleration (m / s^2)
 sat_pressure_0c = 6.112  #Saturation presssure at 0 degree (hPa)
 T_BASE = 300.
+omega = 7292115e-11  # Avg. angular velocity of Earth (rad / s)

@@ -27,6 +27,11 @@
             <artifactId>proj4j</artifactId>
             <version>1.1.4</version>
         </dependency>
+        <dependency>
+            <groupId>net.sf.geographiclib</groupId>
+            <artifactId>GeographicLib-Java</artifactId>
+            <version>1.52</version>
+        </dependency>
     </dependencies>
 
     <build>

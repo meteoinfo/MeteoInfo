@@ -1,6 +1,8 @@
 import mipylib.numeric as np
+from mipylib.geolib import Geod
 
-__all__ = ['resample_nn_1d','nearest_intersection_idx','first_derivative','gradient']
+__all__ = ['resample_nn_1d','nearest_intersection_idx','first_derivative','gradient',
+           'lat_lon_grid_deltas']
 
 def resample_nn_1d(a, centers):
     """Return one-dimensional nearest-neighbor indexes based on user-specified centers.
@@ -79,6 +81,68 @@ def _broadcast_to_axis(arr, axis, ndim):
         new_shape[axis] = arr.size
         arr = arr.reshape(*new_shape)
     return arr
+
+def lat_lon_grid_deltas(longitude, latitude, x_dim=-1, y_dim=-2, geod=None):
+    r"""
+    Calculate the actual delta between grid points that are in latitude/longitude format.
+
+    Parameters
+    ----------
+    longitude : array_like
+        Array of longitudes defining the grid. Assumed to be in
+        degrees.
+    latitude : array_like
+        Array of latitudes defining the grid. Assumed to be in
+        degrees.
+    x_dim: int
+        axis number for the x dimension, defaults to -1.
+    y_dim : int
+        axis number for the y dimension, defaults to -2.
+    geod : `geolib.Geod` or ``None``
+        geolib Geod to use for forward azimuth and distance calculations. If ``None``, use a
+        default spherical ellipsoid.
+
+    Returns
+    -------
+    dx, dy:
+        At least two dimensional arrays of signed deltas between grid points in the x and y
+        direction
+
+    Notes
+    -----
+    Accepts 1D, 2D, or higher arrays for latitude and longitude
+    Assumes [..., Y, X] dimension order for input and output, unless keyword arguments `y_dim`
+    and `x_dim` are otherwise specified.
+    """
+    # Inputs must be the same number of dimensions
+    if latitude.ndim != longitude.ndim:
+        raise ValueError('Latitude and longitude must have the same number of dimensions.')
+
+    # If we were given 1D arrays, make a mesh grid
+    if latitude.ndim < 2:
+        longitude, latitude = np.meshgrid(longitude, latitude)
+
+    longitude = np.asarray(longitude)
+    latitude = np.asarray(latitude)
+
+    # Determine dimension order for offset slicing
+    take_y = make_take(latitude.ndim, y_dim)
+    take_x = make_take(latitude.ndim, x_dim)
+
+    g = Geod() if geod is None else geod
+    forward_az, _, dy = g.inv(longitude[take_y(slice(None, -1))],
+                              latitude[take_y(slice(None, -1))],
+                              longitude[take_y(slice(1, None))],
+                              latitude[take_y(slice(1, None))])
+    dy[(forward_az < -90.) | (forward_az > 90.)] *= -1
+
+    forward_az, _, dx = g.inv(longitude[take_x(slice(None, -1))],
+                              latitude[take_x(slice(None, -1))],
+                              longitude[take_x(slice(1, None))],
+                              latitude[take_x(slice(1, None))])
+    dx[(forward_az < 0.) | (forward_az > 180.)] *= -1
+
+    return dx, dy
 
 def _process_gradient_args(f, axes, coordinates, deltas):
     """Handle common processing of arguments for gradient and gradient-like functions."""

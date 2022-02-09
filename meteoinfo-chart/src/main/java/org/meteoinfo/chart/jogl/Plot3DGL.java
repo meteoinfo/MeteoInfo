@@ -1094,8 +1094,15 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         gl.glColor3f(0.0f, 0.0f, 0.0f);
 
+        //Draw base
+        if (this.drawBase) {
+            this.drawBase(gl);
+        }
+
         //Draw box
-        drawBoxGrids(gl);
+        if (this.boxed) {
+            this.drawBox(gl);
+        }
 
         //Draw title
         this.drawTitle();
@@ -1106,6 +1113,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (this.clipPlane) {
             enableClipPlane(gl);
         }
+
+        drawGridLine(gl);
 
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);

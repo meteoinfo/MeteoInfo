@@ -154,6 +154,7 @@ class DimArray(NDArray):
         alllist = True
         isempty = False
         nshape = []
+        squeeze = False
         for i in range(0, self.ndim):  
             isrange = True
             k = indices[i]
@@ -164,6 +165,7 @@ class DimArray(NDArray):
                 eidx = k
                 step = 1       
                 alllist = False
+                squeeze = True
             elif isinstance(k, slice):
                 if isinstance(k.start, basestring):
                     sv = float(k.start)
@@ -221,6 +223,7 @@ class DimArray(NDArray):
                 if len(kvalues) == 1:
                     eidx = sidx
                     step = 1
+                    squeeze = True
                 else:                    
                     eidx = dim.getValueIndex(float(kvalues[1]))
                     if len(kvalues) == 2:
@@ -263,7 +266,7 @@ class DimArray(NDArray):
             return NDArray(r)
         
         if onlyrange:
-            r = ArrayMath.section(self._array, ranges)
+            r = ArrayMath.section(self._array, ranges, squeeze)
         else:
             if alllist:
                 r = ArrayMath.takeValues(self._array, ranges)

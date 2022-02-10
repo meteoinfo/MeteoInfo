@@ -1,8 +1,9 @@
 import mipylib.numeric as np
 from mipylib.geolib import Geod
+from ..interpolate import interpolate_1d
 
 __all__ = ['resample_nn_1d','nearest_intersection_idx','first_derivative','gradient',
-           'lat_lon_grid_deltas']
+           'lat_lon_grid_deltas','get_layer_heights']
 
 def resample_nn_1d(a, centers):
     """Return one-dimensional nearest-neighbor indexes based on user-specified centers.
@@ -64,6 +65,136 @@ def _remove_nans(*variables):
     for v in variables:
         ret.append(v[~mask])
     return ret
+
+def get_layer_heights(height, depth, *args, **kwargs):
+    """Return an atmospheric layer from upper air data with the requested bottom and depth.
+
+    This function will subset an upper air dataset to contain only the specified layer using
+    the height only.
+
+    Parameters
+    ----------
+    height : array-like
+        Atmospheric height
+    depth : `array-like`
+        Thickness of the layer
+    args : array-like
+        Atmospheric variable(s) measured at the given pressures
+    bottom : `float`, optional
+        Bottom of the layer
+    interpolate : bool, optional
+        Interpolate the top and bottom points if they are not in the given data. Defaults
+        to True.
+    with_agl : bool, optional
+        Returns the height as above ground level by subtracting the minimum height in the
+        provided height. Defaults to False.
+
+    Returns
+    -------
+    `array, array`
+        Height and data variables of the layer
+    Notes
+    -----
+    Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
+    """
+    # Make sure pressure and datavars are the same length
+    for datavar in args:
+        if len(height) != len(datavar):
+            raise ValueError('Height and data variables must have the same length.')
+
+    # If we want things in AGL, subtract the minimum height from all height values
+    with_agl = kwargs.pop('with_agl', False)
+    if with_agl:
+        sfc_height = np.min(height)
+        height = height - sfc_height
+
+    # If the bottom is not specified, make it the surface
+    bottom = kwargs.pop('bottom', None)
+    if bottom is None:
+        bottom = height[0]
+
+    # Make heights and arguments base units
+    height = height.to_base_units()
+    bottom = bottom.to_base_units()
+
+    # Calculate the top of the layer
+    top = bottom + depth
+
+    ret = []  # returned data variables in layer
+
+    # Ensure heights are sorted in ascending order
+    sort_inds = np.argsort(height)
+    height = height[sort_inds]
+
+    # Mask based on top and bottom
+    inds = _greater_or_close(height, bottom) & _less_or_close(height, top)
+    heights_interp = height[inds]
+
+    # Interpolate heights at bounds if necessary and sort
+    interpolate = kwargs.pop('interpolate', True)
+    if interpolate:
+        # If we don't have the bottom or top requested, append them
+        if top not in heights_interp:
+            heights_interp = np.sort(np.append(heights_interp.m, top.m))
+        if bottom not in heights_interp:
+            heights_interp = np.sort(np.append(heights_interp.m, bottom.m))
+
+    ret.append(heights_interp)
+
+    for datavar in args:
+        # Ensure that things are sorted in ascending order
+        datavar = datavar[sort_inds]
+
+        if interpolate:
+            # Interpolate for the possibly missing bottom/top values
+            datavar_interp = interpolate_1d(heights_interp, height, datavar)
+            datavar = datavar_interp
+        else:
+            datavar = datavar[inds]
+
+        ret.append(datavar)
+    return ret
+
+def _greater_or_close(a, value, **kwargs):
+    r"""Compare values for greater or close to boolean masks.
+
+    Returns a boolean mask for values greater than or equal to a target within a specified
+    absolute or relative tolerance.
+
+    Parameters
+    ----------
+    a : array-like
+        Array of values to be compared
+    value : float
+        Comparison value
+
+    Returns
+    -------
+    array-like
+        Boolean array where values are greater than or nearly equal to value.
+    """
+    return (a > value) | np.isclose(a, value, **kwargs)
+
+
+def _less_or_close(a, value, **kwargs):
+    r"""Compare values for less or close to boolean masks.
+
+    Returns a boolean mask for values less than or equal to a target within a specified
+    absolute or relative tolerance.
+
+    Parameters
+    ----------
+    a : array-like
+        Array of values to be compared
+    value : float
+        Comparison value
+
+    Returns
+    -------
+    array-like
+        Boolean array where values are less than or nearly equal to value
+    """
+    return (a < value) | np.isclose(a, value, **kwargs)
 
 def make_take(ndims, slice_dim):
     """Generate a take function to index in a particular dimension."""

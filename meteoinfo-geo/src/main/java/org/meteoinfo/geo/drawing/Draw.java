@@ -355,11 +355,12 @@ public class Draw {
                     if (s.startsWith("$") && s.endsWith("$")) {
                         drawLaTeX(g, s, x, y, useExternalFont);
                         dim = getStringDimension(s, g, true);
-                        x += dim.width;
+                        x += dim.width - 5;
                     } else {
                         dim = getStringDimension(s, g, false);
                         g.drawString(s, x, y - (float) (dim.getHeight() * 0.2));
-                        x += dim.width - 5;
+                        //x += dim.width - 5;
+                        x += dim.width;
                     }
                 }
                 break;
@@ -391,11 +392,12 @@ public class Draw {
                     if (s.startsWith("$") && s.endsWith("$")) {
                         drawLaTeX(g, s, (float) x, (float) y, useExternalFont);
                         dim = getStringDimension(s, g, true);
-                        x += dim.width;
+                        x += dim.width - 5;
                     } else {
                         dim = getStringDimension(s, g, false);
                         g.drawString(s, (float) x, (float) (y - dim.getHeight() * 0.2));
-                        x += dim.width - 5;
+                        //x += dim.width - 5;
+                        x += dim.width;
                     }
                 }
                 break;

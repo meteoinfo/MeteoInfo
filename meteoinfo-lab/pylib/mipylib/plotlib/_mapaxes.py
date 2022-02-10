@@ -1544,6 +1544,8 @@ class MapAxes(Axes):
             y = np.asarray(args[1])
             u = np.asarray(args[2])
             v = np.asarray(args[3])
+            if u.ndim == 2 and x.ndim == 1:
+                x, y = np.meshgrid(x, y)
             args = args[4:]
             if len(args) > 0:
                 cdata = np.asarray(args[0])

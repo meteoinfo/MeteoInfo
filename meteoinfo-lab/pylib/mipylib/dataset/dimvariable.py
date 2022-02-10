@@ -94,6 +94,18 @@ class DimVariable(object):
         
         if not isinstance(indices, tuple):
             indices = [indices]
+
+        #deal with Ellipsis
+        if Ellipsis in indices:
+            indices1 = []
+            n = self.ndim - len(indices) + 1
+            for ii in indices:
+                if ii is Ellipsis:
+                    for _ in range(n):
+                        indices1.append(slice(None))
+                else:
+                    indices1.append(ii)
+            indices = indices1
             
         if len(indices) < self.ndim:
             indices = list(indices)

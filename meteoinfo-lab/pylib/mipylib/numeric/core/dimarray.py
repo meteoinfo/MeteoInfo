@@ -64,9 +64,19 @@ class DimArray(NDArray):
         
     def __getitem__(self, indices):
         if not isinstance(indices, tuple):
-            inds = []
-            inds.append(indices)
-            indices = inds
+            indices = [indices]
+
+        #deal with Ellipsis
+        if Ellipsis in indices:
+            indices1 = []
+            n = self.ndim - len(indices) + 1
+            for ii in indices:
+                if ii is Ellipsis:
+                    for _ in range(n):
+                        indices1.append(slice(None))
+                else:
+                    indices1.append(ii)
+            indices = indices1
             
         if len(indices) < self.ndim:
             if isinstance(indices, tuple):

@@ -9,7 +9,7 @@ __all__ = [
     'mixing_ratio','mixing_ratio_from_specific_humidity','potential_temperature',
     'relative_humidity_from_specific_humidity',
     'saturation_mixing_ratio','saturation_vapor_pressure','temperature_from_potential_temperature',
-    'virtual_temperature'
+    'virtual_temperature','dry_static_energy'
     ]
 
 def saturation_vapor_pressure(temperature):
@@ -278,3 +278,34 @@ def virtual_temperature(temperature, mixing, molecular_weight_ratio=constants.ep
     """
     return temperature * ((mixing + molecular_weight_ratio)
                           / (molecular_weight_ratio * (1 + mixing)))
+
+def dry_static_energy(height, temperature):
+    r"""Calculate the dry static energy of parcels.
+
+    This function will calculate the dry static energy following the first two terms of
+    equation 3.72 in [Hobbs2006]_.
+
+    Parameters
+    ----------
+    height : `array`
+        Atmospheric height
+    temperature : `array`
+        Air temperature
+
+    Returns
+    -------
+    `array`
+        Dry static energy
+
+    See Also
+    --------
+    montgomery_streamfunction
+
+    Notes
+    -----
+    .. math:: \text{dry static energy} = c_{pd} T + gz
+
+    * :math:`T` is temperature
+    * :math:`z` is height
+    """
+    return constants.g * height + constants.Cp_d * temperature

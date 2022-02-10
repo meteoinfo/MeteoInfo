@@ -1103,6 +1103,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (this.boxed) {
             this.drawBox(gl);
         }
+        if (this.drawBoundingBox) {
+            this.drawBoundingBox(gl);
+        }
 
         //Draw title
         this.drawTitle();
@@ -1423,11 +1426,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
         float yMax = this.transform.transform_y(this.ymax);
         float zMin = this.transform.transform_z(this.zmin);
         float zMax = this.transform.transform_z(this.zmax);
-        float[] rgba;
+        float[] rgba = this.gridLine.getColor().getRGBComponents(null);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
         if (this.angleY >= 180 && this.angleY < 360) {
-            rgba = this.gridLine.getColor().getRGBComponents(null);
-            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
             gl.glBegin(GL2.GL_LINE_STRIP);
             gl.glVertex3f(xMin, yMax, zMin);
             gl.glVertex3f(xMin, yMin, zMin);
@@ -1436,9 +1438,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glVertex3f(xMin, yMax, zMin);
             gl.glEnd();
         } else {
-            rgba = this.gridLine.getColor().getRGBComponents(null);
-            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
             gl.glBegin(GL2.GL_LINE_STRIP);
             gl.glVertex3f(xMax, yMax, zMin);
             gl.glVertex3f(xMax, yMin, zMin);
@@ -1448,9 +1447,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glEnd();
         }
         if (this.angleY >= 90 && this.angleY < 270) {
-            rgba = this.gridLine.getColor().getRGBComponents(null);
-            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(this.gridLine.getSize() * dpiScale);
             gl.glBegin(GL2.GL_LINE_STRIP);
             gl.glVertex3f(xMin, yMin, zMin);
             gl.glVertex3f(xMax, yMin, zMin);
@@ -1459,15 +1455,58 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glVertex3f(xMin, yMin, zMin);
             gl.glEnd();
         } else {
-            rgba = this.gridLine.getColor().getRGBComponents(null);
-            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glLineWidth(this.gridLine.getSize() * dpiScale);
             gl.glBegin(GL2.GL_LINE_STRIP);
             gl.glVertex3f(xMin, yMax, zMin);
             gl.glVertex3f(xMax, yMax, zMin);
             gl.glVertex3f(xMax, yMax, zMax);
             gl.glVertex3f(xMin, yMax, zMax);
             gl.glVertex3f(xMin, yMax, xMin);
+            gl.glEnd();
+        }
+    }
+
+    protected void drawBoundingBox(GL2 gl) {
+        float xMin = this.transform.transform_x(this.xmin);
+        float xMax = this.transform.transform_x(this.xmax);
+        float yMin = this.transform.transform_y(this.ymin);
+        float yMax = this.transform.transform_y(this.ymax);
+        float zMin = this.transform.transform_z(this.zmin);
+        float zMax = this.transform.transform_z(this.zmax);
+        float[] rgba = this.gridLine.getColor().getRGBComponents(null);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
+        if (this.angleY >= 180 && this.angleY < 360) {
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            gl.glVertex3f(xMax, yMax, zMin);
+            gl.glVertex3f(xMax, yMin, zMin);
+            gl.glVertex3f(xMax, yMin, zMax);
+            gl.glVertex3f(xMax, yMax, zMax);
+            gl.glVertex3f(xMax, yMax, zMin);
+            gl.glEnd();
+        } else {
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            gl.glVertex3f(xMin, yMax, zMin);
+            gl.glVertex3f(xMin, yMin, zMin);
+            gl.glVertex3f(xMin, yMin, zMax);
+            gl.glVertex3f(xMin, yMax, zMax);
+            gl.glVertex3f(xMin, yMax, zMin);
+            gl.glEnd();
+        }
+        if (this.angleY >= 90 && this.angleY < 270) {
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            gl.glVertex3f(xMin, yMax, zMin);
+            gl.glVertex3f(xMax, yMax, zMin);
+            gl.glVertex3f(xMax, yMax, zMax);
+            gl.glVertex3f(xMin, yMax, zMax);
+            gl.glVertex3f(xMin, yMax, xMin);
+            gl.glEnd();
+        } else {
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            gl.glVertex3f(xMin, yMin, zMin);
+            gl.glVertex3f(xMax, yMin, zMin);
+            gl.glVertex3f(xMax, yMin, zMax);
+            gl.glVertex3f(xMin, yMin, zMax);
+            gl.glVertex3f(xMin, yMin, zMin);
             gl.glEnd();
         }
     }

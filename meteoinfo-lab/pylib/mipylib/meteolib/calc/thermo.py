@@ -1,8 +1,11 @@
 """Contains a collection of thermodynamic calculations."""
 
 from .. import constants
-from .tools import _remove_nans
+from ..cbook import broadcast_indices
+from .tools import find_bounding_indices, _less_or_close
+from ..interpolate import interpolate_1d
 import mipylib.numeric as np
+import mipylib.numeric.optimize as so
 
 __all__ = [
     'equivalent_potential_temperature','exner_function',
@@ -309,3 +312,150 @@ def dry_static_energy(height, temperature):
     * :math:`z` is height
     """
     return constants.g * height + constants.Cp_d * temperature
+
+def isentropic_interpolation(levels, pressure, temperature, *args, **kwargs):
+    r"""Interpolate data in isobaric coordinates to isentropic coordinates.
+
+    Parameters
+    ----------
+    levels : array
+        One-dimensional array of desired potential temperature surfaces
+    pressure : array
+        One-dimensional array of pressure levels
+    temperature : array
+        Array of temperature
+    vertical_dim : int, optional
+        The axis corresponding to the vertical in the temperature array, defaults to 0.
+    temperature_out : bool, optional
+        If true, will calculate temperature and output as the last item in the output list.
+        Defaults to False.
+    max_iters : int, optional
+        Maximum number of iterations to use in calculation, defaults to 50.
+    eps : float, optional
+        The desired absolute error in the calculated value, defaults to 1e-6.
+    bottom_up_search : bool, optional
+        Controls whether to search for levels bottom-up, or top-down. Defaults to
+        True, which is bottom-up search.
+    args : array, optional
+        Any additional variables will be interpolated to each isentropic level
+
+    Returns
+    -------
+    list
+        List with pressure at each isentropic level, followed by each additional
+        argument interpolated to isentropic coordinates.
+
+    See Also
+    --------
+    potential_temperature, isentropic_interpolation_as_dataset
+
+    Notes
+    -----
+    Input variable arrays must have the same number of vertical levels as the pressure levels
+    array. Pressure is calculated on isentropic surfaces by assuming that temperature varies
+    linearly with the natural log of pressure. Linear interpolation is then used in the
+    vertical to find the pressure at each isentropic level. Interpolation method from
+    [Ziv1994]_. Any additional arguments are assumed to vary linearly with temperature and will
+    be linearly interpolated to the new isentropic levels.
+    Will only return Pint Quantities, even when given xarray DataArray profiles. To
+    obtain a xarray Dataset instead, use `isentropic_interpolation_as_dataset` instead.
+    """
+    # iteration function to be used later
+    # Calculates theta from linearly interpolated temperature and solves for pressure
+    def _isen_iter(iter_log_p, isentlevs_nd, ka, a, b, pok):
+        exner = pok * np.exp(-ka * iter_log_p)
+        t = a * iter_log_p + b
+        # Newton-Raphson iteration
+        f = isentlevs_nd - t * exner
+        fp = exner * (ka * t - a)
+        return iter_log_p - (f / fp)
+
+    # Get dimensions in temperature
+    ndim = temperature.ndim
+
+    # Convert units
+    #pressure = pressure.to('hPa')
+    #temperature = temperature.to('kelvin')
+    vertical_dim = kwargs.pop('vertical_dim', 0)
+    slices = [np.newaxis] * ndim
+    slices[vertical_dim] = slice(None)
+    slices = tuple(slices)
+    pressure = np.broadcast_to(pressure[slices].magnitude, temperature.shape)
+
+    # Sort input data
+    sort_pressure = np.argsort(pressure.m, axis=vertical_dim)
+    sort_pressure = np.swapaxes(np.swapaxes(sort_pressure, 0, vertical_dim)[::-1], 0,
+                                vertical_dim)
+    sorter = broadcast_indices(pressure, sort_pressure, ndim, vertical_dim)
+    levs = pressure[sorter]
+    tmpk = temperature[sorter]
+
+    levels = np.asarray(levels.m_as('kelvin')).reshape(-1)
+    isentlevels = levels[np.argsort(levels)]
+
+    # Make the desired isentropic levels the same shape as temperature
+    shape = list(temperature.shape)
+    shape[vertical_dim] = isentlevels.size
+    isentlevs_nd = np.broadcast_to(isentlevels[slices], shape)
+
+    # exponent to Poisson's Equation, which is imported above
+    ka = constants.kappa
+
+    # calculate theta for each point
+    pres_theta = potential_temperature(levs, tmpk)
+
+    # Raise error if input theta level is larger than pres_theta max
+    if np.max(pres_theta) < np.max(levels):
+        raise ValueError('Input theta level out of data bounds')
+
+    # Find log of pressure to implement assumption of linear temperature dependence on
+    # ln(p)
+    log_p = np.log(levs)
+
+    # Calculations for interpolation routine
+    pok = constants.P0 ** ka
+
+    # index values for each point for the pressure level nearest to the desired theta level
+    bottom_up_search = kwargs.pop('bottom_up_search', True)
+    above, below, good = find_bounding_indices(pres_theta.m, levels, vertical_dim,
+                                               from_below=bottom_up_search)
+
+    # calculate constants for the interpolation
+    a = (tmpk.m[above] - tmpk.m[below]) / (log_p[above] - log_p[below])
+    b = tmpk.m[above] - a * log_p[above]
+
+    # calculate first guess for interpolation
+    isentprs = 0.5 * (log_p[above] + log_p[below])
+
+    # Make sure we ignore any nans in the data for solving; checking a is enough since it
+    # combines log_p and tmpk.
+    good &= ~np.isnan(a)
+
+    # iterative interpolation using scipy.optimize.fixed_point and _isen_iter defined above
+    max_iters = kwargs.pop('max_iters', 50)
+    eps = kwargs.pop('eps', 1e-6)
+    log_p_solved = so.fixed_point(_isen_iter, isentprs[good],
+                                  args=(isentlevs_nd[good], ka, a[good], b[good], pok.m),
+                                  xtol=eps, maxiter=max_iters)
+
+    # get back pressure from log p
+    isentprs[good] = np.exp(log_p_solved)
+
+    # Mask out points we know are bad as well as points that are beyond the max pressure
+    isentprs[~(good & _less_or_close(isentprs, np.max(pressure.m)))] = np.nan
+
+    # create list for storing output data
+    ret = [isentprs]
+
+    # if temperature_out = true, calculate temperature and output as last item in list
+    temperature_out = kwargs.pop('temperature_out', False)
+    if temperature_out:
+        ret.append(isentlevs_nd / ((constants.P0 / isentprs) ** ka))
+
+    # do an interpolation for each additional argument
+    if args:
+        others = interpolate_1d(isentlevels, pres_theta, *(arr[sorter] for arr in args),
+                                axis=vertical_dim, return_list_always=True)
+        ret.extend(others)
+
+    return ret

@@ -19,12 +19,10 @@
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\gradient.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\vorticity_divergence.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\potential_vorticity_baroclinic.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\gradient.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\vorticity_divergence.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\potential_vorticity_baroclinic.py"/>
     </RecentFiles>
@@ -34,5 +32,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1389,808"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

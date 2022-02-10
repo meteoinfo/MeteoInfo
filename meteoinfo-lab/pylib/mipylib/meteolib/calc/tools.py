@@ -1,9 +1,10 @@
 import mipylib.numeric as np
 from mipylib.geolib import Geod
 from ..interpolate import interpolate_1d
+from ..cbook import broadcast_indices
 
 __all__ = ['resample_nn_1d','nearest_intersection_idx','first_derivative','gradient',
-           'lat_lon_grid_deltas','get_layer_heights']
+           'lat_lon_grid_deltas','get_layer_heights', 'find_bounding_indices']
 
 def resample_nn_1d(a, centers):
     """Return one-dimensional nearest-neighbor indexes based on user-specified centers.
@@ -154,6 +155,86 @@ def get_layer_heights(height, depth, *args, **kwargs):
 
         ret.append(datavar)
     return ret
+
+def find_bounding_indices(arr, values, axis, from_below=True):
+    """Find the indices surrounding the values within arr along axis.
+
+    Returns a set of above, below, good. Above and below are lists of arrays of indices.
+    These lists are formulated such that they can be used directly to index into a numpy
+    array and get the expected results (no extra slices or ellipsis necessary). `good` is
+    a boolean array indicating the "columns" that actually had values to bound the desired
+    value(s).
+
+    Parameters
+    ----------
+    arr : array-like
+        Array to search for values
+    values: array-like
+        One or more values to search for in `arr`
+    axis : int
+        Dimension of `arr` along which to search
+    from_below : bool, optional
+        Whether to search from "below" (i.e. low indices to high indices). If `False`,
+        the search will instead proceed from high indices to low indices. Defaults to `True`.
+
+    Returns
+    -------
+    above : list of arrays
+        List of broadcasted indices to the location above the desired value
+    below : list of arrays
+        List of broadcasted indices to the location below the desired value
+    good : array
+        Boolean array indicating where the search found proper bounds for the desired value
+    """
+    # The shape of generated indices is the same as the input, but with the axis of interest
+    # replaced by the number of values to search for.
+    indices_shape = list(arr.shape)
+    indices_shape[axis] = len(values)
+
+    # Storage for the found indices and the mask for good locations
+    indices = np.empty(indices_shape, dtype=np.dtype.int)
+    good = np.empty(indices_shape, dtype=np.dtype.bool)
+
+    # Used to put the output in the proper location
+    take = make_take(arr.ndim, axis)
+
+    # Loop over all of the values and for each, see where the value would be found from a
+    # linear search
+    for level_index, value in enumerate(values):
+        # Look for changes in the value of the test for <= value in consecutive points
+        # Taking abs() because we only care if there is a flip, not which direction.
+        switches = np.abs(np.diff((arr <= value).astype(np.dtype.int), axis=axis))
+
+        # Good points are those where it's not just 0's along the whole axis
+        good_search = np.any(switches, axis=axis)
+
+        if from_below:
+            # Look for the first switch; need to add 1 to the index since argmax is giving the
+            # index within the difference array, which is one smaller.
+            index = switches.argmax(axis=axis) + 1
+        else:
+            # Generate a list of slices to reverse the axis of interest so that searching from
+            # 0 to N is starting at the "top" of the axis.
+            arr_slice = [slice(None)] * arr.ndim
+            arr_slice[axis] = slice(None, None, -1)
+
+            # Same as above, but we use the slice to come from the end; then adjust those
+            # indices to measure from the front.
+            index = arr.shape[axis] - 1 - switches[tuple(arr_slice)].argmax(axis=axis)
+
+        # Set all indices where the results are not good to 0
+        index[~good_search] = 0
+
+        # Put the results in the proper slice
+        store_slice = take(level_index)
+        indices[store_slice] = index
+        good[store_slice] = good_search
+
+    # Create index values for broadcasting arrays
+    above = broadcast_indices(arr, indices, arr.ndim, axis)
+    below = broadcast_indices(arr, indices - 1, arr.ndim, axis)
+
+    return above, below, good
 
 def _greater_or_close(a, value, **kwargs):
     r"""Compare values for greater or close to boolean masks.

@@ -48,7 +48,7 @@ __all__ = [
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reshape',
     'repeat','roll','rolling_mean','rot90','sign','sin','sinh','shape','smooth5','smooth9','sort',
     'sphere','squeeze','split','sqrt','square','std','sum','swapaxes','take','tan','tanh','tile',
-    'transpose','trapz','vdot','unique','unravel_index','var','vstack','zeros','zeros_like'
+    'transpose','trapz','vdot','unravel_index','var','vstack','zeros','zeros_like'
     ]
 
 def isgriddata(gdata):
@@ -1686,23 +1686,6 @@ def argsort(a, axis=-1):
     if isinstance(a, list):
         a = array(a)
     r = ArrayUtil.argSort(a.asarray(), axis)
-    return NDArray(r)
-
-def unique(a, axis=None):
-    """
-    Find the unique elements of an array.
-
-    Returns the sorted unique elements of an array.
-
-    :param a: (*array_like*) Array to be sorted.
-    :param axis: (*int or None*) Optional. Axis along which to operate on. If None, the array is
-        flattened.
-
-    :returns: (*NDArray*) Sorted unique elements of input array.
-    """
-    if isinstance(a, list):
-        a = array(a)
-    r = ArrayUtil.unique(a.asarray(), axis)
     return NDArray(r)
     
 def isnan(a):

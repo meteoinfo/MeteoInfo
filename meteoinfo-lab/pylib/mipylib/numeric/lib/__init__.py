@@ -8,6 +8,7 @@ from .function_base import *
 from .index_tricks import *
 from .stride_tricks import *
 from .type_check import *
+from .arraysetops import *
 
 __all__ = []
 __all__ += shape_base.__all__
@@ -15,3 +16,4 @@ __all__ += function_base.__all__
 __all__ += index_tricks.__all__
 __all__ += stride_tricks.__all__
 __all__ += type_check.__all__
+__all__ += arraysetops.__all__

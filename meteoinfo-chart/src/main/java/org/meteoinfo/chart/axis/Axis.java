@@ -1529,6 +1529,7 @@ public class Axis implements Cloneable {
 
                 if (value >= this.minValue && value <= this.maxValue) {
                     //Draw tick line
+                    g.setColor(this.tickColor);
                     xy = plot.projToScreen(value, plot.getDrawExtent().minY, area);
                     x = xy[0];
                     x += minx;
@@ -1547,6 +1548,7 @@ public class Axis implements Cloneable {
                     }
 
                     //Draw tick label
+                    g.setColor(this.tickLabelColor);
                     if (this.drawTickLabel && n < this.tickLabels.size()) {
                         ChartText chartText = this.tickLabels.get(n);
                         g.setFont(tickLabelFont);
@@ -1755,6 +1757,7 @@ public class Axis implements Cloneable {
             Dimension dim;
             int n = 0;
             while (n < this.getTickValues().length) {
+                g.setColor(this.tickColor);
                 double value = this.getTickValues()[n];
                 xy = plot.projToScreen(plot.getDrawExtent().minX, value, area);
                 y = xy[1];
@@ -1772,6 +1775,7 @@ public class Axis implements Cloneable {
                 }
                 //Draw tick label
                 if (this.drawTickLabel && n < this.tickLabels.size()) {
+                    g.setColor(this.tickLabelColor);
                     drawStr = this.tickLabels.get(n).getText();
                     g.setFont(this.tickLabelFont);
                     if (this.location == Location.LEFT) {

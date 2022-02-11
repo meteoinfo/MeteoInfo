@@ -511,6 +511,14 @@ public class Plot3D extends Plot {
     }
 
     /**
+     * Set box fill color
+     * @param value Box fill color
+     */
+    public void setBoxColor(Color value) {
+        this.boxColor = value;
+    }
+
+    /**
      * Get extent
      *
      * @return Extent
@@ -1536,8 +1544,10 @@ public class Plot3D extends Plot {
         x[4] = x[0];
         y[4] = y[0];
 
-        g.setColor(this.boxColor);
-        g.fillPolygon(x, y, 4);
+        if (this.boxColor != null) {
+            g.setColor(this.boxColor);
+            g.fillPolygon(x, y, 4);
+        }
 
         g.setColor(this.gridLine.getColor());
         g.setStroke(new BasicStroke(this.gridLine.getSize()));
@@ -1886,8 +1896,10 @@ public class Plot3D extends Plot {
             x[4] = x[0];
             y[4] = y[0];
 
-            g.setColor(this.boxColor);
-            g.fillPolygon(x, y, 4);
+            if (this.boxColor != null) {
+                g.setColor(this.boxColor);
+                g.fillPolygon(x, y, 4);
+            }
 
             g.setColor(this.gridLine.getColor());
             g.setStroke(new BasicStroke(this.gridLine.getSize()));
@@ -1902,8 +1914,10 @@ public class Plot3D extends Plot {
             x[4] = x[0];
             y[4] = y[0];
 
-            g.setColor(this.boxColor);
-            g.fillPolygon(x, y, 4);
+            if (this.boxColor != null) {
+                g.setColor(this.boxColor);
+                g.fillPolygon(x, y, 4);
+            }
 
             g.setColor(this.gridLine.getColor());
             g.setStroke(new BasicStroke(this.gridLine.getSize()));
@@ -2002,11 +2016,12 @@ public class Plot3D extends Plot {
                 }
                 //projection = projector.project(vi, factor_y * 10.5f, -10);                
                 value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength());
-                g.setColor(this.xAxis.getLineColor());
+                g.setColor(this.xAxis.getTickColor());
                 //g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
                 g.drawLine(tickpos.x, tickpos.y, (int) value[0], (int) value[1]);
                 value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + 5);
-                tickpos = new Point((int) value[0], (int) value[1]);                
+                tickpos = new Point((int) value[0], (int) value[1]);
+                g.setColor(this.xAxis.getTickLabelColor());
                 if (x_left) {
                     //outString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP);
                     Draw.drawString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP, true);
@@ -2083,10 +2098,11 @@ public class Plot3D extends Plot {
                     }
                 }
                 value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength());
-                g.setColor(this.yAxis.getLineColor());
+                g.setColor(this.yAxis.getTickColor());
                 g.drawLine(tickpos.x, tickpos.y, (int) value[0], (int) value[1]);
                 value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + 5);
                 tickpos = new Point((int) value[0], (int) value[1]);
+                g.setColor(this.yAxis.getTickLabelColor());
                 if (y_left) {
                     //outString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP);
                     Draw.drawString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP, true);
@@ -2166,9 +2182,10 @@ public class Plot3D extends Plot {
                     g.drawLine(x[0], y[0], projection.x, projection.y);
                 }
                 //projection = projector.project(factor_x * 10.2f * lf, -factor_y * 10.2f * lf, vi);
-                g.setColor(this.zAxis.getLineColor());
+                g.setColor(this.zAxis.getTickColor());
                 //g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
                 g.drawLine(tickpos.x, tickpos.y, tickpos.x - (int)this.zAxis.getTickLength(), tickpos.y);
+                g.setColor(this.zAxis.getTickLabelColor());
                 //tickpos = projector.project(factor_x * 10.5f * lf, -factor_y * 10.5f * lf, vi);
                 //outString(g, tickpos.x - this.zAxis.getTickLength() - 5, tickpos.y, s, XAlign.RIGHT, YAlign.CENTER);
                 Draw.drawString(g, tickpos.x - this.zAxis.getTickLength() - 5, tickpos.y, s, XAlign.RIGHT, YAlign.CENTER, true);

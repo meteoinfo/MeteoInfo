@@ -675,6 +675,14 @@ class NDArray(object):
             r = ArrayMath.argMax(self._array, axis)
             return NDArray(r)
 
+    def sort(self, axis=-1):
+        """
+        Sort an array in-place.
+
+        :param: (*int*) Axis along which to sort. Default is -1, which means sort along the last axis.
+        """
+        self._array = ArrayUtil.sort(self._array, axis)
+
     def max(self, axis=None):
         '''
         Get maximum value along an axis.

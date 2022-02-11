@@ -215,6 +215,15 @@ class Axes3D(Axes):
         self.set_draw_box(axis)
         self.set_draw_xy(axis)
         self.set_draw_z(axis)
+
+    def set_box_color(self, color):
+        """
+        Set box fill color.
+
+        :param color: (*color*) Box fill color.
+        """
+        color = plotutil.getcolor(color)
+        self.axes.setBoxColor(color)
         
     def get_xlim(self):
         """
@@ -477,6 +486,9 @@ class Axes3D(Axes):
             color = plotutil.getcolor(color)
         linewidth = kwargs.pop('linewidth', None)
         linestyle = kwargs.pop('linestyle', None)
+        tickcolor = kwargs.pop('tickcolor', None)
+        if not tickcolor is None:
+            tickcolor = plotutil.getcolor(tickcolor)
         tickline = kwargs.pop('tickline', None)
         tickline = kwargs.pop('tickvisible', tickline)
         tickwidth = kwargs.pop('tickwidth', None)
@@ -485,6 +497,9 @@ class Axes3D(Axes):
         minorticknum = kwargs.pop('minorticknum', 5)
         tickin = kwargs.pop('tickin', True)
         axistype = kwargs.pop('axistype', None)
+        ticklabelcolor= kwargs.pop('ticklabelcolor', None)
+        if not ticklabelcolor is None:
+            ticklabelcolor = plotutil.getcolor(ticklabelcolor)
         tickfontname = kwargs.pop('tickfontname', 'Arial')
         tickfontsize = kwargs.pop('tickfontsize', 14)
         tickbold = kwargs.pop('tickbold', False)
@@ -501,6 +516,8 @@ class Axes3D(Axes):
                 axis.setShift(shift)
             if not color is None:
                 axis.setColor_All(color)
+            if not tickcolor is None:
+                axis.setTickColor(tickcolor)
             if not linewidth is None:
                 axis.setLineWidth(linewidth)
             if not linestyle is None:
@@ -515,6 +532,8 @@ class Axes3D(Axes):
             axis.setMinorTickVisible(minortick)
             axis.setMinorTickNum(minorticknum)
             axis.setInsideTick(tickin)
+            if not ticklabelcolor is None:
+                axis.setTickLabelColor(ticklabelcolor)
             axis.setTickLabelFont(font)
 
     def grid(self, b, **kwargs):

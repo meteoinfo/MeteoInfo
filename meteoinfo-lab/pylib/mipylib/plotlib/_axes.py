@@ -754,6 +754,9 @@ class Axes(object):
         color = kwargs.pop('color', None)
         if not color is None:
             color = plotutil.getcolor(color)
+        tickcolor = kwargs.pop('tickcolor', None)
+        if not tickcolor is None:
+            tickcolor = plotutil.getcolor(tickcolor)
         linewidth = kwargs.pop('linewidth', None)
         linestyle = kwargs.pop('linestyle', None)
         tickline = kwargs.pop('tickline', None)
@@ -784,6 +787,9 @@ class Axes(object):
             for loc in locs:
                 axislist.append(self.axes.getAxis(loc))
 
+        ticklabelcolor = kwargs.pop('ticklabelcolor', None)
+        if not ticklabelcolor is None:
+            ticklabelcolor = plotutil.getcolor(ticklabelcolor)
         tick_font = axislist[0].getTickLabelFont()
         tickfontname = kwargs.pop('tickfontname', tick_font.getFontName())
         tickfontsize = kwargs.pop('tickfontsize', tick_font.getSize())
@@ -805,6 +811,8 @@ class Axes(object):
                     axis.setPosition(shift)
             if not color is None:
                 axis.setColor_All(color)
+            if not tickcolor is None:
+                axis.setTickColor(tickcolor)
             if not linewidth is None:
                 axis.setLineWidth(linewidth)
             if not linestyle is None:
@@ -824,6 +832,8 @@ class Axes(object):
                 axis.setMinorTickNum(minorticknum)
             if not tickin is None:
                 axis.setInsideTick(tickin)
+            if not ticklabelcolor is None:
+                axis.setTickLabelColor(ticklabelcolor)
             axis.setTickLabelFont(font)
         
     def yaxis(self, **kwargs):
@@ -861,6 +871,9 @@ class Axes(object):
         color = kwargs.pop('color', None)
         if not color is None:
             color = plotutil.getcolor(color)
+        tickcolor = kwargs.pop('tickcolor', None)
+        if not tickcolor is None:
+            tickcolor = plotutil.getcolor(tickcolor)
         linewidth = kwargs.pop('linewidth', None)
         linestyle = kwargs.pop('linestyle', None)
         tickline = kwargs.pop('tickline', None)
@@ -891,6 +904,9 @@ class Axes(object):
             for loc in locs:
                 axislist.append(self.axes.getAxis(loc))
 
+        ticklabelcolor = kwargs.pop('ticklabelcolor', None)
+        if not ticklabelcolor is None:
+            ticklabelcolor = plotutil.getcolor(ticklabelcolor)
         tick_font = axislist[0].getTickLabelFont()
         tickfontname = kwargs.pop('tickfontname', tick_font.getFontName())
         tickfontsize = kwargs.pop('tickfontsize', tick_font.getSize())
@@ -912,6 +928,8 @@ class Axes(object):
                     axis.setPosition(shift)
             if not color is None:
                 axis.setColor_All(color)
+            if not tickcolor is None:
+                axis.setTickColor(tickcolor)
             if not linewidth is None:
                 axis.setLineWidth(linewidth)
             if not linestyle is None:
@@ -931,6 +949,8 @@ class Axes(object):
                 axis.setMinorTickNum(minorticknum)
             if not tickin is None:
                 axis.setInsideTick(tickin)
+            if not ticklabelcolor is None:
+                axis.setTickLabelColor(ticklabelcolor)
             axis.setTickLabelFont(font)
     
     def xreverse(self):

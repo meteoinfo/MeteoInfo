@@ -8,6 +8,7 @@ import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.geometry.graphic.Graphic;
 
+import java.nio.Buffer;
 import java.nio.IntBuffer;
 
 import static com.jogamp.opengl.GL.*;
@@ -114,7 +115,7 @@ public class VolumeRender extends JOGLGraphicRender {
         //gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, Buffers.newDirectByteBuffer(volume.getColors()));
         //gl.glActiveTexture(GL_TEXTURE1);
         gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, volume.getColorNum(), 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                Buffers.newDirectByteBuffer(volume.getColors()).rewind());
+                ((Buffer) Buffers.newDirectByteBuffer(volume.getColors())).rewind());
 
         //Volume data 3D texture
         this.volumeTexture = getTextureID();
@@ -138,7 +139,7 @@ public class VolumeRender extends JOGLGraphicRender {
                 0,              // border
                 GL_LUMINANCE,         // format
                 GL_UNSIGNED_BYTE,       // type
-                Buffers.newDirectByteBuffer(volume.getData()).rewind()           // pixel
+                ((Buffer) Buffers.newDirectByteBuffer(volume.getData())).rewind()           // pixel
         );
 
         //Normals 3D texture
@@ -165,7 +166,7 @@ public class VolumeRender extends JOGLGraphicRender {
                         0,              // border
                         GL_RGB,         // format
                         GL_UNSIGNED_BYTE,       // type
-                        Buffers.newDirectByteBuffer(volume.getNormals()).rewind()           // pixel
+                        ((Buffer) Buffers.newDirectByteBuffer(volume.getNormals())).rewind()           // pixel
                 );
                 break;
         }

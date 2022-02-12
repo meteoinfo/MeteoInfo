@@ -1,4 +1,8 @@
-"""Interpolate data along a single axis."""
+"""
+Interpolate data along a single axis.
+
+Ported from MetPy.
+"""
 
 from org.meteoinfo.ndarray.math import ArrayUtil
 import mipylib.numeric as np

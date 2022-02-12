@@ -1,4 +1,8 @@
-"""Contains calculation of kinematic parameters (e.g. divergence or vorticity)."""
+"""
+Contains calculation of kinematic parameters (e.g. divergence or vorticity).
+
+Ported from MetPy.
+"""
 
 from org.meteoinfo.math.meteo import MeteoMath
 import mipylib.numeric as np

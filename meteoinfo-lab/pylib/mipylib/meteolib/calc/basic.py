@@ -1,3 +1,9 @@
+"""
+Basic calculation function.
+
+Ported from MetPy.
+"""
+
 import warnings
 from itertools import product
 

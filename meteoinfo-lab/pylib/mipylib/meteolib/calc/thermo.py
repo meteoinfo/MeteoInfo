@@ -1,4 +1,8 @@
-"""Contains a collection of thermodynamic calculations."""
+"""
+Contains a collection of thermodynamic calculations.
+
+Ported from MetPy.
+"""
 
 from .. import constants
 from ..cbook import broadcast_indices

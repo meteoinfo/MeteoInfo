@@ -127,6 +127,7 @@ def height_to_pressure_std(height):
     
 def sigma_to_pressure(sigma, psfc, ptop):
     r"""Calculate pressure from sigma values.
+
     Parameters
     ----------
     sigma : ndarray
@@ -139,6 +140,7 @@ def sigma_to_pressure(sigma, psfc, ptop):
     -------
     ndarray
         The pressure values at the given sigma levels.
+
     Notes
     -----
     Sigma definition adapted from [Philips1957]_.

@@ -1092,7 +1092,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         this.updateMatrix(gl);
 
-        gl.glColor3f(0.0f, 0.0f, 0.0f);
+        //gl.glColor3f(0.0f, 0.0f, 0.0f);
 
         //Draw base
         if (this.drawBase) {
@@ -1102,9 +1102,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //Draw box
         if (this.boxed) {
             this.drawBox(gl);
-        }
-        if (this.drawBoundingBox) {
-            this.drawBoundingBox(gl);
         }
 
         //Draw title
@@ -1149,6 +1146,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //Stop lighting
         if (this.lighting.isEnable()) {
             this.lighting.stop(gl);
+        }
+
+        //Draw bounding box
+        if (this.drawBoundingBox) {
+            this.drawBoundingBox(gl);
         }
 
         //Draw axis
@@ -3201,6 +3203,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             surface.updateTexture(gl);
             int idTexture = surface.getTextureID();
 
+            gl.glEnable(GL2.GL_TEXTURE_2D);
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
             gl.glPolygonOffset(1.0f, 1.0f);
 
@@ -3246,6 +3249,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 
             gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
+            gl.glDisable(GL2.GL_TEXTURE_2D);
         }
 
         if (lightEnabled && !surface.isUsingLight()) {
@@ -3399,6 +3403,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         int idTexture = texture.getTextureObject();
         List<PointZ> coords = ishape.getCoords();
 
+        gl.glEnable(GL2.GL_TEXTURE_2D);
         gl.glColor3f(1f, 1f, 1f);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, idTexture);
 
@@ -3425,6 +3430,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         // Unbinding the texture
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+        gl.glDisable(GL2.GL_TEXTURE_2D);
     }
 
     private void drawImage(GL2 gl) throws IOException {
@@ -3464,6 +3470,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         int idTexture = ishape.getTextureID();
         List<PointZ> coords = ishape.getCoords();
 
+        gl.glEnable(GL2.GL_TEXTURE_2D);
         gl.glColor3f(1f, 1f, 1f);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, idTexture);
 
@@ -3492,6 +3499,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         // Unbinding the texture
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+        gl.glDisable(GL2.GL_TEXTURE_2D);
     }
 
     void drawArrow(GL2 gl, float[] p1, float[] p2, StreamlineBreak slb) {
@@ -4205,7 +4213,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glDepthFunc(GL2.GL_LEQUAL);
         //gl.glDepthFunc(GL2.GL_LESS);
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
-        gl.glEnable(GL2.GL_TEXTURE_2D);
 
         //jogl specific addition for tessellation
         tessCallback = new TessCallback(gl, glu);

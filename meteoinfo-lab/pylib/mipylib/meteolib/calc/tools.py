@@ -1,3 +1,9 @@
+"""
+Calculation tools functions.
+
+Ported from MetPy.
+"""
+
 import mipylib.numeric as np
 from mipylib.geolib import Geod
 from ..interpolate import interpolate_1d

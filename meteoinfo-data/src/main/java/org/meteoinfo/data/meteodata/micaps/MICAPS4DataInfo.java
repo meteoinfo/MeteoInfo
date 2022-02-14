@@ -273,6 +273,13 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             do {
                 aLine = sr.readLine();
                 if (aLine == null) {
+                    while (dataList.size() >= xNum) {
+                        for (i = 0; i < xNum; i++) {
+                            theData[col][i] = Float.parseFloat(dataList.get(i));
+                        }
+                        dataList = dataList.subList(xNum, dataList.size());
+                        col += 1;
+                    }
                     break;
                 }
                 aLine = aLine.trim();
@@ -374,6 +381,13 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             do {
                 aLine = sr.readLine();
                 if (aLine == null) {
+                    while (dataList.size() >= xNum) {
+                        for (i = 0; i < xNum; i++) {
+                            theData[col][i] = Float.parseFloat(dataList.get(i));
+                        }
+                        dataList = dataList.subList(xNum, dataList.size());
+                        col += 1;
+                    }
                     break;
                 }
                 aLine = aLine.trim();

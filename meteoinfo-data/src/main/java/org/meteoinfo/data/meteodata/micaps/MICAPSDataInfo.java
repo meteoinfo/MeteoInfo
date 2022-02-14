@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.data.meteodata.micaps;
 
+import org.apache.commons.io.input.BOMInputStream;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 
 import java.io.BufferedReader;
@@ -45,7 +46,7 @@ public class MICAPSDataInfo {
         MeteoDataType mdType = null;
         try {
             String dataType;
-            sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "gbk"));
+            sr = new BufferedReader(new InputStreamReader(new BOMInputStream(new FileInputStream(fileName)), "gbk"));
             String aLine;
             String[] dataArray;
 

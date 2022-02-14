@@ -50,6 +50,11 @@
             <artifactId>juniversalchardet</artifactId>
             <version>2.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -2341,10 +2341,89 @@ public class ArrayUtil {
             Range range = ranges.get(axis);
             for (int i = 0; i < tList.size(); i++) {
                 range = new Range(i, i, 1);
-                ranges.set(i, range);
+                ranges.set(axis, range);
                 ArrayMath.setSection(r, ranges, tList.get(i));
             }
             return r;
+        }
+    }
+
+    /**
+     * Find the unique elements and index of an array.
+     *
+     * @param a Array a
+     * @param axis The axis
+     * @return  The sorted unique elements and index of an array
+     * @throws InvalidRangeException
+     */
+    public static Array[] uniqueIndex(Array a, Integer axis) throws InvalidRangeException {
+        int n = a.getRank();
+        int[] shape = a.getShape();
+        if (axis == null) {
+            TreeMap<Object, Integer> map = new TreeMap<>();
+            List tList = new ArrayList<>();
+            IndexIterator ii = a.getIndexIterator();
+            Object o;
+            int idx = 0;
+            while (ii.hasNext()) {
+                o = ii.getObjectNext();
+                if (!tList.contains(o)) {
+                    tList.add(o);
+                    map.put(o, idx);
+                }
+                idx += 1;
+            }
+            int[] nShape = new int[]{map.size()};
+            Array r = Array.factory(a.getDataType(), nShape);
+            Array index = Array.factory(DataType.INT, nShape);
+            Iterator iter = map.entrySet().iterator();
+            idx = 0;
+            while(iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                r.setObject(idx, entry.getKey());
+                index.setInt(idx, (Integer) entry.getValue());
+                idx += 1;
+            }
+
+            return new Array[]{r, index};
+        } else {
+            if (axis == -1) {
+                axis = n - 1;
+            }
+            List<Array> tList = new ArrayList();
+            TreeMap<Array, Integer> map = new TreeMap<>();
+            Array ta;
+            int nn = shape[axis];
+            shape[axis] = 1;
+            int[] origin = new int[shape.length];
+            for (int i = 0; i < nn; i++) {
+                origin[axis] = i;
+                ta = a.section(origin, shape);
+                if (!tList.contains(ta)) {
+                    tList.add(ta);
+                    map.put(ta, i);
+                }
+            }
+            shape[axis] = map.size();
+            Array r = Array.factory(a.getDataType(), shape);
+            Array index = Array.factory(DataType.INT, shape);
+            List<Range> ranges = new ArrayList<>();
+            for (int i = 0; i < shape.length; i++) {
+                ranges.add(new Range(0, shape[i] - 1, 1));
+            }
+            Range range = ranges.get(axis);
+            Iterator iter = map.keySet().iterator();
+            int i = 0;
+            while(iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                range = new Range(i, i, 1);
+                ranges.set(axis, range);
+                ArrayMath.setSection(r, ranges, entry.getKey());
+                index.setInt(i, (Integer) entry.getValue());
+                i += 1;
+            }
+
+            return new Array[]{r, index};
         }
     }
 
@@ -4956,6 +5035,33 @@ public class ArrayUtil {
 
         return idx;
     }
+
+    /**
+     * Search sorted list index
+     *
+     * @param a Sorted list
+     * @param v value
+     * @return Index
+     */
+    public static int[] searchSorted1(Array a, double v) {
+        a = a.copyIfView();
+        int n = (int) a.getSize();
+        double v1, v2;
+        int[] idx = null;
+        for (int i = 1; i < n; i++) {
+            v1 = a.getDouble(i - 1);
+            v2 = a.getDouble(i);
+            if (v < v2 && v >= v1) {
+                idx = new int[]{i - 1, i};
+                break;
+            } else if (v < v1 && v >= v2) {
+                idx = new int[]{i, i - 1};
+                break;
+            }
+        }
+
+        return idx;
+    }
     
     /**
      * Interpolates data with any shape over a specified axis.
@@ -5076,7 +5182,7 @@ public class ArrayUtil {
                     currentr[j] = currentrr[idx];
                 }
             }
-            tArray = ArrayMath.section(xp, ranges);
+            tArray = ArrayMath.section(xp, ranges).copy();
             for (int j = 0; j < xa.getSize(); j++) {
                 x = xa.getDouble(j);
                 idx = searchSorted(tArray, x);

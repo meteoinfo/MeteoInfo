@@ -362,11 +362,11 @@ public class ArrayInt extends Array {
     }
 
     public boolean getBoolean(int index) {
-        throw new ForbiddenConversionException();
+        return storage[index] != 0;
     }
 
     public void setBoolean(int index, boolean value) {
-        throw new ForbiddenConversionException();
+        storage[index] = value ? 1 : 0;
     }
 
     public String getString(int index) {

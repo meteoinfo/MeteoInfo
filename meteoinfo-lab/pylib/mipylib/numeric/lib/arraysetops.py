@@ -13,7 +13,7 @@ def _unique1d(ar, return_index=False, return_inverse=False,
     optional_indices = return_index or return_inverse
 
     if optional_indices:
-        perm = ar.argsort(kind='mergesort' if return_index else 'quicksort')
+        perm = ar.argsort()
         aux = ar[perm]
     else:
         ar.sort()
@@ -46,13 +46,15 @@ def _unique1d(ar, return_index=False, return_inverse=False,
         ret += (np.diff(idx),)
     return ret
 
-def unique(a, axis=None):
+def unique(a, return_index=False, axis=None):
     """
     Find the unique elements of an array.
 
     Returns the sorted unique elements of an array.
 
     :param a: (*array_like*) Array to be sorted.
+    :param return_index: (*bool*) Optional, If True, also return the indices of ar (along the specified
+        axis, if provided, or in the flattened array) that result in the unique array.
     :param axis: (*int or None*) Optional. Axis along which to operate on. If None, the array is
         flattened.
 
@@ -60,8 +62,12 @@ def unique(a, axis=None):
     """
     if isinstance(a, list):
         a = np.array(a)
-    r = ArrayUtil.unique(a.asarray(), axis)
-    return np.NDArray(r)
+    if return_index:
+        r = ArrayUtil.uniqueIndex(a.asarray(), axis)
+        return np.NDArray(r[0]), np.NDArray(r[1])
+    else:
+        r = ArrayUtil.unique(a.asarray(), axis)
+        return np.NDArray(r)
 
 def intersect1d(ar1, ar2, assume_unique=False, return_indices=False):
     """
@@ -132,7 +138,7 @@ def intersect1d(ar1, ar2, assume_unique=False, return_indices=False):
 
     aux = np.concatenate((ar1, ar2))
     if return_indices:
-        aux_sort_indices = np.argsort(aux, kind='mergesort')
+        aux_sort_indices = np.argsort(aux)
         aux = aux[aux_sort_indices]
     else:
         aux.sort()

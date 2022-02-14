@@ -16,7 +16,7 @@ __all__ = [
     'mixing_ratio','mixing_ratio_from_specific_humidity','potential_temperature',
     'relative_humidity_from_specific_humidity',
     'saturation_mixing_ratio','saturation_vapor_pressure','temperature_from_potential_temperature',
-    'virtual_temperature','dry_static_energy'
+    'virtual_temperature','dry_static_energy','isentropic_interpolation'
     ]
 
 def saturation_vapor_pressure(temperature):
@@ -39,10 +39,8 @@ def saturation_vapor_pressure(temperature):
     The formula used is that from [Bolton1980]_ for T in degrees Celsius:
     .. math:: 6.112 e^\frac{17.67T}{T + 243.5}
     """
-    # Converted from original in terms of C to use kelvin. Using raw absolute values of C in
-    # a formula plays havoc with units support.
-    return constants.sat_pressure_0c * np.exp(17.67 * temperature
-                                              / (temperature + 243.5))
+    # Converted from original in terms of C to use kelvin.
+    return constants.sat_pressure_0c * np.exp(17.67 * (temperature - 273.15) / (temperature - 29.65))
 
 def mixing_ratio_from_specific_humidity(specific_humidity):
     r"""Calculate the mixing ratio from specific humidity.
@@ -112,27 +110,33 @@ def saturation_mixing_ratio(tot_press, temperature):
 
     return mixing_ratio(saturation_vapor_pressure(temperature), tot_press)
 
-def relative_humidity_from_specific_humidity(specific_humidity, temperature, pressure):
+def relative_humidity_from_specific_humidity(pressure, temperature, specific_humidity):
     r"""Calculate the relative humidity from specific humidity, temperature, and pressure.
+
     Parameters
     ----------
-    specific_humidity: `pint.Quantity`
-        Specific humidity of air
-    temperature: `pint.Quantity`
-        Air temperature
-    pressure: `pint.Quantity`
+    pressure: `array`
         Total atmospheric pressure
+    temperature: `array`
+        Air temperature
+    specific_humidity: `array`
+        Specific humidity of air
+
     Returns
     -------
-    `pint.Quantity`
+    `array`
         Relative humidity
+
     Notes
     -----
     Formula based on that from [Hobbs1977]_ pg. 74. and [Salby1996]_ pg. 118.
+
     .. math:: RH = \frac{q}{(1-q)w_s}
+
     * :math:`RH` is relative humidity as a unitless ratio
     * :math:`q` is specific humidity
     * :math:`w_s` is the saturation mixing ratio
+
     See Also
     --------
     relative_humidity_from_mixing_ratio
@@ -142,20 +146,26 @@ def relative_humidity_from_specific_humidity(specific_humidity, temperature, pre
 
 def exner_function(pressure, reference_pressure=constants.P0):
     r"""Calculate the Exner function.
+
     .. math:: \Pi = \left( \frac{p}{p_0} \right)^\kappa
+
     This can be used to calculate potential temperature from temperature (and visa-versa),
     since
+
     .. math:: \Pi = \frac{T}{\theta}
+
     Parameters
     ----------
     pressure : `pint.Quantity`
         The total atmospheric pressure
     reference_pressure : `pint.Quantity`, optional
         The reference pressure against which to calculate the Exner function, defaults to P0
+
     Returns
     -------
     `pint.Quantity`
         The value of the Exner function at the given pressure
+
     See Also
     --------
     potential_temperature
@@ -384,10 +394,10 @@ def isentropic_interpolation(levels, pressure, temperature, *args, **kwargs):
     slices = [np.newaxis] * ndim
     slices[vertical_dim] = slice(None)
     slices = tuple(slices)
-    pressure = np.broadcast_to(pressure[slices].magnitude, temperature.shape)
+    pressure = np.broadcast_to(pressure[slices], temperature.shape)
 
     # Sort input data
-    sort_pressure = np.argsort(pressure.m, axis=vertical_dim)
+    sort_pressure = np.argsort(pressure, axis=vertical_dim)
     sort_pressure = np.swapaxes(np.swapaxes(sort_pressure, 0, vertical_dim)[::-1], 0,
                                 vertical_dim)
     sorter = broadcast_indices(pressure, sort_pressure, ndim, vertical_dim)
@@ -421,12 +431,12 @@ def isentropic_interpolation(levels, pressure, temperature, *args, **kwargs):
 
     # index values for each point for the pressure level nearest to the desired theta level
     bottom_up_search = kwargs.pop('bottom_up_search', True)
-    above, below, good = find_bounding_indices(pres_theta.m, levels, vertical_dim,
+    above, below, good = find_bounding_indices(pres_theta, levels, vertical_dim,
                                                from_below=bottom_up_search)
 
     # calculate constants for the interpolation
-    a = (tmpk.m[above] - tmpk.m[below]) / (log_p[above] - log_p[below])
-    b = tmpk.m[above] - a * log_p[above]
+    a = (tmpk[above] - tmpk[below]) / (log_p[above] - log_p[below])
+    b = tmpk[above] - a * log_p[above]
 
     # calculate first guess for interpolation
     isentprs = 0.5 * (log_p[above] + log_p[below])
@@ -439,14 +449,14 @@ def isentropic_interpolation(levels, pressure, temperature, *args, **kwargs):
     max_iters = kwargs.pop('max_iters', 50)
     eps = kwargs.pop('eps', 1e-6)
     log_p_solved = so.fixed_point(_isen_iter, isentprs[good],
-                                  args=(isentlevs_nd[good], ka, a[good], b[good], pok.m),
+                                  args=(isentlevs_nd[good], ka, a[good], b[good], pok),
                                   xtol=eps, maxiter=max_iters)
 
     # get back pressure from log p
     isentprs[good] = np.exp(log_p_solved)
 
     # Mask out points we know are bad as well as points that are beyond the max pressure
-    isentprs[~(good & _less_or_close(isentprs, np.max(pressure.m)))] = np.nan
+    isentprs[~(good & _less_or_close(isentprs, np.max(pressure)))] = np.nan
 
     # create list for storing output data
     ret = [isentprs]

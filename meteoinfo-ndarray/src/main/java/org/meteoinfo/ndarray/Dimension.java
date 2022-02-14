@@ -526,6 +526,25 @@ public class Dimension {
     }
 
     /**
+     * Extract dimension
+     *
+     * @param index Indices
+     * @return Extracted dimension
+     */
+    public Dimension extract(Array index) {
+        Dimension dim = new Dimension(this.getShortName(), this.getLength(), this._dimType);
+        dim.setDimId(this._dimId);
+        List<Double> values = new ArrayList<>();
+        IndexIterator iter = index.getIndexIterator();
+        while (iter.hasNext()) {
+            values.add(this._dimValue.get(iter.getIntNext()));
+        }
+        dim.setValues(values);
+
+        return dim;
+    }
+
+    /**
      * Get value index
      *
      * @param v Value

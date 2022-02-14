@@ -176,19 +176,21 @@ class NDArray(object):
                 step = 1 if k.step is None else k.step
                 alllist = False
             elif isinstance(k, (list, tuple, NDArray)):
-                if isinstance(k, NDArray):
-                    k = k.aslist()
-                if isinstance(k[0], bool):
-                    kk = []
-                    for i in range(len(k)):
-                        if k[i]:
-                            kk.append(i)
-                    k = kk
+                if isinstance(k, (list, tuple)):
+                    k = NDArray(k)
+                # if isinstance(k, NDArray):
+                #     k = k.aslist()
+                # if isinstance(k[0], bool):
+                #     kk = []
+                #     for i in range(len(k)):
+                #         if k[i]:
+                #             kk.append(i)
+                #     k = kk
                 onlyrange = False
-                ranges.append(k)
+                ranges.append(k.asarray())
                 continue
             else:
-                print k
+                print(k)
                 return None
 
             if step < 0:
@@ -233,7 +235,7 @@ class NDArray(object):
                 rr.base = self.get_base()
             return rr
 
-        if r.getSize() == 1:
+        if r.getSize() == 1 and squeeze:
             iter = r.getIndexIterator()
             if self.dtype == _dtype.dtype.char:
                 return iter.getStringNext()
@@ -456,6 +458,8 @@ class NDArray(object):
         return r
 
     def __eq__(self, other):
+        if other is Ellipsis:
+            return False
         other = NDArray.__value_other(self, other)
         r = NDArray(ArrayMath.equal(self._array, other))
         return r

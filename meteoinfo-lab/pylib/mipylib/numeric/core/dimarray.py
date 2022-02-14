@@ -215,17 +215,20 @@ class DimArray(NDArray):
                 onlyrange = False
                 isrange = False
                 if not isinstance(k[0], datetime.datetime):
-                    if isinstance(k, NDArray):
-                        k = k.aslist()
-                    ranges.append(k)
+                    if isinstance(k, (list, tuple)):
+                        k = NDArray(k)
+                    # if isinstance(k, NDArray):
+                    #     k = k.aslist()
+                    # ranges.append(k)
                 else:
                     tlist = []
                     for tt in k:
                         sv = miutil.date2num(tt)
                         idx = self.dims[i].getValueIndex(sv)
                         tlist.append(idx)
-                    ranges.append(tlist)
-                    k = tlist
+                    # ranges.append(tlist)
+                    k = NDArray(tlist)
+                ranges.append(k.asarray())
             elif isinstance(k, basestring):
                 dim = self.dims[i]
                 kvalues = k.split(':')
@@ -244,7 +247,7 @@ class DimArray(NDArray):
                         step = -step
                 alllist = False
             else:                
-                print k
+                print(k)
                 raise IndexError()
                 
             if isrange:
@@ -269,6 +272,8 @@ class DimArray(NDArray):
             else:
                 if len(k) > 1:
                     dim = self.dims[i]
+                    if isinstance(k, NDArray):
+                        k = k.asarray()
                     ndims.append(dim.extract(k))
 
         if isempty:
@@ -298,7 +303,7 @@ class DimArray(NDArray):
                 rr.base = self.get_base()
             return rr
 
-        if r.getSize() == 1:
+        if r.getSize() == 1 and squeeze:
             iter = r.getIndexIterator()
             return iter.getObjectNext()
         else:
@@ -644,7 +649,7 @@ class DimArray(NDArray):
         else:
             if isinstance(dimvalue, (NDArray, DimArray)):
                 dimvalue = dimvalue.aslist()
-            dtype = DimensionType.Other
+            dtype = DimensionType.OTHER
             if not dimtype is None:
                 if dimtype.upper() == 'X':
                     dtype = DimensionType.X

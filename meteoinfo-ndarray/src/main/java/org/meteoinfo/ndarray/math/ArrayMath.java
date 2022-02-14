@@ -3596,6 +3596,29 @@ public class ArrayMath {
     }
 
     /**
+     * Returns a boolean array where two arrays are element-wise equal within a tolerance.
+     * @param a Input array a.
+     * @param b Input number b.
+     * @param rTol The relative tolerance parameter
+     * @param aTol The absolute tolerance parameter
+     * @param equalNaN Whether to compare NaN’s as equal
+     * @return Result array
+     */
+    public static Array isClose(Array a, Number b, double rTol, double aTol, boolean equalNaN) {
+        a = a.copyIfView();
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+        for (int i = 0; i < a.getSize(); i++) {
+            if (isClose(a.getDouble(i), b.doubleValue(), rTol, aTol, equalNaN)) {
+                r.setBoolean(i, true);
+            } else {
+                r.setBoolean(i, false);
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Test element-wise for positive or negative infinity.
      *
      * @param a Array a
@@ -5602,12 +5625,18 @@ public class ArrayMath {
                 for (int j = kr.first(); j <= kr.last(); j += kr.stride()) {
                     list.add(j);
                 }
-                indexlist.add(list);
+            } else if (k instanceof Array) {
+                list = new ArrayList<>();
+                IndexIterator iter = ((Array) k).getIndexIterator();
+                while (iter.hasNext()) {
+                    list.add(iter.getIntNext());
+                }
             } else {
-                List<Integer> kl = (List<Integer>) k;
-                shape[i] = kl.size();
-                indexlist.add(kl);
+                list = (List<Integer>) k;
+                shape[i] = list.size();
+
             }
+            indexlist.add(list);
         }
 
         Array r = Array.factory(a.getDataType(), shape);
@@ -5634,7 +5663,7 @@ public class ArrayMath {
      * @param ranges The indices of the values to extract.
      * @return The returned array has the same type as a.
      */
-    public static Array takeValues(Array a, List<List<Integer>> ranges) {
+    public static Array takeValuesList(Array a, List<List<Integer>> ranges) {
         int n = a.getRank();
         int nn = ranges.get(0).size();
         int[] shape = new int[]{nn};
@@ -5644,6 +5673,53 @@ public class ArrayMath {
         for (int i = 0; i < nn; i++) {
             for (int j = 0; j < n; j++) {
                 current[j] = ranges.get(j).get(i);
+            }
+            index.set(current);
+            r.setObject(i, a.getObject(index));
+        }
+
+        return r;
+    }
+
+    /**
+     * Take elements from an array.
+     *
+     * @param a The array
+     * @param ranges The indices of the values to extract.
+     * @return The returned array has the same type as a.
+     */
+    public static Array takeValues(Array a, List<Array> ranges) {
+        int n = a.getRank();
+        Array bigArray = ranges.get(0);
+        boolean sameSize = true;
+        for (int i = 0; i < ranges.size(); i++) {
+            ranges.set(i, ranges.get(i).copyIfView());
+            if (ranges.get(i).getSize() != bigArray.getSize()) {
+                if (ranges.get(i).getSize() > bigArray.getSize())
+                    bigArray = ranges.get(i);
+                sameSize = false;
+            }
+        }
+        if (!sameSize) {
+            for (int i = 0; i < ranges.size(); i++) {
+                if (ranges.get(i).getSize() < bigArray.getSize()) {
+                    ranges.set(i, ArrayUtil.broadcast(ranges.get(i), bigArray.getShape()));
+                }
+            }
+        }
+
+        int nn = (int) bigArray.getSize();
+        int[] shape = bigArray.getShape();
+        Array r = Array.factory(a.getDataType(), shape);
+        Index index = a.getIndex();
+        int[] current = new int[n];
+        int idx;
+        for (int i = 0; i < nn; i++) {
+            for (int j = 0; j < n; j++) {
+                idx = ranges.get(j).getInt(i);
+                if (idx < 0)
+                    idx = shape[j] + idx;
+                current[j] = idx;
             }
             index.set(current);
             r.setObject(i, a.getObject(index));
@@ -7810,9 +7886,11 @@ public class ArrayMath {
         if (b.getDataType() == DataType.BOOLEAN) {
             if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()
                     && value.getIndexPrivate().isFastIterator()) {
+                int idx = 0;
                 for (int i = 0; i < a.getSize(); i++) {
                     if (b.getBoolean(i)) {
-                        a.setObject(i, value.getObject(i));
+                        a.setObject(i, value.getObject(idx));
+                        idx += 1;
                     }
                 }
             } else {
@@ -7830,9 +7908,11 @@ public class ArrayMath {
         } else {
             if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()
                     && value.getIndexPrivate().isFastIterator()) {
+                int idx = 0;
                 for (int i = 0; i < a.getSize(); i++) {
                     if (b.getInt(i) == 1) {
-                        a.setObject(i, value.getObject(i));
+                        a.setObject(i, value.getObject(idx));
+                        idx += 1;
                     }
                 }
             } else {

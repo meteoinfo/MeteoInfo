@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\micaps">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\particles"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamslice"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
@@ -16,21 +15,18 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\potential_vorticity_baroclinic.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\isentropic_analysis.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\log_interpolate_1d_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\micaps\micaps_4_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\micaps\test_read_bom.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_sombrero.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\potential_vorticity_baroclinic.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\isentropic_analysis.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\log_interpolate_1d_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\micaps\micaps_4_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\micaps\test_read_bom.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_sombrero.py"/>
     </RecentFiles>
   </File>
   <Font>

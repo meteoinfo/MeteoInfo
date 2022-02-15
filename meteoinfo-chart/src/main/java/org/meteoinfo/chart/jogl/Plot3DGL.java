@@ -1048,6 +1048,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
 
+        //Set light position - follow glLoadIdentity
         this.lighting.setPosition(gl);
 
         gl.glPushMatrix();
@@ -1107,14 +1108,16 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //Draw title
         this.drawTitle();
 
-        this.setLight(gl);
-
         //Draw graphics
         if (this.clipPlane) {
             enableClipPlane(gl);
         }
 
+        //Draw grid line
         drawGridLine(gl);
+
+        //Lighting
+        this.setLight(gl);
 
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);

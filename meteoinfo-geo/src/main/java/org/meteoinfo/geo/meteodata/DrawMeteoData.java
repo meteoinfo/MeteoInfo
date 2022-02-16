@@ -686,10 +686,14 @@ public class DrawMeteoData {
         int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
         double[] xArray = gridData.getXArray();
         double[] yArray = gridData.getYArray();
-        if (gridData.getXDelta() < 0)
+        if (gridData.getXDelta() < 0) {
             ArrayUtils.reverse(xArray);
-        if (gridData.getYDelta() < 0)
+            gridData.xReverse();
+        }
+        if (gridData.getYDelta() < 0) {
             ArrayUtils.reverse(yArray);
+            gridData.yReverse();
+        }
         Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
                 cValues, xArray, yArray, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
@@ -911,10 +915,14 @@ public class DrawMeteoData {
         int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
         double[] xArray = gridData.getXArray();
         double[] yArray = gridData.getYArray();
-        if (gridData.getXDelta() < 0)
+        if (gridData.getXDelta() < 0) {
             ArrayUtils.reverse(xArray);
-        if (gridData.getYDelta() < 0)
+            gridData.xReverse();
+        }
+        if (gridData.getYDelta() < 0) {
             ArrayUtils.reverse(yArray);
+            gridData.yReverse();
+        }
         Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
                 cValues, xArray, yArray, gridData.getDoubleMissingValue(), S1);
         ContourLines = (List<PolyLine>) cbs[0];

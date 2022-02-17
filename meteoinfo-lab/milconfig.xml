@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\grib">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamslice"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\satellite\calipso">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d_earth"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
@@ -13,20 +9,24 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\potential_vorticity_baroclinic.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\isentropic_analysis.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib\grib_ensemble.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\volumeplot_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\plot_cuace_3d_volume.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\calipso\CALIPSO_aerosol_type_v4-21_2.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\potential_vorticity_baroclinic.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\isentropic_analysis.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib\grib_ensemble.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\volumeplot_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\plot_cuace_3d_volume.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\calipso\CALIPSO_aerosol_type_v4-21_2.py"/>
     </RecentFiles>
   </File>
   <Font>

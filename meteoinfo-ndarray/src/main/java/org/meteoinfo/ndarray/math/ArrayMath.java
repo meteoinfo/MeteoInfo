@@ -275,7 +275,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), b.getDataType());
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.addInt(a, b);
             case FLOAT:
@@ -303,7 +305,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.addInt(a, b.intValue());
             case FLOAT:
@@ -664,7 +668,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), b.getDataType());
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.subInt(a, b);
             case FLOAT:
@@ -692,7 +698,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.subInt(a, b.intValue());
             case FLOAT:
@@ -731,7 +739,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.subInt(b.intValue(), a);
             case FLOAT:
@@ -1165,7 +1175,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), b.getDataType());
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.mulInt(a, b);
             case FLOAT:
@@ -1190,7 +1202,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.mulInt(a, b.intValue());
             case FLOAT:
@@ -1602,7 +1616,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), b.getDataType());
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.divInt(a, b);
             case FLOAT:
@@ -1627,7 +1643,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.divInt(a, b.intValue());
             case FLOAT:
@@ -1663,7 +1681,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.divInt(b.intValue(), a);
             case FLOAT:
@@ -2158,7 +2178,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), b.getDataType());
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.modInt(a, b);
             case FLOAT:
@@ -2181,7 +2203,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.modInt(a, b.intValue());
             case FLOAT:
@@ -2204,7 +2228,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.modInt(b.intValue(), a);
             case FLOAT:
@@ -2556,7 +2582,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), b.getDataType());
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.floorDivInt(a, b);
             case FLOAT:
@@ -2579,7 +2607,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.floorDivInt(a, b.intValue());
             case FLOAT:
@@ -2602,7 +2632,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.floorDivInt(b.intValue(), a);
             case FLOAT:
@@ -2940,7 +2972,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.powInt(a, b.intValue());
             case FLOAT:
@@ -2975,7 +3009,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(b.getDataType(), bType);
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
             case BOOLEAN:
                 return ArrayMath.powInt(a.intValue(), b);
             case FLOAT:
@@ -3009,7 +3045,9 @@ public class ArrayMath {
         DataType type = ArrayMath.commonType(a.getDataType(), b.getDataType());
         switch (type) {
             case SHORT:
+            case USHORT:
             case INT:
+            case UINT:
                 return ArrayMath.powInt(a, b);
             case FLOAT:
             case DOUBLE:

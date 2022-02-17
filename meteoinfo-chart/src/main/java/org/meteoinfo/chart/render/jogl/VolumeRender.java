@@ -201,8 +201,13 @@ public class VolumeRender extends JOGLGraphicRender {
                 e.printStackTrace();
             }
         } else if (program.getProgramId() == null) {
-            //this.bindingTextures();
-            program.init(gl);
+            this.bindingTextures();
+            /*try {
+                compileShaders();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
+            //program.init(gl);
         }
     }
 
@@ -258,12 +263,10 @@ public class VolumeRender extends JOGLGraphicRender {
     @Override
     public void draw() {
         try {
-            //this.bindingTextures();
-            //this.compileShaders();
+            //gl.glEnable(GL_TEXTURE_2D);
+            //gl.glEnable(GL_TEXTURE_3D);
             program.use(gl);
             setUniforms();
-            //program.use(gl);
-            //program.setUniforms(gl);
 
             IntBuffer intBuffer = IntBuffer.allocate(1);
             gl.glGenBuffers(1, intBuffer);
@@ -291,6 +294,8 @@ public class VolumeRender extends JOGLGraphicRender {
             //Program.destroyAllPrograms(gl);
             gl.glUseProgram(0);
             gl.glEnable(GL_DEPTH_TEST);
+            //gl.glDisable(GL_TEXTURE_2D);
+            //gl.glDisable(GL_TEXTURE_3D);
         } catch (Exception e) {
             e.printStackTrace();
         }

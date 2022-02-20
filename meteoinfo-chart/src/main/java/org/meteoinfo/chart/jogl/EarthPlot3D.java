@@ -6,13 +6,13 @@ import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import org.apache.commons.imaging.ImageReadException;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.ChartColorBar;
+import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.SurfaceGraphics;
 import org.meteoinfo.chart.plot.GridLine;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.*;
 import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
@@ -29,14 +29,17 @@ import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EarthPlot3D extends Plot3DGL {
     // <editor-fold desc="Variables">
     private float radius = 6371.f;
     private SurfaceGraphics surface;
+    private Extent3D dataExtent;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -79,8 +82,26 @@ public class EarthPlot3D extends Plot3DGL {
         this.radius = value;
     }
 
+    @Override
+    public void setDrawExtent(Extent3D value) {
+        this.drawExtent = value;
+        this.transform.setExtent(this.drawExtent);
+    }
+
     // </editor-fold>
     // <editor-fold desc="Method">
+
+    void updateDataExtent() {
+        xmin = (float) dataExtent.minX;
+        xmax = (float) dataExtent.maxX;
+        ymin = (float) dataExtent.minY;
+        ymax = (float) dataExtent.maxY;
+        zmin = (float) dataExtent.minZ;
+        zmax = (float) dataExtent.maxZ;
+        xAxis.setMinMaxValue(xmin, xmax);
+        yAxis.setMinMaxValue(ymin, ymax);
+        zAxis.setMinMaxValue(zmin, zmax);
+    }
 
     /**
      * Add a graphic
@@ -88,6 +109,13 @@ public class EarthPlot3D extends Plot3DGL {
      */
     @Override
     public void addGraphic(Graphic graphic) {
+        if (this.dataExtent == null) {
+            this.dataExtent = (Extent3D) graphic.getExtent();
+        } else {
+            this.dataExtent = this.dataExtent.union((Extent3D) graphic.getExtent());
+        }
+        updateDataExtent();
+
         this.graphics.add(SphericalTransform.transform(graphic));
         Extent ex = this.graphics.getExtent();
         if (!ex.is3D()) {
@@ -240,6 +268,9 @@ public class EarthPlot3D extends Plot3DGL {
             this.lighting.stop(gl);
         }
 
+        //Draw axis
+        this.drawAllZAxis(gl);
+
         //Draw legend
         gl.glPopMatrix();
         this.updateMatrix(gl);
@@ -258,6 +289,97 @@ public class EarthPlot3D extends Plot3DGL {
             AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
             this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
             this.doScreenShot = false;
+        }
+    }
+
+    @Override
+    protected void drawZAxis(GL2 gl, PointF loc) {
+        float[] rgba;
+        float x, y, z, v;
+        int skip = 1;
+        XAlign xAlign;
+        YAlign yAlign;
+        Rectangle2D rect;
+        float strWidth, strHeight;
+
+        //z axis line
+        rgba = this.zAxis.getLineColor().getRGBComponents(null);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
+        gl.glBegin(GL2.GL_LINES);
+        float[] xyz = SphericalTransform.transform(loc.X, loc.Y, this.zmin);
+        x = this.transform.transform_x(xyz[0]);
+        y = this.transform.transform_y(xyz[1]);
+        z = this.transform.transform_z(xyz[2]);
+        gl.glVertex3f(x, y, z);
+        xyz = SphericalTransform.transform(loc.X, loc.Y, this.zmax);
+        x = this.transform.transform_x(xyz[0]);
+        y = this.transform.transform_y(xyz[1]);
+        z = this.transform.transform_z(xyz[2]);
+        gl.glVertex3f(x, y, z);
+        gl.glEnd();
+
+        //z axis ticks
+        this.zAxis.updateTickLabels();
+        List<ChartText> tlabs = this.zAxis.getTickLabels();
+        //float axisLen = this.toScreenLength(x, y, zMin, x, y, zMax);
+        //skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
+        float x1 = x;
+        float y1 = y;
+        float tickLen = this.zAxis.getTickLength() * this.lenScale;
+        xAlign = XAlign.RIGHT;
+        yAlign = YAlign.CENTER;
+        strWidth = 0.0f;
+        for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
+            v = (float) this.zAxis.getTickValues()[i];
+            if (v < zmin || v > zmax) {
+                continue;
+            }
+
+            xyz = SphericalTransform.transform(loc.X, loc.Y, v);
+            x = this.transform.transform_x(xyz[0]);
+            y = this.transform.transform_y(xyz[1]);
+            z = this.transform.transform_z(xyz[2]);
+            x1 = x;
+            y1 = y;
+            if (x < 0) {
+                if (y > 0) {
+                    y1 += tickLen;
+                } else {
+                    x1 -= tickLen;
+                }
+            } else {
+                if (y > 0) {
+                    x1 += tickLen;
+                } else {
+                    y1 -= tickLen;
+                }
+            }
+            if (i == tlabs.size()) {
+                break;
+            }
+
+            //Draw tick line
+            rgba = this.zAxis.getLineColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
+            gl.glBegin(GL2.GL_LINES);
+            gl.glVertex3f(x, y, z);
+            gl.glVertex3f(x1, y1, z);
+            gl.glEnd();
+
+            //Draw tick label
+            rect = drawString(gl, tlabs.get(i), x1, y1, z, xAlign, yAlign, -this.tickSpace, 0);
+            if (strWidth < rect.getWidth()) {
+                strWidth = (float) rect.getWidth();
+            }
+        }
+
+        //Draw z axis label
+        ChartText label = this.zAxis.getLabel();
+        if (label != null) {
+            float yShift = strWidth + this.tickSpace * 3;
+            drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
         }
     }
 

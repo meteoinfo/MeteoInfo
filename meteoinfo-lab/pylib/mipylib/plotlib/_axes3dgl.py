@@ -288,6 +288,15 @@ class Axes3DGL(Axes3D):
         if not mat_shininess is None:
             lighting.setMat_Shininess(mat_shininess)
 
+    def add_zaxis(self, x, y):
+        """
+        Add a z axis.
+
+        :param x: (*float*) X coordinate of the z axis.
+        :param y: (*float*) Y coordinate of the z axis.
+        """
+        self.axes.addZAxis(x, y)
+
     def bar(self, x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
         """
         Make a 3D bar plot of x, y and z, where x, y and z are sequence like objects of the same lengths.

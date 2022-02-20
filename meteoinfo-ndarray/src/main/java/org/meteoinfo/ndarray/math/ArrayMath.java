@@ -4674,7 +4674,7 @@ public class ArrayMath {
     /**
      * Integrate vector array using the composite trapezoidal rule.
      *
-     * @param y Vecotr array
+     * @param y Vertical array
      * @param x Spacing array between all y elements
      * @param ranges Ranges
      * @return Definite integral as approximated by trapezoidal rule

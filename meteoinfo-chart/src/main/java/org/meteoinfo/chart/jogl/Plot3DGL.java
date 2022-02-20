@@ -93,6 +93,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected final Axis xAxis;
     protected final Axis yAxis;
     protected final Axis zAxis;
+    protected List<PointF> zAxisLocations;
     protected float xmin, xmax = 1.0f, ymin;
     protected float ymax = 1.0f, zmin, zmax = 1.0f;
     protected Transform transform = new Transform();
@@ -138,24 +139,17 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.projInfo = null;
         this.doScreenShot = false;
         this.legends = new ArrayList<>();
-        //this.legends.add(new ChartColorBar(new LegendScheme(ShapeTypes.Polygon, 5)));
         this.xAxis = new Axis();
-        //this.xAxis.setLabel("X");
-        //this.xAxis.setLabel("Longitude");
         this.xAxis.setTickLength(8);
         this.yAxis = new Axis();
-        //this.yAxis.setLabel("Y");
-        //this.yAxis.setLabel("Latitude");
         this.yAxis.setTickLength(8);
         this.zAxis = new Axis();
-        //this.zAxis.setLabel("Z");
-        //this.zAxis.setLabel("Altitude");
         this.zAxis.setTickLength(8);
+        this.zAxisLocations = new ArrayList<>();
         this.graphics = new GraphicCollection3D();
         this.hideOnDrag = false;
         this.boxed = true;
         this.gridLine = new GridLine(true);
-        //this.displayGrids = true;
         this.drawBase = true;
         this.displayXY = true;
         this.displayZ = true;
@@ -1040,6 +1034,15 @@ public class Plot3DGL extends Plot implements GLEventListener {
     public void setAutoExtent() {
     }
 
+    /**
+     * Add z axis locations
+     * @param x Location x
+     * @param y Location y
+     */
+    public void addZAxis(float x, float y) {
+        this.zAxisLocations.add(new PointF(x, y));
+    }
+
     @Override
     public void display(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
@@ -1158,6 +1161,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         //Draw axis
         this.drawAxis(gl);
+        this.drawAllZAxis(gl);
 
         //Draw legend
         gl.glPopMatrix();
@@ -1884,86 +1888,106 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         //Draw z axis
         if (this.displayZ) {
-            //z axis line
+            PointF loc = new PointF();
             if (this.angleY < 90) {
-                x = xMin;
-                y = yMax;
+                loc = new PointF(this.xmin, this.ymax);
             } else if (this.angleY < 180) {
-                x = xMax;
-                y = yMax;
+                loc = new PointF(this.xmax, this.ymax);
             } else if (this.angleY < 270) {
-                x = xMax;
-                y = yMin;
+                loc = new PointF(this.xmax, this.ymin);
             } else {
-                x = xMin;
-                y = yMin;
+                loc = new PointF(this.xmin, this.ymin);
             }
+            drawZAxis(gl, loc);
+        }
+        gl.glDepthFunc(GL2.GL_LEQUAL);
+    }
+
+    protected void drawZAxis(GL2 gl, PointF loc) {
+        float[] rgba;
+        float x, y, v;
+        int skip;
+        XAlign xAlign;
+        YAlign yAlign;
+        Rectangle2D rect;
+        float strWidth, strHeight;
+
+        x = this.transform.transform_x(loc.X);
+        y = this.transform.transform_y(loc.Y);
+        float zMin = this.transform.transform_z(this.zmin);
+        float zMax = this.transform.transform_z(this.zmax);
+
+        //z axis line
+        rgba = this.zAxis.getLineColor().getRGBComponents(null);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex3f(x, y, zMin);
+        gl.glVertex3f(x, y, zMax);
+        gl.glEnd();
+
+        //z axis ticks
+        this.zAxis.updateTickLabels();
+        List<ChartText> tlabs = this.zAxis.getTickLabels();
+        float axisLen = this.toScreenLength(x, y, zMin, x, y, zMax);
+        skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
+        float x1 = x;
+        float y1 = y;
+        float tickLen = this.zAxis.getTickLength() * this.lenScale;
+        if (x < 0) {
+            if (y > 0) {
+                y1 += tickLen;
+            } else {
+                x1 -= tickLen;
+            }
+        } else {
+            if (y > 0) {
+                x1 += tickLen;
+            } else {
+                y1 -= tickLen;
+            }
+        }
+        xAlign = XAlign.RIGHT;
+        yAlign = YAlign.CENTER;
+        strWidth = 0.0f;
+        for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
+            v = (float) this.zAxis.getTickValues()[i];
+            if (v < zmin || v > zmax) {
+                continue;
+            }
+            v = this.transform.transform_z(v);
+            if (i == tlabs.size()) {
+                break;
+            }
+
+            //Draw tick line
             rgba = this.zAxis.getLineColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
             gl.glBegin(GL2.GL_LINES);
-            gl.glVertex3f(x, y, zMin);
-            gl.glVertex3f(x, y, zMax);
+            gl.glVertex3f(x, y, v);
+            gl.glVertex3f(x1, y1, v);
             gl.glEnd();
 
-            //z axis ticks
-            this.zAxis.updateTickLabels();
-            List<ChartText> tlabs = this.zAxis.getTickLabels();
-            float axisLen = this.toScreenLength(x, y, zMin, x, y, zMax);
-            skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
-            float x1 = x;
-            float y1 = y;
-            float tickLen = this.zAxis.getTickLength() * this.lenScale;
-            if (x < 0) {
-                if (y > 0) {
-                    y1 += tickLen;
-                } else {
-                    x1 -= tickLen;
-                }
-            } else {
-                if (y > 0) {
-                    x1 += tickLen;
-                } else {
-                    y1 -= tickLen;
-                }
-            }
-            xAlign = XAlign.RIGHT;
-            yAlign = YAlign.CENTER;
-            strWidth = 0.0f;
-            for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
-                v = (float) this.zAxis.getTickValues()[i];
-                if (v < zmin || v > zmax) {
-                    continue;
-                }
-                v = this.transform.transform_z(v);
-                if (i == tlabs.size()) {
-                    break;
-                }
-
-                //Draw tick line
-                rgba = this.zAxis.getLineColor().getRGBComponents(null);
-                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
-                gl.glBegin(GL2.GL_LINES);
-                gl.glVertex3f(x, y, v);
-                gl.glVertex3f(x1, y1, v);
-                gl.glEnd();
-
-                //Draw tick label
-                rect = drawString(gl, tlabs.get(i), x1, y1, v, xAlign, yAlign, -this.tickSpace, 0);
-                if (strWidth < rect.getWidth()) {
-                    strWidth = (float) rect.getWidth();
-                }
-            }
-
-            //Draw z axis label
-            ChartText label = this.zAxis.getLabel();
-            if (label != null) {
-                float yShift = strWidth + this.tickSpace * 3;
-                drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+            //Draw tick label
+            rect = drawString(gl, tlabs.get(i), x1, y1, v, xAlign, yAlign, -this.tickSpace, 0);
+            if (strWidth < rect.getWidth()) {
+                strWidth = (float) rect.getWidth();
             }
         }
-        gl.glDepthFunc(GL2.GL_LEQUAL);
+
+        //Draw z axis label
+        ChartText label = this.zAxis.getLabel();
+        if (label != null) {
+            float yShift = strWidth + this.tickSpace * 3;
+            drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+        }
+    }
+
+    protected void drawAllZAxis(GL2 gl) {
+        for (PointF loc : this.zAxisLocations) {
+            drawZAxis(gl, loc);
+        }
     }
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz, XAlign xAlign, YAlign yAlign) {

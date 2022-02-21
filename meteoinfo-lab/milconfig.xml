@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d_earth">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\grib">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour"/>
@@ -11,20 +11,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d_earth"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib\grib_ensemble_record.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d_earth\CALIPSO_L1_3d_axis.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib\grib_ensemble.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib\grib_ensemble_record.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d_earth\CALIPSO_L1_3d_axis.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib\grib_ensemble.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -32,5 +32,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1361,845"/>
 </MeteoInfo>

@@ -4,6 +4,7 @@ Contains a collection of thermodynamic calculations.
 Ported from MetPy.
 """
 
+import warnings
 from .. import constants
 from ..cbook import broadcast_indices
 from .tools import find_bounding_indices, _less_or_close
@@ -16,31 +17,39 @@ __all__ = [
     'mixing_ratio','mixing_ratio_from_specific_humidity','potential_temperature',
     'relative_humidity_from_specific_humidity',
     'saturation_mixing_ratio','saturation_vapor_pressure','temperature_from_potential_temperature',
-    'virtual_temperature','dry_static_energy','isentropic_interpolation'
+    'virtual_temperature','dry_static_energy','isentropic_interpolation',
+    'dewpoint','dewpoint_from_relative_humidity','specific_humidity_from_dewpoint',
+    'specific_humidity_from_mixing_ratio','specific_humidity_from_relative_humidity'
     ]
 
 def saturation_vapor_pressure(temperature):
     r"""Calculate the saturation water vapor (partial) pressure.
+
     Parameters
     ----------
     temperature : `float`
-        The temperature (celsius)
+        The temperature (kelvin)
+
     Returns
     -------
     `float`
         The saturation water vapor (partial) pressure
+
     See Also
     --------
     vapor_pressure, dewpoint
+
     Notes
     -----
     Instead of temperature, dewpoint may be used in order to calculate
     the actual (ambient) water vapor (partial) pressure.
     The formula used is that from [Bolton1980]_ for T in degrees Celsius:
+
     .. math:: 6.112 e^\frac{17.67T}{T + 243.5}
     """
     # Converted from original in terms of C to use kelvin.
-    return constants.sat_pressure_0c * np.exp(17.67 * (temperature - 273.15) / (temperature - 29.65))
+    return constants.sat_pressure_0c * np.exp(17.67 * (temperature - 273.15) /
+                                                     (temperature - 29.65))
 
 def mixing_ratio_from_specific_humidity(specific_humidity):
     r"""Calculate the mixing ratio from specific humidity.
@@ -68,18 +77,22 @@ def mixing_ratio(part_press, tot_press):
     """
     Calculates the mixing ratio of gas given its partial pressure
     and the total pressure of the air.
+
     There are no required units for the input arrays, other than that
     they have the same units.
+
     Parameters
     ----------
     part_press : array_like
         Partial pressure of the constituent gas
     tot_press : array_like
         Total air pressure
+
     Returns
     -------
     array_like
         The (mass) mixing ratio, dimensionless (e.g. Kg/Kg or g/g)
+
     See Also
     --------
     vapor_pressure
@@ -91,17 +104,22 @@ def saturation_mixing_ratio(tot_press, temperature):
     """
     Calculates the saturation mixing ratio given total pressure
     and the temperature.
+
     The implementation uses the formula outlined in [4]
+
     Parameters
     ----------
     tot_press: array_like
         Total atmospheric pressure (hPa)
+
     temperature: array_like
-        The temperature (celsius)
+        The temperature (kelvin)
+
     Returns
     -------
     array_like
         The saturation mixing ratio, dimensionless
+
     References
     ----------
     .. [4] Hobbs, Peter V. and Wallace, John M., 1977: Atmospheric Science, an Introductory
@@ -176,95 +194,110 @@ def exner_function(pressure, reference_pressure=constants.P0):
 def potential_temperature(pressure, temperature):
     """
     Calculate the potential temperature.
+
     Uses the Poisson equation to calculation the potential temperature
     given `pressure` and `temperature`.
+
     Parameters
     ----------
     pressure : array_like
         The total atmospheric pressure
     temperature : array_like
         The temperature
+
     Returns
     -------
     array_like
         The potential temperature corresponding to the the temperature and
         pressure.
+
     See Also
     --------
     dry_lapse
+
     Notes
     -----
     Formula:
+
     .. math:: \Theta = T (P_0 / P)^\kappa
     """
-    return temperature * (constants.P0 / pressure)**constants.kappa
+    return temperature / exner_function(pressure)
 
-def temperature_from_potential_temperature(pressure, theta):
+def temperature_from_potential_temperature(pressure, potential_temperature):
     r"""Calculate the temperature from a given potential temperature.
+
     Uses the inverse of the Poisson equation to calculate the temperature from a
     given potential temperature at a specific pressure level.
+
     Parameters
     ----------
-    pressure : `pint.Quantity`
-        The total atmospheric pressure
-    theta : `pint.Quantity`
-        The potential temperature
+    pressure : `array`
+        The total atmospheric pressure (hPa)
+    potential_temperature : `array`
+        The potential temperature (Kelvin)
+
     Returns
     -------
-    `pint.Quantity`
+    `array` (kelvin)
         The temperature corresponding to the potential temperature and pressure.
+
     See Also
     --------
     dry_lapse
     potential_temperature
+
     Notes
     -----
     Formula:
+
     .. math:: T = \Theta (P / P_0)^\kappa
     """
-    return theta * exner_function(pressure)
+    return potential_temperature * exner_function(pressure)
 
 def equivalent_potential_temperature(pressure, temperature, dewpoint):
     r"""Calculate equivalent potential temperature.
+
     This calculation must be given an air parcel's pressure, temperature, and dewpoint.
     The implementation uses the formula outlined in [Bolton1980]_:
     First, the LCL temperature is calculated:
+
     .. math:: T_{L}=\frac{1}{\frac{1}{T_{D}-56}+\frac{ln(T_{K}/T_{D})}{800}}+56
     Which is then used to calculate the potential temperature at the LCL:
+
     .. math:: \theta_{DL}=T_{K}\left(\frac{1000}{p-e}\right)^k
               \left(\frac{T_{K}}{T_{L}}\right)^{.28r}
+
     Both of these are used to calculate the final equivalent potential temperature:
     .. math:: \theta_{E}=\theta_{DL}\exp\left[\left(\frac{3036.}{T_{L}}
                                               -1.78\right)*r(1+.448r)\right]
+
     Parameters
     ----------
     pressure: `float`
         Total atmospheric pressure (hPa)
     temperature: `float`
-        Temperature of parcel (celsius)
+        Temperature of parcel (kelvin)
     dewpoint: `float`
-        Dewpoint of parcel (celsius)
+        Dewpoint of parcel (kelvin)
+
     Returns
     -------
     `float`
-        The equivalent potential temperature of the parcel (celsius)
+        The equivalent potential temperature of the parcel (kelvin)
     Notes
     -----
     [Bolton1980]_ formula for Theta-e is used, since according to
     [DaviesJones2009]_ it is the most accurate non-iterative formulation
     available.
     """
-    t = temperature + 273.15
-    td = dewpoint + 273.15
-    p = pressure
+    t = temperature
+    td = dewpoint
     e = saturation_vapor_pressure(dewpoint)
     r = saturation_mixing_ratio(pressure, dewpoint)
 
     t_l = 56 + 1. / (1. / (td - 56) + np.log(t / td) / 800.)
-    th_l = t * (1000 / (p - e)) ** constants.kappa * (t / t_l) ** (0.28 * r)
-    th_e = th_l * np.exp((3036. / t_l - 1.78) * r * (1 + 0.448 * r))
-
-    return th_e - 273.15
+    th_l = potential_temperature(pressure - e, temperature) * (t / t_l) ** (0.28 * r)
+    return th_l * np.exp(r * (1 + 0.448 * r) * (3036. / t_l - 1.78))
 
 def virtual_temperature(temperature, mixing, molecular_weight_ratio=constants.epsilon):
     r"""Calculate virtual temperature.
@@ -473,3 +506,122 @@ def isentropic_interpolation(levels, pressure, temperature, *args, **kwargs):
         ret.extend(others)
 
     return ret
+
+def dewpoint_from_relative_humidity(temperature, rh):
+    r"""Calculate the ambient dewpoint given air temperature and relative humidity.
+    Parameters
+    ----------
+    temperature : `float`
+        Air temperature (celsius)
+    rh : `float`
+        Relative humidity expressed as a ratio in the range 0 < rh <= 1
+    Returns
+    -------
+    `float`
+        The dew point temperature (celsius)
+    See Also
+    --------
+    dewpoint, saturation_vapor_pressure
+    """
+    if np.any(rh > 1.2):
+        warnings.warn('Relative humidity >120%, ensure proper units.')
+    return dewpoint(rh * saturation_vapor_pressure(temperature))
+
+def dewpoint(vapor_pressure):
+    r"""Calculate the ambient dewpoint given the vapor pressure.
+
+    Parameters
+    ----------
+    vapor_pressure : `array`
+        Water vapor partial pressure
+
+    Returns
+    -------
+    `array`
+        Dew point temperature
+
+    See Also
+    --------
+    dewpoint_rh, saturation_vapor_pressure, vapor_pressure
+
+    Notes
+    -----
+    This function inverts the [Bolton1980]_ formula for saturation vapor
+    pressure to instead calculate the temperature. This yield the following
+    formula for dewpoint in degrees Celsius:
+
+    .. math:: T = \frac{243.5 log(e / 6.112)}{17.67 - log(e / 6.112)}
+    """
+    val = np.log(vapor_pressure / constants.nounit.sat_pressure_0c)
+    return constants.nounit.zero_degc + 243.5 * val / (17.67 - val)
+
+def specific_humidity_from_mixing_ratio(mixing_ratio):
+    r"""Calculate the specific humidity from the mixing ratio.
+
+    Parameters
+    ----------
+    mixing_ratio: `array`
+        Mixing ratio
+
+    Returns
+    -------
+    `array`
+        Specific humidity
+
+    See Also
+    --------
+    mixing_ratio, mixing_ratio_from_specific_humidity
+
+    Notes
+    -----
+    Formula from [Salby1996]_ pg. 118.
+
+    .. math:: q = \frac{w}{1+w}
+
+    * :math:`w` is mixing ratio
+
+    * :math:`q` is the specific humidity
+    """
+    return mixing_ratio / (1 + mixing_ratio)
+
+def specific_humidity_from_dewpoint(pressure, dewpoint):
+    r"""Calculate the specific humidity from the dewpoint temperature and pressure.
+
+    Parameters
+    ----------
+    dewpoint: `array`
+        Dewpoint temperature
+    pressure: `array`
+        Pressure
+
+    Returns
+    -------
+    `array`
+        Specific humidity
+
+    See Also
+    --------
+    mixing_ratio, saturation_mixing_ratio
+    """
+    mixing_ratio = saturation_mixing_ratio(pressure, dewpoint)
+    return specific_humidity_from_mixing_ratio(mixing_ratio)
+
+def specific_humidity_from_relative_humidity(pressure, temperature, rh):
+    """Calculate specific humidity from relative humidity, pressure and temperature.
+
+    Parameters
+    ----------
+    pressure: `array`
+        Pressure
+    temperature: `array`
+        temperature
+    rh: `array`
+        relative humidity
+
+    Returns
+    -------
+    `array`
+        Specific humidity
+    """
+    dp = dewpoint_from_relative_humidity(temperature, rh)
+    return specific_humidity_from_dewpoint(pressure, dp)

@@ -7,7 +7,7 @@ Ported from MetPy.
 from org.meteoinfo.math.meteo import MeteoMath
 import mipylib.numeric as np
 from mipylib.numeric.core import NDArray, DimArray
-from .tools import first_derivative, gradient, get_layer_heights
+from .tools import first_derivative, gradient, get_layer_heights, lat_lon_grid_deltas
 from .basic import coriolis_parameter
 from .. import constants
 
@@ -77,13 +77,34 @@ def vorticity(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     if dx is None:
         xx = u.dimvalue(x_dim)
         yy = u.dimvalue(y_dim)
-        xx,yy = np.meshgrid(xx, yy)
-        dudy = first_derivative(u, x=yy, axis=y_dim)
-        dvdx = first_derivative(v, x=xx, axis=x_dim)
+        xx, yy = np.meshgrid(xx, yy)
+        if u.proj.isLonLat():
+            dx, dy = lat_lon_grid_deltas(xx, yy)
+            if dx.ndim < u.ndim:
+                ea = range(u.ndim - dx.ndim)
+                dx = np.expand_dims(dx, axis=ea)
+                dy = np.expand_dims(dy, axis=ea)
+            dudy = first_derivative(u, delta=dy, axis=y_dim)
+            dvdx = first_derivative(v, delta=dx, axis=x_dim)
+        else:
+            if xx.ndim < u.ndim:
+                ea = range(u.ndim - xx.ndim)
+                xx = np.expand_dims(xx, axis=ea)
+                yy = np.expand_dims(yy, axis=ea)
+            dudy = first_derivative(u, x=yy, axis=y_dim)
+            dvdx = first_derivative(v, x=xx, axis=x_dim)
     else:
+        if dx.ndim < u.ndim:
+            ea = range(u.ndim - dx.ndim)
+            dx = np.expand_dims(dx, axis=ea)
+            dy = np.expand_dims(dy, axis=ea)
         dudy = first_derivative(u, delta=dy, axis=y_dim)
         dvdx = first_derivative(v, delta=dx, axis=x_dim)
-    return dvdx - dudy
+    r = dvdx - dudy
+    if isinstance(u, DimArray):
+        return DimArray(r, u.dims, u.fill_value, u.proj)
+    else:
+        return r
 
 def vorticity_bak(u, v, x=None, y=None):
     """
@@ -165,13 +186,35 @@ def divergence(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     if dx is None:
         xx = u.dimvalue(x_dim)
         yy = u.dimvalue(y_dim)
-        xx,yy = np.meshgrid(xx, yy)
-        dudx = first_derivative(u, x=xx, axis=x_dim)
-        dvdy = first_derivative(v, x=yy, axis=y_dim)
+        xx, yy = np.meshgrid(xx, yy)
+        if u.proj.isLonLat():
+            dx, dy = lat_lon_grid_deltas(xx, yy)
+            if dx.ndim < u.ndim:
+                ea = range(u.ndim - dx.ndim)
+                dx = np.expand_dims(dx, axis=ea)
+                dy = np.expand_dims(dy, axis=ea)
+            dudx = first_derivative(u, delta=dx, axis=x_dim)
+            dvdy = first_derivative(v, delta=dy, axis=y_dim)
+        else:
+            if xx.ndim < u.ndim:
+                ea = range(u.ndim - xx.ndim)
+                xx = np.expand_dims(xx, axis=ea)
+                yy = np.expand_dims(yy, axis=ea)
+            dudx = first_derivative(u, x=xx, axis=x_dim)
+            dvdy = first_derivative(v, x=yy, axis=y_dim)
     else:
+        if dx.ndim < u.ndim:
+            ea = range(u.ndim - dx.ndim)
+            dx = np.expand_dims(dx, axis=ea)
+            dy = np.expand_dims(dy, axis=ea)
         dudx = first_derivative(u, delta=dx, axis=x_dim)
         dvdy = first_derivative(v, delta=dy, axis=y_dim)
-    return dudx + dvdy
+    r = dudx + dvdy
+    if isinstance(u, DimArray):
+        return DimArray(r, u.dims, u.fill_value, u.proj)
+    else:
+        return r
+
 
 def divergence_bak(u, v, x=None, y=None):
     '''

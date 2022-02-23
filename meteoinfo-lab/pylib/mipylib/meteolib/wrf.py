@@ -104,7 +104,7 @@ def get_rh(wrfin, timeidx=0):
     full_p = p + pb
     qvapor[qvapor < 0] = 0.
     tk = temperature_from_potential_temperature(full_p * 0.01, full_t)
-    rh = relative_humidity_from_specific_humidity(qvapor, tk - 273.15, full_p * 0.01) * 100
+    rh = relative_humidity_from_specific_humidity(full_p * 0.01, tk, qvapor)
     
     return rh
     
@@ -124,6 +124,6 @@ def get_rh2m(wrfin, timeidx=0):
     psfc = wrfin['PSFC'][timeidx,:,:]
     q2 = wrfin['Q2'][timeidx,:,:]
     q2[q2 < 0] = 0.
-    rh = relative_humidity_from_specific_humidity(q2, t2 - 273.15, psfc * 0.01) * 100
+    rh = relative_humidity_from_specific_humidity(psfc * 0.01, t2, q2)
     
     return rh

@@ -5669,6 +5669,7 @@ public class ArrayMath {
                 while (iter.hasNext()) {
                     list.add(iter.getIntNext());
                 }
+                shape[i] = list.size();
             } else {
                 list = (List<Integer>) k;
                 shape[i] = list.size();

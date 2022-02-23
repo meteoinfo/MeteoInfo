@@ -258,50 +258,7 @@ def rh2dewpoint(rh, temp):
             r = DimArray(r, rh.dims, rh.fill_value, rh.proj)
         return r
     else:
-        return MeteoMath.rh2dewpoint(rh, temp)     
-        
-def dewpoint(e):
-    r"""Calculate the ambient dewpoint given the vapor pressure.
-    Parameters
-    ----------
-    e : `pint.Quantity`
-        Water vapor partial pressure
-    Returns
-    -------
-    `pint.Quantity`
-        Dew point temperature
-    See Also
-    --------
-    dewpoint_rh, saturation_vapor_pressure, vapor_pressure
-    Notes
-    -----
-    This function inverts the [Bolton1980]_ formula for saturation vapor
-    pressure to instead calculate the temperature. This yield the following
-    formula for dewpoint in degrees Celsius:
-    .. math:: T = \frac{243.5 log(e / 6.112)}{17.67 - log(e / 6.112)}
-    """
-    val = np.log(e / constants.sat_pressure_0c)
-    return 243.5 * val / (17.67 - val)
-
-def dewpoint_from_relative_humidity(temperature, rh):
-    r"""Calculate the ambient dewpoint given air temperature and relative humidity.
-    Parameters
-    ----------
-    temperature : `float`
-        Air temperature (celsius)
-    rh : `float`
-        Relative humidity expressed as a ratio in the range 0 < rh <= 1
-    Returns
-    -------
-    `float`
-        The dew point temperature (celsius)
-    See Also
-    --------
-    dewpoint, saturation_vapor_pressure
-    """
-    #if np.any(rh > 1.2):
-    #    warnings.warn('Relative humidity >120%, ensure proper units.')
-    return dewpoint(rh * saturation_vapor_pressure(temperature))
+        return MeteoMath.rh2dewpoint(rh, temp)
 
 def dewpoint_rh(temperature, rh):
     r"""Calculate the ambient dewpoint given air temperature and relative humidity.
@@ -424,16 +381,20 @@ def vapor_pressure(pressure, mixing):
 def cumsimp(y):
     """
     Simpson-rule column-wise cumulative summation.
+
     Numerical approximation of a function F(x) such that
     Y(X) = dF/dX.  Each column of the input matrix Y represents
     the value of the integrand  Y(X)  at equally spaced points
     X = 0,1,...size(Y,1).
+
     The output is a matrix  F of the same size as Y.
     The first row of F is equal to zero and each following row
     is the approximation of the integral of each column of matrix
-    Y up to the givem row.
+    Y up to the given row.
+
     CUMSIMP assumes continuity of each column of the function Y(X)
     and uses Simpson rule summation.
+
     Similar to the command F = CUMSUM(Y), exept for zero first
     row and more accurate summation (under the assumption of
     continuous integrand Y(X)).

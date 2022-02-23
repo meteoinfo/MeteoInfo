@@ -14,10 +14,9 @@ from . import signal
 from . import spatial
 from . import special
 
-__all__ = []
+__all__ = ['linalg', 'fitting', 'random', 'ma', 'stats', 'interpolate', 'optimize', 'signal', 'spatial',
+           'special']
 __all__.extend(['__version__'])
 __all__.extend(core.__all__)
 __all__.extend(lib.__all__)
-__all__.extend(['linalg', 'fitting', 'random', 'ma', 'stats', 'interpolate', 'optimize', 'signal', 'spatial',
-                'special'])
 __all__.extend(['griddata'])

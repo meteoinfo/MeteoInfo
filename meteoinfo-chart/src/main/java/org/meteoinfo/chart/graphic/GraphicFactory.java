@@ -2908,7 +2908,8 @@ public class GraphicFactory {
                         }
                     }
                 }
-                aImage.setRGB(j, height - i - 1, oneColor.getRGB());
+                //aImage.setRGB(j, height - i - 1, oneColor.getRGB());
+                aImage.setRGB(j, i, oneColor.getRGB());
             }
         }
 

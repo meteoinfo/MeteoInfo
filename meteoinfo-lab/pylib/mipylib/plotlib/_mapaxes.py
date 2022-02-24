@@ -48,7 +48,10 @@ class MapAxes(Axes):
         super(MapAxes, self).__init__(*args, **kwargs)               
      
         # Set projection
-        projinfo = kwargs.pop('projinfo', None)
+        projinfo = kwargs.pop('projection', None)
+        if projinfo is None:
+            projinfo = kwargs.pop('projinfo', None)
+
         if projinfo is None:
             proj = kwargs.pop('proj', 'longlat')
             origin = kwargs.pop('origin', (0, 0, 0))    

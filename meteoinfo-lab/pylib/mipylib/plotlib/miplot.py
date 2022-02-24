@@ -1291,7 +1291,7 @@ def axesm(*args, **kwargs):
     """
     Add an map axes to the figure.
     
-    :param projinfo: (*ProjectionInfo*) Optional, map projection, default is longlat projection.
+    :param projection: (*ProjectionInfo*) Optional, map projection, default is longlat projection.
     :param position: (*list*) Optional, axes position specified by *position=* [left, bottom, width
         height] in normalized (0, 1) units. Default is [0.13, 0.11, 0.775, 0.815].
     :param bgcolor: (*Color*) Optional, axes background color.

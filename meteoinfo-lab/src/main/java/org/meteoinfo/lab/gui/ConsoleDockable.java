@@ -270,18 +270,10 @@ public class ConsoleDockable extends DefaultSingleCDockable {
      */
     public void execfile(final String fn) {
         myWorker = new SwingWorker<String, String>() {
-            //PrintStream oout = System.out;
-            //PrintStream oerr = System.err;
 
             @Override
             protected String doInBackground() throws Exception {
-                //JTextPane jTextPane_Output = interp.console.getTextPane();
-                //JTextPaneWriter writer = new JTextPaneWriter(jTextPane_Output);
-                //JTextPanePrintStream printStream = new JTextPanePrintStream(System.out, jTextPane_Output);
-                //interp.setOut(writer);
-                //interp.setErr(writer);
-                //System.setOut(printStream);
-                //System.setErr(printStream);
+                parent.getProgressBar().setVisible(true);
 
                 interp.console.setStyle(consoleColors.getCommandColor());
                 interp.console.println("run script...");
@@ -310,8 +302,6 @@ public class ConsoleDockable extends DefaultSingleCDockable {
 
             @Override
             protected void done() {
-                //System.setOut(oout);
-                //System.setErr(oerr);
                 IChartPanel cp = parent.getFigureDock().getCurrentFigure();
                 if (cp != null) {
                     cp.paintGraphics();
@@ -319,6 +309,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                         ((GLChartPanel) cp).display();
                     }*/
                 }
+                parent.getProgressBar().setVisible(false);
             }
         };
         myWorker.execute();
@@ -365,26 +356,15 @@ public class ConsoleDockable extends DefaultSingleCDockable {
     public void runPythonScript(final String code) throws InterruptedException {
 
         myWorker = new SwingWorker<String, String>() {
-            //PrintStream oout = System.out;
-            //PrintStream oerr = System.err;
 
             @Override
             protected String doInBackground() throws Exception {
-                //JTextAreaWriter writer = new JTextAreaWriter(jTextArea_Output);
-                //JTextAreaPrintStream printStream = new JTextAreaPrintStream(System.out, jTextArea_Output);
-                //jTextArea_Output.setText("");
+                parent.getProgressBar().setVisible(true);
 
-                //JTextPane jTextPane_Output = interp.console.getTextPane();
-                //JTextPaneWriter writer = new JTextPaneWriter(jTextPane_Output);
-                //JTextPanePrintStream printStream = new JTextPanePrintStream(System.out, jTextPane_Output);
                 interp.console.setStyle(consoleColors.getCommandColor());
                 interp.console.println("run script...");
                 interp.console.setFocusable(true);
                 interp.console.requestFocusInWindow();
-                //interp.setOut(writer);
-                //interp.setErr(writer);
-                //System.setOut(printStream);
-                //System.setErr(printStream);
 
                 String encoding = "utf-8";
                 try {
@@ -394,44 +374,20 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                     interp.exec("mipylib.plotlib.miplot.isinteractive = True");
                 } catch (Exception e) {
                     e.printStackTrace();
-                    //interp.console.print(">>> ", Color.red);
-                    //interp.console.setStyle(Color.black);
-                    //interp.console.setForeground(Color.black);
                     interp.exec("mipylib.plotlib.miplot.isinteractive = True");
                     interp.fireConsoleExecEvent();
                 }
 
-                //String encoding = EncodingUtil.findEncoding(code);                
-//                if (encoding != null) {
-//                    try {
-//                        interp.execfile(new ByteArrayInputStream(code.getBytes(encoding)));
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                        interp.console.print(">>> ", Color.red);
-//                        //interp.console.setStyle(Color.black);
-//                        //interp.console.setForeground(Color.black);
-//                    }
-//                } else {
-//                    try {
-//                        interp.execfile(new ByteArrayInputStream(code.getBytes()));
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                        interp.console.print(">>> ", Color.red);
-//                        //interp.console.setStyle(Color.black);
-//                        //interp.console.setForeground(Color.black);
-//                    }
-//                }
                 return "";
             }
 
             @Override
             protected void done() {
-                //System.setOut(oout);
-                //System.setErr(oerr);
                 IChartPanel cp = parent.getFigureDock().getCurrentFigure();
                 if (cp != null) {
                     cp.paintGraphics();
                 }
+                parent.getProgressBar().setVisible(false);
             }
         };
         myWorker.execute();

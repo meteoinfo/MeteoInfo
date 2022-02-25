@@ -8,10 +8,8 @@ package org.meteoinfo.lab.gui;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.Dimension;
+
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -25,6 +23,7 @@ import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -475,6 +474,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jMenuItem_About = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         jMenuItem_Help = new javax.swing.JMenuItem();
+        jProgressBar_Run = new javax.swing.JProgressBar();
+        jProgressBar_Memory = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("MeteoInfoLab");
@@ -620,21 +621,33 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         getContentPane().add(jPanel_Toolbar, java.awt.BorderLayout.NORTH);
 
-        jPanel_Status.setPreferredSize(new java.awt.Dimension(588, 25));
+        //Status panel
+        jPanel_Status.setPreferredSize(new java.awt.Dimension(588, 23));
+        jPanel_Status.setLayout(new java.awt.BorderLayout());
+        //Run progress bar
+        jProgressBar_Run.setIndeterminate(true);
+        jProgressBar_Run.setStringPainted(true);
+        jProgressBar_Run.setString("Run...");
+        jProgressBar_Run.setVisible(false);
+        jPanel_Status.add(jProgressBar_Run, BorderLayout.WEST);
+        //Memory progress bar
+        int maxMemory = (int)(Runtime.getRuntime().maxMemory() / (1024 * 1024 * 1024));
+        jProgressBar_Memory.setStringPainted(true);
+        jProgressBar_Memory.setString(String.format("%dG", maxMemory));
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                int ratio = (int) ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) *
+                        100. / Runtime.getRuntime().maxMemory());
+                jProgressBar_Memory.setValue(ratio);
+                jProgressBar_Memory.setString(String.format("%d%% / %dG", ratio, maxMemory));
+            }
+        }, 1000,1000);
+        jPanel_Status.add(jProgressBar_Memory, java.awt.BorderLayout.EAST);
+        getContentPane().add(jPanel_Status, java.awt.BorderLayout.PAGE_END);
 
-        javax.swing.GroupLayout jPanel_StatusLayout = new javax.swing.GroupLayout(jPanel_Status);
-        jPanel_Status.setLayout(jPanel_StatusLayout);
-        jPanel_StatusLayout.setHorizontalGroup(
-            jPanel_StatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 777, Short.MAX_VALUE)
-        );
-        jPanel_StatusLayout.setVerticalGroup(
-            jPanel_StatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 25, Short.MAX_VALUE)
-        );
-
-        //getContentPane().add(jPanel_Status, java.awt.BorderLayout.PAGE_END);
-
+        //Menu
         jMenu_File.setText("File");
         jMenu_File.setMnemonic(KeyEvent.VK_F);
 
@@ -1332,7 +1345,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
     @Override
     public JProgressBar getProgressBar() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.jProgressBar_Run;
     }
 
     @Override
@@ -1449,6 +1462,8 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JToolBar jToolBar_CurrentFolder;
     private javax.swing.JToolBar jToolBar_Editor;
+    private javax.swing.JProgressBar jProgressBar_Run;
+    private javax.swing.JProgressBar jProgressBar_Memory;
     // End of variables declaration//GEN-END:variables
 
 }

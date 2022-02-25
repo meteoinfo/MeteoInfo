@@ -72,7 +72,15 @@
     <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.4" level="project" />
     <orderEntry type="library" name="Maven: net.sf.geographiclib:GeographicLib-Java:1.52" level="project" />
     <orderEntry type="module" module-name="meteoinfo-dataframe" />
-    <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.5.3-SNAPSHOT" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven: edu.ucar:netcdfAll:5.5.3-SNAPSHOT">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../meteoinfo-data/lib/netcdfAll-5.5.3-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Maven: com.github.albfernandez:juniversalchardet:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: com.formdev:flatlaf:2.0.1" level="project" />

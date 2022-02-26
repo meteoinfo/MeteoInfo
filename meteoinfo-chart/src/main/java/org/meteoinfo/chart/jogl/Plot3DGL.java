@@ -1194,18 +1194,24 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void enableClipPlane(GL2 gl) {
+        float xMin = this.transform.transform_x(this.xmin);
+        float xMax = this.transform.transform_x(this.xmax) + 0.01f;
+        float yMin = this.transform.transform_y(this.ymin);
+        float yMax = this.transform.transform_y(this.ymax) + 0.01f;
+        float zMin = this.transform.transform_z(this.zmin);
+        float zMax = this.transform.transform_z(this.zmax) + 0.01f;
         float s = 1.01f;
-        gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{1, 0, 0, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{1, 0, 0, xMax}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE0);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[]{-1, 0, 0, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[]{-1, 0, 0, xMax}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE1);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[]{0, -1, 0, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[]{0, -1, 0, yMax}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE2);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[]{0, 1, 0, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[]{0, 1, 0, yMax}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE3);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE4, new double[]{0, 0, 1, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE4, new double[]{0, 0, 1, zMax}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE4);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE5, new double[]{0, 0, -1, s}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE5, new double[]{0, 0, -1, zMax}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE5);
     }
 

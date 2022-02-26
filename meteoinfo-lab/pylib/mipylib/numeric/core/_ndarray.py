@@ -257,9 +257,14 @@ class NDArray(object):
         #print type(indices)
         if isinstance(indices, NDArray):
             if isinstance(value, NDArray):
+                if value.size == indices.size == self.size:
+                    ArrayMath.setValueArray(self._array, indices._array, value._array)
+                    return
+
                 value = value.asarray()
+
             ArrayMath.setValue(self._array, indices._array, value)
-            return None
+            return
 
         if not isinstance(indices, tuple):
             indices = [indices]

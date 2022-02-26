@@ -76,17 +76,20 @@ public class Transform {
                 yRatio = yRange / maxRange;
                 float zRatio = zRange / maxRange;
                 if (zRatio != 1) {
-                    this.zmin = zmin / zRatio;
-                    this.zmax = zmax / zRatio;
+                    float zCenter = (this.zmax + this.zmin) / 2;
+                    this.zmin = zCenter - zRange * 0.5f / zRatio;
+                    this.zmax = zCenter + zRatio * 0.5f / zRatio;
                 }
             }
             if (xRatio != 1) {
-                this.xmin = xmin / xRatio;
-                this.xmax = xmax / xRatio;
+                float xCenter = (this.xmax + this.xmin) / 2;
+                this.xmin = xCenter - xRange * 0.5f / xRatio;
+                this.xmax = xCenter + xRange * 0.5f / xRatio;
             }
             if (yRatio != 1) {
-                this.ymin = ymin / yRatio;
-                this.ymax = ymax / yRatio;
+                float yCenter = (this.ymax + this.ymin) / 2;
+                this.ymin = yCenter - yRange * 0.5f / yRatio;
+                this.ymax = yCenter + yRange * 0.5f / yRatio;
             }
         }
     }

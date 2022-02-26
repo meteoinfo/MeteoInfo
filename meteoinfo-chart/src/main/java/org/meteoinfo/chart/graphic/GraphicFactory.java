@@ -1853,55 +1853,47 @@ public class GraphicFactory {
             case POLYLINE_Z:
             case POLYGON_Z:
                 graphics.setFixZ(false);
-                if (xshift == 0) {
-                    for (Shape shape : layer.getShapes()) {
-
-                        cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                        graphics.add(new Graphic(shape, cb));
-                    }
-                } else {
-                    switch (shapeType) {
-                        case POINT_Z:
-                            for (PointZShape shape : (List<PointZShape>) layer.getShapes()) {
-                                PointZShape s = new PointZShape();
-                                PointZ pd = (PointZ) shape.getPoint();
-                                pz = new PointZ(pd.X + xshift, pd.Y, pd.Z, pd.M);
-                                s.setPoint(pz);
-                                cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                                graphics.add(new Graphic(s, cb));
-                            }
-                            break;
-                        case POLYLINE_Z:
-                            for (PolylineZShape shape : (List<PolylineZShape>) layer.getShapes()) {
-                                cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                                for (PolylineZ pl : (List<PolylineZ>) shape.getPolylines()) {
-                                    PolylineZShape s = new PolylineZShape();
-                                    List<PointZ> plist = new ArrayList<>();
-                                    for (PointZ pd : (List<PointZ>) pl.getPointList()) {
-                                        pz = new PointZ(pd.X + xshift, pd.Y, pd.Z, pd.M);
-                                        plist.add(pz);
-                                    }
-                                    s.setPoints(plist);
-                                    graphics.add(new Graphic(s, cb));
-                                }
-                            }
-                            break;
-                        case POLYGON_Z:
-                            for (PolygonZShape shape : (List<PolygonZShape>) layer.getShapes()) {
-                                PolygonZShape s = new PolygonZShape();
+                switch (shapeType) {
+                    case POINT_Z:
+                        for (PointZShape shape : (List<PointZShape>) layer.getShapes()) {
+                            PointZShape s = new PointZShape();
+                            PointZ pd = (PointZ) shape.getPoint();
+                            pz = new PointZ(pd.X + xshift, pd.Y, pd.Z + offset, pd.M);
+                            s.setPoint(pz);
+                            cb = ls.getLegendBreaks().get(shape.getLegendIndex());
+                            graphics.add(new Graphic(s, cb));
+                        }
+                        break;
+                    case POLYLINE_Z:
+                        for (PolylineZShape shape : (List<PolylineZShape>) layer.getShapes()) {
+                            cb = ls.getLegendBreaks().get(shape.getLegendIndex());
+                            for (PolylineZ pl : (List<PolylineZ>) shape.getPolylines()) {
+                                PolylineZShape s = new PolylineZShape();
                                 List<PointZ> plist = new ArrayList<>();
-                                for (PointZ pd : (List<PointZ>) shape.getPoints()) {
-                                    pz = new PointZ(pd.X + xshift, pd.Y, pd.Z, pd.M);
+                                for (PointZ pd : (List<PointZ>) pl.getPointList()) {
+                                    pz = new PointZ(pd.X + xshift, pd.Y, pd.Z + offset, pd.M);
                                     plist.add(pz);
                                 }
-                                s.setPartNum(shape.getPartNum());
-                                s.setParts(shape.getParts());
                                 s.setPoints(plist);
-                                cb = ls.getLegendBreaks().get(shape.getLegendIndex());
                                 graphics.add(new Graphic(s, cb));
                             }
-                            break;
-                    }
+                        }
+                        break;
+                    case POLYGON_Z:
+                        for (PolygonZShape shape : (List<PolygonZShape>) layer.getShapes()) {
+                            PolygonZShape s = new PolygonZShape();
+                            List<PointZ> plist = new ArrayList<>();
+                            for (PointZ pd : (List<PointZ>) shape.getPoints()) {
+                                pz = new PointZ(pd.X + xshift, pd.Y, pd.Z + offset, pd.M);
+                                plist.add(pz);
+                            }
+                            s.setPartNum(shape.getPartNum());
+                            s.setParts(shape.getParts());
+                            s.setPoints(plist);
+                            cb = ls.getLegendBreaks().get(shape.getLegendIndex());
+                            graphics.add(new Graphic(s, cb));
+                        }
+                        break;
                 }
                 break;
         }

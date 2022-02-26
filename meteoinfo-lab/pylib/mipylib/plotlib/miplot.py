@@ -1323,7 +1323,18 @@ def axes3d(*args, **kwargs):
     
     :param position: (*list*) Optional, axes position specified by *position=* [left, bottom, width
         height] in normalized (0, 1) units. Default is [0.13, 0.11, 0.775, 0.815].
-    :param outerposition: (*list*) Optional, axes size and location, including labels and margin.    
+    :param outerposition: (*list*) Optional, axes size and location, including labels and margin.
+    :param projection: (*str or ProjectionInfo*) If ``earth``, 3D earth axes will be created. If a
+        ``ProjectionInfo``, 3D map axes will be created. Default is ``None`` with normal 3D axes.
+    :param opengl: (*bool*) Using opengl backend or not. Default is ``True``.
+    :param orthographic: (*bool*) Using orthographic orthographic or perspective view. Default is
+        ``True``.
+    :param aspect: (*str*) ['equal' | 'xy_equal' | None]. Default is ``None``.
+    :param bgcolor: (*color*) Background color. Default is white.
+    :param fgcolor: (*color*) Foreground color. Default is black.
+    :param clip_plane: (*bool*) Clip plane in axes or not. Default is ``True``;
+    :param axis: (*bool*) Draw axis or not. Default is ``True``.
+    :param image: (*str*) Image file in ``map`` folder of the MeteoInfo. Only valid with 3D earth axes.
     
     :returns: The axes.
     """

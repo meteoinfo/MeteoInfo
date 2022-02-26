@@ -78,7 +78,7 @@ public class Transform {
                 if (zRatio != 1) {
                     float zCenter = (this.zmax + this.zmin) / 2;
                     this.zmin = zCenter - zRange * 0.5f / zRatio;
-                    this.zmax = zCenter + zRatio * 0.5f / zRatio;
+                    this.zmax = zCenter + zRange * 0.5f / zRatio;
                 }
             }
             if (xRatio != 1) {

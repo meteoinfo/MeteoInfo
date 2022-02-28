@@ -1528,7 +1528,7 @@ public class GeoComputation {
         return newPolygons;
     }
 
-    private static List<Polygon> clipPolygon(Polygon inPolygon, Object clipObj) {
+    public static List<Polygon> clipPolygon(Polygon inPolygon, Object clipObj) {
         List<Polygon> newPolygons = new ArrayList<>();
         List<Polyline> newPolylines = new ArrayList<>();
         List<PointD> aPList = (List<PointD>) inPolygon.getOutLine();

@@ -11,12 +11,15 @@ import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.SurfaceGraphics;
+import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.plot.GridLine;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
+import org.meteoinfo.geometry.shape.PolygonZ;
+import org.meteoinfo.geometry.shape.PolygonZShape;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.image.ImageUtil;
@@ -381,6 +384,11 @@ public class EarthPlot3D extends Plot3DGL {
             float yShift = strWidth + this.tickSpace * 3;
             drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
         }
+    }
+
+    @Override
+    protected void drawPolygonShape(GL2 gl, Graphic graphic) {
+        super.drawPolygonShape(gl, graphic);
     }
 
     // </editor-fold>

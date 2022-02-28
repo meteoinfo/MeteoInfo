@@ -121,6 +121,16 @@ public class SphericalTransform {
                                 primitive.vertices.set(k, transform(primitive.vertices.get(k)));
                             }
                         }
+                        List<PointZ> outLine = (List<PointZ>) tessPolygon.getOutLine();
+                        for (int k = 0; k < outLine.size(); k++) {
+                            outLine.set(k, transform(outLine.get(k)));
+                        }
+                        for (int k = 0; k < tessPolygon.getHoleLineNumber(); k++) {
+                            List<PointZ> holeLine = (List<PointZ>) tessPolygon.getHoleLine(k);
+                            for (int l = 0; l < holeLine.size(); l++) {
+                                holeLine.set(l, transform(holeLine.get(l)));
+                            }
+                        }
                         polygonZS.set(j, tessPolygon);
                     }
                 } else {

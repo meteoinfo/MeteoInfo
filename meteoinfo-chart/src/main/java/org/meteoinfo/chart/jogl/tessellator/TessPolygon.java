@@ -2,10 +2,18 @@ package org.meteoinfo.chart.jogl.tessellator;
 
 import org.meteoinfo.geometry.shape.PolygonZ;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TessPolygon extends PolygonZ {
-    private List<Primitive> primitives;
+    protected List<Primitive> primitives;
+
+    /**
+     * Constructor
+     */
+    public TessPolygon() {
+        this.primitives = new ArrayList<>();
+    }
 
     /**
      * Constructor

@@ -2219,7 +2219,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
     }
 
-    private void drawGraphic(GL2 gl, Graphic graphic) {
+    protected void drawGraphic(GL2 gl, Graphic graphic) {
         Shape shape = graphic.getGraphicN(0).getShape();
         switch (shape.getShapeType()) {
             case POINT:
@@ -2763,7 +2763,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
     }
 
-    private void drawPolygonShape(GL2 gl, Graphic graphic) {
+    protected void drawPolygonShape(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
             isDraw = drawExtent.intersects(graphic.getExtent());
@@ -2801,16 +2801,18 @@ public class Plot3DGL extends Plot implements GLEventListener {
             float[] rgba = aPGB.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
 
-            try {
-                for (Primitive primitive : tessPolygon.getPrimitives()) {
-                    gl.glBegin(primitive.type);
-                    for (PointZ p : primitive.vertices) {
-                        gl.glVertex3fv(transform.transform((float) p.X, (float) p.Y, (float) p.Z), 0);
+            if (tessPolygon.getPrimitives() != null) {
+                try {
+                    for (Primitive primitive : tessPolygon.getPrimitives()) {
+                        gl.glBegin(primitive.type);
+                        for (PointZ p : primitive.vertices) {
+                            gl.glVertex3fv(transform.transform((float) p.X, (float) p.Y, (float) p.Z), 0);
+                        }
+                        gl.glEnd();
                     }
-                    gl.glEnd();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
         if (aPGB.isDrawOutline()) {

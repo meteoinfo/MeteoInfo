@@ -2378,7 +2378,10 @@ class Axes(object):
         elif X.ndim > 2:
             isrgb = True
         else:
-            gdata = np.asgridarray(X)
+            if n >= 3:
+                gdata = np.asgridarray(X, xdata, ydata)
+            else:
+                gdata = np.asgridarray(X)
         args = args[1:]   
         
         extent = kwargs.pop('extent', extent)

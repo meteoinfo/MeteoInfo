@@ -4,7 +4,7 @@
 # Purpose: MeteoInfo dimarray module
 # Note: Jython
 #-----------------------------------------------------
-from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
+from org.meteoinfo.projection import KnownCoordinateSystems, Reproject, ProjectionInfo
 from org.meteoinfo.data import GridData, GridArray
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.geometry.geoprocess import GeometryUtil
@@ -49,7 +49,7 @@ def dimension(value, name='null', type=None):
 # Dimension array
 class DimArray(NDArray):
     
-    def __init__(self, array, dims=None, fill_value=-9999.0, proj=None):
+    def __init__(self, array, dims=None, fill_value=-9999.0, proj=ProjectionInfo.LONG_LAT):
         if isinstance(array, NDArray):
             array = array._array
         super(DimArray, self).__init__(array)

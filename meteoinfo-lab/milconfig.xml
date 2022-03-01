@@ -21,12 +21,12 @@
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot\traj_3d.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d_earth\contourf.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\hdf\CloudSAT_Swath.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\hdf\CloudSAT_CWC.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot\traj_3d.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d_earth\contourf.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\hdf\CloudSAT_Swath.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\hdf\CloudSAT_CWC.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1356,773"/>
 </MeteoInfo>

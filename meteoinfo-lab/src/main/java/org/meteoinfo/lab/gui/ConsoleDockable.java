@@ -211,6 +211,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
 
             @Override
             protected String doInBackground() throws Exception {
+                parent.getProgressBar().setVisible(true);
                 interp.console.setStyle(consoleColors.getCommandColor());
                 interp.console.println("evaluate selection...");
                 interp.console.setStyle(consoleColors.getCodeLinesColor());
@@ -233,6 +234,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                 interp.console.print(">>> ", consoleColors.getPromptColor());
                 interp.console.setStyle(consoleColors.getCommandColor());
                 interp.exec("mipylib.plotlib.miplot.isinteractive = True");
+                parent.getProgressBar().setVisible(false);
             }
         };
         myWorker.execute();

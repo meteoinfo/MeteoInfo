@@ -218,6 +218,8 @@ public class FigureDockable extends DefaultSingleCDockable {
      * @return Figure chart panel
      */
     public final IChartPanel addFigure(final JPanel ncp) {
+        ((IChartPanel) ncp).setLoading(true);
+
         if (ncp instanceof ChartPanel) {
             ((ChartPanel) ncp).setDoubleBuffer(this.doubleBuffer);
         }
@@ -265,6 +267,8 @@ public class FigureDockable extends DefaultSingleCDockable {
             }
         });
         tabbedPanel.setTabComponentAt(tabbedPanel.indexOfComponent(sp), btc);
+
+        ((IChartPanel) ncp).setLoading(false);
 
         return (IChartPanel) ncp;
     }

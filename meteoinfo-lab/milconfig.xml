@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\hdf">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d_earth"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\optimize"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\spatial"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\special"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot\traj_3d.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d_earth\contourf.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\hdf\CloudSAT_CWC.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_cma.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_3.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot\traj_3d.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d_earth\contourf.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\hdf\CloudSAT_CWC.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_cma.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_3.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1356,773"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

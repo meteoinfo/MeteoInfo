@@ -4090,6 +4090,17 @@ public class MapView extends JPanel implements IWebMapPanel {
     }
 
     /**
+     * Re draw function
+     * @param graphics2D Graphics2D object
+     * @param width Width
+     * @param height Height
+     */
+    @Override
+    public void reDraw(Graphics2D graphics2D, int width, int height) {
+        this.paintGraphics(graphics2D);
+    }
+
+    /**
      * New paint
      */
     public void repaintNew() {

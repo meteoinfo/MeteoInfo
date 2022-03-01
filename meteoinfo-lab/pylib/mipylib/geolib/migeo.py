@@ -434,6 +434,8 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
     :param k: (*float*) Scaling factor.
     :param x_0: (*float*) False easting.
     :param y_0: (*float*) False northing.
+    :param a: (*float*) Semi-major radius of the ellipsoid axis. Unit: meter.
+    :param b: (*float*) Semi-minor radius of the ellipsoid axis. Unit: meter.
     :param h: (*float*) Height from earth surface.
     :param zone: (*int*) Projection zone - used in UTM or other projection with zone setting.
     
@@ -497,6 +499,14 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
         projstr = projstr + ' +x_0=' + str(x_0)
     if not y_0 is None:
         projstr = projstr + ' +y_0=' + str(y_0)
+
+    a = kwargs.pop('a', None)
+    if not a is None:
+        projstr = projstr + ' a=' + str(a)
+
+    b = kwargs.pop('b', None)
+    if not b is None:
+        projstr = projstr + ' b=' + str(b)
 
     h = kwargs.pop('h', None)
     if not h is None:

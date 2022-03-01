@@ -5,6 +5,7 @@
  */
 package org.meteoinfo.data.mapdata.webmap;
 
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -18,6 +19,9 @@ import java.beans.PropertyChangeListener;
 public class TileLoadListener implements PropertyChangeListener {
 
     IWebMapPanel panel = null;
+    Graphics2D graphics2D = null;
+    Integer width = null;
+    Integer height = null;
 
     /**
      * Constructor
@@ -28,13 +32,41 @@ public class TileLoadListener implements PropertyChangeListener {
         this.panel = panel;
     }
 
+    /**
+     * Set Graphics2D object
+     * @param graphics2D Graphics2D object
+     */
+    public void setGraphics2D(Graphics2D graphics2D) {
+        this.graphics2D = graphics2D;
+    }
+
+    /**
+     * Set width
+     * @param width Width
+     */
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    /**
+     * Set height
+     * @param height Height
+     */
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if ("loaded".equals(evt.getPropertyName())
                 && Boolean.TRUE.equals(evt.getNewValue())) {
             Tile t = (Tile) evt.getSource();
             if (t.getZoom() == this.panel.getWebMapZoom()) {
-                this.panel.reDraw();
+                if (this.graphics2D != null && this.width != null && this.height != null) {
+                    this.panel.reDraw(graphics2D, width, height);
+                } else {
+                    this.panel.reDraw();
+                }
             }
         }
     }

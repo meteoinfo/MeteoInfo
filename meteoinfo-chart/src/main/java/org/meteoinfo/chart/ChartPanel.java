@@ -87,12 +87,13 @@ import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.image.ImageUtil;
+import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
 import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;
 import org.meteoinfo.geo.layer.RasterLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.geo.mapview.FrmIdentifer;
 import org.meteoinfo.geo.mapview.FrmIdentiferGrid;
 import org.meteoinfo.geo.mapview.MapView;
@@ -128,6 +129,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
     private double paintScale = 1.0;
     private LocalDateTime lastMouseWheelTime;
     private Timer mouseWheelDetctionTimer;
+    private boolean loading = false;
     // </editor-fold>
 
     // <editor-fold desc="Constructor">
@@ -247,6 +249,23 @@ public class ChartPanel extends JPanel implements IChartPanel{
 
     // </editor-fold>
     // <editor-fold desc="Get set methods">
+
+    /**
+     * Get whether chart panel is loading
+     * @return Is loading or not
+     */
+    public boolean isLoading() {
+        return this.loading;
+    }
+
+    /**
+     * Set whether chart panel is loading
+     * @param loading Boolean
+     */
+    public void setLoading(boolean loading) {
+        this.loading = loading;
+    }
+
     /**
      * Get chart
      *
@@ -591,10 +610,12 @@ public class ChartPanel extends JPanel implements IChartPanel{
     }
 
     void onComponentResized(ComponentEvent e) {
-        if (this.getWidth() > 0 && this.getHeight() > 0) {
-            if (this.chart != null) {
-                //this.paintGraphics();
-                this.repaintNew();
+        if (!loading) {
+            if (this.getWidth() > 0 && this.getHeight() > 0) {
+                if (this.chart != null) {
+                    //this.paintGraphics();
+                    this.repaintNew();
+                }
             }
         }
     }
@@ -737,13 +758,18 @@ public class ChartPanel extends JPanel implements IChartPanel{
                 break;
             case PAN:
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    int deltaX = e.getX() - mouseDownPoint.x;
+                    double[] xy1 = xyplot.screenToProj(mouseDownPoint.x, mouseDownPoint.y);
+                    double[] xy2 = xyplot.screenToProj(e.getX(), e.getY());
+                    Extent extent = xyplot.getDrawExtent();
+                    extent = extent.shift(xy1[0] - xy2[0], xy1[1] - xy2[1]);
+                    xyplot.setDrawExtent(extent);
+                    /*int deltaX = e.getX() - mouseDownPoint.x;
                     int deltaY = e.getY() - mouseDownPoint.y;
                     double minX = -deltaX;
                     double minY = -deltaY;
                     double maxX = xyplot.getGraphArea().getWidth() - deltaX;
                     double maxY = xyplot.getGraphArea().getHeight() - deltaY;
-                    xyplot.zoomToExtentScreen(minX, maxX, minY, maxY);
+                    xyplot.zoomToExtentScreen(minX, maxX, minY, maxY);*/
                     //this.paintGraphics();
                     this.repaintNew();
                 }
@@ -1113,7 +1139,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
     @Override
     public void saveImage(String aFile) {
         try {
-            saveImage(aFile, null);
+            saveImageSleep(aFile, null);
         } catch (PrintException | IOException | InterruptedException | ImageWriteException ex) {
             Logger.getLogger(ChartPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1128,7 +1154,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @throws javax.print.PrintException
      * @throws java.lang.InterruptedException
      */
-    public void saveImage(String aFile, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException, ImageWriteException {
+    public void saveImageSleep(String aFile, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException, ImageWriteException {
         int w, h;
         if (this.chartSize == null) {
             w = this.getWidth();
@@ -1220,6 +1246,20 @@ public class ChartPanel extends JPanel implements IChartPanel{
             int imageType = imageFormat == ImageFormats.JPEG ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
             BufferedImage image = new BufferedImage(width, height, imageType);
             Graphics2D g = image.createGraphics();
+            if (this.hasWebMap()) {
+                for (Plot plot : this.chart.getPlots()) {
+                    if (plot instanceof MapPlot) {
+                        MapPlot mapPlot = (MapPlot) plot;
+                        if (mapPlot.hasWebMapLayer()) {
+                            TileLoadListener tileLoadListener = mapPlot.getTileLoadListener();
+                            tileLoadListener.setGraphics2D(g);
+                            tileLoadListener.setWidth(width);
+                            tileLoadListener.setHeight(height);
+                        }
+                    }
+                }
+            }
+
             paintGraphics(g, width, height);
 
             if (sleep != null) {
@@ -1227,6 +1267,20 @@ public class ChartPanel extends JPanel implements IChartPanel{
             }
 
             ImageUtil.imageSave(image, aFile);
+
+            if (this.hasWebMap()) {
+                for (Plot plot : this.chart.getPlots()) {
+                    if (plot instanceof MapPlot) {
+                        MapPlot mapPlot = (MapPlot) plot;
+                        if (mapPlot.hasWebMapLayer()) {
+                            TileLoadListener tileLoadListener = mapPlot.getTileLoadListener();
+                            tileLoadListener.setGraphics2D(null);
+                            tileLoadListener.setWidth(this.getWidth());
+                            tileLoadListener.setHeight(this.getHeight());
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -1522,7 +1576,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
             height = this.getHeight();
         }
         
-        this.saveImage(fileName,dpi, width, height, sleep);
+        this.saveImage(fileName, dpi, width, height, sleep);
     }
 
     /**
@@ -1548,6 +1602,20 @@ public class ChartPanel extends JPanel implements IChartPanel{
         AffineTransform at = g.getTransform();
         at.scale(scaleFactor, scaleFactor);
         g.setTransform(at);
+        if (this.hasWebMap()) {
+            for (Plot plot : this.chart.getPlots()) {
+                if (plot instanceof MapPlot) {
+                    MapPlot mapPlot = (MapPlot) plot;
+                    if (mapPlot.hasWebMapLayer()) {
+                        TileLoadListener tileLoadListener = mapPlot.getTileLoadListener();
+                        tileLoadListener.setGraphics2D(g);
+                        tileLoadListener.setWidth(width);
+                        tileLoadListener.setHeight(height);
+                    }
+                }
+            }
+        }
+
         paintGraphics(g, width, height);
         g.dispose();
 
@@ -1559,6 +1627,20 @@ public class ChartPanel extends JPanel implements IChartPanel{
             ImageUtil.imageSave(image, fileName, dpi);
         } catch (ImageWriteException e) {
             e.printStackTrace();
+        }
+
+        if (this.hasWebMap()) {
+            for (Plot plot : this.chart.getPlots()) {
+                if (plot instanceof MapPlot) {
+                    MapPlot mapPlot = (MapPlot) plot;
+                    if (mapPlot.hasWebMapLayer()) {
+                        TileLoadListener tileLoadListener = mapPlot.getTileLoadListener();
+                        tileLoadListener.setGraphics2D(null);
+                        tileLoadListener.setWidth(this.getWidth());
+                        tileLoadListener.setHeight(this.getHeight());
+                    }
+                }
+            }
         }
     }
 
@@ -1701,7 +1783,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
     }
 
     /**
-     * Check if has web map layer
+     * Check if chart panel has web map layer
      *
      * @return Boolean
      */

@@ -52,6 +52,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     private float distanceX = 0.0f;
     private float distanceY = 0.0f;
     private FPSAnimator animator;
+    private boolean loading;
 
     // </editor-fold>
     // <editor-fold desc="Construction">
@@ -203,6 +204,22 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     // </editor-fold>
     // <editor-fold desc="Get set methods">
     /**
+     * Get whether chart panel is loading
+     * @return Is loading or not
+     */
+    public boolean isLoading() {
+        return this.loading;
+    }
+
+    /**
+     * Set whether chart panel is loading
+     * @param loading Boolean
+     */
+    public void setLoading(boolean loading) {
+        this.loading = loading;
+    }
+
+    /**
      * Get plot
      *
      * @return Plot
@@ -271,7 +288,9 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     // </editor-fold>
     // <editor-fold desc="Events">
     void onComponentResized(ComponentEvent e) {
-        this.display();
+        if (!loading) {
+            this.display();
+        }
     }
 
     void onMousePressed(MouseEvent e) {

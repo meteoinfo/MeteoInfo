@@ -5,6 +5,8 @@
  */
 package org.meteoinfo.data.mapdata.webmap;
 
+import java.awt.*;
+
 /**
  *
  * @author Yaqiang Wang
@@ -20,4 +22,12 @@ public interface IWebMapPanel {
      * Re draw function
      */
     public abstract void reDraw();
+
+    /**
+     * Re draw function
+     * @param graphics2D Graphics2D object
+     * @param width Width
+     * @param height Height
+     */
+    public abstract void reDraw(Graphics2D graphics2D, int width, int height);
 }

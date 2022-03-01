@@ -2490,6 +2490,17 @@ import org.xml.sax.SAXException;
          this.repaintNew();
      }
 
+     /**
+      * Re draw function
+      * @param graphics2D Graphics2D object
+      * @param width Width
+      * @param height Height
+      */
+     @Override
+     public void reDraw(Graphics2D graphics2D, int width, int height) {
+         this.paintGraphics(graphics2D);
+     }
+
      @Override
      public void paintComponent(Graphics g) {
          super.paintComponent(g);

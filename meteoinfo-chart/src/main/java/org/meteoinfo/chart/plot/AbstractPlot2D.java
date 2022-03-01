@@ -1365,6 +1365,17 @@ public abstract class AbstractPlot2D extends Plot {
      *
      * @param screenX Screen X
      * @param screenY Screen Y
+     * @return Projected X/Y
+     */
+    public double[] screenToProj(double screenX, double screenY) {
+        return screenToProj(screenX, screenY, this.getGraphArea());
+    }
+
+    /**
+     * Convert coordinate from screen to map
+     *
+     * @param screenX Screen X
+     * @param screenY Screen Y
      * @param area Area
      * @return Projected X/Y
      */

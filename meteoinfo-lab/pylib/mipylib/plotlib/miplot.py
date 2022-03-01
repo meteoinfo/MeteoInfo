@@ -1587,7 +1587,7 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
                 if sleep is None:
                     g_figure.saveImage(fname)
                 else:
-                    g_figure.saveImage(fname, sleep)
+                    g_figure.saveImageSleep(fname, sleep)
         else:
             if (not width is None) and (not height is None):
                 g_figure.saveImage(fname, dpi, width, height, sleep)

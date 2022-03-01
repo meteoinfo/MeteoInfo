@@ -11,6 +11,18 @@ package org.meteoinfo.chart;
  */
 public interface IChartPanel {
     /**
+     * Get whether chart panel is loading
+     * @return Boolean
+     */
+    public abstract boolean isLoading();
+
+    /**
+     * Set whether chart panel is loading
+     * @param loading Boolean
+     */
+    public abstract void setLoading(boolean loading);
+
+    /**
      * Save image
      * @param fn Image file name
      */

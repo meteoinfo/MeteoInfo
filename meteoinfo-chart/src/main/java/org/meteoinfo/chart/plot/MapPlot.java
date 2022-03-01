@@ -54,7 +54,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     private MapView mapView;
     private boolean antialias;
     private MapLayer selectedLayer;
-    private final TileLoadListener tileLoadListener = new TileLoadListener(this);
+    protected TileLoadListener tileLoadListener = new TileLoadListener(this);
     private ChartPanel parent;
     private float[] lonLim;
     private float[] latLim;
@@ -111,6 +111,16 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
 
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
+
+    /**
+     * Get tile load listener
+     *
+     * @return Tile load listener
+     */
+    public TileLoadListener getTileLoadListener() {
+        return this.tileLoadListener;
+    }
+
     /**
      * ChartPanel parent
      *
@@ -147,6 +157,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      */
     public void setMapView(MapView value, boolean isGeoMap) {
         this.mapView = value;
+        this.mapView.setLockViewUpdate(true);
         this.mapView.setGeoMap(isGeoMap);
         this.mapView.setMultiGlobalDraw(isGeoMap);
         Extent extent = this.getAutoExtent();
@@ -418,7 +429,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     // </editor-fold>
     // <editor-fold desc="Methods">
     /**
-     * Check if has web map layer
+     * Check if the plot has web map layer
      *
      * @return Boolean
      */
@@ -440,6 +451,19 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     public void reDraw() {
         if (this.parent != null) {
             this.parent.paintGraphics();
+        }
+    }
+
+    /**
+     * Re draw function
+     * @param graphics2D Graphics2D object
+     * @param width Width
+     * @param height Height
+     */
+    @Override
+    public void reDraw(Graphics2D graphics2D, int width, int height) {
+        if (this.parent != null) {
+            this.parent.paintGraphics(graphics2D, width, height);
         }
     }
     
@@ -467,6 +491,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
 
     @Override
     void drawGraph(Graphics2D g, Rectangle2D area) {
+        this.mapView.setLockViewUpdate(false);
         this.mapView.setAntiAlias(this.antialias);        
         this.mapView.setViewExtent((Extent) this.getDrawExtent().clone());
         if (this.boundary != null) {
@@ -484,6 +509,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             this.mapView.drawGraphic(g, new Graphic(this.boundary.getShape(), pb), area.getBounds());
             //pb.setDrawFill(true);
         }
+        this.mapView.setLockViewUpdate(true);
     }
 
     /**

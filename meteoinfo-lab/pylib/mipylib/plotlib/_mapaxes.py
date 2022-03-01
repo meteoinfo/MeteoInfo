@@ -1682,19 +1682,19 @@ class MapAxes(Axes):
             
         return MILayer(layer)
         
-    def webmap(self, provider='OpenStreetMap', order=0):
+    def webmap(self, provider='OpenStreetMap', zorder=0):
         '''
         Add a new web map layer.
         
         :param provider: (*string*) Web map provider.
-        :param order: (*int*) Layer order.
+        :param zorder: (*int*) Layer order.
         
         :returns: Web map layer
         '''
         layer = WebMapLayer()
         provider = WebMapProvider.valueOf(provider)
         layer.setWebMapProvider(provider)
-        self.add_layer(layer, order)
+        self.add_layer(layer, zorder)
         return MILayer(layer)
         
     def masklayer(self, mobj, layers):

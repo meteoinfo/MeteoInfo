@@ -1617,7 +1617,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
         }
 
         paintGraphics(g, width, height);
-        g.dispose();
+        //g.dispose();
 
         if (sleep != null) {
             Thread.sleep(sleep * 1000);

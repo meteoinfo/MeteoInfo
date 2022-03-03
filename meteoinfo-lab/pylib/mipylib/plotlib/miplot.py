@@ -2098,7 +2098,7 @@ def readlegend(fn):
         ls.importFromXMLFile(fn, False)
         return ls
     else:
-        print 'File not exists: ' + fn
+        print('File not exists: ' + fn)
         return None
         
 def colorbar(mappable=None, **kwargs):
@@ -2116,7 +2116,8 @@ def colorbar(mappable=None, **kwargs):
     :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
     :param label: (*string*) Label. Default is ``None`` .
     :param labelloc: (*string*) Label location ['in' | 'out' | 'top' | 'bottom' | 'left' | 'right'].
-        Defaul is ``out``.
+        Default is ``out``.
+    :param labelshift: (*float*) Label location shift value. Default is None (value is 5).
     :param extend: (*string*) {'neither', 'both', 'min', 'max'} If not 'neither', make pointed end(s)
             for out-of- range values. These are set for a given colormap using the colormap set_under and
             set_over methods.

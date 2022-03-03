@@ -1542,7 +1542,7 @@ public class ChartColorBar extends ChartLegend {
                                 this.width = Math.max(this.width, dim.width);
                                 break;
                             default:
-                                this.width += dim.height + 5;
+                                this.width += dim.height + this.labelShift;
                                 break;
                         }                        
                     }
@@ -1564,7 +1564,7 @@ public class ChartColorBar extends ChartLegend {
                                 //this.width += dim.width + 10;
                                 break;
                             default:
-                                this.height += dim.height + 5;
+                                this.height += dim.height + this.labelShift;
                                 break;
                         }
                     }

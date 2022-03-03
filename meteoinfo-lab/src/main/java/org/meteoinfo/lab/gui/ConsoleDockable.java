@@ -202,6 +202,15 @@ public class ConsoleDockable extends DefaultSingleCDockable {
     }
 
     /**
+     * Get SwingWorker
+     *
+     * @return The SwingWorker
+     */
+    public SwingWorker getSwingWorker() {
+        return this.myWorker;
+    }
+
+    /**
      * Run a command line
      *
      * @param command Command line
@@ -304,14 +313,18 @@ public class ConsoleDockable extends DefaultSingleCDockable {
 
             @Override
             protected void done() {
-                IChartPanel cp = parent.getFigureDock().getCurrentFigure();
-                if (cp != null) {
-                    cp.paintGraphics();
+                if (this.isCancelled()) {
+                    parent.getProgressBar().setVisible(false);
+                } else {
+                    IChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                    if (cp != null) {
+                        cp.paintGraphics();
                     /*if (cp instanceof GLChartPanel) {
                         ((GLChartPanel) cp).display();
                     }*/
+                    }
+                    parent.getProgressBar().setVisible(false);
                 }
-                parent.getProgressBar().setVisible(false);
             }
         };
         myWorker.execute();

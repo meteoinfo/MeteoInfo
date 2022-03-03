@@ -54,6 +54,7 @@ public class ChartLegend {
     protected int legendHeight;
     protected ChartText label;
     protected String labelLocation;
+    protected float labelShift;
     protected Font tickLabelFont;
     protected Color tickLabelColor;
     protected float tickLabelAngle;
@@ -99,6 +100,7 @@ public class ChartLegend {
         barWidth = 10;
         barHeight = 10;
         this.labelLocation = "out";
+        this.labelShift = 5.0f;
         tickLabelFont = new Font("Arial", Font.PLAIN, 14);
         this.tickLabelColor = Color.black;
         this.tickLabelAngle = 0;
@@ -505,6 +507,22 @@ public class ChartLegend {
      */
     public void setLabelLocation(String value) {
         this.labelLocation = value;
+    }
+
+    /**
+     * Get label shift
+     * @return Label shift
+     */
+    public float getLabelShift() {
+        return this.labelShift;
+    }
+
+    /**
+     * Set label shift
+     * @param value Label shift
+     */
+    public void setLabelShift(float value) {
+        this.labelShift = value;
     }
 
     /**
@@ -952,7 +970,7 @@ public class ChartLegend {
                         this.width = (int) (this.getTickWidth(g) + limitDim.height * this.shrink / this.aspect + 5);
                         if (this.label != null) {
                             g.setFont(this.label.getFont());
-                            this.width += (int) Draw.getStringDimension(label.getText(), g).height + 5;
+                            this.width += (int) Draw.getStringDimension(label.getText(), g).height + labelShift;
                         }
                         break;
                     default:
@@ -964,10 +982,10 @@ public class ChartLegend {
                             switch (this.labelLocation) {
                                 case "top":
                                 case "right":
-                                    this.width += dim.width + 10;
+                                    this.width += dim.width + labelShift * 2;
                                     break;
                                 default:
-                                    this.height += (int) Draw.getStringDimension(label.getText(), g).height + 5;
+                                    this.height += (int) Draw.getStringDimension(label.getText(), g).height + labelShift;
                                     break;
                             }
                         }

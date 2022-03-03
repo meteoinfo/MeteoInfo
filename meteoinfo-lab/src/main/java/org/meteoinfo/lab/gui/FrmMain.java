@@ -10,10 +10,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
 
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -318,6 +315,36 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         System.out.println("Main form is loaded!");
 
         System.setOut(this.consoleDock.getConsole().getOut());
+
+        this.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent ke) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                switch (ke.getKeyCode()) {
+                    // Control-C
+                    case (KeyEvent.VK_C):
+                        if (ke.isControlDown()) {
+                            SwingWorker myWorker = consoleDock.getSwingWorker();
+                            if (myWorker != null && !myWorker.isCancelled() && !myWorker.isDone()) {
+                                myWorker.cancel(true);
+                                myWorker = null;
+                                //myWorker = new SmallWorker();
+                                //myWorker.execute();
+                                //enter();
+                            }
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent ke) {
+            }
+
+        });
     }
 
     /**

@@ -3707,7 +3707,8 @@ class Axes(object):
         :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
         :param label: (*string*) Label. Default is ``None`` .
         :param labelloc: (*string*) Label location ['in' | 'out' | 'top' | 'bottom' | 'left' | 'right'].
-            Defaul is ``out``.
+            Default is ``out``.
+        :param labelshift: (*float*) Label location shift value. Default is None (value is 5).
         :param newlegend: (*boolean*) Add a new legend or replace existing one.
         :param extend: (*string*) {'neither', 'both', 'min', 'max'} If not 'neither', make pointed end(s)
             for out-of- range values. These are set for a given colormap using the colormap set_under and
@@ -3791,6 +3792,9 @@ class Axes(object):
         labelloc = kwargs.pop('labelloc', None)
         if not labelloc is None:
             legend.setLabelLocation(labelloc)
+        labelshift = kwargs.pop('labelshift', None)
+        if not labelshift is None:
+            legend.setLabelShift(labelshift)
         if orientation == 'horizontal':
             legend.setPlotOrientation(PlotOrientation.HORIZONTAL)
             legend.setPosition(LegendPosition.LOWER_CENTER_OUTSIDE)

@@ -456,13 +456,13 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
         lat_0 = origin[0]
         lon_0 = origin[1]
 
-    lat_0 = kwargs.pop('lat_0', lat_0)
-    if not lat_0 is None:
-        projstr = projstr + ' +lat_0=' + str(lat_0)
-
     lon_0 = kwargs.pop('lon_0', lon_0)
     if not lon_0 is None:
         projstr = projstr + ' +lon_0=' + str(lon_0)
+
+    lat_0 = kwargs.pop('lat_0', lat_0)
+    if not lat_0 is None:
+        projstr = projstr + ' +lat_0=' + str(lat_0)
 
     lat_ts = kwargs.pop('truescalelat', None)
     lat_ts = kwargs.pop('lat_ts', lat_ts)
@@ -487,7 +487,7 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
     lat_1 = kwargs.pop('lat_1', lat_1)
     lat_2 = kwargs.pop('lat_2', lat_2)
     if not lat_1 is None:
-        projstr = projstr + ' +lat_1=' + str(lat_2)
+        projstr = projstr + ' +lat_1=' + str(lat_1)
     if not lat_2 is None:
         projstr = projstr + ' +lat_2=' + str(lat_2)
 
@@ -502,11 +502,11 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
 
     a = kwargs.pop('a', None)
     if not a is None:
-        projstr = projstr + ' a=' + str(a)
+        projstr = projstr + ' +a=' + str(a)
 
     b = kwargs.pop('b', None)
     if not b is None:
-        projstr = projstr + ' b=' + str(b)
+        projstr = projstr + ' +b=' + str(b)
 
     h = kwargs.pop('h', None)
     if not h is None:

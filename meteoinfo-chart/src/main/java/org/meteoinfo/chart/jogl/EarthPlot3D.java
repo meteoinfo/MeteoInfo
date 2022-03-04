@@ -237,9 +237,6 @@ public class EarthPlot3D extends Plot3DGL {
 
         this.updateMatrix(gl);
 
-        //Draw title
-        this.drawTitle();
-
         this.setLight(gl);
 
         //Draw graphics
@@ -284,6 +281,9 @@ public class EarthPlot3D extends Plot3DGL {
             else
                 this.drawColorbar(gl, legend);
         }
+
+        //Draw title
+        this.drawTitle();
 
         gl.glFlush();
 

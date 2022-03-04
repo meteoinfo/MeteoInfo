@@ -1108,9 +1108,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
             this.drawBox(gl);
         }
 
-        //Draw title
-        this.drawTitle();
-
         //Draw graphics
         if (this.clipPlane) {
             enableClipPlane(gl);
@@ -1173,6 +1170,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
             else
                 this.drawColorbar(gl, legend);
         }
+
+        //Draw title
+        this.drawTitle();
 
         gl.glFlush();
 

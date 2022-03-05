@@ -381,8 +381,28 @@ public class EarthPlot3D extends Plot3DGL {
         //Draw z axis label
         ChartText label = this.zAxis.getLabel();
         if (label != null) {
+            v = (zmin + zmax) / 2;
+            xyz = SphericalTransform.transform(loc.X, loc.Y, v);
+            x = this.transform.transform_x(xyz[0]);
+            y = this.transform.transform_y(xyz[1]);
+            z = this.transform.transform_z(xyz[2]);
+            x1 = x;
+            y1 = y;
+            if (x < 0) {
+                if (y > 0) {
+                    y1 += tickLen;
+                } else {
+                    x1 -= tickLen;
+                }
+            } else {
+                if (y > 0) {
+                    x1 += tickLen;
+                } else {
+                    y1 -= tickLen;
+                }
+            }
             float yShift = strWidth + this.tickSpace * 3;
-            drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+            drawString(gl, label, x1, y1, z, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
         }
     }
 

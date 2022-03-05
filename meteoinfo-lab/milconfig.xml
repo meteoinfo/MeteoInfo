@@ -21,14 +21,14 @@
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot\traj_3d.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_flower.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\plot\plot_cuace_earth_isosurface_streamline_slice_xy_loop.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\plot\plot_cuace_earth_isosurface_streamline_slice_xy.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\plot\plot_cuace_earth_isosurface_streamline_slice.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\plot\plot_cuace_earth_isosurface_streamline_slice_loop.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot\traj_3d.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_flower.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\plot\plot_cuace_earth_isosurface_streamline_slice_xy_loop.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\plot\plot_cuace_earth_isosurface_streamline_slice_xy.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace_dust\py\plot\plot_cuace_earth_isosurface_streamline_slice.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace_dust\py\plot\plot_cuace_earth_isosurface_streamline_slice_loop.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1361,783"/>
 </MeteoInfo>

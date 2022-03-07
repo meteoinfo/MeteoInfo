@@ -181,6 +181,23 @@ public class IFDEntry implements Comparable{
     }
 
     /**
+     * Find a GeoKey
+     * @param tags The GeoKey tags
+     * @return Found GeoKey
+     */
+    public GeoKey findGeoKey(GeoKey.Tag... tags){
+        GeoKey geoKey = null;
+        for (GeoKey.Tag tag : tags){
+            geoKey = findGeoKey(tag);
+            if (geoKey != null) {
+                break;
+            }
+        }
+
+        return geoKey;
+    }
+
+    /**
      * Compare to
      *
      * @param o Object

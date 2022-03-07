@@ -528,8 +528,8 @@ public class GeoTiff {
         long nextOffset = readHeader(this.channel);
         while (nextOffset > 0) {
             nextOffset = readIFD(this.channel, nextOffset);
-            parseGeoInfo();
         }
+        parseGeoInfo();
     }
 
     /**
@@ -857,23 +857,38 @@ public class GeoTiff {
         if (geoKeyDirectoryTag != null) {
             GeoKey gtModelTypeGeoKey = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GTModelTypeGeoKey);
             if (gtModelTypeGeoKey.value() == 1) {
+                boolean fromName = false;
                 GeoKey projCSType = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.ProjectedCSTypeGeoKey);
-                if (projCSType == null) {
+                if (projCSType != null) {
+                    if (projCSType.value(0) != 32767) {
+                        fromName = true;
+                    }
+                }
+                if (fromName) {
+                    CRSFactory crsFactory = new CRSFactory();
+                    int csType = projCSType.value(0);
+                    String crsName = String.format("EPSG:%d", csType);
+                    CoordinateReferenceSystem crs = crsFactory.createFromName(crsName);
+                    projStr = crs.getParameterString();
+                } else {
                     GeoKey projCoordTrans = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjCoordTrans);
                     GeoKey projStdParallel1 = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjStdParallel1);
                     double lat_1 = projStdParallel1 == null ? 0 : projStdParallel1.valueD(0);
                     GeoKey projStdParallel2 = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjStdParallel2);
                     double lat_2 = projStdParallel2 == null ? 0 : projStdParallel2.valueD(0);
-                    GeoKey projCenterLong = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjNatOriginLong);
-                    if (projCenterLong == null) {
-                        projCenterLong = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjCenterLong);
-                    }
+                    GeoKey projCenterLong = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjNatOriginLong,
+                            GeoKey.Tag.GeoKey_ProjCenterLong, GeoKey.Tag.GeoKey_ProjFalseOriginLong,
+                            GeoKey.Tag.ProjCenterLongGeoKey, GeoKey.Tag.ProjFalseOriginLongGeoKey);
                     double lon_0 = projCenterLong == null ? 0 : projCenterLong.valueD(0);
-                    GeoKey projNatOriginLat = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjNatOriginLat);
+                    GeoKey projNatOriginLat = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjNatOriginLat,
+                            GeoKey.Tag.GeoKey_ProjFalseOriginLat, GeoKey.Tag.ProjCenterLatGeoKey,
+                            GeoKey.Tag.ProjFalseOriginLatGeoKey);
                     double lat_0 = projNatOriginLat == null ? 0 : projNatOriginLat.valueD(0);
-                    GeoKey projFalseEasting = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjFalseEasting);
+                    GeoKey projFalseEasting = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjFalseEasting,
+                            GeoKey.Tag.ProjFalseEastingGeoKey);
                     double x_0 = projFalseEasting == null ? 0 : projFalseEasting.valueD(0);
-                    GeoKey projFalseNorthing = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjFalseNorthing);
+                    GeoKey projFalseNorthing = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.GeoKey_ProjFalseNorthing,
+                            GeoKey.Tag.ProjFalseNorthingGeoKey);
                     double y_0 = projFalseNorthing == null ? 0 : projFalseNorthing.valueD(0);
                     GeoKey projScaleAtNatOrigin = geoKeyDirectoryTag.findGeoKey(GeoKey.Tag.ProjScaleAtNatOriginGeoKey);
                     double k_0 = projScaleAtNatOrigin == null ? 1 : projScaleAtNatOrigin.valueD(0);
@@ -886,7 +901,16 @@ public class GeoTiff {
                                     + "+x_0=" + String.valueOf(x_0)
                                     + "+y_0=" + String.valueOf(y_0);
                             break;
-                        case 11:    //AlbersEqualArea
+                        case 8:     //Lambert Conformal Conic
+                            projStr = "+proj=lcc"
+                                    + "+lat_1=" + String.valueOf(lat_1)
+                                    + "+lat_2=" + String.valueOf(lat_2)
+                                    + "+lon_0=" + String.valueOf(lon_0)
+                                    + "+lat_0=" + String.valueOf(lat_0)
+                                    + "+x_0=" + String.valueOf(x_0)
+                                    + "+y_0=" + String.valueOf(y_0);
+                            break;
+                        case 11:    //Albers Equal Area
                             projStr = "+proj=aea"
                                     + "+lat_1=" + String.valueOf(lat_1)
                                     + "+lat_2=" + String.valueOf(lat_2)
@@ -896,12 +920,6 @@ public class GeoTiff {
                                     + "+y_0=" + String.valueOf(y_0);
                             break;
                     }
-                } else {
-                    CRSFactory crsFactory = new CRSFactory();
-                    int csType = projCSType.value(0);
-                    String crsName = String.format("EPSG:%d", csType);
-                    CoordinateReferenceSystem crs = crsFactory.createFromName(crsName);
-                    projStr = crs.getParameterString();
                 }
             }
         }
@@ -1017,6 +1035,34 @@ public class GeoTiff {
         IFDEntry samplesPerPixelTag = findTag(Tag.SamplesPerPixel);
         int samplesPerPixel = samplesPerPixelTag.value[0];    //Number of bands
         return samplesPerPixel;
+    }
+
+    /**
+     * Get strip offset
+     * @param stripOffsetTag Strip offset tag
+     * @param i Index
+     * @return Strip offset
+     */
+    public long getStripOffset(IFDEntry stripOffsetTag, int i) {
+        if (stripOffsetTag.valueL != null) {
+            return stripOffsetTag.valueL[i];
+        } else {
+            return stripOffsetTag.value[i];
+        }
+    }
+
+    /**
+     * Get strip size
+     * @param stripSizeTag Strip size tag
+     * @param i Index
+     * @return Strip size
+     */
+    public int getStripSize(IFDEntry stripSizeTag, int i) {
+        if (stripSizeTag.valueL != null) {
+            return (int) stripSizeTag.valueL[i];
+        } else {
+            return stripSizeTag.value[i];
+        }
     }
 
     /**
@@ -1217,9 +1263,9 @@ public class GeoTiff {
             IFDEntry stripOffsetTag = findTag(Tag.StripOffsets);
             if (stripOffsetTag != null) {
                 int stripNum = (int)stripOffsetTag.count;
-                int stripOffset;
+                long stripOffset;
                 IFDEntry stripSizeTag = findTag(Tag.StripByteCounts);
-                int stripSize = stripSizeTag.value[0];
+                int stripSize;
                 IFDEntry rowsPerStripTag = findTag(Tag.RowsPerStrip);
                 int rowNum = rowsPerStripTag.value[0];
                 //System.out.println("stripOffset =" + stripOffset + " stripSize=" + stripSize);
@@ -1227,24 +1273,39 @@ public class GeoTiff {
                 switch (bitsPerSample) {
                     case 8:
                         for (int i = 0; i < stripNum; i++) {
-                            stripOffset = stripOffsetTag.value[i];
-                            stripSize = stripSizeTag.value[i];
+                            stripOffset = getStripOffset(stripOffsetTag, i);
+                            stripSize = getStripSize(stripSizeTag, i);
                             buffer = testReadData(stripOffset, stripSize, cDecoder);
-                            for (int j = 0; j < width * rowNum; j++) {
-                                for (int k = 0; k < samplesPerPixel; k++) {
+                            int size = width * rowNum;
+                            if (i == stripNum - 1) {
+                                size = width * (height - rowNum * (stripNum - 1));
+                            }
+                            if (samplesPerPixel == 1) {
+                                for (int j = 0; j < size; j++) {
                                     r.setInt(idx, DataConvert.byte2Int(buffer.get()));
                                     idx += 1;
+                                }
+                            } else {
+                                for (int j = 0; j < size; j++) {
+                                    for (int k = 0; k < samplesPerPixel; k++) {
+                                        r.setInt(idx, DataConvert.byte2Int(buffer.get()));
+                                        idx += 1;
+                                    }
                                 }
                             }
                         }
                         break;
                     case 16:
                         for (int i = 0; i < stripNum; i++) {
-                            stripOffset = stripOffsetTag.value[i];
-                            stripSize = stripSizeTag.value[i];
+                            stripOffset = getStripOffset(stripOffsetTag, i);
+                            stripSize = getStripSize(stripSizeTag, i);
                             buffer = testReadData(stripOffset, stripSize, cDecoder);
-                            for (int j = 0; j < width * rowNum; j++) {
-                                for (int k = 0; k < samplesPerPixel; k++) {
+                            int size = width * rowNum;
+                            if (i == stripNum - 1) {
+                                size = width * (height - rowNum * (stripNum - 1));
+                            }
+                            if (samplesPerPixel == 1) {
+                                for (int j = 0; j < size; j++) {
                                     if (dataType == DataType.FLOAT) {
                                         r.setFloat(idx, buffer.getShort());
                                     } else {
@@ -1252,18 +1313,43 @@ public class GeoTiff {
                                     }
                                     idx += 1;
                                 }
+                            } else {
+                                for (int j = 0; j < size; j++) {
+                                    for (int k = 0; k < samplesPerPixel; k++) {
+                                        if (dataType == DataType.FLOAT) {
+                                            r.setFloat(idx, buffer.getShort());
+                                        } else {
+                                            r.setInt(idx, buffer.getShort());
+                                        }
+                                        idx += 1;
+                                    }
+                                }
                             }
                         }
                         break;
                     case 32:
                         for (int i = 0; i < stripNum; i++) {
-                            stripOffset = stripOffsetTag.value[i];
-                            stripSize = stripSizeTag.value[i];
+                            stripOffset = getStripOffset(stripOffsetTag, i);
+                            stripSize = getStripSize(stripSizeTag, i);
                             buffer = testReadData(stripOffset, stripSize, cDecoder);
-                            for (int j = 0; j < width * rowNum; j++) {
-                                for (int k = 0; k < samplesPerPixel; k++) {
+                            int size = width * rowNum;
+                            if (i == stripNum - 1) {
+                                size = width * (height - rowNum * (stripNum - 1));
+                            }
+                            if (cDecoder instanceof LZWCompression) {
+                                undoFloatData(buffer, width);
+                            }
+                            if (samplesPerPixel == 1) {
+                                for (int j = 0; j < size; j++) {
                                     r.setFloat(idx, buffer.getFloat());
                                     idx += 1;
+                                }
+                            } else {
+                                for (int j = 0; j < size; j++) {
+                                    for (int k = 0; k < samplesPerPixel; k++) {
+                                        r.setFloat(idx, buffer.getFloat());
+                                        idx += 1;
+                                    }
                                 }
                             }
                         }
@@ -1567,7 +1653,14 @@ public class GeoTiff {
                             stripOffset = stripOffsetTag.value[i];
                             stripSize = stripSizeTag.value[i];
                             buffer = testReadData(stripOffset, stripSize, cDecoder);
-                            for (int j = 0; j < width * rowNum; j++) {
+                            int size = width * rowNum;
+                            if (i == stripNum - 1) {
+                                size = width * (height - rowNum * (stripNum - 1));
+                            }
+                            if (cDecoder instanceof LZWCompression) {
+                                undoFloatData(buffer, width);
+                            }
+                            for (int j = 0; j < size; j++) {
                                 counter = index.getCurrentCounter();
                                 if (yRange.contains(counter[0]) && xRange.contains(counter[1])) {
                                     for (int k = 0; k < samplesPerPixel; k++) {
@@ -1628,6 +1721,20 @@ public class GeoTiff {
         }
 
         return buffer;
+    }
+
+    private void undoFloatData(ByteBuffer buffer, int width) {
+        int n = buffer.limit();
+        int height = n / (width * 4);
+        for (int y = 0; y < height; y++) {
+            int v = buffer.getInt();
+            for (int x = 1; x < width; x++) {
+                v += buffer.getInt();
+                buffer.position(buffer.position() - 4);
+                buffer.putInt(v);
+            }
+        }
+        buffer.flip();
     }
 
     /**

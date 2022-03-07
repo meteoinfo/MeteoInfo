@@ -165,7 +165,7 @@ import org.meteoinfo.data.meteodata.Attribute;
                          xdim = Double.parseDouble(sr.readLine());
                          sr.readLine();
                          sr.readLine();
-                         ydim = -Double.parseDouble(sr.readLine());
+                         ydim = Double.parseDouble(sr.readLine());
                          ulxmap = Double.parseDouble(sr.readLine());
                          ulymap = Double.parseDouble(sr.readLine());
                          sr.close();
@@ -183,7 +183,7 @@ import org.meteoinfo.data.meteodata.Attribute;
 
                  double[] Y = new double[_nrows];
                  for (i = 0; i < _nrows; i++) {
-                     Y[_nrows - 1 - i] = ulymap - i * ydim;
+                     Y[i] = ulymap - i * ydim;
                  }
 
                  Dimension xDim = new Dimension(DimensionType.X);

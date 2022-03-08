@@ -493,7 +493,8 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     void drawGraph(Graphics2D g, Rectangle2D area) {
         this.mapView.setLockViewUpdate(false);
         this.mapView.setAntiAlias(this.antialias);        
-        this.mapView.setViewExtent((Extent) this.getDrawExtent().clone());
+        //this.mapView.setViewExtent((Extent) this.getDrawExtent().clone());
+        this.mapView.zoomToExtent((Extent) this.getDrawExtent().clone());
         if (this.boundary != null) {
             PolygonBreak pb = (PolygonBreak)this.boundary.getLegend().clone();
             if (pb.isDrawFill()) {

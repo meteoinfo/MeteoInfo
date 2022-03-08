@@ -14,6 +14,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
@@ -100,8 +101,8 @@ public class WebMapLayer extends MapLayer {
     private boolean horizontalWrapped = true;
     private WebMapProvider defaultProvider = WebMapProvider.OpenStreetMap;
     private Graphics2D graphics;
-    private int width;
-    private int height;
+    private double width;
+    private double height;
     private List<Double> scales = new ArrayList<>();
     // </editor-fold>
     // <editor-fold desc="Event">
@@ -532,7 +533,7 @@ public class WebMapLayer extends MapLayer {
      * Repaint
      */
     public void repaint() {
-        Rectangle rect = this.calculateViewportBounds(graphics, width, height);
+        Rectangle2D rect = this.calculateViewportBounds(graphics, width, height);
         this.drawMapTiles(graphics, zoom, rect);
     }
 
@@ -544,12 +545,12 @@ public class WebMapLayer extends MapLayer {
      * @param width The width
      * @param height The height
      */
-    public void drawMapTiles(final Graphics2D g, final int zoom, int width, int height) {
+    public void drawMapTiles(final Graphics2D g, final int zoom, double width, double height) {
         this.graphics = g;
         this.zoom = zoom;
         this.width = width;
         this.height = height;
-        Rectangle rect = this.calculateViewportBounds(g, width, height);
+        Rectangle2D rect = this.calculateViewportBounds(g, width, height);
         this.drawMapTiles(g, zoom, rect);
     }
 
@@ -560,13 +561,13 @@ public class WebMapLayer extends MapLayer {
      * @param zoom zoom level to draw at
      * @param viewportBounds View bounds
      */
-    public void drawMapTiles(final Graphics2D g, final int zoom, final Rectangle viewportBounds) {
+    public void drawMapTiles(final Graphics2D g, final int zoom, final Rectangle2D viewportBounds) {
         int size = getTileFactory().getTileSize(zoom);
         Dimension mapSize = getTileFactory().getMapSize(zoom);
 
         //calculate the "visible" viewport area in tiles
-        int numWide = viewportBounds.width / size + 2;
-        int numHigh = viewportBounds.height / size + 2;
+        int numWide = (int) (viewportBounds.getWidth() / size) + 2;
+        int numHigh = (int) (viewportBounds.getHeight() / size) + 2;
 
         //TilePoint topLeftTile = getTileFactory().getTileCoordinate(
         //        new Point2D.Double(viewportBounds.x, viewportBounds.y));
@@ -588,8 +589,8 @@ public class WebMapLayer extends MapLayer {
                 //itpy * size - viewportBounds.y, size, size))) {
                 Tile tile = getTileFactory().getTile(itpx, itpy, zoom);
                 //tile.addUniquePropertyChangeListener("loaded", tileLoadListener); //this is a filthy hack
-                int ox = ((itpx * getTileFactory().getTileSize(zoom)) - viewportBounds.x);
-                int oy = ((itpy * getTileFactory().getTileSize(zoom)) - viewportBounds.y);
+                int ox = ((itpx * getTileFactory().getTileSize(zoom)) - (int) viewportBounds.getX());
+                int oy = ((itpy * getTileFactory().getTileSize(zoom)) - (int) viewportBounds.getY());
 
                 //if the tile is off the map to the north/south, then just don't paint anything                    
                 if (isTileOnMap(itpx, itpy, mapSize)) {
@@ -634,16 +635,16 @@ public class WebMapLayer extends MapLayer {
      * @param height Canvas height
      * @param tll TileLoadListener
      */
-    public void drawWebMapLayer(Graphics2D g, int width, int height, TileLoadListener tll) {        
+    public void drawWebMapLayer(Graphics2D g, double width, double height, TileLoadListener tll) {
         //layer.setZoom(zoom);
         //layer.drawMapTiles(g, zoom, width, height);        
-        Rectangle viewportBounds = this.calculateViewportBounds(g, width, height);
+        Rectangle2D viewportBounds = this.calculateViewportBounds(g, width, height);
         int size = this.getTileFactory().getTileSize(zoom);
         Dimension mapSize = this.getTileFactory().getMapSize(zoom);
 
         //calculate the "visible" viewport area in tiles
-        int numWide = viewportBounds.width / size + 2;
-        int numHigh = viewportBounds.height / size + 2;
+        int numWide = (int) (viewportBounds.getWidth() / size) + 2;
+        int numHigh = (int) (viewportBounds.getHeight() / size) + 2;
 
         //TilePoint topLeftTile = getTileFactory().getTileCoordinate(
         //        new Point2D.Double(viewportBounds.x, viewportBounds.y));
@@ -666,8 +667,8 @@ public class WebMapLayer extends MapLayer {
                 //itpy * size - viewportBounds.y, size, size))) {
                 Tile tile = this.getTileFactory().getTile(itpx, itpy, zoom);
                 tile.addUniquePropertyChangeListener("loaded", tll); //this is a filthy hack
-                int ox = ((itpx * this.getTileFactory().getTileSize(zoom)) - viewportBounds.x);
-                int oy = ((itpy * this.getTileFactory().getTileSize(zoom)) - viewportBounds.y);
+                int ox = ((itpx * this.getTileFactory().getTileSize(zoom)) - (int) viewportBounds.getX());
+                int oy = ((itpy * this.getTileFactory().getTileSize(zoom)) - (int) viewportBounds.getY());
 
                 //if the tile is off the map to the north/south, then just don't paint anything                    
                 if (this.isTileOnMap(itpx, itpy, mapSize)) {
@@ -739,13 +740,13 @@ public class WebMapLayer extends MapLayer {
      * @param height The height
      * @return View port bounds rectangle
      */
-    public Rectangle calculateViewportBounds(Graphics2D g, int width, int height) {
+    public Rectangle2D calculateViewportBounds(Graphics2D g, double width, double height) {
         //calculate the "visible" viewport area in pixels
         //double sx = g.getTransform().getTranslateX();
         //double sy = g.getTransform().getTranslateY();
         double viewportX = (center.getX() - width / 2);
         double viewportY = (center.getY() - height / 2);
-        return new Rectangle((int) viewportX, (int) viewportY, width, height);
+        return new Rectangle2D.Double(viewportX, viewportY, width, height);
     }
     
     /**

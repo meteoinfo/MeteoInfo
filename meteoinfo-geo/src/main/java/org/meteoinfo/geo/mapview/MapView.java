@@ -4403,7 +4403,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         drawLayers(g, this.getWidth(), this.getHeight());
     }
 
-    private void drawLayers(Graphics2D g, int width, int height) {
+    private void drawLayers(Graphics2D g, double width, double height) {
         java.awt.Shape oldRegion = g.getClip();
         double geoScale = this.getGeoScale();
         for (MapLayer aLayer : layers) {
@@ -4521,7 +4521,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         this.fixMapScale = false;
     }
 
-    private void drawImage(Graphics2D g, ImageLayer aILayer, double LonShift, int width, int height) {
+    private void drawImage(Graphics2D g, ImageLayer aILayer, double LonShift, double width, double height) {
         Extent lExtent = MIMath.shiftExtentLon(aILayer.getExtent(), LonShift);
         if (MIMath.isExtentCross(lExtent, _drawExtent)) {
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, aILayer.getInterpolation());
@@ -4543,7 +4543,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             }
 
             //Draw image
-            BufferedImage dImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage dImage = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D dg = (Graphics2D) dImage.getGraphics();
             //dg.drawImage(aILayer.getImage(), 0, 0, null);
 //                Image dImage = new Bitmap(width, height);
@@ -5719,11 +5719,11 @@ public class MapView extends JPanel implements IWebMapPanel {
         return rPoints;
     }
 
-    private void drawWebMapLayer(WebMapLayer layer, Graphics2D g, int width, int height) {
+    private void drawWebMapLayer(WebMapLayer layer, Graphics2D g, double width, double height) {
         this.drawWebMapLayer(layer, g, width, height, tileLoadListener);
     }
     
-    private void drawWebMapLayer(WebMapLayer layer, Graphics2D g, int width, int height, TileLoadListener tll) {
+    private void drawWebMapLayer(WebMapLayer layer, Graphics2D g, double width, double height, TileLoadListener tll) {
         PointD geoCenter = this.getGeoCenter();
         layer.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X));
         if (this.fixMapScale) {
@@ -5887,12 +5887,12 @@ public class MapView extends JPanel implements IWebMapPanel {
 //        }
 //    }
 
-    private double getWebMapScale(WebMapLayer layer, int zoom, int width, int height) {
+    private double getWebMapScale(WebMapLayer layer, int zoom, double width, double height) {
         Point2D center = layer.getCenter();
-        double minx = center.getX() - width / 2;
-        double miny = center.getY() - height / 2;
-        double maxx = center.getX() + width / 2;
-        double maxy = center.getY() + height / 2;
+        double minx = center.getX() - width / 2.;
+        double miny = center.getY() - height / 2.;
+        double maxx = center.getX() + width / 2.;
+        double maxy = center.getY() + height / 2.;
         GeoPosition pos1 = GeoUtil.getPosition(new Point2D.Double(minx, miny), zoom, layer.getTileFactory().getInfo());
         GeoPosition pos2 = GeoUtil.getPosition(new Point2D.Double(maxx, maxy), zoom, layer.getTileFactory().getInfo());
         PointD p1 = Reproject.reprojectPoint(new PointD(pos1.getLongitude(), pos1.getLatitude()),
@@ -7822,7 +7822,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         setCoordinateGeoMap(aExtent, this.getWidth(), this.getHeight());
     }
 
-    private void setCoordinateGeoMap(Extent aExtent, int width, int height) {
+    private void setCoordinateGeoMap(Extent aExtent, double width, double height) {
         double scaleFactor, lonRan, latRan, temp;
 
         _scaleX = width / (aExtent.maxX - aExtent.minX);
@@ -7854,7 +7854,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         setCoordinateGeoMapEx(aExtent, this.getWidth(), this.getHeight());
     }
 
-    private void setCoordinateGeoMapEx(Extent aExtent, int width, int height) {
+    private void setCoordinateGeoMapEx(Extent aExtent, double width, double height) {
         double scaleFactor;
 
         _scaleX = width / (aExtent.maxX - aExtent.minX);
@@ -7878,12 +7878,12 @@ public class MapView extends JPanel implements IWebMapPanel {
         setCoordinateMap(aExtent, this.getWidth(), this.getHeight());
     }
 
-    private void setCoordinateMap(Extent aExtent, int width, int height) {
+    private void setCoordinateMap(Extent aExtent, double width, double height) {
         _scaleX = width / (aExtent.maxX - aExtent.minX);
         _scaleY = height / (aExtent.maxY - aExtent.minY);
     }
 
-    private void setScale(double scale, int width, int height) {
+    private void setScale(double scale, double width, double height) {
         this._scaleX = scale;
         this._scaleY = scale;
         //PointD center = (PointD)this._drawExtent.getCenterPoint().clone();
@@ -7911,7 +7911,7 @@ public class MapView extends JPanel implements IWebMapPanel {
      * @param width The width
      * @param height The height
      */
-    public void refreshXYScale(int width, int height) {
+    public void refreshXYScale(double width, double height) {
         Extent aExtent = (Extent) _viewExtent.clone();
 
         if (_isGeoMap) {
@@ -7921,6 +7921,23 @@ public class MapView extends JPanel implements IWebMapPanel {
         }
 
         _drawExtent = aExtent;
+    }
+
+    /**
+     * Refresh X/Y scale
+     *
+     * @param extent The extent
+     * @param width The width
+     * @param height The height
+     */
+    public void refreshXYScale(Extent extent, double width, double height) {
+        if (_isGeoMap) {
+            setCoordinateGeoMap(extent, width, height);
+        } else {
+            setCoordinateMap(extent, width, height);
+        }
+
+        _drawExtent = extent;
     }
 
     private double getGeoWidth(double width) {
@@ -7964,7 +7981,7 @@ public class MapView extends JPanel implements IWebMapPanel {
     /**
      * Get geographic center with longitude/latitude
      *
-     * @return Geogrphic center
+     * @return Geographic center
      */
     public PointD getGeoCenter() {
         PointD viewCenter = this.getViewCenter();

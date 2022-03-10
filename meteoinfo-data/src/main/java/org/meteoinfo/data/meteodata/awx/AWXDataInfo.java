@@ -213,6 +213,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
             bytes = new byte[8];
             br.read(bytes);
             _illumination = new String(bytes).trim();
+            bytes = new byte[2];
             br.read(bytes);
             _qualityMark = DataConvert.bytes2Int(bytes, byteOrder);
 

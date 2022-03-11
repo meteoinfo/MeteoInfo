@@ -131,6 +131,6 @@
     <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-linux-i586:v2.4.0-rc4" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-windows-amd64:v2.4.0-rc4" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-windows-i586:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.joml:joml:1.9.25" level="project" />
+    <orderEntry type="library" name="Maven: org.joml:joml:1.10.4" level="project" />
   </component>
 </module>

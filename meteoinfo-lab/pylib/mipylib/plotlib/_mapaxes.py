@@ -415,7 +415,7 @@ class MapAxes(Axes):
                     self.axes.setExtent(extent)
                 return True
             else:
-                print 'The limits parameter must be a list with 4 elements: xmin, xmax, ymin, ymax!'
+                print('The limits parameter must be a list with 4 elements: xmin, xmax, ymin, ymax!')
                 return None
         
     def data2pixel(self, x, y, z=None):

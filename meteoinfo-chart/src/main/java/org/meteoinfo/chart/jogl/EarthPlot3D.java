@@ -4,6 +4,9 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import org.apache.commons.imaging.ImageReadException;
+import org.joml.AxisAngle4f;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.ChartColorBar;
 import org.meteoinfo.chart.ChartText;
@@ -310,15 +313,15 @@ public class EarthPlot3D extends Plot3DGL {
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
         gl.glBegin(GL2.GL_LINES);
-        float[] xyz = SphericalTransform.transform(loc.X, loc.Y, this.zmin);
-        x = this.transform.transform_x(xyz[0]);
-        y = this.transform.transform_y(xyz[1]);
-        z = this.transform.transform_z(xyz[2]);
+        Vector3f xyz = SphericalTransform.transform(loc.X, loc.Y, this.zmin);
+        x = this.transform.transform_x(xyz.x);
+        y = this.transform.transform_y(xyz.y);
+        z = this.transform.transform_z(xyz.z);
         gl.glVertex3f(x, y, z);
         xyz = SphericalTransform.transform(loc.X, loc.Y, this.zmax);
-        x = this.transform.transform_x(xyz[0]);
-        y = this.transform.transform_y(xyz[1]);
-        z = this.transform.transform_z(xyz[2]);
+        x = this.transform.transform_x(xyz.x);
+        y = this.transform.transform_y(xyz.y);
+        z = this.transform.transform_z(xyz.z);
         gl.glVertex3f(x, y, z);
         gl.glEnd();
 
@@ -340,9 +343,9 @@ public class EarthPlot3D extends Plot3DGL {
             }
 
             xyz = SphericalTransform.transform(loc.X, loc.Y, v);
-            x = this.transform.transform_x(xyz[0]);
-            y = this.transform.transform_y(xyz[1]);
-            z = this.transform.transform_z(xyz[2]);
+            x = this.transform.transform_x(xyz.x);
+            y = this.transform.transform_y(xyz.y);
+            z = this.transform.transform_z(xyz.z);
             x1 = x;
             y1 = y;
             if (x < 0) {
@@ -383,9 +386,9 @@ public class EarthPlot3D extends Plot3DGL {
         if (label != null) {
             v = (zmin + zmax) / 2;
             xyz = SphericalTransform.transform(loc.X, loc.Y, v);
-            x = this.transform.transform_x(xyz[0]);
-            y = this.transform.transform_y(xyz[1]);
-            z = this.transform.transform_z(xyz[2]);
+            x = this.transform.transform_x(xyz.x);
+            y = this.transform.transform_y(xyz.y);
+            z = this.transform.transform_z(xyz.z);
             x1 = x;
             y1 = y;
             if (x < 0) {
@@ -404,6 +407,107 @@ public class EarthPlot3D extends Plot3DGL {
             float yShift = strWidth + this.tickSpace * 3;
             drawString(gl, label, x1, y1, z, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
         }
+    }
+
+    protected void drawZAxis(GL2 gl, ZAxisOption zAxisOption) {
+        Matrix4f mvMatrix = toMatrix(mvmatrix);
+        gl.glPushMatrix();
+
+        float[] rgba;
+        float v;
+        int skip = 1;
+        XAlign xAlign;
+        YAlign yAlign;
+        Rectangle2D rect;
+        float strWidth, strHeight;
+
+        PointF loc = zAxisOption.getLocation();
+        boolean left = zAxisOption.isLeft();
+
+        //z axis line
+        rgba = this.zAxis.getLineColor().getRGBComponents(null);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
+        gl.glBegin(GL2.GL_LINES);
+        Vector3f xyz = SphericalTransform.transform(loc.X, loc.Y, this.zmin);
+        xyz = this.transform.transform(xyz);
+        gl.glVertex3f(xyz.x, xyz.y, xyz.z);
+        Vector3f xyz1 = SphericalTransform.transform(loc.X, loc.Y, this.zmax);
+        xyz1 = this.transform.transform(xyz1);
+        gl.glVertex3f(xyz1.x, xyz1.y, xyz1.z);
+        gl.glEnd();
+
+        //Load identity
+        gl.glLoadIdentity();
+        this.updateMatrix(gl);
+
+        //z axis ticks positions
+        this.zAxis.updateTickLabels();
+        List<ChartText> tlabs = this.zAxis.getTickLabels();
+        float tickLen = this.zAxis.getTickLength() * this.lenScale;
+        xAlign = XAlign.RIGHT;
+        yAlign = YAlign.CENTER;
+        strWidth = 0.0f;
+        for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
+            v = (float) this.zAxis.getTickValues()[i];
+            if (v < zmin || v > zmax) {
+                continue;
+            }
+
+            xyz = SphericalTransform.transform(loc.X, loc.Y, v);
+            xyz = this.transform.transform(xyz);
+            mvMatrix.transformPosition(xyz);
+            xyz1 = new Vector3f(xyz.x, xyz.y, xyz.z);
+            float xShift;
+            if (left) {
+                xyz1.x -= tickLen;
+                xAlign = XAlign.RIGHT;
+                xShift = -this.tickSpace;
+            } else {
+                xyz1.x += tickLen;
+                xAlign = XAlign.LEFT;
+                xShift = this.tickSpace;
+            }
+            if (i == tlabs.size()) {
+                break;
+            }
+
+            //Draw tick line
+            rgba = this.zAxis.getLineColor().getRGBComponents(null);
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
+            gl.glBegin(GL2.GL_LINES);
+            gl.glVertex3f(xyz.x, xyz.y, xyz.z);
+            gl.glVertex3f(xyz1.x, xyz1.y, xyz1.z);
+            gl.glEnd();
+
+            //Draw tick label
+            rect = drawString(gl, tlabs.get(i), xyz1.x, xyz1.y, xyz1.z, xAlign, yAlign, xShift, 0);
+            if (strWidth < rect.getWidth()) {
+                strWidth = (float) rect.getWidth();
+            }
+        }
+
+        //Draw z axis label
+        ChartText label = this.zAxis.getLabel();
+        if (label != null) {
+            v = (zmin + zmax) / 2;
+            xyz = SphericalTransform.transform(loc.X, loc.Y, v);
+            xyz = this.transform.transform(xyz);
+            mvMatrix.transformPosition(xyz);
+            if (left) {
+                xyz.x -= tickLen;
+                float yShift = strWidth + this.tickSpace * 3;
+                drawString(gl, label, xyz.x, xyz.y, xyz.z, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+            } else {
+                xyz.x += tickLen;
+                float yShift = -(strWidth + this.tickSpace * 3);
+                drawString(gl, label, xyz.x, xyz.y, xyz.z, XAlign.CENTER, YAlign.TOP, 90.f, 0, yShift);
+            }
+        }
+
+        gl.glPopMatrix();
+        this.updateMatrix(gl);
     }
 
     @Override

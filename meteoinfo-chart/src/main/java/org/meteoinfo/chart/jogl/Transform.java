@@ -153,8 +153,12 @@ public class Transform {
         return transform_y(len) - transform_y(0);
     }
 
-    public float[] transform(float x, float y, float z) {
-        return new float[] {transform_x(x), transform_y(y), transform_z(z)};
+    public float[] transformArray(float x, float y, float z) {
+        return new float[]{transform_x(x), transform_y(y), transform_z(z)};
+    }
+
+    public Vector3f transform(float x, float y, float z) {
+        return new Vector3f(transform_x(x), transform_y(y), transform_z(z));
     }
 
     public float[] transformf(PointZ p) {
@@ -165,8 +169,12 @@ public class Transform {
         return new double[]{transform_x(p.X), transform_y(p.Y), transform_z(p.Z)};
     }
 
-    public float[] transform(Vector3f p) {
+    public Vector3f transform(Vector3f p) {
         return transform(p.x, p.y, p.z);
+    }
+
+    public static float[] toArray(Vector3f vec) {
+        return new float[] {vec.x, vec.y, vec.z};
     }
 
     /**

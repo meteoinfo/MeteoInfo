@@ -1,5 +1,6 @@
 package org.meteoinfo.chart.jogl;
 
+import org.joml.Vector3f;
 import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.jogl.tessellator.Primitive;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
@@ -24,14 +25,14 @@ public class SphericalTransform {
      * @param alt Altitude
      * @return Normal 3D coordinates - x,y,z
      */
-    public static float[] transform(float lon, float lat, float alt) {
+    public static Vector3f transform(float lon, float lat, float alt) {
         double u = Math.toRadians(lon);
         double v = Math.toRadians(lat);
         float x = (float) (Math.cos(u) * Math.cos(v)) * (radius + alt);
         float y = (float) (Math.sin(u) * Math.cos(v)) * (radius + alt);
         float z = (float) Math.sin(v) * (radius + alt);
 
-        return new float[]{x, y, z};
+        return new Vector3f(x, y, z);
     }
 
     /**
@@ -40,9 +41,9 @@ public class SphericalTransform {
      * @return Transformed PointZ
      */
     public static PointZ transform(PointZ p) {
-        float[] xyz = transform((float)p.X, (float)p.Y, (float)p.Z);
+        Vector3f xyz = transform((float)p.X, (float)p.Y, (float)p.Z);
 
-        return new PointZ(xyz[0], xyz[1], xyz[2]);
+        return new PointZ(xyz.x, xyz.y, xyz.z);
     }
 
     /**
@@ -51,11 +52,11 @@ public class SphericalTransform {
      * @return Transformed particle
      */
     public static ParticleGraphics.Particle transform(ParticleGraphics.Particle p) {
-        float[] xyz = transform((float)p.x, (float)p.y, (float)p.x);
+        Vector3f xyz = transform((float)p.x, (float)p.y, (float)p.x);
 
-        p.x = xyz[0];
-        p.y = xyz[1];
-        p.z = xyz[2];
+        p.x = xyz.x;
+        p.y = xyz.y;
+        p.z = xyz.z;
 
         return p;
     }

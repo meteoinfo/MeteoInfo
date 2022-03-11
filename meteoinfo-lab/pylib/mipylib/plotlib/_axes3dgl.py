@@ -288,14 +288,15 @@ class Axes3DGL(Axes3D):
         if not mat_shininess is None:
             lighting.setMat_Shininess(mat_shininess)
 
-    def add_zaxis(self, x, y):
+    def add_zaxis(self, x, y, left=True):
         """
         Add a z axis.
 
         :param x: (*float*) X coordinate of the z axis.
         :param y: (*float*) Y coordinate of the z axis.
+        :param left: (*boolean*) Whether left tick. Default is True.
         """
-        self.axes.addZAxis(x, y)
+        self.axes.addZAxis(x, y, left)
 
     def bar(self, x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
         """

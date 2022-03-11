@@ -425,14 +425,14 @@ public class VolumeGraphics extends GraphicCollection3D {
         float yMax = (float) extent.maxY;
         float zMin = (float) extent.minZ;
         float zMax = (float) extent.maxZ;
-        float[] p0 = transform.transform(xMin, yMin, zMin);
-        float[] p1 = transform.transform(xMax, yMin, zMin);
-        float[] p2 = transform.transform(xMax, yMax, zMin);
-        float[] p3 = transform.transform(xMin, yMax, zMin);
-        float[] p4 = transform.transform(xMin, yMin, zMax);
-        float[] p5 = transform.transform(xMax, yMin, zMax);
-        float[] p6 = transform.transform(xMax, yMax, zMax);
-        float[] p7 = transform.transform(xMin, yMax, zMax);
+        float[] p0 = transform.transformArray(xMin, yMin, zMin);
+        float[] p1 = transform.transformArray(xMax, yMin, zMin);
+        float[] p2 = transform.transformArray(xMax, yMax, zMin);
+        float[] p3 = transform.transformArray(xMin, yMax, zMin);
+        float[] p4 = transform.transformArray(xMin, yMin, zMax);
+        float[] p5 = transform.transformArray(xMax, yMin, zMax);
+        float[] p6 = transform.transformArray(xMax, yMax, zMax);
+        float[] p7 = transform.transformArray(xMin, yMax, zMax);
         this.aabbMin = p0;
         this.aabbMax = p6;
         return new float[] {

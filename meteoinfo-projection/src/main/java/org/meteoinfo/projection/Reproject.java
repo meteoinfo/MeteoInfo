@@ -13,10 +13,7 @@
  */
 package org.meteoinfo.projection;
 
-import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.locationtech.proj4j.CoordinateTransform;
-import org.locationtech.proj4j.CoordinateTransformFactory;
-import org.locationtech.proj4j.ProjCoordinate;
+import org.locationtech.proj4j.*;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.ResampleMethods;
@@ -102,9 +99,14 @@ public class Reproject {
             }
             ProjCoordinate p1 = new ProjCoordinate(points[i][0], points[i][1]);
             ProjCoordinate p2 = new ProjCoordinate();
-            trans.transform(p1, p2);
-            points[i][0] = p2.x;
-            points[i][1] = p2.y;
+            try {
+                trans.transform(p1, p2);
+                points[i][0] = p2.x;
+                points[i][1] = p2.y;
+            } catch (ProjectionException e) {
+                points[i][0] = Double.NaN;
+                points[i][1] = Double.NaN;
+            }
         }
     }
     

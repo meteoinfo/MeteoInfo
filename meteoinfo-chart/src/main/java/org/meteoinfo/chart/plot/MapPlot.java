@@ -34,6 +34,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -463,6 +464,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     @Override
     public void reDraw(Graphics2D graphics2D, int width, int height) {
         if (this.parent != null) {
+            graphics2D.setTransform(new AffineTransform());
             this.parent.paintGraphics(graphics2D, width, height);
         }
     }

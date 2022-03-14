@@ -679,11 +679,11 @@ public class WebMapLayer extends MapLayer {
                 } else if (tile.isLoaded()) {
                     g.drawImage(tile.getImage(), ox, oy, null);
                 } else {
-                    int imageX = (this.getTileFactory().getTileSize(zoom) - this.getLoadingImage().getWidth(null)) / 2;
+                    /*int imageX = (this.getTileFactory().getTileSize(zoom) - this.getLoadingImage().getWidth(null)) / 2;
                     int imageY = (this.getTileFactory().getTileSize(zoom) - this.getLoadingImage().getHeight(null)) / 2;
                     g.setColor(Color.GRAY);
                     g.fillRect(ox, oy, size, size);
-                    g.drawImage(this.getLoadingImage(), ox + imageX, oy + imageY, null);
+                    g.drawImage(this.getLoadingImage(), ox + imageX, oy + imageY, null);*/
                 }
                 if (this.isDrawTileBorders()) {
 

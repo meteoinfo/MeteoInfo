@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl">
-    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\MeteoInfo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\satellite\FY">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city"/>
@@ -14,19 +10,25 @@
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\awx"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\awx"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot\traj_3d.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\CALIPSO_L1_3d_axis.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\geoshow_zaxis.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\plotweb_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY2E_PRE_proj.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot\traj_3d.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\CALIPSO_L1_3d_axis.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\geoshow_zaxis.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\plotweb_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY2E_PRE_proj.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1406,828"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1395,835"/>
 </MeteoInfo>

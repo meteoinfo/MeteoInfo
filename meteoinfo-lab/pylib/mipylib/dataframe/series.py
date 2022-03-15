@@ -49,6 +49,24 @@ class Series(object):
             self._series = series
             self._data = np.array(self._series.getData())
             self._index = Index.factory(index=self._series.getIndex())
+
+    def __and__(self, other):
+        if isinstance(other, Series):
+            other = other.values
+
+        return Series(self.values.__and__(other), index=self._index)
+
+    def __or__(self, other):
+        if isinstance(other, Series):
+            other = other.values
+
+        return Series(self.values.__or__(other), index=self._index)
+
+    def __xor__(self, other):
+        if isinstance(other, Series):
+            other = other.values
+
+        return Series(self.values.__xor__(other), index=self._index)
         
     #---- index property
     def get_index(self):

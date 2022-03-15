@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\satellite\FY">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\webmap">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city"/>
@@ -11,22 +10,23 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\awx"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot\traj_3d.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\CALIPSO_L1_3d_axis.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\plotweb_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\plotweb_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot\traj_3d.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\CALIPSO_L1_3d_axis.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\plotweb_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\plotweb_2.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1395,835"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1368,830"/>
 </MeteoInfo>

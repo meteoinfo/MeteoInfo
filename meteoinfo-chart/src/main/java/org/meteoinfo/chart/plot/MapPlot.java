@@ -464,7 +464,6 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     @Override
     public void reDraw(Graphics2D graphics2D, int width, int height) {
         if (this.parent != null) {
-            graphics2D.setTransform(new AffineTransform());
             this.parent.paintGraphics(graphics2D, width, height);
         }
     }

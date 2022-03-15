@@ -6,6 +6,7 @@
 package org.meteoinfo.data.mapdata.webmap;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -22,6 +23,7 @@ public class TileLoadListener implements PropertyChangeListener {
     Graphics2D graphics2D = null;
     Integer width = null;
     Integer height = null;
+    AffineTransform transform = null;
 
     /**
      * Constructor
@@ -56,6 +58,14 @@ public class TileLoadListener implements PropertyChangeListener {
         this.height = height;
     }
 
+    /**
+     * Set transform
+     * @param transform Transform
+     */
+    public void setTransform(AffineTransform transform) {
+        this.transform = transform;
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if ("loaded".equals(evt.getPropertyName())
@@ -63,6 +73,8 @@ public class TileLoadListener implements PropertyChangeListener {
             Tile t = (Tile) evt.getSource();
             if (t.getZoom() == this.panel.getWebMapZoom()) {
                 if (this.graphics2D != null && this.width != null && this.height != null) {
+                    if (this.transform != null)
+                        this.graphics2D.setTransform(this.transform);
                     this.panel.reDraw(graphics2D, width, height);
                 } else {
                     this.panel.reDraw();

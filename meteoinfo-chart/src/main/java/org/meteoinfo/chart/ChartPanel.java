@@ -1253,6 +1253,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                         if (mapPlot.hasWebMapLayer()) {
                             TileLoadListener tileLoadListener = mapPlot.getTileLoadListener();
                             tileLoadListener.setGraphics2D(g);
+                            tileLoadListener.setTransform(new AffineTransform());
                             tileLoadListener.setWidth(width);
                             tileLoadListener.setHeight(height);
                         }
@@ -1275,6 +1276,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                         if (mapPlot.hasWebMapLayer()) {
                             TileLoadListener tileLoadListener = mapPlot.getTileLoadListener();
                             tileLoadListener.setGraphics2D(null);
+                            tileLoadListener.setTransform(null);
                             tileLoadListener.setWidth(this.getWidth());
                             tileLoadListener.setHeight(this.getHeight());
                         }
@@ -1609,6 +1611,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                     if (mapPlot.hasWebMapLayer()) {
                         TileLoadListener tileLoadListener = mapPlot.getTileLoadListener();
                         tileLoadListener.setGraphics2D(g);
+                        tileLoadListener.setTransform(at);
                         tileLoadListener.setWidth(width);
                         tileLoadListener.setHeight(height);
                     }
@@ -1636,6 +1639,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                     if (mapPlot.hasWebMapLayer()) {
                         TileLoadListener tileLoadListener = mapPlot.getTileLoadListener();
                         tileLoadListener.setGraphics2D(null);
+                        tileLoadListener.setTransform(null);
                         tileLoadListener.setWidth(this.getWidth());
                         tileLoadListener.setHeight(this.getHeight());
                     }

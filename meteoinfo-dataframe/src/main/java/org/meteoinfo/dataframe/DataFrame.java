@@ -5,6 +5,7 @@
  */
 package org.meteoinfo.dataframe;
 
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.common.util.TypeUtils;
@@ -1140,7 +1141,11 @@ public class DataFrame implements Iterable {
         colnames.removeAll(todrop);
 
         if (this.array2D) {
-            return null;
+            List ranges = new ArrayList<>();
+            ranges.add(new Range(this.length()));
+            ranges.add(columns.indexOfName(colnames));
+            Array r = ArrayMath.take((Array) this.data, ranges);
+            return new DataFrame(r, index.getValues(), colnames);
         } else {
             final List<Array> keep = new ArrayList<>(colnames.size());
             for (final String col : colnames) {
@@ -1148,6 +1153,78 @@ public class DataFrame implements Iterable {
             }
 
             return new DataFrame(keep, index.getValues(), colnames);
+        }
+    }
+
+    /**
+     * Remove null or NaN values - any value is null or NaN in a row or column
+     * @param row Remove rows or columns
+     * @return Dropped DataFrame
+     * @throws InvalidRangeException
+     */
+    public DataFrame dropNAAny(boolean row) throws InvalidRangeException {
+        int size = this.size();
+        int length = this.length();
+        if (row) {
+            List<Integer> rowRange = new ArrayList<>();
+            for (int i = 0; i < length; i++) {
+                boolean noNA = true;
+                for (int j = 0; j < size; j++) {
+                    if (MIMath.isNullOrNaN(this.getValue(i, j))) {
+                        noNA = false;
+                        break;
+                    }
+                }
+                if (noNA) {
+                    rowRange.add(i);
+                }
+            }
+            return (DataFrame) this.select(rowRange);
+        } else {
+            List<Integer> colRange = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                Array a = this.getColumnData(i);
+                if (ArrayMath.containsNaN(a)) {
+                    colRange.add(i);
+                }
+            }
+            return drop(colRange.toArray(new Integer[colRange.size()]));
+        }
+    }
+
+    /**
+     * Remove null or NaN values - any value is null or NaN in a row or column
+     * @param row Remove rows or columns
+     * @return Dropped DataFrame
+     * @throws InvalidRangeException
+     */
+    public DataFrame dropNAAll(boolean row) throws InvalidRangeException {
+        int size = this.size();
+        int length = this.length();
+        if (row) {
+            List<Integer> rowRange = new ArrayList<>();
+            for (int i = 0; i < length; i++) {
+                boolean allNA = true;
+                for (int j = 0; j < size; j++) {
+                    if (!MIMath.isNullOrNaN(this.getValue(i, j))) {
+                        allNA = false;
+                        break;
+                    }
+                }
+                if (!allNA) {
+                    rowRange.add(i);
+                }
+            }
+            return (DataFrame) this.select(rowRange);
+        } else {
+            List<Integer> colRange = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                Array a = this.getColumnData(i);
+                if (ArrayMath.allNaN(a)) {
+                    colRange.add(i);
+                }
+            }
+            return drop(colRange.toArray(new Integer[colRange.size()]));
         }
     }
 
@@ -1977,6 +2054,29 @@ public class DataFrame implements Iterable {
             n = rn;
         }
         return toString(rn - n, rn);
+    }
+
+    /**
+     * Replace value
+     * @param toReplace The value to be replaced
+     * @param value The replacing value
+     * @return new DataFrame
+     */
+    public DataFrame replace(Object toReplace, Object value) {
+        if (this.array2D) {
+            Array a = ((Array) this.data).copy();
+            ArrayMath.replaceValue(a, toReplace, value);
+            return new DataFrame(a, (Index) this.index.clone(), (ColumnIndex) this.columns.clone());
+        } else {
+            List<Array> arrays = (List<Array>) this.data;
+            List<Array> r = new ArrayList<>();
+            for (Array arr : arrays) {
+                Array a = arr.copy();
+                ArrayMath.replaceValue(a, toReplace, value);
+                r.add(a);
+            }
+            return new DataFrame(r, (Index) this.index.clone(), (ColumnIndex) this.columns.clone());
+        }
     }
 
     @Override

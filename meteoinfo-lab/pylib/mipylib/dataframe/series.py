@@ -343,6 +343,17 @@ class Series(object):
         :returns: MI Java Array object
         '''
         return self.values.asarray()
+
+    def replace(self, to_replace, value):
+        """
+        Replace values given in to_replace with value.
+
+        :param to_replace: (*object*) The value to be replaced.
+        :param value: (*object*) The replacing value.
+        :return: (*Series*) New series with after value replaced.
+        """
+        r = self._series.replace(to_replace, value)
+        return Series(series=r)
         
     def mean(self):
         '''

@@ -4153,10 +4153,35 @@ public class ArrayMath {
     }
 
     /**
+     * Check if the array values are all NaN
+     *
+     * @param a Input array
+     * @return Boolean
+     */
+    public static boolean allNaN(Array a) {
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                if (!Double.isNaN(a.getDouble(i))) {
+                    return false;
+                }
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            while (iterA.hasNext()) {
+                if (!Double.isNaN(iterA.getDoubleNext())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Remove NaN values in an array
      *
      * @param a The array
-     * @return The array withou NaN values
+     * @return The array without NaN values
      */
     public static Array removeNaN(Array a) {
         List d = new ArrayList<>();

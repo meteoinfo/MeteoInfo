@@ -187,6 +187,35 @@ public class MIMath {
     }
 
     /**
+     * Check whether an object is NaN - only valid for double and float object
+     *
+     * @param o The object
+     * @return Whether is NaN
+     */
+    public static boolean isNaN(Object o) {
+        if (o instanceof Double) {
+            return Double.isNaN((double) o);
+        } else if (o instanceof Float) {
+            return Float.isNaN((float) o);
+        }
+        return false;
+    }
+
+    /**
+     * Check whether an object is null or NaN - only valid for double and float object
+     *
+     * @param o The object
+     * @return Whether is null or NaN
+     */
+    public static boolean isNullOrNaN(Object o) {
+        if (o == null) {
+            return true;
+        } else {
+            return isNaN(o);
+        }
+    }
+
+    /**
      * Get extent from PointF array
      *
      * @param PList PointF array

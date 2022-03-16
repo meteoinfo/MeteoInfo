@@ -358,6 +358,19 @@ public class Series implements Iterable {
     }
 
     /**
+     * Replace value
+     *
+     * @param toReplace The value to be replaced
+     * @param value The replacing value
+     * @return new Series
+     */
+    public Series replace(Object toReplace, Object value) {
+        Array a = this.data.copy();
+        ArrayMath.replaceValue(a, toReplace, value);
+        return new Series(a, (Index) this.index.clone(), this.name);
+    }
+
+    /**
      * Group the series rows using the specified key function.
      *
      * @param function the function to reduce rows to grouping keys

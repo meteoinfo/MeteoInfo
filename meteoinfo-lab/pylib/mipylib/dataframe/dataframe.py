@@ -688,6 +688,40 @@ class DataFrame(object):
             columns = [columns]
         r = self._dataframe.drop(columns)
         return DataFrame(dataframe=r)
+
+    def dropna(self, axis=0, how='any', thresh=None, subset=None, inplace=False):
+        """
+        Remove missing values.
+
+        :param axis: (*int*) {0 or ‘index’, 1 or ‘columns’}, default 0. Determine if rows or columns which contain
+            missing values are removed.
+        :param how: (*str*) {‘any’, ‘all’}, default ‘any’. Determine if row or column is removed from DataFrame,
+            when we have at least one NA or all NA.
+        :param thresh: (*int*) Optional. Require that many non-NA values.
+        :param subset: (*list*) column label or sequence of labels, optional. Labels along other axis to consider,
+            e.g. if you are dropping rows these would be a list of columns to include.
+        :param inplace: (*bool*) default False. If True, do operation inplace and return None.
+
+        :return: (*DataFrame*) DataFrame with NA entries dropped from it or None if inplace=True.
+        """
+        row = (axis == 0 or axis == 'index')
+        any = (how == 'any')
+        if any:
+            r = self._dataframe.dropNAAny(row)
+        else:
+            r = self._dataframe.dropNAAll(row)
+        return DataFrame(dataframe=r)
+
+    def replace(self, to_replace, value):
+        """
+        Replace values given in to_replace with value.
+
+        :param to_replace: (*object*) The value to be replaced.
+        :param value: (*object*) The replacing value.
+        :return: (*DataFrame*) New data frame with after value replaced.
+        """
+        r = self._dataframe.replace(to_replace, value)
+        return DataFrame(dataframe=r)
     
     def append(self, other):
         '''

@@ -517,6 +517,8 @@ package org.meteoinfo.projection;
          if (iStart >= 0) {
              iStart += 13 + name.length();
              int iEnd = esriString.indexOf(",", iStart) - 1;
+             if (iEnd < 0)
+                 iEnd = esriString.length() - 2;
              result = esriString.substring(iStart, iEnd);
          }
          return result;

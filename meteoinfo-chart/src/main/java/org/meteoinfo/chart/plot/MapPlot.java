@@ -980,15 +980,12 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             g.setFont(font);
             float labX, labY;
             int len = mapFrame.getTickLineLength();
-            int space = len + this.mapFrame.getGridLabelShift();
-            if (mapFrame.isInsideTickLine()) {
-                space = mapFrame.getGridLabelShift();
-            }
+            int space = mapFrame.getGridLabelShift();
 
             Object[] objs;
             float xShift, yShift;
-            XAlign xAlign;
-            YAlign yAlign;
+            XAlign xAlign = XAlign.CENTER;
+            YAlign yAlign = YAlign.CENTER;
             for (int i = 0; i < mapFrame.getMapView().getGridLabels().size(); i++) {
                 GridLabel aGL = mapFrame.getMapView().getGridLabels().get(i);
                 switch (mapFrame.getGridLabelPosition()) {
@@ -1028,6 +1025,13 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                 labY = labY + (float) area.getY();
                 sP.X = labX;
                 sP.Y = labY;
+                if (aGL.isBorder()) {
+                    switch (aGL.getLabDirection()) {
+                        case South:
+                            sP.Y = (float) area.getMaxY();
+                            break;
+                    }
+                }
 
                 drawStr = aGL.getLabString();
                 //if (this.drawDegreeSymbol) {
@@ -1074,51 +1078,55 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                     if (aGL.isBorder()) {
                         switch (aGL.getLabDirection()) {
                             case South:
-                                labX = labX - aSF.width / 2;
-                                labY = labY + aSF.height * 3 / 4 + space;
                                 eP.X = sP.X;
                                 if (mapFrame.isInsideTickLine()) {
                                     eP.Y = sP.Y - len;
                                 } else {
                                     eP.Y = sP.Y + len;
                                 }
+                                labY = eP.Y + space;
+                                xAlign = XAlign.CENTER;
+                                yAlign = YAlign.TOP;
                                 break;
                             case Weast:
-                                labX = labX - aSF.width - space;
-                                labY = labY + aSF.height / 3;
                                 eP.Y = sP.Y;
                                 if (mapFrame.isInsideTickLine()) {
                                     eP.X = sP.X + len;
                                 } else {
                                     eP.X = sP.X - len;
                                 }
+                                labX = eP.X - space;
+                                xAlign = XAlign.RIGHT;
+                                yAlign = YAlign.CENTER;
                                 break;
                             case North:
-                                labX = labX - aSF.width / 2;
-                                //labY = labY - aSF.height / 3 - space;
-                                labY = labY - space;
                                 eP.X = sP.X;
                                 if (mapFrame.isInsideTickLine()) {
                                     eP.Y = sP.Y + len;
                                 } else {
                                     eP.Y = sP.Y - len;
                                 }
+                                labY = eP.Y - space;
+                                xAlign = XAlign.CENTER;
+                                yAlign = YAlign.BOTTOM;
                                 break;
                             case East:
-                                labX = labX + space;
-                                labY = labY + aSF.height / 3;
                                 eP.Y = sP.Y;
                                 if (mapFrame.isInsideTickLine()) {
                                     eP.X = sP.X - len;
                                 } else {
                                     eP.X = sP.X + len;
                                 }
+                                labX = eP.X + space;
+                                xAlign = XAlign.LEFT;
+                                yAlign = YAlign.CENTER;
                                 break;
                         }
                         g.setColor(mapFrame.getGridLineColor());
                         g.draw(new Line2D.Float(sP.X, sP.Y, eP.X, eP.Y));
                         g.setColor(this.getXAxis().getTickLabelColor());
-                        g.drawString(drawStr, labX, labY);
+                        //g.drawString(drawStr, labX, labY);
+                        Draw.drawString(g, labX, labY, drawStr, xAlign, yAlign, false);
                     } else {
                         g.setColor(this.getXAxis().getTickLabelColor());
                         objs = this.getProjInfo().checkGridLabel(aGL, shift);

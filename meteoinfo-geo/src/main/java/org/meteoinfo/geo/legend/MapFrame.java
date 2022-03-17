@@ -136,7 +136,7 @@ public class MapFrame extends ItemNode {
     private boolean _drawNeatLine = true;
     private boolean _insideTickLine = false;
     private int _tickLineLength = 5;
-    private int _gridLabelShift = 2;
+    private int _gridLabelShift = 5;
     private Color _neatLineColor = Color.black;
     private float _neatLineSize = 1.0f;
     private boolean _drawGridLabel = true;

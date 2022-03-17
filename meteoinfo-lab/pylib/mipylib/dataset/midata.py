@@ -53,15 +53,15 @@ def __getfilename(fname):
             fname = os.path.abspath(fname)
             return fname, isweb
     else:
-        if migl.currentfolder != None:
+        if not migl.currentfolder is None:
             fname = os.path.join(migl.currentfolder, fname)
             if os.path.isfile(fname):
                 return fname, isweb
             else:
-                print 'File not exist: ' + fname
+                print('File not exist: ' + fname)
                 return None, isweb
         else:
-            print 'File not exist: ' + fname
+            print('File not exist: ' + fname)
             return None, isweb
             
 def addfiles(fnames):

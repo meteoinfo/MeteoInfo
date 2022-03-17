@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\geoshow">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\projection">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\plot"/>
@@ -14,17 +13,16 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\CALIPSO_L1_3d_axis.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\geoshow\geoshow_test.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\CALIPSO_L1_3d_axis.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\geoshow\geoshow_test.py"/>
     </RecentFiles>
   </File>
   <Font>

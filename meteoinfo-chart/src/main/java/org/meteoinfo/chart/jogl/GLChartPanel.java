@@ -53,6 +53,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     private float distanceY = 0.0f;
     private FPSAnimator animator;
     private boolean loading;
+    private boolean zoomXY = false;
 
     // </editor-fold>
     // <editor-fold desc="Construction">
@@ -285,6 +286,24 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         this.setCursor(customCursor);
     }
 
+    /**
+     * Get whether only zoom XY
+     *
+     * @return Whether only zoom XY
+     */
+    public boolean isZoomXY() {
+        return this.zoomXY;
+    }
+
+    /**
+     * Set whether only zoom XY
+     *
+     * @param value Whether only zoom XY
+     */
+    public void setZoomXY(boolean value) {
+        this.zoomXY = value;
+    }
+
     // </editor-fold>
     // <editor-fold desc="Events">
     void onComponentResized(ComponentEvent e) {
@@ -411,12 +430,27 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
         float zoomF = e.getWheelRotation() / 10.0f;
         double dx = extent.getWidth() * zoomF;
         double dy = extent.getHeight() * zoomF;
-        if (e.isShiftDown() && !(this.plot3DGL instanceof EarthPlot3D)) {
-            extent = extent.extend(dx, dy, 0);
-        } else {
+        if (this.plot3DGL instanceof EarthPlot3D) {
             double dz = extent.getZLength() * zoomF;
             extent = extent.extend(dx, dy, dz);
+        } else {
+            if (this.zoomXY) {
+                if (e.isShiftDown()) {
+                    double dz = extent.getZLength() * zoomF;
+                    extent = extent.extend(dx, dy, dz);
+                } else {
+                    extent = extent.extend(dx, dy, 0);
+                }
+            } else {
+                if (e.isShiftDown()) {
+                    extent = extent.extend(dx, dy, 0);
+                } else {
+                    double dz = extent.getZLength() * zoomF;
+                    extent = extent.extend(dx, dy, dz);
+                }
+            }
         }
+
         this.plot3DGL.setDrawExtent(extent);
 
         this.repaint();

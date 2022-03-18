@@ -1227,5 +1227,14 @@ public class Variable {
             this.setZDimension(zdim);
         }
     }
+
+    /**
+     * To string
+     * @return String
+     */
+    @Override
+    public String toString() {
+        return this.name;
+    }
     // </editor-fold>
 }

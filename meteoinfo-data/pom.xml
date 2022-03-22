@@ -5,7 +5,7 @@
     <parent>
         <artifactId>MeteoInfo</artifactId>
         <groupId>org.meteothink</groupId>
-        <version>${revision}</version>
+        <version>3.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,13 +16,13 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <!--<repositories>
+    <repositories>
         <repository>
             <id>unidata-all</id>
             <name>Unidata All</name>
             <url>https://artifacts.unidata.ucar.edu/repository/unidata-all/</url>
         </repository>
-    </repositories>-->
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -43,9 +43,9 @@
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdfAll</artifactId>
-            <version>5.5.3-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/netcdfAll-5.5.3-SNAPSHOT.jar</systemPath>
+            <version>5.5.2</version>
+            <!--<scope>system</scope>
+            <systemPath>${project.basedir}/lib/netcdfAll-5.5.3-SNAPSHOT.jar</systemPath>-->
         </dependency>
         <dependency>
             <groupId>com.github.albfernandez</groupId>

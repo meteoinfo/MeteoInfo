@@ -1014,6 +1014,20 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     /**
+     * Remove a graphic
+     *
+     * @param graphic The graphic to be removed
+     */
+    public void removeGraphic(Graphic graphic) {
+        if (this.graphics.contains(graphic)) {
+            this.graphics.remove(graphic);
+            if (graphic instanceof VolumeGraphics) {
+                this.volumeRender = null;
+            }
+        }
+    }
+
+    /**
      * Remove a graphic by index
      *
      * @param idx Index
@@ -3610,6 +3624,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
         ishape.updateTexture(gl);
         int idTexture = ishape.getTextureID();
         List<PointZ> coords = ishape.getCoords();
+        int xRepeat = ishape.getXRepeat();
+        int yRepeat = ishape.getYRepeat();
+        float width = (float) (coords.get(1).X - coords.get(0).X);
+        float height = (float) (coords.get(1).Y - coords.get(2).Y);
+        width = width * (xRepeat - 1);
+        height = height * (yRepeat - 1);
 
         gl.glEnable(GL2.GL_TEXTURE_2D);
         gl.glColor3f(1f, 1f, 1f);
@@ -3619,19 +3639,21 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR_MIPMAP_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_MIRRORED_REPEAT);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_MIRRORED_REPEAT);
 
         // Draw image
         gl.glBegin(GL2.GL_QUADS);
         // Front Face
         //gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glTexCoord2f(0.0f, 1.0f);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(0).X, (float) coords.get(0).Y, (float) coords.get(0).Z), 0);
+        gl.glTexCoord2f(0.0f, 1.0f * yRepeat);
+        gl.glVertex3fv(transform.transformArray((float) coords.get(0).X, (float) coords.get(0).Y + height, (float) coords.get(0).Z), 0);
         //gl.glTexCoord2f(1.0f, 0.0f);
-        gl.glTexCoord2f(1.0f, 1.0f);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(1).X, (float) coords.get(1).Y, (float) coords.get(1).Z), 0);
+        gl.glTexCoord2f(1.0f * xRepeat, 1.0f * yRepeat);
+        gl.glVertex3fv(transform.transformArray((float) coords.get(1).X + width, (float) coords.get(1).Y + height, (float) coords.get(1).Z), 0);
         //gl.glTexCoord2f(1.0f, 1.0f);
-        gl.glTexCoord2f(1.0f, 0.0f);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(2).X, (float) coords.get(2).Y, (float) coords.get(2).Z), 0);
+        gl.glTexCoord2f(1.0f * xRepeat, 0.0f);
+        gl.glVertex3fv(transform.transformArray((float) coords.get(2).X + width, (float) coords.get(2).Y, (float) coords.get(2).Z), 0);
         //gl.glTexCoord2f(0.0f, 1.0f);
         gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex3fv(transform.transformArray((float) coords.get(3).X, (float) coords.get(3).Y, (float) coords.get(3).Z), 0);

@@ -24,6 +24,8 @@ public class TextureShape extends ImageShape{
     private String fileName;
     private int textureID;
     private GL2 gl;
+    private int xRepeat = 1;
+    private int yRepeat = 1;
     
     /**
      * Constructor
@@ -84,6 +86,38 @@ public class TextureShape extends ImageShape{
      */
     public void setFileName(String value) {
         this.fileName = value;
+    }
+
+    /**
+     * Get texture repeat number along x direction
+     * @return Texture repeat number along x direction
+     */
+    public int getXRepeat() {
+        return this.xRepeat;
+    }
+
+    /**
+     * Set texture repeat number along x direction
+     * @param value Texture repeat number along x direction
+     */
+    public void setXRepeat(int value) {
+        this.xRepeat = value;
+    }
+
+    /**
+     * Get texture repeat number along y direction
+     * @return Texture repeat number along y direction
+     */
+    public int getYRepeat() {
+        return this.yRepeat;
+    }
+
+    /**
+     * Set texture repeat number along y direction
+     * @param value Texture repeat number along y direction
+     */
+    public void setYRepeat(int value) {
+        this.yRepeat = value;
     }
     
     /**

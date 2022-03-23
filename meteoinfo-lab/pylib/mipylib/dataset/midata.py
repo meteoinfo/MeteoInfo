@@ -346,8 +346,7 @@ def addfile_hypart(fname, skip_bytes=4, getfn=True):
     if not os.path.exists(fname):
         raise IOError('No such file: ' + fname)
     meteodata = MeteoDataInfo()
-    meteodata.openHYSPLITPartData(fname)
-    meteodata.getDataInfo().setSkipNBytes(skip_bytes)
+    meteodata.openHYSPLITPartData(fname, skip_bytes)
     datafile = DimDataFile(meteodata)
     return datafile
     

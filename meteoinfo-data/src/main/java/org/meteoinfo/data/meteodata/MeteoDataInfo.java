@@ -749,6 +749,21 @@ public class MeteoDataInfo {
     }
 
     /**
+     * Open HYSPLIT particle data
+     *
+     * @param fileName File path
+     * @param skipNBytes Number of skip bytes
+     */
+    public void openHYSPLITPartData(String fileName, int skipNBytes) {
+        //Read data info
+        HYSPLITPartDataInfo aDataInfo = new HYSPLITPartDataInfo();
+        aDataInfo.setSkipNBytes(skipNBytes);
+        aDataInfo.readDataInfo(fileName);
+        _dataInfo = aDataInfo;
+        _infoText = aDataInfo.generateInfoText();
+    }
+
+    /**
      * Open NetCDF data
      *
      * @param fileName File path

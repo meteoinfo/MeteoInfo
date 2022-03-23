@@ -281,7 +281,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
                 else if (varName.startsWith("vel_v"))
                     r.setFloat(i, vel_v);
 
-                br.skipBytes(40);
+                br.skipBytes(28);
             }
 
             return r;

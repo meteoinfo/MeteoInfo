@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\test">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
@@ -11,24 +11,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\CALIPSO_L1_3d_axis.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow\geoshow_image_xrepeat.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\plot_particle_3d.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\hy_part_dataframe_3d_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\CALIPSO_L1_3d_axis.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow\geoshow_image_xrepeat.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\plot_particle_3d.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\hy_part_dataframe_3d_1.py"/>
     </RecentFiles>
   </File>
   <Font>

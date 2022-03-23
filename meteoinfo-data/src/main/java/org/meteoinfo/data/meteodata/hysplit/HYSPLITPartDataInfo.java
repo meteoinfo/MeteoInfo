@@ -34,6 +34,7 @@ import java.io.RandomAccessFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.meteodata.MeteoDataType;
@@ -47,7 +48,8 @@ import org.meteoinfo.data.meteodata.Attribute;
 public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
 
     // <editor-fold desc="Variables">
-    private List<List<Integer>> _parameters = new ArrayList<List<Integer>>();
+    private List<List<Integer>> _parameters = new ArrayList<>();
+    private int skipNBytes = 4;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -58,6 +60,22 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
+
+    /**
+     * Get skip bytes number
+     * @return Skip bytes number
+     */
+    public int getSkipNBytes() {
+        return this.skipNBytes;
+    }
+
+    /**
+     * Set skip bytes number
+     * @param value Skip bytes number
+     */
+    public void setSkipNBytes(int value) {
+        this.skipNBytes = value;
+    }
     // </editor-fold>
     // <editor-fold desc="Methods">
 
@@ -74,7 +92,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
             this.addAttribute(new Attribute("data_format", "HYSPLIT Particles"));
 
             int i = 0;
-            String[] varNames = new String[]{"lat", "lon", "height"};
+            String[] varNames = new String[]{"lat", "lon", "height", "sigma_h", "vel_w", "vel_v"};
             while (br.getFilePointer() < br.length() - 28) {
                 //Read head
                 int pos = (int) br.getFilePointer();
@@ -109,17 +127,38 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
                     var.setDimension(dim);
                     var.setDataType(DataType.FLOAT);
                     var.addAttribute(new Attribute("time_index", i));
-                    if (varName == "lon")
-                        var.addAttribute("long_name", "longitude");
-                    else if (varName == "lat")
-                        var.addAttribute("long_name", "latitude");
-                    else
-                        var.addAttribute("long_name", "height");
+                    switch (varName.toLowerCase()) {
+                        case "lon":
+                            var.addAttribute("long_name", "longitude");
+                            var.addAttribute("units", "degrees_east");
+                            break;
+                        case "lat":
+                            var.addAttribute("long_name", "latitude");
+                            var.addAttribute("units", "degrees_north");
+                            break;
+                        case "height":
+                            var.addAttribute("long_name", "height above ground");
+                            var.addAttribute("units", "meter");
+                            break;
+                        case "sigma_h":
+                            var.addAttribute("long_name", "horizontal puff size");
+                            var.addAttribute("units", "meter");
+                            break;
+                        case "vel_w":
+                            var.addAttribute("long_name", "current value for the turbulent velocity in the vertical");
+                            var.addAttribute("units", "m/s");
+                            break;
+                        case "vel_v":
+                            var.addAttribute("long_name", "current value for the turbulent velocity in the horizontal");
+                            var.addAttribute("units", "m/s");
+                            break;
+                    }
                     variables.add(var);
                 }
 
                 //Skip data
                 int len = (8 + pollutantNum * 4 + 60) * particleNum + 4;
+                len += this.skipNBytes;
                 br.skipBytes(len);
 
                 i ++;
@@ -212,10 +251,10 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
 
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             int i, j;
-            float lon, lat, alt;
+            float lon, lat, alt, sigma_h, vel_w, vel_v;
 
             br.seek(pos);
-            br.skipBytes(28);
+            br.skipBytes(28 + skipNBytes);
             for (i = 0; i < particleNum; i++) {
                 br.skipBytes(8);
                 for (j = 0; j < pollutantNum; j++) {
@@ -225,13 +264,22 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
                 lat = br.readFloat();
                 lon = br.readFloat();
                 alt = br.readFloat();
+                sigma_h = br.readFloat();
+                vel_w = br.readFloat();
+                vel_v = br.readFloat();
 
                 if (varName.startsWith("lon"))
                     r.setFloat(i, lon);
                 else if (varName.startsWith("lat"))
                     r.setFloat(i, lat);
-                else
+                else if (varName.startsWith("height"))
                     r.setFloat(i, alt);
+                else if (varName.startsWith("sigma_h"))
+                    r.setFloat(i, sigma_h);
+                else if (varName.startsWith("vel_w"))
+                    r.setFloat(i, vel_w);
+                else if (varName.startsWith("vel_v"))
+                    r.setFloat(i, vel_v);
 
                 br.skipBytes(40);
             }
@@ -264,10 +312,10 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
 
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             int i, j;
-            float lon, lat, alt;
+            float lon, lat, alt, sigma_h, vel_w, vel_v;
 
             br.seek(pos);
-            br.skipBytes(28);
+            br.skipBytes(28 + skipNBytes);
             for (i = 0; i < particleNum; i++) {
                 br.skipBytes(8);
                 for (j = 0; j < pollutantNum; j++) {
@@ -277,12 +325,18 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
                 lat = br.readFloat();
                 lon = br.readFloat();
                 alt = br.readFloat();
+                sigma_h = br.readFloat();
+                vel_w = br.readFloat();
+                vel_v = br.readFloat();
 
                 data.get(0).setFloat(i, lat);
                 data.get(1).setFloat(i, lon);
                 data.get(2).setFloat(i, alt);
+                data.get(3).setFloat(i, sigma_h);
+                data.get(4).setFloat(i, vel_w);
+                data.get(5).setFloat(i, vel_v);
 
-                br.skipBytes(40);
+                br.skipBytes(28);
             }
 
             Index index = Index.factory(particleNum);
@@ -297,16 +351,16 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
     public StationData getStationData(int timeIdx, String varName, int levelIdx) {
         try {
             StationData stationData = new StationData();
-            List<String> stations = new ArrayList<String>();
+            List<String> stations = new ArrayList<>();
             int particleNum = _parameters.get(timeIdx).get(0);
             int pollutantNum = _parameters.get(timeIdx).get(1);
             int pos = _parameters.get(timeIdx).get(2);
-            double[][] discreteData = new double[particleNum][3];
+            double[][] discreteData = new double[particleNum][6];
 
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             byte[] aBytes;
             int i, j;
-            float lon, lat, alt;
+            float lon, lat, alt, sigma_h, vel_w, vel_v;
             float minX, maxX, minY, maxY;
             minX = 0;
             maxX = 0;
@@ -314,7 +368,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
             maxY = 0;
 
             br.seek(pos);
-            br.skipBytes(28);
+            br.skipBytes(28 + skipNBytes);
             for (i = 0; i < particleNum; i++) {
                 br.skipBytes(8);
                 for (j = 0; j < pollutantNum; j++) {
@@ -324,10 +378,16 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
                 lat = br.readFloat();
                 lon = br.readFloat();
                 alt = br.readFloat();
+                sigma_h = br.readFloat();
+                vel_w = br.readFloat();
+                vel_v = br.readFloat();
 
                 discreteData[i][0] = lon;
                 discreteData[i][1] = lat;
                 discreteData[i][2] = alt;
+                discreteData[i][3] = sigma_h;
+                discreteData[i][4] = vel_w;
+                discreteData[i][5] = vel_v;
                 stations.add("P" + String.valueOf(i + 1));
 
                 br.skipBytes(40);

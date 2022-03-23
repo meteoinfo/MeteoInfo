@@ -332,11 +332,12 @@ def addfile_hyconc(fname, getfn=True, big_endian=True):
     datafile = DimDataFile(meteodata)
     return datafile
 
-def addfile_hypart(fname, getfn=True):
+def addfile_hypart(fname, skip_bytes=4, getfn=True):
     '''
     Add a HYSPLIT concentration data file.
 
     :param fname: (*string*) The HYSPLIT concentration file name.
+    :param skip_bytes: (*int*) Extra skip bytes number between time. Default is 4.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     :returns: (*DimDataFile*) Opened file object.
     '''
@@ -346,6 +347,7 @@ def addfile_hypart(fname, getfn=True):
         raise IOError('No such file: ' + fname)
     meteodata = MeteoDataInfo()
     meteodata.openHYSPLITPartData(fname)
+    meteodata.getDataInfo().setSkipNBytes(skip_bytes)
     datafile = DimDataFile(meteodata)
     return datafile
     

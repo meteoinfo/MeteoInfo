@@ -2859,6 +2859,7 @@ def interp2d(*args, **kwargs):
     :param xq: (*array_like*) X coordinate array of the query points.
     :param yq: (*array_like*) Y coordinate array of the query points.
     :param kind: (*string*) The kind of the interpolation method. ['linear' | 'nearest'].
+        Default is 'linear'.
     
     :returns: (*array_like*) Interpolated array.
     """

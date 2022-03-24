@@ -88,6 +88,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected GraphicCollection3D graphics;
     protected Extent3D extent;
     protected Extent3D drawExtent;
+    protected boolean fixExtent;
     protected ChartText title;
     protected GridLine gridLine;
     protected List<ChartLegend> legends;
@@ -140,6 +141,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.projInfo = null;
         this.doScreenShot = false;
         this.legends = new ArrayList<>();
+        this.fixExtent = false;
         this.xAxis = new Axis();
         this.xAxis.setTickLength(8);
         this.yAxis = new Axis();
@@ -324,6 +326,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
         yAxis.setMinMaxValue(ymin, ymax);
         zAxis.setMinMaxValue(zmin, zmax);
         this.transform.setExtent(this.drawExtent);
+    }
+
+    /**
+     * Get whether fix extent when add graphic
+     * @return Whether fix extent
+     */
+    public boolean isFixExtent() {
+        return this.fixExtent;
+    }
+
+    /**
+     * Set whether fix extent when add graphic
+     * @param value Whether fix extent
+     */
+    public void setFixExtent(boolean value) {
+        this.fixExtent = value;
     }
 
     /**
@@ -995,7 +1013,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
             ex = ex.to3D();
         }
         this.extent = (Extent3D) ex;
-        this.setDrawExtent((Extent3D) this.extent.clone());
+        if (!fixExtent)
+            this.setDrawExtent((Extent3D) this.extent.clone());
     }
 
     /**

@@ -1081,10 +1081,11 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                                 eP.X = sP.X;
                                 if (mapFrame.isInsideTickLine()) {
                                     eP.Y = sP.Y - len;
+                                    labY = sP.Y + space;
                                 } else {
                                     eP.Y = sP.Y + len;
+                                    labY = eP.Y + space;
                                 }
-                                labY = eP.Y + space;
                                 xAlign = XAlign.CENTER;
                                 yAlign = YAlign.TOP;
                                 break;
@@ -1092,10 +1093,11 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                                 eP.Y = sP.Y;
                                 if (mapFrame.isInsideTickLine()) {
                                     eP.X = sP.X + len;
+                                    labX = sP.X - space;
                                 } else {
                                     eP.X = sP.X - len;
+                                    labX = eP.X - space;
                                 }
-                                labX = eP.X - space;
                                 xAlign = XAlign.RIGHT;
                                 yAlign = YAlign.CENTER;
                                 break;
@@ -1103,10 +1105,11 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                                 eP.X = sP.X;
                                 if (mapFrame.isInsideTickLine()) {
                                     eP.Y = sP.Y + len;
+                                    labY = sP.Y - space;
                                 } else {
                                     eP.Y = sP.Y - len;
+                                    labY = eP.Y - space;
                                 }
-                                labY = eP.Y - space;
                                 xAlign = XAlign.CENTER;
                                 yAlign = YAlign.BOTTOM;
                                 break;
@@ -1114,10 +1117,11 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                                 eP.Y = sP.Y;
                                 if (mapFrame.isInsideTickLine()) {
                                     eP.X = sP.X - len;
+                                    labX = sP.X + space;
                                 } else {
                                     eP.X = sP.X + len;
+                                    labX = eP.X + space;
                                 }
-                                labX = eP.X + space;
                                 xAlign = XAlign.LEFT;
                                 yAlign = YAlign.CENTER;
                                 break;

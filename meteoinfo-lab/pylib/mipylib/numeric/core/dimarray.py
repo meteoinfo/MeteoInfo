@@ -1314,7 +1314,7 @@ class DimArray(NDArray):
         :param x: To x coordinates.
         :param y: To y coordinates.
         :param toproj: To projection.
-        :param method: Interpolation method: ``bilinear`` or ``neareast`` .
+        :param method: Interpolation method: ``bilinear`` or ``nearest``. Default is ``bilinear``.
         
         :returns: (*NDArray*) Projected array
         """

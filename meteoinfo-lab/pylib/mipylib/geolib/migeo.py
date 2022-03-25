@@ -585,7 +585,7 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
     :param xp: (*array_like*) Projected x coordinates.
     :param yp: (*array_like*) Projected y coordinates.
     :param toproj: (*ProjectionInfo*) Output projection.
-    :param method: Interpolation method: ``bilinear`` or ``neareast`` .
+    :param method: Interpolation method: ``bilinear`` or ``nearest``. Default is ``bilinear``.
     
     :returns: (*NDArray*) Projected array
     """

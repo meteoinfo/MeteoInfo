@@ -345,7 +345,7 @@ def linint2(*args, **kwargs):
 
     :param x: (*array_like*) X coordinate array of the sample data (one dimension).
     :param y: (*array_like*) Y coordinate array of the sample data (one dimension).
-    :param z: (*array_like*) Value array of the sample data (muti-dimension, last two dimensions are y and x).
+    :param z: (*array_like*) Value array of the sample data (multi-dimension, last two dimensions are y and x).
     :param xq: (*array_like*) X coordinate array of the query data (one dimension).
     :param yq: (*array_like*) Y coordinate array of the query data (one dimension).
 

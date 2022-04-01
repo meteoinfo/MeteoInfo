@@ -797,13 +797,30 @@ public class JOGLUtil {
      */
     public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, ColorMap colorMap,
                                            Normalize norm, List<Number> opacityNodes, List<Number> opacityLevels) {
+        TransferFunction transferFunction = new TransferFunction(opacityNodes, opacityLevels, norm);
+        return volume(data, xa, ya, za, colorMap, norm, transferFunction);
+    }
+
+    /**
+     * Create volume graphics
+     *
+     * @param data     3d data array
+     * @param xa       X coordinates
+     * @param ya       Y coordinates
+     * @param za       Z coordinates
+     * @param colorMap ColorMap
+     * @param norm Normalize
+     * @param transferFunction Transfer function
+     * @return Volume graphics
+     */
+    public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, ColorMap colorMap,
+                                           Normalize norm, TransferFunction transferFunction) {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
 
         VolumeGraphics graphics = new VolumeGraphics(data, colorMap, norm);
-        TransferFunction transferFunction = new TransferFunction(opacityNodes, opacityLevels, norm);
         graphics.setTransferFunction(transferFunction);
         graphics.updateColors();
 

@@ -31,6 +31,8 @@ public class VolumeGraphics extends GraphicCollection3D {
     private byte[] colors;
     private byte[] originalColors;
     private TransferFunction transferFunction = new TransferFunction();
+    private Normalize normalize;
+    private ColorMap colorMap;
     private float[] opacityLevels = new float[]{0, 1};
     private float[] opacityNodes = new float[]{0f, 1f};
     private float[] colorRange = new float[]{0f, 1f};
@@ -73,6 +75,8 @@ public class VolumeGraphics extends GraphicCollection3D {
      * @param vMax Maximum value
      */
     public VolumeGraphics(Array value, ColorMap colorMap, double vMin, double vMax) {
+        this.colorMap = colorMap;
+
         value = value.copyIfView();
         int[] shape = value.getShape();
         this.depth = shape[0];
@@ -119,23 +123,7 @@ public class VolumeGraphics extends GraphicCollection3D {
         }
         //buffer = Buffers.newDirectByteBuffer(data);
 
-        Color[] oColors = colorMap.getColors();
-        int n = oColors.length;
-        originalColors = new byte[n * 3];
-        for (int i = 0; i < n; i++) {
-            int color = oColors[i].getRGB();
-            originalColors[i * 3 + 0] = (byte) ((color >> 16) & 0xff);
-            originalColors[i * 3 + 1] = (byte) ((color >> 8) & 0xff);
-            originalColors[i * 3 + 2] = (byte) ((color) & 0xff);
-        }
-
-        double[] values = MIMath.getIntervalValues(norm.getMinValue(), norm.getMaxValue(), n - 1);
-        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, ShapeTypes.POLYGON,
-                norm.getMinValue(), norm.getMaxValue());
-        ls.setColorMap(colorMap);
-        ls.setNormalize(norm);
-        this.setLegendScheme(ls);
-        this.setSingleLegend(false);
+        setColorMap(colorMap, norm);
     }
 
     /**
@@ -169,9 +157,44 @@ public class VolumeGraphics extends GraphicCollection3D {
         this.setSingleLegend(false);
     }
 
-    /*public void updateColors() {
-        this.colors = this.transferFunction.getColors(this.originalColors);
-    }*/
+    /**
+     * Set color map
+     * @param colorMap Color map
+     */
+    public void setColorMap(ColorMap colorMap) {
+        if (this.normalize == null) {
+            this.normalize = new Normalize();
+        }
+        setColorMap(colorMap, this.normalize);
+    }
+
+    /**
+     * Set color map
+     * @param colorMap Color map
+     * @param norm Normalize
+     */
+    public void setColorMap(ColorMap colorMap, Normalize norm) {
+        this.colorMap = colorMap;
+        this.normalize = norm;
+
+        Color[] oColors = colorMap.getColors();
+        int n = oColors.length;
+        originalColors = new byte[n * 3];
+        for (int i = 0; i < n; i++) {
+            int color = oColors[i].getRGB();
+            originalColors[i * 3 + 0] = (byte) ((color >> 16) & 0xff);
+            originalColors[i * 3 + 1] = (byte) ((color >> 8) & 0xff);
+            originalColors[i * 3 + 2] = (byte) ((color) & 0xff);
+        }
+
+        double[] values = MIMath.getIntervalValues(norm.getMinValue(), norm.getMaxValue(), n - 1);
+        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, ShapeTypes.POLYGON,
+                norm.getMinValue(), norm.getMaxValue());
+        ls.setColorMap(colorMap);
+        ls.setNormalize(norm);
+        this.setLegendScheme(ls);
+        this.setSingleLegend(false);
+    }
 
     public void updateColors() {
         final float cRange = colorRange[1] - colorRange[0];

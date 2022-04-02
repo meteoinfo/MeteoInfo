@@ -338,7 +338,7 @@ public abstract class DataMath {
         if (windSpeed == 0) {
             windDir = 0;
         } else {
-            windDir = (180 + Math.atan2(V, U) * 180 / Math.PI) % 360;
+            windDir = (270 - Math.atan2(V, U) * 180 / Math.PI) % 360;
         }
 
         return new double[]{windDir, windSpeed};

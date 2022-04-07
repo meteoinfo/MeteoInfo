@@ -37,7 +37,7 @@ public class Dimension {
     private boolean variableLength = false;
     private boolean shared = true;
     private boolean reverse = false;
-    private String unit;
+    private String unit = "null";
 
     /**
      * Constructor

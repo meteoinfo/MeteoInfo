@@ -1178,6 +1178,12 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
                 //aDim.setValues(values);
+                String unit = null;
+                ucar.nc2.Attribute unitAtt = var.findAttribute("units");
+                if (unitAtt != null) {
+                    unit = unitAtt.getStringValue().trim().toLowerCase();
+                    dim.setUnit(unit);
+                }
                 switch (dimType) {
                     case X:
                         double[] X = (double[]) ArrayUtil.copyToNDJavaArray_Double(values);
@@ -1190,13 +1196,13 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                                 }
                             }
                         }
-                        if (!this.getProjectionInfo().isLonLat()) {
-                            ucar.nc2.Attribute unitAtt = var.findAttribute("units");
-                            if (unitAtt != null) {
-                                if (unitAtt.getStringValue().trim().toLowerCase().equals("km")) {
+                        if (unit != null) {
+                            if (!this.getProjectionInfo().isLonLat()) {
+                                if (unit.equals("km")) {
                                     for (int i = 0; i < X.length; i++) {
                                         X[i] = X[i] * 1000;
                                     }
+                                    dim.setUnit("m");
                                 }
                             }
                         }
@@ -1205,13 +1211,13 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         break;
                     case Y:
                         double[] Y = (double[]) ArrayUtil.copyToNDJavaArray_Double(values);
-                        if (!this.getProjectionInfo().isLonLat()) {
-                            ucar.nc2.Attribute unitAtt = var.findAttribute("units");
-                            if (unitAtt != null) {
-                                if (unitAtt.getStringValue().trim().toLowerCase().equals("km")) {
+                        if (unit != null) {
+                            if (!this.getProjectionInfo().isLonLat()) {
+                                if (unit.equals("km")) {
                                     for (int i = 0; i < Y.length; i++) {
                                         Y[i] = Y[i] * 1000;
                                     }
+                                    dim.setUnit("m");
                                 }
                             }
                         }

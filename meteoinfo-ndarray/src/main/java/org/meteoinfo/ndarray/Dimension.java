@@ -37,6 +37,7 @@ public class Dimension {
     private boolean variableLength = false;
     private boolean shared = true;
     private boolean reverse = false;
+    private String unit;
 
     /**
      * Constructor
@@ -288,6 +289,22 @@ public class Dimension {
     public void setVariableLength(boolean value) {
         this.variableLength = value;
     }
+
+    /**
+     * Get unit string
+     * @return Unit string
+     */
+    public String getUnit() {
+        return this.unit;
+    }
+
+    /**
+     * Set unit string
+     * @param value Unit string
+     */
+    public void setUnit(String value) {
+        this.unit = value;
+    }
     // </editor-fold>
     // <editor-fold desc="Methods">
 
@@ -433,6 +450,7 @@ public class Dimension {
         int n = (last - first) / stride + 1;
         Dimension dim = new Dimension(this.getShortName(), n, this._dimType);
         dim.setDimId(this._dimId);
+        dim.setUnit(this.unit);
         //dim.setReverse(this.reverse);
         if (this._dimValue.size() > last) {
             List<Double> values = new ArrayList<>();
@@ -486,6 +504,7 @@ public class Dimension {
     public Dimension extract(double first, double last, double stride) {
         Dimension dim = new Dimension(this.getShortName(), this.getLength(), this._dimType);
         dim.setDimId(this._dimId);
+        dim.setUnit(this.unit);
         List<Double> values = new ArrayList<>();
         int idx;
         for (double v = first; v <= last; v += stride) {
@@ -506,6 +525,7 @@ public class Dimension {
     public Dimension extract(List<Integer> index) {
         Dimension dim = new Dimension(this.getShortName(), this.getLength(), this._dimType);
         dim.setDimId(this._dimId);
+        dim.setUnit(this.unit);
         //dim.setReverse(this.reverse);
         List<Double> values = new ArrayList<>();
         for (int i = 0; i < index.size(); i++) {
@@ -534,6 +554,7 @@ public class Dimension {
     public Dimension extract(Array index) {
         Dimension dim = new Dimension(this.getShortName(), this.getLength(), this._dimType);
         dim.setDimId(this._dimId);
+        dim.setUnit(this.unit);
         List<Double> values = new ArrayList<>();
         IndexIterator iter = index.getIndexIterator();
         while (iter.hasNext()) {

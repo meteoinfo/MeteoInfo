@@ -830,18 +830,7 @@ public class MeteoMath {
         if (ws == 0) {
             wd = 0;
         } else {
-            wd = Math.asin(u / ws) * 180 / Math.PI;
-            if (u <= 0 && v < 0) {
-                wd = 180.0 - wd;
-            } else if (u > 0 && v < 0) {
-                wd = 180.0 - wd;
-            } else if (u < 0 && v > 0) {
-                wd = 360.0 + wd;
-            }
-            wd += 180;
-            if (wd >= 360) {
-                wd -= 360;
-            }
+            wd = (180 + Math.atan2(u, v) * 180 / Math.PI) % 360;
         }
 
         return new double[]{wd, ws};

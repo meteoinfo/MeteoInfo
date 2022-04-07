@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\maskout">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot"/>
@@ -12,17 +8,25 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\turtle"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\CALIPSO_L1_3d_axis.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\plot_cuace_3d_volume_opacity.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\CALIPSO_L1_3d_axis.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\plot_cuace_3d_volume_opacity.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -30,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1418,802"/>
 </MeteoInfo>

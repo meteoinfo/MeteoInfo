@@ -450,7 +450,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                     String pStr = PDEF.PDEF_Type;
                     switch (pStr) {
                         case "LCC":
-                        case "LCCR": {
+                        case "LCCR":
                             PDEF_LCC aPLCC = new PDEF_LCC();
                             aPLCC.isize = Integer.parseInt(dataArray[1]);
                             aPLCC.jsize = Integer.parseInt(dataArray[2]);
@@ -483,18 +483,19 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                                     aPLCC.latref, X, Y);
                             Dimension xdim = new Dimension(DimensionType.X);
                             xdim.setShortName("X");
+                            xdim.setUnit("m");
                             xdim.setValues(X);
                             this.setXDimension(xdim);
                             this.addDimension(xdim);
                             Dimension ydim = new Dimension(DimensionType.Y);
                             ydim.setShortName("Y");
+                            ydim.setUnit("m");
                             ydim.setValues(Y);
                             this.setYDimension(ydim);
                             this.addDimension(ydim);
                             break;
-                        }
                         case "NPS":
-                        case "SPS": {
+                        case "SPS":
                             int iSize = Integer.parseInt(dataArray[1]);
                             int jSize = Integer.parseInt(dataArray[2]);
                             float iPole = Float.parseFloat(dataArray[3]);
@@ -516,18 +517,19 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             X = new double[iSize];
                             Y = new double[jSize];
                             getProjectedXY_NPS(dx, dy, iPole, jPole, X, Y);
-                            Dimension xdim = new Dimension(DimensionType.X);
+                            xdim = new Dimension(DimensionType.X);
                             xdim.setShortName("X");
+                            xdim.setUnit("m");
                             xdim.setValues(X);
                             this.setXDimension(xdim);
                             this.addDimension(xdim);
-                            Dimension ydim = new Dimension(DimensionType.Y);
+                            ydim = new Dimension(DimensionType.Y);
                             ydim.setShortName("Y");
+                            ydim.setUnit("m");
                             ydim.setValues(Y);
                             this.setYDimension(ydim);
                             this.addDimension(ydim);
                             break;
-                        }
                         default:
                             errorStr = "The PDEF type is not supported at present!" + System.getProperty("line.separator")
                                     + "Please send your data to the author to improve MeteoInfo!";
@@ -577,6 +579,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         }
                         Dimension xDim = new Dimension(DimensionType.X);
                         xDim.setShortName("X");
+                        xDim.setUnit("degree east");
                         xDim.setValues(values);
                         this.setXDimension(xDim);
                         this.addDimension(xDim);
@@ -623,6 +626,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
                         Dimension yDim = new Dimension(DimensionType.Y);
                         yDim.setShortName("Y");
+                        yDim.setUnit("degree north");
                         yDim.setValues(values);
                         this.setYDimension(yDim);
                         this.addDimension(yDim);
@@ -632,6 +636,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                     ZDEF.ZNum = Integer.parseInt(dataArray[1]);
                     ZDEF.Type = dataArray[2];
                     ZDEF.ZLevels = new float[ZDEF.ZNum];
+                    String unit = "hpa";
                     List<Double> values = new ArrayList<>();
                     if (ZDEF.Type.toUpperCase().equals("LINEAR")) {
                         ZDEF.SLevel = Float.parseFloat(dataArray[3]);
@@ -640,52 +645,44 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             ZDEF.ZLevels[i] = ZDEF.SLevel + i * ZDEF.ZDelt;
                             values.add(Double.valueOf(ZDEF.ZLevels[i]));
                         }
-                    } else if (dataArray.length < ZDEF.ZNum + 3) {
-                        while (true) {
-                            String line = sr.readLine().trim();
-                            if (line.isEmpty()) {
-                                continue;
-                            }
-                            dataArray = line.split("\\s+|,");
-                            if (this.isKeyWord(dataArray[0])) {
-                                dataArray = aLine.split("\\s+|,");
-//                    if (dataArray.length > ZDEF.ZNum + 3) {
-//                        errorStr = "ZDEF is wrong! Please check the ctl file!";
-//                        //goto ERROR;
-//                    }
-//                    for (i = 0; i < ZDEF.ZNum; i++) {
-//                        ZDEF.ZLevels[i] = Float.parseFloat(dataArray[3 + i]);
-//                        values.add(Double.parseDouble(dataArray[3 + i]));
-//                    }
-                                ZDEF.ZNum = dataArray.length - 3;
-                                ZDEF.ZLevels = new float[ZDEF.ZNum];
-                                for (i = 0; i < ZDEF.ZNum; i++) {
-                                    ZDEF.ZLevels[i] = Float.parseFloat(dataArray[3 + i]);
-                                    values.add(Double.parseDouble(dataArray[3 + i]));
-                                }
-                                aLine = line;
-                                isReadLine = false;
-                                break;
-                            }
-
-                            aLine = aLine + " " + line;
-//                            dataArray = aLine.split("\\s+");
-//                            if (dataArray.length >= ZDEF.ZNum + 3) {
-//                                break;
-//                            }
-                        }
+                        unit = "m";
                     } else {
-                        ZDEF.ZNum = dataArray.length - 3;
-                        ZDEF.ZLevels = new float[ZDEF.ZNum];
-                        String v;
-                        for (i = 0; i < ZDEF.ZNum; i++) {
-                            v = dataArray[3 + i].trim();
-                            ZDEF.ZLevels[i] = Float.parseFloat(dataArray[3 + i]);
-                            values.add(Double.parseDouble(dataArray[3 + i]));
+                        if (dataArray.length < ZDEF.ZNum + 3) {
+                            while (true) {
+                                String line = sr.readLine().trim();
+                                if (line.isEmpty()) {
+                                    continue;
+                                }
+                                dataArray = line.split("\\s+|,");
+                                if (this.isKeyWord(dataArray[0])) {
+                                    dataArray = aLine.split("\\s+|,");
+                                    ZDEF.ZNum = dataArray.length - 3;
+                                    ZDEF.ZLevels = new float[ZDEF.ZNum];
+                                    for (i = 0; i < ZDEF.ZNum; i++) {
+                                        ZDEF.ZLevels[i] = Float.parseFloat(dataArray[3 + i]);
+                                        values.add(Double.parseDouble(dataArray[3 + i]));
+                                    }
+                                    aLine = line;
+                                    isReadLine = false;
+                                    break;
+                                }
+
+                                aLine = aLine + " " + line;
+                            }
+                        } else {
+                            ZDEF.ZNum = dataArray.length - 3;
+                            ZDEF.ZLevels = new float[ZDEF.ZNum];
+                            String v;
+                            for (i = 0; i < ZDEF.ZNum; i++) {
+                                v = dataArray[3 + i].trim();
+                                ZDEF.ZLevels[i] = Float.parseFloat(dataArray[3 + i]);
+                                values.add(Double.parseDouble(dataArray[3 + i]));
+                            }
                         }
                     }
                     zDim = new Dimension(DimensionType.Z);
                     zDim.setShortName("Z");
+                    zDim.setUnit(unit);
                     zDim.setValues(values);
                     this.setZDimension(zDim);
                     this.addDimension(zDim);
@@ -869,6 +866,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                     break;
                 case "VARS":
                     int vNum = Integer.parseInt(dataArray[1]);
+                    zDim = this.getZDimension();
                     for (i = 0; i < vNum; i++) {
                         aLine = sr.readLine().trim();
                         if (aLine.isEmpty()) {
@@ -916,6 +914,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                                 }
                                 Dimension dim = new Dimension(DimensionType.Z);
                                 dim.setShortName("Z_" + String.valueOf(lNum));
+                                dim.setUnit(zDim.getUnit());
                                 dim.setValues(levs);
                                 aVar.setDimension(dim);
                                 this.addDimension(dim);

@@ -616,9 +616,10 @@ class Axes(object):
             extent = Extent(xmin, xmax, ymin, ymax)
             self.axes.setDrawExtent(extent)
             self.axes.setExtent(extent.clone())
+            self.axes.setFixDrawExtent(True)
             return True
         else:
-            print 'The limits parameter must be a list with 4 elements: xmin, xmax, ymin, ymax!'    
+            print('The limits parameter must be a list with 4 elements: xmin, xmax, ymin, ymax!')
             return None
             
     def get_xlim(self):
@@ -646,7 +647,8 @@ class Axes(object):
         extent.minX = xmin
         extent.maxX = xmax
         self.axes.setDrawExtent(extent)
-        self.axes.setExtent(extent.clone())    
+        self.axes.setExtent(extent.clone())
+        self.axes.setFixDrawExtent(True)
 
     def get_ylim(self):
         """
@@ -673,7 +675,8 @@ class Axes(object):
         extent.minY = ymin
         extent.maxY = ymax
         self.axes.setDrawExtent(extent)
-        self.axes.setExtent(extent.clone())  
+        self.axes.setExtent(extent.clone())
+        self.axes.setFixDrawExtent(True)
         
     def twinx(self):
         """

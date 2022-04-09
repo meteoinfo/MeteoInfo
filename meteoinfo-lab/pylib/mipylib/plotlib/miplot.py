@@ -42,7 +42,7 @@ __all__ = [
     'axism','bar','bar3','barh','barbs','barbsm','bgcolor','box',
     'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
     'contourfm','contourm','contourfslice','contourslice','delfig','draw','draw_if_interactive','errorbar',
-    'figure','glfigure','figsize','patch','rectangle','fill_between','fill_betweenx','webmap','gc_collect','geoshow',
+    'figure','glfigure','figsize','patch','rectangle','fill','fill_between','fill_betweenx','webmap','gc_collect','geoshow',
     'get_figure','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','isosurface','legend','left_title','lighting','loglog','makecolors',
     'makelegend','makesymbolspec','masklayer','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
@@ -825,6 +825,26 @@ def annotate(s, xy, *args, **kwargs):
             g_axes = axes()
             
     r = g_axes.annotate(s, xy, *args, **kwargs)
+    if not r is None:
+        draw_if_interactive()
+    return r
+
+def fill(x, y=None, **kwargs):
+    """
+    Create one or more filled polygons.
+
+    :param x: (*array_like*) X coordinates for each vertex. X should be PolygonShape if y
+        is None.
+    :param y: (*array_like*) Y coordinates for each vertex.
+    """
+    global g_axes
+    if g_figure is None:
+        figure()
+
+    if g_axes is None:
+        g_axes = axes()
+
+    r = g_axes.patch(x, y, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r

@@ -742,7 +742,7 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
 
     #Add dimension variables
     dimvars = []
-    for dim in dims:
+    for dim, mdim in zip(dims, f.dimensions()):
         dname = dim.getShortName()
         if dname == 'T':
             var = ncfile.addvar('time', 'int', [dim])
@@ -754,27 +754,29 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
         elif dname == 'Z':
             var = ncfile.addvar('level', 'float', [dim])
             var.addattr('axis', dname)
+            var.addattr('units', mdim.getUnit())
         else:
             var = ncfile.addvar(dim.getShortName(), 'float', [dim])
             if 'Z' in dname:
                 var.addattr('axis', 'Z')
             else:
                 var.addattr('axis', dname)
+            var.addattr('units', mdim.getUnit())
         dimvars.append(var)
 
     #Add variables
     variables = []
     for var in f.variables():    
-        print 'Variable: ' + var.getShortName()
+        print('Variable: ' + var.name)
         vdims = []
-        for vdim in var.getDimensions():
+        for vdim in var.dims:
             for dim in dims:
                 if vdim.getShortName() == dim.getShortName():
                     vdims.append(dim)
         #print vdims
-        nvar = ncfile.addvar(var.getShortName(), var.getDataType(), vdims)
+        nvar = ncfile.addvar(var.name, var.dtype, vdims)
         nvar.addattr('fill_value', -9999.0)
-        for attr in var.getAttributes():
+        for attr in var.attributes:
             nvar.addattr(attr.getName(), attr.getValues())
         variables.append(nvar)
 
@@ -789,14 +791,14 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
     sst = datetime.datetime(1900,1,1)
     for t in range(0, tnum):
         st = f.gettime(t)
-        print st.strftime('%Y-%m-%d %H:00')
+        print(st.strftime('%Y-%m-%d %H:00'))
         hours = (st - sst).total_seconds() // 3600
         origin = [t]
         ncfile.write(tvar, np.array([hours]), origin=origin)
         for var in variables:
-            print 'Variable: ' + var.name
+            print('Variable: ' + var.name)
             if var.ndim == 3:
-                data = f[str(var.name)][t,:,:]    
+                data = f[var.name][t,:,:]
                 data[data==np.nan] = -9999.0        
                 origin = [t, 0, 0]
                 shape = [1, ynum, xnum]
@@ -814,7 +816,7 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
 
     #Close netCDF file
     ncfile.close()
-    print 'Convert finished!'
+    print('Convert finished!')
     
 def dimension(dimvalue, dimname='null', dimtype=None):
     """

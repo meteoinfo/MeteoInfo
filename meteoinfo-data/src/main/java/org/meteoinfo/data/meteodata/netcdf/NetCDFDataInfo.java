@@ -66,7 +66,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
     private String _fileTypeStr;
     private String _fileTypeId;
-    private Conventions _convention = Conventions.CF;
+    private Conventions convention = Conventions.CF;
     private NetcdfFile ncfile = null;
     private boolean keepOpen = false;
     private List<ucar.nc2.Variable> ncVariables = new ArrayList<>();
@@ -169,6 +169,14 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         } else {
             return false;
         }
+    }
+
+    /**
+     * Get convention
+     * @return Convention
+     */
+    public Conventions getConvention() {
+        return this.convention;
     }
 
     // </editor-fold>
@@ -335,7 +343,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             //Get convention
-            _convention = this.getConvention();
+            this.convention = this.readConvention();
 
             //Get projection
             this.getProjection();
@@ -504,11 +512,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         }
     }
 
-    private Conventions getConvention() {
-        Conventions convention = _convention;
+    private Conventions readConvention() {
+        Conventions convention = Conventions.CF;
         boolean isIOAPI = false;
         boolean isWRFOUT = false;
-        //List<String> WRFStrings = new ArrayList<String>();
 
         for (ucar.nc2.Attribute aAtts : ncAttributes) {
             if (aAtts.getShortName().toLowerCase().equals("ioapi_version")) {
@@ -552,7 +559,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
     private void getProjection() {
         ProjectionInfo projInfo = this.getProjectionInfo();
-        switch (_convention) {
+        switch (convention) {
             case CF:
                 projInfo = getProjection_CF();
                 break;
@@ -1079,7 +1086,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     }
 
     private boolean getDimensionValues(NetcdfFile ncfile) throws IOException, ParseException {
-        switch (_convention) {
+        switch (convention) {
             case CF:
                 if (this._isHDFEOS) {
                     getDimValues_HDFEOS_SWATH();
@@ -2121,7 +2128,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             GridData aGridData = new GridData(gridData, nvar.getXDimension().getValues(),
                     nvar.getYDimension().getValues(), missingValue);
 
-            if (this._convention == Conventions.WRFOUT) {
+            if (this.convention == Conventions.WRFOUT) {
                 if (nvar.getName().equals("U")) {
                     aGridData.setXStagger(true);
                 }

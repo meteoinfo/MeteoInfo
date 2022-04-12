@@ -9,20 +9,24 @@ __all__ = ['ndim','nonzero','ravel','searchsorted']
 def ndim(a):
     """
     Return the number of dimensions of an array.
+
     Parameters
     ----------
     a : array_like
         Input array.  If it is not already an ndarray, a conversion is
         attempted.
+
     Returns
     -------
     number_of_dimensions : int
         The number of dimensions in `a`.  Scalars are zero-dimensional.
+
     See Also
     --------
     ndarray.ndim : equivalent method
     shape : dimensions of array
     ndarray.shape : dimensions of array
+
     Examples
     --------
     >>> np.ndim([[1,2,3],[4,5,6]])

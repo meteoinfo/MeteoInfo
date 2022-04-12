@@ -50,6 +50,7 @@ public abstract class AbstractPlot2D extends Plot {
     protected AspectType aspectType = AspectType.AUTO;
     protected double aspect = 1;
     protected boolean clip = true;
+    protected boolean fixDrawExtent = false;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -660,6 +661,22 @@ public abstract class AbstractPlot2D extends Plot {
      * @param value Boolean
      */
     public void setClip(boolean value) {this.clip = value;}
+
+    /**
+     * Get whether fix draw extent
+     * @return Whether fix draw extent
+     */
+    public boolean isFixDrawExtent() {
+        return  this.fixDrawExtent;
+    }
+
+    /**
+     * Set whether fix draw extent
+     * @param value Whether fix draw extent
+     */
+    public void setFixDrawExtent(boolean value) {
+        this.fixDrawExtent = value;
+    }
 
     // </editor-fold>
     // <editor-fold desc="Method">

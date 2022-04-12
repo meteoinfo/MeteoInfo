@@ -50,7 +50,6 @@ public class Plot2D extends AbstractPlot2D {
     // <editor-fold desc="Variables">
     private GraphicCollection graphics;
     private float barsWidth = 0.8f;
-    private boolean fixDrawExtent = false;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -103,28 +102,12 @@ public class Plot2D extends AbstractPlot2D {
         this.barsWidth = value;
     }
 
-    /**
-     * Get whether fix draw extent
-     * @return Whether fix draw extent
-     */
-    public boolean isFixDrawExtent() {
-        return  this.fixDrawExtent;
-    }
-
-    /**
-     * Set whether fix draw extent
-     * @param value Whether fix draw extent
-     */
-    public void setFixDrawExtent(boolean value) {
-        this.fixDrawExtent = value;
-    }
-
     // </editor-fold>
     // <editor-fold desc="Methods">
     /**
      * Add a graphic
      *
-     * @param g Grahic
+     * @param g Graphic
      */
     public void addGraphic(Graphic g) {
         this.graphics.add(g);

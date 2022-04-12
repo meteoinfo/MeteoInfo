@@ -2320,14 +2320,15 @@ def transpose(a, axes=None):
     return a.transpose(axes)
 
 def swapaxes(a, axis1, axis2):
-    '''
+    """
     Interchange two axes of an array.
 
+    :param a: (*array*) Input array.
     :param axis1: (*int*) First axis.
     :param axis2: (*int*) Second axis.
 
     :returns: Axes swapped array.
-    '''
+    """
     return a.swapaxes(axis1, axis2)
 
 def moveaxis(a, source, destination):
@@ -2335,6 +2336,7 @@ def moveaxis(a, source, destination):
     Move axes of an array to new positions.
     Other axes remain in their original order.
     .. versionadded:: 1.11.0
+
     Parameters
     ----------
     a : np.ndarray
@@ -2344,14 +2346,17 @@ def moveaxis(a, source, destination):
     destination : int or sequence of int
         Destination positions for each of the original axes. These must also be
         unique.
+
     Returns
     -------
     result : np.ndarray
         Array with moved axes. This array is a view of the input array.
+
     See Also
     --------
     transpose: Permute the dimensions of an array.
     swapaxes: Interchange two axes of an array.
+
     Examples
     --------
     >>> x = np.zeros((3, 4, 5))

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.meteodata.Attribute;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.ndarray.*;

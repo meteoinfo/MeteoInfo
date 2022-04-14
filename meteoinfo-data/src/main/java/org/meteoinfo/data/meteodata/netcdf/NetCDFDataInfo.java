@@ -21,8 +21,8 @@ import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
-import org.meteoinfo.ndarray.Dimension;
-import org.meteoinfo.ndarray.DimensionType;
+import org.meteoinfo.data.dimarray.Dimension;
+import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.IStationDataInfo;
 import org.meteoinfo.data.meteodata.StationInfoData;
@@ -36,7 +36,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -1434,12 +1433,20 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 X[i] = orgX + dx * i;
             }
             xDim.setValues(X);
-            this.setXDimension(xDim);
             double[] Y = new double[yNum];
             for (i = 0; i < yNum; i++) {
                 Y[i] = orgY + dy * i;
             }
             yDim.setValues(Y);
+
+            if (this.getProjectionInfo().isLonLat()) {
+                xDim.setUnit("degree east");
+                yDim.setUnit("degree north");
+            } else {
+                xDim.setUnit("m");
+                yDim.setUnit("m");
+            }
+            this.setXDimension(xDim);
             this.setYDimension(yDim);
 
             Dimension xsdim = findDimension("west_east_stag");
@@ -1460,6 +1467,14 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     nY[i] = norgY + dy * i;
                 }
                 ysdim.setValues(nY);
+
+                if (this.getProjectionInfo().isLonLat()) {
+                    xsdim.setUnit("degree east");
+                    ysdim.setUnit("degree north");
+                } else {
+                    xsdim.setUnit("m");
+                    ysdim.setUnit("m");
+                }
             }
         }
 
@@ -1484,6 +1499,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 zDim.setDimType(DimensionType.Z);
                 //zDim.setDimName(_levelVar.getShortName());
                 zDim.setValues(levels);
+                zDim.setUnit("eta");
                 this.setZDimension(zDim);
             }
         }
@@ -1509,6 +1525,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 zDim.setDimType(DimensionType.Z);
                 //zDim.setDimName(_levelVar.getShortName());
                 zDim.setValues(levels);
+                zDim.setUnit("eta");
                 //this.setZDimension(zDim);
             }
         }

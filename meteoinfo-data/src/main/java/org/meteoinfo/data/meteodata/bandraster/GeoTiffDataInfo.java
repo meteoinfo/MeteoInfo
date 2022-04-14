@@ -21,11 +21,12 @@ import java.util.logging.Logger;
 
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
+import org.meteoinfo.data.dimarray.Dimension;
+import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.data.mapdata.geotiff.GeoTiff;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.ndarray.*;
-import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.data.meteodata.Attribute;

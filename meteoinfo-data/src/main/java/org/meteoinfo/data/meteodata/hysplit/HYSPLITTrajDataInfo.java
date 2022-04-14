@@ -17,8 +17,8 @@ import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.meteodata.*;
-import org.meteoinfo.ndarray.Dimension;
-import org.meteoinfo.ndarray.DimensionType;
+import org.meteoinfo.data.dimarray.Dimension;
+import org.meteoinfo.data.dimarray.DimensionType;
 
 import java.io.BufferedReader;
 import java.io.File;

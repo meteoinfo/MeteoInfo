@@ -12,7 +12,7 @@ from mipylib.numeric.core import NDArray, DimArray
 
 import midata as midata
 from dimdatafile import DimDataFile
-from org.meteoinfo.ndarray import Dimension, DimensionType
+from org.meteoinfo.data.dimarray import Dimension, DimensionType
 
 __all__ = [
     'convert2nc','dimension','grads2nc','ncwrite'

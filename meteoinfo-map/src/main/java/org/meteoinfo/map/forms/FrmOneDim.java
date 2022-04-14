@@ -37,7 +37,7 @@ import org.meteoinfo.data.meteodata.MeteoDataInfo;
 import org.meteoinfo.data.meteodata.PlotDimension;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.meteodata.hysplit.HYSPLITTrajDataInfo;
 import org.meteoinfo.map.config.GenericFileFilter;
 import org.meteoinfo.image.AnimatedGifEncoder;

@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +31,8 @@ import javax.swing.JOptionPane;
 
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
+import org.meteoinfo.data.dimarray.Dimension;
+import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayUtil;

@@ -13,7 +13,6 @@
  */
 package org.meteoinfo.data.meteodata;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -22,7 +21,7 @@ import java.util.List;
 
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 
@@ -154,10 +153,10 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @return Times
       */
      public List<LocalDateTime> getTimes() {
-         List<Double> values = tDim.getDimValue();
+         Array values = tDim.getDimValue();
          List<LocalDateTime> times = new ArrayList<>();
-         for (Double v : values) {
-             times.add(JDateUtil.fromOADate(v));
+         for (int i = 0; i < values.getSize(); i++) {
+             times.add(JDateUtil.fromOADate(values.getDouble(i)));
          }
 
          return times;
@@ -170,16 +169,16 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @return Time
       */
      public LocalDateTime getTime(int timeIdx) {
-         return JDateUtil.fromOADate(tDim.getDimValue().get(timeIdx));
+         return JDateUtil.fromOADate(tDim.getDimValue().getDouble(timeIdx));
      }
 
      /**
-      * Get time doble value
+      * Get time double value
       * @param timeIdx Time index
       * @return Time double value
       */
      public double getTimeValue(int timeIdx) {
-         return tDim.getDimValue().get(timeIdx);
+         return tDim.getDimValue().getDouble(timeIdx);
      }
 
      /**

@@ -15,7 +15,7 @@ import org.meteoinfo.geo.meteodata.*;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LegendType;
 import org.meteoinfo.geometry.legend.PointBreak;
-import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
 
 import java.awt.Color;
@@ -42,7 +42,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import org.meteoinfo.ndarray.DimensionType;
+import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.geo.layer.FrmLabelSet;
 import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;

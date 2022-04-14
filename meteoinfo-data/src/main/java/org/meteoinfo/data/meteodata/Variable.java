@@ -14,8 +14,8 @@
 package org.meteoinfo.data.meteodata;
 
 import org.meteoinfo.common.util.JDateUtil;
-import org.meteoinfo.ndarray.DimensionType;
-import org.meteoinfo.ndarray.Dimension;
+import org.meteoinfo.data.dimarray.DimensionType;
+import org.meteoinfo.data.dimarray.Dimension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -241,7 +241,7 @@ public class Variable {
         if (zDim == null) {
             return _levels;
         } else {
-            return zDim.getDimValue();
+            return zDim.getDimValueList();
         }
     }
 
@@ -1068,7 +1068,7 @@ public class Variable {
             return null;
         }
 
-        List<Double> values = tDim.getDimValue();
+        List<Double> values = tDim.getDimValueList();
         List<LocalDateTime> times = new ArrayList<>();
         for (Double v : values) {
             times.add(JDateUtil.fromOADate(v));

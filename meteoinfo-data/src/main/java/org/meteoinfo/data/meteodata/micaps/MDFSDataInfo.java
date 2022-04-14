@@ -6,6 +6,8 @@ import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
+import org.meteoinfo.data.dimarray.Dimension;
+import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.dataframe.Column;
 import org.meteoinfo.dataframe.ColumnIndex;
 import org.meteoinfo.dataframe.DataFrame;
@@ -114,7 +116,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     LocalDateTime dt = LocalDateTime.of(year, month, day, hour, 0);
                     Dimension tDim = new Dimension(DimensionType.T);
                     tDim.setName("time");
-                    tDim.addValue(JDateUtil.toOADate(dt));
+                    tDim.setValue(JDateUtil.toOADate(dt));
                     this.setTimeDimension(tDim);
                     this.addDimension(tDim);
                     Dimension zDim = new Dimension(DimensionType.Z);
@@ -245,7 +247,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     dt = LocalDateTime.of(year, month, day, hour, 0);
                     tDim = new Dimension(DimensionType.T);
                     tDim.setName("time");
-                    tDim.addValue(JDateUtil.toOADate(dt));
+                    tDim.setValue(JDateUtil.toOADate(dt));
                     this.setTimeDimension(tDim);
                     this.addDimension(tDim);
                     zDim = new Dimension(DimensionType.Z);

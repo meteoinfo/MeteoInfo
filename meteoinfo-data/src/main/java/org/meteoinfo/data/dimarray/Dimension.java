@@ -11,11 +11,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
  * General Public License for more details.
  */
-package org.meteoinfo.ndarray;
+package org.meteoinfo.data.dimarray;
 
+import org.meteoinfo.ndarray.*;
+import org.meteoinfo.ndarray.math.ArrayMath;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,12 +31,10 @@ import java.util.List;
 public class Dimension {
     // <editor-fold desc="Variables">
 
-    //private ucar.nc2.Dimension _ncDimension = null;
     private String name;
-    private DimensionType _dimType;
-    private List<Double> _dimValue = new ArrayList<>();
-    private int _dimId;
-    private int length = 1;
+    private DimensionType dimType;
+    private Array dimValue;
+    private int dimId;
     private boolean unlimited = false;
     private boolean variableLength = false;
     private boolean shared = true;
@@ -54,9 +56,8 @@ public class Dimension {
      */
     public Dimension(String name, int len) {
         this.name = name;
-        this.length = len;
-        _dimType = DimensionType.OTHER;
-        _dimValue = new ArrayList<>();
+        dimType = DimensionType.OTHER;
+        dimValue = ArrayUtil.arrayRange(0, len, 1);
     }
 
     /**
@@ -72,13 +73,35 @@ public class Dimension {
      * Constructor
      *
      * @param name Name
+     * @param dimValue Dimension values
+     * @param dimType Dimension type
+     */
+    public Dimension(String name, Array dimValue, DimensionType dimType) {
+        this.name = name;
+        this.dimType = dimType;
+        this.dimValue = dimValue;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param name Name
+     * @param dimValue Dimension values
+     */
+    public Dimension(String name, Array dimValue) {
+        this(name, dimValue, DimensionType.OTHER);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param name Name
      * @param len Length
      * @param dimType Dimension type
      */
     public Dimension(String name, int len, DimensionType dimType) {
         this(name, len);
-        _dimType = dimType;
-        _dimValue = new ArrayList<>();
+        this.dimType = dimType;
     }
 
     /**
@@ -89,15 +112,11 @@ public class Dimension {
      * @param dimType Dimension type
      * @param min Minimum value
      * @param delta Delta value
-     * @param num value number
      */
-    public Dimension(String name, int len, DimensionType dimType, double min, double delta, int num) {
+    public Dimension(String name, int len, DimensionType dimType, double min, double delta) {
         this(name, len);
-        _dimType = dimType;
-        _dimValue = new ArrayList<>();
-        for (int i = 0; i < num; i++) {
-            _dimValue.add(min + delta * i);
-        }
+        this.dimType = dimType;
+        dimValue = ArrayUtil.arrayRange1(min, len, delta);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -138,7 +157,7 @@ public class Dimension {
      * @return Length
      */
     public int getLength() {
-        return this.length;
+        return (int) this.dimValue.getSize();
     }
    
     /**
@@ -149,15 +168,9 @@ public class Dimension {
     public void setLength(int value) {
         if (value <= 0)
             return;
-                   
-        this.length = value;
-        if (this._dimValue == null)
-            this._dimValue = new ArrayList<>();
-        if (this._dimValue.size() != value){
-            this._dimValue.clear();
-            for (int i = 0; i < value; i++) {
-                this._dimValue.add(Double.valueOf(i));
-            }
+
+        if (this.dimValue == null || this.dimValue.getSize() != value) {
+            this.dimValue = ArrayUtil.arrayRange(0, value, 1);
         }
     }
 
@@ -167,7 +180,7 @@ public class Dimension {
      * @return Dimension type
      */
     public DimensionType getDimType() {
-        return _dimType;
+        return dimType;
     }
 
     /**
@@ -176,7 +189,7 @@ public class Dimension {
      * @param value Dimension type
      */
     public void setDimType(DimensionType value) {
-        _dimType = value;
+        this.dimType = value;
     }
 
     /**
@@ -184,22 +197,16 @@ public class Dimension {
      *
      * @return Dimension values
      */
-    public List<Double> getDimValue() {
-        return _dimValue;
+    public Array getDimValue() {
+        return dimValue;
     }
-    
+
     /**
-     * Get dimension value array
-     * @return dimension value array
+     * Set dimension values
+     * @param value Dimension values
      */
-    public Array getDimArray() {
-        int n = this.getLength();
-        Array r = Array.factory(DataType.DOUBLE, new int[]{n});
-        for (int i = 0; i < n; i++) {
-            r.setDouble(i, _dimValue.get(i));
-        }
-        
-        return r;
+    public void setDimValue(Array value) {
+        this.dimValue = value;
     }
     
     /**
@@ -208,7 +215,20 @@ public class Dimension {
      * @return Dimension value
      */
     public double getDimValue(int idx) {
-        return this._dimValue.get(idx);
+        return this.dimValue.getDouble(idx);
+    }
+
+    /**
+     * Get dimension value list
+     * @return Value list
+     */
+    public List<Double> getDimValueList() {
+        List<Double> values = new ArrayList<>();
+        for (int i = 0; i < this.dimValue.getSize(); i++) {
+            values.add(this.dimValue.getDouble(i));
+        }
+
+        return values;
     }
 
     /**
@@ -217,11 +237,11 @@ public class Dimension {
      * @return Dimension identifer
      */
     public int getDimId() {
-        return _dimId;
+        return dimId;
     }
 
     public void setDimId(int value) {
-        _dimId = value;
+        dimId = value;
     }
 
     /**
@@ -318,7 +338,7 @@ public class Dimension {
         if (!this.getShortName().equals(aDim.getShortName())) {
             return false;
         }
-        if (_dimType != aDim.getDimType()) {
+        if (dimType != aDim.getDimType()) {
             return false;
         }
         return this.getLength() == aDim.getLength();
@@ -333,7 +353,7 @@ public class Dimension {
         int len = this.getLength();
         double[] values = new double[len];
         for (int i = 0; i < len; i++) {
-            values[i] = _dimValue.get(i);
+            values[i] = dimValue.getDouble(i);
         }
 
         return values;
@@ -345,8 +365,7 @@ public class Dimension {
      * @param values Values
      */
     public void setValues(List<Double> values) {
-        _dimValue = values;
-        this.setLength(_dimValue.size());
+        dimValue = ArrayUtil.array(values);
     }
 
     /**
@@ -355,11 +374,16 @@ public class Dimension {
      * @param values Values
      */
     public void setDimValues(List<Number> values) {
-        _dimValue = new ArrayList<>();
-        for (Number v : values) {
-            _dimValue.add(v.doubleValue());
-        }
-        this.setLength(_dimValue.size());
+        dimValue = ArrayUtil.array(values);
+    }
+
+    /**
+     * Set dimension value
+     * @param v Dimension value
+     */
+    public void setValue(double v) {
+        dimValue = Array.factory(DataType.DOUBLE, new int[]{1});
+        dimValue.setDouble(0, v);
     }
 
     /**
@@ -368,11 +392,7 @@ public class Dimension {
      * @param values Values
      */
     public void setValues(double[] values) {
-        _dimValue = new ArrayList<>();
-        for (double v : values) {
-            _dimValue.add(v);
-        }
-        this.setLength(_dimValue.size());
+        dimValue = Array.factory(DataType.DOUBLE, new int[]{values.length}, values);
     }
 
     /**
@@ -381,22 +401,18 @@ public class Dimension {
      * @param values Values
      */
     public void setValues(float[] values) {
-        _dimValue = new ArrayList<>();
-        for (double v : values) {
-            _dimValue.add(v);
-        }
-        this.setLength(_dimValue.size());
+        dimValue = Array.factory(DataType.FLOAT, new int[]{values.length}, values);
     }
 
     /**
      * Add a dimension value
      *
      * @param value The value
-     */
+     *//*
     public void addValue(double value) {
-        _dimValue.add(value);
-        this.setLength(_dimValue.size());
-    }
+        dimValue.add(value);
+        this.setLength(dimValue.size());
+    }*/
 
     /**
      * Get minimum dimension value
@@ -404,7 +420,7 @@ public class Dimension {
      * @return Minimum dimension value
      */
     public double getMinValue() {
-        return _dimValue.get(0);
+        return dimValue.getDouble(0);
     }
 
     /**
@@ -413,7 +429,7 @@ public class Dimension {
      * @return Maximum dimension value
      */
     public double getMaxValue() {
-        return _dimValue.get(_dimValue.size() - 1);
+        return dimValue.getDouble((int)dimValue.getSize() - 1);
     }
 
     /**
@@ -422,11 +438,11 @@ public class Dimension {
      * @return Delta value
      */
     public double getDeltaValue() {
-        if (_dimValue.size() <= 1) {
+        if (dimValue.getSize() <= 1) {
             return 1;
         }
 
-        return BigDecimalUtil.sub(_dimValue.get(1), _dimValue.get(0));
+        return BigDecimalUtil.sub(dimValue.getDouble(1), dimValue.getDouble(0));
     }
     
     /**
@@ -435,7 +451,18 @@ public class Dimension {
      * @return Result dimension
      */
     public Dimension extract(Range range) {
-        return this.extract(range.first(), range.last(), range.stride());
+        List<Range> ranges = new ArrayList<>();
+        ranges.add(range);
+        try {
+            Array a = this.dimValue.section(ranges);
+            Dimension dim = new Dimension(this.getShortName(), a, this.dimType);
+            dim.setDimId(this.dimId);
+            dim.setUnit(this.unit);
+            return dim;
+        } catch (InvalidRangeException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -447,50 +474,46 @@ public class Dimension {
      * @return Extracted dimension
      */
     public Dimension extract(int first, int last, int stride) {
-        int n = (last - first) / stride + 1;
-        Dimension dim = new Dimension(this.getShortName(), n, this._dimType);
-        dim.setDimId(this._dimId);
+        /*int n = (last - first) / stride + 1;
+        Dimension dim = new Dimension(this.getShortName(), n, this.dimType);
+        dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
         //dim.setReverse(this.reverse);
-        if (this._dimValue.size() > last) {
+        if (this.dimValue.size() > last) {
             List<Double> values = new ArrayList<>();
             if (first <= last) {
                 if (stride > 0) {
                     for (int i = first; i <= last; i += stride) {
-                        values.add(this._dimValue.get(i));
+                        values.add(this.dimValue.get(i));
                     }
                 } else {
                     for (int i = last; i >= first; i += stride) {
-                        values.add(this._dimValue.get(i));
+                        values.add(this.dimValue.get(i));
                     }
                 }
             } else {
                 if (stride > 0) {
                     for (int i = last; i <= first; i += stride) {
-                        values.add(this._dimValue.get(i));
+                        values.add(this.dimValue.get(i));
                     }
                 } else {
                     for (int i = first; i >= last; i += stride) {
-                        values.add(this._dimValue.get(i));
+                        values.add(this.dimValue.get(i));
                     }
                 }
             }
-            /*int step = Math.abs(stride);
-            if (this.reverse) {
-                int ff = this.getLength() - last - 1;
-                int ll = this.getLength() - first - 1;
-                for (int i = ff; i <= ll; i += step) {
-                    values.add(this._dimValue.get(i));
-                }
-            } else {
-                for (int i = first; i <= last; i += step) {
-                    values.add(this._dimValue.get(i));
-                }
-            }*/
             dim.setValues(values);
         }
 
-        return dim;
+        return dim;*/
+
+        try {
+            Range range = new Range(first, last, stride);
+            return extract(range);
+        } catch (InvalidRangeException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -502,14 +525,14 @@ public class Dimension {
      * @return Extracted dimension
      */
     public Dimension extract(double first, double last, double stride) {
-        Dimension dim = new Dimension(this.getShortName(), this.getLength(), this._dimType);
-        dim.setDimId(this._dimId);
+        Dimension dim = new Dimension(this.getShortName(), this.getLength(), this.dimType);
+        dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
         List<Double> values = new ArrayList<>();
         int idx;
         for (double v = first; v <= last; v += stride) {
             idx = this.getValueIndex(v);
-            values.add(this._dimValue.get(idx));
+            values.add(this.dimValue.getDouble(idx));
         }
         dim.setValues(values);
 
@@ -523,23 +546,14 @@ public class Dimension {
      * @return Extracted dimension
      */
     public Dimension extract(List<Integer> index) {
-        Dimension dim = new Dimension(this.getShortName(), this.getLength(), this._dimType);
-        dim.setDimId(this._dimId);
+        Dimension dim = new Dimension(this.getShortName(), this.getLength(), this.dimType);
+        dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
         //dim.setReverse(this.reverse);
         List<Double> values = new ArrayList<>();
         for (int i = 0; i < index.size(); i++) {
-            values.add(this._dimValue.get(index.get(i)));
+            values.add(this.dimValue.getDouble(index.get(i)));
         }
-        /*if (this.reverse) {
-            for (int i = index.size() - 1; i <= 0; i--) {
-                values.add(this._dimValue.get(index.get(i)));
-            }
-        } else {
-            for (int i = 0; i < index.size(); i++) {
-                values.add(this._dimValue.get(index.get(i)));
-            }
-        }*/
         dim.setValues(values);
 
         return dim;
@@ -552,13 +566,13 @@ public class Dimension {
      * @return Extracted dimension
      */
     public Dimension extract(Array index) {
-        Dimension dim = new Dimension(this.getShortName(), this.getLength(), this._dimType);
-        dim.setDimId(this._dimId);
+        Dimension dim = new Dimension(this.getShortName(), this.getLength(), this.dimType);
+        dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
         List<Double> values = new ArrayList<>();
         IndexIterator iter = index.getIndexIterator();
         while (iter.hasNext()) {
-            values.add(this._dimValue.get(iter.getIntNext()));
+            values.add(this.dimValue.getDouble(iter.getIntNext()));
         }
         dim.setValues(values);
 
@@ -572,16 +586,17 @@ public class Dimension {
      * @return Index
      */
     public int getValueIndex(double v) {
-        int idx = this._dimValue.indexOf(v);
+        return ArrayUtil.getDimIndex(this.dimValue, v);
+        /*int idx = this.dimValue.indexOf(v);
         if (idx < 0) {
             idx = this.getLength() - 1;
             if (getDeltaValue() > 0) {
                 for (int i = 0; i < this.getLength(); i++) {
-                    if (v <= this._dimValue.get(i)) {
+                    if (v <= this.dimValue.get(i)) {
                         if (i == 0)
                             idx = 0;
                         else {
-                            if (this._dimValue.get(i) - v > v - this._dimValue.get(i - 1))
+                            if (this.dimValue.get(i) - v > v - this.dimValue.get(i - 1))
                                 idx = i - 1;
                             else
                                 idx = i;
@@ -591,11 +606,11 @@ public class Dimension {
                 }
             } else {
                 for (int i = 0; i < this.getLength(); i++) {
-                    if (v >= this._dimValue.get(i)) {
+                    if (v >= this.dimValue.get(i)) {
                         if (i == 0)
                             idx = 0;
                         else {
-                            if (this._dimValue.get(i - 1) - v > v - this._dimValue.get(i))
+                            if (this.dimValue.get(i - 1) - v > v - this.dimValue.get(i))
                                 idx = i;
                             else
                                 idx = i - 1;
@@ -606,18 +621,19 @@ public class Dimension {
             }
         }
 
-        /*if (this.reverse) {
+        *//*if (this.reverse) {
             idx = this.getLength() - idx - 1;
-        }*/
+        }*//*
 
-        return idx;
+        return idx;*/
     }
 
     /**
      * Reverse the dimension values
      */
     public void reverse() {
-        Collections.reverse(this._dimValue);
+        this.dimValue = this.dimValue.flip(0);
+        //Collections.reverse(this.dimValue);
     }
 
     @Override

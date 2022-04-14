@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.ndarray;
+package org.meteoinfo.data.dimarray;
+
+import org.meteoinfo.ndarray.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +28,20 @@ public class DimArray {
         this.array = null;
         this.dimensions = new ArrayList<>();
     }
+
+    public DimArray(Array array) {
+        this.array = array;
+        this.dimensions = new ArrayList<>();
+        int[] shape = array.getShape();
+        for (int s : shape) {
+
+        }
+    }
     
     /**
      * Constructor
      * @param array Array
-     * @param dims Dimesions
+     * @param dims Dimensions
      */
     public DimArray(Array array, List<Dimension> dims) {
         this.array = array;
@@ -132,7 +143,7 @@ public class DimArray {
      * @param size Size
      * @param stride Stride
      * @return Section result dim array
-     * @throws InvalidRangeException 
+     * @throws InvalidRangeException
      */
     public DimArray section(int[] origin, int[] size, int[] stride) throws InvalidRangeException {
         Array r = this.array.section(origin, size, stride);

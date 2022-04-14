@@ -20,6 +20,8 @@ import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
+import org.meteoinfo.data.dimarray.Dimension;
+import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.data.meteodata.*;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;

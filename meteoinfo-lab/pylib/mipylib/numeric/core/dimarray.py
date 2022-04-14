@@ -10,7 +10,8 @@ from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.geometry.geoprocess import GeometryUtil
 from org.meteoinfo.common import ResampleMethods
 from org.meteoinfo.common import PointD
-from org.meteoinfo.ndarray import Array, Range, MAMath, DataType, Dimension, DimensionType
+from org.meteoinfo.ndarray import Array, Range, MAMath, DataType
+from org.meteoinfo.data.dimarray import Dimension, DimensionType
 from ._ndarray import NDArray
 import math
 import datetime
@@ -589,7 +590,7 @@ class DimArray(NDArray):
         return self.dims[idx].getLength()
         
     def dimvalue(self, idx=0, convert=False):
-        '''
+        """
         Get dimension values.
         
         :param idx: (*int*) Dimension index.
@@ -597,26 +598,27 @@ class DimArray(NDArray):
             is ``False``.
         
         :returns: (*array_like*) Dimension values
-        '''
+        """
         dim = self.dims[idx]
         if convert:
             if dim.getDimType() == DimensionType.T:
                 return miutil.nums2dates(dim.getDimValue())
             else:
-                return NDArray(ArrayUtil.array(self.dims[idx].getDimValue()))
+                return NDArray(self.dims[idx].getDimValue())
         else:
-            return NDArray(ArrayUtil.array(self.dims[idx].getDimValue()))
+            return NDArray(self.dims[idx].getDimValue())
         
     def setdimvalue(self, idx, dimvalue):
-        '''
+        """
         Set dimension value.
         
         :param idx: (*int*) Dimension index.
         :param dimvalue: (*array_like*) Dimension value.
-        '''
+        """
         if isinstance(dimvalue, NDArray):
-            dimvalue = dimvalue.aslist()
-        self.dims[idx].setDimValues(dimvalue)
+            self.dims[idx].setDimValue(dimvalue._array)
+        else:
+            self.dims[idx].setDimValues(dimvalue)
         
     def setdimtype(self, idx, dimtype):
         '''
@@ -1422,8 +1424,27 @@ class DimArray(NDArray):
                     gdata.saveAsMICAPS4File(fname, desc, date, hours, level, smooth, boldvalue, float_format)
                 else:
                     gdata.saveAsMICAPS4File(fname, desc, date, hours, level, smooth, boldvalue, float_format, proj)
-    
-       
+
+def dim_array(a, dims=None):
+    """
+    Create a dimension array (DimArray).
+
+    :param a: (*array_like*) Array (NDArray) or data list.
+    :param dims: (*list*) List of dimensions.
+
+    :returns: (*DimArray*) Dimension array.
+    """
+    if not isinstance(a, NDArray):
+        a = array(a)
+    if dims is None:
+        dims = []
+        for i in range(a.ndim):
+            dim = Dimension()
+            dim.setDimValues(range(a.shape[i]))
+            dims.append(dim)
+    return DimArray(a, dims)
+
+
 # The encapsulate class of GridData
 class PyGridData():
     

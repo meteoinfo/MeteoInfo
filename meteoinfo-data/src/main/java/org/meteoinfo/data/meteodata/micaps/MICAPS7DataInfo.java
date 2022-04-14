@@ -27,6 +27,8 @@
 
  import org.meteoinfo.common.PointD;
  import org.meteoinfo.common.util.JDateUtil;
+ import org.meteoinfo.data.dimarray.Dimension;
+ import org.meteoinfo.data.dimarray.DimensionType;
  import org.meteoinfo.data.meteodata.*;
  import org.meteoinfo.data.meteodata.hysplit.HYSPLITTrajDataInfo;
  import org.meteoinfo.data.meteodata.TrajectoryInfo;

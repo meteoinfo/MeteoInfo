@@ -946,7 +946,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 this.jComboBox_Level.removeAllItems();
                 if (this._meteoDataInfo.isSWATHData()) {
                     Variable lonvar = _meteoDataInfo.getDataInfo().getVariable("longitude");
-                    org.meteoinfo.ndarray.Dimension ldim = var.getLevelDimension(lonvar);
+                    org.meteoinfo.data.dimarray.Dimension ldim = var.getLevelDimension(lonvar);
                     if (ldim == null) {
                         this.jComboBox_Level.addItem("Surface");
                         this.jComboBox_Level.setSelectedIndex(0);

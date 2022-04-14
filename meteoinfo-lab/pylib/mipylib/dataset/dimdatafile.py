@@ -6,7 +6,7 @@
 #-----------------------------------------------------
 from org.meteoinfo.data.meteodata import MeteoDataType
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
-from org.meteoinfo.ndarray import DimensionType, Dimension
+from org.meteoinfo.data.dimarray import DimensionType, Dimension
 from ucar.ma2 import DataType as NCDataType
 from ucar.nc2 import Attribute as NCAttribute
 from ucar.nc2 import Variable as NCVariable
@@ -16,7 +16,7 @@ from mipylib.dataframe.dataframe import DataFrame
 import mipylib.miutil as miutil
 import mipylib.numeric as np
 from mipylib.numeric.core._dtype import DataType
-from .ncutil import convert_variable, to_dtype
+from .ncutil import to_dtype
 
 import datetime
 

@@ -9,7 +9,8 @@ import os
 import datetime
 
 from org.meteoinfo.data.meteodata import MeteoDataInfo
-from org.meteoinfo.ndarray import Dimension, DimensionType, DataType
+from org.meteoinfo.ndarray import DataType
+from org.meteoinfo.data.dimarray import Dimension, DimensionType
 from org.meteoinfo.data.meteodata.arl import ARLDataInfo
 from org.meteoinfo.data.meteodata.bufr import BufrDataInfo
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo

@@ -1403,7 +1403,7 @@ public class MeteoDataInfo {
     public double toStation(String varName, double x, double y, double z, int tidx) {
         double ivalue = this.getDataInfo().getMissingValue();
         Variable var = this.getDataInfo().getVariable(varName);
-        List<Double> levels = var.getZDimension().getDimValue();
+        List<Double> levels = var.getZDimension().getDimValueList();
         int znum = levels.size();
         double v_z1, v_z2;
         this.setTimeIndex(tidx);
@@ -1481,7 +1481,7 @@ public class MeteoDataInfo {
         List<Double> ivalues = new ArrayList<>();
         double ivalue;
         Variable var = this.getDataInfo().getVariable(varNames.get(0));
-        List<Double> levels = var.getZDimension().getDimValue();
+        List<Double> levels = var.getZDimension().getDimValueList();
         int znum = levels.size();
         double v_z1, v_z2;
         this.setTimeIndex(tidx);

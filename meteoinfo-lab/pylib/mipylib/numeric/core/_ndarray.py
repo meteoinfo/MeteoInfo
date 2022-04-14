@@ -6,7 +6,7 @@ NDArray class - multiple dimensional array
 from org.meteoinfo.data import GridArray
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.math.linalg import LinalgUtil
-from org.meteoinfo.ndarray import Array, Range, MAMath, Complex, Dimension
+from org.meteoinfo.ndarray import Array, Range, MAMath, Complex
 
 import datetime
 

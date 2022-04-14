@@ -17,7 +17,7 @@ from java.lang import Math, Double
 from java.util import Calendar
 from org.meteoinfo.data import GridData, GridArray, StationData, DataMath, TableData, TableUtil
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
-from org.meteoinfo.ndarray import Array, Dimension
+from org.meteoinfo.ndarray import Array
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.math.linalg import LinalgUtil
 from org.python.core import PyComplex
@@ -41,7 +41,7 @@ __all__ = [
     'asgriddata','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
     'concatenate','corrcoef','cos','cosh','cumsum','cylinder','degrees','delete','delnan','diag','diff',
-    'dim_array','datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
+    'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','identity','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','linspace','log','log10','logical_not','logspace',
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
@@ -127,26 +127,7 @@ def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
         a = a.reshape(shape)
 
     return a
-    
-def dim_array(a, dims=None):
-    '''
-    Create a dimension array (DimArray).
-    
-    :param a: (*array_like*) Array (NDArray) or data list.
-    :param dims: (*list*) List of dimensions.
-    
-    :returns: (*DimArray*) Dimension array.
-    '''
-    if not isinstance(a, NDArray):
-        a = array(a)
-    if dims is None:
-        dims = []
-        for i in range(a.ndim):
-            dim = Dimension()
-            dim.setDimValues(range(a.shape[i]))
-            dims.append(dim)
-    return DimArray(a, dims)
-    
+
 def isarray(a):
     '''
     Check if input object is an array or not.

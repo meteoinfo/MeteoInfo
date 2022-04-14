@@ -29,8 +29,8 @@ import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.ndarray.Dimension;
-import org.meteoinfo.ndarray.DimensionType;
+import org.meteoinfo.data.dimarray.Dimension;
+import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.Variable;
@@ -209,7 +209,7 @@ public class MICAPS131DataInfo extends DataInfo implements IGridDataInfo {
             br.close();
 
             Dimension tdim = new Dimension(DimensionType.T);
-            tdim.addValue(JDateUtil.toOADate(time));
+            tdim.setValue(JDateUtil.toOADate(time));
             this.setTimeDimension(tdim);
             this.addDimension(tdim);
             Dimension zdim = new Dimension(DimensionType.Z);

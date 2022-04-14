@@ -15,7 +15,6 @@ package org.meteoinfo.data;
 
 import java.io.BufferedReader;
 
-import org.locationtech.proj4j.datum.Grid;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
@@ -31,18 +30,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
 import org.meteoinfo.common.ResampleMethods;
-import org.meteoinfo.common.util.GlobalUtil;
-import org.meteoinfo.ndarray.Dimension;
-import org.meteoinfo.ndarray.DimensionType;
-import org.meteoinfo.ndarray.math.ArrayUtil;
+import org.meteoinfo.data.dimarray.Dimension;
+import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.ndarray.Array;

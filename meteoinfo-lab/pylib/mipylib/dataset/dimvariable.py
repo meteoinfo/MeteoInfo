@@ -4,7 +4,8 @@
 # Purpose: MeteoInfo Dataset module
 # Note: Jython
 #-----------------------------------------------------
-from org.meteoinfo.ndarray import Dimension, DimensionType, Range, Array, MAMath
+from org.meteoinfo.ndarray import Range, Array, MAMath
+from org.meteoinfo.data.dimarray import Dimension, DimensionType
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.common import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject

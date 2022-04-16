@@ -16,6 +16,7 @@ package org.meteoinfo.data.meteodata.micaps;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.StationData;
+import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.dimarray.DimensionType;

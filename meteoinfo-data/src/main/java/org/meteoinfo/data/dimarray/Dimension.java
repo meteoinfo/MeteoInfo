@@ -40,12 +40,21 @@ public class Dimension {
     private boolean shared = true;
     private boolean reverse = false;
     private String unit = "null";
+    private boolean stagger = false;
 
     /**
      * Constructor
      */
     public Dimension() {
         this("null", 1);
+    }
+
+    /**
+     * Constructor
+     * @param len Length
+     */
+    public Dimension(int len) {
+        this("null", len);
     }
 
     /**
@@ -79,7 +88,7 @@ public class Dimension {
     public Dimension(String name, Array dimValue, DimensionType dimType) {
         this.name = name;
         this.dimType = dimType;
-        this.dimValue = dimValue;
+        this.dimValue = dimValue.copyIfView();
     }
 
     /**
@@ -117,6 +126,19 @@ public class Dimension {
         this(name, len);
         this.dimType = dimType;
         dimValue = ArrayUtil.arrayRange1(min, len, delta);
+    }
+
+    /**
+     * Constructor
+     * @param dimension Other dimension
+     */
+    public Dimension(Dimension dimension) {
+        this.name = dimension.getName();
+        this.dimId = dimension.getDimId();
+        this.unit = dimension.getUnit();
+        this.dimType = dimension.getDimType();
+        this.stagger = dimension.isStagger();
+        this.unlimited = dimension.isUnlimited();
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -206,7 +228,7 @@ public class Dimension {
      * @param value Dimension values
      */
     public void setDimValue(Array value) {
-        this.dimValue = value;
+        this.dimValue = value.copyIfView();
     }
     
     /**
@@ -324,6 +346,22 @@ public class Dimension {
      */
     public void setUnit(String value) {
         this.unit = value;
+    }
+
+    /**
+     * Get whether is stagger dimension
+     * @return Whether is stagger dimension
+     */
+    public boolean isStagger() {
+        return this.stagger;
+    }
+
+    /**
+     * Set whether is stagger dimension
+     * @param value Whether is stagger dimension
+     */
+    public void setStagger(boolean value) {
+        this.stagger = value;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -474,46 +512,38 @@ public class Dimension {
      * @return Extracted dimension
      */
     public Dimension extract(int first, int last, int stride) {
-        /*int n = (last - first) / stride + 1;
+        int n = (last - first) / stride + 1;
         Dimension dim = new Dimension(this.getShortName(), n, this.dimType);
         dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
         //dim.setReverse(this.reverse);
-        if (this.dimValue.size() > last) {
+        if (this.dimValue.getSize() > last) {
             List<Double> values = new ArrayList<>();
             if (first <= last) {
                 if (stride > 0) {
                     for (int i = first; i <= last; i += stride) {
-                        values.add(this.dimValue.get(i));
+                        values.add(this.dimValue.getDouble(i));
                     }
                 } else {
                     for (int i = last; i >= first; i += stride) {
-                        values.add(this.dimValue.get(i));
+                        values.add(this.dimValue.getDouble(i));
                     }
                 }
             } else {
                 if (stride > 0) {
                     for (int i = last; i <= first; i += stride) {
-                        values.add(this.dimValue.get(i));
+                        values.add(this.dimValue.getDouble(i));
                     }
                 } else {
                     for (int i = first; i >= last; i += stride) {
-                        values.add(this.dimValue.get(i));
+                        values.add(this.dimValue.getDouble(i));
                     }
                 }
             }
             dim.setValues(values);
         }
 
-        return dim;*/
-
-        try {
-            Range range = new Range(first, last, stride);
-            return extract(range);
-        } catch (InvalidRangeException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return dim;
     }
 
     /**
@@ -586,17 +616,16 @@ public class Dimension {
      * @return Index
      */
     public int getValueIndex(double v) {
-        return ArrayUtil.getDimIndex(this.dimValue, v);
-        /*int idx = this.dimValue.indexOf(v);
+        int idx = Arrays.asList(this.dimValue).indexOf(v);
         if (idx < 0) {
             idx = this.getLength() - 1;
             if (getDeltaValue() > 0) {
                 for (int i = 0; i < this.getLength(); i++) {
-                    if (v <= this.dimValue.get(i)) {
+                    if (v <= this.dimValue.getDouble(i)) {
                         if (i == 0)
                             idx = 0;
                         else {
-                            if (this.dimValue.get(i) - v > v - this.dimValue.get(i - 1))
+                            if (this.dimValue.getDouble(i) - v > v - this.dimValue.getDouble(i - 1))
                                 idx = i - 1;
                             else
                                 idx = i;
@@ -606,11 +635,11 @@ public class Dimension {
                 }
             } else {
                 for (int i = 0; i < this.getLength(); i++) {
-                    if (v >= this.dimValue.get(i)) {
+                    if (v >= this.dimValue.getDouble(i)) {
                         if (i == 0)
                             idx = 0;
                         else {
-                            if (this.dimValue.get(i - 1) - v > v - this.dimValue.get(i))
+                            if (this.dimValue.getDouble(i - 1) - v > v - this.dimValue.getDouble(i))
                                 idx = i;
                             else
                                 idx = i - 1;
@@ -621,11 +650,7 @@ public class Dimension {
             }
         }
 
-        *//*if (this.reverse) {
-            idx = this.getLength() - idx - 1;
-        }*//*
-
-        return idx;*/
+        return idx;
     }
 
     /**
@@ -648,6 +673,8 @@ public class Dimension {
         sb.append("Size: ").append(String.valueOf(this.getLength()));
         sb.append("\n");
         sb.append("Delta: ").append(String.valueOf(this.getDeltaValue()));
+        sb.append("\n");
+        sb.append("Unit: ").append(this.unit);
 
         return sb.toString();
     }

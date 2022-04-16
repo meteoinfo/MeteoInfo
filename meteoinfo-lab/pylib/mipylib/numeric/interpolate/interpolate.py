@@ -9,7 +9,7 @@
 from org.meteoinfo.math.interpolate import InterpUtil, RectLinearInterpolator, RectNearestInterpolator, \
     RectNearestInterpolator3D, RectLinearInterpolator3D
 from org.meteoinfo.ndarray.math import ArrayUtil
-from org.meteoinfo.geometry.geoprocess import GeometryUtil
+from org.meteoinfo.geometry.geoprocess import GeometryUtil, GeoComputation
 
 from ..core import NDArray
 from ..core import numeric as np
@@ -513,7 +513,7 @@ def griddata(points, values, xi=None, **kwargs):
         r = InterpUtil.interpolation_Inside_Count(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), True, centerpoint)
         return NDArray(r[0]), x_g, y_g, NDArray(r[1])
     elif method == 'surface':
-        r = InterpUtil.interpolation_Surface(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray())
+        r = GeoComputation.interpolation_Surface(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray())
     elif method == 'kriging':
         beta = kwargs.pop('beta', 1.5)
         r = InterpUtil.gridDataKriging(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(), beta)

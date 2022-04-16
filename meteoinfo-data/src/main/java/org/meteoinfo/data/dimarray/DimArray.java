@@ -29,12 +29,16 @@ public class DimArray {
         this.dimensions = new ArrayList<>();
     }
 
+    /**
+     * Constructor
+     * @param array The array
+     */
     public DimArray(Array array) {
         this.array = array;
         this.dimensions = new ArrayList<>();
         int[] shape = array.getShape();
         for (int s : shape) {
-
+            this.dimensions.add(new Dimension(s));
         }
     }
     
@@ -136,7 +140,89 @@ public class DimArray {
     public double getDimValue(int dimIdx, int vIdx) {
         return this.dimensions.get(dimIdx).getDimValue(vIdx);
     }
-    
+
+    /**
+     * Get stagger dimension
+     * @return Stagger dimension
+     */
+    public Dimension getStaggerDim() {
+        for (Dimension dim : this.dimensions) {
+            if (dim.isStagger()) {
+                return dim;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get stagger dimension index
+     * @return Stagger dimension index
+     */
+    public int getStaggerDimIndex() {
+        int i = 0;
+        for (Dimension dim : this.dimensions) {
+            if (dim.isStagger()) {
+                return i;
+            }
+            i += 1;
+        }
+
+        return -1;
+    }
+
+    /**
+     * Get X dimension
+     * @return X dimension
+     */
+    public Dimension getXDimension() {
+        for (Dimension dim : this.dimensions) {
+            if (dim.getDimType() == DimensionType.X) {
+                return dim;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get Y dimension
+     * @return Y dimension
+     */
+    public Dimension getYDimension() {
+        for (Dimension dim : this.dimensions) {
+            if (dim.getDimType() == DimensionType.Y) {
+                return dim;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get Z dimension
+     * @return Z dimension
+     */
+    public Dimension getZDimension() {
+        for (Dimension dim : this.dimensions) {
+            if (dim.getDimType() == DimensionType.Z) {
+                return dim;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get time dimension
+     * @return Time dimension
+     */
+    public Dimension getTDimension() {
+        for (Dimension dim : this.dimensions) {
+            if (dim.getDimType() == DimensionType.T) {
+                return dim;
+            }
+        }
+        return null;
+    }
+
     /**
      * Section
      * @param origin Origin

@@ -14,6 +14,7 @@
 package org.meteoinfo.data.meteodata;
 
 import org.meteoinfo.common.util.JDateUtil;
+import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.data.dimarray.Dimension;
 
@@ -21,9 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.Range;
-import org.meteoinfo.ndarray.Section;
+import org.meteoinfo.ndarray.*;
 
 /**
  *
@@ -31,9 +30,6 @@ import org.meteoinfo.ndarray.Section;
  */
 public class Variable {
     // <editor-fold desc="Variables">
-    /// <summary>
-    /// Parameter number
-    /// </summary>
 
     public int Number;
     private  String name;
@@ -42,21 +38,17 @@ public class Variable {
     protected int[] shape = new int[0];
     protected List<Dimension> dimensions = new ArrayList<>();
     protected List<Attribute> attributes = new ArrayList<>();
-    private int _levelType;
-    private List<Double> _levels;
+    private int levelType;
+    private List<Double> levels;
     private String units;
-    private String _description;
-    //private List<Dimension> _dimensions = new ArrayList<>();
-    private String _hdfPath;
-    private boolean _isStation = false;
-    private boolean _isSwath = false;
-    //private NetCDF4.NcType _ncType;
-    //private List<Attribute> _attributes = new ArrayList<>();
-    //private int _attNumber;
-    private int _varId;
+    private String description;
+    private String hdfPath;
+    private boolean isStation = false;
+    private boolean isSwath = false;
+    private int varId;
     private boolean dimVar = false;
-    private List<Integer> _levelIdxs = new ArrayList<>();
-    private List<Integer> _varInLevelIdxs = new ArrayList<>();
+    private List<Integer> levelIdxs = new ArrayList<>();
+    private List<Integer> varInLevelIdxs = new ArrayList<>();
     private double fill_value = -9999.0;
     private double scale_factor = 1;
     private double add_offset = 0;
@@ -70,9 +62,9 @@ public class Variable {
         this.name = "null";
         this.shortName = null;
         this.dataType = DataType.FLOAT;
-        _levels = new ArrayList<>();
+        levels = new ArrayList<>();
         units = "null";
-        _description = "null";
+        description = "null";
     }
 
     /**
@@ -87,8 +79,8 @@ public class Variable {
         Number = aNum;
         this.name = aName;
         this.units = aUnit;
-        _description = aDesc;
-        _levels = new ArrayList<>();
+        description = aDesc;
+        levels = new ArrayList<>();
     }
 
     // </editor-fold>
@@ -218,7 +210,7 @@ public class Variable {
      * @return Level type
      */
     public int getLevelType() {
-        return _levelType;
+        return levelType;
     }
 
     /**
@@ -227,7 +219,7 @@ public class Variable {
      * @param value Level type
      */
     public void setLevelType(int value) {
-        _levelType = value;
+        levelType = value;
     }
 
     /**
@@ -239,7 +231,7 @@ public class Variable {
         //return _levels;
         Dimension zDim = this.getZDimension();
         if (zDim == null) {
-            return _levels;
+            return levels;
         } else {
             return zDim.getDimValueList();
         }
@@ -251,7 +243,7 @@ public class Variable {
      * @param value Levels
      */
     public void setLevels(List<Double> value) {
-        _levels = value;
+        levels = value;
         this.updateZDimension();
     }
 
@@ -279,7 +271,7 @@ public class Variable {
      * @return Description
      */
     public String getDescription() {
-        return _description;
+        return description;
     }
 
     /**
@@ -288,7 +280,7 @@ public class Variable {
      * @param value Description
      */
     public void setDescription(String value) {
-        _description = value;
+        description = value;
     }
 
     /**
@@ -321,7 +313,7 @@ public class Variable {
      * @return HDF path
      */
     public String getHDFPath() {
-        return _hdfPath;
+        return hdfPath;
     }
 
     /**
@@ -330,7 +322,7 @@ public class Variable {
      * @param value HDF path
      */
     public void setHDFPath(String value) {
-        _hdfPath = value;
+        hdfPath = value;
     }
 
     /**
@@ -425,7 +417,7 @@ public class Variable {
      * @return Boolean
      */
     public boolean isStation() {
-        return _isStation;
+        return isStation;
     }
 
     /**
@@ -434,7 +426,7 @@ public class Variable {
      * @param value Boolean
      */
     public void setStation(boolean value) {
-        _isStation = value;
+        isStation = value;
     }
 
     /**
@@ -443,7 +435,7 @@ public class Variable {
      * @return Boolean
      */
     public boolean isSwath() {
-        return _isSwath;
+        return isSwath;
     }
 
     /**
@@ -452,7 +444,7 @@ public class Variable {
      * @param value Boolean
      */
     public void setSwath(boolean value) {
-        _isSwath = value;
+        isSwath = value;
     }
 
     /**
@@ -461,7 +453,7 @@ public class Variable {
      * @return Boolean
      */
     public boolean isPlottable() {
-        if (_isStation) {
+        if (isStation) {
             return true;
         }
         if (this.getXDimension() == null) {
@@ -489,7 +481,7 @@ public class Variable {
      * @return Variable identifer
      */
     public int getVarId() {
-        return _varId;
+        return varId;
     }
 
     /**
@@ -498,7 +490,7 @@ public class Variable {
      * @param value Variable identifer
      */
     public void setVarId(int value) {
-        _varId = value;
+        varId = value;
     }
 
     /**
@@ -525,7 +517,7 @@ public class Variable {
      * @return Level index list
      */
     public List<Integer> getLevelIdxs() {
-        return _levelIdxs;
+        return levelIdxs;
     }
 
     /**
@@ -534,7 +526,7 @@ public class Variable {
      * @param value Level index list
      */
     public void setLevelIdxs(List<Integer> value) {
-        _levelIdxs = value;
+        levelIdxs = value;
     }
 
     /**
@@ -543,7 +535,7 @@ public class Variable {
      * @return Variable index
      */
     public List<Integer> getVarInLevelIdxs() {
-        return _varInLevelIdxs;
+        return varInLevelIdxs;
     }
 
     /**
@@ -552,7 +544,7 @@ public class Variable {
      * @param value Variable index
      */
     public void setVarInLevelIdxs(List<Integer> value) {
-        _varInLevelIdxs = value;
+        varInLevelIdxs = value;
     }
 
     /**
@@ -651,15 +643,13 @@ public class Variable {
         aPar.setName(this.getName());
         aPar.setShortName(this.getShortName());
         aPar.setUnits(units);
-        aPar.setDescription(_description);
-        aPar.setLevelType(_levelType);
+        aPar.setDescription(description);
+        aPar.setLevelType(levelType);
 
-        //aPar.getAttributes().addAll(_attributes);
         aPar.getDimensions().addAll(this.getDimensions());
         aPar.setDimVar(dimVar);
-        aPar.getLevels().addAll(_levels);
-        //aPar.NCType = _ncType;
-        aPar.setVarId(_varId);
+        aPar.getLevels().addAll(levels);
+        aPar.setVarId(varId);
 
         return aPar;
     }
@@ -677,7 +667,7 @@ public class Variable {
         if (Number != aVar.Number) {
             return false;
         }
-        if (!_description.equals(aVar.getDescription())) {
+        if (!description.equals(aVar.getDescription())) {
             return false;
         }
         if (!units.equals(aVar.getUnits())) {
@@ -700,13 +690,13 @@ public class Variable {
         if (Number != aVar.Number) {
             return false;
         }
-        if (!_description.equals(aVar.getDescription())) {
+        if (!description.equals(aVar.getDescription())) {
             return false;
         }
         if (!units.equals(aVar.getUnits())) {
             return false;
         }
-        if (_levelType != aVar.getLevelType()) {
+        if (levelType != aVar.getLevelType()) {
             return false;
         }
 
@@ -719,8 +709,8 @@ public class Variable {
      * @param levelValue Level value
      */
     public void addLevel(double levelValue) {
-        if (!_levels.contains(levelValue)) {
-            _levels.add(levelValue);
+        if (!levels.contains(levelValue)) {
+            levels.add(levelValue);
         }
     }
 
@@ -1221,11 +1211,33 @@ public class Variable {
      * Update z dimension from levels
      */
     public void updateZDimension() {
-        if (_levels.size() > 0) {
+        if (levels.size() > 0) {
             Dimension zdim = new Dimension("null", 0, DimensionType.Z);
-            zdim.setValues(_levels);
+            zdim.setValues(levels);
             this.setZDimension(zdim);
         }
+    }
+
+    /**
+     * Section dimensions
+     * @param origin Origin
+     * @param size Size
+     * @param stride Stride
+     * @return Section result dimensions
+     * @throws InvalidRangeException
+     */
+    public List<Dimension> sectionDimensions(int[] origin, int[] size, int[] stride) throws InvalidRangeException {
+        Section section = new Section(origin, size, stride);
+        List<Dimension> dims = new ArrayList<>();
+        for (int i = 0; i < section.getRank(); i++) {
+            Range range = section.getRange(i);
+            if (range.length() > 1) {
+                Dimension dim = this.dimensions.get(i).extract(range);
+                dims.add(dim);
+            }
+        }
+
+        return dims;
     }
 
     /**

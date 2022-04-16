@@ -2672,4 +2672,101 @@ public class GeoComputation {
     }
 
     // </editor-fold>
+
+    // <editor-fold desc="Interpolation">
+    /**
+     * Interpolate with surface method
+     *
+     * @param x_s scatter X array
+     * @param y_s scatter Y array
+     * @param a scatter value array
+     * @param X x coordinate
+     * @param Y y coordinate
+     * @return grid data
+     */
+    public static Array interpolation_Surface(Array x_s, Array y_s, Array a, Array X, Array Y) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+        X = X.copyIfView();
+        Y = Y.copyIfView();
+
+        int rowNum, colNum, xn, yn;
+        int[] shape = x_s.getShape();
+        colNum = shape[1];
+        rowNum = shape[0];
+        xn = (int) X.getSize();
+        yn = (int) Y.getSize();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{yn, xn});
+        for (int i = 0; i < r.getSize(); i++) {
+            r.setDouble(i, Double.NaN);
+        }
+
+        double x, y;
+        double v, xll, xtl, xtr, xlr, yll, ytl, ytr, ylr;
+        double dX = X.getDouble(1) - X.getDouble(0);
+        double dY = Y.getDouble(1) - Y.getDouble(0);
+        int minxi, maxxi, minyi, maxyi;
+        for (int i = 0; i < rowNum - 1; i++) {
+            for (int j = 0; j < colNum - 1; j++) {
+                v = a.getDouble(i * colNum + j);
+                if (Double.isNaN(v)) {
+                    continue;
+                }
+                xll = x_s.getDouble(i * colNum + j);
+                xtl = x_s.getDouble((i + 1) * colNum + j);
+                xtr = x_s.getDouble((i + 1) * colNum + j + 1);
+                xlr = x_s.getDouble(i * colNum + j + 1);
+                yll = y_s.getDouble(i * colNum + j);
+                ytl = y_s.getDouble((i + 1) * colNum + j);
+                ytr = y_s.getDouble((i + 1) * colNum + j + 1);
+                ylr = y_s.getDouble(i * colNum + j + 1);
+                if (Double.isNaN(xll) || Double.isNaN(xtl) || Double.isNaN(xtr) || Double.isNaN(xlr)
+                        || Double.isNaN(yll) || Double.isNaN(ytl) || Double.isNaN(ytr) || Double.isNaN(ylr)) {
+                    continue;
+                }
+                PolygonShape ps = new PolygonShape();
+                List<PointD> points = new ArrayList<>();
+                points.add(new PointD(xll, yll));
+                points.add(new PointD(xtl, ytl));
+                points.add(new PointD(xtr, ytr));
+                points.add(new PointD(xlr, ylr));
+                points.add((PointD) points.get(0).clone());
+                ps.setPoints(points);
+                minxi = (int) ((ps.getExtent().minX - X.getDouble(0)) / dX);
+                maxxi = (int) ((ps.getExtent().maxX - X.getDouble(0)) / dX);
+                minyi = (int) ((ps.getExtent().minY - Y.getDouble(0)) / dY);
+                maxyi = (int) ((ps.getExtent().maxY - Y.getDouble(0)) / dY);
+                maxxi += 1;
+                maxyi += 1;
+                if (maxxi < 0 || minxi >= xn) {
+                    continue;
+                }
+                if (maxyi < 0 || minyi >= yn) {
+                    continue;
+                }
+                if (minxi < 0) {
+                    minxi = 0;
+                }
+                if (maxxi >= xn) {
+                    maxxi = xn - 1;
+                }
+                if (maxyi >= yn) {
+                    maxyi = yn - 1;
+                }
+                for (int m = minyi; m <= maxyi; m++) {
+                    y = Y.getDouble(m);
+                    for (int n = minxi; n <= maxxi; n++) {
+                        x = X.getDouble(n);
+                        if (GeoComputation.pointInPolygon(ps, x, y)) {
+                            r.setDouble(m * xn + n, v);
+                        }
+                    }
+                }
+            }
+        }
+
+        return r;
+    }
+    // </editor-fold>
 }

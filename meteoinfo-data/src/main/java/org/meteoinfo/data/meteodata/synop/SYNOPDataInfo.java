@@ -17,6 +17,7 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.StationData;
+import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.dimarray.DimensionType;
@@ -338,6 +339,16 @@ import org.meteoinfo.data.meteodata.Attribute;
       */
      @Override
      public Array read(String varName, int[] origin, int[] size, int[] stride) {
+         return null;
+     }
+
+     @Override
+     public DimArray readDimArray(String varName) {
+         return null;
+     }
+
+     @Override
+     public DimArray readDimArray(String varName, int[] origin, int[] size, int[] stride) {
          return null;
      }
  

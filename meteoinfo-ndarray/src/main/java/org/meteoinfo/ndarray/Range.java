@@ -99,7 +99,7 @@ public final class Range {
     /**
      * Create a range starting at zero, with unit stride.
      *
-     * @param length number of elements in the Rnage
+     * @param length number of elements in the Range
      */
     public Range(int length) {
         this.name = null;

@@ -631,16 +631,13 @@ class Figure(ChartPanel):
                     y -= hspace
             for j in range(ncols):   
                 if axestype == '3d':
-                    ax = Axes3D()
-                    self.__set_axes3d(ax, **kwargs)
+                    ax = Axes3D(**kwargs)
                 elif axestype == 'map':
-                    ax = MapAxes()
-                    self.__set_axesm(ax, **kwargs)
+                    ax = MapAxes(**kwargs)
                 elif axestype == 'polar':
-                    ax = PolarAxes()
+                    ax = PolarAxes(**kwargs)
                 else:
                     ax = Axes(**kwargs)
-                    #self.__set_axes(ax, **kwargs)
                 ax.axes.isSubPlot = True             
                 if not iswspace and not ishspace:
                     x = left + w * j

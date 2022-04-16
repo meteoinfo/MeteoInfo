@@ -1514,7 +1514,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
             this.jComboBox_Level1.setSelectedIndex(0);
         } else {
             for (i = 0; i < var.getLevelNum(); i++) {
-                this.jComboBox_Level1.addItem(String.valueOf(zDim.getDimValue().get(i)));
+                this.jComboBox_Level1.addItem(String.valueOf(zDim.getDimValue().getDouble(i)));
             }
             if ((levelIdx > -1) && (this.jComboBox_Level1.getItemCount() > levelIdx)) {
                 this.jComboBox_Level1.setSelectedIndex(levelIdx);
@@ -1538,13 +1538,13 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         //Set lon/lat
         this.jComboBox_Lon1.removeAllItems();
         for (i = 0; i < (_meteoDataInfo.getDataInfo()).getXDimension().getLength(); i++) {
-            this.jComboBox_Lon1.addItem(String.valueOf((_meteoDataInfo.getDataInfo()).getXDimension().getDimValue().get(i)));
+            this.jComboBox_Lon1.addItem(String.valueOf((_meteoDataInfo.getDataInfo()).getXDimension().getDimValue().getDouble(i)));
         }
         this.jComboBox_Lon1.setSelectedIndex(0);
 
         this.jComboBox_Lat1.removeAllItems();
         for (i = 0; i < (_meteoDataInfo.getDataInfo()).getYDimension().getLength(); i++) {
-            this.jComboBox_Lat1.addItem(String.valueOf((_meteoDataInfo.getDataInfo()).getYDimension().getDimValue().get(i)));
+            this.jComboBox_Lat1.addItem(String.valueOf((_meteoDataInfo.getDataInfo()).getYDimension().getDimValue().getDouble(i)));
         }
         this.jComboBox_Lat1.setSelectedIndex(0);
 

@@ -15,8 +15,8 @@ __all__ = [
     ]
 
 def destagger(var, stagger_dim):
-    '''
-    Return the variable on the unstaggered grid.
+    """
+    Return the variable data array on the unstaggered grid.
     
     This function destaggers the variable by taking the average of the 
     values located on either side of the grid box. 
@@ -26,8 +26,8 @@ def destagger(var, stagger_dim):
         Negative values can be used to choose dimensions referenced 
         from the right hand side (-1 is the rightmost dimension).
         
-    :returns: (*array*) The destaggered variable.
-    '''
+    :returns: (*array*) The destaggered variable data array.
+    """
     var_shape = var.shape
     num_dims = var.ndim
     stagger_dim_size = var_shape[stagger_dim]

@@ -6,6 +6,7 @@ import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
+import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.dataframe.Column;
@@ -507,6 +508,16 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
             Logger.getLogger(MDFSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
+    }
+
+    @Override
+    public DimArray readDimArray(String varName) {
+        return null;
+    }
+
+    @Override
+    public DimArray readDimArray(String varName, int[] origin, int[] size, int[] stride) {
+        return null;
     }
 
     @Override

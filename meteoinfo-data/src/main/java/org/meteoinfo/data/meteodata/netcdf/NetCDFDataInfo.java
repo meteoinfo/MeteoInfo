@@ -18,6 +18,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
+import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
@@ -1453,6 +1454,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             Dimension ysdim = findDimension("south_north_stag");
             if (xsdim != null && ysdim != null) {
                 xsdim.setDimType(DimensionType.X);
+                xsdim.setStagger(true);
                 double[] nX = new double[xNum + 1];
                 double norgX = orgX - dx * 0.5;
                 for (i = 0; i <= xNum; i++) {
@@ -1461,6 +1463,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 xsdim.setValues(nX);
 
                 ysdim.setDimType(DimensionType.Y);
+                ysdim.setStagger(true);
                 double[] nY = new double[yNum + 1];
                 double norgY = orgY - dx * 0.5;
                 for (i = 0; i <= yNum; i++) {
@@ -1497,6 +1500,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
                 zDim.setDimType(DimensionType.Z);
+                zDim.setStagger(true);
                 //zDim.setDimName(_levelVar.getShortName());
                 zDim.setValues(levels);
                 zDim.setUnit("eta");

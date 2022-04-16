@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.meteoinfo.common.util.JDateUtil;
+import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.dimarray.Dimension;
+import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 
@@ -521,6 +523,23 @@ import org.meteoinfo.projection.ProjectionInfo;
      public abstract Array read(String varName);
 
      /**
+      * Read dimension array data
+      * @param varName Variable name
+      * @return Dimension array
+      */
+     public DimArray readDimArray(String varName) {
+         Variable variable = this.getVariable(varName);
+         if (variable == null) {
+             System.out.println("The variable is not exist: " + varName);
+             return null;
+         }
+
+         Array array = read(varName);
+
+         return new DimArray(array, variable.getDimensions());
+     }
+
+     /**
       * Read array data
       *
       * @param varName Variable name
@@ -530,6 +549,32 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @return Array
       */
      public abstract Array read(String varName, int[] origin, int[] size, int[] stride);
+
+     /**
+      * Read dimension array data
+      *
+      * @param varName Variable name
+      * @param origin Origin array
+      * @param size Size array
+      * @param stride Stride array
+      * @return Dimension array
+      */
+     public DimArray readDimArray(String varName, int[] origin, int[] size, int[] stride) {
+         Variable variable = this.getVariable(varName);
+         if (variable == null) {
+             System.out.println("The variable is not exist: " + varName);
+             return null;
+         }
+
+         Array array = read(varName, origin, size, stride);
+         try {
+             List<Dimension> dimensions = variable.sectionDimensions(origin, size, stride);
+             return new DimArray(array, dimensions);
+         } catch (InvalidRangeException e) {
+             e.printStackTrace();
+             return new DimArray(array);
+         }
+     }
 
      /**
       * Get global attributes

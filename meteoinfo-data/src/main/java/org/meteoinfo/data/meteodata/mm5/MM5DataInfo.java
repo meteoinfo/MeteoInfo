@@ -23,6 +23,7 @@ import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
+import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.dimarray.DimensionType;

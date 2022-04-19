@@ -24,6 +24,8 @@ import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.Range;
+import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 
@@ -574,6 +576,20 @@ import org.meteoinfo.projection.ProjectionInfo;
              e.printStackTrace();
              return new DimArray(array);
          }
+     }
+
+     /**
+      * Read dimension array data
+      *
+      * @param varName Variable name
+      * @param ranges Range list
+      * @return Dimension array
+      */
+     public DimArray readDimArray(String varName, List<Range> ranges) {
+         int[] origin = new int[1], size = new int[1], stride = new int[1];
+         ArrayMath.rangesToSection(ranges, origin, size, stride);
+
+         return readDimArray(varName, origin, size, stride);
      }
 
      /**

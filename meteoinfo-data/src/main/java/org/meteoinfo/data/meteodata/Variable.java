@@ -1163,6 +1163,22 @@ public class Variable {
     }
 
     /**
+     * Get stagger dimension index
+     * @return Stagger dimension index
+     */
+    public int getStaggerDimIndex() {
+        int i = 0;
+        for (Dimension dim : this.dimensions) {
+            if (dim.isStagger()) {
+                return i;
+            }
+            i += 1;
+        }
+
+        return -1;
+    }
+
+    /**
      * Add an attribute
      *
      * @param attr Attribute

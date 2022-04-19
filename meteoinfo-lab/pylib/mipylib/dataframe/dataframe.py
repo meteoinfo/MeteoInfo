@@ -678,15 +678,39 @@ class DataFrame(object):
             value = value._array 
         self._dataframe.addColumn(loc, column, value)
         
-    def drop(self, columns=None):
-        '''
+    def drop(self, labels=None, axis=0, index=None, columns=None):
+        """
         Drop specified labels from rows or columns.
         
-        :param columns: (*list like*) Column labels.
-        '''
-        if isinstance(columns, basestring):
+        :param labels: (*single label or list-like*) Index or column labels to drop.
+        :param axis: (*0 or ‘index’, 1 or ‘columns’*) Whether to drop labels from the index (0 or ‘index’)
+            or columns (1 or ‘columns’).
+        :param index: (*single label or list-like*) Alternative to specifying axis (labels, axis=0 is
+            equivalent to index=labels).
+        :param columns: (*single label or list-like*) Alternative to specifying axis (labels, axis=1 is
+            equivalent to columns=labels).
+
+        :return: (*DataFrame*) Dropped DataFrame.
+        """
+        drop_index = index is not None
+        drop_col = columns is not None
+        if index is None and columns is None:
+            if labels is None:
+                print('At least one argument needed: labels, index, columns!')
+                raise IndexError
+
+            if axis == 0:
+                index = labels
+            else:
+                columns = labels
+
+        if not index is None and not isinstance(index, (list, tuple)):
+            index = [index]
+        if not columns is None and not isinstance(columns, (list, tuple)):
             columns = [columns]
-        r = self._dataframe.drop(columns)
+
+        r = self._dataframe.drop(index, columns)
+
         return DataFrame(dataframe=r)
 
     def dropna(self, axis=0, how='any', thresh=None, subset=None, inplace=False):

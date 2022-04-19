@@ -3,6 +3,7 @@ package org.meteoinfo.data.meteodata.util;
 import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.InvalidRangeException;
@@ -85,6 +86,32 @@ public class WRFUtil {
         DimArray phb = dataInfo.readDimArray("PHB");
         phb = deStagger(phb);
         DimArray hgt = dataInfo.readDimArray("HGT");
+        Array gpm = ArrayMath.sub(ArrayMath.div(ArrayMath.add(ph.getArray(), phb.getArray()), 9.81), hgt.getArray());
+
+        return new DimArray(gpm, ph.getDimensions());
+    }
+
+    /**
+     * Get geopotential 1-D height array - meter
+     * @param dataInfo The WRF data info
+     * @return Geopotential height
+     */
+    public static DimArray getGPM1D(DataInfo dataInfo) {
+        Variable variable = dataInfo.getVariable("PH");
+        List<Range> ranges = new ArrayList<>();
+        for (Dimension dimension : variable.getDimensions()) {
+            if (dimension.isStagger()) {
+                ranges.add(new Range(dimension.getLength()));
+            } else {
+                ranges.add(new Range(1));
+            }
+        }
+        DimArray ph = dataInfo.readDimArray("PH", ranges);
+        ph = deStagger(ph);
+        DimArray phb = dataInfo.readDimArray("PHB", ranges);
+        phb = deStagger(phb);
+        ranges.remove(1);
+        DimArray hgt = dataInfo.readDimArray("HGT", ranges);
         Array gpm = ArrayMath.sub(ArrayMath.div(ArrayMath.add(ph.getArray(), phb.getArray()), 9.81), hgt.getArray());
 
         return new DimArray(gpm, ph.getDimensions());

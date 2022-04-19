@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\satellite\smap">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\array">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\subplot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\hdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\smap"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe\series"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\typhoon_map_volume.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\wrf\wrf_eta2height.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\smap\pro_SMAP_L4_with_MI.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\drop_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\pearsonr.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\spearmanr.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\delnan_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\typhoon_map_volume.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\wrf\wrf_eta2height.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\smap\pro_SMAP_L4_with_MI.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\drop_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\pearsonr.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\spearmanr.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\array\delnan_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +38,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1435,830"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1397,803"/>
 </MeteoInfo>

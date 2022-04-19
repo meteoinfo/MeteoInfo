@@ -4218,7 +4218,7 @@ public class ArrayMath {
      * Remove NaN values in arrays
      *
      * @param a The arrays
-     * @return The array withou NaN values
+     * @return The array without NaN values
      */
     public static Array[] removeNaN(Array... a) {
         if (a.length == 1) {
@@ -5522,6 +5522,51 @@ public class ArrayMath {
         Array r = Array.factory(a.getDataType(), a.getShape());
         MAMath.copy(r, a);
         return r;
+    }
+
+    /**
+     * Range list to section arrays
+     * @param ranges The Range list
+     * @param origin Origin array
+     * @param size Size array
+     * @param stride Stride array
+     */
+    public static void rangesToSection(List<Range> ranges, int[] origin, int[] size, int[] stride) {
+        int n = ranges.size();
+        origin = new int[n];
+        size = new int[n];
+        stride = new int[n];
+        for (int i = 0; i < n; i++) {
+            origin[i] = ranges.get(i).first();
+            size[i] = ranges.get(i).last() - ranges.get(i).first() + 1;
+            stride[i] = ranges.get(i).stride();
+        }
+    }
+
+    /**
+     * Section arrays to range list
+     * @param origin Origin array
+     * @param size Size array
+     * @param stride Stride array
+     * @return Range list
+     */
+    public static List<Range> sectionToRanges(int[] origin, int[] size, int[] stride) {
+        List<Range> ranges = new ArrayList<>(origin.length);
+        if (stride == null) {
+            stride = new int[origin.length];
+            for (int i = 0; i < stride.length; i++) {
+                stride[i] = 1;
+            }
+        }
+        for (int i = 0; i < origin.length; i++) {
+            try {
+                ranges.add(new Range(origin[i], origin[i] + stride[i] * size[i] - 1, stride[i]));
+            } catch (InvalidRangeException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return ranges;
     }
 
     /**

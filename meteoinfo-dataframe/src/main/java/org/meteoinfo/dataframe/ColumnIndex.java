@@ -92,7 +92,7 @@ public class ColumnIndex extends Index<Column> {
      * @return Indices
      */
     @Override
-    public Integer[] indices(final Object[] names) {
+    public int[] indices(final Object[] names) {
         return indices(Arrays.asList(names));
     }
 
@@ -102,9 +102,9 @@ public class ColumnIndex extends Index<Column> {
      * @return Indices
      */
     @Override
-    public Integer[] indices(final List<Object> names) {
+    public int[] indices(final List<Object> names) {
         final int size = names.size();
-        final Integer[] indices = new Integer[size];
+        final int[] indices = new int[size];
         for (int i = 0; i < size; i++) {
             indices[i] = indexOfName(names.get(i).toString());
         }

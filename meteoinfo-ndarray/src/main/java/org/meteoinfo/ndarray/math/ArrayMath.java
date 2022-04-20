@@ -5533,9 +5533,6 @@ public class ArrayMath {
      */
     public static void rangesToSection(List<Range> ranges, int[] origin, int[] size, int[] stride) {
         int n = ranges.size();
-        origin = new int[n];
-        size = new int[n];
-        stride = new int[n];
         for (int i = 0; i < n; i++) {
             origin[i] = ranges.get(i).first();
             size[i] = ranges.get(i).last() - ranges.get(i).first() + 1;

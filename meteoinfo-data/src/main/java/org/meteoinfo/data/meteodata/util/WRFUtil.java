@@ -26,7 +26,7 @@ public class WRFUtil {
             Range range1 = new Range(0, sDim.getLength() - 2);
             Range range2 = new Range(1, sDim.getLength() - 1);
             Array sDimValue = sDim.getDimValue();
-            Array sDimValue1 = Array.factory(DataType.DOUBLE, new int[]{sDim.getLength()});
+            Array sDimValue1 = Array.factory(DataType.DOUBLE, new int[]{sDim.getLength() - 1});
             for (int i = 0; i < sDimValue1.getSize(); i++) {
                 sDimValue1.setDouble(i, 0.5 * (sDimValue.getDouble(i) + sDimValue.getDouble(i + 1)));
             }

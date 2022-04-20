@@ -586,7 +586,8 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @return Dimension array
       */
      public DimArray readDimArray(String varName, List<Range> ranges) {
-         int[] origin = new int[1], size = new int[1], stride = new int[1];
+         int n = ranges.size();
+         int[] origin = new int[n], size = new int[n], stride = new int[n];
          ArrayMath.rangesToSection(ranges, origin, size, stride);
 
          return readDimArray(varName, origin, size, stride);

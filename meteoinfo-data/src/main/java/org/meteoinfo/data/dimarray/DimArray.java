@@ -247,5 +247,10 @@ public class DimArray {
         
         return new DimArray(rr, dims);
     }
+
+    @Override
+    public String toString() {
+        return this.array.toString();
+    }
     // </editor-fold>
 }

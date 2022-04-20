@@ -496,6 +496,7 @@ public class Dimension {
             Dimension dim = new Dimension(this.getShortName(), a, this.dimType);
             dim.setDimId(this.dimId);
             dim.setUnit(this.unit);
+            dim.setStagger(this.stagger);
             return dim;
         } catch (InvalidRangeException e) {
             e.printStackTrace();
@@ -516,6 +517,7 @@ public class Dimension {
         Dimension dim = new Dimension(this.getShortName(), n, this.dimType);
         dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
+        dim.setStagger(this.stagger);
         //dim.setReverse(this.reverse);
         if (this.dimValue.getSize() > last) {
             List<Double> values = new ArrayList<>();
@@ -558,6 +560,7 @@ public class Dimension {
         Dimension dim = new Dimension(this.getShortName(), this.getLength(), this.dimType);
         dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
+        dim.setStagger(this.stagger);
         List<Double> values = new ArrayList<>();
         int idx;
         for (double v = first; v <= last; v += stride) {
@@ -579,6 +582,7 @@ public class Dimension {
         Dimension dim = new Dimension(this.getShortName(), this.getLength(), this.dimType);
         dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
+        dim.setStagger(this.stagger);
         //dim.setReverse(this.reverse);
         List<Double> values = new ArrayList<>();
         for (int i = 0; i < index.size(); i++) {
@@ -599,6 +603,7 @@ public class Dimension {
         Dimension dim = new Dimension(this.getShortName(), this.getLength(), this.dimType);
         dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
+        dim.setStagger(this.stagger);
         List<Double> values = new ArrayList<>();
         IndexIterator iter = index.getIndexIterator();
         while (iter.hasNext()) {

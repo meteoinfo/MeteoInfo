@@ -1500,7 +1500,6 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
                 zDim.setDimType(DimensionType.Z);
-                zDim.setStagger(true);
                 //zDim.setDimName(_levelVar.getShortName());
                 zDim.setValues(levels);
                 zDim.setUnit("eta");
@@ -1527,6 +1526,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
                 zDim.setDimType(DimensionType.Z);
+                zDim.setStagger(true);
                 //zDim.setDimName(_levelVar.getShortName());
                 zDim.setValues(levels);
                 zDim.setUnit("eta");
@@ -1550,6 +1550,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
                 zDim.setDimType(DimensionType.Z);
+                zDim.setStagger(true);
                 //zDim.setDimName(_levelVar.getShortName());
                 zDim.setValues(levels);
                 //this.setZDimension(zDim);
@@ -3226,7 +3227,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 MAMath.copy(data, r);
             } else {
                 ucar.ma2.Section section = new ucar.ma2.Section(origin, size, stride);
-                data = NCUtil.convertArray(var.read(section));
+                data = NCUtil.convertArray(var.read(section)).reduce();
             }
 
             if (unpack) {

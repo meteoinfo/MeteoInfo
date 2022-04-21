@@ -2867,7 +2867,7 @@ public class Draw {
                 break;
             case BACKWARD_DIAGONAL:
                 //g2.drawLine(size, 0, 0, size);
-                g2.draw(new Line2D.Float(0, size, size, 0));
+                g2.draw(new Line2D.Float(-0.1f, size + 0.1f, size + 0.1f, -0.1f));
                 break;
             case CROSS:
                 g2.drawLine(0, size / 2, size, size / 2);

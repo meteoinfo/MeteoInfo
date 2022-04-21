@@ -89,6 +89,19 @@ void intersect(
     tmax = min(min(tmax, tymax), tzmax);
 }
 
+vec4 premultiplyAlpha(vec4 color)
+{
+    //return vec4(color.rgb * color.a, color.a);
+    return color * color.a;
+}
+
+// GL_ONE_MINUS_DST_ALPHA, GL_ONE
+void blendToBack(inout vec4 accum, vec4 color)
+{
+    //accum = color * (1-accum.a) + accum;
+    accum = premultiplyAlpha(color) * (1-accum.a) + accum;
+}
+
 void main(){
     vec2 vUV = 2.0 * (gl_FragCoord.xy + vec2(0.5, 0.5)) / viewSize - 1.0;
     Ray ray;
@@ -129,7 +142,8 @@ void main(){
 
         px = px * px;
 
-        value = value + pxColor - pxColor * value.a;
+        //value = value + pxColor - pxColor * value.a;
+        blendToBack(value, pxColor);
 
         if(value.a >= 0.95){
             value.a = 1.0;

@@ -3364,14 +3364,30 @@ public class ArrayMath {
     public static Array log(Array a) {
         Array r;
         if (isComplex(a)) {
-            r = Array.factory(DataType.OBJECT, a.getShape());
-            for (int i = 0; i < a.getSize(); i++) {
-                r.setObject(i, ((Complex) a.getObject(i)).log());
+            r = Array.factory(DataType.COMPLEX, a.getShape());
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setComplex(i, a.getComplex(i).log());
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterA.hasNext()) {
+                    iterR.setComplexNext(iterA.getComplexNext().log());
+                }
             }
         } else {
             r = Array.factory(DataType.DOUBLE, a.getShape());
-            for (int i = 0; i < a.getSize(); i++) {
-                r.setDouble(i, Math.log(a.getDouble(i)));
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setDouble(i, Math.log(a.getDouble(i)));
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterA.hasNext()) {
+                    iterR.setDoubleNext(Math.log(iterA.getDoubleNext()));
+                }
             }
         }
 
@@ -3386,8 +3402,16 @@ public class ArrayMath {
      */
     public static Array log10(Array a) {
         Array r = Array.factory(DataType.DOUBLE, a.getShape());
-        for (int i = 0; i < a.getSize(); i++) {
-            r.setDouble(i, Math.log10(a.getDouble(i)));
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                r.setDouble(i, Math.log10(a.getDouble(i)));
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setDoubleNext(Math.log10(iterA.getDoubleNext()));
+            }
         }
 
         return r;

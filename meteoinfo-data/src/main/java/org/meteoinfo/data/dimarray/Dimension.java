@@ -659,11 +659,46 @@ public class Dimension {
     }
 
     /**
+     * Get whether the dimension values are ascending
+     * @return Ascending or not
+     */
+    public boolean isAscending() {
+        for (int i = 0; i < this.dimValue.getSize() - 1; i++) {
+            if (dimValue.getDouble(i) >= dimValue.getDouble(i + 1)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get whether the dimension values are descending
+     * @return Descending or not
+     */
+    public boolean isDescending() {
+        for (int i = 0; i < this.dimValue.getSize() - 1; i++) {
+            if (dimValue.getDouble(i) <= dimValue.getDouble(i + 1)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get whether the dimension values are ordered
+     * @return Ordered or not
+     */
+    public boolean isOrdered() {
+        return isAscending() || isDescending();
+    }
+
+    /**
      * Reverse the dimension values
      */
     public void reverse() {
-        this.dimValue = this.dimValue.flip(0);
-        //Collections.reverse(this.dimValue);
+        this.dimValue = this.dimValue.flip(0).copy();
     }
 
     @Override

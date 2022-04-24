@@ -1,4 +1,4 @@
-package org.meteoinfo.chart.render;
+package org.meteoinfo.geometry.colors;
 
 import org.meteoinfo.geometry.colors.Normalize;
 

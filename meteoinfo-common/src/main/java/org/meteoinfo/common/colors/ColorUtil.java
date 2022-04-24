@@ -261,6 +261,39 @@ public class ColorUtil {
 
         return ncts;
     }
+
+     /**
+      * Get color maps
+      *
+      * @return Color maps
+      * @throws IOException
+      */
+     public static ColorMap[] getColorMaps(String path) throws IOException {
+         File pathDir = new File(path);
+         if (!pathDir.isDirectory()) {
+             return null;
+         }
+
+         File[] files = pathDir.listFiles();
+         List<ColorMap> cts = new ArrayList<>();
+         for (File file : files) {
+             ColorMap ct = new ColorMap();
+             ct.readFromFile(file);
+             if (ct.getColorCount() > 0) {
+                 String name = file.getName();
+                 name = name.substring(0, name.lastIndexOf("."));
+                 ct.setName(name);
+                 cts.add(ct);
+             }
+         }
+
+         ColorMap[] ncts = new ColorMap[cts.size()];
+         for (int i = 0; i < cts.size(); i++) {
+             ncts[i] = cts.get(i);
+         }
+
+         return ncts;
+     }
     
     /**
      * Load color map from rgb file

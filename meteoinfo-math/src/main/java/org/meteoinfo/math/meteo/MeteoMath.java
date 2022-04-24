@@ -5,6 +5,7 @@
  */
 package org.meteoinfo.math.meteo;
 
+import org.meteoinfo.math.Constants;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
@@ -236,6 +237,38 @@ public class MeteoMath {
      */
     public static double cal_E(double es, double rh) {
         return (rh * es) / 100;
+    }
+
+    /**
+     * Convert pressure data to heights using the U.S. standard atmosphere.
+     *
+     * @param p Pressure - hPa
+     * @return Height - meter
+     */
+    public static double pressure2Height(double p) {
+        double t0 = 288.;
+        double gamma = 6.5;
+        double p0 = 1013.25;
+        double h = (t0 / gamma) * (1 - Math.pow(p / p0, Constants.Rd * gamma / Constants.g)) * 1000;
+
+        return h;
+    }
+
+    /**
+     * Convert pressure data to heights using the U.S. standard atmosphere.
+     *
+     * @param p Pressure - hPa
+     * @return Height - meter
+     */
+    public static Array pressure2Height(Array press) {
+        Array r = Array.factory(DataType.DOUBLE, press.getShape());
+        IndexIterator iter = press.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        while (iter.hasNext()) {
+            iterR.setDoubleNext(pressure2Height(iter.getDoubleNext()));
+        }
+
+        return r;
     }
 
     /**

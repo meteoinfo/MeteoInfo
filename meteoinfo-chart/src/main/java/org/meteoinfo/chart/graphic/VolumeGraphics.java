@@ -1,8 +1,7 @@
 package org.meteoinfo.chart.graphic;
 
-import com.jogamp.common.nio.Buffers;
 import org.meteoinfo.chart.jogl.Transform;
-import org.meteoinfo.chart.render.TransferFunction;
+import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
@@ -12,10 +11,8 @@ import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.math.ArrayMath;
 
 import java.awt.*;
-import java.nio.Buffer;
 import java.util.List;
 
 import static org.joml.Math.clamp;

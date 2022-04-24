@@ -224,6 +224,25 @@ public class DimArray {
     }
 
     /**
+     * Change all dimensions to be ascending
+     */
+    public void asAscending() {
+        boolean changed = false;
+        int i = 0;
+        for (Dimension dimension : this.dimensions) {
+            if (dimension.isDescending()) {
+                dimension.reverse();
+                array = array.flip(i);
+                changed = true;
+            }
+            i += 1;
+        }
+        if (changed) {
+            array = array.copy();
+        }
+    }
+
+    /**
      * Section
      * @param origin Origin
      * @param size Size

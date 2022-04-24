@@ -467,6 +467,135 @@ public class Reproject {
      * @param ry Result y array
      * @param fromProj From projection
      * @param toProj To projection
+     * @param resampleMethod Resample method
+     * @return Result arrays
+     * @throws InvalidRangeException
+     */
+    public static Array reproject(Array data, Array x, Array y, Array rx, Array ry,
+                                  ProjectionInfo fromProj, ProjectionInfo toProj, ResampleMethods resampleMethod) throws InvalidRangeException {
+        int n = (int) rx.getSize();
+        int[] dshape = data.getShape();
+        int[] shape;
+        if (rx.getRank() == 1) {
+            shape = new int[1];
+            shape[0] = rx.getShape()[0];
+        } else {
+            shape = new int[data.getRank()];
+            for (int i = 0; i < shape.length; i++) {
+                if (i == shape.length - 2) {
+                    shape[i] = rx.getShape()[0];
+                } else if (i == shape.length - 1) {
+                    shape[i] = rx.getShape()[1];
+                } else {
+                    shape[i] = data.getShape()[i];
+                }
+            }
+        }
+        Array r = Array.factory(data.getDataType(), shape);
+
+        double[][] points = new double[n][];
+        for (int i = 0; i < n; i++) {
+            points[i] = new double[]{rx.getDouble(i), ry.getDouble(i)};
+        }
+        if (!fromProj.equals(toProj)) {
+            Reproject.reprojectPoints(points, toProj, fromProj, 0, points.length);
+        }
+        double xx, yy;
+        if (resampleMethod == ResampleMethods.Bilinear) {
+            if (shape.length <= 2) {
+                for (int i = 0; i < n; i++) {
+                    xx = points[i][0];
+                    yy = points[i][1];
+                    r.setObject(i, ArrayUtil.toStation(data, x, y, xx, yy));
+                }
+            } else {
+                Index indexr = r.getIndex();
+                int[] current, cc = null;
+                boolean isNew;
+                Array ndata = null;
+                int k;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = indexr.getCurrentCounter();
+                    isNew = true;
+                    if (i > 0) {
+                        for (int j = 0; j < shape.length - 2; j++) {
+                            if (cc[j] != current[j]) {
+                                isNew = false;
+                                break;
+                            }
+                        }
+                    }
+                    cc = Arrays.copyOf(current, current.length);
+                    if (isNew) {
+                        List<Range> ranges = new ArrayList<>();
+                        for (int j = 0; j < shape.length - 2; j++) {
+                            ranges.add(new Range(current[j], current[j], 1));
+                        }
+                        ranges.add(new Range(0, dshape[dshape.length - 2] - 1, 1));
+                        ranges.add(new Range(0, dshape[dshape.length - 1] - 1, 1));
+                        ndata = data.section(ranges).reduce();
+                    }
+                    k = current[shape.length - 2] * shape[shape.length - 1] + current[shape.length - 1];
+                    xx = points[k][0];
+                    yy = points[k][1];
+                    r.setObject(i, ArrayUtil.toStation(ndata, x, y, xx, yy));
+                    indexr.incr();
+                }
+            }
+        } else if (shape.length == 2) {
+            for (int i = 0; i < n; i++) {
+                xx = points[i][0];
+                yy = points[i][1];
+                r.setObject(i, ArrayUtil.toStation_Neighbor(data, x, y, xx, yy));
+            }
+        } else {
+            Index indexr = r.getIndex();
+            int[] current, cc = null;
+            boolean isNew;
+            Array ndata = null;
+            int k;
+            for (int i = 0; i < r.getSize(); i++) {
+                current = indexr.getCurrentCounter();
+                isNew = true;
+                if (i > 0) {
+                    for (int j = 0; j < shape.length - 2; j++) {
+                        if (cc[j] != current[j]) {
+                            isNew = false;
+                            break;
+                        }
+                    }
+                }
+                cc = Arrays.copyOf(current, current.length);
+                if (isNew) {
+                    List<Range> ranges = new ArrayList<>();
+                    for (int j = 0; j < shape.length - 2; j++) {
+                        ranges.add(new Range(current[j], current[j], 1));
+                    }
+                    ranges.add(new Range(0, dshape[dshape.length - 2] - 1, 1));
+                    ranges.add(new Range(0, dshape[dshape.length - 1] - 1, 1));
+                    ndata = data.section(ranges).reduce();
+                }
+                k = current[shape.length - 2] * shape[shape.length - 1] + current[shape.length - 1];
+                xx = points[k][0];
+                yy = points[k][1];
+                r.setObject(i, ArrayUtil.toStation_Neighbor(ndata, x, y, xx, yy));
+                indexr.incr();
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Reproject
+     *
+     * @param data Data array
+     * @param x X array
+     * @param y Y array
+     * @param rx Result x array
+     * @param ry Result y array
+     * @param fromProj From projection
+     * @param toProj To projection
      * @param fill_value Fill value
      * @param resampleMethod Resample method
      * @return Result arrays

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\cuace_dust\py\mm5">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\stats">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
@@ -16,17 +13,18 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\typhoon_map_volume_specular.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\mm5tonc.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace_dust\py\mm5\read_cuace_mm5_test.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\chi2_distribution.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\typhoon_map_volume_specular.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\mm5tonc.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace_dust\py\mm5\read_cuace_mm5_test.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\chi2_distribution.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +32,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1391,812"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1390,824"/>
 </MeteoInfo>

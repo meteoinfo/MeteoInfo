@@ -12,15 +12,14 @@ from org.apache.commons.math3.distribution import RealDistribution
 from ..core import numeric as np
 from ..core import NDArray
 
-import numbers
-
 class rv_continuous(object):
-    '''
+    """
     A generic continuous random variable class meant for subclassing.
-    '''
+    """
     
     def __init__(self):
-        pass
+        self.name = None
+        self._dist = None
     
     def _parse_args(self, *args):
         loc = 0
@@ -40,13 +39,20 @@ class rv_continuous(object):
             return tuple(r)
         
     def _create_distribution(self, *args):
-        '''
+        """
         Create a distribution object.
-        '''
-        return RealDistribution()
+        """
+        pass
+
+    def __call__(self, *args):
+        """
+        Create frozen distribution.
+        """
+        self._dist = self._create_distribution(*args)
+        return self
         
-    def rvs(self, *args, **kwargs):
-        '''
+    def rvs(self, size=10, *args):
+        """
         Random variates of given type.
 
         :param loc: (*float*) location parameter (default=0).
@@ -54,14 +60,16 @@ class rv_continuous(object):
         :param size: (*int*) Size.
         
         :returns: Probability density function.
-        '''
-        dist = self._create_distribution(*args)
-        size = kwargs.pop('size', 1)        
+        """
+        if len(args) == 0:
+            dist = self._dist
+        else:
+            dist = self._create_distribution(*args)
         r = DistributionUtil.rvs(dist, size)
         return NDArray(r)
     
-    def pdf(self, x, *args, **kwargs):
-        '''
+    def pdf(self, x, *args):
+        """
         Probability density function at x of the given RV.
         
         :param x: (*array_like*) quantiles.
@@ -69,8 +77,11 @@ class rv_continuous(object):
         :param scale: (*float*) scale parameter (default=1).
         
         :returns: Probability density function.
-        '''
-        dist = self._create_distribution(*args)
+        """
+        if len(args) == 0:
+            dist = self._dist
+        else:
+            dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
             x = np.array(x)
         if isinstance(x, NDArray):
@@ -78,8 +89,8 @@ class rv_continuous(object):
         r = DistributionUtil.pdf(dist, x)
         return NDArray(r)
         
-    def logpdf(self, x, *args, **kwargs):
-        '''
+    def logpdf(self, x, *args):
+        """
         Log of the probability density function at x of the given RV.
         
         :param x: (*array_like*) quantiles.
@@ -87,8 +98,11 @@ class rv_continuous(object):
         :param scale: (*float*) scale parameter (default=1).
         
         :returns: Log of the probability density function.
-        '''
-        dist = self._create_distribution(*args)
+        """
+        if len(args) == 0:
+            dist = self._dist
+        else:
+            dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
             x = np.array(x)
         if isinstance(x, NDArray):
@@ -96,8 +110,8 @@ class rv_continuous(object):
         r = DistributionUtil.logpdf(dist, x)
         return NDArray(r)
         
-    def cdf(self, x, *args, **kwargs):
-        '''
+    def cdf(self, x, *args):
+        """
         Cumulative distribution function of the given RV.
         
         :param x: (*array_like*) quantiles.
@@ -105,8 +119,11 @@ class rv_continuous(object):
         :param scale: (*float*) scale parameter (default=1).
         
         :returns: Cumulative distribution function.
-        '''
-        dist = self._create_distribution(*args)
+        """
+        if len(args) == 0:
+            dist = self._dist
+        else:
+            dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
             x = np.array(x)
         if isinstance(x, NDArray):
@@ -114,8 +131,8 @@ class rv_continuous(object):
         r = DistributionUtil.cdf(dist, x)
         return NDArray(r)
         
-    def pmf(self, x, *args, **kwargs):
-        '''
+    def pmf(self, x, *args):
+        """
         Probability mass function (PMF) of the given RV.
         
         :param x: (*array_like*) quantiles.
@@ -123,8 +140,11 @@ class rv_continuous(object):
         :param scale: (*float*) scale parameter (default=1).
         
         :returns: Probability mas function.
-        '''
-        dist = self._create_distribution(*args)
+        """
+        if len(args) == 0:
+            dist = self._dist
+        else:
+            dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
             x = np.array(x)
         if isinstance(x, NDArray):
@@ -132,8 +152,8 @@ class rv_continuous(object):
         r = DistributionUtil.pmf(dist, x)
         return NDArray(r)
         
-    def ppf(self, x, *args, **kwargs):
-        '''
+    def ppf(self, x, *args):
+        """
         Percent point function (inverse of cdf) at q of the given RV.
         
         :param q: (*array_like*) lower tail probability.
@@ -141,8 +161,11 @@ class rv_continuous(object):
         :param scale: (*float*) scale parameter (default=1).
         
         :returns: Quantile corresponding to the lower tail probability q.
-        '''
-        dist = self._create_distribution(*args)
+        """
+        if len(args) == 0:
+            dist = self._dist
+        else:
+            dist = self._create_distribution(*args)
         if isinstance(x, (list, tuple)):
             x = np.array(x)
         if isinstance(x, NDArray):
@@ -150,44 +173,53 @@ class rv_continuous(object):
         r = DistributionUtil.ppf(dist, x)
         return NDArray(r)
         
-    def mean(self, *args, **kwargs):
-        '''
+    def mean(self, *args):
+        """
         Mean of the distribution.
         
         :param loc: (*float*) location parameter (default=0).
         :param scale: (*float*) scale parameter (default=1).
         
         :returns: Mean of the distribution.
-        '''
-        dist = self._create_distribution(*args)
+        """
+        if len(args) == 0:
+            dist = self._dist
+        else:
+            dist = self._create_distribution(*args)
         return dist.getMean()
         
-    def std(self, *args, **kwargs):
-        '''
+    def std(self, *args):
+        """
         Standard deviation of the distribution.
         
         :param loc: (*float*) location parameter (default=0).
         :param scale: (*float*) scale parameter (default=1).
         
         :returns: Standard deviation of the distribution.
-        '''
-        dist = self._create_distribution(*args)
+        """
+        if len(args) == 0:
+            dist = self._dist
+        else:
+            dist = self._create_distribution(*args)
         return dist.getStandardDeviation()
         
-    def var(self, *args, **kwargs):
-        '''
+    def var(self, *args):
+        """
         Variance of the distribution.
         
         :param loc: (*float*) location parameter (default=0).
         :param scale: (*float*) scale parameter (default=1).
         
         :returns: Variance of the distribution.
-        '''
-        dist = self._create_distribution(*args)
+        """
+        if len(args) == 0:
+            dist = self._dist
+        else:
+            dist = self._create_distribution(*args)
         return dist.getNumericalVariance()
 
     def interval(self, alpha, *args, **kwargs):
-        '''
+        """
         Confidence interval with equal areas around the median.
 
         :param alpha: (*float*) Probability that an rv will be drawn from the returned range.
@@ -197,10 +229,13 @@ class rv_continuous(object):
 
         :return: end-points of range that contain ``100 * alpha %`` of the rv's
             possible values.
-        '''
+        """
         loc = kwargs.pop('loc', 0)
         scale = kwargs.pop('scale', 1)
-        dist = self._create_distribution(*args)
+        if len(args) == 0:
+            dist = self._dist
+        else:
+            dist = self._create_distribution(*args)
         significance = 1 - alpha
         n = kwargs.pop('n', 1)
         a = dist.inverseCumulativeProbability(1.0 - significance / 2)

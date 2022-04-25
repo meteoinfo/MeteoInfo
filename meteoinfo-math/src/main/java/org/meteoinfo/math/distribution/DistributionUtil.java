@@ -5,17 +5,38 @@
  */
 package org.meteoinfo.math.distribution;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.distribution.MultivariateRealDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.ndarray.math.ArrayMath;
+import org.meteoinfo.ndarray.math.ArrayUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
  * @author wyq
  */
 public class DistributionUtil {
+
+    /**
+     * Create MultivariateNormalDistribution object
+     * @param means Vector of means
+     * @param covariances Matrix of covariances
+     * @return MultivariateNormalDistribution object
+     */
+    public static MultivariateNormalDistribution mvNormDist(Array means, Array covariances) {
+        double[] m = (double[]) ArrayUtil.copyToNDJavaArray_Double(means);
+        double[][] cov = (double[][]) ArrayUtil.copyToNDJavaArray_Double(covariances);
+
+        return new MultivariateNormalDistribution(m, cov);
+    }
+
     /**
      * Random variates of given type.
      * @param dis Distribution.
@@ -25,6 +46,20 @@ public class DistributionUtil {
     public static Array rvs(RealDistribution dis, int n){
         double[] samples = dis.sample(n);
         Array r = Array.factory(DataType.DOUBLE, new int[]{n}, samples);        
+        return r;
+    }
+
+    /**
+     * Random variates of given type.
+     * @param dis Distribution.
+     * @param n Size.
+     * @return Result array.
+     */
+    public static Array rvs(MultivariateRealDistribution dis, int n){
+        double[][] samples = dis.sample(n);
+        double[] s = Arrays.stream(samples).flatMapToDouble(x -> Arrays.stream(x)).toArray();
+        int dim = dis.getDimension();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{n, dim}, s);
         return r;
     }
     

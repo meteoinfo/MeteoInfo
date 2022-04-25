@@ -1,4 +1,5 @@
 import inspect
+import numbers
 from mipylib import numeric as np
 
 def prod(iterable):
@@ -122,3 +123,30 @@ def _asarray_validated(a, check_finite=True,
         if not np.issubdtype(a.dtype, np.inexact):
             a = toarray(a, dtype=np.float_)
     return a
+
+def check_random_state(seed):
+    """Turn `seed` into a `np.random.RandomState` instance.
+    Parameters
+    ----------
+    seed : {None, int, `np.random.Generator`,
+            `np.random.RandomState`}, optional
+        If `seed` is None (or `np.random`), the `numpy.random.RandomState`
+        singleton is used.
+        If `seed` is an int, a new ``RandomState`` instance is used,
+        seeded with `seed`.
+        If `seed` is already a ``Generator`` or ``RandomState`` instance then
+        that instance is used.
+    Returns
+    -------
+    seed : {`np.random.Generator`, `np.random.RandomState`}
+        Random number generator.
+    """
+    if seed is None or seed is np.random:
+        return np.random.mtrand._rand
+    if isinstance(seed, numbers.Integral):
+        return np.random.RandomState(seed)
+    if isinstance(seed, np.random.RandomState):
+        return seed
+
+    raise ValueError('%r cannot be used to seed a numpy.random.RandomState'
+                     ' instance' % seed)

@@ -647,6 +647,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         }
                         unit = "m";
                     } else {
+                        double maxZ = 0;
                         if (dataArray.length < ZDEF.ZNum + 3) {
                             while (true) {
                                 String line = sr.readLine().trim();
@@ -659,8 +660,11 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                                     ZDEF.ZNum = dataArray.length - 3;
                                     ZDEF.ZLevels = new float[ZDEF.ZNum];
                                     for (i = 0; i < ZDEF.ZNum; i++) {
-                                        ZDEF.ZLevels[i] = Float.parseFloat(dataArray[3 + i]);
-                                        values.add(Double.parseDouble(dataArray[3 + i]));
+                                        float zv = Float.parseFloat(dataArray[3 + i]);
+                                        ZDEF.ZLevels[i] = zv;
+                                        values.add((double) zv);
+                                        if (zv > maxZ)
+                                            maxZ = zv;
                                     }
                                     aLine = line;
                                     isReadLine = false;
@@ -675,10 +679,15 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             String v;
                             for (i = 0; i < ZDEF.ZNum; i++) {
                                 v = dataArray[3 + i].trim();
-                                ZDEF.ZLevels[i] = Float.parseFloat(dataArray[3 + i]);
-                                values.add(Double.parseDouble(dataArray[3 + i]));
+                                float zv = Float.parseFloat(dataArray[3 + i]);
+                                ZDEF.ZLevels[i] = zv;
+                                values.add((double) zv);
+                                if (zv > maxZ)
+                                    maxZ = zv;
                             }
                         }
+                        if (maxZ > 1200)
+                            unit = "m";
                     }
                     zDim = new Dimension(DimensionType.Z);
                     zDim.setShortName("Z");

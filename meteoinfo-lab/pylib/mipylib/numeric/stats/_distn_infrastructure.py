@@ -51,7 +51,7 @@ class rv_continuous(object):
         self._dist = self._create_distribution(*args)
         return self
         
-    def rvs(self, size=10, *args):
+    def rvs(self, *args, **kwargs):
         """
         Random variates of given type.
 
@@ -65,6 +65,7 @@ class rv_continuous(object):
             dist = self._dist
         else:
             dist = self._create_distribution(*args)
+        size = kwargs.pop('size', 10)
         r = DistributionUtil.rvs(dist, size)
         return NDArray(r)
     

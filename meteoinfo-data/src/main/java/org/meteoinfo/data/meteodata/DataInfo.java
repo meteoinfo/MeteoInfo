@@ -568,7 +568,8 @@ import org.meteoinfo.projection.ProjectionInfo;
              return null;
          }
 
-         Array array = read(varName, origin, size, stride);
+         Array array = read(varName, origin, size, stride).reduce();
+         ArrayMath.missingToNaN(array, this.missingValue);
          try {
              List<Dimension> dimensions = variable.sectionDimensions(origin, size, stride);
              return new DimArray(array, dimensions);

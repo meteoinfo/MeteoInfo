@@ -3227,7 +3227,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 MAMath.copy(data, r);
             } else {
                 ucar.ma2.Section section = new ucar.ma2.Section(origin, size, stride);
-                data = NCUtil.convertArray(var.read(section)).reduce();
+                data = NCUtil.convertArray(var.read(section));
             }
 
             if (unpack) {

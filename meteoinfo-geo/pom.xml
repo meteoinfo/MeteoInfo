@@ -83,12 +83,12 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>2.1</version>
+            <version>2.2</version>
         </dependency>
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf-extras</artifactId>
-            <version>2.1</version>
+            <version>2.2</version>
         </dependency>
         <dependency>
             <groupId>org.freehep</groupId>

@@ -621,7 +621,7 @@ public class Dimension {
      * @return Index
      */
     public int getValueIndex(double v) {
-        int idx = Arrays.asList(this.dimValue).indexOf(v);
+        int idx = ArrayMath.asList(this.dimValue).indexOf(v);
         if (idx < 0) {
             idx = this.getLength() - 1;
             if (getDeltaValue() > 0) {

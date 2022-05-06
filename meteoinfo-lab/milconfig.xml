@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\stats">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+  <Path OpenPath="D:\Working\MIScript\cuace\script">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\particles"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
-    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
+    <RecentFolder Folder="D:\Working\MIScript"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace"/>
+    <RecentFolder Folder="D:\Working\MIScript\cuace\script"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\typhoon_map_volume_specular.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\chi2_distribution.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace\script\cuace_haze_pm25.py"/>
+      <OpenedFile File="D:\Working\MIScript\cuace\script\plot_pm25_3d_volume_relief-1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\typhoon_map_volume_specular.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\chi2_distribution.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace\script\cuace_haze_pm25.py"/>
+      <RecentFile File="D:\Working\MIScript\cuace\script\plot_pm25_3d_volume_relief-1.py"/>
     </RecentFiles>
   </File>
   <Font>

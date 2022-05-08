@@ -135,7 +135,9 @@ public class MapFrame extends ItemNode {
     private int _order;
     private boolean _drawNeatLine = true;
     private boolean _insideTickLine = false;
-    private int _tickLineLength = 5;
+    private int tickLineLength = 5;
+    private float tickLineWidth = 1.0f;
+    private Color tickLineColor = Color.black;
     private int _gridLabelShift = 5;
     private Color _neatLineColor = Color.black;
     private float _neatLineSize = 1.0f;
@@ -397,7 +399,7 @@ public class MapFrame extends ItemNode {
      * @return Tick line length
      */
     public int getTickLineLength() {
-        return _tickLineLength;
+        return tickLineLength;
     }
 
     /**
@@ -406,7 +408,39 @@ public class MapFrame extends ItemNode {
      * @param len The length
      */
     public void setTickLineLength(int len) {
-        _tickLineLength = len;
+        tickLineLength = len;
+    }
+
+    /**
+     * Get tick line width
+     * @return Tick line width
+     */
+    public float getTickLineWidth() {
+        return this.tickLineWidth;
+    }
+
+    /**
+     * Set tick line width
+     * @param value Tick line width
+     */
+    public void setTickLineWidth(float value) {
+        this.tickLineWidth = value;
+    }
+
+    /**
+     * Get tick line color
+     * @return Tick line color
+     */
+    public Color getTickLineColor() {
+        return this.tickLineColor;
+    }
+
+    /**
+     * Set tick line color
+     * @param value Tick line color
+     */
+    public void setTickLineColor(Color value) {
+        this.tickLineColor = value;
     }
 
     /**

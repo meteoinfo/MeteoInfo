@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\cuace\script">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\particles"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\projection">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\grads"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py"/>
@@ -16,17 +8,23 @@
     <RecentFolder Folder="D:\Working\MIScript"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace\script"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geod"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\typhoon_map_volume_specular.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace\script\cuace_haze_pm25.py"/>
-      <OpenedFile File="D:\Working\MIScript\cuace\script\plot_pm25_3d_volume_relief-1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\aea_proj.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj_tickline.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\typhoon_map_volume_specular.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace\script\cuace_haze_pm25.py"/>
-      <RecentFile File="D:\Working\MIScript\cuace\script\plot_pm25_3d_volume_relief-1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\aea_proj.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj_tickline.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +32,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1390,824"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

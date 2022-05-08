@@ -525,8 +525,7 @@ class Axes3D(Axes):
             if not tickline is None:
                 axis.setDrawTickLine(tickline)
             if not tickwidth is None:
-                stroke = BasicStroke(tickwidth)
-                axis.setTickStroke(stroke)
+                axis.setTickWidth(tickwidth)
             if not ticklabel is None:
                 axis.setDrawTickLabel(ticklabel)
             axis.setMinorTickVisible(minortick)

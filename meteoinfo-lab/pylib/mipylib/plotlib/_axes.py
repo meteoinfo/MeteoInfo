@@ -823,8 +823,7 @@ class Axes(object):
             if not tickline is None:
                 axis.setDrawTickLine(tickline)
             if not tickwidth is None:
-                stroke = BasicStroke(tickwidth)
-                axis.setTickStroke(stroke)
+                axis.setTickWidth(tickwidth)
             if not ticklength is None:
                 axis.setTickLength(ticklength)
             if not ticklabel is None:
@@ -940,8 +939,7 @@ class Axes(object):
             if not tickline is None:
                 axis.setDrawTickLine(tickline)
             if not tickwidth is None:
-                stroke = BasicStroke(tickwidth)
-                axis.setTickStroke(stroke)
+                axis.setTickWidth(tickwidth)
             if not ticklength is None:
                 axis.setTickLength(ticklength)
             if not ticklabel is None:

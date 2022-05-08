@@ -44,7 +44,8 @@ public class Axis implements Cloneable {
     protected LineStyles lineStyle;
     //private Stroke lineStroke;
     protected Color tickColor;
-    protected Stroke tickStroke;
+    //protected Stroke tickStroke;
+    protected float tickWidth;
     protected float tickLength;
     protected boolean insideTick;
     protected Font tickLabelFont;
@@ -88,7 +89,8 @@ public class Axis implements Cloneable {
         this.lineStyle = LineStyles.SOLID;
         //this.lineStroke = new BasicStroke(1.0f);
         this.tickColor = Color.black;
-        this.tickStroke = new BasicStroke(1.0f);
+        //this.tickStroke = new BasicStroke(1.0f);
+        this.tickWidth = 1.0f;
         this.tickLength = 5;
         this.insideTick = false;
         this.tickLabelFont = new Font("Arial", Font.PLAIN, 14);
@@ -235,7 +237,8 @@ public class Axis implements Cloneable {
         this.tickLabelColor = axis.getTickLabelColor();
         this.tickLabelFont = axis.getTickLabelFont();
         this.tickLength = axis.getTickLength();
-        this.tickStroke = axis.tickStroke;
+        //this.tickStroke = axis.tickStroke;
+        this.tickWidth = axis.tickWidth;
         this.visible = axis.isVisible();
         this.position = axis.getPosition();
         this.positionType = axis.getPositionType();
@@ -471,21 +474,21 @@ public class Axis implements Cloneable {
     }
 
     /**
-     * Get tick stroke
+     * Get tick line width
      *
-     * @return Tick stroke
+     * @return Tick line width
      */
-    public Stroke getTickStroke() {
-        return tickStroke;
+    public float getTickWidth() {
+        return tickWidth;
     }
 
     /**
-     * Set tick stroke
+     * Set tick line width
      *
-     * @param value Tick stroke
+     * @param value Tick line width
      */
-    public void setTickStroke(Stroke value) {
-        tickStroke = value;
+    public void setTickWidth(float value) {
+        tickWidth = value;
     }
 
     /**
@@ -1518,7 +1521,7 @@ public class Axis implements Cloneable {
         float len = 0;
         if (this.drawTickLine) {
             g.setColor(this.tickColor);
-            g.setStroke(this.tickStroke);
+            g.setStroke(new BasicStroke(this.tickWidth));
             g.setFont(this.tickLabelFont);
             String drawStr;
             len = this.tickLength;
@@ -1748,7 +1751,7 @@ public class Axis implements Cloneable {
         float len = 0;
         if (this.drawTickLine) {
             g.setColor(this.getTickColor());
-            g.setStroke(this.getTickStroke());
+            g.setStroke(new BasicStroke(this.tickWidth));
             g.setFont(this.getTickLabelFont());
             this.updateLabelGap(g, area);
             len = this.getTickLength();

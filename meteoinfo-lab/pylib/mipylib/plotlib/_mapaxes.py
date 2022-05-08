@@ -97,10 +97,22 @@ class MapAxes(Axes):
         frameon = kwargs.pop('frameon', None)
         if not frameon is None:
             self.axes.setDrawNeatLine(frameon)
+        framelinewidth = kwargs.pop('framelinewidth', None)
+        if not framelinewidth is None:
+            self.axes.setNeatLineWidth(framelinewidth)
+        framelinecolor = kwargs.pop('framelinecolor', None)
+        if not framelinecolor is None:
+            framelinecolor = plotutil.getcolor(framelinecolor)
+            self.axes.setNeatLineColor(framelinecolor)
         gridlabel = kwargs.pop('gridlabel', True)
         gridlabelloc = kwargs.pop('gridlabelloc', 'left_bottom')
         gridline = kwargs.pop('gridline', False)
         tickin = kwargs.pop('tickin', False)
+        ticklength = kwargs.pop('ticklength', None)
+        tickwidth = kwargs.pop('tickwidth', None)
+        tickcolor = kwargs.pop('tickcolor', None)
+        if not tickcolor is None:
+            tickcolor = plotutil.getcolor(tickcolor)
         griddx = kwargs.pop('griddx', 10)
         griddy = kwargs.pop('griddy', 10)
         start_lon = kwargs.pop('start_lon', -180)
@@ -110,6 +122,12 @@ class MapAxes(Axes):
         mapframe.setDrawGridLabel(gridlabel)
         mapframe.setDrawGridTickLine(gridlabel)
         mapframe.setInsideTickLine(tickin)
+        if not ticklength is None:
+            mapframe.setTickLineLength(ticklength)
+        if not tickwidth is None:
+            mapframe.setTickLineWidth(tickwidth)
+        if not tickcolor is None:
+            mapframe.setTickLineColor(tickcolor)
         mapframe.setGridLabelPosition(gridlabelloc)
         mapframe.setDrawGridLine(gridline)
         mapframe.setGridXDelt(griddx)

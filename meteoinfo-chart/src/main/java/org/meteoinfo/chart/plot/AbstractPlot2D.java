@@ -40,7 +40,9 @@ public abstract class AbstractPlot2D extends Plot {
     private final GridLine gridLine;
     private boolean drawTopAxis;
     private boolean drawRightAxis;
-    private boolean drawNeatLine;
+    protected boolean drawNeatLine;
+    protected float neatLineWidth;
+    protected Color neatLineColor;
     private ChartText title;
     private ChartText leftTitle;
     private ChartText rightTitle;
@@ -76,6 +78,8 @@ public abstract class AbstractPlot2D extends Plot {
         this.drawTopAxis = true;
         this.drawRightAxis = true;
         this.drawNeatLine = false;
+        this.neatLineWidth = 1.0f;
+        this.neatLineColor = Color.black;
         this.legends = new ArrayList<>();
         this.texts = new ArrayList<>();
     }
@@ -541,6 +545,38 @@ public abstract class AbstractPlot2D extends Plot {
     }
 
     /**
+     * Get neat line width
+     * @return Neat line width
+     */
+    public float getNeatLineWidth() {
+        return this.neatLineWidth;
+    }
+
+    /**
+     * Set neat line width
+     * @param value Neat line width
+     */
+    public void setNeatLineWidth(float value) {
+        this.neatLineWidth = value;
+    }
+
+    /**
+     * Get neat line color
+     * @return Neat line color
+     */
+    public Color getNeatLineColor() {
+        return this.neatLineColor;
+    }
+
+    /**
+     * Set neat line color
+     * @param value Neat line color
+     */
+    public void setNeatLineColor(Color value) {
+        this.neatLineColor = value;
+    }
+
+    /**
      * Get texts
      *
      * @return Texts
@@ -806,8 +842,8 @@ public abstract class AbstractPlot2D extends Plot {
 
         //Draw neat line
         if (this.drawNeatLine) {
-            g.setStroke(new BasicStroke(1.0f));
-            g.setColor(Color.black);
+            g.setStroke(new BasicStroke(this.neatLineWidth));
+            g.setColor(this.neatLineColor);
             g.draw(graphArea);
         }
 

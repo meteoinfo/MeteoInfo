@@ -1081,6 +1081,9 @@ class DimArray(NDArray):
         else:
             x = self.dims[1].getDimValue()
             y = self.dims[0].getDimValue()
+            xy = ArrayUtil.meshgrid([x,y])
+            x = xy[0]
+            y = xy[1]
             if not isinstance(mask, (list, ArrayList)):
                 mask = [mask]
             r = GeometryUtil.maskout(self.asarray(), x, y, mask)

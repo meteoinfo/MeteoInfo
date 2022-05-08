@@ -1126,7 +1126,8 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                                 yAlign = YAlign.CENTER;
                                 break;
                         }
-                        g.setColor(mapFrame.getGridLineColor());
+                        g.setColor(mapFrame.getTickLineColor());
+                        g.setStroke(new BasicStroke(mapFrame.getTickLineWidth()));
                         g.draw(new Line2D.Float(sP.X, sP.Y, eP.X, eP.Y));
                         g.setColor(this.getXAxis().getTickLabelColor());
                         //g.drawString(drawStr, labX, labY);

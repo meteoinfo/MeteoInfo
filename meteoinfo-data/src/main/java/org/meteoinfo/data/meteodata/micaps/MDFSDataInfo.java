@@ -81,6 +81,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                 case 1:
                 case 2:
                 case 3:
+                case 12:
                     bytes = new byte[100];
                     br.read(bytes);
                     description = new String(bytes, "GBK").trim();
@@ -474,6 +475,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                 case 1:
                 case 2:
                 case 3:
+                case 12:
                     Range stRange = section.getRange(rangeIdx);
                     Array array = this.dataFrame.getColumnData(varName);
                     for (int i = stRange.first(); i <= stRange.last(); i += stRange.stride()) {

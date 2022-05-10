@@ -312,6 +312,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                             var = new Variable();
                             var.setName("WindSpeed");
                             var.setDataType(DataType.FLOAT);
+                            var.setUnits("m/s");
                             var.setDimension(tDim);
                             var.setDimension(zDim);
                             var.setDimension(yDim);
@@ -321,6 +322,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                             var = new Variable();
                             var.setName("WindDirection");
                             var.setDataType(DataType.FLOAT);
+                            var.setUnits("degree");
                             var.setDimension(tDim);
                             var.setDimension(zDim);
                             var.setDimension(yDim);
@@ -491,15 +493,32 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     int index;
                     byte[] bytes = new byte[4];
                     float v;
-                    for (int y = yRange.first(); y <= yRange.last(); y += yRange.stride()) {
-                        for (int x = xRange.first(); x <= xRange.last(); x += xRange.stride()) {
-                            if (this.yReverse)
-                                index = (numLat - y - 1) * xNum + x;
-                            else
-                                index = y * xNum + x;
-                            System.arraycopy(dataBytes, index * 4, bytes, 0, 4);
-                            v = DataConvert.bytes2Float(bytes, ByteOrder.LITTLE_ENDIAN);
-                            ii.setFloatNext(v);
+                    if (this.type == 11 && varName.equals("WindDirection")) {
+                        for (int y = yRange.first(); y <= yRange.last(); y += yRange.stride()) {
+                            for (int x = xRange.first(); x <= xRange.last(); x += xRange.stride()) {
+                                if (this.yReverse)
+                                    index = (numLat - y - 1) * xNum + x;
+                                else
+                                    index = y * xNum + x;
+                                System.arraycopy(dataBytes, index * 4, bytes, 0, 4);
+                                v = DataConvert.bytes2Float(bytes, ByteOrder.LITTLE_ENDIAN);
+                                v = 360 - (v + 90);
+                                if (v < 0)
+                                    v = v + 360;
+                                ii.setFloatNext(v);
+                            }
+                        }
+                    } else {
+                        for (int y = yRange.first(); y <= yRange.last(); y += yRange.stride()) {
+                            for (int x = xRange.first(); x <= xRange.last(); x += xRange.stride()) {
+                                if (this.yReverse)
+                                    index = (numLat - y - 1) * xNum + x;
+                                else
+                                    index = y * xNum + x;
+                                System.arraycopy(dataBytes, index * 4, bytes, 0, 4);
+                                v = DataConvert.bytes2Float(bytes, ByteOrder.LITTLE_ENDIAN);
+                                ii.setFloatNext(v);
+                            }
                         }
                     }
                     break;
@@ -538,14 +557,32 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
         double[][] data = new double[numLat][numLon];
         int index;
         byte[] bytes = new byte[4];
-        for (int i = 0; i < numLat; i++) {
-            for (int j = 0; j < numLon; j++) {
-                if (this.yReverse)
-                    index = (numLat - i - 1) * numLon + j;
-                else
-                    index = i * numLon + j;
-                System.arraycopy(dataBytes, index * 4, bytes, 0, 4);
-                data[i][j] = DataConvert.bytes2Float(bytes, ByteOrder.LITTLE_ENDIAN);
+        if (this.type == 11 && varName.equals("WindDirection")) {
+            float wd;
+            for (int i = 0; i < numLat; i++) {
+                for (int j = 0; j < numLon; j++) {
+                    if (this.yReverse)
+                        index = (numLat - i - 1) * numLon + j;
+                    else
+                        index = i * numLon + j;
+                    System.arraycopy(dataBytes, index * 4, bytes, 0, 4);
+                    wd = DataConvert.bytes2Float(bytes, ByteOrder.LITTLE_ENDIAN);
+                    wd = 360 - (wd + 90);
+                    if (wd < 0)
+                        wd = wd + 360;
+                    data[i][j] = wd;
+                }
+            }
+        } else {
+            for (int i = 0; i < numLat; i++) {
+                for (int j = 0; j < numLon; j++) {
+                    if (this.yReverse)
+                        index = (numLat - i - 1) * numLon + j;
+                    else
+                        index = i * numLon + j;
+                    System.arraycopy(dataBytes, index * 4, bytes, 0, 4);
+                    data[i][j] = DataConvert.bytes2Float(bytes, ByteOrder.LITTLE_ENDIAN);
+                }
             }
         }
 

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\micaps">
-    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py\mm5"/>
-    <RecentFolder Folder="D:\Working\MIScript\cuace_dust\py"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\boxplot">
     <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
     <RecentFolder Folder="D:\Working\MIScript"/>
     <RecentFolder Folder="D:\Working\MIScript\cuace"/>
@@ -14,19 +12,23 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\boxplot"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\aea_proj.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj_tickline.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\micaps\mdfs_type11.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\boxplot\boxplot_h_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\boxplot\boxplot_5.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\aea_proj.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj_tickline.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\micaps\mdfs_type11.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\boxplot\boxplot_h_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\boxplot\boxplot_5.py"/>
     </RecentFiles>
   </File>
   <Font>

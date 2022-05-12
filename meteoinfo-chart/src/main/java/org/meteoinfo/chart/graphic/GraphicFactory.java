@@ -6908,6 +6908,196 @@ public class GraphicFactory {
     }
 
     /**
+     * Create horizontal box graphics
+     *
+     * @param xdata X data array list
+     * @param positions Box position list
+     * @param widths Box width list
+     * @param showcaps Show caps or not
+     * @param showfliers Show fliers or not
+     * @param showmeans Show means or not
+     * @param showmedians Show medians or not
+     * @param boxBreak Box polygon break
+     * @param medianBreak Meandian line break
+     * @param whiskerBreak Whisker line break
+     * @param capBreak Whisker cap line break
+     * @param meanBreak Mean point break
+     * @param flierBreak Flier point break
+     * @return GraphicCollection
+     */
+    public static GraphicCollection createHBox(List<Array> xdata, List<Number> positions, List<Number> widths,
+                                              boolean showcaps, boolean showfliers, boolean showmeans, boolean showmedians, PolygonBreak boxBreak,
+                                              ColorBreak medianBreak, PolylineBreak whiskerBreak, PolylineBreak capBreak,
+                                              ColorBreak meanBreak, PointBreak flierBreak) {
+        GraphicCollection gc = new GraphicCollection();
+        int n = xdata.size();
+        if (positions == null) {
+            positions = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                positions.add(i + 1);
+            }
+        }
+        if (widths == null) {
+            widths = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                widths.add(0.5);
+            }
+        }
+        double v, width;
+        if (boxBreak == null) {
+            boxBreak = new PolygonBreak();
+            boxBreak.setDrawFill(false);
+            boxBreak.setOutlineColor(Color.blue);
+        }
+        if (medianBreak == null) {
+            medianBreak = new PolylineBreak();
+            medianBreak.setColor(Color.red);
+        }
+        if (whiskerBreak == null) {
+            whiskerBreak = new PolylineBreak();
+            whiskerBreak.setColor(Color.black);
+            whiskerBreak.setStyle(LineStyles.DASH);
+        }
+        if (capBreak == null) {
+            capBreak = new PolylineBreak();
+            capBreak.setColor(Color.black);
+        }
+        if (flierBreak == null) {
+            flierBreak = new PointBreak();
+            flierBreak.setStyle(PointStyle.PLUS);
+        }
+        if (meanBreak == null) {
+            meanBreak = new PointBreak();
+            ((PointBreak) meanBreak).setStyle(PointStyle.SQUARE);
+            ((PointBreak) meanBreak).setColor(Color.red);
+            ((PointBreak) meanBreak).setOutlineColor(Color.black);
+        }
+
+        for (int i = 0; i < n; i++) {
+            Array a = xdata.get(i);
+            if (Double.isNaN(ArrayMath.min(a).doubleValue())) {
+                continue;
+            }
+
+            v = positions.get(i).doubleValue();
+            width = widths.get(i).doubleValue();
+            //Add box polygon
+            double q1 = Statistics.quantile(a, 1);
+            double q3 = Statistics.quantile(a, 3);
+            double median = Statistics.quantile(a, 2);
+            double mind = ArrayMath.getMinimum(a);
+            double maxd = ArrayMath.getMaximum(a);
+            double mino = q1 - (q3 - q1) * 1.5;
+            double maxo = q3 + (q3 - q1) * 1.5;
+            List<PointD> pList = new ArrayList<>();
+            pList.add(new PointD(q1, v - width * 0.5));
+            pList.add(new PointD(q3, v - width * 0.5));
+            pList.add(new PointD(q3, v + width * 0.5));
+            pList.add(new PointD(q1, v + width * 0.5));
+            pList.add(new PointD(q1, v - width * 0.5));
+            PolygonShape pgs = new PolygonShape();
+            pgs.setPoints(pList);
+            gc.add(new Graphic(pgs, boxBreak));
+
+            //Add meadian line
+            if (showmedians) {
+                if (medianBreak.getBreakType() == BreakTypes.POLYLINE_BREAK) {
+                    pList = new ArrayList<>();
+                    pList.add(new PointD(median, v - width * 0.5));
+                    pList.add(new PointD(median, v + width * 0.5));
+                    PolylineShape pls = new PolylineShape();
+                    pls.setPoints(pList);
+                    gc.add(new Graphic(pls, medianBreak));
+                } else {
+                    PointShape ps = new PointShape();
+                    ps.setPoint(new PointD(median, v));
+                    gc.add(new Graphic(ps, medianBreak));
+                }
+            }
+
+            //Add low whisker line
+            double min = Math.max(mino, mind);
+            pList = new ArrayList<>();
+            pList.add(new PointD(q1, v));
+            pList.add(new PointD(min, v));
+            PolylineShape pls = new PolylineShape();
+            pls.setPoints(pList);
+            gc.add(new Graphic(pls, whiskerBreak));
+            //Add cap
+            if (showcaps) {
+                pList = new ArrayList<>();
+                pList.add(new PointD(min, v - width * 0.25));
+                pList.add(new PointD(min, v + width * 0.25));
+                pls = new PolylineShape();
+                pls.setPoints(pList);
+                gc.add(new Graphic(pls, capBreak));
+            }
+            //Add low fliers
+            if (showfliers) {
+                if (mino > mind) {
+                    for (int j = 0; j < a.getSize(); j++) {
+                        if (a.getDouble(j) < mino) {
+                            PointShape ps = new PointShape();
+                            ps.setPoint(new PointD(a.getDouble(j), v));
+                            gc.add(new Graphic(ps, flierBreak));
+                        }
+                    }
+                }
+            }
+
+            //Add high whisker line
+            double max = Math.min(maxo, maxd);
+            pList = new ArrayList<>();
+            pList.add(new PointD(q3, v));
+            pList.add(new PointD(max, v));
+            pls = new PolylineShape();
+            pls.setPoints(pList);
+            gc.add(new Graphic(pls, whiskerBreak));
+            //Add cap
+            if (showcaps) {
+                pList = new ArrayList<>();
+                pList.add(new PointD(max, v - width * 0.25));
+                pList.add(new PointD(max, v + width * 0.25));
+                pls = new PolylineShape();
+                pls.setPoints(pList);
+                gc.add(new Graphic(pls, capBreak));
+            }
+            //Add high fliers
+            if (showfliers) {
+                if (maxo < maxd) {
+                    for (int j = 0; j < a.getSize(); j++) {
+                        if (a.getDouble(j) > maxo) {
+                            PointShape ps = new PointShape();
+                            ps.setPoint(new PointD(a.getDouble(j), v));
+                            gc.add(new Graphic(ps, flierBreak));
+                        }
+                    }
+                }
+            }
+
+            //Add mean line
+            if (showmeans) {
+                double mean = ArrayMath.mean(a);
+                if (meanBreak.getBreakType() == BreakTypes.POINT_BREAK) {
+                    PointShape ps = new PointShape();
+                    ps.setPoint(new PointD(mean, v));
+                    gc.add(new Graphic(ps, meanBreak));
+                } else {
+                    pList = new ArrayList<>();
+                    pList.add(new PointD(mean, v - width * 0.5));
+                    pList.add(new PointD(mean, v + width * 0.5));
+                    pls = new PolylineShape();
+                    pls.setPoints(pList);
+                    gc.add(new Graphic(pls, meanBreak));
+                }
+            }
+        }
+        gc.setSingleLegend(false);
+
+        return gc;
+    }
+
+    /**
      * Convert graphics from polar to cartesian coordinate
      *
      * @param graphics Graphics

@@ -2873,7 +2873,7 @@ class Axes(object):
 
         return tuple(graphics)
         
-    def boxplot(self, x, sym=None, positions=None, widths=None, color=None, showcaps=True, showfliers=True, showmeans=False, \
+    def boxplot(self, x, sym=None, vert=True, positions=None, widths=None, color=None, showcaps=True, showfliers=True, showmeans=False, \
             showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):
         """
         Make a box and whisker plot.
@@ -2886,6 +2886,7 @@ class Axes(object):
         :param sym: (*string*) The default symbol for flier points. Enter an empty string ('') if you don’t 
             want to show fliers. If None, then the fliers default to ‘b+’ If you want more control use the 
             flierprops kwarg.
+        :param vert: (*boolean*) If True, draws vertical boxes (default). If False, draw horizontal boxes.
         :param positions: (*array_like*) Sets the positions of the boxes. The ticks and limits are automatically 
             set to match the positions. Defaults to range(1, N+1) where N is the number of boxes to be drawn.
         :param widths: (*scalar or array_like*) Sets the width of each box either with a scalar or a sequence. 
@@ -2992,8 +2993,12 @@ class Axes(object):
             flierprops.setStyle(PointStyle.PLUS)
         
         #Create graphics
-        graphics = GraphicFactory.createBox(x, positions, widths, showcaps, showfliers, showmeans, \
-            showmedians, boxprops, medianprops, whiskerprops, capprops, meanprops, flierprops)
+        if vert:
+            graphics = GraphicFactory.createBox(x, positions, widths, showcaps, showfliers, showmeans, \
+                showmedians, boxprops, medianprops, whiskerprops, capprops, meanprops, flierprops)
+        else:
+            graphics = GraphicFactory.createHBox(x, positions, widths, showcaps, showfliers, showmeans, \
+                showmedians, boxprops, medianprops, whiskerprops, capprops, meanprops, flierprops)
 
         self.add_graphic(graphics)
         self.axes.setAutoExtent()

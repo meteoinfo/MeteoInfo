@@ -991,7 +991,7 @@ def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6
         draw_if_interactive()
     return r
 
-def boxplot(x, sym=None, positions=None, widths=None, color=None, showcaps=True, showfliers=True, showmeans=False, \
+def boxplot(x, sym=None, vert=True, positions=None, widths=None, color=None, showcaps=True, showfliers=True, showmeans=False, \
         showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):
     """
     Make a box and whisker plot.
@@ -1004,7 +1004,8 @@ def boxplot(x, sym=None, positions=None, widths=None, color=None, showcaps=True,
     :param sym: (*string*) The default symbol for flier points. Enter an empty string ('') if you don’t 
         want to show fliers. If None, then the fliers default to ‘b+’ If you want more control use the 
         flierprops kwarg.
-    :param positions: (*array_like*) Sets the positions of the boxes. The ticks and limits are automatically 
+    :param vert: (*boolean*) If True, draws vertical boxes (default). If False, draw horizontal boxes.
+    :param positions: (*array_like*) Sets the positions of the boxes. The ticks and limits are automatically
         set to match the positions. Defaults to range(1, N+1) where N is the number of boxes to be drawn.
     :param widths: (*scalar or array_like*) Sets the width of each box either with a scalar or a sequence. 
         The default is 0.5, or 0.15*(distance between extreme positions), if that is smaller.
@@ -1034,7 +1035,7 @@ def boxplot(x, sym=None, positions=None, widths=None, color=None, showcaps=True,
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
             
-    r = g_axes.boxplot(x, sym, positions, widths, color, showcaps, showfliers, showmeans, \
+    r = g_axes.boxplot(x, sym, vert, positions, widths, color, showcaps, showfliers, showmeans, \
         showmedians, meanline, medianline, boxprops, medianprops, meanprops, whiskerprops, capprops, flierprops)
     if not r is None:
         draw_if_interactive()

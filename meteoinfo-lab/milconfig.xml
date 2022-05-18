@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\boxplot">
-    <RecentFolder Folder="D:\Working\MIScript\cuace_dust"/>
-    <RecentFolder Folder="D:\Working\MIScript"/>
-    <RecentFolder Folder="D:\Working\MIScript\cuace"/>
-    <RecentFolder Folder="D:\Working\MIScript\cuace\script"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geod"/>
+  <Path OpenPath="D:\Temp\test">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\micaps"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\boxplot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
+    <RecentFolder Folder="D:\Temp\test"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\aea_proj.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj_tickline.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\boxplot\boxplot_h_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\boxplot\boxplot_5.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface\heart.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\aea_proj.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj_tickline.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\boxplot\boxplot_h_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\boxplot\boxplot_5.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface\heart.py"/>
     </RecentFiles>
   </File>
   <Font>

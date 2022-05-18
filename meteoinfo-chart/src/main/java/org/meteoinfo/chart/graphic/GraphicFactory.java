@@ -3273,12 +3273,16 @@ public class GraphicFactory {
         int[][] S1 = new int[shape[0]][shape[1]];
         double[] x = (double[])ArrayUtil.copyToNDJavaArray_Double(xa);
         double[] y = (double[])ArrayUtil.copyToNDJavaArray_Double(ya);
+        if (x[1] - x[0] < 0) {
+            ArrayUtils.reverse(x);
+            va = va.flip(1);
+        }
+        if (y[1] - y[0] < 0) {
+            ArrayUtils.reverse(y);
+            va = va.flip(0);
+        }
         double missingValue = -9999.0;
         double[][] data = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va, missingValue);
-        if (x[1] - x[0] < 0)
-            ArrayUtils.reverse(x);
-        if (y[1] - y[0] < 0)
-            ArrayUtils.reverse(y);
         Object[] cbs = ContourDraw.tracingContourLines(data,
                 cValues, x, y, missingValue, S1);
         List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
@@ -3361,10 +3365,14 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
         double[] x = gridData.getXArray();
         double[] y = gridData.getYArray();
-        if (gridData.getXDelta() < 0)
+        if (gridData.getXDelta() < 0) {
             ArrayUtils.reverse(x);
-        if (gridData.getYDelta() < 0)
+            gridData.xReverse();
+        }
+        if (gridData.getYDelta() < 0) {
             ArrayUtils.reverse(y);
+            gridData.yReverse();
+        }
         Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
                 cValues, x, y, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
@@ -3450,10 +3458,14 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
         double[] x = gridData.getXArray();
         double[] y = gridData.getYArray();
-        if (gridData.getXDelta() < 0)
+        if (gridData.getXDelta() < 0) {
             ArrayUtils.reverse(x);
-        if (gridData.getYDelta() < 0)
+            gridData.xReverse();
+        }
+        if (gridData.getYDelta() < 0) {
             ArrayUtils.reverse(y);
+            gridData.yReverse();
+        }
         Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
                 cValues, x, y, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
@@ -3542,10 +3554,14 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
         double[] xArray = gridData.getXArray();
         double[] yArray = gridData.getYArray();
-        if (gridData.getXDelta() < 0)
+        if (gridData.getXDelta() < 0) {
             ArrayUtils.reverse(xArray);
-        if (gridData.getYDelta() < 0)
+            gridData.xReverse();
+        }
+        if (gridData.getYDelta() < 0) {
             ArrayUtils.reverse(yArray);
+            gridData.yReverse();
+        }
         Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
                 cValues, xArray, yArray, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
@@ -4282,10 +4298,14 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
         double[] xArray = gridData.getXArray();
         double[] yArray = gridData.getYArray();
-        if (gridData.getXDelta() < 0)
+        if (gridData.getXDelta() < 0) {
             ArrayUtils.reverse(xArray);
-        if (gridData.getYDelta() < 0)
+            gridData.xReverse();
+        }
+        if (gridData.getYDelta() < 0) {
             ArrayUtils.reverse(yArray);
+            gridData.yReverse();
+        }
         Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
                 cValues, xArray, yArray, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
@@ -4414,12 +4434,16 @@ public class GraphicFactory {
         int[][] S1 = new int[shape[0]][shape[1]];
         double[] x = (double[])ArrayUtil.copyToNDJavaArray_Double(xa);
         double[] y = (double[])ArrayUtil.copyToNDJavaArray_Double(ya);
+        if (x[1] - x[0] < 0) {
+            ArrayUtils.reverse(x);
+            va = va.flip(1);
+        }
+        if (y[1] - y[0] < 0) {
+            ArrayUtils.reverse(y);
+            va = va.flip(0);
+        }
         double missingValue = -9999.0;
         double[][] data = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va, missingValue);
-        if (x[1] - x[0] < 0)
-            ArrayUtils.reverse(x);
-        if (y[1] - y[0] < 0)
-            ArrayUtils.reverse(y);
         Object[] cbs = ContourDraw.tracingContourLines(data,
                 cValues, x, y, missingValue, S1);
         List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
@@ -4543,10 +4567,14 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
         double[] xArray = gridData.getXArray();
         double[] yArray = gridData.getYArray();
-        if (gridData.getXDelta() < 0)
+        if (gridData.getXDelta() < 0) {
             ArrayUtils.reverse(xArray);
-        if (gridData.getYDelta() < 0)
+            gridData.xReverse();
+        }
+        if (gridData.getYDelta() < 0) {
             ArrayUtils.reverse(yArray);
+            gridData.yReverse();
+        }
         Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
                 cValues, xArray, yArray, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
@@ -4705,10 +4733,14 @@ public class GraphicFactory {
         int[][] S1 = new int[gridData.getYNum()][gridData.getXNum()];
         double[] xArray = gridData.getXArray();
         double[] yArray = gridData.getYArray();
-        if (gridData.getXDelta() < 0)
+        if (gridData.getXDelta() < 0) {
             ArrayUtils.reverse(xArray);
-        if (gridData.getYDelta() < 0)
+            gridData.xReverse();
+        }
+        if (gridData.getYDelta() < 0) {
             ArrayUtils.reverse(yArray);
+            gridData.yReverse();
+        }
         Object[] cbs = ContourDraw.tracingContourLines(gridData.getData(),
                 cValues, xArray, yArray, gridData.getDoubleMissingValue(), S1);
         List<PolyLine> contourLines = (List<PolyLine>) cbs[0];

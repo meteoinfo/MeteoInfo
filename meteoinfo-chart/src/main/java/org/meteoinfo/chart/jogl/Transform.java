@@ -1,5 +1,6 @@
 package org.meteoinfo.chart.jogl;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.AspectType;
 import org.meteoinfo.common.Extent3D;
@@ -12,6 +13,7 @@ public class Transform {
     protected AspectType aspectType = AspectType.AUTO;
     protected float xmin, xmax = 1.0f, ymin;
     protected float ymax = 1.0f, zmin, zmax = 1.0f;
+    protected Matrix4f transformMatrix = new Matrix4f();
 
     /**
      * Constructor
@@ -70,7 +72,7 @@ public class Transform {
             float xRatio = xRange / maxXYRange;
             float yRatio = yRange / maxXYRange;
             if (this.aspectType == AspectType.EQUAL) {
-                float zRange = (zmax - zmin);
+                float zRange = zmax - zmin;
                 float maxRange = zRange > maxXYRange ? zRange : maxXYRange;
                 xRatio = xRange / maxRange;
                 yRatio = yRange / maxRange;
@@ -92,6 +94,10 @@ public class Transform {
                 this.ymax = yCenter + yRange * 0.5f / yRatio;
             }
         }
+
+        this.transformMatrix = new Matrix4f()
+                .translate((this.xmax + this.xmin) / 2, (this.ymax + this.ymin) / 2, (this.zmax + this.zmin) / 2)
+                .scale((this.xmax - this.xmin) / 2, (this.ymax - this.ymin) / 2, (this.zmax - this.zmin) / 2);
     }
 
     public AspectType getAspectType() {
@@ -100,6 +106,14 @@ public class Transform {
 
     public void setAspectType(AspectType value) {
         this.aspectType = value;
+    }
+
+    /**
+     * Get transform matrix
+     * @return Transform matrix
+     */
+    public Matrix4f getTransformMatrix() {
+        return this.transformMatrix;
     }
 
     public boolean equals(Transform other) {

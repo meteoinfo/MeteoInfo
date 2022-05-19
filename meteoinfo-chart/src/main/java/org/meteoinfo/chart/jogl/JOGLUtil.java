@@ -12,13 +12,9 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
 import org.apache.commons.imaging.ImageWriteException;
 import org.joml.Vector3f;
-import org.meteoinfo.chart.graphic.IsosurfaceGraphics;
-import org.meteoinfo.chart.graphic.ParticleGraphics;
-import org.meteoinfo.chart.graphic.SurfaceGraphics;
-import org.meteoinfo.chart.graphic.VolumeGraphics;
+import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.jogl.mc.MarchingCubes;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.Extent;
@@ -482,6 +478,41 @@ public class JOGLUtil {
         data = data.copyIfView();
 
         List<float[]> vertices = MarchingCubes.marchingCubes(data, x, y, z, isoLevel);
+
+        int nVertex = vertices.size();
+        float[] vertexData = new float[nVertex * 3];
+        int pos = 0;
+        for (int i = 0; i < vertices.size(); i++) {
+            System.arraycopy(vertices.get(i), 0, vertexData, pos, 3);
+            pos += 3;
+        }
+
+        MeshGraphic meshGraphic = new MeshGraphic();
+        meshGraphic.setLegendBreak(pb);
+        meshGraphic.setVertexData(vertexData);
+
+        return meshGraphic;
+    }
+
+    /**
+     * Create isosurface graphics
+     *
+     * @param data     3d data array
+     * @param x        X coordinates
+     * @param y        Y coordinates
+     * @param z        Z coordinates
+     * @param isoLevel iso level
+     * @param pb       Polygon break
+     * @return Graphics
+     */
+    public static GraphicCollection isosurface_bak(Array data, Array x, Array y, Array z,
+                                               float isoLevel, PolygonBreak pb) {
+        x = x.copyIfView();
+        y = y.copyIfView();
+        z = z.copyIfView();
+        data = data.copyIfView();
+
+        List<float[]> vertices = MarchingCubes.marchingCubes(data, x, y, z, isoLevel);
         IsosurfaceGraphics graphics = new IsosurfaceGraphics();
         graphics.setLegendBreak(pb);
         float[] v1, v2, v3;
@@ -512,6 +543,93 @@ public class JOGLUtil {
      * @return Graphics
      */
     public static GraphicCollection isosurface(final Array data, final Array x, final Array y, final Array z,
+                                               final float isoLevel, PolygonBreak pb, int nThreads) {
+        // TIMER
+        ArrayList<Thread> threads = new ArrayList<>();
+        final ArrayList<ArrayList<float[]>> results = new ArrayList<>();
+
+        // Thread work distribution
+        int nz = (int) z.getSize();
+        int remainder = nz % nThreads;
+        int segment = nz / nThreads;
+
+        // Z axis offset for vertice position calculation
+        int zAxisOffset = 0;
+
+        for (int i = 0; i < nThreads; i++) {
+            // Distribute remainder among first (remainder) threads
+            int segmentSize = (remainder-- > 0) ? segment + 1 : segment;
+
+            // Padding needs to be added to correctly close the gaps between segments
+            final int paddedSegmentSize = (i != nThreads - 1) ? segmentSize + 1 : segmentSize;
+
+            // Finished callback
+            final CallbackMC callback = new CallbackMC() {
+                @Override
+                public void run() {
+                    results.add(getVertices());
+                }
+            };
+
+            // Java...
+            final int finalZAxisOffset = zAxisOffset;
+
+            // Start the thread
+            Thread t = new Thread() {
+                public void run() {
+                    MarchingCubes.marchingCubes(data, x, y, z, isoLevel, paddedSegmentSize, finalZAxisOffset, callback);
+                }
+            };
+
+            threads.add(t);
+            t.start();
+
+            // Correct offsets for next iteration
+            zAxisOffset += segmentSize;
+        }
+
+        // Join the threads
+        for (int i = 0; i < threads.size(); i++) {
+            try {
+                threads.get(i).join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        int nVertex = 0;
+        for (List<float[]> vertices : results) {
+            nVertex += vertices.size();
+        }
+        float[] vertexData = new float[nVertex * 3];
+        int pos = 0;
+        for (List<float[]> vertices : results) {
+            for (int i = 0; i < vertices.size(); i++) {
+                System.arraycopy(vertices.get(i), 0, vertexData, pos, 3);
+                pos += 3;
+            }
+        }
+
+        MeshGraphic meshGraphic = new MeshGraphic();
+        meshGraphic.setLegendBreak(pb);
+        meshGraphic.setVertexData(vertexData);
+
+        return meshGraphic;
+    }
+
+    /**
+     * Create isosurface graphics
+     *
+     * @param data     3d data array
+     * @param x        X coordinates
+     * @param y        Y coordinates
+     * @param z        Z coordinates
+     * @param isoLevel iso level
+     * @param pb       Polygon break
+     * @param nThreads Thread number
+     * @return Graphics
+     */
+    public static GraphicCollection isosurface_bak(final Array data, final Array x, final Array y, final Array z,
                                                final float isoLevel, PolygonBreak pb, int nThreads) {
         // TIMER
         ArrayList<Thread> threads = new ArrayList<>();

@@ -16,15 +16,13 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import com.sun.net.httpserver.Headers;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
-import org.meteoinfo.chart.graphic.IsosurfaceGraphics;
-import org.meteoinfo.chart.graphic.ParticleGraphics;
-import org.meteoinfo.chart.graphic.SurfaceGraphics;
-import org.meteoinfo.chart.graphic.VolumeGraphics;
+import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.jogl.pipe.Pipe;
 import org.meteoinfo.chart.jogl.pipe.PipeShape;
 import org.meteoinfo.chart.jogl.tessellator.Primitive;
@@ -32,7 +30,8 @@ import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.plot.GridLine;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.PlotType;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.render.jogl.JOGLGraphicRender;
+import org.meteoinfo.chart.render.jogl.MeshRender;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
 import org.meteoinfo.chart.render.jogl.VolumeRender;
 import org.meteoinfo.chart.shape.TextureShape;
@@ -59,10 +58,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES2.GL_TEXTURE_3D;
@@ -130,7 +127,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected float distance;
     protected GLAutoDrawable drawable;
 
-    private VolumeRender volumeRender;
+    protected Map<Graphic, JOGLGraphicRender> renderMap = new HashMap<>();
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -1041,8 +1038,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
     public void removeGraphic(Graphic graphic) {
         if (this.graphics.contains(graphic)) {
             this.graphics.remove(graphic);
-            if (graphic instanceof VolumeGraphics) {
-                this.volumeRender = null;
+            if (renderMap.containsKey(graphic)) {
+                renderMap.remove(graphic);
             }
         }
     }
@@ -2306,21 +2303,33 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 this.drawIsosurface(gl, (IsosurfaceGraphics) graphic);
             } else if (graphic instanceof ParticleGraphics) {
                 this.drawParticles(gl, (ParticleGraphics) graphic);
+            } else if (graphic instanceof MeshGraphic) {
+                if (!this.renderMap.containsKey(graphic)) {
+                    renderMap.put(graphic, new MeshRender(gl, (MeshGraphic) graphic));
+                }
+                MeshRender meshRender = (MeshRender) renderMap.get(graphic);
+                meshRender.setTransform(this.transform);
+                meshRender.setOrthographic(this.orthographic);
+                meshRender.updateMatrix();
+                meshRender.draw();
             } else if (graphic instanceof VolumeGraphics) {
                 try {
-                    if (this.clipPlane)
-                        this.disableClipPlane(gl);
-                    //this.drawVolume(gl, (VolumeGraphics) graphic);
-                    if (volumeRender == null)
+                    /*if (this.clipPlane)
+                        this.disableClipPlane(gl);*/
+                    VolumeRender volumeRender = null;
+                    if (!this.renderMap.containsKey(graphic)) {
                         volumeRender = new VolumeRender(gl, (VolumeGraphics) graphic);
-                    else
+                        renderMap.put(graphic, volumeRender);
+                    } else {
+                        volumeRender = (VolumeRender) renderMap.get(graphic);
                         volumeRender.updateShaders();
+                    }
                     volumeRender.setTransform(this.transform);
                     volumeRender.setOrthographic(this.orthographic);
                     volumeRender.updateMatrix();
                     volumeRender.draw();
-                    if (this.clipPlane)
-                        this.enableClipPlane(gl);
+                    /*if (this.clipPlane)
+                        this.enableClipPlane(gl);*/
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

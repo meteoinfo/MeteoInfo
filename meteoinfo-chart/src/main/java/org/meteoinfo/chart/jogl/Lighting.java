@@ -167,6 +167,14 @@ public class Lighting {
     }
 
     /**
+     * Get material shininess
+     * @return Material shininess
+     */
+    public float getMat_shininess() {
+        return this.mat_shininess;
+    }
+
+    /**
      * Set specular
      *
      * @param value Specular

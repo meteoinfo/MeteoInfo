@@ -148,7 +148,9 @@ public class Program {
     }
 
     public void use(GL2 gl) {
-        init(gl);
+        if (programId == null)
+            init(gl);
+
         gl.glUseProgram(programId);
     }
 

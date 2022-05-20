@@ -33,15 +33,8 @@ public class VolumeRender extends JOGLGraphicRender {
      */
     public VolumeRender(GL2 gl) {
         super(gl);
-    }
 
-    /**
-     * Constructor
-     * @param gl JOGL GL2 object
-     * @param rayCastingType Ray casting type
-     */
-    public VolumeRender(GL2 gl, RayCastingType rayCastingType) {
-        super(gl);
+        useShader = true;
     }
 
     /**
@@ -51,6 +44,7 @@ public class VolumeRender extends JOGLGraphicRender {
      */
     public VolumeRender(GL2 gl, VolumeGraphics graphic) {
         this(gl);
+
         setVolume(graphic);
     }
 
@@ -62,6 +56,7 @@ public class VolumeRender extends JOGLGraphicRender {
      */
     public VolumeRender(GL2 gl, VolumeGraphics graphic, Transform transform) {
         this(gl, graphic);
+
         this.transform = transform;
     }
 

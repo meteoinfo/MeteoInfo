@@ -2,6 +2,7 @@ package org.meteoinfo.chart.render.jogl;
 
 import com.jogamp.opengl.GL2;
 import org.joml.Matrix4f;
+import org.meteoinfo.chart.jogl.Lighting;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.render.GraphicRender;
 import org.meteoinfo.geometry.graphic.Graphic;
@@ -17,6 +18,8 @@ public abstract class JOGLGraphicRender implements GraphicRender {
     protected float mvmatrix[] = new float[16];
     protected float projmatrix[] = new float[16];
     protected Matrix4f viewProjMatrix = new Matrix4f();
+    protected boolean useShader = false;
+    protected Lighting lighting = new Lighting();
 
     /**
      * Constructor
@@ -76,6 +79,13 @@ public abstract class JOGLGraphicRender implements GraphicRender {
         return this.viewport[3];
     }
 
+    /**
+     * Set lighting
+     * @param lighting Lighting
+     */
+    public void setLighting(Lighting lighting) {
+        this.lighting = lighting;
+    }
 
     protected int getTextureID() {
         IntBuffer intBuffer = IntBuffer.allocate(1);

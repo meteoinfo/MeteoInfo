@@ -27,6 +27,16 @@ public class MeshRender extends JOGLGraphicRender {
      */
     public MeshRender(GL2 gl) {
         super(gl);
+
+        useShader = false;
+        if (useShader) {
+            try {
+                this.compileShaders();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        initVertexBuffer();
     }
 
     /**
@@ -36,33 +46,14 @@ public class MeshRender extends JOGLGraphicRender {
      * @param meshGraphic The MeshGraphic
      */
     public MeshRender(GL2 gl, MeshGraphic meshGraphic) {
-        super(gl);
+        this(gl);
+
         this.meshGraphic = meshGraphic;
-
-        initVertexBuffer();
-
-        /*try {
-            this.compileShaders();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
 
     private void initVertexBuffer() {
         vbo = GLBuffers.newDirectIntBuffer(1);
-
-        /*FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexData(this.transform));
-        gl.glGenBuffers(1, vbo);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.capacity() * Float.BYTES, vertexBuffer, GL.GL_STATIC_DRAW);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);*/
-
         vboNormal = GLBuffers.newDirectIntBuffer(1);
-        /*FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
-        gl.glGenBuffers(1, vboNormal);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNormal.get(0));
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, normalBuffer.capacity() * Float.BYTES, normalBuffer, GL.GL_STATIC_DRAW);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);*/
     }
 
     @Override
@@ -120,6 +111,9 @@ public class MeshRender extends JOGLGraphicRender {
         program.allocateUniform(gl, "color", (gl2, loc) -> {
             gl2.glUniform4f(loc, rgba[0], rgba[1], rgba[2], rgba[3]);
         });
+        program.allocateUniform(gl, "lightPosition", (gl2, loc) -> {
+            gl2.glUniform4fv(loc, 0, lighting.getPosition(), 0);
+        });
 
         program.setUniforms(gl);
     }
@@ -127,38 +121,51 @@ public class MeshRender extends JOGLGraphicRender {
     @Override
     public void draw() {
 
-        //program.use(gl);
-        //setUniforms();
+        if (useShader) {
+            program.use(gl);
+            setUniforms();
 
-        float[] rgba = meshGraphic.getColor().getRGBComponents(null);
-        gl.glColor4fv(rgba, 0);
+            float[] rgba = meshGraphic.getColor().getRGBComponents(null);
+            gl.glColor4fv(rgba, 0);
 
-        /*float[] vertexData = meshGraphic.getVertexData(this.transform);
-        FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
-        gl.glGenBuffers(1, vbo);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.capacity() * Float.BYTES, vertexBuffer, GL.GL_STATIC_DRAW);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);*/
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+            gl.glEnableVertexAttribArray(0);
+            gl.glBindAttribLocation(0, 0, "coordinates");
+            gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
 
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-        gl.glEnableVertexAttribArray(0);
-        gl.glBindAttribLocation(0, 0, "coordinates");
-        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNormal.get(0));
+            //gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+            //gl.glNormalPointer(GL.GL_FLOAT, 0, 0);
+            gl.glEnableVertexAttribArray(1);
+            gl.glBindAttribLocation(1, 0, "normal");
+            gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 0, 0);
 
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNormal.get(0));
-        gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-        gl.glNormalPointer(GL.GL_FLOAT, 0, 0);
-        //gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNormal.get(0));
-        gl.glEnableVertexAttribArray(1);
-        gl.glBindAttribLocation(1, 0, "normal");
-        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 0, 0);
+            gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
 
-        gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
+            //gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+            gl.glDisableVertexAttribArray(0);
+            gl.glDisableVertexAttribArray(1);
 
-        gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-        gl.glDisableVertexAttribArray(0);
-        gl.glDisableVertexAttribArray(1);
+            gl.glUseProgram(0);
+        } else {
+            float[] rgba = meshGraphic.getColor().getRGBComponents(null);
+            gl.glColor4fv(rgba, 0);
 
-        //gl.glUseProgram(0);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+            gl.glEnableVertexAttribArray(0);
+            gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
+
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNormal.get(0));
+            gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+            gl.glNormalPointer(GL.GL_FLOAT, 0, 0);
+            gl.glEnableVertexAttribArray(1);
+            gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 0, 0);
+
+            gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
+
+            gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+            gl.glDisableVertexAttribArray(0);
+            gl.glDisableVertexAttribArray(1);
+        }
     }
 }

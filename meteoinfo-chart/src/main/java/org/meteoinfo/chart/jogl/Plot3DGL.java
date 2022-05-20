@@ -2310,12 +2310,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 MeshRender meshRender = (MeshRender) renderMap.get(graphic);
                 meshRender.setTransform(this.transform);
                 meshRender.setOrthographic(this.orthographic);
+                meshRender.setLighting(this.lighting);
                 meshRender.updateMatrix();
                 meshRender.draw();
             } else if (graphic instanceof VolumeGraphics) {
                 try {
-                    /*if (this.clipPlane)
-                        this.disableClipPlane(gl);*/
+                    if (this.clipPlane)
+                        this.disableClipPlane(gl);
                     VolumeRender volumeRender = null;
                     if (!this.renderMap.containsKey(graphic)) {
                         volumeRender = new VolumeRender(gl, (VolumeGraphics) graphic);
@@ -2328,8 +2329,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     volumeRender.setOrthographic(this.orthographic);
                     volumeRender.updateMatrix();
                     volumeRender.draw();
-                    /*if (this.clipPlane)
-                        this.enableClipPlane(gl);*/
+                    if (this.clipPlane)
+                        this.enableClipPlane(gl);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

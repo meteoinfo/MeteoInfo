@@ -11,7 +11,6 @@ uniform mat4 MV;
 uniform mat4 MVI;
 uniform mat4 transMatrix;
 
-varying vec4 lightPosition;
 varying vec3 Normal;
 varying vec3 eyePosition;
 
@@ -36,7 +35,7 @@ void main() {
     // Backtransform hardcoded light position (50,75,0100) such that the light
     // remains fixed when the object(s) rotate.
     //lightPosition = inverse(MVP) * vec4(50, 75, -100, 1.0);
-    lightPosition = vec4(50, 75, 100, 1.0);
+    //lightPosition = vec4(50, 75, 100, 1.0);
 
     gl_Position = MVP * vec4(coordinates, 1);
 }

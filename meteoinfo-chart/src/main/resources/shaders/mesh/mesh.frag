@@ -6,8 +6,8 @@
 #endif
 
 uniform vec4 color;
+uniform vec4 lightPosition;
 
-varying vec4 lightPosition;
 varying vec3 Normal;
 varying vec3 eyePosition;
 

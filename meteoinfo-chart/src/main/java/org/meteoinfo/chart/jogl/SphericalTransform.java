@@ -37,6 +37,21 @@ public class SphericalTransform {
 
     /**
      * Transform spherical coordinates to normal 3D coordinates
+     * @param vertex Vertex
+     * @return Transformed vertex
+     */
+    public static float[] transform(float[] vertex) {
+        double u = Math.toRadians(vertex[0]);
+        double v = Math.toRadians(vertex[1]);
+        float x = (float) (Math.cos(u) * Math.cos(v)) * (radius + vertex[2]);
+        float y = (float) (Math.sin(u) * Math.cos(v)) * (radius + vertex[2]);
+        float z = (float) Math.sin(v) * (radius + vertex[2]);
+
+        return new float[]{x, y, z};
+    }
+
+    /**
+     * Transform spherical coordinates to normal 3D coordinates
      * @param p Input PointZ
      * @return Transformed PointZ
      */
@@ -91,6 +106,18 @@ public class SphericalTransform {
             }
             isosurfaceGraphics.setTriangles(triangles);
             return isosurfaceGraphics;
+        } else if (graphic instanceof MeshGraphic) {
+            MeshGraphic meshGraphic = (MeshGraphic) graphic;
+            float[] vertexData = meshGraphic.getVertexData();
+            Vector3f vector3f;
+            for (int i = 0; i < vertexData.length; i+=3) {
+                vector3f = transform(vertexData[i], vertexData[i+1], vertexData[i+2]);
+                vertexData[i] = vector3f.x;
+                vertexData[i+1] = vector3f.y;
+                vertexData[i+2] = vector3f.z;
+            }
+            meshGraphic.setVertexData(vertexData);
+            return meshGraphic;
         } else if (graphic instanceof ParticleGraphics) {
             ParticleGraphics particleGraphics = (ParticleGraphics) graphic;
             for (Map.Entry<Integer, List> map : particleGraphics.getParticleList()) {

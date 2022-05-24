@@ -9,7 +9,7 @@ import cmath
 import datetime
 import itertools
 import math
-import mipylib.miutil as miutil
+from ... import miutil
 import numbers
 import operator
 import __builtin__
@@ -26,7 +26,7 @@ import _dtype
 from dimarray import PyGridData, DimArray, PyStationData
 from mitable import PyTableData
 from ._ndarray import NDArray
-from org.meteoinfo.lab.util import JythonUtil
+from org.meteoinfo.console.jython import JythonUtil
 
 # Global variables
 pi = Math.PI

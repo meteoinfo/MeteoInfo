@@ -120,7 +120,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
     }
 
     /**
-     * get if user interpolated coloring for each face
+     * Get whether using interpolated coloring for each face
      * @return Boolean
      */
     public boolean isFaceInterp() {
@@ -128,7 +128,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
     }
 
     /**
-     * Set if use interpolated coloring for each face
+     * Set whether using interpolated coloring for each face
      * @param value Boolean
      */
     public void setFaceInterp(boolean value) {
@@ -136,7 +136,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
     }
 
     /**
-     * get if user interpolated coloring for each edge
+     * Get whether using interpolated coloring for each edge
      * @return Boolean
      */
     public boolean isEdgeInterp() {
@@ -144,7 +144,7 @@ public class SurfaceGraphics extends GraphicCollection3D {
     }
 
     /**
-     * Set if use interpolated coloring for each edge
+     * Set whether using interpolated coloring for each edge
      * @param value Boolean
      */
     public void setEdgeInterp(boolean value) {

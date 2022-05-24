@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.joml.Math.clamp;
 
-public class VolumeGraphics extends GraphicCollection3D {
+public class VolumeGraphic extends GraphicCollection3D {
     //public static Buffer buffer = null;
     final int width;
     final int height;
@@ -48,7 +48,7 @@ public class VolumeGraphics extends GraphicCollection3D {
      * @param depth 3D texture depth
      * @param colors Colors byte array
      */
-    public VolumeGraphics(byte[] data, int width, int height, int depth, byte[] colors) {
+    public VolumeGraphic(byte[] data, int width, int height, int depth, byte[] colors) {
         this.width = width;
         this.height = height;
         this.depth = depth;
@@ -71,7 +71,7 @@ public class VolumeGraphics extends GraphicCollection3D {
      * @param vMin Minimum value
      * @param vMax Maximum value
      */
-    public VolumeGraphics(Array value, ColorMap colorMap, double vMin, double vMax) {
+    public VolumeGraphic(Array value, ColorMap colorMap, double vMin, double vMax) {
         this.colorMap = colorMap;
 
         value = value.copyIfView();
@@ -108,7 +108,7 @@ public class VolumeGraphics extends GraphicCollection3D {
      * @param colorMap Color map
      * @param norm Normalize
      */
-    public VolumeGraphics(Array value, ColorMap colorMap, Normalize norm) {
+    public VolumeGraphic(Array value, ColorMap colorMap, Normalize norm) {
         value = value.copyIfView();
         int[] shape = value.getShape();
         this.depth = shape[0];
@@ -128,7 +128,7 @@ public class VolumeGraphics extends GraphicCollection3D {
      * @param value Value array - 3D
      * @param ls LegendScheme
      */
-    public VolumeGraphics(Array value, LegendScheme ls) {
+    public VolumeGraphic(Array value, LegendScheme ls) {
         value = value.copyIfView();
         int[] shape = value.getShape();
         this.depth = shape[0];

@@ -1,11 +1,10 @@
 import org.meteoinfo.chart.jogl.GLChartPanel;
 import org.meteoinfo.chart.jogl.Plot3DGL;
-import org.meteoinfo.chart.graphic.VolumeGraphics;
+import org.meteoinfo.chart.graphic.VolumeGraphic;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -97,15 +96,15 @@ public class VolumeTest {
         }
     }
 
-    public VolumeGraphics createGraphics() {
-        return new VolumeGraphics(this.data, this.width, this.height, this.depth, this.colors);
+    public VolumeGraphic createGraphics() {
+        return new VolumeGraphic(this.data, this.width, this.height, this.depth, this.colors);
     }
 
     public static void main(String[] args) throws IOException {
         VolumeTest test = new VolumeTest();
         test.readData();
         test.readColorMap();
-        VolumeGraphics graphics = test.createGraphics();
+        VolumeGraphic graphics = test.createGraphics();
         graphics.setRayCastingType(RayCastingType.SPECULAR);
         JFrame frame = new JFrame("Volume Test");
         Plot3DGL plot = new Plot3DGL();

@@ -1,4 +1,4 @@
-package org.meteoinfo.lab.util;
+package org.meteoinfo.console.jython;
 
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Complex;

@@ -14,9 +14,6 @@
     <orderEntry type="module" module-name="meteoinfo-chart" />
     <orderEntry type="module" module-name="meteoinfo-geo" />
     <orderEntry type="module" module-name="meteoinfo-math" />
-    <orderEntry type="module" module-name="meteoinfo-ndarray" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-math3:3.6.1" level="project" />
-    <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-experimental:0.40" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-core:0.40" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-ddense:0.40" level="project" />
@@ -26,7 +23,7 @@
     <orderEntry type="library" name="Maven: org.ejml:ejml-fdense:0.40" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-cdense:0.40" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-fsparse:0.40" level="project" />
-    <orderEntry type="library" name="Maven: org.ojalgo:ojalgo:48.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ojalgo:ojalgo:51.3.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-interpolation:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-math:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
@@ -128,5 +125,8 @@
     <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.2" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.2.0" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:3.2.0" level="project" />
+    <orderEntry type="module" module-name="meteoinfo-ndarray" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-math3:3.6.1" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.0.0" level="project" />
   </component>
 </module>

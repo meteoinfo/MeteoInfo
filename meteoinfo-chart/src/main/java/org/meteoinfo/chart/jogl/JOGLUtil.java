@@ -846,7 +846,7 @@ public class JOGLUtil {
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        VolumeGraphics graphics = new VolumeGraphics(data, colorMap, vMin, vMax);
+        VolumeGraphic graphics = new VolumeGraphic(data, colorMap, vMin, vMax);
         graphics.setAlphaMin(alphaMin);
         graphics.setAlphaMax(alphaMax);
         graphics.updateColors();
@@ -882,7 +882,7 @@ public class JOGLUtil {
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        VolumeGraphics graphics = new VolumeGraphics(data, colorMap, norm);
+        VolumeGraphic graphics = new VolumeGraphic(data, colorMap, norm);
         graphics.setAlphaMin(alphaMin);
         graphics.setAlphaMax(alphaMax);
         graphics.updateColors();
@@ -937,7 +937,7 @@ public class JOGLUtil {
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        VolumeGraphics graphics = new VolumeGraphics(data, colorMap, norm);
+        VolumeGraphic graphics = new VolumeGraphic(data, colorMap, norm);
         graphics.setTransferFunction(transferFunction);
         graphics.updateColors();
 
@@ -972,7 +972,7 @@ public class JOGLUtil {
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        VolumeGraphics graphics = new VolumeGraphics(data, ls);
+        VolumeGraphic graphics = new VolumeGraphic(data, ls);
         graphics.setAlphaMin(alphaMin);
         graphics.setAlphaMax(alphaMax);
         graphics.updateColors();

@@ -10,11 +10,9 @@ import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.interpolation.*;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.meteoinfo.common.PointD;
-//import org.meteoinfo.geoprocess.GeoComputation;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.math.spatial.KDTree;
-//import org.meteoinfo.shape.PolygonShape;
 import smile.interpolation.KrigingInterpolation1D;
 import smile.interpolation.KrigingInterpolation2D;
 

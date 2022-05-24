@@ -16,7 +16,6 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
-import com.sun.net.httpserver.Headers;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -32,7 +31,6 @@ import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.chart.render.jogl.JOGLGraphicRender;
 import org.meteoinfo.chart.render.jogl.MeshRender;
-import org.meteoinfo.chart.render.jogl.RayCastingType;
 import org.meteoinfo.chart.render.jogl.VolumeRender;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
@@ -2313,13 +2311,13 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 meshRender.setLighting(this.lighting);
                 meshRender.updateMatrix();
                 meshRender.draw();
-            } else if (graphic instanceof VolumeGraphics) {
+            } else if (graphic instanceof VolumeGraphic) {
                 try {
                     if (this.clipPlane)
                         this.disableClipPlane(gl);
                     VolumeRender volumeRender = null;
                     if (!this.renderMap.containsKey(graphic)) {
-                        volumeRender = new VolumeRender(gl, (VolumeGraphics) graphic);
+                        volumeRender = new VolumeRender(gl, (VolumeGraphic) graphic);
                         renderMap.put(graphic, volumeRender);
                     } else {
                         volumeRender = (VolumeRender) renderMap.get(graphic);
@@ -2522,7 +2520,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return intBuffer.get(0);
     }
 
-    private void drawVolume(GL2 gl, VolumeGraphics volume) throws Exception {
+    private void drawVolume(GL2 gl, VolumeGraphic volume) throws Exception {
         gl.glDisable(GL_DEPTH_TEST);
 
         gl.glActiveTexture(GL_TEXTURE1);

@@ -3,7 +3,6 @@ package org.meteoinfo.chart.render.jogl;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.util.GLBuffers;
 import org.meteoinfo.chart.graphic.MeshGraphic;
 import org.meteoinfo.chart.jogl.Program;
@@ -13,10 +12,11 @@ import org.meteoinfo.chart.jogl.Utils;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class MeshRender extends JOGLGraphicRender {
+public class SurfaceRender extends JOGLGraphicRender {
 
     private MeshGraphic meshGraphic;
     private IntBuffer vbo;
+    private IntBuffer vboColor;
     private IntBuffer vboNormal;
     private Program program;
 
@@ -25,7 +25,7 @@ public class MeshRender extends JOGLGraphicRender {
      *
      * @param gl The JOGL GL2 object
      */
-    public MeshRender(GL2 gl) {
+    public SurfaceRender(GL2 gl) {
         super(gl);
 
         useShader = false;
@@ -45,7 +45,7 @@ public class MeshRender extends JOGLGraphicRender {
      * @param gl The opengl pipeline
      * @param meshGraphic The MeshGraphic
      */
-    public MeshRender(GL2 gl, MeshGraphic meshGraphic) {
+    public SurfaceRender(GL2 gl, MeshGraphic meshGraphic) {
         this(gl);
 
         this.meshGraphic = meshGraphic;
@@ -76,9 +76,9 @@ public class MeshRender extends JOGLGraphicRender {
     }
 
     void compileShaders() throws Exception {
-        String vertexShaderCode = Utils.loadResource("/shaders/mesh/vertex.vert");
-        String fragmentShaderCode = Utils.loadResource("/shaders/mesh/mesh.frag");
-        program = new Program("mesh", vertexShaderCode, fragmentShaderCode);
+        String vertexShaderCode = Utils.loadResource("/shaders/surface/vertex.vert");
+        String fragmentShaderCode = Utils.loadResource("/shaders/surface/surface.frag");
+        program = new Program("surface", vertexShaderCode, fragmentShaderCode);
     }
 
     /**

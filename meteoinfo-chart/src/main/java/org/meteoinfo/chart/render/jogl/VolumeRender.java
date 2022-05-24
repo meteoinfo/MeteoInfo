@@ -2,11 +2,10 @@ package org.meteoinfo.chart.render.jogl;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL2;
-import org.meteoinfo.chart.graphic.VolumeGraphics;
+import org.meteoinfo.chart.graphic.VolumeGraphic;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
-import org.meteoinfo.geometry.graphic.Graphic;
 
 import java.nio.Buffer;
 import java.nio.IntBuffer;
@@ -21,7 +20,7 @@ import static com.jogamp.opengl.GL2ES3.GL_TEXTURE_BASE_LEVEL;
  */
 public class VolumeRender extends JOGLGraphicRender {
 
-    private VolumeGraphics volume;
+    private VolumeGraphic volume;
     private int colorTexture;
     private int volumeTexture;
     private int normalsTexture;
@@ -42,7 +41,7 @@ public class VolumeRender extends JOGLGraphicRender {
      * @param gl JOGL GL2 object
      * @param graphic Volume graphic
      */
-    public VolumeRender(GL2 gl, VolumeGraphics graphic) {
+    public VolumeRender(GL2 gl, VolumeGraphic graphic) {
         this(gl);
 
         setVolume(graphic);
@@ -54,7 +53,7 @@ public class VolumeRender extends JOGLGraphicRender {
      * @param graphic Volume graphic
      * @param transform Transform
      */
-    public VolumeRender(GL2 gl, VolumeGraphics graphic, Transform transform) {
+    public VolumeRender(GL2 gl, VolumeGraphic graphic, Transform transform) {
         this(gl, graphic);
 
         this.transform = transform;
@@ -64,7 +63,7 @@ public class VolumeRender extends JOGLGraphicRender {
      * Get volume graphic
      * @return Volume graphic
      */
-    public VolumeGraphics getVolume() {
+    public VolumeGraphic getVolume() {
         return volume;
     }
 
@@ -72,7 +71,7 @@ public class VolumeRender extends JOGLGraphicRender {
      * Set volume graphic
      * @param value Volume graphic
      */
-    public void setVolume(VolumeGraphics value) {
+    public void setVolume(VolumeGraphic value) {
         this.volume = value;
         this.bindingTextures();
         try {

@@ -26,7 +26,7 @@
     <orderEntry type="library" name="Maven: org.ejml:ejml-fdense:0.40" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-cdense:0.40" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-fsparse:0.40" level="project" />
-    <orderEntry type="library" name="Maven: org.ojalgo:ojalgo:48.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ojalgo:ojalgo:51.3.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-interpolation:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-math:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />

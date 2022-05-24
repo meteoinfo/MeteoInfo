@@ -126,7 +126,7 @@ public class SphericalTransform {
                 }
             }
             return particleGraphics;
-        } else if (graphic instanceof VolumeGraphics) {
+        } else if (graphic instanceof VolumeGraphic) {
             return graphic;
         } else {
             GraphicCollection3D graphics = (GraphicCollection3D) graphic;

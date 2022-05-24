@@ -135,7 +135,7 @@ public class FrmTextEditor extends javax.swing.JFrame {
         List<String> jarfns = GlobalUtil.getFiles(pluginPath, ".jar");
         String path = _parent.getStartupPath() + File.separator + "pylib";
         if (isDebug) {
-            path = "D:\\MyProgram\\java\\MeteoInfoDev\\MeteoInfo\\MeteoInfoLab\\pylib";
+            path = "D:\\MyProgram\\java\\MeteoInfoDev\\MeteoInfo\\meteoinfo-lab\\pylib";
         }
 
         try {

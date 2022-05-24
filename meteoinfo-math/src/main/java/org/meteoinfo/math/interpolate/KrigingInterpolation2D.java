@@ -108,7 +108,7 @@ public class KrigingInterpolation2D implements Interpolation2D {
         value[n][n] = 0.0;
 
         final Primitive64Matrix v = Primitive64Matrix.FACTORY.rows(value);
-        SingularValue<Double> tmpSVD = SingularValue.make(v);
+        SingularValue<Double> tmpSVD = SingularValue.PRIMITIVE.make(v);
         tmpSVD.decompose(v);
         MatrixStore<Double> solution = tmpSVD.getSolution(Primitive64Store.FACTORY.column(yv));
         yvi = solution.toRawCopy1D();

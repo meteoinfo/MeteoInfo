@@ -2,3 +2,6 @@ target/
 /MeteoInfoLab/target/
 /MeteoInfoLib/target/
 /MeteoInfoMap/target/
+**/.settings/*
+.classpath
+.project

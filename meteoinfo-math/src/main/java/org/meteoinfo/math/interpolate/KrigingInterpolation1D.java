@@ -96,7 +96,7 @@ public class KrigingInterpolation1D implements Interpolation {
         yv[n] = 0.0;
         v.set(n, n, 0.0);
 
-        SingularValue<Double> tmpSVD = SingularValue.make(v);
+        SingularValue<Double> tmpSVD = SingularValue.PRIMITIVE.make(v);
         tmpSVD.decompose(v);
         MatrixStore<Double> solution = tmpSVD.getSolution(Primitive64Store.FACTORY.column(yv));
         yvi = solution.toRawCopy1D();

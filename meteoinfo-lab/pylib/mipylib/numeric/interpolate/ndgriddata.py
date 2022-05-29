@@ -1,4 +1,5 @@
 from org.meteoinfo.math.interpolate import NearestNDInterpolator as JInterp
+from org.meteoinfo.math.interpolate import IDWNDInterpolator as JIDWInterp
 from mipylib.numeric import NDArray
 from jarray import array
 
@@ -87,7 +88,7 @@ class IDWNDInterpolator(object):
             x = xx
         else:
             x = x.asarray()
-        self._interp = JInterp(x, y.asarray())
+        self._interp = JIDWInterp(x, y.asarray())
         if not pnum is None:
             self._interp.setPointNum(pnum)
         if not radius is None:

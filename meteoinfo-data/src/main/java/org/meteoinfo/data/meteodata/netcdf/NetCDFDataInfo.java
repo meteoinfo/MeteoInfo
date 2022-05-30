@@ -73,7 +73,6 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     private List<ucar.nc2.Dimension> ncDimensions = new ArrayList<>();
     private List<Dimension> dimensions = new ArrayList<>();
     private List<ucar.nc2.Attribute> ncAttributes = new ArrayList<>();
-    //private List<Attribute> attributes = new ArrayList<>();
     private ucar.nc2.Variable _xVar = null;
     private ucar.nc2.Variable _yVar = null;
     private ucar.nc2.Variable _levelVar = null;
@@ -275,9 +274,6 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         try {
             _fileTypeStr = ncfile.getFileTypeDescription();
             _fileTypeId = ncfile.getFileTypeId();
-//            if (_fileTypeId.equals("GRIB2")){
-//                ncfile.getIosp().
-//            }
 
             //Read variables
             ncVariables = ncfile.getVariables();
@@ -305,16 +301,6 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                                 dim.setShortName(dimName);
                             }
                         }
-//                        String newName;
-//                        //int idx = dim.getShortName().lastIndexOf("_");
-//                        int idx = dim.getShortName().indexOf("Data_Fields_");
-//                        if (idx >= 0) {
-//                            newName = dim.getShortName().substring(idx + 12);
-//                        } else {
-//                            idx = dim.getShortName().lastIndexOf("_");
-//                            newName = dim.getShortName().substring(idx + 1);
-//                        }
-//                        dim.setShortName(newName);
                     }
                 }
             }

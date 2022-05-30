@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.dimarray.DimArray;
+import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.ndarray.InvalidRangeException;
@@ -157,6 +158,10 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @return Times
       */
      public List<LocalDateTime> getTimes() {
+         if (tDim == null) {
+             return null;
+         }
+
          Array values = tDim.getDimValue();
          List<LocalDateTime> times = new ArrayList<>();
          for (int i = 0; i < values.getSize(); i++) {
@@ -173,6 +178,9 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @return Time
       */
      public LocalDateTime getTime(int timeIdx) {
+         if (tDim == null)
+             return null;
+
          return JDateUtil.fromOADate(tDim.getDimValue().getDouble(timeIdx));
      }
 
@@ -182,6 +190,9 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @return Time double value
       */
      public double getTimeValue(int timeIdx) {
+         if (tDim == null)
+             return Double.NaN;
+
          return tDim.getDimValue().getDouble(timeIdx);
      }
 
@@ -243,6 +254,11 @@ import org.meteoinfo.projection.ProjectionInfo;
          for (LocalDateTime t : value) {
              values.add(JDateUtil.toOADate(t));
          }
+
+         if (tDim == null) {
+             tDim = new Dimension(DimensionType.T);
+         }
+
          tDim.setValues(values);
      }
 
@@ -252,6 +268,9 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @return Time number
       */
      public int getTimeNum() {
+         if (tDim == null)
+             return 0;
+
          return tDim.getLength();
      }
 

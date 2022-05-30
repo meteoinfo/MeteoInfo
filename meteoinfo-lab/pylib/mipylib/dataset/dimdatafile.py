@@ -256,22 +256,28 @@ class DimDataFile(object):
         return self.dataset.getDataInfo().getTimeNum()
     
     def gettime(self, idx):
-        '''
+        """
         Get time by index.
         
         :param idx: (*int*) Time index.
         
         :returns: (*datetime*) The time
-        '''
-        t = self.dataset.getDataInfo().getTimes().get(idx)     
+        """
+        t = self.dataset.getDataInfo().getTimes().get(idx)
+        if t is None:
+            return None
+
         t = miutil.pydate(t)
         return t
         
     def gettimes(self):
-        '''
+        """
         Get time list.
-        '''
+        """
         tt = self.dataset.getDataInfo().getTimes()
+        if tt is None:
+            return None
+
         times = []
         for t in tt:
             times.append(miutil.pydate(t))

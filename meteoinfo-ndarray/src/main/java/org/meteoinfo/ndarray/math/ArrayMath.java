@@ -6121,20 +6121,20 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array setSection_List(Array a, List<List<Integer>> ranges, Number v) {
-        Array r = copy(a);
-        int n = r.getRank();
+        //Array r = copy(a);
+        int n = a.getRank();
         int[] count = new int[n];
-        Index index = Index.factory(count);
+        Index index = a.getIndex();
         int m = ranges.get(0).size();
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 count[j] = ranges.get(j).get(i);
             }
             index.set(count);
-            r.setObject(index, v);
+            a.setObject(index, v);
         }
 
-        return r;
+        return a;
     }
 
     /**
@@ -6146,10 +6146,10 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array setSection_List(Array a, List<List<Integer>> ranges, Array v) {
-        Array r = copy(a);
-        int n = r.getRank();
+        //Array r = copy(a);
+        int n = a.getRank();
         int[] count = new int[n];
-        Index index = r.getIndex();
+        Index index = a.getIndex();
         Index vIndex = v.getIndex();
         int m = ranges.get(0).size();
         for (int i = 0; i < m; i++) {
@@ -6157,11 +6157,11 @@ public class ArrayMath {
                 count[j] = ranges.get(j).get(i);
             }
             index.set(count);
-            r.setObject(index, v.getObject(vIndex));
+            a.setObject(index, v.getObject(vIndex));
             vIndex.incr();
         }
 
-        return r;
+        return a;
     }
 
     /**

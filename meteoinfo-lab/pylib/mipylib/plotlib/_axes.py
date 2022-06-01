@@ -1004,7 +1004,7 @@ class Axes(object):
     def remove_graphic(self, graphic):
         '''
         Remove a graphic
-        :param graphic: (*int or Grahpic*) The graphic
+        :param graphic: (*int or Graphic*) The graphic
         :return:
         '''
         if isinstance(graphic, int):

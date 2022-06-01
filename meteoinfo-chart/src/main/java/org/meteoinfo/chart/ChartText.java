@@ -35,21 +35,21 @@ public class ChartText extends Shape {
     // <editor-fold desc="Variables">
     protected double x;
     protected double y;
-    private Font font;
-    private List<String> text;
-    private Color color;
-    private int lineSpace;
-    private CoordinateType coordinates;
-    private Color background;
-    private boolean drawBackground;
-    private boolean drawNeatline;
-    private Color neatLineColor;
-    private float neatLineSize;
-    private float gap;
+    protected Font font;
+    protected List<String> text;
+    protected Color color;
+    protected int lineSpace;
+    protected CoordinateType coordinates;
+    protected Color background;
+    protected boolean drawBackground;
+    protected boolean drawNeatline;
+    protected Color neatLineColor;
+    protected float neatLineSize;
+    protected float gap;
     protected float angle;
-    private XAlign xAlign;
-    private YAlign yAlign;
-    private boolean useExternalFont;
+    protected XAlign xAlign;
+    protected YAlign yAlign;
+    protected boolean useExternalFont;
     protected double xShift;
     protected double yShift;
 

@@ -124,4 +124,35 @@ public class ChartText3D extends ChartText {
         double[] value = DataMath.getDSFromUV(p1.x - p0.x, p1.y - p0.y);
         this.angle = (float)value[0];
     }
+
+    /**
+     * Clone
+     *
+     * @return Cloned object
+     */
+    @Override
+    public Object clone() {
+        ChartText3D ct = new ChartText3D();
+        ct.angle = this.angle;
+        ct.background = this.background;
+        ct.color = this.color;
+        ct.coordinates = this.coordinates;
+        ct.drawBackground = this.drawBackground;
+        ct.drawNeatline = this.drawNeatline;
+        ct.font = this.font;
+        ct.gap = this.gap;
+        ct.lineSpace = this.lineSpace;
+        ct.neatLineColor = this.neatLineColor;
+        ct.neatLineSize = this.neatLineSize;
+        ct.text = this.text;
+        ct.useExternalFont = this.useExternalFont;
+        ct.x = this.x;
+        ct.xAlign = this.xAlign;
+        ct.y = this.y;
+        ct.yAlign = this.yAlign;
+        ct.z = this.z;
+        ct.zdir = this.zdir;
+
+        return ct;
+    }
 }

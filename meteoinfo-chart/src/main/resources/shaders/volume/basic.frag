@@ -98,8 +98,8 @@ vec4 premultiplyAlpha(vec4 color)
 // GL_ONE_MINUS_DST_ALPHA, GL_ONE
 void blendToBack(inout vec4 accum, vec4 color)
 {
-    //accum = color * (1-accum.a) + accum;
-    accum = premultiplyAlpha(color) * (1-accum.a) + accum;
+    accum = color * color.a * (1-accum.a) + accum;
+    //accum = premultiplyAlpha(color) * (1-accum.a) + accum;
 }
 
 void main(){

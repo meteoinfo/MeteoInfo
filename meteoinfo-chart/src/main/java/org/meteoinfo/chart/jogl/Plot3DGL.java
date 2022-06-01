@@ -309,14 +309,29 @@ public class Plot3DGL extends Plot implements GLEventListener {
      *
      * @param value Extent
      */
-    public void setDrawExtent(Extent3D value) {
-        this.drawExtent = value;
-        xmin = (float) drawExtent.minX;
-        xmax = (float) drawExtent.maxX;
-        ymin = (float) drawExtent.minY;
-        ymax = (float) drawExtent.maxY;
-        zmin = (float) drawExtent.minZ;
-        zmax = (float) drawExtent.maxZ;
+    public void setDrawExtent(Extent3D extent) {
+        xmin = (float) extent.minX;
+        xmax = (float) extent.maxX;
+        ymin = (float) extent.minY;
+        ymax = (float) extent.maxY;
+        zmin = (float) extent.minZ;
+        zmax = (float) extent.maxZ;
+
+        if (xmin == xmax) {
+            xmin -= 1;
+            xmax += 1;
+        }
+        if (ymin == ymax) {
+            ymin -= 1;
+            ymax += 1;
+        }
+        if (zmin == zmax) {
+            zmin -= 1;
+            zmax += 1;
+        }
+
+        this.drawExtent = new Extent3D(xmin, xmax, ymin, ymax, zmin, zmax);
+
         xAxis.setMinMaxValue(xmin, xmax);
         yAxis.setMinMaxValue(ymin, ymax);
         zAxis.setMinMaxValue(zmin, zmax);
@@ -727,6 +742,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.xmax = max;
         updateExtent();
         this.xAxis.setMinMaxValue(min, max);
+        this.fixExtent = true;
     }
 
     /**
@@ -780,6 +796,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.ymax = max;
         updateExtent();
         this.yAxis.setMinMaxValue(min, max);
+        this.fixExtent = true;
     }
 
     /**
@@ -833,6 +850,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.zmax = max;
         updateExtent();
         this.zAxis.setMinMaxValue(min, max);
+        this.fixExtent = true;
     }
 
     /**
@@ -1003,12 +1021,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
      */
     public void addGraphic(Graphic graphic) {
         this.graphics.add(graphic);
+        Extent ex = this.graphics.getExtent();
+        if (!ex.is3D()) {
+            ex = ex.to3D();
+        }
+        this.extent = (Extent3D) ex;
         if (!fixExtent) {
-            Extent ex = this.graphics.getExtent();
-            if (!ex.is3D()) {
-                ex = ex.to3D();
-            }
-            this.extent = (Extent3D) ex;
             this.setDrawExtent((Extent3D) this.extent.clone());
         }
     }

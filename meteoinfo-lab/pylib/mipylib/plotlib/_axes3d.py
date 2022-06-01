@@ -1581,7 +1581,7 @@ class Axes3D(Axes):
         return graphics
         
     def text(self, x, y, z, s, zdir=None, **kwargs):
-        '''
+        """
         Add text to the plot. kwargs will be passed on to text, except for the zdir 
         keyword, which sets the direction to be used as the z direction.
         
@@ -1592,7 +1592,19 @@ class Axes3D(Axes):
         :param zdir: Z direction.
 
         :return: 3D text graphics
-        '''
+        """
+        if isinstance(x, (list, tuple)):
+            x = np.array(x)
+        if isinstance(y, (list, tuple)):
+            y = np.array(y)
+        if isinstance(z, (list, tuple)):
+            z = np.array(z)
+        if isinstance(s, (list, tuple)):
+            s = np.array(s)
+            ss = s[0]
+        else:
+            ss = s
+
         fontname = kwargs.pop('fontname', 'Arial')
         fontsize = kwargs.pop('fontsize', 14)
         bold = kwargs.pop('bold', False)
@@ -1603,10 +1615,11 @@ class Axes3D(Axes):
             font = Font(fontname, Font.PLAIN, fontsize)
         c = plotutil.getcolor(color)
         text = ChartText3D()
-        text.setText(s)
+        text.setText(ss)
         text.setFont(font)
         text.setColor(c)
-        text.setPoint(x, y, z)
+        if not isinstance(x, np.NDArray):
+            text.setPoint(x, y, z)
         ha = kwargs.pop('horizontalalignment', None)
         if ha is None:
             ha = kwargs.pop('ha', None)
@@ -1647,7 +1660,11 @@ class Axes3D(Axes):
                 text.setZDir(zdir[0], zdir[1], zdir[2])
             else:
                 text.setZDir(zdir)
-        graphic = Graphic(text, None)
+
+        if isinstance(x, np.NDArray):
+            graphic = GraphicFactory.createTexts3D(x._array, y._array, z._array, s._array, text)
+        else:
+            graphic = Graphic(text, None)
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphic)

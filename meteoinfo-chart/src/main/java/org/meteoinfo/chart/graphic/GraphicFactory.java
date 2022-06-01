@@ -7,6 +7,7 @@ package org.meteoinfo.chart.graphic;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.chart.ChartText;
+import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.jogl.pipe.PipeShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
@@ -1323,6 +1324,38 @@ public class GraphicFactory {
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);
+        return graphics;
+    }
+
+    /**
+     * Create 3D text graphics
+     *
+     * @param xa X data array
+     * @param ya Y data array
+     * @param za Z data array
+     * @param sa  data array
+     * @param text Text 3d
+     * @return 3D point graphics
+     */
+    public static GraphicCollection createTexts3D(Array xa, Array ya, Array za, Array sa, ChartText3D text) {
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        IndexIterator xIter = xa.getIndexIterator();
+        IndexIterator yIter = ya.getIndexIterator();
+        IndexIterator zIter = za.getIndexIterator();
+        IndexIterator sIter = sa.getIndexIterator();
+        double x, y, z;
+        String s;
+        while (xIter.hasNext()) {
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            z = zIter.getDoubleNext();
+            s = sIter.getStringNext();
+            ChartText3D text3D = (ChartText3D) text.clone();
+            text3D.setText(s);
+            text3D.setPoint(x, y, z);
+            graphics.add(new Graphic(text3D, null));
+        }
+
         return graphics;
     }
 

@@ -54,6 +54,8 @@ import org.meteoinfo.projection.Reproject;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.NetcdfFiles;
+import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dataset.NetcdfDatasets;
 import ucar.nc2.iosp.hdf5.H5header;
 import ucar.unidata.io.RandomAccessFile;
 
@@ -64,22 +66,22 @@ import ucar.unidata.io.RandomAccessFile;
 public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationDataInfo {
     // <editor-fold desc="Variables">
 
-    private String _fileTypeStr;
-    private String _fileTypeId;
+    private String fileTypeStr;
+    private String fileTypeId;
     private Conventions convention = Conventions.CF;
+    private NetcdfDataset ncDataset = null;
     private NetcdfFile ncfile = null;
     private boolean keepOpen = false;
     private List<ucar.nc2.Variable> ncVariables = new ArrayList<>();
     private List<ucar.nc2.Dimension> ncDimensions = new ArrayList<>();
     private List<Dimension> dimensions = new ArrayList<>();
     private List<ucar.nc2.Attribute> ncAttributes = new ArrayList<>();
-    private ucar.nc2.Variable _xVar = null;
-    private ucar.nc2.Variable _yVar = null;
-    private ucar.nc2.Variable _levelVar = null;
-    private ucar.nc2.Variable _timeVar = null;
-    private boolean _isHDFEOS = false;
-    private boolean _isSWATH = false;
-    private boolean _isPROFILE = false;
+    private ucar.nc2.Variable xVar = null;
+    private ucar.nc2.Variable yVar = null;
+    private ucar.nc2.Variable levelVar = null;
+    private boolean isHDFEOS = false;
+    private boolean isSWATH = false;
+    private boolean isPROFILE = false;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -145,7 +147,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return File type identifer
      */
     public String getFileTypeId() {
-        return _fileTypeId;
+        return fileTypeId;
     }
 
     /**
@@ -154,7 +156,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return Boolean
      */
     public boolean isHDFEOS() {
-        return _isHDFEOS;
+        return isHDFEOS;
     }
 
     /**
@@ -163,7 +165,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return Boolean
      */
     public boolean isSWATH() {
-        if (_isSWATH || _isPROFILE) {
+        if (isSWATH || isPROFILE) {
             return true;
         } else {
             return false;
@@ -234,9 +236,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     public void readDataInfo(String fileName) {
         this.setFileName(fileName);
         try {
-            //ncfile = NetcdfFile.open(fileName);
-            //ncfile = NetcdfDatasets.openDataset(fileName);
-            ncfile = NetcdfFile.open(fileName);
+            //ncDataset = NetcdfDatasets.openDataset(fileName);
+            ncfile = NetcdfDatasets.openFile(fileName, null);
             readDataInfo(false);
         } catch (IOException e) {
             e.printStackTrace();
@@ -272,16 +273,17 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
     public void readDataInfo(boolean keepOpen) {
         try {
-            _fileTypeStr = ncfile.getFileTypeDescription();
-            _fileTypeId = ncfile.getFileTypeId();
+            fileTypeStr = ncfile.getFileTypeDescription();
+            fileTypeId = ncfile.getFileTypeId();
 
             //Read variables
             ncVariables = ncfile.getVariables();
+            //ncVariables = ncDataset.getVariables();
 
             //Read dimensions
             ncDimensions = ncfile.getDimensions();
-            if (_fileTypeId.equals("HDF5-EOS") || _fileTypeId.equals("HDF4-EOS")) {
-                _isHDFEOS = true;
+            if (fileTypeId.equals("HDF5-EOS") || fileTypeId.equals("HDF4-EOS")) {
+                isHDFEOS = true;
                 List<String> dimNames = new ArrayList<>();
                 for (ucar.nc2.Variable var : ncVariables) {
                     for (ucar.nc2.Dimension dim : var.getDimensions()) {
@@ -318,10 +320,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             String featureType = this.getGlobalAttStr("featureType");
             switch (featureType) {
                 case "SWATH":
-                    _isSWATH = true;
+                    isSWATH = true;
                     break;
                 case "PROFILE":
-                    _isPROFILE = true;
+                    isPROFILE = true;
                     break;
             }
             for (ucar.nc2.Attribute ncattr : ncAttributes) {
@@ -345,7 +347,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 //nvar.setName(var.getShortName());
                 //nvar.setCoorVar(var.isCoordinateVariable());
                 nvar.setDimVar(var.getRank() <= 1);
-                if (_isSWATH || _isPROFILE) {
+                if (isSWATH || isPROFILE) {
                     nvar.setStation(true);
                 }
 
@@ -397,10 +399,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     public void readDataInfo(String fileName, boolean keepOpen) {
         try {
             this.setFileName(fileName);
-            //ncfile = NetcdfDatasets.openDataset(fileName);
-            ncfile = NetcdfFile.open(fileName);
-            //ucar.nc2.grib.grib1.tables.Grib1ParamTables.setStrict(true);
-            //ncfile = NetcdfFiles.open(fileName);
+            //ncDataset = NetcdfDatasets.openDataset(fileName);
+            ncfile = NetcdfDatasets.openFile(fileName, null);
             readDataInfo(keepOpen);
         } catch (IOException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
@@ -561,7 +561,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
     private ProjectionInfo getProjection_CF() {
         String projStr = this.getProjectionInfo().toProj4String();
-        if (this._isHDFEOS) {
+        if (this.isHDFEOS) {
             ucar.nc2.Variable pVar = null;
             for (ucar.nc2.Variable aVar : ncVariables) {
                 if (aVar.getShortName().equals("_HDFEOS_CRS")) {
@@ -609,10 +609,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 //                    double temp = ymax;
 //                    ymax = ymin;
 //                    ymin = temp;
-                    if (this._fileTypeId.equals("HDF5-EOS")) {
+                    if (this.fileTypeId.equals("HDF5-EOS")) {
                         this.setYReverse(true);
                     }
-                } else if (!this._fileTypeId.equals("HDF5-EOS")) {
+                } else if (!this.fileTypeId.equals("HDF5-EOS")) {
                     this.setYReverse(true);
                 }
 
@@ -1074,13 +1074,13 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     private boolean getDimensionValues(NetcdfFile ncfile) throws IOException, ParseException {
         switch (convention) {
             case CF:
-                if (this._isHDFEOS) {
+                if (this.isHDFEOS) {
                     getDimValues_HDFEOS_SWATH();
                 } else {
                     getDimValues_CF();
                     if (this.getXDimension() == null || this.getYDimension() == null) {
                         if (this.findNCVariable("Longitude") != null && this.findNCVariable("Latitude") != null) {
-                            this._isSWATH = true;
+                            this.isSWATH = true;
                         }
                     }
                 }
@@ -1099,7 +1099,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     }
 
     private void getDimValues_HDFEOS_SWATH() throws IOException {
-        if (this._isSWATH || this._isPROFILE) {
+        if (this.isSWATH || this.isPROFILE) {
             ucar.nc2.Variable var = this.findNCVariable("Pressure");
             if (var != null) {
                 Array darray = NCUtil.convertArray(var.read());
@@ -1364,29 +1364,29 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             int yNum = yDim.getLength();
 
             //List<String> varNameList = this.getVariableNames();
-            _yVar = ncfile.findVariable("XLAT");
-            if (_yVar == null) {
-                _yVar = ncfile.findVariable("XLAT_M");
+            yVar = ncfile.findVariable("XLAT");
+            if (yVar == null) {
+                yVar = ncfile.findVariable("XLAT_M");
             }
 
-            _xVar = ncfile.findVariable("XLONG");
-            if (_xVar == null) {
-                _xVar = ncfile.findVariable("XLON");
+            xVar = ncfile.findVariable("XLONG");
+            if (xVar == null) {
+                xVar = ncfile.findVariable("XLON");
             }
-            if (_xVar == null) {
-                _xVar = ncfile.findVariable("XLONG_M");
+            if (xVar == null) {
+                xVar = ncfile.findVariable("XLONG_M");
             }
 
-            _levelVar = ncfile.findVariable("ZNU");
+            levelVar = ncfile.findVariable("ZNU");
 
             //Get X/Y Array
             double dx = Double.parseDouble(getGlobalAttStr("DX"));
             double dy = Double.parseDouble(getGlobalAttStr("DY"));
             ProjectionInfo fromProj = KnownCoordinateSystems.geographic.world.WGS1984;
             double[][] points = new double[1][];
-            if (_yVar != null && _xVar != null) {
+            if (yVar != null && xVar != null) {
                 dimLen = yNum;
-                Array yarray = NCUtil.convertArray(_yVar.read().reduce());
+                Array yarray = NCUtil.convertArray(yVar.read().reduce());
                 double[] xlat = new double[dimLen];
                 for (i = 0; i < dimLen; i++) {
                     xlat[i] = yarray.getDouble(i);
@@ -1394,7 +1394,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 orgLat = xlat[0];
 
                 dimLen = xNum;
-                Array xarray = NCUtil.convertArray(_xVar.read().reduce());
+                Array xarray = NCUtil.convertArray(xVar.read().reduce());
                 double[] xlon = new double[dimLen];
                 for (i = 0; i < dimLen; i++) {
                     xlon[i] = xarray.getDouble(i);
@@ -1474,9 +1474,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         }
         if (zDim != null) {
             int lNum = zDim.getLength();
-            if (_levelVar != null) {
+            if (levelVar != null) {
                 dimLen = lNum;
-                Array larray = NCUtil.convertArray(_levelVar.read().reduce());
+                Array larray = NCUtil.convertArray(levelVar.read().reduce());
                 double[] levels = new double[lNum];
                 for (i = 0; i < lNum; i++) {
                     if (i < dimLen) {
@@ -1486,7 +1486,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
                 zDim.setDimType(DimensionType.Z);
-                //zDim.setDimName(_levelVar.getShortName());
+                //zDim.setDimName(levelVar.getShortName());
                 zDim.setValues(levels);
                 zDim.setUnit("eta");
                 this.setZDimension(zDim);
@@ -1513,7 +1513,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
                 zDim.setDimType(DimensionType.Z);
                 zDim.setStagger(true);
-                //zDim.setDimName(_levelVar.getShortName());
+                //zDim.setDimName(levelVar.getShortName());
                 zDim.setValues(levels);
                 zDim.setUnit("eta");
                 //this.setZDimension(zDim);
@@ -1537,7 +1537,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
                 zDim.setDimType(DimensionType.Z);
                 zDim.setStagger(true);
-                //zDim.setDimName(_levelVar.getShortName());
+                //zDim.setDimName(levelVar.getShortName());
                 zDim.setValues(levels);
                 //this.setZDimension(zDim);
             }
@@ -1636,7 +1636,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     private DimensionType getDimType(ucar.nc2.Variable aVar) {
         String sName;
         DimensionType dimType = DimensionType.OTHER;
-        if (_fileTypeId.equals("HDF5-EOS")) {
+        if (fileTypeId.equals("HDF5-EOS")) {
             sName = aVar.getShortName().toLowerCase();
             switch (sName) {
                 case "longitude":
@@ -1924,7 +1924,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         int i, j;
         ucar.nc2.Attribute aAttS;
         dataInfo = "File Name: " + this.getFileName();
-        dataInfo += System.getProperty("line.separator") + "File type: " + _fileTypeStr + " (" + _fileTypeId + ")";
+        dataInfo += System.getProperty("line.separator") + "File type: " + fileTypeStr + " (" + fileTypeId + ")";
         dataInfo += System.getProperty("line.separator") + "Dimensions: " + ncDimensions.size();
         for (i = 0; i < ncDimensions.size(); i++) {
             dataInfo += System.getProperty("line.separator") + "\t" + ncDimensions.get(i).getShortName() + " = "
@@ -2971,7 +2971,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     ucar.nc2.Dimension dim = var.getDimension(i);
                     switch (ndim.getDimType()) {
                         case T:
-                            if (this._isPROFILE) {
+                            if (this.isPROFILE) {
                                 origin[i] = timeIdx;
                                 size[i] = ndim.getLength();
                             } else {

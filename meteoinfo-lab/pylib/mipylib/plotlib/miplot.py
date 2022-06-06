@@ -5,31 +5,32 @@
 # Purpose: MeteoInfoLab plot module
 # Note: Jython
 #-----------------------------------------------------
+
+from javax.swing import WindowConstants
+from org.meteoinfo.chart import Location
+from org.meteoinfo.chart.form import ChartForm
+from org.meteoinfo.chart.jogl import JOGLUtil
+from org.meteoinfo.chart.plot import Plot2D, MapPlot, Plot3D
+from org.meteoinfo.geo.legend import LegendManage
+from org.meteoinfo.geo.meteodata import DrawMeteoData
+from org.meteoinfo.geometry.legend import LegendScheme, LegendType
+from org.meteoinfo.geometry.shape import ShapeTypes
+from org.meteoinfo.image import AnimatedGifEncoder
+
 import datetime
-import math
+import os
+import functools
 import mipylib.migl as migl
 import mipylib.miutil as miutil
-import mipylib.numeric as np
-import os
-import plotutil
-from javax.swing import WindowConstants
 from mipylib.numeric.core import NDArray, DimArray
-
-from org.meteoinfo.chart import Location
-from org.meteoinfo.chart.plot import Plot2D, MapPlot, Plot3D
-from org.meteoinfo.chart.jogl import JOGLUtil
-from org.meteoinfo.geo.meteodata import DrawMeteoData
-from org.meteoinfo.image import AnimatedGifEncoder
-from org.meteoinfo.geo.legend import LegendManage
-from org.meteoinfo.geometry.legend import LegendScheme, LegendType
-from org.meteoinfo.chart.form import ChartForm
-from org.meteoinfo.geometry.shape import ShapeTypes
+import plotutil
 from ._axes import Axes, PolarAxes
 from ._axes3d import Axes3D
 from ._axes3dgl import Axes3DGL, MapAxes3D, EarthAxes3D
 from ._figure import Figure
 from ._glfigure import GLFigure
 from ._mapaxes import MapAxes
+import docstring
 
 ## Global ##
 batchmode = False
@@ -53,6 +54,16 @@ __all__ = [
     'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
     'isinteractive'
     ]
+
+def _copy_docstring_and_deprecators(method, func=None):
+    if func is None:
+        return functools.partial(_copy_docstring_and_deprecators, method)
+    decorators = [docstring.copy(method)]
+    while getattr(method, "__wrapped__", None) is not None:
+        method = method.__wrapped__
+    for decorator in decorators[::-1]:
+        func = decorator(func)
+    return func
 
 def gca():
     '''
@@ -86,60 +97,9 @@ def draw():
     Draw the current figure.
     '''
     g_figure.paintGraphics()
-    
+
+@_copy_docstring_and_deprecators(Axes.plot)
 def plot(*args, **kwargs):
-    """
-    Plot lines and/or markers to the axes. *args* is a variable length argument, allowing
-    for multiple *x, y* pairs with an optional format string.
-    
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param style: (*string*) Line style for plot.
-    
-    :returns: Legend breaks of the lines.
-    
-    The following format string characters are accepted to control the line style or marker:
-    
-      =========  ===========
-      Character  Description
-      =========  ===========
-      '-'         solid line style
-      '--'        dashed line style
-      '-.'        dash-dot line style
-      ':'         dotted line style
-      '.'         point marker
-      ','         pixel marker
-      'o'         circle marker
-      'v'         triangle_down marker
-      '^'         triangle_up marker
-      '<'         triangle_left marker
-      '>'         triangle_right marker
-      's'         square marker
-      'S'         star marker
-      'p'         pentagon marker
-      '*'         star line marker
-      'x'         x cross marker
-      'D'         diamond marker
-      'm'         minus marker
-      '+'         plus marker
-      'os'        circle star marker
-      'do'        double circle
-      =========  ===========
-      
-    The following color abbreviations are supported:
-      
-      =========  =====
-      Character  Color  
-      =========  =====
-      'b'        blue
-      'g'        green
-      'r'        red
-      'c'        cyan
-      'm'        magenta
-      'y'        yellow
-      'k'        black
-      =========  =====
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -155,20 +115,8 @@ def plot(*args, **kwargs):
         draw_if_interactive()
     return r    
 
+@_copy_docstring_and_deprecators(Axes.step)
 def step(x, y, *args, **kwargs):
-    '''
-    Make a step plot.
-    
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param style: (*string*) Line style for plot.
-    :param label: (*string*) Step line label.
-    :param where: (*string*) ['pre' | 'post' | 'mid']. If 'pre' (the default), the interval 
-        from x[i] to x[i+1] has level y[i+1]. If 'post', that interval has level y[i].
-        If ‘mid’, the jumps in y occur half-way between the x-values.
-    
-    :returns: Step lines
-    '''    
     global g_axes
     if g_figure is None:
         figure()
@@ -183,56 +131,9 @@ def step(x, y, *args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r 
-        
+
+@_copy_docstring_and_deprecators(Axes3D.plot)
 def plot3(x, y, z, *args, **kwargs):
-    """
-    Plot 3D lines and/or markers to the axes. *args* is a variable length argument, allowing
-    for multiple *x, y* pairs with an optional format string.
-    
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param z: (*array_like*) Input z data.
-    :param style: (*string*) Line style for plot.
-    
-    :returns: Legend breaks of the lines.
-    
-    The following format string characters are accepted to control the line style or marker:
-    
-      =========  ===========
-      Character  Description
-      =========  ===========
-      '-'         solid line style
-      '--'        dashed line style
-      '-.'        dash-dot line style
-      ':'         dotted line style
-      '.'         point marker
-      ','         pixel marker
-      'o'         circle marker
-      'v'         triangle_down marker
-      '^'         triangle_up marker
-      '<'         triangle_left marker
-      '>'         triangle_right marker
-      's'         square marker
-      'p'         pentagon marker
-      '*'         star marker
-      'x'         x marker
-      'D'         diamond marker
-      =========  ===========
-      
-    The following color abbreviations are supported:
-      
-      =========  =====
-      Character  Color  
-      =========  =====
-      'b'        blue
-      'g'        green
-      'r'        red
-      'c'        cyan
-      'm'        magenta
-      'y'        yellow
-      'k'        black
-      =========  =====
-    """
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -243,54 +144,9 @@ def plot3(x, y, z, *args, **kwargs):
     r = g_axes.plot(x, y, z, *args, **kwargs)
     draw_if_interactive()
     return r
-        
+
+@_copy_docstring_and_deprecators(Axes.semilogy)
 def semilogy(*args, **kwargs):
-    """
-    Make a plot with log scaling on the y axis.
-    
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param style: (*string*) Line style for plot.
-    
-    :returns: Legend breaks of the lines.
-    
-    The following format string characters are accepted to control the line style or marker:
-    
-      =========  ===========
-      Character  Description
-      =========  ===========
-      '-'         solid line style
-      '--'        dashed line style
-      '-.'        dash-dot line style
-      ':'         dotted line style
-      '.'         point marker
-      ','         pixel marker
-      'o'         circle marker
-      'v'         triangle_down marker
-      '^'         triangle_up marker
-      '<'         triangle_left marker
-      '>'         triangle_right marker
-      's'         square marker
-      'p'         pentagon marker
-      '*'         star marker
-      'x'         x marker
-      'D'         diamond marker
-      =========  ===========
-      
-    The following color abbreviations are supported:
-      
-      =========  =====
-      Character  Color  
-      =========  =====
-      'b'        blue
-      'g'        green
-      'r'        red
-      'c'        cyan
-      'm'        magenta
-      'y'        yellow
-      'k'        black
-      =========  =====
-    """       
     global g_axes
     if g_figure is None:
         figure()
@@ -305,54 +161,9 @@ def semilogy(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r 
-    
+
+@_copy_docstring_and_deprecators(Axes.semilogx)
 def semilogx(*args, **kwargs):
-    """
-    Make a plot with log scaling on the x axis.
-    
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param style: (*string*) Line style for plot.
-    
-    :returns: Legend breaks of the lines.
-    
-    The following format string characters are accepted to control the line style or marker:
-    
-      =========  ===========
-      Character  Description
-      =========  ===========
-      '-'         solid line style
-      '--'        dashed line style
-      '-.'        dash-dot line style
-      ':'         dotted line style
-      '.'         point marker
-      ','         pixel marker
-      'o'         circle marker
-      'v'         triangle_down marker
-      '^'         triangle_up marker
-      '<'         triangle_left marker
-      '>'         triangle_right marker
-      's'         square marker
-      'p'         pentagon marker
-      '*'         star marker
-      'x'         x marker
-      'D'         diamond marker
-      =========  ===========
-      
-    The following color abbreviations are supported:
-      
-      =========  =====
-      Character  Color  
-      =========  =====
-      'b'        blue
-      'g'        green
-      'r'        red
-      'c'        cyan
-      'm'        magenta
-      'y'        yellow
-      'k'        black
-      =========  =====
-    """       
     global g_axes
     if g_figure is None:
         figure()
@@ -367,54 +178,9 @@ def semilogx(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r 
-    
+
+@_copy_docstring_and_deprecators(Axes.loglog)
 def loglog(*args, **kwargs):
-    """
-    Make a plot with log scaling on both x and y axis.
-    
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param style: (*string*) Line style for plot.
-    
-    :returns: Legend breaks of the lines.
-    
-    The following format string characters are accepted to control the line style or marker:
-    
-      =========  ===========
-      Character  Description
-      =========  ===========
-      '-'         solid line style
-      '--'        dashed line style
-      '-.'        dash-dot line style
-      ':'         dotted line style
-      '.'         point marker
-      ','         pixel marker
-      'o'         circle marker
-      'v'         triangle_down marker
-      '^'         triangle_up marker
-      '<'         triangle_left marker
-      '>'         triangle_right marker
-      's'         square marker
-      'p'         pentagon marker
-      '*'         star marker
-      'x'         x marker
-      'D'         diamond marker
-      =========  ===========
-      
-    The following color abbreviations are supported:
-      
-      =========  =====
-      Character  Color  
-      =========  =====
-      'b'        blue
-      'g'        green
-      'r'        red
-      'c'        cyan
-      'm'        magenta
-      'y'        yellow
-      'k'        black
-      =========  =====
-    """       
     global g_axes
     if g_figure is None:
         figure()
@@ -429,23 +195,10 @@ def loglog(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r    
-        
+
+@_copy_docstring_and_deprecators(Axes.errorbar)
 def errorbar(x, y, yerr=None, xerr=None, fmt='', ecolor=None, elinewidth=None, capsize=None,
             **kwargs):
-    '''
-    Plot an errorbar graph.
-    
-    :param x: (*array_like*) X data.
-    :param y: (*array_like*) Y data.
-    :param yerr: (*scalar or array_like*) Y error values.
-    :param xerr: (*scalar or array_like*) X error values.
-    :param fmt: (*string*) Plot format string.
-    :param ecolor: (*color*) Error bar color.
-    :param elinewidth: (*float*) Error bar line width.
-    :param capsize: (*float*) The length of the error bar caps.
-
-    :returns: Error bar lines.
-    '''
     global g_axes
     if g_figure is None:
         figure()
@@ -461,49 +214,8 @@ def errorbar(x, y, yerr=None, xerr=None, fmt='', ecolor=None, elinewidth=None, c
         draw_if_interactive()
     return r    
 
+@_copy_docstring_and_deprecators(Axes.bar)
 def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
-    """
-    Make a bar plot.
-    
-    Make a bar plot with rectangles bounded by:
-        left, left + width, bottom, bottom + height
-    
-    :param left: (*array_like*) The x coordinates of the left sides of the bars.
-    :param height: (*array_like*) The height of the bars.
-    :param width: (*array_like*) Optional, the widths of the bars default: 0.8.
-    :param bottom: (*array_like*) Optional, the y coordinates of the bars default: None
-    :param color: (*Color*) Optional, the color of the bar faces.
-    :param edgecolor: (*Color*) Optional, the color of the bar edge. Default is black color.
-        Edge line will not be plotted if ``edgecolor`` is ``None``.
-    :param linewidth: (*int*) Optional, width of bar edge.
-    :param label: (*string*) Label of the bar series.
-    :param hatch: (*string*) Hatch string.
-    :param hatchsize: (*int*) Hatch size. Default is None (8).
-    :param bgcolor: (*Color*) Background color, only valid with hatch.
-    :param barswidth: (*float*) Bars width (0 - 1), only used for automatic bar with plot
-        (only one argument without ``width`` argument). Default is 0.8.
-    :param ecolor: (*Color*) The line color of the errorbars. Default is black.
-    :param elinewidth: (*float*) The line width of the errorbars.
-    :param capsize: (*float*) The length of the error bar caps in pixels. Default is 0.
-    :param morepoints: (*boolean*) More points in bar rectangle. Default is False.
-    
-    :returns: Bar legend break.
-    
-    
-    The following format string characters are accepted to control the hatch style:
-      =========  ===========
-      Character  Description
-      =========  ===========
-      '-'         horizontal hatch style
-      '|'         vertical hatch style
-      '\\'        forward_diagonal hatch style
-      '/'         backward_diagonal hatch style
-      '+'         cross hatch style
-      'x'         diagonal_cross hatch style
-      '.'         dot hatch style
-      =========  ===========
-      
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -519,29 +231,8 @@ def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3D.bar)
 def bar3(x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
-    """
-    Make a 3D bar plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
-
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param z: (*array_like*) Input z data.
-    :param width: (*float*) Bar width.
-    :param cylinder: (*bool*) Is sylinder bar or rectangle bar.
-    :param bottom: (*bool*) Color of the points. Or z vlaues.
-    :param color: (*Color*) Optional, the color of the bar faces.
-    :param edgecolor: (*Color*) Optional, the color of the bar edge. Default is black color.
-        Edge line will not be plotted if ``edgecolor`` is ``None``.
-    :param linewidth: (*int*) Optional, width of bar edge.
-    :param label: (*string*) Label of the bar series.
-    :param hatch: (*string*) Hatch string.
-    :param hatchsize: (*int*) Hatch size. Default is None (8).
-    :param bgcolor: (*Color*) Background color, only valid with hatch.
-    :param barswidth: (*float*) Bars width (0 - 1), only used for automatic bar with plot
-        (only one argument widthout ``width`` augument). Defaul is 0.8.
-
-    :returns: Points legend break.
-    """
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -553,46 +244,8 @@ def bar3(x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes.barh)
 def barh(*args, **kwargs):
-    """
-    Make a horizontal bar plot.
-    
-    Make a bar plot with rectangles bounded by:
-        left, left + width, y, y + height
-    
-    :param y: (*array_like*) The y coordinates of the bars.
-    :param width: (*array_like*) The widths of the bars.
-    :param height: (*array_like*) Optional, the height of the bars default: 0.8.
-    :param left: (*array_like*) Optional, the x coordinates of the bars default: None
-    :param color: (*Color*) Optional, the color of the bar faces.
-    :param edgecolor: (*Color*) Optional, the color of the bar edge. Default is black color.
-        Edge line will not be plotted if ``edgecolor`` is ``None``.
-    :param linewidth: (*int*) Optional, width of bar edge.
-    :param label: (*string*) Label of the bar series.
-    :param hatch: (*string*) Hatch string.
-    :param hatchsize: (*int*) Hatch size. Default is None (8).
-    :param bgcolor: (*Color*) Background color, only valid with hatch.
-    :param barswidth: (*float*) Bars width (0 - 1), only used for automatic bar with plot
-        (only one argument widthout ``width`` augument). Defaul is 0.8.
-    :param morepoints: (*boolean*) More points in bar rectangle. Defaul is False.
-    
-    :returns: Bar legend break.
-    
-    
-    The following format string characters are accepted to control the hatch style:
-      =========  ===========
-      Character  Description
-      =========  ===========
-      '-'         horizontal hatch style
-      '|'         vertical hatch style
-      '\\'        forward_diagonal hatch style
-      '/'         backward_diagonal hatch style
-      '+'         cross hatch style
-      'x'         diagonal_cross hatch style
-      '.'         dot hatch style
-      =========  ===========
-      
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -607,17 +260,11 @@ def barh(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-          
+
+@_copy_docstring_and_deprecators(Axes.hist)
 def hist(x, bins=10, range=None, density=False, cumulative=False,
         bottom=None, histtype='bar', align='mid',
         orientation='vertical', rwidth=None, log=False, **kwargs):
-    """
-    Plot a histogram.
-    
-    :param x: (*array_like*) Input values, this takes either a single array or a sequency of arrays 
-        which are not required to be of the same length.
-    :param bins: (*int*) If an integer is given, bins + 1 bin edges are returned.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -633,23 +280,9 @@ def hist(x, bins=10, range=None, density=False, cumulative=False,
     if not r is None:
         draw_if_interactive()
     return r
-    
+
+@_copy_docstring_and_deprecators(Axes.stem)
 def stem(*args, **kwargs):
-    """
-    Make a stem plot.
-    
-    A stem plot plots vertical lines at each x location from the baseline to y, and 
-    places a marker there.
-    
-    :param x: (*array_like*) The x-positions of the stems.
-    :param y: (*array_like*) The y-values of the stem heads.
-    :param bottom: (*array_like*) Optional, the y coordinates of the bars default: None
-    :param linefmt: (*dict*) Optional, stem line format.
-    :param markerfmt: (*dict*) Optional, stem marker format.
-    :param color: (*Color*) Optional, the color of the stem.
-    
-    :returns: Stem line legend break.                  
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -665,24 +298,9 @@ def stem(*args, **kwargs):
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3D.stem)
 def stem3(x, y, z, s=8, c='b', marker='o', alpha=None, linewidth=None,
          verts=None, **kwargs):
-    """
-    Make a 3D scatter plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
-
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param z: (*array_like*) Input z data.
-    :param s: (*int*) Size of points.
-    :param c: (*Color*) Color of the points. Or z vlaues.
-    :param alpha: (*int*) The alpha blending value, between 0 (transparent) and 1 (opaque).
-    :param marker: (*string*) Marker of the points.
-    :param label: (*string*) Label of the points series.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level
-        points to draw, in increasing order.
-
-    :returns: Points legend break.
-    """
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -694,22 +312,8 @@ def stem3(x, y, z, s=8, c='b', marker='o', alpha=None, linewidth=None,
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes.scatter)
 def scatter(*args, **kwargs):
-    """
-    Make a scatter plot of x vs y, where x and y are sequence like objects of the same lengths.
-    
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param s: (*int*) Size of points.
-    :param c: (*Color or array*) Color of the points. Or z vlaues.
-    :param alpha: (*int*) The alpha blending value, between 0 (transparent) and 1 (opaque).
-    :param marker: (*string*) Marker of the points.
-    :param label: (*string*) Label of the points series.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
-        points to draw, in increasing order.
-    
-    :returns: Points legend break.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -724,24 +328,9 @@ def scatter(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-    
+
+@_copy_docstring_and_deprecators(Axes3D.scatter)
 def scatter3(x, y, z, s=8, c='b', marker='o', **kwargs):
-    """
-    Make a 3D scatter plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
-    
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param z: (*array_like*) Input z data.
-    :param s: (*int*) Size of points.
-    :param c: (*Color*) Color of the points. Or z vlaues.
-    :param alpha: (*int*) The alpha blending value, between 0 (transparent) and 1 (opaque).
-    :param marker: (*string*) Marker of the points.
-    :param label: (*string*) Label of the points series.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
-        points to draw, in increasing order.
-    
-    :returns: Points legend break.
-    """
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -751,17 +340,8 @@ def scatter3(x, y, z, s=8, c='b', marker='o', **kwargs):
     
     return g_axes.scatter(x, y, z, s, c, marker, **kwargs)
 
+@_copy_docstring_and_deprecators(Axes.arrow)
 def arrow(x, y, dx, dy, **kwargs):
-    '''
-    Add an arrow to the axes.
-    
-    :param x: (*float*) X coordinate.
-    :param y: (*float*) Y coordinate.
-    :param dx: (*float*) The length of arrow along x direction.
-    :param dy: (*float*) The length of arrow along y direction.
-    
-    :returns: Arrow graphic.
-    '''
     global g_axes
     if g_figure is None:
         figure()
@@ -777,17 +357,8 @@ def arrow(x, y, dx, dy, **kwargs):
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes.arrowline)
 def arrowline(x, y, dx=0, dy=0, **kwargs):
-    '''
-    Add an arrow line to the axes.
-    
-    :param x: (*float or array_like*) X coordinates.
-    :param y: (*float or array_like*) Y coordinates.
-    :param dx: (*float*) The length of arrow along x direction. Only valid when x is float.
-    :param dy: (*float*) The length of arrow along y direction. Only valid when y is float.
-    
-    :returns: Arrow line graphic.
-    '''
     global g_axes
     if g_figure is None:
         figure()
@@ -802,18 +373,9 @@ def arrowline(x, y, dx=0, dy=0, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-    
+
+@_copy_docstring_and_deprecators(Axes.annotate)
 def annotate(s, xy, *args, **kwargs):
-    '''
-    Annotate the point xy with text s.
-    
-    :param s: (*string*) The text of the annotation.
-    :param xy: (*float, float*) The point (x,y) to annotate.
-    :param xytext: (*float, float*) The position (x,y) to place the text at. If None, 
-        defaults to xy.
-        
-    :returns: Annotation.
-    '''
     global g_axes
     if g_figure is None:
         figure()
@@ -829,14 +391,8 @@ def annotate(s, xy, *args, **kwargs):
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes.patch)
 def fill(x, y=None, **kwargs):
-    """
-    Create one or more filled polygons.
-
-    :param x: (*array_like*) X coordinates for each vertex. X should be PolygonShape if y
-        is None.
-    :param y: (*array_like*) Y coordinates for each vertex.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -849,14 +405,8 @@ def fill(x, y=None, **kwargs):
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes.patch)
 def patch(x, y=None, **kwargs):
-    '''
-    Create one or more filled polygons.
-    
-    :param x: (*array_like*) X coordinates for each vertex. X should be PolygonShape if y
-        is None.
-    :param y: (*array_like*) Y coordinates for each vertex.
-    '''
     global g_axes
     if g_figure is None:
         figure()
@@ -871,14 +421,9 @@ def patch(x, y=None, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-    
+
+@_copy_docstring_and_deprecators(Axes.rectangle)
 def rectangle(position, curvature=None, **kwargs):
-    '''
-    Create one or more filled polygons.
-    
-    :param position: (*list*) Position of the rectangle [x, y, width, height].
-    :param curvature: (*list*) Curvature of the rectangle [x, y]. Default is None.
-    '''
     global g_axes
     if g_figure is None:
         figure()
@@ -893,17 +438,9 @@ def rectangle(position, curvature=None, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-    
+
+@_copy_docstring_and_deprecators(Axes.fill_between)
 def fill_between(x, y1, y2=0, where=None, **kwargs):
-    """
-    Make filled polygons between two curves (y1 and y2) where ``where==True``.
-    
-    :param x: (*array_like*) An N-length array of the x data.
-    :param y1: (*array_like*) An N-length array (or scalar) of the y data.
-    :param y2: (*array_like*) An N-length array (or scalar) of the y data.
-    :param where: (*array_like*) If None, default to fill between everywhere. If not None, it is an 
-        N-length boolean array and the fill will only happen over the regions where ``where==True``.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -918,17 +455,9 @@ def fill_between(x, y1, y2=0, where=None, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-    
+
+@_copy_docstring_and_deprecators(Axes.fill_betweenx)
 def fill_betweenx(y, x1, x2=0, where=None, **kwargs):
-    """
-    Make filled polygons between two curves (x1 and x2) where ``where==True``.
-    
-    :param y: (*array_like*) An N-length array of the y data.
-    :param x1: (*array_like*) An N-length array (or scalar) of the x data.
-    :param x2: (*array_like*) An N-length array (or scalar) of the x data.
-    :param where: (*array_like*) If None, default to fill between everywhere. If not None, it is an 
-        N-length boolean array and the fill will only happen over the regions where ``where==True``.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -943,38 +472,10 @@ def fill_betweenx(y, x1, x2=0, where=None, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-        
+
+@_copy_docstring_and_deprecators(Axes.pie)
 def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6, shadow=False, 
     labeldistance=1.1, startangle=0, radius=None, wedgeprops=None, **kwargs):
-    """
-    Plot a pie chart.
-    
-    Make a pie chart of array *x*. The fraction area of each wedge is given by x/sum(x). If
-    sum(x) <= 1, then the values of x give the fractional area directly and the array will not
-    be normalized. The wedges are plotted counterclockwise, by default starting from the x-axis.
-    
-    :param explode: (*None | len(x)sequence) If not *None*, is a ``len(x)`` array which specifies
-        the fraction of the radius with which to offset each wedge.
-    :param labels: (*None | len(x) sequence of colors*] A sequence of strings providing the labels
-        for each wedge.
-    :param colors: (*None | color sequence*) A sequence of color args through which the pie chart
-        will cycle.
-    :param autopct: (*None | format string | format function) If not *None*, is a string or function
-        used to label the wedges with their numeric value. The label will be placed inside the wedge.
-        If it is a format string, the label will be ``fmt%pct``. If it is a function, it will be called.
-    :param pctdistance: (*float*) The ratio between the center of each pie slice and the start of the
-        text generated by *autopct*. Ignored if autopct is *None*; default is 0.6.
-    :param labeldistance: (*float*) The ratial distance at which the pie labels are drawn.
-    :param shadow: (*boolean*) Draw a shadow beneath the pie.
-    :param startangle: (*float*) If not *0*, rotates the start of the pie chart by *angle* degrees
-        counterclockwise from the x-axis.
-    :param radius: (*float*) The radius of the pie, if *radius* is *None* it will be set to 1.
-    :param wedgeprops: (*dict*) Dict of arguments passed to the wedge objects making the pie. 
-    :param fontname: (*string*) Font name. Default is ``Arial`` .
-    :param fontsize: (*int*) Font size. Default is ``14`` .
-    
-    :returns: (*tuple*) Patches and texts.
-    """        
     global g_axes
     if g_figure is None:
         figure()
@@ -991,40 +492,9 @@ def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes.boxplot)
 def boxplot(x, sym=None, vert=True, positions=None, widths=None, color=None, showcaps=True, showfliers=True, showmeans=False, \
         showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):
-    """
-    Make a box and whisker plot.
-    
-    Make a box and whisker plot for each column of x or each vector in sequence x. The box extends from lower
-    to upper quartile values of the data, with a line at the median. The whiskers extend from the box to show
-    the range of the data. Flier points are those past the end of the whiskers.
-    
-    :param x: (*Array or a sequence of vectors*) The input data.
-    :param sym: (*string*) The default symbol for flier points. Enter an empty string ('') if you don’t 
-        want to show fliers. If None, then the fliers default to ‘b+’ If you want more control use the 
-        flierprops kwarg.
-    :param vert: (*boolean*) If True, draws vertical boxes (default). If False, draw horizontal boxes.
-    :param positions: (*array_like*) Sets the positions of the boxes. The ticks and limits are automatically
-        set to match the positions. Defaults to range(1, N+1) where N is the number of boxes to be drawn.
-    :param widths: (*scalar or array_like*) Sets the width of each box either with a scalar or a sequence. 
-        The default is 0.5, or 0.15*(distance between extreme positions), if that is smaller.
-    :param color: (*Color*) Color for all parts of the box plot. Defaul is None.
-    :param showcaps: (*boolean*) Show the caps on the ends of whiskers. Default is ``True``.
-    :param showfliers: (*boolean*) Show the outliers beyond the caps. Defaul is ``True``.
-    :param showmeans: (*boolean*) Default is ``False``. Show the mean or not.
-    :param showmedians: (*boolean*) Default is ``True``. Show the median or not.
-    :param meanline: (*boolean*) Default is ``False``. If ``True`` (and showmeans is ``True``), will try to render
-        the mean as a line spanning. Otherwise, means will be shown as points.
-    :param medianline: (*boolean*) Default is ``True``. If ``True`` (and showmedians is ``True``), will try to render
-        the median as a line spanning. Otherwise, medians will be shown as points.
-    :param boxprops: (*dict*) Specifies the style of the box.
-    :param medianprops: (*dict*) Specifies the style of the median.
-    :param meanprops: (*dict*) Specifies the style of the mean.
-    :param whiskerprops: (*dict*) Specifies the style of the whiskers.
-    :param capprops: (*dict*) Specifies the style of the caps.
-    :param flierprops: (*dict*) Specifies the style of the fliers.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -1040,23 +510,10 @@ def boxplot(x, sym=None, vert=True, positions=None, widths=None, color=None, sho
     if not r is None:
         draw_if_interactive()
     return r
-    
+
+@_copy_docstring_and_deprecators(Axes.violinplot)
 def violinplot(dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None, \
     whiskerprops=None, **kwargs):
-    """
-    Make a violin plot.
-    
-    :param dateset: (*Array or a sequence of vectors*) The input data.
-    :param positions: (*array_like*) Sets the positions of the violins. The ticks and limits are automatically 
-        set to match the positions. Defaults to range(1, N+1) where N is the number of violins to be drawn.
-    :param widths: (*scalar or array_like*) Sets the width of each box either with a scalar or a sequence. 
-        The default is 0.5, or 0.15*(distance between extreme positions), if that is smaller.   
-    :param boxwidth: (*float*) box width.
-    :param boxprops: (*dict*) Specifies the style of the box.
-    :param whiskerprops: (*dict*) Specifies the style of the whiskers.
-    
-    :returns: Violin graphics.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -1071,28 +528,10 @@ def violinplot(dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None
     if not r is None:
         draw_if_interactive()
     return r
-  
+
+@_copy_docstring_and_deprecators(PolarAxes.windrose)
 def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='matlab_jet', \
     alpha=0.7, rmax=None, rtickloc=None, rticks=None, rlabelpos=60, xticks=None, **kwargs):
-    '''
-    Plot windrose chart.
-    
-    :param wd: (*array_like*) Wind direction.
-    :param ws: (*array_like*) Wind speed.
-    :param nwdbins: (*int*) Number of wind direction bins [4 | 8 | 16].
-    :param wsbins: (*array_like*) Wind speed bins.
-    :param degree: (*boolean*) The unit of wind direction is degree or radians.
-    :param colors: (*color list*) The colors.
-    :param cmap: (*string*) Color map.
-    :param alpha: (*float*) Color alpha (0 - 1).
-    :param rmax: (*float*) Radial maximum value.
-    :param rtickloc: (*list of float*) Radial tick locations.
-    :param rticks: (*list of string*) Radial ticks.
-    :param rlabelpos: (*float*) Radial label position in degree.
-    :param xticks: (*list of string*) X ticks.
-    
-    :returns: Polar axes and bars
-    '''    
     bottom = kwargs.pop('bottom', None)
     global g_axes
     if g_axes is None:
@@ -1464,72 +903,22 @@ def twiny(ax):
     g_axes = ax2
     return ax2
 
+@_copy_docstring_and_deprecators(Axes.xaxis)
 def xaxis(ax=None, **kwargs):
-    """
-    Set x axis of the axes.
-    
-    :param ax: The axes.
-    :param color: (*Color*) Color of the x axis. Default is 'black'.
-    :param shift: (*int) X axis shif along x direction. Units is pixel. Default is 0.
-    :param visible: (*boolean*) Set axis visible or not, Default is `None`.
-    :param linewidth: (*float*) Line width of the axis.
-    :param linestyle: (*string*) Line style of the axis.
-    :param tickline: (*boolean*) Draw tick line or not.
-    :param tickwidth: (*float*) Tick line width.
-    :param ticklength: (*float*) Tick line length.
-    :param ticklabel: (*boolean*) Draw tick label or not.
-    :param minortick: (*boolean*) Draw minor tick line or not.
-    :param minorticknum: (*int*) Minor tick line number between two adjacent major tick lines.
-    :param tickin: (*boolean*) Tick lines are ploted inside or outside of the axes.
-    :param axistype: (*string*) Axis type ['normal' | 'lon' | 'lat' | 'time' | 'log'].
-    :param timetickformat: (*string*) Time tick label format, only valid with time axis.
-    :param tickfontname: (*string*) Tick label font name.
-    :param tickfontsize: (*int*) Tick label font size.
-    :param tickbold: (*boolean*) Tick label font is bold or not.
-    :param location: (*string*) Locations of the axis ['both' | 'top' | 'bottom'].
-    """
     if ax is None:
         ax = g_axes
     ax.xaxis(**kwargs)
     draw_if_interactive()
-    
+
+@_copy_docstring_and_deprecators(Axes.yaxis)
 def yaxis(ax=None, **kwargs):
-    """
-    Set y axis of the axes.
-    
-    :param ax: The axes.
-    :param color: (*Color*) Color of the y axis. Default is 'black'.
-    :param shift: (*int) Y axis shif along x direction. Units is pixel. Default is 0.
-    :param visible: (*boolean*) Set axis visible or not, Default is `None`.
-    :param linewidth: (*float*) Line width of the axis.
-    :param linestyle: (*string*) Line style of the axis.
-    :param tickline: (*boolean*) Draw tick line or not.
-    :param tickwidth: (*float*) Tick line width.
-    :param ticklength: (*float*) Tick line length.
-    :param ticklabel: (*boolean*) Draw tick label or not.
-    :param minortick: (*boolean*) Draw minor tick line or not.
-    :param minorticknum: (*int*) Minor tick line number between two adjacent major tick lines.
-    :param tickin: (*boolean*) Tick lines are ploted inside or outside of the axes.
-    :param axistype: (*string*) Axis type ['normal' | 'lon' | 'lat' | 'time' | 'log'].
-    :param timetickformat: (*string*) Time tick label format, only valid with time axis.
-    :param tickfontname: (*string*) Tick label font name.
-    :param tickfontsize: (*int*) Tick label font size.
-    :param tickbold: (*boolean*) Tick label font is bold or not.
-    :param location: (*string*) Locations of the axis ['both' | 'left' | 'right'].
-    """
     if ax is None:
         ax = g_axes
     ax.yaxis(**kwargs)
     draw_if_interactive()
-    
+
+@_copy_docstring_and_deprecators(Axes3D.zaxis)
 def zaxis(ax=None, **kwargs):
-    """
-    Set z axis of the axes.
-    
-    :param ax: The axes.
-    :param color: (*Color*) Color of the z axis. Default is 'black'.
-    :param shift: (*int) z axis shif along horizontal direction. Units is pixel. Default is 0.
-    """
     if ax is None:
         ax = g_axes
     ax.zaxis(**kwargs)
@@ -1709,61 +1098,26 @@ def clc():
         console = migl.milapp.getConsoleDockable().getConsole()
         console.getTextPane().setText('')   
 
+@_copy_docstring_and_deprecators(Axes.set_title)
 def title(label, loc='center', fontname=None, fontsize=14, bold=True, color='black', **kwargs):
-    """
-    Set a title of the current axes.
-    
-    :param label: (*string*) Title label string.
-    :param loc: (*string') Which title to set ['center' | 'left' | 'right'],
-        default to 'center'.
-    :param fontname: (*string*) Font name. Default is ``None``, using ``Arial`` .
-    :param fontsize: (*int*) Font size. Default is ``14`` .
-    :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
-    :param color: (*color*) Title string color. Default is ``black`` .  
-    :param linespace: (*int*) Line space of multiple line title.
-    """
     r = g_axes.set_title(label, loc, fontname, fontsize, bold, color, **kwargs)
     draw_if_interactive()
     return r
-    
+
+@_copy_docstring_and_deprecators(Figure.set_title)
 def suptitle(label, fontname=None, fontsize=14, bold=True, color='black'):
-    """
-    Add a centered title to the figure.
-    
-    :param label: (*string*) Title label string.
-    :param fontname: (*string*) Font name. Default is ``Arial`` .
-    :param fontsize: (*int*) Font size. Default is ``14`` .
-    :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
-    :param color: (*color*) Title string color. Default is ``black`` .
-    """    
     r = g_figure.set_title(label, fontname, fontsize, bold, color)
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Figure.set_xlabel)
 def supxlabel(label, **kwargs):
-    """
-    Set the x label of the figure.
-
-    :param label: (*string*) Label string.
-    :param fontname: (*string*) Font name. Default is ``Arial`` .
-    :param fontsize: (*int*) Font size. Default is ``14`` .
-    :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
-    :param color: (*color*) Label string color. Default is ``black`` .
-    """
     r = g_figure.set_xlabel(label, **kwargs)
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Figure.set_ylabel)
 def supylabel(label, **kwargs):
-    """
-    Set the y label of the figure.
-
-    :param label: (*string*) Label string.
-    :param fontname: (*string*) Font name. Default is ``Arial`` .
-    :param fontsize: (*int*) Font size. Default is ``14`` .
-    :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
-    :param color: (*color*) Label string color. Default is ``black`` .
-    """
     r = g_figure.set_ylabel(label, **kwargs)
     draw_if_interactive()
     return r
@@ -1796,29 +1150,13 @@ def right_title(label, fontname=None, fontsize=14, bold=False, color='black', **
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes.set_xlabel)
 def xlabel(label, **kwargs):
-    """
-    Set the x axis label of the current axes.
-    
-    :param label: (*string*) Label string.
-    :param fontname: (*string*) Font name. Default is ``Arial`` .
-    :param fontsize: (*int*) Font size. Default is ``14`` .
-    :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
-    :param color: (*color*) Label string color. Default is ``black`` .
-    """
     g_axes.set_xlabel(label, **kwargs)
     draw_if_interactive()
-    
+
+@_copy_docstring_and_deprecators(Axes.set_ylabel)
 def ylabel(label, **kwargs):
-    """
-    Set the y axis label of the current axes.
-    
-    :param label: (*string*) Label string.
-    :param fontname: (*string*) Font name. Default is ``Arial`` .
-    :param fontsize: (*int*) Font size. Default is ``14`` .
-    :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
-    :param color: (*color*) Label string color. Default is ``black`` .
-    """
     g_axes.set_ylabel(label, **kwargs)
     draw_if_interactive()
 
@@ -1967,17 +1305,8 @@ def text(x, y, s, **kwargs):
     draw_if_interactive()
     return ctext
 
+@_copy_docstring_and_deprecators(Axes3D.text)
 def text3(x, y, z, s, zdir=None, **kwargs):
-    '''
-    Add text to the plot. kwargs will be passed on to text, except for the zdir
-    keyword, which sets the direction to be used as the z direction.
-
-    :param x: (*float*) X coordinate.
-    :param y: (*float*) Y coordinate.
-    :param z: (*float*) Z coordinate.
-    :param s: (*string*) Text string.
-    :param zdir: Z direction.
-    '''
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -1988,119 +1317,51 @@ def text3(x, y, z, s, zdir=None, **kwargs):
     r = g_axes.text(x, y, z, s, zdir, **kwargs)
     draw_if_interactive()
     return r
-    
+
+@_copy_docstring_and_deprecators(Axes.axis)
 def axis(limits):
-    """
-    Sets the min and max of the x and y axes, with ``[xmin, xmax, ymin, ymax]`` .
-    
-    :param limits: (*list*) Min and max of the x and y axes.
-    """
     r = g_axes.axis(limits)
     if not r is None:
         draw_if_interactive()
-            
+
+@_copy_docstring_and_deprecators(MapAxes.axis)
 def axism(limits=None, lonlat=True):
-    """
-    Sets the min and max of the x and y map axes, with ``[xmin, xmax, ymin, ymax]`` .
-    
-    :param limits: (*list*) Min and max of the x and y map axes.
-    :param lonlat: (*boolean*) Is longitude/latitude or not.
-    """
     r = g_axes.axis(limits, lonlat)
     if not r is None:
         draw_if_interactive()
 
+@_copy_docstring_and_deprecators(Axes.grid)
 def grid(b=None, **kwargs):
-    """
-    Turn the aexs grids on or off.
-    
-    :param b: If b is *None* and *len(kwargs)==0* , toggle the grid state. If *kwargs*
-        are supplied, it is assumed that you want a grid and *b* is thus set to *True* .
-    :param which: *which* can be 'major' (default), 'minor', or 'both' to control
-        whether major tick grids, minor tick grids, or both are affected.
-    :param axis: *axis* can be 'both' (default), 'x', or 'y' to control which set of
-        gridlines are drawn.
-    :param kwargs: *kwargs* are used to set the grid line properties.
-    """
     g_axes.grid(b, **kwargs)
     draw_if_interactive()
-    
+
+@_copy_docstring_and_deprecators(Axes.set_xlim)
 def xlim(xmin, xmax):
-    """
-    Set the *x* limits of the current axes.
-    
-    :param xmin: (*float*) Minimum limit of the x axis.
-    :param xmax: (*float*) Maximum limit of the x axis.
-    """
     g_axes.set_xlim(xmin, xmax)
     draw_if_interactive()
-            
+
+@_copy_docstring_and_deprecators(Axes.set_ylim)
 def ylim(ymin, ymax):
-    """
-    Set the *y* limits of the current axes.
-    
-    :param ymin: (*float*) Minimum limit of the y axis.
-    :param ymax: (*float*) Maximum limit of the y axis.
-    """
     g_axes.set_ylim(ymin, ymax)
     draw_if_interactive()   
-    
+
+@_copy_docstring_and_deprecators(Axes3D.set_zlim)
 def zlim(zmin, zmax):
-    """
-    Set the *z* limits of the current axes.
-    
-    :param zmin: (*float*) Minimum limit of the z axis.
-    :param zmax: (*float*) Maximum limit of the z axis.
-    """
     g_axes.set_zlim(zmin, zmax)
     draw_if_interactive()   
 
+@_copy_docstring_and_deprecators(Axes.xreverse)
 def xreverse():
-    '''
-    Reverse x axis.
-    '''
     g_axes.xreverse()
     draw_if_interactive()
-    
+
+@_copy_docstring_and_deprecators(Axes.yreverse)
 def yreverse():
-    '''
-    Reverse y axis.
-    '''
     g_axes.yreverse()
     draw_if_interactive()
-            
+
+@_copy_docstring_and_deprecators(Axes.legend)
 def legend(*args, **kwargs):
-    """
-    Places a legend on the axes.
-    
-    :param breaks: (*ColorBreak*) Legend breaks (optional).
-    :param labels: (*list of string*) Legend labels (optional).
-    :param orientation: (*string*) Colorbar orientation: ``vertical`` or ``horizontal``.
-    :param loc: (*string*) The location of the legend, including: 'upper right', 'upper left',
-        'lower left', 'lower right', 'right', 'ceter left', 'center right', lower center',
-        'upper center', 'center' and 'custom'. Default is 'upper right'.
-    :param x: (*float*) Location x in normalized (0, 1) units when ``loc=custom`` .
-    :param y: (*float*) Location y in normalized (0, 1) units when ``loc=custom`` .
-    :param frameon: (*boolean*) Control whether a frame should be drawn around the legend. Default
-        is True.
-    :param facecolor: (*None or color*) Control the legend’s background color. Default is None which 
-        set not draw background.
-    :param fontname: (*string*) Tick font name. Default is ``Arial`` .
-    :param fontsize: (*int*) Tick font size. Default is ``14`` .
-    :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
-    :param title: (*string*) Label string.
-    :param labelfontname: (*string*) Title font name.
-    :param labelfontsize: (*int*) Label font size.
-    :param labcolor: (*color*) Label color. Default is ``black`` .
-    :param markerscale: (*float*) Marker symbol scale.
-    :param markerwidth: (*float*) Marker symbol width.
-    :param markerheight: (*float*) Marker symbol height.
-    :param ncol: (*float*) Column number of the legend.
-    :param xshift: (*float*) X shift.
-    :param yshift: (*float*) Y shift.
-    
-    :returns: (*ChartLegend*) The chart legend.
-    """
     r = g_axes.legend(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
@@ -2121,43 +1382,9 @@ def readlegend(fn):
     else:
         print('File not exists: ' + fn)
         return None
-        
+
+@_copy_docstring_and_deprecators(Axes.colorbar)
 def colorbar(mappable=None, **kwargs):
-    """
-    Add a colorbar to a plot.
-    
-    :param mappable: (*MapLayer | LegendScheme | List of ColorBreak*) The mappable in plot.
-    :param cax: (*Plot*) None | axes object into which the colorbar will be drawn.
-    :param cmap: (*string*) Color map name. Default is None.
-    :param shrink: (*float*) Fraction by which to shrink the colorbar. Default is 1.0.
-    :param orientation: (*string*) Colorbar orientation: ``vertical`` or ``horizontal``.
-    :param aspect: (*int*) Ratio of long to short dimensions.
-    :param fontname: (*string*) Font name. Default is ``Arial`` .
-    :param fontsize: (*int*) Font size. Default is ``14`` .
-    :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
-    :param label: (*string*) Label. Default is ``None`` .
-    :param labelloc: (*string*) Label location ['in' | 'out' | 'top' | 'bottom' | 'left' | 'right'].
-        Default is ``out``.
-    :param labelshift: (*float*) Label location shift value. Default is None (value is 5).
-    :param extend: (*string*) {'neither', 'both', 'min', 'max'} If not 'neither', make pointed end(s)
-            for out-of- range values. These are set for a given colormap using the colormap set_under and
-            set_over methods.
-    :param extendrect: (*boolean*) If ``True`` the minimum and maximum colorbar extensions will be
-        rectangular (the default). If ``False`` the extensions will be triangular.
-    :param extendfrac: [None | 'auto' | length] If set to *None*, both the minimum and maximum triangular
-        colorbar extensions with have a length of 5% of the interior colorbar length (the default). If
-        set to 'auto', makes the triangular colorbar extensions the same lengths as the interior boxes
-        . If a scalar, indicates the length of both the minimum and maximum triangle colorbar extensions
-        as a fraction of the interior colorbar length.
-    :param ticks: [None | list of ticks] If None, ticks are determined automatically from the input.
-    :param ticklabels: [None | list of ticklabels] Tick labels.
-    :param tickin: (*boolean*) Draw tick line inside or outside of the colorbar.
-    :param tickrotation: (*float*) Set tick label rotation angle.
-    :param xshift: (*float*) X shift of the colorbar with pixel coordinate.
-    :param yshift: (*float*) Y shift of the colorbar with pixel coordinate.
-    :param vmintick: (*boolean*) Draw minimum value tick or not.
-    :param vmaxtick: (*boolean*) Draw maximum value tick or not.
-    """
     cax = kwargs.pop('cax', None)
     if cax is None:
         cax = g_axes
@@ -2187,22 +1414,8 @@ def colorbar(mappable=None, **kwargs):
 #             obj.axes.setInsideTick(tickin)
 #     draw_if_interactive()
 
+@_copy_docstring_and_deprecators(Axes.imshow)
 def imshow(*args, **kwargs):
-    """
-    Display an image on the axes.
-    
-    :param X: (*array_like*) 2-D or 3-D (RGB or RGBA) image value array or BufferedImage.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-        color args (string, float, rgb, etc), different levels will be plotted in different colors in 
-        the order specified.
-    :param interpolation: (*string*) Interpolation option [None | bilinear | bicubic].
-    
-    :returns: (*Image graphic*) Image graphic created from array data.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2218,24 +1431,8 @@ def imshow(*args, **kwargs):
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes.pcolor)
 def pcolor(*args, **kwargs):
-    '''
-    Create a pseudocolor plot of a 2-D array.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-        color args (string, float, rgb, etc), different levels will be plotted in different colors in 
-        the order specified.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    
-    :returns: (*GraphicCollection*) Polygon graphic collection.
-    '''    
     global g_axes
     if g_figure is None:
         figure()
@@ -2250,25 +1447,9 @@ def pcolor(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-    
+
+@_copy_docstring_and_deprecators(Axes.gridshow)
 def gridshow(*args, **kwargs):
-    '''
-    Draw a grid plot.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-        color args (string, float, rgb, etc), different levels will be plotted in different colors in 
-        the order specified.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    
-    :returns: (*GraphicCollection*) Polygon graphic collection.
-    '''
     global g_axes
     if g_figure is None:
         figure()
@@ -2283,25 +1464,9 @@ def gridshow(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-      
+
+@_copy_docstring_and_deprecators(Axes.contour)
 def contour(*args, **kwargs):
-    """
-    Plot contours.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-        color args (string, float, rgb, etc), different levels will be plotted in different colors in 
-        the order specified.
-    :param smooth: (*boolean*) Smooth countour lines or not.
-    
-    :returns: (*VectoryLayer*) Contour VectoryLayer created from array data.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2317,24 +1482,8 @@ def contour(*args, **kwargs):
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes.contourf)
 def contourf(*args, **kwargs):
-    """
-    Plot filled contours.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-        color args (string, float, rgb, etc), different levels will be plotted in different colors in 
-        the order specified.
-    :param smooth: (*boolean*) Smooth countour lines or not.
-    
-    :returns: (*VectoryLayer*) Contour filled VectoryLayer created from array data.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2350,26 +1499,8 @@ def contourf(*args, **kwargs):
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes.quiver)
 def quiver(*args, **kwargs):
-    """
-    Plot a 2-D field of arrows.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param u: (*array_like*) U component of the arrow vectors (wind field) or wind direction.
-    :param v: (*array_like*) V component of the arrow vectors (wind field) or wind speed.
-    :param z: (*array_like*) Optional, 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
-        vectors to draw, in increasing order.
-    :param color: (*color*) Set single color.
-    :param cmap: (*string*) Color map string.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
-    :param size: (*float*) Base size of the arrows.
-    :param order: (*int*) Z-order of created layer for display.
-    
-    :returns: (*VectoryLayer*) Created quiver VectoryLayer.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2385,26 +1516,8 @@ def quiver(*args, **kwargs):
         draw_if_interactive()
     return r    
 
+@_copy_docstring_and_deprecators(Axes3D.quiver)
 def quiver3(*args, **kwargs):
-    """
-    Plot a 3-D field of arrows.
-
-    :param x: (*array_like*) X coordinate array.
-    :param y: (*array_like*) Y coordinate array.
-    :param z: (*array_like*) Z coordinate array.
-    :param u: (*array_like*) U component of the arrow vectors (wind field).
-    :param v: (*array_like*) V component of the arrow vectors (wind field).
-    :param w: (*array_like*) W component of the arrow vectors (wind field).
-    :param z: (*array_like*) Optional, 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level
-        vectors to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param length: (*float*) The length of each quiver, default to 1.0, the unit is
-        the same with the axes.
-
-    :returns: (*Graphic list*) Created quiver graphics.
-    """
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -2414,25 +1527,8 @@ def quiver3(*args, **kwargs):
 
     return g_axes.quiver(*args, **kwargs)
 
+@_copy_docstring_and_deprecators(Axes.barbs)
 def barbs(*args, **kwargs):
-    """
-    Plot a 2-D field of barbs.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param u: (*array_like*) U component of the arrow vectors (wind field) or wind direction.
-    :param v: (*array_like*) V component of the arrow vectors (wind field) or wind speed.
-    :param z: (*array_like*) Optional, 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
-        barbs to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
-    :param size: (*float*) Base size of the arrows.
-    :param order: (*int*) Z-order of created layer for display.
-    
-    :returns: (*VectoryLayer*) Created barbs VectoryLayer.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2448,23 +1544,8 @@ def barbs(*args, **kwargs):
         draw_if_interactive()
     return r  
 
+@_copy_docstring_and_deprecators(Axes.streamplot)
 def streamplot(*args, **kwargs):
-    """
-    Plot streamline.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param u: (*array_like*) U component of the arrow vectors (wind field) or wind direction.
-    :param v: (*array_like*) V component of the arrow vectors (wind field) or wind speed.
-    :param z: (*array_like*) Optional, 2-D z value array.
-    :param color: (*Color*) Streamline color.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
-    :param density: (*int*) Streamline density. Default is 4.
-    :param zorder: (*int*) Z-order of streamline graphic for display.
-    
-    :returns: (*VectoryLayer*) Created streamline VectoryLayer.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2479,32 +1560,9 @@ def streamplot(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r      
- 
+
+@_copy_docstring_and_deprecators(MapAxes.scatter)
 def scatterm(*args, **kwargs):
-    """
-    Make a scatter plot on a map.
-    
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param z: (*array_like*) Input z data.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple, different 
-        levels will be plotted in different colors in the order specified.
-    :param size: (*int of list*) Marker size.
-    :param marker: (*string*) Marker of the points.
-    :param fill: (*boolean*) Fill markers or not. Default is True.
-    :param edge: (*boolean*) Draw edge of markers or not. Default is True.
-    :param facecolor: (*Color*) Fill color of markers. Default is black.
-    :param edgecolor: (*Color*) Edge color of markers. Default is black.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-    :param order: (*int*) Z-order of created layer for display.
-    
-    :returns: (*VectoryLayer*) Point VectoryLayer.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2520,19 +1578,8 @@ def scatterm(*args, **kwargs):
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3D.streamplot)
 def streamplot3(*args, **kwargs):
-    """
-    Plot streamline in 3D axes.
-
-    :param x: (*array_like*) X coordinate array.
-    :param y: (*array_like*) Y coordinate array.
-    :param z: (*array_like*) Z coordinate array.
-    :param u: (*array_like*) U component of the arrow vectors (wind field).
-    :param v: (*array_like*) V component of the arrow vectors (wind field).
-    :param w: (*array_like*) W component of the arrow vectors (wind field).
-
-    :returns: Streamlines
-    """
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -2544,22 +1591,8 @@ def streamplot3(*args, **kwargs):
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3DGL.streamslice)
 def streamslice(*args, **kwargs):
-    """
-    Plot stream lines slice in 3D axes.
-
-    :param x: (*array_like*) X coordinate array.
-    :param y: (*array_like*) Y coordinate array.
-    :param z: (*array_like*) Z coordinate array.
-    :param u: (*array_like*) U component of the arrow vectors (wind field).
-    :param v: (*array_like*) V component of the arrow vectors (wind field).
-    :param w: (*array_like*) W component of the arrow vectors (wind field).
-    :param xslice: (*list*) X slice locations.
-    :param yslice: (*list*) Y slice locations.
-    :param zslice: (*list*) Z slice locations.
-    :param density: (*int*) Streamline density. Default is 4.
-    :return: Streamline slices
-    """
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -2571,18 +1604,8 @@ def streamslice(*args, **kwargs):
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(MapAxes.plot)
 def plotm(*args, **kwargs):
-    """
-    Plot lines and/or markers to the map.
-    
-    :param x: (*array_like*) Input x data.
-    :param y: (*array_like*) Input y data.
-    :param style: (*string*) Line style for plot.
-    :param linewidth: (*float*) Line width.
-    :param color: (*Color*) Line color.
-    
-    :returns: (*VectoryLayer*) Line VectoryLayer.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2597,19 +1620,9 @@ def plotm(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r  
-    
+
+@_copy_docstring_and_deprecators(MapAxes.stationmodel)
 def stationmodel(smdata, **kwargs):
-    """
-    Plot station model data on the map.
-    
-    :param smdata: (*StationModelData*) Station model data.
-    :param surface: (*boolean*) Is surface data or not. Default is True.
-    :param size: (*float*) Size of the station model symbols. Default is 12.
-    :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-    :param order: (*int*) Z-order of created layer for display.
-    
-    :returns: (*VectoryLayer*) Station model VectoryLayer.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2624,29 +1637,9 @@ def stationmodel(smdata, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r  
-        
+
+@_copy_docstring_and_deprecators(MapAxes.imshow)
 def imshowm(*args, **kwargs):
-    """
-    Display an image on the map.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-        color args (string, float, rgb, etc), different levels will be plotted in different colors in 
-        the order specified.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param fill_color: (*color*) Fill_color. Default is None (white color).
-    :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-    :param order: (*int*) Z-order of created layer for display.
-    :param interpolation: (*string*) Interpolation option [None | bilinear | bicubic].
-    
-    :returns: (*RasterLayer*) RasterLayer created from array data.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2662,30 +1655,9 @@ def imshowm(*args, **kwargs):
         draw_if_interactive()
     
     return r
-    
-def contourm(*args, **kwargs):  
-    """
-    Plot contours on the map.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ``r`` or ``red``, all levels will be plotted in this color. If a tuple of matplotlib 
-        color args (string, float, rgb, etc), different levels will be plotted in different colors in 
-        the order specified.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-    :param isplot: (*boolean*) Plot layer or not. Default is ``True``.
-    :param order: (*int*) Z-order of created layer for display.
-    :param smooth: (*boolean*) Smooth countour lines or not.
-    :param select: (*boolean*) Set the return layer as selected layer or not.
-    
-    :returns: (*VectoryLayer*) Contour VectoryLayer created from array data.
-    """
+
+@_copy_docstring_and_deprecators(MapAxes.contour)
+def contourm(*args, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
@@ -2701,30 +1673,9 @@ def contourm(*args, **kwargs):
         draw_if_interactive()
     
     return r
-        
+
+@_copy_docstring_and_deprecators(MapAxes.contourf)
 def contourfm(*args, **kwargs):
-    """
-    Plot filled contours.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-        color args (string, float, rgb, etc), different levels will be plotted in different colors in 
-        the order specified.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-    :param isadd: (*boolean*) Add layer in the axes or not. Default is ``True``.
-    :param zorder: (*int*) Z-order of created layer for display.
-    :param smooth: (*boolean*) Smooth countour lines or not.
-    :param select: (*boolean*) Set the return layer as selected layer or not.
-    
-    :returns: (*VectoryLayer*) Contour filled VectoryLayer created from array data.
-    """    
     global g_axes
     if g_figure is None:
         figure()
@@ -2740,29 +1691,9 @@ def contourfm(*args, **kwargs):
         draw_if_interactive()
     
     return r
-    
+
+@_copy_docstring_and_deprecators(MapAxes.pcolor)
 def pcolorm(*args, **kwargs):
-    """
-    Create a pseudocolor plot of a 2-D array in a MapAxes.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-        color args (string, float, rgb, etc), different levels will be plotted in different colors in 
-        the order specified.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-    :param isplot: (*boolean*) Plot layer or not. Default is ``True``.
-    :param order: (*int*) Z-order of created layer for display.
-    :param select: (*boolean*) Set the return layer as selected layer or not.
-    
-    :returns: (*VectoryLayer*) Polygon VectoryLayer created from array data.
-    """    
     global g_axes
     if g_figure is None:
         figure()
@@ -2778,29 +1709,9 @@ def pcolorm(*args, **kwargs):
         draw_if_interactive()
     
     return r
-    
+
+@_copy_docstring_and_deprecators(MapAxes.gridshow)
 def gridshowm(*args, **kwargs):
-    """
-    Create a grid plot of a 2-D array in a MapAxes.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
-        to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
-        string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-        color args (string, float, rgb, etc), different levels will be plotted in different colors in 
-        the order specified.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-    :param isplot: (*boolean*) Plot layer or not. Default is ``True``.
-    :param order: (*int*) Z-order of created layer for display.
-    :param select: (*boolean*) Set the return layer as selected layer or not.
-    
-    :returns: (*VectoryLayer*) Polygon VectoryLayer created from array data.
-    """    
     global g_axes
     if g_figure is None:
         figure()
@@ -2816,28 +1727,9 @@ def gridshowm(*args, **kwargs):
         draw_if_interactive()
     
     return r
-    
+
+@_copy_docstring_and_deprecators(MapAxes.quiver)
 def quiverm(*args, **kwargs):
-    """
-    Plot a 2-D field of arrows in a map.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param u: (*array_like*) U component of the arrow vectors (wind field) or wind direction.
-    :param v: (*array_like*) V component of the arrow vectors (wind field) or wind speed.
-    :param z: (*array_like*) Optional, 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
-        vectors to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
-    :param size: (*float*) Base size of the arrows.
-    :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-    :param zorder: (*int*) Z-order of created layer for display.
-    :param select: (*boolean*) Set the return layer as selected layer or not.
-    
-    :returns: (*VectoryLayer*) Created quiver VectoryLayer.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2853,53 +1745,14 @@ def quiverm(*args, **kwargs):
         draw_if_interactive()
     
     return r
-    
+
+@_copy_docstring_and_deprecators(Axes.quiverkey)
 def quiverkey(*args, **kwargs):
-    """
-    Add a key to a quiver plot.
-    
-    :param Q: (*MILayer or GraphicCollection*) The quiver layer instance returned by a call to quiver/quiverm.
-    :param X: (*float*) The location x of the key.
-    :param Y: (*float*) The location y of the key.
-    :param U: (*float*) The length of the key.
-    :param label: (*string*) A string with the length and units of the key.
-    :param coordinates=['axes'|'figure'|'data'|'inches']: (*string*) Coordinate system and units for 
-        *X, Y*. 'axes' and 'figure' are normalized coordinate system with 0,0 in the lower left and 
-        1,1 in the upper right, 'data' are the axes data coordinates (used for the locations of the 
-        vectors in the quiver plot itself); 'inches' is position in the figure in inches, with 0,0 
-        at the lower left corner.
-    :param color: (*Color*) Overrides face and edge colors from Q.
-    :param labelpos=['N'|'S'|'E'|'W']: (*string*) Position the label above, below, to the right, to
-        the left of the arrow, respectively.
-    :param labelsep: (*float*) Distance in inches between the arrow and the label. Default is 0.1.
-    :param labelcolor: (*Color*) Label color. Default to default is black.
-    :param fontproperties: (*dict*) A dictionary with keyword arguments accepted by the FontProperties
-        initializer: *family, style, variant, size, weight*.
-    """
     g_axes.quiverkey(*args, **kwargs)
     draw_if_interactive()
- 
+
+@_copy_docstring_and_deprecators(MapAxes.barbs)
 def barbsm(*args, **kwargs):
-    """
-    Plot a 2-D field of barbs in a map.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param u: (*array_like*) U component of the arrow vectors (wind field) or wind direction.
-    :param v: (*array_like*) V component of the arrow vectors (wind field) or wind speed.
-    :param z: (*array_like*) Optional, 2-D z value array.
-    :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
-        barbs to draw, in increasing order.
-    :param cmap: (*string*) Color map string.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
-    :param size: (*float*) Base size of the arrows.
-    :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-    :param order: (*int*) Z-order of created layer for display.
-    :param select: (*boolean*) Set the return layer as selected layer or not.
-    
-    :returns: (*VectoryLayer*) Created barbs VectoryLayer.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2914,26 +1767,9 @@ def barbsm(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r   
-  
+
+@_copy_docstring_and_deprecators(MapAxes.streamplot)
 def streamplotm(*args, **kwargs):
-    """
-    Plot streamline in a map.
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param u: (*array_like*) U component of the arrow vectors (wind field) or wind direction.
-    :param v: (*array_like*) V component of the arrow vectors (wind field) or wind speed.
-    :param z: (*array_like*) Optional, 2-D z value array.
-    :param color: (*Color*) Streamline color. Default is blue.
-    :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
-    :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
-    :param density: (*int*) Streamline density. Default is 4.
-    :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-    :param zorder: (*int*) Z-order of created layer for display.
-    :param select: (*boolean*) Set the return layer as selected layer or not.
-    
-    :returns: (*VectoryLayer*) Created streamline VectoryLayer.
-    """
     global g_axes
     if g_figure is None:
         figure()
@@ -2949,6 +1785,7 @@ def streamplotm(*args, **kwargs):
         draw_if_interactive()
     return r   
 
+@_copy_docstring_and_deprecators(Axes.clabel)
 def clabel(layer, **kwargs):
     '''
     Add contour layer labels.
@@ -2967,31 +1804,14 @@ def clabel(layer, **kwargs):
     g_axes.clabel(layer, **kwargs)
     draw_if_interactive()
 
+@_copy_docstring_and_deprecators(MapAxes.webmap)
 def webmap(provider='OpenStreetMap', zorder=0):
-    '''
-    Add a new web map layer.
-    
-    :param provider: (*string*) Web map provider.
-    :param zorder: (*int*) Layer order.
-    
-    :returns: Web map layer
-    '''
     layer = g_axes.webmap(provider, zorder)
     draw_if_interactive()
     return layer
-        
+
+@_copy_docstring_and_deprecators(MapAxes.geoshow)
 def geoshow(*args, **kwargs):
-    '''
-    Display map layer or longitude latitude data.
-    
-    Syntax:
-    --------    
-        geoshow(shapefilename) - Displays the map data from a shape file.
-        geoshow(layer) - Displays the map data from a map layer which may created by ``shaperead`` function.
-        geoshow(S) - Displays the vector geographic features stored in S as points, multipoints, lines, or 
-          polygons.
-        geoshow(lat, lon) - Displays the latitude and longitude vectors.
-    '''
     global g_axes
     if g_figure is None:
         figure()
@@ -3008,20 +1828,9 @@ def geoshow(*args, **kwargs):
     
     return r
 
+@_copy_docstring_and_deprecators(Axes.taylor_diagram)
 def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., colors=None,
                    **kwargs):
-    '''
-    Create Taylor diagram.
-
-    :param stddev: Standard deviation.
-    :param correlation: Pattern correlations.
-    :param ref_std: Reference standard deviation.
-    :param std_max: Maximum standard deviation.
-    :param labels: Data labels.
-    :param colors: Data points colors.
-
-    :returns:
-    '''
     global g_axes
     if g_figure is None:
         figure()
@@ -3037,21 +1846,8 @@ def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., c
         draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3DGL.set_lighting)
 def lighting(enable=True, **kwargs):
-    '''
-    Set lighting.
-
-    :param enable: (*boolean*) Set lighting enable or not.
-    :param position: (*list of float*) Lighting position. Default is [0,0,1,0].
-    :param ambient: (*list of float*) Ambient light. Default is [0.2,0.2,0.2,1].
-    :param diffuse: (*list of float*) Diffuse light.  Default is [1,1,1,1].
-    :param specular: (*list of float*) Specular light. Default is [1,1,1,1].
-    :param mat_ambient: (*list of float*) Material ambient light. Default is [0.2,0.2,0.2,1].
-    :param mat_diffuse: (*list of float*) Material diffuse light. Default is [0.8,0.8,0.8,1].
-    :param mat_specular: (*list of float*) Material specular light. Default is [0,0,0,1].
-    :param mat_emission: (*list of float*) Material emission light. Default is [0,0,0,1].
-    :param mat_shininess: (*float*) Material shininess (0 - 128). Default is 50.
-    '''
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -3062,17 +1858,8 @@ def lighting(enable=True, **kwargs):
     g_axes.set_lighting(enable, **kwargs)
     draw_if_interactive()
 
+@_copy_docstring_and_deprecators(Axes3D.mesh)
 def mesh(*args, **kwargs):
-    '''
-    creates a three-dimensional surface mesh plot
-
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param cmap: (*string*) Color map string.
-
-    :returns: Legend
-    '''
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -3084,22 +1871,8 @@ def mesh(*args, **kwargs):
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3D.surf)
 def surf(*args, **kwargs):
-    '''
-    creates a three-dimensional surface plot
-    
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) 2-D z value array.
-    :param cmap: (*string*) Color map string.
-    :param xyaxis: (*boolean*) Draw x and y axis or not.
-    :param zaxis: (*boolean*) Draw z axis or not.
-    :param grid: (*boolean*) Draw grid or not.
-    :param boxed: (*boolean*) Draw boxed or not.
-    :param mesh: (*boolean*) Draw mesh line or not.
-    
-    :returns: Legend
-    '''
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -3111,19 +1884,8 @@ def surf(*args, **kwargs):
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3DGL.slice)
 def slice3(*args, **kwargs):
-    '''
-    Volume slice planes
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) Optional. Z coordinate array.
-    :param data: (*array_like*) 3D data array.
-    :param xslice: (*list*) X slice locations.
-    :param yslice: (*list*) Y slice locations.
-    :param zslice: (*list*) Z slice locations.
-    :param cmap: (*string*) Color map string.
-    :return:
-    '''
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -3135,20 +1897,8 @@ def slice3(*args, **kwargs):
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3DGL.contourslice)
 def contourslice(*args, **kwargs):
-    '''
-    Volume slice contours
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) Optional. Z coordinate array.
-    :param data: (*array_like*) 3D data array.
-    :param xslice: (*list*) X slice locations.
-    :param yslice: (*list*) Y slice locations.
-    :param zslice: (*list*) Z slice locations.
-    :param cmap: (*string*) Color map string.
-    :param smooth: (*bool*) Smooth contour lines or not.
-    :return: Contour slice graphics
-    '''
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -3160,20 +1910,8 @@ def contourslice(*args, **kwargs):
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3DGL.contourfslice)
 def contourfslice(*args, **kwargs):
-    '''
-    Volume slice contour polygons
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) Optional. Z coordinate array.
-    :param data: (*array_like*) 3D data array.
-    :param xslice: (*list*) X slice locations.
-    :param yslice: (*list*) Y slice locations.
-    :param zslice: (*list*) Z slice locations.
-    :param cmap: (*string*) Color map string.
-    :param smooth: (*bool*) Smooth contour lines or not.
-    :return: Contour polygon slice graphics
-    '''
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -3185,19 +1923,8 @@ def contourfslice(*args, **kwargs):
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3DGL.isosurface)
 def isosurface(*args, **kwargs):
-    '''
-    creates a three-dimensional isosurface plot
-
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) Optional. Z coordinate array.
-    :param data: (*array_like*) 3D data array.
-    :param cmap: (*string*) Color map string.
-    :param nthread: (*int*) Thread number.
-
-    :returns: Legend
-    '''
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -3209,24 +1936,8 @@ def isosurface(*args, **kwargs):
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3DGL.particles)
 def particles(*args, **kwargs):
-    '''
-    creates a three-dimensional particles plot
-
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) Optional. Z coordinate array.
-    :param data: (*array_like*) 3D data array.
-    :param s: (*float*) Point size.
-    :param cmap: (*string*) Color map string.
-    :param vmin: (*float*) Minimum value for particle plotting.
-    :param vmax: (*float*) Maximum value for particle plotting.
-    :param alpha_min: (*float*) Minimum alpha value. Default is 0.1.
-    :param alpha_max: (*float*) Maximum alpha value. Default is 0.6.
-    :param density: (*int*) Particle density value. Default is 2.
-
-    :returns: Legend
-    '''
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -3238,28 +1949,8 @@ def particles(*args, **kwargs):
     draw_if_interactive()
     return r
 
+@_copy_docstring_and_deprecators(Axes3DGL.volumeplot)
 def volumeplot(*args, **kwargs):
-    '''
-    creates a three-dimensional volume plot
-
-    :param x: (*array_like*) Optional. X coordinate array.
-    :param y: (*array_like*) Optional. Y coordinate array.
-    :param z: (*array_like*) Optional. Z coordinate array.
-    :param data: (*array_like*) 3D data array.
-    :param s: (*float*) Point size.
-    :param cmap: (*string*) Color map string.
-    :param vmin: (*float*) Minimum value for particle plotting.
-    :param vmax: (*float*) Maximum value for particle plotting.
-    :param ray_casting: (*str*) Ray casting algorithm ['basic' | 'max_value' | 'specular'].
-        Default is 'max_value'.
-    :param brightness: (*float*) Volume brightness. Default is 1.
-    :param alpha_min: (*float*) Minimum alpha value.
-    :param alpha_max: (*float*) Maximum alpha value.
-    :param opacity_nodes: (*list of float*) Opacity nodes. Default is None.
-    :param opacity_levels: (*list of float*) Opacity levels. Default is [0., 1.].
-
-    :returns: Legend
-    '''
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -3270,44 +1961,27 @@ def volumeplot(*args, **kwargs):
     r = g_axes.volumeplot(*args, **kwargs)
     draw_if_interactive()
     return r
-    
-def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop=None):
-    '''
-    Make colors.
-    
-    :param n: (*int*) Colors number.
-    :param cmap: (*string*) Color map name. Default is ``matlab_jet``.
-    :param reverse: (*boolean*) Reverse the colors or not. Default is ``False``.
-    :param alpha: (*float*) Alpha value (0 - 1) of the colors. Defaul is ``None``.
-    :param start: (*int*) Start color index. Default is ``None``.
-    :param stop: (*int*) Stop color index. Default is ``None``.
 
-    :returns: (*list*) Created colors.
-    '''
+@_copy_docstring_and_deprecators(plotutil.makecolors)
+def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop=None):
     return plotutil.makecolors(n, cmap, reverse, alpha, start, stop)
 
+@_copy_docstring_and_deprecators(plotutil.makelegend)
 def makelegend(source, **kwargs):
-    '''
-    Make a legend.
-    
-    :param souce: Legend file name or list of the legen breaks.
-    
-    :returns: Created legend.
-    '''
     return plotutil.makelegend(source, **kwargs)
     
 def makesymbolspec(geometry, *args, **kwargs):
-    '''
+    """
     Make a legend.
     
     :param geometry: (*string*) Geometry type. [point | line | polygon].
     :param levels: (*array_like*) Value levels. Default is ``None``, not used.
-    :param colors: (*list*) Colors. Defaul is ``None``, not used.
+    :param colors: (*list*) Colors. Default is ``None``, not used.
     :param legend break parameter maps: (*map*) Legend breaks.
     :param field: (*string*) The field to be used in the legend.
     
     :returns: Created legend.
-    '''
+    """
     shapetype = ShapeTypes.IMAGE
     if geometry == 'point':
         shapetype = ShapeTypes.POINT
@@ -3370,7 +2044,7 @@ def makesymbolspec(geometry, *args, **kwargs):
     return ls
     
 def weatherspec(weather='all', size=20, color='b'):
-    '''
+    """
     Make a weather symbol legend.
     
     :param weather: (*string or list*) The weather index list. Defaul is ``all``, used all weathers.
@@ -3378,7 +2052,7 @@ def weatherspec(weather='all', size=20, color='b'):
     :param color: (*color*) The weather symbol color.
     
     :returns: Weather symbol legend.
-    '''
+    """
     if isinstance(weather, str):
         wlist = DrawMeteoData.getWeatherTypes(weather)
     else:
@@ -3387,24 +2061,19 @@ def weatherspec(weather='all', size=20, color='b'):
     return DrawMeteoData.createWeatherLegendScheme(wlist, size, c)
     
 def cloudspec(size=12, color='b'):
-    '''
+    """
     Make a cloud amount symbol legend.
 
     :param size: (*string*) The symbol size.
     :param color: (*color*) The symbol color.
     
     :returns: Cloud amount symbol legend.
-    '''
+    """
     c = plotutil.getcolor(color)
     return DrawMeteoData.createCloudLegendScheme(size, c)
-    
+
+@_copy_docstring_and_deprecators(MapAxes.masklayer)
 def masklayer(mobj, layers):
-    '''
-    Mask layers.
-    
-    :param mobj: (*layer or polgyons*) Mask object.
-    :param layers: (*list*) The layers will be masked.       
-    '''
     g_axes.masklayer(mobj, layers)
     draw_if_interactive()
         

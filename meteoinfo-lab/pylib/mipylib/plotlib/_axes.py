@@ -615,7 +615,7 @@ class Axes(object):
             ymax = limits[3]
             extent = Extent(xmin, xmax, ymin, ymax)
             self.axes.setDrawExtent(extent)
-            self.axes.setExtent(extent.clone())
+            #self.axes.setExtent(extent.clone())
             self.axes.setFixDrawExtent(True)
             return True
         else:

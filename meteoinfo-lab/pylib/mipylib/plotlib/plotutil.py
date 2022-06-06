@@ -219,7 +219,7 @@ def getcolormap(**kwargs):
     return cmap
     
 def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop=None):
-    '''
+    """
     Make colors.
     
     :param n: (*int*) Colors number.
@@ -230,7 +230,7 @@ def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop
     :param stop: (*int*) Stop color index. Default is ``None``.
 
     :returns: (*list*) Created colors.
-    '''
+    """
     if isinstance(n, list):
         cols = getcolors(n, alpha)
     else:
@@ -1051,13 +1051,13 @@ def makesymbolspec(geometry, *args, **kwargs):
     return ls
     
 def makelegend(source, **kwargs):
-    '''
+    """
     Make a legend.
     
-    :param souce: Legend file name or list of the legen breaks.
+    :param source: Legend file name or list of the legend breaks.
     
     :returns: Created legend.
-    '''
+    """
     if isinstance(source, basestring):
         if os.path.exists(source):
             ls = LegendScheme()

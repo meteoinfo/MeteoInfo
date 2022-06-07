@@ -13,6 +13,8 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -46,7 +48,6 @@ public class MeteoInfoMap {
         if (args.length >= 1){
             if (args[0].equalsIgnoreCase("-r")) {
                 String fontPath = GlobalUtil.getAppPath(FrmMain.class) + File.separator + "fonts";
-                //fontPath = "D:\\MyProgram\\java\\MeteoInfoDev\\MeteoInfo\\fonts";
                 List<String> fontFns = GlobalUtil.getFiles(fontPath, ".ttc");
                 for (String fontFn : fontFns){
                     System.out.println("Register: " + fontFn);
@@ -80,7 +81,6 @@ public class MeteoInfoMap {
                 runApplication(args[0].substring(1));
             } else if (args[0].equalsIgnoreCase("-r")) {
                 String fontPath = GlobalUtil.getAppPath(FrmMain.class) + File.separator + "fonts";
-                //fontPath = "D:\\MyProgram\\java\\MeteoInfoDev\\MeteoInfo\\fonts";
                 List<String> fontFns = GlobalUtil.getFiles(fontPath, ".ttc");
                 for (String fontFn : fontFns){
                     System.out.println("Register: " + fontFn);
@@ -104,10 +104,7 @@ public class MeteoInfoMap {
     private static void runScript(String args[], String fn, int idx) {
         String ext = GlobalUtil.getFileExtension(fn);
         System.out.println("Running Jython script...");
-        //PySystemState state = Py.getSystemState();
-        //Py.getSystemState().setdefaultencoding("utf-8");
         PySystemState state = new PySystemState();
-        //state.setdefaultencoding("utf-8");
         if (args.length > idx + 1) {
             for (int i = idx + 1; i < args.length; i++) {
                 state.argv.append(new PyString(args[i]));
@@ -119,11 +116,7 @@ public class MeteoInfoMap {
         List<String> jarfns = GlobalUtil.getFiles(pluginPath, ".jar");
         String path = GlobalUtil.getAppPath(FrmMain.class) + File.separator + "pylib";
         interp.exec("import sys");
-        //interp.set("mis", mis);
         interp.exec("sys.path.append('" + path + "')");
-        //interp.exec("import mipylib");
-        //interp.exec("from mipylib.miscript import *");
-        //interp.exec("from meteoinfo.numeric.JNumeric import *");
         for (String jarfn : jarfns) {
             interp.exec("sys.path.append('" + jarfn + "')");
         }
@@ -132,14 +125,11 @@ public class MeteoInfoMap {
     }
 
     private static void runInteractive() {
-        //String path = GlobalUtil.getAppPath(FrmMain.class) + File.separator + "pylib";
+        String path = GlobalUtil.getAppPath(FrmMain.class) + File.separator + "pylib";
         InteractiveConsole console = new InteractiveConsole();
         try {
-            //console.set("mis", mis);
             console.exec("import sys");
-            //console.exec("sys.path.append('" + path + "')");
-            //console.exec("from milab import *");
-            //console.exec("mipylib.miplot.isinteractive = True");
+            console.exec("sys.path.append('" + path + "')");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -197,17 +187,13 @@ public class MeteoInfoMap {
      * @return Startup path.
      */
     private static String getStartupPath() {
-        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
-                getInputArguments().toString().contains("jdwp");
-        String startupPath;
-        if (isDebug) {
-            startupPath = System.getProperty("user.dir");
-            if (startupPath.endsWith("MeteoInfo")) {
-                startupPath += "/meteoinfo-map";
-            }
-        } else {
-            startupPath = GlobalUtil.getAppPath(FrmMain.class);
+        String startupPath = GlobalUtil.getAppPath(FrmMain.class);
+        if (startupPath.endsWith("classes")) {
+            Path path = new File(startupPath).toPath();
+            path = path.getParent().getParent();
+            startupPath = path.toString();
         }
+        //System.out.println(startupPath);
         return startupPath;
     }
 
@@ -234,10 +220,11 @@ public class MeteoInfoMap {
     }
 
     private static void runApplication(final String locale) {
-        /* Set look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         String startupPath = getStartupPath();
         Options options = loadConfigureFile(startupPath);
+
+        /* Set look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         String laf = options.getLookFeel();
         if (laf.equals("FlatLightLaf")) {
             try {
@@ -313,34 +300,8 @@ public class MeteoInfoMap {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-//                new Thread() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            final SplashScreen splash = SplashScreen.getSplashScreen();
-//                            if (splash == null){
-//                                System.out.println("SplashScreen.getSplashScreen() returned null");
-//                                return;
-//                            }
-//                            Graphics2D g = splash.createGraphics();
-//                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//                            g.setFont(new Font("Arial", Font.BOLD, 60));
-//                            g.setColor(Color.red);
-//                            g.drawString("MeteoInfo", 100, 200);
-//                            splash.update();
-//                            Thread.sleep(1000);
-//                            //splash.setImageURL(Program.class.getResource("/meteoinfo/resources/logo.png"));
-//                            //splash.update();
-//                        } catch (Exception e) {
-//                        }
-//                    }
-//                }.start();
-
                 boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
                         getInputArguments().toString().contains("jdwp");
-//                if (isDebug) {
-//                    Locale.setDefault(Locale.ENGLISH);
-//                }
 
                 if (locale != null){
                     switch (locale.toLowerCase()){
@@ -362,11 +323,9 @@ public class MeteoInfoMap {
                     System.setErr(sw.printStream);
                 }
 
-                //registerFonts();
                 FontUtil.registerWeatherFont();
                 FrmMain frame = new FrmMain(startupPath, options);
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-                //frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
                 if (sw != null) {
                     sw.setLocationRelativeTo(frame);
@@ -378,7 +337,6 @@ public class MeteoInfoMap {
     private static void registerFonts() {
         FontUtil.registerWeatherFont();
         String fn = GlobalUtil.getAppPath(FrmMain.class);
-        //fn = fn.substring(0, fn.lastIndexOf("/"));
         String path = fn + File.separator + "font";
         File pathDir = new File(path);
         if (pathDir.isDirectory()) {

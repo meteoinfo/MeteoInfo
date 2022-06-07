@@ -120,7 +120,7 @@ public class FrmLegendBreaks extends javax.swing.JDialog {
 
         ColorMap[] colorTables;
         try {
-            colorTables = ColorUtil.getColorTables();
+            colorTables = ColorUtil.getColorMaps();
             ColorListCellRender render = new ColorListCellRender();
             render.setPreferredSize(new Dimension(62, 21));
             this.jComboBox_ColorTable.setModel(new ColorComboBoxModel(colorTables));

@@ -134,10 +134,8 @@ public class FrmMain extends JFrame implements IApplication {
     private AbstractButton _currentTool = null;
     ResourceBundle bundle;
     ProjectFile _projectFile;
-    //private boolean _isEditingVertices = false;
     private boolean _isLoading = false;
     private FrmMeteoData _frmMeteoData;
-    //private String _currentDataFolder = "";
     private PluginCollection _plugins = new PluginCollection();
     private FlatSVGIcon _loadedPluginIcon;
     private FlatSVGIcon _unloadedPluginIcon;
@@ -261,9 +259,7 @@ public class FrmMain extends JFrame implements IApplication {
         _projectFile = new ProjectFile(this);
         this._mapDocument.getActiveMapFrame().setMapView(_mapView);
         this._mapDocument.setMapLayout(_mapLayout);
-        //this._mapDocument.setIsLayoutView(false);
         _mapLayout.setLockViewUpdate(true);
-        //this._options.setLegendFont(_mapDocument.getFont());
 
         BufferedImage image = null;
         try {
@@ -286,13 +282,6 @@ public class FrmMain extends JFrame implements IApplication {
         this._plugins.setPluginPath(pluginPath);
         this._plugins.setPluginConfigFile(pluginPath + File.separator + "plugins.xml");
 
-//        //Help
-//        HelpSet hs = getHelpSet("/org/meteoinfo/help/mi.hs");
-//        HelpBroker hb = hs.createHelpBroker();
-//        //Assign help to components
-//        CSH.setHelpIDString(this.jMenuItem_Help, "top");
-//        //Handle events
-//        this.jMenuItem_Help.addActionListener(new CSH.DisplayHelpFromSource(hb));
         loadForm();
     }
 
@@ -1827,14 +1816,10 @@ public class FrmMain extends JFrame implements IApplication {
             this.jComboBox_PageZoom.addItem(zoom);
         }
         this.jComboBox_PageZoom.setSelectedItem(String.valueOf((int) (_mapDocument.getMapLayout().getZoom() * 100)) + "%");
-        //this._loadedPluginIcon = new ImageIcon(ImageIO.read(this.getClass().getResource("/images/plugin_green.png")));
-        //this._unloadedPluginIcon = new ImageIcon(ImageIO.read(this.getClass().getResource("/images/plugin_unsel.png")));
         this._loadedPluginIcon = new FlatSVGIcon("org/meteoinfo/map/icons/plugin-loaded.svg");
         this._unloadedPluginIcon = new FlatSVGIcon("org/meteoinfo/map/icons/plugin.svg");
 
         this.loadDefaultPojectFile();
-        //this.loadConfigureFile();
-        //this._mapDocument.setFont(this._options.getLegendFont());
         this.setLocation(this._options.getMainFormLocation());
         this.setSize(this._options.getMainFormSize());
         try {
@@ -1847,8 +1832,6 @@ public class FrmMain extends JFrame implements IApplication {
         }
         _mapView = _mapDocument.getActiveMapFrame().getMapView();
         setMapView();
-        //_mapView.setIsLayoutMap(false);
-        //_mapView.zoomToExtent(_mapView.getViewExtent());
 
         this.jToolBar_Layout.setEnabled(false);
         for (Component c : this.jToolBar_Layout.getComponents()) {
@@ -1945,13 +1928,6 @@ public class FrmMain extends JFrame implements IApplication {
 
         _mapView.setFocusable(true);
         _mapView.requestFocusInWindow();
-
-//            tabControl1.TabPages[0].Controls.Clear();
-//            tabControl1.TabPages[0].Controls.Add(_mapView);
-//            _mapView.Dock = DockStyle.Fill;
-//            _mapView.MouseMove += new MouseEventHandler(this.MapView_MouseMove);
-//            _mapView.MouseDown += new MouseEventHandler(this.MapView_MouseDown);
-//            _mapView.GraphicSeleted += new EventHandler(this.MapView_GraphicSelected);
     }
 
     private void refreshUndoRedo() {
@@ -1990,13 +1966,12 @@ public class FrmMain extends JFrame implements IApplication {
             ProjectionInfo fromProj = _mapDocument.getActiveMapFrame().getMapView().getProjection().getProjInfo();
             double[][] points = new double[1][];
             points[0] = new double[]{projX, projY};
-            //double[] Z = new double[1];
             try {
                 Reproject.reprojectPoints(points, fromProj, toProj, 0, 1);
                 this.jLabel_Coordinate.setText(theText + " (Lon: " + String.format("%1$.2f", points[0][0]) + "; Lat: "
                         + String.format("%1$.2f", points[0][1]) + ")");
             } catch (Exception ex) {
-                //this.TSSL_Coord.Text = "X: " + ProjX.ToString("0.0") + "; Y: " + ProjY.ToString("0.0"); 
+                ex.printStackTrace();
             }
         }
     }
@@ -2027,7 +2002,7 @@ public class FrmMain extends JFrame implements IApplication {
                         this.jLabel_Coordinate.setText(theText + " (Lon: " + String.format("%1$.2f", points[0][0]) + "; Lat: "
                                 + String.format("%1$.2f", points[0][1]) + ")");
                     } catch (Exception ex) {
-                        //this.TSSL_Coord.Text = "X: " + ProjX.ToString("0.0") + "; Y: " + ProjY.ToString("0.0"); 
+                        ex.printStackTrace();
                     }
                 }
 
@@ -3007,12 +2982,6 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jMenuItem_HelpActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-//        Help help = new Help();
-//        help.setTitle("MeteoInfoMap - Help");
-//        help.setIconImage("/images/MeteoInfo_1_16x16x8.png");
-//        help.setSize(800, 700);
-//        help.setLocationRelativeTo(this);
-//        help.setVisible(true);
         try {
             URI uri = new URI("http://www.meteothink.org/docs/meteoinfo/desktop/index.html");
             Desktop desktop = null;
@@ -3027,25 +2996,6 @@ public class FrmMain extends JFrame implements IApplication {
         } catch (IOException ioe) {
         }
     }
-
-/*    *//**
-     * find the helpset file and create a HelpSet object
-     *//*
-    private HelpSet getHelpSet(String helpsetfile) {
-        HelpSet hs = null;
-        ClassLoader cl = this.getClass().getClassLoader();
-
-        try {
-            //URL hsURL = HelpSet.findHelpSet(cl, helpsetfile);   
-            //URL hsURL = new URL("file:/" + helpsetfile);
-            URL hsURL = this.getClass().getResource(helpsetfile);
-            hs = new HelpSet(cl, hsURL);
-        } catch (Exception ee) {
-            System.out.println("HelpSet: " + ee.getMessage());
-            System.out.println("HelpSet: " + helpsetfile + " not found");
-        }
-        return hs;
-    }*/
 
     private void jMenuItem_AboutActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:

@@ -1289,6 +1289,8 @@ class Axes3DGL(Axes3D):
             kwargs['edge'] = edge
             plotutil.setlegendscheme(ls, **kwargs)
         else:
+            if not kwargs.has_key('edgecolor'):
+                kwargs['edgecolor'] = None
             ls = plotutil.getlegendbreak('polygon', **kwargs)[0]
         nthread = kwargs.pop('nthread', None)
         if nthread is None:

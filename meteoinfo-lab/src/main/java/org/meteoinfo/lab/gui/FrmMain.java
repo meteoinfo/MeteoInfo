@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -152,8 +154,11 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         //Load toolbox applications        
         System.out.println("Load toolbox applications...");
         String toolboxPath = this.startupPath + File.separator + "toolbox";
-        if (isDebug) {
-            toolboxPath = "D:/MyProgram/Java/MeteoInfoDev/toolbox";
+        if (this.startupPath.endsWith("meteoinfo-lab")) {
+            Path path = new File(this.startupPath).toPath();
+            path = path.getParent();
+            path = path.resolve(Paths.get("auxdata", "toolbox"));
+            toolboxPath = path.toString();
         }
         String appConfFn = toolboxPath + File.separator + "apps.xml";
         if (new File(appConfFn).exists()) {
@@ -1109,7 +1114,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
     private void jMenuItem_ColorMapsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_ColorMapsActionPerformed
         // TODO add your handling code here:        
         try {
-            ColorMap[] colorTables = ColorUtil.getColorTables();
+            ColorMap[] colorTables = ColorUtil.getColorMaps();
             ColorListCellRender render = new ColorListCellRender();
             render.setPreferredSize(new Dimension(62, 21));
             Object[][] elements = new Object[colorTables.length][2];

@@ -8,6 +8,8 @@ package org.meteoinfo.lab;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -130,9 +132,31 @@ public class MeteoInfoLab {
 
         boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
                 getInputArguments().toString().contains("jdwp");
-        String path, toolboxPath, miPath;
-        if (isDebug) {
-            path = "D:/MyProgram/java/MeteoInfoDev/MeteoInfo/meteoinfo-lab/pylib";
+        String pyPath, toolboxPath, miPath;
+        miPath = GlobalUtil.getAppPath(FrmMain.class);
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("windows") && miPath.substring(0, 1).equals("/")) {
+            miPath = miPath.substring(1);
+        }
+        if (miPath.endsWith("classes")) {
+            Path path = new File(miPath).toPath();
+            path = path.getParent().getParent();
+            miPath = path.toString();
+        }
+        pyPath = miPath + File.separator + "pylib";
+        toolboxPath = miPath + File.separator + "toolbox";
+        if (miPath.endsWith("meteoinfo-lab")) {
+            Path path = new File(miPath).toPath();
+            path = path.getParent();
+            path = path.resolve(Paths.get("auxdata", "toolbox"));
+            toolboxPath = path.toFile().getAbsolutePath();
+        }
+        pyPath = pyPath.replace("\\", "/");
+        miPath = miPath.replace("\\", "/");
+        toolboxPath = toolboxPath.replace("\\", "/");
+
+        /*if (isDebug) {
+            pyPath = "D:/MyProgram/java/MeteoInfoDev/MeteoInfo/meteoinfo-lab/pylib";
             toolboxPath = "D:/MyProgram/java/MeteoInfoDev/toolbox";
             miPath = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo";
         } else {
@@ -143,24 +167,24 @@ public class MeteoInfoLab {
             if (os.contains("windows") && miPath.substring(0, 1).equals("/")) {
                 miPath = miPath.substring(1);
             }
-            path = miPath + File.separator + "pylib";
-            toolboxPath = miPath + "/toolbox";;
-        }
+            pyPath = miPath + File.separator + "pylib";
+            toolboxPath = miPath + "/toolbox";
+        }*/
 
         try {
             interp.exec("import sys");
             interp.exec("import os");
             interp.exec("import datetime");
-            interp.exec("sys.path.append('" + path + "')");
+            interp.exec("sys.path.append(u'" + pyPath + "')");
             //interp.exec("from milab import *");
-            interp.execfile(path + "/milab.py");
+            interp.execfile(pyPath + "/milab.py");
             if (!isDebug) {
-                interp.exec("sys.path.append('" + toolboxPath + "')");
+                interp.exec("sys.path.append(u'" + toolboxPath + "')");
                 //interp.exec("from toolbox import *");
             }
             interp.exec("mipylib.plotlib.miplot.batchmode = True");
             interp.exec("mipylib.plotlib.miplot.isinteractive = False");
-            interp.exec("mipylib.migl.mifolder = '" + miPath + "'");
+            interp.exec("mipylib.migl.mifolder = u'" + miPath + "'");
             System.out.println("mipylib is loaded...");
             interp.execfile(fn);
         } catch (Exception e) {
@@ -209,16 +233,11 @@ public class MeteoInfoLab {
      * @return Startup path.
      */
     private static String getStartupPath() {
-        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
-                getInputArguments().toString().contains("jdwp");
-        String startupPath;
-        if (isDebug) {
-            startupPath = System.getProperty("user.dir");
-            if (startupPath.endsWith("MeteoInfo")) {
-                startupPath += "/meteoinfo-lab";
-            }
-        } else {
-            startupPath = GlobalUtil.getAppPath(FrmMain.class);
+        String startupPath = GlobalUtil.getAppPath(FrmMain.class);
+        if (startupPath.endsWith("classes")) {
+            Path path = new File(startupPath).toPath();
+            path = path.getParent().getParent();
+            startupPath = path.toString();
         }
         return startupPath;
     }
@@ -322,35 +341,16 @@ public class MeteoInfoLab {
             //java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-//                boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
-//                        getInputArguments().toString().contains("jdwp");
-//                if (isDebug) {
-//                    Locale.setDefault(Locale.ENGLISH);
-//                }
-
                 if (isEng) {
                     Locale.setDefault(Locale.ENGLISH);
                 }
 
-//                StackWindow sw = null;
-//                if (!isDebug) {
-//                    sw = new StackWindow("Show Exception Stack", 600, 400);
-//                    Thread.UncaughtExceptionHandler handler = sw;
-//                    Thread.setDefaultUncaughtExceptionHandler(handler);
-//                    System.setOut(sw.printStream);
-//                    System.setErr(sw.printStream);
-//                }
-                //registerFonts();
                 System.out.println("Register weather font...");
                 FontUtil.registerWeatherFont();
                 System.out.println("Open main form...");
                 FrmMain frame = new FrmMain(startupPath, options);
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-                //frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
-//                if (sw != null) {
-//                    sw.setLocationRelativeTo(frame);
-//                }
             }
         });
     }

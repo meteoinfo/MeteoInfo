@@ -22,6 +22,8 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -225,51 +227,47 @@ public class ColorUtil {
      * @return Color tables
      * @throws IOException
      */
-    public static ColorMap[] getColorTables() throws IOException {
+    public static ColorMap[] getColorMaps() throws IOException {
         String fn = GlobalUtil.getAppPath(ColorUtil.class);
-        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
-                getInputArguments().toString().contains("jdwp");
-        if (isDebug) {
-            fn = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo/";
-        }     
-        fn = fn.substring(0, fn.lastIndexOf("/"));
-        String path = fn + File.separator + "colormaps";
-        File pathDir = new File(path);
+        File pathDir = new File(fn);
         if (!pathDir.isDirectory()) {
             return null;
         }
 
-        File[] files = pathDir.listFiles();
-        List<ColorMap> cts = new ArrayList<>();
-        for (File file : files) {
-            //InputStream is = ColorUtil.class.getResourceAsStream(pdir + "/" + fileName);
-            //System.out.println(file.getAbsolutePath());
-            ColorMap ct = new ColorMap();
-            ct.readFromFile(file);            
-            if (ct.getColorCount() > 0) {
-                String name = file.getName();
-                name = name.substring(0, name.lastIndexOf("."));
-                ct.setName(name);
-                cts.add(ct);
-            }
+        if (fn.endsWith("classes")) {
+            pathDir = pathDir.getParentFile().getParentFile().getParentFile();
+            Path path = Paths.get(pathDir.getAbsolutePath(), "auxdata", "colormaps");
+            pathDir = path.toFile();
+        } else {
+            pathDir = pathDir.getParentFile();
+            Path path = Paths.get(pathDir.getAbsolutePath(), "colormaps");
+            pathDir = path.toFile();
         }
 
-        ColorMap[] ncts = new ColorMap[cts.size()];
-        for (int i = 0; i < cts.size(); i++) {
-            ncts[i] = cts.get(i);
-        }
-
-        return ncts;
+        return getColorMaps(pathDir);
     }
 
      /**
       * Get color maps
       *
+      * @param path Color map path directory string
       * @return Color maps
       * @throws IOException
       */
      public static ColorMap[] getColorMaps(String path) throws IOException {
          File pathDir = new File(path);
+
+         return getColorMaps(pathDir);
+     }
+
+     /**
+      * Get color maps
+      *
+      * @param pathDir Color map path directory
+      * @return Color maps
+      * @throws IOException
+      */
+     public static ColorMap[] getColorMaps(File pathDir) throws IOException {
          if (!pathDir.isDirectory()) {
              return null;
          }

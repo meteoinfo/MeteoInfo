@@ -283,6 +283,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
 
         //jButton_MakeBreaks.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/TSB_MakeBreaks.Image.png"))); // NOI18N
         jButton_MakeBreaks.setIcon(new FlatSVGIcon("org/meteoinfo/icons/colors.svg"));
+        jButton_MakeBreaks.setToolTipText("Reset Breaks");
         jButton_MakeBreaks.setFocusable(false);
         jButton_MakeBreaks.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton_MakeBreaks.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

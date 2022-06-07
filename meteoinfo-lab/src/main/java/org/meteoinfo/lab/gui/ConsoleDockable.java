@@ -18,6 +18,8 @@ import java.awt.event.KeyListener;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -123,13 +125,22 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         //System.out.println("New Jython interpreter...");
         interp = new PythonInteractiveInterpreter(console);
         interp.setConsoleColors(consoleColors);
-        String path = this.startupPath + File.separator + "pylib";
+        String pyPath = this.startupPath + File.separator + "pylib";
+        pyPath = pyPath.replace("\\", "/");
         String toolboxPath = this.startupPath + "/toolbox";
+        if (this.startupPath.endsWith("meteoinfo-lab")) {
+            Path path = new File(this.startupPath).toPath();
+            path = path.getParent();
+            path = path.resolve(Paths.get("auxdata", "toolbox"));
+            toolboxPath = path.toFile().getAbsolutePath();
+        }
+        toolboxPath = toolboxPath.replace("\\", "/");
         String miPath = this.startupPath;
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows") && miPath.substring(0, 1).equals("/")) {
             miPath = miPath.substring(1);
         }
+        miPath = miPath.replace("\\", "/");
 
         //System.out.println("New interpreter thread...");
         //this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -139,10 +150,10 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             interp.exec("import sys");
             interp.exec("import os");
             interp.exec("import datetime");
-            System.out.println("Append path: " + path);
-            interp.exec("sys.path.append('" + path + "')");
+            System.out.println("Append path: " + pyPath);
+            interp.exec("sys.path.append(u'" + pyPath + "')");
             System.out.println("Run milab.py ...");
-            interp.execfile_(path + "/milab.py");
+            interp.execfile_(pyPath + "/milab.py");
             //System.out.println("Set isinteractive...");
             interp.exec("mipylib.plotlib.miplot.isinteractive = True");
             //System.out.println("Set milapp...");
@@ -156,7 +167,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             interp.exec("sys.path.append(u'" + toolboxPath + "')");
             if (isDebug) {
                 System.out.println("Run milab_debug.py ...");
-                interp.execfile_(path + "/milab_debug.py");
+                interp.execfile_(pyPath + "/milab_debug.py");
             }
             System.out.println("Interpreter done...");
         } catch (Exception e) {

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<VerifyCase Name="Test">
+  <Groups>
+    <Group DataMaskFile="D:\MyProgram\Distribution\Java\AMVS\AMVS\map\china.shp" Name="Visibility" OutputDirectory="D:\SampleData\verification" StatRegionFile="D:\MyProgram\Distribution\Java\AMVS\AMVS\map\china_regions.shp" StatisticType="StationStat" TimeZone="GMT+8" VerifyCategory="Spatial">
+      <Method MethodType="CONTINUOUS">
+        <Parameter/>
+      </Method>
+      <Times TimeSelect="TimeIndex">
+        <Time Index="1"/>
+        <Time Index="2"/>
+        <Time Index="3"/>
+        <Time Index="4"/>
+        <Time Index="5"/>
+        <Time Index="6"/>
+        <Time Index="7"/>
+        <Time Index="8"/>
+        <Time Index="9"/>
+        <Time Index="10"/>
+        <Time Index="11"/>
+        <Time Index="12"/>
+        <Time Index="13"/>
+        <Time Index="14"/>
+        <Time Index="15"/>
+        <Time Index="16"/>
+        <Time Index="17"/>
+        <Time Index="18"/>
+        <Time Index="19"/>
+        <Time Index="20"/>
+        <Time Index="21"/>
+        <Time Index="22"/>
+        <Time Index="23"/>
+        <Time Index="24"/>
+      </Times>
+      <ObservationDataset DataSource="Observation" DataType="MICAPS_1" FileName="D:\SampleData\micaps\13013011.000" Name="Observation" TimeZone="GMT+8" VariableName="Visibility"/>
+      <ForecastDataset DataSource="Forecast" DataType="GrADS_Grid" FileName="D:\SampleData\CUACE_Haze-Fog\2013013000\produce\aero_VIS.ctl" Name="Forecast" TimeZone="GMT+0" VariableName="VIS"/>
+    </Group>
+  </Groups>
+</VerifyCase>

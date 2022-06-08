@@ -1,0 +1,18 @@
+# Converted from MeteoSwiss NCL library
+
+# number of colors in table
+ncolors = 12
+
+#  r   g   b
+ 100   0 150
+  39  48 215
+  89 141 252
+ 139 239 217
+  96 207 145
+  26 152  80
+ 145 207  96
+ 217 239 139
+ 254 224 139
+ 252 141  89
+ 215  48  39
+ 150   0 100

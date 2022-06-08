@@ -1,0 +1,19 @@
+# Categorical 12-step scheme, after ColorBrewer 11-step Paired Scheme
+#
+# Taken from Department of Geography, University of Oregon
+
+ncolors = 12
+
+#   r      g       b
+  255     191     127
+  255     127       0
+  255     255     153
+  255     255      50
+  178     255     140
+   50     255       0
+  165     237     255
+   25     178     255
+  204     191     255
+  101      76     255
+  255     153     191
+  229      25      50

@@ -1,0 +1,23 @@
+# Green to Magenta, 16 steps
+#
+# Taken from Department of Geography, University of Oregon
+
+ncolors = 16
+
+#   r      g        b
+    0      80       0
+    0     134       0
+    0     187       0
+    0     241       0
+   80     255      80
+  134     255     134
+  187     255     187
+  255     255     255
+  255     241     255
+  255     187     255
+  255     134     255
+  255      80     255
+  241       0     241
+  187       0     187
+  134       0     134
+   80       0      80

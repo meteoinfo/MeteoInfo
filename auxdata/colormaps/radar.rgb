@@ -1,0 +1,17 @@
+ncolors = 15
+#  r    g    b
+    0  255  255   # cyan
+    0  157  255   # light.blue
+    0    0  255   # blue
+    9  130  175   # light.green
+    0  255    0   # green
+    8  175   20   # dark.green
+  255  214    0   # yellow
+  255  152    0   # light.orange
+  255    0    0   # red
+  221    0   27   # added
+  188    0   54   # med.red
+  121    0  109   # dark.red
+  121   51  160   # light.violet
+  195  163  212   # violet
+  255  255  255   # white

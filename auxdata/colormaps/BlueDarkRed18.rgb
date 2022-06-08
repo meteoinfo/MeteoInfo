@@ -1,0 +1,25 @@
+# Blue to Dark Red, 18 steps, based on ColorBrewer
+#
+# Taken from Department of Geography, University of Oregon
+
+ncolors = 18
+
+#   r       g       b
+   36       0     216
+   24      28     247
+   40      87     255
+   61     135     255
+   86     176     255
+  117     211     255
+  153     234     255
+  188     249     255
+  234     255     255
+  255     255     234
+  255     241     188
+  255     214     153
+  255     172     117
+  255     120      86
+  255      61      61
+  247      39      53
+  216      21      47
+  165       0      33

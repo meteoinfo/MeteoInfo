@@ -1,0 +1,19 @@
+# Brown to Blue, 12 steps
+#
+# Taken from Department of Geography, University of Oregon
+
+ncolors = 12
+
+#   r      g       b
+   51      25       0
+  102      47       0
+  153      96      53
+  204     155     122
+  216     175     151
+  242     218     205
+  204     253     255
+  153     248     255
+  101     239     255
+   50     227     255
+    0     169     204
+    0     122     153

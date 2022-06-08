@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<MeteoInfo File="config.xml" Type="configurefile">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types"/>
+  <Font>
+    <TextFont FontName="Monospaced.plain" FontSize="15"/>
+    <LegendFont FontName="Monospaced.plain" FontSize="14"/>
+  </Font>
+  <ScriptLanguage Language="Jython"/>
+</MeteoInfo>

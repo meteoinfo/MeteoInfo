@@ -1,0 +1,18 @@
+# GrADS color map from http://www.iges.org/grads/gadoc/colorcontrol.html
+
+ncolors = 14
+# r   g   b
+ 250  60  60  
+   0 220   0  
+  30  60 255  
+   0 200 200  
+ 240   0 130  
+ 230 220  50  
+ 240 130  40  
+ 160   0 200  
+ 160 230  50  
+   0 160 255  
+ 230 175  45  
+   0 210 140  
+ 130   0 220  
+ 170 170 170  

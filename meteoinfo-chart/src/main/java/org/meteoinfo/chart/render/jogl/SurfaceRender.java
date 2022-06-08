@@ -232,9 +232,11 @@ public class SurfaceRender extends JOGLGraphicRender {
                     this.lighting.stop(gl);
                 }
                 gl.glLineWidth(pb.getOutlineSize() * this.dpiScale);
-                gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
-                float[] rgba = pb.getOutlineColor().getRGBComponents(null);
-                gl.glColor4fv(rgba, 0);
+                if (!surfaceGraphic.isMesh()) {
+                    gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
+                    float[] rgba = pb.getOutlineColor().getRGBComponents(null);
+                    gl.glColor4fv(rgba, 0);
+                }
                 gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
                 gl.glDrawElements(GL2.GL_QUADS, surfaceGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
                 gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);

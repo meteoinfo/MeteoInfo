@@ -1045,7 +1045,8 @@ class Axes3DGL(Axes3D):
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
             else:
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
-        ls = ls.convertTo(ShapeTypes.POLYGON, True)
+        #ls = ls.convertTo(ShapeTypes.POLYGON, True)
+        ls = ls.convertTo(ShapeTypes.POLYGON)
         face_interp = None
         if kwargs.has_key('facecolor'):
             facecolor = kwargs.pop('facecolor', None)
@@ -1054,7 +1055,7 @@ class Axes3DGL(Axes3D):
                 if not facecolor in ['flat','texturemap','none']:
                     kwargs['facecolor'] = facecolor
         else:
-            kwargs['facecolor'] = 'w'
+            kwargs['facecolor'] = None
         edgecolor = kwargs.pop('edgecolor', None)
         edge_interp = None
         if not edgecolor is None:
@@ -1063,7 +1064,7 @@ class Axes3DGL(Axes3D):
                 if not edgecolor in ['flat','texturemap','none']:
                     kwargs['edgecolor'] = edgecolor
         plotutil.setlegendscheme(ls, **kwargs)
-        graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), ls)
+        graphics = GraphicFactory.surface(x.asarray(), y.asarray(), z.asarray(), ls)
         graphics.setMesh(True)
         if face_interp:
             graphics.setFaceInterp(face_interp)

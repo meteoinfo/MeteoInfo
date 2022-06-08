@@ -23,6 +23,7 @@ public class SurfaceGraphic extends GraphicCollection3D {
     private boolean faceInterp;
     private boolean edgeInterp;
     private BufferedImage image;
+    private boolean mesh;
 
     /**
      * Constructor
@@ -32,6 +33,7 @@ public class SurfaceGraphic extends GraphicCollection3D {
 
         faceInterp = false;
         edgeInterp = false;
+        mesh = false;
     }
 
     /**
@@ -201,6 +203,22 @@ public class SurfaceGraphic extends GraphicCollection3D {
      */
     public void setEdgeInterp(boolean value) {
         this.edgeInterp = value;
+    }
+
+    /**
+     * Get if is mesh
+     * @return Boolean
+     */
+    public boolean isMesh() {
+        return this.mesh;
+    }
+
+    /**
+     * Set if is mesh
+     * @param value Boolean
+     */
+    public void setMesh(boolean value) {
+        this.mesh = value;
     }
 
     /**

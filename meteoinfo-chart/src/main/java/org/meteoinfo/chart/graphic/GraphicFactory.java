@@ -8,6 +8,8 @@ package org.meteoinfo.chart.graphic;
 import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.ChartText3D;
+import org.meteoinfo.chart.jogl.mc.CallbackMC;
+import org.meteoinfo.chart.jogl.mc.MarchingCubes;
 import org.meteoinfo.chart.jogl.pipe.PipeShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
@@ -31,6 +33,7 @@ import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 import org.meteoinfo.math.interpolate.InterpUtil;
 import org.meteoinfo.math.interpolate.InterpolationMethod;
+import org.meteoinfo.math.interpolate.RectNearestInterpolator3D;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
@@ -7223,6 +7226,394 @@ public class GraphicFactory {
         }
 
         return idx;
+    }
+
+    /**
+     * Create surface graphic
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate array
+     * @param ls Legend scheme
+     * @return Surface graphic
+     */
+    public static SurfaceGraphic surface(Array xa, Array ya, Array za, LegendScheme ls) {
+        return surface(xa, ya, za, za, ls);
+    }
+
+    /**
+     * Create surface graphic
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate array
+     * @param va Data array
+     * @param ls Legend scheme
+     * @return Surface graphic
+     */
+    public static SurfaceGraphic surface(Array xa, Array ya, Array za, Array va, LegendScheme ls) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+        va = va.copyIfView();
+
+        SurfaceGraphic surfaceGraphic = new SurfaceGraphic();
+        int[] shape = xa.getShape();
+        int colNum = shape[1];
+        int rowNum = shape[0];
+        int idx;
+        float[] vertexPosition = new float[rowNum * colNum * 3];
+        float[] vertexValue = new float[rowNum * colNum];
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                idx = i * colNum + j;
+                vertexValue[idx] = va.getFloat(idx);
+                vertexPosition[idx * 3] = xa.getFloat(idx);
+                vertexPosition[idx * 3 + 1] = ya.getFloat(idx);
+                vertexPosition[idx * 3 + 2] = za.getFloat(idx);
+            }
+        }
+        surfaceGraphic.setVertexPosition(vertexPosition, rowNum);
+        surfaceGraphic.setVertexValue(vertexValue);
+        surfaceGraphic.setLegendScheme(ls);
+        return surfaceGraphic;
+    }
+
+    /**
+     * Create slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xSlice X slice list
+     * @param ySlice Y slice list
+     * @param zSlice Z slice list
+     * @param ls     Legend scheme
+     * @return Surface graphics
+     */
+    public static List<SurfaceGraphic> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+                                              List<Number> ySlice, List<Number> zSlice, LegendScheme ls) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        List<SurfaceGraphic> sgs = new ArrayList<>();
+
+        int dim1, dim2;
+        float x, y, z;
+        int idx;
+
+        //X slices
+        dim1 = (int) za.getSize();
+        dim2 = (int) ya.getSize();
+        for (int s = 0; s < xSlice.size(); s++) {
+            x = xSlice.get(s).floatValue();
+            Array r = ArrayUtil.slice(data, 2, xa, x);
+            if (r != null) {
+                Index index = r.getIndex();
+                SurfaceGraphic graphic = new SurfaceGraphic();
+                float[] vertexPosition = new float[dim1 * dim2 * 3];
+                float[] vertexValue = new float[dim1 * dim2];
+                for (int i = 0; i < dim1; i++) {
+                    z = za.getFloat(i);
+                    for (int j = 0; j < dim2; j++) {
+                        y = ya.getFloat(j);
+                        idx = i * dim2 +j;
+                        vertexValue[idx] = r.getFloat(index.set(i, j));
+                        idx = idx * 3;
+                        vertexPosition[idx] = x;
+                        vertexPosition[idx+1] = y;
+                        vertexPosition[idx+2] = z;
+                    }
+                }
+                graphic.setVertexPosition(vertexPosition, dim1);
+                graphic.setVertexValue(vertexValue);
+                graphic.setLegendScheme(ls);
+                sgs.add(graphic);
+            }
+        }
+
+        //Y slices
+        dim1 = (int) za.getSize();
+        dim2 = (int) xa.getSize();
+        for (int s = 0; s < ySlice.size(); s++) {
+            y = ySlice.get(s).floatValue();
+            Array r = ArrayUtil.slice(data, 1, ya, y);
+            if (r != null) {
+                Index index = r.getIndex();
+                SurfaceGraphic graphic = new SurfaceGraphic();
+                float[] vertexPosition = new float[dim1 * dim2 * 3];
+                float[] vertexValue = new float[dim1 * dim2];
+                for (int i = 0; i < dim1; i++) {
+                    z = za.getFloat(i);
+                    for (int j = 0; j < dim2; j++) {
+                        x = xa.getFloat(j);
+                        idx = i * dim2 +j;
+                        vertexValue[idx] = r.getFloat(index.set(i, j));
+                        idx = idx * 3;
+                        vertexPosition[idx] = x;
+                        vertexPosition[idx+1] = y;
+                        vertexPosition[idx+2] = z;
+                    }
+                }
+                graphic.setVertexPosition(vertexPosition, dim1);
+                graphic.setVertexValue(vertexValue);
+                graphic.setLegendScheme(ls);
+                sgs.add(graphic);
+            }
+        }
+
+        //Z slices
+        dim1 = (int) ya.getSize();
+        dim2 = (int) xa.getSize();
+        for (int s = 0; s < zSlice.size(); s++) {
+            z = zSlice.get(s).floatValue();
+            Array r = ArrayUtil.slice(data, 0, za, z);
+            if (r != null) {
+                Index index = r.getIndex();
+                SurfaceGraphic graphic = new SurfaceGraphic();
+                float[] vertexPosition = new float[dim1 * dim2 * 3];
+                float[] vertexValue = new float[dim1 * dim2];
+                for (int i = 0; i < dim1; i++) {
+                    y = ya.getFloat(i);
+                    for (int j = 0; j < dim2; j++) {
+                        x = xa.getFloat(j);
+                        idx = i * dim2 +j;
+                        vertexValue[idx] = r.getFloat(index.set(i, j));
+                        idx = idx * 3;
+                        vertexPosition[idx] = x;
+                        vertexPosition[idx+1] = y;
+                        vertexPosition[idx+2] = z;
+                    }
+                }
+                graphic.setVertexPosition(vertexPosition, dim1);
+                graphic.setVertexValue(vertexValue);
+                graphic.setLegendScheme(ls);
+                sgs.add(graphic);
+            }
+        }
+
+        return sgs;
+    }
+
+    /**
+     * Create xy slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xySlice XY slice list - [x1,y1,x2,y2]
+     * @param ls     Legend scheme
+     * @param method Interpolation method - nearest or linear
+     * @return Surface graphics
+     */
+    public static SurfaceGraphic slice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
+                                        LegendScheme ls, InterpolationMethod method) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        Array[] rxy = InterpUtil.sliceXY(xa, ya, za, data, xySlice, method);
+        Array r = rxy[0];
+        Array x2d = rxy[4];
+        Array y2d = rxy[5];
+        Array z2d = rxy[6];
+        SurfaceGraphic graphic = new SurfaceGraphic();
+        int[] shape = r.getShape();
+        int colNum = shape[1];
+        int rowNum = shape[0];
+        int idx;
+        float[] vertexPosition = new float[rowNum * colNum * 3];
+        float[] vertexValue = new float[rowNum * colNum];
+        for (int i = 0; i < vertexValue.length; i++) {
+            idx = i * 3;
+            vertexPosition[idx] = x2d.getFloat(i);
+            vertexPosition[idx+1] = y2d.getFloat(i);
+            vertexPosition[idx+2] = z2d.getFloat(i);
+            vertexValue[i] = r.getFloat(i);
+        }
+
+        graphic.setVertexPosition(vertexPosition, rowNum);
+        graphic.setVertexValue(vertexValue);
+        graphic.setLegendScheme(ls);
+
+        return graphic;
+    }
+
+    /**
+     * Create slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xSlice X slice list
+     * @param ySlice Y slice list
+     * @param zSlice Z slice list
+     * @param ls     Legend scheme
+     * @return Surface graphics
+     */
+    public static List<SurfaceGraphic> slice(Array data, Array xa, Array ya, Array za, Array xSlice,
+                                              Array ySlice, Array zSlice, LegendScheme ls) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+        xSlice = xSlice.copyIfView();
+        ySlice = ySlice.copyIfView();
+        zSlice = zSlice.copyIfView();
+
+        List<SurfaceGraphic> sgs = new ArrayList<>();
+
+        RectNearestInterpolator3D interpolator3D = new RectNearestInterpolator3D(xa, ya, za, data);
+        Array r = interpolator3D.interpolate(xSlice, ySlice, zSlice);
+        SurfaceGraphic graphic = new SurfaceGraphic();
+        int[] shape = r.getShape();
+        int colNum = shape[1];
+        int rowNum = shape[0];
+        int idx;
+        float[] vertexPosition = new float[rowNum * colNum * 3];
+        float[] vertexValue = new float[rowNum * colNum];
+        for (int i = 0; i < vertexValue.length; i++) {
+            idx = i * 3;
+            vertexPosition[idx] = xSlice.getFloat(i);
+            vertexPosition[idx+1] = ySlice.getFloat(i);
+            vertexPosition[idx+2] = zSlice.getFloat(i);
+            vertexValue[i] = r.getFloat(i);
+        }
+
+        graphic.setVertexPosition(vertexPosition, rowNum);
+        graphic.setVertexValue(vertexValue);
+        graphic.setLegendScheme(ls);
+        sgs.add(graphic);
+
+        return sgs;
+    }
+
+    /**
+     * Create isosurface graphics
+     *
+     * @param data     3d data array
+     * @param x        X coordinates
+     * @param y        Y coordinates
+     * @param z        Z coordinates
+     * @param isoLevel iso level
+     * @param pb       Polygon break
+     * @return Graphics
+     */
+    public static GraphicCollection isosurface(Array data, Array x, Array y, Array z,
+                                               float isoLevel, PolygonBreak pb) {
+        x = x.copyIfView();
+        y = y.copyIfView();
+        z = z.copyIfView();
+        data = data.copyIfView();
+
+        List<float[]> vertices = MarchingCubes.marchingCubes(data, x, y, z, isoLevel);
+
+        int nVertex = vertices.size();
+        float[] vertexData = new float[nVertex * 3];
+        int pos = 0;
+        for (int i = 0; i < vertices.size(); i++) {
+            System.arraycopy(vertices.get(i), 0, vertexData, pos, 3);
+            pos += 3;
+        }
+
+        MeshGraphic meshGraphic = new MeshGraphic();
+        meshGraphic.setLegendBreak(pb);
+        meshGraphic.setVertexData(vertexData);
+
+        return meshGraphic;
+    }
+
+    /**
+     * Create isosurface graphics
+     *
+     * @param data     3d data array
+     * @param x        X coordinates
+     * @param y        Y coordinates
+     * @param z        Z coordinates
+     * @param isoLevel iso level
+     * @param pb       Polygon break
+     * @param nThreads Thread number
+     * @return Graphics
+     */
+    public static GraphicCollection isosurface(final Array data, final Array x, final Array y, final Array z,
+                                               final float isoLevel, PolygonBreak pb, int nThreads) {
+        // TIMER
+        ArrayList<Thread> threads = new ArrayList<>();
+        final ArrayList<ArrayList<float[]>> results = new ArrayList<>();
+
+        // Thread work distribution
+        int nz = (int) z.getSize();
+        int remainder = nz % nThreads;
+        int segment = nz / nThreads;
+
+        // Z axis offset for vertice position calculation
+        int zAxisOffset = 0;
+
+        for (int i = 0; i < nThreads; i++) {
+            // Distribute remainder among first (remainder) threads
+            int segmentSize = (remainder-- > 0) ? segment + 1 : segment;
+
+            // Padding needs to be added to correctly close the gaps between segments
+            final int paddedSegmentSize = (i != nThreads - 1) ? segmentSize + 1 : segmentSize;
+
+            // Finished callback
+            final CallbackMC callback = new CallbackMC() {
+                @Override
+                public void run() {
+                    results.add(getVertices());
+                }
+            };
+
+            // Java...
+            final int finalZAxisOffset = zAxisOffset;
+
+            // Start the thread
+            Thread t = new Thread() {
+                public void run() {
+                    MarchingCubes.marchingCubes(data, x, y, z, isoLevel, paddedSegmentSize, finalZAxisOffset, callback);
+                }
+            };
+
+            threads.add(t);
+            t.start();
+
+            // Correct offsets for next iteration
+            zAxisOffset += segmentSize;
+        }
+
+        // Join the threads
+        for (int i = 0; i < threads.size(); i++) {
+            try {
+                threads.get(i).join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        int nVertex = 0;
+        for (List<float[]> vertices : results) {
+            nVertex += vertices.size();
+        }
+        float[] vertexData = new float[nVertex * 3];
+        int pos = 0;
+        for (List<float[]> vertices : results) {
+            for (int i = 0; i < vertices.size(); i++) {
+                System.arraycopy(vertices.get(i), 0, vertexData, pos, 3);
+                pos += 3;
+            }
+        }
+
+        MeshGraphic meshGraphic = new MeshGraphic();
+        meshGraphic.setLegendBreak(pb);
+        meshGraphic.setVertexData(vertexData);
+
+        return meshGraphic;
     }
 
 }

@@ -94,6 +94,19 @@ public class SphericalTransform {
             }
             surfaceGraphics.setVertices(vertices);
             return surfaceGraphics;
+        } else if (graphic instanceof SurfaceGraphic) {
+            SurfaceGraphic surfaceGraphic = (SurfaceGraphic) graphic;
+            float[] vertexPosition = surfaceGraphic.getVertexPosition();
+            Vector3f vector3f;
+            for (int i = 0; i < vertexPosition.length; i+=3) {
+                vector3f = transform(vertexPosition[i], vertexPosition[i+1], vertexPosition[i+2]);
+                vertexPosition[i] = vector3f.x;
+                vertexPosition[i+1] = vector3f.y;
+                vertexPosition[i+2] = vector3f.z;
+            }
+            surfaceGraphic.setVertexPosition(vertexPosition);
+            surfaceGraphic.updateVertexTexture();
+            return surfaceGraphic;
         } else if (graphic instanceof IsosurfaceGraphics) {
             IsosurfaceGraphics isosurfaceGraphics = (IsosurfaceGraphics) graphic;
             List<PointZ[]> triangles = new ArrayList<>();

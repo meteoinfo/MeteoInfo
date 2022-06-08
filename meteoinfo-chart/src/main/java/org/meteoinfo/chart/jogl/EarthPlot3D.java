@@ -13,7 +13,8 @@ import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
-import org.meteoinfo.chart.graphic.SurfaceGraphics;
+import org.meteoinfo.chart.graphic.GraphicFactory;
+import org.meteoinfo.chart.graphic.SurfaceGraphic;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.plot.GridLine;
 import org.meteoinfo.common.*;
@@ -44,7 +45,7 @@ import java.util.List;
 public class EarthPlot3D extends Plot3DGL {
     // <editor-fold desc="Variables">
     private float radius = 6371.f;
-    private SurfaceGraphics surface;
+    private SurfaceGraphic surface;
     private Extent3D dataExtent;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -151,7 +152,7 @@ public class EarthPlot3D extends Plot3DGL {
      * Set earth surface
      * @param n The sphere has n*n faces
      */
-    public SurfaceGraphics earthSurface(int n) {
+    public SurfaceGraphic earthSurface(int n) {
         Array lon = ArrayUtil.lineSpace(-180.f, 180.f, n + 1, true);
         Array lat = ArrayUtil.lineSpace(-90.f, 90.f, n + 1, true);
         lat = lat.flip(0).copy();
@@ -162,7 +163,7 @@ public class EarthPlot3D extends Plot3DGL {
         LegendScheme ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, Color.cyan, 1);
         ((PolygonBreak) ls.getLegendBreak(0)).setDrawOutline(false);
         ((PolygonBreak) ls.getLegendBreak(0)).setOutlineColor(Color.white);
-        surface = JOGLUtil.surface(lon, lat, alt, ls);
+        surface = GraphicFactory.surface(lon, lat, alt, ls);
 
         return surface;
     }

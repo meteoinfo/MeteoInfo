@@ -20,6 +20,7 @@ public abstract class JOGLGraphicRender implements GraphicRender {
     protected Matrix4f viewProjMatrix = new Matrix4f();
     protected boolean useShader = false;
     protected Lighting lighting = new Lighting();
+    protected float dpiScale = 1.0f;
 
     /**
      * Constructor
@@ -85,6 +86,22 @@ public abstract class JOGLGraphicRender implements GraphicRender {
      */
     public void setLighting(Lighting lighting) {
         this.lighting = lighting;
+    }
+
+    /**
+     * Get DPI scale
+     * @return DPI scale
+     */
+    public float getDpiScale() {
+        return this.dpiScale;
+    }
+
+    /**
+     * Set DPI scale
+     * @param value DPI scale
+     */
+    public void setDpiScale(float value) {
+        this.dpiScale = value;
     }
 
     protected int getTextureID() {

@@ -682,7 +682,7 @@ class Axes3DGL(Axes3D):
         return self.geoshow(layer, **kwargs)
 
     def slice(self, *args, **kwargs):
-        '''
+        """
         Volume slice planes
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -695,7 +695,7 @@ class Axes3DGL(Axes3D):
         :param cmap: (*string*) Color map string.
 
         :return: Slice plane graphics.
-        '''
+        """
         if len(args) <= 3:
             x = args[0].dimvalue(2)
             y = args[0].dimvalue(1)
@@ -748,17 +748,17 @@ class Axes3DGL(Axes3D):
         if isinstance(zslice, numbers.Number):
             zslice = [zslice]
         if isinstance(xslice, NDArray):
-            graphics = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
+            graphics = GraphicFactory.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
                                       xslice._array, yslice._array, zslice._array, ls)
         else:
-            graphics = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
+            graphics = GraphicFactory.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
                                       yslice, zslice, ls)
 
         xyslice = kwargs.pop('xyslice', None)
         if not xyslice is None:
             method = kwargs.pop('method', 'nearest')
             method = InterpolationMethod.valueOf(method.upper())
-            gg = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
+            gg = GraphicFactory.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
                                 xyslice, ls, method)
             graphics.append(gg)
 
@@ -1075,7 +1075,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def surf(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional surface plot
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -1085,7 +1085,7 @@ class Axes3DGL(Axes3D):
         :param lighting: (*bool*) Using light or not.
 
         :returns: 3D surface graphic
-        '''
+        """
         if len(args) <= 2:
             z = args[0]
             if isinstance(z, DimArray):
@@ -1145,7 +1145,7 @@ class Axes3DGL(Axes3D):
 
         ls = ls.convertTo(ShapeTypes.POLYGON)
 
-        face_interp = None
+        face_interp = False
         image = None
         if not facecolor is None:
             face_interp = (facecolor == 'interp')
@@ -1165,11 +1165,12 @@ class Axes3DGL(Axes3D):
                 elif not facecolor in ['flat','none']:
                     facecolor = plotutil.getcolor(facecolor)
                     ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, facecolor, 1)
+                    face_interp = True
         plotutil.setlegendscheme(ls, **kwargs)
         if C is None:
-            graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), ls)
+            graphics = GraphicFactory.surface(x.asarray(), y.asarray(), z.asarray(), ls)
         else:
-            graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), C.asarray(), ls)
+            graphics = GraphicFactory.surface(x.asarray(), y.asarray(), z.asarray(), C.asarray(), ls)
 
         if not image is None:
             graphics.setImage(image)
@@ -1294,13 +1295,13 @@ class Axes3DGL(Axes3D):
             ls = plotutil.getlegendbreak('polygon', **kwargs)[0]
         nthread = kwargs.pop('nthread', None)
         if nthread is None:
-            graphics = JOGLUtil.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls)
+            graphics = GraphicFactory.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls)
         else:
             data = data.asarray().copyIfView()
             x = x.asarray().copyIfView()
             y = y.asarray().copyIfView()
             z = z.asarray().copyIfView()
-            graphics = JOGLUtil.isosurface(data, x, y, z, isovalue, ls, nthread)
+            graphics = GraphicFactory.isosurface(data, x, y, z, isovalue, ls, nthread)
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

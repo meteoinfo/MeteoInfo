@@ -164,6 +164,9 @@ public class VolumeRender extends JOGLGraphicRender {
                 );
                 break;
         }
+
+        gl.glBindTexture(GL_TEXTURE_2D, 0);
+        gl.glBindTexture(GL_TEXTURE_3D, 0);
     }
 
     void compileShaders() throws Exception {
@@ -257,8 +260,6 @@ public class VolumeRender extends JOGLGraphicRender {
     @Override
     public void draw() {
         try {
-            //gl.glEnable(GL_TEXTURE_2D);
-            //gl.glEnable(GL_TEXTURE_3D);
             program.use(gl);
             setUniforms();
 
@@ -281,15 +282,27 @@ public class VolumeRender extends JOGLGraphicRender {
             );
 
             // Draw the triangle !
-            gl.glDisable(GL_DEPTH_TEST);
+            gl.glActiveTexture(GL_TEXTURE1);
+            gl.glBindTexture(GL_TEXTURE_2D, this.colorTexture);
+            gl.glActiveTexture(GL_TEXTURE0);
+            gl.glBindTexture(GL_TEXTURE_3D, this.volumeTexture);
+            if (this.getRayCastingType() == RayCastingType.SPECULAR) {
+                gl.glActiveTexture(GL_TEXTURE2);
+                gl.glBindTexture(GL_TEXTURE_3D, this.normalsTexture);
+            }
+
+            //gl.glDisable(GL_DEPTH_TEST);
+
             gl.glDrawArrays(GL_TRIANGLES, 0, vertexBufferData.length / 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
+
             gl.glDisableVertexAttribArray(0);
 
+            gl.glActiveTexture(GL_TEXTURE0);
+            gl.glBindTexture(GL_TEXTURE_2D, 0);
+            gl.glBindTexture(GL_TEXTURE_3D, 0);
             //Program.destroyAllPrograms(gl);
             gl.glUseProgram(0);
-            gl.glEnable(GL_DEPTH_TEST);
-            //gl.glDisable(GL_TEXTURE_2D);
-            //gl.glDisable(GL_TEXTURE_3D);
+            //gl.glEnable(GL_DEPTH_TEST);
         } catch (Exception e) {
             e.printStackTrace();
         }

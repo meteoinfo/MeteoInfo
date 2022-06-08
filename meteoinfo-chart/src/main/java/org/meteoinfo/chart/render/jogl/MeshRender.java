@@ -11,6 +11,7 @@ import org.meteoinfo.chart.graphic.MeshGraphic;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
+import org.meteoinfo.geometry.legend.PolygonBreak;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -57,7 +58,6 @@ public class MeshRender extends JOGLGraphicRender {
 
     private void initVertexBuffer() {
         vbo = GLBuffers.newDirectIntBuffer(1);
-        //vboNormal = GLBuffers.newDirectIntBuffer(1);
     }
 
     @Override
@@ -142,9 +142,6 @@ public class MeshRender extends JOGLGraphicRender {
             int attribVertexPosition = gl.glGetAttribLocation(program.getProgramId(), "vertexPosition");
             int attribVertexNormal = gl.glGetAttribLocation(program.getProgramId(), "vertexNormal");
 
-            //float[] rgba = meshGraphic.getColor().getRGBComponents(null);
-            //gl.glColor4fv(rgba, 0);
-
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
 
             gl.glEnableVertexAttribArray(attribVertexPosition);
@@ -175,7 +172,26 @@ public class MeshRender extends JOGLGraphicRender {
             gl.glNormalPointer(GL.GL_FLOAT, 0, vertexPosition.length * Float.BYTES);
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
 
-            gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
+            PolygonBreak pb = (PolygonBreak) meshGraphic.getLegendBreak();
+            if (pb.isDrawFill()) {
+                gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+                gl.glPolygonOffset(1.0f, 1.0f);
+                gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
+            }
+            if (pb.isDrawOutline()) {
+                boolean lightEnabled = this.lighting.isEnable();
+                if (lightEnabled) {
+                    this.lighting.stop(gl);
+                }
+                rgba = pb.getOutlineColor().getRGBComponents(null);
+                gl.glColor4fv(rgba, 0);
+                gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
+                gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
+                gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
+                if (lightEnabled) {
+                    this.lighting.start(gl);
+                }
+            }
 
             gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
             gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);

@@ -31,6 +31,7 @@ import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.chart.render.jogl.JOGLGraphicRender;
 import org.meteoinfo.chart.render.jogl.MeshRender;
+import org.meteoinfo.chart.render.jogl.SurfaceRender;
 import org.meteoinfo.chart.render.jogl.VolumeRender;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
@@ -2313,8 +2314,17 @@ public class Plot3DGL extends Plot implements GLEventListener {
             Graphic gg = graphic.getGraphicN(0);
             this.drawGraphic(gl, gg);
         } else {
-            if (graphic instanceof SurfaceGraphics) {
-                this.drawSurface(gl, (SurfaceGraphics) graphic);
+            if (graphic instanceof SurfaceGraphic) {
+                //this.drawSurface(gl, (SurfaceGraphics) graphic);
+                if (!this.renderMap.containsKey(graphic)) {
+                    renderMap.put(graphic, new SurfaceRender(gl, (SurfaceGraphic) graphic));
+                }
+                SurfaceRender surfaceRender = (SurfaceRender) renderMap.get(graphic);
+                surfaceRender.setTransform(this.transform);
+                surfaceRender.setOrthographic(this.orthographic);
+                surfaceRender.setLighting(this.lighting);
+                surfaceRender.updateMatrix();
+                surfaceRender.draw();
             } else if (graphic instanceof IsosurfaceGraphics) {
                 this.drawIsosurface(gl, (IsosurfaceGraphics) graphic);
             } else if (graphic instanceof ParticleGraphics) {

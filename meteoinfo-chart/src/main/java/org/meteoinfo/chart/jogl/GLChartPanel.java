@@ -793,7 +793,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
      */
     @Override
     public void onUndoZoomClick() {
-        this.plot3DGL.setDrawExtent(this.plot3DGL.getExtent());
+        this.plot3DGL.setDrawExtent(this.plot3DGL.getGraphicExtent());
         this.plot3DGL.initAngles();
         this.repaint();
     }

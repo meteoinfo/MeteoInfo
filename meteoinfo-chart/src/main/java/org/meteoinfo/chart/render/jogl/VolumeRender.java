@@ -291,7 +291,7 @@ public class VolumeRender extends JOGLGraphicRender {
                 gl.glBindTexture(GL_TEXTURE_3D, this.normalsTexture);
             }
 
-            //gl.glDisable(GL_DEPTH_TEST);
+            gl.glDisable(GL_DEPTH_TEST);
 
             gl.glDrawArrays(GL_TRIANGLES, 0, vertexBufferData.length / 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
 
@@ -302,7 +302,7 @@ public class VolumeRender extends JOGLGraphicRender {
             gl.glBindTexture(GL_TEXTURE_3D, 0);
             //Program.destroyAllPrograms(gl);
             gl.glUseProgram(0);
-            //gl.glEnable(GL_DEPTH_TEST);
+            gl.glEnable(GL_DEPTH_TEST);
         } catch (Exception e) {
             e.printStackTrace();
         }

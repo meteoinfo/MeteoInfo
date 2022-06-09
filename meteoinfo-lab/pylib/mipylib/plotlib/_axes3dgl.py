@@ -100,6 +100,9 @@ class Axes3DGL(Axes3D):
         clip_plane = kwargs.pop('clip_plane', None)
         if not clip_plane is None:
             self.axes.setClipPlane(clip_plane)
+        axes_zoom = kwargs.pop('axes_zoom', None)
+        if not axes_zoom is None:
+            self.axes.setAxesZoom(axes_zoom)
         aspect = kwargs.pop('aspect', None)
         if not aspect is None:
             self.axes.setAspectType(AspectType.valueOf(aspect.upper()))

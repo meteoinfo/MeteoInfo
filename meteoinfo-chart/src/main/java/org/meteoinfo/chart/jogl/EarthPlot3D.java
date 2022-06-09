@@ -128,8 +128,8 @@ public class EarthPlot3D extends Plot3DGL {
         if (!ex.is3D()) {
             ex = ex.to3D();
         }
-        this.extent = (Extent3D) ex;
-        this.setDrawExtent((Extent3D) this.extent.clone());
+        this.graphicExtent = (Extent3D) ex;
+        this.setDrawExtent((Extent3D) this.graphicExtent.clone());
     }
 
     /**

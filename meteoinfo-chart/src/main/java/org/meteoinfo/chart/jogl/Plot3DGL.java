@@ -1048,6 +1048,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected void updateExtent() {
         this.drawExtent = new Extent3D(xmin, xmax, ymin, ymax, zmin, zmax);
         this.transform.setExtent(this.drawExtent);
+        this.setAxesExtent((Extent3D) this.drawExtent.clone());
     }
 
     /**

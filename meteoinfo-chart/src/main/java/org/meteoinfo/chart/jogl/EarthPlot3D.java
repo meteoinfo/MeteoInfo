@@ -99,15 +99,9 @@ public class EarthPlot3D extends Plot3DGL {
     // <editor-fold desc="Method">
 
     void updateDataExtent() {
-        xmin = (float) dataExtent.minX;
-        xmax = (float) dataExtent.maxX;
-        ymin = (float) dataExtent.minY;
-        ymax = (float) dataExtent.maxY;
-        zmin = (float) dataExtent.minZ;
-        zmax = (float) dataExtent.maxZ;
-        xAxis.setMinMaxValue(xmin, xmax);
-        yAxis.setMinMaxValue(ymin, ymax);
-        zAxis.setMinMaxValue(zmin, zmax);
+        xAxis.setMinMaxValue(dataExtent.minX, dataExtent.maxX);
+        yAxis.setMinMaxValue(dataExtent.minY, dataExtent.maxY);
+        zAxis.setMinMaxValue(dataExtent.minZ, dataExtent.maxZ);
     }
 
     /**
@@ -314,12 +308,12 @@ public class EarthPlot3D extends Plot3DGL {
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
         gl.glBegin(GL2.GL_LINES);
-        Vector3f xyz = SphericalTransform.transform(loc.X, loc.Y, this.zmin);
+        Vector3f xyz = SphericalTransform.transform(loc.X, loc.Y, (float) this.dataExtent.minZ);
         x = this.transform.transform_x(xyz.x);
         y = this.transform.transform_y(xyz.y);
         z = this.transform.transform_z(xyz.z);
         gl.glVertex3f(x, y, z);
-        xyz = SphericalTransform.transform(loc.X, loc.Y, this.zmax);
+        xyz = SphericalTransform.transform(loc.X, loc.Y, (float) this.dataExtent.maxZ);
         x = this.transform.transform_x(xyz.x);
         y = this.transform.transform_y(xyz.y);
         z = this.transform.transform_z(xyz.z);
@@ -339,7 +333,7 @@ public class EarthPlot3D extends Plot3DGL {
         strWidth = 0.0f;
         for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
             v = (float) this.zAxis.getTickValues()[i];
-            if (v < zmin || v > zmax) {
+            if (v < dataExtent.minZ || v > dataExtent.maxZ) {
                 continue;
             }
 
@@ -385,7 +379,7 @@ public class EarthPlot3D extends Plot3DGL {
         //Draw z axis label
         ChartText label = this.zAxis.getLabel();
         if (label != null) {
-            v = (zmin + zmax) / 2;
+            v = (float) (dataExtent.minZ + dataExtent.maxZ) / 2;
             xyz = SphericalTransform.transform(loc.X, loc.Y, v);
             x = this.transform.transform_x(xyz.x);
             y = this.transform.transform_y(xyz.y);
@@ -430,10 +424,10 @@ public class EarthPlot3D extends Plot3DGL {
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
         gl.glBegin(GL2.GL_LINES);
-        Vector3f xyz = SphericalTransform.transform(loc.X, loc.Y, this.zmin);
+        Vector3f xyz = SphericalTransform.transform(loc.X, loc.Y, (float) this.dataExtent.minZ);
         xyz = this.transform.transform(xyz);
         gl.glVertex3f(xyz.x, xyz.y, xyz.z);
-        Vector3f xyz1 = SphericalTransform.transform(loc.X, loc.Y, this.zmax);
+        Vector3f xyz1 = SphericalTransform.transform(loc.X, loc.Y, (float) this.dataExtent.maxZ);
         xyz1 = this.transform.transform(xyz1);
         gl.glVertex3f(xyz1.x, xyz1.y, xyz1.z);
         gl.glEnd();
@@ -451,7 +445,7 @@ public class EarthPlot3D extends Plot3DGL {
         strWidth = 0.0f;
         for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
             v = (float) this.zAxis.getTickValues()[i];
-            if (v < zmin || v > zmax) {
+            if (v < dataExtent.minZ || v > dataExtent.maxZ) {
                 continue;
             }
 
@@ -492,7 +486,7 @@ public class EarthPlot3D extends Plot3DGL {
         //Draw z axis label
         ChartText label = this.zAxis.getLabel();
         if (label != null) {
-            v = (zmin + zmax) / 2;
+            v = (float) (dataExtent.minZ + dataExtent.maxZ) / 2;
             xyz = SphericalTransform.transform(loc.X, loc.Y, v);
             xyz = this.transform.transform(xyz);
             mvMatrix.transformPosition(xyz);

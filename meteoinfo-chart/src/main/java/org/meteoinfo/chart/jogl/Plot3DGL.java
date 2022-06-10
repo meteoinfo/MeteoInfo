@@ -93,8 +93,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected final Axis yAxis;
     protected final Axis zAxis;
     protected List<ZAxisOption> zAxisLocations;
-    protected float xmin, xmax = 1.0f, ymin;
-    protected float ymax = 1.0f, zmin, zmax = 1.0f;
+    //protected float xmin, xmax = 1.0f, ymin;
+    //protected float ymax = 1.0f, zmin, zmax = 1.0f;
     protected Transform transform = new Transform();
     protected boolean clipPlane = true;
     protected boolean axesZoom = false;
@@ -146,9 +146,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.zAxis = new Axis();
         this.zAxis.setTickLength(8);
         this.zAxisLocations = new ArrayList<>();
-        this.graphicExtent = new Extent3D();
-        Extent3D extent3D = new Extent3D(-1, 1, -1, 1, -1, 1);
-        this.setDrawExtent((Extent3D) extent3D.clone());
         this.fixExtent = false;
         this.graphics = new GraphicCollection3D();
         this.hideOnDrag = false;
@@ -163,6 +160,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.orthographic = true;
         this.distance = 5.f;
         this.initAngles();
+        this.graphicExtent = new Extent3D();
+        Extent3D extent3D = new Extent3D(-1, 1, -1, 1, -1, 1);
+        this.drawExtent = (Extent3D) extent3D.clone();
+        this.transform.setExtent(this.drawExtent);
+        this.axesExtent = (Extent3D) this.drawExtent.clone();
     }
 
     /**
@@ -312,27 +314,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param value Extent
      */
     public void setDrawExtent(Extent3D extent) {
-        xmin = (float) extent.minX;
-        xmax = (float) extent.maxX;
-        ymin = (float) extent.minY;
-        ymax = (float) extent.maxY;
-        zmin = (float) extent.minZ;
-        zmax = (float) extent.maxZ;
-
-        if (xmin == xmax) {
-            xmin -= 1;
-            xmax += 1;
-        }
-        if (ymin == ymax) {
-            ymin -= 1;
-            ymax += 1;
-        }
-        if (zmin == zmax) {
-            zmin -= 1;
-            zmax += 1;
-        }
-
-        this.drawExtent = new Extent3D(xmin, xmax, ymin, ymax, zmin, zmax);
+        this.drawExtent = (Extent3D) extent;
         this.transform.setExtent(this.drawExtent);
 
         if (!this.axesZoom) {
@@ -745,7 +727,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @return X minimum
      */
     public float getXMin() {
-        return this.xmin;
+        return (float) this.drawExtent.minX;
     }
 
     /**
@@ -754,9 +736,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param value Minimum x
      */
     public void setXMin(float value) {
-        this.xmin = value;
+        this.drawExtent.minX = value;
         updateExtent();
-        this.xAxis.setMinMaxValue(xmin, xmax);
+        this.xAxis.setMinMaxValue(drawExtent.minX, drawExtent.maxX);
     }
 
     /**
@@ -765,7 +747,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @return X maximum
      */
     public float getXMax() {
-        return this.xmax;
+        return (float) this.drawExtent.maxX;
     }
 
     /**
@@ -774,9 +756,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param value Maximum x
      */
     public void setXMax(float value) {
-        this.xmax = value;
+        this.drawExtent.maxX = value;
         updateExtent();
-        this.xAxis.setMinMaxValue(xmin, xmax);
+        this.xAxis.setMinMaxValue(drawExtent.minX, drawExtent.maxX);
     }
 
     /**
@@ -786,8 +768,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param max Maximum value
      */
     public void setXMinMax(float min, float max) {
-        this.xmin = min;
-        this.xmax = max;
+        this.drawExtent.minX = min;
+        this.drawExtent.maxX = max;
         updateExtent();
         this.xAxis.setMinMaxValue(min, max);
         this.fixExtent = true;
@@ -799,7 +781,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @return Y minimum
      */
     public float getYMin() {
-        return this.ymin;
+        return (float) this.drawExtent.minY;
     }
 
     /**
@@ -808,9 +790,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param value Minimum y
      */
     public void setYMin(float value) {
-        this.ymin = value;
+        this.drawExtent.minY = value;
         updateExtent();
-        this.yAxis.setMinMaxValue(ymin, ymax);
+        this.yAxis.setMinMaxValue(drawExtent.minY, drawExtent.maxY);
     }
 
     /**
@@ -819,7 +801,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @return Y maximum
      */
     public float getYMax() {
-        return this.ymax;
+        return (float) this.drawExtent.maxY;
     }
 
     /**
@@ -828,9 +810,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param value Maximum y
      */
     public void setYMax(float value) {
-        this.ymax = value;
+        this.drawExtent.maxY = value;
         updateExtent();
-        this.yAxis.setMinMaxValue(ymin, ymax);
+        this.yAxis.setMinMaxValue(drawExtent.minY, drawExtent.maxY);
     }
 
     /**
@@ -840,8 +822,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param max Maximum value
      */
     public void setYMinMax(float min, float max) {
-        this.ymin = min;
-        this.ymax = max;
+        this.drawExtent.minY = min;
+        this.drawExtent.maxY = max;
         updateExtent();
         this.yAxis.setMinMaxValue(min, max);
         this.fixExtent = true;
@@ -853,7 +835,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @return Z minimum
      */
     public float getZMin() {
-        return this.zmin;
+        return (float) this.drawExtent.minZ;
     }
 
     /**
@@ -862,9 +844,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param value Minimum z
      */
     public void setZMin(float value) {
-        this.zmin = value;
+        this.drawExtent.minZ = value;
         updateExtent();
-        this.zAxis.setMinMaxValue(zmin, zmax);
+        this.zAxis.setMinMaxValue(drawExtent.minZ, drawExtent.maxZ);
     }
 
     /**
@@ -873,7 +855,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @return Z maximum
      */
     public float getZMax() {
-        return this.zmax;
+        return (float) this.drawExtent.maxZ;
     }
 
     /**
@@ -882,9 +864,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param value Maximum z
      */
     public void setZMax(float value) {
-        this.zmax = value;
+        this.drawExtent.maxZ = value;
         updateExtent();
-        this.zAxis.setMinMaxValue(zmin, zmax);
+        this.zAxis.setMinMaxValue(drawExtent.minZ, drawExtent.maxZ);
     }
 
     /**
@@ -894,8 +876,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param max Maximum value
      */
     public void setZMinMax(float min, float max) {
-        this.zmin = min;
-        this.zmax = max;
+        this.drawExtent.minZ = min;
+        this.drawExtent.maxZ = max;
         updateExtent();
         this.zAxis.setMinMaxValue(min, max);
         this.fixExtent = true;
@@ -1046,7 +1028,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     protected void updateExtent() {
-        this.drawExtent = new Extent3D(xmin, xmax, ymin, ymax, zmin, zmax);
         this.transform.setExtent(this.drawExtent);
         this.setAxesExtent((Extent3D) this.drawExtent.clone());
     }

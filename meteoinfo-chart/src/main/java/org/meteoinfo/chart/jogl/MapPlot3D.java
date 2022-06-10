@@ -109,12 +109,13 @@ public class MapPlot3D extends Plot3DGL {
 
     @Override
     protected void drawAxis(GL2 gl) {
-        float xMin = this.transform.transform_x(this.xmin);
-        float xMax = this.transform.transform_x(this.xmax);
-        float yMin = this.transform.transform_y(this.ymin);
-        float yMax = this.transform.transform_y(this.ymax);
-        float zMin = this.transform.transform_z(this.zmin);
-        float zMax = this.transform.transform_z(this.zmax);
+        float xMin, xMax, yMin, yMax, zMin, zMax;
+        xMin = this.transform.transform_x((float) axesExtent.minX);
+        xMax = this.transform.transform_x((float) axesExtent.maxX);
+        yMin = this.transform.transform_y((float) axesExtent.minY);
+        yMax = this.transform.transform_y((float) axesExtent.maxY);
+        zMin = this.transform.transform_z((float) axesExtent.minZ);
+        zMax = this.transform.transform_z((float) axesExtent.maxZ);
 
         gl.glDepthFunc(GL.GL_ALWAYS);
 
@@ -164,7 +165,7 @@ public class MapPlot3D extends Plot3DGL {
                 GridLabel gridLabel = lonLabels.get(i);
                 PointD point = gridLabel.getCoord();
                 x = (float) point.X;
-                if (x < xmin || x > xmax) {
+                if (x < axesExtent.minX || x > axesExtent.maxX) {
                     continue;
                 }
                 x = this.transform.transform_x(x);
@@ -238,7 +239,7 @@ public class MapPlot3D extends Plot3DGL {
                 GridLabel gridLabel = latLabels.get(i);
                 PointD point = gridLabel.getCoord();
                 y = (float) point.Y;
-                if (y < ymin || y > ymax) {
+                if (y < axesExtent.minY || y > axesExtent.maxY) {
                     continue;
                 }
                 y = this.transform.transform_y(y);
@@ -328,7 +329,7 @@ public class MapPlot3D extends Plot3DGL {
             float v;
             for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
                 v = (float) this.zAxis.getTickValues()[i];
-                if (v < zmin || v > zmax) {
+                if (v < axesExtent.minZ || v > axesExtent.maxZ) {
                     continue;
                 }
                 v = this.transform.transform_z(v);

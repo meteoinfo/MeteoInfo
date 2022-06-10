@@ -1,7 +1,9 @@
 package org.meteoinfo.chart.render.jogl;
 
 import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.GLBuffers;
 import org.meteoinfo.chart.graphic.VolumeGraphic;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -25,6 +27,7 @@ public class VolumeRender extends JOGLGraphicRender {
     private int volumeTexture;
     private int normalsTexture;
     private Program program;
+    private IntBuffer vbo;
 
     /**
      * Constructor
@@ -34,6 +37,7 @@ public class VolumeRender extends JOGLGraphicRender {
         super(gl);
 
         useShader = true;
+        initVertexBuffer();
     }
 
     /**
@@ -56,7 +60,7 @@ public class VolumeRender extends JOGLGraphicRender {
     public VolumeRender(GL2 gl, VolumeGraphic graphic, Transform transform) {
         this(gl, graphic);
 
-        this.transform = transform;
+        this.setTransform(transform);
     }
 
     /**
@@ -95,6 +99,23 @@ public class VolumeRender extends JOGLGraphicRender {
      */
     public float getBrightness() {
         return this.volume == null ? 1.0f : this.volume.getBrightness();
+    }
+
+    private void initVertexBuffer() {
+        vbo = GLBuffers.newDirectIntBuffer(2);
+    }
+
+    @Override
+    public void setTransform(Transform transform) {
+        super.setTransform(transform);
+
+        float[] vertexBufferData = volume.getVertexBufferData(this.transform);
+
+        gl.glGenBuffers(1, vbo);
+        gl.glBindBuffer(GL_ARRAY_BUFFER, vbo.get(0));
+        gl.glBufferData(GL_ARRAY_BUFFER, vertexBufferData.length * Float.BYTES,
+                Buffers.newDirectFloatBuffer(vertexBufferData), GL_STATIC_DRAW);
+        gl.glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     void bindingTextures() {
@@ -263,12 +284,8 @@ public class VolumeRender extends JOGLGraphicRender {
             program.use(gl);
             setUniforms();
 
-            IntBuffer intBuffer = IntBuffer.allocate(1);
-            gl.glGenBuffers(1, intBuffer);
-            int vertexBuffer = intBuffer.get(0);
-            gl.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-            float[] vertexBufferData = volume.getVertexBufferData(this.transform);
-            gl.glBufferData(GL_ARRAY_BUFFER, vertexBufferData.length * Float.BYTES, Buffers.newDirectFloatBuffer(vertexBufferData), GL_STATIC_DRAW);
+            gl.glBindBuffer(GL_ARRAY_BUFFER, vbo.get(0));
+
             // 1st attribute buffer : vertices
             gl.glEnableVertexAttribArray(0);
             //gl.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -293,9 +310,10 @@ public class VolumeRender extends JOGLGraphicRender {
 
             gl.glDisable(GL_DEPTH_TEST);
 
-            gl.glDrawArrays(GL_TRIANGLES, 0, vertexBufferData.length / 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
+            gl.glDrawArrays(GL_TRIANGLES, 0, volume.getVertexNumber()); // Starting from vertex 0; 3 vertices total -> 1 triangle
 
             gl.glDisableVertexAttribArray(0);
+            gl.glBindBuffer(GL_ARRAY_BUFFER, 0);
 
             gl.glActiveTexture(GL_TEXTURE0);
             gl.glBindTexture(GL_TEXTURE_2D, 0);

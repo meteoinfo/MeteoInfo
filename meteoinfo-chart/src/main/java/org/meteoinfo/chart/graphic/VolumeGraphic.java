@@ -496,6 +496,14 @@ public class VolumeGraphic extends GraphicCollection3D {
     }
 
     /**
+     * Get vertex number
+     * @return Vertex number
+     */
+    public int getVertexNumber() {
+        return this.vertexBufferData.length / 3;
+    }
+
+    /**
      * Calculate normals
      */
     public void calculateNormals() {

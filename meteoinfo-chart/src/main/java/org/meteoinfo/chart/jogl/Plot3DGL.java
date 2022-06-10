@@ -2393,14 +2393,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 try {
                     if (this.clipPlane)
                         this.disableClipPlane(gl);
-                    VolumeRender volumeRender = null;
                     if (!this.renderMap.containsKey(graphic)) {
-                        volumeRender = new VolumeRender(gl, (VolumeGraphic) graphic);
-                        renderMap.put(graphic, volumeRender);
-                    } else {
-                        volumeRender = (VolumeRender) renderMap.get(graphic);
-                        volumeRender.updateShaders();
+                        renderMap.put(graphic, new VolumeRender(gl, (VolumeGraphic) graphic));
                     }
+                    VolumeRender volumeRender = (VolumeRender) renderMap.get(graphic);
                     volumeRender.setTransform(this.transform);
                     volumeRender.setOrthographic(this.orthographic);
                     volumeRender.updateMatrix();

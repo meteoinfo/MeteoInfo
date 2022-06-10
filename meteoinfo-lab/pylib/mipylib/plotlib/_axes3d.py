@@ -303,7 +303,7 @@ class Axes3D(Axes):
             zmax = limits[5]
             extent = Extent3D(xmin, xmax, ymin, ymax, zmin, zmax)
             self.axes.setDrawExtent(extent)
-            self.axes.setExtent(extent.clone())
+            self.axes.setAxesExtent(extent.clone())
             return True
         else:
             print('The limits parameter must be a list with 6 elements: xmin, xmax, ymin, ymax, zmin, zmax!')

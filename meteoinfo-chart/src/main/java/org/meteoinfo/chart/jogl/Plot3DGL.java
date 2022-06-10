@@ -1074,8 +1074,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
             ex = ex.to3D();
         }
         this.graphicExtent = (Extent3D) ex;
-        this.setAxesExtent((Extent3D) graphicExtent.clone());
         if (!fixExtent) {
+            this.setAxesExtent((Extent3D) graphicExtent.clone());
             this.setDrawExtent((Extent3D) this.graphicExtent.clone());
         }
     }

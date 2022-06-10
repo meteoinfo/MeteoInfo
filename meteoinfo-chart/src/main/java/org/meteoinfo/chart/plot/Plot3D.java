@@ -38,6 +38,7 @@ public class Plot3D extends Plot {
     // <editor-fold desc="Variables">
     private final GraphicCollection3D graphics;
     private Extent3D extent;
+    private Extent3D axesExtent;
     private ChartText title;
     private List<ChartLegend> legends;
     private Axis xAxis;
@@ -547,6 +548,22 @@ public class Plot3D extends Plot {
             this.projector.setZRange((float)Math.log10(zmin), (float)Math.log10(zmax));
         else
             this.projector.setZRange(zmin, zmax);
+    }
+
+    /**
+     * Get axes extent
+     * @return Axes extent
+     */
+    public Extent3D getAxesExtent() {
+        return this.axesExtent;
+    }
+
+    /**
+     * Set axes extent
+     * @param value Axes extent
+     */
+    public void setAxesExtent(Extent3D value) {
+        this.axesExtent = value;
     }
 
     // </editor-fold>

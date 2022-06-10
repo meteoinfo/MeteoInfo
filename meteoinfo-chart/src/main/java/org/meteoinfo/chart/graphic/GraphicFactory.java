@@ -467,7 +467,7 @@ public class GraphicFactory {
                 if (!fixZ) {
                     z = zIter.getDoubleNext();
                 }
-                if (Double.isNaN(y) || Double.isNaN(x)) {
+                if (Double.isNaN(y) || Double.isNaN(x) || Double.isNaN(z)) {
                     if (points.isEmpty()) {
                         continue;
                     }

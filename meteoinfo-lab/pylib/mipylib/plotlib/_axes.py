@@ -3064,18 +3064,24 @@ class Axes(object):
 
     def taylor_diagram(self, stddev, correlation, std_max=1.65, labels=None, ref_std=1., colors=None,
                        **kwargs):
-        '''
+        """
         Create Taylor diagram.
 
-        :param stddev: Standard deviation.
-        :param correlation: Pattern correlations.
-        :param ref_std: Reference standard deviation.
-        :param std_max: Maximum standard deviation.
-        :param labels: Data labels.
-        :param colors: Data points colors.
+        :param stddev: (*array*) Standard deviation.
+        :param correlation: (*array*) Pattern correlations.
+        :param ref_std: (*float*) Reference standard deviation. Default value is `1.`.
+        :param std_max: (*float*) Maximum standard deviation. Default value is `1.651`.
+        :param labels: (*list of string*) Data labels.
+        :param colors: (*list of color*) Data points colors.
+        :param markers: (*list of marker string*) Data points markers.
+        :param sizes: (*list of int*) Data points sizes.
+        :param std_max_axis_props: (*dict*) Property of the maximum standard deviation axis line.
+        :param corr_tick_props: (*dict*) Property of the correlation tick lines.
+        :param corr_tick_label_props: (*dict*) Property of the correlation tick labels.
+        :param corr_label_props: (*dict*) Property of the correlation label.
 
         :returns:
-        '''
+        """
         #Set axes
         self.set_aspect('equal')
         self.set_clip(False)
@@ -3116,11 +3122,21 @@ class Axes(object):
         xticks = self.get_xticks()
         for i in xticks:
             self.plot(xunit * i, yunit * i, color='gray', linestyle='--')
-        self.plot(xunit * std_max, yunit * std_max, color='k')
+        std_max_axis_props = kwargs.pop('std_max_axis_props', dict(color='k'))
+        self.plot(xunit * std_max, yunit * std_max, **std_max_axis_props)
 
         #plot correlation lines
         values = np.arange(0., 1., 0.1)
         values = values.join(np.array([0.95,0.99,1.0]), 0)
+        corr_tick_props = kwargs.pop('corr_tick_props', dict(color='k'))
+        corr_tick_label_props = kwargs.pop('corr_tick_label_props', dict(yalign='center'))
+        if not corr_tick_label_props.has_key('yalign'):
+            corr_tick_label_props['yalign'] = 'center'
+        corr_label_props = kwargs.pop('corr_label_props', dict(xalign='center', yalign='bottom'))
+        if not corr_label_props.has_key('xalign'):
+            corr_label_props['xalign'] = 'center'
+        if not corr_label_props.has_key('yalign'):
+            corr_label_props['yalign'] = 'bottom'
         for t in values:
             theta = np.acos(t)
             x = np.cos(theta) * std_max
@@ -3128,13 +3144,13 @@ class Axes(object):
             if 0 < t < 1:
                 if t == 0.6 or t == 0.9:
                     self.plot([0,x], [0,y], color='gray', linestyle=':')
-                self.plot([x*0.98,x], [y*0.98,y], color='k')
+                self.plot([x*0.98,x], [y*0.98,y], **corr_tick_props)
             x = x * 1.02
             y = y * 1.02
-            self.text(x, y, str(t), rotation=np.degrees(theta), yalign='center')
+            self.text(x, y, str(t), rotation=np.degrees(theta), **corr_tick_label_props)
             if t == 0.7:
                 self.text(x*1.1, y*1.1, 'Correlation', rotation=np.degrees(theta)-90,
-                        xalign='center', yalign='bottom')
+                        **corr_label_props)
 
         values = np.arange(0.05, 0.9, 0.1)
         values = values.join(np.array([0.91,0.92,0.93,0.94,0.96,0.97,0.98]), 0)
@@ -3142,7 +3158,7 @@ class Axes(object):
             theta = np.acos(t)
             x = np.cos(theta) * std_max
             y = np.sin(theta) * std_max
-            self.plot([x*0.99,x], [y*0.99,y], color='k')
+            self.plot([x*0.99,x], [y*0.99,y], **corr_tick_props)
 
         #plot data
         stddev = np.atleast_2d(stddev)
@@ -3154,12 +3170,14 @@ class Axes(object):
             cmap = kwargs.pop('cmap', 'matlab_jet')
             colors = plotutil.makecolors(ncase, cmap)
         gg = []
+        markers = kwargs.pop('markers', [None] * ncase)
+        sizes = kwargs.pop('sizes', [6] * ncase)
         for i in range(ncase):
             rho = stddev[i]
             theta = np.acos(correlation[i])
             x = np.cos(theta) * rho
             y = np.sin(theta) * rho
-            gg.append(self.scatter(x, y, edge=False, c=colors[i]))
+            gg.append(self.scatter(x, y, edge=False, c=colors[i], s=sizes[i], marker=markers[i]))
             if labels is None:
                 lbs = []
                 for j in range(len(rho)):
@@ -3167,7 +3185,7 @@ class Axes(object):
             else:
                 lbs = labels[i]
             for xx, yy, label in zip(x, y, lbs):
-                self.text(xx, yy, label, color=colors[i], xalign='center', yalign='bottom', yshift=-5)
+                self.text(xx, yy, label, color=colors[i], xalign='center', yalign='bottom', yshift=-sizes[i])
 
         self.set_xlim(0, std_max)
         self.set_ylim(0, std_max)

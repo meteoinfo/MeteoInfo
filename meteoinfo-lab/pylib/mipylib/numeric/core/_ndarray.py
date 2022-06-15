@@ -771,25 +771,46 @@ class NDArray(object):
         '''
         return NDArray(ArrayMath.floor(self._array))
 
+    def round(self, decimals=0):
+        """
+        Round of the decimal numbers to the nearest value.
+
+        :param: (*int*) Decimal numbers. Default is 0.
+
+        :return: (*array*) Rounded array.
+        """
+        if decimals == 0:
+            r = ArrayMath.round(self._array)
+        else:
+            r = ArrayMath.round(self._array, decimals)
+        return NDArray(r)
+
     def ave(self, fill_value=None):
         if fill_value == None:
             return ArrayMath.aveDouble(self._array)
         else:
             return ArrayMath.aveDouble(self._array, fill_value)
 
-    def mean(self, axis=None):
-        '''
+    def mean(self, axis=None, keepdims=False):
+        """
         Compute tha arithmetic mean along the specified axis.
 
         :param axis: (*int*) Axis along which the standard deviation is computed.
             The default is to compute the standard deviation of the flattened array.
+        :param keepdims: (*bool*) If this is set to True, the axes which are reduced are
+            left in the result as dimensions with size one. Default if `False`.
 
         returns: (*array_like*) Mean result
-        '''
+        """
         if self.ndim == 1 or axis is None:
             return ArrayMath.mean(self._array)
         else:
-            return NDArray(ArrayMath.mean(self._array, axis))
+            r = NDArray(ArrayMath.mean(self._array, axis))
+            if keepdims:
+                s = list(r.shape)
+                s.insert(axis, 1)
+                r = r.reshape(s)
+            return r
 
     def median(self, axis=None):
         '''

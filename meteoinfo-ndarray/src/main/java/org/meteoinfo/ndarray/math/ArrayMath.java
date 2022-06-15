@@ -3504,6 +3504,56 @@ public class ArrayMath {
     }
 
     /**
+     * Round of the decimal numbers to the nearest value.
+     *
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array round(Array a) {
+        Array r;
+        IndexIterator iterA = a.getIndexIterator();
+        r = Array.factory(a.getDataType(), a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setDouble(i, Math.round(a.getDouble(i)));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setDoubleNext(Math.round(iterA.getDoubleNext()));
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Round of the decimal numbers to the nearest value.
+     *
+     * @param a Array a
+     * @param decimals Decimal number
+     * @return Result array
+     */
+    public static Array round(Array a, int decimals) {
+        Array r;
+        IndexIterator iterA = a.getIndexIterator();
+        r = Array.factory(a.getDataType(), a.getShape());
+        double p10 = Math.pow(10, decimals);
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setDouble(i, Math.round(a.getDouble(i) * p10) / p10);
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setDoubleNext(Math.round(iterA.getDoubleNext() * p10) / p10);
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Array equal
      *
      * @param a Array a

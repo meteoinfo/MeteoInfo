@@ -15,8 +15,8 @@ from collections import namedtuple
 import warnings
 
 __all__ = [
-    'chi2_contingency','chisquare','covariance','cov','pearsonr','spearmanr','kendalltau',
-    'linregress','mlinregress','percentile','ttest_1samp', 'ttest_ind','ttest_rel','taylor_stats'
+    'chi2_contingency','chisquare','covariance','cov','pearsonr','spearmanr','kendalltau','kurtosis',
+    'linregress','mlinregress','percentile','skew','ttest_1samp', 'ttest_ind','ttest_rel','taylor_stats'
     ]
 
 def _contains_nan(a, nan_policy='propagate'):
@@ -46,6 +46,191 @@ def _contains_nan(a, nan_policy='propagate'):
         raise ValueError("The input contains nan values")
 
     return contains_nan, nan_policy
+
+# Moment with optional pre-computed mean, equal to a.mean(axis, keepdims=True)
+def _moment(a, moment, axis, mean=None):
+    if moment == 0 or moment == 1:
+        # By definition the zeroth moment about the mean is 1, and the first
+        # moment is 0.
+        shape = list(a.shape)
+        del shape[axis]
+        dtype = a.dtype
+
+        if len(shape) == 0:
+            return dtype(1.0 if moment == 0 else 0.0)
+        else:
+            return (np.ones(shape, dtype=dtype) if moment == 0
+                    else np.zeros(shape, dtype=dtype))
+    else:
+        # Exponentiation by squares: form exponent sequence
+        n_list = [moment]
+        current_n = moment
+        while current_n > 2:
+            if current_n % 2:
+                current_n = (current_n - 1) / 2
+            else:
+                current_n /= 2
+            n_list.append(current_n)
+
+        # Starting point for exponentiation by squares
+        mean = a.mean(axis, keepdims=True) if mean is None else mean
+        a_zero_mean = a - mean
+        if n_list[-1] == 1:
+            s = a_zero_mean.copy()
+        else:
+            s = a_zero_mean**2
+
+        # Perform multiplications
+        for n in n_list[-2::-1]:
+            s = s**2
+            if n % 2:
+                s *= a_zero_mean
+        return np.mean(s, axis)
+
+def skew(a, axis=0, bias=True):
+    r"""Compute the sample skewness of a data set.
+    For normally distributed data, the skewness should be about zero. For
+    unimodal continuous distributions, a skewness value greater than zero means
+    that there is more weight in the right tail of the distribution. The
+    function `skewtest` can be used to determine if the skewness value
+    is close enough to zero, statistically speaking.
+
+    Parameters
+    ----------
+    a : ndarray
+        Input array.
+    axis : int or None, optional
+        Axis along which skewness is calculated. Default is 0.
+        If None, compute over the whole array `a`.
+    bias : bool, optional
+        If False, then the calculations are corrected for statistical bias.
+
+    Returns
+    -------
+    skewness : ndarray
+        The skewness of values along an axis, returning 0 where all values are
+        equal.
+
+    Notes
+    -----
+    The sample skewness is computed as the Fisher-Pearson coefficient
+    of skewness, i.e.
+    .. math::
+        g_1=\frac{m_3}{m_2^{3/2}}
+    where
+    .. math::
+        m_i=\frac{1}{N}\sum_{n=1}^N(x[n]-\bar{x})^i
+    is the biased sample :math:`i\texttt{th}` central moment, and
+    :math:`\bar{x}` is
+    the sample mean.  If ``bias`` is False, the calculations are
+    corrected for bias and the value computed is the adjusted
+    Fisher-Pearson standardized moment coefficient, i.e.
+    .. math::
+        G_1=\frac{k_3}{k_2^{3/2}}=
+            \frac{\sqrt{N(N-1)}}{N-2}\frac{m_3}{m_2^{3/2}}.
+    References
+    ----------
+    .. [1] Zwillinger, D. and Kokoska, S. (2000). CRC Standard
+       Probability and Statistics Tables and Formulae. Chapman & Hall: New
+       York. 2000.
+       Section 2.2.24.1
+    Examples
+    --------
+    >>> from numeric.stats import skew
+    >>> skew([1, 2, 3, 4, 5])
+    0.0
+    >>> skew([2, 8, 0, 4, 1, 9, 9, 0])
+    0.2650554122698573
+    """
+    a = np.asanyarray(a)
+    n = a.shape[axis]
+    mean = a.mean(axis, keepdims=True)
+    m2 = _moment(a, 2, axis, mean=mean)
+    m3 = _moment(a, 3, axis, mean=mean)
+    g1 = m3 / m2 ** 1.5
+
+    if not bias:
+        g1 = np.sqrt((n - 1.0) * n) / (n - 2.0) * g1
+
+    return g1
+
+def kurtosis(a, axis=0, fisher=True, bias=True):
+    """Compute the kurtosis (Fisher or Pearson) of a dataset.
+    Kurtosis is the fourth central moment divided by the square of the
+    variance. If Fisher's definition is used, then 3.0 is subtracted from
+    the result to give 0.0 for a normal distribution.
+    If bias is False then the kurtosis is calculated using k statistics to
+    eliminate bias coming from biased moment estimators
+    Use `kurtosistest` to see if result is close enough to normal.
+
+    Parameters
+    ----------
+    a : array
+        Data for which the kurtosis is calculated.
+    axis : int or None, optional
+        Axis along which the kurtosis is calculated. Default is 0.
+        If None, compute over the whole array `a`.
+    fisher : bool, optional
+        If True, Fisher's definition is used (normal ==> 0.0). If False,
+        Pearson's definition is used (normal ==> 3.0).
+    bias : bool, optional
+        If False, then the calculations are corrected for statistical bias.
+
+    Returns
+    -------
+    kurtosis : array
+        The kurtosis of values along an axis. If all values are equal,
+        return -3 for Fisher's definition and 0 for Pearson's definition.
+
+    References
+    ----------
+    .. [1] Zwillinger, D. and Kokoska, S. (2000). CRC Standard
+       Probability and Statistics Tables and Formulae. Chapman & Hall: New
+       York. 2000.
+
+    Examples
+    --------
+    In Fisher's definiton, the kurtosis of the normal distribution is zero.
+    In the following example, the kurtosis is close to zero, because it was
+    calculated from the dataset, not from the continuous distribution.
+    >>> from mipylib.numeric.stats import norm, kurtosis
+    >>> data = norm.rvs(size=1000, random_state=3)
+    >>> kurtosis(data)
+    -0.06928694200380558
+    The distribution with a higher kurtosis has a heavier tail.
+    The zero valued kurtosis of the normal distribution in Fisher's definition
+    can serve as a reference point.
+    >>> import matplotlib.pyplot as plt
+    >>> import scipy.stats as stats
+    >>> from scipy.stats import kurtosis
+    >>> x = np.linspace(-5, 5, 100)
+    >>> ax = plt.subplot()
+    >>> distnames = ['laplace', 'norm', 'uniform']
+    >>> for distname in distnames:
+    ...     if distname == 'uniform':
+    ...         dist = getattr(stats, distname)(loc=-2, scale=4)
+    ...     else:
+    ...         dist = getattr(stats, distname)
+    ...     data = dist.rvs(size=1000)
+    ...     kur = kurtosis(data, fisher=True)
+    ...     y = dist.pdf(x)
+    ...     ax.plot(x, y, label="{}, {}".format(distname, round(kur, 3)))
+    ...     ax.legend()
+    The Laplace distribution has a heavier tail than the normal distribution.
+    The uniform distribution (which has negative kurtosis) has the thinnest
+    tail.
+    """
+    a = np.asanyarray(a)
+    n = a.shape[axis]
+    mean = a.mean(axis, keepdims=True)
+    m2 = _moment(a, 2, axis, mean=mean)
+    m4 = _moment(a, 4, axis, mean=mean)
+    g1 =  m4 / m2 ** 2.0
+
+    if not bias:
+        g1 = 1.0/(n-2)/(n-3) * ((n**2-1.0)*m4/m2**2.0 - 3*(n-1)**2.0)
+
+    return g1 - 3 if fisher else g1
 
 def covariance(x, y, bias=False):
     '''

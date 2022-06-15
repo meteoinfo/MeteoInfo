@@ -46,7 +46,7 @@ __all__ = [
     'isclose','isfinite','isinf','isnan','linspace','log','log10','logical_not','logspace',
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reshape',
-    'repeat','roll','rolling_mean','rot90','sign','sin','sinh','shape','smooth5','smooth9','sort',
+    'repeat','roll','rolling_mean','rot90','round','sign','sin','sinh','shape','smooth5','smooth9','sort',
     'sphere','squeeze','split','sqrt','square','std','sum','swapaxes','take','tan','tanh','tile',
     'transpose','trapz','vdot','unravel_index','var','vstack','zeros','zeros_like'
     ]
@@ -599,19 +599,35 @@ def ceil(x):
         return math.ceil(x)
 
 def floor(x):
-    '''
+    """
     Return the floor of the input, element-wise.
 
     :param x: (*array_like*) Input array.
 
     :return: The floor of each element.
-    '''
+    """
     if isinstance(x, list):
         x = array(x)
     if isinstance(x, NDArray):
         return x.floor()
     else:
         return math.floor(x)
+
+def round(x, decimals=0):
+    """
+    Round of the decimal numbers to the nearest value.
+
+    :param x: (*array_like*) Input array.
+    :param decimals: (*int*) Decimal numbers. Default is 0.
+
+    :return: (*array*) Rounded array.
+    """
+    if isinstance(x, (list, tuple)):
+        x = array(x)
+    if isinstance(x, NDArray):
+        return x.round(decimals)
+    else:
+        return round(x, decimals)
 
 def square(x):
     """
@@ -1219,13 +1235,15 @@ def cumsum(x, axis=None):
             dims.append(x.dims[i])
         return DimArray(r, dims, x.fill_value, x.proj)
             
-def mean(x, axis=None):
+def mean(x, axis=None, keepdims=False):
     """
     Compute tha arithmetic mean along the specified axis.
     
     :param x: (*array_like*) Input values.
     :param axis: (*int*) Axis along which the means is computed.
         The default is to compute the means of the flattened array.
+    :param keepdims: (*bool*) If this is set to True, the axes which are reduced are
+            left in the result as dimensions with size one. Default if `False`.
     
     returns: (*array_like*) Mean result
     """
@@ -1247,7 +1265,7 @@ def mean(x, axis=None):
             return PyStationData(r)
         else:
             x = array(x)
-    r = x.mean(axis)
+    r = x.mean(axis, keepdims)
     return r
 
 def average(a, axis=None, weights=None):

@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\taylor">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\stats">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\mesh"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
@@ -16,19 +12,23 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\taylor"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface\isosurface_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\volumeplot_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow\geoshow_proj.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\taylor\taylor_custom.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\skew_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\kurtosis_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface\isosurface_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\volumeplot_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow\geoshow_proj.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\taylor\taylor_custom.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\skew_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\kurtosis_2.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1434,805"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

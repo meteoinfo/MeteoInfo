@@ -3080,7 +3080,7 @@ class Axes(object):
         :param corr_tick_label_props: (*dict*) Property of the correlation tick labels.
         :param corr_label_props: (*dict*) Property of the correlation label.
 
-        :returns:
+        :returns: Axes and Taylor graphic.
         """
         #Set axes
         self.set_aspect('equal')

@@ -4,8 +4,14 @@ import com.jogamp.opengl.util.texture.Texture;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.colors.ColorMap;
+import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.colors.Normalize;
+import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -302,27 +308,6 @@ public class SurfaceGraphic extends GraphicCollection3D {
         }
     }
 
-    /**
-     * Update vertex indices
-     */
-    public void updateVertexIndices_bak() {
-        int n = (rows - 1) * (columns - 1) * 6;
-        vertexIndices = new int[n];
-        int idx, vIdx;
-        for (int i = 0; i < rows - 1; i++) {
-            for (int j = 0; j < columns - 1; j++) {
-                vIdx = i * columns + j;
-                idx = (i * (columns - 1) + j) * 6;
-                vertexIndices[idx] = vIdx;
-                vertexIndices[idx + 1] = vIdx + 1;
-                vertexIndices[idx + 2] = vIdx + 1 + columns;
-                vertexIndices[idx + 3] = vIdx + 1 + columns;
-                vertexIndices[idx + 4] = vIdx + columns;
-                vertexIndices[idx + 5] = vIdx;
-            }
-        }
-    }
-
     @Override
     public void setLegendScheme(LegendScheme ls) {
         super.setLegendScheme(ls);
@@ -341,6 +326,25 @@ public class SurfaceGraphic extends GraphicCollection3D {
                 System.arraycopy(color, 0, vertexColor, i * 4, 4);
             }
         }
+    }
+
+    /**
+     * Set transfer function
+     * @param transferFunction Transfer function
+     */
+    public void setTransferFunction(TransferFunction transferFunction) {
+        if (vertexValue != null) {
+            vertexColor = new float[getVertexNumber() * 4];
+            float[] color;
+            for (int i = 0; i < vertexValue.length; i++) {
+                color = transferFunction.getColor(vertexValue[i]).getRGBComponents(null);
+                System.arraycopy(color, 0, vertexColor, i * 4, 4);
+            }
+        }
+
+        LegendScheme ls = LegendManage.createLegendScheme(transferFunction);
+        this.legendScheme = ls;
+        this.setSingleLegend(false);
     }
 
     /**

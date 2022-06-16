@@ -70,6 +70,23 @@ public class MapPlot3D extends Plot3DGL {
     }
 
     /**
+     * Add a graphic
+     *
+     * @param index The index
+     * @param graphic The graphic
+     * @param proj The graphic projection
+     */
+    @Override
+    public void addGraphic(int index, Graphic graphic, ProjectionInfo proj) {
+        if (proj.equals(this.projInfo)) {
+            super.addGraphic(index, graphic);
+        } else {
+            Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphic, proj, this.projInfo);
+            super.addGraphic(index, nGraphic);
+        }
+    }
+
+    /**
      * Set draw extent
      *
      * @param value Extent

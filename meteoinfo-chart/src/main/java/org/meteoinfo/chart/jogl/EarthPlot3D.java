@@ -129,6 +129,30 @@ public class EarthPlot3D extends Plot3DGL {
     /**
      * Add a graphic
      *
+     * @param index The index
+     * @param graphic The graphic
+     */
+    @Override
+    public void addGraphic(int index, Graphic graphic) {
+        if (this.dataExtent == null) {
+            this.dataExtent = (Extent3D) graphic.getExtent();
+        } else {
+            this.dataExtent = this.dataExtent.union((Extent3D) graphic.getExtent());
+        }
+        updateDataExtent();
+
+        this.graphics.add(index, SphericalTransform.transform(graphic));
+        Extent ex = this.graphics.getExtent();
+        if (!ex.is3D()) {
+            ex = ex.to3D();
+        }
+        this.graphicExtent = (Extent3D) ex;
+        this.setDrawExtent((Extent3D) this.graphicExtent.clone());
+    }
+
+    /**
+     * Add a graphic
+     *
      * @param graphic The graphic
      * @param proj The graphic projection
      */
@@ -139,6 +163,23 @@ public class EarthPlot3D extends Plot3DGL {
             addGraphic(nGraphic);
         } else {
             addGraphic(graphic);
+        }
+    }
+
+    /**
+     * Add a graphic
+     *
+     * @param index The index
+     * @param graphic The graphic
+     * @param proj The graphic projection
+     */
+    @Override
+    public void addGraphic(int index, Graphic graphic, ProjectionInfo proj) {
+        if (! proj.equals(this.projInfo)) {
+            Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
+            addGraphic(index, nGraphic);
+        } else {
+            addGraphic(index, graphic);
         }
     }
 

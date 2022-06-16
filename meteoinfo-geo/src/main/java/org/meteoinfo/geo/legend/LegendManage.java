@@ -19,6 +19,8 @@ import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.geo.drawing.ContourDraw;
+import org.meteoinfo.geometry.colors.Normalize;
+import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.geometry.shape.ShapeTypes;
@@ -1390,6 +1392,26 @@ public class LegendManage {
         } else {
             return createLegendScheme(min, max, n, legendType, shapeType, hasMissingValue, stdata.missingValue);
         }
+    }
+
+    /**
+     * Create legend scheme by transfer function
+     *
+     * @param transferFunction Transfer function
+     * @return Legend scheme
+     */
+    public static LegendScheme createLegendScheme(TransferFunction transferFunction) {
+        ColorMap colorMap = transferFunction.getColorMap();
+        Color[] colors = colorMap.getColors();
+        int n = colors.length;
+        Normalize norm = transferFunction.getNormalize();
+        double[] values = MIMath.getIntervalValues(norm.getMinValue(), norm.getMaxValue(), n - 1);
+        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, colors, ShapeTypes.POLYGON,
+                norm.getMinValue(), norm.getMaxValue());
+        ls.setColorMap(colorMap);
+        ls.setNormalize(norm);
+
+        return ls;
     }
 
     /**

@@ -15,7 +15,7 @@ import org.joml.Vector3f;
 import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.jogl.mc.MarchingCubes;
-import org.meteoinfo.geometry.colors.TransferFunction;
+import org.meteoinfo.geometry.colors.OpacityTransferFunction;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
@@ -914,7 +914,7 @@ public class JOGLUtil {
      */
     public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, ColorMap colorMap,
                                            Normalize norm, List<Number> opacityNodes, List<Number> opacityLevels) {
-        TransferFunction transferFunction = new TransferFunction(opacityNodes, opacityLevels, norm);
+        OpacityTransferFunction transferFunction = new OpacityTransferFunction(opacityNodes, opacityLevels, norm);
         return volume(data, xa, ya, za, colorMap, norm, transferFunction);
     }
 
@@ -931,14 +931,14 @@ public class JOGLUtil {
      * @return Volume graphics
      */
     public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, ColorMap colorMap,
-                                           Normalize norm, TransferFunction transferFunction) {
+                                           Normalize norm, OpacityTransferFunction transferFunction) {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
 
         VolumeGraphic graphics = new VolumeGraphic(data, colorMap, norm);
-        graphics.setTransferFunction(transferFunction);
+        graphics.setOpacityTransferFunction(transferFunction);
         graphics.updateColors();
 
         Extent3D extent3D = new Extent3D();

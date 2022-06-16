@@ -1,13 +1,14 @@
 package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.chart.jogl.Transform;
-import org.meteoinfo.geometry.colors.TransferFunction;
+import org.meteoinfo.geometry.colors.OpacityTransferFunction;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geometry.colors.Normalize;
+import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.Array;
@@ -28,8 +29,6 @@ public class VolumeGraphic extends GraphicCollection3D {
     private byte[] colors;
     private byte[] originalColors;
     private TransferFunction transferFunction = new TransferFunction();
-    private Normalize normalize;
-    private ColorMap colorMap;
     private float[] opacityLevels = new float[]{0, 1};
     private float[] opacityNodes = new float[]{0f, 1f};
     private float[] colorRange = new float[]{0f, 1f};
@@ -72,7 +71,7 @@ public class VolumeGraphic extends GraphicCollection3D {
      * @param vMax Maximum value
      */
     public VolumeGraphic(Array value, ColorMap colorMap, double vMin, double vMax) {
-        this.colorMap = colorMap;
+        this.transferFunction.setColorMap(colorMap);
 
         value = value.copyIfView();
         int[] shape = value.getShape();
@@ -159,10 +158,7 @@ public class VolumeGraphic extends GraphicCollection3D {
      * @param colorMap Color map
      */
     public void setColorMap(ColorMap colorMap) {
-        if (this.normalize == null) {
-            this.normalize = new Normalize();
-        }
-        setColorMap(colorMap, this.normalize);
+        setColorMap(colorMap, this.transferFunction.getNormalize());
     }
 
     /**
@@ -171,8 +167,8 @@ public class VolumeGraphic extends GraphicCollection3D {
      * @param norm Normalize
      */
     public void setColorMap(ColorMap colorMap, Normalize norm) {
-        this.colorMap = colorMap;
-        this.normalize = norm;
+        this.transferFunction.setColorMap(colorMap);
+        this.transferFunction.setNormalize(norm);
 
         Color[] oColors = colorMap.getColors();
         int n = oColors.length;
@@ -203,7 +199,7 @@ public class VolumeGraphic extends GraphicCollection3D {
         for (int i = 0; i < n; i++) {
             float px = ((float) i) / n;
             float a;
-            a = this.transferFunction.getOpacity(px);
+            a = this.transferFunction.getOpacityTransferFunction().getOpacity(px);
             /*if (px <= opacityNodes[0]) {
                 a = opacityNodes[0];
             } else if (px > opacityNodes[1]) {
@@ -305,20 +301,56 @@ public class VolumeGraphic extends GraphicCollection3D {
     }
 
     /**
+     * Set opacity transfer function
+     * @param value Opacity transfer function
+     */
+    public void setOpacityTransferFunction(OpacityTransferFunction value) {
+        this.transferFunction.setOpacityTransferFunction(value);
+    }
+
+    /**
+     * Set opacity transfer function
+     * @param opacityNodes Opacity nodes
+     * @param opacityLevels Opacity levels
+     */
+    public void setOpacityTransferFunction(List<Number> opacityNodes, List<Number> opacityLevels) {
+        this.transferFunction.setOpacityTransferFunction(new OpacityTransferFunction(opacityNodes, opacityLevels));
+    }
+
+    /**
+     * Get transfer function
+     * @return Transfer function
+     */
+    public TransferFunction getTransferFunction() {
+        return this.transferFunction;
+    }
+
+    /**
      * Set transfer function
      * @param value Transfer function
      */
     public void setTransferFunction(TransferFunction value) {
         this.transferFunction = value;
-    }
 
-    /**
-     * Set transfer function
-     * @param opacityNodes Opacity nodes
-     * @param opacityLevels Opacity levels
-     */
-    public void setTransferFunction(List<Number> opacityNodes, List<Number> opacityLevels) {
-        this.transferFunction = new TransferFunction(opacityNodes, opacityLevels);
+        ColorMap colorMap = this.transferFunction.getColorMap();
+        Color[] oColors = colorMap.getColors();
+        int n = oColors.length;
+        originalColors = new byte[n * 3];
+        for (int i = 0; i < n; i++) {
+            int color = oColors[i].getRGB();
+            originalColors[i * 3 + 0] = (byte) ((color >> 16) & 0xff);
+            originalColors[i * 3 + 1] = (byte) ((color >> 8) & 0xff);
+            originalColors[i * 3 + 2] = (byte) ((color) & 0xff);
+        }
+
+        Normalize norm = this.transferFunction.getNormalize();
+        double[] values = MIMath.getIntervalValues(norm.getMinValue(), norm.getMaxValue(), n - 1);
+        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, ShapeTypes.POLYGON,
+                norm.getMinValue(), norm.getMaxValue());
+        ls.setColorMap(colorMap);
+        ls.setNormalize(norm);
+        this.setLegendScheme(ls);
+        this.setSingleLegend(false);
     }
 
     /**

@@ -1064,6 +1064,25 @@ public class Plot3DGL extends Plot implements GLEventListener {
     /**
      * Add a graphic
      *
+     * @param index Index
+     * @param graphic Graphic
+     */
+    public void addGraphic(int index, Graphic graphic) {
+        this.graphics.add(index, graphic);
+        Extent ex = this.graphics.getExtent();
+        if (!ex.is3D()) {
+            ex = ex.to3D();
+        }
+        this.graphicExtent = (Extent3D) ex;
+        if (!fixExtent) {
+            this.setAxesExtent((Extent3D) graphicExtent.clone());
+            this.setDrawExtent((Extent3D) this.graphicExtent.clone());
+        }
+    }
+
+    /**
+     * Add a graphic
+     *
      * @param graphic The graphic
      * @param proj The graphic projection
      */
@@ -1073,6 +1092,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
         } else {
             Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
             addGraphic(nGraphic);
+        }
+    }
+
+    /**
+     * Add a graphic
+     *
+     * @param index The index
+     * @param graphic The graphic
+     * @param proj The graphic projection
+     */
+    public void addGraphic(int index, Graphic graphic, ProjectionInfo proj) {
+        if (this.projInfo == null || proj.equals(this.projInfo)) {
+            addGraphic(index, graphic);
+        } else {
+            Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
+            addGraphic(index, nGraphic);
         }
     }
 

@@ -34,10 +34,10 @@ public class GLForm extends JFrame{
             }
         });
         
-        glcp.animator_start();
+        //glcp.animator_start();
     }
     
     private void formWindowClosing() {
-        glcp.animator_stop();
+        //glcp.animator_stop();
     }
 }

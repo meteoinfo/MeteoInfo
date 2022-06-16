@@ -1562,12 +1562,12 @@ class Axes3DGL(Axes3D):
             plotutil.setlegendscheme(ls, **kwargs)
             ls.setNormalize(norm._norm)
             ls.setColorMap(cmap)
-            graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
+            graphics = GraphicFactory.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
                                        alpha_min, alpha_max)
         else:
             opacity_nodes = kwargs.pop('opacity_nodes', None)
             opacity_levels = kwargs.pop('opacity_levels', [0., 1.])
-            graphics = JOGLUtil.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), cmap, \
+            graphics = GraphicFactory.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), cmap, \
                                        norm._norm, opacity_nodes, opacity_levels)
 
         ray_casting = kwargs.pop('ray_casting', None)
@@ -1582,9 +1582,9 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def view(self):
-        '''
+        """
         Open GLForm
-        '''
+        """
         form = GLForm(self.axes)
         form.setSize(600, 500)
         form.setLocationRelativeTo(None)

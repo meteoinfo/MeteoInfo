@@ -23,6 +23,8 @@ import org.meteoinfo.geo.layer.ImageLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geometry.colors.Normalize;
+import org.meteoinfo.geometry.colors.OpacityTransferFunction;
+import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.graphic.ImageGraphic;
@@ -7399,6 +7401,125 @@ public class GraphicFactory {
     }
 
     /**
+     * Create slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xSlice X slice list
+     * @param ySlice Y slice list
+     * @param zSlice Z slice list
+     * @param transferFunction Transfer function
+     * @return Surface graphics
+     */
+    public static List<SurfaceGraphic> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+                                             List<Number> ySlice, List<Number> zSlice, TransferFunction transferFunction) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        List<SurfaceGraphic> sgs = new ArrayList<>();
+
+        int dim1, dim2;
+        float x, y, z;
+        int idx;
+
+        //X slices
+        dim1 = (int) za.getSize();
+        dim2 = (int) ya.getSize();
+        for (int s = 0; s < xSlice.size(); s++) {
+            x = xSlice.get(s).floatValue();
+            Array r = ArrayUtil.slice(data, 2, xa, x);
+            if (r != null) {
+                Index index = r.getIndex();
+                SurfaceGraphic graphic = new SurfaceGraphic();
+                float[] vertexPosition = new float[dim1 * dim2 * 3];
+                float[] vertexValue = new float[dim1 * dim2];
+                for (int i = 0; i < dim1; i++) {
+                    z = za.getFloat(i);
+                    for (int j = 0; j < dim2; j++) {
+                        y = ya.getFloat(j);
+                        idx = i * dim2 +j;
+                        vertexValue[idx] = r.getFloat(index.set(i, j));
+                        idx = idx * 3;
+                        vertexPosition[idx] = x;
+                        vertexPosition[idx+1] = y;
+                        vertexPosition[idx+2] = z;
+                    }
+                }
+                graphic.setVertexPosition(vertexPosition, dim1);
+                graphic.setVertexValue(vertexValue);
+                graphic.setTransferFunction(transferFunction);
+                sgs.add(graphic);
+            }
+        }
+
+        //Y slices
+        dim1 = (int) za.getSize();
+        dim2 = (int) xa.getSize();
+        for (int s = 0; s < ySlice.size(); s++) {
+            y = ySlice.get(s).floatValue();
+            Array r = ArrayUtil.slice(data, 1, ya, y);
+            if (r != null) {
+                Index index = r.getIndex();
+                SurfaceGraphic graphic = new SurfaceGraphic();
+                float[] vertexPosition = new float[dim1 * dim2 * 3];
+                float[] vertexValue = new float[dim1 * dim2];
+                for (int i = 0; i < dim1; i++) {
+                    z = za.getFloat(i);
+                    for (int j = 0; j < dim2; j++) {
+                        x = xa.getFloat(j);
+                        idx = i * dim2 +j;
+                        vertexValue[idx] = r.getFloat(index.set(i, j));
+                        idx = idx * 3;
+                        vertexPosition[idx] = x;
+                        vertexPosition[idx+1] = y;
+                        vertexPosition[idx+2] = z;
+                    }
+                }
+                graphic.setVertexPosition(vertexPosition, dim1);
+                graphic.setVertexValue(vertexValue);
+                graphic.setTransferFunction(transferFunction);
+                sgs.add(graphic);
+            }
+        }
+
+        //Z slices
+        dim1 = (int) ya.getSize();
+        dim2 = (int) xa.getSize();
+        for (int s = 0; s < zSlice.size(); s++) {
+            z = zSlice.get(s).floatValue();
+            Array r = ArrayUtil.slice(data, 0, za, z);
+            if (r != null) {
+                Index index = r.getIndex();
+                SurfaceGraphic graphic = new SurfaceGraphic();
+                float[] vertexPosition = new float[dim1 * dim2 * 3];
+                float[] vertexValue = new float[dim1 * dim2];
+                for (int i = 0; i < dim1; i++) {
+                    y = ya.getFloat(i);
+                    for (int j = 0; j < dim2; j++) {
+                        x = xa.getFloat(j);
+                        idx = i * dim2 +j;
+                        vertexValue[idx] = r.getFloat(index.set(i, j));
+                        idx = idx * 3;
+                        vertexPosition[idx] = x;
+                        vertexPosition[idx+1] = y;
+                        vertexPosition[idx+2] = z;
+                    }
+                }
+                graphic.setVertexPosition(vertexPosition, dim1);
+                graphic.setVertexValue(vertexValue);
+                graphic.setTransferFunction(transferFunction);
+                sgs.add(graphic);
+            }
+        }
+
+        return sgs;
+    }
+
+    /**
      * Create xy slice graphics
      *
      * @param data   Data array - 3D
@@ -7614,6 +7735,186 @@ public class GraphicFactory {
         meshGraphic.setVertexData(vertexData);
 
         return meshGraphic;
+    }
+
+    /**
+     * Create volume graphics
+     *
+     * @param data     3d data array
+     * @param xa       X coordinates
+     * @param ya       Y coordinates
+     * @param za       Z coordinates
+     * @param colorMap ColorMap
+     * @param vMin Min value
+     * @param vMax Max value
+     * @param alphaMin Min alpha
+     * @param alphaMax Max alpha
+     * @return Particles
+     */
+    public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, ColorMap colorMap,
+                                           double vMin, double vMax, float alphaMin, float alphaMax) {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        VolumeGraphic graphics = new VolumeGraphic(data, colorMap, vMin, vMax);
+        graphics.setAlphaMin(alphaMin);
+        graphics.setAlphaMax(alphaMax);
+        graphics.updateColors();
+
+        Extent3D extent3D = new Extent3D();
+        extent3D.minX = xa.getDouble(0);
+        extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
+        extent3D.minY = ya.getDouble(0);
+        extent3D.maxY = ya.getDouble((int) ya.getSize() - 1);
+        extent3D.minZ = za.getDouble(0);
+        extent3D.maxZ = za.getDouble((int) za.getSize() - 1);
+        graphics.setExtent(extent3D);
+
+        return graphics;
+    }
+
+    /**
+     * Create volume graphics
+     *
+     * @param data     3d data array
+     * @param xa       X coordinates
+     * @param ya       Y coordinates
+     * @param za       Z coordinates
+     * @param colorMap ColorMap
+     * @param alphaMin Min alpha
+     * @param alphaMax Max alpha
+     * @return Particles
+     */
+    public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, ColorMap colorMap,
+                                           Normalize norm, float alphaMin, float alphaMax) {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        VolumeGraphic graphics = new VolumeGraphic(data, colorMap, norm);
+        graphics.setAlphaMin(alphaMin);
+        graphics.setAlphaMax(alphaMax);
+        graphics.updateColors();
+
+        Extent3D extent3D = new Extent3D();
+        extent3D.minX = xa.getDouble(0);
+        extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
+        extent3D.minY = ya.getDouble(0);
+        extent3D.maxY = ya.getDouble((int) ya.getSize() - 1);
+        extent3D.minZ = za.getDouble(0);
+        extent3D.maxZ = za.getDouble((int) za.getSize() - 1);
+        graphics.setExtent(extent3D);
+
+        return graphics;
+    }
+
+    /**
+     * Create volume graphics
+     *
+     * @param data     3d data array
+     * @param xa       X coordinates
+     * @param ya       Y coordinates
+     * @param za       Z coordinates
+     * @param colorMap ColorMap
+     * @param norm Normalize
+     * @param opacityNodes Opacity nodes
+     * @param opacityLevels Opacity levels
+     * @return Volume graphics
+     */
+    public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, ColorMap colorMap,
+                                           Normalize norm, List<Number> opacityNodes, List<Number> opacityLevels) {
+        OpacityTransferFunction opacityTransferFunction = new OpacityTransferFunction(opacityNodes, opacityLevels, norm);
+        return volume(data, xa, ya, za, colorMap, norm, opacityTransferFunction);
+    }
+
+    /**
+     * Create volume graphics
+     *
+     * @param data     3d data array
+     * @param xa       X coordinates
+     * @param ya       Y coordinates
+     * @param za       Z coordinates
+     * @param transferFunction Transfer function
+     * @return Volume graphics
+     */
+    public static GraphicCollection volume(Array data, Array xa, Array ya, Array za,
+                                           TransferFunction transferFunction) {
+        return volume(data, xa, ya, za, transferFunction.getColorMap(), transferFunction.getNormalize(),
+                transferFunction.getOpacityTransferFunction());
+    }
+
+    /**
+     * Create volume graphics
+     *
+     * @param data     3d data array
+     * @param xa       X coordinates
+     * @param ya       Y coordinates
+     * @param za       Z coordinates
+     * @param colorMap ColorMap
+     * @param norm Normalize
+     * @param opacityTransferFunction Opacity transfer function
+     * @return Volume graphics
+     */
+    public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, ColorMap colorMap,
+                                           Normalize norm, OpacityTransferFunction opacityTransferFunction) {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        VolumeGraphic graphics = new VolumeGraphic(data, colorMap, norm);
+        graphics.setOpacityTransferFunction(opacityTransferFunction);
+        graphics.updateColors();
+
+        Extent3D extent3D = new Extent3D();
+        extent3D.minX = xa.getDouble(0);
+        extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
+        extent3D.minY = ya.getDouble(0);
+        extent3D.maxY = ya.getDouble((int) ya.getSize() - 1);
+        extent3D.minZ = za.getDouble(0);
+        extent3D.maxZ = za.getDouble((int) za.getSize() - 1);
+        graphics.setExtent(extent3D);
+
+        return graphics;
+    }
+
+    /**
+     * Create volume graphics
+     *
+     * @param data     3d data array
+     * @param xa       X coordinates
+     * @param ya       Y coordinates
+     * @param za       Z coordinates
+     * @param ls       LegendScheme
+     * @param alphaMin Min alpha
+     * @param alphaMax Max alpha
+     * @return Particles
+     */
+    public static GraphicCollection volume(Array data, Array xa, Array ya, Array za, LegendScheme ls,
+                                           float alphaMin, float alphaMax) {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        VolumeGraphic graphics = new VolumeGraphic(data, ls);
+        graphics.setAlphaMin(alphaMin);
+        graphics.setAlphaMax(alphaMax);
+        graphics.updateColors();
+
+        Extent3D extent3D = new Extent3D();
+        extent3D.minX = xa.getDouble(0);
+        extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
+        extent3D.minY = ya.getDouble(0);
+        extent3D.maxY = ya.getDouble((int) ya.getSize() - 1);
+        extent3D.minZ = za.getDouble(0);
+        extent3D.maxZ = za.getDouble((int) za.getSize() - 1);
+        graphics.setExtent(extent3D);
+
+        return graphics;
     }
 
 }

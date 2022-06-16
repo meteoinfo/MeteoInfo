@@ -975,17 +975,25 @@ class Axes(object):
         self.axes.addGraphic(patch)
         self.axes.setAutoExtent()
     
-    def add_graphic(self, graphic, projection=None):
-        '''
+    def add_graphic(self, graphic, projection=None, zorder=None):
+        """
         Add a graphic
         
         :param graphic: (*Graphic*) The graphic to be added.
-        :param projection: (*Projection*) The projection
-        '''
+        :param projection: (*Projection*) The projection.
+        :param zorder: (*int*) Z order of the graphic. Default is `None` that the graphic added
+            to the end.
+        """
         if projection is None:
-            self.axes.addGraphic(graphic)
+            if zorder is None:
+                self.axes.addGraphic(graphic)
+            else:
+                self.axes.addGraphic(zorder, graphic)
         else:
-            self.axes.addGraphic(graphic, projection)
+            if zorder is None:
+                self.axes.addGraphic(graphic, projection)
+            else:
+                self.axes.addGraphic(zorder, graphic, projection)
 
     def get_graphics(self):
         '''
@@ -1277,11 +1285,12 @@ class Axes(object):
             self.axes.getAxis(Location.TOP).setTimeFormat(timetickformat)    
 
         #Add graphics
+        zorder = kwargs.pop('zorder', None)
         iscurve = kwargs.pop('iscurve', False)
         graphics = []
         if isxylistdata:
             graphic = GraphicFactory.createLineString(dataset, lines)
-            self.add_graphic(graphic)
+            self.add_graphic(graphic, zorder=zorder)
             graphics.append(graphic)
         else:
             if zvalues is None:
@@ -1305,7 +1314,7 @@ class Axes(object):
                             graphic = GraphicFactory.createLineString(xdata, ydata, lines[0], iscurve)
                     else:    #>1                        
                         graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
-                    self.add_graphic(graphic)
+                    self.add_graphic(graphic, zorder=zorder)
                     graphics.append(graphic)
                 else:
                     for i in range(0, snum):
@@ -1320,7 +1329,7 @@ class Axes(object):
                 ydata = plotutil.getplotdata(ydatalist[0])
                 zdata = plotutil.getplotdata(zvalues)
                 graphic = GraphicFactory.createLineString(xdata, ydata, zdata, ls, iscurve)
-                self.add_graphic(graphic)
+                self.add_graphic(graphic, zorder=zorder)
                 graphics.append(graphic)
         self.axes.setAutoExtent()
 
@@ -1330,7 +1339,7 @@ class Axes(object):
             return graphics[0]
             
     def step(self, x, y, *args, **kwargs):
-        '''
+        """
         Make a step plot.
         
         :param x: (*array_like*) Input x data.
@@ -1342,7 +1351,7 @@ class Axes(object):
             If ‘mid’, the jumps in y occur half-way between the x-values.
         
         :returns: Step lines
-        '''    
+        """
         label = kwargs.pop('label', 'S_0')
         xdata = plotutil.getplotdata(x)
         ydata = plotutil.getplotdata(y)
@@ -1356,7 +1365,8 @@ class Axes(object):
         
         #Create graphics
         graphics = GraphicFactory.createStepLineString(xdata, ydata, fmt, where)
-        self.add_graphic(graphics)
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
         self.axes.setAutoExtent()
         return graphics 
             
@@ -1471,7 +1481,8 @@ class Axes(object):
             #Create graphics
             graphics = GraphicFactory.createPoints(xdata, ydata, pbs)
 
-        self.add_graphic(graphics)
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
         self.axes.setAutoExtent()
 
         return graphics
@@ -1722,7 +1733,8 @@ class Axes(object):
             capsize = 10
         graphics = GraphicFactory.createErrorLineString(xdata, ydata, xerrL, xerrR, yerrB, \
             yerrU, line, eline, capsize)
-        self.add_graphic(graphics)
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
         self.axes.setAutoExtent()
 
         return graphics 
@@ -1846,9 +1858,10 @@ class Axes(object):
                 not bottom is None, bottom, barbreaks)
         else:
             graphics = GraphicFactory.createBars(x.asarray(), height.asarray(), autowidth, width, not yerr is None, yerr, \
-                not bottom is None, bottom, barbreaks)        
+                not bottom is None, bottom, barbreaks)
 
-        self.add_graphic(graphics)
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
         self.axes.setAutoExtent()
         if autowidth:
             barswidth = kwargs.pop('barswidth', 0.8)
@@ -1972,9 +1985,10 @@ class Axes(object):
             
         #Create bar graphics
         graphics = GraphicFactory.createHBars(ydata, xdata, autoheight, height, not xerr is None, xerr, \
-            not left is None, left, barbreaks)  
-                      
-        self.add_graphic(graphics)
+            not left is None, left, barbreaks)
+
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
         self.axes.setAutoExtent()
         if autoheight:
             barsheight = kwargs.pop('barsheight', 0.8)
@@ -2127,9 +2141,10 @@ class Axes(object):
         
         #Create stem graphics
         graphics = GraphicFactory.createStems(xdata, ydata, linefmt, markerfmt, \
-            basefmt, bottom)       
+            basefmt, bottom)
 
-        self.add_graphic(graphics)
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
         self.axes.setAutoExtent()
 
         return linefmt
@@ -2201,7 +2216,9 @@ class Axes(object):
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
             self.axes.updateDrawExtent()
-        self.add_graphic(igraphic)
+
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(igraphic, zorder=zorder)
         #self.axes.setAutoExtent()
         self.axes.setExtent(igraphic.getExtent())
         self.axes.setDrawExtent(igraphic.getExtent())
@@ -2336,7 +2353,9 @@ class Axes(object):
             if not xaxistype is None:
                 self.set_xaxis_type(xaxistype)
                 self.axes.updateDrawExtent()
-            self.add_graphic(igraphic)
+
+            zorder = kwargs.pop('zorder', None)
+            self.add_graphic(igraphic, zorder=zorder)
             #self.setAutoExtent()
             self.axes.setExtent(igraphic.getExtent())
             self.axes.setDrawExtent(igraphic.getExtent())
@@ -2429,7 +2448,9 @@ class Axes(object):
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
             self.axes.updateDrawExtent()
-        self.add_graphic(igraphic)
+
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(igraphic, zorder=zorder)
         self.axes.setAutoExtent()
         gridline = self.axes.getGridLine()
         gridline.setTop(True)
@@ -2477,7 +2498,8 @@ class Axes(object):
         graphics = GraphicFactory.createPColorPolygons(x.asarray(), y.asarray(), a.asarray(), ls)            
         visible = kwargs.pop('visible', True)
         if visible:
-            self.add_graphic(graphics)
+            zorder = kwargs.pop('zorder', None)
+            self.add_graphic(graphics, zorder=zorder)
             self.axes.setExtent(graphics.getExtent())
             self.axes.setDrawExtent(graphics.getExtent())
         return graphics
@@ -2519,7 +2541,8 @@ class Axes(object):
         graphics = GraphicFactory.createGridPolygons(x.asarray(), y.asarray(), a.asarray(), ls)            
         visible = kwargs.pop('visible', True)
         if visible:
-            self.add_graphic(graphics)
+            zorder = kwargs.pop('zorder', None)
+            self.add_graphic(graphics, zorder=zorder)
             self.axes.setExtent(graphics.getExtent())
             self.axes.setDrawExtent(graphics.getExtent())
         return graphics
@@ -2546,7 +2569,7 @@ class Axes(object):
         return ctext
     
     def arrow(self, x, y, dx, dy, **kwargs):
-        '''
+        """
         Add an arrow to the axes.
         
         :param x: (*float*) X coordinate.
@@ -2555,20 +2578,21 @@ class Axes(object):
         :param dy: (*float*) The length of arrow along y direction.
         
         :returns: Arrow graphic.
-        '''
+        """
         if not kwargs.has_key('facecolor'):
             kwargs['facecolor'] = (51,204,255)
         apb, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         apb = plotutil.polygon2arrow(apb, **kwargs)
         graphic = GraphicFactory.createArrow(x, y, dx, dy, apb)
-            
-        self.add_graphic(graphic)
+
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphic, zorder=zorder)
         self.axes.setAutoExtent()
         
         return graphic
     
     def arrowline(self, x, y, dx=0, dy=0, **kwargs):
-        '''
+        """
         Add an arrow line to the axes.
         
         :param x: (*float or array_like*) X coordinates.
@@ -2577,7 +2601,7 @@ class Axes(object):
         :param dy: (*float*) The length of arrow along y direction. Only valid when y is float.
         
         :returns: Arrow line graphic.
-        '''
+        """
         if isinstance(x, (list, tuple)):
             x = np.array(x)
         if isinstance(y, (list, tuple)):
@@ -2590,14 +2614,15 @@ class Axes(object):
             graphic = GraphicFactory.createArrowLine(x._array, y._array, alb, iscurve)
         else:
             graphic = GraphicFactory.createArrowLine(x, y, dx, dy, alb)
-            
-        self.add_graphic(graphic)
+
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphic, zorder=zorder)
         self.axes.setAutoExtent()
         
         return graphic
         
     def annotate(self, s, xy, *args, **kwargs):
-        '''
+        """
         Annotate the point xy with text s.
         
         :param s: (*string*) The text of the annotation.
@@ -2607,7 +2632,7 @@ class Axes(object):
         :param arrowprops: (*dict*) Arrow properties.
             
         :returns: Annotation.
-        '''
+        """
         if len(args) > 0:
             xytext = args[0]
         else:
@@ -2661,13 +2686,13 @@ class Axes(object):
         pass
     
     def patch(self, x, y=None, **kwargs):
-        '''
+        """
         Create one or more filled polygons.
         
         :param x: (*array_like*) X coordinates for each vertex. X should be PolygonShape if y
             is None.
         :param y: (*array_like*) Y coordinates for each vertex.
-        '''
+        """
         lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         if y is None:
             graphics = Graphic(x, lbreak)
@@ -2676,23 +2701,25 @@ class Axes(object):
             y = plotutil.getplotdata(y)
             graphics = GraphicFactory.createPolygons(x, y, lbreak)
 
-        self.add_graphic(graphics)
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
         self.axes.setAutoExtent()
         return graphics
         
     def rectangle(self, position, curvature=None, **kwargs):
-        '''
+        """
         Create one or more filled polygons.
         
         :param position: (*list*) Position of the rectangle [x, y, width, height].
         :param curvature: (*list*) Curvature of the rectangle [x, y]. Default is None.
-        '''
+        """
         lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         if isinstance(curvature, (int, float)):
             curvature = [curvature, curvature]
         graphic = GraphicFactory.createRectangle(position, curvature, lbreak)
 
-        self.add_graphic(graphic)
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphic, zorder=zorder)
         self.axes.setAutoExtent()
         return graphic
 
@@ -2738,8 +2765,9 @@ class Axes(object):
         pb.setCaption(label)
         
         #Create graphics
-        graphics = GraphicFactory.createFillBetweenPolygons(xdata, y1, y2, where, pb)    
-        self.add_graphic(graphics)
+        graphics = GraphicFactory.createFillBetweenPolygons(xdata, y1, y2, where, pb)
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
         self.axes.setAutoExtent()
 
         return pb 
@@ -2786,8 +2814,9 @@ class Axes(object):
         pb.setCaption(label)
         
         #Create graphics
-        graphics = GraphicFactory.createFillBetweenPolygonsX(ydata, x1, x2, where, pb)    
-        self.add_graphic(graphics)
+        graphics = GraphicFactory.createFillBetweenPolygonsX(ydata, x1, x2, where, pb)
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
         self.axes.setAutoExtent()
 
         return pb
@@ -3290,7 +3319,9 @@ class Axes(object):
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
             self.axes.updateDrawExtent()
-        self.add_graphic(igraphic)
+
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(igraphic, zorder=zorder)
         self.axes.setAutoExtent()
 
         return igraphic
@@ -3389,7 +3420,9 @@ class Axes(object):
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
             self.axes.updateDrawExtent()
-        self.add_graphic(igraphic)
+
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(igraphic, zorder=zorder)
         self.axes.setAutoExtent()
 
         return igraphic
@@ -3517,7 +3550,8 @@ class Axes(object):
         igraphic = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array, 
             density, alb, isuv)
 
-        self.add_graphic(igraphic)
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(igraphic, zorder=zorder)
         self.axes.setAutoExtent()
 
         return igraphic

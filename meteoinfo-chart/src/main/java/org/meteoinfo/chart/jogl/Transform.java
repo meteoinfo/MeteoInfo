@@ -196,6 +196,9 @@ public class Transform {
      * @return Cloned transform
      */
     public Object clone() {
-        return new Transform(xmin, xmax, ymin, ymax, zmin, zmax);
+        Transform transform = new Transform(xmin, xmax, ymin, ymax, zmin, zmax);
+        transform.aspectType = this.aspectType;
+
+        return transform;
     }
 }

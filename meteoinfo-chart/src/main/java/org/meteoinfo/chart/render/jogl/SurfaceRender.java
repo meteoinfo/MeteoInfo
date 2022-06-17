@@ -77,38 +77,44 @@ public class SurfaceRender extends JOGLGraphicRender {
 
     @Override
     public void setTransform(Transform transform) {
-        super.setTransform(transform);
+        boolean updateBuffer = true;
+        if (this.transform != null && this.transform.equals(transform))
+            updateBuffer = false;
 
-        float[] vertexData = surfaceGraphic.getVertexPosition(this.transform);
-        FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
-        surfaceGraphic.calculateNormalVectors(vertexData);
-        FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(surfaceGraphic.getVertexNormal());
-        sizePosition = vertexBuffer.capacity() * Float.BYTES;
-        sizeNormal = normalBuffer.capacity() * Float.BYTES;
-        int totalSize = sizePosition + sizeNormal;
+        super.setTransform((Transform) transform.clone());
 
-        FloatBuffer ctBuffer;
-        if (surfaceGraphic.isUsingTexture()) {
-            ctBuffer = GLBuffers.newDirectFloatBuffer(surfaceGraphic.getVertexTexture());
-        } else {
-            ctBuffer = GLBuffers.newDirectFloatBuffer(surfaceGraphic.getVertexColor());
+        if (updateBuffer) {
+            float[] vertexData = surfaceGraphic.getVertexPosition(this.transform);
+            FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
+            surfaceGraphic.calculateNormalVectors(vertexData);
+            FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(surfaceGraphic.getVertexNormal());
+            sizePosition = vertexBuffer.capacity() * Float.BYTES;
+            sizeNormal = normalBuffer.capacity() * Float.BYTES;
+            int totalSize = sizePosition + sizeNormal;
+
+            FloatBuffer ctBuffer;
+            if (surfaceGraphic.isUsingTexture()) {
+                ctBuffer = GLBuffers.newDirectFloatBuffer(surfaceGraphic.getVertexTexture());
+            } else {
+                ctBuffer = GLBuffers.newDirectFloatBuffer(surfaceGraphic.getVertexColor());
+            }
+            sizeColorTexture = ctBuffer.capacity() * Float.BYTES;
+            totalSize += sizeColorTexture;
+
+            gl.glGenBuffers(2, vbo);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, totalSize,
+                    ByteBuffer.allocateDirect(totalSize).asFloatBuffer(), GL.GL_STATIC_DRAW);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeNormal, normalBuffer);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal, sizeColorTexture, ctBuffer);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+            IntBuffer indexBuffer = GLBuffers.newDirectIntBuffer(surfaceGraphic.getVertexIndices());
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
+            gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * Integer.BYTES, indexBuffer, GL.GL_STATIC_DRAW);
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
-        sizeColorTexture = ctBuffer.capacity() * Float.BYTES;
-        totalSize += sizeColorTexture;
-
-        gl.glGenBuffers(2, vbo);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, totalSize,
-                ByteBuffer.allocateDirect(totalSize).asFloatBuffer(), GL.GL_STATIC_DRAW);
-        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
-        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeNormal, normalBuffer);
-        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal, sizeColorTexture, ctBuffer);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-
-        IntBuffer indexBuffer = GLBuffers.newDirectIntBuffer(surfaceGraphic.getVertexIndices());
-        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
-        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * Integer.BYTES, indexBuffer, GL.GL_STATIC_DRAW);
-        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     void bindingTextures() {

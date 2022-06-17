@@ -62,23 +62,29 @@ public class MeshRender extends JOGLGraphicRender {
 
     @Override
     public void setTransform(Transform transform) {
-        super.setTransform(transform);
+        boolean updateBuffer = true;
+        if (this.transform != null && this.transform.equals(transform))
+            updateBuffer = false;
 
-        vertexPosition = meshGraphic.getVertexData(this.transform);
-        FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
-        meshGraphic.calculateNormalVectors(vertexPosition);
-        FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
-        int sizePosition = vertexBuffer.capacity() * Float.BYTES;
-        int sizeNormal = normalBuffer.capacity() * Float.BYTES;
+        super.setTransform((Transform) transform.clone());
 
-        gl.glGenBuffers(1, vbo);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal,
-                ByteBuffer.allocateDirect(sizePosition + sizeNormal).asFloatBuffer(), GL.GL_STATIC_DRAW);
-        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vertexBuffer.capacity() * Float.BYTES, vertexBuffer);
-        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, vertexBuffer.capacity() * Float.BYTES,
-                normalBuffer.capacity() * Float.BYTES, normalBuffer);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+        if (updateBuffer) {
+            vertexPosition = meshGraphic.getVertexData(this.transform);
+            FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
+            meshGraphic.calculateNormalVectors(vertexPosition);
+            FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
+            int sizePosition = vertexBuffer.capacity() * Float.BYTES;
+            int sizeNormal = normalBuffer.capacity() * Float.BYTES;
+
+            gl.glGenBuffers(1, vbo);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal,
+                    ByteBuffer.allocateDirect(sizePosition + sizeNormal).asFloatBuffer(), GL.GL_STATIC_DRAW);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vertexBuffer.capacity() * Float.BYTES, vertexBuffer);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, vertexBuffer.capacity() * Float.BYTES,
+                    normalBuffer.capacity() * Float.BYTES, normalBuffer);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+        }
     }
 
     void compileShaders() throws Exception {

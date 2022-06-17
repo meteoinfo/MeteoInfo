@@ -107,15 +107,21 @@ public class VolumeRender extends JOGLGraphicRender {
 
     @Override
     public void setTransform(Transform transform) {
-        super.setTransform(transform);
+        boolean updateBuffer = true;
+        if (this.transform != null && this.transform.equals(transform))
+            updateBuffer = false;
 
-        float[] vertexBufferData = volume.getVertexBufferData(this.transform);
+        super.setTransform((Transform) transform.clone());
 
-        gl.glGenBuffers(1, vbo);
-        gl.glBindBuffer(GL_ARRAY_BUFFER, vbo.get(0));
-        gl.glBufferData(GL_ARRAY_BUFFER, vertexBufferData.length * Float.BYTES,
-                Buffers.newDirectFloatBuffer(vertexBufferData), GL_STATIC_DRAW);
-        gl.glBindBuffer(GL_ARRAY_BUFFER, 0);
+        if (updateBuffer) {
+            float[] vertexBufferData = volume.getVertexBufferData(this.transform);
+
+            gl.glGenBuffers(1, vbo);
+            gl.glBindBuffer(GL_ARRAY_BUFFER, vbo.get(0));
+            gl.glBufferData(GL_ARRAY_BUFFER, vertexBufferData.length * Float.BYTES,
+                    Buffers.newDirectFloatBuffer(vertexBufferData), GL_STATIC_DRAW);
+            gl.glBindBuffer(GL_ARRAY_BUFFER, 0);
+        }
     }
 
     void bindingTextures() {

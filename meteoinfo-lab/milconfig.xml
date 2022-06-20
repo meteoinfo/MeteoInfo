@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf">
+  <Path OpenPath="D:\MyProgram\java\MeteoInfoDev\MeteoInfo\meteoinfo-lab">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\gui"/>
@@ -10,12 +10,11 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
-    <RecentFolder Folder="D:\Temp\test\radar"/>
-    <RecentFolder Folder="D:\Temp\test"/>
-    <RecentFolder Folder="D:\Temp\test\demo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
+    <RecentFolder Folder="D:\Temp\test"/>
+    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\MeteoInfo\meteoinfo-lab"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -36,5 +35,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1403,819"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1352,799"/>
 </MeteoInfo>

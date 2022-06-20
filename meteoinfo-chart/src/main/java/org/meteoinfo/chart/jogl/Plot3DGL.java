@@ -4482,6 +4482,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     @Override
     public void init(GLAutoDrawable drawable) {
         this.drawable = drawable;
+        drawable.getGL().setSwapInterval(1);
         //drawable.getContext().makeCurrent();
         GL2 gl = drawable.getGL().getGL2();
         this.gl = gl;

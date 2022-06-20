@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.l2fprod</groupId>
             <artifactId>l2fprod-common-all</artifactId>
-            <version>0.1</version>
+            <version>6.9.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

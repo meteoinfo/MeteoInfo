@@ -7239,7 +7239,7 @@ public class GraphicFactory {
      * @param ls Legend scheme
      * @return Surface graphic
      */
-    public static SurfaceGraphic surface(Array xa, Array ya, Array za, LegendScheme ls) {
+    public static MeshGraphic surface(Array xa, Array ya, Array za, LegendScheme ls) {
         return surface(xa, ya, za, za, ls);
     }
 
@@ -7253,13 +7253,13 @@ public class GraphicFactory {
      * @param ls Legend scheme
      * @return Surface graphic
      */
-    public static SurfaceGraphic surface(Array xa, Array ya, Array za, Array va, LegendScheme ls) {
+    public static MeshGraphic surface(Array xa, Array ya, Array za, Array va, LegendScheme ls) {
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
         va = va.copyIfView();
 
-        SurfaceGraphic surfaceGraphic = new SurfaceGraphic();
+        MeshGraphic surfaceGraphic = new MeshGraphic();
         int[] shape = xa.getShape();
         int colNum = shape[1];
         int rowNum = shape[0];
@@ -7294,14 +7294,14 @@ public class GraphicFactory {
      * @param ls     Legend scheme
      * @return Surface graphics
      */
-    public static List<SurfaceGraphic> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
-                                              List<Number> ySlice, List<Number> zSlice, LegendScheme ls) throws InvalidRangeException {
+    public static List<MeshGraphic> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+                                          List<Number> ySlice, List<Number> zSlice, LegendScheme ls) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        List<SurfaceGraphic> sgs = new ArrayList<>();
+        List<MeshGraphic> sgs = new ArrayList<>();
 
         int dim1, dim2;
         float x, y, z;
@@ -7315,7 +7315,7 @@ public class GraphicFactory {
             Array r = ArrayUtil.slice(data, 2, xa, x);
             if (r != null) {
                 Index index = r.getIndex();
-                SurfaceGraphic graphic = new SurfaceGraphic();
+                MeshGraphic graphic = new MeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -7345,7 +7345,7 @@ public class GraphicFactory {
             Array r = ArrayUtil.slice(data, 1, ya, y);
             if (r != null) {
                 Index index = r.getIndex();
-                SurfaceGraphic graphic = new SurfaceGraphic();
+                MeshGraphic graphic = new MeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -7375,7 +7375,7 @@ public class GraphicFactory {
             Array r = ArrayUtil.slice(data, 0, za, z);
             if (r != null) {
                 Index index = r.getIndex();
-                SurfaceGraphic graphic = new SurfaceGraphic();
+                MeshGraphic graphic = new MeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -7413,14 +7413,14 @@ public class GraphicFactory {
      * @param transferFunction Transfer function
      * @return Surface graphics
      */
-    public static List<SurfaceGraphic> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
-                                             List<Number> ySlice, List<Number> zSlice, TransferFunction transferFunction) throws InvalidRangeException {
+    public static List<MeshGraphic> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+                                          List<Number> ySlice, List<Number> zSlice, TransferFunction transferFunction) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        List<SurfaceGraphic> sgs = new ArrayList<>();
+        List<MeshGraphic> sgs = new ArrayList<>();
 
         int dim1, dim2;
         float x, y, z;
@@ -7434,7 +7434,7 @@ public class GraphicFactory {
             Array r = ArrayUtil.slice(data, 2, xa, x);
             if (r != null) {
                 Index index = r.getIndex();
-                SurfaceGraphic graphic = new SurfaceGraphic();
+                MeshGraphic graphic = new MeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -7464,7 +7464,7 @@ public class GraphicFactory {
             Array r = ArrayUtil.slice(data, 1, ya, y);
             if (r != null) {
                 Index index = r.getIndex();
-                SurfaceGraphic graphic = new SurfaceGraphic();
+                MeshGraphic graphic = new MeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -7494,7 +7494,7 @@ public class GraphicFactory {
             Array r = ArrayUtil.slice(data, 0, za, z);
             if (r != null) {
                 Index index = r.getIndex();
-                SurfaceGraphic graphic = new SurfaceGraphic();
+                MeshGraphic graphic = new MeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -7531,8 +7531,8 @@ public class GraphicFactory {
      * @param method Interpolation method - nearest or linear
      * @return Surface graphics
      */
-    public static SurfaceGraphic slice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
-                                        LegendScheme ls, InterpolationMethod method) throws InvalidRangeException {
+    public static MeshGraphic slice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
+                                    LegendScheme ls, InterpolationMethod method) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
@@ -7543,7 +7543,7 @@ public class GraphicFactory {
         Array x2d = rxy[4];
         Array y2d = rxy[5];
         Array z2d = rxy[6];
-        SurfaceGraphic graphic = new SurfaceGraphic();
+        MeshGraphic graphic = new MeshGraphic();
         int[] shape = r.getShape();
         int colNum = shape[1];
         int rowNum = shape[0];
@@ -7578,8 +7578,8 @@ public class GraphicFactory {
      * @param ls     Legend scheme
      * @return Surface graphics
      */
-    public static List<SurfaceGraphic> slice(Array data, Array xa, Array ya, Array za, Array xSlice,
-                                              Array ySlice, Array zSlice, LegendScheme ls) throws InvalidRangeException {
+    public static List<MeshGraphic> slice(Array data, Array xa, Array ya, Array za, Array xSlice,
+                                          Array ySlice, Array zSlice, LegendScheme ls) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
@@ -7588,11 +7588,11 @@ public class GraphicFactory {
         ySlice = ySlice.copyIfView();
         zSlice = zSlice.copyIfView();
 
-        List<SurfaceGraphic> sgs = new ArrayList<>();
+        List<MeshGraphic> sgs = new ArrayList<>();
 
         RectNearestInterpolator3D interpolator3D = new RectNearestInterpolator3D(xa, ya, za, data);
         Array r = interpolator3D.interpolate(xSlice, ySlice, zSlice);
-        SurfaceGraphic graphic = new SurfaceGraphic();
+        MeshGraphic graphic = new MeshGraphic();
         int[] shape = r.getShape();
         int colNum = shape[1];
         int rowNum = shape[0];
@@ -7626,8 +7626,8 @@ public class GraphicFactory {
      * @param pb       Polygon break
      * @return Graphics
      */
-    public static MeshGraphic isosurface(Array data, Array x, Array y, Array z,
-                                               float isoLevel, PolygonBreak pb) {
+    public static TriMeshGraphic isosurface(Array data, Array x, Array y, Array z,
+                                            float isoLevel, PolygonBreak pb) {
         x = x.copyIfView();
         y = y.copyIfView();
         z = z.copyIfView();
@@ -7643,7 +7643,7 @@ public class GraphicFactory {
             pos += 3;
         }
 
-        MeshGraphic meshGraphic = new MeshGraphic();
+        TriMeshGraphic meshGraphic = new TriMeshGraphic();
         meshGraphic.setLegendBreak(pb);
         meshGraphic.setVertexData(vertexData);
 
@@ -7662,8 +7662,8 @@ public class GraphicFactory {
      * @param nThreads Thread number
      * @return Graphics
      */
-    public static MeshGraphic isosurface(final Array data, final Array x, final Array y, final Array z,
-                                               final float isoLevel, PolygonBreak pb, int nThreads) {
+    public static TriMeshGraphic isosurface(final Array data, final Array x, final Array y, final Array z,
+                                            final float isoLevel, PolygonBreak pb, int nThreads) {
         // TIMER
         ArrayList<Thread> threads = new ArrayList<>();
         final ArrayList<ArrayList<float[]>> results = new ArrayList<>();
@@ -7730,7 +7730,7 @@ public class GraphicFactory {
             }
         }
 
-        MeshGraphic meshGraphic = new MeshGraphic();
+        TriMeshGraphic meshGraphic = new TriMeshGraphic();
         meshGraphic.setLegendBreak(pb);
         meshGraphic.setVertexData(vertexData);
 

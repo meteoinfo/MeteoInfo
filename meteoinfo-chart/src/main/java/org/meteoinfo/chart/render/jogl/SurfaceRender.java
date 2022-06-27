@@ -7,14 +7,11 @@ import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import org.meteoinfo.chart.graphic.MeshGraphic;
-import org.meteoinfo.chart.graphic.SurfaceGraphic;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 
-import java.awt.image.BufferedImage;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -23,7 +20,7 @@ import static com.jogamp.opengl.GL.*;
 
 public class SurfaceRender extends JOGLGraphicRender {
 
-    private SurfaceGraphic surfaceGraphic;
+    private MeshGraphic surfaceGraphic;
     private IntBuffer vbo;
     private IntBuffer vao;
     private Program program;
@@ -59,7 +56,7 @@ public class SurfaceRender extends JOGLGraphicRender {
      * @param gl The opengl pipeline
      * @param surfaceGraphic The SurfaceGraphic
      */
-    public SurfaceRender(GL2 gl, SurfaceGraphic surfaceGraphic) {
+    public SurfaceRender(GL2 gl, MeshGraphic surfaceGraphic) {
         this(gl);
 
         this.surfaceGraphic = surfaceGraphic;

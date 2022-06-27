@@ -82,20 +82,8 @@ public class SphericalTransform {
      * @return Transformed graphic
      */
     public static Graphic transform(Graphic graphic) {
-        if (graphic instanceof SurfaceGraphics) {
-            SurfaceGraphics surfaceGraphics = (SurfaceGraphics) graphic;
-            PointZ[][] vertices = surfaceGraphics.getVertices();
-            int dim1 = surfaceGraphics.getDim1();
-            int dim2 = surfaceGraphics.getDim2();
-            for (int i = 0; i < dim1; i++) {
-                for (int j = 0; j < dim2; j++) {
-                    vertices[i][j] = transform(vertices[i][j]);
-                }
-            }
-            surfaceGraphics.setVertices(vertices);
-            return surfaceGraphics;
-        } else if (graphic instanceof SurfaceGraphic) {
-            SurfaceGraphic surfaceGraphic = (SurfaceGraphic) graphic;
+        if (graphic instanceof MeshGraphic) {
+            MeshGraphic surfaceGraphic = (MeshGraphic) graphic;
             float[] vertexPosition = surfaceGraphic.getVertexPosition();
             Vector3f vector3f;
             for (int i = 0; i < vertexPosition.length; i+=3) {
@@ -119,8 +107,8 @@ public class SphericalTransform {
             }
             isosurfaceGraphics.setTriangles(triangles);
             return isosurfaceGraphics;
-        } else if (graphic instanceof MeshGraphic) {
-            MeshGraphic meshGraphic = (MeshGraphic) graphic;
+        } else if (graphic instanceof TriMeshGraphic) {
+            TriMeshGraphic meshGraphic = (TriMeshGraphic) graphic;
             float[] vertexData = meshGraphic.getVertexData();
             Vector3f vector3f;
             for (int i = 0; i < vertexData.length; i+=3) {

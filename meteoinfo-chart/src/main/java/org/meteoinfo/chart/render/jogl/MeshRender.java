@@ -3,11 +3,10 @@ package org.meteoinfo.chart.render.jogl;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.MeshGraphic;
+import org.meteoinfo.chart.graphic.TriMeshGraphic;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
@@ -19,7 +18,7 @@ import java.nio.IntBuffer;
 
 public class MeshRender extends JOGLGraphicRender {
 
-    private MeshGraphic meshGraphic;
+    private TriMeshGraphic meshGraphic;
     private IntBuffer vbo;
     //private IntBuffer vboNormal;
     private Program program;
@@ -50,7 +49,7 @@ public class MeshRender extends JOGLGraphicRender {
      * @param gl The opengl pipeline
      * @param meshGraphic The MeshGraphic
      */
-    public MeshRender(GL2 gl, MeshGraphic meshGraphic) {
+    public MeshRender(GL2 gl, TriMeshGraphic meshGraphic) {
         this(gl);
 
         this.meshGraphic = meshGraphic;

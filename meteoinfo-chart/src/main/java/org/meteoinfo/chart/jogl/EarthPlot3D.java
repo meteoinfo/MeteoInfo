@@ -4,32 +4,23 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import org.apache.commons.imaging.ImageReadException;
-import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.ChartColorBar;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.ChartText3D;
-import org.meteoinfo.chart.axis.Axis;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.GraphicFactory;
-import org.meteoinfo.chart.graphic.SurfaceGraphic;
-import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
-import org.meteoinfo.chart.plot.GridLine;
+import org.meteoinfo.chart.graphic.MeshGraphic;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
-import org.meteoinfo.geometry.shape.PolygonZ;
-import org.meteoinfo.geometry.shape.PolygonZShape;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -39,13 +30,12 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EarthPlot3D extends Plot3DGL {
     // <editor-fold desc="Variables">
     private float radius = 6371.f;
-    private SurfaceGraphic surface;
+    private MeshGraphic surface;
     private Extent3D dataExtent;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -187,7 +177,7 @@ public class EarthPlot3D extends Plot3DGL {
      * Set earth surface
      * @param n The sphere has n*n faces
      */
-    public SurfaceGraphic earthSurface(int n) {
+    public MeshGraphic earthSurface(int n) {
         Array lon = ArrayUtil.lineSpace(-180.f, 180.f, n + 1, true);
         Array lat = ArrayUtil.lineSpace(-90.f, 90.f, n + 1, true);
         lat = lat.flip(0).copy();

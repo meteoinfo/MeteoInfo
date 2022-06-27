@@ -30,13 +30,8 @@ import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.shape.ImageShape;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.image.ImageUtil;
-import org.meteoinfo.math.interpolate.InterpUtil;
-import org.meteoinfo.math.interpolate.InterpolationMethod;
-import org.meteoinfo.math.interpolate.RectNearestInterpolator3D;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
-import org.meteoinfo.ndarray.InvalidRangeException;
-import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.w3c.dom.Element;
 
 import javax.imageio.*;
@@ -209,257 +204,6 @@ public class JOGLUtil {
     }
 
     /**
-     * Create surface graphics
-     *
-     * @param xa X coordinate array
-     * @param ya Y coordinate array
-     * @param za Z coordinate array
-     * @param ls Legend scheme
-     * @return Surface graphics
-     */
-    public static SurfaceGraphics surface(Array xa, Array ya, Array za, LegendScheme ls) {
-        xa = xa.copyIfView();
-        ya = ya.copyIfView();
-        za = za.copyIfView();
-
-        SurfaceGraphics graphics = new SurfaceGraphics();
-        int[] shape = xa.getShape();
-        int colNum = shape[1];
-        int rowNum = shape[0];
-        int idx;
-        PointZ[][] vertices = new PointZ[rowNum][colNum];
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
-                idx = i * colNum + j;
-                vertices[i][j] = new PointZ(xa.getDouble(idx), ya.getDouble(idx), za.getDouble(idx), za.getDouble(idx));
-            }
-        }
-        graphics.setVertices(vertices);
-        graphics.setLegendScheme(ls);
-        return graphics;
-    }
-
-    /**
-     * Create surface graphics
-     *
-     * @param xa X coordinate array
-     * @param ya Y coordinate array
-     * @param za Z coordinate array
-     * @param va Data array
-     * @param ls Legend scheme
-     * @return Surface graphics
-     */
-    public static SurfaceGraphics surface(Array xa, Array ya, Array za, Array va, LegendScheme ls) {
-        xa = xa.copyIfView();
-        ya = ya.copyIfView();
-        za = za.copyIfView();
-        va = va.copyIfView();
-
-        SurfaceGraphics graphics = new SurfaceGraphics();
-        int[] shape = xa.getShape();
-        int colNum = shape[1];
-        int rowNum = shape[0];
-        int idx;
-        PointZ[][] vertices = new PointZ[rowNum][colNum];
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
-                idx = i * colNum + j;
-                vertices[i][j] = new PointZ(xa.getDouble(idx), ya.getDouble(idx), za.getDouble(idx), va.getDouble(idx));
-            }
-        }
-        graphics.setVertices(vertices);
-        graphics.setLegendScheme(ls);
-        return graphics;
-    }
-
-    /**
-     * Create slice graphics
-     *
-     * @param data   Data array - 3D
-     * @param xa     X coordinate array - 1D
-     * @param ya     Y coordinate array - 1D
-     * @param za     Z coordinate array - 1D
-     * @param xSlice X slice list
-     * @param ySlice Y slice list
-     * @param zSlice Z slice list
-     * @param ls     Legend scheme
-     * @return Surface graphics
-     */
-    public static List<SurfaceGraphics> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
-                                              List<Number> ySlice, List<Number> zSlice, LegendScheme ls) throws InvalidRangeException {
-        data = data.copyIfView();
-        xa = xa.copyIfView();
-        ya = ya.copyIfView();
-        za = za.copyIfView();
-
-        List<SurfaceGraphics> sgs = new ArrayList<>();
-
-        int dim1, dim2;
-        double x, y, z;
-
-        //X slices
-        dim1 = (int) za.getSize();
-        dim2 = (int) ya.getSize();
-        for (int s = 0; s < xSlice.size(); s++) {
-            x = xSlice.get(s).doubleValue();
-            Array r = ArrayUtil.slice(data, 2, xa, x);
-            if (r != null) {
-                Index index = r.getIndex();
-                SurfaceGraphics graphics = new SurfaceGraphics();
-                PointZ[][] vertices = new PointZ[dim1][dim2];
-                for (int i = 0; i < dim1; i++) {
-                    z = za.getDouble(i);
-                    for (int j = 0; j < dim2; j++) {
-                        y = ya.getDouble(j);
-                        vertices[i][j] = new PointZ(x, y, z, r.getDouble(index.set(i, j)));
-                    }
-                }
-                graphics.setVertices(vertices);
-                graphics.setLegendScheme(ls);
-                sgs.add(graphics);
-            }
-        }
-
-        //Y slices
-        dim1 = (int) za.getSize();
-        dim2 = (int) xa.getSize();
-        for (int s = 0; s < ySlice.size(); s++) {
-            y = ySlice.get(s).doubleValue();
-            Array r = ArrayUtil.slice(data, 1, ya, y);
-            if (r != null) {
-                Index index = r.getIndex();
-                SurfaceGraphics graphics = new SurfaceGraphics();
-                PointZ[][] vertices = new PointZ[dim1][dim2];
-                for (int i = 0; i < dim1; i++) {
-                    z = za.getDouble(i);
-                    for (int j = 0; j < dim2; j++) {
-                        x = xa.getDouble(j);
-                        vertices[i][j] = new PointZ(x, y, z, r.getDouble(index.set(i, j)));
-                    }
-                }
-                graphics.setVertices(vertices);
-                graphics.setLegendScheme(ls);
-                sgs.add(graphics);
-            }
-        }
-
-        //Z slices
-        dim1 = (int) ya.getSize();
-        dim2 = (int) xa.getSize();
-        for (int s = 0; s < zSlice.size(); s++) {
-            z = zSlice.get(s).doubleValue();
-            Array r = ArrayUtil.slice(data, 0, za, z);
-            if (r != null) {
-                Index index = r.getIndex();
-                SurfaceGraphics graphics = new SurfaceGraphics();
-                PointZ[][] vertices = new PointZ[dim1][dim2];
-                for (int i = 0; i < dim1; i++) {
-                    y = ya.getDouble(i);
-                    for (int j = 0; j < dim2; j++) {
-                        x = xa.getDouble(j);
-                        vertices[i][j] = new PointZ(x, y, z, r.getDouble(index.set(i, j)));
-                    }
-                }
-                graphics.setVertices(vertices);
-                graphics.setLegendScheme(ls);
-                sgs.add(graphics);
-            }
-        }
-
-        return sgs;
-    }
-
-    /**
-     * Create xy slice graphics
-     *
-     * @param data   Data array - 3D
-     * @param xa     X coordinate array - 1D
-     * @param ya     Y coordinate array - 1D
-     * @param za     Z coordinate array - 1D
-     * @param xySlice XY slice list - [x1,y1,x2,y2]
-     * @param ls     Legend scheme
-     * @param method Interpolation method - nearest or linear
-     * @return Surface graphics
-     */
-    public static SurfaceGraphics slice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
-                                        LegendScheme ls, InterpolationMethod method) throws InvalidRangeException {
-        data = data.copyIfView();
-        xa = xa.copyIfView();
-        ya = ya.copyIfView();
-        za = za.copyIfView();
-
-        Array[] rxy = InterpUtil.sliceXY(xa, ya, za, data, xySlice, method);
-        Array r = rxy[0];
-        Array x2d = rxy[4];
-        Array y2d = rxy[5];
-        Array z2d = rxy[6];
-        SurfaceGraphics graphics = new SurfaceGraphics();
-        int[] shape = r.getShape();
-        int colNum = shape[1];
-        int rowNum = shape[0];
-        int idx;
-        PointZ[][] vertices = new PointZ[rowNum][colNum];
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
-                idx = i * colNum + j;
-                vertices[i][j] = new PointZ(x2d.getDouble(idx), y2d.getDouble(idx),
-                        z2d.getDouble(idx), r.getDouble(idx));
-            }
-        }
-        graphics.setVertices(vertices);
-        graphics.setLegendScheme(ls);
-
-        return graphics;
-    }
-
-    /**
-     * Create slice graphics
-     *
-     * @param data   Data array - 3D
-     * @param xa     X coordinate array - 1D
-     * @param ya     Y coordinate array - 1D
-     * @param za     Z coordinate array - 1D
-     * @param xSlice X slice list
-     * @param ySlice Y slice list
-     * @param zSlice Z slice list
-     * @param ls     Legend scheme
-     * @return Surface graphics
-     */
-    public static List<SurfaceGraphics> slice(Array data, Array xa, Array ya, Array za, Array xSlice,
-                                              Array ySlice, Array zSlice, LegendScheme ls) throws InvalidRangeException {
-        data = data.copyIfView();
-        xa = xa.copyIfView();
-        ya = ya.copyIfView();
-        za = za.copyIfView();
-        xSlice = xSlice.copyIfView();
-        ySlice = ySlice.copyIfView();
-        zSlice = zSlice.copyIfView();
-
-        List<SurfaceGraphics> sgs = new ArrayList<>();
-
-        RectNearestInterpolator3D interpolator3D = new RectNearestInterpolator3D(xa, ya, za, data);
-        Array r = interpolator3D.interpolate(xSlice, ySlice, zSlice);
-        SurfaceGraphics graphics = new SurfaceGraphics();
-        int[] shape = r.getShape();
-        int colNum = shape[1];
-        int rowNum = shape[0];
-        int idx;
-        PointZ[][] vertices = new PointZ[rowNum][colNum];
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
-                idx = i * colNum + j;
-                vertices[i][j] = new PointZ(xSlice.getDouble(idx), ySlice.getDouble(idx),
-                        zSlice.getDouble(idx), r.getDouble(idx));
-            }
-        }
-        graphics.setVertices(vertices);
-        graphics.setLegendScheme(ls);
-        sgs.add(graphics);
-
-        return sgs;
-    }
-
-    /**
      * Create isosurface graphics
      *
      * @param data     3d data array
@@ -487,7 +231,7 @@ public class JOGLUtil {
             pos += 3;
         }
 
-        MeshGraphic meshGraphic = new MeshGraphic();
+        TriMeshGraphic meshGraphic = new TriMeshGraphic();
         meshGraphic.setLegendBreak(pb);
         meshGraphic.setVertexData(vertexData);
 
@@ -610,7 +354,7 @@ public class JOGLUtil {
             }
         }
 
-        MeshGraphic meshGraphic = new MeshGraphic();
+        TriMeshGraphic meshGraphic = new TriMeshGraphic();
         meshGraphic.setLegendBreak(pb);
         meshGraphic.setVertexData(vertexData);
 

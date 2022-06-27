@@ -30,8 +30,8 @@ import org.meteoinfo.chart.plot.GridLine;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.chart.render.jogl.JOGLGraphicRender;
+import org.meteoinfo.chart.render.jogl.TriMeshRender;
 import org.meteoinfo.chart.render.jogl.MeshRender;
-import org.meteoinfo.chart.render.jogl.SurfaceRender;
 import org.meteoinfo.chart.render.jogl.VolumeRender;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
@@ -93,14 +93,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected final Axis yAxis;
     protected final Axis zAxis;
     protected List<ZAxisOption> zAxisLocations;
-    //protected float xmin, xmax = 1.0f, ymin;
-    //protected float ymax = 1.0f, zmin, zmax = 1.0f;
     protected Transform transform = new Transform();
     protected boolean clipPlane = true;
     protected boolean axesZoom = false;
 
     protected Color boxColor = Color.getHSBColor(0f, 0f, 0.95f);
-    //protected Color lineBoxColor = new Color(220, 220, 220);
 
     protected boolean boxed, mesh, scaleBox, displayXY, displayZ,
             drawBoundingBox, hideOnDrag, drawBase;
@@ -129,6 +126,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected GLAutoDrawable drawable;
 
     protected Map<Graphic, JOGLGraphicRender> renderMap = new HashMap<>();
+    protected boolean alwaysUpdateBuffers = false;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -1296,6 +1294,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
             this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
             this.doScreenShot = false;
         }
+
+        //Disable always update buffers
+        if (this.alwaysUpdateBuffers)
+            this.alwaysUpdateBuffers = false;
     }
 
     private void disableClipPlane(GL2 gl) {
@@ -2383,28 +2385,28 @@ public class Plot3DGL extends Plot implements GLEventListener {
             if (graphic instanceof MeshGraphic) {
                 //this.drawSurface(gl, (SurfaceGraphics) graphic);
                 if (!this.renderMap.containsKey(graphic)) {
-                    renderMap.put(graphic, new SurfaceRender(gl, (MeshGraphic) graphic));
+                    renderMap.put(graphic, new MeshRender(gl, (MeshGraphic) graphic));
                 }
-                SurfaceRender surfaceRender = (SurfaceRender) renderMap.get(graphic);
-                surfaceRender.setTransform(this.transform);
-                surfaceRender.setOrthographic(this.orthographic);
-                surfaceRender.setLighting(this.lighting);
-                surfaceRender.updateMatrix();
-                surfaceRender.draw();
+                MeshRender meshRender = (MeshRender) renderMap.get(graphic);
+                meshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                meshRender.setOrthographic(this.orthographic);
+                meshRender.setLighting(this.lighting);
+                meshRender.updateMatrix();
+                meshRender.draw();
             } else if (graphic instanceof IsosurfaceGraphics) {
                 this.drawIsosurface(gl, (IsosurfaceGraphics) graphic);
             } else if (graphic instanceof ParticleGraphics) {
                 this.drawParticles(gl, (ParticleGraphics) graphic);
             } else if (graphic instanceof TriMeshGraphic) {
                 if (!this.renderMap.containsKey(graphic)) {
-                    renderMap.put(graphic, new MeshRender(gl, (TriMeshGraphic) graphic));
+                    renderMap.put(graphic, new TriMeshRender(gl, (TriMeshGraphic) graphic));
                 }
-                MeshRender meshRender = (MeshRender) renderMap.get(graphic);
-                meshRender.setTransform(this.transform);
-                meshRender.setOrthographic(this.orthographic);
-                meshRender.setLighting(this.lighting);
-                meshRender.updateMatrix();
-                meshRender.draw();
+                TriMeshRender triMeshRender = (TriMeshRender) renderMap.get(graphic);
+                triMeshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                triMeshRender.setOrthographic(this.orthographic);
+                triMeshRender.setLighting(this.lighting);
+                triMeshRender.updateMatrix();
+                triMeshRender.draw();
             } else if (graphic instanceof VolumeGraphic) {
                 try {
                     if (this.clipPlane)
@@ -2413,7 +2415,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                         renderMap.put(graphic, new VolumeRender(gl, (VolumeGraphic) graphic));
                     }
                     VolumeRender volumeRender = (VolumeRender) renderMap.get(graphic);
-                    volumeRender.setTransform(this.transform);
+                    volumeRender.setTransform(this.transform, this.alwaysUpdateBuffers);
                     volumeRender.setOrthographic(this.orthographic);
                     volumeRender.updateMatrix();
                     volumeRender.draw();
@@ -4169,10 +4171,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
     @Override
     public void dispose(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
-        /*if (this.volumeRender != null) {
-            this.volumeRender.dispose();
-        }*/
         Program.destroyAllPrograms(gl);
+        this.alwaysUpdateBuffers = true;
     }
 
     @Override

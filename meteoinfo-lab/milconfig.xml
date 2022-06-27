@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\gui"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Temp\test"/>
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\MeteoInfo\meteoinfo-lab"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW"/>
@@ -16,17 +15,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface\isosurface_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow\geoshow_image_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_alpha_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\plot_cuace_3d_volume_specular.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface\isosurface_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow\geoshow_image_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_alpha_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\plot_cuace_3d_volume_specular.py"/>
     </RecentFiles>
   </File>
   <Font>

@@ -106,9 +106,9 @@ public class VolumeRender extends JOGLGraphicRender {
     }
 
     @Override
-    public void setTransform(Transform transform) {
+    public void setTransform(Transform transform, boolean alwaysUpdateBuffers) {
         boolean updateBuffer = true;
-        if (this.transform != null && this.transform.equals(transform))
+        if (!alwaysUpdateBuffers && this.transform != null && this.transform.equals(transform))
             updateBuffer = false;
 
         super.setTransform((Transform) transform.clone());
@@ -121,6 +121,15 @@ public class VolumeRender extends JOGLGraphicRender {
             gl.glBufferData(GL_ARRAY_BUFFER, vertexBufferData.length * Float.BYTES,
                     Buffers.newDirectFloatBuffer(vertexBufferData), GL_STATIC_DRAW);
             gl.glBindBuffer(GL_ARRAY_BUFFER, 0);
+        }
+
+        if (alwaysUpdateBuffers) {
+            this.bindingTextures();
+            try {
+                this.compileShaders();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

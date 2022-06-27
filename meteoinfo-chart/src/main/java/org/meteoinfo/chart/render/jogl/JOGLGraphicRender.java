@@ -65,6 +65,15 @@ public abstract class JOGLGraphicRender implements GraphicRender {
     }
 
     /**
+     * Set transform
+     * @param value Transform
+     * @param alwaysUpdateBuffers Always update buffers or not
+     */
+    public void setTransform(Transform value, boolean alwaysUpdateBuffers) {
+        this.transform = value;
+    }
+
+    /**
      * Get view port width
      * @return View port width
      */

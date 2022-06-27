@@ -119,7 +119,7 @@ def interpolate_1d_bak(x, xp, *args, **kwargs):
         return ret[0]
 
 def interpolate_1d(x, xp, *args, **kwargs):
-    '''
+    """
     Interpolation over a specified axis for arrays of any shape.
 
     Parameters
@@ -138,7 +138,7 @@ def interpolate_1d(x, xp, *args, **kwargs):
     -------
     array-like
         Interpolated values for each point with coordinates sorted in ascending order.
-    '''
+    """
     axis = kwargs.pop('axis', 0)
 
     # Make x an array
@@ -185,7 +185,7 @@ def interpolate_1d(x, xp, *args, **kwargs):
         return ret[0]
 
 def log_interpolate_1d(x, xp, *args, **kwargs):
-    '''
+    """
     Interpolation on a logarithmic x-scale for interpolation values in pressure coordintates.
 
     Parameters
@@ -204,7 +204,7 @@ def log_interpolate_1d(x, xp, *args, **kwargs):
     -------
     array-like
         Interpolated values for each point with coordinates sorted in ascending order.
-    '''
+    """
     # Log x and xp
     log_x = np.log(x)
     log_xp = np.log(xp)

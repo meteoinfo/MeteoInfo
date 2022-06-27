@@ -13,11 +13,11 @@ __all__ = ['GLFigure']
 class GLFigure(GLChartPanel):
 
     def __init__(self, ax=None, **kwargs):
-        '''
+        """
         Constructor
         
         :param ax: (*Axes3DGL*) 3D axes with JOGL
-        '''
+        """
         self.axes = ax
         double_buffered = kwargs.pop('double_buffered', True)
         sample_buffers = kwargs.pop('sample_buffers', True)
@@ -27,14 +27,14 @@ class GLFigure(GLChartPanel):
         super(GLFigure, self).__init__(cap)
         
     def set_axes(self, ax):
-        '''
+        """
         Set axes.
         
         :param ax: (*Axes*) The axes.
-        '''
+        """
         ax.figure = self
         self.axes = ax
-        self.setPlot(ax.axes)
+        self.setPlot(ax._axes)
 
     def set_antialias(self, b=None, symbol=None):
         """

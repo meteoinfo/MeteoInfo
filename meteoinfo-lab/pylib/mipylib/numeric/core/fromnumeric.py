@@ -42,19 +42,19 @@ def ndim(a):
         return asarray(a).ndim
 
 def ravel(a):
-    '''
+    """
     Return a contiguous flattened array.
 
     :param a: (*array*) Input array.
     :return: A contiguous flattened array.
-    '''
+    """
     if isinstance(a, (list, tuple)):
         a = array(a)
 
     return a.ravel()
 
 def nonzero(a):
-    '''
+    """
     Return the indices of the elements that are non-zero.
 
     Returns a tuple of arrays, one for each dimension of a, containing the indices of the
@@ -63,7 +63,7 @@ def nonzero(a):
     :param a: (*array_like*) Input array.
 
     :returns: (*tuple*) Indices of elements that are non-zero.
-    '''
+    """
     if isinstance(a, list):
         a = array(a)
     ra = ArrayUtil.nonzero(a.asarray())

@@ -16,48 +16,48 @@ __all__ = [
     ]
 
 def imread(fname):
-    '''
+    """
     Read RGB(A) data array from image file.
     
     :param fname: (*String*) Image file name.
     
     :returns: (*array*) RGB(A) data array.
-    '''
+    """
     if not os.path.exists(fname):
         raise IOError(fname)
     r = ImageUtil.imageRead(fname)
     return NDArray(r)
     
 def imload(fname):
-    '''
+    """
     Load image from image file.
     
     :param fname: (*String*) Image file name.
     
     :returns: (*BufferedImage*) Loadded image.
-    '''
+    """
     if not os.path.exists(fname):
         raise IOError(fname)
     r = ImageUtil.imageLoad(fname)
     return r
  
 def imwrite(a, fname):
-    '''
+    """
     Write RGB(A) data array or image into an image file.
     
     :param a: (*array or BufferedImage*) RGB(A) data array or image.
     :param fname: (*String*) Image file name.
-    '''
+    """
     ImageUtil.imageSave(a, fname)
         
 def gifopen(fname):
-    '''
+    """
     Open a gif image file.
     
     :param fname: (*string*) Gif image file name.
     
     :returns: (*GifDecoder*) Gif decoder object.
-    '''
+    """
     if not os.path.exists(fname):
         raise IOError(fname)
     decoder = GifDecoder()
@@ -65,14 +65,14 @@ def gifopen(fname):
     return decoder
     
 def gifread(gif, frame=0):
-    '''
+    """
     Read RGB(A) data array from a gif image file or a gif decoder object.
     
     :param gif: (*string or GifDecoder*) Gif image file or gif decoder object.
     :param frame: (*int*) Image frame index.
     
     :returns: (*array*) RGB(A) data array.
-    '''
+    """
     if isinstance(gif, basestring):
         gif = gifopen(gif)
     im = gif.getFrame(frame)
@@ -80,14 +80,14 @@ def gifread(gif, frame=0):
     return NDArray(r)
     
 def gifload(gif, frame=0):
-    '''
+    """
     Load image from a gif image file or a gif decoder object.
     
     :param gif: (*string or GifDecoder*) Gif image file or gif decoder object.
     :param frame: (*int*) Image frame index.
     
     :returns: (*BufferedImage*) Loadded image.
-    '''
+    """
     if isinstance(gif, basestring):
         gif = gifopen(gif)
     im = gif.getFrame(frame)
@@ -130,13 +130,13 @@ def giffinish(animation):
     animation.finish()
     
 def gifwrite(imfns, giffn, repeat=0, delay=1000):
-    '''
+    """
     Write a gif animation file.
     
     :param imfns: (*list*) Input image file names.
     :param giffn: (*string*) Output gif file name.
     :param: repeat: (*int, Default 0*) Animation repeat time number. 0 means repeat forever.
     :param: delay: (*int, Default 1000*) Animation frame delay time with units of millsecond.
-    '''
+    """
     ImageUtil.createGifAnimator(imfns, giffn, delay, repeat)
     

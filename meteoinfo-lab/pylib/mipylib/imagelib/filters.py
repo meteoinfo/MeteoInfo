@@ -49,7 +49,7 @@ def __getreturn(src, dst):
         return dst
     
 def contrast(src, brightness=1, contrast=1):
-    '''
+    """
     A filter to change the brightness and contrast of an image.
     
     :param src: (*image*) Source image.
@@ -57,7 +57,7 @@ def contrast(src, brightness=1, contrast=1):
     :param contrast: (*float*) Contrast.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -70,13 +70,13 @@ def contrast(src, brightness=1, contrast=1):
     return __getreturn(src, dst)
     
 def sharpen(src):
-    '''
+    """
     A filter which performs a simple 3x3 sharpening operation.
     
     :param src: (*image*) Source image.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -87,7 +87,7 @@ def sharpen(src):
     return __getreturn(src, dst)
     
 def rgb_adjust(src, r=0, g=0, b=0):
-    '''
+    """
     This filter adds or subtracts a given amount from each of the red, green and blue channels 
     of an image.
     
@@ -97,7 +97,7 @@ def rgb_adjust(src, r=0, g=0, b=0):
     :param b: (*float*) Blue channel.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -108,7 +108,7 @@ def rgb_adjust(src, r=0, g=0, b=0):
     return __getreturn(src, dst)
     
 def channel_mix(src, b_g=0, r_b=0, g_r=0, to_r=0, to_g=0, to_b=0):
-    '''
+    """
     A filter which allows the red, green and blue channels of an image to be mixed into each other.
     
     :param src: (*image*) Source image.
@@ -120,7 +120,7 @@ def channel_mix(src, b_g=0, r_b=0, g_r=0, to_r=0, to_g=0, to_b=0):
     :param to_b: (*float*) Mix into blue.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -137,7 +137,7 @@ def channel_mix(src, b_g=0, r_b=0, g_r=0, to_r=0, to_g=0, to_b=0):
     return __getreturn(src, dst)
     
 def gain(src, gain=0.5, bias=0.5):
-    '''
+    """
     A filter which changes the gain and bias of an image
     
     :param src: (*image*) Source image.
@@ -145,7 +145,7 @@ def gain(src, gain=0.5, bias=0.5):
     :param bias: (*float*) Bias.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -158,7 +158,7 @@ def gain(src, gain=0.5, bias=0.5):
     return __getreturn(src, dst)
     
 def gamma(src, gamma=None, rgamma=1, ggamma=1, bgamma=1):
-    '''
+    """
     A filter for changing the gamma of an image.
     
     :param src: (*image*) Source image.
@@ -168,7 +168,7 @@ def gamma(src, gamma=None, rgamma=1, ggamma=1, bgamma=1):
     :param bgamma: (*float*) Blue gamma value.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -182,13 +182,13 @@ def gamma(src, gamma=None, rgamma=1, ggamma=1, bgamma=1):
     return __getreturn(src, dst)
     
 def gray(src):
-    '''
+    """
     A filter which 'grays out' an image by averaging each pixel with white.
     
     :param src: (*image*) Source image.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -199,13 +199,13 @@ def gray(src):
     return __getreturn(src, dst)
     
 def gray_scale(src):
-    '''
+    """
     A filter which converts an image to grayscale using the NTSC brightness calculation.
     
     :param src: (*image*) Source image.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -216,7 +216,7 @@ def gray_scale(src):
     return __getreturn(src, dst)
     
 def hsb_adjust(src, h=0, s=0, b=0):
-    '''
+    """
     This filter adds or subtracts a given amount from each of the hue, saturation and brightness 
     channels of an image.
     
@@ -226,7 +226,7 @@ def hsb_adjust(src, h=0, s=0, b=0):
     :param b: (*float*) brightness.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -237,13 +237,13 @@ def hsb_adjust(src, h=0, s=0, b=0):
     return __getreturn(src, dst)
     
 def invert_alpha(src):
-    '''
+    """
     A Filter to invert the alpha channel of an image.
     
     :param src: (*image*) Source image.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -254,13 +254,13 @@ def invert_alpha(src):
     return __getreturn(src, dst)
     
 def invert(src):
-    '''
+    """
     A filter which inverts the RGB channels of an image.
     
     :param src: (*image*) Source image.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -271,7 +271,7 @@ def invert(src):
     return __getreturn(src, dst)
     
 def levels(src, low=0, high=1, low_out=0, high_out=1):
-    '''
+    """
     A filter which allows levels adjustment on an image.
     
     :param src: (*image*) Source image.
@@ -281,7 +281,7 @@ def levels(src, low=0, high=1, low_out=0, high_out=1):
     :param high_out: (*float*) High output level.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -296,7 +296,7 @@ def levels(src, low=0, high=1, low_out=0, high_out=1):
     return __getreturn(src, dst)
     
 def mask(src, mask=None):
-    '''
+    """
     Applies a bit mask to each ARGB pixel of an image. You can use this for, say, masking out 
     the red channel.
     
@@ -304,7 +304,7 @@ def mask(src, mask=None):
     :param mask: (*int*) Mask color value.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -317,14 +317,14 @@ def mask(src, mask=None):
     return __getreturn(src, dst)
     
 def posterize(src, n=None):
-    '''
+    """
     A filter to posterize an image.
     
     :param src: (*image*) Source image.
     :param n: (*int*) Number levels.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -337,14 +337,14 @@ def posterize(src, n=None):
     return __getreturn(src, dst)
     
 def rescale(src, scale=1):
-    '''
+    """
     A filter which simply multiplies pixel values by a given scale factor.
     
     :param src: (*image*) Source image.
     :param scale: (*float*) Scale factor.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -356,13 +356,13 @@ def rescale(src, scale=1):
     return __getreturn(src, dst)
     
 def solarize(src):
-    '''
+    """
     A filter which solarizes an image.
     
     :param src: (*image*) Source image.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -373,7 +373,7 @@ def solarize(src):
     return __getreturn(src, dst)
     
 def threshold(src, t=None, lt=127, ut=127, white=None, black=None):
-    '''
+    """
     A filter which performs a threshold operation on an image.
     
     :param src: (*image*) Source image.
@@ -384,7 +384,7 @@ def threshold(src, t=None, lt=127, ut=127, white=None, black=None):
     :param black: (*int*) The color to be used for pixels blow the lower threshold.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -404,7 +404,7 @@ def threshold(src, t=None, lt=127, ut=127, white=None, black=None):
     return __getreturn(src, dst)
     
 def tritone(src, shadow=None, mid=None, high=None):
-    '''
+    """
     A filter which performs a tritone conversion on an image. Given three colors
     for shadows, midtones and highlights, it converts the image to grayscale and
     then applies a color mapping based on the colors.
@@ -415,7 +415,7 @@ def tritone(src, shadow=None, mid=None, high=None):
     :param high: (*int*) Highlight color
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -432,7 +432,7 @@ def tritone(src, shadow=None, mid=None, high=None):
     return __getreturn(src, dst)
     
 def flip(src, operation=1):
-    '''
+    """
     A filter which flips images or rotates by multiples of 90 degrees.
     
     :param src: (*image*) Source image.
@@ -442,7 +442,7 @@ def flip(src, operation=1):
         image 180 degrees.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -453,7 +453,7 @@ def flip(src, operation=1):
     return __getreturn(src, dst)
     
 def rotate(src, angle=0, resize=True):
-    '''
+    """
     A filter which rotates an image.
     
     :param src: (*image*) Source image.
@@ -461,7 +461,7 @@ def rotate(src, angle=0, resize=True):
     :param resize: (*boolean*) Resize the image or not.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -472,7 +472,7 @@ def rotate(src, angle=0, resize=True):
     return __getreturn(src, dst)
     
 def emboss(src, azimuth=135, elevation=30, emboss=False, bh=1):
-    '''
+    """
     This filter will emboss an image. 
     
     :param src: (*image*) Source image.
@@ -482,7 +482,7 @@ def emboss(src, azimuth=135, elevation=30, emboss=False, bh=1):
     :param bh: (*float*) Bump height.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -499,7 +499,7 @@ def emboss(src, azimuth=135, elevation=30, emboss=False, bh=1):
     return __getreturn(src, dst)
     
 def light(src, height=None, shape=None, softness=None, source=None):
-    '''
+    """
     A filter which produces lighting and embossing effects.
     
     :param src: (*image*) Source image.
@@ -509,7 +509,7 @@ def light(src, height=None, shape=None, softness=None, source=None):
     :param source: (*int*) Bump source.
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -528,14 +528,14 @@ def light(src, height=None, shape=None, softness=None, source=None):
     return __getreturn(src, dst)
     
 def opacity(src, opacity=None):
-    '''
+    """
     Sets the opacity (alpha) of every pixel in an image to a constant value.
     
     :param src: (*image*) Source image.
     :param opacity: (*int*) Opacity value (0-255).
     
     :returns: Destination image.
-    '''
+    """
     image = __getimage(src)
     if image is None:
         return None
@@ -549,19 +549,19 @@ def opacity(src, opacity=None):
     return __getreturn(src, dst)
     
 def count(a, size):
-    '''
+    """
     Count none-zero points with window size
     
     :param a: (*array_like*) 2-D array.
     :param size: (*int*) Window size.
     
     :returns: (*array_like*) Count result.
-    '''
+    """
     r = ImageUtil.count(a.asarray(), size)
     return NDArray(r)
     
 def mean(a, size, positive=True):
-    '''
+    """
     Calculate mean value with window size
     
     :param a: (*array_like*) 2-D array.
@@ -569,40 +569,40 @@ def mean(a, size, positive=True):
     :param positive: (*boolean*) Only calculate the positive value or not.
     
     :returns: (*array_like*) Mean result.
-    '''
+    """
     r = ImageUtil.mean(a.asarray(), size, positive)
     return NDArray(r)
 
 def minimum_filter(a, size):
-    '''
+    """
     Calculate a multi-dimensional minimum filter.
 
     :param a: (*array*) Input array
     :param size: (*int*) Window size
     :return: Filtered array. Has the same shape as input array.
-    '''
+    """
     r = ImageUtil.minimumFilter(a._array, size)
     return NDArray(r)
 
 def maximum_filter(a, size):
-    '''
+    """
     Calculate a multi-dimensional maximum filter.
 
     :param a: (*array*) Input array
     :param size: (*int*) Window size
     :return: Filtered array. Has the same shape as input array.
-    '''
+    """
     r = ImageUtil.maximumFilter(a._array, size)
     return NDArray(r)
 
 def gaussian_filter(a, sigma, size=3):
-    '''
+    """
     Calculate a multi-dimensional gaussian filter.
 
     :param a: (*array*) Input array
     :param sigma: (*float*) Standard deviation for Gaussian kernel.
     :param size: (*int*) Window size
     :return: Filtered array. Has the same shape as input array.
-    '''
+    """
     r = ImageUtil.gaussianFilter(a._array, size, sigma)
     return NDArray(r)

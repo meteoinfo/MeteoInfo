@@ -4,7 +4,7 @@ from ..core import NDArray
 from ..core import numeric as np
 
 class RandomState(object):
-    '''
+    """
     RandomState(seed=None)
 
     Container for the slow Mersenne Twister pseudo-random number generator
@@ -12,7 +12,7 @@ class RandomState(object):
     :param seed: (*int*) optional
         Random seed used to initialize the pseudo-random number generator or
         an instantized BitGenerator.
-    '''
+    """
 
     def __init__(self, seed=None):
         self._seed = seed
@@ -49,7 +49,7 @@ class RandomState(object):
             return NDArray(self._mtrand.rand(args))
 
     def shuffle(self, x, axis=0):
-        '''
+        """
         Modify a sequence in-place by shuffling its contents.
 
         This function only shuffles the array along the first axis of a
@@ -61,11 +61,11 @@ class RandomState(object):
             on ndarray objects.
 
         :return: None
-        '''
+        """
         self._mtrand.shuffle(x._array, axis)
 
     def permutation(self, x, axis=0):
-        '''
+        """
         MRandomly permute a sequence, or return a permuted range.
 
         If x is a multi-dimensional array, it is only shuffled along its first index.
@@ -75,7 +75,7 @@ class RandomState(object):
             on ndarray objects.
 
         :return: Permutation array
-        '''
+        """
         if isinstance(x, int):
             arr = np.arange(x)
         else:

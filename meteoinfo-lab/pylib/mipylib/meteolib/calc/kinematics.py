@@ -19,14 +19,14 @@ __all__ = [
     ]
 
 def cdiff(a, dimidx):
-    '''
+    """
     Performs a centered difference operation on a array in a specific direction
 
     :param a: (*array*) The input array.
     :param dimidx: (*int*) Dimension index of the specific direction.
 
     :returns: Result array.
-    '''
+    """
     r = MeteoMath.cdiff(a.asarray(), dimidx)
     if isinstance(a, DimArray):
         return DimArray(NDArray(r), a.dims, a.fill_value, a.proj)
@@ -217,7 +217,7 @@ def divergence(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
 
 
 def divergence_bak(u, v, x=None, y=None):
-    '''
+    """
     Calculates the horizontal divergence using finite differencing. The data should be lon/lat projection.
 
     :param u: (*array*) U component array.
@@ -226,7 +226,7 @@ def divergence_bak(u, v, x=None, y=None):
     :param y: (*array*) Y coordinate.
 
     :returns: Array of the horizontal divergence.
-    '''
+    """
     ny = u.shape[-2]
     nx = u.shape[-1]
     if x is None:

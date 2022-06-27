@@ -1131,7 +1131,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * @param idx Index
      */
     public void removeGraphic(int idx) {
-        this.graphics.remove(idx);
+        this.graphics.remove(this.graphics.get(idx));
     }
 
     /**

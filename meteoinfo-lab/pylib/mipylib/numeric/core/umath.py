@@ -11,14 +11,14 @@ __all__ = [
     ]
 
 def absolute(x):
-    '''
+    """
     Calculate the absolute value element-wise.
 
     :param x: (*array_like*) Input array.
 
     :returns: An array containing the absolute value of each element in x.
         For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
-    '''
+    """
     if isinstance(x, list):
         x = array(x)
     if isinstance(x, NDArray):

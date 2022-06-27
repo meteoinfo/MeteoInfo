@@ -36,9 +36,9 @@ __all__ = ['Axes3D']
 
 #########################################################
 class Axes3D(Axes):
-    '''
+    """
     Axes with 3 dimensional.
-    '''
+    """
     
     def __init__(self, *args, **kwargs):
         axes = kwargs.pop('axes', None)
@@ -63,7 +63,7 @@ class Axes3D(Axes):
             self.active_outerposition(True)
         units = kwargs.pop('units', None)
         if not units is None:
-            self.axes.setUnits(units)
+            self._axes.setUnits(units)
         tickfontname = kwargs.pop('tickfontname', 'Arial')
         tickfontsize = kwargs.pop('tickfontsize', 14)
         tickbold = kwargs.pop('tickbold', False)
@@ -71,9 +71,9 @@ class Axes3D(Axes):
             font = Font(tickfontname, Font.BOLD, tickfontsize)
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
-        self.axes.setAxisTickFont(font)
+        self._axes.setAxisTickFont(font)
         
-        self.projector = self.axes.getProjector()
+        self.projector = self._axes.getProjector()
         #distance = kwargs.pop('distance', 10000)
         #self.projector.setDistance(distance)
         rotation_angle = kwargs.pop('rotation', 225)
@@ -81,29 +81,29 @@ class Axes3D(Axes):
         elevation_angle = kwargs.pop('elevation', 30)
         self.projector.setElevationAngle(elevation_angle)
         xyaxis = kwargs.pop('xyaxis', True)
-        self.axes.setDisplayXY(xyaxis)
+        self._axes.setDisplayXY(xyaxis)
         zaxis = kwargs.pop('zaxis', True)
-        self.axes.setDisplayZ(zaxis)
+        self._axes.setDisplayZ(zaxis)
         grid = kwargs.pop('grid', True)
-        grid_line = self.axes.getGridLine()
+        grid_line = self._axes.getGridLine()
         grid_line.setDrawXLine(grid)
         grid_line.setDrawYLine(grid)
         grid_line.setDrawZLine(grid)
         boxed = kwargs.pop('boxed', True)
-        self.axes.setBoxed(boxed)
+        self._axes.setBoxed(boxed)
         bbox = kwargs.pop('bbox', False)
-        self.axes.setDrawBoundingBox(bbox)
+        self._axes.setDrawBoundingBox(bbox)
         
     def _set_plot(self, plot):
-        '''
+        """
         Set plot.
         
         :param plot: (*Plot3D*) Plot.
-        '''
+        """
         if plot is None:
-            self.axes = Plot3D()
+            self._axes = Plot3D()
         else:
-            self.axes = plot
+            self._axes = plot
     
     @property
     def axestype(self):
@@ -117,68 +117,68 @@ class Axes3D(Axes):
         return 3
     
     def get_distance(self):
-        '''
+        """
         Get distance to object.
         
         :returns: Distance to object.
-        '''
+        """
         return self.projector.getDistance()
         
     def set_distance(self, dis):
-        '''
+        """
         Set distance to object.
         
         :param dis: (*float*) Distance to object.
-        '''
+        """
         self.projector.setDistance(dis)
         
     def get_rotation(self):
-        '''
+        """
         Get rotation angle.
         
         :returns: Rotation angle.
-        '''
+        """
         return self.projector.getRotationAngle()
         
     def set_rotation(self, rotation):
-        '''
+        """
         Set rotation angle.
         
         :param rotation: (*float*) Rotation angle.
-        '''
+        """
         self.projector.setRotationAngle(rotation)
         
     def get_elevation(self):
-        '''
+        """
         Get elevation angle.
         
         :returns: Elevation angle.
-        '''
+        """
         return self.projector.getElevationAngle()
         
     def set_elevation(self, elevation):
-        '''
+        """
         Set elevation angle.
         
         :param elevation: (*float*) Elevation angle.
-        '''
+        """
         self.projector.setElevationAngle(elevation)
         
     def set_draw_xy(self, dxy):
-        '''
+        """
         Set draw xy axis or not.
         
         :param dxy: (*boolean*) Draw xy axis or not.
-        '''
-        self.axes.setDisplayXY(dxy)
+        """
+        self._axes.setDisplayXY(dxy)
         
     def set_draw_z(self, dz):
-        '''
+        """
         Set draw z axis or not.
         
         :param dz: (*boolean*) Draw z axis or not.
-        '''
-        self.axes.setDisplayZ(dz)
+        """
+        self._axes.setDisplayZ(dz)
 
     def set_draw_base(self, is_draw):
         """
@@ -186,23 +186,23 @@ class Axes3D(Axes):
 
         :param is_draw: (*bool*) Draw base area or not.
         """
-        self.axes.setDrawBase(is_draw)
+        self._axes.setDrawBase(is_draw)
         
     def set_draw_box(self, db):
-        '''
+        """
         Set draw 3D box or not.
         
         :param db: (*boolean*) Draw 3D box or not.
-        '''
-        self.axes.setBoxed(db)
+        """
+        self._axes.setBoxed(db)
         
     def set_draw_bbox(self, bbox):
-        '''
+        """
         Set draw bounding box or not.
         
         :param bbox: (*boolean*) Draw bounding box or not.
-        '''
-        self.axes.setDrawBoundingBox(bbox)
+        """
+        self._axes.setDrawBoundingBox(bbox)
 
     def set_draw_axis(self, axis):
         """
@@ -223,7 +223,7 @@ class Axes3D(Axes):
         :param color: (*color*) Box fill color.
         """
         color = plotutil.getcolor(color)
-        self.axes.setBoxColor(color)
+        self._axes.setBoxColor(color)
         
     def get_xlim(self):
         """
@@ -231,7 +231,7 @@ class Axes3D(Axes):
         
         :returns: (*tuple*) x limits.
         """
-        return self.axes.getXMin(), self.axes.getXMax()
+        return self._axes.getXMin(), self._axes.getXMax()
         
     def set_xlim(self, xmin, xmax):
         """
@@ -244,7 +244,7 @@ class Axes3D(Axes):
             xmin = miutil.date2num(xmin)
         if isinstance(xmax, datetime.datetime):
             xmax = miutil.date2num(xmax)                
-        self.axes.setXMinMax(xmin, xmax)
+        self._axes.setXMinMax(xmin, xmax)
         
     def get_ylim(self):
         """
@@ -252,7 +252,7 @@ class Axes3D(Axes):
         
         :returns: (*tuple*) y limits.
         """
-        return self.axes.getYMin(), self.axes.getYMax()
+        return self._axes.getYMin(), self._axes.getYMax()
             
     def set_ylim(self, ymin, ymax):
         """
@@ -265,7 +265,7 @@ class Axes3D(Axes):
             ymin = miutil.date2num(ymin)
         if isinstance(ymax, datetime.datetime):
             ymax = miutil.date2num(ymax)    
-        self.axes.setYMinMax(ymin, ymax) 
+        self._axes.setYMinMax(ymin, ymax)
 
     def get_zlim(self):
         """
@@ -273,7 +273,7 @@ class Axes3D(Axes):
         
         :returns: (*tuple*) z limits.
         """
-        return self.axes.getZMin(), self.axes.getZMax()
+        return self._axes.getZMin(), self._axes.getZMax()
             
     def set_zlim(self, zmin, zmax):
         """
@@ -286,7 +286,7 @@ class Axes3D(Axes):
             zmin = miutil.date2num(zmin)
         if isinstance(zmax, datetime.datetime):
             zmax = miutil.date2num(zmax)    
-        self.axes.setZMinMax(zmin, zmax)
+        self._axes.setZMinMax(zmin, zmax)
 
     def axis(self, limits):
         """
@@ -302,8 +302,8 @@ class Axes3D(Axes):
             zmin = limits[4]
             zmax = limits[5]
             extent = Extent3D(xmin, xmax, ymin, ymax, zmin, zmax)
-            self.axes.setDrawExtent(extent)
-            self.axes.setAxesExtent(extent.clone())
+            self._axes.setDrawExtent(extent)
+            self._axes.setAxesExtent(extent.clone())
             return True
         else:
             print('The limits parameter must be a list with 6 elements: xmin, xmax, ymin, ymax, zmin, zmax!')
@@ -326,40 +326,40 @@ class Axes3D(Axes):
         if not kwargs.has_key('rotation'):
             kwargs['rotation'] = 90
         ctext = plotutil.text(0, 0, label, **kwargs)
-        axis = self.axes.getZAxis()
+        axis = self._axes.getZAxis()
         axis.setLabel(ctext)
         axis.setDrawLabel(True)
     
     def get_zticks(self):
-        '''
+        """
         Get z axis tick locations.
-        '''
-        axis = self.axes.getZAxis()
+        """
+        axis = self._axes.getZAxis()
         axis.updateTickLabels()
         return axis.getTickLocations()
         
     def set_zticks(self, locs):
-        '''
+        """
         Set z axis tick locations.
-        '''
-        axis = self.axes.getZAxis()
+        """
+        axis = self._axes.getZAxis()
         if isinstance(locs, (NDArray, DimArray)):
             locs = labels.aslist()
         axis.setTickLocations(locs)
     
     def get_zticklabels(self):
-        '''
+        """
         Get z axis tick labels.
-        '''
-        axis = self.axes.getZAxis()
+        """
+        axis = self._axes.getZAxis()
         axis.updateTickLabels()
         return axis.getTickLabelText()
         
     def set_zticklabels(self, labels, **kwargs):
-        '''
+        """
         Set z axis tick labels.
-        '''
-        axis = self.axes.getZAxis()
+        """
+        axis = self._axes.getZAxis()
 
         if not labels is None:
             if isinstance(labels, (NDArray, DimArray)):
@@ -386,13 +386,13 @@ class Axes3D(Axes):
         axis.setTickLabelAngle(angle)
 
     def set_xaxis_type(self, axistype, timetickformat=None):
-        '''
+        """
         Set x axis type.
 
         :param axistype: (*string*) Axis type ['lon' | 'lat' | 'time' | 'log'].
         :param timetickformat: (*string*) Time tick label format.
-        '''
-        ax = self.axes
+        """
+        ax = self._axes
         if axistype == 'lon':
             axis = LonLatAxis(ax.getXAxis())
             axis.setLongitude(False)
@@ -415,13 +415,13 @@ class Axes3D(Axes):
             ax.setXAxis(axis)
 
     def set_yaxis_type(self, axistype, timetickformat=None):
-        '''
+        """
         Set y axis type.
 
         :param axistype: (*string*) Axis type ['lon' | 'lat' | 'time' | 'log'].
         :param timetickformat: (*string*) Time tick label format.
-        '''
-        ax = self.axes
+        """
+        ax = self._axes
         if axistype == 'lon':
             axis = LonLatAxis(ax.getYAxis())
             axis.setLongitude(True)
@@ -444,13 +444,13 @@ class Axes3D(Axes):
             ax.setYAxis(axis)
 
     def set_zaxis_type(self, axistype, timetickformat=None):
-        '''
+        """
         Set z axis type.
 
         :param axistype: (*string*) Axis type ['lon' | 'lat' | 'time' | 'log'].
         :param timetickformat: (*string*) Time tick label format.
-        '''
-        ax = self.axes
+        """
+        ax = self._axes
         if axistype == 'lon':
             axis = LonLatAxis(ax.getZAxis())
             axis.setLongitude(True)
@@ -508,7 +508,7 @@ class Axes3D(Axes):
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
         axislist = []
-        axislist.append(self.axes.getZAxis())
+        axislist.append(self._axes.getZAxis())
         for axis in axislist:
             if not visible is None:
                 axis.setVisible(visible)
@@ -543,7 +543,7 @@ class Axes3D(Axes):
             are supplied, it is assumed that you want a grid and *b* is thus set to *True* .
         :param kwargs: *kwargs* are used to set the grid line properties.
         """
-        gridline = self.axes.getGridLine()
+        gridline = self._axes.getGridLine()
         if b is None:
             b = not gridline.isDrawZLine()
         axis = kwargs.pop('axis', 'all')
@@ -907,7 +907,7 @@ class Axes3D(Axes):
         return graphics[0], graphics[1]
 
     def mesh(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional wireframe plot
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -921,7 +921,7 @@ class Axes3D(Axes):
         :param mesh: (*boolean*) Draw mesh line or not.
 
         :returns: Mesh graphics
-        '''
+        """
         if len(args) == 1:
             x = args[0].dimvalue(1)
             y = args[0].dimvalue(0)
@@ -961,7 +961,7 @@ class Axes3D(Axes):
         return graphics
         
     def plot_wireframe(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional wireframe plot
         
         :param x: (*array_like*) Optional. X coordinate array.
@@ -975,7 +975,7 @@ class Axes3D(Axes):
         :param mesh: (*boolean*) Draw mesh line or not.
         
         :returns: Legend
-        '''
+        """
         warnings.warn("plot_wireframe is deprecated", DeprecationWarning)
         if len(args) == 1:
             x = args[0].dimvalue(1)
@@ -1016,7 +1016,7 @@ class Axes3D(Axes):
         return graphics
 
     def surf(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional surface plot
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -1030,7 +1030,7 @@ class Axes3D(Axes):
         :param mesh: (*boolean*) Draw mesh line or not.
 
         :returns: Legend
-        '''
+        """
         if len(args) <= 2:
             x = args[0].dimvalue(1)
             y = args[0].dimvalue(0)
@@ -1065,7 +1065,7 @@ class Axes3D(Axes):
         return graphics
         
     def plot_surface(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional surface plot
         
         :param x: (*array_like*) Optional. X coordinate array.
@@ -1079,7 +1079,7 @@ class Axes3D(Axes):
         :param mesh: (*boolean*) Draw mesh line or not.
         
         :returns: Legend
-        '''
+        """
         warnings.warn("plot_surface is deprecated", DeprecationWarning)
         if len(args) <= 2:
             x = args[0].dimvalue(1)
@@ -1445,7 +1445,7 @@ class Axes3D(Axes):
         return igraphic
 
     def geoshow(self, layer, **kwargs):
-        '''
+        """
         Plot a layer map in 3D axes.
 
         :param layer: (*str or MILayer*) The layer to be plotted.
@@ -1456,24 +1456,17 @@ class Axes3D(Axes):
         :param linewidth: (*float*) Line width.
 
         :returns: Graphics.
-        '''
+        """
         ls = kwargs.pop('symbolspec', None)
         offset = kwargs.pop('offset', 0)
         xshift = kwargs.pop('xshift', 0)
 
         if isinstance(layer, basestring):
             fn = layer
-            if not fn.endswith('.shp'):
-                fn = fn + '.shp'
-            if not os.path.exists(fn):
-                fn = os.path.join(migl.get_map_folder(), fn)
-            if os.path.exists(fn):
-                encoding = kwargs.pop('encoding', None)
-                layer = migeo.shaperead(fn, encoding)
-            else:
-                raise IOError('File not exists: ' + fn)
+            encoding = kwargs.pop('encoding', None)
+            layer = migeo.georead(fn, encoding)
 
-        layer = layer.layer
+        layer = layer._layer
         if layer.getLayerType() == LayerTypes.VECTOR_LAYER:
             if ls is None:
                 ls = layer.getLegendScheme()
@@ -1509,13 +1502,13 @@ class Axes3D(Axes):
         return graphics
         
     def plot_layer(self, layer, **kwargs):
-        '''
+        """
         Plot a layer in 3D axes.
         
         :param layer: (*MILayer*) The layer to be plotted.
         
         :returns: Graphics.
-        '''
+        """
         warnings.warn("plot_layer is deprecated", DeprecationWarning)
         return self.geoshow(layer, **kwargs)
         
@@ -1671,18 +1664,18 @@ class Axes3D(Axes):
         return graphic
         
     def data2pixel(self, x, y, z=None):
-        '''
+        """
         Transform data coordinate to screen coordinate
         
         :param x: (*float*) X coordinate.
         :param y: (*float*) Y coordinate.
         :param z: (*float*) Z coordinate - only used for 3-D axes.
-        '''
-        r = self.axes.project(x, y, z) 
+        """
+        r = self._axes.project(x, y, z)
         x = r.x
         y = r.y
-        rect = self.axes.getPositionArea()
-        r = self.axes.projToScreen(x, y, rect)
+        rect = self._axes.getPositionArea()
+        r = self._axes.projToScreen(x, y, rect)
         sx = r[0] + rect.getX()
         sy = r[1] + rect.getY()
         sy = self.figure.get_size()[1] - sy

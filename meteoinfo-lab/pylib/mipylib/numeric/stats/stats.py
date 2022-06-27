@@ -233,7 +233,7 @@ def kurtosis(a, axis=0, fisher=True, bias=True):
     return g1 - 3 if fisher else g1
 
 def covariance(x, y, bias=False):
-    '''
+    """
     Calculate covariance of two array.
     
     :param x: (*array_like*) A 1-D array containing multiple variables and observations.
@@ -243,7 +243,7 @@ def covariance(x, y, bias=False):
         given (unbiased estimate). If bias is True, then normalization is by N.
         
     returns: Covariance
-    '''
+    """
     if isinstance(x, (list, tuple)):
         x = np.array(x)
     if isinstance(y, (list, tuple)):
@@ -252,7 +252,7 @@ def covariance(x, y, bias=False):
     return r
     
 def cov(m, y=None, rowvar=True, bias=False):
-    '''
+    """
     Estimate a covariance matrix.
     
     :param m: (*array_like*) A 1-D or 2-D array containing multiple variables and observations.
@@ -265,7 +265,7 @@ def cov(m, y=None, rowvar=True, bias=False):
         given (unbiased estimate). If bias is True, then normalization is by N.
     
     :returns: Covariance.
-    '''
+    """
     if isinstance(m, list):
         m = np.array(m)
     if rowvar == True and m.ndim == 2:
@@ -285,7 +285,7 @@ def cov(m, y=None, rowvar=True, bias=False):
         return np.array(r)
         
 def pearsonr(x, y, axis=None):
-    '''
+    """
     Calculates a Pearson correlation coefficient and the p-value for testing non-correlation.
 
     The Pearson correlation coefficient measures the linear relationship between two datasets. 
@@ -306,7 +306,7 @@ def pearsonr(x, y, axis=None):
         along the specified axis.
     
     :returns: Pearson’s correlation coefficient and 2-tailed p-value.
-    '''
+    """
     if isinstance(x, list):
         x = np.array(x)
     if isinstance(y, list):
@@ -400,7 +400,7 @@ def kendalltau(x, y, nan_policy='propagate', method='auto', variant='b'):
     return r[0], r[1]
 
 def spearmanr(m, y=None, axis=0):
-    '''
+    """
     Calculates a Spearman rank-order correlation coefficient.
     
     The Spearman correlation is a nonparametric measure of the monotonicity of the relationship 
@@ -418,7 +418,7 @@ def spearmanr(m, y=None, axis=0):
         a variable, while the columns contain observations..
     
     :returns: Spearman correlation matrix.
-    '''
+    """
     if isinstance(m, list):
         m = np.array(m)
     if axis == 1 and m.ndim == 2:
@@ -438,7 +438,7 @@ def spearmanr(m, y=None, axis=0):
         return r[0], r[1]
         
 def linregress(x, y, outvdn=False):
-    '''
+    """
     Calculate a linear least-squares regression for two sets of measurements.
     
     :param x, y: (*array_like*) Two sets of measurements. Both arrays should have the same length.
@@ -447,7 +447,7 @@ def linregress(x, y, outvdn=False):
     :returns: Result slope, intercept, relative coefficient, two-sided p-value for a hypothesis test 
         whose null hypothesis is that the slope is zero, standard error of the estimated gradient, 
         validate data number (remove NaN values).
-    '''
+    """
     if isinstance(x, list):
         x = np.array(x)
     if isinstance(y, list):
@@ -459,7 +459,7 @@ def linregress(x, y, outvdn=False):
         return r[0], r[1], r[2], r[3], r[4]
     
 def mlinregress(y, x):
-    '''
+    """
     Implements ordinary least squares (OLS) to estimate the parameters of a multiple linear 
     regression model.
     
@@ -467,7 +467,7 @@ def mlinregress(y, x):
     :param x: (*array_like*) X sample data - two dimension array.
     
     :returns: Estimated regression parameters and residuals.
-    '''
+    """
     if isinstance(x, list):
         x = np.array(x)
     if isinstance(y, list):
@@ -476,7 +476,7 @@ def mlinregress(y, x):
     return np.array(r[0]), np.array(r[1])
     
 def percentile(a, q, axis=None):
-    '''
+    """
     Compute the qth percentile of the data along the specified axis.
     
     :param a: (*array_like*) Input array.
@@ -486,7 +486,7 @@ def percentile(a, q, axis=None):
         to compute the percentile along a flattened version of the array.
     
     :returns: (*float*) qth percentile value.
-    '''
+    """
     if isinstance(a, list):
         a = np.array(x)
     if axis is None:
@@ -497,7 +497,7 @@ def percentile(a, q, axis=None):
     return r
     
 def ttest_1samp(a, popmean):
-    '''
+    """
     Calculate the T-test for the mean of ONE group of scores.
 
     This is a two-sided test for the null hypothesis that the expected value (mean) of 
@@ -507,14 +507,14 @@ def ttest_1samp(a, popmean):
     :param popmean: (*float*) Expected value in null hypothesis.
     
     :returns: t-statistic and p-value
-    '''
+    """
     if isinstance(a, list):
         a = np.array(x)
     r = StatsUtil.tTest(a.asarray(), popmean)
     return r[0], r[1]
     
 def ttest_rel(a, b):
-    '''
+    """
     Calculates the T-test on TWO RELATED samples of scores, a and b.
 
     This is a two-sided test for the null hypothesis that 2 related or repeated samples 
@@ -524,7 +524,7 @@ def ttest_rel(a, b):
     :param b: (*array_like*) Sample data b.
     
     :returns: t-statistic and p-value
-    '''
+    """
     if isinstance(a, list):
         a = np.array(a)
     if isinstance(b, list):
@@ -533,7 +533,7 @@ def ttest_rel(a, b):
     return r[0], r[1]
     
 def ttest_ind(a, b):
-    '''
+    """
     Calculates the T-test for the means of TWO INDEPENDENT samples of scores.
 
     This is a two-sided test for the null hypothesis that 2 independent samples have 
@@ -544,7 +544,7 @@ def ttest_ind(a, b):
     :param b: (*array_like*) Sample data b.
     
     :returns: t-statistic and p-value
-    '''
+    """
     if isinstance(a, list):
         a = np.array(a)
     if isinstance(b, list):
@@ -553,7 +553,7 @@ def ttest_ind(a, b):
     return r[0], r[1]
     
 def chisquare(f_obs, f_exp=None):
-    '''
+    """
     Calculates a one-way chi square test.
 
     The chi square test tests the null hypothesis that the categorical data has the 
@@ -564,7 +564,7 @@ def chisquare(f_obs, f_exp=None):
         are assumed to be equally likely.
     
     :returns: Chi-square statistic and p-value
-    '''
+    """
     if isinstance(f_obs, list):
         f_obs = np.array(f_obs)
     if f_exp is None:
@@ -576,7 +576,7 @@ def chisquare(f_obs, f_exp=None):
     return r[0], r[1]
     
 def chi2_contingency(observed):
-    '''
+    """
     Chi-square test of independence of variables in a contingency table.
 
     This function computes the chi-square statistic and p-value for the hypothesis test of 
@@ -587,14 +587,14 @@ def chi2_contingency(observed):
         the table is often described as an `R x C table`.
     
     :returns: Chi-square statistic and p-value
-    '''
+    """
     if isinstance(observed, list):
         observed = np.array(observed)
     r = StatsUtil.chiSquareTest(observed.asarray())
     return r[0], r[1]
 
 def taylor_stats(p, r):
-    '''
+    """
     Calculates the statistics needed to create a Taylor diagram as
     described in Taylor (2001) using the data provided in the predicted
     field (PREDICTED) and the reference field (REFERENCE).
@@ -636,7 +636,7 @@ def taylor_stats(p, r):
         www.thesymplectic.com
         prochford@thesymplectic.com
     Created on Dec 3, 2016
-    '''
+    """
     # Check that dimensions of predicted and reference fields match
     pdims= p.shape
     rdims= r.shape

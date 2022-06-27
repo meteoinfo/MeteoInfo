@@ -22,13 +22,13 @@ nan = Double.NaN
 class Series(object):
 
     def __init__(self, data=None, index=None, name=None, series=None):
-        '''
+        """
         One-dimensional array with axis labels (including time series).
         
         :param data: (*array_like*) One-dimensional array data.
         :param index: (*list*) Data index list. Values must be unique and hashable, same length as data.
         :param name: (*string*) Series name.
-        '''
+        """
         if series is None:
             if isinstance(data, (list, tuple)):
                 data = np.array(data)
@@ -108,16 +108,16 @@ class Series(object):
     
     @property
     def loc(self):
-        '''
+        """
         Access a group of rows and columns by label(s) or a boolean array.
-        '''
+        """
         return LocIndexer(self)
         
     @property
     def iloc(self):
-        '''
+        """
         Purely integer-location based indexing for selection by position.
-        '''
+        """
         return ILocIndexer(self)
         
     def __getitem__(self, key):
@@ -317,31 +317,31 @@ class Series(object):
         return r
 
     def head(self, n=5):
-        '''
+        """
         Get top rows
         
         :param n: (*int*) row number.
         
         :returns: Top rows
-        '''
+        """
         print self._series.head(n)
         
     def tail(self, n=5):
-        '''
+        """
         Get bottom rows
         
         :param n: (*int*) row number.
         
         :returns: Bottom rows
-        '''
+        """
         print self._series.tail(n)
 
     def asarray(self):
-        '''
+        """
         Return MI Java Array object
 
         :returns: MI Java Array object
-        '''
+        """
         return self.values.asarray()
 
     def replace(self, to_replace, value):
@@ -356,11 +356,11 @@ class Series(object):
         return Series(series=r)
         
     def mean(self):
-        '''
+        """
         Return the mean of the values
         
         :returns: Mean value
-        '''
+        """
         r = self._series.mean()
         if isinstance(r, (MISeries)):
             return Series(series=r)
@@ -368,11 +368,11 @@ class Series(object):
             return r
             
     def max(self):
-        '''
+        """
         Return the maximum of the values
         
         :returns: Maximum value
-        '''
+        """
         r = self._series.max()
         if isinstance(r, (MISeries)):
             return Series(series=r)
@@ -380,11 +380,11 @@ class Series(object):
             return r
             
     def min(self):
-        '''
+        """
         Return the minimum of the values
         
         :returns: Minimum value
-        '''
+        """
         r = self._series.min()
         if isinstance(r, (MISeries)):
             return Series(series=r)
@@ -392,11 +392,11 @@ class Series(object):
             return r
             
     def std(self):
-        '''
+        """
         Return the standard deviation of the values
         
         :returns: Standard deviation value
-        '''
+        """
         r = self._series.stdDev()
         if isinstance(r, (MISeries)):
             return Series(series=r)
@@ -404,30 +404,30 @@ class Series(object):
             return r
         
     def groupby(self, by=None):
-        '''
+        """
         Group Series.
         
         :param by: Used to determine the groups for the groupby.
         
         :returns: GroupBy object.
-        '''
+        """
         gb = self._series.groupBy(by)
         return groupby.GroupBy(gb)
         
     def resample(self, by):
-        '''
+        """
         Group series by date time index.
         
         :param by: Used to determine the groups for the groupby.
         
         :returns: GroupBy object.
-        '''
+        """
         gb = self._series.resample(by)
         return groupby.GroupBy(gb)
 
     def to_csv(self, filepath, delimiter=',', date_format=None, \
                float_format=None, index=True):
-        '''
+        """
         Save the data to an csv file.
 
         :param filepath: (*string*) The file name.
@@ -435,7 +435,7 @@ class Series(object):
         :param date_format: (*string*) Date format string. i.e. 'yyyyMMddHH'.
         :param float_format: (*string*) Float format string. i.e. '%.2f'.
         :param index: (*boolean*) Write index or not.
-        '''
+        """
         self._series.saveCSV(filepath, delimiter, date_format, float_format, index)
         
 #################################################################

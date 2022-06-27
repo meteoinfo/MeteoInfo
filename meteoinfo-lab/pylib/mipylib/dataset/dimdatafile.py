@@ -65,9 +65,9 @@ class DimDataFile(object):
         return self.dataset.getInfoText()
             
     def close(self):
-        '''
+        """
         Close the opended dataset
-        '''
+        """
         if not self.dataset is None:
             self.dataset.close()
         elif not self.ncfile is None:
@@ -84,34 +84,34 @@ class DimDataFile(object):
         self.dataset.getDataInfo().reOpen()
     
     def dimensions(self):
-        '''
+        """
         Get dimensions
-        '''
+        """
         return self.dataset.getDataInfo().getDimensions()
         
     def finddim(self, name):
-        '''
+        """
         Find a dimension by name
         
         :name: (*string*) Dimension name
-        '''
+        """
         for dim in self.dataset.getDataInfo().getDimensions():
             if name == dim.getShortName():
                 return dim
         return None
         
     def attributes(self):
-        '''
+        """
         Get global attributes.
-        '''
+        """
         return self.dataset.getDataInfo().getGlobalAttributes()
     
     def attrvalue(self, attr):
-        '''
+        """
         Get a global attribute value.
         
         :param attr: (*string or Attribute*) Attribute or Attribute name
-        '''
+        """
         if isinstance(attr, str):
             attr = self.dataset.getDataInfo().findGlobalAttribute(attr)
         
@@ -121,40 +121,40 @@ class DimDataFile(object):
         return v
         
     def variables(self):
-        '''
+        """
         Get all variables.
-        '''
+        """
         return self._variables
         
     def varnames(self):
-        '''
+        """
         Get all variable names.
-        '''
+        """
         return self.dataset.getDataInfo().getVariableNames()
         
     def read(self, varname, origin=None, size=None, stride=None):
-        '''
+        """
         Read data array from a variable.
         
         :varname: (*string*) Variable name
-        '''
+        """
         if origin is None:
             return self.dataset.read(varname)
         else:
             return self.dataset.read(varname, origin, size, stride)
         
     def dump(self):
-        '''
+        """
         Print data file information
-        '''
+        """
         print self.dataset.getInfoText()
         
     def read_dataframe(self, tidx=None):
-        '''
+        """
         Read data frame from dataset.
         :param tidx: (*int*) Time index. Default is ``None``.
         :returns: (*DataFrame*) The DataFrame.
-        '''
+        """
         if tidx is None:
             df = self.dataset.getDataInfo().readDataFrame()
         else:
@@ -162,9 +162,9 @@ class DimDataFile(object):
         return DataFrame(dataframe=df)
         
     def read_table(self):
-        '''
+        """
         Read data table from dataset.
-        '''
+        """
         dt = self.dataset.getDataInfo().readTable()
         return np.datatable(dt)
         
@@ -187,9 +187,9 @@ class DimDataFile(object):
             return None
             
     def stinfodata(self):
-        '''
+        """
         Get station info data
-        '''
+        """
         if self.dataset.isStationData():
             sidata = self.dataset.getStationInfoData()
             return sidata
@@ -197,9 +197,9 @@ class DimDataFile(object):
             return None
             
     def smodeldata(self, timeindex=0, levelindex=0):
-        '''
+        """
         Get station model data.
-        '''
+        """
         if self.dataset.isStationData():
             self.dataset.setTimeIndex(timeindex)
             self.dataset.setLevelIndex(levelindex)
@@ -209,36 +209,36 @@ class DimDataFile(object):
             return None
             
     def trajlayer(self):
-        '''
+        """
         Create trajectory polyline layer.
-        '''
+        """
         if self.dataset.isTrajData():
             return MILayer(self.dataset.getDataInfo().createTrajLineLayer())
         else:
             return None
             
     def trajplayer(self):
-        '''
+        """
         Create trajectory point layer.
-        '''
+        """
         if self.dataset.isTrajData():
             return MILayer(self.dataset.getDataInfo().createTrajPointLayer())
         else:
             return None
             
     def trajsplayer(self):
-        '''
+        """
         Create trajectory start point layer.
-        '''
+        """
         if self.dataset.isTrajData():
             return MILayer(self.dataset.getDataInfo().createTrajStartPointLayer())
         else:
             return None
             
     def trajvardata(self, varidx, hourx=False):
-        '''
+        """
         Get trajectory variable data.
-        '''
+        """
         if self.dataset.isTrajData():
             if hourx:
                 return MIXYListData(self.dataset.getDataInfo().getXYDataset_HourX(varidx))
@@ -284,19 +284,19 @@ class DimDataFile(object):
         return times
         
     def bigendian(self, big_endian):
-        '''
+        """
         Set dataset as big_endian or little_endian. Only for GrADS binary data.
         
         :param big_endian: (*boolean*) Big endian or not.
-        '''
+        """
         datatype = self.dataset.getDataInfo().getDataType()
         if datatype.isGrADS() or datatype == MeteoDataType.HYSPLIT_Conc:
             self.dataset.getDataInfo().setBigEndian(big_endian)            
             
     def tostation(self, varname, x, y, z, t):
-        '''
+        """
         Interpolate data to a point.
-        '''
+        """
         if isinstance(t, datetime.datetime):
             t = miutil.jdate(t)
         if z is None:
@@ -307,24 +307,24 @@ class DimDataFile(object):
 ####################################################################            
     #Write netCDF data    
     def adddim(self, dimname, dimsize, group=None):
-        '''
+        """
         Add a dimension.
         
         :param dimname: (*string*) Dimension name.
         :param dimsize: (*int*) Dimension size.
         :param group: None means global dimension.
-        '''
+        """
         return self.ncfile.addDimension(group, dimname, dimsize)
         
     def addgroupattr(self, attrname, attrvalue, group=None, float=False):
-        '''
+        """
         Add a global attribute.
         
         :param attrname: (*string*) Attribute name.
         :param attrvalue: (*object*) Attribute value.
         :param group: None means global attribute.
         :param float: (*boolean*) Transfer data as float or not.
-        '''
+        """
         if float:
             if isinstance(attrvalue, (list, tuple)):
                 for i in range(len(attrvalue)):
@@ -358,7 +358,7 @@ class DimDataFile(object):
             return datatype
  
     def addvar(self, varname, datatype, dims, attrs=None, group=None):
-        '''
+        """
         Add a variable.
         
         :param varname: (*string*) Variable name.
@@ -366,7 +366,7 @@ class DimDataFile(object):
             char].
         :param dims: (*list*) Dimensions.
         :param attrs: (*dict*) Attributes.
-        '''
+        """
         dt = self.__getdatatype(datatype)
         if len(dims) > 0:
             if isinstance(dims[0], Dimension):
@@ -385,20 +385,20 @@ class DimDataFile(object):
         return var
         
     def create(self):
-        '''
+        """
         Create a netCDF data file according the settings of dimensions, global attributes
         and variables
-        '''
+        """
         self.ncfile.create()
 
     def nc_define(self, dims, gattrs, vars, write_dimvars=True):
-        '''
+        """
         Define dimensions, global attributes, variables of the netcdf file
         :param dims: (*list of Dimension*) The dimensions
         :param gattrs: (*list of Attribute*) The global attributes
         :param vars: (*list of DimVariable*) The variables
         :param write_dimvars: (*bool*) Write dimension variables value or not. Default is ``True``
-        '''
+        """
         #Add dimensions
         ncdims = []
         for dim in dims:
@@ -465,13 +465,13 @@ class DimDataFile(object):
                     self.write(dimvar, np.array(dim.getDimValue()))
         
     def write(self, variable, value, origin=None):
-        '''
+        """
         Write variable value.
         
         :param variable: (*Variable*) Variable object.
         :param value: (*array_like*) Data array to be write.
         :param origin: (*list*) Dimensions origin indices. None means all from 0.
-        '''
+        """
         if isinstance(value, (list, tuple)):
             value = np.array(value)
 
@@ -502,43 +502,43 @@ class DimDataFile(object):
             self.ncfile.write(ncvariable, origin, value)
 
     def flush(self):
-        '''
+        """
         Flush the data.
-        '''
+        """
         self.ncfile.flush()        
         
     def largefile(self, islarge=True):
-        '''
+        """
         Set the netCDF file is large file (more than 2G) nor not.
         
         :param islarge: (*boolean*) Is large file or not.
-        '''
+        """
         self.ncfile.setLargeFile(islarge)
         
 ##################################################################
     # Write ARL data
     def setx(self, x):
-        '''
+        """
         Set x (longitude) dimension value.
         
         :param x: (*array_like*) X dimension value.
-        '''
+        """
         self.arldata.setX(x.aslist())
         
     def sety(self, y):
-        '''
+        """
         Set y (latitude) dimension value.
         
         :param y: (*array_like*) Y dimension value.
-        '''
+        """
         self.arldata.setY(y.aslist())
         
     def setlevels(self, levels):
-        '''
+        """
         Set vertical levels.
         
         :param leveles: (*list*) Vertical levels.
-        '''
+        """
         if isinstance(levels, np.NDArray):
             levels = levels.aslist()
         if levels[0] != 1:
@@ -546,23 +546,23 @@ class DimDataFile(object):
         self.arldata.levels = levels
         
     def set2dvar(self, vnames):
-        '''
+        """
         Set surface variables (2 dimensions ignore time dimension).
         
         :param vnames: (*list*) Variable names.
-        '''
+        """
         self.arldata.LevelVarList.add(vnames)
         
     def set3dvar(self, vnames):
-        '''
+        """
         Set level variables (3 dimensions ignore time dimension).
         
         :param vnames: (*list*) Variable names.
-        '''
+        """
         self.arldata.LevelVarList.add(vnames)
     
     def getdatahead(self, proj, model, vertical, icx=0, mn=0):
-        '''
+        """
         Get data head.
         
         :param proj: (*ProjectionInfo*) Projection information.
@@ -571,31 +571,31 @@ class DimDataFile(object):
             2-pressure (mb); 3-terrain (fraction); 4-hybrid (mb: offset.fraction)
         :param icx: (*int*) Forecast hour (>99 the header forecast hr = 99)
         :param mn: (*int*) Minutes associated with data time.
-        '''
+        """
         return self.arldata.getDataHead(proj, model, vertical, icx, mn)
 
     def diff_origin_pack(self, data):
-        '''
+        """
         Get difference between the original data and the packed data.
         :param data: (*array*) The original data.
         :return: (*array*) Difference.
-        '''
+        """
         r = self.arldata.diffOriginPack(data._array)
         return np.NDArray(r)
         
     def writeindexrec(self, t, datahead, ksums=None):
-        '''
+        """
         Write index record.
         
         :param t: (*datatime*) The time of the data.
         :param datahead: (*DataHeader') Data header of the record.
         :param ksums: (*list*) Check sum list.
-        '''
+        """
         t = miutil.jdate(t)
         self.arldata.writeIndexRecord(t, datahead, ksums)
         
     def writedatarec(self, t, lidx, vname, fhour, grid, data):
-        '''
+        """
         Write data record.
         
         :param t: (*datetime*) The time of the data.
@@ -609,7 +609,7 @@ class DimDataFile(object):
         :param data: (*array_like*) Data array.
         
         :returns: (*int*) Check sum of the record data.
-        '''
+        """
         t = miutil.jdate(t)
         ksum = self.arldata.writeGridData(t, lidx, vname, fhour, grid, data.asarray())
         return ksum
@@ -617,27 +617,27 @@ class DimDataFile(object):
 ########################################################################        
     # Write Bufr data
     def write_indicator(self, bufrlen, edition=3):
-        '''
+        """
         Write indicator section with arbitrary length.
         
         :param bufrlen: (*int*) The total length of the message.
         :param edition: (*int*) Bruf edition.
         
         :returns: (*int*) Indicator section length.
-        '''
+        """
         return self.bufrdata.writeIndicatorSection(bufrlen, edition)
         
     def rewrite_indicator(self, bufrlen, edition=3):
-        '''
+        """
         Write indicator section with correct length.
         
         :param bufrlen: (*int*) The total length of the message.
         :param edition: (*int*) Bruf edition.
-        '''
+        """
         self.bufrdata.reWriteIndicatorSection(bufrlen, edition)
         
     def write_identification(self, **kwargs):
-        '''
+        """
         Write identification section.
         
         :param length: (*int*) Section length
@@ -657,7 +657,7 @@ class DimDataFile(object):
         :param minute: (*int*) Minute
         
         :returns: (*int*) Section length
-        '''
+        """
         length = kwargs.pop('length', 18)
         master_table = kwargs.pop('master_table', 0)
         subcenter_id = kwargs.pop('subcenter_id', 0)
@@ -678,50 +678,50 @@ class DimDataFile(object):
             local_table_version, year, month, day, hour, minute)
             
     def write_datadescription(self, n, datatype, descriptors):
-        '''
+        """
         Write data description section
         
         :param n: (*int*) Numer of dataset.
         :param datatype: (*int*) Data type.
         :param descriptors: (*list*) Data descriptors.
-        '''
+        """
         return self.bufrdata.writeDataDescriptionSection(n, datatype, descriptors)
         
     def write_datahead(self, len):
-        '''
+        """
         Write data header with arbitrary data length.
         
         :param len: (*int*) Data section length.
         
         :returns: (*int*) Data section head length - always 4.
-        '''
+        """
         return self.bufrdata.writeDataSectionHead(len)
         
     def rewrite_datahead(self, len):
-        '''
+        """
         Write data header with correct data length.
         
         :param len: (*int*) Data section length.
-        '''
+        """
         self.bufrdata.reWriteDataSectionHead(len)
         
     def write_data(self, value, nbits=None):
-        '''
+        """
         Write data.
         
         :param value: (*int*) Value.
         :param nbits: (*int*) Bit number.
         
         :returns: (*int*) Data value length.
-        '''
+        """
         return self.bufrdata.write(value, nbits)
         
     def write_end(self):
-        '''
+        """
         Write end section ('7777').
         
         :returns: (*int*) End section length - always 4.
-        '''
+        """
         return self.bufrdata.writeEndSection()
 
         
@@ -774,11 +774,11 @@ class DimDataFiles(list):
             return list.__getitem__(self, key)
     
     def filenames(self):
-        '''
+        """
         Get file names.
         
         :returns: File name list
-        '''
+        """
         fns = []
         for df in self:
             fns.append(df.filename)
@@ -815,13 +815,13 @@ class DimDataFiles(list):
         return self[idx]
         
     def dftindex(self, t):
-        '''
+        """
         Get data file index and time index of it.
         
         :param t: (*datetime or idx*) Time value of index.
         
         :returns: (*list of int*) Data file index and time index of it.
-        '''
+        """
         if isinstance(t, datetime.datetime):
             t = self.timeindex(t)
         nn = 0
@@ -838,13 +838,13 @@ class DimDataFiles(list):
         return dfidx, tidx
         
     def timeindex(self, t):
-        '''
+        """
         Get time index.
         
         :param t: (*datetime*) Given time
         
         :returns: (*int*) Time index
-        '''
+        """
         idx = 0
         for tt in self.times:
             if t <= tt:
@@ -853,19 +853,19 @@ class DimDataFiles(list):
         return idx if idx < self.tnum else idx - 1
     
     def gettime(self, idx):
-        '''
+        """
         Get time by index.
         
         :param idx: (*int*) Time index.
         
         :returns: (*datetime*) The time
-        '''        
+        """        
         return self.times[idx]
         
     def varnames(self):
-        '''
+        """
         Get variable names
-        '''
+        """
         return self[0].varnames()
         
 #############################################

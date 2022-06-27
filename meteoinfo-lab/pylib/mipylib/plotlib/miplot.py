@@ -66,18 +66,18 @@ def _copy_docstring_and_deprecators(method, func=None):
     return func
 
 def gca():
-    '''
+    """
     Get current axes
     :return: Current axes
-    '''
+    """
     return g_axes
         
 def figsize():
-    '''
+    """
     Get current figure size.
     
     :returns: Figure width and height.    
-    '''
+    """
     if g_figure is None:
         return None
     else:    
@@ -86,16 +86,16 @@ def figsize():
         return width, height
 
 def draw_if_interactive():
-    '''
+    """
     Draw current figure if is interactive model.
-    '''
+    """
     if isinteractive:
 		g_figure.paintGraphics()
         
 def draw():
-    '''
+    """
     Draw the current figure.
-    '''
+    """
     g_figure.paintGraphics()
 
 @_copy_docstring_and_deprecators(Axes.plot)
@@ -608,22 +608,22 @@ def show(newfig=True):
     
 # Set figure background color
 def bgcolor(color):
-    '''
+    """
     Set figure background color
     
     :param color: (*Color*) Background color    
-    '''
+    """
     chart = g_figure.getChart()
     chart.setBackground(plotutil.getcolor(color))
     draw_if_interactive()    
     
 def caxes(ax=None):
-    '''
+    """
     Set or get current axes.
     
     :param ax: (*Axes or int*) The axes to be set as current axes. Is None, get current
         axes.
-    '''
+    """
     global g_axes
     chart = g_figure.getChart()    
     if isinstance(ax, int):
@@ -634,7 +634,7 @@ def caxes(ax=None):
         chart.setCurrentPlot(ax - 1)
     elif not ax is None:
         g_axes = ax
-        chart.setCurrentPlot(chart.getPlotIndex(ax.axes))
+        chart.setCurrentPlot(chart.getPlotIndex(ax._axes))
     return g_axes
 
 def subplot(nrows, ncols, plot_number, **kwargs):
@@ -660,7 +660,7 @@ def subplot(nrows, ncols, plot_number, **kwargs):
     
 def subplots(nrows=1, ncols=1, position=None, sharex=False, sharey=False, \
     wspace=None, hspace=None, axestype='Axes', **kwargs):
-    '''
+    """
     Create a figure and a set of subplots.
     
     :param nrows: (*int*) Number of rows.
@@ -677,7 +677,7 @@ def subplots(nrows=1, ncols=1, position=None, sharex=False, sharey=False, \
     :param axestype: (*string*) Axes type [axes | 3d | map | polar].
     
     :returns: The figure and the axes tuple.
-    '''
+    """
     global g_figure
     if g_figure is None:
         figure()
@@ -936,10 +936,10 @@ def box(ax=None, on=None):
     locs_all = [Location.LEFT, Location.BOTTOM, Location.TOP, Location.RIGHT]
     locs = []
     for loc in locs_all:
-        if not ax.axes.getAxis(loc).isDrawTickLabel():
+        if not ax._axes.getAxis(loc).isDrawTickLabel():
             locs.append(loc)
     for loc in locs:
-        axis = ax.axes.getAxis(loc)
+        axis = ax._axes.getAxis(loc)
         if on is None:
             axis.setVisible(not axis.isVisible())
         else:
@@ -983,9 +983,9 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
         if height is None:
             height = g_figure.getHeight() if not g_figure is None else 400
         if dpi is None:
-            JOGLUtil.saveImage(g_axes.axes, fname, width, height)
+            JOGLUtil.saveImage(g_axes._axes, fname, width, height)
         else:
-            JOGLUtil.saveImage(g_axes.axes, fname, width, height, dpi)
+            JOGLUtil.saveImage(g_axes._axes, fname, width, height, dpi)
     else:
         if fname.endswith('.eps') or fname.endswith('.pdf'):
             dpi = None
@@ -1031,23 +1031,23 @@ def savefig_jpeg(fname, width=None, height=None, dpi=None):
 
 # Clear current axes
 def cla():
-    '''
+    """
     Clear current axes.
-    '''
+    """
     global g_axes
     if not g_axes is None:
         if not g_figure is None:
             chart = g_figure.getChart()
             if not chart is None:
-                g_figure.getChart().removePlot(g_axes.axes)
+                g_figure.getChart().removePlot(g_axes._axes)
         g_axes = None
         draw_if_interactive()
 
 # Delete current figure
 def delfig():
-    '''
+    """
     Clear current figure.
-    '''
+    """
     if g_figure is None:
         return
     
@@ -1060,9 +1060,9 @@ def delfig():
     
 # Clear current figure    
 def clf():
-    '''
+    """
     Clear current figure.
-    '''
+    """
     if g_figure is None:
         return
 
@@ -1079,21 +1079,21 @@ def clf():
     draw_if_interactive()
 
 def cll():
-    '''
+    """
     Clear last added plot object.
-    '''
+    """
     if not g_axes is None:
         if isinstance(g_axes, MapAxes):
-            g_axes.axes.removeLastLayer()
+            g_axes._axes.removeLastLayer()
         else:
-            g_axes.axes.removeLastGraphic()
-            g_axes.axes.setAutoExtent()
+            g_axes._axes.removeLastGraphic()
+            g_axes._axes.setAutoExtent()
         draw_if_interactive()
         
 def clc():
-    '''
+    """
     Clear command window.
-    '''
+    """
     if not migl.milapp is None:
         console = migl.milapp.getConsoleDockable().getConsole()
         console.getTextPane().setText('')   
@@ -1299,9 +1299,9 @@ def text(x, y, s, **kwargs):
     else:
         if isinstance(g_axes, MapAxes):
             islonlat = kwargs.pop('islonlat', True)
-            g_axes.axes.addText(ctext, islonlat)
+            g_axes._axes.addText(ctext, islonlat)
         else:
-            g_axes.axes.addText(ctext)
+            g_axes._axes.addText(ctext)
     draw_if_interactive()
     return ctext
 
@@ -1393,25 +1393,25 @@ def colorbar(mappable=None, **kwargs):
     return cb
 
 # def set(obj, **kwargs):
-#     '''
+#     """
 #     Set properties to an object. Used to change the plot parameters.
-#     '''
+#     """
 #     if isinstance(obj, Axes):
 #         xminortick = kwargs.pop('xminortick', None)
 #         if not xminortick is None:
 #             locs = [Location.BOTTOM, Location.TOP]
 #             for loc in locs:
-#                 axis = obj.axes.getAxis(loc)
+#                 axis = obj._axes.getAxis(loc)
 #                 axis.setMinorTickVisible(xminortick)
 #         yminortick = kwargs.pop('yminortick', None)
 #         if not yminortick is None:
 #             locs = [Location.LEFT, Location.RIGHT]
 #             for loc in locs:
-#                 axis = obj.axes.getAxis(loc)
+#                 axis = obj._axes.getAxis(loc)
 #                 axis.setMinorTickVisible(yminortick)
 #         tickin = kwargs.pop('tickin', None)
 #         if not tickin is None:
-#             obj.axes.setInsideTick(tickin)
+#             obj._axes.setInsideTick(tickin)
 #     draw_if_interactive()
 
 @_copy_docstring_and_deprecators(Axes.imshow)
@@ -1787,7 +1787,7 @@ def streamplotm(*args, **kwargs):
 
 @_copy_docstring_and_deprecators(Axes.clabel)
 def clabel(layer, **kwargs):
-    '''
+    """
     Add contour layer labels.
     
     :param layer: (*MILayer*) The contour layer.
@@ -1800,7 +1800,7 @@ def clabel(layer, **kwargs):
     :param xoffset: (*int*) X offset of the labels.
     :param yoffset: (int*) Y offset of the labels.
     :param avoidcoll: (*boolean*) Avoid labels collision or not.
-    '''    
+    """    
     g_axes.clabel(layer, **kwargs)
     draw_if_interactive()
 
@@ -2128,9 +2128,9 @@ def clear():
     migl.milapp.delVariables()
     
 def gc_collect():
-    '''
+    """
     Clear variables and release memory
-    '''
+    """
     clear()
     import gc
     gc.collect()

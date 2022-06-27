@@ -55,7 +55,7 @@ def destagger(var, stagger_dim):
     return result
     
 def get_slp(wrfin, timeidx=0, units='hPa'):
-    '''
+    """
     Return the sea level pressure in the specified units.
     
     This function extracts the necessary variables from the NetCDF file 
@@ -66,7 +66,7 @@ def get_slp(wrfin, timeidx=0, units='hPa'):
     :param units: (*string*) The desired units.
     
     :returns: (*array*) Sea level pressure.
-    '''
+    """
     t = wrfin['T'][timeidx,:,:,:]
     p = wrfin['P'][timeidx,:,:,:]
     pb = wrfin['PB'][timeidx,:,:,:]
@@ -85,7 +85,7 @@ def get_slp(wrfin, timeidx=0, units='hPa'):
     return DimArray(slp, dims=t.dims[1:])
     
 def get_rh(wrfin, timeidx=0):
-    '''
+    """
     Return the relative humidity.
     
     This functions extracts the necessary variables from the NetCDF file 
@@ -95,7 +95,7 @@ def get_rh(wrfin, timeidx=0):
     :param timeidx: (*int*) Time index.
     
     :returns: (*array*) Relative humidity.
-    '''
+    """
     t = wrfin['T'][timeidx,:,:,:]
     p = wrfin['P'][timeidx,:,:,:]
     pb = wrfin['PB'][timeidx,:,:,:]
@@ -109,7 +109,7 @@ def get_rh(wrfin, timeidx=0):
     return rh
     
 def get_rh2m(wrfin, timeidx=0):
-    '''
+    """
     Return the 2m relative humidity.
     
     This functions extracts the necessary variables from the NetCDF file 
@@ -119,7 +119,7 @@ def get_rh2m(wrfin, timeidx=0):
     :param timeidx: (*int*) Time index.
     
     :returns: (*array*) Relative humidity.
-    '''
+    """
     t2 = wrfin['T2'][timeidx,:,:]
     psfc = wrfin['PSFC'][timeidx,:,:]
     q2 = wrfin['Q2'][timeidx,:,:]

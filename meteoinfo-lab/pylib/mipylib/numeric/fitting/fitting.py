@@ -16,7 +16,7 @@ __all__ = [
     ]
 
 def powerfit(x, y, func=False):
-    '''
+    """
     Power law fitting.
     
     :param x: (*array_like*) x data array.
@@ -24,7 +24,7 @@ def powerfit(x, y, func=False):
     :param func: (*boolean*) Return fit function (for predict function) or not. Default is ``False``.
     
     :returns: Fitting parameters and function (optional).
-    '''
+    """
     if isinstance(x, list):
         x = NDArray(ArrayUtil.array(x))
     if isinstance(y, list):
@@ -36,7 +36,7 @@ def powerfit(x, y, func=False):
         return r[0], r[1], r[2]
         
 def expfit(x, y, func=False):
-    '''
+    """
     Exponent fitting.
     
     :param x: (*array_like*) x data array.
@@ -44,7 +44,7 @@ def expfit(x, y, func=False):
     :param func: (*boolean*) Return fit function (for predict function) or not. Default is ``False``.
     
     :returns: Fitting parameters and function (optional).
-    '''
+    """
     if isinstance(x, list):
         x = NDArray(ArrayUtil.array(x))
     if isinstance(y, list):
@@ -56,7 +56,7 @@ def expfit(x, y, func=False):
         return r[0], r[1], r[2]
         
 def polyfit(x, y, degree, func=False):
-    '''
+    """
     Polynomail fitting.
     
     :param x: (*array_like*) x data array.
@@ -65,7 +65,7 @@ def polyfit(x, y, degree, func=False):
     :param func: (*boolean*) Return fit function (for predict function) or not. Default is ``False``.
     
     :returns: Fitting parameters and function (optional).
-    '''
+    """
     if isinstance(x, list):
         x = NDArray(ArrayUtil.array(x))
     if isinstance(y, list):
@@ -99,14 +99,14 @@ def polyval(p, x):
     return NDArray(ArrayMath.polyVal(p, x.asarray()))
     
 def predict(func, x):
-    '''
+    """
     Predict y value using fitting function and x value.
     
     :param func: (*Fitting function object*) Fitting function.
     :param x: (*float*) x value.
     
     :returns: (*float*) y value.
-    '''
+    """
     if isinstance(x, (int, float, long)):
         return func.predict(x)
         

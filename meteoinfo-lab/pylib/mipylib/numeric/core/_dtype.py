@@ -20,11 +20,11 @@ _dtype_dict = dict(byte = JDataType.BYTE,
     object = JDataType.OBJECT)
 
 class DataType(object):
-    '''
+    """
     Data type
 
     :param name: (*string*) Data type name
-    '''
+    """
 
     def __init__(self, name):
         if name is int:
@@ -91,11 +91,11 @@ class DataType(object):
 
     @property
     def char(self):
-        '''
+        """
         Get A unique character code for each of the 21 different built-in types.
 
         :return: (*str*) Character code
-        '''
+        """
         if self.name == 'bool' or self.name == 'boolean':
             return 'b'
         elif self.name == 'int16' or self.name == 'short':
@@ -117,11 +117,11 @@ class DataType(object):
 
     @property
     def kind(self):
-        '''
+        """
         Get kind property
 
         :return: kind string
-        '''
+        """
         if self.name == 'bool' or self.name == 'boolean':
             return 'b'
         elif self.name == 'int' or self.name == 'integer' or self.name == 'int32' or self.name == 'int16' or \
@@ -193,13 +193,13 @@ class dtype(DataType):
 
     @staticmethod
     def fromjava(dt):
-        '''
+        """
         Convert Java data type to Python data type.
 
         :param dt: (*JDataType*) Java data type
 
         :returns: Python data type
-        '''
+        """
         return DataType(dt.toString().lower())
 
 
@@ -227,11 +227,11 @@ datetime = DataType('date')
 obj = DataType('object')
 
 def fromjava(dt):
-    '''
+    """
     Convert Java data type to Python data type.
 
     :param dt: (*JDataType*) Java data type
 
     :returns: Python data type
-    '''
+    """
     return DataType(dt.toString().lower())

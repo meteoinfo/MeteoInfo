@@ -18,18 +18,18 @@ from java.awt import Font
 __all__ = ['Figure']
 
 class Figure(ChartPanel):
-    '''
+    """
     top level container for all plot elements
-    '''
+    """
     
     def __init__(self, figsize=None, dpi=None, bgcolor='w'):
-        '''
+        """
         Constructor
         
         :param figsize: (*list*) Optional, width and height of the figure such as ``[600, 400]``.
         :param bgcolor: (*Color*) Optional, background color of the figure. Default is ``w`` (white).
         :param dpi: (*int*) Dots per inch.
-        '''
+        """
         chart = Chart()
         chart.setBackground(plotutil.getcolor(bgcolor))
         if figsize is None:
@@ -40,11 +40,11 @@ class Figure(ChartPanel):
         self.current_axes = -1
             
     def get_size(self):
-        '''
+        """
         Get figure size.
         
         :returns: Figure width and height
-        '''
+        """
         return self.getFigureWidth(), self.getFigureHeight()
      
     def __create_axes(self, *args, **kwargs):
@@ -106,7 +106,7 @@ class Figure(ChartPanel):
             ax.active_outerposition(True)
         units = kwargs.pop('units', None)
         if not units is None:
-            ax.axes.setUnits(units)
+            ax._axes.setUnits(units)
         
     def __set_axes(self, ax, **kwargs):
         """
@@ -148,11 +148,11 @@ class Figure(ChartPanel):
         bgcobj = kwargs.pop('bgcolor', None)        
         
         if aspect == 'equal':
-            ax.axes.setAutoAspect(False)
+            ax._axes.setAutoAspect(False)
         else:
             if isinstance(aspect, (int, float)):
-                ax.axes.setAspect(aspect)
-                ax.axes.setAutoAspect(False)
+                ax._axes.setAspect(aspect)
+                ax._axes.setAutoAspect(False)
         if bottomaxis == False:
             b_axis.setVisible(False)
         if leftaxis == False:
@@ -170,7 +170,7 @@ class Figure(ChartPanel):
         if not xaxistype is None:
             ax.set_xaxis_type(xaxistype)
         bgcolor = plotutil.getcolor(bgcobj)
-        ax.axes.setBackground(bgcolor)
+        ax._axes.setBackground(bgcolor)
         tickline = kwargs.pop('tickline', True)
         b_axis.setDrawTickLine(tickline)
         t_axis.setDrawTickLine(tickline)
@@ -183,7 +183,7 @@ class Figure(ChartPanel):
             font = Font(tickfontname, Font.BOLD, tickfontsize)
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
-        ax.axes.setAxisLabelFont(font)
+        ax._axes.setAxisLabelFont(font)
         
     def __create_axesm(self, *args, **kwargs):  
         """
@@ -234,13 +234,13 @@ class Figure(ChartPanel):
         """       
         aspect = kwargs.pop('aspect', 'equal')
         if aspect == 'equal':
-            ax.axes.setAutoAspect(False)
+            ax._axes.setAutoAspect(False)
         elif aspect == 'auto':
-            ax.axes.setAutoAspect(True)
+            ax._axes.setAutoAspect(True)
         else:
             if isinstance(aspect, (int, float)):
-                ax.axes.setAspect(aspect)
-                ax.axes.setAutoAspect(False)
+                ax._axes.setAspect(aspect)
+                ax._axes.setAutoAspect(False)
         axis = kwargs.pop('axis', True)
         if axis:
             bottomaxis = kwargs.pop('bottomaxis', True)
@@ -257,7 +257,7 @@ class Figure(ChartPanel):
         gridline = kwargs.pop('gridline', False)
         griddx = kwargs.pop('griddx', 10)
         griddy = kwargs.pop('griddy', 10)
-        if ax.axes.getProjInfo().isLonLat():
+        if ax._axes.getProjInfo().isLonLat():
             frameon = kwargs.pop('frameon', False)
         else:
             frameon = kwargs.pop('frameon', True)
@@ -272,22 +272,22 @@ class Figure(ChartPanel):
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
             
-        mapview = ax.axes.getMapView()
+        mapview = ax._axes.getMapView()
         mapview.setXYScaleFactor(xyscale)
-        ax.axes.setAspect(xyscale)
-        ax.axes.setAxisLabelFont(font)
+        ax._axes.setAspect(xyscale)
+        ax._axes.setAxisLabelFont(font)
         if not axison is None:
-            ax.axes.setAxisOn(axison)
+            ax._axes.setAxisOn(axison)
         else:
             if bottomaxis == False:
-                ax.axes.getAxis(Location.BOTTOM).setVisible(False)
+                ax._axes.getAxis(Location.BOTTOM).setVisible(False)
             if leftaxis == False:
-                ax.axes.getAxis(Location.LEFT).setVisible(False)
+                ax._axes.getAxis(Location.LEFT).setVisible(False)
             if topaxis == False:
-                ax.axes.getAxis(Location.TOP).setVisible(False)
+                ax._axes.getAxis(Location.TOP).setVisible(False)
             if rightaxis == False:
-                ax.axes.getAxis(Location.RIGHT).setVisible(False)
-        mapframe = ax.axes.getMapFrame()
+                ax._axes.getAxis(Location.RIGHT).setVisible(False)
+        mapframe = ax._axes.getMapFrame()
         mapframe.setGridFont(font)
         mapframe.setDrawGridLabel(gridlabel)
         mapframe.setDrawGridTickLine(gridlabel)
@@ -295,13 +295,13 @@ class Figure(ChartPanel):
         mapframe.setDrawGridLine(gridline)
         mapframe.setGridXDelt(griddx)
         mapframe.setGridYDelt(griddy)
-        ax.axes.setDrawNeatLine(frameon)
+        ax._axes.setDrawNeatLine(frameon)
         bgcolor = plotutil.getcolor(bgcobj)
-        ax.axes.setBackground(bgcolor)
+        ax._axes.setBackground(bgcolor)
         boundaryprop = kwargs.pop('boundaryprop', None)
         if not boundaryprop is None:
             boundaryprop = plotutil.getlegendbreak('polygon', **boundaryprop)[0]
-            ax.axes.setBoundaryProp(boundaryprop)
+            ax._axes.setBoundaryProp(boundaryprop)
      
         return ax
 
@@ -358,11 +358,11 @@ class Figure(ChartPanel):
             font = Font(tickfontname, Font.BOLD, tickfontsize)
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
-        ax.axes.setAxisTickFont(font)
+        ax._axes.setAxisTickFont(font)
         return ax
         
     def new_axes(self, *args, **kwargs):
-        '''
+        """
         Add an axes to the figure.
     
         :param position: (*list*) Optional, axes position specified by *position=* [left, bottom, width
@@ -381,7 +381,7 @@ class Figure(ChartPanel):
         :param yreverse: (*boolean*) Optional, set yaxis reverse or not. Default is ``False`` .
         
         :returns: The axes.
-        '''
+        """
         axestype = kwargs.pop('axestype', 'cartesian')
         polar = kwargs.pop('polar', False)
         if polar:
@@ -406,7 +406,7 @@ class Figure(ChartPanel):
         return ax
      
     def add_axes(self, *args, **kwargs):
-        '''
+        """
         Add an axes to the figure.
     
         :param position: (*list*) Optional, axes position specified by *position=* [left, bottom, width
@@ -425,7 +425,7 @@ class Figure(ChartPanel):
         :param yreverse: (*boolean*) Optional, set yaxis reverse or not. Default is ``False`` .
         
         :returns: The axes.
-        '''
+        """
         if len(args) > 0 and isinstance(args[0], Axes):
             ax = args[0]
         else:
@@ -437,31 +437,31 @@ class Figure(ChartPanel):
         else:
             plot = chart.getCurrentPlot()
             if plot.isSubPlot:
-                ax.axes.isSubPlot = True
+                ax._axes.isSubPlot = True
                 position = kwargs.pop('position', None)
                 if position is None:
                     ax.set_position(plot.getPosition())  
-            chart.setCurrentPlot(ax.axes)
+            chart.setCurrentPlot(ax._axes)
 
         return ax
         
     def _add_axes(self, ax):
-        '''
+        """
         Add a axes.
         
         :param ax: (*Axes*) The axes.
-        '''
+        """
         ax.figure = self
         self.axes.append(ax)
-        self.getChart().addPlot(ax.axes)
+        self.getChart().addPlot(ax._axes)
         self.getChart().setCurrentPlot(self.getChart().getPlots().size())
         
     def remove_axes(self, ax=None):
-        '''
+        """
         Remove the axes.
         
         :param ax: (*Axes*) The axes.
-        '''
+        """
         if ax is None:
             self.axes = []
             self.getChart().getPlots().clear()
@@ -470,21 +470,21 @@ class Figure(ChartPanel):
             self.getChart().getPlots().remove(ax)
         else:
             self.axes.remove(ax)
-            self.getChart().removePlot(ax.axes)
+            self.getChart().removePlot(ax._axes)
         
     def draw(self):
-        '''
+        """
         Re-paint the figure.
-        '''
+        """
         self.paintGraphics()
         
     def set_mousemode(self, mm):
-        '''
+        """
         Set MouseMode.
         
         :param mm: (*string*) MouseMode string [zoom_in | zoom_out | pan | identifer
             | rotate | select].
-        '''
+        """
         mm = MouseMode.valueOf(mm.upper())
         self.setMouseMode(mm)
 
@@ -513,7 +513,7 @@ class Figure(ChartPanel):
             #    ax = PolarAxes()
             #else:
             #    ax = Axes()
-            ax.axes.isSubPlot = True        
+            ax._axes.isSubPlot = True
         else:
             chart.setCurrentPlot(plot_number - 1)  
         position = kwargs.pop('position', None)
@@ -570,14 +570,14 @@ class Figure(ChartPanel):
 
         if isnew:
             self._add_axes(ax)
-            #chart.addPlot(ax.axes)
+            #chart.addPlot(ax._axes)
             #chart.setCurrentPlot(chart.getPlots().size() - 1)
 
         return ax
 
     def subplots(self, nrows=1, ncols=1, position=None, sharex=False, sharey=False, \
         wspace=None, hspace=None, axestype='Axes', **kwargs):
-        '''
+        """
         Create a figure and a set of subplots.
 
         :param nrows: (*int*) Number of rows.
@@ -594,7 +594,7 @@ class Figure(ChartPanel):
         :param axestype: (*string*) Axes type [axes | 3d | map | polar].
 
         :returns: The figure and the axes tuple.
-        '''
+        """
         if position is None:
             if wspace is None and hspace is None:
                 position = [0, 0, 1, 1]
@@ -638,7 +638,7 @@ class Figure(ChartPanel):
                     ax = PolarAxes(**kwargs)
                 else:
                     ax = Axes(**kwargs)
-                ax.axes.isSubPlot = True             
+                ax._axes.isSubPlot = True
                 if not iswspace and not ishspace:
                     x = left + w * j
                     y = (bottom + height) - h * (i + 1)
@@ -654,11 +654,11 @@ class Figure(ChartPanel):
                     x += w
                 if sharex:
                     if i < nrows - 1:
-                        ax.axes.getAxis(Location.BOTTOM).setDrawTickLabel(False)
+                        ax._axes.getAxis(Location.BOTTOM).setDrawTickLabel(False)
                 if sharey:
                     if j > 0:
-                        ax.axes.getAxis(Location.LEFT).setDrawTickLabel(False)
-                #chart.addPlot(ax.axes)
+                        ax._axes.getAxis(Location.LEFT).setDrawTickLabel(False)
+                #chart.addPlot(ax._axes)
                 self._add_axes(ax)
                 if ax2d:
                     axs2d.append(ax)
@@ -672,9 +672,9 @@ class Figure(ChartPanel):
         return tuple(axs)
         
     def get_title(self):
-        '''
+        """
         Get title               
-        '''
+        """
         return self.getChart().getTitle()  
         
     def set_title(self, label, fontname=None, fontsize=14, bold=True, color='black'):

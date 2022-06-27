@@ -19,9 +19,9 @@ class Index(object):
     
     @staticmethod
     def factory(data=None, name='Index', index=None):
-        '''
+        """
         Factory method
-        '''
+        """
         if index is None:
             if isinstance(data[0], (LocalDateTime, datetime.datetime)):
                 return DateTimeIndex(data, name)
@@ -34,12 +34,12 @@ class Index(object):
                 return Index(index=index)
     
     def __init__(self, data=None, name='Index', index=None):
-        '''
+        """
         Index 
         
         :param data: (*array_like*) Index values
         :param name: (*string*) Index name                
-        '''
+        """
         if index is None:
             if isinstance(data, np.NDArray):
                 data = data.aslist()
@@ -94,24 +94,24 @@ class Index(object):
             return False
             
     def index(self, v):
-        '''
+        """
         Get index of a value.
         
         :param v: (*object*) value
         
         :returns: (*int*) Value index
-        '''
+        """
         return self._index.indexOf(v)
 
     def get_loc(self, key, outkeys=False):
-        '''
+        """
         Get integer location, slice or boolean mask for requested label.
         
         :param key: (*string or list*) Label.
         :param outkeys: (*boolean*) If return location keys or not.
         
         :returns: int if unique index, slice if monotonic index, else mask.
-        '''
+        """
         if isinstance(key, np.NDArray) and key.dtype == np.dtype.bool:
             r = self._index.filterIndices(key.asarray())
             return list(r)
@@ -129,19 +129,19 @@ class Index(object):
         return self._index.fillKeyList(rdata.asarray(), rfdata)
         
     def get_format(self):
-        '''
+        """
         Get value to string format.
         
         :returns: (*string*) Format string.
-        '''
+        """
         return self._index.getFormat()
         
     def set_format(self, format):
-        '''
+        """
         Set value to string format.
         
         :param format: (*string*) Format string.
-        '''
+        """
         self._index.setFormat(format)
         
 ############################################
@@ -171,13 +171,13 @@ class DateTimeIndex(Index):
         self._index.setName(name)
             
     def index(self, v):
-        '''
+        """
         Get index of a value.
         
         :param v: (*datetime or string*) Date time value
         
         :returns: (*int*) Value index
-        '''
+        """
         if isinstance(v, datetime.datetime):
             v = miutil.jdatetime(v)
         else:
@@ -185,14 +185,14 @@ class DateTimeIndex(Index):
         return self._index.indexOf(v)
         
     def get_loc(self, key, outkeys=False):
-        '''
+        """
         Get integer location, slice or boolean mask for requested label.
         
         :param key: (*string or list*) Label.
         :param outkeys: (*boolean*) If return location keys or not.
         
         :returns: int if unique index, slice if monotonic index, else mask.
-        '''
+        """
         if isinstance(key, np.NDArray) and key.dtype.kind == 'b':
             r = self._index.filterIndices(key.asarray())
             return list(r)
@@ -208,56 +208,56 @@ class DateTimeIndex(Index):
             
     @property
     def year(self):
-        '''
+        """
         Get year index.
-        '''
+        """
         r = self._index.getYear()
         return Index(index=r)
     
     @property
     def month(self):
-        '''
+        """
         Get month index.
-        '''
+        """
         r = self._index.getMonth()
         return Index(index=r)
         
     @property
     def day(self):
-        '''
+        """
         Get day index.
-        '''
+        """
         r = self._index.getDay()
         return Index(index=r)
         
     @property
     def hour(self):
-        '''
+        """
         Get hour index.
-        '''
+        """
         r = self._index.getHour()
         return Index(index=r)
         
     @property
     def minute(self):
-        '''
+        """
         Get minute index.
-        '''
+        """
         r = self._index.getMinute()
         return Index(index=r)
         
     @property
     def second(self):
-        '''
+        """
         Get second index.
-        '''
+        """
         r = self._index.getSecond()
         return Index(index=r)
 
         
 #############################################
 def date_range(start=None, end=None, periods=None, freq='D'):
-    '''
+    """
     Create DateTimeIndex by date range.
     
     :param start: (*string or datetime*) Start date time.
@@ -266,7 +266,7 @@ def date_range(start=None, end=None, periods=None, freq='D'):
     :param freq: (*string*) Date time frequent value [ Y | M | D | H | m | S ]. 
     
     :returns: (*DateTimeIndex*) DateTimeIndex
-    '''
+    """
     r = DateTimeIndex(start=start, end=end, periods=periods, freq=freq)
     return r
     

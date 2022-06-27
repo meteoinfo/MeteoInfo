@@ -55,9 +55,9 @@ class NDArray(object):
     shape = property(get_shape, set_shape)
 
     def get_base(self):
-        '''
+        """
         Get base array.
-        '''
+        """
         if self.base is None:
             return self
         else:
@@ -527,76 +527,76 @@ class NDArray(object):
             raise StopIteration()
 
     def copy(self):
-        '''
+        """
         Copy array values to a new array.
-        '''
+        """
         return NDArray(self._array.copy())
 
     def view(self):
-        '''
+        """
         New view of array with the same data.
 
         :return: New view of array with the same data.
-        '''
+        """
         return NDArray(ArrayUtil.view(self._array))
 
     def tojarray(self, dtype=None):
-        '''
+        """
         Convert to java array.
 
         :param dtype: (*string*) Data type ['double','long',None].
 
         :returns: (*java array*) Java array.
-        '''
+        """
         r = ArrayUtil.copyToNDJavaArray(self._array, dtype)
         return r
 
     def to_encoding(self, encoding):
-        '''
+        """
         Convert char array to encoding from UTF-8
 
         :param encoding: (*string*) Encoding string.
 
         :returns: (*array*) Converted array.
-        '''
+        """
         if self.dtype == _dtype.dtype.char:
             return NDArray(ArrayUtil.convertEncoding(self._array, encoding))
         else:
             return None
 
     def get_string(self, encoding='UTF-8'):
-        '''
+        """
         Get string from a char array.
 
         :param encoding: (*string*) Encoding string.
 
         :returns: (*string*) String.
-        '''
+        """
         if self.dtype == _dtype.dtype.char:
             return ArrayUtil.getString(self._array, encoding)
         else:
             return None
 
     def in_values(self, other):
-        '''
+        """
         Return the array with the value of 1 when the element value
         in the list other, otherwise set value as 0.
 
         :param other: (*list or array*) List value.
 
         :returns: (*array*) Result array.
-        '''
+        """
         if not isinstance(other, (list, tuple)):
             other = other.aslist()
         r = NDArray(ArrayMath.inValues(self._array, other))
         return r
 
     def contains_nan(self):
-        '''
+        """
         Check if the array contains nan value.
 
         :returns: (*boolean*) True if contains nan, otherwise return False.
-        '''
+        """
         return ArrayMath.containsNaN(self._array)
 
     def getsize(self, name='size'):
@@ -608,13 +608,13 @@ class NDArray(object):
             return sizestr
 
     def astype(self, dtype):
-        '''
+        """
         Convert to another data type.
 
         :param dtype: (*str or DataType*) Data type.
 
         :returns: (*array*) Converted array.
-        '''
+        """
         if not isinstance(dtype, _dtype.DataType):
             dtype = _dtype.dtype(dtype)
 
@@ -635,14 +635,14 @@ class NDArray(object):
         return r
 
     def min(self, axis=None):
-        '''
+        """
         Get minimum value along an axis.
 
         :param axis: (*int*) Axis along which the minimum is computed. The default is to
             compute the minimum of the flattened array.
 
         :returns: Minimum values.
-        '''
+        """
         if axis is None:
             r = ArrayMath.min(self._array)
             return r
@@ -651,7 +651,7 @@ class NDArray(object):
             return NDArray(r)
 
     def argmin(self, axis=None):
-        '''
+        """
         Returns the indices of the minimum values along an axis.
 
         :param axis: (*int*) By default, the index is into the flattened array, otherwise
@@ -659,7 +659,7 @@ class NDArray(object):
 
         :returns: Array of indices into the array. It has the same shape as a.shape with the
             dimension along axis removed.
-        '''
+        """
         if axis is None:
             r = ArrayMath.argMin(self._array)
             return r
@@ -668,7 +668,7 @@ class NDArray(object):
             return NDArray(r)
 
     def argmax(self, axis=None):
-        '''
+        """
         Returns the indices of the minimum values along an axis.
 
         :param axis: (*int*) By default, the index is into the flattened array, otherwise
@@ -676,7 +676,7 @@ class NDArray(object):
 
         :returns: Array of indices into the array. It has the same shape as a.shape with the
             dimension along axis removed.
-        '''
+        """
         if axis is None:
             r = ArrayMath.argMax(self._array)
             return r
@@ -693,14 +693,14 @@ class NDArray(object):
         self._array = ArrayUtil.sort(self._array, axis)
 
     def max(self, axis=None):
-        '''
+        """
         Get maximum value along an axis.
 
         :param axis: (*int*) Axis along which the maximum is computed. The default is to
             compute the maximum of the flattened array.
 
         :returns: Maximum values.
-        '''
+        """
         if axis is None:
             r = ArrayMath.max(self._array)
             return r
@@ -709,14 +709,14 @@ class NDArray(object):
             return NDArray(r)
 
     def sum(self, axis=None):
-        '''
+        """
         Sum of array elements over a given axis.
 
         :param axis: (*int*) Axis along which the standard deviation is computed.
             The default is to compute the standard deviation of the flattened array.
 
         returns: (*array_like*) Sum result
-        '''
+        """
         if axis is None:
             return ArrayMath.sum(self._array)
         else:
@@ -724,14 +724,14 @@ class NDArray(object):
             return NDArray(r)
 
     def cumsum(self, axis=None):
-        '''
+        """
         Return the cumulative sum of the elements along a given axis.
 
         :param axis: (*int*) Axis along which the standard deviation is computed.
             The default is to compute the standard deviation of the flattened array.
 
         returns: (*array_like*) Sum result
-        '''
+        """
         if axis is None:
             return ArrayMath.cumsum(self.flatten()._array, 0)
         else:
@@ -739,36 +739,36 @@ class NDArray(object):
             return NDArray(r)
 
     def prod(self):
-        '''
+        """
         Return the product of array elements.
 
         :returns: (*float*) Produce value.
-        '''
+        """
         return ArrayMath.prodDouble(self._array)
 
     def abs(self):
-        '''
+        """
         Calculate the absolute value element-wise.
 
         :returns: An array containing the absolute value of each element in x.
             For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
-        '''
+        """
         return NDArray(ArrayMath.abs(self._array))
 
     def ceil(self):
-        '''
+        """
         Return the ceiling of the input, element-wise.
 
         :return: The ceiling of each element.
-        '''
+        """
         return NDArray(ArrayMath.ceil(self._array))
 
     def floor(self):
-        '''
+        """
         Return the floor of the input, element-wise.
 
         :return: The floor of each element.
-        '''
+        """
         return NDArray(ArrayMath.floor(self._array))
 
     def round(self, decimals=0):
@@ -813,21 +813,21 @@ class NDArray(object):
             return r
 
     def median(self, axis=None):
-        '''
+        """
         Compute tha median along the specified axis.
 
         :param axis: (*int*) Axis along which the standard deviation is computed.
             The default is to compute the standard deviation of the flattened array.
 
         returns: (*array_like*) Median result
-        '''
+        """
         if self.ndim == 1 or axis is None:
             return ArrayMath.median(self._array)
         else:
             return NDArray(ArrayMath.median(self._array, axis))
 
     def std(self, axis=None, ddof=0):
-        '''
+        """
         Compute the standard deviation along the specified axis.
 
         :param axis: (*int*) Axis along which the standard deviation is computed.
@@ -836,7 +836,7 @@ class NDArray(object):
             N - ddof, where N represents the number of elements. By default ddof is zero.
 
         returns: (*array_like*) Standart deviation result.
-        '''
+        """
         if self.ndim == 1 or axis is None:
             r = ArrayMath.std(self._array, ddof)
             return r
@@ -845,7 +845,7 @@ class NDArray(object):
             return NDArray(r)
 
     def var(self, axis=None, ddof=0):
-        '''
+        """
         Compute variance along the specified axis.
 
         :param axis: (*int*) Axis along which the variance is computed.
@@ -854,7 +854,7 @@ class NDArray(object):
             N - ddof, where N represents the number of elements. By default ddof is zero.
 
         returns: (*array_like*) Variance result.
-        '''
+        """
         if self.ndim == 1 or axis is None:
             r = ArrayMath.var(self._array, ddof)
             return r
@@ -905,11 +905,11 @@ class NDArray(object):
         return NDArray(ArrayMath.log10(self._array))
 
     def sign(self):
-        '''
+        """
         Returns an element-wise indication of the sign of a number.
 
         The sign function returns -1 if x < 0, 0 if x==0, 1 if x > 0. nan is returned for nan inputs.
-        '''
+        """
         return NDArray(ArrayMath.sign(self._array))
 
     def dot(self, other):
@@ -930,36 +930,36 @@ class NDArray(object):
         return list(r)
 
     def tolist(self):
-        '''
+        """
         Convert to a list
-        '''
+        """
         r = ArrayMath.asList(self._array)
         return list(r)
 
     def index(self, v):
-        '''
+        """
         Get index of a value in the array.
 
         :param v: (*object*) Value object.
 
         :returns: (*int*) Value index.
-        '''
+        """
         return self.tolist().index(v)
 
     def asarray(self):
-        '''
+        """
         Get backend Java Array
 
         :return: Backend Java Array
-        '''
+        """
         return self._array
 
     def backend(self):
-        '''
+        """
         Get backend Java Array
 
         :return: Backend Java Array
-        '''
+        """
         return self._array
 
     def reshape(self, *args):
@@ -990,14 +990,14 @@ class NDArray(object):
         return r
 
     def transpose(self, axes=None):
-        '''
+        """
         Permute the dimensions of an array.
 
         :param axes: (*list of int*) By default, reverse the dimensions, otherwise permute the axes according to the
             values given.
 
         :returns: Permuted array.
-        '''
+        """
         if self.ndim == 1:
             return self[:]
 
@@ -1012,14 +1012,14 @@ class NDArray(object):
     T = property(transpose)
 
     def swapaxes(self, axis1, axis2):
-        '''
+        """
         Interchange two axes of an array.
 
         :param axis1: (*int*) First axis.
         :param axis2: (*int*) Second axis.
 
         :returns: Axes swapped array.
-        '''
+        """
         if self.ndim == 1:
             return self
 
@@ -1037,11 +1037,11 @@ class NDArray(object):
         return r
 
     def inv(self):
-        '''
+        """
         Calculate inverse matrix array.
 
         :returns: Inverse matrix array.
-        '''
+        """
         r = LinalgUtil.inv(self._array)
         return NDArray(r)
 
@@ -1064,27 +1064,27 @@ class NDArray(object):
         self.flat[:] = value
 
     def flatten(self):
-        '''
+        """
         Return a copy of the array collapsed into one dimension.
 
         :returns: (*NDArray*) A copy of the input array, flattened to one dimension.
-        '''
+        """
         shape = [self.size]
         r = NDArray(self._array.reshape(shape))
         return r
 
     def ravel(self):
-        '''
+        """
         Return a copy of the array collapsed into one dimension.
 
         :returns: (*NDArray*) A copy of the input array, flattened to one dimension.
-        '''
+        """
         shape = [self.size]
         r = NDArray(self._array.reshape(shape))
         return r
 
     def repeat(self, repeats, axis=None):
-        '''
+        """
         Repeat elements of an array.
 
         :param repeats: (*int or list of ints*) The number of repetitions for each
@@ -1093,7 +1093,7 @@ class NDArray(object):
             the flattened input array, and return a flat output array.
 
         :returns: (*array_like*) Repeated array.
-        '''
+        """
         if isinstance(repeats, int):
             repeats = [repeats]
         if axis is None:
@@ -1103,14 +1103,14 @@ class NDArray(object):
         return NDArray(r)
 
     def take(self, indices, axis=None):
-        '''
+        """
         Take elements from an array along an axis.
 
         :param indices: (*array_like*) The indices of the values to extract.
         :param axis: (*int*) The axis over which to select values.
 
         :returns: (*array*) The returned array has the same type as a.
-        '''
+        """
         if isinstance(indices, (list, tuple)):
             indices = NDArray(indices)
         r = ArrayMath.take(self._array, indices._array, axis)

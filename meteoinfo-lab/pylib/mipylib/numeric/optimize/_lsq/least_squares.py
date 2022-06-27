@@ -88,11 +88,11 @@ def construct_loss_function(m, loss, f_scale):
 
 class UniFunc(UnivariateFunction):
     def __init__(self, f):
-        '''
+        """
         Initialize
 
         :param f: Jython function
-        '''
+        """
         self.f = f
 
     def value(self, *args):

@@ -169,71 +169,71 @@ class PyTableData(object):
         return 'loc'
     
     def head(self, n=5):
-        '''
+        """
         Get top rows
         
         :param n: (*int*) row number.
         
         :returns: Top rows
-        '''
+        """
         print self.data.head(n)
         
     def tail(self, n=5):
-        '''
+        """
         Get bottom rows
         
         :param n: (*int*) row number.
         
         :returns: Bottom rows
-        '''
+        """
         print self.data.tail(n)
     
     def rownum(self):
-        '''
+        """
         Returns the row number.
-        '''
+        """
         return self.data.getRowCount()
         
     def colnum(self):
-        '''
+        """
         Returns the column number.
-        '''
+        """
         return self.data.getColumnCount()
     
     def colnames(self):
-        '''
+        """
         Returns the column names.
-        '''
+        """
         return self.data.getColumnNames()
         
     def setcolname(self, col, colname):
-        '''
+        """
         Set column name to a specified column.
         
         :param col: (*int or string*) Column index or column name.
         :param colname: (*string*) New column name.
-        '''
+        """
         self.data.renameColumn(col, colname)
         self.columns = self.data.getColumnNames()
         
     def setcolnames(self, colnames):
-        '''
+        """
         Set column names to all or first part of columns.
         
         :param colnames: (*list*) List of the column names.
-        '''
+        """
         for i in range(len(colnames)):
             self.data.renameColumn(i, colnames[i])
         self.columns = self.data.getColumnNames()
     
     def coldata(self, key):
-        '''
+        """
         Return column data as one dimension array.
         
         :param key: (*string*) Column name.
         
         :returns: (*NDArray*) Colomn data.
-        '''
+        """
         if isinstance(key, str):
             print key     
             values = self.data.getColumnData(key).getDataValues()
@@ -241,31 +241,31 @@ class PyTableData(object):
         return None
         
     def getvalue(self, row, col):
-        '''
+        """
         Return a value in the table.
         
         :param row: (*int*) Row index.
         :param col: (*int*) Column index.
         
         :returns: The value at the row and column.
-        '''
+        """
         r = self.data.getValue(row, col)
         if isinstance(r, LocalDateTime):
             r = miutil.pydate(r)
         return r
 
     def setvalue(self, row, col, value):
-        '''
+        """
         Set a value to the table.
         
         :param row: (*int*) Row index.
         :param col: (*int*) Column index.
         :param value: (*object*) The value.
-        '''
+        """
         self.data.setValue(row, col, value)
     
     def addcoldata(self, colname, dtype, coldata, index=None):
-        '''
+        """
         Add a column and its data.
         
         :param colname: (*string*) The new column name.
@@ -273,7 +273,7 @@ class PyTableData(object):
         :param value: (*array_like*) The data value.
         :param index: (*int*) The order index of the column to be added. Default is ``None``, the
             column will be added as last column.
-        '''
+        """
         if isinstance(coldata, NDArray):
             coldata = coldata.aslist()
         if index is None:
@@ -282,14 +282,14 @@ class PyTableData(object):
             self.data.addColumnData(index, colname, dtype, coldata)
 
     def addcol(self, colname, dtype, index=None):
-        '''
+        """
         Add an emtpy column.
         
         :param colname: (*string*) The new column name.
         :param dtype: (*string*) The data type. [string | int | float].
         :param index: (*int*) The order index of the column to be added. Default is ``None``, the
             column will be added as last column.
-        '''
+        """
         dtype = TableUtil.toDataTypes(dtype)
         if index is None:
             self.data.addColumn(colname, dtype)
@@ -297,19 +297,19 @@ class PyTableData(object):
             self.data.addColumn(index, colname, dtype)
     
     def delcol(self, colname):
-        '''
+        """
         Delete a column.
         
         :param colname: (*string*) The column name.
-        '''
+        """
         self.data.removeColumn(colname)
         
     def addrow(self, row=None):
-        '''
+        """
         Add a row.
         
         :param row: (*DataRow*) The row. Default is ``None`, an emtpy row will be added.
-        '''
+        """
         if row is None:
             self.data.addRow()
         else:
@@ -317,69 +317,69 @@ class PyTableData(object):
         self.shape = (self.data.getRowCount(), self.data.getColumnCount())
             
     def addrows(self, rows):
-        '''
+        """
         Add rows.
         
         :param rows: (*list*) The list of the rows.
-        '''
+        """
         self.data.addRows(rows)
         self.shape = (self.data.getRowCount(), self.data.getColumnCount())
         
     def delrow(self, row):
-        '''
+        """
         Delete a row.
         
         :param row: (*int or DataRow*) Data row.
-        '''
+        """
         self.data.removeRow(row)
         self.shape = (self.data.getRowCount(), self.data.getColumnCount())
         
     def delrows(self, rows):
-        '''
+        """
         Delete rows.
         
         :param rows: (*list*) Data rows.
-        '''
+        """
         self.data.removRows(rows)
         self.shape = (self.data.getRowCount(), self.data.getColumnCount())
         
     def clearrows(self):
-        '''
+        """
         Clear all rows.               
-        '''
+        """
         self.data.getRows().clear()
         self.shape = (self.data.getRowCount(), self.data.getColumnCount())
         
     def getrow(self, index):
-        '''
+        """
         Return a row.
         
         :param index: (*int*) Row index.
         
         :returns: The row
-        '''
+        """
         return self.data.getRow(index)
         
     def getrows(self):
-        '''
+        """
         Return all rows.               
-        '''
+        """
         return self.data.getRows()
         
     #Set time column
     def timecol(self, colname):
-        '''
+        """
         Set time column.
         
         :param colname: (*string*) The Name of the column which will be set as time column. For time
             statistic calculation such as daily average.
-        '''
+        """
         tdata = TimeTableData(self.data.dataTable, colname)
         self.data = tdata;
         self.timedata = True
         
     def join(self, other, colname, colname1=None):
-        '''
+        """
         Join with another table. Joining data is typically used to append the fields of one table to 
         those of another through an attribute or field common to both tables.
         
@@ -387,14 +387,14 @@ class PyTableData(object):
         :param colname: (*string*) The common field name.
         :param colname1: (*string*) The common field name in the other table. Default is ``None`` if
             the common field names are same in both tables.
-        '''
+        """
         if colname1 == None:
             self.data.join(other.data, colname)
         else:
             self.data.join(other.data, colname, colname1)
         
     def savefile(self, filename, delimiter=',', format=None, date_format=None, float_format=None):
-        '''
+        """
         Save the table data to an ASCII file.
         
         :param filename: (*string*) The file name.
@@ -402,42 +402,42 @@ class PyTableData(object):
         :param format: (*string*) Format string.
         :param date_format: (*string*) Date format string. i.e. 'yyyyMMddHH'.
         :param float_format: (*string*) Float format string. i.e. '%.2f'.
-        '''
+        """
         self.data.saveAsASCIIFile(filename, delimiter, date_format, float_format)
             
     def ave(self, colnames):
-        '''
+        """
         Average some columns data.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains one row of average data of the columns.
-        '''
+        """
         cols = self.data.findColumns(colnames)
         dtable = self.data.average(cols)
         return PyTableData(TableData(dtable))
         
     def sum(self, colnames):
-        '''
+        """
         Summary some columns data.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains one row of summary data of the columns.
-        '''
+        """
         cols = self.data.findColumns(colnames)
         dtable = self.data.sum(cols)
         return PyTableData(TableData(dtable))
         
     def ave_year(self, colnames, year=None):
-        '''
+        """
         Yearly average function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         :param year: (*int*) Specific year. Default is ``None``.
         
         :returns: (*PyTableData*) Result table contains some rows of yearly average data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -450,14 +450,14 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
             
     def sum_year(self, colnames, year=None):
-        '''
+        """
         Yearly summary function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         :param year: (*int*) Specific year. Default is ``None``.
         
         :returns: (*PyTableData*) Result table contains some rows of yearly summary data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -470,14 +470,14 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
             
     def ave_yearmonth(self, colnames, month):
-        '''
+        """
         Average the table data by year and month. Time column is needed.
         
         :param colnames: (*list*) Column names.
         :param month: (*int*) Specific month.
         
         :returns: (*PyTableData*) Result table contains some rows of year-month average data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -487,14 +487,14 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
             
     def sum_yearmonth(self, colnames, month):
-        '''
+        """
         summary the table data by year and month. Time column is needed.
         
         :param colnames: (*list*) Column names.
         :param month: (*int*) Specific month.
         
         :returns: (*PyTableData*) Result table contains some rows of year-month summary data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -504,13 +504,13 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
                   
     def ave_monthofyear(self, colnames):
-        '''
+        """
         Month of year average function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of month of year average data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -520,13 +520,13 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
             
     def sum_monthofyear(self, colnames):
-        '''
+        """
         Month of year summary function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of month of year summary data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -536,13 +536,13 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
             
     def ave_seasonofyear(self, colnames):
-        '''
+        """
         Season of year average function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of season of year average data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -552,13 +552,13 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
             
     def sum_seasonofyear(self, colnames):
-        '''
+        """
         Season of year summary function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of season of year summary data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -568,13 +568,13 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
             
     def ave_hourofday(self, colnames):
-        '''
+        """
         Hour of day average function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of hour of day average data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -584,13 +584,13 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
             
     def sum_hourofday(self, colnames):
-        '''
+        """
         Hour of day summary function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of hour of day summary data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -600,13 +600,13 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
     
     def ave_month(self, colnames):
-        '''
+        """
         Monthly average function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of monthly average data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -616,13 +616,13 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
             
     def sum_month(self, colnames):
-        '''
+        """
         Monthly summary function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of monthly summary data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -632,13 +632,13 @@ class PyTableData(object):
             return PyTableData(TableData(dtable))
             
     def ave_day(self, colnames, day=None):
-        '''
+        """
         Daily average function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of daily average data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -649,13 +649,13 @@ class PyTableData(object):
             return PyTableData(ttd)
             
     def sum_day(self, colnames, day=None):
-        '''
+        """
         Daily summary function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of daily summary data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -666,13 +666,13 @@ class PyTableData(object):
             return PyTableData(ttd)
             
     def ave_dayofweek(self, colnames, day=None):
-        '''
+        """
         Day of week average function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of dya of week average data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -683,13 +683,13 @@ class PyTableData(object):
             return PyTableData(ttd)
             
     def sum_dayofweek(self, colnames, day=None):
-        '''
+        """
         Day of week summary function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of day of week summary data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -700,13 +700,13 @@ class PyTableData(object):
             return PyTableData(ttd)
             
     def ave_hour(self, colnames):
-        '''
+        """
         Hourly average function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of hourly average data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -717,13 +717,13 @@ class PyTableData(object):
             return PyTableData(ttd)
             
     def sum_hour(self, colnames):
-        '''
+        """
         Hourly summary function. Time column is needed.
         
         :param colnames: (*list*) Column names.
         
         :returns: (*PyTableData*) Result table contains some rows of hourly summary data of the columns.
-        '''
+        """
         if not self.timedata:
             print 'There is no time column!'
             return None
@@ -734,25 +734,25 @@ class PyTableData(object):
             return PyTableData(ttd)
             
     def assinglerow(self):
-        '''
+        """
         Returns single row table if this table is single column table.
-        '''
+        """
         return PyTableData(TableData(self.data.toSingleRowTable()))
         
     def sql(self, expression):
-        '''
+        """
         Returns SQL selection result.
         
         :param expression: (*string*) SQL expression.
         
         :returns: (*PyTableData*) SQL result table.
-        '''
+        """
         return PyTableData(self.data.sqlSelect(expression))
     
     def clone(self):
-        '''
+        """
         Return coloned table.
-        '''
+        """
         return PyTableData(self.data.clone())
 
 #################################################################  

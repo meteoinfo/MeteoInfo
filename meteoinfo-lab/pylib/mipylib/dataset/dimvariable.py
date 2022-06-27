@@ -311,18 +311,18 @@ class DimVariable(object):
             return data
     
     def read(self):
-        '''
+        """
         Read data array.
         :return: (*array*) Data array.
-        '''
+        """
         return np.array(self.dataset.read(self.name))
 
     def get_members(self):
-        '''
+        """
         Get structure members. Only valid for Structure data type.
 
         :return: Structure members.
-        '''
+        """
         a = self.read()
         if a._array.getDataType() != DataType.STRUCTURE:
             print 'This method is only valid for structure array!'
@@ -331,12 +331,12 @@ class DimVariable(object):
         return a.getMembers()
 
     def get_member(self, member):
-        '''
+        """
         Get structure members. Only valid for Structure data type.
 
         :param member: (*str*) Member name.
         :return: Structure members.
-        '''
+        """
         a = self.read()
         if a._array.getDataType() != DataType.STRUCTURE:
             print 'This method is only valid for structure array!'
@@ -345,14 +345,14 @@ class DimVariable(object):
         return a.findMember(member)
 
     def member_array(self, member, indices=None):
-        '''
+        """
         Extract member array. Only valid for Structure data type.
 
         :param member: (*string*) Member name.
         :param indices: (*slice*) Indices.
 
         :returns: (*array*) Extracted member array.
-        '''
+        """
         a = self.read()
         if a._array.getDataType() != DataType.STRUCTURE:
             print 'This method is only valid for structure array!'
@@ -384,7 +384,7 @@ class DimVariable(object):
         return self.dims[idx].getLength()
         
     def dimvalue(self, idx, convert=False):
-        '''
+        """
         Get dimension values.
         
         :param idx: (*int*) Dimension index.
@@ -392,7 +392,7 @@ class DimVariable(object):
             is ``False``.
         
         :returns: (*array_like*) Dimension values
-        '''
+        """
         dim = self.dims[idx]
         if convert:
             if dim.getDimType() == DimensionType.T:
@@ -403,11 +403,11 @@ class DimVariable(object):
             return np.array(ArrayUtil.array(self.dims[idx].getDimValue()))
         
     def attrvalue(self, attr):
-        '''
+        """
         Get a global attribute value.
         
         :param attr: (*string or Attribute*) Attribute or Attribute name
-        '''
+        """
         if isinstance(attr, str):
             attr = self.variable.findAttribute(attr)
         if attr is None:
@@ -536,7 +536,7 @@ class StructureArray(object):
             return self._array.getObject(rec).findMember(member)
 
     def member_array(self, member, indices=None, rec=0):
-        '''
+        """
         Extract member array. Only valid for Structure data type.
 
         :param member: (*string*) Member name.
@@ -544,7 +544,7 @@ class StructureArray(object):
         :param rec: (*int*) Record index.
 
         :returns: (*array*) Extracted member array.
-        '''
+        """
         is_structure = isinstance(self._array, ArrayStructure)
         if isinstance(member, basestring):
             if is_structure:

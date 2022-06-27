@@ -85,6 +85,14 @@ public class MeshGraphic extends GraphicCollection3D {
         return this.legendBreak.getColor();
     }
 
+    /**
+     * Set color
+     * @param color The color
+     */
+    public void setColor(Color color) {
+        this.legendBreak.setColor(color);
+    }
+
     public void updateExtent() {
         float x, y, z;
         float minX = Float.MAX_VALUE, maxX = Float.MIN_VALUE, minY = minX, maxY = maxX,
@@ -123,12 +131,6 @@ public class MeshGraphic extends GraphicCollection3D {
         float[] ny = new float[n];
         float[] nz = new float[n];
 
-        /*for (int i = 0; i < n; i++) {
-            nx[i] = 0f;
-            ny[i] = 0f;
-            nz[i] = 0f;
-        }*/
-
         // Temporary storage for the vertex coordinates
         // there's one temporary array for each dimension.
         float[] x = new float[n];
@@ -162,80 +164,6 @@ public class MeshGraphic extends GraphicCollection3D {
             nx[i + 2] += normal[0];
             ny[i + 2] += normal[1];
             nz[i + 2] += normal[2];
-        }
-
-        // Copy the data for the normal vectors from the temporary arrays into
-        // the permanent normalArray vector.
-        vertexNormal = new float[n * 3];
-        counter = 0;
-        for (int i = 0; i < n; i++) {
-            vertexNormal[counter] = nx[i];
-            counter++;
-            vertexNormal[counter] = ny[i];
-            counter++;
-            vertexNormal[counter] = nz[i];
-            counter++;
-        }
-    }
-
-    /**
-     * Given the vertex coordinates of a shape this function calculates the
-     * normal vector coordinates.
-     */
-    public void calculateNormalVectors_bak(float[] vData) {
-        // Temporary storage for the normal vector coordinates
-        // there's one temporary array for each dimension.
-        int n = vData.length / 3;
-        float[] nx = new float[n];
-        float[] ny = new float[n];
-        float[] nz = new float[n];
-
-        for (int i = 0; i < n; i++) {
-            nx[i] = 0f;
-            ny[i] = 0f;
-            nz[i] = 0f;
-        }
-
-        // Temporary storage for the vertex coordinates
-        // there's one temporary array for each dimension.
-        float[] x = new float[n];
-        float[] y = new float[n];
-        float[] z = new float[n];
-
-        // Load the coordinate values into their respective arrays.
-        int counter = 0;
-        for (int i = 0; i < n; i++) {
-            x[i] = vData[counter];
-            counter++;
-            y[i] = vData[counter];
-            counter++;
-            z[i] = vData[counter];
-            counter++;
-        }
-
-        // Compute normals for each vertex.
-        float Qx, Qy, Qz, Px, Py, Pz;
-        for (int i = 0; i < n; i += 3) {
-            // Calculate the vectors P and Q formed by the triangle vertices.
-            Qx = x[i + 1] - x[i];
-            Qy = y[i + 1] - y[i];
-            Qz = z[i + 1] - z[i];
-            Px = x[i + 2] - x[i];
-            Py = y[i + 2] - y[i];
-            Pz = z[i + 2] - z[i];
-
-            // Estimate the normal as the dot product of P and Q.
-            nx[i] += Py * Qz - Pz * Qy;
-            ny[i] += Pz * Qx - Px * Qz;
-            nz[i] += Px * Qy - Py * Qx;
-
-            nx[i + 1] += Py * Qz - Pz * Qy;
-            ny[i + 1] += Pz * Qx - Px * Qz;
-            nz[i + 1] += Px * Qy - Py * Qx;
-
-            nx[i + 2] += Py * Qz - Pz * Qy;
-            ny[i + 2] += Pz * Qx - Px * Qz;
-            nz[i + 2] += Px * Qy - Py * Qx;
         }
 
         // Copy the data for the normal vectors from the temporary arrays into

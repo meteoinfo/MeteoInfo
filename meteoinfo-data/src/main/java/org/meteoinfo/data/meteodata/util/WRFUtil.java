@@ -70,7 +70,7 @@ public class WRFUtil {
         if (idx >= 0) {
             return deStagger(array, idx);
         } else {
-            System.out.println("The dimension array has no stagger dimension!");
+            //System.out.println("The dimension array has no stagger dimension!");
             return array;
         }
     }

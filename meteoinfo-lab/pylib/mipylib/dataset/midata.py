@@ -66,13 +66,13 @@ def __getfilename(fname):
             return None, isweb
             
 def addfiles(fnames):
-    '''
+    """
     Open multiple data files.
     
     :param fnames: (*list of string*) Data file names to be opened.
     
     :returns: (*DimDataFiles*) DimDataFiles object.
-    '''
+    """
     dfs = []
     for fname in fnames:
         dfs.append(addfile(fname))
@@ -158,7 +158,7 @@ def addfile(fname, access='r', dtype='netcdf', keepopen=False, **kwargs):
         return None
     
 def addfile_grads(fname, getfn=True):
-    '''
+    """
     Add a GrADS data file. use this function is GrADS control file has no ``.ctl`` suffix, otherwise use
     ``addfile`` function.
     
@@ -166,7 +166,7 @@ def addfile_grads(fname, getfn=True):
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
@@ -175,14 +175,14 @@ def addfile_grads(fname, getfn=True):
     return datafile
     
 def addfile_nc(fname, getfn=True):
-    '''
+    """
     Add a netCDF data file.
     
     :param fname: (*string*) The netCDF file name.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
@@ -191,7 +191,7 @@ def addfile_nc(fname, getfn=True):
     return datafile
     
 def addfile_grib(fname, getfn=True, version=None):
-    '''
+    """
     Add a GRIB data file.
     
     :param fname: (*string*) The GRIB file name.
@@ -199,7 +199,7 @@ def addfile_grib(fname, getfn=True, version=None):
     :param version: (*int*) None, GRIB-1 or GRIB-2. Default is None, the version will be read from data.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
@@ -211,14 +211,14 @@ def addfile_grib(fname, getfn=True, version=None):
     return datafile
     
 def addfile_arl(fname, getfn=True):
-    '''
+    """
     Add a ARL data file.
     
     :param fname: (*string*) The ARL file name.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
@@ -227,14 +227,14 @@ def addfile_arl(fname, getfn=True):
     return datafile
     
 def addfile_surfer(fname, getfn=True):
-    '''
+    """
     Add a Surfer ASCII grid data file.
     
     :param fname: (*string*) The Surfer ASCII grid file name.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
@@ -243,7 +243,7 @@ def addfile_surfer(fname, getfn=True):
     return datafile
     
 def addfile_mm5(fname, getfn=True, reffile=None):
-    '''
+    """
     Add a MM5 data file.
     
     :param fname: (*string*) The MM5 file name.
@@ -251,7 +251,7 @@ def addfile_mm5(fname, getfn=True, reffile=None):
     :param reffile: (*string*) Reference file, for the mm5 file lacking header part.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
@@ -263,14 +263,14 @@ def addfile_mm5(fname, getfn=True, reffile=None):
     return datafile
     
 def addfile_lonlat(fname, getfn=True, missingv=-9999.0):
-    '''
+    """
     Add a Lon/Lat ASCII data file.
     
     :param fname: (*string*) The Lon/Lat ASCII file name.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
@@ -280,14 +280,14 @@ def addfile_lonlat(fname, getfn=True, missingv=-9999.0):
     return datafile
     
 def addfile_micaps(fname, getfn=True):
-    '''
+    """
     Add a MICAPS data file (Data formats from CMA).
     
     :param fname: (*string*) The MICAPS file name.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
@@ -296,14 +296,14 @@ def addfile_micaps(fname, getfn=True):
     return datafile
 
 def addfile_hytraj(fname, getfn=True):
-    '''
+    """
     Add a HYSPLIT trajectory endpoint data file.
     
     :param fname: (*string*) The HYSPLIT trajectory endpoint file name.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if isinstance(fname, basestring):
         if getfn:
             fname, isweb = __getfilename(fname)
@@ -315,7 +315,7 @@ def addfile_hytraj(fname, getfn=True):
     return datafile
     
 def addfile_hyconc(fname, getfn=True, big_endian=True):
-    '''
+    """
     Add a HYSPLIT concentration data file.
     
     :param fname: (*string*) The HYSPLIT concentration file name.
@@ -323,7 +323,7 @@ def addfile_hyconc(fname, getfn=True, big_endian=True):
     :param big_endian: (*boolean*) Big_endian or little_endian.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     if not os.path.exists(fname):
@@ -334,14 +334,14 @@ def addfile_hyconc(fname, getfn=True, big_endian=True):
     return datafile
 
 def addfile_hypart(fname, skip_bytes=4, getfn=True):
-    '''
+    """
     Add a HYSPLIT concentration data file.
 
     :param fname: (*string*) The HYSPLIT concentration file name.
     :param skip_bytes: (*int*) Extra skip bytes number between time. Default is 4.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     if not os.path.exists(fname):
@@ -352,14 +352,14 @@ def addfile_hypart(fname, skip_bytes=4, getfn=True):
     return datafile
     
 def addfile_geotiff(fname, getfn=True):
-    '''
+    """
     Add a GeoTiff data file.
     
     :param fname: (*string*) The GeoTiff file name.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     if not os.path.exists(fname):
@@ -370,14 +370,14 @@ def addfile_geotiff(fname, getfn=True):
     return datafile
     
 def addfile_bil(fname, getfn=True):
-    '''
+    """
     Add a bil data file.
     
     :param fname: (*string*) The bil file name.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     if not os.path.exists(fname):
@@ -388,7 +388,7 @@ def addfile_bil(fname, getfn=True):
     return datafile
     
 def addfile_awx(fname, getfn=True):
-    '''
+    """
     Add a AWX data file (Satellite data file format from CMA). use this function is the file has no ``.awx`` 
     suffix, otherwise use ``addfile`` function.
     
@@ -396,7 +396,7 @@ def addfile_awx(fname, getfn=True):
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     if not os.path.exists(fname):
@@ -407,14 +407,14 @@ def addfile_awx(fname, getfn=True):
     return datafile
     
 def addfile_ascii_grid(fname, getfn=True):
-    '''
+    """
     Add a ESRI ASCII grid data file.
     
     :param fname: (*string*) The ESRI ASCII grid file name.
     :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
     
     :returns: (*DimDataFile*) Opened file object.
-    '''
+    """
     if getfn:
         fname, isweb = __getfilename(fname)
     if not os.path.exists(fname):
@@ -425,7 +425,7 @@ def addfile_ascii_grid(fname, getfn=True):
     return datafile
     
 def addtimedim(infn, outfn, t, tunit='hours'):
-    '''
+    """
     Add a time dimension to a netCDF data file.
     
     :param infn: (*string*) Input netCDF file name.
@@ -434,11 +434,11 @@ def addtimedim(infn, outfn, t, tunit='hours'):
     :param tunit: (*string*) Time unite, Default is ``hours``.
     
     :returns: The new netCDF with time dimension.
-    '''
+    """
     NetCDFDataInfo.addTimeDimension(infn, outfn, miutil.jdate(t), tunit)
         
 def joinncfile(infns, outfn, tdimname):
-    '''
+    """
     Join several netCDF files to one netCDF file.
     
     :param infns: (*list*) Input netCDF file name list.
@@ -446,22 +446,22 @@ def joinncfile(infns, outfn, tdimname):
     :param tdimname: (*string*) Time dimension name.
     
     :returns: Joined netCDF file.
-    '''
+    """
     NetCDFDataInfo.joinDataFiles(infns, outfn, tdimname)
     
 def numasciirow(filename):
-    '''
+    """
     Returns the number of rows in an ASCII file.
     
     :param filename: (*string*) The ASCII file name.
     
     :returns: The number of rows in the file.
-    '''
+    """
     nrow = ArrayUtil.numASCIIRow(filename)
     return nrow
     
 def numasciicol(filename, delimiter=None, headerlines=0):
-    '''
+    """
     Returns the number of columns in an ASCII file.
     
     :param filename: (*string*) The ASCII file name.
@@ -470,12 +470,12 @@ def numasciicol(filename, delimiter=None, headerlines=0):
     :param headerlines: (*int*) Lines to skip at beginning of the file. Default is ``0``.
     
     :returns: The number of columns in the file.
-    '''
+    """
     ncol = ArrayUtil.numASCIICol(filename, delimiter, headerlines)
     return ncol        
         
 def readtable(filename, **kwargs):
-    '''
+    """
     Create table by reading column oriented data from a file.
     
     :param filename: (*string*) File name for reading.
@@ -499,7 +499,7 @@ def readtable(filename, **kwargs):
         inferred from the document header row(s).
         
     :returns: (*PyTableData*) The table.
-    '''
+    """
     delimiter = kwargs.pop('delimiter', None)
     format = kwargs.pop('format', None)
     headerlines = kwargs.pop('headerlines', 0)
@@ -519,7 +519,7 @@ def readtable(filename, **kwargs):
     return r
     
 def asciiread(filename, **kwargs):
-    '''
+    """
     Read data from an ASCII file.
     
     :param filename: (*string*) The ASCII file name.
@@ -531,7 +531,7 @@ def asciiread(filename, **kwargs):
     :param readfirstcol: (*boolean*) Read first column data or not. Default is ``True``.
     
     :returns: (*NDArray*) The data array.
-    '''
+    """
     if not os.path.exists(filename):
         raise IOError('No such file: ' + filename)
     delimiter = kwargs.pop('delimiter', None)

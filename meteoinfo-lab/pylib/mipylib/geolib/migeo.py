@@ -37,14 +37,14 @@ __all__ = [
     ]
 
 def shaperead(fn, encoding=None):   
-    '''
+    """
     Returns a layer readed from a shape file.
     
     :param fn: (*string*) The shape file name (.shp).
     :param encoding: (*string*) Encoding
     
     :returns: (*MILayer*) The created layer.
-    '''
+    """
     if not fn.endswith('.shp'):
         fn = fn + '.shp'
     if not os.path.exists(fn):
@@ -68,52 +68,59 @@ def shaperead(fn, encoding=None):
         print 'File not exists: ' + fn
         raise
     
-def georead(fn):
+def georead(fn, encoding=None):
     """
     Returns a layer read from a supported geo-data file.
     
     :param fn: (*string*) The supported geo-data file name (shape file, wmp, geotiff, image, bil...).
+    :param encoding: (*string*) Table file encoding - only used for shape file. Default is `None`.
     
     :returns: (*MILayer*) The created layer.
     """
     if not os.path.exists(fn):
         fn = os.path.join(migl.get_map_folder(), fn)
+
+    if not os.path.exists(fn):
+        fn = fn + '.shp'
         
-    if os.path.exists(fn):        
-        try:
-            layer = MILayer(MapDataManage.loadLayer(fn))
-            if not layer.legend() is None:
-                lb = layer.legend().getLegendBreaks()[0]
-                if lb.getBreakType() == BreakTypes.POLYGON_BREAK:
-                    lb.setDrawFill(False)
-            return layer
-        except:
-            raise
+    if os.path.exists(fn):
+        if fn.endswith('.shp'):
+            return shaperead(fn, encoding)
+        else:
+            try:
+                layer = MILayer(MapDataManage.loadLayer(fn))
+                if not layer.legend() is None:
+                    lb = layer.legend().getLegendBreaks()[0]
+                    if lb.getBreakType() == BreakTypes.POLYGON_BREAK:
+                        lb.setDrawFill(False)
+                return layer
+            except:
+                raise
     else:
         print('File not exists: ' + fn)
         raise IOError
     
 def geotiffread(filename):
-    '''
+    """
     Return data array from a GeoTiff data file.
     
     :param filename: (*string*) The GeoTiff file name.
     
     :returns: (*NDArray*) Read data array.
-    '''
+    """
     geotiff = GeoTiff(filename)
     geotiff.read()
     r = geotiff.readArray()
     return NDArray(r)
     
 def convert_encoding_dbf(filename, fromencoding, toencoding):
-    '''
+    """
     Convert encoding of a dBase file (.dbf).
     
     :param filename: (*string*) The dBase file name.
     :param fromencoding: (*string*) From encoding.
     :param toencoding: (*string*) To encoding.
-    '''
+    """
     #Read dBase file
     atable = AttributeTable()
     atable.setEncoding(fromencoding)
@@ -125,25 +132,25 @@ def convert_encoding_dbf(filename, fromencoding, toencoding):
     atable.save()
     
 def maplayer(shapetype='polygon'):
-    '''
+    """
     Create a new map layer.
     
     :param shapetype: (*ShapeTypes*) Shape type ['point' | 'point_z' | 'line' | 'line_z' | 'polygon'
         | 'polygon_z']
     
     :returns: (*MILayer*) MILayer object.
-    '''
+    """
     return MILayer(shapetype=shapetype)
     
 def polygon(x, y=None):
-    '''
+    """
     Create polygon from coordinate data.
     
     :param x: (*array_like*) X coordinate array. If y is ``None``, x should be 2-D array contains x and y.
     :param y: (*array_like*) Y coordinate array.
     
     :returns: (*PolygonShape*) Created polygon.
-    '''
+    """
     if y is None:
         polygon = ShapeUtil.createPolygonShape(x)
     else:
@@ -155,19 +162,19 @@ def polygon(x, y=None):
     return polygon  
 
 def circle(xy, radius=5):
-    '''
+    """
     Create a circle patch
     
     :param xy: (*list of float*) X and Y coordinates of the circle center.
     :param radius: (*float*) Circle radius.
     
     :returns: (*CircleShape*) Created circle.
-    '''
+    """
     cc = ShapeUtil.createCircleShape(xy[0], xy[1], radius)
     return cc    
     
 def inpolygon(x, y, polygon):
-    '''
+    """
     Check if x/y points are inside a polygon or not.
     
     :param x: (*array_like*) X coordinate of the points.
@@ -175,7 +182,7 @@ def inpolygon(x, y, polygon):
     :param polygon: (*PolygonShape list*) The polygon list.
     
     :returns: (*boolean array*) Inside or not.
-    '''
+    """
     if isinstance(x, numbers.Number):
         x = np.array([x])
     if isinstance(y, numbers.Number):
@@ -205,7 +212,7 @@ def inpolygon(x, y, polygon):
             return r
     
 def arrayinpolygon(a, polygon, x=None, y=None):
-    '''
+    """
     Set array element value as 1 if inside a polygon or set value as -1.
     
     :param a: (*array_like*) The array.
@@ -214,7 +221,7 @@ def arrayinpolygon(a, polygon, x=None, y=None):
     :param y: (*float*) Y coordinate of the point. Default is ``None``, for DimArray
     
     :returns: (*array_like*) Result array.
-    '''
+    """
     if isinstance(a, DimArray):
         if x is None or y is None:
             x = self.dimvalue(1)
@@ -230,7 +237,7 @@ def arrayinpolygon(a, polygon, x=None, y=None):
             return NDArray(GeometryUtil.inPolygon(a.asarray(), x.aslist(), y.aslist(), x_p, y_p))
         else:
             if isinstance(polygon, MILayer):
-                polygon = polygon.layer
+                polygon = polygon._layer
             return NDArray(GeometryUtil.inPolygon(a.asarray(), x.aslist(), y.aslist(), polygon))
     else:
         return None
@@ -258,13 +265,13 @@ def distance(*args, **kwargs):
     return r
     
 def polyarea(*args, **kwargs):
-    '''
+    """
     Calculate area of polygon.
     
     Parameter is a polygon object or x, y coordinate arrays.
     
     :return: The area of the polygon.
-    '''
+    """
     islonlat = kwargs.pop('islonlat', False)
     if len(args) == 1:
         if islonlat:

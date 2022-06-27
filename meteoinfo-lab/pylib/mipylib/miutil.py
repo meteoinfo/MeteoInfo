@@ -134,13 +134,13 @@ def nums2dates(values):
     return tt
     
 def str2date(dstr):
-    '''
+    """
     Convert string to python date.
     
     :param dstr: (*string*) date string.
     
     :returns: Python date
-    '''
+    """
     n = len(dstr)
     if n == 8:
         t = datetime.datetime.strptime(dstr, '%Y%m%d')
@@ -161,25 +161,25 @@ def str2date(dstr):
     return t
     
 def str2jdate(dstr):
-    '''
+    """
     Convert string to java date.
     
     :param dstr: (*string*) date string.
     
     :returns: Java date
-    '''
+    """
     pt = str2date(dstr)
     jt = jdate(pt)
     return jt
     
 def str2jdatetime(dstr):
-    '''
+    """
     Convert string to joda DateTime.
     
     :param dstr: (*string*) date string.
     
     :returns: Joda DateTime
-    '''
+    """
     pt = str2date(dstr)
     jt = jdatetime(pt)
     return jt
@@ -201,13 +201,13 @@ def dateformat(t, format, language=None):
     return df.format(jt)
     
 def jcomplex(v):
-    '''
+    """
     Convert Python complex number to Java Complex object.
     
     :param v: (*complex*) Python complex number.
     
     :returns: (*Complex*) Java Complex object.
-    '''
+    """
     return Complex(v.real, v.img)
 
 def makeshapes(x, y, type=None, z=None, m=None):
@@ -241,12 +241,12 @@ def makeshapes(x, y, type=None, z=None, m=None):
     return shapes     
 
 def getcolor(style, alpha=None):
-    '''
+    """
     Get color.
     
     :param style: (*color object*) Color object.
     :param alpha: (*float*) Color alpha.
-    '''
+    """
     if style is None:
         return None
         

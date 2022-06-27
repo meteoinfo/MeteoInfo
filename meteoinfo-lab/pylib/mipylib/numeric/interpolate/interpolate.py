@@ -20,14 +20,14 @@ __all__ = [
     ]
 
 class interp1d(object):
-    '''
+    """
     Interpolate a 1-D function.
     
     :param x: (*array_like*) A 1-D array of real values.
     :param y: (*array_like*) A 1-D array of real values. The length of y must be equal to the length of x.
     :param kind: (*boolean*) Specifies the kind of interpolation as a string (‘linear’, 
         ‘cubic’,‘akima’,‘divided’,‘loess’,‘neville’,'kriging'). Default is ‘linear’.
-    '''
+    """
     def __init__(self, x, y, kind='linear', **kwargs):
         if isinstance(x, list):
             x = np.array(x)
@@ -40,11 +40,11 @@ class interp1d(object):
             self._func = InterpUtil.getInterpFunc(x.asarray(), y.asarray(), kind)
 
     def __call__(self, x):
-        '''
+        """
         Evaluate the interpolate values.
         
         :param x: (*array_like*) Points to evaluate the interpolate at.
-        '''
+        """
         if isinstance(x, list):
             x = np.array(x)
         if isinstance(x, NDArray):
@@ -56,7 +56,7 @@ class interp1d(object):
             return NDArray(r)
             
 class interp2d(object):
-    '''
+    """
     Interpolate over a 2-D grid.
 
     x, y and z are arrays of values used to approximate some function f: z = f(x, y). 
@@ -70,7 +70,7 @@ class interp2d(object):
     :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
     :param kind: (*boolean*) Specifies the kind of interpolation as a string (‘linear’, 
         ‘nearest’, 'kriging'). Default is ‘linear’.
-    '''
+    """
     def __init__(self, x, y, z, kind='linear', **kwargs):
         if isinstance(x, list):
             x = np.array(x)
@@ -91,12 +91,12 @@ class interp2d(object):
             self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.T.asarray(), kind)
         
     def __call__(self, x, y):
-        '''
+        """
         Evaluate the interpolate values.
         
         :param x: (*array_like*) X to evaluate the interpolate at.
         :param y: (*array_like*) Y to evaluate the interpolate at.
-        '''
+        """
         if isinstance(x, list):
             x = np.array(x)
         if isinstance(x, NDArray):
@@ -112,7 +112,7 @@ class interp2d(object):
             return NDArray(r)
             
 class RectBivariateSpline(object):
-    '''
+    """
     Bivariate spline approximation over a rectangular mesh.
     
     Can be used for both smoothing and interpolating data.
@@ -120,7 +120,7 @@ class RectBivariateSpline(object):
     :param x: (*array_like*) 1-D arrays of x coordinate in strictly ascending order.
     :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
     :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
-    '''
+    """
     def __init__(self, x, y, z):        
         if isinstance(x, list):
             x = np.array(x)
@@ -131,12 +131,12 @@ class RectBivariateSpline(object):
         self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.asarray(), 'linear')
 
     def __call__(self, x, y):
-        '''
+        """
         Evaluate the interpolate values.
         
         :param x: (*array_like*) X to evaluate the interpolate at.
         :param y: (*array_like*) Y to evaluate the interpolate at.
-        '''
+        """
         if isinstance(x, list):
             x = np.array(x)
         if isinstance(x, NDArray):
@@ -152,7 +152,7 @@ class RectBivariateSpline(object):
             return NDArray(r)
 
 class RectInterpLinear(object):
-    '''
+    """
     Bivariate linear interpolation over a rectangular mesh.
 
     Can be used for both smoothing and interpolating data.
@@ -160,7 +160,7 @@ class RectInterpLinear(object):
     :param x: (*array_like*) 1-D arrays of x coordinate in strictly ascending order.
     :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
     :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
-    '''
+    """
     def __init__(self, x, y, z):
         if isinstance(x, list):
             x = np.array(x)
@@ -171,12 +171,12 @@ class RectInterpLinear(object):
         self._func = RectLinearInterpolator(x.asarray(), y.asarray(), z.asarray())
 
     def __call__(self, x, y):
-        '''
+        """
         Evaluate the interpolate values.
 
         :param x: (*array_like*) X to evaluate the interpolate at.
         :param y: (*array_like*) Y to evaluate the interpolate at.
-        '''
+        """
         if isinstance(x, list):
             x = np.array(x)
         if isinstance(x, NDArray):
@@ -192,7 +192,7 @@ class RectInterpLinear(object):
             return NDArray(r)
 
 class RectInterpNearest(object):
-    '''
+    """
     Bivariate nearest interpolation over a rectangular mesh.
 
     Can be used for both smoothing and interpolating data.
@@ -200,7 +200,7 @@ class RectInterpNearest(object):
     :param x: (*array_like*) 1-D arrays of x coordinate in strictly ascending order.
     :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
     :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
-    '''
+    """
     def __init__(self, x, y, z):
         if isinstance(x, list):
             x = np.array(x)
@@ -211,12 +211,12 @@ class RectInterpNearest(object):
         self._func = RectNearestInterpolator(x.asarray(), y.asarray(), z.asarray())
 
     def __call__(self, x, y):
-        '''
+        """
         Evaluate the interpolate values.
 
         :param x: (*array_like*) X to evaluate the interpolate at.
         :param y: (*array_like*) Y to evaluate the interpolate at.
-        '''
+        """
         if isinstance(x, list):
             x = np.array(x)
         if isinstance(x, NDArray):
@@ -404,7 +404,7 @@ def nearestint2(*args, **kwargs):
     return NDArray(r)
 
 def griddata(points, values, xi=None, **kwargs):
-    '''
+    """
     Interpolate scattered data to grid data.
 
     :param points: (*list*) The list contains x and y coordinate arrays of the scattered data.
@@ -424,7 +424,7 @@ def griddata(points, values, xi=None, **kwargs):
     :param convexhull: (*boolean*) If the convexhull will be used to mask result grid data. Default is ``False``.
 
     :returns: (*array*) Interpolated grid data (2-D array)
-    '''
+    """
     method = kwargs.pop('method', 'idw')
     x_s = points[0]
     y_s = points[1]

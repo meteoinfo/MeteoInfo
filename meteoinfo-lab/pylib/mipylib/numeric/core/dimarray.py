@@ -446,11 +446,11 @@ class DimArray(NDArray):
         self._array = value._array
     
     def member_names(self):
-        '''
+        """
         Get member names. Only valid for Structure data type.
         
         :returns: (*list*) Member names
-        '''
+        """
         if self._array.getDataType() != DataType.STRUCTURE:
             print 'This method is only valid for structure array!'
             return None
@@ -459,14 +459,14 @@ class DimArray(NDArray):
         return list(ms)
     
     def member_array(self, member, indices=None):
-        '''
+        """
         Extract member array. Only valid for Structure data type.
         
         :param member: (*string*) Member name.
         :param indices: (*slice*) Indices.
         
         :returns: (*array*) Extracted member array.
-        '''
+        """
         if self._array.getDataType() != DataType.STRUCTURE:
             print 'This method is only valid for structure array!'
             return None
@@ -484,25 +484,25 @@ class DimArray(NDArray):
         return r
     
     def in_values(self, other):
-        '''
+        """
         The returned array element set 1 when the input array element is in other, otherwise the
         element set 0.
         
         :param other: (*array_like*) The array or list value.
         
         :returns: (*array*) The array with element value of 1 or 0.
-        '''
+        """
         r = super(DimArray, self).in_values(other)
         return DimArray(r, self.dims, self.fill_value, self.proj)
         
     def astype(self, dtype):
-        '''
+        """
         Convert to another data type.
         
         :param dtype: (*string*) Data type.
         
         :returns: (*array*) Converted array.
-        '''
+        """
         r = super(DimArray, self).astype(dtype)
         return DimArray(r, self.dims, self.fill_value, self.proj)
     
@@ -573,20 +573,20 @@ class DimArray(NDArray):
         return data
         
     def copy(self):
-        '''
+        """
         Copy array vlaues to a new array.
-        '''
+        """
         return DimArray(self._array.copy(), self.dims, self.fill_value, self.proj)
     
     # get dimension length
     def dimlen(self, idx=0):
-        '''
+        """
         Get dimension length.
         
         :param idx: (*int*) Dimension index.        
         
         :returns: (*int*) Dimension length.
-        '''
+        """
         return self.dims[idx].getLength()
         
     def dimvalue(self, idx=0, convert=False):
@@ -621,12 +621,12 @@ class DimArray(NDArray):
             self.dims[idx].setDimValues(dimvalue)
         
     def setdimtype(self, idx, dimtype):
-        '''
+        """
         Set dimension type.
         
         :param idx: (*int*) Dimension index.
         :param dimtype: (*string*) Dimension type. [X | Y | Z | T].
-        '''
+        """
         dtype = DimensionType.Other
         if dimtype.upper() == 'X':
             dtype = DimensionType.X
@@ -639,13 +639,13 @@ class DimArray(NDArray):
         self.dims[idx].setDimType(dtype)
         
     def adddim(self, dimvalue, dimtype=None, index=None):
-        '''
+        """
         Add a dimension.
         
         :param dimvalue: (*array_like*) Dimension value.
         :param dimtype: (*string*) Dimension type.
         :param index: (*int*) Index to be inserted.
-        '''
+        """
         if isinstance(dimvalue, Dimension):
             dim = dimvalue
         else:
@@ -673,11 +673,11 @@ class DimArray(NDArray):
         self.ndim = len(self.dims)
         
     def addtdim(self, t):
-        '''
+        """
         Add a time dimension as first dimension.
         
         :param t: (*array_like*) datetime array.
-        '''
+        """
         if self.tdim() is None:
             dim = Dimension(DimensionType.T)
             t = miutil.date2num(t)
@@ -694,36 +694,36 @@ class DimArray(NDArray):
             #self.shape = self._array.shape
         
     def xdim(self):
-        '''
+        """
         Get x dimension.
-        '''
+        """
         for dim in self.dims:
             if dim.getDimType() == DimensionType.X:
                 return dim        
         return None
         
     def ydim(self):
-        '''
+        """
         Get y dimension.
-        '''
+        """
         for dim in self.dims:
             if dim.getDimType() == DimensionType.Y:
                 return dim        
         return None
         
     def zdim(self):
-        '''
+        """
         Get z dimension.
-        '''
+        """
         for dim in self.dims:
             if dim.getDimType() == DimensionType.Z:
                 return dim        
         return None
         
     def tdim(self):
-        '''
+        """
         Get time dimension.
-        '''
+        """
         if self.dims is None:
             return None
 
@@ -733,11 +733,11 @@ class DimArray(NDArray):
         return None
         
     def islondim(self, idx=0):
-        '''
+        """
         Check a dimension is a longitude dimension or not.
         
         :param idx: (*int*) Dimension index.
-        '''
+        """
         dim = self.dims[idx]
         if dim.getDimType() == DimensionType.X and self.proj.isLonLat():
             return True
@@ -745,11 +745,11 @@ class DimArray(NDArray):
             return False
             
     def islatdim(self, idx=0):
-        '''
+        """
         Check a dimension is a latitude dimension or not.
         
         :param idx: (*int*) Dimension index.
-        '''
+        """
         dim = self.dims[idx]
         if dim.getDimType() == DimensionType.Y and self.proj.isLonLat():
             return True
@@ -757,19 +757,19 @@ class DimArray(NDArray):
             return False
             
     def islonlatdim(self, idx=0):
-        '''
+        """
         Check a dimension is a longitude or latitude dimension or not.
         
         :param idx: (*int*) Dimension index.
-        '''
+        """
         return self.islondim(idx) or self.islatdim(idx)
             
     def istimedim(self, idx=0):
-        '''
+        """
         Check a dimension is a time dimension or not.
         
         :param idx: (*int*) Dimension index.
-        '''
+        """
         dim = self.dims[idx]
         if dim.getDimType() == DimensionType.T:
             return True
@@ -809,14 +809,14 @@ class DimArray(NDArray):
         return gdata
         
     def sum(self, axis=None):
-        '''
+        """
         Sum of array elements over a given axis.
 
         :param axis: (*int*) Axis along which the standard deviation is computed. 
             The default is to compute the standard deviation of the flattened array.
         
         returns: (*array_like*) Sum result
-        '''
+        """
         r = super(DimArray, self).sum(axis)
         if axis is None:
             return r
@@ -828,14 +828,14 @@ class DimArray(NDArray):
             return DimArray(r, dims, self.fill_value, self.proj)
 
     def max(self, axis=None):
-        '''
+        """
         Compute tha arithmetic maximum along the specified axis.
 
         :param axis: (*int*) Axis along which the value is computed.
             The default is to compute the value of the flattened array.
 
         returns: (*array_like*) Maximum result
-        '''
+        """
         r = super(DimArray, self).max(axis)
         if isinstance(r, numbers.Number):
             return r
@@ -851,14 +851,14 @@ class DimArray(NDArray):
             return DimArray(r, dims, self.fill_value, self.proj)
 
     def min(self, axis=None):
-        '''
+        """
         Compute tha arithmetic minimum along the specified axis.
 
         :param axis: (*int*) Axis along which the value is computed.
             The default is to compute the value of the flattened array.
 
         returns: (*array_like*) Minimum result
-        '''
+        """
         r = super(DimArray, self).min(axis)
         if isinstance(r, numbers.Number):
             return r
@@ -874,14 +874,14 @@ class DimArray(NDArray):
             return DimArray(r, dims, self.fill_value, self.proj)
         
     def mean(self, axis=None):
-        '''
+        """
         Compute tha arithmetic mean along the specified axis.
 
         :param axis: (*int*) Axis along which the value is computed.
             The default is to compute the value of the flattened array.
         
         returns: (*array_like*) Mean result
-        '''
+        """
         r = super(DimArray, self).mean(axis)
         if isinstance(r, numbers.Number):
             return r
@@ -897,14 +897,14 @@ class DimArray(NDArray):
             return DimArray(r, dims, self.fill_value, self.proj)
             
     def median(self, axis=None):
-        '''
+        """
         Compute tha median along the specified axis.
 
         :param axis: (*int*) Axis along which the value is computed.
             The default is to compute the value of the flattened array.
         
         returns: (*array_like*) Median result
-        '''
+        """
         r = super(DimArray, self).median(axis)
         if isinstance(r, numbers.Number):
             return r
@@ -916,7 +916,7 @@ class DimArray(NDArray):
             return DimArray(r, dims, self.fill_value, self.proj)
             
     def std(self, axis=None, ddof=0):
-        '''
+        """
         Compute the standard deviation along the specified axis.
 
         :param axis: (*int*) Axis along which the standard deviation is computed. 
@@ -925,7 +925,7 @@ class DimArray(NDArray):
             N - ddof, where N represents the number of elements. By default ddof is zero.
         
         returns: (*array_like*) Standart deviation result.
-        '''
+        """
         r = super(DimArray, self).std(axis, ddof)
         if isinstance(r, numbers.Number):
             return r
@@ -937,7 +937,7 @@ class DimArray(NDArray):
             return DimArray(r, dims, self.fill_value, self.proj)
 
     def var(self, axis=None, ddof=0):
-        '''
+        """
         Compute the variance along the specified axis.
 
         :param axis: (*int*) Axis along which the standard deviation is computed.
@@ -946,7 +946,7 @@ class DimArray(NDArray):
             N - ddof, where N represents the number of elements. By default ddof is zero.
 
         returns: (*array_like*) Variance result.
-        '''
+        """
         r = super(DimArray, self).std(axis, ddof)
         if isinstance(r, numbers.Number):
             return r
@@ -958,48 +958,48 @@ class DimArray(NDArray):
             return DimArray(r, dims, self.fill_value, self.proj)
         
     def abs(self):
-        '''
+        """
         Calculate the absolute value element-wise.
         
         :returns: An array containing the absolute value of each element in x. 
             For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
-        '''
+        """
         r = super(DimArray, self).abs()
         return DimArray(r, self.dims, self.fill_value, self.proj)
 
     def ceil(self):
-        '''
+        """
         Return the ceiling of the input, element-wise.
 
         :return: The ceiling of each element.
-        '''
+        """
         r = super(DimArray, self).ceil()
         return DimArray(r, self.dims, self.fill_value, self.proj)
 
     def floor(self):
-        '''
+        """
         Return the floor of the input, element-wise.
 
         :return: The floor of each element.
-        '''
+        """
         r = super(DimArray, self).floor()
         return DimArray(r, self.dims, self.fill_value, self.proj)
         
     def sqrt(self):
-        '''
+        """
         Calculate sqrt value.
         
         :returns: (*DimArray*) Sqrt value array.
-        '''
+        """
         r = super(DimArray, self).sqrt()
         return DimArray(r, self.dims, self.fill_value, self.proj)
     
     def sin(self):
-        '''
+        """
         Calculate sin value.
         
         :returns: (*DimArray*) Sin value array.
-        '''
+        """
         r = super(DimArray, self).sin()
         return DimArray(r, self.dims, self.fill_value, self.proj)
 
@@ -1043,11 +1043,11 @@ class DimArray(NDArray):
         return DimArray(r, self.dims, self.fill_value, self.proj)
         
     def acos(self):
-        '''
+        """
         Calculate acos value.
         
         :returns: (*DimArray*) Acos value array.
-        '''
+        """
         r = super(DimArray, self).acos()
         return DimArray(r, self.dims, self.fill_value, self.proj)
         
@@ -1068,13 +1068,13 @@ class DimArray(NDArray):
         return DimArray(r, self.dims, self.fill_value, self.proj)        
         
     def maskout(self, mask):
-        '''
+        """
         Maskout data by polygons - the elements outside polygons will be set as NaN.
 
         :param mask: (*list*) Polygon list as mask borders.
         
         :returns: (*DimArray*) Maskouted data.
-        '''
+        """
         if isinstance(mask, NDArray):
             r = ArrayMath.maskout(self.asarray(), mask.asarray())
             return DimArray(NDArray(r), self.dims, self.fill_value, self.proj)
@@ -1091,13 +1091,13 @@ class DimArray(NDArray):
             return r
             
     def maskin(self, mask):
-        '''
+        """
         Maskin data by polygons - the elements inside polygons will be set as NaN.
 
         :param mask: (*list*) Polygon list as mask borders.
         
         :returns: (*DimArray*) Maskined data.
-        '''
+        """
         if isinstance(mask, NDArray):
             r = ArrayMath.maskin(self.asarray(), mask.asarray())
             return DimArray(r, self.dims, self.fill_value, self.proj)
@@ -1111,14 +1111,14 @@ class DimArray(NDArray):
             return r
         
     def transpose(self, axes=None):
-        '''
+        """
         Permute the dimensions of an array.
 
         :param axes: (*list of int*) By default, reverse the dimensions, otherwise permute the axes according to the
             values given.
 
         :returns: Permuted array.
-        '''
+        """
         if axes is None:
             axes = [self.ndim-i-1 for i in range(self.ndim)]
 
@@ -1136,14 +1136,14 @@ class DimArray(NDArray):
     T = property(transpose)
 
     def swapaxes(self, axis1, axis2):
-        '''
+        """
         Interchange two axes of an array.
 
         :param axis1: (*int*) First axis.
         :param axis2: (*int*) Second axis.
 
         :returns: Axes swapped array.
-        '''
+        """
         if self.ndim == 1:
             return self
 
@@ -1167,22 +1167,22 @@ class DimArray(NDArray):
         return DimArray(r, dims, self.fill_value, self.proj)
     
     def inv(self):
-        '''
+        """
         Calculate inverse matrix array.
         
         :returns: Inverse matrix array.
-        '''
+        """
         r = super(DimArray, self).inv()
         return DimArray(r, self.dims, self.fill_value, self.proj)
         
     I = property(inv)                
         
     def lonflip(self):
-        '''
+        """
         Reorder global array from 0 - 360 longitude to -180 - 180 longitude or vice versa.
         
         :returns: Reordered array.
-        '''
+        """
         lon = self.dimvalue(self.ndim - 1)
         if lon.max() > 180:
             return self.lonpivot(180)
@@ -1190,14 +1190,14 @@ class DimArray(NDArray):
             return self.lonpivot(0)
         
     def lonpivot(self, pivot):
-        '''
+        """
         Pivots an array about a user-specified longitude. The rightmost dimension must be the
         longitude dimension, which must be global and without a cyclic point.
         
         :param pivot: (*float*) The longitude value around which to pivot.
         
         :returns: Result array after longitude pivot.
-        '''
+        """
         lon = self.dimvalue(self.ndim - 1)    
         minlon = lon.min()
         maxlon = lon.max()
@@ -1230,7 +1230,7 @@ class DimArray(NDArray):
         return r
         
     def month_to_season(self, season):
-        '''
+        """
         Computes a user-specified three-month seasonal mean
         (DJF, JFM, FMA, MAM, AMJ, MJJ, JJA, JAS, ASO, SON, OND, NDJ).
         The first average (DJF=JF) and the last average (NDJ=ND) are actually 
@@ -1243,7 +1243,7 @@ class DimArray(NDArray):
             calculate: e.g., "JFM", "JJA".
             
         :returns: Season averaged data array.
-        '''
+        """
         nmonth = self.dimlen(0)
         nyear = nmonth / 12
         seasons = ['DJF','JFM','FMA','MAM','AMJ','MJJ','JJA','JAS','ASO','SON','OND','NDJ']
@@ -1385,7 +1385,7 @@ class DimArray(NDArray):
         return DimArray(NDArray(r), rdims, self.fill_value, self.proj)
         
     def savegrid(self, fname, format='surfer', **kwargs):
-        '''
+        """
         Save the array data to an ASCII or binary file. The array must be 2 dimension.
         
         :param fname: (*string*) File name.
@@ -1398,7 +1398,7 @@ class DimArray(NDArray):
         :param boldvalue: (*int*) Bold contour value - only used for ``micaps4`` file.
         :param proj: (*ProjectionInfo*) Data ProjectionInfo - only used for ``micaps4`` file.
         :param float_format: (*string*) Float number format, such as '%.2f'.
-        '''
+        """
         if self.ndim != 2:
             print 'The array must be 2 dimensional!'
             return

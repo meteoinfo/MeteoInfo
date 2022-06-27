@@ -34,7 +34,7 @@ def normalize_axis_index(axis, ndim, msg_prefix=None):
         raise AxisError(axis, ndim, msg_prefix)
 
 def where(condition):
-    '''
+    """
     Return elements, either from x or y, depending on condition.
 
     If only condition is given, return condition.nonzero().
@@ -42,7 +42,7 @@ def where(condition):
     :param condition: (*array_like*) Input array.
 
     :returns: (*tuple*) Indices of elements that are non-zero.
-    '''
+    """
     return nonzero(condition)
 
 def bincount(x, weights=None, minlength=0):

@@ -23,7 +23,7 @@ from java.lang import Double
 nan = Double.NaN
 
 class DataFrame(object):
-    '''
+    """
     Two-dimensional size-mutable, potentially heterogeneous tabular data structure with 
     labeled axes (rows and columns). Arithmetic operations align on both row and column 
     labels. Can be thought of as a dict-like container for Series objects.
@@ -32,7 +32,7 @@ class DataFrame(object):
     :param index: (*list*) Data index list. Values must be unique and hashable, same length as data.
     :param columns: (*list*) Column labels to use for resulting frame. Will default to 
         arange(n) if no column labels are provided
-    '''   
+    """   
     def __init__(self, data=None, index=None, columns=None, dataframe=None):                             
         if dataframe is None:
             if not data is None:
@@ -146,30 +146,30 @@ class DataFrame(object):
     
     @property
     def loc(self):
-        '''
+        """
         Access a group of rows and columns by label(s) or a boolean array.
-        '''
+        """
         return LocIndexer(self)
         
     @property
     def iloc(self):
-        '''
+        """
         Purely integer-location based indexing for selection by position.
-        '''
+        """
         return ILocIndexer(self)
         
     @property
     def at(self):
-        '''
+        """
         Access a single value for a row/column label pair.
-        '''
+        """
         return AtIndexer(self)
        
     @property
     def iat(self):
-        '''
+        """
         Access a single value for a row/column pair by integer position.
-        '''
+        """
         return IAtIndexer(self)
         
     def __getitem__(self, key):
@@ -624,44 +624,44 @@ class DataFrame(object):
         return self._dataframe.toString()    
         
     def head(self, n=5):
-        '''
+        """
         Get top rows
         
         :param n: (*int*) row number.
         
         :returns: Top rows
-        '''
+        """
         print self._dataframe.head(n)
         
     def tail(self, n=5):
-        '''
+        """
         Get bottom rows
         
         :param n: (*int*) row number.
         
         :returns: Bottom rows
-        '''
+        """
         print self._dataframe.tail(n)
         
     def transpose(self):
-        '''
+        """
         Transpose data frame.
         
         :returns: Transposed data frame.
-        '''        
+        """        
         r = self._dataframe.transpose()
         return DataFrame(dataframe=r)
         
     T = property(transpose)
     
     def insert(self, loc, column, value):
-        '''
+        """
         Insert column into DataFrame at specified location.
         
         :param loc: (*int*) Insertation index.
         :param column: (*string*) Label of inserted column.
         :param value: (*array_like*) Column values.
-        '''
+        """
         if isinstance(value, datetime.datetime):
             value = miutil.jdatetime(value)
         if isinstance(value, (list, tuple)):
@@ -748,13 +748,13 @@ class DataFrame(object):
         return DataFrame(dataframe=r)
     
     def append(self, other):
-        '''
+        """
         Append another data frame.
         
         :param other: (*DataFrame, dict, list*) Other data frame or row data.
         
         :returns: (*DataFrame*) Appended data frame.
-        '''
+        """
         if isinstance(other, DataFrame):
             r = self._dataframe.append(other._dataframe)
             return DataFrame(dataframe=r)
@@ -763,29 +763,29 @@ class DataFrame(object):
             return self
         
     def describe(self):
-        '''
+        """
         Generates descriptive statistics that summarize the central tendency, dispersion and shape of a 
         dataset’s distribution, excluding NaN values.
         
         :returns: Describe DataFrame.
-        '''
+        """
         r = self._dataframe.describe()
         return DataFrame(dataframe=r)
         
     def sort_index(self, axis=0, ascending=True):
-        '''
+        """
         Sort by the index along either axis
 
         :param axis: (*int*) Axis to be sorted {0 or ‘index’, 1 or ‘columns’}, default 0
         :param ascending: (*boolean*) Sort ascending vs. descending. 
             
         :returns: Sorted DataFrame
-        '''
+        """
         df = self._dataframe.sortByIndex(ascending)
         return DataFrame(dataframe=df)
         
     def sort_values(self, by, axis=0, ascending=True):
-        '''
+        """
         Sort by the values along either axis
         
         :param by: (*string or list of string*) Name or list of names to sort by.
@@ -794,7 +794,7 @@ class DataFrame(object):
             If this is a list of bools, must match the length of the by.
             
         :returns: Sorted DataFrame
-        '''
+        """
         if isinstance(by, basestring):
             by = [by]
         if isinstance(ascending, bool):
@@ -803,74 +803,74 @@ class DataFrame(object):
         return DataFrame(dataframe=df)
     
     def groupby(self, by):
-        '''
+        """
         Group DataFrame.
         
         :param by: Period string.
         
         :returns: GroupBy object.
-        '''
+        """
         if isinstance(by, basestring):
             by = [by]
         gb = self._dataframe.groupBy(by)
         return groupby.GroupBy(gb)
         
     def resample(self, by):
-        '''
+        """
         Group DataFrame by date time index.
         
         :param by: Used to determine the groups for the groupby.
         
         :returns: GroupBy object
-        '''
+        """
         gb = self._dataframe.groupByIndex(by)
         return groupby.GroupBy(gb)
         
     def count(self):
-        '''
+        """
         Return the count of the values for the requested axis
-        '''
+        """
         return DataFrame(dataframe=self._dataframe.count())
         
     def sum(self):
-        '''
+        """
         Return the sum of the values for the requested axis
-        '''
+        """
         return DataFrame(dataframe=self._dataframe.sum())
         
     def mean(self):
-        '''
+        """
         Return the mean of the values for the requested axis
-        '''
+        """
         return DataFrame(dataframe=self._dataframe.mean())
         
     def min(self):
-        '''
+        """
         Return the minimum of the values for the requested axis
-        '''
+        """
         return DataFrame(dataframe=self._dataframe.min())
         
     def max(self):
-        '''
+        """
         Return the maximum of the values for the requested axis
-        '''
+        """
         return DataFrame(dataframe=self._dataframe.max())
         
     def median(self):
-        '''
+        """
         Return the median of the values for the requested axis
-        '''
+        """
         return DataFrame(dataframe=self._dataframe.median())
         
     def std(self):
-        '''
+        """
         Return the standard deviation of the values for the requested axis
-        '''
+        """
         return DataFrame(dataframe=self._dataframe.stdDev())
     
     @classmethod
     def read_table(cls, filepath, **kwargs):
-        '''
+        """
         Create DataFrame by reading column oriented data from a file.
     
         :param filepath: (*string*) File path for reading.
@@ -894,7 +894,7 @@ class DataFrame(object):
             inferred from the document header row(s).
             
         :returns: (*DataFrame*) The DataFrame.
-        '''
+        """
         delimiter = kwargs.pop('delimiter', None)
         format = kwargs.pop('format', None)
         skiprows = kwargs.pop('skiprows', 0)
@@ -915,7 +915,7 @@ class DataFrame(object):
         
     def to_csv(self, filepath, delimiter=',', format=None, date_format=None, \
         float_format=None, index=True):
-        '''
+        """
         Save the data to an csv file.
         
         :param filepath: (*string*) The output file path.
@@ -924,7 +924,7 @@ class DataFrame(object):
         :param date_format: (*string*) Date format string. i.e. 'yyyyMMddHH'.
         :param float_format: (*string*) Float format string. i.e. '%.2f'.
         :param index: (*boolean*) Write index or not.
-        '''
+        """
         self._dataframe.saveCSV(filepath, delimiter, format, date_format, float_format, index)
 
 #################################################################

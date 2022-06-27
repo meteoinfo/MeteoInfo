@@ -17,13 +17,13 @@ __all__ = [
     ]
 
 def convert_array(a):
-    '''
+    """
     Convert netcdf Array to NDArray or conversely.
     
     :param a: (*netcdf Array or NDArray*) Input array.
     
     :returns: (*NDArray or netcdf Array) Output array.
-    '''
+    """
     if isinstance(a, Array):
         return NDArray(NCUtil.convertArray(a))
     else:

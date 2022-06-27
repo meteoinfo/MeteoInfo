@@ -40,9 +40,9 @@ __all__ = ['MapAxes']
 
 ##############################################        
 class MapAxes(Axes):
-    '''
+    """
     Axes with geological map coordinate.
-    '''
+    """
     
     def __init__(self, *args, **kwargs):
         super(MapAxes, self).__init__(*args, **kwargs)               
@@ -90,20 +90,20 @@ class MapAxes(Axes):
         cutoff = kwargs.pop('cutoff', None)
         if not cutoff is None:
             projinfo.setCutoff(cutoff)        
-        self.axes.setProjInfo(projinfo)
-        self.proj = self.axes.getProjInfo()
+        self._axes.setProjInfo(projinfo)
+        self.proj = self._axes.getProjInfo()
         
         # set other properties
         frameon = kwargs.pop('frameon', None)
         if not frameon is None:
-            self.axes.setDrawNeatLine(frameon)
+            self._axes.setDrawNeatLine(frameon)
         framelinewidth = kwargs.pop('framelinewidth', None)
         if not framelinewidth is None:
-            self.axes.setNeatLineWidth(framelinewidth)
+            self._axes.setNeatLineWidth(framelinewidth)
         framelinecolor = kwargs.pop('framelinecolor', None)
         if not framelinecolor is None:
             framelinecolor = plotutil.getcolor(framelinecolor)
-            self.axes.setNeatLineColor(framelinecolor)
+            self._axes.setNeatLineColor(framelinecolor)
         gridlabel = kwargs.pop('gridlabel', True)
         gridlabelloc = kwargs.pop('gridlabelloc', 'left_bottom')
         gridline = kwargs.pop('gridline', False)
@@ -118,7 +118,7 @@ class MapAxes(Axes):
         start_lon = kwargs.pop('start_lon', -180)
         start_lat = kwargs.pop('start_lat', -90)
         xyscale = kwargs.pop('xyscale', 1)
-        mapframe = self.axes.getMapFrame()
+        mapframe = self._axes.getMapFrame()
         mapframe.setDrawGridLabel(gridlabel)
         mapframe.setDrawGridTickLine(gridlabel)
         mapframe.setInsideTickLine(tickin)
@@ -134,116 +134,116 @@ class MapAxes(Axes):
         mapframe.setGridYDelt(griddy)
         mapframe.setGridXOrigin(start_lon)
         mapframe.setGridYOrigin(start_lat)
-        mapview = self.axes.getMapView()
+        mapview = self._axes.getMapView()
         mapview.setXYScaleFactor(xyscale)
-        self.axes.setAspect(xyscale)
+        self._axes.setAspect(xyscale)
         boundaryprop = kwargs.pop('boundaryprop', None)
         if not boundaryprop is None:
             boundaryprop = plotutil.getlegendbreak('polygon', **boundaryprop)[0]
-            self.axes.setBoundaryProp(boundaryprop)               
+            self._axes.setBoundaryProp(boundaryprop)
     
     def _set_plot(self, plot):
-        '''
+        """
         Set plot.
         
         :param plot: (*Axes3D*) Plot.
-        '''
+        """
         if plot is None:
             mapview = MapView()
-            self.axes = MapPlot(mapview)
+            self._axes = MapPlot(mapview)
         else:
-            self.axes = plot
+            self._axes = plot
     
     @property
     def axestype(self):
         return 'map'
     
     def islonlat(self):
-        '''
+        """
         Get if the map axes is lonlat projection or not.
         
         :returns: (*boolean*) Is lonlat projection or not.
-        '''
+        """
         return self.proj.isLonLat()
             
     def add_layer(self, layer, zorder=None, select=None):
-        '''
+        """
         Add a map layer
         
         :param layer: (*MapLayer*) The map layer.
         :param zorder: (*int*) Layer z order.
         :param select: (*boolean*) Select layer or not.
-        '''
+        """
         if isinstance(layer, MILayer):
-            layer = layer.layer
+            layer = layer._layer
         if zorder is None:
-            self.axes.addLayer(layer)
+            self._axes.addLayer(layer)
         else:
-            self.axes.addLayer(zorder, layer)
+            self._axes.addLayer(zorder, layer)
         if not select is None:
             if select:
-                self.axes.setSelectedLayer(layer)
+                self._axes.setSelectedLayer(layer)
                 
     def get_layers(self):
-        '''
+        """
         Get all layers.
         
         :returns: All layers
-        '''
-        r = self.axes.getLayers()
+        """
+        r = self._axes.getLayers()
         layers = []
         for layer in r:
             layers.append(MILayer(layer))
         return layers
     
     def get_layer(self, by):
-        '''
+        """
         Get a layer by name or index.
         
         :param by: (*string or int*) Layer name or index.
         
         :returns: The layer.
-        '''
-        r = self.axes.getLayer(by)
+        """
+        r = self._axes.getLayer(by)
         if not r is None:
             r = MILayer(r)
         return r
             
     def set_active_layer(self, layer):
-        '''
+        """
         Set active layer
         
         :param layer: (*MILayer*) The map layer.
-        '''
-        self.axes.setSelectedLayer(layer.layer)
+        """
+        self._axes.setSelectedLayer(layer._layer)
         
     def add_graphic(self, graphic, proj=None):
-        '''
+        """
         Add a graphic
         
         :param graphic: (*Graphic*) The graphic to be added.
         :param proj: (*ProjectionInfo*) Graphic projection.
         
         :returns: Added graphic
-        '''
+        """
         if proj is None:
-            self.axes.addGraphic(graphic)
+            self._axes.addGraphic(graphic)
         else:
-            graphic = self.axes.addGraphic(graphic, proj)
+            graphic = self._axes.addGraphic(graphic, proj)
         return graphic
         
     def add_circle(self, xy, radius=5, **kwargs):
-        '''
+        """
         Add a circle patch
-        '''
+        """
         if not kwargs.has_key('facecolor'):
             kwargs['facecolor'] = None
         lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
-        circle = self.axes.addCircle(xy[0], xy[1], radius, lbreak)
+        circle = self._axes.addCircle(xy[0], xy[1], radius, lbreak)
         return circle
         
     def scale_bar(self, x, y, **kwargs):
-        '''
+        """
         Set map scale bar.
         
         :param x: (*float*) The location x of the scale bar.
@@ -259,8 +259,8 @@ class MapAxes(Axes):
         :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
         :param fontproperties: (*dict*) A dictionary with keyword arguments accepted by the FontProperties
             initializer: *family, style, variant, size, weight*.
-        '''
-        sb = ChartScaleBar(self.axes)
+        """
+        sb = ChartScaleBar(self._axes)
         sb.setX(x)
         sb.setY(y)
         bartype = kwargs.pop('bartype', None)
@@ -310,10 +310,10 @@ class MapAxes(Axes):
             if not linewidth is None:
                 sb.setNeatlineSize(linewidth)
                 sb.setDrawNeatline(True)
-        self.axes.setScaleBar(sb)
+        self._axes.setScaleBar(sb)
         
     def north_arrow(self, x, y, **kwargs):
-        '''
+        """
         Set map scale bar.
         
         :param x: (*float*) The location x of the scale bar.
@@ -326,8 +326,8 @@ class MapAxes(Axes):
         :param labelcolor: (*Color*) Label color. Default to default is black.
         :param fontproperties: (*dict*) A dictionary with keyword arguments accepted by the FontProperties
             initializer: *family, style, variant, size, weight*.
-        '''
-        cna = ChartNorthArrow(self.axes)
+        """
+        cna = ChartNorthArrow(self._axes)
         cna.setX(x)
         cna.setY(y)
         linewidth = kwargs.pop('linewidth', None)
@@ -365,7 +365,7 @@ class MapAxes(Axes):
             if not linewidth is None:
                 cna.setNeatlineSize(linewidth)
                 cna.setDrawNeatline(True)
-        self.axes.setNorthArrow(cna)
+        self._axes.setNorthArrow(cna)
         
     def grid(self, b=None, **kwargs):
         """
@@ -383,7 +383,7 @@ class MapAxes(Axes):
         if self.islonlat():
             super(MapAxes, self).grid(b, **kwargs)
         else:
-            mapframe = self.axes.getMapFrame()
+            mapframe = self._axes.getMapFrame()
             gridline = mapframe.isDrawGridLine()
             if b is None:
                 gridline = not gridline
@@ -417,8 +417,8 @@ class MapAxes(Axes):
         :param lonlat: (*boolean*) Is longitude/latitude or not.
         """
         if limits is None:
-            self.axes.setDrawExtent(self.axes.getFullExtent())
-            self.axes.setExtent(self.axes.getDrawExtent().clone())
+            self._axes.setDrawExtent(self._axes.getFullExtent())
+            self._axes.setExtent(self._axes.getDrawExtent().clone())
             return True
         else:
             if len(limits) == 4:
@@ -428,45 +428,45 @@ class MapAxes(Axes):
                 ymax = limits[3]
                 extent = Extent(xmin, xmax, ymin, ymax)
                 if lonlat:
-                    self.axes.setLonLatExtent(extent)
-                    self.axes.setExtent(self.axes.getDrawExtent().clone())
+                    self._axes.setLonLatExtent(extent)
+                    self._axes.setExtent(self._axes.getDrawExtent().clone())
                 else:
-                    self.axes.setDrawExtent(extent)
-                    self.axes.setExtent(extent)
+                    self._axes.setDrawExtent(extent)
+                    self._axes.setExtent(extent)
                 return True
             else:
                 print('The limits parameter must be a list with 4 elements: xmin, xmax, ymin, ymax!')
                 return None
         
     def data2pixel(self, x, y, z=None):
-        '''
+        """
         Transform data coordinate to screen coordinate
         
         :param x: (*float*) X coordinate.
         :param y: (*float*) Y coordinate.
         :param z: (*float*) Z coordinate - only used for 3-D axes.
-        '''
-        if not self.axes.isLonLatMap():
+        """
+        if not self._axes.isLonLatMap():
             x, y = migeo.project(x, y, toproj=self.proj)  
             
-        rect = self.axes.getPositionArea()
-        r = self.axes.projToScreen(x, y, rect)
+        rect = self._axes.getPositionArea()
+        r = self._axes.projToScreen(x, y, rect)
         sx = r[0] + rect.getX()
         sy = r[1] + rect.getY()
         sy = self.figure.get_size()[1] - sy
         return sx, sy
         
     def loadmip(self, mipfn, mfidx=0):
-        '''
+        """
         Load one map frame from a MeteoInfo project file.
         
         :param mipfn: (*string*) MeteoInfo project file name.
         :param mfidx: (*int*) Map frame index.
-        '''
-        self.axes.loadMIProjectFile(mipfn, mfidx)
+        """
+        self._axes.loadMIProjectFile(mipfn, mfidx)
         
     def geoshow(self, *args, **kwargs):
-        '''
+        """
         Display map layer or longitude latitude data.
         
         Syntax:
@@ -476,27 +476,20 @@ class MapAxes(Axes):
             geoshow(S) - Displays the vector geographic features stored in S as points, multipoints, lines, or 
               polygons.
             geoshow(lat, lon) - Displays the latitude and longitude vectors.
-        '''
+        """
         islayer = False
         if isinstance(args[0], basestring):
             fn = args[0]
-            if not fn.endswith('.shp'):
-                fn = fn + '.shp'
-            if not os.path.exists(fn):
-                fn = os.path.join(migl.get_map_folder(), fn)
-            if os.path.exists(fn):
-                encoding = kwargs.pop('encoding', None)
-                layer = migeo.shaperead(fn, encoding)
-                islayer = True
-            else:
-                raise IOError('File not exists: ' + fn)
+            encoding = kwargs.pop('encoding', None)
+            layer = migeo.georead(fn, encoding)
+            islayer = True
         elif isinstance(args[0], MILayer):
             layer = args[0]
             islayer = True
 
         visible = kwargs.pop('visible', True)
         if islayer:    
-            layer = layer.layer
+            layer = layer._layer
             layer.setVisible(visible)
             zorder = kwargs.pop('zorder', None)
             interpolation = kwargs.pop('interpolation', None)
@@ -560,8 +553,8 @@ class MapAxes(Axes):
                         labelset.setDecimalDigits(decimals)
                     labelset.setAvoidCollision(avoidcoll)
                     layer.addLabels()  
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
             return MILayer(layer)
         else:
             if isinstance(args[0], Graphic):
@@ -602,16 +595,16 @@ class MapAxes(Axes):
                 lbreak, isunique = plotutil.getlegendbreak(displaytype, **kwargs)
                 iscurve = kwargs.pop('iscurve', False)
                 if displaytype == 'point':
-                    #graphic = self.axes.addPoint(lat, lon, lbreak)
+                    #graphic = self._axes.addPoint(lat, lon, lbreak)
                     if isinstance(lon, NDArray):
                         graphic = GraphicFactory.createPoints(lon._array, lat._array, lbreak)
                     else:
                         graphic = GraphicFactory.createPoint(lon, lat, lbreak)
                 elif displaytype == 'polyline' or displaytype == 'line':
-                    #graphic = self.axes.addPolyline(lat, lon, lbreak, iscurve)
+                    #graphic = self._axes.addPolyline(lat, lon, lbreak, iscurve)
                     graphic = GraphicFactory.createLineString(lon._array, lat._array, lbreak, iscurve)
                 elif displaytype == 'polygon':
-                    #graphic = self.axes.addPolygon(lat, lon, lbreak)
+                    #graphic = self._axes.addPolygon(lat, lon, lbreak)
                     graphic = GraphicFactory.createPolygons(lon._array, lat._array, lbreak)
 
                 if graphic.getNumGraphics() == 1:
@@ -620,14 +613,14 @@ class MapAxes(Axes):
                 if visible:
                     if graphic.isCollection():
                         if self.islonlat():
-                            self.axes.addGraphics(graphic)
+                            self._axes.addGraphics(graphic)
                         else:
-                            graphic = self.axes.addGraphics(graphic, migeo.projinfo())
+                            graphic = self._axes.addGraphics(graphic, migeo.projinfo())
                     else:
                         if self.islonlat():
-                            self.axes.addGraphic(graphic)
+                            self._axes.addGraphic(graphic)
                         else:
-                            graphic = self.axes.addGraphic(graphic, migeo.projinfo())
+                            graphic = self._axes.addGraphic(graphic, migeo.projinfo())
 
             return graphic
             
@@ -791,8 +784,8 @@ class MapAxes(Axes):
                 zorder = kwargs.pop('zorder', None)
                 select = kwargs.pop('select', True)
                 self.add_layer(layer, zorder, select)
-                self.axes.setDrawExtent(layer.getExtent().clone())
-                self.axes.setExtent(layer.getExtent().clone())
+                self._axes.setDrawExtent(layer.getExtent().clone())
+                self._axes.setExtent(layer.getExtent().clone())
                 
             return MILayer(layer)
         else:
@@ -836,7 +829,7 @@ class MapAxes(Axes):
                 self.add_graphic(graphic, proj)
                 graphics.append(graphic)
             
-            self.axes.setAutoExtent()
+            self._axes.setAutoExtent()
 
             if len(graphics) > 1:
                 return graphics
@@ -940,8 +933,8 @@ class MapAxes(Axes):
             zorder = kwargs.pop('zorder', None)
             select = kwargs.pop('select', True)
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
             
         return MILayer(layer)
         
@@ -1036,8 +1029,8 @@ class MapAxes(Axes):
             zorder = kwargs.pop('zorder', None)
             select = kwargs.pop('select', True)
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
         
         return MILayer(layer)
 
@@ -1060,7 +1053,7 @@ class MapAxes(Axes):
         """
         ctext = plotutil.text(x, y, s, **kwargs)
         islonlat = kwargs.pop('islonlat', True)
-        self.axes.addText(ctext, islonlat)
+        self._axes.addText(ctext, islonlat)
         return ctext
         
     def contour(self, *args, **kwargs):  
@@ -1117,8 +1110,8 @@ class MapAxes(Axes):
             zorder = kwargs.pop('zorder', None)
             select = kwargs.pop('select', True)
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
                 
         return MILayer(layer)
         
@@ -1177,8 +1170,8 @@ class MapAxes(Axes):
             if zorder is None:
                 zorder = 0
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
                 
         return MILayer(layer)
         
@@ -1302,8 +1295,8 @@ class MapAxes(Axes):
             if zorder is None:
                 zorder = 0
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
         return MILayer(layer)
         
     def pcolor(self, *args, **kwargs):
@@ -1367,8 +1360,8 @@ class MapAxes(Axes):
             if zorder is None:
                 zorder = 0
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
 
         return MILayer(layer)
         
@@ -1423,8 +1416,8 @@ class MapAxes(Axes):
             if zorder is None:
                 zorder = 0
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
 
         return MILayer(layer)
     
@@ -1514,8 +1507,8 @@ class MapAxes(Axes):
             zorder = kwargs.pop('zorder', None)
             select = kwargs.pop('select', True)
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
 
         return MILayer(layer)
     
@@ -1605,8 +1598,8 @@ class MapAxes(Axes):
             zorder = kwargs.pop('zorder', None)
             select = kwargs.pop('select', True)
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
 
         return MILayer(layer)
         
@@ -1664,8 +1657,8 @@ class MapAxes(Axes):
             zorder = kwargs.pop('zorder', None)
             select = kwargs.pop('select', True)
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
             
         return MILayer(layer)
         
@@ -1697,20 +1690,20 @@ class MapAxes(Axes):
             zorder = kwargs.pop('zorder', None)
             select = kwargs.pop('select', True)
             self.add_layer(layer, zorder, select)
-            self.axes.setDrawExtent(layer.getExtent().clone())
-            self.axes.setExtent(layer.getExtent().clone())
+            self._axes.setDrawExtent(layer.getExtent().clone())
+            self._axes.setExtent(layer.getExtent().clone())
             
         return MILayer(layer)
         
     def webmap(self, provider='OpenStreetMap', zorder=0):
-        '''
+        """
         Add a new web map layer.
         
         :param provider: (*string*) Web map provider.
         :param zorder: (*int*) Layer order.
         
         :returns: Web map layer
-        '''
+        """
         layer = WebMapLayer()
         provider = WebMapProvider.valueOf(provider)
         layer.setWebMapProvider(provider)
@@ -1718,26 +1711,26 @@ class MapAxes(Axes):
         return MILayer(layer)
         
     def masklayer(self, mobj, layers):
-        '''
+        """
         Mask layers.
         
         :param mobj: (*layer or polgyons*) Mask object.
         :param layers: (*list*) The layers will be masked.       
-        '''
-        mapview = self.axes.getMapView()
+        """
+        mapview = self._axes.getMapView()
         mapview.getMaskOut().setMask(True)
-        mapview.getMaskOut().setMaskLayer(mobj.layer.getLayerName())
+        mapview.getMaskOut().setMaskLayer(mobj._layer.getLayerName())
         for layer in layers:
-            layer.layer.setMaskout(True)
+            layer._layer.setMaskout(True)
             
     def move_graphic(self, graphic, x=0, y=0, coordinates='screen'):
-        '''
+        """
         Move a graphic by screen coordinate.
         
         :param graphic: (*Graphic*) A graphic.
         :param x: (*float*) X shift for moving.
         :param y: (*float*) Y shift for moving.
         :param coordinates: (*string*) Coordinates of x/y ['screen' | 'data'].
-        '''
-        mapview = self.axes.getMapView()
+        """
+        mapview = self._axes.getMapView()
         mapview.moveGraphic(graphic, x, y, coordinates == 'screen')

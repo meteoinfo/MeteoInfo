@@ -14,7 +14,7 @@ import constants as constants
 from .calc.thermo import saturation_vapor_pressure, saturation_mixing_ratio
 
 __all__ = [
-    'cumsimp','dewpoint','dewpoint2rh','dewpoint_from_relative_humidity','dewpoint_rh','dry_lapse','ds2uv',
+    'cumsimp','dewpoint2rh','dewpoint_rh','dry_lapse','ds2uv',
     'flowfun','h2p',
     'moist_lapse','p2h','qair2rh','rh2dewpoint',
     'sigma_to_pressure','tc2tf',
@@ -23,14 +23,14 @@ __all__ = [
     ]
 
 def uv2ds(u, v):
-    '''
+    """
     Calculate wind direction and wind speed from U/V.
     
     :param u: (*array_like*) U component of wind field.
     :param v: (*array_like*) V component of wind field.
     
     :returns: Wind direction and wind speed.
-    '''
+    """
     if isinstance(u, NDArray):
         r = MeteoMath.uv2ds(u.asarray(), v.asarray())
         d = NDArray(r[0])
@@ -44,14 +44,14 @@ def uv2ds(u, v):
         return r[0], r[1]
         
 def ds2uv(d, s):
-    '''
+    """
     Calculate U/V from wind direction and wind speed.
     
     :param d: (*array_like*) Wind direction.
     :param s: (*array_like*) Wind speed.
     
     :returns: Wind U/V.
-    '''
+    """
     if isinstance(d, NDArray):
         r = MeteoMath.ds2uv(d.asarray(), s.asarray())
         u = NDArray(r[0])
@@ -496,7 +496,7 @@ def flowfun(u, v):
     return psi, phi
     
 def eof(x, svd=True, transform=False):
-    '''
+    """
     Empirical Orthogonal Function (EOF) analysis to finds both time series and spatial patterns.
     
     :param x: (*array_like*) Input 2-D array with space-time field.
@@ -507,7 +507,7 @@ def eof(x, svd=True, transform=False):
         
     :returns: (EOF, E, PC) EOF: eigen vector 2-D array; E: eigen values 1-D array;
         PC: Principle component 2-D array.
-    '''
+    """
     has_nan = False
     if x.contains_nan():       #Has NaN value
         valid_idx = np.where(x[:,0]!=np.nan)[0]
@@ -554,7 +554,7 @@ def eof(x, svd=True, transform=False):
         return EOF, E, PC
     
 def varimax(x, normalize=False, tol=1e-10, it_max=1000):
-    '''
+    """
     Rotate EOFs according to varimax algorithm
     
     :param x: (*array_like*) Input 2-D array.
@@ -564,7 +564,7 @@ def varimax(x, normalize=False, tol=1e-10, it_max=1000):
     :param it_max: (*int*) Specifies the maximum number of iterations to do.
     
     :returns: Rotated EOFs and rotate matrix.
-    '''
+    """
     p, nc = x.shape
     TT = np.eye(nc)
     d = 0

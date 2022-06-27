@@ -23,11 +23,11 @@ __all__ = [
     ]
 
 def seed(seed=None):
-    '''
+    """
     Seed the generator.
     
     :param seed: (*int*) Seed for random data generator.
-    '''
+    """
     if seed is None:
         RandomUtil.useSeed = False
     else:

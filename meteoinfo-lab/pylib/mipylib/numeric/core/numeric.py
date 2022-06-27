@@ -129,23 +129,23 @@ def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
     return a
 
 def isarray(a):
-    '''
+    """
     Check if input object is an array or not.
     
     :param a: (*object*) Input object.
     
     :returns: (*boolean*) True if the input object is an array.
-    '''
+    """
     return isinstance(a, NDArray)
     
 def datatable(data=None):
-    '''
+    """
     Create a PyTableData object.
     
     :param data: (*TableData*) Table data.
     
     :returns: (*PyTableData*) PyTableData object.
-    '''
+    """
     return PyTableData(data)   
     
 def arange(*args, **kwargs):
@@ -342,7 +342,7 @@ def zeros(shape, dtype='float'):
     return NDArray(ArrayUtil.zeros(shapelist, dtype._dtype))
     
 def zeros_like(a, dtype=None):
-    '''
+    """
     Return an array of zeros with the same shape and type as a given array.
     
     :param a: (*array*) The shape and data-type of a define these same attributes of the returned array.
@@ -350,7 +350,7 @@ def zeros_like(a, dtype=None):
         type of array ``a``.
         
     :returns: Array of zeros with the same shape and type as a.
-    '''
+    """
     shape = a.shape
     if dtype is None:
         dtype = _dtype.fromjava(a.dtype)
@@ -376,7 +376,7 @@ def empty_like(a, dtype=None):
     return NDArray(ArrayUtil.empty(shape, dtype._dtype))
     
 def ones_like(a, dtype=None):
-    '''
+    """
     Return an array of ones with the same shape and type as a given array.
     
     :param a: (*array*) The shape and data-type of a define these same attributes of the returned array.
@@ -384,7 +384,7 @@ def ones_like(a, dtype=None):
         type of array ``a``.
         
     :returns: Array of ones with the same shape and type as a.
-    '''
+    """
     shape = a.shape
     if dtype is None:
         dtype = _dtype.fromjava(a.dtype)
@@ -422,7 +422,7 @@ def ones(shape, dtype='float'):
     return NDArray(ArrayUtil.ones(shapelist, dtype._dtype))
     
 def full(shape, fill_value, dtype=None):
-    '''
+    """
     Return a new array of given shape and type, filled with fill_value.
     
     :param shape: (*int or sequence of ints*) Shape of the new array, e.g., ``(2, 3)`` or ``2``.
@@ -431,7 +431,7 @@ def full(shape, fill_value, dtype=None):
         'float' and 'double'.
         
     :returns: (*NDArray*) Array of ones with the given shape and dtype.
-    '''
+    """
     shapelist = []
     if isinstance(shape, int):
         shapelist.append(shape)
@@ -449,7 +449,7 @@ def full(shape, fill_value, dtype=None):
         return NDArray(ArrayUtil.full(shapelist, fill_value, dtype))
     
 def identity(n, dtype='float'):
-    '''
+    """
     Return the identity array - a square array with ones on the main diagonal.
     
     :param n: (*int*) Number of rows (and columns) in ``n x n`` output.
@@ -457,13 +457,13 @@ def identity(n, dtype='float'):
         'float' and 'double'. Default is ``float``.
         
     :returns: (*NDArray*) ``n x n`` array with its main diagonal set to one, and all other elements 0.
-    '''
+    """
     if isinstance(dtype, basestring):
         dtype = _dtype.DataType(dtype)
     return NDArray(ArrayUtil.identity(n, dtype._dtype))
     
 def eye(n, m=None, k=0, dtype='float'):
-    '''
+    """
     Return a 2-D array with ones on the diagonal and zeros elsewhere.
     
     :param n: (*int*) Number of rows in the output.
@@ -474,7 +474,7 @@ def eye(n, m=None, k=0, dtype='float'):
         'float' and 'double'. Default is ``float``.
         
     :returns: (*NDArray*) ``n x n`` array with its main diagonal set to one, and all other elements 0.
-    '''
+    """
     if m is None:
         m = n
     if isinstance(dtype, basestring):
@@ -482,7 +482,7 @@ def eye(n, m=None, k=0, dtype='float'):
     return NDArray(ArrayUtil.eye(n, m, k, dtype._dtype))
     
 def diag(v, k=0):
-    '''
+    """
     Extract a diagonal or construct a diagonal array.
         
     Parameters
@@ -500,13 +500,13 @@ def diag(v, k=0):
     -------
     out : ndarray
         The extracted diagonal or constructed diagonal array.
-    '''
+    """
     if isinstance(v, (list, tuple)):
         v = array(v)
     return NDArray(ArrayUtil.diag(v.asarray(), k))
     
 def repeat(a, repeats, axis=None):
-    '''
+    """
     Repeat elements of an array.
     
     :param repeats: (*int or list of ints*) The number of repetitions for each 
@@ -515,7 +515,7 @@ def repeat(a, repeats, axis=None):
         the flattened input array, and return a flat output array.
     
     :returns: (*array_like*) Repeated array.
-    '''
+    """
     if isinstance(repeats, int):
         repeats = [repeats]
     if isinstance(a, (list, tuple)):
@@ -529,7 +529,7 @@ def repeat(a, repeats, axis=None):
     return NDArray(r)
     
 def tile(a, repeats):
-    '''
+    """
     Construct an array by repeating ``a`` the number of times given by repeats.
     
     If repeats has length ``d``, the result will have dimension of ``max(d, a.ndim)``.
@@ -538,7 +538,7 @@ def tile(a, repeats):
         axis.
     
     :returns: (*array_like*) Tiled array.
-    '''
+    """
     if isinstance(repeats, int):
         repeats = [repeats]
     if isinstance(a, (list, tuple)):
@@ -584,13 +584,13 @@ def abs(x):
         return __builtin__.abs(x)
 
 def ceil(x):
-    '''
+    """
     Return the ceiling of the input, element-wise.
 
     :param x: (*array_like*) Input array.
 
     :return: The ceiling of each element.
-    '''
+    """
     if isinstance(x, list):
         x = array(x)
     if isinstance(x, NDArray):
@@ -693,13 +693,13 @@ def power(x1, x2):
                 return math.pow(x1, x2)
     
 def degrees(x):
-    '''
+    """
     Convert radians to degrees.
     
     :param x: (*array_like*) Array in radians.
     
     :returns: (*array_like*) Array in degrees.
-    '''
+    """
     if isinstance(x, (list, tuple)):
         x = array(x)
     if isinstance(x, NDArray):
@@ -708,13 +708,13 @@ def degrees(x):
         return math.degrees(x)
         
 def radians(x):
-    '''
+    """
     Convert degrees to radians.
     
     :param x: (*array_like*) Array in degrees.
     
     :returns: (*array_like*) Array in radians.
-    '''
+    """
     if isinstance(x, (list, tuple)):
         x = array(x)
     if isinstance(x, NDArray):
@@ -1076,7 +1076,7 @@ def log10(x):
             return math.log10(x)
             
 def sign(x):
-    '''
+    """
     Returns an element-wise indication of the sign of a number.
 
     The sign function returns -1 if x < 0, 0 if x==0, 1 if x > 0. nan is returned for nan inputs.
@@ -1084,7 +1084,7 @@ def sign(x):
     :param x: (*array_like*) Input values.
     
     :returns: The sign of x. This is a scalar if x is a scalar.
-    '''
+    """
     if isinstance(x, list):
         x = array(x)
         
@@ -1094,7 +1094,7 @@ def sign(x):
         return math.copysign(1, x)
         
 def any(x, axis=None):
-    '''
+    """
     Test whether any array element along a given axis evaluates to True.
     
     :param x: (*array_like or list*) Input values.
@@ -1103,7 +1103,7 @@ def any(x, axis=None):
         dimensions of the input array.
     
     :returns: (*array_like*) Any result
-    '''
+    """
     if isinstance(x, list):
         x = array(x)
         
@@ -1115,7 +1115,7 @@ def any(x, axis=None):
         return NDArray(ArrayMath.any(x._array, axis))
         
 def all(x, axis=None):
-    '''
+    """
     Test whether all array element along a given axis evaluates to True.
     
     :param x: (*array_like or list*) Input values.
@@ -1124,7 +1124,7 @@ def all(x, axis=None):
         dimensions of the input array.
     
     :returns: (*array_like*) All result
-    '''
+    """
     if isinstance(x, list):
         x = array(x)
         
@@ -1316,7 +1316,7 @@ def average(a, axis=None, weights=None):
             return DimArray(avg, dims, x.fill_value, x.proj)
             
 def std(x, axis=None, ddof=0):
-    '''
+    """
     Compute the standard deviation along the specified axis.
     
     :param x: (*array_like or list*) Input values.
@@ -1326,14 +1326,14 @@ def std(x, axis=None, ddof=0):
         N - ddof, where N represents the number of elements. By default ddof is zero.
     
     returns: (*array_like*) Standart deviation result.
-    '''
+    """
     if isinstance(x, (list, tuple)):
         x = array(x)
     r = x.std(axis, ddof)
     return r
             
 def var(x, axis=None, ddof=0):
-    '''
+    """
     Compute variance along the specified axis.
     
     :param x: (*array_like or list*) Input values.
@@ -1343,7 +1343,7 @@ def var(x, axis=None, ddof=0):
         N - ddof, where N represents the number of elements. By default ddof is zero.
     
     returns: (*array_like*) Variance result.
-    '''
+    """
     if isinstance(x, (list, tuple)):
         x = array(x)
     r = x.var(axis, ddof)
@@ -1487,7 +1487,7 @@ def fmin(x1, x2):
         return min(x1, x2)
         
 def min(a, axis=None):
-    '''
+    """
     Returns the minimum values along an axis.
     
     :param a: (*array_like*) Input array.
@@ -1496,13 +1496,13 @@ def min(a, axis=None):
         
     :returns: Array of minimum values. It has the same shape as a.shape with the 
         dimension along axis removed.
-    '''
+    """
     if isinstance(a, (list, tuple)):
         a = array(a)
     return a.min(axis)
     
 def max(a, axis=None):
-    '''
+    """
     Returns the maximum values along an axis.
     
     :param a: (*array_like*) Input array.
@@ -1511,13 +1511,13 @@ def max(a, axis=None):
         
     :returns: Array of maximum values. It has the same shape as a.shape with the 
         dimension along axis removed.
-    '''
+    """
     if isinstance(a, (list, tuple)):
         a = array(a)
     return a.max(axis)
         
 def argmin(a, axis=None):
-    '''
+    """
     Returns the indices of the minimum values along an axis.
     
     :param a: (*array_like*) Input array.
@@ -1526,7 +1526,7 @@ def argmin(a, axis=None):
         
     :returns: Array of indices into the array. It has the same shape as a.shape with the 
         dimension along axis removed.
-    '''
+    """
     if axis is None:
         r = ArrayMath.argMin(a.asarray())
         return r
@@ -1535,7 +1535,7 @@ def argmin(a, axis=None):
         return NDArray(r)
         
 def argmax(a, axis=None):
-    '''
+    """
     Returns the indices of the minimum values along an axis.
     
     :param a: (*array_like*) Input array.
@@ -1544,7 +1544,7 @@ def argmax(a, axis=None):
         
     :returns: Array of indices into the array. It has the same shape as a.shape with the 
         dimension along axis removed.
-    '''
+    """
     if axis is None:
         r = ArrayMath.argMax(a.asarray())
         return r
@@ -1553,7 +1553,7 @@ def argmax(a, axis=None):
         return NDArray(r)
         
 def diff(a, axis=-1):
-    '''
+    """
     Calculate the n-th discrete difference along the given axis.
     
     The first difference is given by out[n] = a[n+1] - a[n] along the given axis.
@@ -1563,7 +1563,7 @@ def diff(a, axis=-1):
         
     :returns: The n-th differences. The shape of the output is the same as a except along axis 
         where the dimension is smaller by n.
-    '''
+    """
     a = asarray(a)
     nd = a.ndim
     if axis < 0:
@@ -1579,7 +1579,7 @@ def diff(a, axis=-1):
     return r
         
 def unravel_index(indices, dims):
-    '''
+    """
     Converts a flat index or array of flat indices into a tuple of coordinate arrays.
     
     :param indices: (*array_like*) An integer array whose elements are indices into the 
@@ -1588,7 +1588,7 @@ def unravel_index(indices, dims):
     
     :returns: tuple of ndarray. Each array in the tuple has the same shape as the indices 
         array.
-    '''
+    """
     if isinstance(indices, int):
         idx = indices
         coords = []
@@ -1625,7 +1625,7 @@ def ave_month(data, colnames, t):
     return PyTableData(TableData(r))
     
 def histogram(a, bins=10, density=False):
-    '''
+    """
     Compute the histogram of a set of data.
     
     :param a: (*array_like*) Input data. The histogram is computed over the flattened array.
@@ -1636,7 +1636,7 @@ def histogram(a, bins=10, density=False):
         the bin, normalized such that the integral over the range is 1.
     
     :returns: The values of the histogram (hist) and the bin edges (length(hist)+1).
-    '''
+    """
     if isinstance(a, list):
         a = array(a)
     elif isinstance(a, numbers.Number):
@@ -1688,7 +1688,7 @@ def argsort(a, axis=-1):
     return NDArray(r)
     
 def isnan(a):
-    '''
+    """
     Test element-wise for NaN and return result as a boolean array.
     
     :param a: (*array_like*) Input array.
@@ -1697,7 +1697,7 @@ def isnan(a):
         otherwise the value is False. For array input, the result is a boolean array of the same dimensions 
         as the input and the values are True if the corresponding element of the input is NaN; otherwise the 
         values are False.
-    '''
+    """
     if isinstance(a, (list, tuple)):
         a = array(a)
     if isarray(a):
@@ -1706,14 +1706,14 @@ def isnan(a):
         return Double.isNaN(a)
 
 def isinf(x):
-    '''
+    """
     Test element-wise for positive or negative infinity.
 
     :param x: (*array_like*) Input array.
 
     :returns: (*array*) True where x is positive or negative infinity, false otherwise. This is a scalar if x
         is a scalar.
-    '''
+    """
     if isinstance(x, (list, tuple)):
         x = array(x)
     if isarray(x):
@@ -1722,14 +1722,14 @@ def isinf(x):
         return Double.isInfinite(x)
 
 def isfinite(x):
-    '''
+    """
     Test element-wise for finiteness (not infinity or not Not a Number).
 
     :param x: (*array_like*) Input array.
 
     :returns: (*array*) True where x is not positive infinity, negative infinity, or NaN; false otherwise. This is a
         scalar if x is a scalar.
-    '''
+    """
     if isinstance(x, (list, tuple)):
         x = array(x)
     if isarray(x):
@@ -1738,13 +1738,13 @@ def isfinite(x):
         return Double.isFinite(x)
 
 def delnan(a):
-    '''
+    """
     Delete NaN values.
     
     :param a: (*arrays*) Input arrays with one dimension.
     
     :returns: The array or arrays without NaN values.
-    '''
+    """
     if isinstance(a, (list, tuple))and (not isinstance(a[0], NDArray)):
         a = array(a)
     if isinstance(a, NDArray):
@@ -1763,13 +1763,13 @@ def delnan(a):
         return rr
 
 def flatnonzero(a):
-    '''
+    """
     Return indices that are non-zero in the flattened version of a.
 
     :param a: (*array_like*) Input array.
 
     :returns: (*array*) Indices of elements that are non-zero.
-    '''
+    """
     if isinstance(a, list):
         a = array(a)
     r = ArrayUtil.flatNonZero(a.asarray())
@@ -1777,13 +1777,13 @@ def flatnonzero(a):
     return NDArray(r)
 
 def logical_not(arr):
-    '''
+    """
     Compute the truth value of NOT x element-wise.
 
     :param arr: (*array_like*) Input array.
     :return: (*array_like*) Boolean result with the same shape as x of the NOT operation on elements of x.
         This is a scalar if x is a scalar.
-    '''
+    """
     if isinstance(arr, int):
         return arr == 0
     elif isinstance(arr, bool):
@@ -1795,7 +1795,7 @@ def logical_not(arr):
     return NDArray(r)
     
 def delete(arr, obj, axis=None):
-    '''
+    """
     Return a new array with sub-arrays along an axis deleted.
     
     :param arr: (*array_like*) Input array.
@@ -1805,7 +1805,7 @@ def delete(arr, obj, axis=None):
         
     :returns: A copy of arr with the elements specified by obj removed. If axis is None, 
         out is a flattened array.
-    '''
+    """
     if isinstance(arr, (list, tuple)):
         arr = array(arr)
     
@@ -1820,7 +1820,7 @@ def delete(arr, obj, axis=None):
     return NDArray(r)
     
 def concatenate(arrays, axis=0):
-    '''
+    """
     Join a sequence of arrays along an existing axis.
     
     :param arrays: (list of arrays) The arrays must have the same shape, except in the dimension 
@@ -1828,7 +1828,7 @@ def concatenate(arrays, axis=0):
     :param axis: (*int*) The axis along which the arrays will be joined. Default is 0.
     
     :returns: (*array_like*) The concatenated array.
-    '''
+    """
     ars = []
     for a in arrays:
         ars.append(a.asarray())
@@ -1836,7 +1836,7 @@ def concatenate(arrays, axis=0):
     return NDArray(r)
 
 def array_split(ary, indices_or_sections, axis=0):
-    '''
+    """
     Split an array into multiple sub-arrays.
 
     :param ary: (*array*) Array to be divided into sub-arrays.
@@ -1845,7 +1845,7 @@ def array_split(ary, indices_or_sections, axis=0):
         integers, the entries indicate where along axis the array is split.
     :param axis: (*int*) Array to be divided into sub-arrays.
     :return:
-    '''
+    """
     if axis < 0:
         axis = ary.ndim + axis
     n = ary.shape[axis]
@@ -1875,7 +1875,7 @@ def array_split(ary, indices_or_sections, axis=0):
     return r
 
 def split(ary, indices_or_sections, axis=0):
-    '''
+    """
     Split an array into multiple sub-arrays.
 
     :param ary: (*array*) Array to be divided into sub-arrays.
@@ -1884,7 +1884,7 @@ def split(ary, indices_or_sections, axis=0):
         integers, the entries indicate where along axis the array is split.
     :param axis: (*int*) Array to be divided into sub-arrays.
     :return:
-    '''
+    """
     if axis < 0:
         axis = ary.ndim + axis
     n = ary.shape[axis]
@@ -1894,7 +1894,7 @@ def split(ary, indices_or_sections, axis=0):
     return array_split(ary, indices_or_sections, axis)
 
 def atleast_1d(*args):
-    '''
+    """
     View inputs as arrays with at least one dimensions.
     
     Parameters
@@ -1906,7 +1906,7 @@ def atleast_1d(*args):
     -------
     res, res2, ... : array_like
         An array, or list of arrays, each with ``a.ndim >= 1``.
-    '''
+    """
     res = []
     for arg in args:
         arg = array(arg)
@@ -1922,7 +1922,7 @@ def atleast_1d(*args):
 
     
 def atleast_2d(*args):
-    '''
+    """
     View inputs as arrays with at least two dimensions.
     
     Parameters
@@ -1937,7 +1937,7 @@ def atleast_2d(*args):
         An array, or list of arrays, each with ``a.ndim >= 2``.
         Copies are avoided where possible, and views with two or more
         dimensions are returned.
-    '''
+    """
     res = []
     for arg in args:
         arg = array(arg)
@@ -1954,7 +1954,7 @@ def atleast_2d(*args):
         return res
         
 def vstack(tup):
-    '''
+    """
     Stack arrays in sequence vertically (row wise).
     
     This is equivalent to concatenation along the first axis after 1-D arrays
@@ -1965,11 +1965,11 @@ def vstack(tup):
         
     :returns: (*array*) The array formed by stacking the given arrays, will be 
         at least 2-D.
-    '''
+    """
     return concatenate([atleast_2d(_m) for _m in tup], 0)
     
 def hstack(tup):
-    '''
+    """
     Stack arrays in sequence horizontally (column wise).
 
     This is equivalent to concatenation along the second axis, except for 1-D
@@ -1979,7 +1979,7 @@ def hstack(tup):
         along all but the first axis. 1-D arrays must have the same length.
         
     :returns: (*array*) The array formed by stacking the given arrays.
-    '''
+    """
     arrs = [atleast_1d(_m) for _m in tup]
     # As a special case, dimension 0 of 1-dimensional arrays is "horizontal"
     if arrs and arrs[0].ndim == 1:
@@ -2008,7 +2008,7 @@ def dot(a, b):
     return NDArray(r)
     
 def vdot(a, b):
-    '''
+    """
     Return the dot product of two vectors.
     
     Note that ``vdot`` handles multidimensional arrays differently than dot: it does not 
@@ -2019,7 +2019,7 @@ def vdot(a, b):
     :param b: (*array_like*) Second argument to the dot product.
     
     :returns: (*float*) Dot product of ``a`` and ``b``.    
-    '''
+    """
     if isinstance(a, list):
         a = array(a)
     if isinstance(b, list):
@@ -2046,13 +2046,13 @@ def outer(a, b):
     return NDArray(r)
 
 def shape(a):
-    '''
+    """
     Return the shape of an array.
 
     :param a: (*array_like*) Input array.
 
     :return: (*tuple*) The elements of the shape tuple give the lengths of the corresponding array dimensions.
-    '''
+    """
     try:
         result = a.shape
     except AttributeError:
@@ -2074,14 +2074,14 @@ def reshape(a, *args):
     return a.reshape(*args)
     
 def squeeze(a):
-    '''
+    """
     Remove single-dimensional entries from the shape of an array.
     
     :param a: (*array_like*) Input data array.
     
     :returns: (*array_like*) The input array, but with all or a subset of the dimensions of length 1 
         removed.
-    '''
+    """
     da = a.asarray()
     da = da.reduce()
     if type(a) is NDArray:
@@ -2175,7 +2175,7 @@ def take(a, indices, axis=None, out=None, mode='raise'):
     return a.take(indices, axis=axis)
         
 def meshgrid(*args):
-    '''
+    """
     Return coordinate matrices from coordinate vectors.
 
     Make N-D coordinate arrays for vectorized evaluations of N-D scalar/vector fields 
@@ -2185,7 +2185,7 @@ def meshgrid(*args):
     
     :returns X1,X2...XN: For vectors x1, x2,…, ‘xn’ with lengths Ni=len(xi) , 
         return (N1, N2, N3,...Nn) shaped arrays
-    '''
+    """
     xs = []
     for x in args:
         if isinstance(x, list):
@@ -2202,7 +2202,7 @@ def meshgrid(*args):
     return tuple(rs)
     
 def meshgrid_bak(*args):
-    '''
+    """
     Return coordinate matrices from coordinate vectors.
 
     Make N-D coordinate arrays for vectorized evaluations of N-D scalar/vector fields 
@@ -2212,7 +2212,7 @@ def meshgrid_bak(*args):
     
     :returns X1,X2...XN: For vectors x1, x2,…, ‘xn’ with lengths Ni=len(xi) , 
         return (N1, N2, N3,...Nn) shaped arrays
-    '''
+    """
     if isinstance(x, list):
         x = array(x)
     if isinstance(y, list):
@@ -2305,7 +2305,7 @@ def corrcoef(x, y):
     return r
 
 def transpose(a, axes=None):
-    '''
+    """
     Transpose 2-D array.
     
     :param a: (*array*) 2-D array to be transposed.
@@ -2313,7 +2313,7 @@ def transpose(a, axes=None):
             values given.
     
     :returns: Transposed array.
-    '''
+    """
     if isinstance(a, (list, tuple)):
         a = array(a)
     return a.transpose(axes)
@@ -2464,7 +2464,7 @@ def trapz(y, x=None, dx=1.0, axis=-1):
             return DimArray(NDArray(r), dims, y.fill_value, y.proj)
             
 def rolling_mean(x, window, center=False):
-    '''
+    """
     Moving average function
     
     :param x: (*array_like*) Input data array. Must be vector (one dimension).
@@ -2472,7 +2472,7 @@ def rolling_mean(x, window, center=False):
     :param center: (*boolean*) Set the labels at the center of the window. Default is ``False``.
     
     :returns: (*array_like*) Moving averaged array.
-    '''
+    """
     if isinstance(x, list):
         x = array(x)
     r = ArrayMath.rolling_mean(x.asarray(), window, center)
@@ -2641,7 +2641,7 @@ def normalize_axis_tuple(axis, ndim, argname=None, allow_duplicate=False):
     return axis
     
 def smooth5(x):
-    '''
+    """
     Performs a 5 point smoothing to the 2D array x. 
     
     The result at each grid point is a weighted average of the grid point plus the 4 
@@ -2656,7 +2656,7 @@ def smooth5(x):
     :param x: (*array_like*) Input 2D array.
     
     :returned: (*array*) Smoothed 2D array.
-    '''
+    """
     if isinstance(x, list):
         x = array(x)
     if x.ndim != 2:
@@ -2669,7 +2669,7 @@ def smooth5(x):
         return NDArray(r)
         
 def smooth9(x):
-    '''
+    """
     Performs a 9 point smoothing to the 2D array x. 
     
     The result at each grid point is a weighted average of the grid point plus the 4 
@@ -2684,7 +2684,7 @@ def smooth9(x):
     :param x: (*array_like*) Input 2D array.
     
     :returned: (*array*) Smoothed 2D array.
-    '''
+    """
     if isinstance(x, list):
         x = array(x)
     if x.ndim != 2:
@@ -2697,14 +2697,14 @@ def smooth9(x):
         return NDArray(r)
  
 def cdiff(a, dimidx):
-    '''
+    """
     Performs a centered difference operation on a array in a specific direction
     
     :param a: (*array*) The input array.
     :param dimidx: (*int*) Demension index of the specific direction.
     
     :returns: Result array.
-    '''
+    """
     if isinstance(a, DimArray):
         r = ArrayMath.cdiff(a.asarray(), dimidx)
         return DimArray(NDArray(r), a.dims, a.fill_value, a.proj)
@@ -2713,14 +2713,14 @@ def cdiff(a, dimidx):
 
 # Calculates the vertical component of the curl (ie, vorticity)    
 def hcurl(u, v):
-    '''
+    """
     Calculates the vertical component of the curl (ie, vorticity). The data should be lon/lat projection.
     
     :param u: (*array*) U component array.
     :param v: (*array*) V component array.
     
     :returns: Array of the vertical component of the curl.
-    '''
+    """
     if isinstance(u, DimArray) and isinstance(v, DimArray):
         ydim = u.ydim()
         xdim = u.xdim()
@@ -2729,14 +2729,14 @@ def hcurl(u, v):
 
 #  Calculates the horizontal divergence using finite differencing        
 def hdivg(u, v):
-    '''
+    """
     Calculates the horizontal divergence using finite differencing. The data should be lon/lat projection.
     
     :param u: (*array*) U component array.
     :param v: (*array*) V component array.
     
     :returns: Array of the horizontal divergence.
-    '''
+    """
     if isinstance(u, DimArray) and isinstance(v, DimArray):
         ydim = u.ydim()
         xdim = u.xdim()
@@ -2744,14 +2744,14 @@ def hdivg(u, v):
         return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
               
 def magnitude(u, v):
-    '''
+    """
     Performs the calculation: sqrt(u*u+v*v).
     
     :param u: (*array*) U component array.
     :param v: (*array*) V component array.
     
     :returns: Result array.
-    '''
+    """
     if isinstance(u, DimArray) and isinstance(v, DimArray):
         r = ArrayMath.magnitude(u.asarray(), v.asarray())
         return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
@@ -2763,14 +2763,14 @@ def magnitude(u, v):
         return r
 
 def asarray(data, dtype=None):
-    '''
+    """
     Convert the array_like data to NDArray data.
     
     :param data: (*array_like*) The input data.
     :param dtype: (*datatype*) Data type.
     
     :returns: NDArray data.
-    '''
+    """
     if isinstance(data, Array):
         data = NDArray(data)
     if isinstance(data, NDArray):
@@ -2782,24 +2782,24 @@ def asarray(data, dtype=None):
         return array(data, dtype)
 
 def asanyarray(data, dtype=None):
-    '''
+    """
     Convert the array_like data to NDArray data.
 
     :param data: (*array_like*) The input data.
     :param dtype: (*datatype*) Data type.
 
     :returns: NDArray data.
-    '''
+    """
     return asarray(data, dtype)
 
 def asmiarray(data):
-    '''
+    """
     Convert the array_like data to NDArray data.
     
     :param data: (*array_like*) The input data.
     
     :returns: NDArray data.
-    '''
+    """
     if isinstance(data, Array):
         return NDArray(data)
     elif isinstance(data, NDArray):
@@ -2931,14 +2931,14 @@ def interpn(points, values, xi):
         return r
 
 def pol2cart(theta, rho):
-    '''
+    """
     Transform polar coordinates to Cartesian
     
     :param theta: (*array_like*) Theta value in polar coordinates
     :param rho: (*array_like*) Rho value in polar coordinates
     
     :returns: x and y value in Cartesian coordinates
-    '''
+    """
     if isinstance(theta, (int, float)):
         r = ArrayMath.polarToCartesian(theta, rho)
         return r[0], r[1]
@@ -2949,14 +2949,14 @@ def pol2cart(theta, rho):
         return NDArray(r[0]), NDArray(r[1])
         
 def cart2pol(x, y):
-    '''
+    """
     Transform Cartesian coordinates to polar
     
     :param x: (*array_like*) X value in Cartesian coordinates
     :param y: (*array_like*) Y value in Cartesian coordinates
     
     :returns: Theta and rho value in polar coordinates
-    '''
+    """
     if isinstance(x, (int, float)):
         r = ArrayMath.cartesianToPolar(x, y)
         return r[0], r[1]
@@ -2997,7 +2997,7 @@ def peaks(*args, **kwargs):
         return z
 
 def addtimedim(infn, outfn, t, tunit='hours'):
-    '''
+    """
     Add a time dimension to a netCDF data file.
     
     :param infn: (*string*) Input netCDF file name.
@@ -3006,14 +3006,14 @@ def addtimedim(infn, outfn, t, tunit='hours'):
     :param tunit: (*string*) Time unite, Default is ``hours``.
     
     :returns: The new netCDF with time dimension.
-    '''
+    """
     cal = Calendar.getInstance()
     cal.set(t.year, t.month - 1, t.day, t.hour, t.minute, t.second)
     nt = cal.getTime()
     NetCDFDataInfo.addTimeDimension(infn, outfn, nt, tunit)
         
 def joinncfile(infns, outfn, tdimname):
-    '''
+    """
     Join several netCDF files to one netCDF file.
     
     :param infns: (*list*) Input netCDF file name list.
@@ -3021,16 +3021,16 @@ def joinncfile(infns, outfn, tdimname):
     :param tdimname: (*string*) Time dimension name.
     
     :returns: Joined netCDF file.
-    '''
+    """
     NetCDFDataInfo.joinDataFiles(infns, outfn, tdimname)
     
 # Get month abstract English name
 def monthname(m):  
-    '''
+    """
     Get month abstract English name.
     
     :param m: (*int*) Month number (1 to 12).
-    '''
+    """
     mmm = 'jan'
     if m == 1:
         mmm = 'jan'

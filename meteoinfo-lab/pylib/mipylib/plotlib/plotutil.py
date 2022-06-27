@@ -612,13 +612,13 @@ def setlegendscheme_point(ls, **kwargs):
     return ls
     
 def setlegendscheme_arrow(ls, **kwargs):
-    '''
+    """
     Set legend scheme as arrow breaks.
     
     :param ls: (*LegendScheme') Input legend scheme.
     
     :returns: (*LegendScheme*) Result legend scheme.
-    '''
+    """
     ls = ls.convertTo(ShapeTypes.POINT)
     sizes = kwargs.get('size', None)
     colors = kwargs.get('colors', None)
@@ -640,7 +640,7 @@ def setlegendscheme_arrow(ls, **kwargs):
     return ls
     
 def point2arrow(pb, **kwargs):
-    '''
+    """
     Convert point break to arrow break.
     
     :param pb: (*PointBreak*) Point break.
@@ -651,7 +651,7 @@ def point2arrow(pb, **kwargs):
         triangular shape). Can be negative or greater than one.
     
     :returns: (*ArrowBreak*) Arrow break.
-    '''
+    """
     arrowbreak = ArrowBreak(pb)
     width = kwargs.pop('width', 1.)
     arrowbreak.initWidth(width)
@@ -668,7 +668,7 @@ def point2arrow(pb, **kwargs):
     return arrowbreak
     
 def line2arrow(lb, **kwargs):
-    '''
+    """
     Convert linestring break to arrow line break.
     
     :param lb: (*PolylineBreak*) Linestring break.
@@ -680,7 +680,7 @@ def line2arrow(lb, **kwargs):
     :param edgecolor: (*Color*) Arrow edge color.
     
     :returns: (*ArrowLineBreak*) Arrow line break.
-    '''
+    """
     albreak = ArrowLineBreak(lb)
     headwidth = kwargs.pop('headwidth', lb.getWidth() * 5.)
     albreak.setArrowHeadWidth(headwidth)
@@ -699,7 +699,7 @@ def line2arrow(lb, **kwargs):
     return albreak
     
 def line2stream(lb, **kwargs):
-    '''
+    """
     Convert linestring break to stream line break.
     
     :param lb: (*PolylineBreak*) Linestring break.
@@ -712,7 +712,7 @@ def line2stream(lb, **kwargs):
     :param interval: (*int*) Arrow interval.
     
     :returns: (*StreamineBreak*) Stream line break.
-    '''
+    """
     albreak = StreamlineBreak(lb)
     headwidth = lb.getWidth() * 5.
     if kwargs.has_key('headwidth'):
@@ -740,7 +740,7 @@ def line2stream(lb, **kwargs):
     return albreak
     
 def polygon2arrow(pb, **kwargs):
-    '''
+    """
     Convert polygon break to arrow polygon break.
     
     :param pb: (*PolygonBreak*) Polygon break.
@@ -751,7 +751,7 @@ def polygon2arrow(pb, **kwargs):
         triangular shape). Can be negative or greater than one.
     
     :returns: (*ArrowPolygonBreak*) Arrow polygon break.
-    '''
+    """
     arrowbreak = ArrowPolygonBreak(pb)
     width = kwargs.pop('width', 0.001)
     arrowbreak.setWidth(width)
@@ -979,7 +979,7 @@ def text(x, y, s, **kwargs):
     return text
     
 def makesymbolspec(geometry, *args, **kwargs):
-    '''
+    """
     Make a legend.
     
     :param geometry: (*string*) Geometry type. [point | line | polygon].
@@ -988,7 +988,7 @@ def makesymbolspec(geometry, *args, **kwargs):
     :param field: (*string*) The field to be used in the legend.
     
     :returns: Created legend.
-    '''
+    """
     shapetype = ShapeTypes.IMAGE
     if geometry == 'point':
         shapetype = ShapeTypes.POINT

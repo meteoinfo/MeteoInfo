@@ -80,11 +80,11 @@ def _initialize_feasible(lb, ub):
 
 class UniFunc(ParamUnivariateFunction):
     def __init__(self, f):
-        '''
+        """
         Initialize
 
         :param f: Jython function
-        '''
+        """
         self.f = f
         self._args = list(f.__code__.co_varnames)[1:]
         self._args = tuple(self._args)
@@ -97,7 +97,7 @@ class UniFunc(ParamUnivariateFunction):
 def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
               check_finite=True, bounds=(-np.inf, np.inf), method=None,
               jac=None, **kwargs):
-    '''
+    """
     Use non-linear least squares to fit a function, f, to data.
 
     Assumes ``ydata = f(xdata, *params) + eps``
@@ -118,7 +118,7 @@ def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
         function can be determined using introspection, otherwise a
         ValueError is raised).
     :return:
-    '''
+    """
     if p0 is None:
         # determine number of parameters by inspecting the function
         from ..lib._util import getargspec_no_self as _getargspec

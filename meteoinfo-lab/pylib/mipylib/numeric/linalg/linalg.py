@@ -32,7 +32,7 @@ def _assert_2d(*arrays):
                               'two-dimensional' % a.ndim)
 
 def solve(a, b):
-    '''
+    """
     Solve a linear matrix equation, or system of linear scalar equations.
     
     Computes the "exact" solution, ``x``, of the well-determined, i.e., full
@@ -49,7 +49,7 @@ def solve(a, b):
 
     x : {(M), (M, K)} ndarray
         Solution to the system a x = b.  Returned shape is identical to ``b``.
-    '''
+    """
     _assert_2d(a)
     r_2d = False
     if b.ndim == 2:
@@ -62,7 +62,7 @@ def solve(a, b):
     return r
 
 def solve_triangular(a, b, lower=False):
-    '''
+    """
     Solve the equation `a x = b` for `x`, assuming a is a triangular matrix.
 
     Parameters
@@ -79,12 +79,12 @@ def solve_triangular(a, b, lower=False):
 
     x : {(M), (M, K)} ndarray
         Solution to the system a x = b.  Returned shape is identical to ``b``.
-    '''
+    """
     x = LinalgUtil.solve(a.asarray(), b.asarray())
     return NDArray(x)
     
 def cholesky(a, lower=True):
-    '''
+    """
     Cholesky decomposition.
     
     Return the Cholesky decomposition, `L * L.H`, of the square matrix `a`,
@@ -106,12 +106,12 @@ def cholesky(a, lower=True):
     L : (M, M) array_like
         Upper or lower-triangular Cholesky factor of `a`.  Returns a
         matrix object if `a` is a matrix object.
-    '''
+    """
     r = LinalgUtil.cholesky(a.asarray(), lower)
     return NDArray(r)
     
 def lu(a):
-    '''
+    """
     Compute pivoted LU decomposition of a matrix.
     
     The decomposition is::
@@ -142,7 +142,7 @@ def lu(a):
         Lower triangular or trapezoidal matrix with unit diagonal.
     u : (M, M) ndarray
         Upper triangular or trapezoidal matrix
-    '''
+    """
     r = LinalgUtil.lu(a.asarray())
     p = NDArray(r[0])
     l = NDArray(r[1])
@@ -150,7 +150,7 @@ def lu(a):
     return p, l, u
     
 def qr(a):
-    '''
+    """
     Compute QR decomposition of a matrix.
     
     Calculate the decomposition ``A = Q R`` where Q is unitary/orthogonal
@@ -169,14 +169,14 @@ def qr(a):
         if ``mode='r'``.
     R : float or complex ndarray
         Of shape (M, N), or (K, N) for ``mode='economic'``.  ``K = min(M, N)``.
-    '''
+    """
     r = LinalgUtil.qr(a.asarray())
     q = NDArray(r[0])
     r = NDArray(r[1])
     return q, r
 
 def svd(a, full_matrices=True):
-    '''
+    """
     Singular Value Decomposition.
     
     Factorizes the matrix a into two unitary matrices U and Vh, and
@@ -203,7 +203,7 @@ def svd(a, full_matrices=True):
     Vh : ndarray
         Unitary matrix having right singular vectors as rows.
         Of shape ``(N,N)``.
-    '''
+    """
     r = LinalgUtil.svd(a.asarray())
     #r = LinalgUtil.svd_EJML(a.asarray())
     U = NDArray(r[0])
@@ -220,7 +220,7 @@ def svd(a, full_matrices=True):
     return U, s, Vh
     
 def eig(a):
-    '''
+    """
     Compute the eigenvalues and right eigenvectors of a square array.
     
     Parameters
@@ -242,7 +242,7 @@ def eig(a):
         The normalized (unit "length") eigenvectors, such that the
         column ``v[:,i]`` is the eigenvector corresponding to the
         eigenvalue ``w[i]``.
-    '''
+    """
     r = LinalgUtil.eigen(a.asarray())
     #r = LinalgUtil.eigen_EJML(a.asarray())
     w = NDArray(r[0])
@@ -250,18 +250,18 @@ def eig(a):
     return w, v
     
 def inv(a):
-    '''
+    """
     Compute the (multiplicative) inverse of a matrix.
     
     :param a: (*array_like*) Input array.
     
     :returns: Inverse matrix.
-    '''
+    """
     r = LinalgUtil.inv(a.asarray())
     return NDArray(r)
     
 def lstsq(a, b):
-    '''
+    """
     Compute least-squares solution to equation Ax = b.
 
     Compute a vector x such that the 2-norm |b - A x| is minimized.
@@ -279,12 +279,12 @@ def lstsq(a, b):
         Least-squares solution. Return shape matches shape of b.
     residues : (0,) or () or (K,) ndarray
         Sums of residues, squared 2-norm for each column in b - a x.
-    '''
+    """
     r = StatsUtil.multipleLineRegress_OLS(b.asarray(), a.asarray(), True)
     return NDArray(r[0]), NDArray(r[1])
     
 def det(a):
-    '''
+    """
     Compute the determinant of an array.
     
     arameters
@@ -295,7 +295,7 @@ def det(a):
     -------
     det : (...) array_like
         Determinant of `a`.
-    '''
+    """
     #r = LinalgUtil.determinantOfMatrix(a.asarray())
     r = LinalgUtil.det(a.asarray())
     return r

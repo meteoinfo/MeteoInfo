@@ -7626,7 +7626,7 @@ public class GraphicFactory {
      * @param pb       Polygon break
      * @return Graphics
      */
-    public static GraphicCollection isosurface(Array data, Array x, Array y, Array z,
+    public static MeshGraphic isosurface(Array data, Array x, Array y, Array z,
                                                float isoLevel, PolygonBreak pb) {
         x = x.copyIfView();
         y = y.copyIfView();
@@ -7662,7 +7662,7 @@ public class GraphicFactory {
      * @param nThreads Thread number
      * @return Graphics
      */
-    public static GraphicCollection isosurface(final Array data, final Array x, final Array y, final Array z,
+    public static MeshGraphic isosurface(final Array data, final Array x, final Array y, final Array z,
                                                final float isoLevel, PolygonBreak pb, int nThreads) {
         // TIMER
         ArrayList<Thread> threads = new ArrayList<>();

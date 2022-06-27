@@ -69,14 +69,14 @@ class Axes3DGL(Axes3D):
         bgcolor = kwargs.pop('bgcolor', None)
         if not bgcolor is None:
             bgcolor = plotutil.getcolor(bgcolor)
-            self.axes.setBackground(bgcolor)
+            self._axes.setBackground(bgcolor)
         fgcolor = kwargs.pop('fgcolor', None)
         if not fgcolor is None:
             fgcolor = plotutil.getcolor(fgcolor)
-            self.axes.setForeground(fgcolor)
+            self._axes.setForeground(fgcolor)
         units = kwargs.pop('units', None)
         if not units is None:
-            self.axes.setUnits(units)
+            self._axes.setUnits(units)
         tickfontname = kwargs.pop('tickfontname', 'Arial')
         tickfontsize = kwargs.pop('tickfontsize', 14)
         tickbold = kwargs.pop('tickbold', False)
@@ -84,84 +84,84 @@ class Axes3DGL(Axes3D):
             font = Font(tickfontname, Font.BOLD, tickfontsize)
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
-        self.axes.setAxisTickFont(font)
+        self._axes.setAxisTickFont(font)
         orthographic = kwargs.pop('orthographic', None)
         if not orthographic is None:
-            self.axes.setOrthographic(orthographic)
+            self._axes.setOrthographic(orthographic)
         rotation = kwargs.pop('rotation', None)
         if not rotation is None:
-            self.axes.setAngleY(rotation)
+            self._axes.setAngleY(rotation)
         elevation = kwargs.pop('elevation', None)
         if not elevation is None:
-            self.axes.setAngleX(elevation)
+            self._axes.setAngleX(elevation)
         antialias = kwargs.pop('antialias', None)
         if not antialias is None:
-            self.axes.setAntialias(antialias)
+            self._axes.setAntialias(antialias)
         clip_plane = kwargs.pop('clip_plane', None)
         if not clip_plane is None:
-            self.axes.setClipPlane(clip_plane)
+            self._axes.setClipPlane(clip_plane)
         axes_zoom = kwargs.pop('axes_zoom', None)
         if not axes_zoom is None:
-            self.axes.setAxesZoom(axes_zoom)
+            self._axes.setAxesZoom(axes_zoom)
         aspect = kwargs.pop('aspect', None)
         if not aspect is None:
-            self.axes.setAspectType(AspectType.valueOf(aspect.upper()))
+            self._axes.setAspectType(AspectType.valueOf(aspect.upper()))
         distance = kwargs.pop('distance', None)
         if not distance is None:
-            self.axes.setDistance(distance)
+            self._axes.setDistance(distance)
         axis = kwargs.pop('axis', True)
         if not axis:
-            self.axes.setDrawBase(False)
-            self.axes.setBoxed(False)
-            self.axes.setDisplayXY(False)
-            self.axes.setDisplayZ(False)
+            self._axes.setDrawBase(False)
+            self._axes.setBoxed(False)
+            self._axes.setDisplayXY(False)
+            self._axes.setDisplayZ(False)
         
     def _set_plot(self, plot):
-        '''
+        """
         Set plot.
         
         :param plot: (*Axes3D*) Plot.
-        '''
+        """
         if plot is None:
-            self.axes = Plot3DGL()
+            self._axes = Plot3DGL()
         else:
-            self.axes = plot
+            self._axes = plot
     
     @property
     def axestype(self):
         return '3d'
         
     def get_rotation(self):
-        '''
+        """
         Get rotation angle.
         
         :returns: Rotation angle.
-        '''
-        return self.axes.getAngleY()
+        """
+        return self._axes.getAngleY()
         
     def set_rotation(self, rotation):
-        '''
+        """
         Set rotation angle.
         
         :param rotation: (*float*) Rotation angle.
-        '''
-        self.axes.setAngleY(rotation)
+        """
+        self._axes.setAngleY(rotation)
         
     def get_elevation(self):
-        '''
+        """
         Get elevation angle.
         
         :returns: Elevation angle.
-        '''
-        return self.axes.getAngleX()
+        """
+        return self._axes.getAngleX()
         
     def set_elevation(self, elevation):
-        '''
+        """
         Set elevation angle.
         
         :param elevation: (*float*) Elevation angle.
-        '''
-        self.axes.setAngleX(elevation)
+        """
+        self._axes.setAngleX(elevation)
 
     def get_head(self):
         """
@@ -169,7 +169,7 @@ class Axes3DGL(Axes3D):
 
         :return: (*float*) Head angle
         """
-        return self.axes.getHeadAngle()
+        return self._axes.getHeadAngle()
 
     def set_head(self, head):
         """
@@ -177,7 +177,7 @@ class Axes3DGL(Axes3D):
 
         :param head: (*float*) Head angle
         """
-        self.axes.setHeadAngle(head)
+        self._axes.setHeadAngle(head)
 
     def get_pitch(self):
         """
@@ -185,7 +185,7 @@ class Axes3DGL(Axes3D):
 
         :return: (*float*) Pitch angle
         """
-        return self.axes.getPitchAngle()
+        return self._axes.getPitchAngle()
 
     def set_pitch(self, pitch):
         """
@@ -193,61 +193,61 @@ class Axes3DGL(Axes3D):
 
         :param pitch: (*float*) Pitch angle
         """
-        self.axes.setPitchAngle(pitch)
+        self._axes.setPitchAngle(pitch)
 
     def set_background(self, color):
-        '''
+        """
         Set background color.
 
         :param color: (*color*) Background color.
-        '''
+        """
         color = plotutil.getcolor(color)
-        self.axes.setBackground(color)
+        self._axes.setBackground(color)
 
     def get_antialias(self):
-        '''
+        """
         Get antialias
         :return: (*bool*) Antialias or not.
-        '''
-        return self.axes.isAntialias()
+        """
+        return self._axes.isAntialias()
 
     def set_antialias(self, antialias):
-        '''
+        """
         Set antialias.
         :param antialias: (*bool*) Antialias or not.
-        '''
-        self.axes.setAntialias(antialias)
+        """
+        self._axes.setAntialias(antialias)
 
     def get_orthographic(self):
         """
         Get orthographic.
         :return: (*bool*) Orthographic or not.
         """
-        return self.axes.isOrthographic()
+        return self._axes.isOrthographic()
 
     def set_orthographic(self, orthographic):
         """
         Set orthographic.
         :param orthographic: (*bool*) Orthographic or not.
         """
-        self.axes.setOrthographic(orthographic)
+        self._axes.setOrthographic(orthographic)
 
     def get_distance(self):
         """
         Get camera distance.
         :return: (*float*) Camera distance.
         """
-        return self.axes.getDistance()
+        return self._axes.getDistance()
 
     def set_distance(self, dis):
         """
         Set camera distance.
         :param dis: (*float*) Camera distance.
         """
-        self.axes.setDistance(dis)
+        self._axes.setDistance(dis)
         
     def set_lighting(self, enable=True, **kwargs):
-        '''
+        """
         Set lighting.
         
         :param enable: (*boolean*) Set lighting enable or not.
@@ -260,8 +260,8 @@ class Axes3DGL(Axes3D):
         :param mat_specular: (*list of float*) Material specular light. Default is [0,0,0,1].
         :param mat_emission: (*list of float*) Material emission light. Default is [0,0,0,1].
         :param mat_shininess: (*float*) Material shininess (0 - 128). Default is 50.
-        '''
-        lighting = self.axes.getLighting()
+        """
+        lighting = self._axes.getLighting()
         lighting.setEnable(enable)
         position = kwargs.pop('position', None)
         if not position is None:
@@ -299,7 +299,7 @@ class Axes3DGL(Axes3D):
         :param y: (*float*) Y coordinate of the z axis.
         :param left: (*boolean*) Whether left tick. Default is True.
         """
-        self.axes.addZAxis(x, y, left)
+        self._axes.addZAxis(x, y, left)
 
     def bar(self, x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
         """
@@ -614,30 +614,23 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def geoshow(self, layer, **kwargs):
-        '''
+        """
         Plot a layer in 3D axes.
 
         :param layer: (*MILayer*) The layer to be plotted.
 
         :returns: Graphics.
-        '''
+        """
         ls = kwargs.pop('symbolspec', None)
         offset = kwargs.pop('offset', 0)
         xshift = kwargs.pop('xshift', 0)
 
         if isinstance(layer, basestring):
             fn = layer
-            if not fn.endswith('.shp'):
-                fn = fn + '.shp'
-            if not os.path.exists(fn):
-                fn = os.path.join(migl.get_map_folder(), fn)
-            if os.path.exists(fn):
-                encoding = kwargs.pop('encoding', None)
-                layer = migeo.shaperead(fn, encoding)
-            else:
-                raise IOError('File not exists: ' + fn)
+            encoding = kwargs.pop('encoding', None)
+            layer = migeo.georead(fn, encoding)
 
-        layer = layer.layer
+        layer = layer._layer
         if layer.getLayerType() == LayerTypes.VECTOR_LAYER:
             if ls is None:
                 ls = layer.getLegendScheme()
@@ -675,13 +668,13 @@ class Axes3DGL(Axes3D):
         return graphics
         
     def plot_layer(self, layer, **kwargs):
-        '''
+        """
         Plot a layer in 3D axes.
         
         :param layer: (*MILayer*) The layer to be plotted.
         
         :returns: Graphics.
-        '''
+        """
         return self.geoshow(layer, **kwargs)
 
     def slice(self, *args, **kwargs):
@@ -779,7 +772,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def plot_slice(self, *args, **kwargs):
-        '''
+        """
         Volume slice planes
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
@@ -790,7 +783,7 @@ class Axes3DGL(Axes3D):
         :param zslice: (*list*) Z slice locations.
         :param cmap: (*string*) Color map string.
         :return:
-        '''
+        """
         warnings.warn("plot_slice is deprecated", DeprecationWarning)
         if len(args) <= 3:
             x = args[0].dimvalue(2)
@@ -846,7 +839,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def contourslice(self, *args, **kwargs):
-        '''
+        """
         Volume slice contours
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -859,7 +852,7 @@ class Axes3DGL(Axes3D):
         :param cmap: (*string*) Color map string.
         :param smooth: (*bool*) Smooth contour lines or not.
         :return: Contour slice graphics
-        '''
+        """
         if len(args) <= 3:
             x = args[0].dimvalue(2)
             y = args[0].dimvalue(1)
@@ -927,7 +920,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def contourfslice(self, *args, **kwargs):
-        '''
+        """
         Volume slice contour polygons
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
@@ -939,7 +932,7 @@ class Axes3DGL(Axes3D):
         :param cmap: (*string*) Color map string.
         :param smooth: (*bool*) Smooth contour lines or not.
         :return: Contour polygon slice graphics
-        '''
+        """
         if len(args) <= 3:
             x = args[0].dimvalue(2)
             y = args[0].dimvalue(1)
@@ -1007,7 +1000,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def mesh(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional surface mesh plot
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -1016,7 +1009,7 @@ class Axes3DGL(Axes3D):
         :param cmap: (*string*) Color map string.
 
         :returns: Legend
-        '''
+        """
         if len(args) <= 2:
             x = args[0].dimvalue(1)
             y = args[0].dimvalue(0)
@@ -1189,7 +1182,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def plot_surface(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional surface plot
         
         :param x: (*array_like*) Optional. X coordinate array.
@@ -1198,7 +1191,7 @@ class Axes3DGL(Axes3D):
         :param cmap: (*string*) Color map string.
         
         :returns: Legend
-        '''
+        """
         warnings.warn("plot_surface is deprecated", DeprecationWarning)
         if len(args) <= 2:
             x = args[0].dimvalue(1)
@@ -1249,7 +1242,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def isosurface(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional isosurface plot
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -1260,7 +1253,7 @@ class Axes3DGL(Axes3D):
         :param nthread: (*int*) Thread number.
 
         :returns: Legend
-        '''
+        """
         if len(args) <= 3:
             x = args[0].dimvalue(2)
             y = args[0].dimvalue(1)
@@ -1312,7 +1305,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def plot_isosurface(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional isosurface plot
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -1323,7 +1316,7 @@ class Axes3DGL(Axes3D):
         :param nthread: (*int*) Thread number.
 
         :returns: Legend
-        '''
+        """
         warnings.warn("plot_isosurface is deprecated", DeprecationWarning)
         if len(args) <= 3:
             x = args[0].dimvalue(2)
@@ -1374,7 +1367,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def particles(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional particles plot
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -1390,7 +1383,7 @@ class Axes3DGL(Axes3D):
         :param density: (*int*) Particle density value. Default is 2.
 
         :returns: Legend
-        '''
+        """
         if len(args) <= 3:
             x = args[0].dimvalue(2)
             y = args[0].dimvalue(1)
@@ -1437,7 +1430,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def plot_particles(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional particles plot
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -1453,7 +1446,7 @@ class Axes3DGL(Axes3D):
         :param density: (*int*) Particle density value.
 
         :returns: Legend
-        '''
+        """
         warnings.warn("plot_particles is deprecated", DeprecationWarning)
         if len(args) <= 3:
             x = args[0].dimvalue(2)
@@ -1501,7 +1494,7 @@ class Axes3DGL(Axes3D):
         return graphics
 
     def volumeplot(self, *args, **kwargs):
-        '''
+        """
         creates a three-dimensional volume plot
 
         :param x: (*array_like*) Optional. X coordinate array.
@@ -1520,7 +1513,7 @@ class Axes3DGL(Axes3D):
         :param opacity_levels: (*list of float*) Opacity levels. Default is [0., 1.].
 
         :returns: Volumeplot graphic
-        '''
+        """
         if len(args) <= 3:
             data = args[0]
             if isinstance(data, DimArray):
@@ -1585,7 +1578,7 @@ class Axes3DGL(Axes3D):
         """
         Open GLForm
         """
-        form = GLForm(self.axes)
+        form = GLForm(self._axes)
         form.setSize(600, 500)
         form.setLocationRelativeTo(None)
         form.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
@@ -1601,7 +1594,7 @@ class MapAxes3D(Axes3DGL):
 
         projection = kwargs.pop('projection', None)
         if not projection is None:
-            self.axes.setProjInfo(projection)
+            self._axes.setProjInfo(projection)
 
     def _set_plot(self, plot):
         """
@@ -1610,9 +1603,9 @@ class MapAxes3D(Axes3DGL):
         :param plot: (*EarthPlot3D*) Plot.
         """
         if plot is None:
-            self.axes = MapPlot3D()
+            self._axes = MapPlot3D()
         else:
-            self.axes = plot
+            self._axes = plot
 
     @property
     def axestype(self):
@@ -1620,7 +1613,7 @@ class MapAxes3D(Axes3DGL):
 
     @property
     def projection(self):
-        return self.axes.getProjInfo()
+        return self._axes.getProjInfo()
 
 class EarthAxes3D(Axes3DGL):
     """
@@ -1642,7 +1635,7 @@ class EarthAxes3D(Axes3DGL):
             if not os.path.exists(image):
                 image = os.path.join(migl.get_map_folder(), image)
             if os.path.exists(image):
-                self.axes.earthImage(image)
+                self._axes.earthImage(image)
 
     def _set_plot(self, plot):
         """
@@ -1651,9 +1644,9 @@ class EarthAxes3D(Axes3DGL):
         :param plot: (*EarthPlot3D*) Plot.
         """
         if plot is None:
-            self.axes = EarthPlot3D()
+            self._axes = EarthPlot3D()
         else:
-            self.axes = plot
+            self._axes = plot
 
     @property
     def axestype(self):
@@ -1667,7 +1660,7 @@ class EarthAxes3D(Axes3DGL):
         if not os.path.exists(image):
             image = os.path.join(migl.get_map_folder(), image)
         if os.path.exists(image):
-            self.axes.earthImage(image)
+            self._axes.earthImage(image)
 
     def lonlat(self, lon_delta=30, lat_delta=30, npoints=50, offset=10, **kwargs):
         """
@@ -1718,7 +1711,7 @@ class EarthAxes3D(Axes3DGL):
             zmin = limits[4]
             zmax = limits[5]
             extent = Extent3D(xmin, xmax, ymin, ymax, zmin, zmax)
-            self.axes.setDrawExtent(extent)
+            self._axes.setDrawExtent(extent)
             return True
         else:
             print('The limits parameter must be a list with 6 elements: xmin, xmax, ymin, ymax, zmin, zmax!')

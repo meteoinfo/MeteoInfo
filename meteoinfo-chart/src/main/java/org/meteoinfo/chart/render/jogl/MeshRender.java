@@ -111,6 +111,12 @@ public class MeshRender extends JOGLGraphicRender {
             gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * Integer.BYTES, indexBuffer, GL.GL_STATIC_DRAW);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
+
+        if (alwaysUpdateBuffers) {
+            texture = AWTTextureIO.newTexture(gl.getGLProfile(), meshGraphic.getImage(), true);
+            this.textureID = texture.getTextureObject(gl);
+            this.bindingTextures();
+        }
     }
 
     void bindingTextures() {

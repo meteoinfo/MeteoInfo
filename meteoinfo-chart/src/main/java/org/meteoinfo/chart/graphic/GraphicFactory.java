@@ -11,6 +11,7 @@ import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.jogl.mc.MarchingCubes;
 import org.meteoinfo.chart.jogl.pipe.PipeShape;
+import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.data.GridArray;
@@ -41,6 +42,7 @@ import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
+import org.meteoinfo.projection.ProjectionInfo;
 import wcontour.Contour;
 import wcontour.global.Point3D;
 import wcontour.global.PolyLine;
@@ -49,6 +51,7 @@ import wcontour.global.PolyLine3D;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
@@ -3273,6 +3276,45 @@ public class GraphicFactory {
         graphics.setZDir("z");
         graphics.setZValue(offset);
         ImageShape ishape = new ImageShape();
+        ishape.setImage(layer.getImage());
+        Extent extent = layer.getExtent();
+        Extent3D ex3 = new Extent3D(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
+        List<PointZ> coords = new ArrayList<>();
+        coords.add(new PointZ(extent.minX + xshift, extent.minY, offset));
+        coords.add(new PointZ(extent.maxX + xshift, extent.minY, offset));
+        coords.add(new PointZ(extent.maxX + xshift, extent.maxY, offset));
+        coords.add(new PointZ(extent.minX + xshift, extent.maxY, offset));
+        ishape.setExtent(ex3);
+        ishape.setCoords(coords);
+        Graphic gg = new Graphic(ishape, new ColorBreak());
+        if (interpolation != null) {
+            ((ImageShape) gg.getShape()).setInterpolation(interpolation);
+        }
+        graphics.add(gg);
+
+        return graphics;
+    }
+
+    /**
+     * Create Texture
+     *
+     * @param gl            GL2
+     * @param layer         Image layer
+     * @param offset        Offset of z axis
+     * @param xshift        X shift - to shift the grahpics in x direction, normally
+     *                      for map in 180 - 360 degree east
+     * @param interpolation Interpolation
+     * @return Graphics
+     * @throws IOException
+     */
+    public static GraphicCollection createTexture(ImageLayer layer, double offset, double xshift,
+                                                  String interpolation) throws IOException {
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        graphics.setFixZ(true);
+        graphics.setZDir("z");
+        graphics.setZValue(offset);
+        TextureShape ishape = new TextureShape();
+        ishape.setFileName(layer.getFileName());
         ishape.setImage(layer.getImage());
         Extent extent = layer.getExtent();
         Extent3D ex3 = new Extent3D(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
@@ -7279,6 +7321,200 @@ public class GraphicFactory {
         surfaceGraphic.setVertexValue(vertexValue);
         surfaceGraphic.setLegendScheme(ls);
         return surfaceGraphic;
+    }
+
+    /**
+     * Create surface graphic
+     *
+     * @param layer         Image layer
+     * @param offset        Offset of z axis
+     * @param xShift        X shift - to shift the graphics in x direction, normally
+     *                      for map in 180 - 360 degree east
+     * @param nLon Number of longitude
+     * @param nLat Number of latitude
+     * @return Graphics
+     * @throws IOException
+     */
+    public static MeshGraphic geoSurface(ImageLayer layer, double offset, double xShift,
+                                      int nLon, int nLat) throws IOException {
+        Extent extent = layer.getExtent();
+        Array lon = ArrayUtil.lineSpace(extent.minX + xShift, extent.maxX + xShift, nLon + 1, true);
+        Array lat = ArrayUtil.lineSpace(extent.minY, extent.maxY, nLat + 1, true);
+        lat = lat.flip(0).copy();
+        Array[] lonlat = ArrayUtil.meshgrid(lon, lat);
+        lon = lonlat[0];
+        lat = lonlat[1];
+        Array alt = ArrayUtil.zeros(lon.getShape(), DataType.FLOAT);
+        alt = ArrayMath.add(alt, offset);
+        LegendScheme ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, Color.cyan, 1);
+        ((PolygonBreak) ls.getLegendBreak(0)).setDrawOutline(false);
+        ((PolygonBreak) ls.getLegendBreak(0)).setOutlineColor(Color.white);
+
+        MeshGraphic graphic = GraphicFactory.surface(lon, lat, alt, ls);
+        graphic.setImage(layer.getImage());
+
+        return graphic;
+    }
+
+    /**
+     * Create surface graphic
+     *
+     * @param layer         Image layer
+     * @param offset        Offset of z axis
+     * @param xShift        X shift - to shift the graphics in x direction, normally
+     *                      for map in 180 - 360 degree east
+     * @param nLon Number of longitude
+     * @param nLat Number of latitude
+     * @param toProj Destination projection
+     * @return Graphics
+     * @throws IOException
+     */
+    public static MeshGraphic geoSurface(ImageLayer layer, double offset, double xShift,
+                                         int nLon, int nLat, ProjectionInfo toProj) throws IOException {
+        Extent layerExtent = layer.getExtent();
+        Extent extent = (Extent) layerExtent.clone();
+        double width = extent.getWidth();
+        double height = extent.getHeight();
+        float cutoff = toProj.getCutoff();
+        double cLon = toProj.getCenterLon();
+        boolean extentChanged = false;
+        switch (toProj.getProjectionName()) {
+            case Lambert_Conformal_Conic:
+                if (extent.minY < cutoff) {
+                    extent.minY = cutoff;
+                    extentChanged = true;
+                }
+                break;
+            case North_Polar_Stereographic_Azimuthal:
+                if (extent.minY < cutoff) {
+                    extent.minY = cutoff;
+                    extentChanged = true;
+                }
+                break;
+            case South_Polar_Stereographic_Azimuthal:
+                if (extent.maxY > cutoff) {
+                    extent.maxY = cutoff;
+                    extentChanged = true;
+                }
+                break;
+            case Mercator:
+                if (extent.maxY > cutoff) {
+                    extent.maxY = cutoff;
+                    extentChanged = true;
+                }
+                if (extent.minY < -cutoff) {
+                    extent.minY = -cutoff;
+                    extentChanged = true;
+                }
+                break;
+        }
+
+        if (cLon != 0) {
+            extent.minX = cLon - 180 + 0.1;
+            extent.maxX = cLon + 180 - 0.1;
+            extentChanged = true;
+        }
+
+        BufferedImage image = layer.getImage();
+        if (extentChanged) {
+            int x = (int) ((extent.minX - layerExtent.minX) / width * image.getWidth());
+            int y = (int) ((layerExtent.maxY - extent.maxY) / height * image.getHeight());
+            int w = (int) (extent.getWidth() / layerExtent.getWidth() * image.getWidth());
+            int h = (int) (extent.getHeight() / layerExtent.getHeight() * image.getHeight());
+            BufferedImage nImage = new BufferedImage(w, h, image.getType());
+            if (cLon == 0) {
+                int[] rgb = new int[w * h];
+                rgb = image.getRGB(x, y, w, h, rgb, 0, w);
+                nImage.setRGB(0, 0, w, h, rgb, 0, w);
+            }
+            else {
+                if (cLon > 0) {
+                    int w1 = (int) ((layerExtent.maxX - extent.minX) / extent.getWidth() * w);
+                    int[] rgb1 = new int[w1 * h];
+                    rgb1 = image.getRGB(x, y, w1, h, rgb1, 0, w1);
+                    int[] rgb2 = new int[(w - w1) * h];
+                    rgb2 = image.getRGB(0, y, w - w1, h, rgb2, 0, w - w1);
+                    nImage.setRGB(0, 0, w1, h, rgb1, 0, w1);
+                    nImage.setRGB(w1, 0, w - w1, h, rgb2, 0, w - w1);
+                } else {
+                    int w1 = (int) ((extent.maxX - layerExtent.minX) / extent.getWidth() * w);
+                    int[] rgb1 = new int[w1 * h];
+                    rgb1 = image.getRGB(x, y, w1, h, rgb1, 0, w1);
+                    int[] rgb2 = new int[(w - w1) * h];
+                    rgb2 = image.getRGB(x + w1, y, w - w1, h, rgb2, 0, w - w1);
+                    nImage.setRGB(w - w1, 0, w1, h, rgb1, 0, w1);
+                    nImage.setRGB(0, 0, w - w1, h, rgb2, 0, w - w1);
+                }
+            }
+            image = nImage;
+        }
+
+        Array lon = ArrayUtil.lineSpace(extent.minX + xShift, extent.maxX + xShift, nLon + 1, true);
+        Array lat = ArrayUtil.lineSpace(extent.minY, extent.maxY, nLat + 1, true);
+        lat = lat.flip(0).copy();
+        Array[] lonlat = ArrayUtil.meshgrid(lon, lat);
+        lon = lonlat[0];
+        lat = lonlat[1];
+        Array alt = ArrayUtil.zeros(lon.getShape(), DataType.FLOAT);
+        alt = ArrayMath.add(alt, offset);
+        LegendScheme ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, Color.cyan, 1);
+        ((PolygonBreak) ls.getLegendBreak(0)).setDrawOutline(false);
+        ((PolygonBreak) ls.getLegendBreak(0)).setOutlineColor(Color.white);
+
+        MeshGraphic graphic = GraphicFactory.surface(lon, lat, alt, ls);
+        graphic.setImage(image);
+
+        return graphic;
+    }
+
+    /**
+     * Create surface graphic
+     *
+     * @param layer         Image layer
+     * @param offset        Offset of z axis
+     * @param xShift        X shift - to shift the graphics in x direction, normally
+     *                      for map in 180 - 360 degree east
+     * @param nLon Number of longitude
+     * @param nLat Number of latitude
+     * @param toProj Destination projection
+     * @param limits Image extent limitations
+     * @return Graphics
+     * @throws IOException
+     */
+    public static MeshGraphic geoSurface(ImageLayer layer, double offset, double xShift,
+                                         int nLon, int nLat, ProjectionInfo toProj, List<Number> limits) throws IOException {
+        Extent layerExtent = layer.getExtent();
+        Extent extent = new Extent(limits.get(0).doubleValue(), limits.get(1).doubleValue(),
+                limits.get(2).doubleValue(), limits.get(3).doubleValue());
+        double width = layerExtent.getWidth();
+        double height = layerExtent.getHeight();
+
+        BufferedImage image = layer.getImage();
+        int x = (int) ((extent.minX - layerExtent.minX) / width * image.getWidth());
+        int y = (int) ((layerExtent.maxY - extent.maxY) / height * image.getHeight());
+        int w = (int)(extent.getWidth() / layerExtent.getWidth() * image.getWidth());
+        int h = (int)(extent.getHeight() / layerExtent.getHeight() * image.getHeight());
+        BufferedImage nImage = new BufferedImage(w, h, image.getType());
+        Graphics2D g2 = nImage.createGraphics();
+        g2.drawImage(image.getSubimage(x, y, w, h), 0, 0, null);
+        image = nImage;
+
+        Array lon = ArrayUtil.lineSpace(extent.minX + xShift, extent.maxX + xShift, nLon + 1, true);
+        Array lat = ArrayUtil.lineSpace(extent.minY, extent.maxY, nLat + 1, true);
+        lat = lat.flip(0).copy();
+        Array[] lonlat = ArrayUtil.meshgrid(lon, lat);
+        lon = lonlat[0];
+        lat = lonlat[1];
+        Array alt = ArrayUtil.zeros(lon.getShape(), DataType.FLOAT);
+        alt = ArrayMath.add(alt, offset);
+        LegendScheme ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, Color.cyan, 1);
+        ((PolygonBreak) ls.getLegendBreak(0)).setDrawOutline(false);
+        ((PolygonBreak) ls.getLegendBreak(0)).setOutlineColor(Color.white);
+
+        MeshGraphic graphic = GraphicFactory.surface(lon, lat, alt, ls);
+        graphic.setImage(image);
+
+        return graphic;
     }
 
     /**

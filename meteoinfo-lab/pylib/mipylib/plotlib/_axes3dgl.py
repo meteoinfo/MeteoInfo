@@ -653,9 +653,19 @@ class Axes3DGL(Axes3D):
             layer.setLegendScheme(ls)
             graphics = GraphicFactory.createGraphicsFromLayer(layer, offset, xshift)
         else:
-            interpolation = kwargs.pop('interpolation', None)
-            graphics = JOGLUtil.createTexture(layer, offset, xshift, interpolation)
-            #graphics = GraphicFactory.createImage(layer, offset, xshift, interpolation)
+            #interpolation = kwargs.pop('interpolation', None)
+            #graphics = GraphicFactory.createTexture(layer, offset, xshift, interpolation)
+            nlat = kwargs.pop('nlat', 180)
+            nlon = kwargs.pop('nlon', 360)
+            if self._axes.getProjInfo() is None:
+                graphics = GraphicFactory.geoSurface(layer, offset, xshift, nlon, nlat)
+            else:
+                limits = kwargs.pop('limits', None)
+                if limits is None:
+                    graphics = GraphicFactory.geoSurface(layer, offset, xshift, nlon, nlat, self._axes.getProjInfo())
+                else:
+                    graphics = GraphicFactory.geoSurface(layer, offset, xshift, nlon, nlat, self._axes.getProjInfo(),
+                                                         limits)
 
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:
@@ -663,7 +673,7 @@ class Axes3DGL(Axes3D):
 
         visible = kwargs.pop('visible', True)
         if visible:
-            projection = kwargs.pop('projection', migeo.projinfo())
+            projection = kwargs.pop('projection', layer.getProjInfo())
             self.add_graphic(graphics, projection)
         return graphics
         
@@ -1609,7 +1619,7 @@ class MapAxes3D(Axes3DGL):
 
     @property
     def axestype(self):
-        return '3d_Map'
+        return '3d'
 
     @property
     def projection(self):
@@ -1650,7 +1660,7 @@ class EarthAxes3D(Axes3DGL):
 
     @property
     def axestype(self):
-        return '3d_Earth'
+        return '3d'
 
     def earth_image(self, image):
         """

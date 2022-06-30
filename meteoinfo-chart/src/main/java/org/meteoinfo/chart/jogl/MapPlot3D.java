@@ -3,6 +3,7 @@ package org.meteoinfo.chart.jogl;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import org.meteoinfo.chart.ChartText;
+import org.meteoinfo.chart.graphic.GraphicProjectionUtil;
 import org.meteoinfo.chart.plot.MapGridLine;
 import org.meteoinfo.chart.plot.MapGridLine3D;
 import org.meteoinfo.common.*;
@@ -64,7 +65,7 @@ public class MapPlot3D extends Plot3DGL {
         if (proj.equals(this.projInfo)) {
             super.addGraphic(graphic);
         } else {
-            Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphic, proj, this.projInfo);
+            Graphic nGraphic = GraphicProjectionUtil.projectClipGraphic(graphic, proj, this.projInfo);
             super.addGraphic(nGraphic);
         }
     }
@@ -81,7 +82,7 @@ public class MapPlot3D extends Plot3DGL {
         if (proj.equals(this.projInfo)) {
             super.addGraphic(index, graphic);
         } else {
-            Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphic, proj, this.projInfo);
+            Graphic nGraphic = GraphicProjectionUtil.projectClipGraphic(graphic, proj, this.projInfo);
             super.addGraphic(index, nGraphic);
         }
     }

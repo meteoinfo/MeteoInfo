@@ -24,6 +24,6 @@
     <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.0.0" level="project" />
     <orderEntry type="module" module-name="meteoinfo-ui" />
     <orderEntry type="library" name="Maven: com.toedter:jcalendar:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.locationtech.jts:jts-core:1.17.0" level="project" />
+    <orderEntry type="library" name="Maven: org.locationtech.jts:jts-core:1.19.0" level="project" />
   </component>
 </module>

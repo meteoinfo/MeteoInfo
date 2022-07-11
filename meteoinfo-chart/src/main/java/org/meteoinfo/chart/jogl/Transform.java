@@ -14,6 +14,7 @@ public class Transform {
     protected float xmin, xmax = 1.0f, ymin;
     protected float ymax = 1.0f, zmin, zmax = 1.0f;
     protected Matrix4f transformMatrix = new Matrix4f();
+    protected float zScale = 1.0f;
 
     /**
      * Constructor
@@ -95,17 +96,48 @@ public class Transform {
             }
         }
 
+        if (this.zScale != 1) {
+            float zCenter = (this.zmax + this.zmin) / 2;
+            float zRange = zmax - zmin;
+            this.zmin = zCenter - zRange * 0.5f / zScale;
+            this.zmax = zCenter + zRange * 0.5f / zScale;
+        }
+
         this.transformMatrix = new Matrix4f()
                 .translate((this.xmax + this.xmin) / 2, (this.ymax + this.ymin) / 2, (this.zmax + this.zmin) / 2)
                 .scale((this.xmax - this.xmin) / 2, (this.ymax - this.ymin) / 2, (this.zmax - this.zmin) / 2);
     }
 
+    /**
+     * Get aspect type
+     * @return Aspect type
+     */
     public AspectType getAspectType() {
         return this.aspectType;
     }
 
+    /**
+     * Set aspect type
+     * @param value Aspect type
+     */
     public void setAspectType(AspectType value) {
         this.aspectType = value;
+    }
+
+    /**
+     * Get z scale
+     * @return Z scale
+     */
+    public float getZScale() {
+        return this.zScale;
+    }
+
+    /**
+     * Set z scale
+     * @param value Z scale
+     */
+    public void setZScale(float value) {
+        this.zScale = value;
     }
 
     /**
@@ -116,8 +148,15 @@ public class Transform {
         return this.transformMatrix;
     }
 
+    /**
+     * Check whether this transform equals to another one
+     * @param other Other transform
+     * @return Equals or not
+     */
     public boolean equals(Transform other) {
         if (this.aspectType != other.aspectType)
+            return false;
+        if (this.zScale != other.zScale)
             return false;
         if (this.xmin != other.xmin)
             return false;
@@ -198,6 +237,7 @@ public class Transform {
     public Object clone() {
         Transform transform = new Transform(xmin, xmax, ymin, ymax, zmin, zmax);
         transform.aspectType = this.aspectType;
+        transform.zScale = this.zScale;
 
         return transform;
     }

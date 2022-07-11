@@ -131,7 +131,7 @@
     <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-windows-i586:v2.4.0-rc4" level="project" />
     <orderEntry type="library" name="Maven: org.joml:joml:1.10.4" level="project" />
     <orderEntry type="module" module-name="meteoinfo-console" />
-    <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.2" level="project" />
+    <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.3b1" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.2.0" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:3.2.0" level="project" />
     <orderEntry type="module" module-name="meteoinfo-ndarray" />

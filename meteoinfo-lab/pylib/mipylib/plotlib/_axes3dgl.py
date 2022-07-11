@@ -191,9 +191,25 @@ class Axes3DGL(Axes3D):
         """
         Set pitch angle.
 
-        :param pitch: (*float*) Pitch angle
+        :param pitch: (*float*) Pitch angle.
         """
         self._axes.setPitchAngle(pitch)
+
+    def get_zscale(self):
+        """
+        Get z axis scale.
+
+        :return: (*float*) Z axis scale.
+        """
+        return self._axes.getZScale()
+
+    def set_zscale(self, zscale):
+        """
+        Set z axis scale.
+
+        :param zscale: (*float*) Z axis scale.
+        """
+        self._axes.setZScale(zscale)
 
     def set_background(self, color):
         """

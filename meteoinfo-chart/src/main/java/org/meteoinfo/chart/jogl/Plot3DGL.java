@@ -720,6 +720,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     /**
+     * Get z scale
+     * @return Z scale
+     */
+    public float getZScale() {
+        return this.transform.getZScale();
+    }
+
+    /**
+     * Set z scale
+     * @param value Z scale
+     */
+    public void setZScale(float value) {
+        this.transform.zScale = value;
+    }
+
+    /**
      * Get x minimum
      *
      * @return X minimum
@@ -1574,7 +1590,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glVertex3f(xMax, yMax, zMin);
             gl.glVertex3f(xMax, yMax, zMax);
             gl.glVertex3f(xMin, yMax, zMax);
-            gl.glVertex3f(xMin, yMax, xMin);
+            gl.glVertex3f(xMin, yMax, zMin);
             gl.glEnd();
         }
     }
@@ -1614,7 +1630,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glVertex3f(xMax, yMax, zMin);
             gl.glVertex3f(xMax, yMax, zMax);
             gl.glVertex3f(xMin, yMax, zMax);
-            gl.glVertex3f(xMin, yMax, xMin);
+            gl.glVertex3f(xMin, yMax, zMin);
             gl.glEnd();
         } else {
             gl.glBegin(GL2.GL_LINE_STRIP);

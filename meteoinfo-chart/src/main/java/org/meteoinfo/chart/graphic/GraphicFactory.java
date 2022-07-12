@@ -6522,6 +6522,12 @@ public class GraphicFactory {
             Array r = data == null ? null : ArrayUtil.slice(data, 2, aa, x);
             Array yya = ya.getRank() == 1 ? ya : ArrayUtil.slice(ya, 2, aa, x);
             Array zza = za.getRank() == 1 ? za : ArrayUtil.slice(za, 2, aa, x);
+            zza = zza.copyIfView();
+            if ((zza.getDouble(1) - zza.getDouble(0)) != (zza.getDouble(2) - zza.getDouble(1))) {
+                Array[] xy = ArrayUtil.meshgrid(yya, zza);
+                yya = xy[0];
+                zza = xy[1];
+            }
             GraphicCollection3D graphics = streamLines(yya, zza, x, xua, xva, r, density, "x", ls);
             sgs.add(graphics);
         }
@@ -6539,6 +6545,12 @@ public class GraphicFactory {
             Array r = data == null ? null : ArrayUtil.slice(data, 1, aa, y);
             Array xxa = xa.getRank() == 1 ? xa : ArrayUtil.slice(xa, 1, aa, y);
             Array zza = za.getRank() == 1 ? za : ArrayUtil.slice(za, 1, aa, y);
+            zza = zza.copyIfView();
+            if ((zza.getDouble(1) - zza.getDouble(0)) != (zza.getDouble(2) - zza.getDouble(1))) {
+                Array[] xy = ArrayUtil.meshgrid(xxa, zza);
+                xxa = xy[0];
+                zza = xy[1];
+            }
             GraphicCollection3D graphics = streamLines(xxa, zza, y, xua, xva, r, density, "y", ls);
             sgs.add(graphics);
         }

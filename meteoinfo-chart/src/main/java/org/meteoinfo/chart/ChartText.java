@@ -762,6 +762,8 @@ public class ChartText extends Shape {
         ct.xAlign = this.xAlign;
         ct.y = this.y;
         ct.yAlign = this.yAlign;
+        ct.xShift = this.xShift;
+        ct.yShift = this.yShift;
 
         return ct;
     }

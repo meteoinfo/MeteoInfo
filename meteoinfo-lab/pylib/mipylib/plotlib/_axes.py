@@ -3135,11 +3135,11 @@ class Axes(object):
         #plot stddev circle
         self.set_xlim(0, std_max)
         self.set_ylim(0, std_max)
-        std_ticks = np.arange(0, 1.51, 0.25)
+        std_ticks = np.arange(0, std_max, 0.25)
         self.set_xticks(std_ticks)
         xtick_labels = []
         for std_tick in std_ticks:
-            if std_tick == 1:
+            if std_tick == ref_std:
                 xtick_labels.append('REF')
             else:
                 xtick_labels.append(str(std_tick))

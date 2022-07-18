@@ -873,16 +873,18 @@ class DimArray(NDArray):
                         dims.append(self.dims[i])
             return DimArray(r, dims, self.fill_value, self.proj)
         
-    def mean(self, axis=None):
+    def mean(self, axis=None, keepdims=False):
         """
         Compute tha arithmetic mean along the specified axis.
 
         :param axis: (*int*) Axis along which the value is computed.
             The default is to compute the value of the flattened array.
+        :param keepdims: (*bool*) If this is set to True, the axes which are reduced are
+            left in the result as dimensions with size one. Default if `False`.
         
         returns: (*array_like*) Mean result
         """
-        r = super(DimArray, self).mean(axis)
+        r = super(DimArray, self).mean(axis, keepdims)
         if isinstance(r, numbers.Number):
             return r
         else:

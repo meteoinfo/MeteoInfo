@@ -102,7 +102,7 @@ public class VolumeRender extends JOGLGraphicRender {
     }
 
     private void initVertexBuffer() {
-        vbo = GLBuffers.newDirectIntBuffer(2);
+        vbo = GLBuffers.newDirectIntBuffer(1);
     }
 
     @Override
@@ -142,8 +142,6 @@ public class VolumeRender extends JOGLGraphicRender {
         gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        //gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, Buffers.newDirectByteBuffer(volume.getColors()));
-        //gl.glActiveTexture(GL_TEXTURE1);
         gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, volume.getColorNum(), 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                 ((Buffer) Buffers.newDirectByteBuffer(volume.getColors())).rewind());
 
@@ -157,7 +155,6 @@ public class VolumeRender extends JOGLGraphicRender {
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        //gl.glActiveTexture(GL_TEXTURE0);
         gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         gl.glTexImage3D(
                 GL_TEXTURE_3D,  // target
@@ -184,7 +181,6 @@ public class VolumeRender extends JOGLGraphicRender {
                 gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
                 gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                 gl.glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-                //gl.glActiveTexture(GL_TEXTURE2);
                 gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
                 gl.glTexImage3D(
                         GL_TEXTURE_3D,  // target

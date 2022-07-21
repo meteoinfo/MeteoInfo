@@ -21,23 +21,6 @@ Ray makeRay(vec3 origin, vec3 direction) {
     );
 }
 
-Ray createRay(vec2 uv)
-{
-    float far = 5.0;
-
-    // Transform the camera origin to world space
-    vec4 origin = iP * vec4(uv, 0.0, 1.0);
-    origin = iV * origin;
-    origin = origin / origin.w;
-
-    // Invert the perspective projection of the view-space position
-    vec4 image = iP * vec4(uv, far, 1.0);
-    // Transform the direction from camera to world space and normalize
-    image = iV* image;
-    vec4 direction = normalize(origin - image);
-    return makeRay(origin.xyz, direction.xyz);
-}
-
 Ray createRayOrthographic(vec2 uv)
 {
     float far = 5.0;

@@ -298,7 +298,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     /**
      * Get graphic list size
      *
-     * @return Gaphic list size
+     * @return Graphic list size
      */
     public int size() {
         return this.graphics.size();

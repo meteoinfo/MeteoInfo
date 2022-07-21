@@ -1653,6 +1653,9 @@ class Axes3D(Axes):
                 text.setZDir(zdir[0], zdir[1], zdir[2])
             else:
                 text.setZDir(zdir)
+        draw3D = kwargs.pop('draw3d', None)
+        if not draw3D is None:
+            text.setDraw3D(draw3D)
 
         if isinstance(x, np.NDArray):
             graphic = GraphicFactory.createTexts3D(x._array, y._array, z._array, s._array, text)

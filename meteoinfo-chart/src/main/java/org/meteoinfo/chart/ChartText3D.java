@@ -23,7 +23,8 @@ import org.meteoinfo.geometry.shape.PointZ;
  */
 public class ChartText3D extends ChartText {
     private double z;
-    private PointZ zdir = null;    
+    private PointZ zdir = null;
+    private boolean draw3D = false;
     
     /**
      * Get z coordinate value
@@ -88,6 +89,22 @@ public class ChartText3D extends ChartText {
                 break;
         }
         this.setZDir(x1, y1, z1);
+    }
+
+    /**
+     * Get whether draw text at 3D location
+     * @return Boolean
+     */
+    public boolean isDraw3D() {
+        return this.draw3D;
+    }
+
+    /**
+     * Set whether draw text at 3D location
+     * @param value Boolean
+     */
+    public void setDraw3D(boolean value) {
+        this.draw3D = value;
     }
     
     /**

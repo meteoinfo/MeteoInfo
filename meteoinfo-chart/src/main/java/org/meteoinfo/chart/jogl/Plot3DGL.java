@@ -1156,6 +1156,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     /**
+     * Remove all graphics
+     */
+    public void removeAllGraphics() {
+        this.graphics.clear();
+        this.renderMap.clear();
+    }
+
+    /**
      * Set auto extent
      */
     public void setAutoExtent() {
@@ -1257,7 +1265,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
 
         //Draw text
-        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
+        /*for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
             if (graphic.getNumGraphics() == 1) {
                 Shape shape = graphic.getGraphicN(0).getShape();
@@ -1272,7 +1280,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     }
                 }
             }
-        }
+        }*/
 
         //Stop lighting
         if (this.lighting.isEnable()) {
@@ -2363,6 +2371,37 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return rect;
     }
 
+    Rectangle2D drawString3D(GL2 gl, ChartText3D text3D, float vx, float vy, float vz) {
+        return drawString3D(gl, text3D.getText(), text3D.getFont(), text3D.getColor(), vx, vy, vz);
+    }
+
+    Rectangle2D drawString3D(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz) {
+        //Get screen coordinates
+        Vector2f coord = this.toScreen(vx, vy, vz);
+        float x = coord.x;
+        float y = coord.y;
+
+        //Rendering text string
+        TextRenderer textRenderer;
+        if (this.dpiScale == 1) {
+            textRenderer = new TextRenderer(font, true, true);
+        } else {
+            textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
+                    (int)(font.getSize() * (1 + (this.dpiScale - 1) * 0.8))), true, true);
+        }
+        textRenderer.beginRendering(this.width, this.height, false);
+        //textRenderer.begin3DRendering();
+        textRenderer.setColor(color);
+        textRenderer.setSmoothing(true);
+        Rectangle2D rect = textRenderer.getBounds(str.subSequence(0, str.length()));
+        textRenderer.draw3D(str, x, y, vz, 1.0f);
+        //textRenderer.draw3D(str, vx, vy, vz, 1.0f);
+        textRenderer.endRendering();
+        //textRenderer.end3DRendering();
+
+        return rect;
+    }
+
     void drawTitle() {
         if (title != null) {
             //Rendering text string
@@ -2486,7 +2525,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 this.drawPoint(gl, graphic);
                 break;
             case TEXT:
-                //this.drawText(gl, (ChartText3D) shape);
+                if (this.clipPlane)
+                    this.disableClipPlane(gl);
+                this.drawText(gl, (ChartText3D) shape);
+                if (this.clipPlane)
+                    this.enableClipPlane(gl);
                 break;
             case POLYLINE:
             case POLYLINE_Z:
@@ -2543,7 +2586,16 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     protected void drawText(GL2 gl, ChartText3D text) {
         Vector3f xyz = this.transform.transform((float) text.getX(), (float) text.getY(), (float) text.getZ());
-        this.drawString(gl, text, xyz.x, xyz.y, xyz.z, text.getXAlign(), text.getYAlign());
+        if (text.isDraw3D()) {
+            this.drawString3D(gl, text, xyz.x, xyz.y, xyz.z);
+        } else {
+            this.drawString(gl, text, xyz.x, xyz.y, xyz.z, text.getXAlign(), text.getYAlign());
+        }
+    }
+
+    protected void drawText3D(GL2 gl, ChartText3D text) {
+        Vector3f xyz = this.transform.transform((float) text.getX(), (float) text.getY(), (float) text.getZ());
+        this.drawString3D(gl, text, xyz.x, xyz.y, xyz.z);
     }
 
     private void drawPoint(GL2 gl, Graphic graphic) {

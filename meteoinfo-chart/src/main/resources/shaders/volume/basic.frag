@@ -11,6 +11,7 @@ uniform mat4 iV;
 uniform mat4 iP;
 
 uniform sampler3D tex;
+uniform sampler3D normals;
 uniform sampler2D colorMap;
 uniform int depthSampleCount;
 uniform vec3 aabbMin;

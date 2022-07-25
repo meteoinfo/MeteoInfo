@@ -269,11 +269,11 @@ public class VolumeRender extends JOGLGraphicRender {
         program.allocateUniform(gl, "colorMap", (gl2, loc) -> {
             gl2.glUniform1i(loc, 1);
         });
-        if (this.getRayCastingType() == RayCastingType.SPECULAR) {
+        //if (this.getRayCastingType() == RayCastingType.SPECULAR) {
             program.allocateUniform(gl, "normals", (gl2, loc) -> {
                 gl2.glUniform1i(loc, 2);
             });
-        }
+       // }
         program.allocateUniform(gl, "brightness", (gl2, loc) -> {
             gl2.glUniform1f(loc, this.getBrightness());
         });

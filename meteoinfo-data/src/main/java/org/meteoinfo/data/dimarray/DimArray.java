@@ -267,6 +267,29 @@ public class DimArray {
         return new DimArray(rr, dims);
     }
 
+    /**
+     * Section
+     * @param ranges ranges
+     * @return Section result dim array
+     * @throws InvalidRangeException
+     */
+    public DimArray section(List<Range> ranges) throws InvalidRangeException {
+        Array r = this.array.section(ranges);
+        Array rr = Array.factory(r.getDataType(), r.getShape());
+        MAMath.copy(rr, r);
+        Section section = new Section(ranges);
+        List<Dimension> dims = new ArrayList<>();
+        for (int i = 0; i < section.getRank(); i++) {
+            Range range = section.getRange(i);
+            if (range.length() > 1) {
+                Dimension dim = this.dimensions.get(i).extract(range);
+                dims.add(dim);
+            }
+        }
+
+        return new DimArray(rr, dims);
+    }
+
     @Override
     public String toString() {
         return this.array.toString();

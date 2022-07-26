@@ -1,6 +1,8 @@
 package org.meteoinfo.geometry.colors;
 
+import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;
+import org.meteoinfo.geometry.legend.LegendFactory;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 
@@ -117,5 +119,42 @@ public class TransferFunction {
         float alpha = this.opacityTransferFunction.getOpacity(ratio);
 
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (alpha * 255));
+    }
+
+    /**
+     * To legend scheme
+     * @param min The minimum value
+     * @param max The maximum value
+     * @param n Legend break number
+     * @return Legend scheme
+     */
+    public LegendScheme toLegendScheme(double min, double max) {
+        double[] values = MIMath.getIntervalValues(min, max);
+        int n = values.length;
+        Color[] colors = new Color[n + 1];
+        colors[0] = getColor(min);
+        for (int i = 1; i < n; i++) {
+            colors[i] = getColor(values[i - 1]);
+        }
+
+        return LegendFactory.createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE, min, max);
+    }
+
+    /**
+     * To legend scheme
+     * @param min The minimum value
+     * @param max The maximum value
+     * @param n Legend break number
+     * @return Legend scheme
+     */
+    public LegendScheme toLegendScheme(double min, double max, int n) {
+        double[] values = MIMath.getIntervalValues(min, max, n);
+        Color[] colors = new Color[n + 1];
+        colors[0] = getColor(min);
+        for (int i = 1; i < n; i++) {
+            colors[i] = getColor(values[i - 1]);
+        }
+
+        return LegendFactory.createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE, min, max);
     }
 }

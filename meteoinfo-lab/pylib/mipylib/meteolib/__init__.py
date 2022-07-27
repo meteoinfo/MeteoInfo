@@ -1,5 +1,5 @@
 from .meteo import *
-from . import wrf
+from .wrf import *
 from . import constants
 from .calc import *
 from .interpolate import *

@@ -119,13 +119,15 @@ class DimDataFile(object):
             return None
         v = np.array(attr.getValues())
         return v
-        
+
+    @property
     def variables(self):
         """
         Get all variables.
         """
         return self._variables
-        
+
+    @property
     def varnames(self):
         """
         Get all variable names.

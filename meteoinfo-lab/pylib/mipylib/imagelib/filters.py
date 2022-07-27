@@ -30,7 +30,7 @@ def __getimage(src):
     elif isinstance(src, Graphic):
         return src.getShape().getImage()
     elif isinstance(src, MILayer):
-        return src.layer.getImage()
+        return src._layer.getImage()
     elif isinstance(src, NDArray):
         return ImageUtil.createImage(src.asarray())
     return None
@@ -40,7 +40,7 @@ def __getreturn(src, dst):
         src.getShape().setImage(dst)
         return src
     elif isinstance(src, MILayer):
-        src.layer.setImage(dst)
+        src._layer.setImage(dst)
         return src
     elif isinstance(src, NDArray):
         r = ImageUtil.imageRead(dst)

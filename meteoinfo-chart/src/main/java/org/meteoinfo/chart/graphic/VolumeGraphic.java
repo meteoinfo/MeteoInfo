@@ -81,7 +81,11 @@ public class VolumeGraphic extends GraphicCollection3D {
         this.data = new byte[width * height * depth];
         double range = vMax - vMin;
         for (int i = 0; i < value.getSize(); i++) {
-            data[i] = (byte) ((int) ((value.getDouble(i) - vMin) / range * 255));
+            if (Double.isNaN(value.getDouble(i))) {
+                data[i] = 0;
+            } else {
+                data[i] = (byte) ((int) ((value.getDouble(i) - vMin) / range * 255));
+            }
         }
         //buffer = Buffers.newDirectByteBuffer(data);
 
@@ -115,7 +119,11 @@ public class VolumeGraphic extends GraphicCollection3D {
         this.width = shape[2];
         this.data = new byte[width * height * depth];
         for (int i = 0; i < value.getSize(); i++) {
-            data[i] = (byte) ((int) (norm.apply(value.getDouble(i)).floatValue() * 255));
+            if (Double.isNaN(value.getDouble(i))) {
+                data[i] = 0;
+            } else {
+                data[i] = (byte) ((int) (norm.apply(value.getDouble(i)).floatValue() * 255));
+            }
         }
         //buffer = Buffers.newDirectByteBuffer(data);
 
@@ -137,7 +145,11 @@ public class VolumeGraphic extends GraphicCollection3D {
         List<Color> oColors = ls.getColors();
         int n = oColors.size();
         for (int i = 0; i < value.getSize(); i++) {
-            data[i] = (byte)((int)(ls.legendBreakIndex(value.getDouble(i)) * 255.0 / n));
+            if (Double.isNaN(value.getDouble(i))) {
+                data[i] = 0;
+            } else {
+                data[i] = (byte) ((int) (ls.legendBreakIndex(value.getDouble(i)) * 255.0 / n));
+            }
         }
         //buffer = Buffers.newDirectByteBuffer(data);
 

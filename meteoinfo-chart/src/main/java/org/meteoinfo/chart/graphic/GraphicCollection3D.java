@@ -9,6 +9,10 @@ import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.legend.BreakTypes;
+import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.legend.ColorBreakCollection;
+import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.PolygonZ;
 import org.meteoinfo.geometry.shape.PolygonZShape;
@@ -51,6 +55,30 @@ public class GraphicCollection3D extends GraphicCollection{
         allConvexPolygon = false;
         usingLight = true;
         sphere = false;
+    }
+
+    /**
+     * Set legend scheme
+     *
+     * @param value Legend scheme
+     */
+    @Override
+    public void setLegendScheme(LegendScheme value) {
+        super.setLegendScheme(value);
+
+        if (!this.graphics.isEmpty()) {
+            if (this.getGraphicN(0).getLegend().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
+                for (Graphic graphic : this.graphics) {
+                    ColorBreakCollection cbs = new ColorBreakCollection();
+                    Shape shape = graphic.getShape();
+                    for (PointZ pointZ : (List<PointZ>) shape.getPoints()) {
+                        ColorBreak cb = this.legendScheme.findLegendBreak(pointZ.M);
+                        cbs.add(cb);
+                    }
+                    graphic.setLegend(cbs);
+                }
+            }
+        }
     }
     
     /**

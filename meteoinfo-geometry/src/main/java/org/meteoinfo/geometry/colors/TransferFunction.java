@@ -129,15 +129,22 @@ public class TransferFunction {
      * @return Legend scheme
      */
     public LegendScheme toLegendScheme(double min, double max) {
+        if (min == max) {
+            return LegendFactory.createSingleSymbolLegendScheme(ShapeTypes.IMAGE);
+        }
+
         double[] values = MIMath.getIntervalValues(min, max);
         int n = values.length;
         Color[] colors = new Color[n + 1];
         colors[0] = getColor(min);
-        for (int i = 1; i < n; i++) {
+        for (int i = 1; i < n + 1; i++) {
             colors[i] = getColor(values[i - 1]);
         }
 
-        return LegendFactory.createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE, min, max);
+        LegendScheme ls = LegendFactory.createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE, min, max);
+        ls.setColorMap(colorMap);
+        ls.setNormalize(normalize);
+        return ls;
     }
 
     /**
@@ -148,13 +155,20 @@ public class TransferFunction {
      * @return Legend scheme
      */
     public LegendScheme toLegendScheme(double min, double max, int n) {
+        if (min == max) {
+            return LegendFactory.createSingleSymbolLegendScheme(ShapeTypes.IMAGE);
+        }
+
         double[] values = MIMath.getIntervalValues(min, max, n);
         Color[] colors = new Color[n + 1];
         colors[0] = getColor(min);
-        for (int i = 1; i < n; i++) {
+        for (int i = 1; i < n + 1; i++) {
             colors[i] = getColor(values[i - 1]);
         }
 
-        return LegendFactory.createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE, min, max);
+        LegendScheme ls = LegendFactory.createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE, min, max);
+        ls.setColorMap(colorMap);
+        ls.setNormalize(normalize);
+        return ls;
     }
 }

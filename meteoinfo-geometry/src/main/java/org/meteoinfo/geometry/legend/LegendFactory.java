@@ -105,7 +105,13 @@ public class LegendFactory {
             aPGB.setEndValue(0);
             aPGB.setCaption("");
             legendScheme.getLegendBreaks().add(aPGB);
-
+        } else {
+            ColorBreak cb = new ColorBreak();
+            cb.setColor(aColor);
+            cb.setStartValue(0);
+            cb.setEndValue(0);
+            cb.setCaption("");
+            legendScheme.getLegendBreaks().add(cb);
         }
 
         return legendScheme;

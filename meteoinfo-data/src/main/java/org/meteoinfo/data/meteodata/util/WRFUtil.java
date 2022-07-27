@@ -85,8 +85,7 @@ public class WRFUtil {
         ph = deStagger(ph);
         DimArray phb = dataInfo.readDimArray("PHB");
         phb = deStagger(phb);
-        DimArray hgt = dataInfo.readDimArray("HGT");
-        Array gpm = ArrayMath.sub(ArrayMath.div(ArrayMath.add(ph.getArray(), phb.getArray()), 9.81), hgt.getArray());
+        Array gpm = ArrayMath.div(ArrayMath.add(ph.getArray(), phb.getArray()), 9.81);
 
         return new DimArray(gpm, ph.getDimensions());
     }
@@ -110,9 +109,7 @@ public class WRFUtil {
         ph = deStagger(ph);
         DimArray phb = dataInfo.readDimArray("PHB", ranges);
         phb = deStagger(phb);
-        ranges.remove(1);
-        DimArray hgt = dataInfo.readDimArray("HGT", ranges);
-        Array gpm = ArrayMath.sub(ArrayMath.div(ArrayMath.add(ph.getArray(), phb.getArray()), 9.81), hgt.getArray());
+        Array gpm = ArrayMath.div(ArrayMath.add(ph.getArray(), phb.getArray()), 9.81);
 
         return new DimArray(gpm, ph.getDimensions());
     }

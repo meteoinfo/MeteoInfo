@@ -1408,7 +1408,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         yMax = this.transform.transform_y((float) axesExtent.maxY);
         zMin = this.transform.transform_z((float) axesExtent.minZ);
 
-        float[] rgba = this.gridLine.getColor().getRGBComponents(null);
+        float[] rgba = this.boxColor.getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
         gl.glBegin(GL2.GL_LINE_STRIP);
@@ -1564,7 +1564,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         zMin = this.transform.transform_z((float) axesExtent.minZ);
         zMax = this.transform.transform_z((float) axesExtent.maxZ);
 
-        float[] rgba = this.gridLine.getColor().getRGBComponents(null);
+        float[] rgba = this.boxColor.getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
         if (this.angleY >= 180 && this.angleY < 360) {
@@ -1612,7 +1612,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         zMin = this.transform.transform_z((float) axesExtent.minZ);
         zMax = this.transform.transform_z((float) axesExtent.maxZ);
 
-        float[] rgba = this.gridLine.getColor().getRGBComponents(null);
+        float[] rgba = this.boxColor.getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
         if (this.angleY >= 180 && this.angleY < 360) {

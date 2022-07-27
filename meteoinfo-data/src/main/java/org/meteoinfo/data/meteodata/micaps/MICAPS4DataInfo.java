@@ -28,10 +28,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.GridArray;
@@ -271,12 +274,14 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             int xNum = this.getXDimension().getLength();
             int yNum = this.getYDimension().getLength();
             float[][] theData = new float[yNum][xNum];
+            NumberFormat format = NumberFormat.getInstance(Locale.ENGLISH);
             do {
                 aLine = sr.readLine();
                 if (aLine == null) {
                     while (dataList.size() >= xNum) {
                         for (i = 0; i < xNum; i++) {
-                            theData[col][i] = Float.parseFloat(dataList.get(i));
+                            //theData[col][i] = Float.parseFloat(dataList.get(i));
+                            theData[col][i] = format.parse(dataList.get(i)).floatValue();
                         }
                         dataList = dataList.subList(xNum, dataList.size());
                         col += 1;
@@ -310,7 +315,8 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
                     }
                 }
                 for (i = 0; i < xNum; i++) {
-                    theData[col][i] = Float.parseFloat(dataList.get(i));
+                    //theData[col][i] = Float.parseFloat(dataList.get(i));
+                    theData[col][i] = format.parse(dataList.get(i)).floatValue();
                 }
                 if (dataList.size() > xNum) {
                     dataList = dataList.subList(xNum, dataList.size());
@@ -349,6 +355,8 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             Logger.getLogger(MICAPS4DataInfo.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(MICAPS4DataInfo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
     
@@ -379,12 +387,14 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             int xNum = this.getXDimension().getLength();
             int yNum = this.getYDimension().getLength();
             double[][] theData = new double[yNum][xNum];
+            NumberFormat format = NumberFormat.getInstance(Locale.ENGLISH);
             do {
                 aLine = sr.readLine();
                 if (aLine == null) {
                     while (dataList.size() >= xNum) {
                         for (i = 0; i < xNum; i++) {
-                            theData[col][i] = Float.parseFloat(dataList.get(i));
+                            //theData[col][i] = Float.parseFloat(dataList.get(i));
+                            theData[col][i] = format.parse(dataList.get(i)).doubleValue();
                         }
                         dataList = dataList.subList(xNum, dataList.size());
                         col += 1;
@@ -420,7 +430,8 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
                     }
                 }
                 for (i = 0; i < xNum; i++) {
-                    theData[col][i] = Double.parseDouble(dataList.get(i));
+                    //theData[col][i] = Double.parseDouble(dataList.get(i));
+                    theData[col][i] = format.parse(dataList.get(i)).doubleValue();
                 }
                 if (dataList.size() > xNum) {
                     dataList = new ArrayList(dataList.subList(xNum, dataList.size()));
@@ -445,7 +456,7 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
 
             return new GridData(newGridData, this.getXDimension().getValues(),
                     this.getYDimension().getValues(), this.missingValue);
-        } catch (IOException ex) {
+        } catch (IOException | ParseException ex) {
             Logger.getLogger(MICAPS4DataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }

@@ -65,20 +65,6 @@ public class GraphicCollection3D extends GraphicCollection{
     @Override
     public void setLegendScheme(LegendScheme value) {
         super.setLegendScheme(value);
-
-        if (!this.graphics.isEmpty()) {
-            if (this.getGraphicN(0).getLegend().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
-                for (Graphic graphic : this.graphics) {
-                    ColorBreakCollection cbs = new ColorBreakCollection();
-                    Shape shape = graphic.getShape();
-                    for (PointZ pointZ : (List<PointZ>) shape.getPoints()) {
-                        ColorBreak cb = this.legendScheme.findLegendBreak(pointZ.M);
-                        cbs.add(cb);
-                    }
-                    graphic.setLegend(cbs);
-                }
-            }
-        }
     }
     
     /**
@@ -236,6 +222,29 @@ public class GraphicCollection3D extends GraphicCollection{
      */
     public void setSphere(boolean value) {
         this.sphere = value;
+    }
+
+    /**
+     * Update legend scheme
+     *
+     * @param value Legend scheme
+     */
+    public void updateLegendScheme(LegendScheme value) {
+        this.setLegendScheme(value);
+
+        if (!this.graphics.isEmpty()) {
+            if (this.getGraphicN(0).getLegend().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
+                for (Graphic graphic : this.graphics) {
+                    ColorBreakCollection cbs = new ColorBreakCollection();
+                    Shape shape = graphic.getShape();
+                    for (PointZ pointZ : (List<PointZ>) shape.getPoints()) {
+                        ColorBreak cb = this.legendScheme.findLegendBreak(pointZ.M);
+                        cbs.add(cb);
+                    }
+                    graphic.setLegend(cbs);
+                }
+            }
+        }
     }
 
     /**

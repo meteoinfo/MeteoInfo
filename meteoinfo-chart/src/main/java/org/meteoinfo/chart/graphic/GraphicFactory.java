@@ -696,7 +696,7 @@ public class GraphicFactory {
                     points = new ArrayList<>();
                     cbs = new ColorBreakCollection();
                 } else {
-                    points.add(new PointZ(x, y, z));
+                    points.add(new PointZ(x, y, z, m));
                     cbs.add(cb);
                 }
             }
@@ -736,7 +736,7 @@ public class GraphicFactory {
                         points = new ArrayList<>();
                         cbs = new ColorBreakCollection();
                     } else {
-                        points.add(new PointZ(x, y, z));
+                        points.add(new PointZ(x, y, z, m));
                         cbs.add(cb);
                     }
                 }

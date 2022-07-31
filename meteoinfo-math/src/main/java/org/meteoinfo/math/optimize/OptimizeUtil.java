@@ -1,9 +1,12 @@
 package org.meteoinfo.math.optimize;
 
+import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
 import org.apache.commons.math3.analysis.differentiation.FiniteDifferencesDifferentiator;
 import org.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
+import org.apache.commons.math3.fitting.SimpleCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoints;
 import org.apache.commons.math3.fitting.leastsquares.MultivariateJacobianFunction;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -103,5 +106,32 @@ public class OptimizeUtil {
         };
 
         return jacobianFunc;
+    }
+
+    /**
+     * Get curve fitting parameters.
+     * @param func The uni-variate function
+     * @param x X values
+     * @param y Y values
+     * @param nbPoints Number of points for difference calculation
+     * @param stepSize Step size for difference calculation
+     * @param guess Guess values
+     * @return Curve fitting parameters
+     */
+    public static double[] curveFit(ParamUnivariateFunction func, Array x, Array y,
+                                    int nbPoints, double stepSize, double[] guess) {
+        ParametricUnivariateFunction function = new MyParametricUnivariateFunction(func, nbPoints, stepSize);
+        SimpleCurveFitter curveFitter = SimpleCurveFitter.create(function, guess);
+
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        WeightedObservedPoints observedPoints = new WeightedObservedPoints();
+        while (xIter.hasNext()){
+            observedPoints.add(xIter.getDoubleNext(), yIter.getDoubleNext());
+        }
+
+        double[] best = curveFitter.fit(observedPoints.toList());
+
+        return best;
     }
 }

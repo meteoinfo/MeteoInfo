@@ -132,18 +132,61 @@ def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
         n = p0.size
 
     func = UniFunc(f)
-    jac_func = OptimizeUtil.getJacobianFunction(func, xdata.asarray(), func.order, 5, 0.1)
-    problem = LeastSquaresBuilder().start(p0.tojarray('double')). \
-        model(jac_func). \
-        target(ydata.tojarray('double')). \
-        lazyEvaluation(False). \
-        maxEvaluations(1000). \
-        maxIterations(1000). \
-        build()
-    optimum = LevenbergMarquardtOptimizer().optimize(problem)
-    r = tuple(optimum.getPoint().toArray())
+    best = OptimizeUtil.curveFit(func, xdata.asarray(), ydata.asarray(), 5, 0.1, p0.tojarray('double'))
+    r = tuple(best)
 
     return r
+
+# def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
+#               check_finite=True, bounds=(-np.inf, np.inf), method=None,
+#               jac=None, **kwargs):
+#     """
+#     Use non-linear least squares to fit a function, f, to data.
+#
+#     Assumes ``ydata = f(xdata, *params) + eps``
+#
+#     :param f: callable
+#         The model function, f(x, ...).  It must take the independent
+#         variable as the first argument and the parameters to fit as
+#         separate remaining arguments.
+#     :param xdata: array_like or object
+#         The independent variable where the data is measured.
+#         Should usually be an M-length sequence or an (k,M)-shaped array for
+#         functions with k predictors, but can actually be any object.
+#     :param ydata: array_like
+#         The dependent data, a length M array - nominally ``f(xdata, ...)``.
+#     :param p0: array_like, optional
+#         Initial guess for the parameters (length N).  If None, then the
+#         initial values will all be 1 (if the number of parameters for the
+#         function can be determined using introspection, otherwise a
+#         ValueError is raised).
+#     :return:
+#     """
+#     if p0 is None:
+#         # determine number of parameters by inspecting the function
+#         from ..lib._util import getargspec_no_self as _getargspec
+#         args, varargs, varkw, defaults = _getargspec(f)
+#         if len(args) < 2:
+#             raise ValueError("Unable to determine number of fit parameters.")
+#         n = len(args) - 1
+#         p0 = np.ones(n)
+#     else:
+#         p0 = np.atleast_1d(p0)
+#         n = p0.size
+#
+#     func = UniFunc(f)
+#     jac_func = OptimizeUtil.getJacobianFunction(func, xdata.asarray(), func.order, 5, 0.1)
+#     problem = LeastSquaresBuilder().start(p0.tojarray('double')). \
+#         model(jac_func). \
+#         target(ydata.tojarray('double')). \
+#         lazyEvaluation(False). \
+#         maxEvaluations(1000). \
+#         maxIterations(1000). \
+#         build()
+#     optimum = LevenbergMarquardtOptimizer().optimize(problem)
+#     r = tuple(optimum.getPoint().toArray())
+#
+#     return r
 
 def _del2(p0, p1, d):
     return p0 - np.square(p1 - p0) / d

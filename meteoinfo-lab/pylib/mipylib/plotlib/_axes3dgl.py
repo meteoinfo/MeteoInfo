@@ -810,59 +810,7 @@ class Axes3DGL(Axes3D):
         :param cmap: (*string*) Color map string.
         :return:
         """
-        warnings.warn("plot_slice is deprecated", DeprecationWarning)
-        if len(args) <= 3:
-            x = args[0].dimvalue(2)
-            y = args[0].dimvalue(1)
-            z = args[0].dimvalue(0)
-            data = args[0]
-            args = args[1:]
-        else:
-            x = args[0]
-            y = args[1]
-            z = args[2]
-            data = args[3]
-            args = args[4:]
-        if x.ndim == 3:
-            x = x[0,0]
-        if y.ndim == 3:
-            y = y[0,:,0]
-        if z.ndim == 3:
-            z = z[:,0,0]
-
-        cmap = plotutil.getcolormap(**kwargs)
-        if len(args) > 0:
-            level_arg = args[0]
-            if isinstance(level_arg, int):
-                cn = level_arg
-                ls = LegendManage.createLegendScheme(data.min(), data.max(), cn, cmap)
-            else:
-                if isinstance(level_arg, NDArray):
-                    level_arg = level_arg.aslist()
-                ls = LegendManage.createLegendScheme(data.min(), data.max(), level_arg, cmap)
-        else:
-            ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.POLYGON)
-        edge = kwargs.pop('edge', True)
-        kwargs['edge'] = edge
-        plotutil.setlegendscheme(ls, **kwargs)
-
-        xslice = kwargs.pop('xslice', [])
-        if isinstance(xslice, numbers.Number):
-            xslice = [xslice]
-        yslice = kwargs.pop('yslice', [])
-        if isinstance(yslice, numbers.Number):
-            yslice = [yslice]
-        zslice = kwargs.pop('zslice', [])
-        if isinstance(zslice, numbers.Number):
-            zslice = [zslice]
-        graphics = JOGLUtil.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
-                                  yslice, zslice, ls)
-        visible = kwargs.pop('visible', True)
-        if visible:
-            for gg in graphics:
-                self.add_graphic(gg)
-        return graphics
+        return self.slice(*args, **kwargs)
 
     def contourslice(self, *args, **kwargs):
         """
@@ -1218,54 +1166,7 @@ class Axes3DGL(Axes3D):
         
         :returns: Legend
         """
-        warnings.warn("plot_surface is deprecated", DeprecationWarning)
-        if len(args) <= 2:
-            x = args[0].dimvalue(1)
-            y = args[0].dimvalue(0)
-            x, y = np.meshgrid(x, y)
-            z = args[0]    
-            args = args[1:]
-        else:
-            x = args[0]
-            y = args[1]
-            z = args[2]
-            args = args[3:]
-
-        if kwargs.has_key('colors'):
-            cn = len(kwargs['colors'])
-        else:
-            cn = None
-        cmap = plotutil.getcolormap(**kwargs)
-        if len(args) > 0:
-            level_arg = args[0]
-            if isinstance(level_arg, int):
-                cn = level_arg
-                ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
-            else:
-                if isinstance(level_arg, NDArray):
-                    level_arg = level_arg.aslist()
-                ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
-        else:  
-            if cn is None:
-                ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
-            else:
-                ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
-        ls = ls.convertTo(ShapeTypes.POLYGON)
-        facecolor = kwargs.pop('facecolor', None)
-        face_interp = None
-        if not facecolor is None:
-            face_interp = (facecolor == 'interp')
-            if not face_interp:
-                if not facecolor in ['flat','texturemap','none']:
-                    kwargs['facecolor'] = facecolor
-        plotutil.setlegendscheme(ls, **kwargs)
-        graphics = JOGLUtil.surface(x.asarray(), y.asarray(), z.asarray(), ls)
-        if face_interp:
-            graphics.setFaceInterp(face_interp)
-        visible = kwargs.pop('visible', True)
-        if visible:
-            self.add_graphic(graphics)
-        return graphics
+        return self.surf(*args, **kwargs)
 
     def isosurface(self, *args, **kwargs):
         """
@@ -1343,54 +1244,7 @@ class Axes3DGL(Axes3D):
 
         :returns: Legend
         """
-        warnings.warn("plot_isosurface is deprecated", DeprecationWarning)
-        if len(args) <= 3:
-            x = args[0].dimvalue(2)
-            y = args[0].dimvalue(1)
-            z = args[0].dimvalue(0)
-            data = args[0]
-            isovalue = args[1]
-            args = args[2:]
-        else:
-            x = args[0]
-            y = args[1]
-            z = args[2]
-            data = args[3]
-            isovalue = args[4]
-            args = args[5:]
-        cmap = plotutil.getcolormap(**kwargs)
-        cvalue = kwargs.pop('cvalue', None)
-        if not cvalue is None:
-            if len(args) > 0:
-                level_arg = args[0]
-                if isinstance(level_arg, int):
-                    cn = level_arg
-                    ls = LegendManage.createLegendScheme(data.min(), data.max(), cn, cmap)
-                else:
-                    if isinstance(level_arg, NDArray):
-                        level_arg = level_arg.aslist()
-                    ls = LegendManage.createLegendScheme(data.min(), data.max(), level_arg, cmap)
-            else:
-                ls = LegendManage.createLegendScheme(data.min(), data.max(), cmap)
-            ls = ls.convertTo(ShapeTypes.POLYGON)
-            edge = kwargs.pop('edge', True)
-            kwargs['edge'] = edge
-            plotutil.setlegendscheme(ls, **kwargs)
-        else:
-            ls = plotutil.getlegendbreak('polygon', **kwargs)[0]
-        nthread = kwargs.pop('nthread', None)
-        if nthread is None:
-            graphics = JOGLUtil.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls)
-        else:
-            data = data.asarray().copyIfView()
-            x = x.asarray().copyIfView()
-            y = y.asarray().copyIfView()
-            z = z.asarray().copyIfView()
-            graphics = JOGLUtil.isosurface(data, x, y, z, isovalue, ls, nthread)
-        visible = kwargs.pop('visible', True)
-        if visible:
-            self.add_graphic(graphics)
-        return graphics
+        return self.isosurface(*args, **kwargs)
 
     def particles(self, *args, **kwargs):
         """
@@ -1473,51 +1327,7 @@ class Axes3DGL(Axes3D):
 
         :returns: Legend
         """
-        warnings.warn("plot_particles is deprecated", DeprecationWarning)
-        if len(args) <= 3:
-            x = args[0].dimvalue(2)
-            y = args[0].dimvalue(1)
-            z = args[0].dimvalue(0)
-            data = args[0]
-            args = args[1:]
-        else:
-            x = args[0]
-            y = args[1]
-            z = args[2]
-            data = args[3]
-            args = args[4:]
-        cmap = plotutil.getcolormap(**kwargs)
-        vmin = kwargs.pop('vmin', data.min())
-        vmax = kwargs.pop('vmax', data.max())
-        if vmin >= vmax:
-            raise ValueError("Minimum value larger than maximum value")
-
-        if len(args) > 0:
-            level_arg = args[0]
-            if isinstance(level_arg, int):
-                cn = level_arg
-                ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap)
-            else:
-                if isinstance(level_arg, NDArray):
-                    level_arg = level_arg.aslist()
-                ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
-        else:
-            ls = LegendManage.createLegendScheme(vmin, vmax, cmap)
-        plotutil.setlegendscheme(ls, **kwargs)
-        alpha_min = kwargs.pop('alpha_min', 0.1)
-        alpha_max = kwargs.pop('alpha_max', 0.6)
-        density = kwargs.pop('density', 2)
-        graphics = JOGLUtil.particles(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
-                                      alpha_min, alpha_max, density)
-        s = kwargs.pop('s', None)
-        if s is None:
-            s = kwargs.pop('size', None)
-        if not s is None:
-            graphics.setPointSize(s)
-        visible = kwargs.pop('visible', True)
-        if visible:
-            self.add_graphic(graphics)
-        return graphics
+        return self.particles(*args, **kwargs)
 
     def volumeplot(self, *args, **kwargs):
         """

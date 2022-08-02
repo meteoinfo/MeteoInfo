@@ -5,7 +5,11 @@
  */
 package org.meteoinfo.math.random;
 
-import org.apache.commons.math3.random.RandomDataGenerator;
+import org.apache.commons.rng.UniformRandomProvider;
+import org.apache.commons.rng.simple.RandomSource;
+import org.apache.commons.statistics.distribution.ContinuousDistribution;
+import org.apache.commons.statistics.distribution.DiscreteDistribution;
+import org.apache.commons.statistics.distribution.PoissonDistribution;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 
@@ -185,10 +189,15 @@ public class RandomUtil {
      * @return Random value
      */
     public static double poisson(double mean){
-        RandomDataGenerator rdg = new RandomDataGenerator();
-        if (useSeed)
-            rdg.reSeed(seed);
-        return rdg.nextPoisson(mean);
+        PoissonDistribution distribution = PoissonDistribution.of(mean);
+        DiscreteDistribution.Sampler sampler;
+        if (useSeed) {
+            sampler = distribution.createSampler(RandomSource.ISAAC.create(seed));
+        } else {
+            sampler = distribution.createSampler(RandomSource.MT.create());
+        }
+
+        return sampler.sample();
     }
     
     /**
@@ -200,11 +209,15 @@ public class RandomUtil {
      */
     public static Array poisson(double mean, int n) {
         Array a = Array.factory(DataType.INT, new int[]{n});
-        RandomDataGenerator rd = new RandomDataGenerator();
-        if (useSeed)
-            rd.reSeed(seed);
+        PoissonDistribution distribution = PoissonDistribution.of(mean);
+        DiscreteDistribution.Sampler sampler;
+        if (useSeed) {
+            sampler = distribution.createSampler(RandomSource.ISAAC.create(seed));
+        } else {
+            sampler = distribution.createSampler(RandomSource.MT.create());
+        }
         for (int i = 0; i < a.getSize(); i++) {
-            a.setDouble(i, rd.nextPoisson(mean));
+            a.setDouble(i, sampler.sample());
         }
 
         return a;
@@ -223,11 +236,15 @@ public class RandomUtil {
             ashape[i] = shape.get(i);
         }
         Array a = Array.factory(DataType.INT, ashape);
-        RandomDataGenerator rd = new RandomDataGenerator();
-        if (useSeed)
-            rd.reSeed(seed);
+        PoissonDistribution distribution = PoissonDistribution.of(mean);
+        DiscreteDistribution.Sampler sampler;
+        if (useSeed) {
+            sampler = distribution.createSampler(RandomSource.ISAAC.create(seed));
+        } else {
+            sampler = distribution.createSampler(RandomSource.MT.create());
+        }
         for (int i = 0; i < a.getSize(); i++) {
-            a.setDouble(i, rd.nextPoisson(mean));
+            a.setDouble(i, sampler.sample());
         }
 
         return a;

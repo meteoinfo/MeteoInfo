@@ -5,10 +5,12 @@
  */
 package org.meteoinfo.math.distribution;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
-import org.apache.commons.math3.distribution.MultivariateRealDistribution;
-import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.distribution.RealDistribution;
+import org.apache.commons.math4.legacy.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math4.legacy.distribution.MultivariateRealDistribution;
+import org.apache.commons.rng.UniformRandomProvider;
+import org.apache.commons.rng.simple.RandomSource;
+import org.apache.commons.statistics.distribution.NormalDistribution;
+import org.apache.commons.statistics.distribution.ContinuousDistribution;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
@@ -43,8 +45,12 @@ public class DistributionUtil {
      * @param n Size.
      * @return Result array.
      */
-    public static Array rvs(RealDistribution dis, int n){
-        double[] samples = dis.sample(n);
+    public static Array rvs(ContinuousDistribution dis, int n){
+        ContinuousDistribution.Sampler sampler = dis.createSampler(RandomSource.MT.create());
+        double[] samples = new double[n];
+        for (int i = 0; i < n; i++) {
+            samples[i] = sampler.sample();
+        }
         Array r = Array.factory(DataType.DOUBLE, new int[]{n}, samples);        
         return r;
     }
@@ -55,10 +61,14 @@ public class DistributionUtil {
      * @param n Size.
      * @return Result array.
      */
-    public static Array rvs(MultivariateRealDistribution dis, int n){
-        double[][] samples = dis.sample(n);
-        double[] s = Arrays.stream(samples).flatMapToDouble(x -> Arrays.stream(x)).toArray();
+    public static Array rvs(MultivariateRealDistribution dis, int n) {
+        MultivariateRealDistribution.Sampler sampler = dis.createSampler(RandomSource.MT.create());
         int dim = dis.getDimension();
+        double[][] samples = new double[n][dim];
+        for (int i = 0; i < n; i++) {
+            samples[i] = sampler.sample();
+        }
+        double[] s = Arrays.stream(samples).flatMapToDouble(x -> Arrays.stream(x)).toArray();
         Array r = Array.factory(DataType.DOUBLE, new int[]{n, dim}, s);
         return r;
     }
@@ -69,7 +79,7 @@ public class DistributionUtil {
      * @param x X.
      * @return Probability density value.
      */
-    public static double pdf(RealDistribution dis, Number x){
+    public static double pdf(ContinuousDistribution dis, Number x){
         return dis.density(x.doubleValue());
     }
     
@@ -79,7 +89,7 @@ public class DistributionUtil {
      * @param x X array.
      * @return Probability density array.
      */
-    public static Array pdf(RealDistribution dis, Array x){
+    public static Array pdf(ContinuousDistribution dis, Array x){
         Array r = Array.factory(DataType.DOUBLE, x.getShape());
         IndexIterator iter = x.getIndexIterator();
         for (int i = 0; i < r.getSize(); i++){
@@ -121,7 +131,7 @@ public class DistributionUtil {
      * @param x X.
      * @return Cumulative distribution value.
      */
-    public static double cdf(RealDistribution dis, Number x){
+    public static double cdf(ContinuousDistribution dis, Number x){
         return dis.cumulativeProbability(x.doubleValue());
     }
     
@@ -131,7 +141,7 @@ public class DistributionUtil {
      * @param x X array.
      * @return Result array.
      */
-    public static Array cdf(RealDistribution dis, Array x){
+    public static Array cdf(ContinuousDistribution dis, Array x){
         Array r = Array.factory(DataType.DOUBLE, x.getShape());
         IndexIterator iter = x.getIndexIterator();
         for (int i = 0; i < r.getSize(); i++){
@@ -147,8 +157,8 @@ public class DistributionUtil {
      * @param x X.
      * @return PMF value.
      */
-    public static double pmf(RealDistribution dis, Number x){
-        return dis.probability(x.doubleValue());
+    public static double pmf(ContinuousDistribution dis, Number x){
+        return dis.probability(x.doubleValue(), x.doubleValue());
     }
     
     /**
@@ -157,11 +167,13 @@ public class DistributionUtil {
      * @param x X array.
      * @return Result array.
      */
-    public static Array pmf(RealDistribution dis, Array x){
+    public static Array pmf(ContinuousDistribution dis, Array x){
         Array r = Array.factory(DataType.DOUBLE, x.getShape());
         IndexIterator iter = x.getIndexIterator();
+        double v;
         for (int i = 0; i < r.getSize(); i++){
-            r.setDouble(i, dis.probability(iter.getDoubleNext()));
+            v = iter.getDoubleNext();
+            r.setDouble(i, dis.probability(v, v));
         }
         
         return r;
@@ -173,7 +185,7 @@ public class DistributionUtil {
      * @param q Lower tail probability
      * @return PMF value.
      */
-    public static double ppf(RealDistribution dis, Number q){
+    public static double ppf(ContinuousDistribution dis, Number q){
         return dis.inverseCumulativeProbability(q.doubleValue());
     }
     
@@ -183,7 +195,7 @@ public class DistributionUtil {
      * @param q Q array.
      * @return Result array.
      */
-    public static Array ppf(RealDistribution dis, Array q){
+    public static Array ppf(ContinuousDistribution dis, Array q){
         Array r = Array.factory(DataType.DOUBLE, q.getShape());
         IndexIterator iter = q.getIndexIterator();
         for (int i = 0; i < r.getSize(); i++){

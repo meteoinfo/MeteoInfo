@@ -8,16 +8,16 @@
 
 from org.meteoinfo.math.random import RandomUtil
 from org.meteoinfo.math.distribution import DistributionUtil
-from org.apache.commons.math3.distribution import NormalDistribution, BetaDistribution, \
+from org.apache.commons.statistics.distribution import NormalDistribution, BetaDistribution, \
     BinomialDistribution, ChiSquaredDistribution, ExponentialDistribution, FDistribution, \
     GammaDistribution, GumbelDistribution, LaplaceDistribution, LogisticDistribution, \
     LogNormalDistribution, ParetoDistribution, TDistribution, TriangularDistribution, \
-    UniformRealDistribution, WeibullDistribution
+    UniformContinuousDistribution, WeibullDistribution
 
 from ..core import NDArray
 
 __all__ = [
-    'beta','binomial','chisquare','exponential','f','gamma','gumbel','laplace','logistic',
+    'chisquare','exponential','f','gamma','gumbel','laplace','logistic',
     'lognormal','normal','rand','randn','randint','random','pareto','poisson','seed','standard_t',
     'triangular','uniform','weibull'
     ]
@@ -144,7 +144,7 @@ def normal(loc=0.0, scale=1.0, size=None):
     :param size: (*int*) Output shape. If size is None (default), a single value is returned.
     
     """
-    dist = NormalDistribution(loc, scale)
+    dist = NormalDistribution.of(loc, scale)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -159,7 +159,7 @@ def chisquare(df, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized chisquare distribution.    
     """
-    dist = ChiSquaredDistribution(df)
+    dist = ChiSquaredDistribution.of(df)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -174,7 +174,7 @@ def exponential(scale=1.0, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized exponential distribution.    
     """
-    dist = ExponentialDistribution(scale)
+    dist = ExponentialDistribution.of(scale)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -190,7 +190,7 @@ def f(dfnum, dfden, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized Fisher distribution.    
     """
-    dist = FDistribution(dfnum, dfden)
+    dist = FDistribution.of(dfnum, dfden)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -206,7 +206,7 @@ def gamma(shape, scale=1.0, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized Gamma distribution.    
     """
-    dist = GammaDistribution(shape, scale)
+    dist = GammaDistribution.of(shape, scale)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -222,7 +222,7 @@ def gumbel(loc=0.0, scale=1.0, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized Gumbel distribution.    
     """
-    dist = GumbelDistribution(loc, scale)
+    dist = GumbelDistribution.of(loc, scale)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -238,7 +238,7 @@ def laplace(loc=0.0, scale=1.0, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized Laplace distribution.    
     """
-    dist = LaplaceDistribution(loc, scale)
+    dist = LaplaceDistribution.of(loc, scale)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -254,7 +254,7 @@ def logistic(loc=0.0, scale=1.0, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized Logistic distribution.    
     """
-    dist = LogisticDistribution(loc, scale)
+    dist = LogisticDistribution.of(loc, scale)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -270,7 +270,7 @@ def lognormal(mean=0.0, sigma=1.0, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized log-normal distribution.    
     """
-    dist = LogNormalDistribution(loc, scale)
+    dist = LogNormalDistribution.of(loc, scale)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -285,7 +285,7 @@ def pareto(a, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized Pareto distribution.    
     """
-    dist = ParetoDistribution(1, a)
+    dist = ParetoDistribution.of(1, a)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -300,7 +300,7 @@ def standard_t(df, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized Student’s t distribution.    
     """
-    dist = TDistribution(df)
+    dist = TDistribution.of(df)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -318,7 +318,7 @@ def triangular(left, mode, right, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized triangular distribution.    
     """
-    dist = TriangularDistribution(left, mode, right)
+    dist = TriangularDistribution.of(left, mode, right)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -336,7 +336,7 @@ def uniform(low=0.0, high=1.0, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized uniform distribution.    
     """
-    dist = UniformRealDistribution(low, high)
+    dist = UniformContinuousDistribution.of(low, high)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
@@ -351,7 +351,7 @@ def weibull(a, size=None):
     
     :returns: (*ndarray or scalar*) Drawn samples from the parameterized Weibull distribution.    
     """
-    dist = WeibullDistribution(a, 1)
+    dist = WeibullDistribution.of(a, 1)
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)

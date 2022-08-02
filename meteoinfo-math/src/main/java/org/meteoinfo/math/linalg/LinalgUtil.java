@@ -5,23 +5,15 @@
  */
 package org.meteoinfo.math.linalg;
 
-import org.apache.commons.math3.fitting.leastsquares.*;
-import org.apache.commons.math3.linear.*;
-import org.apache.commons.math3.util.Pair;
-import org.ejml.data.Complex_F64;
-import org.ejml.simple.SimpleBase;
-import org.ejml.simple.SimpleEVD;
-import org.ejml.simple.SimpleMatrix;
-import org.ejml.simple.SimpleSVD;
+import org.apache.commons.math4.legacy.fitting.leastsquares.*;
+import org.apache.commons.math4.legacy.linear.*;
+import org.apache.commons.math4.legacy.core.Pair;
 import org.meteoinfo.math.matrix.Matrix;
 import org.meteoinfo.math.matrix.MatrixUtil;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.Complex;
 import org.meteoinfo.ndarray.DataType;
 import smile.math.blas.UPLO;
-
-import java.util.List;
 
 /**
  *

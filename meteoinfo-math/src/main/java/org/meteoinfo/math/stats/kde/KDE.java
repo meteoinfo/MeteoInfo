@@ -1,7 +1,7 @@
 package org.meteoinfo.math.stats.kde;
 
 import java.util.List;
-import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math4.core.jdkmath.AccurateMath;
 import org.meteoinfo.math.stats.kde.kdtree.KDTree;
 
 public class KDE
@@ -130,7 +130,7 @@ public class KDE
 	{
 		List<Double> logValues = ballTree.logPdfRecurse(e);
 		double sum = Helpers.logSumExp(logValues);
-		return sum - FastMath.log(numPoints);
+		return sum - AccurateMath.log(numPoints);
 	}
 	
 	private static String className()

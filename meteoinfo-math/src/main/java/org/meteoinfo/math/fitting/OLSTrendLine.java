@@ -5,9 +5,9 @@
  */
 package org.meteoinfo.math.fitting;
 
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
+import org.apache.commons.math4.legacy.linear.MatrixUtils;
+import org.apache.commons.math4.legacy.linear.RealMatrix;
+import org.apache.commons.math4.legacy.stat.regression.OLSMultipleLinearRegression;
 import org.meteoinfo.ndarray.Array;
 
 /**

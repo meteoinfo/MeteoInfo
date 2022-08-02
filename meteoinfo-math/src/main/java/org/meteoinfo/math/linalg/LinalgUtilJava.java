@@ -5,9 +5,9 @@
  */
 package org.meteoinfo.math.linalg;
 
-import org.apache.commons.math3.fitting.leastsquares.*;
-import org.apache.commons.math3.linear.*;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.math4.legacy.fitting.leastsquares.*;
+import org.apache.commons.math4.legacy.linear.*;
+import org.apache.commons.math4.legacy.core.Pair;
 import org.ejml.data.Complex_F64;
 import org.ejml.simple.SimpleBase;
 import org.ejml.simple.SimpleEVD;

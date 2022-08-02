@@ -79,7 +79,7 @@ public class GraphicFactory {
         while (xIter.hasNext()) {
             x = xIter.getDoubleNext();
             y = yIter.getDoubleNext();
-            if (Double.isNaN(y) || Double.isNaN(x)) {
+            if (Double.isNaN(y) || Double.isNaN(x) || Double.isInfinite(y) || Double.isInfinite(x)) {
                 if (points.isEmpty()) {
                     continue;
                 }
@@ -126,7 +126,7 @@ public class GraphicFactory {
             while (xIter.hasNext()) {
                 x = xIter.getDoubleNext();
                 y = yIter.getDoubleNext();
-                if (Double.isNaN(y) || Double.isNaN(x)) {
+                if (Double.isNaN(y) || Double.isNaN(x) || Double.isInfinite(y) || Double.isInfinite(x)) {
                     if (points.isEmpty()) {
                         continue;
                     }

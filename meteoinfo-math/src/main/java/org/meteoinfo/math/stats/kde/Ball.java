@@ -2,8 +2,6 @@ package org.meteoinfo.math.stats.kde;
 
 import java.util.List;
 
-import org.apache.commons.math3.util.FastMath;
-
 public class Ball
 {
 	private static final String NAME = "Ball";

@@ -5,10 +5,10 @@
  */
 package org.meteoinfo.math.interpolate;
 
-import org.apache.commons.math3.analysis.BivariateFunction;
-import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.interpolation.*;
-import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.apache.commons.math4.legacy.analysis.BivariateFunction;
+import org.apache.commons.math4.legacy.analysis.UnivariateFunction;
+import org.apache.commons.math4.legacy.analysis.interpolation.*;
+import org.apache.commons.math4.legacy.analysis.polynomials.PolynomialSplineFunction;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayUtil;

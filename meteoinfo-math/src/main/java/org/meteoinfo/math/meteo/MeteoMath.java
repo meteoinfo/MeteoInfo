@@ -970,7 +970,7 @@ public class MeteoMath {
                 if (Double.isNaN(a) || Double.isNaN(b)) {
                     r.setDouble(indexr, Double.NaN);
                 } else {
-                    r.setDouble(indexr, a - b);
+                    r.setDouble(indexr, b - a);
                 }
             }
             indexr.incr();

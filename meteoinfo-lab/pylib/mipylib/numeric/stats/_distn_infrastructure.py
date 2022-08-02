@@ -7,10 +7,10 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.distribution import DistributionUtil
-from org.apache.commons.math3.distribution import RealDistribution
 
-from ..core import numeric as np
 from ..core import NDArray
+from ..core import numeric as np
+
 
 class rv_continuous(object):
     """

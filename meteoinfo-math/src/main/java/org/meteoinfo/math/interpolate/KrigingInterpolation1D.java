@@ -17,7 +17,7 @@
 
 package org.meteoinfo.math.interpolate;
 
-import org.apache.commons.math3.linear.*;
+import org.apache.commons.math4.legacy.linear.*;
 import org.meteoinfo.math.MathEx;
 import org.ojalgo.matrix.Primitive64Matrix;
 import org.ojalgo.matrix.decomposition.SingularValue;

@@ -1,8 +1,9 @@
 package org.meteoinfo.math.special;
 
-import org.apache.commons.math3.special.Erf;
-import org.apache.commons.math3.special.Gamma;
-import org.apache.commons.math3.util.CombinatoricsUtils;
+import org.apache.commons.numbers.gamma.Erf;
+import org.apache.commons.numbers.gamma.Gamma;
+import org.apache.commons.numbers.gamma.LogGamma;
+import org.apache.commons.numbers.combinatorics.Factorial;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
@@ -15,7 +16,7 @@ public class SpecialUtil {
      * @return Factorial value
      */
     public static long factorial(int n) {
-        return n >= 0 ? CombinatoricsUtils.factorial(n) : 0;
+        return n >= 0 ? Factorial.value(n) : 0;
     }
 
     /**
@@ -40,7 +41,7 @@ public class SpecialUtil {
      * @return Value of gamma function
      */
     public static double gamma(double x) {
-        return Gamma.gamma(x);
+        return Gamma.value(x);
     }
 
     /**
@@ -54,7 +55,7 @@ public class SpecialUtil {
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator yIter = y.getIndexIterator();
         while(xIter.hasNext()) {
-            yIter.setDoubleNext(Gamma.gamma(xIter.getDoubleNext()));
+            yIter.setDoubleNext(Gamma.value(xIter.getDoubleNext()));
         }
 
         return y;
@@ -66,7 +67,7 @@ public class SpecialUtil {
      * @return Value of logarithm of the gamma function
      */
     public static double logGamma(double x) {
-        return Gamma.logGamma(x);
+        return LogGamma.value(x);
     }
 
     /**
@@ -80,7 +81,7 @@ public class SpecialUtil {
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator yIter = y.getIndexIterator();
         while(xIter.hasNext()) {
-            yIter.setDoubleNext(Gamma.logGamma(xIter.getDoubleNext()));
+            yIter.setDoubleNext(LogGamma.value(xIter.getDoubleNext()));
         }
 
         return y;
@@ -93,7 +94,7 @@ public class SpecialUtil {
      * @return Error function
      */
     public static double erf(double x) {
-        return Erf.erf(x);
+        return Erf.value(x);
     }
 
     /**
@@ -107,7 +108,7 @@ public class SpecialUtil {
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator rIter = r.getIndexIterator();
         while(xIter.hasNext()) {
-            rIter.setDoubleNext(Erf.erf(xIter.getDoubleNext()));
+            rIter.setDoubleNext(Erf.value(xIter.getDoubleNext()));
         }
 
         return r;
@@ -119,7 +120,7 @@ public class SpecialUtil {
      * @return Complementary error function
      */
     public static double erfc(double x) {
-        return Erf.erfc(x);
+        return Erf.value(x);
     }
 
     /**
@@ -132,7 +133,7 @@ public class SpecialUtil {
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator rIter = r.getIndexIterator();
         while(xIter.hasNext()) {
-            rIter.setDoubleNext(Erf.erfc(xIter.getDoubleNext()));
+            rIter.setDoubleNext(Erf.value(xIter.getDoubleNext()));
         }
 
         return r;

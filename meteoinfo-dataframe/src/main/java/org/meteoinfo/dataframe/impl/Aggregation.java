@@ -17,10 +17,10 @@
  */
 package org.meteoinfo.dataframe.impl;
 
-import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
-import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
+import org.apache.commons.math4.legacy.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math4.legacy.stat.descriptive.StorelessUnivariateStatistic;
+import org.apache.commons.math4.legacy.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math4.legacy.stat.descriptive.UnivariateStatistic;
 import org.meteoinfo.dataframe.Column;
 import org.meteoinfo.dataframe.DataFrame;
 import org.meteoinfo.ndarray.DataType;
@@ -131,7 +131,7 @@ public class Aggregation {
             extends AbstractStorelessStatistic<V> {
 
         public Sum() {
-            super(new org.apache.commons.math3.stat.descriptive.summary.Sum());
+            super(new org.apache.commons.math4.legacy.stat.descriptive.summary.Sum());
         }
     }
 
@@ -139,7 +139,7 @@ public class Aggregation {
             extends AbstractStorelessStatistic<V> {
 
         public Product() {
-            super(new org.apache.commons.math3.stat.descriptive.summary.Product());
+            super(new org.apache.commons.math4.legacy.stat.descriptive.summary.Product());
         }
     }
 
@@ -147,7 +147,7 @@ public class Aggregation {
             extends AbstractStorelessStatistic<V> {
 
         public Mean() {
-            super(new org.apache.commons.math3.stat.descriptive.moment.Mean());
+            super(new org.apache.commons.math4.legacy.stat.descriptive.moment.Mean());
         }
     }
 
@@ -155,7 +155,7 @@ public class Aggregation {
             extends AbstractStorelessStatistic<V> {
 
         public StdDev() {
-            super(new org.apache.commons.math3.stat.descriptive.moment.StandardDeviation());
+            super(new org.apache.commons.math4.legacy.stat.descriptive.moment.StandardDeviation());
         }
     }
 
@@ -163,7 +163,7 @@ public class Aggregation {
             extends AbstractStorelessStatistic<V> {
 
         public Variance() {
-            super(new org.apache.commons.math3.stat.descriptive.moment.Variance());
+            super(new org.apache.commons.math4.legacy.stat.descriptive.moment.Variance());
         }
     }
 
@@ -171,7 +171,7 @@ public class Aggregation {
             extends AbstractStorelessStatistic<V> {
 
         public Skew() {
-            super(new org.apache.commons.math3.stat.descriptive.moment.Skewness());
+            super(new org.apache.commons.math4.legacy.stat.descriptive.moment.Skewness());
         }
     }
 
@@ -179,7 +179,7 @@ public class Aggregation {
             extends AbstractStorelessStatistic<V> {
 
         public Kurtosis() {
-            super(new org.apache.commons.math3.stat.descriptive.moment.Kurtosis());
+            super(new org.apache.commons.math4.legacy.stat.descriptive.moment.Kurtosis());
         }
     }
 
@@ -187,7 +187,7 @@ public class Aggregation {
             extends AbstractStorelessStatistic<V> {
 
         public Min() {
-            super(new org.apache.commons.math3.stat.descriptive.rank.Min());
+            super(new org.apache.commons.math4.legacy.stat.descriptive.rank.Min());
         }
     }
 
@@ -195,7 +195,7 @@ public class Aggregation {
             extends AbstractStorelessStatistic<V> {
 
         public Max() {
-            super(new org.apache.commons.math3.stat.descriptive.rank.Max());
+            super(new org.apache.commons.math4.legacy.stat.descriptive.rank.Max());
         }
     }
 
@@ -226,7 +226,7 @@ public class Aggregation {
             extends AbstractStatistic<V> {
 
         public Median() {
-            super(new org.apache.commons.math3.stat.descriptive.rank.Median());
+            super(new org.apache.commons.math4.legacy.stat.descriptive.rank.Median());
         }
     }
 
@@ -234,7 +234,7 @@ public class Aggregation {
             extends AbstractStatistic<V> {
 
         public Percentile(final double quantile) {
-            super(new org.apache.commons.math3.stat.descriptive.rank.Percentile(quantile));
+            super(new org.apache.commons.math4.legacy.stat.descriptive.rank.Percentile(quantile));
         }
     }
 

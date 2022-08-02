@@ -2,14 +2,39 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
-      <option name="id" value="sonatype-nexus-snapshots" />
-      <option name="name" value="Sonatype Nexus Snapshots" />
-      <option name="url" value="https://oss.sonatype.org/content/repositories/snapshots" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="apache.snapshots" />
+      <option name="name" value="Apache Development Snapshot Repository" />
+      <option name="url" value="https://repository.apache.org/content/repositories/snapshots/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central" />
+      <option name="url" value="https://repo1.maven.org/maven2/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="apache.snapshots" />
+      <option name="name" value="Apache Development Snapshot Repository" />
+      <option name="url" value="https://repository.apache.org" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="boundless" />
+      <option name="name" value="boundlessgeo" />
+      <option name="url" value="http://repo.boundlessgeo.com/main/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="sonatype-nexus-snapshots" />
+      <option name="name" value="Sonatype Nexus Snapshots" />
+      <option name="url" value="https://oss.sonatype.org/content/repositories/snapshots" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="freehep" />
@@ -27,16 +52,6 @@
       <option name="url" value="http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="central" />
-      <option name="name" value="Maven Central repository" />
-      <option name="url" value="https://repo1.maven.org/maven2" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="central" />
-      <option name="name" value="Maven Central" />
-      <option name="url" value="https://repo1.maven.org/maven2/" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="jzy3d-snapshots" />
       <option name="name" value="Jzy3d Snapshots" />
       <option name="url" value="http://maven.jzy3d.org/snapshots/" />
@@ -47,9 +62,9 @@
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="boundless" />
-      <option name="name" value="boundlessgeo" />
-      <option name="url" value="http://repo.boundlessgeo.com/main/" />
+      <option name="id" value="apache" />
+      <option name="name" value="apache_snapshots" />
+      <option name="url" value="http://repository.apache.org/snapshots" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />

@@ -5,10 +5,8 @@
  */
 package org.meteoinfo.ndarray.math;
 
-import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.ndarray.*;
 
-import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8709,7 +8707,7 @@ public class ArrayMath {
                 if (Double.isNaN(a) || Double.isNaN(b)) {
                     r.setDouble(indexr, Double.NaN);
                 } else {
-                    r.setDouble(indexr, a - b);
+                    r.setDouble(indexr, b - a);
                 }
             }
             indexr.incr();

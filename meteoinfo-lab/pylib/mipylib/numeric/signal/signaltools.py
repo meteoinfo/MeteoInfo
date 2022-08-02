@@ -1,6 +1,6 @@
 
 from .. import core as np
-from ..lib import expand_dims, r_
+from ..lib import expand_dims, r_, unique
 from ..lib._util import prod as _prod
 from ..linalg import lstsq
 
@@ -52,7 +52,7 @@ def detrend(data, axis=-1, type='linear', bp=0, overwrite_data=False):
     else:
         dshape = data.shape
         N = dshape[axis]
-        bp = np.sort(np.unique(r_[0, bp, N]))
+        bp = np.sort(unique(r_[0, bp, N]))
         if np.any(bp > N):
             raise ValueError("Breakpoints must be less than length "
                              "of data along given axis.")

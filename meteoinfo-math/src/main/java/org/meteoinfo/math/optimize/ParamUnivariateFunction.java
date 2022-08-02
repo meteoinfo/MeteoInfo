@@ -1,6 +1,6 @@
 package org.meteoinfo.math.optimize;
 
-import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math4.legacy.analysis.UnivariateFunction;
 
 import java.util.List;
 

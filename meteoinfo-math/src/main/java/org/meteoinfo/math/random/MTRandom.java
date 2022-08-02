@@ -1,6 +1,8 @@
 package org.meteoinfo.math.random;
 
-import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math4.core.jdkmath.AccurateMath;
+import org.apache.commons.rng.core.source32.MersenneTwister;
+import org.apache.commons.rng.simple.RandomSource;
 import org.meteoinfo.ndarray.*;
 
 import java.util.ArrayList;
@@ -8,11 +10,14 @@ import java.util.List;
 
 public class MTRandom extends MersenneTwister {
 
+    /** Next gaussian. */
+    private double nextGaussian = Double.NaN;
+
     /**
      * Constructor
      */
     public MTRandom() {
-        super();
+        super(RandomSource.createIntArray(624));
     }
 
     /**
@@ -20,7 +25,7 @@ public class MTRandom extends MersenneTwister {
      * @param seed Seed
      */
     public MTRandom(int seed) {
-        super(seed);
+        super(RandomSource.createIntArray(seed));
     }
 
     /**
@@ -55,6 +60,27 @@ public class MTRandom extends MersenneTwister {
         }
 
         return a;
+    }
+
+    public double nextGaussian() {
+
+        final double random;
+        if (Double.isNaN(nextGaussian)) {
+            // generate a new pair of gaussian numbers
+            final double x = nextDouble();
+            final double y = nextDouble();
+            final double alpha = 2 * AccurateMath.PI * x;
+            final double r      = Math.sqrt(-2 * AccurateMath.log(y));
+            random       = r * AccurateMath.cos(alpha);
+            nextGaussian = r * AccurateMath.sin(alpha);
+        } else {
+            // use the second element of the pair already generated
+            random = nextGaussian;
+            nextGaussian = Double.NaN;
+        }
+
+        return random;
+
     }
 
     /**

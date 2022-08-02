@@ -7,15 +7,15 @@ package org.meteoinfo.math.stats;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.stat.StatUtils;
-import org.apache.commons.math3.stat.correlation.Covariance;
-import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
-import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
-import org.apache.commons.math3.stat.inference.TestUtils;
-import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
+import org.apache.commons.math4.legacy.linear.Array2DRowRealMatrix;
+import org.apache.commons.math4.legacy.linear.RealMatrix;
+import org.apache.commons.math4.legacy.stat.StatUtils;
+import org.apache.commons.math4.legacy.stat.correlation.Covariance;
+import org.apache.commons.math4.legacy.stat.correlation.KendallsCorrelation;
+import org.apache.commons.math4.legacy.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math4.legacy.stat.correlation.SpearmansCorrelation;
+import org.apache.commons.math4.legacy.stat.inference.InferenceTestUtils;
+import org.apache.commons.math4.legacy.stat.regression.OLSMultipleLinearRegression;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
@@ -371,6 +371,7 @@ public class StatsUtil {
     public static Array[] multipleLineRegress_OLS(Array y, Array x, boolean noIntercept) {
         OLSMultipleLinearRegression regression = new OLSMultipleLinearRegression();
         regression.setNoIntercept(noIntercept);
+        y = y.reduce();
         double[] yy = (double[])ArrayUtil.copyToNDJavaArray_Double(y);
         double[][] xx = (double[][])ArrayUtil.copyToNDJavaArray_Double(x);
         regression.newSampleData(yy, xx);
@@ -458,8 +459,8 @@ public class StatsUtil {
      */
     public static double[] tTest(Array a, double mu){
         double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
-        double s = TestUtils.t(mu, ad);
-        double p = TestUtils.tTest(mu, ad);
+        double s = InferenceTestUtils.t(mu, ad);
+        double p = InferenceTestUtils.tTest(mu, ad);
         
         return new double[]{s, p};
     }
@@ -474,8 +475,8 @@ public class StatsUtil {
     public static double[] tTest(Array a, Array b) {
         double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
         double[] bd = (double[]) ArrayUtil.copyToNDJavaArray_Double(b);
-        double s = TestUtils.t(ad, bd);
-        double p = TestUtils.tTest(ad, bd);
+        double s = InferenceTestUtils.t(ad, bd);
+        double p = InferenceTestUtils.tTest(ad, bd);
         
         return new double[]{s, p};
     }
@@ -492,8 +493,8 @@ public class StatsUtil {
     public static double[] pairedTTest(Array a, Array b) {
         double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
         double[] bd = (double[]) ArrayUtil.copyToNDJavaArray_Double(b);
-        double s = TestUtils.pairedT(ad, bd);
-        double p = TestUtils.pairedTTest(ad, bd);
+        double s = InferenceTestUtils.pairedT(ad, bd);
+        double p = InferenceTestUtils.pairedTTest(ad, bd);
         
         return new double[]{s, p};
     }
@@ -508,8 +509,8 @@ public class StatsUtil {
     public static double[] chiSquareTest(Array e, Array o) {
         double[] ed = (double[]) ArrayUtil.copyToNDJavaArray_Double(e);
         long[] od = (long[]) ArrayUtil.copyToNDJavaArray_Long(o);
-        double s = TestUtils.chiSquare(ed, od);
-        double p = TestUtils.chiSquareTest(ed, od);
+        double s = InferenceTestUtils.chiSquare(ed, od);
+        double p = InferenceTestUtils.chiSquareTest(ed, od);
         
         return new double[]{s, p};
     }
@@ -522,8 +523,8 @@ public class StatsUtil {
      */
     public static double[] chiSquareTest(Array o) {
         long[][] od = (long[][]) ArrayUtil.copyToNDJavaArray_Long(o);
-        double s = TestUtils.chiSquare(od);
-        double p = TestUtils.chiSquareTest(od);
+        double s = InferenceTestUtils.chiSquare(od);
+        double p = InferenceTestUtils.chiSquareTest(od);
         
         return new double[]{s, p};
     }

@@ -1,6 +1,6 @@
 package org.meteoinfo.math.stats.kde;
 
-import org.apache.commons.math3.util.Precision;
+import org.apache.commons.numbers.core.Precision;
 
 public class Event
 {

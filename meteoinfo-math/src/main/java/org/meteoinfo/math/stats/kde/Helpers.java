@@ -3,7 +3,7 @@ package org.meteoinfo.math.stats.kde;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math4.core.jdkmath.AccurateMath;
 
 import com.google.common.primitives.Doubles;
 
@@ -21,11 +21,11 @@ public class Helpers
 		double sum = 0;
 		for(int d = 0 ; d < point1.length ; d++)
 		{
-			sum += FastMath.pow(point1[d] - point2[d], 2);
+			sum += AccurateMath.pow(point1[d] - point2[d], 2);
 		}
 		
 		
-		return FastMath.sqrt(sum);
+		return Math.sqrt(sum);
 	}
 	
 	/**

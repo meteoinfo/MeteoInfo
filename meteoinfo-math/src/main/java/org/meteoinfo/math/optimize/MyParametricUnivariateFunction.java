@@ -1,9 +1,9 @@
 package org.meteoinfo.math.optimize;
 
-import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
-import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
-import org.apache.commons.math3.analysis.differentiation.FiniteDifferencesDifferentiator;
-import org.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
+import org.apache.commons.math4.legacy.analysis.ParametricUnivariateFunction;
+import org.apache.commons.math4.legacy.analysis.differentiation.DerivativeStructure;
+import org.apache.commons.math4.legacy.analysis.differentiation.FiniteDifferencesDifferentiator;
+import org.apache.commons.math4.legacy.analysis.differentiation.UnivariateDifferentiableFunction;
 
 public class MyParametricUnivariateFunction implements ParametricUnivariateFunction {
 

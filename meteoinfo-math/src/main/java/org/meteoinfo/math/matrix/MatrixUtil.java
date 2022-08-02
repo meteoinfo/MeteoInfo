@@ -1,6 +1,6 @@
 package org.meteoinfo.math.matrix;
 
-import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math4.core.jdkmath.AccurateMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Complex;
 import org.meteoinfo.ndarray.DataType;
@@ -156,8 +156,8 @@ public class MatrixUtil {
             for (int j = i + 1; j < rows; j++) {
                 final double mij = matrix.get(i, j);
                 final double mji = matrix.get(j, i);
-                if (FastMath.abs(mij - mji) >
-                        FastMath.max(FastMath.abs(mij), FastMath.abs(mji)) * relativeTolerance) {
+                if (AccurateMath.abs(mij - mji) >
+                        AccurateMath.max(AccurateMath.abs(mij), AccurateMath.abs(mji)) * relativeTolerance) {
                     return false;
                 }
             }

@@ -1,10 +1,7 @@
-#from org.apache.commons.math3.analysis import UnivariateFunction
 from org.meteoinfo.math.optimize import OptimizeUtil, ParamUnivariateFunction
-from org.apache.commons.math3.fitting.leastsquares import LeastSquaresBuilder, LevenbergMarquardtOptimizer
 
 import warnings
 from ..core import numeric as np
-from ._lsq.least_squares import prepare_bounds
 from ..linalg import cholesky, solve_triangular, svd
 from ..lib._util import _lazywhere
 

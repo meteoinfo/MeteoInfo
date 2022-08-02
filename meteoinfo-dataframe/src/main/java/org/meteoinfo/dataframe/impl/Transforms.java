@@ -18,7 +18,7 @@
 
 package org.meteoinfo.dataframe.impl;
 
-import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
+import org.apache.commons.math4.legacy.stat.descriptive.StorelessUnivariateStatistic;
 
 public class Transforms {
     public interface CumulativeFunction<I, O>
@@ -53,28 +53,28 @@ public class Transforms {
     public static class CumulativeSum<V>
     extends AbstractCumulativeFunction<V> {
         public CumulativeSum() {
-            super(new org.apache.commons.math3.stat.descriptive.summary.Sum(), 0);
+            super(new org.apache.commons.math4.legacy.stat.descriptive.summary.Sum(), 0);
         }
     }
 
     public static class CumulativeProduct<V>
     extends AbstractCumulativeFunction<V> {
         public CumulativeProduct() {
-            super(new org.apache.commons.math3.stat.descriptive.summary.Product(), 1);
+            super(new org.apache.commons.math4.legacy.stat.descriptive.summary.Product(), 1);
         }
     }
 
     public static class CumulativeMin<V>
     extends AbstractCumulativeFunction<V> {
         public CumulativeMin() {
-            super(new org.apache.commons.math3.stat.descriptive.rank.Min(), Double.MAX_VALUE);
+            super(new org.apache.commons.math4.legacy.stat.descriptive.rank.Min(), Double.MAX_VALUE);
         }
     }
 
     public static class CumulativeMax<V>
     extends AbstractCumulativeFunction<V> {
         public CumulativeMax() {
-            super(new org.apache.commons.math3.stat.descriptive.rank.Max(), Double.MIN_VALUE);
+            super(new org.apache.commons.math4.legacy.stat.descriptive.rank.Max(), Double.MIN_VALUE);
         }
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math4.core.jdkmath.AccurateMath;
 
 public class BallTree
 {
@@ -134,10 +134,10 @@ public class BallTree
 		double minPdf = ball.minPdf(e);
 		double maxPdf = ball.maxPdf(e);
 		
-		if(FastMath.exp(maxPdf) - FastMath.exp(minPdf) < 0.001)
+		if(AccurateMath.exp(maxPdf) - AccurateMath.exp(minPdf) < 0.001)
 		{
 			// No recursion needed 
-			logValues.add(FastMath.log(ball.numPoints) + (maxPdf + minPdf)/2);
+			logValues.add(AccurateMath.log(ball.numPoints) + (maxPdf + minPdf)/2);
 			
 			numSkipped += ball.numPoints;
 			
@@ -186,7 +186,7 @@ public class BallTree
 
 		double expVal = ones * (invH * ones) + twos * (invH * twos);
 
-		double firstVal = -FastMath.log(2 * FastMath.PI) - FastMath.log(hMax);
+		double firstVal = -AccurateMath.log(2 * AccurateMath.PI) - AccurateMath.log(hMax);
 		double value = firstVal + -0.5 * expVal;
 
 		return value;

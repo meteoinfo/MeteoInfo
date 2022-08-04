@@ -1,4 +1,6 @@
 from org.meteoinfo.math.optimize import OptimizeUtil, ParamUnivariateFunction
+from org.apache.commons.math4.legacy.fitting.leastsquares import LeastSquaresBuilder
+from org.apache.commons.math4.legacy.fitting.leastsquares import LevenbergMarquardtOptimizer
 
 import warnings
 from ..core import numeric as np
@@ -91,9 +93,7 @@ class UniFunc(ParamUnivariateFunction):
         args = tuple(self.getParameters())
         return self.f(x, *args)
 
-def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
-              check_finite=True, bounds=(-np.inf, np.inf), method=None,
-              jac=None, **kwargs):
+def curve_fit(f, xdata, ydata, p0=None, npoint=5, step=0.1):
     """
     Use non-linear least squares to fit a function, f, to data.
 
@@ -114,7 +114,13 @@ def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
         initial values will all be 1 (if the number of parameters for the
         function can be determined using introspection, otherwise a
         ValueError is raised).
-    :return:
+    :param npoint: int
+        Number of points for difference calculation. Default value is 5.
+    :param step: float
+        Step size for difference calculation.
+
+    :return: tuple
+        Fitted parameter values.
     """
     if p0 is None:
         # determine number of parameters by inspecting the function
@@ -129,14 +135,12 @@ def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
         n = p0.size
 
     func = UniFunc(f)
-    best = OptimizeUtil.curveFit(func, xdata.asarray(), ydata.asarray(), 5, 0.1, p0.tojarray('double'))
+    best = OptimizeUtil.curveFit(func, xdata.asarray(), ydata.asarray(), npoint, step, p0.tojarray('double'))
     r = tuple(best)
 
     return r
 
-# def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
-#               check_finite=True, bounds=(-np.inf, np.inf), method=None,
-#               jac=None, **kwargs):
+# def curve_fit(f, xdata, ydata, p0=None, npoint=5, step=0.1):
 #     """
 #     Use non-linear least squares to fit a function, f, to data.
 #
@@ -157,7 +161,13 @@ def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
 #         initial values will all be 1 (if the number of parameters for the
 #         function can be determined using introspection, otherwise a
 #         ValueError is raised).
-#     :return:
+#     :param npoint: int
+#          Number of points for difference calculation. Default value is 5.
+#      :param step: float
+#          Step size for difference calculation.
+#
+#     :return: tuple
+#          Fitted parameter values.
 #     """
 #     if p0 is None:
 #         # determine number of parameters by inspecting the function
@@ -172,7 +182,7 @@ def curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False,
 #         n = p0.size
 #
 #     func = UniFunc(f)
-#     jac_func = OptimizeUtil.getJacobianFunction(func, xdata.asarray(), func.order, 5, 0.1)
+#     jac_func = OptimizeUtil.getJacobianFunction(func, xdata.asarray(), func.order, npoint, step)
 #     problem = LeastSquaresBuilder().start(p0.tojarray('double')). \
 #         model(jac_func). \
 #         target(ydata.tojarray('double')). \

@@ -26,32 +26,54 @@ public class MyParametricUnivariateFunction implements ParametricUnivariateFunct
     @Override
     public double value(double v, double... parameters) {
         function.setParameters(parameters);
-        return function.value(v);
+        double y = Double.POSITIVE_INFINITY;
+        try {
+            y = function.value(v);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return y;
     }
 
     @Override
-    public double[] gradient(double v, double... parameters) {
+    public double[] gradient(double x, double ... parameters) {
         function.setParameters(parameters);
 
-        // create a differentiator
-        FiniteDifferencesDifferentiator differentiator =
-                new FiniteDifferencesDifferentiator(nbPoints, stepSize);
-
-        // create a new function that computes both the value and the derivatives
-        // using DerivativeStructure
-        UnivariateDifferentiableFunction diffFunc = differentiator.differentiate(function);
-
-        double y = function.value(v);
         int n = parameters.length;
         double[] gradients = new double[n];
         for (int i = 0; i < n; i++) {
-            DerivativeStructure xDS = new DerivativeStructure(n, 1, i, parameters[i]);
-            DerivativeStructure yDS = diffFunc.value(xDS);
-            int[] idx = new int[n];
-            idx[i] = 1;
-            gradients[i] = yDS.getPartialDerivative(idx);
+            gradients[i] = Double.POSITIVE_INFINITY;
+        }
+
+        try {
+            // create a differentiator
+            FiniteDifferencesDifferentiator differentiator =
+                    new FiniteDifferencesDifferentiator(nbPoints, stepSize);
+
+            // create a new function that computes both the value and the derivatives
+            // using DerivativeStructure
+            UnivariateDifferentiableFunction diffFunc = differentiator.differentiate(function);
+
+            for (int i = 0; i < n; i++) {
+                DerivativeStructure xDS = new DerivativeStructure(n, 1, i, parameters[i]);
+                DerivativeStructure yDS = diffFunc.value(xDS);
+                int[] idx = new int[n];
+                idx[i] = 1;
+                gradients[i] = yDS.getPartialDerivative(idx);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return gradients;
+
+        /*final double a = parameters[0];
+        final double b = parameters[1];
+        final double c = parameters[2];
+        final double[] grad = new double[3];
+        grad[0] = Math.exp(-b * x);
+        grad[1] = -a * x * grad[0];
+        grad[2] = 1;
+        return grad;*/
     }
 }

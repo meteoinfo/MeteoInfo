@@ -57,6 +57,53 @@ public class OptimizeUtil {
         return jacobian;
     }
 
+/*    *//**
+     * Get Jacobian function.
+     * @param func The uni-variate function
+     * @param x X values
+     * @param params Parameter number
+     * @param nbPoints Number of points for difference calculation
+     * @param stepSize Step size for difference calculation
+     * @return Jacobian function
+     *//*
+    public static MultivariateJacobianFunction getJacobianFunction(ParamUnivariateFunction func, Array x,
+        int params, int nbPoints, double stepSize) throws NoSuchMethodException {
+        // create a differentiator
+        FiniteDifferencesDifferentiator differentiator =
+                new FiniteDifferencesDifferentiator(nbPoints, stepSize);
+
+        Array finalX = x.copyIfView();
+        MultivariateJacobianFunction jacobianFunc = new MultivariateJacobianFunction() {
+            public Pair<RealVector, RealMatrix> value(final RealVector point) {
+                func.setParameters(point.toArray());
+                // create a new function that computes both the value and the derivatives
+                // using DerivativeStructure
+                UnivariateDifferentiableFunction diffFunc = differentiator.differentiate(func);
+
+                int n = (int) finalX.getSize();
+                RealVector value = new ArrayRealVector(n);
+                for (int i = 0; i < n; i++) {
+                    value.setEntry(i, func.value(x.getDouble(i)));
+                }
+                RealMatrix jacobian = new Array2DRowRealMatrix(n, params);
+                double v;
+                for (int i = 0; i < params; i++) {
+                    for (int j = 0; j < n; j++) {
+                        DerivativeStructure xDS = new DerivativeStructure(n, 1, j, value.getEntry(j));
+                        DerivativeStructure yDS = diffFunc.value(xDS);
+                        int[] idx = new int[n];
+                        idx[j] = 1;
+                        jacobian.setEntry(j, i, yDS.getPartialDerivative(idx));
+                    }
+                }
+
+                return new Pair<RealVector, RealMatrix>(value, jacobian);
+            }
+        };
+
+        return jacobianFunc;
+    }*/
+
     /**
      * Get Jacobian function.
      * @param func The uni-variate function
@@ -67,11 +114,7 @@ public class OptimizeUtil {
      * @return Jacobian function
      */
     public static MultivariateJacobianFunction getJacobianFunction(ParamUnivariateFunction func, Array x,
-        int params, int nbPoints, double stepSize) throws NoSuchMethodException {
-//        Class cls = func.getClass();
-//        Method method = cls.getMethod("value");
-//        int order = method.getParameterCount() - 1;
-
+                                                                   int params, int nbPoints, double stepSize) throws NoSuchMethodException {
         // create a differentiator
         FiniteDifferencesDifferentiator differentiator =
                 new FiniteDifferencesDifferentiator(nbPoints, stepSize);

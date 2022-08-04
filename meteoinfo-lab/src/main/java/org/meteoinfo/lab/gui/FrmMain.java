@@ -296,15 +296,41 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    int row = ((JTable) e.getSource()).getSelectedRow();
-                    if (row >= 0) {
-                        if (((JTable) e.getSource()).getValueAt(row, 2).toString().equals("py")) {
-                            File file = new File(FrmMain.this.fileDock.getFileExplorer().getPath().getAbsoluteFile()
-                                    + File.separator + ((JTable) e.getSource()).getValueAt(row, 0).toString());
-                            FrmMain.this.editorDock.openFile(file);
-                        }
+                File file = null;
+                int row = ((JTable) e.getSource()).getSelectedRow();
+                if (row >= 0) {
+                    if (((JTable) e.getSource()).getValueAt(row, 2).toString().equals("py")) {
+                        file = new File(FrmMain.this.fileDock.getFileExplorer().getPath().getAbsoluteFile()
+                                + File.separator + ((JTable) e.getSource()).getValueAt(row, 0).toString());
                     }
+                }
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    JPopupMenu jPopupMenu = new JPopupMenu();
+                    JMenuItem jMenuItemOpen = new JMenuItem("Open file");
+                    File finalFile = file;
+                    jMenuItemOpen.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (finalFile != null)
+                                FrmMain.this.editorDock.openFile(finalFile);
+                        }
+                    });
+                    jPopupMenu.add(jMenuItemOpen);
+
+                    JMenuItem jMenuItemRun = new JMenuItem("Run file");
+                    jMenuItemRun.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (finalFile != null)
+                                FrmMain.this.consoleDock.execfile(finalFile.getAbsolutePath());
+                        }
+                    });
+                    jPopupMenu.add(jMenuItemRun);
+
+                    jPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+                } else if (e.getClickCount() == 2) {
+                    if (file != null)
+                        FrmMain.this.editorDock.openFile(file);
                 }
             }
 

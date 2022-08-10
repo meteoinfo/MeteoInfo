@@ -816,6 +816,13 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     }
 
     /**
+     * Driven reshape method of the 3D plot
+     */
+    public void reshape() {
+        this.plot3DGL.reshape(this, 0, 0, plot3DGL.width, plot3DGL.height);
+    }
+
+    /**
      * Start animator
      */
     public void animator_start() {

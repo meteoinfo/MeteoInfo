@@ -10,6 +10,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.glu.GLUtessellator;
+import com.jogamp.opengl.glu.gl2.GLUgl2;
 import com.jogamp.opengl.math.VectorUtil;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -353,6 +354,22 @@ public class Plot3DGL extends Plot implements GLEventListener {
      */
     public void setFixExtent(boolean value) {
         this.fixExtent = value;
+    }
+
+    /**
+     * Get width
+     * @return Width
+     */
+    public int getWidth() {
+        return this.width;
+    }
+
+    /**
+     * Get height
+     * @return Height
+     */
+    public int getHeight() {
+        return this.height;
     }
 
     /**
@@ -957,6 +974,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
      */
     public void setOrthographic(boolean value) {
         this.orthographic = value;
+
+        /*if (this.drawable != null)
+            this.updateProjections(this.drawable);*/
     }
 
     /**
@@ -4279,6 +4299,43 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         final float h = (float) width / (float) height;
         gl.glViewport(0, 0, width, height);
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glLoadIdentity();
+
+        if (this.orthographic) {
+            float v = 2.0f;
+            switch (this.aspectType) {
+                case EQUAL:
+                    gl.glOrthof(-v * h, v * h, -v, v, -distance, distance);
+                    break;
+                default:
+                    gl.glOrthof(-v, v, -v, v, -distance, distance);
+                    break;
+            }
+        } else {
+            float near = 0.1f;
+            float far = 1000.0f;
+            switch (this.aspectType) {
+                case EQUAL:
+                    glu.gluPerspective(45.0f, h, near, far);
+                    break;
+                default:
+                    glu.gluPerspective(45.0f, 1.0f, near, far);
+                    break;
+            }
+            glu.gluLookAt(0.0f, 0.0f, distance, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+        }
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glLoadIdentity();
+    }
+
+    /**
+     * Update projections
+     */
+    public void updateProjections(GLAutoDrawable drawable) {
+        final GL2 gl = drawable.getGL().getGL2();
+
+        final float h = (float) width / (float) height;
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 

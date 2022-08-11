@@ -975,8 +975,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
     public void setOrthographic(boolean value) {
         this.orthographic = value;
 
-        /*if (this.drawable != null)
-            this.updateProjections(this.drawable);*/
+        if (this.drawable != null) {
+            this.drawable.invoke(true, new GLRunnable() {
+                public boolean run(GLAutoDrawable drawable) {
+                    updateProjections(drawable);
+                    return false;
+                }
+            });
+        }
     }
 
     /**
@@ -4333,6 +4339,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * Update projections
      */
     public void updateProjections(GLAutoDrawable drawable) {
+        //drawable.getContext().makeCurrent();
         final GL2 gl = drawable.getGL().getGL2();
 
         final float h = (float) width / (float) height;

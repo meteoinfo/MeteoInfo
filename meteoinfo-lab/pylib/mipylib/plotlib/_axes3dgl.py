@@ -1177,9 +1177,9 @@ class Axes3DGL(Axes3D):
         :param z: (*array_like*) Optional. Z coordinate array.
         :param data: (*array_like*) 3D data array.
         :param cmap: (*string*) Color map string.
-        :param nthread: (*int*) Thread number.
+        :param nthread: (*int*) Thread number. Default is 4.
 
-        :returns: Legend
+        :returns: 3D Mesh graphic
         """
         if len(args) <= 3:
             x = args[0].dimvalue(2)
@@ -1217,7 +1217,7 @@ class Axes3DGL(Axes3D):
             if not kwargs.has_key('edgecolor'):
                 kwargs['edgecolor'] = None
             ls = plotutil.getlegendbreak('polygon', **kwargs)[0]
-        nthread = kwargs.pop('nthread', None)
+        nthread = kwargs.pop('nthread', 4)
         if nthread is None:
             graphics = GraphicFactory.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls)
         else:
@@ -1240,11 +1240,35 @@ class Axes3DGL(Axes3D):
         :param z: (*array_like*) Optional. Z coordinate array.
         :param data: (*array_like*) 3D data array.
         :param cmap: (*string*) Color map string.
-        :param nthread: (*int*) Thread number.
+        :param nthread: (*int*) Thread number. Default is 4.
 
-        :returns: Legend
+        :returns: 3D Mesh graphic
         """
         return self.isosurface(*args, **kwargs)
+
+    def fimplicit3(self, f, interval=[-5.,5.], mesh_density=35, *args, **kwargs):
+        """
+        Plot the 3-D implicit function defined by f(x,y,z) = 0 over the default interval [-5, 5] for x, y, and z.
+
+        :param f: (*function*) The 3-D implicit function defined by f(x,y,z).
+        :param interval: (*list*) Optional. the plotting interval for x, y, and z. Default is [-5.,5.]. Length
+            2 or 6, 2 means x, y, and z use same interval.
+        :param mesh_density: (*int*) Optional. Number of evaluation points per direction. Default is 35.
+        :param cmap: (*string*) Color map string.
+        :param nthread: (*int*) Thread number. Default is 4.
+
+        :returns: 3D Mesh graphic
+        """
+        if len(interval) == 2:
+            interval = interval * 3
+
+        a = np.linspace(interval[0], interval[1], mesh_density)
+        b = np.linspace(interval[2], interval[3], mesh_density)
+        c = np.linspace(interval[4], interval[5], mesh_density)
+        x, y, z = np.meshgrid(a, b, c)
+        v = f(x, y, z)
+
+        return self.isosurface(a, b, c, v, 0, *args, **kwargs)
 
     def particles(self, *args, **kwargs):
         """

@@ -43,8 +43,8 @@ __all__ = [
     'axism','bar','bar3','barh','barbs','barbsm','bgcolor','box',
     'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
     'contourfm','contourm','contourfslice','contourslice','delfig','draw','draw_if_interactive','errorbar',
-    'figure','glfigure','figsize','patch','rectangle','fill','fill_between','fill_betweenx','webmap','gc_collect','geoshow',
-    'get_figure','gifaddframe','gifanimation','giffinish',
+    'figure','glfigure','figsize','patch','rectangle','fill','fill_between','fill_betweenx','fimplicit3',
+    'webmap','gc_collect','geoshow','get_figure','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','isosurface','legend','left_title','lighting','loglog','makecolors',
     'makelegend','makesymbolspec','masklayer','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
@@ -1933,6 +1933,19 @@ def isosurface(*args, **kwargs):
             g_axes = axes3dgl()
 
     r = g_axes.isosurface(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+@_copy_docstring_and_deprecators(Axes3DGL.fimplicit3)
+def fimplicit3(f, interval=[-5.,5.], mesh_density=35, *args, **kwargs):
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
+
+    r = g_axes.fimplicit3(f, interval, mesh_density, *args, **kwargs)
     draw_if_interactive()
     return r
 

@@ -25,12 +25,12 @@
         <repository>
             <id>freehep</id>
             <name>freehep</name>
-            <url>http://java.freehep.org/maven2/</url>
+            <url>https://java.freehep.org/maven2/</url>
         </repository>
         <repository>
             <id>boundless</id>
             <name>boundlessgeo</name>
-            <url>http://repo.boundlessgeo.com/main/</url>
+            <url>https://repo.boundlessgeo.com/main/</url>
         </repository>
     </repositories>
 

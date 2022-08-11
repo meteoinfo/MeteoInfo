@@ -7,6 +7,11 @@
       <option name="url" value="https://repo.maven.apache.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="jzy3d-releases" />
+      <option name="name" value="Jzy3d Releases" />
+      <option name="url" value="https://maven.jzy3d.org/releases/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="apache.snapshots" />
       <option name="name" value="Apache Development Snapshot Repository" />
       <option name="url" value="https://repository.apache.org/content/repositories/snapshots/" />
@@ -39,6 +44,16 @@
     <remote-repository>
       <option name="id" value="freehep" />
       <option name="name" value="freehep" />
+      <option name="url" value="https://java.freehep.org/maven2/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="boundless" />
+      <option name="name" value="boundlessgeo" />
+      <option name="url" value="https://repo.boundlessgeo.com/main/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="freehep" />
+      <option name="name" value="freehep" />
       <option name="url" value="http://java.freehep.org/maven2/" />
     </remote-repository>
     <remote-repository>
@@ -55,6 +70,11 @@
       <option name="id" value="jzy3d-snapshots" />
       <option name="name" value="Jzy3d Snapshots" />
       <option name="url" value="http://maven.jzy3d.org/snapshots/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jzy3d-snapshots" />
+      <option name="name" value="Jzy3d Snapshots" />
+      <option name="url" value="https://maven.jzy3d.org/snapshots/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="jboss.community" />

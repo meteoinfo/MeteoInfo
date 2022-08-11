@@ -25,22 +25,22 @@
         <repository>
             <id>freehep</id>
             <name>freehep</name>
-            <url>http://java.freehep.org/maven2/</url>
+            <url>https://java.freehep.org/maven2/</url>
         </repository>
         <repository>
             <id>boundless</id>
             <name>boundlessgeo</name>
-            <url>http://repo.boundlessgeo.com/main/</url>
+            <url>https://repo.boundlessgeo.com/main/</url>
         </repository>
         <repository>
             <id>jzy3d-snapshots</id>
             <name>Jzy3d Snapshots</name>
-            <url>http://maven.jzy3d.org/snapshots/</url>
+            <url>https://maven.jzy3d.org/snapshots/</url>
         </repository>
         <repository>
             <id>jzy3d-releases</id>
             <name>Jzy3d Releases</name>
-            <url>http://maven.jzy3d.org/releases/</url>
+            <url>https://maven.jzy3d.org/releases/</url>
         </repository>
     </repositories>
 

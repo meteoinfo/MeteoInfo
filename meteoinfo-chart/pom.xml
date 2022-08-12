@@ -27,11 +27,11 @@
             <name>freehep</name>
             <url>https://java.freehep.org/maven2/</url>
         </repository>
-        <repository>
+        <!--<repository>
             <id>boundless</id>
             <name>boundlessgeo</name>
             <url>https://repo.boundlessgeo.com/main/</url>
-        </repository>
+        </repository>-->
         <repository>
             <id>jzy3d-snapshots</id>
             <name>Jzy3d Snapshots</name>

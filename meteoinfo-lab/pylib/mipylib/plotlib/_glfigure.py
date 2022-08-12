@@ -25,7 +25,17 @@ class GLFigure(GLChartPanel):
         cap = GLChartPanel.createCapabilities(double_buffered, sample_buffers, nsamples)
 
         super(GLFigure, self).__init__(cap)
-        
+
+    def add_axes(self, ax):
+        """
+        And an axes.
+
+        :param ax: (*Axes*) The axes.
+        """
+        ax.figure = self
+        self.axes = ax
+        self.setPlot(ax._axes)
+
     def set_axes(self, ax):
         """
         Set axes.

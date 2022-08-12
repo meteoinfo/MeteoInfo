@@ -1242,12 +1242,12 @@ class Axes(object):
                     snum = len(xdatalist)
                     colors = kwargs.pop('colors', None)
                     if colors is None:
-                        color = kwargs.pop('color', None)
-                        if color is None:
-                            colors = plotutil.makecolors(snum)
-                        else:
+                        if kwargs.has_key('color'):
+                            color = kwargs['color']
                             color = plotutil.getcolor(color)
                             colors = [color] * snum
+                        else:
+                            colors = plotutil.makecolors(snum)
                     else:
                         snum = len(colors) if len(colors) > snum else snum
                     for i in range(0, snum):

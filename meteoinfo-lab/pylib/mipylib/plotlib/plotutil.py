@@ -476,10 +476,10 @@ def getlegendbreak(geometry, **kwargs):
             markersize = kwargs.pop('markersize', None)
             if not markersize is None:
                 lb.setSymbolSize(markersize)
-            markercolor = kwargs.pop('markeredgecolor', None)
+            markercolor = kwargs.pop('markeredgecolor', lb.getColor())
             markercolor = getcolor(markercolor)
             lb.setSymbolColor(markercolor)
-            fillcolor = kwargs.pop('markerfacecolor', None)
+            fillcolor = kwargs.pop('markerfacecolor', lb.getColor())
             if not fillcolor is None:
                 lb.setFillSymbol(True)
                 lb.setSymbolFillColor(getcolor(fillcolor))

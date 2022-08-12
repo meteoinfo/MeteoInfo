@@ -71,6 +71,7 @@ import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.DefaultTableModel;
 
+import com.jogamp.opengl.awt.GLJPanel;
 import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.ImageWriteException;
 import org.freehep.graphics2d.VectorGraphics;

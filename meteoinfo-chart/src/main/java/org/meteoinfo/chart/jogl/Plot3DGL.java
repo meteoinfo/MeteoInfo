@@ -4339,7 +4339,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
      * Update projections
      */
     public void updateProjections(GLAutoDrawable drawable) {
-        //drawable.getContext().makeCurrent();
         final GL2 gl = drawable.getGL().getGL2();
 
         final float h = (float) width / (float) height;

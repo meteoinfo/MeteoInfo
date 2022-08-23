@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.meteoinfo.chart.jogl;
 
 import com.jogamp.common.nio.Buffers;
@@ -10,7 +5,6 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.glu.GLUtessellator;
-import com.jogamp.opengl.glu.gl2.GLUgl2;
 import com.jogamp.opengl.math.VectorUtil;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -31,8 +25,8 @@ import org.meteoinfo.chart.plot.GridLine;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.chart.render.jogl.JOGLGraphicRender;
-import org.meteoinfo.chart.render.jogl.TriMeshRender;
 import org.meteoinfo.chart.render.jogl.MeshRender;
+import org.meteoinfo.chart.render.jogl.TriMeshRender;
 import org.meteoinfo.chart.render.jogl.VolumeRender;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
@@ -43,8 +37,8 @@ import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;
@@ -58,19 +52,19 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import static com.jogamp.opengl.GL.*;
+import static com.jogamp.opengl.GL.GL_TRIANGLE_STRIP;
 import static com.jogamp.opengl.GL2ES2.GL_TEXTURE_3D;
 import static com.jogamp.opengl.GL2ES2.GL_TEXTURE_WRAP_R;
 import static com.jogamp.opengl.GL2ES3.GL_TEXTURE_BASE_LEVEL;
 
-/**
- *
- * @author wyq
- */
-public class Plot3DGL extends Plot implements GLEventListener {
+public class GLPlot extends Plot {
 
     // <editor-fold desc="Variables">
     protected ProjectionInfo projInfo;
@@ -79,7 +73,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected boolean doScreenShot;
     protected BufferedImage screenImage;
     protected GL2 gl;
-    protected GLU glu;
+    protected GLU glu = new GLU();
     protected final GLUT glut = new GLUT();
     protected int startList = 2;
     protected GraphicCollection3D graphics;
@@ -89,11 +83,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected boolean fixExtent;
     protected ChartText title;
     protected GridLine gridLine;
-    protected List<ChartLegend> legends;
+    protected java.util.List<ChartLegend> legends;
     protected final Axis xAxis;
     protected final Axis yAxis;
     protected final Axis zAxis;
-    protected List<ZAxisOption> zAxisLocations;
+    protected java.util.List<ZAxisOption> zAxisLocations;
     protected Transform transform = new Transform();
     protected boolean clipPlane = true;
     protected boolean axesZoom = false;
@@ -114,7 +108,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     protected float pitchAngle;
     protected AspectType aspectType = AspectType.AUTO;
 
-    protected TessCallback tessCallback;
+    protected Plot3DGL.TessCallback tessCallback;
     protected int width;
     protected int height;
     protected float tickSpace = 5.0f;
@@ -134,7 +128,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     /**
      * Constructor
      */
-    public Plot3DGL() {
+    public GLPlot() {
         this.projInfo = null;
         this.doScreenShot = false;
         this.legends = new ArrayList<>();
@@ -642,7 +636,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      *
      * @return Legends
      */
-    public List<ChartLegend> getLegends() {
+    public java.util.List<ChartLegend> getLegends() {
         return this.legends;
     }
 
@@ -688,7 +682,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
      *
      * @param value Legends
      */
-    public void setLegends(List<ChartLegend> value) {
+    public void setLegends(java.util.List<ChartLegend> value) {
         this.legends = value;
     }
 
@@ -1205,48 +1199,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
         this.zAxisLocations.add(new ZAxisOption(x, y, left));
     }
 
-    @Override
     public void display(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
-        float[] rgba = this.background.getRGBComponents(null);
-        gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
 
         //Set light position - follow glLoadIdentity
         this.lighting.setPosition(gl);
 
         gl.glPushMatrix();
-
-        gl.glShadeModel(GL2.GL_SMOOTH);
-
-        gl.glEnable(GL2.GL_BLEND);
-        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
-        //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE);
-
-        if (this.antialias) {
-            if (this.sampleBuffers)
-                gl.glEnable(GL2.GL_MULTISAMPLE);
-            else {
-                gl.glEnable(GL2.GL_LINE_SMOOTH);
-                gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_NICEST);
-                gl.glEnable(GL2.GL_POINT_SMOOTH);
-                gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
-                //gl.glEnable(GL2.GL_POLYGON_SMOOTH);
-                //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_NICEST);
-            }
-        } else {
-            if (this.sampleBuffers)
-                gl.glDisable(GL2.GL_MULTISAMPLE);
-            else {
-                gl.glDisable(GL2.GL_LINE_SMOOTH);
-                gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_FASTEST);
-                gl.glDisable(GL2.GL_POINT_SMOOTH);
-                gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_FASTEST);
-                //gl.glDisable(GL2.GL_POLYGON_SMOOTH);
-                //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_FASTEST);
-            }
-        }
 
         //gl.glScalef(scaleX, scaleY, scaleZ);
 
@@ -1290,24 +1250,6 @@ public class Plot3DGL extends Plot implements GLEventListener {
             disableClipPlane(gl);
         }
 
-        //Draw text
-        /*for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
-            Graphic graphic = this.graphics.get(m);
-            if (graphic.getNumGraphics() == 1) {
-                Shape shape = graphic.getGraphicN(0).getShape();
-                if (shape.getShapeType() == ShapeTypes.TEXT) {
-                    this.drawText(gl, (ChartText3D) shape);
-                }
-            } else {
-                for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                    Shape shape = graphic.getGraphicN(i).getShape();
-                    if (shape.getShapeType() == ShapeTypes.TEXT) {
-                        this.drawText(gl, (ChartText3D) shape);
-                    }
-                }
-            }
-        }*/
-
         //Stop lighting
         if (this.lighting.isEnable()) {
             this.lighting.stop(gl);
@@ -1338,7 +1280,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         gl.glFlush();
 
-        //Do screen-shot
+        //Do screenshot
         if (this.doScreenShot) {
             AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
             this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
@@ -1517,7 +1459,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     protected Vector2f toScreen(float vx, float vy, float vz) {
         //Get screen coordinates
-        float coord[] = new float[4];// x, y;// returned xy 2d coords        
+        float coord[] = new float[4];// x, y;// returned xy 2d coords
         glu.gluProject(vx, vy, vz, mvmatrix, 0, projmatrix, 0, viewport, 0, coord, 0);
         if (viewport[0] != 0)
             coord[0] -= viewport[0];
@@ -1549,7 +1491,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return (float) MeteoMath.uv2ds(sx2 - sx1, sy2 - sy1)[0];
     }
 
-    protected int getLabelGap(Font font, List<ChartText> labels, double len) {
+    protected int getLabelGap(Font font, java.util.List<ChartText> labels, double len) {
         TextRenderer textRenderer = new TextRenderer(font);
         int n = labels.size();
         int nn;
@@ -1703,7 +1645,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             }
 
             this.xAxis.updateTickLabels();
-            List<ChartText> tlabs = this.xAxis.getTickLabels();
+            java.util.List<ChartText> tlabs = this.xAxis.getTickLabels();
             float axisLen = this.toScreenLength(-1.0f, y, -1.0f, 1.0f, y, -1.0f);
             skip = getLabelGap(this.xAxis.getTickLabelFont(), tlabs, axisLen);
             for (int i = 0; i < this.xAxis.getTickValues().length; i += skip) {
@@ -1818,7 +1760,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
 
         this.zAxis.updateTickLabels();
-        List<ChartText> tlabs = this.zAxis.getTickLabels();
+        java.util.List<ChartText> tlabs = this.zAxis.getTickLabels();
         float axisLen = this.toScreenLength(x, y, zMin, x, y, zMax);
         skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
         for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
@@ -1925,7 +1867,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             //x axis ticks
             float tickLen = this.xAxis.getTickLength() * this.lenScale;
             this.xAxis.updateTickLabels();
-            List<ChartText> tlabs = this.xAxis.getTickLabels();
+            java.util.List<ChartText> tlabs = this.xAxis.getTickLabels();
             float axisLen = this.toScreenLength(xMin, y, zMin, xMax, y, zMin);
             skip = getLabelGap(this.xAxis.getTickLabelFont(), tlabs, axisLen);
             float y1 = y > 0 ? y + tickLen : y - tickLen;
@@ -2102,7 +2044,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         //z axis ticks
         this.zAxis.updateTickLabels();
-        List<ChartText> tlabs = this.zAxis.getTickLabels();
+        java.util.List<ChartText> tlabs = this.zAxis.getTickLabels();
         float axisLen = this.toScreenLength(x, y, zMin, x, y, zMax);
         skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
         float x1 = x;
@@ -2200,7 +2142,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         //z axis ticks
         Vector3f xyz, xyz1;
         this.zAxis.updateTickLabels();
-        List<ChartText> tlabs = this.zAxis.getTickLabels();
+        java.util.List<ChartText> tlabs = this.zAxis.getTickLabels();
         skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
         float tickLen = this.zAxis.getTickLength() * this.lenScale;
         yAlign = YAlign.CENTER;
@@ -2282,12 +2224,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
-            XAlign xAlign, YAlign yAlign) {
+                           XAlign xAlign, YAlign yAlign) {
         return drawString(gl, str, font, color, vx, vy, vz, xAlign, yAlign, 0, 0);
     }
 
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
-            XAlign xAlign, YAlign yAlign, float xShift, float yShift) {
+                           XAlign xAlign, YAlign yAlign, float xShift, float yShift) {
         //Get screen coordinates
         Vector2f coord = this.toScreen(vx, vy, vz);
         float x = coord.x;
@@ -2328,24 +2270,24 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
-            XAlign xAlign, YAlign yAlign, float angle) {
+                           XAlign xAlign, YAlign yAlign, float angle) {
         return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy, vz, xAlign, yAlign, angle,
                 (float)text.getXShift(), (float)text.getYShift());
     }
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
-            XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
+                           XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
         return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy,
                 vz, xAlign, yAlign, angle, (float)text.getXShift() + xShift, (float)text.getYShift() + yShift);
     }
 
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
-            XAlign xAlign, YAlign yAlign, float angle) {
+                           XAlign xAlign, YAlign yAlign, float angle) {
         return drawString(gl, str, font, color, vx, vy, vz, xAlign, yAlign, angle, 0, 0);
     }
 
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
-            XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
+                           XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
         //Get screen coordinates
         Vector2f coord = this.toScreen(vx, vy, vz);
         float x = coord.x;
@@ -2688,10 +2630,10 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawParticles(GL2 gl, ParticleGraphics particles) {
-        for (Map.Entry<Integer, List> map : particles.getParticleList()) {
+        for (Map.Entry<Integer, java.util.List> map : particles.getParticleList()) {
             gl.glPointSize(particles.getPointSize() * this.dpiScale);
             gl.glBegin(GL2.GL_POINTS);
-            for (ParticleGraphics.Particle p : (List<ParticleGraphics.Particle>)map.getValue()) {
+            for (ParticleGraphics.Particle p : (java.util.List<ParticleGraphics.Particle>)map.getValue()) {
                 float[] rgba = p.rgba;
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glVertex3fv(transform.transformArray((float) p.x, (float) p.y, (float) p.z), 0);
@@ -2834,7 +2776,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
                 Polyline line = shape.getPolylines().get(0);
-                List<PointZ> ps = (List<PointZ>) line.getPointList();
+                java.util.List<PointZ> ps = (java.util.List<PointZ>) line.getPointList();
                 float[] rgba;
                 PointZ p;
                 gl.glLineWidth(((PolylineBreak) cbc.get(0)).getWidth() * this.dpiScale);
@@ -2855,7 +2797,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glLineWidth(pb.getWidth() * this.dpiScale);
                 for (Polyline line : shape.getPolylines()) {
                     gl.glBegin(GL2.GL_LINE_STRIP);
-                    List<PointZ> ps = (List<PointZ>) line.getPointList();
+                    java.util.List<PointZ> ps = (java.util.List<PointZ>) line.getPointList();
                     for (PointZ p : ps) {
                         gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
                     }
@@ -2933,7 +2875,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
                 Polyline line = shape.getPolylines().get(0);
-                List<PointZ> ps = (List<PointZ>) line.getPointList();
+                java.util.List<PointZ> ps = (java.util.List<PointZ>) line.getPointList();
                 float[] rgba;
                 PointZ p;
                 gl.glLineWidth(((PolylineBreak) cbc.get(0)).getWidth() * this.dpiScale);
@@ -2973,7 +2915,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 gl.glLineWidth(slb.getWidth() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 for (Polyline line : shape.getPolylines()) {
-                    List<PointZ> ps = (List<PointZ>) line.getPointList();
+                    java.util.List<PointZ> ps = (java.util.List<PointZ>) line.getPointList();
                     float[] p;
                     PointZ pp;
                     for (int i = 0; i < ps.size(); i++) {
@@ -2987,7 +2929,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 //Draw arrow
                 if (slb.getArrowHeadLength() > 0 || slb.getArrowHeadWidth() > 0) {
                     for (Polyline line : shape.getPolylines()) {
-                        List<PointZ> ps = (List<PointZ>) line.getPointList();
+                        java.util.List<PointZ> ps = (java.util.List<PointZ>) line.getPointList();
                         float[] p, p1;
                         PointZ pp;
                         for (int i = 0; i < ps.size(); i++) {
@@ -3105,7 +3047,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (isDraw) {
             PolygonZShape shape = (PolygonZShape) graphic.getShape();
             PolygonBreak pb = (PolygonBreak) graphic.getLegend();
-            List<PolygonZ> polygonZS = (List<PolygonZ>) shape.getPolygons();
+            java.util.List<PolygonZ> polygonZS = (java.util.List<PolygonZ>) shape.getPolygons();
             for (int i = 0; i < polygonZS.size(); i++) {
                 PolygonZ polygonZ = polygonZS.get(i);
                 if (pb.isDrawFill()) {
@@ -3123,7 +3065,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 } else {
                     drawPolygon(gl, polygonZ, pb);
                 }
-             }
+            }
         }
     }
 
@@ -3156,16 +3098,16 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_LINE_STRIP);
             PointZ p;
             for (int i = 0; i < tessPolygon.getOutLine().size(); i++) {
-                p = ((List<PointZ>) tessPolygon.getOutLine()).get(i);
+                p = ((java.util.List<PointZ>) tessPolygon.getOutLine()).get(i);
                 gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
             }
             gl.glEnd();
 
             if (tessPolygon.hasHole()) {
-                List<PointZ> newPList;
+                java.util.List<PointZ> newPList;
                 for (int h = 0; h < tessPolygon.getHoleLines().size(); h++) {
                     gl.glBegin(GL2.GL_LINE_STRIP);
-                    newPList = (List<PointZ>) tessPolygon.getHoleLines().get(h);
+                    newPList = (java.util.List<PointZ>) tessPolygon.getHoleLines().get(h);
                     for (int j = 0; j < newPList.size(); j++) {
                         p = newPList.get(j);
                         gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
@@ -3206,16 +3148,16 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glBegin(GL2.GL_LINE_STRIP);
             PointZ p;
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
                 gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
             }
             gl.glEnd();
 
             if (aPG.hasHole()) {
-                List<PointZ> newPList;
+                java.util.List<PointZ> newPList;
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 for (int h = 0; h < aPG.getHoleLines().size(); h++) {
-                    newPList = (List<PointZ>) aPG.getHoleLines().get(h);
+                    newPList = (java.util.List<PointZ>) aPG.getHoleLines().get(h);
                     for (int j = 0; j < newPList.size(); j++) {
                         p = newPList.get(j);
                         gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
@@ -3252,7 +3194,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 glu.gluTessBeginContour(tobj);
                 double[] v;
                 for (int i = 0; i < aPG.getOutLine().size() - 1; i++) {
-                    p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                    p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
                     v = transform.transform(p);
                     glu.gluTessVertex(tobj, v, 0, v);
                 }
@@ -3261,7 +3203,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     for (int i = 0; i < aPG.getHoleLineNumber(); i++) {
                         glu.gluTessBeginContour(tobj);
                         for (int j = 0; j < aPG.getHoleLine(i).size() - 1; j++) {
-                            p = ((List<PointZ>) aPG.getHoleLine(i)).get(j);
+                            p = ((java.util.List<PointZ>) aPG.getHoleLine(i)).get(j);
                             v = transform.transform(p);
                             glu.gluTessVertex(tobj, v, 0, v);
                         }
@@ -3283,16 +3225,16 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
                 gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
             }
             gl.glEnd();
 
             if (aPG.hasHole()) {
-                List<PointZ> newPList;
+                java.util.List<PointZ> newPList;
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 for (int h = 0; h < aPG.getHoleLines().size(); h++) {
-                    newPList = (List<PointZ>) aPG.getHoleLines().get(h);
+                    newPList = (java.util.List<PointZ>) aPG.getHoleLines().get(h);
                     for (int j = 0; j < newPList.size(); j++) {
                         p = newPList.get(j);
                         gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
@@ -3311,7 +3253,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_POLYGON);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
                 gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
             }
             gl.glEnd();
@@ -3323,7 +3265,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
                 gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
             }
             gl.glEnd();
@@ -3341,7 +3283,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             if (isDraw) {
                 PolygonZShape shape = (PolygonZShape) gg.getShape();
                 PolygonBreak pb = (PolygonBreak) gg.getLegend();
-                for (PolygonZ poly : (List<PolygonZ>) shape.getPolygons()) {
+                for (PolygonZ poly : (java.util.List<PolygonZ>) shape.getPolygons()) {
                     drawQuads(gl, poly, pb);
                 }
             }
@@ -3355,7 +3297,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_QUADS);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
                 gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
             }
             gl.glEnd();
@@ -3367,7 +3309,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
                 gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
             }
             gl.glEnd();
@@ -3385,7 +3327,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             if (isDraw) {
                 PolygonZShape shape = (PolygonZShape) gg.getShape();
                 PolygonBreak pb = (PolygonBreak) gg.getLegend();
-                for (PolygonZ poly : (List<PolygonZ>) shape.getPolygons()) {
+                for (PolygonZ poly : (java.util.List<PolygonZ>) shape.getPolygons()) {
                     drawTriangle(gl, poly, pb);
                 }
             }
@@ -3399,7 +3341,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_TRIANGLES);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
                 gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
             }
             gl.glEnd();
@@ -3411,7 +3353,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((List<PointZ>) aPG.getOutLine()).get(i);
+                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
                 gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
             }
             gl.glEnd();
@@ -3453,7 +3395,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
     }
 
     private void drawIsosurface(GL2 gl, IsosurfaceGraphics isosurface) {
-        List<PointZ[]> triangles = isosurface.getTriangles();
+        java.util.List<PointZ[]> triangles = isosurface.getTriangles();
         PolygonBreak pgb = (PolygonBreak) isosurface.getLegendBreak();
         for (PointZ[] triangle : triangles) {
             this.drawTriangle(gl, triangle, pgb);
@@ -3466,7 +3408,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(), image, true);
         //Texture texture = this.imageCache.get(image);
         int idTexture = texture.getTextureObject();
-        List<PointZ> coords = ishape.getCoords();
+        java.util.List<PointZ> coords = ishape.getCoords();
 
         gl.glEnable(GL2.GL_TEXTURE_2D);
         gl.glColor3f(1f, 1f, 1f);
@@ -3533,7 +3475,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         TextureShape ishape = (TextureShape) graphic.getShape();
         ishape.updateTexture(gl);
         int idTexture = ishape.getTextureID();
-        List<PointZ> coords = ishape.getCoords();
+        java.util.List<PointZ> coords = ishape.getCoords();
         int xRepeat = ishape.getXRepeat();
         int yRepeat = ishape.getYRepeat();
         float width = (float) (coords.get(1).X - coords.get(0).X);
@@ -3730,9 +3672,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
             // Initialize transformation matrix
             float[] mat44
                     = {1, 0, 0, 0,
-                        0, 1, 0, 0,
-                        0, 0, 1, 0,
-                        0, 0, 0, 1};
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1};
 
             // The direction of the arrowhead is the line vector
             float[] dVec = {v[0], v[1], v[2]};
@@ -3816,7 +3758,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
     void drawCircle(GL2 gl, float z, float radius, PolygonBreak bb, boolean clockwise) {
         int points = 100;
-        List<float[]> vertex = new ArrayList<>();
+        java.util.List<float[]> vertex = new ArrayList<>();
         double angle = 0.0;
         if (clockwise) {
             for (int i = points - 1; i >= 0; i--) {
@@ -3866,8 +3808,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (isDraw) {
             CubicShape cubic = (CubicShape) graphic.getShape();
             BarBreak bb = (BarBreak) graphic.getLegend();
-            List<PointZ> ps = cubic.getPoints();
-            List<float[]> vertex = new ArrayList<>();
+            java.util.List<PointZ> ps = cubic.getPoints();
+            java.util.List<float[]> vertex = new ArrayList<>();
             for (PointZ p : ps) {
                 vertex.add(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z));
             }
@@ -3913,8 +3855,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
         if (isDraw) {
             CylinderShape cylinder = (CylinderShape) graphic.getShape();
             BarBreak bb = (BarBreak) graphic.getLegend();
-            List<PointZ> ps = cylinder.getPoints();
-            List<float[]> vertex = new ArrayList<>();
+            java.util.List<PointZ> ps = cylinder.getPoints();
+            java.util.List<float[]> vertex = new ArrayList<>();
             for (PointZ p : ps) {
                 vertex.add(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z));
             }
@@ -3950,7 +3892,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         float y = -1.0f;
         float lHeight = 2.0f;
         float lWidth = lHeight / legend.getAspect();
-        List<Integer> labelIdxs = new ArrayList<>();
+        java.util.List<Integer> labelIdxs = new ArrayList<>();
         List<String> tLabels = new ArrayList<>();
         if (legend.isAutoTick()) {
             float legendLen = this.toScreenLength(x, y, 0.0f, x, y + lHeight, 0.0f);
@@ -4262,14 +4204,12 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return (float) (this.graphicExtent.getWidth() / this.drawExtent.getWidth());
     }
 
-    @Override
     public void dispose(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
         Program.destroyAllPrograms(gl);
         this.alwaysUpdateBuffers = true;
     }
 
-    @Override
     public void init(GLAutoDrawable drawable) {
         this.drawable = drawable;
         drawable.getGL().setSwapInterval(1);
@@ -4288,16 +4228,18 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 
         //jogl specific addition for tessellation
-        tessCallback = new TessCallback(gl, glu);
+        tessCallback = new Plot3DGL.TessCallback(gl, glu);
 
         this.positionArea = new Rectangle2D.Double(0, 0, 1, 1);
     }
 
-    @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        this.width = width;
-        this.height = height;
+        //this.width = width;
+        //this.height = height;
         this.positionArea = this.getPositionArea(new Rectangle2D.Double(0, 0, width, height));
+        this.setGraphArea(this.positionArea);
+        this.width = (int) this.positionArea.getWidth();
+        this.height = (int) this.positionArea.getHeight();
 
         final GL2 gl = drawable.getGL().getGL2();
         if (height <= 0) {
@@ -4305,7 +4247,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
 
         final float h = (float) width / (float) height;
-        gl.glViewport(0, 0, width, height);
+        //gl.glViewport(0, 0, width, height);
+        gl.glViewport((int) positionArea.getX(), (int) positionArea.getY(), this.width, this.height);
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 

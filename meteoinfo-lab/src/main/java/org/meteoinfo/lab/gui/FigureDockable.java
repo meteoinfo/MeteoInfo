@@ -24,7 +24,7 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.chart.ChartPanel;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
-import org.meteoinfo.chart.jogl.GLChartPanel;
+//import org.meteoinfo.chart.jogl.GLChartPanel;
 import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
 import org.meteoinfo.ui.ButtonTabComponent;
 
@@ -278,9 +278,9 @@ public class FigureDockable extends DefaultSingleCDockable {
      * @param cp Chart panel
      */
     public void removeFigure(JPanel cp) {
-        if (cp instanceof GLChartPanel) {
+        /*if (cp instanceof GLChartPanel) {
             ((GLChartPanel) cp).animator_stop();
-        }
+        }*/
         JScrollPane sp = (JScrollPane) cp.getParent().getParent();
         if (tabbedPanel.getTabCount() > 0) {
             tabbedPanel.remove(sp);

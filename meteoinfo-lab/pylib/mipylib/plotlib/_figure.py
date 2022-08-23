@@ -6,23 +6,24 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.chart import ChartPanel, Chart, Location, MouseMode, ChartText
+from org.meteoinfo.chart import GLChartPanel, GLChart, Location, MouseMode, ChartText
 
 import plotutil
 from ._axes import Axes, PolarAxes
 from ._mapaxes import MapAxes
 from ._axes3d import Axes3D
+from ._axes3dgl import Axes3DGL
 
 from java.awt import Font
 
 __all__ = ['Figure']
 
-class Figure(ChartPanel):
+class Figure(GLChartPanel):
     """
     top level container for all plot elements
     """
     
-    def __init__(self, figsize=None, dpi=None, bgcolor='w'):
+    def __init__(self, figsize=None, dpi=None, bgcolor='w', **kwargs):
         """
         Constructor
         
@@ -30,7 +31,7 @@ class Figure(ChartPanel):
         :param bgcolor: (*Color*) Optional, background color of the figure. Default is ``w`` (white).
         :param dpi: (*int*) Dots per inch.
         """
-        chart = Chart()
+        chart = GLChart()
         chart.setBackground(plotutil.getcolor(bgcolor))
         if figsize is None:
             super(Figure, self).__init__(chart)
@@ -396,8 +397,8 @@ class Figure(ChartPanel):
             ax = MapAxes(*args, **kwargs)
             #self.__set_axesm(ax, **kwargs)
         elif axestype == '3d':
-            ax = Axes3D(*args, **kwargs)
-            #self.__set_axes3d(ax, **kwargs)
+            #ax = Axes3D(*args, **kwargs)
+            ax = Axes3DGL(*args, **kwargs)
         else:
             ax = Axes(*args, **kwargs)
             #self.__set_axes(ax, **kwargs)
@@ -749,8 +750,8 @@ class Figure(ChartPanel):
         :param symbol: (*boolean*) Set symbol antialias or not.
         """
         if b is None:
-            b = not self.getChart().isAntiAlias()
-        self.getChart().setAntiAlias(b)
+            b = not self.getChart().isAntialias()
+        self.getChart().setAntialias(b)
         
         if not symbol is None:
             self.getChart().setSymbolAntialias(symbol)

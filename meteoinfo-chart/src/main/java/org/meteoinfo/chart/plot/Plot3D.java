@@ -2278,16 +2278,6 @@ public class Plot3D extends Plot {
             }
         }
 
-        //Get x axis space
-        //bottom += this.getXAxisHeight(g, space);
-        //Get y axis space
-        //left += this.getYAxisWidth(g, space);
-        //Set right space
-//        if (this.getXAxis().isVisible()) {
-//            if (this.getXAxis().isDrawTickLabel()) {
-//                right += this.getXAxis().getMaxLabelLength(g) / 2;
-//            }
-//        }
         return new Margin(left, right, top, bottom);
     }
 

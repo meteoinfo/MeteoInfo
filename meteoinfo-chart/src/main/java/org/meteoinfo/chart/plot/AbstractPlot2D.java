@@ -811,8 +811,7 @@ public abstract class AbstractPlot2D extends Plot {
             return;
         }
 
-        Rectangle2D graphArea;
-        graphArea = this.getPositionArea();
+        Rectangle2D graphArea = this.getPositionArea();
         this.setGraphArea(graphArea);
 
         //Draw title

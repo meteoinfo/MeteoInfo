@@ -100,7 +100,7 @@
             <artifactId>freehep-graphicsio-ps</artifactId>
             <version>2.4</version>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-main</artifactId>
             <version>2.3.2</version>
@@ -109,8 +109,8 @@
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-main</artifactId>
             <version>2.3.2</version>
-        </dependency>-->
-        <dependency>
+        </dependency>
+        <!--<dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all</artifactId>
             <version>v2.4.0-rc4</version>
@@ -158,7 +158,7 @@
             <version>v2.4.0-rc4</version>
         </dependency>
 
-        <!-- GLUEGEN -->
+        &lt;!&ndash; GLUEGEN &ndash;&gt;
 
 
         <dependency>
@@ -212,7 +212,7 @@
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-natives-windows-i586</artifactId>
             <version>v2.4.0-rc4</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>

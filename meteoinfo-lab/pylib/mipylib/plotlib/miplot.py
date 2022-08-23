@@ -547,7 +547,7 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
 
     return g_axes, bars
  
-def figure(bgcolor='w', figsize=None, newfig=True):
+def figure(bgcolor='w', figsize=None, newfig=True, **kwargs):
     """
     Creates a figure.
     
@@ -557,7 +557,7 @@ def figure(bgcolor='w', figsize=None, newfig=True):
     :param newfig: (*boolean*) Optional, if creates a new figure. Default is ``True`` .
     """
     global g_figure
-    g_figure = Figure(figsize, bgcolor=bgcolor)
+    g_figure = Figure(figsize, bgcolor=bgcolor, **kwargs)
     if not batchmode:
         show(newfig)
         
@@ -818,7 +818,7 @@ def axes3d(*args, **kwargs):
     
 def axes3dgl(*args, **kwargs):
     """
-    Add an 3d axes with JOGL to the figure.
+    Add a 3d axes with JOGL to the figure.
     
     :returns: The axes.
     """
@@ -828,9 +828,9 @@ def axes3dgl(*args, **kwargs):
     g_axes = ax
 
     if not batchmode:
-        if g_figure is None or isinstance(g_figure, Figure):
-            glfigure(**kwargs)
-        g_figure.set_axes(ax)
+        if g_figure is None:
+            figure(**kwargs)
+        g_figure.add_axes(ax)
 
     draw_if_interactive()
     return ax

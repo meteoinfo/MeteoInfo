@@ -1,39 +1,24 @@
-/* This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at
- * your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
- * General Public License for more details.
- */
 package org.meteoinfo.chart;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.util.gl2.GLUT;
+import org.meteoinfo.chart.*;
+import org.meteoinfo.chart.jogl.GLPlot;
+import org.meteoinfo.chart.jogl.Plot3DGL;
+import org.meteoinfo.chart.plot.MapPlot;
+import org.meteoinfo.chart.plot.Plot;
+import org.meteoinfo.common.PointF;
+
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meteoinfo.chart.jogl.Plot3DGL;
-import org.meteoinfo.chart.plot.MapPlot;
-import org.meteoinfo.chart.plot.Plot;
-import org.meteoinfo.common.PointF;
-import org.meteoinfo.geo.drawing.Draw;
-
-/**
- *
- * @author Yaqiang Wang
- * yaqiang.wang@gmail.com
- */
-public class Chart {
+public class GLChart implements GLEventListener {
 
     // <editor-fold desc="Variables">
     protected List<Plot> plots;
@@ -50,20 +35,21 @@ public class Chart {
     //private boolean drawBackground;
     private boolean drawLegend;
     private Rectangle2D plotArea;
-    private boolean antiAlias;
+    protected boolean sampleBuffers = true;
+    private boolean antialias;
     private boolean symbolAntialias;
-    private ChartPanel parent;
+    private org.meteoinfo.chart.GLChartPanel parent;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
      * Constructor
      */
-    public Chart() {
+    public GLChart() {
         this.drawLegend = false;
         this.background = Color.white;
         //this.drawBackground = true;
-        this.antiAlias = false;
+        this.antialias = false;
         this.symbolAntialias = true;
         this.rowNum = 1;
         this.columnNum = 1;
@@ -77,7 +63,7 @@ public class Chart {
      *
      * @param parent ChartPanel parent
      */
-    public Chart(ChartPanel parent) {
+    public GLChart(org.meteoinfo.chart.GLChartPanel parent) {
         this();
         this.parent = parent;
     }
@@ -88,7 +74,7 @@ public class Chart {
      * @param plot Plot
      * @param parent ChartPanel
      */
-    public Chart(Plot plot, ChartPanel parent) {
+    public GLChart(Plot plot, org.meteoinfo.chart.GLChartPanel parent) {
         this(parent);
         this.plots.add(plot);
     }
@@ -98,7 +84,7 @@ public class Chart {
      *
      * @param plot Plot
      */
-    public Chart(Plot plot) {
+    public GLChart(Plot plot) {
         this(plot, null);
     }
 
@@ -109,7 +95,7 @@ public class Chart {
      * @param plot Plot
      * @param parent ChartPanel
      */
-    public Chart(String title, Plot plot, ChartPanel parent) {
+    public GLChart(String title, Plot plot, org.meteoinfo.chart.GLChartPanel parent) {
         this(plot, parent);
         if (title == null) {
             this.title = null;
@@ -124,7 +110,7 @@ public class Chart {
      * @param title Title
      * @param plot Plot
      */
-    public Chart(String title, Plot plot) {
+    public GLChart(String title, Plot plot) {
         this(title, plot, null);
     }
 
@@ -135,13 +121,13 @@ public class Chart {
      *
      * @param value ChartPanel
      */
-    public void setParent(ChartPanel value) {
+    public void setParent(org.meteoinfo.chart.GLChartPanel value) {
         this.parent = value;
-        for (Plot plot : this.plots) {
+        /*for (Plot plot : this.plots) {
             if (plot instanceof MapPlot) {
                 ((MapPlot) plot).setParent(value);
             }
-        }
+        }*/
     }
 
     /**
@@ -162,7 +148,7 @@ public class Chart {
         if (this.plots.isEmpty()) {
             return null;
         }
-        
+
         if (this.currentPlot < 0 || this.currentPlot >= this.plots.size()) {
             this.currentPlot = this.plots.size() - 1;
         }
@@ -391,23 +377,23 @@ public class Chart {
     }
 
     /**
-     * Get if is anti-alias
+     * Get if is antialias
      *
      * @return Boolean
      */
-    public boolean isAntiAlias() {
-        return this.antiAlias;
+    public boolean isAntialias() {
+        return this.antialias;
     }
 
     /**
-     * Set if is anti-alias
+     * Set if is antialias
      *
      * @param value Boolean
      */
-    public void setAntiAlias(boolean value) {
-        this.antiAlias = value;
+    public void setAntialias(boolean value) {
+        this.antialias = value;
     }
-    
+
     /**
      * Get symbol antialias
      * @return Boolean
@@ -415,25 +401,41 @@ public class Chart {
     public boolean isSymbolAntialias() {
         return this.symbolAntialias;
     }
-    
+
     /**
      * Set symbol antialias
      * @param value Boolean
      */
     public void setSymbolAntialias(boolean value) {
         this.symbolAntialias = value;
-    }   
+    }
+
+    /**
+     * Get is sample buffers or not
+     * @return Boolean
+     */
+    public boolean isSampleBuffers() {
+        return this.sampleBuffers;
+    }
+
+    /**
+     * Set sample buffers or not
+     * @param value Boolean
+     */
+    public void setSampleBuffers(boolean value) {
+        this.sampleBuffers = value;
+    }
 
     // </editor-fold>
     // <editor-fold desc="Methods">
 
     /**
-     * Whether contains 3D GL plot
+     * Whether contains GL plot
      * @return Boolean
      */
-    public boolean contains3DGLPlot() {
+    public boolean containsGLPlot() {
         for (Plot plot : this.plots) {
-            if (plot instanceof Plot3DGL) {
+            if (plot instanceof GLPlot) {
                 return true;
             }
         }
@@ -449,7 +451,7 @@ public class Chart {
      */
     public void draw(Graphics2D g, Rectangle2D area) {
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-        if (antiAlias) {
+        if (antialias) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             //g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
@@ -473,7 +475,7 @@ public class Chart {
         g.translate(area.getX(), area.getY());
 
         //Draw background
-        if (this.background != null && !contains3DGLPlot()) {
+        if (this.background != null && !containsGLPlot()) {
             g.setColor(background);
             g.fill(new Rectangle2D.Double(0, 0, area.getWidth(), area.getHeight()));
         }
@@ -523,7 +525,7 @@ public class Chart {
                     }
                 }
                 if (plot instanceof MapPlot) {
-                    ((MapPlot) plot).setAntialias(this.antiAlias);
+                    ((MapPlot) plot).setAntialias(this.antialias);
                 }
                 if (plot instanceof Plot3DGL) {
                     Rectangle2D graphArea = plot.getPositionArea();
@@ -574,7 +576,7 @@ public class Chart {
             text.draw(g, x, y);
         }
     }
-    
+
     private Rectangle2D getPlotArea(Graphics2D g, Rectangle2D area) {
         Rectangle2D pArea = new Rectangle2D.Double();
         int edge = 0;
@@ -877,9 +879,9 @@ public class Chart {
      * @param plot Plot
      */
     public void addPlot(Plot plot) {
-        if (plot instanceof MapPlot) {
+        /*if (plot instanceof MapPlot) {
             ((MapPlot) plot).setParent(parent);
-        }
+        }*/
         this.plots.add(plot);
     }
 
@@ -912,7 +914,7 @@ public class Chart {
         else
             return null;
     }
-    
+
     /**
      * Get plot index
      * @param plot The plot
@@ -923,7 +925,7 @@ public class Chart {
     }
 
     /**
-     * Check if has web map layer
+     * Check whether it has web map layer
      *
      * @return Boolean
      */
@@ -950,4 +952,106 @@ public class Chart {
     }
     // </editor-fold>
 
+    protected GLAutoDrawable drawable;
+    protected GL2 gl;
+    protected GLU glu;
+    protected final GLUT glut = new GLUT();
+
+    protected Plot3DGL.TessCallback tessCallback;
+    protected int width;
+    protected int height;
+
+    @Override
+    public void init(GLAutoDrawable drawable) {
+        this.drawable = drawable;
+        drawable.getGL().setSwapInterval(1);
+        //drawable.getContext().makeCurrent();
+        GL2 gl = drawable.getGL().getGL2();
+        this.gl = gl;
+        this.glu = GLU.createGLU(gl);
+        //Background
+        //gl.glClearColor(1f, 1f, 1f, 1.0f);
+        gl.glEnable(GL2.GL_POINT_SMOOTH);
+        gl.glEnable(GL2.GL_DEPTH_TEST);
+        gl.glShadeModel(GL2.GL_SMOOTH);
+        //gl.glShadeModel(GL2.GL_FLAT);
+        gl.glDepthFunc(GL2.GL_LEQUAL);
+        //gl.glDepthFunc(GL2.GL_LESS);
+        gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
+
+        //jogl specific addition for tessellation
+        tessCallback = new Plot3DGL.TessCallback(gl, glu);
+    }
+
+    @Override
+    public void dispose(GLAutoDrawable drawable) {
+
+    }
+
+    @Override
+    public void display(GLAutoDrawable drawable) {
+        float[] rgba = this.background.getRGBComponents(null);
+        gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+
+        gl.glShadeModel(GL2.GL_SMOOTH);
+
+        gl.glEnable(GL2.GL_BLEND);
+        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+        //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE);
+
+        if (this.antialias) {
+            if (this.sampleBuffers)
+                gl.glEnable(GL2.GL_MULTISAMPLE);
+            else {
+                gl.glEnable(GL2.GL_LINE_SMOOTH);
+                gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_NICEST);
+                gl.glEnable(GL2.GL_POINT_SMOOTH);
+                gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
+                //gl.glEnable(GL2.GL_POLYGON_SMOOTH);
+                //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_NICEST);
+            }
+        } else {
+            if (this.sampleBuffers)
+                gl.glDisable(GL2.GL_MULTISAMPLE);
+            else {
+                gl.glDisable(GL2.GL_LINE_SMOOTH);
+                gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_FASTEST);
+                gl.glDisable(GL2.GL_POINT_SMOOTH);
+                gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_FASTEST);
+                //gl.glDisable(GL2.GL_POLYGON_SMOOTH);
+                //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_FASTEST);
+            }
+        }
+
+        List<GLPlot> glPlots = getGLPlots();
+        for (GLPlot glPlot : glPlots) {
+            glPlot.reshape(drawable, 0, 0, width, height);
+            glPlot.display(drawable);
+        }
+    }
+
+    @Override
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+        this.width = width;
+        this.height = height;
+
+        final GL2 gl = drawable.getGL().getGL2();
+        gl.glViewport(x, y, width, height);
+    }
+
+    /**
+     * Get GL plots
+     * @return GL plots
+     */
+    public List<GLPlot> getGLPlots() {
+        List<GLPlot> glPlots = new ArrayList<>();
+        for (Plot plot : this.plots) {
+            if (plot instanceof GLPlot) {
+                glPlots.add((GLPlot) plot);
+            }
+        }
+
+        return glPlots;
+    }
 }

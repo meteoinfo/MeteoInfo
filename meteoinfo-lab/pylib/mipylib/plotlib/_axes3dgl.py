@@ -13,7 +13,7 @@ from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
-from org.meteoinfo.chart.jogl import Plot3DGL, GLForm, JOGLUtil, EarthPlot3D, MapPlot3D
+from org.meteoinfo.chart.jogl import Plot3DGL, GLPlot, GLForm, JOGLUtil, EarthPlot3D, MapPlot3D
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
 from org.meteoinfo.common import Extent3D
@@ -58,7 +58,8 @@ class Axes3DGL(Axes3D):
             position = kwargs.pop('position', None)    
         outerposition = kwargs.pop('outerposition', None)
         if position is None:
-            position = [0.13, 0.11, 0.71, 0.815]
+            #position = [0.13, 0.11, 0.71, 0.815]
+            position = [0, 0, 1, 1]
             self.active_outerposition(True)
         else:        
             self.active_outerposition(False)        
@@ -123,7 +124,8 @@ class Axes3DGL(Axes3D):
         :param plot: (*Axes3D*) Plot.
         """
         if plot is None:
-            self._axes = Plot3DGL()
+            #self._axes = Plot3DGL()
+            self._axes = GLPlot()
         else:
             self._axes = plot
     

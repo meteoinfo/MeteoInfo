@@ -11,19 +11,55 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.GLJPanel;
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.ImageWriteException;
+import org.freehep.graphics2d.VectorGraphics;
+import org.freehep.graphicsio.emf.EMFGraphics2D;
+import org.freehep.graphicsio.pdf.PDFGraphics2D;
+import org.freehep.graphicsio.ps.PSGraphics2D;
+import org.meteoinfo.chart.jogl.EarthGLPlot;
+import org.meteoinfo.chart.jogl.EarthPlot3D;
+import org.meteoinfo.chart.jogl.GLPlot;
+import org.meteoinfo.chart.jogl.Plot3DGL;
+import org.meteoinfo.chart.plot.*;
+import org.meteoinfo.chart.plot3d.Projector;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.GenericFileFilter;
+import org.meteoinfo.common.PointF;
+import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
+import org.meteoinfo.geo.layer.LayerTypes;
+import org.meteoinfo.geo.layer.MapLayer;
+import org.meteoinfo.geo.layer.RasterLayer;
+import org.meteoinfo.geo.layer.VectorLayer;
+import org.meteoinfo.geo.mapview.FrmIdentifer;
+import org.meteoinfo.geo.mapview.FrmIdentiferGrid;
+import org.meteoinfo.geo.mapview.MapView;
+import org.meteoinfo.image.ImageUtil;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.table.Field;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.imageio.*;
+import javax.imageio.metadata.IIOInvalidTreeException;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
+import javax.print.*;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
@@ -42,76 +78,12 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOInvalidTreeException;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.imageio.stream.FileImageOutputStream;
-import javax.imageio.stream.ImageOutputStream;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintException;
-import javax.print.PrintService;
-import javax.print.SimpleDoc;
-import javax.print.StreamPrintServiceFactory;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.EventListenerList;
-import javax.swing.table.DefaultTableModel;
-
-import com.jogamp.opengl.awt.GLJPanel;
-import org.apache.commons.imaging.ImageFormats;
-import org.apache.commons.imaging.ImageWriteException;
-import org.freehep.graphics2d.VectorGraphics;
-import org.freehep.graphicsio.emf.EMFGraphics2D;
-import org.freehep.graphicsio.pdf.PDFGraphics2D;
-import org.freehep.graphicsio.ps.PSGraphics2D;
-import org.meteoinfo.chart.jogl.EarthPlot3D;
-import org.meteoinfo.chart.jogl.Plot3DGL;
-import org.meteoinfo.chart.plot.MapPlot;
-import org.meteoinfo.chart.plot.Plot;
-import org.meteoinfo.chart.plot.XY1DPlot;
-import org.meteoinfo.chart.plot.AbstractPlot2D;
-import org.meteoinfo.chart.plot.Plot3D;
-import org.meteoinfo.chart.plot.PlotType;
-import org.meteoinfo.chart.plot3d.Projector;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.common.GenericFileFilter;
-import org.meteoinfo.common.PointF;
-import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
-import org.meteoinfo.geo.layer.LayerTypes;
-import org.meteoinfo.geo.layer.MapLayer;
-import org.meteoinfo.geo.layer.RasterLayer;
-import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.image.ImageUtil;
-import org.meteoinfo.geo.mapview.FrmIdentifer;
-import org.meteoinfo.geo.mapview.FrmIdentiferGrid;
-import org.meteoinfo.geo.mapview.MapView;
-import org.meteoinfo.table.Field;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  *
  * @author yaqiang
  */
-public class ChartPanel extends JPanel implements IChartPanel{
+public class GLChartPanel extends GLJPanel implements IChartPanel{
 
     // <editor-fold desc="Variables">
     private final EventListenerList listeners = new EventListenerList();
@@ -119,7 +91,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
     private BufferedImage tempImage = null;
     private boolean newPaint = false;
     private boolean doubleBuffer = true;
-    private Chart chart;
+    private GLChart chart;
     private Plot currentPlot;
     private Dimension chartSize;
     private Point mouseDownPoint = new Point(0, 0);
@@ -127,21 +99,23 @@ public class ChartPanel extends JPanel implements IChartPanel{
     private boolean dragMode = false;
     private JPopupMenu popupMenu;
     private MouseMode mouseMode;
-    private List<int[]> selectedPoints;    
+    private List<int[]> selectedPoints;
     private int xShift = 0;
     private int yShift = 0;
     private double paintScale = 1.0;
     private LocalDateTime lastMouseWheelTime;
     private Timer mouseWheelDetctionTimer;
     private boolean loading = false;
+    private boolean zoomXY = false;
     // </editor-fold>
 
     // <editor-fold desc="Constructor">
     /**
      * Constructor
      */
-    public ChartPanel() {
-        super();
+    public GLChartPanel() {
+        super(createCapabilities(true, true, 4));
+
         //this.setBackground(Color.white);
         this.setBackground(Color.lightGray);
         this.setSize(200, 200);
@@ -184,7 +158,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                 onMouseWheelMoved(e);
             }
         });
-        
+
         this.mouseWheelDetctionTimer = new Timer(100, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -230,11 +204,12 @@ public class ChartPanel extends JPanel implements IChartPanel{
      *
      * @param chart Chart
      */
-    public ChartPanel(Chart chart) {
+    public GLChartPanel(GLChart chart) {
         this();
         this.chart = chart;
         if (this.chart != null) {
             this.chart.setParent(this);
+            this.addGLEventListener(chart);
         }
     }
 
@@ -245,10 +220,27 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @param width Chart width
      * @param height Chart height
      */
-    public ChartPanel(Chart chart, int width, int height) {
+    public GLChartPanel(GLChart chart, int width, int height) {
         this(chart);
         this.chartSize = new Dimension(width, height);
         this.setPreferredSize(chartSize);
+    }
+
+    /**
+     * Create GLCapabilities
+     * @param doubleBuffered Double buffered
+     * @param sampleBuffers Sample buffers
+     * @param numSamples Number samples
+     * @return GLCapabilities
+     */
+    public static GLCapabilities createCapabilities(boolean doubleBuffered, boolean sampleBuffers, int numSamples) {
+        GLProfile profile = GLProfile.get(GLProfile.GL2);
+        GLCapabilities cap = new GLCapabilities(profile);
+        cap.setDoubleBuffered(doubleBuffered);
+        cap.setSampleBuffers(sampleBuffers);
+        cap.setNumSamples(numSamples);
+
+        return cap;
     }
 
     // </editor-fold>
@@ -275,7 +267,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      *
      * @return Chart
      */
-    public Chart getChart() {
+    public GLChart getChart() {
         return chart;
     }
 
@@ -284,7 +276,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      *
      * @param value
      */
-    public void setChart(Chart value) {
+    public void setChart(GLChart value) {
         chart = value;
         if (this.chart != null) {
             chart.setParent(this);
@@ -375,6 +367,24 @@ public class ChartPanel extends JPanel implements IChartPanel{
     public List<int[]> getSelectedPoints() {
         return this.selectedPoints;
     }
+
+    /**
+     * Get whether only zoom XY
+     *
+     * @return Whether only zoom XY
+     */
+    public boolean isZoomXY() {
+        return this.zoomXY;
+    }
+
+    /**
+     * Set whether only zoom XY
+     *
+     * @param value Whether only zoom XY
+     */
+    public void setZoomXY(boolean value) {
+        this.zoomXY = value;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Events">
@@ -448,7 +458,13 @@ public class ChartPanel extends JPanel implements IChartPanel{
         int n = this.chart.getPlots().size();
         for (int i = n - 1; i >= 0; i--) {
             Plot plot = this.chart.getPlots().get(i);
-            Rectangle2D rect = plot.getGraphArea();
+            Rectangle2D rect;
+            if (plot instanceof GLPlot) {
+                //rect = plot.getPositionArea(new Rectangle2D.Double(0, 0, this.chart.width, this.chart.height));
+                rect = plot.getPositionArea(new Rectangle2D.Double(0, 0, this.getWidth(), this.getHeight()));
+            } else {
+                rect = plot.getGraphArea();
+            }
             if (rect.contains(x, y)) {
                 return plot;
             }
@@ -789,7 +805,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
         switch (this.mouseMode) {
             case ZOOM_IN:
             case SELECT:
-                if (plot instanceof Plot3DGL) {
+                if (plot instanceof GLPlot) {
                     this.repaint();
                 } else {
                     this.repaintOld();
@@ -797,19 +813,19 @@ public class ChartPanel extends JPanel implements IChartPanel{
                 break;
             case PAN:
                 if (plot != null) {
-                    if (plot instanceof Plot3DGL) {
-                        Plot3DGL plot3DGL = (Plot3DGL) plot;
+                    if (plot instanceof GLPlot) {
+                        GLPlot glPlot = (GLPlot) plot;
                         Dimension size = e.getComponent().getSize();
                         float dx = (float) (x - this.mouseLastPos.x) / size.width;
                         float dy = (float) (this.mouseLastPos.y - y) / size.height;
-                        Extent3D extent = plot3DGL.getDrawExtent();
-                        float rotation = plot3DGL.getAngleY();
+                        Extent3D extent = glPlot.getDrawExtent();
+                        float rotation = glPlot.getAngleY();
                         if (rotation < 90 || rotation > 270) {
                             dx = -dx;
                             dy = -dy;
                         }
                         extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
-                        plot3DGL.setDrawExtent(extent);
+                        glPlot.setDrawExtent(extent);
                         this.repaint();
                     } else {
                         Graphics2D g = (Graphics2D) this.getGraphics();
@@ -885,60 +901,60 @@ public class ChartPanel extends JPanel implements IChartPanel{
                             projector.setElevationAngle(new_value);
                         }
                         this.repaintNew();
-                    } else if (plot instanceof Plot3DGL) {
-                        Plot3DGL plot3DGL = (Plot3DGL) plot;
+                    } else if (plot instanceof GLPlot) {
+                        GLPlot glPlot = (GLPlot) plot;
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             if (e.isShiftDown()) {
                                 Dimension size = e.getComponent().getSize();
                                 float dx = (float) (x - this.mouseLastPos.x) / size.width;
                                 float dy = (float) (this.mouseLastPos.y - y) / size.height;
-                                Extent3D extent = plot3DGL.getDrawExtent();
-                                float rotation = plot3DGL.getAngleY();
+                                Extent3D extent = glPlot.getDrawExtent();
+                                float rotation = glPlot.getAngleY();
                                 if (rotation < 90 || rotation > 270) {
                                     dx = -dx;
                                     dy = -dy;
                                 }
                                 extent = extent.shift(extent.getWidth() * dx, extent.getHeight() * dy, 0);
-                                plot3DGL.setDrawExtent(extent);
+                                glPlot.setDrawExtent(extent);
                             } else {
                                 Dimension size = e.getComponent().getSize();
 
                                 float thetaY = 360.0f * ((float) (x - this.mouseLastPos.x) / size.width);
                                 float thetaX = 180.0f * ((float) (this.mouseLastPos.y - y) / size.height);
 
-                                if (plot3DGL instanceof EarthPlot3D) {
-                                    float scale = plot3DGL.getScale();
+                                if (glPlot instanceof EarthGLPlot) {
+                                    float scale = glPlot.getScale();
                                     thetaY /= scale;
                                     thetaX /= scale;
                                 }
 
-                                float elevation = plot3DGL.getAngleX() - thetaX;
+                                float elevation = glPlot.getAngleX() - thetaX;
                                 if (elevation > 0) {
                                     elevation = 0;
                                 }
                                 if (elevation < -180) {
                                     elevation = -180;
                                 }
-                                plot3DGL.setAngleX(elevation);
+                                glPlot.setAngleX(elevation);
 
-                                float rotation = plot3DGL.getAngleY() + thetaY;
+                                float rotation = glPlot.getAngleY() + thetaY;
                                 if (rotation >= 360) {
                                     rotation -= 360;
                                 }
                                 if (rotation < 0) {
                                     rotation += 360;
                                 }
-                                plot3DGL.setAngleY(rotation);
+                                glPlot.setAngleY(rotation);
                             }
                             this.repaint();
                         } else if (SwingUtilities.isRightMouseButton(e)) {
                             Dimension size = e.getComponent().getSize();
                             float shift = 360.0f * ((float) (this.mouseLastPos.x - x) / size.width);
-                            if (plot3DGL instanceof EarthPlot3D) {
-                                float scale = plot3DGL.getScale();
+                            if (glPlot instanceof EarthGLPlot) {
+                                float scale = glPlot.getScale();
                                 shift /= -scale;
                             }
-                            float head = plot3DGL.getHeadAngle() - shift;
+                            float head = glPlot.getHeadAngle() - shift;
                             if (head >= 360) {
                                 head -= 360;
                             } else if (head < 0) {
@@ -948,18 +964,18 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                 head = 0;
                             else if (head > 359)
                                 head = 0;
-                            plot3DGL.setHeadAngle(head);
+                            glPlot.setHeadAngle(head);
 
-                            if (plot3DGL instanceof EarthPlot3D) {
+                            if (glPlot instanceof EarthGLPlot) {
                                 shift = 180.0f * ((float) (this.mouseLastPos.y - y) / size.height);
-                                float pitch = plot3DGL.getPitchAngle() + shift;
+                                float pitch = glPlot.getPitchAngle() + shift;
                                 if (pitch > 0) {
                                     pitch = 0;
                                 }
                                 if (pitch < -90) {
                                     pitch = -90;
                                 }
-                                plot3DGL.setPitchAngle(pitch);
+                                glPlot.setPitchAngle(pitch);
                             }
                             this.repaint();
                         }
@@ -1009,7 +1025,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                         @Override
                                         public void windowClosed(WindowEvent e) {
                                             mapView.setDrawIdentiferShape(false);
-                                            ChartPanel.this.repaintOld();
+                                            GLChartPanel.this.repaintOld();
                                         }
                                     });
                                 }
@@ -1042,7 +1058,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                         tData[i + 1][1] = valueStr;
                                     }
                                 }
-                                DefaultTableModel dtm = new javax.swing.table.DefaultTableModel(tData, colNames) {
+                                DefaultTableModel dtm = new DefaultTableModel(tData, colNames) {
                                     @Override
                                     public boolean isCellEditable(int row, int column) {
                                         return false;
@@ -1089,71 +1105,101 @@ public class ChartPanel extends JPanel implements IChartPanel{
     }
 
     void onMouseWheelMoved(MouseWheelEvent e) {
-        Plot plt = selPlot(e.getX(), e.getY());
-        if (!(plt instanceof AbstractPlot2D)) {
-            return;
-        }
+        Plot plot = selPlot(e.getX(), e.getY());
 
-        double minX, maxX, minY, maxY, lonRan, latRan, zoomF;
-        double mouseLon, mouseLat;
-        Extent drawExtent = ((AbstractPlot2D) plt).getDrawExtent();
-        lonRan = drawExtent.maxX - drawExtent.minX;
-        latRan = drawExtent.maxY - drawExtent.minY;
-        mouseLon = drawExtent.minX + lonRan / 2;
-        mouseLat = drawExtent.minY + latRan / 2;
+        if (plot instanceof AbstractPlot2D) {
+            double minX, maxX, minY, maxY, lonRan, latRan, zoomF;
+            double mouseLon, mouseLat;
+            Extent drawExtent = ((AbstractPlot2D) plot).getDrawExtent();
+            lonRan = drawExtent.maxX - drawExtent.minX;
+            latRan = drawExtent.maxY - drawExtent.minY;
+            mouseLon = drawExtent.minX + lonRan / 2;
+            mouseLat = drawExtent.minY + latRan / 2;
 
-        zoomF = 1 + e.getWheelRotation() / 10.0f;
+            zoomF = 1 + e.getWheelRotation() / 10.0f;
 
-        minX = mouseLon - (lonRan / 2 * zoomF);
-        maxX = mouseLon + (lonRan / 2 * zoomF);
-        minY = mouseLat - (latRan / 2 * zoomF);
-        maxY = mouseLat + (latRan / 2 * zoomF);
-        switch (this.mouseMode) {
-            case PAN:
-                if (plt instanceof MapPlot) {
-                    MapPlot mplt = (MapPlot) plt;
-                    Graphics2D g = (Graphics2D) this.getGraphics();
-                    Rectangle2D mapRect = mplt.getGraphArea();
-                    
-                    this.lastMouseWheelTime = LocalDateTime.now();
-                    if (!this.mouseWheelDetctionTimer.isRunning()) {
-                        this.mouseWheelDetctionTimer.start();
-                        tempImage = new BufferedImage((int) mapRect.getWidth() - 2,
-                            (int) mapRect.getHeight() - 2, BufferedImage.TYPE_INT_ARGB);
-                        Graphics2D tg = tempImage.createGraphics();
-                        tg.setColor(Color.white);
-                        tg.fill(mapRect);
-                        tg.drawImage(this.mapBitmap, -(int) mapRect.getX() - 1, -(int) mapRect.getY() - 1, this);
-                        tg.dispose();
+            minX = mouseLon - (lonRan / 2 * zoomF);
+            maxX = mouseLon + (lonRan / 2 * zoomF);
+            minY = mouseLat - (latRan / 2 * zoomF);
+            maxY = mouseLat + (latRan / 2 * zoomF);
+            switch (this.mouseMode) {
+                case PAN:
+                    if (plot instanceof MapPlot) {
+                        MapPlot mplt = (MapPlot) plot;
+                        Graphics2D g = (Graphics2D) this.getGraphics();
+                        Rectangle2D mapRect = mplt.getGraphArea();
+
+                        this.lastMouseWheelTime = LocalDateTime.now();
+                        if (!this.mouseWheelDetctionTimer.isRunning()) {
+                            this.mouseWheelDetctionTimer.start();
+                            tempImage = new BufferedImage((int) mapRect.getWidth() - 2,
+                                    (int) mapRect.getHeight() - 2, BufferedImage.TYPE_INT_ARGB);
+                            Graphics2D tg = tempImage.createGraphics();
+                            tg.setColor(Color.white);
+                            tg.fill(mapRect);
+                            tg.drawImage(this.mapBitmap, -(int) mapRect.getX() - 1, -(int) mapRect.getY() - 1, this);
+                            tg.dispose();
+                        }
+
+                        g.setClip(mapRect);
+                        g.setColor(Color.white);
+                        //g.clearRect((int)mapRect.getX(), (int)mapRect.getY(), (int)mapRect.getWidth(), (int)mapRect.getHeight());
+                        paintScale = paintScale / zoomF;
+                        float nWidth = (float) mapRect.getWidth() * (float) paintScale;
+                        float nHeight = (float) mapRect.getHeight() * (float) paintScale;
+                        float nx = ((float) mapRect.getWidth() - nWidth) / 2;
+                        float ny = ((float) mapRect.getHeight() - nHeight) / 2;
+                        if (nx > 0) {
+                            g.fillRect((int) mapRect.getX(), (int) mapRect.getY(), (int) nx, (int) mapRect.getHeight());
+                            g.fillRect((int) (mapRect.getMaxX() - nx), (int) mapRect.getY(), (int) nx, (int) mapRect.getHeight());
+                        }
+                        if (ny > 0) {
+                            g.fillRect((int) mapRect.getX(), (int) mapRect.getY(), (int) mapRect.getWidth(), (int) ny);
+                            g.fillRect((int) mapRect.getX(), (int) (mapRect.getMaxY() - ny), (int) mapRect.getWidth(), (int) ny);
+                        }
+                        g.drawImage(tempImage, (int) (mapRect.getX() + nx), (int) (mapRect.getY() + ny),
+                                (int) nWidth, (int) nHeight, null);
+                        g.setColor(this.getForeground());
+                        g.draw(mapRect);
+                        mplt.setDrawExtent(new Extent(minX, maxX, minY, maxY));
+                    } else {
+                        ((AbstractPlot2D) plot).setDrawExtent(new Extent(minX, maxX, minY, maxY));
+                        //this.paintGraphics();
+                        this.repaintNew();
                     }
-                    
-                    g.setClip(mapRect);
-                    g.setColor(Color.white);
-                    //g.clearRect((int)mapRect.getX(), (int)mapRect.getY(), (int)mapRect.getWidth(), (int)mapRect.getHeight());
-                    paintScale = paintScale / zoomF;
-                    float nWidth = (float)mapRect.getWidth() * (float) paintScale;
-                    float nHeight = (float)mapRect.getHeight() * (float) paintScale;
-                    float nx = ((float)mapRect.getWidth() - nWidth) / 2;
-                    float ny = ((float)mapRect.getHeight() - nHeight) / 2;
-                    if (nx > 0) {
-                        g.fillRect((int) mapRect.getX(), (int) mapRect.getY(), (int)nx, (int) mapRect.getHeight());
-                        g.fillRect((int) (mapRect.getMaxX() - nx), (int) mapRect.getY(), (int)nx, (int) mapRect.getHeight());
+                    break;
+            }
+        } else if (plot instanceof GLPlot) {
+            GLPlot glPlot = (GLPlot) plot;
+            Extent3D extent = glPlot.getDrawExtent();
+            //float zoomF = 1 + e.getWheelRotation() / 10.0f;
+            float zoomF = e.getWheelRotation() / 10.0f;
+            double dx = extent.getWidth() * zoomF;
+            double dy = extent.getHeight() * zoomF;
+            if (glPlot instanceof EarthGLPlot) {
+                double dz = extent.getZLength() * zoomF;
+                extent = extent.extend(dx, dy, dz);
+            } else {
+                if (this.zoomXY) {
+                    if (e.isShiftDown()) {
+                        double dz = extent.getZLength() * zoomF;
+                        extent = extent.extend(dx, dy, dz);
+                    } else {
+                        extent = extent.extend(dx, dy, 0);
                     }
-                    if (ny > 0) {
-                        g.fillRect((int) mapRect.getX(), (int) mapRect.getY(), (int) mapRect.getWidth(), (int)ny);
-                        g.fillRect((int) mapRect.getX(), (int) (mapRect.getMaxY() - ny), (int) mapRect.getWidth(), (int)ny);
-                    } 
-                    g.drawImage(tempImage, (int)(mapRect.getX() + nx), (int)(mapRect.getY() + ny), 
-                            (int)nWidth, (int)nHeight, null);       
-                    g.setColor(this.getForeground());
-                    g.draw(mapRect);
-                    mplt.setDrawExtent(new Extent(minX, maxX, minY, maxY));
                 } else {
-                    ((AbstractPlot2D) plt).setDrawExtent(new Extent(minX, maxX, minY, maxY));
-                    //this.paintGraphics();
-                    this.repaintNew();
+                    if (e.isShiftDown()) {
+                        extent = extent.extend(dx, dy, 0);
+                    } else {
+                        double dz = extent.getZLength() * zoomF;
+                        extent = extent.extend(dx, dy, dz);
+                    }
                 }
-                break;
+            }
+
+            glPlot.setDrawExtent(extent);
+
+            this.repaint();
         }
     }
 
@@ -1233,7 +1279,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
         try {
             saveImageSleep(aFile, null);
         } catch (PrintException | IOException | InterruptedException | ImageWriteException ex) {
-            Logger.getLogger(ChartPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -1242,9 +1288,9 @@ public class ChartPanel extends JPanel implements IChartPanel{
      *
      * @param aFile File path
      * @param sleep Sleep seconds for web map layer
-     * @throws java.io.FileNotFoundException
-     * @throws javax.print.PrintException
-     * @throws java.lang.InterruptedException
+     * @throws FileNotFoundException
+     * @throws PrintException
+     * @throws InterruptedException
      */
     public void saveImageSleep(String aFile, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException, ImageWriteException {
         int w, h;
@@ -1265,9 +1311,9 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @param width Width
      * @param height Height
      * @param sleep Sleep seconds for web map layer
-     * @throws java.io.FileNotFoundException
-     * @throws javax.print.PrintException
-     * @throws java.lang.InterruptedException
+     * @throws FileNotFoundException
+     * @throws PrintException
+     * @throws InterruptedException
      */
     public void saveImage(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException, ImageWriteException {
         if (aFile.endsWith(".ps")) {
@@ -1385,9 +1431,9 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @param width Width
      * @param height Height
      * @param sleep Sleep seconds for web map layer
-     * @throws java.io.FileNotFoundException
-     * @throws javax.print.PrintException
-     * @throws java.lang.InterruptedException
+     * @throws FileNotFoundException
+     * @throws PrintException
+     * @throws InterruptedException
      */
     public void saveImage_bak(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException {
         if (aFile.endsWith(".ps")) {
@@ -1488,7 +1534,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      *
      * @param fileName File name
      * @param dpi DPI
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public void saveImage_Jpeg_old(String fileName, int dpi) throws IOException {
         BufferedImage image = this.mapBitmap;
@@ -1645,7 +1691,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @param fileName File name
      * @param dpi DPI
      * @throws IOException
-     * @throws java.lang.InterruptedException
+     * @throws InterruptedException
      */
     public void saveImage(String fileName, int dpi) throws IOException, InterruptedException {
         saveImage(fileName, dpi, null);
@@ -1658,7 +1704,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @param dpi DPI
      * @param sleep Sleep seconds for web map layer
      * @throws IOException
-     * @throws java.lang.InterruptedException
+     * @throws InterruptedException
      */
     public void saveImage(String fileName, int dpi, Integer sleep) throws IOException, InterruptedException {
         int width, height;
@@ -1682,7 +1728,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @param height Height
      * @param sleep Sleep seconds for web map layer
      * @throws IOException
-     * @throws java.lang.InterruptedException
+     * @throws InterruptedException
      */
     public void saveImage(String fileName, int dpi, int width, int height, Integer sleep) throws IOException, InterruptedException {
         File output = new File(fileName);
@@ -1749,7 +1795,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @param height Height
      * @param sleep Sleep seconds for web map layer
      * @throws IOException
-     * @throws java.lang.InterruptedException
+     * @throws InterruptedException
      */
     public void saveImage_bak(String fileName, int dpi, int width, int height, Integer sleep) throws IOException, InterruptedException {
         File output = new File(fileName);

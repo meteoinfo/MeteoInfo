@@ -955,6 +955,22 @@ public class GLPlot extends Plot {
     }
 
     /**
+     * Get is always update buffers or not
+     * @return Is always update buffers or not
+     */
+    public boolean isAlwaysUpdateBuffers() {
+        return this.alwaysUpdateBuffers;
+    }
+
+    /**
+     * Set whether always update buffers
+     * @param value Whether always update buffers
+     */
+    public void setAlwaysUpdateBuffers(boolean value) {
+        this.alwaysUpdateBuffers = value;
+    }
+
+    /**
      * Get is orthographic or not
      * @return is orthographic or not
      */
@@ -1280,12 +1296,12 @@ public class GLPlot extends Plot {
 
         gl.glFlush();
 
-        //Do screenshot
+        /*//Do screenshot
         if (this.doScreenShot) {
             AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
             this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
             this.doScreenShot = false;
-        }
+        }*/
 
         //Disable always update buffers
         if (this.alwaysUpdateBuffers)

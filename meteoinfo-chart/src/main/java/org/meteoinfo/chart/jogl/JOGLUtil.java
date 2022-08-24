@@ -12,6 +12,7 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
 import org.apache.commons.imaging.ImageWriteException;
 import org.joml.Vector3f;
+import org.meteoinfo.chart.GLChart;
 import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.jogl.mc.MarchingCubes;
@@ -732,56 +733,6 @@ public class JOGLUtil {
      * @param plot3DGL Plot3DGL
      * @param width    Image width
      * @param height   Image height
-     * @return View image
-     */
-    public static BufferedImage paintViewImage_bak(Plot3DGL plot3DGL, int width, int height) {
-        final GLProfile glp = GLProfile.get(GLProfile.GL2);
-        //final GLProfile glp = GLProfile.getDefault();
-        GLCapabilities caps = new GLCapabilities(glp);
-        caps.setHardwareAccelerated(true);
-        caps.setDoubleBuffered(false);
-        caps.setAlphaBits(8);
-        caps.setRedBits(8);
-        caps.setBlueBits(8);
-        caps.setGreenBits(8);
-        caps.setOnscreen(false);
-        caps.setPBuffer(true);
-
-        final Display display = NewtFactory.createDisplay(null); // local display
-        final Screen screen = NewtFactory.createScreen(display, 0); // screen 0
-        final com.jogamp.newt.Window window = NewtFactory.createWindow(screen, caps);
-        window.setSize(width, height);
-        final GLWindow glWindow = GLWindow.create(window);
-        glWindow.setVisible(true);
-
-        glWindow.addGLEventListener(plot3DGL);
-        plot3DGL.setDoScreenShot(true);
-        glWindow.display();
-
-        BufferedImage image = plot3DGL.getScreenImage();
-
-        if (null != glWindow) {
-            glWindow.destroy();
-        }
-        if (null != window) {
-            window.destroy();
-        }
-        if (null != screen) {
-            screen.destroy();
-        }
-        if (null != display) {
-            display.destroy();
-        }
-
-        return image;
-    }
-
-    /**
-     * Paint view image
-     *
-     * @param plot3DGL Plot3DGL
-     * @param width    Image width
-     * @param height   Image height
      * @param dpi      Image dpi
      * @return View image
      */
@@ -792,6 +743,59 @@ public class JOGLUtil {
         plot3DGL.setDpiScale((float) scaleFactor);
         BufferedImage image = paintViewImage(plot3DGL, width, height);
         plot3DGL.setDpiScale(1);
+        return image;
+    }
+
+    /**
+     * Paint view image
+     *
+     * @param chart The GLChart
+     * @param width Image width
+     * @param height Image height
+     * @return View image
+     */
+    public static BufferedImage paintViewImage(GLChart chart, int width, int height) {
+        final GLProfile glp = GLProfile.get(GLProfile.GL2);
+        GLCapabilities caps = new GLCapabilities(glp);
+        caps.setHardwareAccelerated(true);
+        caps.setDoubleBuffered(false);
+        caps.setAlphaBits(8);
+        caps.setRedBits(8);
+        caps.setBlueBits(8);
+        caps.setGreenBits(8);
+        caps.setOnscreen(false);
+        caps.setPBuffer(true);
+        GLDrawableFactory factory = GLDrawableFactory.getFactory(glp);
+        GLOffscreenAutoDrawable drawable = factory.createOffscreenAutoDrawable(null, caps, null,
+                width, height);
+        drawable.addGLEventListener(chart);
+        chart.setDoScreenShot(true);
+        chart.setAlwaysUpdateBuffers(true);
+        drawable.display();
+
+        BufferedImage image = chart.getScreenImage();
+        drawable.destroy();
+        chart.setAlwaysUpdateBuffers(true);
+
+        return image;
+    }
+
+    /**
+     * Paint view image
+     *
+     * @param chart The GLChart
+     * @param width    Image width
+     * @param height   Image height
+     * @param dpi      Image dpi
+     * @return View image
+     */
+    public static BufferedImage paintViewImage(GLChart chart, int width, int height, int dpi) {
+        double scaleFactor = dpi / 72.0;
+        width = (int) (width * scaleFactor);
+        height = (int) (height * scaleFactor);
+        chart.setDpiScale((float) scaleFactor);
+        BufferedImage image = paintViewImage(chart, width, height);
+        chart.setDpiScale(1);
         return image;
     }
 

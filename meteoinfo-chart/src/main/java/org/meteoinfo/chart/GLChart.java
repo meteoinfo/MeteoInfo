@@ -4,6 +4,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.gl2.GLUT;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.jogl.GLPlot;
@@ -15,6 +16,7 @@ import org.meteoinfo.common.PointF;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,8 @@ public class GLChart implements GLEventListener {
     private boolean antialias;
     private boolean symbolAntialias;
     private org.meteoinfo.chart.GLChartPanel parent;
+    protected boolean doScreenShot;
+    protected BufferedImage screenImage;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -56,6 +60,7 @@ public class GLChart implements GLEventListener {
         this.plots = new ArrayList<>();
         this.currentPlot = -1;
         this.texts = new ArrayList<>();
+        this.doScreenShot = false;
     }
 
     /**
@@ -424,6 +429,53 @@ public class GLChart implements GLEventListener {
      */
     public void setSampleBuffers(boolean value) {
         this.sampleBuffers = value;
+    }
+
+    /**
+     * Get if do screenshot
+     * @return Boolean
+     */
+    public boolean isDoScreenShot() {
+        return this.doScreenShot;
+    }
+
+    /**
+     * Set if do screenshot
+     * @param value Boolean
+     */
+    public void setDoScreenShot(boolean value) {
+        this.doScreenShot = value;
+    }
+
+    /**
+     * Get screen image
+     *
+     * @return Screen image
+     */
+    public BufferedImage getScreenImage() {
+        return this.screenImage;
+    }
+
+    /**
+     * Set DPI scale
+     * @param value DPI scale
+     */
+    public void setDpiScale(float value) {
+        List<GLPlot> glPlots = this.getGLPlots();
+        for (GLPlot glPlot : glPlots) {
+            glPlot.setDpiScale(value);
+        }
+    }
+
+    /**
+     * Set whether always update buffers
+     * @param value Whether always update buffers
+     */
+    public void setAlwaysUpdateBuffers(boolean value) {
+        List<GLPlot> glPlots = this.getGLPlots();
+        for (GLPlot glPlot : glPlots) {
+            glPlot.setAlwaysUpdateBuffers(value);
+        }
     }
 
     // </editor-fold>
@@ -990,44 +1042,53 @@ public class GLChart implements GLEventListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
-        float[] rgba = this.background.getRGBComponents(null);
-        gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        if (this.containsGLPlot()) {
+            float[] rgba = this.background.getRGBComponents(null);
+            gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
-        gl.glShadeModel(GL2.GL_SMOOTH);
+            gl.glShadeModel(GL2.GL_SMOOTH);
 
-        gl.glEnable(GL2.GL_BLEND);
-        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
-        //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE);
+            gl.glEnable(GL2.GL_BLEND);
+            gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+            //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE);
 
-        if (this.antialias) {
-            if (this.sampleBuffers)
-                gl.glEnable(GL2.GL_MULTISAMPLE);
-            else {
-                gl.glEnable(GL2.GL_LINE_SMOOTH);
-                gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_NICEST);
-                gl.glEnable(GL2.GL_POINT_SMOOTH);
-                gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
-                //gl.glEnable(GL2.GL_POLYGON_SMOOTH);
-                //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_NICEST);
+            if (this.antialias) {
+                if (this.sampleBuffers)
+                    gl.glEnable(GL2.GL_MULTISAMPLE);
+                else {
+                    gl.glEnable(GL2.GL_LINE_SMOOTH);
+                    gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_NICEST);
+                    gl.glEnable(GL2.GL_POINT_SMOOTH);
+                    gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
+                    //gl.glEnable(GL2.GL_POLYGON_SMOOTH);
+                    //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_NICEST);
+                }
+            } else {
+                if (this.sampleBuffers)
+                    gl.glDisable(GL2.GL_MULTISAMPLE);
+                else {
+                    gl.glDisable(GL2.GL_LINE_SMOOTH);
+                    gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_FASTEST);
+                    gl.glDisable(GL2.GL_POINT_SMOOTH);
+                    gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_FASTEST);
+                    //gl.glDisable(GL2.GL_POLYGON_SMOOTH);
+                    //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_FASTEST);
+                }
             }
-        } else {
-            if (this.sampleBuffers)
-                gl.glDisable(GL2.GL_MULTISAMPLE);
-            else {
-                gl.glDisable(GL2.GL_LINE_SMOOTH);
-                gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_FASTEST);
-                gl.glDisable(GL2.GL_POINT_SMOOTH);
-                gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_FASTEST);
-                //gl.glDisable(GL2.GL_POLYGON_SMOOTH);
-                //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_FASTEST);
-            }
-        }
 
-        List<GLPlot> glPlots = getGLPlots();
-        for (GLPlot glPlot : glPlots) {
-            glPlot.reshape(drawable, 0, 0, width, height);
-            glPlot.display(drawable);
+            List<GLPlot> glPlots = getGLPlots();
+            for (GLPlot glPlot : glPlots) {
+                glPlot.reshape(drawable, 0, 0, width, height);
+                glPlot.display(drawable);
+            }
+
+            //Do screenshot
+            if (this.doScreenShot) {
+                AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
+                this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
+                this.doScreenShot = false;
+            }
         }
     }
 

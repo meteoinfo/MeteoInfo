@@ -20,10 +20,7 @@ import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.ps.PSGraphics2D;
-import org.meteoinfo.chart.jogl.EarthGLPlot;
-import org.meteoinfo.chart.jogl.EarthPlot3D;
-import org.meteoinfo.chart.jogl.GLPlot;
-import org.meteoinfo.chart.jogl.Plot3DGL;
+import org.meteoinfo.chart.jogl.*;
 import org.meteoinfo.chart.plot.*;
 import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.common.Extent;
@@ -1382,7 +1379,12 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         } else {
             ImageFormats imageFormat = ImageUtil.getImageFormat(aFile);
             int imageType = imageFormat == ImageFormats.JPEG ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-            BufferedImage image = new BufferedImage(width, height, imageType);
+            BufferedImage image;
+            if (this.chart.containsGLPlot()) {
+                image = JOGLUtil.paintViewImage(this.chart, width, height);
+            } else {
+                image = new BufferedImage(width, height, imageType);
+            }
             Graphics2D g = image.createGraphics();
             if (this.hasWebMap()) {
                 for (Plot plot : this.chart.getPlots()) {
@@ -1425,195 +1427,6 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
     }
 
     /**
-     * Save image to a picture file
-     *
-     * @param aFile File path
-     * @param width Width
-     * @param height Height
-     * @param sleep Sleep seconds for web map layer
-     * @throws FileNotFoundException
-     * @throws PrintException
-     * @throws InterruptedException
-     */
-    public void saveImage_bak(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException {
-        if (aFile.endsWith(".ps")) {
-            DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
-            String mimeType = "application/postscript";
-            StreamPrintServiceFactory[] factories = StreamPrintServiceFactory.lookupStreamPrintServiceFactories(flavor, mimeType);
-            FileOutputStream out = new FileOutputStream(aFile);
-            if (factories.length > 0) {
-                PrintService service = factories[0].getPrintService(out);
-                SimpleDoc doc = new SimpleDoc(new Printable() {
-                    @Override
-                    public int print(Graphics g, PageFormat pf, int page) {
-                        if (page >= 1) {
-                            return Printable.NO_SUCH_PAGE;
-                        } else {
-                            double sf1 = pf.getImageableWidth() / (getWidth() + 1);
-                            double sf2 = pf.getImageableHeight() / (getHeight() + 1);
-                            double s = Math.min(sf1, sf2);
-                            Graphics2D g2 = (Graphics2D) g;
-                            g2.translate((pf.getWidth() - pf.getImageableWidth()) / 2, (pf.getHeight() - pf.getImageableHeight()) / 2);
-                            g2.scale(s, s);
-
-                            paintGraphics(g2);
-                            return Printable.PAGE_EXISTS;
-                        }
-                    }
-                }, flavor, null);
-                DocPrintJob job = service.createPrintJob();
-                PrintRequestAttributeSet attributes = new HashPrintRequestAttributeSet();
-                job.print(doc, attributes);
-                out.close();
-            }
-        } else if (aFile.endsWith(".eps")) {
-//            EPSGraphics2D g = new EPSGraphics2D(0.0, 0.0, width, height);
-//            paintGraphics(g);
-//            FileOutputStream file = new FileOutputStream(aFile);
-//            try {
-//                file.write(g.getBytes());
-//            } finally {
-//                file.close();
-//                g.dispose();
-//            }
-
-            Properties p = new Properties();
-            p.setProperty("PageSize", "A5");
-            VectorGraphics g = new PSGraphics2D(new File(aFile), new Dimension(width, height));
-            //g.setProperties(p);
-            g.startExport();
-            //this.paintGraphics(g);
-            this.paintGraphics(g, width, height);
-            g.endExport();
-            g.dispose();
-        } else if (aFile.endsWith(".pdf")) {
-            VectorGraphics g = new PDFGraphics2D(new File(aFile), new Dimension(width, height));
-            //g.setProperties(p);
-            g.startExport();
-            this.paintGraphics(g, width, height);
-            g.endExport();
-            g.dispose();
-        } else if (aFile.endsWith(".emf")) {
-            VectorGraphics g = new EMFGraphics2D(new File(aFile), new Dimension(width, height));
-            //g.setProperties(p);
-            g.startExport();
-            //this.paintGraphics(g);
-            this.paintGraphics(g, width, height);
-            g.endExport();
-            g.dispose();
-        } else {
-            //String extension = aFile.substring(aFile.lastIndexOf('.') + 1);
-            //ImageIO.write(this.mapBitmap, extension, new File(aFile));
-
-            String extension = aFile.substring(aFile.lastIndexOf('.') + 1);
-            BufferedImage aImage;
-            if (extension.equalsIgnoreCase("bmp")) {
-                aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            } else {
-                aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            }
-            Graphics2D g = aImage.createGraphics();
-            paintGraphics(g, width, height);
-
-            if (sleep != null) {
-                Thread.sleep(sleep * 1000);
-            }
-
-            if (extension.equalsIgnoreCase("jpg")) {
-                BufferedImage newImage = new BufferedImage(aImage.getWidth(), aImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-                newImage.createGraphics().drawImage(aImage, 0, 0, Color.BLACK, null);
-                ImageIO.write(newImage, extension, new File(aFile));
-            } else {
-                ImageIO.write(aImage, extension, new File(aFile));
-            }
-        }
-    }
-
-    /**
-     * Save image to Jpeg file
-     *
-     * @param fileName File name
-     * @param dpi DPI
-     * @throws IOException
-     */
-    public void saveImage_Jpeg_old(String fileName, int dpi) throws IOException {
-        BufferedImage image = this.mapBitmap;
-        Iterator i = ImageIO.getImageWritersByFormatName("jpeg");
-        //are there any jpeg encoders available?
-
-        if (i.hasNext()) //there's at least one ImageWriter, just use the first one
-        {
-            ImageWriter imageWriter = (ImageWriter) i.next();
-            //get the param
-            ImageWriteParam param = imageWriter.getDefaultWriteParam();
-            ImageTypeSpecifier its = new ImageTypeSpecifier(image.getColorModel(), image.getSampleModel());
-
-            //get metadata
-            IIOMetadata iomd = imageWriter.getDefaultImageMetadata(its,
-                    param);
-
-            String formatName = "javax_imageio_jpeg_image_1.0";//this is the DOCTYPE of the metadata we need
-
-            Node node = iomd.getAsTree(formatName);
-            //what are child nodes?
-            NodeList nl = node.getChildNodes();
-            for (int j = 0; j < nl.getLength(); j++) {
-                Node n = nl.item(j);
-                System.out.println("node from IOMetadata is : "
-                        + n.getNodeName());
-
-                if (n.getNodeName().equals("JPEGvariety")) {
-                    NodeList childNodes = n.getChildNodes();
-
-                    for (int k = 0; k < childNodes.getLength(); k++) {
-                        System.out.println("node #" + k + " is "
-                                + childNodes.item(k).getNodeName());
-                        if (childNodes.item(k).getNodeName().equals("app0JFIF")) {
-                            NamedNodeMap nnm = childNodes.item(k).getAttributes();
-                            //get the resUnits, Xdensity, and Ydensity attribuutes 
-                            Node resUnitsNode = getAttributeByName(childNodes.item(k), "resUnits");
-                            Node XdensityNode = getAttributeByName(childNodes.item(k), "Xdensity");
-                            Node YdensityNode = getAttributeByName(childNodes.item(k), "Ydensity");
-
-                            //reset values for nodes
-                            resUnitsNode.setNodeValue("1"); //indicate DPI mode 
-                            XdensityNode.setNodeValue(String.valueOf(dpi));
-                            YdensityNode.setNodeValue(String.valueOf(dpi));
-
-                            System.out.println("name="
-                                    + resUnitsNode.getNodeName() + ", value=" + resUnitsNode.getNodeValue());
-                            System.out.println("name="
-                                    + XdensityNode.getNodeName() + ", value=" + XdensityNode.getNodeValue());
-                            System.out.println("name="
-                                    + YdensityNode.getNodeName() + ", value=" + YdensityNode.getNodeValue());
-
-                        } //end if (childNodes.item(k).getNodeName().equals("app0JFIF"))
-                    } //end if (n.getNodeName().equals("JPEGvariety")
-                    break; //we don't care about the rest of the children
-                } //end if (n.getNodeName().equals("JPEGvariety"))
-
-            } //end  for (int j = 0; j < nl.getLength(); j++)
-
-            try {
-                iomd.setFromTree(formatName, node);
-            } catch (IIOInvalidTreeException e) {
-                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-            }
-            //attach the metadata to an image
-            IIOImage iioimage = new IIOImage(image, null, iomd);
-            FileImageOutputStream stream = new FileImageOutputStream(new File(fileName));
-            try {
-                imageWriter.setOutput(stream);
-                imageWriter.write(iioimage);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                stream.close();
-            }
-        }  //end if (i.hasNext()) //there's at least one ImageWriter, just use the first one
-    }
-
-    /**
      * @param node
      * @param attributeName - name of child node to return
      * @return Node
@@ -1646,7 +1459,12 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
 
     public boolean saveImage_Jpeg(String file, int width, int height, int dpi) {
         double scaleFactor = dpi / 72.0;
-        BufferedImage bufferedImage = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage;
+        if (this.chart.containsGLPlot()) {
+            bufferedImage = JOGLUtil.paintViewImage(this.chart, width, height, dpi);
+        } else {
+            bufferedImage = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_RGB);
+        }
         Graphics2D g = bufferedImage.createGraphics();
         AffineTransform at = g.getTransform();
         at.scale(scaleFactor, scaleFactor);
@@ -1737,7 +1555,12 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         ImageFormats imageFormat = ImageUtil.getImageFormat(fileName);
         double scaleFactor = dpi / 72.0;
         int imageType = imageFormat == ImageFormats.JPEG ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-        BufferedImage image = new BufferedImage((int) (width * scaleFactor), (int) (height * scaleFactor), imageType);
+        BufferedImage image;
+        if (this.chart.containsGLPlot()) {
+            image = JOGLUtil.paintViewImage(this.chart, width, height, dpi);
+        } else {
+            image = new BufferedImage((int) (width * scaleFactor), (int) (height * scaleFactor), imageType);
+        }
         Graphics2D g = image.createGraphics();
         AffineTransform at = g.getTransform();
         at.scale(scaleFactor, scaleFactor);
@@ -1786,64 +1609,6 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         }
     }
 
-    /**
-     * Save image
-     *
-     * @param fileName File name
-     * @param dpi DPI
-     * @param width Width
-     * @param height Height
-     * @param sleep Sleep seconds for web map layer
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public void saveImage_bak(String fileName, int dpi, int width, int height, Integer sleep) throws IOException, InterruptedException {
-        File output = new File(fileName);
-        output.delete();
-
-        String formatName = fileName.substring(fileName.lastIndexOf('.') + 1);
-        if (formatName.equals("jpg")) {
-            formatName = "jpeg";
-            saveImage_Jpeg(fileName, width, height, dpi);
-            return;
-        }
-
-        double scaleFactor = dpi / 72.0;
-        BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = image.createGraphics();
-        AffineTransform at = g.getTransform();
-        at.scale(scaleFactor, scaleFactor);
-        g.setTransform(at);
-        paintGraphics(g, width, height);
-        for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
-            ImageWriter writer = iw.next();
-            ImageWriteParam writeParam = writer.getDefaultWriteParam();
-            ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
-            IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
-            if (metadata == null) {
-                metadata = writer.getDefaultImageMetadata(typeSpecifier, null);
-            }
-            if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
-                continue;
-            }
-
-            ImageUtil.setDPI(metadata, dpi);
-
-            if (sleep != null) {
-                Thread.sleep(sleep * 1000);
-            }
-            final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
-            try {
-                writer.setOutput(stream);
-                writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
-            } finally {
-                stream.close();
-            }
-            break;
-        }
-        g.dispose();
-    }
-    
     /**
      * Get view image
      *

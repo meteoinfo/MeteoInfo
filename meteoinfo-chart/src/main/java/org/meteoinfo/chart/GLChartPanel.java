@@ -281,7 +281,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
     }
 
     /**
-     * Get if using off screen image double buffering.
+     * Get if using off-screen image double buffering.
      * Using double buffering will be faster but lower view quality in
      * high dpi screen computer.
      *
@@ -292,7 +292,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
     }
 
     /**
-     * Set using off screen image double buffering or not.
+     * Set using off-screen image double buffering or not.
      * @param value Boolean
      */
     public void setDoubleBuffer(boolean value) {

@@ -847,9 +847,9 @@ def axes3d_map(*args, **kwargs):
     g_axes = ax
 
     if not batchmode:
-        if g_figure is None or isinstance(g_figure, Figure):
-            glfigure(**kwargs)
-        g_figure.set_axes(ax)
+        if g_figure is None:
+            figure(**kwargs)
+        g_figure.add_axes(ax)
 
     draw_if_interactive()
     return ax
@@ -866,9 +866,9 @@ def axes3d_earth(*args, **kwargs):
     g_axes = ax
 
     if not batchmode:
-        if g_figure is None or isinstance(g_figure, Figure):
-            glfigure(**kwargs)
-        g_figure.set_axes(ax)
+        if g_figure is None:
+            figure(**kwargs)
+        g_figure.add_axes(ax)
 
     draw_if_interactive()
     return ax

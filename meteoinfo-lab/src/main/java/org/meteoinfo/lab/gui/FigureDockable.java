@@ -21,10 +21,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import org.meteoinfo.chart.ChartPanel;
+import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
-//import org.meteoinfo.chart.jogl.GLChartPanel;
 import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
 import org.meteoinfo.ui.ButtonTabComponent;
 
@@ -192,8 +191,8 @@ public class FigureDockable extends DefaultSingleCDockable {
      * @return Figure chart panel
      */
     public final IChartPanel addNewFigure(String title, final JPanel cp) {
-        if (cp instanceof ChartPanel) {
-            ((ChartPanel)cp).setDoubleBuffer(this.doubleBuffer);
+        if (cp instanceof GLChartPanel) {
+            ((GLChartPanel)cp).setDoubleBuffer(this.doubleBuffer);
         }
         final JScrollPane sp = new JScrollPane(cp);
         this.tabbedPanel.add(sp, title);
@@ -220,8 +219,8 @@ public class FigureDockable extends DefaultSingleCDockable {
     public final IChartPanel addFigure(final JPanel ncp) {
         ((IChartPanel) ncp).setLoading(true);
 
-        if (ncp instanceof ChartPanel) {
-            ((ChartPanel) ncp).setDoubleBuffer(this.doubleBuffer);
+        if (ncp instanceof GLChartPanel) {
+            ((GLChartPanel) ncp).setDoubleBuffer(this.doubleBuffer);
         }
         int idx = 1;
         if (this.tabbedPanel.getTabCount() > 0) {
@@ -319,10 +318,10 @@ public class FigureDockable extends DefaultSingleCDockable {
      * @param idx Figure index
      * @return Figure
      */
-    public ChartPanel getFigure(int idx) {
+    public GLChartPanel getFigure(int idx) {
         if (this.tabbedPanel.getTabCount() > idx) {
             JScrollPane sp = (JScrollPane) this.tabbedPanel.getComponentAt(idx);
-            return (ChartPanel) sp.getViewport().getView();
+            return (GLChartPanel) sp.getViewport().getView();
         } else {
             return null;
         }
@@ -340,8 +339,8 @@ public class FigureDockable extends DefaultSingleCDockable {
      * Get figures
      * @return Figures
      */
-    public List<ChartPanel> getFigures() {
-        List<ChartPanel> figures = new ArrayList<>();
+    public List<GLChartPanel> getFigures() {
+        List<GLChartPanel> figures = new ArrayList<>();
         for (int i = 0; i < this.tabbedPanel.getTabCount(); i++) {
             figures.add(this.getFigure(i));
         }
@@ -353,7 +352,7 @@ public class FigureDockable extends DefaultSingleCDockable {
      *
      * @param cp ChartPanel
      */
-    public void setCurrentFigure(ChartPanel cp) {
+    public void setCurrentFigure(GLChartPanel cp) {
         if (this.tabbedPanel.getTabCount() > 0) {
             JScrollPane sp = new JScrollPane(cp);
             this.tabbedPanel.setComponentAt(this.tabbedPanel.getSelectedIndex(), sp);
@@ -375,8 +374,8 @@ public class FigureDockable extends DefaultSingleCDockable {
      */
     public void setDoubleBuffer(boolean doubleBuffer) {
         this.doubleBuffer = doubleBuffer;
-        List<ChartPanel> figures = this.getFigures();
-        for (ChartPanel figure : figures) {
+        List<GLChartPanel> figures = this.getFigures();
+        for (GLChartPanel figure : figures) {
             figure.setDoubleBuffer(this.doubleBuffer);
             figure.repaintNew();
         }

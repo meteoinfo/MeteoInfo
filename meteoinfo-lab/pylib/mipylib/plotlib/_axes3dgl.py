@@ -13,7 +13,7 @@ from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
-from org.meteoinfo.chart.jogl import Plot3DGL, GLPlot, GLForm, JOGLUtil, EarthPlot3D, MapPlot3D
+from org.meteoinfo.chart.jogl import GLPlot, GLForm, JOGLUtil, EarthGLPlot, MapGLPlot
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
 from org.meteoinfo.common import Extent3D
@@ -1465,7 +1465,7 @@ class MapAxes3D(Axes3DGL):
         :param plot: (*EarthPlot3D*) Plot.
         """
         if plot is None:
-            self._axes = MapPlot3D()
+            self._axes = MapGLPlot()
         else:
             self._axes = plot
 
@@ -1506,7 +1506,7 @@ class EarthAxes3D(Axes3DGL):
         :param plot: (*EarthPlot3D*) Plot.
         """
         if plot is None:
-            self._axes = EarthPlot3D()
+            self._axes = EarthGLPlot()
         else:
             self._axes = plot
 

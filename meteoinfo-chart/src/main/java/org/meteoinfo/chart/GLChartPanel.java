@@ -631,6 +631,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
             if (this.getWidth() > 0 && this.getHeight() > 0) {
                 if (this.chart != null) {
                     //this.paintGraphics();
+                    this.chart.setAlwaysUpdateBuffers(true);
                     this.repaintNew();
                 }
             }

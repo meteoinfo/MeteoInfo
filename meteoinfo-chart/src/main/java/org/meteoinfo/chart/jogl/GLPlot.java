@@ -4263,8 +4263,8 @@ public class GLPlot extends Plot {
         }
 
         final float h = (float) width / (float) height;
-        //gl.glViewport(0, 0, width, height);
-        gl.glViewport((int) positionArea.getX(), (int) positionArea.getY(), this.width, this.height);
+        gl.glViewport((int) positionArea.getX(), (int) (height - this.height - positionArea.getY()),
+                this.width, this.height);
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 

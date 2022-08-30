@@ -29,8 +29,7 @@ import mipylib.migl as migl
 __all__ = [
     'addfile','addfiles','addfile_arl','addfile_ascii_grid','addfile_awx','addfile_geotiff',
     'addfile_grads','addfile_hyconc','addfile_hytraj','addfile_hypart','addfile_lonlat',
-    'addfile_micaps',
-    'addfile_mm5','addfile_nc','addfile_grib','addfile_surfer','add_bufr_lookup',
+    'addfile_micaps','addfile_mm5','addfile_nc','addfile_grib','addfile_surfer','add_bufr_lookup',
     'addtimedim','joinncfile','asciiread','asciiwrite','bincreate','binread','binwrite',
     'numasciicol','numasciirow','readtable','convert2nc','grads2nc','ncwrite'
     ]

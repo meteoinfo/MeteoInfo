@@ -987,10 +987,15 @@ class Axes3DGL(Axes3D):
         :returns: Legend
         """
         if len(args) <= 2:
-            x = args[0].dimvalue(1)
-            y = args[0].dimvalue(0)
-            x, y = np.meshgrid(x, y)
             z = args[0]
+            if isinstance(z, DimArray):
+                x = args[0].dimvalue(1)
+                y = args[0].dimvalue(0)
+            else:
+                ny, nx = z.shape
+                x = np.arange(nx)
+                y = np.arange(ny)
+            x, y = np.meshgrid(x, y)
             args = args[1:]
         else:
             x = args[0]

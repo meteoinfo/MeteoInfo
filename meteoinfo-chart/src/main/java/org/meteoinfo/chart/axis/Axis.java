@@ -52,18 +52,14 @@ public class Axis implements Cloneable {
     protected Color tickLabelColor;
     protected float tickLabelAngle;
     protected int tickLabelGap;
+    protected boolean tickLabelAvoidCollision;
     protected double tickStartValue;
     protected double tickDeltaValue;
     protected double minValue;
     protected double maxValue;
     protected double[] tickValues;
-    //private boolean timeAxis;
-    //private String timeFormat;
-    //private TimeUnit timeUnit;
     protected boolean inverse;
-    //private float shift;
     protected List<Double> tickLocations;
-    //private List<String> tickLabels;
     protected List<ChartText> tickLabels;
     protected boolean autoTick;
     protected boolean minorTickVisible;
@@ -87,9 +83,7 @@ public class Axis implements Cloneable {
         this.lineColor = Color.black;
         this.lineWidth = 1.0f;
         this.lineStyle = LineStyles.SOLID;
-        //this.lineStroke = new BasicStroke(1.0f);
         this.tickColor = Color.black;
-        //this.tickStroke = new BasicStroke(1.0f);
         this.tickWidth = 1.0f;
         this.tickLength = 5;
         this.insideTick = false;
@@ -97,14 +91,11 @@ public class Axis implements Cloneable {
         this.tickLabelColor = Color.black;
         this.tickLabelAngle = 0;
         this.tickLabelGap = 1;
+        this.tickLabelAvoidCollision = true;
         this.minValue = 0;
         this.maxValue = 1;
         this.updateTickValues();
-        //this.timeAxis = false;
-        //this.timeFormat = "yyyy-MM-dd";
-        //this.timeUnit = TimeUnit.DAY;
         this.inverse = false;
-        //this.shift = 0;
         this.tickLocations = new ArrayList<>();
         this.tickLabels = new ArrayList<>();
         this.autoTick = true;
@@ -627,12 +618,19 @@ public class Axis implements Cloneable {
     }
 
     /**
-     * Set tick label gap
-     *
-     * @param value Tick label gap
+     * Get whether auto avoid collision of tick labels
+     * @return Whether auto avoid collision of tick labels
      */
-    public void setTickLabelGap(int value) {
-        this.tickLabelGap = value;
+    public boolean isTickLabelAvoidCollision() {
+        return this.tickLabelAvoidCollision;
+    }
+
+    /**
+     * Set whether auto avoid collision of tick labels
+     * @param value Whether auto avoid collision of tick labels
+     */
+    public void setTickLabelAvoidCollision(boolean value) {
+        this.tickLabelAvoidCollision = value;
     }
 
     /**
@@ -1291,9 +1289,9 @@ public class Axis implements Cloneable {
     /**
      * Get label string with maximum length
      *
-     * @return Maximum length lable string
+     * @return Maximum length label string
      */
-    public String getMaxLenLable() {
+    public String getMaxLenLabel() {
         this.updateTickLabels();
         if (this.tickLabels.isEmpty()) {
             return "1";
@@ -1403,13 +1401,13 @@ public class Axis implements Cloneable {
     }
 
     /**
-     * Update lable gap
+     * Update tick label gap to avoid tick labels collision
      *
      * @param g Graphics2D
      * @param rect The rectangle
      */
-    public void updateLabelGap(Graphics2D g, Rectangle2D rect) {
-        if (this.getTickValues() == null) {
+    public void updateTickLabelGap(Graphics2D g, Rectangle2D rect) {
+        if (this.getTickValues() == null || !this.tickLabelAvoidCollision) {
             return;
         }
 
@@ -1524,6 +1522,7 @@ public class Axis implements Cloneable {
             g.setStroke(new BasicStroke(this.tickWidth));
             g.setFont(this.tickLabelFont);
             String drawStr;
+            this.updateTickLabelGap(g, area);
             len = this.tickLength;
             this.updateTickLabels();
             int n = 0;
@@ -1753,7 +1752,7 @@ public class Axis implements Cloneable {
             g.setColor(this.getTickColor());
             g.setStroke(new BasicStroke(this.tickWidth));
             g.setFont(this.getTickLabelFont());
-            this.updateLabelGap(g, area);
+            this.updateTickLabelGap(g, area);
             len = this.getTickLength();
             this.updateTickLabels();
             String drawStr;

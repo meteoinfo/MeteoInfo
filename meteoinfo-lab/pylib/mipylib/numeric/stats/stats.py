@@ -417,7 +417,7 @@ def spearmanr(m, y=None, axis=0):
         observations in the rows. If axis=1, the relationship is transposed: each row represents 
         a variable, while the columns contain observations..
     
-    :returns: Spearman correlation matrix.
+    :returns: Spearman correlation and pvalue.
     """
     if isinstance(m, list):
         m = np.array(m)

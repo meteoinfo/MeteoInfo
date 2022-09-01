@@ -724,27 +724,28 @@ class Axes(object):
 
     def xaxis(self, **kwargs):
         """
-        Set x axis of the axes.
+        Set x-axis of the axes.
         
         :param color: (*Color*) Color of the axis. Default is `black`.
         :param position: (*tuple*) Axis position specified by a 2 tuple of (position type, amount). 
             The position types are ['outerward' | 'axes' | 'data'].
-        :param shift: (*int) Axis shif along x direction. Units is pixel. Default is 0.
-        :param visible: (*boolean*) Set axis visible or not, Default is `None`.
+        :param shift: (*int) Axis shif along x direction. Units are pixel. Default is 0.
+        :param visible: (*bool*) Set axis visible or not, Default is `None`.
         :param linewidth: (*float*) Line width of the axis.
         :param linestyle: (*string*) Line style of the axis.
         :param tickline: (*boolean*) Draw tick line or not.
         :param tickwidth: (*float*) Tick line width.
         :param ticklength: (*float*) Tick line length.
-        :param ticklabel: (*boolean*) Draw tick label or not.
-        :param minortick: (*boolean*) Draw minor tick line or not.
+        :param ticklabel: (*bool*) Draw tick label or not.
+        :param minortick: (*bool*) Draw minor tick line or not.
         :param minorticknum: (*int*) Minor tick line number between two adjacent major tick lines.
-        :param tickin: (*boolean*) Tick lines are ploted inside or outside of the axes.
+        :param tickin: (*bool*) Tick lines are plot inside or outside the axes.
         :param axistype: (*string*) Axis type ['normal' | 'lon' | 'lat' | 'time' | 'log'].
         :param timetickformat: (*string*) Time tick label format, only valid with time axis.
         :param tickfontname: (*string*) Tick label font name.
         :param tickfontsize: (*int*) Tick label font size.
-        :param tickbold: (*boolean*) Tick label font is bold or not.
+        :param tickbold: (*bool*) Tick label font is bold or not.
+        :param tickavoidcoll: (*bool*) Whether avoid collision of tick labels. Default is `True`.
         :param location: (*string*) Locations of the axis ['both' | 'top' | 'bottom'].
         """
         visible = kwargs.pop('visible', None)
@@ -801,6 +802,7 @@ class Axes(object):
             font = Font(tickfontname, Font.BOLD, tickfontsize)
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
+        tickavoidcoll = kwargs.pop('tickavoidcoll', None)
 
         for axis in axislist:
             if not visible is None:
@@ -836,31 +838,34 @@ class Axes(object):
                 axis.setInsideTick(tickin)
             if not ticklabelcolor is None:
                 axis.setTickLabelColor(ticklabelcolor)
+            if not tickavoidcoll is None:
+                axis.setTickLabelAvoidCollision(tickavoidcoll)
             axis.setTickLabelFont(font)
         
     def yaxis(self, **kwargs):
         """
-        Set y axis of the axes.
+        Set y-axis of the axes.
 
         :param color: (*Color*) Color of the y axis. Default is 'black'.
         :param position: (*tuple*) Axis position specified by a 2 tuple of (position type, amount). 
             The position types are ['outerward' | 'axes' | 'data'].
-        :param shift: (*int) Y axis shif along x direction. Units is pixel. Default is 0.
-        :param visible: (*boolean*) Set axis visible or not, Default is `None`.
+        :param shift: (*int) Y axis shift along x direction. Units are pixel. Default is 0.
+        :param visible: (*bool*) Set axis visible or not, Default is `None`.
         :param linewidth: (*float*) Line width of the axis.
         :param linestyle: (*string*) Line style of the axis.
-        :param tickline: (*boolean*) Draw tick line or not.
+        :param tickline: (*bool*) Draw tick line or not.
         :param tickwidth: (*float*) Tick line width.
         :param ticklength: (*float*) Tick line length.
-        :param ticklabel: (*boolean*) Draw tick label or not.
-        :param minortick: (*boolean*) Draw minor tick line or not.
+        :param ticklabel: (*bool*) Draw tick label or not.
+        :param minortick: (*bool*) Draw minor tick line or not.
         :param minorticknum: (*int*) Minor tick line number between two adjacent major tick lines.
-        :param tickin: (*boolean*) Tick lines are ploted inside or outside of the axes.
+        :param tickin: (*bool*) Tick lines are ploted inside or outside the axes.
         :param axistype: (*string*) Axis type ['normal' | 'lon' | 'lat' | 'time' | 'log'].
         :param timetickformat: (*string*) Time tick label format, only valid with time axis.
         :param tickfontname: (*string*) Tick label font name.
         :param tickfontsize: (*int*) Tick label font size.
-        :param tickbold: (*boolean*) Tick label font is bold or not.
+        :param tickbold: (*bool*) Tick label font is bold or not.
+        :param tickavoidcoll: (*bool*) Whether avoid collision of tick labels. Default is `True`.
         :param location: (*string*) Locations of the axis ['both' | 'left' | 'right'].
         """
         visible = kwargs.pop('visible', None)
@@ -917,6 +922,7 @@ class Axes(object):
             font = Font(tickfontname, Font.BOLD, tickfontsize)
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
+        tickavoidcoll = kwargs.pop('tickavoidcoll', None)
 
         for axis in axislist:
             if not visible is None:
@@ -952,6 +958,8 @@ class Axes(object):
                 axis.setInsideTick(tickin)
             if not ticklabelcolor is None:
                 axis.setTickLabelColor(ticklabelcolor)
+            if not tickavoidcoll is None:
+                axis.setTickLabelAvoidCollision(tickavoidcoll)
             axis.setTickLabelFont(font)
     
     def xreverse(self):

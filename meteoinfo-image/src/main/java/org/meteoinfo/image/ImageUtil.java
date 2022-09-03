@@ -6,6 +6,12 @@
 package org.meteoinfo.image;
 
 import org.apache.commons.imaging.*;
+import org.apache.commons.imaging.formats.bmp.BmpImageParser;
+import org.apache.commons.imaging.formats.bmp.BmpImagingParameters;
+import org.apache.commons.imaging.formats.png.PngImageParser;
+import org.apache.commons.imaging.formats.png.PngImagingParameters;
+import org.apache.commons.imaging.formats.tiff.TiffImageParser;
+import org.apache.commons.imaging.formats.tiff.TiffImagingParameters;
 import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.*;
@@ -24,6 +30,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -209,7 +216,7 @@ public class ImageUtil {
                 ImageIO.write(image, "jpg", new File(fileName));
                 break;
             default:
-                Imaging.writeImage(image, new File(fileName), format, null);
+                Imaging.writeImage(image, new File(fileName), format);
                 break;
         }
     }
@@ -254,15 +261,22 @@ public class ImageUtil {
                 }
                 break;
             case BMP:
+                BmpImagingParameters bmpImagingParameters = new BmpImagingParameters();
+                bmpImagingParameters.setPixelDensity(PixelDensity.createFromPixelsPerInch(dpi, dpi));
+                new BmpImageParser().writeImage(image, new FileOutputStream(fileName), bmpImagingParameters);
+                break;
             case PNG:
+                PngImagingParameters pngImagingParameters = new PngImagingParameters();
+                pngImagingParameters.setPixelDensity(PixelDensity.createFromPixelsPerInch(dpi, dpi));
+                new PngImageParser().writeImage(image, new FileOutputStream(fileName), pngImagingParameters);
+                break;
             case TIFF:
-                final Map<String, Object> params = new HashMap<String, Object>();
-                params.put(ImagingConstants.PARAM_KEY_PIXEL_DENSITY,
-                        PixelDensity.createFromPixelsPerInch(dpi, dpi));
-                Imaging.writeImage(image, new File(fileName), format, params);
+                TiffImagingParameters tiffImagingParameters = new TiffImagingParameters();
+                tiffImagingParameters.setPixelDensity(PixelDensity.createFromPixelsPerInch(dpi, dpi));
+                new TiffImageParser().writeImage(image, new FileOutputStream(fileName), tiffImagingParameters);
                 break;
             default:
-                Imaging.writeImage(image, new File(fileName), format, null);
+                Imaging.writeImage(image, new File(fileName), format);
                 break;
         }
     }

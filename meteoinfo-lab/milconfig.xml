@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart\axis">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\gui"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\subplot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
@@ -16,19 +11,22 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\pie"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\savefig"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\subplot_3d_cylinder_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\subplot\subplot_4plots.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\axis\axis_chinese-1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_spherical_harmonic_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\subplot_3d_cylinder_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\subplot\subplot_4plots.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\axis\axis_chinese-1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_spherical_harmonic_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1395,790"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1385,790"/>
 </MeteoInfo>

@@ -30,17 +30,17 @@
         <dependency>
             <groupId>org.ejml</groupId>
             <artifactId>ejml-experimental</artifactId>
-            <version>0.40</version>
+            <version>0.41</version>
         </dependency>
         <dependency>
             <groupId>org.ejml</groupId>
             <artifactId>ejml-simple</artifactId>
-            <version>0.40</version>
+            <version>0.41</version>
         </dependency>
         <dependency>
             <groupId>org.ojalgo</groupId>
             <artifactId>ojalgo</artifactId>
-            <version>51.3.0</version>
+            <version>51.4.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.haifengl</groupId>

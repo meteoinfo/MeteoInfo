@@ -23,23 +23,44 @@ class Figure(GLChartPanel):
     top level container for all plot elements
     """
     
-    def __init__(self, figsize=None, dpi=None, bgcolor='w', **kwargs):
+    def __init__(self, figsize=None, dpi=None, facecolor='w', **kwargs):
         """
         Constructor
         
         :param figsize: (*list*) Optional, width and height of the figure such as ``[600, 400]``.
-        :param bgcolor: (*Color*) Optional, background color of the figure. Default is ``w`` (white).
+        :param facecolor: (*Color*) Optional, fill color of the figure. Default is ``w`` (white).
         :param dpi: (*int*) Dots per inch.
         """
         chart = GLChart()
-        chart.setBackground(plotutil.getcolor(bgcolor))
+        facecolor = plotutil.getcolor(facecolor)
+        if kwargs.has_key('bgcolor'):
+            facecolor = plotutil.getcolor(kwargs.pop('bgcolor'))
+        chart.setBackground(plotutil.getcolor(facecolor))
         if figsize is None:
             super(Figure, self).__init__(chart)
         else:
             super(Figure, self).__init__(chart, figsize[0], figsize[1])
         self.axes = []
         self.current_axes = -1
-            
+
+    @property
+    def facecolor(self):
+        """
+        facecolor property.
+
+        :return: Fill color of the figure.
+        """
+        return self.getChart().getBackground()
+
+    @facecolor.setter
+    def facecolor(self, value):
+        """
+        Set facecolor property value.
+
+        :param value: Fill color of the figure.
+        """
+        self.getChart().setBackground(plotutil.getcolor(value))
+
     def get_size(self):
         """
         Get figure size.

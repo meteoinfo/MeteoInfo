@@ -91,6 +91,32 @@ public class DataConvert {
     }
 
     /**
+     * Byte array convert to short integer
+     *
+     * @param bytes Byte array
+     * @return Short integer value
+     */
+    public static short bytes2Short(byte[] bytes) {
+        short sRet = 0;
+        sRet += (bytes[0] & 0xFF) << 8;
+        sRet += bytes[1] & 0xFF;
+        return sRet;
+    }
+
+    /**
+     * Byte array convert to unsigned short integer
+     *
+     * @param bytes Byte array
+     * @return Unsigned short integer value
+     */
+    public static int bytes2UShort(byte[] bytes) {
+        return (int)(
+                (int)(bytes[1] & 0xff) << 8  |
+                        (int)(bytes[0] & 0xff)
+        );
+    }
+
+    /**
      * Byte array convert to long integer
      *
      * @param bytes Byte array
@@ -115,6 +141,17 @@ public class DataConvert {
             result = (result << 8) - Byte.MIN_VALUE + (int) bytes[i];
         }
         return result;
+    }
+
+    /**
+     * Byte array (2 bytes) convert to integer
+     *
+     * @param bytes byte array
+     * @return Integer value
+     */
+    public static int bytes2Int2(byte[] bytes) {
+        return bytes[1] & 0xFF |
+                (bytes[0] & 0xFF) << 8;
     }
 
     /**

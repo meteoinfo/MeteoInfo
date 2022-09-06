@@ -332,7 +332,7 @@ public enum DataType {
      * convert an unsigned long to a String
      *
      * @param li unsigned int
-     * @return equivilent long value
+     * @return equivalent long value
      */
     static public String unsignedLongToString(long li) {
         if (li >= 0) {
@@ -354,7 +354,7 @@ public enum DataType {
      * widen an unsigned int to a long
      *
      * @param i unsigned int
-     * @return equivilent long value
+     * @return equivalent long value
      */
     static public long unsignedIntToLong(int i) {
         return (i < 0) ? (long) i + 4294967296L : (long) i;
@@ -364,7 +364,7 @@ public enum DataType {
      * widen an unsigned short to an int
      *
      * @param s unsigned short
-     * @return equivilent int value
+     * @return equivalent int value
      */
     static public int unsignedShortToInt(short s) {
         return (s & 0xffff);
@@ -374,7 +374,7 @@ public enum DataType {
      * widen an unsigned byte to a short
      *
      * @param b unsigned byte
-     * @return equivilent short value
+     * @return equivalent short value
      */
     static public short unsignedByteToShort(byte b) {
         return (short) (b & 0xff);

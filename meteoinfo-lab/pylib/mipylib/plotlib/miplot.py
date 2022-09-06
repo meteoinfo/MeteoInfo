@@ -39,12 +39,12 @@ g_figure = None
 g_axes = None
 
 __all__ = [
-    'gca','annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis',
+    'annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis',
     'axism','bar','bar3','barh','barbs','barbsm','bgcolor','box',
     'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
     'contourfm','contourm','contourfslice','contourslice','delfig','draw','draw_if_interactive','errorbar',
     'figure','glfigure','figsize','patch','rectangle','fill','fill_between','fill_betweenx','fimplicit3',
-    'webmap','gc_collect','geoshow','get_figure','gifaddframe','gifanimation','giffinish',
+    'webmap','gca','gcf','gc_collect','geoshow','get_figure','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','isosurface','legend','left_title','lighting','loglog','makecolors',
     'makelegend','makesymbolspec','masklayer','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
@@ -65,9 +65,18 @@ def _copy_docstring_and_deprecators(method, func=None):
         func = decorator(func)
     return func
 
+def gcf():
+    """
+    Get current figure.
+
+    :return: Current figure.
+    """
+    return g_figure
+
 def gca():
     """
     Get current axes
+
     :return: Current axes
     """
     return g_axes
@@ -547,17 +556,17 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
 
     return g_axes, bars
  
-def figure(bgcolor='w', figsize=None, newfig=True, **kwargs):
+def figure(facecolor='w', figsize=None, newfig=True, **kwargs):
     """
     Creates a figure.
     
-    :param bgcolor: (*Color*) Optional, background color of the figure. Default is ``w`` (white) .
+    :param facecolor: (*Color*) Optional, fill color of the figure. Default is ``w`` (white) .
     :param figsize: (*list*) Optional, width and height of the figure such as ``[600, 400]`` .
-        Default is ``None`` with changable size same as *Figures* window.
+        Default is ``None`` with changeable size same as *Figures* window.
     :param newfig: (*boolean*) Optional, if creates a new figure. Default is ``True`` .
     """
     global g_figure
-    g_figure = Figure(figsize, bgcolor=bgcolor, **kwargs)
+    g_figure = Figure(figsize, facecolor=facecolor, **kwargs)
     if not batchmode:
         show(newfig)
         

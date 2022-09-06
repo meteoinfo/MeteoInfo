@@ -51,6 +51,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
     ////First level head record - Part 2
     //private string _satelliteName;
     //private int _factorGridField;
+    private int channelNumber;
     private int _byteGridData;
     //private int _refMarkGridData;
     //private int _scaleGridData;
@@ -85,6 +86,9 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
     private double _yDelt;
     private double _xLB;
     private double _yLB;
+    private int lenColorTable;
+    private int lenCalibration;
+    private int lenLocation;
 
     /// <summary>
     /// start observation time
@@ -195,7 +199,10 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
             this._dataFileName = new String(bytes).trim();
             bytes = new byte[2];
             br.read(bytes);
-            _orderOfInt = DataConvert.bytes2Int(bytes, byteOrder);
+            _orderOfInt = DataConvert.bytes2Int2(bytes);
+            if (_orderOfInt != 0) {
+                this.byteOrder = ByteOrder.BIG_ENDIAN;
+            }
             br.read(bytes);
             _lenHeadP1 = DataConvert.bytes2Int(bytes, byteOrder);
             br.read(bytes);
@@ -280,6 +287,9 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                 }
             }
 
+            tbytes = Arrays.copyOfRange(bytes, yearIdx + 10, yearIdx + 12);
+            channelNumber = DataConvert.bytes2Int(tbytes, byteOrder);
+
             if (_productType == 3) //Get grid parameters
             {
                 tbytes = Arrays.copyOfRange(bytes, yearIdx + 20, yearIdx + 22);
@@ -311,6 +321,13 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
             if (_productType == 1) {
                 getProjection(bytes);
             }
+
+            tbytes = Arrays.copyOfRange(bytes, yearIdx + 48, yearIdx + 50);
+            lenColorTable = DataConvert.bytes2Int(tbytes, byteOrder);
+            tbytes = Arrays.copyOfRange(bytes, yearIdx + 50, yearIdx + 52);
+            lenCalibration = DataConvert.bytes2Int(tbytes, byteOrder);
+            tbytes = Arrays.copyOfRange(bytes, yearIdx + 52, yearIdx + 54);
+            lenLocation = DataConvert.bytes2Int(tbytes, byteOrder);
 
             br.close();
 
@@ -650,7 +667,9 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
     }
 
     private void readXY_1(Range yRange, Range xRange, IndexIterator ii) throws IOException {
-        byte[] imageBytes = getIamgeData();
+        Object[] rawData = getImageData();
+        byte[] imageBytes = (byte[]) rawData[0];
+        int[] calibration = (int[]) rawData[1];
 
         //Get grid data
         int i, j;
@@ -658,9 +677,18 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
         int yNum = (int) _height;
 
         float[] data = new float[yNum * xNum];
-        for (i = 0; i < yNum; i++) {
-            for (j = 0; j < xNum; j++) {
-                data[(yNum - i - 1) * xNum + j] = DataConvert.byte2Int(imageBytes[i * xNum + j]);
+        if (calibration.length > 0) {
+            for (i = 0; i < yNum; i++) {
+                for (j = 0; j < xNum; j++) {
+                    data[(yNum - i - 1) * xNum + j] = calibration[DataConvert.byte2Int(
+                            imageBytes[i * xNum + j]) * 4] * 0.01f;
+                }
+            }
+        } else {
+            for (i = 0; i < yNum; i++) {
+                for (j = 0; j < xNum; j++) {
+                    data[(yNum - i - 1) * xNum + j] = DataConvert.byte2Int(imageBytes[i * xNum + j]);
+                }
             }
         }
 
@@ -847,7 +875,8 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
     }
 
     private GridData getGridData_1() throws IOException {
-        byte[] imageBytes = getIamgeData();
+        Object[] rawData = getImageData();
+        byte[] imageBytes = (byte[]) rawData[0];
 
         //Get grid data
         int i, j;
@@ -879,7 +908,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
      * @return Image data
      * @throws FileNotFoundException
      */
-    public byte[] getIamgeData() throws FileNotFoundException, IOException {
+    public Object[] getImageData() throws FileNotFoundException, IOException {
         RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
 
         byte[] bytes = new byte[_lenHeadP1 + _lenHeadP2];
@@ -891,6 +920,17 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
         int lenVef = DataConvert.bytes2Int(tbytes, byteOrder);
         tbytes = Arrays.copyOfRange(bytes, 100, 102);
         int lenGeo = DataConvert.bytes2Int(tbytes, byteOrder);
+        int[] calibration = new int[lenVef / 2];
+        if (lenVef > 0) {
+            br.seek(104);
+            br.skipBytes(lenPallate);
+            bytes = new byte[lenVef];
+            br.read(bytes);
+            for (int i = 0; i < lenVef / 2; i++) {
+                calibration[i] = DataConvert.bytes2UShort(
+                        Arrays.copyOfRange(bytes, i * 2, i * 2 + 2));
+            }
+        }
 
         //Read byte data 
         br.seek(_lenRecord * _numHeadRecord);
@@ -900,7 +940,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
 
         br.close();
 
-        return imageBytes;
+        return new Object[]{imageBytes, calibration};
     }
 
     @Override

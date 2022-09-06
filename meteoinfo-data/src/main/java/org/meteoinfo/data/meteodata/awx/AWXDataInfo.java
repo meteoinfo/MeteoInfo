@@ -877,6 +877,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
     private GridData getGridData_1() throws IOException {
         Object[] rawData = getImageData();
         byte[] imageBytes = (byte[]) rawData[0];
+        int[] calibration = (int[]) rawData[1];
 
         //Get grid data
         int i, j;
@@ -893,9 +894,18 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
         }
 
         double[][] gData = new double[yNum][xNum];
-        for (i = 0; i < yNum; i++) {
-            for (j = 0; j < xNum; j++) {
-                gData[yNum - i - 1][j] = DataConvert.byte2Int(imageBytes[i * xNum + j]);
+        if (calibration.length > 0) {
+            for (i = 0; i < yNum; i++) {
+                for (j = 0; j < xNum; j++) {
+                    gData[yNum - i - 1][j] = calibration[DataConvert.byte2Int(
+                            imageBytes[i * xNum + j]) * 4] * 0.01f;
+                }
+            }
+        } else {
+            for (i = 0; i < yNum; i++) {
+                for (j = 0; j < xNum; j++) {
+                    gData[yNum - i - 1][j] = DataConvert.byte2Int(imageBytes[i * xNum + j]);
+                }
             }
         }
 

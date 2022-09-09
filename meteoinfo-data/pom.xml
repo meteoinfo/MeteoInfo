@@ -44,8 +44,8 @@
             <groupId>edu.ucar</groupId>
             <artifactId>netcdfAll</artifactId>
             <version>5.5.3</version>
-            <!--<scope>system</scope>
-            <systemPath>${project.basedir}/lib/netcdfAll-5.5.3-SNAPSHOT.jar</systemPath>-->
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/netcdfAll-5.5.3-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.albfernandez</groupId>

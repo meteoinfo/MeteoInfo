@@ -120,7 +120,7 @@ def getcolor(style, alpha=None):
                 c = None
                 print('Not a valid color: {}'.format(style))
                 return c
-    elif isinstance(style, (tuple, list)):
+    elif isinstance(style, (NDArray, tuple, list)):
         if len(style) == 3:
             c = Color(style[0], style[1], style[2])
         else:

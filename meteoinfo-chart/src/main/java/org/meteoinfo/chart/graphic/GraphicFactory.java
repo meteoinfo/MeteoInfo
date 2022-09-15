@@ -7871,11 +7871,11 @@ public class GraphicFactory {
      * @param y        Y coordinates
      * @param z        Z coordinates
      * @param isoLevel iso level
-     * @param pb       Polygon break
+     * @param ls       Legend scheme
      * @return Graphics
      */
     public static TriMeshGraphic isosurface(Array data, Array x, Array y, Array z,
-                                            float isoLevel, PolygonBreak pb) {
+                                            float isoLevel, LegendScheme ls) {
         x = x.copyIfView();
         y = y.copyIfView();
         z = z.copyIfView();
@@ -7892,8 +7892,8 @@ public class GraphicFactory {
         }
 
         TriMeshGraphic meshGraphic = new TriMeshGraphic();
-        meshGraphic.setLegendBreak(pb);
-        meshGraphic.setVertexData(vertexData);
+        meshGraphic.setTriangles(vertexData);
+        meshGraphic.setLegendScheme(ls);
 
         return meshGraphic;
     }
@@ -7906,12 +7906,12 @@ public class GraphicFactory {
      * @param y        Y coordinates
      * @param z        Z coordinates
      * @param isoLevel iso level
-     * @param pb       Polygon break
+     * @param ls       Legend scheme
      * @param nThreads Thread number
      * @return Graphics
      */
     public static TriMeshGraphic isosurface(final Array data, final Array x, final Array y, final Array z,
-                                            final float isoLevel, PolygonBreak pb, int nThreads) {
+                                            final float isoLevel, LegendScheme ls, int nThreads) {
         // TIMER
         ArrayList<Thread> threads = new ArrayList<>();
         final ArrayList<ArrayList<float[]>> results = new ArrayList<>();
@@ -7979,8 +7979,96 @@ public class GraphicFactory {
         }
 
         TriMeshGraphic meshGraphic = new TriMeshGraphic();
-        meshGraphic.setLegendBreak(pb);
-        meshGraphic.setVertexData(vertexData);
+        meshGraphic.setTriangles(vertexData);
+        meshGraphic.setLegendScheme(ls);
+
+        return meshGraphic;
+    }
+
+    /**
+     * Create isosurface graphics
+     *
+     * @param data     3d data array
+     * @param x        X coordinates
+     * @param y        Y coordinates
+     * @param z        Z coordinates
+     * @param isoLevel iso level
+     * @param cData    Color data array
+     * @param ls       Legend scheme
+     * @param nThreads Thread number
+     * @return Graphics
+     */
+    public static TriMeshGraphic isosurface(final Array data, final Array x, final Array y, final Array z,
+                                            final float isoLevel, final Array cData, LegendScheme ls, int nThreads) {
+        // TIMER
+        ArrayList<Thread> threads = new ArrayList<>();
+        final ArrayList<ArrayList<float[]>> results = new ArrayList<>();
+
+        // Thread work distribution
+        int nz = (int) z.getSize();
+        int remainder = nz % nThreads;
+        int segment = nz / nThreads;
+
+        // Z axis offset for vertice position calculation
+        int zAxisOffset = 0;
+
+        for (int i = 0; i < nThreads; i++) {
+            // Distribute remainder among first (remainder) threads
+            int segmentSize = (remainder-- > 0) ? segment + 1 : segment;
+
+            // Padding needs to be added to correctly close the gaps between segments
+            final int paddedSegmentSize = (i != nThreads - 1) ? segmentSize + 1 : segmentSize;
+
+            // Finished callback
+            final CallbackMC callback = new CallbackMC() {
+                @Override
+                public void run() {
+                    results.add(getVertices());
+                }
+            };
+
+            // Java...
+            final int finalZAxisOffset = zAxisOffset;
+
+            // Start the thread
+            Thread t = new Thread() {
+                public void run() {
+                    MarchingCubes.marchingCubes(data, x, y, z, isoLevel, paddedSegmentSize, finalZAxisOffset, callback);
+                }
+            };
+
+            threads.add(t);
+            t.start();
+
+            // Correct offsets for next iteration
+            zAxisOffset += segmentSize;
+        }
+
+        // Join the threads
+        for (int i = 0; i < threads.size(); i++) {
+            try {
+                threads.get(i).join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        int nVertex = 0;
+        for (List<float[]> vertices : results) {
+            nVertex += vertices.size();
+        }
+        float[] vertexData = new float[nVertex * 3];
+        int pos = 0;
+        for (List<float[]> vertices : results) {
+            for (int i = 0; i < vertices.size(); i++) {
+                System.arraycopy(vertices.get(i), 0, vertexData, pos, 3);
+                pos += 3;
+            }
+        }
+
+        TriMeshGraphic meshGraphic = new TriMeshGraphic();
+        meshGraphic.setTriangles(vertexData, cData, x, y, z);
+        meshGraphic.setLegendScheme(ls);
 
         return meshGraphic;
     }

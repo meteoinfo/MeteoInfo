@@ -1199,10 +1199,24 @@ class Axes3DGL(Axes3D):
             x = args[0]
             y = args[1]
             z = args[2]
+            if x.ndim == 3:
+                x = x[0,0]
+            if y.ndim == 3:
+                y = y[0,:,0]
+            if z.ndim == 3:
+                z = z[:,0,0]
             data = args[3]
             isovalue = args[4]
             args = args[5:]
-        cdata = kwargs.pop('cdata', None)
+
+        cdata = None
+        if len(args) > 0:
+            if isinstance(args[0], NDArray) and args[0].shape == data.shape:
+                cdata = args[0]
+                args = args[1:]
+
+        facecolor = kwargs.pop('facecolor', 'c')
+
         if not cdata is None:
             cmap = plotutil.getcolormap(**kwargs)
             if len(args) > 0:
@@ -1217,13 +1231,14 @@ class Axes3DGL(Axes3D):
             else:
                 ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
             ls = ls.convertTo(ShapeTypes.POLYGON)
-            edge = kwargs.pop('edge', True)
-            kwargs['edge'] = edge
-            plotutil.setlegendscheme(ls, **kwargs)
         else:
-            if not kwargs.has_key('edgecolor'):
-                kwargs['edgecolor'] = None
-            ls = plotutil.getlegendbreak('polygon', **kwargs)[0]
+            facecolor = plotutil.getcolor(facecolor)
+            ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, facecolor, 1)
+
+        if not kwargs.has_key('edgecolor'):
+            kwargs['edgecolor'] = None
+        plotutil.setlegendscheme(ls, **kwargs)
+
         nthread = kwargs.pop('nthread', 4)
         if nthread is None:
             graphics = GraphicFactory.isosurface(data.asarray(), x.asarray(), y.asarray(), z.asarray(), isovalue, ls)
@@ -1232,7 +1247,12 @@ class Axes3DGL(Axes3D):
             x = x.asarray().copyIfView()
             y = y.asarray().copyIfView()
             z = z.asarray().copyIfView()
-            graphics = GraphicFactory.isosurface(data, x, y, z, isovalue, ls, nthread)
+            if cdata is None:
+                graphics = GraphicFactory.isosurface(data, x, y, z, isovalue, ls, nthread)
+            else:
+                cdata = cdata.asarray().copyIfView()
+                graphics = GraphicFactory.isosurface(data, x, y, z, isovalue, cdata, ls, nthread)
+
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)

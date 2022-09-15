@@ -23,6 +23,9 @@ public class TriMeshRender extends JOGLGraphicRender {
     //private IntBuffer vboNormal;
     private Program program;
     private float[] vertexPosition;
+    private int sizePosition;
+    private int sizeNormal;
+    private int sizeColor;
 
     /**
      * Constructor
@@ -56,7 +59,7 @@ public class TriMeshRender extends JOGLGraphicRender {
     }
 
     private void initVertexBuffer() {
-        vbo = GLBuffers.newDirectIntBuffer(1);
+        vbo = GLBuffers.newDirectIntBuffer(2);
     }
 
     @Override
@@ -68,20 +71,27 @@ public class TriMeshRender extends JOGLGraphicRender {
         super.setTransform((Transform) transform.clone());
 
         if (updateBuffer) {
-            vertexPosition = meshGraphic.getVertexData(this.transform);
+            vertexPosition = meshGraphic.getVertexPosition(this.transform);
             FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
             meshGraphic.calculateNormalVectors(vertexPosition);
             FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
-            int sizePosition = vertexBuffer.capacity() * Float.BYTES;
-            int sizeNormal = normalBuffer.capacity() * Float.BYTES;
+            FloatBuffer colorBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexColor());
+            sizePosition = vertexBuffer.capacity() * Float.BYTES;
+            sizeNormal = normalBuffer.capacity() * Float.BYTES;
+            sizeColor = colorBuffer.capacity() * Float.BYTES;
 
-            gl.glGenBuffers(1, vbo);
+            gl.glGenBuffers(2, vbo);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal,null, GL.GL_STATIC_DRAW);
-            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vertexBuffer.capacity() * Float.BYTES, vertexBuffer);
-            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, vertexBuffer.capacity() * Float.BYTES,
-                    normalBuffer.capacity() * Float.BYTES, normalBuffer);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal + sizeColor, null, GL.GL_STATIC_DRAW);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeNormal, normalBuffer);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal, sizeColor, colorBuffer);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+            IntBuffer indexBuffer = GLBuffers.newDirectIntBuffer(meshGraphic.getVertexIndices());
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
+            gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * Integer.BYTES, indexBuffer, GL.GL_STATIC_DRAW);
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
     }
 
@@ -138,6 +148,84 @@ public class TriMeshRender extends JOGLGraphicRender {
 
     @Override
     public void draw() {
+
+        if (useShader) {
+            program.use(gl);
+            setUniforms();
+
+            int attribVertexPosition = gl.glGetAttribLocation(program.getProgramId(), "vertexPosition");
+            int attribVertexNormal = gl.glGetAttribLocation(program.getProgramId(), "vertexNormal");
+
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+
+            gl.glEnableVertexAttribArray(attribVertexPosition);
+            gl.glEnableVertexAttribArray(attribVertexNormal);
+
+            gl.glVertexAttribPointer(attribVertexPosition, 3, GL.GL_FLOAT, false, 0, 0);
+            gl.glVertexAttribPointer(attribVertexNormal, 3, GL.GL_FLOAT, false, 0, vertexPosition.length * Float.BYTES);
+
+            gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
+
+            gl.glDisableVertexAttribArray(attribVertexPosition);
+            gl.glDisableVertexAttribArray(attribVertexNormal);
+
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+            gl.glUseProgram(0);
+        } else {
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
+
+            // enable vertex arrays
+            gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+            gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+            gl.glNormalPointer(GL.GL_FLOAT, 0, sizePosition);
+            gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+            gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
+            gl.glColorPointer(4, GL.GL_FLOAT, 0, sizePosition + sizeNormal);
+
+            PolygonBreak pb = (PolygonBreak) meshGraphic.getLegendScheme().getLegendBreak(0);
+            if (pb.isDrawFill()) {
+                gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+                gl.glPolygonOffset(1.0f, 1.0f);
+                if (meshGraphic.isFaceInterp()) {
+                    gl.glDrawElements(GL2.GL_TRIANGLES, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
+                } else {
+                    gl.glShadeModel(GL2.GL_FLAT);
+                    gl.glDrawElements(GL2.GL_TRIANGLES, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
+                    gl.glShadeModel(GL2.GL_SMOOTH);
+                }
+            }
+            if (pb.isDrawOutline()) {
+                boolean lightEnabled = this.lighting.isEnable();
+                if (lightEnabled) {
+                    this.lighting.stop(gl);
+                }
+                gl.glLineWidth(pb.getOutlineSize() * this.dpiScale);
+                if (!meshGraphic.isMesh()) {
+                    gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
+                    float[] rgba = pb.getOutlineColor().getRGBComponents(null);
+                    gl.glColor4fv(rgba, 0);
+                }
+                gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
+                //gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
+                gl.glDrawElements(GL.GL_TRIANGLES, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
+                gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
+                if (lightEnabled) {
+                    this.lighting.start(gl);
+                }
+            }
+
+            gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+            gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+            gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
+
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+        }
+    }
+
+    public void draw_bak() {
 
         if (useShader) {
             program.use(gl);

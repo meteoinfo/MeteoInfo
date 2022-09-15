@@ -100,7 +100,7 @@ public class MeshRender extends JOGLGraphicRender {
 
             gl.glGenBuffers(2, vbo);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, totalSize,null, GL.GL_STATIC_DRAW);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, totalSize, null, GL.GL_STATIC_DRAW);
             gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
             gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeNormal, normalBuffer);
             gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal, sizeColorTexture, ctBuffer);

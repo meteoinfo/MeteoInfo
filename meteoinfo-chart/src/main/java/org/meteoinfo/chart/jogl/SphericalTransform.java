@@ -109,7 +109,7 @@ public class SphericalTransform {
             return isosurfaceGraphics;
         } else if (graphic instanceof TriMeshGraphic) {
             TriMeshGraphic meshGraphic = (TriMeshGraphic) graphic;
-            float[] vertexData = meshGraphic.getVertexData();
+            float[] vertexData = meshGraphic.getVertexPosition();
             Vector3f vector3f;
             for (int i = 0; i < vertexData.length; i+=3) {
                 vector3f = transform(vertexData[i], vertexData[i+1], vertexData[i+2]);
@@ -117,7 +117,7 @@ public class SphericalTransform {
                 vertexData[i+1] = vector3f.y;
                 vertexData[i+2] = vector3f.z;
             }
-            meshGraphic.setVertexData(vertexData);
+            meshGraphic.setVertexPosition(vertexData);
             return meshGraphic;
         } else if (graphic instanceof ParticleGraphics) {
             ParticleGraphics particleGraphics = (ParticleGraphics) graphic;

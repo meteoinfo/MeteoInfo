@@ -733,10 +733,11 @@ class NDArray(object):
         returns: (*array_like*) Sum result
         """
         if axis is None:
-            return ArrayMath.cumsum(self.flatten()._array, 0)
+            r = ArrayMath.cumsum(self._array)
         else:
             r = ArrayMath.cumsum(self._array, axis)
-            return NDArray(r)
+
+        return NDArray(r)
 
     def prod(self):
         """

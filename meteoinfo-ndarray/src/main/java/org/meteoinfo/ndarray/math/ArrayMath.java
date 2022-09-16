@@ -6803,6 +6803,125 @@ public class ArrayMath {
     }
 
     /**
+     * Product array
+     *
+     * @param a Array a
+     * @return Product value
+     */
+    public static Number prod(Array a) {
+        double p = 1.0D;
+        double v;
+        int n = 0;
+        IndexIterator iterA = a.getIndexIterator();
+        while (iterA.hasNext()) {
+            v = iterA.getDoubleNext();
+            if (!Double.isNaN(v)) {
+                p *= v;
+                n += 1;
+            }
+        }
+        if (n == 0) {
+            return Double.NaN;
+        } else {
+            return doubleToNumber(p, a.getDataType());
+        }
+    }
+
+    /**
+     * Compute product value of an array along an axis (dimension)
+     *
+     * @param a Array a
+     * @param axis Axis
+     * @return Product value array
+     * @throws InvalidRangeException
+     */
+    public static Array prod(Array a, int axis) throws InvalidRangeException {
+        int[] dataShape = a.getShape();
+        int[] shape = new int[dataShape.length - 1];
+        int idx;
+        for (int i = 0; i < dataShape.length; i++) {
+            idx = i;
+            if (idx == axis) {
+                continue;
+            } else if (idx > axis) {
+                idx -= 1;
+            }
+            shape[idx] = dataShape[i];
+        }
+        Array r = Array.factory(a.getDataType(), shape);
+        double s;
+        Index indexr = r.getIndex();
+        int[] current;
+        for (int i = 0; i < r.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            List<Range> ranges = new ArrayList<>();
+            for (int j = 0; j < dataShape.length; j++) {
+                if (j == axis) {
+                    ranges.add(new Range(0, dataShape[j] - 1, 1));
+                } else {
+                    idx = j;
+                    if (idx > axis) {
+                        idx -= 1;
+                    }
+                    ranges.add(new Range(current[idx], current[idx], 1));
+                }
+            }
+            s = prod(a, ranges);
+            r.setDouble(i, s);
+            indexr.incr();
+        }
+
+        return r;
+    }
+
+    /**
+     * Compute product value of an array
+     *
+     * @param a Array a
+     * @param ranges Range list
+     * @return Product value
+     * @throws InvalidRangeException
+     */
+    public static double prod(Array a, List<Range> ranges) throws InvalidRangeException {
+        double s = 1.0, v;
+        int n = 0;
+        IndexIterator ii = a.getRangeIterator(ranges);
+        while (ii.hasNext()) {
+            v = ii.getDoubleNext();
+            if (!Double.isNaN(v)) {
+                s *= v;
+                n += 1;
+            }
+        }
+        if (n == 0) {
+            s = Double.NaN;
+        }
+        return s;
+    }
+
+    /**
+     * Return the cumulative sum of the elements as flatten array.
+     *
+     * @param a Array a
+     *
+     * @return Sum value array
+     * @throws InvalidRangeException
+     */
+    public static Array cumsum(Array a) {
+        Array r = Array.factory(a.getDataType(), new int[]{(int) a.getSize()});
+        int i = 0;
+        IndexIterator iterA = a.getIndexIterator();
+        double v = 0;
+        while (iterA.hasNext()) {
+            v += iterA.getDoubleNext();
+            r.setDouble(i, v);
+            i += 1;
+        }
+
+        return r;
+    }
+
+    /**
      * Return the cumulative sum of the elements along a given axis.
      *
      * @param a Array a
@@ -6871,6 +6990,103 @@ public class ArrayMath {
         while (ii.hasNext()) {
             v = ii.getDoubleNext();
             s += v;
+            r.add(s);
+        }
+
+        return r;
+    }
+
+    /**
+     * Return the cumulative product of the elements as flatten array.
+     *
+     * @param a Array a
+     *
+     * @return Product value array
+     * @throws InvalidRangeException
+     */
+    public static Array cumprod(Array a) {
+        Array r = Array.factory(a.getDataType(), new int[]{(int) a.getSize()});
+        int i = 0;
+        IndexIterator iterA = a.getIndexIterator();
+        double v = 1;
+        while (iterA.hasNext()) {
+            v *= iterA.getDoubleNext();
+            r.setDouble(i, v);
+            i += 1;
+        }
+
+        return r;
+    }
+
+    /**
+     * Return the cumulative product of the elements along a given axis.
+     *
+     * @param a Array a
+     * @param axis Axis
+     * @return Product value array
+     * @throws InvalidRangeException
+     */
+    public static Array cumprod(Array a, int axis) throws InvalidRangeException {
+        int[] dataShape = a.getShape();
+        int[] shape = new int[dataShape.length - 1];
+        int idx;
+        for (int i = 0; i < dataShape.length; i++) {
+            idx = i;
+            if (idx == axis) {
+                continue;
+            } else if (idx > axis) {
+                idx -= 1;
+            }
+            shape[idx] = dataShape[i];
+        }
+        Array r = Array.factory(a.getDataType(), shape);
+        Array rr = Array.factory(a.getDataType(), dataShape);
+        List<Double> s;
+        Index indexr = r.getIndex();
+        Index indexrr = rr.getIndex();
+        int[] current, currentrr = indexrr.getCurrentCounter();
+        for (int i = 0; i < r.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            List<Range> ranges = new ArrayList<>();
+            for (int j = 0; j < dataShape.length; j++) {
+                if (j == axis) {
+                    ranges.add(new Range(0, dataShape[j] - 1, 1));
+                } else {
+                    idx = j;
+                    if (idx > axis) {
+                        idx -= 1;
+                    }
+                    ranges.add(new Range(current[idx], current[idx], 1));
+                    currentrr[j] = current[idx];
+                }
+            }
+            s = cumprod(a, ranges);
+            for (int j = 0; j < s.size(); j++) {
+                currentrr[axis] = j;
+                rr.setDouble(indexrr.set(currentrr), s.get(j));
+            }
+            indexr.incr();
+        }
+        r = null;
+
+        return rr;
+    }
+
+    /**
+     * Compute cumulative product value of an array
+     *
+     * @param a Array a
+     * @param ranges Range list
+     * @return Product value
+     * @throws InvalidRangeException
+     */
+    public static List<Double> cumprod(Array a, List<Range> ranges) throws InvalidRangeException {
+        double s = 1, v;
+        IndexIterator ii = a.getRangeIterator(ranges);
+        List<Double> r = new ArrayList<>();
+        while (ii.hasNext()) {
+            v = ii.getDoubleNext();
+            s *= v;
             r.add(s);
         }
 

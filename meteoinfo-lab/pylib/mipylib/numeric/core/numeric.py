@@ -40,14 +40,14 @@ __all__ = [
     'argmin','argmax','argsort','array','array_split','asanyarray','asarray','asgridarray',
     'asgriddata','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
-    'concatenate','corrcoef','cos','cosh','cumsum','cylinder','degrees','delete','delnan','diag','diff',
+    'concatenate','corrcoef','cos','cosh','cylinder','degrees','delete','delnan','diag','diff',
     'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','identity','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','linspace','log','log10','logical_not','logspace',
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reshape',
     'repeat','roll','rolling_mean','rot90','round','sign','sin','sinh','shape','smooth5','smooth9','sort',
-    'sphere','squeeze','split','sqrt','square','std','sum','swapaxes','take','tan','tanh','tile',
+    'sphere','squeeze','split','sqrt','square','std','swapaxes','take','tan','tanh','tile',
     'transpose','trapz','vdot','unravel_index','var','vstack','zeros','zeros_like'
     ]
 
@@ -1179,62 +1179,6 @@ def allclose(a, b, rtol=1e-05, atol=1e-08, equal_nan=False):
     """
     return all(isclose(a, b, rtol, atol, equal_nan))
 
-def sum(x, axis=None):
-    """
-    Sum of array elements over a given axis.
-    
-    :param x: (*array_like or list*) Input values.
-    :param axis: (*int*) Axis along which the standard deviation is computed. 
-        The default is to compute the standard deviation of the flattened array.
-    
-    :returns: (*array_like*) Sum result
-    """
-    if isinstance(x, list):
-        if isinstance(x[0], NDArray):
-            a = []
-            for xx in x:
-                a.append(xx.asarray())
-            r = ArrayMath.sum(a)
-            if type(x[0]) is NDArray:            
-                return NDArray(r)
-            else:
-                return DimArray(NDArray(r), x[0].dims, x[0].fill_value, x[0].proj)
-        else:
-            x = array(x)
-    if axis is None:
-        r = ArrayMath.sum(x.asarray())
-        return r
-    else:
-        r = ArrayMath.sum(x.asarray(), axis)
-        if type(x) is NDArray:
-            return NDArray(r)
-        else:
-            dims = []
-            for i in range(0, x.ndim):
-                if i != axis:
-                    dims.append(x.dims[i])
-            return DimArray(NDArray(r), dims, x.fill_value, x.proj)
-            
-def cumsum(x, axis=None):
-    """
-    Return the cumulative sum of the elements along a given axis.
-    
-    :param x: (*array_like or list*) Input values.
-    :param axis: (*int*) Axis along which the standard deviation is computed. 
-        The default is to compute the standard deviation of the flattened array.
-    
-    :returns: (*array_like*) Cumulative sum result.
-    """
-    x = asarray(x)
-    r = x.cumsum(axis)
-    if type(x) is NDArray:
-        return r
-    else:
-        dims = []
-        for i in range(0, x.ndim):
-            dims.append(x.dims[i])
-        return DimArray(r, dims, x.fill_value, x.proj)
-            
 def mean(x, axis=None, keepdims=False):
     """
     Compute tha arithmetic mean along the specified axis.

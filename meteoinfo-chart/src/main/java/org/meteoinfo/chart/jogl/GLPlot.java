@@ -6,7 +6,6 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.math.VectorUtil;
-import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
@@ -292,6 +291,11 @@ public class GLPlot extends Plot {
         return this.graphicExtent;
     }
 
+    @Override
+    public Extent getExtent() {
+        return this.graphicExtent;
+    }
+
     /**
      * Get extent
      *
@@ -306,7 +310,8 @@ public class GLPlot extends Plot {
      *
      * @param value Extent
      */
-    public void setDrawExtent(Extent3D extent) {
+    @Override
+    public void setDrawExtent(Extent extent) {
         this.drawExtent = (Extent3D) extent;
         this.transform.setExtent(this.drawExtent);
 

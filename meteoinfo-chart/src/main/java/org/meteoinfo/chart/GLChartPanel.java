@@ -1206,20 +1206,13 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      */
     @Override
     public void onUndoZoomClick() {
-        AbstractPlot2D xyplot;
+        Plot plot;
         if (this.currentPlot == null) {
-            xyplot = (AbstractPlot2D) this.chart.getPlots().get(0);
+            plot = this.chart.getPlots().get(0);
         } else {
-            xyplot = (AbstractPlot2D) this.currentPlot;
+            plot = this.currentPlot;
         }
-        xyplot.setDrawExtent((Extent) xyplot.getExtent().clone());
-//        if (xyplot instanceof MapPlot) {
-//            MapPlot plot = (MapPlot) xyplot;
-//            plot.setDrawExtent(plot.getMapView().getLastAddedLayer().getExtent());
-//        } else {
-//            xyplot.setAutoExtent();
-//        }
-        //this.paintGraphics();
+        plot.setDrawExtent((Extent) plot.getExtent().clone());
         this.repaintNew();
     }
 

@@ -1295,7 +1295,10 @@ class Axes3DGL(Axes3D):
         x, y, z = np.meshgrid(a, b, c)
         v = f(x, y, z)
 
-        return self.isosurface(a, b, c, v, 0, *args, **kwargs)
+        if not kwargs.has_key('edgecolor'):
+            kwargs['edgecolor'] = 'k'
+
+        return self.isosurface(a, b, c, v, 0, z, *args, **kwargs)
 
     def particles(self, *args, **kwargs):
         """

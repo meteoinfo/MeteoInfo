@@ -93,7 +93,7 @@ public class MapPlot3D extends Plot3DGL {
      * @param value Extent
      */
     @Override
-    public void setDrawExtent(Extent3D value) {
+    public void setDrawExtent(Extent value) {
         super.setDrawExtent(value);
 
         if (!this.projInfo.isLonLat()) {

@@ -1,6 +1,7 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.chart.Margin;
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.data.Dataset;
 
 import java.awt.*;
@@ -164,5 +165,15 @@ public class SubPlots extends Plot {
     @Override
     public Margin getTightInset(Graphics2D g, Rectangle2D positionArea) {
         return null;
+    }
+
+    @Override
+    public Extent getExtent() {
+        return null;
+    }
+
+    @Override
+    public void setDrawExtent(Extent extent) {
+
     }
 }

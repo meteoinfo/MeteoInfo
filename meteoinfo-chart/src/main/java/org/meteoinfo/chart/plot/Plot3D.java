@@ -566,6 +566,11 @@ public class Plot3D extends Plot {
         this.axesExtent = value;
     }
 
+    @Override
+    public void setDrawExtent(Extent extent) {
+        this.axesExtent = (Extent3D) extent;
+    }
+
     // </editor-fold>
     // <editor-fold desc="Methods">    
     private void updateExtent() {

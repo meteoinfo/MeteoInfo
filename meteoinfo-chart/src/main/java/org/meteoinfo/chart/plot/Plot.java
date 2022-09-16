@@ -6,6 +6,8 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.chart.Margin;
+import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.data.Dataset;
 
 import java.awt.*;
@@ -54,13 +56,13 @@ public abstract class Plot {
     private Rectangle2D outerPositionArea;
     private Margin tightInset = new Margin();
     
-    /** If is sub plot. */
+    /** If is sub-plot. */
     public boolean isSubPlot = false;
     
-    /** Column index as a sub plot. */
+    /** Column index as a sub-plot. */
     public int columnIndex = 0;
     
-    /** Row index as a sub plot. */
+    /** Row index as a sub-plot. */
     public int rowIndex = 0;
 
     private boolean outerPosActive = true;
@@ -295,7 +297,19 @@ public abstract class Plot {
      */
     public void setSymbolAntialias(boolean value) {
         this.symbolAntialias = value;
-    }   
+    }
+
+    /**
+     * Get graphic extent
+     * @return Graphic extent
+     */
+    public abstract Extent getExtent();
+
+    /**
+     * Set draw extent
+     * @param extent Draw extent
+     */
+    public abstract void setDrawExtent(Extent extent);
     
     /**
      * Draw graphics

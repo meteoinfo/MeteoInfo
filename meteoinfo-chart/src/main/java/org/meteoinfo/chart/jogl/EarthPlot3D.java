@@ -80,8 +80,8 @@ public class EarthPlot3D extends Plot3DGL {
     }
 
     @Override
-    public void setDrawExtent(Extent3D value) {
-        this.drawExtent = value;
+    public void setDrawExtent(Extent value) {
+        this.drawExtent = (Extent3D) value;
         this.transform.setExtent(this.drawExtent);
     }
 

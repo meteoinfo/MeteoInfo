@@ -285,6 +285,7 @@ public abstract class AbstractPlot2D extends Plot {
      *
      * @param extent Extent
      */
+    @Override
     public void setDrawExtent(Extent extent) {
         this.drawExtent = extent;
         this.getAxis(Location.BOTTOM).setMinMaxValue(extent.minX, extent.maxX);
@@ -307,6 +308,7 @@ public abstract class AbstractPlot2D extends Plot {
      *
      * @return Extent
      */
+    @Override
     public Extent getExtent() {
         return this.extent;
     }

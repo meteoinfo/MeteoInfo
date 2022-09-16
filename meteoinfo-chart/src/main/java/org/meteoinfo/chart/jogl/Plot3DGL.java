@@ -298,6 +298,11 @@ public class Plot3DGL extends Plot implements GLEventListener {
         return this.graphicExtent;
     }
 
+    @Override
+    public Extent getExtent() {
+        return this.graphicExtent;
+    }
+
     /**
      * Get extent
      *
@@ -312,7 +317,8 @@ public class Plot3DGL extends Plot implements GLEventListener {
      *
      * @param value Extent
      */
-    public void setDrawExtent(Extent3D extent) {
+    @Override
+    public void setDrawExtent(Extent extent) {
         this.drawExtent = (Extent3D) extent;
         this.transform.setExtent(this.drawExtent);
 

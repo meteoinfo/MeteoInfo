@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\array">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\optimize">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\others"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\test"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
-    <RecentFolder Folder="D:\Temp\test\ai"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\regression"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
@@ -13,24 +12,23 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\optimize"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface\heart_cdata.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\cumprod_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\prod_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\curve_fit_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface\heart_cdata.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\array\cumprod_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\array\prod_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\curve_fit_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -38,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1397,779"/>
 </MeteoInfo>

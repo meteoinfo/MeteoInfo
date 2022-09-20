@@ -11,6 +11,9 @@ public class MyParametricUnivariateFunction implements ParametricUnivariateFunct
     private int nbPoints;
     private double stepSize;
 
+    /** A number close to zero, between machine epsilon and its square root. */
+    double EPSILON = 1E-8;
+
     /**
      * Constructor
      * @param function ParamUnivariateFunction
@@ -38,6 +41,7 @@ public class MyParametricUnivariateFunction implements ParametricUnivariateFunct
     @Override
     public double[] gradient(double x, double ... parameters) {
         function.setParameters(parameters);
+        double fx = function.value(x);
 
         int n = parameters.length;
         double[] gradients = new double[n];
@@ -45,25 +49,23 @@ public class MyParametricUnivariateFunction implements ParametricUnivariateFunct
             gradients[i] = Double.POSITIVE_INFINITY;
         }
 
-        try {
-            // create a differentiator
-            FiniteDifferencesDifferentiator differentiator =
-                    new FiniteDifferencesDifferentiator(nbPoints, stepSize);
-
-            // create a new function that computes both the value and the derivatives
-            // using DerivativeStructure
-            UnivariateDifferentiableFunction diffFunc = differentiator.differentiate(function);
-
-            for (int i = 0; i < n; i++) {
-                DerivativeStructure xDS = new DerivativeStructure(n, 1, i, parameters[i]);
-                DerivativeStructure yDS = diffFunc.value(xDS);
-                int[] idx = new int[n];
-                idx[i] = 1;
-                gradients[i] = yDS.getPartialDerivative(idx);
+        double[] xh = new double[n];
+        for (int i = 0; i < n; i++) {
+            System.arraycopy(parameters, 0, xh, 0, n);
+            double xi = parameters[i];
+            double h = EPSILON * Math.abs(xi);
+            if (h == 0.0) {
+                h = EPSILON;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            xh[i] = xi + h; // trick to reduce finite-precision error.
+            h = xh[i] - xi;
+
+            function.setParameters(xh);
+            double fh = function.value(x);
+            xh[i] = xi;
+            gradients[i] = (fh - fx) / h;
         }
+        function.setParameters(parameters);
 
         return gradients;
 

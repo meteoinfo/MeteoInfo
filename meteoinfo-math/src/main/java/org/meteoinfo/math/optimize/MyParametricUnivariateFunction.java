@@ -1,6 +1,7 @@
 package org.meteoinfo.math.optimize;
 
 import org.apache.commons.math4.legacy.analysis.ParametricUnivariateFunction;
+import org.apache.commons.math4.legacy.analysis.UnivariateFunction;
 import org.apache.commons.math4.legacy.analysis.differentiation.DerivativeStructure;
 import org.apache.commons.math4.legacy.analysis.differentiation.FiniteDifferencesDifferentiator;
 import org.apache.commons.math4.legacy.analysis.differentiation.UnivariateDifferentiableFunction;
@@ -49,6 +50,29 @@ public class MyParametricUnivariateFunction implements ParametricUnivariateFunct
             gradients[i] = Double.POSITIVE_INFINITY;
         }
 
+        FiniteDifferencesDifferentiator differentiator =
+                new FiniteDifferencesDifferentiator(5, 0.01);
+        for (int i = 0; i < n; i++) {
+            UnivariateFunction uf = new MyUnivariateFunction(function, x, i, parameters);
+            UnivariateDifferentiableFunction f = differentiator.differentiate(uf);
+            DerivativeStructure y = f.value(new DerivativeStructure(1, 1, 0, parameters[i]));
+            gradients[i] = y.getPartialDerivative(1);
+        }
+        function.setParameters(parameters);
+
+        return gradients;
+    }
+
+    public double[] gradient_bak(double x, double ... parameters) {
+        function.setParameters(parameters);
+        double fx = function.value(x);
+
+        int n = parameters.length;
+        double[] gradients = new double[n];
+        for (int i = 0; i < n; i++) {
+            gradients[i] = Double.POSITIVE_INFINITY;
+        }
+
         double[] xh = new double[n];
         for (int i = 0; i < n; i++) {
             System.arraycopy(parameters, 0, xh, 0, n);
@@ -77,5 +101,31 @@ public class MyParametricUnivariateFunction implements ParametricUnivariateFunct
         grad[1] = -a * x * grad[0];
         grad[2] = 1;
         return grad;*/
+    }
+
+    private class MyUnivariateFunction implements UnivariateFunction {
+
+        private ParamUnivariateFunction function;
+        private double x;
+        private int paraIdx, paraNum;
+        private double[] parameters;
+
+        public MyUnivariateFunction(ParamUnivariateFunction function, double x, int paraIdx, double... parameters) {
+            this.function = function;
+            this.x = x;
+            this.paraIdx = paraIdx;
+            this.parameters = parameters;
+            this.paraNum = parameters.length;
+        }
+
+        @Override
+        public double value(double v) {
+            double[] params = new double[this.paraNum];
+            System.arraycopy(this.parameters, 0, params, 0, paraNum);
+            params[paraIdx] = v;
+            function.setParameters(params);
+
+            return function.value(x);
+        }
     }
 }

@@ -162,17 +162,17 @@ def least_squares(
     n = x0.size
     m = f0.size
 
-    loss_function = construct_loss_function(m, loss, f_scale)
-    if callable(loss):
-        rho = loss_function(f0)
-        if rho.shape != (3, m):
-            raise ValueError("The return value of `loss` callable has wrong "
-                             "shape.")
-        initial_cost = 0.5 * np.sum(rho[0])
-    elif loss_function is not None:
-        initial_cost = loss_function(f0, cost_only=True)
-    else:
-        initial_cost = 0.5 * np.dot(f0, f0)
+    # loss_function = construct_loss_function(m, loss, f_scale)
+    # if callable(loss):
+    #     rho = loss_function(f0)
+    #     if rho.shape != (3, m):
+    #         raise ValueError("The return value of `loss` callable has wrong "
+    #                          "shape.")
+    #     initial_cost = 0.5 * np.sum(rho[0])
+    # elif loss_function is not None:
+    #     initial_cost = loss_function(f0, cost_only=True)
+    # else:
+    #     initial_cost = 0.5 * np.dot(f0, f0)
 
     # Estimate Jacobian by finite differences.
     func = UniFunc(fun)

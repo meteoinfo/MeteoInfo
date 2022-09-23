@@ -14,6 +14,7 @@ public class MyParametricUnivariateFunction implements ParametricUnivariateFunct
 
     /** A number close to zero, between machine epsilon and its square root. */
     double EPSILON = 1E-8;
+    boolean useDerivativeStructure;
 
     /**
      * Constructor
@@ -22,9 +23,37 @@ public class MyParametricUnivariateFunction implements ParametricUnivariateFunct
      * @param stepSize Step size for difference calculation
      */
     public MyParametricUnivariateFunction(ParamUnivariateFunction function, int nbPoints, double stepSize) {
+        this(function, nbPoints, stepSize, true);
+    }
+
+    /**
+     * Constructor
+     * @param function ParamUnivariateFunction
+     * @param nbPoints Number of points for difference calculation
+     * @param stepSize Step size for difference calculation
+     */
+    public MyParametricUnivariateFunction(ParamUnivariateFunction function, int nbPoints, double stepSize,
+                                          boolean useDerivativeStructure) {
         this.function = function;
         this.nbPoints = nbPoints;
         this.stepSize = stepSize;
+        this.useDerivativeStructure = useDerivativeStructure;
+    }
+
+    /**
+     * Get whether using DerivativeStructure
+     * @return Whether using DerivativeStructure
+     */
+    public boolean isUseDerivativeStructure() {
+        return this.useDerivativeStructure;
+    }
+
+    /**
+     * Set whether using DerivativeStructure
+     * @param value Whether using DerivativeStructure
+     */
+    public void setUseDerivativeStructure(boolean value) {
+        this.useDerivativeStructure = value;
     }
 
     @Override
@@ -41,29 +70,14 @@ public class MyParametricUnivariateFunction implements ParametricUnivariateFunct
 
     @Override
     public double[] gradient(double x, double ... parameters) {
-        function.setParameters(parameters);
-        double fx = function.value(x);
-
-        int n = parameters.length;
-        double[] gradients = new double[n];
-        for (int i = 0; i < n; i++) {
-            gradients[i] = Double.POSITIVE_INFINITY;
+        if (this.useDerivativeStructure) {
+            return gradientDerivativeStructure(x, parameters);
+        } else {
+            return gradientSimple(x, parameters);
         }
-
-        FiniteDifferencesDifferentiator differentiator =
-                new FiniteDifferencesDifferentiator(5, 0.01);
-        for (int i = 0; i < n; i++) {
-            UnivariateFunction uf = new MyUnivariateFunction(function, x, i, parameters);
-            UnivariateDifferentiableFunction f = differentiator.differentiate(uf);
-            DerivativeStructure y = f.value(new DerivativeStructure(1, 1, 0, parameters[i]));
-            gradients[i] = y.getPartialDerivative(1);
-        }
-        function.setParameters(parameters);
-
-        return gradients;
     }
 
-    public double[] gradient_bak(double x, double ... parameters) {
+    public double[] gradientSimple(double x, double ... parameters) {
         function.setParameters(parameters);
         double fx = function.value(x);
 
@@ -92,15 +106,29 @@ public class MyParametricUnivariateFunction implements ParametricUnivariateFunct
         function.setParameters(parameters);
 
         return gradients;
+    }
 
-        /*final double a = parameters[0];
-        final double b = parameters[1];
-        final double c = parameters[2];
-        final double[] grad = new double[3];
-        grad[0] = Math.exp(-b * x);
-        grad[1] = -a * x * grad[0];
-        grad[2] = 1;
-        return grad;*/
+    public double[] gradientDerivativeStructure(double x, double ... parameters) {
+        function.setParameters(parameters);
+        double fx = function.value(x);
+
+        int n = parameters.length;
+        double[] gradients = new double[n];
+        for (int i = 0; i < n; i++) {
+            gradients[i] = Double.POSITIVE_INFINITY;
+        }
+
+        FiniteDifferencesDifferentiator differentiator =
+                new FiniteDifferencesDifferentiator(5, 0.01);
+        for (int i = 0; i < n; i++) {
+            UnivariateFunction uf = new MyUnivariateFunction(function, x, i, parameters);
+            UnivariateDifferentiableFunction f = differentiator.differentiate(uf);
+            DerivativeStructure y = f.value(new DerivativeStructure(1, 1, 0, parameters[i]));
+            gradients[i] = y.getPartialDerivative(1);
+        }
+        function.setParameters(parameters);
+
+        return gradients;
     }
 
     private class MyUnivariateFunction implements UnivariateFunction {

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\optimize">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\others"/>
+  <Path OpenPath="D:\Temp\test\cs">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\test"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
@@ -16,6 +15,7 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\optimize"/>
+    <RecentFolder Folder="D:\Temp\test\cs"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1397,779"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1498,856"/>
 </MeteoInfo>

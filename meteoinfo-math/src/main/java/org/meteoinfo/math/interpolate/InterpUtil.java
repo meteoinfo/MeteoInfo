@@ -1505,7 +1505,7 @@ public class InterpUtil {
     }
 
     /**
-     * Interpolate with nearest method
+     * Interpolate with the nearest method
      *
      * @param x_s scatter X array
      * @param y_s scatter Y array

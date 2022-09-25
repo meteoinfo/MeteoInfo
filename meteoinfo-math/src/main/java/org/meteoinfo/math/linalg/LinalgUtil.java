@@ -45,9 +45,16 @@ public class LinalgUtil {
     public static Array solve(Array a, Array b) {
         Matrix ma = MatrixUtil.arrayToMatrix(a);
         Matrix.LU lu = ma.lu();
-        double[] bb = (double[]) ArrayUtil.copyToNDJavaArray_Double(b);
-        double[] x = lu.solve(bb);
-        Array r = Array.factory(DataType.DOUBLE, b.getShape(), x);
+        Array r;
+        if (b.getRank() == 1) {
+            double[] bb = (double[]) ArrayUtil.copyToNDJavaArray_Double(b);
+            double[] x = lu.solve(bb);
+            r = Array.factory(DataType.DOUBLE, b.getShape(), x);
+        } else {
+            Matrix mb = MatrixUtil.arrayToMatrix(b);
+            lu.solve(mb);
+            r = MatrixUtil.matrixToArray(mb);
+        }
 
         return r;
     }

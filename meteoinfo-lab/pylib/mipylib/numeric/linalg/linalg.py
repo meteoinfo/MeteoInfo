@@ -51,14 +51,8 @@ def solve(a, b):
         Solution to the system a x = b.  Returned shape is identical to ``b``.
     """
     _assert_2d(a)
-    r_2d = False
-    if b.ndim == 2:
-        b = b.flatten()
-        r_2d = True
     x = LinalgUtil.solve(a.asarray(), b.asarray())
     r = NDArray(x)
-    if r_2d:
-        r = r.reshape((len(r),1))
     return r
 
 def solve_triangular(a, b, lower=False):

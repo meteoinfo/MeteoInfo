@@ -1941,7 +1941,6 @@ def hstack(tup):
     else:
         return concatenate(arrs, 1)
 
-                
 def dot(a, b):
     """
     Matrix multiplication.
@@ -1956,8 +1955,13 @@ def dot(a, b):
         
     if isinstance(a, list):
         a = array(a)
+
     if isinstance(b, list):
         b = array(b)
+
+    if a.ndim == 1 and b.ndim == 1:
+        return vdot(a, b)
+
     r = LinalgUtil.dot(a.asarray(), b.asarray())
     return NDArray(r)
     
@@ -1976,8 +1980,10 @@ def vdot(a, b):
     """
     if isinstance(a, list):
         a = array(a)
+
     if isinstance(b, list):
         b = array(b)
+
     if a.ndim > 1:
         a = a.flatten()
     if b.ndim > 1:

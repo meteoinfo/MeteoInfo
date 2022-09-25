@@ -5020,7 +5020,7 @@ public class ArrayMath {
             }
         } else {
             IndexIterator iterA = a.getIndexIterator();
-            IndexIterator iterB = a.getIndexIterator();
+            IndexIterator iterB = b.getIndexIterator();
             while (iterA.hasNext()) {
                 r += iterA.getDoubleNext() * iterB.getDoubleNext();
             }

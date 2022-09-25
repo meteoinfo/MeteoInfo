@@ -3,11 +3,15 @@ Universal math functions
 """
 
 import __builtin__
+import math
+
+from org.meteoinfo.ndarray.math import ArrayMath
+
 from ._ndarray import NDArray
-from .numeric import sign
+from .numeric import array, sign
 
 __all__ = [
-    'absolute','add','divmod','floor_divide','fmod','mod','remainder'
+    'absolute','add','deg2rad','divmod','floor_divide','fmod','mod','rad2deg','remainder'
     ]
 
 def absolute(x):
@@ -21,6 +25,7 @@ def absolute(x):
     """
     if isinstance(x, list):
         x = array(x)
+
     if isinstance(x, NDArray):
         return x.abs()
     else:
@@ -133,3 +138,35 @@ def fmod(x1, x2):
     """
     s = sign(x1)
     return mod(x1, x2) * s
+
+def rad2deg(x):
+    """
+    Convert radians to degrees.
+
+    :param x: (*array_like*) Array in radians.
+
+    :returns: (*array_like*) Array in degrees.
+    """
+    if isinstance(x, (list, tuple)):
+        x = array(x)
+
+    if isinstance(x, NDArray):
+        return NDArray(ArrayMath.toDegrees(x.asarray()))
+    else:
+        return math.degrees(x)
+
+def deg2rad(x):
+    """
+    Convert degrees to radians.
+
+    :param x: (*array_like*) Array in degrees.
+
+    :returns: (*array_like*) Array in radians.
+    """
+    if isinstance(x, (list, tuple)):
+        x = array(x)
+
+    if isinstance(x, NDArray):
+        return NDArray(ArrayMath.toRadians(x.asarray()))
+    else:
+        return math.radians(x)

@@ -3285,11 +3285,15 @@ public final class Complex implements Serializable  {
      */
     @Override
     public String toString() {
+        String sign = imaginary >= 0 ? "+" : "";
         return new StringBuilder(TO_STRING_SIZE)
-                .append(FORMAT_START)
-                .append(real).append(FORMAT_SEP)
+                //.append(FORMAT_START)
+                .append(real)
+                //.append(FORMAT_SEP)
+                .append(sign)
                 .append(imaginary)
-                .append(FORMAT_END)
+                .append("j")
+                //.append(FORMAT_END)
                 .toString();
     }
 

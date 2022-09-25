@@ -46,7 +46,7 @@ __all__ = [
     'isclose','isfinite','isinf','isnan','linspace','log','log10','logical_not','logspace',
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reshape',
-    'repeat','roll','rolling_mean','rot90','round','sign','sin','sinh','shape','smooth5','smooth9','sort',
+    'repeat','roll','rolling_mean','rot90','round','sec','sign','sin','sinh','shape','smooth5','smooth9','sort',
     'sphere','squeeze','split','sqrt','square','std','swapaxes','take','tan','tanh','tile',
     'transpose','trapz','vdot','unravel_index','var','vstack','zeros','zeros_like'
     ]
@@ -805,7 +805,17 @@ def cosh(x):
             return cmath.cosh(x)
         else:
             return math.cosh(x)
-        
+
+def sec(x):
+    """
+    Trigonometric secant, element-wise.
+
+    :param x: (*array_like*) Angle, in radians.
+
+    :returns: (*array_like*) The secant of each element of x.
+    """
+    return 1 / cos(x)
+
 def tan(x):
     """
     Trigonometric tangent, element-wise.

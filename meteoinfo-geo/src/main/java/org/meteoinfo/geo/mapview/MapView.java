@@ -4254,6 +4254,7 @@ public class MapView extends JPanel implements IWebMapPanel {
     public void paintGraphics(Graphics2D g, Rectangle2D area, TileLoadListener tll) {
         Rectangle rect = new Rectangle((int) area.getX(), (int) area.getY(),
                 (int) area.getWidth(), (int) area.getHeight());
+        //boolean update = this._viewExtent.getWidth() / this._viewExtent.getHeight() != area.getWidth() / area.getHeight();
         this.paintGraphics(g, rect, tll);
     }
 
@@ -4265,11 +4266,26 @@ public class MapView extends JPanel implements IWebMapPanel {
      * @param tll TileLoadListener
      */
     public void paintGraphics(Graphics2D g, Rectangle rect, TileLoadListener tll) {
+        paintGraphics(g, rect, tll, true);
+    }
+
+    /**
+     * Paint graphics
+     *
+     * @param g Graphics2D
+     * @param rect Target rectangle
+     * @param tll TileLoadListener
+     * @param updateXYScale Whether update X/Y axis scale
+     */
+    public void paintGraphics(Graphics2D g, Rectangle rect, TileLoadListener tll, boolean updateXYScale) {
         if (this._lockViewUpdate) {
             return;
         }
 
-        refreshXYScale(rect.width, rect.height);
+        //this.setSize(rect.width, rect.height);
+
+        if (updateXYScale)
+            refreshXYScale(rect.width, rect.height);
 
         Color background = this.getBackground();
         if (background != null) {
@@ -7738,6 +7754,22 @@ public class MapView extends JPanel implements IWebMapPanel {
     public void zoomToExtent(Extent aExtent) {
         _viewExtent = aExtent;
         refreshXYScale();
+
+        //paintLayers();
+        this.repaintNew();
+        this.fireViewExtentChangedEvent();
+    }
+
+    /**
+     * Zoom to extent
+     *
+     * @param aExtent The extent
+     * @param width The width
+     * @param height The height
+     */
+    public void zoomToExtent(Extent aExtent, int width, int height) {
+        _viewExtent = aExtent;
+        refreshXYScale(width, height);
 
         //paintLayers();
         this.repaintNew();

@@ -85,6 +85,10 @@ public class MICAPS131DataInfo extends DataInfo implements IGridDataInfo {
     // <editor-fold desc="Get Set Methods">
     // </editor-fold>
     // <editor-fold desc="Methods">
+    @Override
+    public boolean isValidFile(RandomAccessFile raf) {
+        return false;
+    }
 
     @Override
     public void readDataInfo(String fileName) {

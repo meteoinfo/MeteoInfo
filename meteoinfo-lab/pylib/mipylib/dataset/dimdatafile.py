@@ -82,12 +82,26 @@ class DimDataFile(object):
         Reopen the data file
         """
         self.dataset.getDataInfo().reOpen()
-    
+
+    @property
     def dimensions(self):
         """
         Get dimensions
         """
         return self.dataset.getDataInfo().getDimensions()
+
+    @property
+    def dimnames(self):
+        """
+        Get names of the dimensions.
+
+        :return: (*list of str*) Dimension names.
+        """
+        names = []
+        for dim in self.dimensions:
+            names.append(dim.getName())
+
+        return names
         
     def finddim(self, name):
         """
@@ -99,6 +113,35 @@ class DimDataFile(object):
             if name == dim.getShortName():
                 return dim
         return None
+
+    def dimlen(self, name):
+        """
+        Get dimension length.
+
+        :param name: (*str*) Dimension name.
+
+        :return: Dimension length.
+        """
+        return self.finddim(name).getLength()
+
+    def dimvalue(self, name, convert=False):
+        """
+        Get dimension values.
+
+        :param name: (*str*) Dimension name.
+        :param convert: (*boolean*) If convert to real values (i.e. datetime). Default
+            is ``False``.
+
+        :returns: (*array_like*) Dimension values
+        """
+        dim = self.finddim(name)
+        if convert:
+            if dim.getDimType() == DimensionType.T:
+                return miutil.nums2dates(dim.getDimValue())
+            else:
+                return np.array(dim.getDimValue())
+        else:
+            return np.array(dim.getDimValue())
         
     def attributes(self):
         """

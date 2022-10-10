@@ -183,6 +183,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     // </editor-fold>
     // <editor-fold desc="Methods">
     // <editor-fold desc="Read Data">
+    @Override
+    public boolean isValidFile(java.io.RandomAccessFile raf) {
+        return false;
+    }
 
     /**
      * Test if the file can be opened.
@@ -234,14 +238,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
     @Override
     public void readDataInfo(String fileName) {
-        this.setFileName(fileName);
-        try {
-            //ncDataset = NetcdfDatasets.openDataset(fileName);
-            ncfile = NetcdfDatasets.openFile(fileName, null);
-            readDataInfo(false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.readDataInfo(fileName, false);
     }
 
     /**
@@ -465,22 +462,6 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 return dim;
             }
         }
-        return null;
-    }
-
-    /**
-     * Find global attribute
-     *
-     * @param attName Attribute name
-     * @return Global attribute
-     */
-    public Attribute findGlobalAttribute(String attName) {
-        for (Attribute att : this.attributes) {
-            if (att.getShortName().equalsIgnoreCase(attName)) {
-                return att;
-            }
-        }
-
         return null;
     }
 
@@ -3217,7 +3198,35 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             if (unpack) {
-                //Get pack info
+                ucar.nc2.Attribute aoAttr = var.findAttribute("add_offset");
+                ucar.nc2.Attribute sfAttr = var.findAttribute("scale_factor");
+                if (aoAttr != null || sfAttr != null) {
+                    Number add_offset = 0;
+                    Number scale_factor = 1;
+                    if (aoAttr != null) {
+                        switch (aoAttr.getDataType()) {
+                            case DOUBLE:
+                                add_offset = aoAttr.getValues().getDouble(0);
+                                break;
+                            case FLOAT:
+                                add_offset = aoAttr.getValues().getFloat(0);
+                                break;
+                        }
+                    }
+                    if (sfAttr != null) {
+                        switch (sfAttr.getDataType()) {
+                            case DOUBLE:
+                                scale_factor = sfAttr.getValues().getDouble(0);
+                                break;
+                            case FLOAT:
+                                scale_factor = sfAttr.getValues().getFloat(0);
+                                break;
+                        }
+                    }
+                    data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+                }
+
+                /*//Get pack info
                 double add_offset, scale_factor, missingValue;
                 double[] packData = this.getPackData(var);
                 add_offset = packData[0];
@@ -3226,7 +3235,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 if (add_offset != 0 || scale_factor != 1) {
                     //ArrayMath.fill_value = missingValue;
                     data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
-                }
+                }*/
             }
 
             return data;

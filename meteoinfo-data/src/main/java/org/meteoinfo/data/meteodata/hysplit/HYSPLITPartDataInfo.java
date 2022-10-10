@@ -77,6 +77,10 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
+    @Override
+    public boolean isValidFile(RandomAccessFile raf) {
+        return false;
+    }
 
     @Override
     public void readDataInfo(String fileName) {

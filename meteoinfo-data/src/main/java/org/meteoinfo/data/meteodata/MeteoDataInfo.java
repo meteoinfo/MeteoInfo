@@ -32,10 +32,13 @@ import org.meteoinfo.data.meteodata.hysplit.HYSPLITTrajDataInfo;
 import org.meteoinfo.data.meteodata.micaps.*;
 import org.meteoinfo.data.meteodata.netcdf.NetCDFDataInfo;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.ArrayList;
 
+import org.meteoinfo.data.meteodata.radar.CMARadarBaseDataInfo;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.projection.ProjectionInfo;
 import java.util.List;
@@ -76,7 +79,7 @@ public class MeteoDataInfo {
     /// If the U/V of the wind are along latitude/longitude.
     /// </summary>
     public boolean EarthWind;
-    private DataInfo _dataInfo;
+    private DataInfo dataInfo;
     /// <summary>
     /// Data information text
     /// </summary>
@@ -100,7 +103,7 @@ public class MeteoDataInfo {
      * Constructor
      */
     public MeteoDataInfo() {
-        _dataInfo = null;
+        dataInfo = null;
         IsLonLat = true;
         EarthWind = true;
         _infoText = "";
@@ -117,7 +120,7 @@ public class MeteoDataInfo {
      * @return Data info
      */
     public DataInfo getDataInfo() {
-        return _dataInfo;
+        return dataInfo;
     }
 
     /**
@@ -126,8 +129,8 @@ public class MeteoDataInfo {
      * @param value Data info
      */
     public void setDataInfo(DataInfo value) {
-        _dataInfo = value;
-        _infoText = _dataInfo.generateInfoText();
+        dataInfo = value;
+        _infoText = dataInfo.generateInfoText();
     }
 
     /**
@@ -136,7 +139,7 @@ public class MeteoDataInfo {
      * @return Projection info
      */
     public ProjectionInfo getProjectionInfo() {
-        return _dataInfo.getProjectionInfo();
+        return dataInfo.getProjectionInfo();
     }
 
     /**
@@ -145,7 +148,7 @@ public class MeteoDataInfo {
      * @return Meteo data type
      */
     public MeteoDataType getDataType() {
-        return this._dataInfo.getDataType();
+        return this.dataInfo.getDataType();
     }
 
     /**
@@ -308,7 +311,7 @@ public class MeteoDataInfo {
      * @return Missing value
      */
     public double getMissingValue() {
-        return _dataInfo.getMissingValue();
+        return dataInfo.getMissingValue();
     }
 
     /**
@@ -334,7 +337,7 @@ public class MeteoDataInfo {
             case MM5IM:
                 return true;
             case NETCDF:
-                if (((NetCDFDataInfo) _dataInfo).isSWATH()) {
+                if (((NetCDFDataInfo) dataInfo).isSWATH()) {
                     return false;
                 } else {
                     return true;
@@ -351,7 +354,7 @@ public class MeteoDataInfo {
                         return false;
                 }
             case MICAPS_MDFS:
-                switch (((MDFSDataInfo) _dataInfo).getType()) {
+                switch (((MDFSDataInfo) dataInfo).getType()) {
                     case 4:
                     case 11:
                         return true;
@@ -388,7 +391,7 @@ public class MeteoDataInfo {
                     return false;
                 }
             case MICAPS_MDFS:
-                switch (((MDFSDataInfo) this._dataInfo).getType()) {
+                switch (((MDFSDataInfo) this.dataInfo).getType()) {
                     case 1:
                     case 2:
                         return true;
@@ -421,7 +424,7 @@ public class MeteoDataInfo {
     public boolean isSWATHData() {
         switch (this.getDataType()) {
             case NETCDF:
-                if (((NetCDFDataInfo) _dataInfo).isSWATH()) {
+                if (((NetCDFDataInfo) dataInfo).isSWATH()) {
                     return true;
                 }
             default:
@@ -459,22 +462,46 @@ public class MeteoDataInfo {
     // </editor-fold>
     // <editor-fold desc="Methods">
     // <editor-fold desc="Open Data">
+
+    /**
+     * Get data info from a file name
+     * @param fileName The file name
+     * @return Data info
+     */
+    public DataInfo getDataInfo(String fileName) {
+        DataInfo di = null;
+        try {
+            RandomAccessFile raf = new RandomAccessFile(fileName, "r");
+            if (GrADSDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
+                di = new GrADSDataInfo();
+            } else if (NetcdfFiles.canOpen(fileName)) {
+                di = new NetCDFDataInfo();
+            } else if (ARLDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
+                di = new ARLDataInfo();
+            } else if (CMARadarBaseDataInfo.class.getDeclaredConstructor().newInstance().canOpen(fileName)) {
+                di = new CMARadarBaseDataInfo();
+            }
+            raf.close();
+        } catch (IOException | NoSuchMethodException ex) {
+            return null;
+        } catch (InvocationTargetException e) {
+            return null;
+        } catch (InstantiationException e) {
+            return null;
+        } catch (IllegalAccessException e) {
+            return null;
+        }
+
+        return di;
+    }
+
     /**
      * Open data file
      *
      * @param fileName File name
      */
     public void openData(String fileName) {
-        try {
-            boolean canOpen = NetcdfFiles.canOpen(fileName);
-            if (canOpen) {
-                this.openNetCDFData(fileName);
-            } else if (ARLDataInfo.canOpen(fileName)) {
-                this.openARLData(fileName);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(MeteoDataInfo.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        openData(fileName, false);
     }
 
     /**
@@ -484,15 +511,14 @@ public class MeteoDataInfo {
      * @param keepOpen Keep the file opened or not
      */
     public void openData(String fileName, boolean keepOpen) {
-        try {
-            boolean canOpen = NetcdfFiles.canOpen(fileName);
-            if (canOpen) {
-                this.openNetCDFData(fileName, keepOpen);
-            } else if (ARLDataInfo.canOpen(fileName)) {
-                this.openARLData(fileName);
+        this.dataInfo = getDataInfo(fileName);
+        if (dataInfo != null) {
+            if (dataInfo.getClass() == NetCDFDataInfo.class) {
+                dataInfo.readDataInfo(fileName, keepOpen);
+            } else {
+                dataInfo.readDataInfo(fileName);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(MeteoDataInfo.class.getName()).log(Level.SEVERE, null, ex);
+            this._infoText = dataInfo.generateInfoText();
         }
     }
     
@@ -510,8 +536,8 @@ public class MeteoDataInfo {
      * Close opened file
      */
     public void close() {
-        if (this._dataInfo.getDataType() == MeteoDataType.NETCDF) {
-            NetCDFDataInfo dinfo = (NetCDFDataInfo) this._dataInfo;
+        if (this.dataInfo.getDataType() == MeteoDataType.NETCDF) {
+            NetCDFDataInfo dinfo = (NetCDFDataInfo) this.dataInfo;
             try {
                 dinfo.close();
             } catch (IOException ex) {
@@ -526,10 +552,10 @@ public class MeteoDataInfo {
      * @param aFile Data file path
      */
     public void openGrADSData(String aFile) {
-        _dataInfo = new GrADSDataInfo();
-        _dataInfo.readDataInfo(aFile);
-        _infoText = _dataInfo.generateInfoText();
-        GrADSDataInfo aDataInfo = (GrADSDataInfo) _dataInfo;
+        dataInfo = new GrADSDataInfo();
+        dataInfo.readDataInfo(aFile);
+        _infoText = dataInfo.generateInfoText();
+        GrADSDataInfo aDataInfo = (GrADSDataInfo) dataInfo;
         if (aDataInfo.DTYPE.equals("Gridded")) {
             yReserve = aDataInfo.OPTIONS.yrev;
 
@@ -546,13 +572,12 @@ public class MeteoDataInfo {
      * @param aFile File path
      */
     public void openARLData(String aFile) {
-        ARLDataInfo aDataInfo = new ARLDataInfo();
-        aDataInfo.readDataInfo(aFile);
-        _dataInfo = aDataInfo;
-        IsLonLat = aDataInfo.isLatLon;
+        dataInfo = new ARLDataInfo();
+        dataInfo.readDataInfo(aFile);
+        IsLonLat = ((ARLDataInfo) dataInfo).isLatLon;
 
         //Get data info text
-        _infoText = aDataInfo.generateInfoText();
+        _infoText = dataInfo.generateInfoText();
     }
 
     /**
@@ -563,7 +588,7 @@ public class MeteoDataInfo {
     public void openAWXData(String aFile) {
         AWXDataInfo aDataInfo = new AWXDataInfo();
         aDataInfo.readDataInfo(aFile);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         //IsLonLat = aDataInfo.isLatLon;
 
         //Get data info text
@@ -586,7 +611,7 @@ public class MeteoDataInfo {
         SYNOPDataInfo aDataInfo = new SYNOPDataInfo();
         aDataInfo.setStationFileName(stFile);
         aDataInfo.readDataInfo(aFile);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         //IsLonLat = aDataInfo.isLatLon;
 
         //Get data info text
@@ -607,7 +632,7 @@ public class MeteoDataInfo {
         METARDataInfo aDataInfo = new METARDataInfo();
         aDataInfo.setStationFileName(stFile);
         aDataInfo.readDataInfo(aFile);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         //IsLonLat = aDataInfo.isLatLon;
 
         //Get data info text
@@ -626,7 +651,7 @@ public class MeteoDataInfo {
     public void openASCIIGridData(String aFile) {
         ASCIIGridDataInfo aDataInfo = new ASCIIGridDataInfo();
         aDataInfo.readDataInfo(aFile);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         //ProjInfo = aDataInfo.projInfo;
         //IsLonLat = aDataInfo.isLatLon;
 
@@ -642,7 +667,7 @@ public class MeteoDataInfo {
     public void openGeoTiffData(String aFile) {
         GeoTiffDataInfo aDataInfo = new GeoTiffDataInfo();
         aDataInfo.readDataInfo(aFile);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
 
         //Get data info text
         _infoText = aDataInfo.generateInfoText();
@@ -656,7 +681,7 @@ public class MeteoDataInfo {
     public void openBILData(String aFile) {
         BILDataInfo aDataInfo = new BILDataInfo();
         aDataInfo.readDataInfo(aFile);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
 
         //Get data info text
         _infoText = aDataInfo.generateInfoText();
@@ -670,7 +695,7 @@ public class MeteoDataInfo {
     public void openHYSPLITConcData(String aFile) {
         HYSPLITConcDataInfo aDataInfo = new HYSPLITConcDataInfo();
         aDataInfo.readDataInfo(aFile);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         //ProjInfo = aDataInfo.projInfo;
         //IsLonLat = aDataInfo.isLatLon;
 
@@ -687,7 +712,7 @@ public class MeteoDataInfo {
     public void openHYSPLITConcData(String aFile, boolean bigendian) {
         HYSPLITConcDataInfo aDataInfo = new HYSPLITConcDataInfo(bigendian);
         aDataInfo.readDataInfo(aFile);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         //ProjInfo = aDataInfo.projInfo;
         //IsLonLat = aDataInfo.isLatLon;
 
@@ -704,7 +729,7 @@ public class MeteoDataInfo {
         //Read data info                            
         HYSPLITTrajDataInfo aDataInfo = new HYSPLITTrajDataInfo();
         aDataInfo.readDataInfo(aFile);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         _infoText = aDataInfo.generateInfoText();
     }
 
@@ -718,7 +743,7 @@ public class MeteoDataInfo {
 //            //Read data info                            
 //            HYSPLITTrajDataInfo aDataInfo = new HYSPLITTrajDataInfo();
 //            aDataInfo.readDataInfo(trajFiles);
-//            _dataInfo = aDataInfo;
+//            dataInfo = aDataInfo;
 //            _infoText = aDataInfo.generateInfoText();
 //        } catch (IOException ex) {
 //            Logger.getLogger(MeteoDataInfo.class.getName()).log(Level.SEVERE, null, ex);
@@ -744,7 +769,7 @@ public class MeteoDataInfo {
         //Read data info                            
         HYSPLITPartDataInfo aDataInfo = new HYSPLITPartDataInfo();
         aDataInfo.readDataInfo(fileName);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         _infoText = aDataInfo.generateInfoText();
     }
 
@@ -759,7 +784,7 @@ public class MeteoDataInfo {
         HYSPLITPartDataInfo aDataInfo = new HYSPLITPartDataInfo();
         aDataInfo.setSkipNBytes(skipNBytes);
         aDataInfo.readDataInfo(fileName);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         _infoText = aDataInfo.generateInfoText();
     }
 
@@ -769,10 +794,7 @@ public class MeteoDataInfo {
      * @param fileName File path
      */
     public void openNetCDFData(String fileName) {
-        NetCDFDataInfo aDataInfo = new NetCDFDataInfo();
-        aDataInfo.readDataInfo(fileName);
-        _dataInfo = aDataInfo;
-        _infoText = aDataInfo.generateInfoText();
+        openNetCDFData(fileName, false);
     }
 
     /**
@@ -784,7 +806,7 @@ public class MeteoDataInfo {
     public void openNetCDFData(String fileName, boolean keepOpen) {
         NetCDFDataInfo aDataInfo = new NetCDFDataInfo();
         aDataInfo.readDataInfo(fileName, keepOpen);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         _infoText = aDataInfo.generateInfoText();
     }
     
@@ -797,7 +819,7 @@ public class MeteoDataInfo {
     public void openNetCDFData(NetcdfFile ncfile, boolean keepOpen) {
         NetCDFDataInfo aDataInfo = new NetCDFDataInfo();
         aDataInfo.readDataInfo(ncfile, keepOpen);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         _infoText = aDataInfo.generateInfoText();
     }
     
@@ -813,7 +835,7 @@ public class MeteoDataInfo {
         if (version == 1)
             mdt = MeteoDataType.GRIB1;
         aDataInfo.readDataInfo(fileName, mdt);
-        _dataInfo = aDataInfo;
+        dataInfo = aDataInfo;
         _infoText = aDataInfo.generateInfoText();
     }
 
@@ -823,9 +845,9 @@ public class MeteoDataInfo {
      * @param fileName File path
      */
     public void openLonLatData(String fileName) {
-        _dataInfo = new LonLatStationDataInfo();
-        _dataInfo.readDataInfo(fileName);
-        _infoText = _dataInfo.generateInfoText();
+        dataInfo = new LonLatStationDataInfo();
+        dataInfo.readDataInfo(fileName);
+        _infoText = dataInfo.generateInfoText();
     }
 
     /**
@@ -834,9 +856,9 @@ public class MeteoDataInfo {
      * @param fileName File path
      */
     public void openSurferGridData(String fileName) {
-        _dataInfo = new SurferGridDataInfo();
-        _dataInfo.readDataInfo(fileName);
-        _infoText = _dataInfo.generateInfoText();
+        dataInfo = new SurferGridDataInfo();
+        dataInfo.readDataInfo(fileName);
+        _infoText = dataInfo.generateInfoText();
     }
 
     /**
@@ -845,9 +867,9 @@ public class MeteoDataInfo {
      * @param fileName File path
      */
     public void openMM5Data(String fileName) {
-        _dataInfo = new MM5DataInfo();
-        _dataInfo.readDataInfo(fileName);
-        _infoText = _dataInfo.generateInfoText();
+        dataInfo = new MM5DataInfo();
+        dataInfo.readDataInfo(fileName);
+        _infoText = dataInfo.generateInfoText();
     }
     
     /**
@@ -857,9 +879,9 @@ public class MeteoDataInfo {
      * @param bigHeadFile The MM5 output data file with big head
      */
     public void openMM5Data(String fileName, String bigHeadFile) {
-        _dataInfo = new MM5DataInfo();
-        ((MM5DataInfo)_dataInfo).readDataInfo(fileName, bigHeadFile);
-        _infoText = _dataInfo.generateInfoText();
+        dataInfo = new MM5DataInfo();
+        ((MM5DataInfo)dataInfo).readDataInfo(fileName, bigHeadFile);
+        _infoText = dataInfo.generateInfoText();
     }
 
     /**
@@ -868,9 +890,9 @@ public class MeteoDataInfo {
      * @param fileName File path
      */
     public void openMM5IMData(String fileName) {
-        _dataInfo = new MM5IMDataInfo();
-        _dataInfo.readDataInfo(fileName);
-        _infoText = _dataInfo.generateInfoText();
+        dataInfo = new MM5IMDataInfo();
+        dataInfo.readDataInfo(fileName);
+        _infoText = dataInfo.generateInfoText();
     }
 
     /**
@@ -886,52 +908,52 @@ public class MeteoDataInfo {
 
         switch (mdType) {
             case MICAPS_1:
-                _dataInfo = new MICAPS1DataInfo();
+                dataInfo = new MICAPS1DataInfo();
                 _meteoUVSet.setUV(false);
                 _meteoUVSet.setFixUVStr(true);
                 _meteoUVSet.setUStr("WindDirection");
                 _meteoUVSet.setVStr("WindSpeed");
                 break;
             case MICAPS_2:
-                _dataInfo = new MICAPS2DataInfo();
+                dataInfo = new MICAPS2DataInfo();
                 _meteoUVSet.setUV(false);
                 _meteoUVSet.setFixUVStr(true);
                 _meteoUVSet.setUStr("WindDirection");
                 _meteoUVSet.setVStr("WindSpeed");
                 break;
             case MICAPS_3:
-                _dataInfo = new MICAPS3DataInfo();
+                dataInfo = new MICAPS3DataInfo();
                 _meteoUVSet.setUV(false);
                 _meteoUVSet.setFixUVStr(true);
                 _meteoUVSet.setUStr("WindDirection");
                 _meteoUVSet.setVStr("WindSpeed");
                 break;
             case MICAPS_4:
-                _dataInfo = new MICAPS4DataInfo();
+                dataInfo = new MICAPS4DataInfo();
                 break;
             case MICAPS_7:
-                _dataInfo = new MICAPS7DataInfo();
+                dataInfo = new MICAPS7DataInfo();
                 break;
             case MICAPS_11:
-                _dataInfo = new MICAPS11DataInfo();
+                dataInfo = new MICAPS11DataInfo();
                 break;
             case MICAPS_13:
-                _dataInfo = new MICAPS13DataInfo();
+                dataInfo = new MICAPS13DataInfo();
                 break;
             case MICAPS_120:
-                _dataInfo = new MICAPS120DataInfo();
+                dataInfo = new MICAPS120DataInfo();
                 break;
             case MICAPS_131:
-                _dataInfo = new MICAPS131DataInfo();
+                dataInfo = new MICAPS131DataInfo();
                 break;
             case MICAPS_MDFS:
-                _dataInfo = new MDFSDataInfo();
+                dataInfo = new MDFSDataInfo();
                 break;
         }
-        _dataInfo.readDataInfo(fileName);
-        _infoText = _dataInfo.generateInfoText();
+        dataInfo.readDataInfo(fileName);
+        _infoText = dataInfo.generateInfoText();
         if (mdType == MeteoDataType.MICAPS_MDFS) {
-            switch (((MDFSDataInfo)_dataInfo).getType()) {
+            switch (((MDFSDataInfo)dataInfo).getType()) {
                 case 1:
                 case 2:
                     _meteoUVSet.setUV(false);
@@ -951,7 +973,7 @@ public class MeteoDataInfo {
      * @return File name
      */
     public String getFileName() {
-        return _dataInfo.getFileName();
+        return dataInfo.getFileName();
     }
 
     /**
@@ -961,7 +983,7 @@ public class MeteoDataInfo {
      * @return Array data
      */
     public Array read(String varName) {
-        return this._dataInfo.read(varName);
+        return this.dataInfo.read(varName);
     }
 
     /**
@@ -974,7 +996,7 @@ public class MeteoDataInfo {
      * @return Array data
      */
     public Array read(String varName, int[] origin, int[] size, int[] stride) {
-        return this._dataInfo.read(varName, origin, size, stride);
+        return this.dataInfo.read(varName, origin, size, stride);
     }
     
     /**
@@ -1025,7 +1047,7 @@ public class MeteoDataInfo {
             }
         }
 
-        return this._dataInfo.read(varName, origin_a, size_a, stride_a);
+        return this.dataInfo.read(varName, origin_a, size_a, stride_a);
     }
 
     /**
@@ -1119,34 +1141,34 @@ public class MeteoDataInfo {
         GridData gdata = null;
         switch (_dimensionSet) {
             case Lat_Lon:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_LonLat(_timeIdx, varName, _levelIdx);
+                gdata = ((IGridDataInfo) dataInfo).getGridData_LonLat(_timeIdx, varName, _levelIdx);
                 break;
             case Time_Lon:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_TimeLon(_latIdx, varName, _levelIdx);
+                gdata = ((IGridDataInfo) dataInfo).getGridData_TimeLon(_latIdx, varName, _levelIdx);
                 break;
             case Time_Lat:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_TimeLat(_lonIdx, varName, _levelIdx);
+                gdata = ((IGridDataInfo) dataInfo).getGridData_TimeLat(_lonIdx, varName, _levelIdx);
                 break;
             case Level_Lon:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_LevelLon(_latIdx, varName, _timeIdx);
+                gdata = ((IGridDataInfo) dataInfo).getGridData_LevelLon(_latIdx, varName, _timeIdx);
                 break;
             case Level_Lat:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_LevelLat(_lonIdx, varName, _timeIdx);
+                gdata = ((IGridDataInfo) dataInfo).getGridData_LevelLat(_lonIdx, varName, _timeIdx);
                 break;
             case Level_Time:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_LevelTime(_latIdx, varName, _lonIdx);
+                gdata = ((IGridDataInfo) dataInfo).getGridData_LevelTime(_latIdx, varName, _lonIdx);
                 break;
             case Lat:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_Lat(_timeIdx, _lonIdx, varName, _levelIdx);
+                gdata = ((IGridDataInfo) dataInfo).getGridData_Lat(_timeIdx, _lonIdx, varName, _levelIdx);
                 break;
             case Level:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_Level(_lonIdx, _latIdx, varName, _timeIdx);
+                gdata = ((IGridDataInfo) dataInfo).getGridData_Level(_lonIdx, _latIdx, varName, _timeIdx);
                 break;
             case Lon:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_Lon(_timeIdx, _latIdx, varName, _levelIdx);
+                gdata = ((IGridDataInfo) dataInfo).getGridData_Lon(_timeIdx, _latIdx, varName, _levelIdx);
                 break;
             case Time:
-                gdata = ((IGridDataInfo) _dataInfo).getGridData_Time(_lonIdx, _latIdx, varName, _levelIdx);
+                gdata = ((IGridDataInfo) dataInfo).getGridData_Time(_lonIdx, _latIdx, varName, _levelIdx);
                 break;
         }
 
@@ -1190,7 +1212,7 @@ public class MeteoDataInfo {
      * @return Station data
      */
     public StationData getStationData() {
-        StationData stData = ((IStationDataInfo) _dataInfo).getStationData(_timeIdx, varName, _levelIdx);
+        StationData stData = ((IStationDataInfo) dataInfo).getStationData(_timeIdx, varName, _levelIdx);
         stData.projInfo = this.getProjectionInfo();
         return stData;
     }
@@ -1201,7 +1223,7 @@ public class MeteoDataInfo {
      * @return Station model data
      */
     public StationModelData getStationModelData() {
-        return ((IStationDataInfo) _dataInfo).getStationModelData(_timeIdx, _levelIdx);
+        return ((IStationDataInfo) dataInfo).getStationModelData(_timeIdx, _levelIdx);
     }
 
     /**
@@ -1210,7 +1232,7 @@ public class MeteoDataInfo {
      * @return Station info data
      */
     public StationInfoData getStationInfoData() {
-        return ((IStationDataInfo) _dataInfo).getStationInfoData(_timeIdx, _levelIdx);
+        return ((IStationDataInfo) dataInfo).getStationInfoData(_timeIdx, _levelIdx);
     }
 
     /**
@@ -1220,7 +1242,7 @@ public class MeteoDataInfo {
      * @return Station info data
      */
     public StationInfoData getStationInfoData(int timeIndex) {
-        return ((IStationDataInfo) _dataInfo).getStationInfoData(timeIndex, _levelIdx);
+        return ((IStationDataInfo) dataInfo).getStationInfoData(timeIndex, _levelIdx);
     }
 
     /**
@@ -1230,7 +1252,7 @@ public class MeteoDataInfo {
      * @return Variable index
      */
     public int getVariableIndex(String varName) {
-        List<String> varList = _dataInfo.getVariableNames();
+        List<String> varList = dataInfo.getVariableNames();
         int idx = varList.indexOf(varName);
 
         return idx;

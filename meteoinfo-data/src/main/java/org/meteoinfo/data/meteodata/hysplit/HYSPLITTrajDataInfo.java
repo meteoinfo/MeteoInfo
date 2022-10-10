@@ -20,11 +20,7 @@ import org.meteoinfo.data.meteodata.*;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.dimarray.DimensionType;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -135,6 +131,10 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
+    @Override
+    public boolean isValidFile(RandomAccessFile raf) {
+        return false;
+    }
 
     @Override
     public void readDataInfo(String fileName) {

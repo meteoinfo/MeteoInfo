@@ -3215,10 +3215,14 @@ public class DrawMeteoData {
      * @param y_s scatter Y array
      * @param a scatter value array
      * @param ls Legend scheme
-     * @param lonlim Longiutde limitation - to avoid the polygon cross -180/180
+     * @param lonlim Longitude limitation - to avoid the polygon cross -180/180
      * @return Mesh polygon layer
      */
     public static VectorLayer meshLayer(Array x_s, Array y_s, Array a, LegendScheme ls, double lonlim) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+
         VectorLayer layer = new VectorLayer(ShapeTypes.POLYGON);
         String fieldName = "Data";
         Field aDC = new Field(fieldName, DataType.DOUBLE);
@@ -3279,6 +3283,10 @@ public class DrawMeteoData {
      * @return Mesh polygon layer
      */
     public static VectorLayer meshLayer(Array x_s, Array y_s, Array a, LegendScheme ls) {
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
+
         VectorLayer layer = new VectorLayer(ShapeTypes.POLYGON);
         String fieldName = "Data";
         Field aDC = new Field(fieldName, DataType.DOUBLE);

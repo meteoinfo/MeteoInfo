@@ -188,6 +188,11 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
     // <editor-fold desc="Methods">
 
     @Override
+    public boolean isValidFile(RandomAccessFile raf) {
+        return false;
+    }
+
+    @Override
     public void readDataInfo(String fileName) {
         this.setFileName(fileName);
         try {

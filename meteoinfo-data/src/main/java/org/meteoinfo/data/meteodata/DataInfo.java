@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.data.meteodata;
 
+import java.io.RandomAccessFile;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -457,6 +458,8 @@ import org.meteoinfo.projection.ProjectionInfo;
      // </editor-fold>
      // <editor-fold desc="Methods">
 
+     public abstract boolean isValidFile(RandomAccessFile raf);
+
      /**
       * Read data info
       *
@@ -617,7 +620,9 @@ import org.meteoinfo.projection.ProjectionInfo;
       * Get global attributes
       * @return Global attributes
       */
-     public abstract List<Attribute> getGlobalAttributes();
+     public List<Attribute> getGlobalAttributes() {
+         return this.attributes;
+     };
 
      /**
       * Get variable by name
@@ -700,6 +705,22 @@ import org.meteoinfo.projection.ProjectionInfo;
       */
      public void addAttribute(Attribute attr){
          this.attributes.add(attr);
+     }
+
+     /**
+      * Find global attribute
+      *
+      * @param attName Attribute name
+      * @return Global attribute
+      */
+     public Attribute findGlobalAttribute(String attName) {
+         for (Attribute att : this.attributes) {
+             if (att.getShortName().equalsIgnoreCase(attName)) {
+                 return att;
+             }
+         }
+
+         return null;
      }
 
      // </editor-fold>

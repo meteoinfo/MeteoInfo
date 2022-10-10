@@ -27,11 +27,7 @@ import org.meteoinfo.data.meteodata.StationModel;
 import org.meteoinfo.data.meteodata.StationModelData;
 import org.meteoinfo.data.meteodata.Variable;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -91,6 +87,10 @@ import org.meteoinfo.data.meteodata.Attribute;
      }
      // </editor-fold>
      // <editor-fold desc="Methods">
+     @Override
+     public boolean isValidFile(RandomAccessFile raf) {
+         return false;
+     }
  
      @Override
      public void readDataInfo(String fileName) {

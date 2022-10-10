@@ -60,7 +60,7 @@ public class MICAPSDataInfo {
                 dataArray = aLine.split("\\s+");
                 dataType = dataArray[0] + " " + dataArray[1];
                 dataType = dataType.trim().toLowerCase();
-                if (dataType.contains("iamond 1")) {
+                if (dataType.contains("diamond 1")) {
                     mdType = MeteoDataType.MICAPS_1;
                 }
                 if (dataType.equals("diamond 2")) {

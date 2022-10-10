@@ -195,18 +195,22 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     // <editor-fold desc="Methods">
     // <editor-fold desc="Read">
     /**
-     * If can open as ARL data
+     * Whether the file is a valid ARL data file
      *
-     * @param fileName File name
+     * @param raf RandomAccessFile object
      * @return Boolean
      */
-    public static boolean canOpen(String fileName) {
+    @Override
+    public boolean isValidFile(RandomAccessFile raf) {
         try {
-            RandomAccessFile br = new RandomAccessFile(fileName, "r");
-            DataLabel dl = readDataLabel(br);
-            br.close();
-            LocalDateTime t = dl.getTimeValue();
-            return t != null;
+            raf.seek(0);
+            DataLabel dl = readDataLabel(raf);
+            if (dl == null) {
+                return false;
+            } else {
+                LocalDateTime t = dl.getTimeValue();
+                return t != null;
+            }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -573,6 +577,8 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             return aDL;
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        } catch (NumberFormatException e) {
             return null;
         }
     }

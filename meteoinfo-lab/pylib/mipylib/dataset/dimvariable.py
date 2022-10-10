@@ -378,9 +378,15 @@ class DimVariable(object):
             r = r.__getitem__(indices)
 
         return r
-    
-    # get dimension length
+
     def dimlen(self, idx):
+        """
+        Get dimension length.
+
+        :param idx: (*int*) Dimension index.
+
+        :return: Dimension length.
+        """
         return self.dims[idx].getLength()
         
     def dimvalue(self, idx, convert=False):
@@ -398,9 +404,9 @@ class DimVariable(object):
             if dim.getDimType() == DimensionType.T:
                 return miutil.nums2dates(dim.getDimValue())
             else:
-                return np.array(ArrayUtil.array(self.dims[idx].getDimValue()))
+                return np.array(dim.getDimValue())
         else:
-            return np.array(ArrayUtil.array(self.dims[idx].getDimValue()))
+            return np.array(dim.getDimValue())
         
     def attrvalue(self, attr):
         """

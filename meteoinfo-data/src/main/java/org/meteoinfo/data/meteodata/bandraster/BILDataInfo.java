@@ -72,6 +72,11 @@ import org.meteoinfo.data.meteodata.Attribute;
      // <editor-fold desc="Methods">
 
      @Override
+     public boolean isValidFile(RandomAccessFile raf) {
+         return false;
+     }
+
+     @Override
      public void readDataInfo(String fileName) {
          this.setFileName(fileName);
 
@@ -79,7 +84,7 @@ import org.meteoinfo.data.meteodata.Attribute;
          String hfn = fileName.replace(fileName.substring(fileName.lastIndexOf(".")), ".hdr");
          if (new File(hfn).exists()) {
              try {
-                 BufferedReader sr = new BufferedReader(new FileReader(new File(hfn)));
+                 BufferedReader sr = new BufferedReader(new FileReader(hfn));
                  String line = "";
                  String[] dataArray;
                  String key;

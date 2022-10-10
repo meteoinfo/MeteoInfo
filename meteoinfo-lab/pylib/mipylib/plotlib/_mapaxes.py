@@ -1347,7 +1347,7 @@ class MapAxes(Axes):
             lonlim = 90
         else:
             lonlim = 0
-            x, y = np.project(x, y, toproj=proj)
+            #x, y = np.project(x, y, toproj=proj)
         layer = DrawMeteoData.meshLayer(x.asarray(), y.asarray(), a.asarray(), ls, lonlim)
         if not proj is None:
             layer.setProjInfo(proj)

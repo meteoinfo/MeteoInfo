@@ -64,6 +64,10 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
     // <editor-fold desc="Get Set Methods">
     // </editor-fold>
     // <editor-fold desc="Methods">
+    @Override
+    public boolean isValidFile(RandomAccessFile raf) {
+        return false;
+    }
 
     @Override
     public void readDataInfo(String fileName) {
@@ -72,7 +76,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
     }
 
     /**
-     * Read data info - the the data file has no big header
+     * Read data info - the data file has no big header
      *
      * @param fileName The data file name
      * @param bigHeaderFile The data file with BigHeader

@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.apache.commons:commons-numbers-gamma:1.1-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-gamma/1.1-SNAPSHOT/commons-numbers-gamma-1.1-20220924.212843-94.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-gamma/1.1-SNAPSHOT/commons-numbers-gamma-1.1-20221008.142521-95.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-gamma/1.1-SNAPSHOT/commons-numbers-gamma-1.1-20220924.212843-94-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-gamma/1.1-SNAPSHOT/commons-numbers-gamma-1.1-20221008.142521-95-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-gamma/1.1-SNAPSHOT/commons-numbers-gamma-1.1-20220924.212843-94-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-gamma/1.1-SNAPSHOT/commons-numbers-gamma-1.1-20221008.142521-95-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -95,20 +95,21 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-imaging:1.0-alpha3" level="project" />
     <orderEntry type="module" module-name="meteoinfo-data" />
     <orderEntry type="module" module-name="meteoinfo-projection" />
-    <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.6-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: net.sf.geographiclib:GeographicLib-Java:2.0" level="project" />
     <orderEntry type="module" module-name="meteoinfo-dataframe" />
     <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.5.3" level="project" />
     <orderEntry type="library" name="Maven: com.github.albfernandez:juniversalchardet:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.11.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.21" level="project" />
     <orderEntry type="library" name="Maven: org.meteothink:wContour:1.7.1" level="project" />
     <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:6.9.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.12.0" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-greek:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-cyrillic:1.0.7" level="project" />
-    <orderEntry type="library" name="Maven: com.formdev:flatlaf:2.4" level="project" />
-    <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:2.4" level="project" />
+    <orderEntry type="library" name="Maven: com.formdev:flatlaf:2.5" level="project" />
+    <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:2.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.formdev:svgSalamander:1.1.3" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-util:2.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.netbeans:openide-lookup:1.9-patched-1.0" level="project" />

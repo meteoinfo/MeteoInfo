@@ -14,6 +14,7 @@
 package org.meteoinfo.data.meteodata.bandraster;
 
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -53,6 +54,11 @@ import org.meteoinfo.data.meteodata.Attribute;
      // <editor-fold desc="Get Set Methods">
      // </editor-fold>
      // <editor-fold desc="Methods">
+
+     @Override
+     public boolean isValidFile(RandomAccessFile raf) {
+         return false;
+     }
 
      @Override
      public void readDataInfo(String fileName) {

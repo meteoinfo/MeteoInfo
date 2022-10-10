@@ -43,10 +43,7 @@ import java.nio.ByteOrder;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.GridArray;
@@ -275,12 +272,23 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
     // <editor-fold desc="Methods">
     // <editor-fold desc="Read and write data">
 
-    public static boolean canOpen(String fileName) {
+    public boolean isValidFile(RandomAccessFile raf) {
         try {
-            BufferedReader sr = new BufferedReader(new FileReader(new File(fileName)));
-            return true;
+            byte[] bytes = new byte[1000];
+            raf.read(bytes);
+            String line = new String(bytes).trim();
+            StringTokenizer stoker = new StringTokenizer(line);
+            while (stoker.hasMoreTokens()) {
+                if (stoker.nextToken().equalsIgnoreCase("DSET")) {
+                    return true;
+                }
+            }
+
+            return false;
         } catch (FileNotFoundException ex) {
             Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (IOException e) {
             return false;
         }
     }
@@ -316,7 +324,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
      */
     private boolean readDataInfo(String aFile, String errorStr) throws FileNotFoundException, IOException {
         this.setFileName(aFile);
-        BufferedReader sr = new BufferedReader(new FileReader(new File(aFile)));
+        BufferedReader sr = new BufferedReader(new FileReader(aFile));
         String aLine = "";
         String[] dataArray;
         int i;

@@ -72,6 +72,11 @@ public class GRIB2DataInfo extends DataInfo implements IGridDataInfo {
     // <editor-fold desc="Methods">
 
     @Override
+    public boolean isValidFile(java.io.RandomAccessFile raf) {
+        return false;
+    }
+
+    @Override
     public void readDataInfo(String fileName) {
         this.setFileName(fileName);
         try {

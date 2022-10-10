@@ -91,6 +91,11 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
             byteOrder = ByteOrder.LITTLE_ENDIAN;
         }
     }
+
+     @Override
+     public boolean isValidFile(RandomAccessFile raf) {
+         return false;
+     }
     
     @Override
     public void readDataInfo(String fileName) {

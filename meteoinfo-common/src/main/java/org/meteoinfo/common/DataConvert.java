@@ -117,6 +117,21 @@ public class DataConvert {
     }
 
     /**
+     * Byte array convert to unsigned short integer
+     *
+     * @param bytes Byte array
+     * @param byteOrder Byte order
+     * @return Unsigned short integer value
+     */
+    public static int bytes2UShort(byte[] bytes, ByteOrder byteOrder) {
+        if (byteOrder == ByteOrder.BIG_ENDIAN) {
+            return bytes2UShort(new byte[]{bytes[1], bytes[0]});
+        } else {
+            return bytes2UShort(bytes);
+        }
+    }
+
+    /**
      * Byte array convert to long integer
      *
      * @param bytes Byte array

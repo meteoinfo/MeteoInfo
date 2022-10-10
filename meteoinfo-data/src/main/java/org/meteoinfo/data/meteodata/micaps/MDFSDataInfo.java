@@ -64,6 +64,10 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
     // </editor-fold>
 
     // <editor-fold desc="Methods">
+    @Override
+    public boolean isValidFile(RandomAccessFile raf) {
+        return false;
+    }
 
     @Override
     public void readDataInfo(String fileName) {

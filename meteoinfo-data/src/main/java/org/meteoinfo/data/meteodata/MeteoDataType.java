@@ -50,7 +50,8 @@ public enum MeteoDataType {
         MM5,
         MM5IM,
         GEOTIFF,
-        BIL;
+        BIL,
+        NULL;
         
         /**
          * If is MICAPS data

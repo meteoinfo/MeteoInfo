@@ -13,11 +13,7 @@
  */
 package org.meteoinfo.data.meteodata.micaps;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -71,7 +67,11 @@ public class MICAPS11DataInfo extends DataInfo implements IGridDataInfo {
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
     // </editor-fold>
-    // <editor-fold desc="Methods">    
+    // <editor-fold desc="Methods">
+    @Override
+    public boolean isValidFile(RandomAccessFile raf) {
+        return false;
+    }
 
     @Override
     public void readDataInfo(String fileName) {

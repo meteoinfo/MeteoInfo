@@ -63,6 +63,11 @@ import org.mozilla.universalchardet.UniversalDetector;
      // <editor-fold desc="Methods">
 
      @Override
+     public boolean isValidFile(RandomAccessFile raf) {
+         return false;
+     }
+
+     @Override
      public void readDataInfo(String fileName) {
          BufferedReader sr = null;
          try {

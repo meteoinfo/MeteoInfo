@@ -198,6 +198,14 @@ public class Attribute {
     }
 
     /**
+     * Get data type
+     * @return Data type
+     */
+    public DataType getDataType() {
+        return this.dataType;
+    }
+
+    /**
      * Get string value
      *
      * @return String value
@@ -380,7 +388,7 @@ public class Attribute {
                 this.dataType = DataType.STRING;
                 return;
             }
-            // otherwise its an array of Strings
+            // otherwise it's an array of Strings
             arr = carr.make1DStringArray();
         }
 

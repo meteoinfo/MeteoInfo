@@ -495,7 +495,8 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         this.mapView.setLockViewUpdate(false);
         this.mapView.setAntiAlias(this.antialias);        
         //this.mapView.setViewExtent((Extent) this.getDrawExtent().clone());
-        this.mapView.zoomToExtent((Extent) this.getDrawExtent().clone());
+        this.mapView.zoomToExtent((Extent) this.getDrawExtent().clone(),
+                (int) area.getWidth(), (int) area.getHeight());
         if (this.boundary != null) {
             PolygonBreak pb = (PolygonBreak)this.boundary.getLegend().clone();
             if (pb.isDrawFill()) {

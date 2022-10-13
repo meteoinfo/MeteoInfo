@@ -6352,24 +6352,21 @@ public class MapView extends JPanel implements IWebMapPanel {
             return;
         }
 
-        //LegendScheme aLS = aLayer.getLegendScheme();
-        //List<Shape> shapeList = new ArrayList<Shape>(aLayer.getShapes());
-        //Font drawFont = aLayer.LabelSet.LabelFont;
-        //SolidBrush labelBrush = new SolidBrush(aLayer.LabelSet.LabelColor);
         List<Extent> extentList = new ArrayList<>();
         Extent maxExtent = new Extent();
         Extent aExtent;
         int i, j;
         List<ChartGraphic> chartPoints = aLayer.getChartPoints();
         PointF aPoint = new PointF();
-        //float X, Y;
-        //X = 0;
-        //Y = 0;
 
         for (i = 0; i < chartPoints.size(); i++) {
             ChartGraphic aCP = chartPoints.get(i);
             PointShape aPS = (PointShape) aCP.getShape();
             ChartBreak aCB = (ChartBreak) aCP.getLegend();
+            if (aCB.getChartData().isEmpty()) {
+                continue;
+            }
+
             PointD startPos = aCP.getStartPosition();
             aPS.setVisible(true);
             aPoint.X = (float) aPS.getPoint().X;

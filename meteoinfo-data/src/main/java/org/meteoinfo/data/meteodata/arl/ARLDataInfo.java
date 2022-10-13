@@ -1506,9 +1506,9 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                     aDH.SYNC_LON = (float) sync_lon;
                     break;
                 case Mercator:
-                    aDH.POLE_LAT = 0;
+                    aDH.POLE_LAT = 90;
                     aDH.POLE_LON = (float) aProj.getProjectionLongitudeDegrees();
-                    aDH.REF_LAT = (float) tanLat;
+                    aDH.REF_LAT = (float) aProj.getTrueScaleLatitudeDegrees();
                     aDH.REF_LON = (float) aProj.getProjectionLongitudeDegrees();
                     aDH.SIZE = (float) (X[1] - X[0]) / 1000;
                     aDH.ORIENT = 0;

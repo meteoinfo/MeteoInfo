@@ -578,15 +578,16 @@ class DimDataFile(object):
         """
         self.arldata.setY(y.aslist())
         
-    def setlevels(self, levels):
+    def setlevels(self, levels, add_ground=True):
         """
         Set vertical levels.
         
-        :param leveles: (*list*) Vertical levels.
+        :param levels: (*list*) Vertical levels.
+        :param add_ground: (*bool*) Whether add ground level. Default is `True`.
         """
         if isinstance(levels, np.NDArray):
             levels = levels.aslist()
-        if levels[0] != 1:
+        if add_ground:
             levels.insert(0, 1)
         self.arldata.levels = levels
         

@@ -91,7 +91,7 @@ public class GLPlot extends Plot {
     protected boolean clipPlane = true;
     protected boolean axesZoom = false;
 
-    protected Color boxColor = Color.getHSBColor(0f, 0f, 0.95f);
+    protected Color boxColor = Color.lightGray;
 
     protected boolean boxed, mesh, scaleBox, displayXY, displayZ,
             drawBoundingBox, hideOnDrag, drawBase;

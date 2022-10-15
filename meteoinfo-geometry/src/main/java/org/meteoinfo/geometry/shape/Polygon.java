@@ -213,29 +213,22 @@ public class Polygon {
             p = _outLine.get(i);
             cs[i] = new Coordinate(p.X, p.Y);
         }
-        if (cs[0].x != cs[cs.length -1].x){
+        if (!cs[0].equals(cs[cs.length - 1])){
             cs = (Coordinate[])DataConvert.resizeArray(cs, cs.length + 1);
-            cs[cs.length - 1] = new Coordinate(cs[0].x, cs[1].y);
+            cs[cs.length - 1] = (Coordinate) cs[0].clone();
         }
         LinearRing shell = factory.createLinearRing(cs);
         LinearRing[] holes = new LinearRing[this._holeLines.size()];
-        int n;
-        boolean isclose;
         for (int j = 0; j < holes.length; j++) {
             List<? extends PointD> hole = this._holeLines.get(j);
-            n = hole.size();
-            isclose = true;
-            if (n == 3) {
-                n = 4;
-                isclose = false;
-            }
-            cs = new Coordinate[n];
+            cs = new Coordinate[hole.size()];
             for (int i = 0; i < hole.size(); i++) {
                 p = hole.get(i);
                 cs[i] = new Coordinate(p.X, p.Y);
             }      
-            if (!isclose){
-                cs[n - 1] = new Coordinate(hole.get(0).X, hole.get(0).Y);
+            if (!cs[0].equals(cs[cs.length - 1])){
+                cs = (Coordinate[])DataConvert.resizeArray(cs, cs.length + 1);
+                cs[cs.length - 1] = (Coordinate) cs[0].clone();
             }
             holes[j] = factory.createLinearRing(cs);
         }

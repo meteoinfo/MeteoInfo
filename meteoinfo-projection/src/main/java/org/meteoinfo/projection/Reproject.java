@@ -744,7 +744,12 @@ public class Reproject {
         int[] shape = rx.getShape();
         int ny = shape[0];
         int nx = shape[1];
-        int[] newShape = new int[]{ny, nx, data.getShape()[2]};
+        int[] newShape;
+        if (data.getRank() == 2) {
+            newShape = new int[]{ny, nx};
+        } else {
+            newShape = new int[]{ny, nx, data.getShape()[2]};
+        }
         Array r = Array.factory(data.getDataType(), newShape);
 
         int n = ny * nx;
@@ -765,38 +770,64 @@ public class Reproject {
         double xx, yy;
         int xi, yi, ii;
         int idx = 0;
-        Index3D index = (Index3D) data.getIndex();
-        for (int i = 0; i < ny; i++) {
-            for (int j = 0; j < nx; j++) {
-                ii = i * nx + j;
-                xx = points[ii][0];
-                yy = points[ii][1];
-                if (xx < minX || xx > maxX)
-                    xi = -1;
-                else
-                    xi = (int)((xx - minX) / dx);
-                if (yy < minY || yy > maxY)
-                    yi = -1;
-                else
-                    yi = (int)((yy - minY) / dy);
+        if (data.getRank() == 2) {
+            Index2D index = (Index2D) data.getIndex();
+            for (int i = 0; i < ny; i++) {
+                for (int j = 0; j < nx; j++) {
+                    ii = i * nx + j;
+                    xx = points[ii][0];
+                    yy = points[ii][1];
+                    if (xx < minX || xx > maxX)
+                        xi = -1;
+                    else
+                        xi = (int) ((xx - minX) / dx);
+                    if (yy < minY || yy > maxY)
+                        yi = -1;
+                    else
+                        yi = (int) ((yy - minY) / dy);
 
-                if (xi >= 0 && yi >= 0) {
-                    index.set(yi, xi, 0);
-                    r.setObject(idx, data.getObject(index));
-                    idx += 1;
-                    index.set2(1);
-                    r.setObject(idx, data.getObject(index));
-                    idx += 1;
-                    index.set2(2);
-                    r.setObject(idx, data.getObject(index));
-                    idx += 1;
-                } else {
-                    r.setObject(idx, 255);
-                    idx += 1;
-                    r.setObject(idx, 255);
-                    idx += 1;
-                    r.setObject(idx, 255);
-                    idx += 1;
+                    if (xi >= 0 && yi >= 0) {
+                        index.set(yi, xi);
+                        r.setObject(ii, data.getObject(index));
+                    } else {
+                        r.setObject(ii, Double.NaN);
+                    }
+                }
+            }
+        } else {
+            Index3D index = (Index3D) data.getIndex();
+            for (int i = 0; i < ny; i++) {
+                for (int j = 0; j < nx; j++) {
+                    ii = i * nx + j;
+                    xx = points[ii][0];
+                    yy = points[ii][1];
+                    if (xx < minX || xx > maxX)
+                        xi = -1;
+                    else
+                        xi = (int) ((xx - minX) / dx);
+                    if (yy < minY || yy > maxY)
+                        yi = -1;
+                    else
+                        yi = (int) ((yy - minY) / dy);
+
+                    if (xi >= 0 && yi >= 0) {
+                        index.set(yi, xi, 0);
+                        r.setObject(idx, data.getObject(index));
+                        idx += 1;
+                        index.set2(1);
+                        r.setObject(idx, data.getObject(index));
+                        idx += 1;
+                        index.set2(2);
+                        r.setObject(idx, data.getObject(index));
+                        idx += 1;
+                    } else {
+                        r.setObject(idx, 255);
+                        idx += 1;
+                        r.setObject(idx, 255);
+                        idx += 1;
+                        r.setObject(idx, 255);
+                        idx += 1;
+                    }
                 }
             }
         }

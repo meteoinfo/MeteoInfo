@@ -629,7 +629,7 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
     r = Reproject.reproject(a.asarray(), x.aslist(), y.aslist(), xp, yp, fromproj, toproj, method)
     return NDArray(r)
 
-def reproject_image(a, x, y, fromproj=None, xp=None, yp=None, toproj=None):
+def reproject_image(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None):
     """
     Project image data array
 
@@ -643,6 +643,13 @@ def reproject_image(a, x, y, fromproj=None, xp=None, yp=None, toproj=None):
 
     :returns: (*NDArray*) Projected array
     """
+    if x is None or y is None:
+        if isinstance(a, DimArray):
+            y = a.dimvalue(a.ndim - 2)
+            x = a.dimvalue(a.ndim - 1)
+        else:
+            raise ValueError('Input x/y coordinates are None')
+
     if fromproj is None:
         fromproj = KnownCoordinateSystems.geographic.world.WGS1984
 

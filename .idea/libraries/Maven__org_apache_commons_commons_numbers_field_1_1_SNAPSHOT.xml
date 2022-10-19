@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.apache.commons:commons-numbers-field:1.1-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-field/1.1-SNAPSHOT/commons-numbers-field-1.1-20221013.124307-98.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-field/1.1-SNAPSHOT/commons-numbers-field-1.1-20221018.122608-102.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-field/1.1-SNAPSHOT/commons-numbers-field-1.1-20221013.124307-98-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-field/1.1-SNAPSHOT/commons-numbers-field-1.1-20221018.122608-102-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-field/1.1-SNAPSHOT/commons-numbers-field-1.1-20221013.124307-98-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-field/1.1-SNAPSHOT/commons-numbers-field-1.1-20221018.122608-102-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

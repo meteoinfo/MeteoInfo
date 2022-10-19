@@ -29,6 +29,7 @@ public class ClipTest {
 
         //创建图例 如把 5 设置成6及以上则不会报错，GridData最小与最大分别为 7.6 21.3
         double[] values = new double[]{
+                3,
                 5,
                 7,
                 9,
@@ -37,6 +38,7 @@ public class ClipTest {
                 15,
                 17};
         Color[] colors = new Color[]{
+                Color.pink,
                 Color.cyan,
                 Color.white,
                 Color.blue,
@@ -64,7 +66,7 @@ public class ClipTest {
         LegendScheme aLS = LegendManage.createGraduatedLegendScheme(values, colors,
                 ShapeTypes.POLYGON, minData, maxData, false, grid.getDoubleMissingValue());
         //绘制图层
-        VectorLayer layer = DrawMeteoData.createShadedLayer(grid, aLS, "Shaded_var", "var", true);
+        VectorLayer layer = DrawMeteoData.createShadedLayer(grid, aLS, "Shaded_var", "var", false);
 
         //对绘制的图层进行裁剪
         VectorLayer clipShp = MapDataManage.readMapFile_ShapeFile("D:\\Temp\\test\\taizhou.shp");

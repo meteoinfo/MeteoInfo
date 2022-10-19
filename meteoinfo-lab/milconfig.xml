@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\projection">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map">
     <RecentFolder Folder="D:\Run\emips\run_cams"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW\airship"/>
@@ -14,21 +14,17 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\sounding.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\radar_bz2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotiff_dem_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\robinson_proj_image.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\sounding.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\radar_bz2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotiff_dem_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\robinson_proj_image.py"/>
     </RecentFiles>
   </File>
   <Font>

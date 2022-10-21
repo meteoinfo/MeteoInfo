@@ -274,6 +274,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
     public boolean isValidFile(RandomAccessFile raf) {
         try {
+            raf.seek(0);
             byte[] bytes = new byte[1000];
             raf.read(bytes);
             String line = new String(bytes).trim();

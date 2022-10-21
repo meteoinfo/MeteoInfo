@@ -480,6 +480,8 @@ public class MeteoDataInfo {
                 di = new ARLDataInfo();
             } else if (CMARadarBaseDataInfo.class.getDeclaredConstructor().newInstance().canOpen(fileName)) {
                 di = new CMARadarBaseDataInfo();
+            } else {
+                di = MICAPSDataInfo.getDataInfo(raf);
             }
             raf.close();
         } catch (IOException | NoSuchMethodException ex) {

@@ -14,13 +14,12 @@
 package org.meteoinfo.data.meteodata.micaps;
 
 import org.apache.commons.io.input.BOMInputStream;
+import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.RandomAccess;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -106,6 +105,63 @@ public class MICAPSDataInfo {
         }
 
         return mdType;
+    }
+
+    /**
+     * Get MICAPS data info
+     *
+     * @param raf RandomAccessFile object
+     * @return Data info
+     */
+    public static DataInfo getDataInfo(RandomAccessFile raf) {
+        DataInfo dataInfo = null;
+        try {
+            raf.seek(0);
+            byte[] bytes = new byte[1000];
+            raf.read(bytes);
+            String line = new String(bytes).trim();
+            if (line.substring(0, 4).equals("mdfs")) {
+                dataInfo = new MDFSDataInfo();
+            } else {
+                StringTokenizer stoker = new StringTokenizer(line);
+                if (stoker.countTokens() >= 2) {
+                    String dataType = stoker.nextToken() + " " + stoker.nextToken();
+                    if (dataType.contains("diamond 1")) {
+                        dataInfo = new MICAPS1DataInfo();
+                    }
+                    if (dataType.equals("diamond 2")) {
+                        dataInfo = new MICAPS2DataInfo();
+                    }
+                    if (dataType.equals("diamond 3")) {
+                        dataInfo = new MICAPS3DataInfo();
+                    }
+                    if (dataType.equals("diamond 4")) {
+                        dataInfo = new MICAPS4DataInfo();
+                    }
+                    if (dataType.equals("diamond 7")) {
+                        dataInfo = new MICAPS7DataInfo();
+                    }
+                    if (dataType.equals("diamond 11")) {
+                        dataInfo = new MICAPS11DataInfo();
+                    }
+                    if (dataType.equals("diamond 13")) {
+                        dataInfo = new MICAPS13DataInfo();
+                    }
+                    if (dataType.contains("iamond 120")) {
+                        dataInfo = new MICAPS120DataInfo();
+                    }
+                    if (dataType.contains("diamond 131")) {
+                        dataInfo = new MICAPS131DataInfo();
+                    }
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MICAPSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MICAPSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return dataInfo;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

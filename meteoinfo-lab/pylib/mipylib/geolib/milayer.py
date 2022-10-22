@@ -459,7 +459,7 @@ class MILayer(object):
         if isinstance(clipobj, PolygonShape):
             clipobj = [clipobj]
         elif isinstance(clipobj, MILayer):
-            clipobj = clipobj.layer
+            clipobj = clipobj._layer
         r = self._layer.clip(clipobj)
         return MILayer(r)
         

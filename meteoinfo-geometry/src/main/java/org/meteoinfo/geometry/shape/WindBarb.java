@@ -13,6 +13,10 @@
  */
 package org.meteoinfo.geometry.shape;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.meteoinfo.common.PointD;
+
 /**
  *
  * @author Yaqiang Wang
@@ -53,6 +57,24 @@ public class WindBarb extends PointShape {
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
+
+    /**
+     * Get intersection shape
+     * @param b Other shape
+     * @return Intersection shape
+     */
+    @Override
+    public Shape intersection(Shape b){
+        Geometry g1 = this.toGeometry();
+        Geometry g2 = b.toGeometry();
+        Geometry g3 = g1.intersection(g2);
+
+        if (g3.getNumPoints() < 1)
+            return null;
+        else {
+            return (WindBarb) this.clone();
+        }
+    }
 
     /**
      * Clone

@@ -150,5 +150,39 @@ public class ArrowBreak extends PointBreak {
         this.headWidth = this.width * 5;
         this.headLength = this.headWidth * 5 / 3;
     }
+
+    /**
+     * Clone
+     *
+     * @return PointBreak
+     */
+    @Override
+    public Object clone() {
+        ArrowBreak aCB = new ArrowBreak();
+        aCB.setCaption(this.getCaption());
+        aCB.setColor(this.getColor());
+        aCB.setDrawShape(this.isDrawShape());
+        aCB.setEndValue(this.getEndValue());
+        aCB.setNoData(this.isNoData());
+        aCB.setStartValue(this.getStartValue());
+        aCB.setMarkerType(markerType);
+        aCB.setFontName(fontName);
+        aCB.setCharIndex(charIndex);
+        aCB.setImagePath(imagePath);
+        aCB.setOutlineColor(outlineColor);
+        aCB.setOutlineSize(this.outlineSize);
+        aCB.setSize(size);
+        aCB.setDrawOutline(drawOutline);
+        aCB.setDrawFill(drawFill);
+        aCB.setStyle(style);
+        aCB.setAngle(angle);
+        aCB.headLength = this.headLength;
+        aCB.headWidth = this.headLength;
+        aCB.width = this.width;
+        aCB.overhang = this.overhang;
+        aCB.autoScale = this.autoScale;
+
+        return aCB;
+    }
     // </editor-fold>
 }

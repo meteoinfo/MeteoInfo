@@ -5,6 +5,8 @@
  */
 package org.meteoinfo.geometry.shape;
 
+import org.locationtech.jts.geom.Geometry;
+
 /**
  *
  * @author Yaqiang Wang
@@ -81,9 +83,27 @@ public class WindArrow3D extends PointZShape {
     }
 
     /**
+     * Get intersection shape
+     * @param b Other shape
+     * @return Intersection shape
+     */
+    @Override
+    public Shape intersection(Shape b){
+        Geometry g1 = this.toGeometry();
+        Geometry g2 = b.toGeometry();
+        Geometry g3 = g1.intersection(g2);
+
+        if (g3.getNumPoints() < 1)
+            return null;
+        else {
+            return (WindArrow3D) this.clone();
+        }
+    }
+
+    /**
      * Clone
      *
-     * @return WindArraw object
+     * @return WindArrow object
      */
     @Override
     public Object clone() {

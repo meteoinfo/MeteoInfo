@@ -304,16 +304,12 @@ class DimArray(NDArray):
                 rr.base = self.get_base()
             return rr
 
-        if r.getSize() == 1 and squeeze:
-            iter = r.getIndexIterator()
-            return iter.getObjectNext()
-        else:
-            for i in flips:
-                r = r.flip(i)
-            data = DimArray(r, ndims, self.fill_value, self.proj)
-            if onlyrange:
-                data.base = self.get_base()
-            return data        
+        for i in flips:
+            r = r.flip(i)
+        data = DimArray(r, ndims, self.fill_value, self.proj)
+        if onlyrange:
+            data.base = self.get_base()
+        return data
         
     def __add__(self, other):
         r = super(DimArray, self).__add__(other)

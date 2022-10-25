@@ -7319,19 +7319,40 @@ public class GraphicFactory {
         int rowNum = shape[0];
         int idx;
         float[] vertexPosition = new float[rowNum * colNum * 3];
-        float[] vertexValue = new float[rowNum * colNum];
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
-                idx = i * colNum + j;
-                vertexValue[idx] = va.getFloat(idx);
-                vertexPosition[idx * 3] = xa.getFloat(idx);
-                vertexPosition[idx * 3 + 1] = ya.getFloat(idx);
-                vertexPosition[idx * 3 + 2] = za.getFloat(idx);
+        if (va.getRank() == 3) {
+            float[] vertexColor = new float[rowNum * colNum * 4];
+            Color color;
+            Index index = va.getIndex();
+            for (int i = 0; i < rowNum; i++) {
+                for (int j = 0; j < colNum; j++) {
+                    idx = i * colNum + j;
+                    vertexPosition[idx * 3] = xa.getFloat(idx);
+                    vertexPosition[idx * 3 + 1] = ya.getFloat(idx);
+                    vertexPosition[idx * 3 + 2] = za.getFloat(idx);
+                    index.set0(i);
+                    index.set1(j);
+                    color = new Color(va.getInt(index.set2(0)), va.getInt(index.set2(1)), va.getInt(index.set2(2)));
+                    System.arraycopy(color.getRGBComponents(null), 0, vertexColor, idx * 4, 4);
+                }
             }
+            surfaceGraphic.setVertexPosition(vertexPosition, rowNum);
+            surfaceGraphic.setVertexColor(vertexColor);
+            surfaceGraphic.setLegendScheme(ls);
+        } else {
+            float[] vertexValue = new float[rowNum * colNum];
+            for (int i = 0; i < rowNum; i++) {
+                for (int j = 0; j < colNum; j++) {
+                    idx = i * colNum + j;
+                    vertexValue[idx] = va.getFloat(idx);
+                    vertexPosition[idx * 3] = xa.getFloat(idx);
+                    vertexPosition[idx * 3 + 1] = ya.getFloat(idx);
+                    vertexPosition[idx * 3 + 2] = za.getFloat(idx);
+                }
+            }
+            surfaceGraphic.setVertexPosition(vertexPosition, rowNum);
+            surfaceGraphic.setVertexValue(vertexValue);
+            surfaceGraphic.setLegendScheme(ls);
         }
-        surfaceGraphic.setVertexPosition(vertexPosition, rowNum);
-        surfaceGraphic.setVertexValue(vertexValue);
-        surfaceGraphic.setLegendScheme(ls);
         return surfaceGraphic;
     }
 

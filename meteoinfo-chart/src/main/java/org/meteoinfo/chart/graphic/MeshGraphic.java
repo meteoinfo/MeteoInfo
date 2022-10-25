@@ -156,6 +156,14 @@ public class MeshGraphic extends GraphicCollection3D {
     }
 
     /**
+     * Set vertex color data
+     * @param value Vertex color data
+     */
+    public void setVertexColor(float[] value) {
+        this.vertexColor = value;
+    }
+
+    /**
      * Get vertex normal
      * @return Vertex normal
      */

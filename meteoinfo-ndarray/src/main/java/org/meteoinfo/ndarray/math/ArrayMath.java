@@ -5805,8 +5805,17 @@ public class ArrayMath {
             } else if (k instanceof Array) {
                 list = new ArrayList<>();
                 IndexIterator iter = ((Array) k).getIndexIterator();
-                while (iter.hasNext()) {
-                    list.add(iter.getIntNext());
+                if (((Array) k).getDataType().isBoolean()) {
+                    int idx = 0;
+                    while (iter.hasNext()) {
+                        if (iter.getBooleanNext())
+                            list.add(idx);
+                        idx += 1;
+                    }
+                } else {
+                    while (iter.hasNext()) {
+                        list.add(iter.getIntNext());
+                    }
                 }
                 shape[i] = list.size();
             } else {
@@ -5868,13 +5877,20 @@ public class ArrayMath {
      */
     public static Array takeValues(Array a, List<Array> ranges) {
         int n = a.getRank();
-        Array bigArray = ranges.get(0);
+        Array bigArray = ranges.get(0).copyIfView();
+        if (bigArray.getDataType().isBoolean()) {
+            bigArray = ArrayUtil.nonzero(bigArray).get(0);
+        }
         boolean sameSize = true;
         for (int i = 0; i < ranges.size(); i++) {
-            ranges.set(i, ranges.get(i).copyIfView());
-            if (ranges.get(i).getSize() != bigArray.getSize()) {
-                if (ranges.get(i).getSize() > bigArray.getSize())
-                    bigArray = ranges.get(i);
+            Array range = ranges.get(i).copyIfView();
+            if (range.getDataType().isBoolean()) {
+                range = ArrayUtil.nonzero(range).get(0);
+            }
+            ranges.set(i, range);
+            if (range.getSize() != bigArray.getSize()) {
+                if (range.getSize() > bigArray.getSize())
+                    bigArray = range;
                 sameSize = false;
             }
         }

@@ -178,14 +178,6 @@ class NDArray(object):
             elif isinstance(k, (list, tuple, NDArray)):
                 if isinstance(k, (list, tuple)):
                     k = NDArray(k)
-                # if isinstance(k, NDArray):
-                #     k = k.aslist()
-                # if isinstance(k[0], bool):
-                #     kk = []
-                #     for i in range(len(k)):
-                #         if k[i]:
-                #             kk.append(i)
-                #     k = kk
                 onlyrange = False
                 ranges.append(k.asarray())
                 continue
@@ -235,23 +227,12 @@ class NDArray(object):
                 rr.base = self.get_base()
             return rr
 
-        if r.getSize() == 1 and squeeze:
-            iter = r.getIndexIterator()
-            if self.dtype == _dtype.dtype.char:
-                return iter.getStringNext()
-            else:
-                r = iter.getObjectNext()
-                if isinstance(r, Complex):
-                    return complex(r.getReal(), r.getImaginary())
-                else:
-                    return r
-        else:
-            for i in flips:
-                r = r.flip(i)
-            r = NDArray(r)
-            if onlyrange:
-                r.base = self.get_base()
-            return r
+        for i in flips:
+            r = r.flip(i)
+        r = NDArray(r)
+        if onlyrange:
+            r.base = self.get_base()
+        return r
 
     def __setitem__(self, indices, value):
         #print type(indices)

@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.apache.commons:commons-numbers-arrays:1.1-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-arrays/1.1-SNAPSHOT/commons-numbers-arrays-1.1-20221018.122608-103.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-arrays/1.1-SNAPSHOT/commons-numbers-arrays-1.1-20221019.203923-105.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-arrays/1.1-SNAPSHOT/commons-numbers-arrays-1.1-20221018.122608-103-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-arrays/1.1-SNAPSHOT/commons-numbers-arrays-1.1-20221019.203923-105-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-arrays/1.1-SNAPSHOT/commons-numbers-arrays-1.1-20221018.122608-103-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-numbers-arrays/1.1-SNAPSHOT/commons-numbers-arrays-1.1-20221019.203923-105-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

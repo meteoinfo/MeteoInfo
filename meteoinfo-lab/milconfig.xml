@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\mesh"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
@@ -14,8 +12,10 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,14 +23,14 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\radar_bz2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\tree_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface\heart_interp.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\hy_frequency.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\sounding.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\radar_bz2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\tree_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface\heart_interp.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\hdivg.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\hy_frequency.py"/>
     </RecentFiles>
   </File>
   <Font>

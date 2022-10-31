@@ -758,7 +758,7 @@ def axes(*args, **kwargs):
 
 def axesm(*args, **kwargs):  
     """
-    Add an map axes to the figure.
+    Add a map axes to the figure.
     
     :param projection: (*ProjectionInfo*) Optional, map projection, default is longlat projection.
     :param position: (*list*) Optional, axes position specified by *position=* [left, bottom, width

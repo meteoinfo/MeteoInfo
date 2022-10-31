@@ -663,7 +663,7 @@ def sqrt(x):
     elif isinstance(x, NDArray):
         return x.sqrt()
     else:
-        return math.sqrt(x)
+        return cmath.sqrt(x)
         
 def power(x1, x2):
     """

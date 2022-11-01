@@ -3,6 +3,7 @@
 out vec4 mgl_FragColor;
 
 uniform vec2 viewSize;
+uniform vec2 viewShift;
 uniform mat4 iV;
 uniform mat4 iP;
 
@@ -92,7 +93,7 @@ void intersect(
 }
 
 void main(){
-    vec2 vUV = 2.0 * (gl_FragCoord.xy + vec2(0.5, 0.5)) / viewSize - 1.0;
+    vec2 vUV = 2.0 * (gl_FragCoord.xy + vec2(0.5, 0.5) - viewShift) / viewSize - 1.0;
     Ray ray;
     if (orthographic) {
         ray = createRayOrthographic(vUV);

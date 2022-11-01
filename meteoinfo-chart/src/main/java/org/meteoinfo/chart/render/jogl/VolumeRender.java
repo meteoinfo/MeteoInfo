@@ -259,6 +259,9 @@ public class VolumeRender extends JOGLGraphicRender {
         program.allocateUniform(gl, "viewSize", (gl2, loc) -> {
             gl2.glUniform2f(loc, this.getWidth(), this.getHeight());
         });
+        program.allocateUniform(gl, "viewShift", (gl2, loc) -> {
+            gl2.glUniform2f(loc, this.viewport[0], this.viewport[1]);
+        });
         int sampleCount = 512;
         program.allocateUniform(gl, "depthSampleCount", (gl2, loc) -> {
             gl2.glUniform1i(loc, sampleCount);

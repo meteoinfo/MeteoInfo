@@ -335,7 +335,7 @@ public class TriMeshGraphic extends GraphicCollection3D {
      * @return The color
      */
     public Color getColor() {
-        return this.legendBreak.getColor();
+        return this.legendScheme.getLegendBreak(0).getColor();
     }
 
     /**
@@ -343,7 +343,8 @@ public class TriMeshGraphic extends GraphicCollection3D {
      * @param color The color
      */
     public void setColor(Color color) {
-        this.legendBreak.setColor(color);
+        this.legendScheme.getLegendBreak(0).setColor(color);
+        updateVertexColor();
     }
 
     public void updateExtent() {

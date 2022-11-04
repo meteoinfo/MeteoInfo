@@ -1298,7 +1298,10 @@ class Axes3DGL(Axes3D):
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = 'k'
 
-        return self.isosurface(a, b, c, v, 0, z, *args, **kwargs)
+        if kwargs.has_key('facecolor'):
+            return self.isosurface(a, b, c, v, 0, *args, **kwargs)
+        else:
+            return self.isosurface(a, b, c, v, 0, z, *args, **kwargs)
 
     def particles(self, *args, **kwargs):
         """

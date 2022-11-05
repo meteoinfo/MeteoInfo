@@ -309,6 +309,24 @@ class Axes3DGL(Axes3D):
         if not mat_shininess is None:
             lighting.setMat_Shininess(mat_shininess)
 
+    def set_material(self, mvalues):
+        """
+        Set reflectance properties of surfaces and patches.
+
+        :param mvalues: (*list*) Material value list. Sets the ambient/diffuse/specular strength,
+            specular exponent, and specular color reflectance of the objects.
+        """
+        lighting = self._axes.getLighting()
+        lighting.setMat_Ambient(mvalues[0])
+        if len(mvalues) > 1:
+            lighting.setMat_Diffuse(mvalues[1])
+        if len(mvalues) > 2:
+            lighting.setMat_Specular(mvalues[2])
+        if len(mvalues) > 3:
+            lighting.setMat_Shininess(mvalues[3])
+        if len(mvalues) > 4:
+            lighting.setMat_Emission(mvalues[4])
+
     def add_zaxis(self, x, y, left=True):
         """
         Add a z axis.
@@ -1091,10 +1109,11 @@ class Axes3DGL(Axes3D):
         min = z.min()
         max = z.max()
         if len(args) > 0:
-            if isinstance(args[0], NDArray) and args[0].shape == z.shape:
+            if isinstance(args[0], NDArray):
                 C = args[0]
-                min = C.min()
-                max = C.max()
+                if C.shape == z.shape:
+                    min = C.min()
+                    max = C.max()
                 if len(args) > 1:
                     level_arg = args[1]
             else:

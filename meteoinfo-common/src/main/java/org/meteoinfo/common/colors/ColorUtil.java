@@ -151,7 +151,7 @@ public class ColorUtil {
      * @param c hex string
      * @return Color
      */
-    public static Color parseToColor(final String c) {
+    public static Color parseToColor(String c) {
         //Color convertedColor = (Color) colorNames.get(c.trim().toLowerCase());
         Color convertedColor = Color.white;
         try {
@@ -159,7 +159,20 @@ public class ColorUtil {
             convertedColor = WebColor.valueOf(c.trim()).getColor();
         } catch (IllegalArgumentException e) {
             try {
-                if (c.length() == 10) {
+                if (c.startsWith("#")) {
+                    c = c.substring(1);
+                    if (c.length() == 3) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(c.substring(0, 1));
+                        sb.append(c.substring(0, 1));
+                        sb.append(c.substring(1, 2));
+                        sb.append(c.substring(1, 2));
+                        sb.append(c.substring(2));
+                        sb.append(c.substring(2));
+                        c = sb.toString();
+                    }
+                    convertedColor = new Color(Integer.parseInt(c, 16));
+                } else if (c.length() == 10) {
                     String aStr = c.substring(2, 4);
                     String cStr = c.substring(0, 2) + c.substring(4);
                     int alpha = Integer.parseInt(aStr, 16);

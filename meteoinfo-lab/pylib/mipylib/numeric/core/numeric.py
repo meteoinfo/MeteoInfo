@@ -2736,6 +2736,7 @@ def asarray(data, dtype=None):
     """
     if isinstance(data, Array):
         data = NDArray(data)
+
     if isinstance(data, NDArray):
         if dtype is None:
             return data

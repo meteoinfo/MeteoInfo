@@ -967,21 +967,19 @@ class MapAxes(Axes):
             a = args[0]
             y = a.dimvalue(0)
             x = a.dimvalue(1)
+            if a.ndim == 2:
+                x, y = np.meshgrid(x, y)
             args = args[1:]
         else:
-            x = args[0]
-            y = args[1]
-            if not isinstance(x, NDArray):
-                x = np.array(x)
-            if not isinstance(y, NDArray):
-                y = np.array(y)
+            x = np.asarray(args[0])
+            y = np.asarray(args[1])
             if n == 2:
                 a = x
                 args = args[2:]
             else:
-                a = args[2]
-                if not isinstance(a, NDArray):
-                    a = np.array(a)
+                a = np.asarray(args[2])
+                if a.ndim == 2 and x.ndim == 1 and y.ndim == 1:
+                    x, y = np.meshgrid(x, y)
                 args = args[3:]
 		
 		if (a.ndim == 2) and (x.ndim == 1):

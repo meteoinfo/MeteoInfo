@@ -261,6 +261,14 @@ public class Lighting {
     }
 
     /**
+     * Set material ambient light
+     * @param value Material ambient light value
+     */
+    public void setMat_Ambient(float value) {
+        this.mat_ambient = new float[]{value, value, value, 1};
+    }
+
+    /**
      * Set material diffuse light
      * @param value Material diffuse light
      */
@@ -280,6 +288,14 @@ public class Lighting {
 
         this.mat_diffuse = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
                 (float) value.get(3)};
+    }
+
+    /**
+     * Set material diffuse light
+     * @param value Material diffuse light value
+     */
+    public void setMat_Diffuse(float value) {
+        this.mat_diffuse = new float[]{value, value, value, 1};
     }
     
     /**
@@ -305,6 +321,14 @@ public class Lighting {
     }
 
     /**
+     * Set material specular light
+     * @param value Material specular light
+     */
+    public void setMat_Specular(float value) {
+        this.mat_specular = new float[]{value, value, value, 1};
+    }
+
+    /**
      * Set material emission light
      * @param value Material emission light
      */
@@ -324,6 +348,14 @@ public class Lighting {
 
         this.mat_emission = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
                 (float) value.get(3)};
+    }
+
+    /**
+     * Set material emission light
+     * @param value Material emission light value
+     */
+    public void setMat_Emission(float value) {
+        this.mat_emission = new float[]{value, value, value, 1};
     }
     
     /**

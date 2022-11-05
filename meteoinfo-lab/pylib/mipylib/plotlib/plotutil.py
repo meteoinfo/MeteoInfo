@@ -115,7 +115,7 @@ def getcolor(style, alpha=None):
             c = Color.pink
         else:
             try:
-                c = Color.decode(style)
+                c = ColorUtil.parseToColor(style)
             except:
                 c = None
                 print('Not a valid color: {}'.format(style))

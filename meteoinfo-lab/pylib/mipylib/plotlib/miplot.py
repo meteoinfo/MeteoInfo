@@ -46,7 +46,7 @@ __all__ = [
     'figure','glfigure','figsize','patch','rectangle','fill','fill_between','fill_betweenx','fimplicit3',
     'webmap','gca','gcf','gc_collect','geoshow','get_figure','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','isosurface','legend','left_title','lighting','loglog','makecolors',
-    'makelegend','makesymbolspec','masklayer','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
+    'makelegend','makesymbolspec','masklayer','material','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
     'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
     'semilogx','semilogy','show','slice3','stationmodel','stem','stem3','step','streamplot','streamplot3',
     'streamplotm','streamslice','subplot','subplots','suptitle','supxlabel','supylabel',
@@ -1865,6 +1865,18 @@ def lighting(enable=True, **kwargs):
             g_axes = axes3dgl()
 
     g_axes.set_lighting(enable, **kwargs)
+    draw_if_interactive()
+
+@_copy_docstring_and_deprecators(Axes3DGL.set_material)
+def material(mvalues):
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
+
+    g_axes.set_material(mvalues)
     draw_if_interactive()
 
 @_copy_docstring_and_deprecators(Axes3D.mesh)

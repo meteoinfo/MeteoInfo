@@ -328,6 +328,8 @@ class NDArray(object):
     def __value_other(self, other):
         if isinstance(other, NDArray):
             other = other.asarray()
+        elif isinstance(other, complex):
+            other = Complex(other.real, other.imag)
         return other
 
     def __abs__(self):
@@ -337,7 +339,7 @@ class NDArray(object):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.add(self._array, other)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
+            raise ValueError('Dimension mismatch, can not broadcast!')
         return NDArray(r)
 
     def __radd__(self, other):

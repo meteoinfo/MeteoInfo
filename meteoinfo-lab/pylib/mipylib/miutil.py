@@ -208,7 +208,7 @@ def jcomplex(v):
     
     :returns: (*Complex*) Java Complex object.
     """
-    return Complex(v.real, v.img)
+    return Complex(v.real, v.imag)
 
 def makeshapes(x, y, type=None, z=None, m=None):
     """

@@ -283,10 +283,7 @@ public class ArrayMath {
             case DOUBLE:
                 return ArrayMath.addDouble(a, b);
             case COMPLEX:
-                if (a.getDataType() == DataType.COMPLEX) {
-                    return ArrayMath.addComplex(a, b);
-                }
-                break;
+                return ArrayMath.addComplex(a, b);
         }
         return null;
     }
@@ -3545,6 +3542,31 @@ public class ArrayMath {
             IndexIterator iterR = r.getIndexIterator();
             while (iterA.hasNext()) {
                 iterR.setDoubleNext(Math.round(iterA.getDoubleNext() * p10) / p10);
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Return the complex conjugate, element-wise.
+     * The complex conjugate of a complex number is obtained by changing the sign of its imaginary part.
+     *
+     * @param a Array a
+     * @return Result array
+     */
+    public static Array conj(Array a) {
+        Array r;
+        IndexIterator iterA = a.getIndexIterator();
+        r = Array.factory(DataType.COMPLEX, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setComplex(i, a.getComplex(i).conj());
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setComplexNext(iterA.getComplexNext().conj());
             }
         }
 

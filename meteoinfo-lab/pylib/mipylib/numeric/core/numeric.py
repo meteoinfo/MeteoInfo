@@ -40,7 +40,7 @@ __all__ = [
     'argmin','argmax','argsort','array','array_split','asanyarray','asarray','asgridarray',
     'asgriddata','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
-    'concatenate','corrcoef','cos','cosh','cylinder','degrees','delete','delnan','diag','diff',
+    'concatenate','conj','conjugate','corrcoef','cos','cosh','cylinder','degrees','delete','delnan','diag','diff',
     'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','identity','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','linspace','log','log10','logical_not','logspace',
@@ -1105,6 +1105,36 @@ def sign(x):
         return x.sign()
     else:
         return math.copysign(1, x)
+
+def conjugate(x):
+    """
+    Return the complex conjugate, element-wise.
+
+    The complex conjugate of a complex number is obtained by changing the sign of its imaginary part.
+
+    :param x: (*array*) Input array.
+
+    :return: (*array*) Complex conjugate array.
+    """
+    if isinstance(x, (list, tuple)):
+        x = array(x)
+
+    if isinstance(x, NDArray):
+        return NDArray(ArrayMath.conj(x._array))
+    else:
+        return x.conjugate()
+
+def conj(x):
+    """
+    Return the complex conjugate, element-wise.
+
+    The complex conjugate of a complex number is obtained by changing the sign of its imaginary part.
+
+    :param x: (*array*) Input array.
+
+    :return: (*array*) Complex conjugate array.
+    """
+    return conj(x)
         
 def any(x, axis=None):
     """

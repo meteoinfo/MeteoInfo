@@ -2488,8 +2488,13 @@ class Axes(object):
         n = len(args) 
         if n <= 2:
             a = args[0]
-            y = a.dimvalue(0)
-            x = a.dimvalue(1)
+            if isinstance(a, DimArray):
+                y = a.dimvalue(0)
+                x = a.dimvalue(1)
+            else:
+                ny, nx = a.shape
+                y = np.arange(ny)
+                x = np.arange(nx)
             args = args[1:]
         else:
             x = args[0]

@@ -1134,7 +1134,7 @@ def conj(x):
 
     :return: (*array*) Complex conjugate array.
     """
-    return conj(x)
+    return conjugate(x)
         
 def any(x, axis=None):
     """

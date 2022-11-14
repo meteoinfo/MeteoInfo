@@ -45,7 +45,7 @@ __all__ = [
     'fmax','fmin','full','hcurl','hdivg','hstack','identity','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','linspace','log','log10','logical_not','logspace',
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
-    'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reshape',
+    'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reciprocal','reshape',
     'repeat','roll','rolling_mean','rot90','round','sec','sign','sin','sinh','shape','smooth5','smooth9','sort',
     'sphere','squeeze','split','sqrt','square','std','swapaxes','take','tan','tanh','tile',
     'transpose','trapz','vdot','unravel_index','var','vstack','zeros','zeros_like'
@@ -694,6 +694,22 @@ def power(x1, x2):
                 return pow(x1, x2)
             else:
                 return math.pow(x1, x2)
+
+def reciprocal(x, dtype=None):
+    """
+    Return the reciprocal of the argument, element-wise.
+
+    Calculates 1/x.
+
+    :param x: (*array*) Input array.
+    :param dtype: (*dtype*) Data type.
+
+    :return: Return array. This is a scalar if x is a scalar.
+    """
+    if isinstance(x, (list, tuple)):
+        x = array(x)
+
+    return 1 / x
     
 def degrees(x):
     """

@@ -2854,7 +2854,7 @@ public class DataFrame implements Iterable {
         return Sorting.sortIndex(this, dir);
     }
 
-    public DataFrame sortBy(final Object... cols) {
+    /*public DataFrame sortBy(final Object... cols) {
         final Map<Integer, SortDirection> sortCols = new LinkedHashMap<>();
         for (final Object col : cols) {
             final String str = col instanceof String ? String.class.cast(col) : "";
@@ -2864,7 +2864,7 @@ public class DataFrame implements Iterable {
             sortCols.put(c, dir);
         }
         return Sorting.sort(this, sortCols);
-    }
+    }*/
 
     public DataFrame sortBy(boolean ascending, final Integer... cols) {
         final Map<Integer, SortDirection> sortCols = new LinkedHashMap<>();
@@ -2907,8 +2907,8 @@ public class DataFrame implements Iterable {
      * @return The grouping
      */
     public DataFrameGroupBy groupBy(final Object... columns) {
-        int[] icols = this.columns.indices(columns);
-        return groupBy(icols);
+        Integer[] iCols = Arrays.stream(this.columns.indices(columns)).boxed().toArray(Integer[]::new);
+        return groupBy(iCols);
     }
 
     /**
@@ -2918,8 +2918,8 @@ public class DataFrame implements Iterable {
      * @return The grouping
      */
     public DataFrameGroupBy groupBy(final List<Object> columns) {
-        int[] icols = this.columns.indices(columns);
-        return groupBy(icols);
+        Integer[] iCols = Arrays.stream(this.columns.indices(columns)).boxed().toArray(Integer[]::new);
+        return groupBy(iCols);
     }
 
     /**

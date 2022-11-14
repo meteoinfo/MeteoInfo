@@ -8217,6 +8217,117 @@ public class ArrayMath {
     }
 
     // </editor-fold>
+    // <editor-fold desc="Complex">
+
+    /**
+     * Get real part of the array
+     * @param a Input array
+     * @return Real part array
+     */
+    public static Array getReal(Array a) {
+        if (a.getDataType() == DataType.COMPLEX) {
+            Array r = Array.factory(DataType.DOUBLE, a.getShape());
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setDoubleNext(iterA.getComplexNext().real());
+            }
+
+            return r;
+        } else {
+            return a;
+        }
+    }
+
+    /**
+     * Set real part of the array
+     * @param a Input array
+     * @param v Real value
+     */
+    public static void setReal(Array a, Number v) {
+        if (a.getDataType() == DataType.COMPLEX) {
+            IndexIterator iterA = a.getIndexIterator();
+            Complex c;
+            double dv = v.doubleValue();
+            while (iterA.hasNext()) {
+                c = iterA.getComplexNext();
+                iterA.setComplexCurrent(new Complex(dv, c.getImaginary()));
+            }
+        }
+    }
+
+    /**
+     * Set real part of the array
+     * @param a Input array
+     * @param v Real value
+     */
+    public static void setReal(Array a, Array v) {
+        if (a.getDataType() == DataType.COMPLEX) {
+            IndexIterator iterA = a.getIndexIterator();
+            Complex c;
+            IndexIterator iterV = v.getIndexIterator();
+            while (iterA.hasNext()) {
+                c = iterA.getComplexNext();
+                iterA.setComplexCurrent(new Complex(iterV.getDoubleNext(), c.getImaginary()));
+            }
+        }
+    }
+
+    /**
+     * Set image part of the array
+     * @param a Input array
+     * @param v Read value
+     */
+    public static void setImage(Array a, Number v) {
+        if (a.getDataType() == DataType.COMPLEX) {
+            IndexIterator iterA = a.getIndexIterator();
+            Complex c;
+            double dv = v.doubleValue();
+            while (iterA.hasNext()) {
+                c = iterA.getComplexNext();
+                iterA.setComplexCurrent(new Complex(c.getReal(), dv));
+            }
+        }
+    }
+
+    /**
+     * Set image part of the array
+     * @param a Input array
+     * @param v Read value
+     */
+    public static void setImage(Array a, Array v) {
+        if (a.getDataType() == DataType.COMPLEX) {
+            IndexIterator iterA = a.getIndexIterator();
+            Complex c;
+            IndexIterator iterV = v.getIndexIterator();
+            while (iterA.hasNext()) {
+                c = iterA.getComplexNext();
+                iterA.setComplexCurrent(new Complex(c.getReal(), iterV.getDoubleNext()));
+            }
+        }
+    }
+
+    /**
+     * Get image part of the array
+     * @param a Input array
+     * @return Image part array
+     */
+    public static Array getImage(Array a) {
+        if (a.getDataType() == DataType.COMPLEX) {
+            Array r = Array.factory(DataType.DOUBLE, a.getShape());
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setDoubleNext(iterA.getComplexNext().imag());
+            }
+
+            return r;
+        } else {
+            return a;
+        }
+    }
+
+    // </editor-fold>
     // <editor-fold desc="Convert">
 
     /**

@@ -617,6 +617,62 @@ class NDArray(object):
             r = self
         return r
 
+    @property
+    def real(self):
+        """
+        Return the real part of the complex argument.
+
+        :return: (*array*) The real component of the complex argument.
+        """
+        if self.dtype == _dtype.complex:
+            return NDArray(ArrayMath.getReal(self._array))
+        else:
+            return self
+
+    @real.setter
+    def real(self, val):
+        """
+        Return the real part of the complex argument.
+
+        :param val: (*number or array*) Real value.
+        """
+        if self.dtype == _dtype.complex:
+            if isinstance(val, (list, tuple)):
+                val = NDArray(val)
+
+            if isinstance(val, NDArray):
+                ArrayMath.setReal(self._array, val._array)
+            else:
+                ArrayMath.setReal(self._array, val)
+
+    @property
+    def imag(self):
+        """
+        Return the image part of the complex argument.
+
+        :return: (*array*) The image component of the complex argument.
+        """
+        if self.dtype == _dtype.complex:
+            return NDArray(ArrayMath.getImage(self._array))
+        else:
+            return self
+
+    @imag.setter
+    def imag(self, val):
+        """
+        Return the image part of the complex argument.
+
+        :param val: (*number or array*) Image value.
+        """
+        if self.dtype == _dtype.complex:
+            if isinstance(val, (list, tuple)):
+                val = NDArray(val)
+
+            if isinstance(val, NDArray):
+                ArrayMath.setImage(self._array, val._array)
+            else:
+                ArrayMath.setImage(self._array, val)
+
     def min(self, axis=None):
         """
         Get minimum value along an axis.
@@ -626,6 +682,9 @@ class NDArray(object):
 
         :returns: Minimum values.
         """
+        if isinstance(axis, (list, tuple)) and len(axis) == self.ndim:
+            axis = None
+
         if axis is None:
             r = ArrayMath.min(self._array)
             return r
@@ -684,6 +743,9 @@ class NDArray(object):
 
         :returns: Maximum values.
         """
+        if isinstance(axis, (list, tuple)) and len(axis) == self.ndim:
+            axis = None
+
         if axis is None:
             r = ArrayMath.max(self._array)
             return r
@@ -695,11 +757,14 @@ class NDArray(object):
         """
         Sum of array elements over a given axis.
 
-        :param axis: (*int*) Axis along which the standard deviation is computed.
-            The default is to compute the standard deviation of the flattened array.
+        :param axis: (*int*) Axis along which the sum is computed.
+            The default is to compute the sum of the flattened array.
 
         returns: (*array_like*) Sum result
         """
+        if isinstance(axis, (list, tuple)) and len(axis) == self.ndim:
+            axis = None
+
         if axis is None:
             return ArrayMath.sum(self._array)
         else:
@@ -905,7 +970,11 @@ class NDArray(object):
         :returns: Result Matrix or vector.
         """
         if isinstance(other, list):
-            other = array(other)
+            other = NDArray(ArrayUtil.array(other))
+
+        if self.ndim == 1 and other.ndim == 1:
+            return self.__mul__(other).sum()
+
         r = LinalgUtil.dot(self._array, other._array)
         return NDArray(r)
 

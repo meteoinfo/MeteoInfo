@@ -1,6 +1,6 @@
-from ..core.numeric import asarray
+from ..core.numeric import asarray, asanyarray
 
-__all__ = ['mintypecode']
+__all__ = ['mintypecode','real','imag']
 
 _typecodes_by_elsize = 'GDFgdfQqLlIiHhBb?'
 
@@ -48,3 +48,29 @@ def mintypecode(typechars, typeset='GDFgdf', default='d'):
     if 'F' in intersection and 'd' in intersection:
         return 'D'
     return min(intersection, key=_typecodes_by_elsize.index)
+
+def real(val):
+    """
+    Return the real part of the complex argument.
+
+    :param val: (*array*) Input array.
+
+    :return: (*array*) The real component of the complex argument.
+    """
+    try:
+        return val.real
+    except AttributeError:
+        return asanyarray(val).real
+
+def imag(val):
+    """
+    Return the image part of the complex argument.
+
+    :param val: (*array*) Input array.
+
+    :return: (*array*) The image component of the complex argument.
+    """
+    try:
+        return val.real
+    except AttributeError:
+        return asanyarray(val).imag

@@ -9,10 +9,11 @@
 from org.meteoinfo.math.linalg import LinalgUtil
 from org.meteoinfo.math.stats import StatsUtil
 
-from ..core import NDArray
+from .. import core as np
 
 __all__ = [
-    'solve','cholesky','det','lu','qr', 'svd','eig','inv','lstsq','slogdet','solve_triangular'
+    'solve','cholesky','det','lu','qr', 'svd','eig','inv','lstsq','slogdet','solve_triangular',
+    'norm'
     ]
 
 class LinAlgError(Exception):
@@ -52,7 +53,7 @@ def solve(a, b):
     """
     _assert_2d(a)
     x = LinalgUtil.solve(a.asarray(), b.asarray())
-    r = NDArray(x)
+    r = np.NDArray(x)
     return r
 
 def solve_triangular(a, b, lower=False):
@@ -75,7 +76,7 @@ def solve_triangular(a, b, lower=False):
         Solution to the system a x = b.  Returned shape is identical to ``b``.
     """
     x = LinalgUtil.solve(a.asarray(), b.asarray())
-    return NDArray(x)
+    return np.NDArray(x)
     
 def cholesky(a, lower=True):
     """
@@ -102,7 +103,7 @@ def cholesky(a, lower=True):
         matrix object if `a` is a matrix object.
     """
     r = LinalgUtil.cholesky(a.asarray(), lower)
-    return NDArray(r)
+    return np.NDArray(r)
     
 def lu(a):
     """
@@ -138,9 +139,9 @@ def lu(a):
         Upper triangular or trapezoidal matrix
     """
     r = LinalgUtil.lu(a.asarray())
-    p = NDArray(r[0])
-    l = NDArray(r[1])
-    u = NDArray(r[2])
+    p = np.NDArray(r[0])
+    l = np.NDArray(r[1])
+    u = np.NDArray(r[2])
     return p, l, u
     
 def qr(a):
@@ -165,15 +166,15 @@ def qr(a):
         Of shape (M, N), or (K, N) for ``mode='economic'``.  ``K = min(M, N)``.
     """
     r = LinalgUtil.qr(a.asarray())
-    q = NDArray(r[0])
-    r = NDArray(r[1])
+    q = np.NDArray(r[0])
+    r = np.NDArray(r[1])
     return q, r
 
 def svd(a, full_matrices=True):
     """
     Singular Value Decomposition.
     
-    Factorizes the matrix a into two unitary matrices U and Vh, and
+    Factorizes the matrix `a` into two unitary matrices U and Vh, and
     a 1-D array s of singular values (real, non-negative) such that
     ``a == U*S*Vh``, where S is a suitably shaped matrix of zeros with
     main diagonal s.
@@ -200,9 +201,9 @@ def svd(a, full_matrices=True):
     """
     r = LinalgUtil.svd(a.asarray())
     #r = LinalgUtil.svd_EJML(a.asarray())
-    U = NDArray(r[0])
-    s = NDArray(r[1])
-    Vh = NDArray(r[2])
+    U = np.NDArray(r[0])
+    s = np.NDArray(r[1])
+    Vh = np.NDArray(r[2])
     if not full_matrices:
         m, n = a.shape
         if m != n:
@@ -239,8 +240,8 @@ def eig(a):
     """
     r = LinalgUtil.eigen(a.asarray())
     #r = LinalgUtil.eigen_EJML(a.asarray())
-    w = NDArray(r[0])
-    v = NDArray(r[1])
+    w = np.NDArray(r[0])
+    v = np.NDArray(r[1])
     return w, v
     
 def inv(a):
@@ -252,7 +253,7 @@ def inv(a):
     :returns: Inverse matrix.
     """
     r = LinalgUtil.inv(a.asarray())
-    return NDArray(r)
+    return np.NDArray(r)
     
 def lstsq(a, b):
     """
@@ -275,16 +276,17 @@ def lstsq(a, b):
         Sums of residues, squared 2-norm for each column in b - a x.
     """
     r = StatsUtil.multipleLineRegress_OLS(b.asarray(), a.asarray(), True)
-    return NDArray(r[0]), NDArray(r[1])
+    return np.NDArray(r[0]), np.NDArray(r[1])
     
 def det(a):
     """
     Compute the determinant of an array.
     
-    arameters
+    parameters
     ----------
     a : (..., M, M) array_like
         Input array to compute determinants for.
+
     Returns
     -------
     det : (...) array_like
@@ -297,8 +299,139 @@ def det(a):
 def slogdet(a):
     """
     Compute the sign and (natural) logarithm of the determinant of an array.
+
     :param a: (*array_like*) Input array, has to be a square 2-D array.
+
     :return: Sign and logarithm of the determinant.
     """
     r = LinalgUtil.sLogDet(a.asarray())
     return r[0], r[1]
+
+def norm(x, ord=None, axis=None, keepdims=False):
+    """
+    Matrix or vector norm.
+
+    This function is able to return one of eight different matrix norms, or one of an infinite number
+    of vector norms (described below), depending on the value of the ord parameter.
+
+    Parameters
+    ----------
+    x : array_like
+        Input array.  If `axis` is None, `x` must be 1-D or 2-D, unless `ord`
+        is None. If both `axis` and `ord` are None, the 2-norm of
+        ``x.ravel`` will be returned.
+    ord : {non-zero int, inf, -inf, 'fro', 'nuc'}, optional
+        Order of the norm (see table under ``Notes``). inf means numpy's
+        `inf` object. The default is None.
+    axis : {None, int, 2-tuple of ints}, optional.
+        If `axis` is an integer, it specifies the axis of `x` along which to
+        compute the vector norms.  If `axis` is a 2-tuple, it specifies the
+        axes that hold 2-D matrices, and the matrix norms of these matrices
+        are computed.  If `axis` is None then either a vector norm (when `x`
+        is 1-D) or a matrix norm (when `x` is 2-D) is returned. The default
+        is None.
+    keepdims: bool, optional
+        If this is set to True, the axes which are normed over are left in the
+        result as dimensions with size one. With this option the result will
+        broadcast correctly against the original x.
+
+    Returns
+    -------
+    n : float or ndarray
+        Norm of the matrix or vector(s).
+    """
+    x = np.asarray(x)
+
+    # Immediately handle some default, simple, fast, and common cases.
+    if axis is None:
+        ndim = x.ndim
+        if ((ord is None) or
+                (ord in ('f', 'fro') and ndim == 2) or
+                (ord == 2 and ndim == 1)):
+
+            x = x.ravel()
+            if x.dtype == np.dtype.complex:
+                x_real = x.real
+                x_imag = x.imag
+                sqnorm = x_real.dot(x_real) + x_imag.dot(x_imag)
+            else:
+                sqnorm = x.dot(x)
+            ret = np.sqrt(sqnorm)
+            if keepdims:
+                ret = ret.reshape(ndim*[1])
+            return ret
+
+    # Normalize the `axis` argument to a tuple.
+    nd = x.ndim
+    if axis is None:
+        axis = tuple(range(nd))
+    elif not isinstance(axis, tuple):
+        try:
+            axis = int(axis)
+        except Exception as e:
+            raise TypeError("'axis' must be None, an integer or a tuple of integers")
+        axis = (axis,)
+
+    if len(axis) == 1:
+        if ord == np.inf:
+            return np.abs(x).max(axis=axis)
+        elif ord == -np.inf:
+            return np.abs(x).min(axis=axis)
+        elif ord == 0:
+            # Zero norm
+            return (x != 0).astype(x.real.dtype).sum(axis=axis)
+        elif ord == 1:
+            return x.abs().sum(axis=axis)
+        elif ord is None or ord == 2:
+            s = (x.conj() * x).real
+            return np.sqrt(s.sum(axis=axis))
+        # None of the str-type keywords for ord ('fro', 'nuc')
+        # are valid for vectors
+        elif isinstance(ord, str):
+            raise ValueError("Invalid norm order '{ord}' for vectors".format(ord))
+        else:
+            absx = np.abs(x)
+            absx **= ord
+            ret = absx.sum(axis=axis)
+            ret **= np.reciprocal(ord)
+            return ret
+    # elif len(axis) == 2:
+    #     row_axis, col_axis = axis
+    #     row_axis = np.normalize_axis_index(row_axis, nd)
+    #     col_axis = np.normalize_axis_index(col_axis, nd)
+    #     if row_axis == col_axis:
+    #         raise ValueError('Duplicate axes given.')
+    #     if ord == 2:
+    #         ret =  _multi_svd_norm(x, row_axis, col_axis, amax)
+    #     elif ord == -2:
+    #         ret = _multi_svd_norm(x, row_axis, col_axis, amin)
+    #     elif ord == 1:
+    #         if col_axis > row_axis:
+    #             col_axis -= 1
+    #         ret = add.reduce(np.abs(x), axis=row_axis).max(axis=col_axis)
+    #     elif ord == np.inf:
+    #         if row_axis > col_axis:
+    #             row_axis -= 1
+    #         ret = add.reduce(np.abs(x), axis=col_axis).max(axis=row_axis)
+    #     elif ord == -1:
+    #         if col_axis > row_axis:
+    #             col_axis -= 1
+    #         ret = add.reduce(np.abs(x), axis=row_axis).min(axis=col_axis)
+    #     elif ord == -np.inf:
+    #         if row_axis > col_axis:
+    #             row_axis -= 1
+    #         ret = add.reduce(np.abs(x), axis=col_axis).min(axis=row_axis)
+    #     elif ord in [None, 'fro', 'f']:
+    #         ret = np.sqrt(add.reduce((x.conj() * x).real, axis=axis))
+    #     elif ord == 'nuc':
+    #         ret = _multi_svd_norm(x, row_axis, col_axis, sum)
+    #     else:
+    #         raise ValueError("Invalid norm order for matrices.")
+    #     if keepdims:
+    #         ret_shape = list(x.shape)
+    #         ret_shape[axis[0]] = 1
+    #         ret_shape[axis[1]] = 1
+    #         ret = ret.reshape(ret_shape)
+    #     return ret
+    # else:
+    #     raise ValueError("Improper number of dimensions to norm.")

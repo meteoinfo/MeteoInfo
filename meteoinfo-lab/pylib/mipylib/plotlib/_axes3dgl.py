@@ -1110,12 +1110,16 @@ class Axes3DGL(Axes3D):
         max = z.max()
         if len(args) > 0:
             if isinstance(args[0], NDArray):
-                C = args[0]
-                if C.shape == z.shape:
+                if args[0].shape == z.shape:
+                    C = args[0]
                     min = C.min()
                     max = C.max()
-                if len(args) > 1:
-                    level_arg = args[1]
+                    if len(args) > 1:
+                        level_arg = args[1]
+                elif args[0].ndim == 3:
+                    C = args[0]
+                else:
+                    level_arg = args[0]
             else:
                 level_arg = args[0]
 

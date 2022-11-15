@@ -2033,6 +2033,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
     }
 
     private void setXYCoords(GridData aGridData) {
+        boolean yReverse = aGridData.getYDelta() < 0;
         int i;
         int xNum = 0, yNum = 0;
         switch (_plotDimension) {
@@ -2068,6 +2069,9 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         }
         aGridData.setXArray(xArray);
         aGridData.setYArray(yArray);
+        if (yReverse) {
+            aGridData.yReverse();
+        }
     }
 
     private void zoomToExtent(Extent aExtent) {

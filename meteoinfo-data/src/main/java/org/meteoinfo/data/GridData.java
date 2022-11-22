@@ -116,7 +116,7 @@ public class GridData {
         this.missingValue = missingValue;
         this.projInfo = projInfo;
 
-        if (this.getYDelta() < 0) {
+        /*if (this.getYDelta() < 0) {
             this.yArray = IntStream.range(0, this.yArray.length)
                     .mapToDouble(i -> this.yArray[this.yArray.length - 1 - i])
                     .toArray();
@@ -128,7 +128,7 @@ public class GridData {
                     .mapToDouble(i -> this.xArray[this.xArray.length - 1 - i])
                     .toArray();
             this.xReverse();
-        }
+        }*/
     }
 
     /**

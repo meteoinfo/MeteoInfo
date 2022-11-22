@@ -47,7 +47,7 @@ __all__ = [
     'webmap','gca','gcf','gc_collect','geoshow','get_figure','gifaddframe','gifanimation','giffinish',
     'grid','gridshow','gridshowm','hist','imshow','imshowm','isosurface','legend','left_title','lighting','loglog','makecolors',
     'makelegend','makesymbolspec','masklayer','material','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
-    'quiverkey','quiverm','readlegend','right_title','savefig','savefig_jpeg','scatter','scatter3','scatterm',
+    'quiverkey','quiverm','readlegend','right_title','refresh','savefig','savefig_jpeg','scatter','scatter3','scatterm',
     'semilogx','semilogy','show','slice3','stationmodel','stem','stem3','step','streamplot','streamplot3',
     'streamplotm','streamslice','subplot','subplots','suptitle','supxlabel','supylabel',
     'surf','taylor_diagram','text','text3','title','twinx','twiny','violinplot','volumeplot','weatherspec','xaxis',
@@ -1267,11 +1267,12 @@ def zticks(*args, **kwargs):
         
     if len(args) > 0:
         locs = args[0]
-        if isinstance(locs, (NDArray, DimArray)):
-            locs = locs.aslist()
-        if isinstance(locs[0], datetime.datetime):
-            for i in range(len(locs)):
-                locs[i] = miutil.date2num(locs[i])
+        if len(locs) > 0:
+            if isinstance(locs, (NDArray, DimArray)):
+                locs = locs.aslist()
+            if isinstance(locs[0], datetime.datetime):
+                for i in range(len(locs)):
+                    locs[i] = miutil.date2num(locs[i])
         g_axes.set_zticks(locs)
         args = args[1:]
     if len(args) > 0:
@@ -2168,3 +2169,10 @@ def gc_collect():
     clear()
     import gc
     gc.collect()
+
+def refresh():
+    """
+    Refresh the figure
+    """
+    migl.milapp.getFigureDock().setVisible(False)
+    migl.milapp.getFigureDock().setVisible(True)

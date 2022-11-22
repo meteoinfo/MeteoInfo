@@ -1,4 +1,7 @@
-import org.meteoinfo.chart.jogl.GLChartPanel;
+import org.meteoinfo.chart.GLChart;
+import org.meteoinfo.chart.GLChartPanel;
+import org.meteoinfo.chart.MouseMode;
+import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.jogl.Plot3DGL;
 import org.meteoinfo.chart.graphic.VolumeGraphic;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
@@ -107,33 +110,30 @@ public class VolumeTest {
         VolumeGraphic graphics = test.createGraphics();
         graphics.setRayCastingType(RayCastingType.SPECULAR);
         JFrame frame = new JFrame("Volume Test");
-        Plot3DGL plot = new Plot3DGL();
+        GLPlot plot = new GLPlot();
         plot.setOrthographic(false);
         plot.setClipPlane(false);
         //plot.setBackground(Color.black);
         //plot.setForeground(Color.blue);
-        plot.setDrawBoundingBox(false);
-        plot.setDrawBase(false);
-        plot.setBoxed(false);
-        plot.getGridLine().setDrawXLine(false);
-        plot.getGridLine().setDrawYLine(false);
-        plot.getGridLine().setDrawZLine(false);
-        GLChartPanel canvas = new GLChartPanel(plot);
+        plot.setDrawBoundingBox(true);
+        plot.setDrawBase(true);
+        plot.setBoxed(true);
+        plot.setDisplayXY(true);
+        //plot.getXAxis().setDrawTickLabel(false);
+        //plot.getYAxis().setDrawTickLabel(false);
+        plot.setDisplayZ(true);
+        plot.getZAxis().setLabel("Z axis");
+        //plot.getGridLine().setDrawXLine(false);
+        //plot.getGridLine().setDrawYLine(false);
+        //plot.getGridLine().setDrawZLine(false);
         plot.addGraphic(graphics);
+        GLChartPanel canvas = new GLChartPanel(new GLChart());
+        canvas.getChart().addPlot(plot);
+        canvas.setMouseMode(MouseMode.ROTATE);
         frame.getContentPane().add(canvas);
         frame.pack();
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        /*try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-        canvas.setSize(width, height + 1);
-        canvas.setSize(width, height);*/
-        //frame.setSize(600, 401);
     }
 }

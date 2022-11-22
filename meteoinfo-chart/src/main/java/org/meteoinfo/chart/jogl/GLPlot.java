@@ -80,6 +80,7 @@ public class GLPlot extends Plot {
     protected Extent3D drawExtent;
     protected Extent3D axesExtent;
     protected boolean fixExtent;
+    protected TextRenderer textRenderer;
     protected ChartText title;
     protected GridLine gridLine;
     protected java.util.List<ChartLegend> legends;
@@ -1224,6 +1225,8 @@ public class GLPlot extends Plot {
         final GL2 gl = drawable.getGL().getGL2();
         gl.glLoadIdentity();
 
+        this.updateTextRender(this.xAxis.getTickLabelFont());
+
         //Set light position - follow glLoadIdentity
         this.lighting.setPosition(gl);
 
@@ -1298,6 +1301,9 @@ public class GLPlot extends Plot {
 
         //Draw title
         this.drawTitle();
+
+        this.textRenderer.dispose();
+        this.textRenderer = null;
 
         gl.glFlush();
 
@@ -1904,6 +1910,9 @@ public class GLPlot extends Plot {
             }
             strWidth = 0.0f;
             strHeight = 0.0f;
+            if (this.xAxis.isDrawTickLabel()) {
+                this.updateTextRender(tlabs.get(0).getFont());
+            }
             for (int i = 0; i < this.xAxis.getTickValues().length; i += skip) {
                 v = (float) this.xAxis.getTickValues()[i];
                 if (v < axesExtent.minX || v > axesExtent.maxX) {
@@ -1924,26 +1933,31 @@ public class GLPlot extends Plot {
                 gl.glEnd();
 
                 //Draw tick label
-                rect = drawString(gl, tlabs.get(i), v, y1, zMin, xAlign, yAlign);
-                if (strWidth < rect.getWidth()) {
-                    strWidth = (float) rect.getWidth();
-                }
-                if (strHeight < rect.getHeight()) {
-                    strHeight = (float) rect.getHeight();
+                if (this.xAxis.isDrawTickLabel()) {
+                    rect = drawString(gl, tlabs.get(i), v, y1, zMin, xAlign, yAlign);
+                    if (strWidth < rect.getWidth()) {
+                        strWidth = (float) rect.getWidth();
+                    }
+                    if (strHeight < rect.getHeight()) {
+                        strHeight = (float) rect.getHeight();
+                    }
                 }
             }
 
             //Draw x axis label
-            ChartText label = this.xAxis.getLabel();
-            if (label != null) {
-                strWidth += this.tickSpace;
-                float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
-                angle = y < 0 ? 270 - angle : 90 - angle;
-                float yShift = Math.min(-strWidth, -strWidth);
-                if (this.angleX <= -120) {
-                    yShift = -yShift;
+            if (this.xAxis.isDrawLabel()) {
+                ChartText label = this.xAxis.getLabel();
+                if (label != null) {
+                    this.updateTextRender(label.getFont());
+                    strWidth += this.tickSpace;
+                    float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
+                    angle = y < 0 ? 270 - angle : 90 - angle;
+                    float yShift = Math.min(-strWidth, -strWidth);
+                    if (this.angleX <= -120) {
+                        yShift = -yShift;
+                    }
+                    drawString(gl, label, 0.0f, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
                 }
-                drawString(gl, label, 0.0f, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
             }
 
             ////////////////////////////////////////////
@@ -1980,6 +1994,9 @@ public class GLPlot extends Plot {
             }
             strWidth = 0.0f;
             strHeight = 0.0f;
+            if (this.yAxis.isDrawTickLabel()) {
+                this.updateTextRender(tlabs.get(0).getFont());
+            }
             for (int i = 0; i < this.yAxis.getTickValues().length; i += skip) {
                 v = (float) this.yAxis.getTickValues()[i];
                 if (v < axesExtent.minY || v > axesExtent.maxY) {
@@ -2000,26 +2017,31 @@ public class GLPlot extends Plot {
                 gl.glEnd();
 
                 //Draw tick label
-                rect = drawString(gl, tlabs.get(i), x1, v, zMin, xAlign, yAlign);
-                if (strWidth < rect.getWidth()) {
-                    strWidth = (float) rect.getWidth();
-                }
-                if (strHeight < rect.getHeight()) {
-                    strHeight = (float) rect.getHeight();
+                if (this.yAxis.isDrawTickLabel()) {
+                    rect = drawString(gl, tlabs.get(i), x1, v, zMin, xAlign, yAlign);
+                    if (strWidth < rect.getWidth()) {
+                        strWidth = (float) rect.getWidth();
+                    }
+                    if (strHeight < rect.getHeight()) {
+                        strHeight = (float) rect.getHeight();
+                    }
                 }
             }
 
             //Draw y axis label
-            label = this.yAxis.getLabel();
-            if (label != null) {
-                strWidth += this.tickSpace;
-                float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, xMin);
-                angle = x > 0 ? 270 - angle : 90 - angle;
-                float yShift = Math.min(-strWidth, -strWidth);
-                if (this.angleX <= -120) {
-                    yShift = -yShift;
+            if (this.yAxis.isDrawLabel()) {
+                ChartText label = this.yAxis.getLabel();
+                if (label != null) {
+                    this.updateTextRender(label.getFont());
+                    strWidth += this.tickSpace;
+                    float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, xMin);
+                    angle = x > 0 ? 270 - angle : 90 - angle;
+                    float yShift = Math.min(-strWidth, -strWidth);
+                    if (this.angleX <= -120) {
+                        yShift = -yShift;
+                    }
+                    drawString(gl, label, x1, 0.0f, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
                 }
-                drawString(gl, label, x1, 0.0f, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
             }
         }
 
@@ -2087,6 +2109,9 @@ public class GLPlot extends Plot {
         xAlign = XAlign.RIGHT;
         yAlign = YAlign.CENTER;
         strWidth = 0.0f;
+        if (this.zAxis.isDrawTickLabel()) {
+            this.updateTextRender(tlabs.get(0).getFont());
+        }
         for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
             v = (float) this.zAxis.getTickValues()[i];
             if (v < axesExtent.minZ || v > axesExtent.maxZ) {
@@ -2107,17 +2132,22 @@ public class GLPlot extends Plot {
             gl.glEnd();
 
             //Draw tick label
-            rect = drawString(gl, tlabs.get(i), x1, y1, v, xAlign, yAlign, -this.tickSpace, 0);
-            if (strWidth < rect.getWidth()) {
-                strWidth = (float) rect.getWidth();
+            if (this.zAxis.isDrawTickLabel()) {
+                rect = drawString(gl, tlabs.get(i), x1, y1, v, xAlign, yAlign, -this.tickSpace, 0);
+                if (strWidth < rect.getWidth()) {
+                    strWidth = (float) rect.getWidth();
+                }
             }
         }
 
         //Draw z axis label
-        ChartText label = this.zAxis.getLabel();
-        if (label != null) {
-            float yShift = strWidth + this.tickSpace * 3;
-            drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+        if (this.zAxis.isDrawLabel()) {
+            ChartText label = this.zAxis.getLabel();
+            if (label != null) {
+                this.updateTextRender(label.getFont());
+                float yShift = strWidth + this.tickSpace * 3;
+                drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+            }
         }
     }
 
@@ -2234,6 +2264,26 @@ public class GLPlot extends Plot {
         }
     }
 
+    void updateTextRender(Font font) {
+        boolean newTR = false;
+        if (this.textRenderer == null) {
+            newTR = true;
+        } else {
+            if (!this.textRenderer.getFont().equals(font)) {
+                //this.textRenderer.dispose();
+                newTR = true;
+            }
+        }
+        if (newTR) {
+            if (this.dpiScale == 1) {
+                textRenderer = new TextRenderer(font, true, true);
+            } else {
+                textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
+                        (int) (font.getSize() * this.dpiScale)), true, true);
+            }
+        }
+    }
+
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz, XAlign xAlign, YAlign yAlign) {
         return drawString(gl, text, vx, vy, vz, xAlign, yAlign, 0, 0);
     }
@@ -2257,13 +2307,6 @@ public class GLPlot extends Plot {
         float y = coord.y;
 
         //Rendering text string
-        TextRenderer textRenderer;
-        if (this.dpiScale == 1) {
-            textRenderer = new TextRenderer(font, true, true);
-        } else {
-            textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
-                    (int)(font.getSize() * (1 + (this.dpiScale - 1) * 0.8))), true, true);
-        }
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
         textRenderer.setSmoothing(true);
@@ -2292,22 +2335,22 @@ public class GLPlot extends Plot {
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
                            XAlign xAlign, YAlign yAlign, float angle) {
-        return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy, vz, xAlign, yAlign, angle,
+        return drawString(gl, text.getText(), text.getColor(), vx, vy, vz, xAlign, yAlign, angle,
                 (float)text.getXShift(), (float)text.getYShift());
     }
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
                            XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
-        return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy,
+        return drawString(gl, text.getText(), text.getColor(), vx, vy,
                 vz, xAlign, yAlign, angle, (float)text.getXShift() + xShift, (float)text.getYShift() + yShift);
     }
 
-    Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
+    Rectangle2D drawString(GL2 gl, String str, Color color, float vx, float vy, float vz,
                            XAlign xAlign, YAlign yAlign, float angle) {
-        return drawString(gl, str, font, color, vx, vy, vz, xAlign, yAlign, angle, 0, 0);
+        return drawString(gl, str, color, vx, vy, vz, xAlign, yAlign, angle, 0, 0);
     }
 
-    Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
+    Rectangle2D drawString(GL2 gl, String str, Color color, float vx, float vy, float vz,
                            XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
         //Get screen coordinates
         Vector2f coord = this.toScreen(vx, vy, vz);
@@ -2315,13 +2358,6 @@ public class GLPlot extends Plot {
         float y = coord.y;
 
         //Rendering text string
-        TextRenderer textRenderer;
-        if (this.dpiScale == 1) {
-            textRenderer = new TextRenderer(font, true, true);
-        } else {
-            textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
-                    (int)(font.getSize() * (1 + (this.dpiScale - 1) * 0.8))), true, true);
-        }
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
         textRenderer.setSmoothing(true);
@@ -2354,30 +2390,22 @@ public class GLPlot extends Plot {
         y += yShift;
         textRenderer.draw(str, (int) x, (int) y);
         textRenderer.endRendering();
-        textRenderer.dispose();
         gl.glPopMatrix();
 
         return rect;
     }
 
     Rectangle2D drawString3D(GL2 gl, ChartText3D text3D, float vx, float vy, float vz) {
-        return drawString3D(gl, text3D.getText(), text3D.getFont(), text3D.getColor(), vx, vy, vz);
+        return drawString3D(gl, text3D.getText(), text3D.getColor(), vx, vy, vz);
     }
 
-    Rectangle2D drawString3D(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz) {
+    Rectangle2D drawString3D(GL2 gl, String str, Color color, float vx, float vy, float vz) {
         //Get screen coordinates
         Vector2f coord = this.toScreen(vx, vy, vz);
         float x = coord.x;
         float y = coord.y;
 
         //Rendering text string
-        TextRenderer textRenderer;
-        if (this.dpiScale == 1) {
-            textRenderer = new TextRenderer(font, true, true);
-        } else {
-            textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
-                    (int)(font.getSize() * (1 + (this.dpiScale - 1) * 0.8))), true, true);
-        }
         textRenderer.beginRendering(this.width, this.height, false);
         //textRenderer.begin3DRendering();
         textRenderer.setColor(color);
@@ -2395,7 +2423,7 @@ public class GLPlot extends Plot {
         if (title != null) {
             //Rendering text string
             Font font = title.getFont();
-            TextRenderer textRenderer;
+            this.updateTextRender(font);
             if (this.dpiScale == 1) {
                 textRenderer = new TextRenderer(font, true, true);
             } else {
@@ -2575,6 +2603,7 @@ public class GLPlot extends Plot {
 
     protected void drawText(GL2 gl, ChartText3D text) {
         Vector3f xyz = this.transform.transform((float) text.getX(), (float) text.getY(), (float) text.getZ());
+        this.updateTextRender(text.getFont());
         if (text.isDraw3D()) {
             this.drawString3D(gl, text, xyz.x, xyz.y, xyz.z);
         } else {
@@ -4238,6 +4267,8 @@ public class GLPlot extends Plot {
         GL2 gl = drawable.getGL().getGL2();
         this.gl = gl;
         this.glu = GLU.createGLU(gl);
+        Font font = this.xAxis.getTickLabelFont();
+        updateTextRender(font);
         //Background
         //gl.glClearColor(1f, 1f, 1f, 1.0f);
         gl.glEnable(GL2.GL_POINT_SMOOTH);

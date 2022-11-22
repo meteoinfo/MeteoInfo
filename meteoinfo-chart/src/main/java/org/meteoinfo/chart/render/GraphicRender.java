@@ -7,5 +7,5 @@ public interface GraphicRender {
     /**
      * Draw graphic
      */
-    public abstract void draw();
+    void draw();
 }

@@ -1372,7 +1372,8 @@ public class Plot3D extends Plot {
             Color aColor = aPGB.getColor();
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = Draw.getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = Draw.getHatchImage(aPGB.getStyle(), size, aPGB.getColor(),
+                        aPGB.getBackColor(), aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(path);

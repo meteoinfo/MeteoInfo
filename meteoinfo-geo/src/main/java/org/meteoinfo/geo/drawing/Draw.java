@@ -2636,7 +2636,8 @@ public class Draw {
         if (aPGB != null) {
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor(),
+                        aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(path);
@@ -2669,7 +2670,8 @@ public class Draw {
         if (aPGB != null) {
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor(),
+                        aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(path);
@@ -2704,7 +2706,6 @@ public class Draw {
     public static void drawPolygon(Polygon aPG, PolygonBreak aPGB, Graphics2D g) {
         int len = aPG.getOutLine().size();
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, len);
-        path.moveTo(0, 0);
         PointD wPoint;
         for (int i = 0; i < aPG.getOutLine().size(); i++) {
             wPoint = aPG.getOutLine().get(i);
@@ -2732,12 +2733,11 @@ public class Draw {
         path.closePath();
 
         if (aPGB.isDrawFill()) {
-            //int alpha = (int)((1 - (double)transparencyPerc / 100.0) * 255);
-            //Color aColor = Color.FromArgb(alpha, aPGB.Color);
             Color aColor = aPGB.getColor();
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(),
+                        aPGB.getBackColor(), aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(path);
@@ -2844,9 +2844,11 @@ public class Draw {
      * @param size
      * @param stripeColor Stripe color
      * @param backColor Background color
+     * @param lineWidth Hatch line width
      * @return Hatch style image
      */
-    public static BufferedImage getHatchImage(HatchStyle style, int size, Color stripeColor, Color backColor) {
+    public static BufferedImage getHatchImage(HatchStyle style, int size, Color stripeColor,
+                                              Color backColor, float lineWidth) {
         BufferedImage bi = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = bi.createGraphics();
         int alpha = backColor.getAlpha();
@@ -2855,6 +2857,7 @@ public class Draw {
             g2.fillRect(0, 0, size, size);
         }
         g2.setColor(stripeColor);
+        g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
         switch (style) {
             case HORIZONTAL:
                 g2.drawLine(0, size / 2, size, size / 2);
@@ -2863,11 +2866,12 @@ public class Draw {
                 g2.drawLine(size / 2, 0, size / 2, size);
                 break;
             case FORWARD_DIAGONAL:
-                g2.drawLine(0, 0, size, size);
+                //g2.drawLine(0, 0, size, size);
+                g2.draw(new Line2D.Float(-1f, -1f, size, size));
                 break;
             case BACKWARD_DIAGONAL:
                 //g2.drawLine(size, 0, 0, size);
-                g2.draw(new Line2D.Float(-0.1f, size + 0.1f, size + 0.1f, -0.1f));
+                g2.draw(new Line2D.Float(-1f, size, size, -1f));
                 break;
             case CROSS:
                 g2.drawLine(0, size / 2, size, size / 2);
@@ -3805,7 +3809,8 @@ public class Draw {
         if (aPGB.isDrawFill()) {
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor(),
+                        aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(new Rectangle.Double(x, y, width, height));
@@ -3838,7 +3843,8 @@ public class Draw {
         if (aPGB.isDrawFill()) {
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor(),
+                        aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(new Rectangle.Float(aP.X, aP.Y, width, height));
@@ -3920,7 +3926,8 @@ public class Draw {
         if (aPGB.isDrawFill()) {
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor(),
+                        aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(new Rectangle.Float(aPoint.X, aPoint.Y, width, height));

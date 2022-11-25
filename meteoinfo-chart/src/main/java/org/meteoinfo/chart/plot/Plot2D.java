@@ -815,7 +815,8 @@ public class Plot2D extends AbstractPlot2D {
             }
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(),
+                        aPGB.getBackColor(), aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(path);
@@ -860,7 +861,8 @@ public class Plot2D extends AbstractPlot2D {
             }
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(),
+                        aPGB.getBackColor(), aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(rshape);
@@ -898,7 +900,8 @@ public class Plot2D extends AbstractPlot2D {
             }
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(),
+                        aPGB.getBackColor(), aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(shape);
@@ -946,7 +949,8 @@ public class Plot2D extends AbstractPlot2D {
             }
             if (aPGB.isUsingHatchStyle()) {
                 int size = aPGB.getStyleSize();
-                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(), aPGB.getBackColor());
+                BufferedImage bi = getHatchImage(aPGB.getStyle(), size, aPGB.getColor(),
+                        aPGB.getBackColor(), aPGB.getStyleLineWidth());
                 Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
                 g.setPaint(new TexturePaint(bi, rect));
                 g.fill(shape);

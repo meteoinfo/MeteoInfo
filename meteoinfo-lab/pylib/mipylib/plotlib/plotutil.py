@@ -511,6 +511,7 @@ def getlegendbreak(geometry, **kwargs):
         hatch = kwargs.pop('hatch', None)
         hatch = gethatch(hatch) 
         hatchsize = kwargs.pop('hatchsize', None)
+        hatchlinewidth = kwargs.pop('hatchlinewidth', None)
         bgcolor = kwargs.pop('bgcolor', None)
         bgcolor = getcolor(bgcolor)
         if not hatch is None:
@@ -519,6 +520,8 @@ def getlegendbreak(geometry, **kwargs):
                 lb.setBackColor(bgcolor)
             if not hatchsize is None:
                 lb.setStyleSize(hatchsize)
+            if not hatchlinewidth is None:
+                lb.setStyleLineWidth(hatchlinewidth)
     else:
         lb = ColorBreak()
     caption = kwargs.pop('caption', None)
@@ -815,6 +818,7 @@ def setlegendscheme_polygon(ls, **kwargs):
     hatch = kwargs.pop('hatch', None)
     hatch = gethatch(hatch) 
     hatchsize = kwargs.pop('hatchsize', None)
+    hatchlinewidth = kwargs.pop('hatchlinewidth', None)
     bgcolor = kwargs.pop('bgcolor', None)
     bgcolor = getcolor(bgcolor)
     for lb in ls.getLegendBreaks():
@@ -841,6 +845,8 @@ def setlegendscheme_polygon(ls, **kwargs):
                 lb.setBackColor(bgcolor)
             if not hatchsize is None:
                 lb.setStyleSize(hatchsize)
+            if not hatchlinewidth is None:
+                lb.setStyleLineWidth(hatchlinewidth)
     return ls
     
 def setpointlegendbreak(lb, **kwargs):

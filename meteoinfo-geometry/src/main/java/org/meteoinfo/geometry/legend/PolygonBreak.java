@@ -31,6 +31,7 @@ package org.meteoinfo.geometry.legend;
      //private boolean usingHatchStyle;
      protected HatchStyle style;
      protected int styleSize;
+     protected float styleLineWidth;
      protected Color backColor;
      //private int _transparencyPerc;
      protected boolean isMaskout;
@@ -51,6 +52,7 @@ package org.meteoinfo.geometry.legend;
          //usingHatchStyle = false;
          style = HatchStyle.NONE;
          styleSize = 8;
+         styleLineWidth = 1;
          backColor = new Color(1.0f, 1.0f, 1.0f, 0.0f);
          //_transparencyPerc = 0;
          isMaskout = false;
@@ -197,6 +199,22 @@ package org.meteoinfo.geometry.legend;
      }
 
      /**
+      * Get hatch style line width
+      * @return Hatch style line width
+      */
+     public float getStyleLineWidth() {
+         return this.styleLineWidth;
+     }
+
+     /**
+      * Set hatch style line width
+      * @param value Hatch style line width
+      */
+     public void setStyleLineWidth(float value) {
+         this.styleLineWidth = value;
+     }
+
+     /**
       * Get if maskout
       *
       * @return Boolean
@@ -232,7 +250,8 @@ package org.meteoinfo.geometry.legend;
          objAttr.put("DrawPolygon", "DrawPolygon");
          objAttr.put("UsingHatchStyle", "UsingHatchStyle");
          objAttr.put("Style", "Style");
-         objAttr.put("SytleSize", "StyleSize");
+         objAttr.put("StyleSize", "StyleSize");
+         objAttr.put("StyleLineWidth", "StyleLineWidth");
          objAttr.put("BackColor", "BackColor");
          objAttr.put("TransparencyPercent", "TransparencyPercent");
          //CustomProperty cp = new CustomProperty(this, objAttr);
@@ -260,6 +279,7 @@ package org.meteoinfo.geometry.legend;
          //aCB.setUsingHatchStyle(usingHatchStyle);
          aCB.setStyle(style);
          aCB.setStyleSize(styleSize);
+         aCB.setStyleLineWidth(styleLineWidth);
          aCB.setBackColor(backColor);
          //aCB.TransparencyPercent = _transparencyPerc;
          aCB.setMaskout(isMaskout);

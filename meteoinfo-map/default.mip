@@ -2,12 +2,13 @@
 <MeteoInfo File="default.mip" Type="projectfile">
   <MapFrames>
     <MapFrame Active="true" DrawGridLabel="true" DrawGridLine="false" DrawNeatLine="true" Expanded="true" GridFontName="Arial" GridFontSize="12" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH" GridXDelt="10.0" GridXOrigin="-180.0" GridYDelt="10.0" GridYOrigin="-90.0" Height="364" Left="48" Name="New Map Frame" NeatLineColor="0xff000000" NeatLineSize="1.0" Order="0" Top="30" Width="776">
-      <Extents xMax="180.0" xMin="-180.0" yMax="83.62359619140625" yMin="-90.0"/>
+      <Extents xMax="1.3153148906367643E7" xMin="1.281804897436543E7" yMax="4934473.71932323" yMin="4763254.775964434"/>
       <MapProperty BackColor="0xffffffff" ForeColor="0xff000000" HighSpeedWheelZoom="true" MultiGlobalDraw="true" PointSmoothingMode="true" SelectColor="0xff66ffff" SmoothingMode="false" XYScaleFactor="1.0"/>
       <GridLine DrawGridLine="false" DrawGridTickLine="false" GridLineColor="0xff808080" GridLineSize="1.0" GridLineStyle="DASH"/>
       <MaskOut MaskLayer="china.shp" SetMaskLayer="false"/>
-      <Projection IsLonLatMap="true" ProjStr="+title=long/lat:WGS84 +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees "/>
+      <Projection IsLonLatMap="false" ProjStr="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 "/>
       <GroupLayer>
+        <Layer Handle="3" IsMaskout="false" LayerDrawType="IMAGE" LayerName="WebMap_AMap" LayerType="WEB_MAP_LAYER" TransparencyPerc="0" Visible="true" WebMapProvider="AMap"/>
         <Layer AvoidCollision="false" Expanded="false" FileName="..\..\..\..\Distribution\Java\MeteoInfo\MeteoInfo\map\cn_province.shp" Handle="1" IsMaskout="false" LayerDrawType="MAP" LayerName="cn_province.shp" LayerType="VECTOR_LAYER" ShapeType="POLYGON_Z" TransparencyPerc="0" Visible="true">
           <LegendScheme BreakNum="1" FieldName="" HasNoData="false" LegendType="SINGLE_SYMBOL" MaxValue="0.0" MinValue="0.0" ShapeType="POLYGON_Z" UNDEF="-9999.0">
             <Breaks>

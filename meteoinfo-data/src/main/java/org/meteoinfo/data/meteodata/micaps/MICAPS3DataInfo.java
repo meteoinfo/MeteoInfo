@@ -288,8 +288,7 @@ public class MICAPS3DataInfo extends DataInfo implements IStationDataInfo {
         for (String vName : this._fieldList) {
             switch (vName) {
                 case "Stid":
-                    dtype = DataType.STRING;
-                    break;
+                    continue;
                 default:
                     dtype = DataType.FLOAT;
                     break;
@@ -305,12 +304,9 @@ public class MICAPS3DataInfo extends DataInfo implements IStationDataInfo {
             for (int j = 0; j < data.size(); j++) {
                 dd = (Array) data.get(j);
                 switch (dd.getDataType()) {
-                    case STRING:
-                        dd.setString(i, dataList.get(j));
-                        break;
                     case FLOAT:
                         try {
-                            dd.setFloat(i, Float.parseFloat(dataList.get(j)));
+                            dd.setFloat(i, Float.parseFloat(dataList.get(j + 1)));
                         } catch (Exception e) {
                             dd.setFloat(i, Float.NaN);
                         }

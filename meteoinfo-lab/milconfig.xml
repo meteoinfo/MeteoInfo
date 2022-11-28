@@ -22,14 +22,12 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\norm_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_3.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_3-2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_3_dataframe_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\sounding.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\norm_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_3.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_3-2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_3_dataframe_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -37,5 +35,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1394,795"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

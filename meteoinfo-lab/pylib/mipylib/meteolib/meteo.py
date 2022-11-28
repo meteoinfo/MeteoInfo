@@ -495,7 +495,7 @@ def flowfun(u, v):
 
     return psi, phi
     
-def eof(x, svd=True, transform=False):
+def eof(x, svd=True, transform=False, return_index=False):
     """
     Empirical Orthogonal Function (EOF) analysis to finds both time series and spatial patterns.
     
@@ -504,9 +504,10 @@ def eof(x, svd=True, transform=False):
     :param transform: (*boolean*) Do space-time transform or not. This transform will speed up
         the computation if the space location number is much more than time stamps. Only valid
         when ``svd=False``.
+    :param return_index: (*bool*) Whether return valid index. Default is `False`.
         
-    :returns: (EOF, E, PC) EOF: eigen vector 2-D array; E: eigen values 1-D array;
-        PC: Principle component 2-D array.
+    :returns: (EOF, E, PC, [valid_index]) EOF: eigen vector 2-D array; E: eigen values 1-D array;
+        PC: Principal component 2-D array. Optional valid_index: Valid data (not NaN) index 1-D array.
     """
     has_nan = False
     if x.contains_nan():       #Has NaN value
@@ -549,9 +550,15 @@ def eof(x, svd=True, transform=False):
         _PC = np.ones(x.shape) * np.nan
         _EOF[valid_idx,:] = EOF
         _PC[valid_idx,:] = PC
-        return _EOF, E, _PC, valid_idx
+        if return_index:
+            return _EOF, E, _PC, valid_idx
+        else:
+            return _EOF, E, _PC
     else:
-        return EOF, E, PC
+        if return_index:
+            return EOF, E, PC, np.arange(x.shape[0])
+        else:
+            return EOF, E, PC
     
 def varimax(x, normalize=False, tol=1e-10, it_max=1000):
     """

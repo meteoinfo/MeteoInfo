@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\micaps">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW\airship"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\webmap">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\text"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\sounding.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\radar_bz2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\norm_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\air_path.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\sounding.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\radar_bz2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\norm_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\air_path.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +35,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1394,795"/>
 </MeteoInfo>

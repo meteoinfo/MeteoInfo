@@ -606,6 +606,22 @@ public class MapView extends JPanel implements IWebMapPanel {
     }
 
     /**
+     * Get whether fix map scale - for web map layer drawing
+     * @return Whether fix map scale
+     */
+    public boolean isFixMapScale() {
+        return fixMapScale;
+    }
+
+    /**
+     * Set whether fix map scale - for web map layer drawing
+     * @param value Whether fix map scale
+     */
+    public void setFixMapScale(boolean value) {
+        fixMapScale = value;
+    }
+
+    /**
      * Get x/y scale factor
      *
      * @return X/Y scale factor
@@ -4250,13 +4266,13 @@ public class MapView extends JPanel implements IWebMapPanel {
      * @param g Graphics2D
      * @param area Target rectangle area
      * @param tll TileLoadListener
-     */
+     *//*
     public void paintGraphics(Graphics2D g, Rectangle2D area, TileLoadListener tll) {
         Rectangle rect = new Rectangle((int) area.getX(), (int) area.getY(),
                 (int) area.getWidth(), (int) area.getHeight());
         //boolean update = this._viewExtent.getWidth() / this._viewExtent.getHeight() != area.getWidth() / area.getHeight();
         this.paintGraphics(g, rect, tll);
-    }
+    }*/
 
     /**
      * Paint graphics
@@ -4265,7 +4281,7 @@ public class MapView extends JPanel implements IWebMapPanel {
      * @param rect Target rectangle
      * @param tll TileLoadListener
      */
-    public void paintGraphics(Graphics2D g, Rectangle rect, TileLoadListener tll) {
+    public void paintGraphics(Graphics2D g, Rectangle2D rect, TileLoadListener tll) {
         paintGraphics(g, rect, tll, true);
     }
 
@@ -4277,7 +4293,7 @@ public class MapView extends JPanel implements IWebMapPanel {
      * @param tll TileLoadListener
      * @param updateXYScale Whether update X/Y axis scale
      */
-    public void paintGraphics(Graphics2D g, Rectangle rect, TileLoadListener tll, boolean updateXYScale) {
+    public void paintGraphics(Graphics2D g, Rectangle2D rect, TileLoadListener tll, boolean updateXYScale) {
         if (this._lockViewUpdate) {
             return;
         }
@@ -4285,7 +4301,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         //this.setSize(rect.width, rect.height);
 
         if (updateXYScale)
-            refreshXYScale(rect.width, rect.height);
+            refreshXYScale(rect.getWidth(), rect.getHeight());
 
         Color background = this.getBackground();
         if (background != null) {
@@ -4301,7 +4317,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
         getMaskOutGraphicsPath(g);
 
-        g.translate(rect.x, rect.y);
+        g.translate(rect.getX(), rect.getY());
         _maskOutGraphicsPath.transform(g.getTransform());
 
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -4329,9 +4345,9 @@ public class MapView extends JPanel implements IWebMapPanel {
         if (_isGeoMap) {
             updateLonLatLayer();
             if (_projection.isLonLatMap()) {
-                drawLonLatMap(g, rect.width, rect.height);
+                drawLonLatMap(g, rect.getWidth(), rect.getHeight());
             } else {
-                drawProjectedMap(g, rect.width, rect.height, tll);
+                drawProjectedMap(g, rect.getWidth(), rect.getHeight(), tll);
             }
             getLonLatGridLabels();
         } else {
@@ -4346,7 +4362,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         drawLonLatMap(g, this.getWidth(), this.getHeight());
     }
 
-    private void drawLonLatMap(Graphics2D g, int width, int heigth) {
+    private void drawLonLatMap(Graphics2D g, double width, double heigth) {
         //Draw layers
         drawLayers(g, width, heigth);
 
@@ -4391,7 +4407,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         this.drawProjectedMap(g, width, height, tileLoadListener);
     }
 
-    private void drawProjectedMap(Graphics2D g, int width, int height, TileLoadListener tll) {
+    private void drawProjectedMap(Graphics2D g, double width, double height, TileLoadListener tll) {
         //Draw layers
         drawProjectedLayers(g, width, height, tll);
 
@@ -4696,7 +4712,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         this.drawProjectedMap(g, width, height, tileLoadListener);
     }
 
-    private void drawProjectedLayers(Graphics2D g, int width, int height, TileLoadListener tll) {
+    private void drawProjectedLayers(Graphics2D g, double width, double height, TileLoadListener tll) {
         java.awt.Shape oldRegion = g.getClip();
         for (MapLayer aLayer : layers) {
             if (aLayer.isVisible()) {
@@ -5744,8 +5760,8 @@ public class MapView extends JPanel implements IWebMapPanel {
         PointD geoCenter = this.getGeoCenter();
         layer.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X));
         if (this.fixMapScale) {
-            layer.setWebMapScale(this._scaleX);
-            layer.setZoom(this.zoomLevel);
+            //layer.setWebMapScale(this._scaleX);
+            //layer.setZoom(this.zoomLevel);
         } else {
             double webMapScale = layer.getWebMapScale();
             if (!MIMath.doubleEquals(_scaleX, webMapScale)) {
@@ -5786,123 +5802,38 @@ public class MapView extends JPanel implements IWebMapPanel {
         layer.drawWebMapLayer(g, width, height, tll);
     }
 
-//    private void drawWebMapLayer_bak(WebMapLayer layer, Graphics2D g, int width, int height, TileLoadListener tll) {
-//        PointD geoCenter = this.getGeoCenter();
-//        layer.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X));
-//        int zoom = layer.getZoom();
-//        if (!MIMath.doubleEquals(_scaleX, _webMapScale)) {
-//            int minZoom = layer.getTileFactory().getInfo().getMinimumZoomLevel();
-//            int maxZoom = layer.getTileFactory().getInfo().getMaximumZoomLevel();
-//            //int totalZoom = layer.getTileFactory().getInfo().getTotalMapZoom();
-//            int nzoom = minZoom;
-//            double scale;
-//            for (int i = maxZoom; i >= minZoom; i--) {
-//                //int z = totalZoom - i;
-//                //double res = GeoUtil.getResolution(z, geoCenter.Y);
-//                //double scale = 1.0 / res;
-//                //layer.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X), i);
-//                layer.setZoom(i);
-//                scale = getWebMapScale(layer, i, width, height);
-//                if (_scaleX < scale || MIMath.doubleEquals(_scaleX, scale)) {
-//                    this.setScale(scale, width, height);
-//                    nzoom = i;
-//                    _webMapScale = scale;
-//                    break;
-//                }
-//            }
-//
-//            boolean addOne = false;
-//            if (zoom == minZoom) {
-//                addOne = true;
-//            } else if (nzoom < maxZoom) {
-//                addOne = true;
-//            }
-//            if (addOne) {
-//                zoom = nzoom + 1;
-//                _webMapScale = getWebMapScale(layer, zoom, width, height);
-//                this.setScale(_webMapScale, width, height);
-//                layer.setZoom(zoom);
-//            } else {
-//                zoom = nzoom;
-//            }
-//        }
-//
-//        if (layer.isMaskout()) {
-//            java.awt.Shape oldRegion = g.getClip();
-//            setClipRegion(g);
-//            if (oldRegion != null) {
-//                g.clip(oldRegion);
-//            }
-//        }
-//
-//        //layer.setZoom(zoom);
-//        //layer.drawMapTiles(g, zoom, width, height);        
-//        Rectangle viewportBounds = layer.calculateViewportBounds(g, width, height);
-//        int size = layer.getTileFactory().getTileSize(zoom);
-//        Dimension mapSize = layer.getTileFactory().getMapSize(zoom);
-//
-//        //calculate the "visible" viewport area in tiles
-//        int numWide = viewportBounds.width / size + 2;
-//        int numHigh = viewportBounds.height / size + 2;
-//
-//        //TilePoint topLeftTile = getTileFactory().getTileCoordinate(
-//        //        new Point2D.Double(viewportBounds.x, viewportBounds.y));
-//        TileFactoryInfo info = layer.getTileFactory().getInfo();
-//        int tpx = (int) Math.floor(viewportBounds.getX() / info.getTileSize(0));
-//        int tpy = (int) Math.floor(viewportBounds.getY() / info.getTileSize(0));
-//        //TilePoint topLeftTile = new TilePoint(tpx, tpy);
-//
-//        //p("top tile = " + topLeftTile);
-//        //fetch the tiles from the factory and store them in the tiles cache
-//        //attach the TileLoadListener
-//        //String language = layer.getTileFactory().getInfo().getLanguage();
-//        for (int x = 0; x <= numWide; x++) {
-//            for (int y = 0; y <= numHigh; y++) {
-//                int itpx = x + tpx;//topLeftTile.getX();
-//                int itpy = y + tpy;//topLeftTile.getY();
-//                //TilePoint point = new TilePoint(x + topLeftTile.getX(), y + topLeftTile.getY());
-//                //only proceed if the specified tile point lies within the area being painted
-//                //if (g.getClipBounds().intersects(new Rectangle(itpx * size - viewportBounds.x,
-//                //itpy * size - viewportBounds.y, size, size))) {
-//                Tile tile = layer.getTileFactory().getTile(itpx, itpy, zoom);
-//                tile.addUniquePropertyChangeListener("loaded", tll); //this is a filthy hack
-//                int ox = ((itpx * layer.getTileFactory().getTileSize(zoom)) - viewportBounds.x);
-//                int oy = ((itpy * layer.getTileFactory().getTileSize(zoom)) - viewportBounds.y);
-//
-//                //if the tile is off the map to the north/south, then just don't paint anything                    
-//                if (layer.isTileOnMap(itpx, itpy, mapSize)) {
-////                        if (isOpaque()) {
-////                            g.setColor(getBackground());
-////                            g.fillRect(ox,oy,size,size);
-////                        }
-//                } else if (tile.isLoaded()) {
-//                    g.drawImage(tile.getImage(), ox, oy, null);
-//                } else {
-//                    int imageX = (layer.getTileFactory().getTileSize(zoom) - layer.getLoadingImage().getWidth(null)) / 2;
-//                    int imageY = (layer.getTileFactory().getTileSize(zoom) - layer.getLoadingImage().getHeight(null)) / 2;
-//                    g.setColor(Color.GRAY);
-//                    g.fillRect(ox, oy, size, size);
-//                    g.drawImage(layer.getLoadingImage(), ox + imageX, oy + imageY, null);
-//                }
-//                if (layer.isDrawTileBorders()) {
-//
-//                    g.setColor(Color.black);
-//                    g.drawRect(ox, oy, size, size);
-//                    g.drawRect(ox + size / 2 - 5, oy + size / 2 - 5, 10, 10);
-//                    g.setColor(Color.white);
-//                    g.drawRect(ox + 1, oy + 1, size, size);
-//
-//                    String text = itpx + ", " + itpy + ", " + layer.getZoom();
-//                    g.setColor(Color.BLACK);
-//                    g.drawString(text, ox + 10, oy + 30);
-//                    g.drawString(text, ox + 10 + 2, oy + 30 + 2);
-//                    g.setColor(Color.WHITE);
-//                    g.drawString(text, ox + 10 + 1, oy + 30 + 1);
-//                }
-//                //}
-//            }
-//        }
-//    }
+    private void updateWebMapScale(double width, double height) {
+        updateWebMapScale(this.getWebMapLayer(), width, height);
+    }
+
+    private void updateWebMapScale(WebMapLayer layer, double width, double height) {
+        double webMapScale = layer.getWebMapScale();
+        if (!MIMath.doubleEquals(_scaleX, webMapScale)) {
+            int minZoom = layer.getTileFactory().getInfo().getMinimumZoomLevel();
+            int maxZoom = layer.getTileFactory().getInfo().getMaximumZoomLevel();
+            int newZoom = minZoom;
+            double scale = webMapScale;
+            for (int i = maxZoom; i >= minZoom; i--) {
+                layer.setZoom(i);
+                scale = getWebMapScale(layer, i, width, height);
+                if (_scaleX < scale) {
+                    newZoom = i;
+                    if (_scaleX < webMapScale) {
+                        if (i < maxZoom) {
+                            newZoom = i + 1;
+                            scale = getWebMapScale(layer, newZoom, width, height);
+                        }
+                    }
+                    break;
+                }
+            }
+            this.setScale(scale, width, height);
+            layer.setWebMapScale(scale);
+            layer.setZoom(newZoom);
+            zoomLevel = newZoom;
+        }
+        //this.fixMapScale = true;
+    }
 
     private double getWebMapScale(WebMapLayer layer, int zoom, double width, double height) {
         Point2D center = layer.getCenter();
@@ -5916,7 +5847,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 KnownCoordinateSystems.geographic.world.WGS1984, this.getProjection().getProjInfo());
         PointD p2 = Reproject.reprojectPoint(new PointD(pos2.getLongitude(), pos2.getLatitude()),
                 KnownCoordinateSystems.geographic.world.WGS1984, this.getProjection().getProjInfo());
-        if (pos2.getLongitude() - pos1.getLongitude() < 360.0) {
+        if (pos2.getLongitude() - pos1.getLongitude() < 360.0 && pos2.getLongitude() <= 180) {
             double xlen = Math.abs(p2.X - p1.X);
             return (double) width / xlen;
         } else {
@@ -7870,7 +7801,7 @@ public class MapView extends JPanel implements IWebMapPanel {
             lonRan = (aExtent.minX - temp) / 2;
             aExtent.minX = aExtent.minX - lonRan;
             aExtent.maxX = aExtent.maxX - lonRan;
-        } else {
+        } else if (_scaleX < _scaleY) {
             _scaleY = _scaleX * scaleFactor;
             temp = aExtent.minY;
             aExtent.minY = aExtent.maxY - height / _scaleY;
@@ -7916,8 +7847,8 @@ public class MapView extends JPanel implements IWebMapPanel {
     private void setScale(double scale, double width, double height) {
         this._scaleX = scale;
         this._scaleY = scale;
-        //PointD center = (PointD)this._drawExtent.getCenterPoint().clone();
-        PointD center = (PointD) this._viewExtent.getCenterPoint().clone();
+        PointD center = (PointD)this._drawExtent.getCenterPoint().clone();
+        //PointD center = (PointD) this._viewExtent.getCenterPoint().clone();
         //center.X -= g.getTransform().getTranslateX();
         //center.Y -= g.getTransform().getTranslateY();        
         double xlen = width / scale * 0.5;
@@ -7968,6 +7899,19 @@ public class MapView extends JPanel implements IWebMapPanel {
         }
 
         _drawExtent = extent;
+    }
+
+    /**
+     * Refresh X/Y scale with web map layer
+     *
+     * @param extent The extent
+     * @param width The width
+     * @param height The height
+     */
+    public void refreshXYScaleWebMap(Extent extent, double width, double height) {
+        setCoordinateGeoMap(extent, width, height);
+        _drawExtent = extent;
+        updateWebMapScale(width, height);
     }
 
     private double getGeoWidth(double width) {

@@ -795,6 +795,9 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                         double maxY = xyplot.getGraphArea().getHeight() - deltaY;
                         xyplot.zoomToExtentScreen(minX, maxX, minY, maxY);*/
                         //this.paintGraphics();
+                        /*if (xyplot instanceof MapPlot) {
+                            ((MapPlot) xyplot).getMapView().setFixMapScale(true);
+                        }*/
                         this.repaintNew();
                     }
                 }

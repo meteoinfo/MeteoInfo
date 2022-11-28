@@ -128,11 +128,11 @@ public class GLChart implements GLEventListener {
      */
     public void setParent(org.meteoinfo.chart.GLChartPanel value) {
         this.parent = value;
-        /*for (Plot plot : this.plots) {
+        for (Plot plot : this.plots) {
             if (plot instanceof MapPlot) {
                 ((MapPlot) plot).setParent(value);
             }
-        }*/
+        }
     }
 
     /**
@@ -579,7 +579,7 @@ public class GLChart implements GLEventListener {
                 if (plot instanceof MapPlot) {
                     ((MapPlot) plot).setAntialias(this.antialias);
                 }
-                if (plot instanceof Plot3DGL) {
+                if (plot instanceof GLPlot) {
                     Rectangle2D graphArea = plot.getPositionArea();
                     plot.setGraphArea(graphArea);
                 } else {
@@ -931,9 +931,9 @@ public class GLChart implements GLEventListener {
      * @param plot Plot
      */
     public void addPlot(Plot plot) {
-        /*if (plot instanceof MapPlot) {
+        if (plot instanceof MapPlot) {
             ((MapPlot) plot).setParent(parent);
-        }*/
+        }
         this.plots.add(plot);
     }
 

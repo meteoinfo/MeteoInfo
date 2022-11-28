@@ -137,11 +137,11 @@ public class Chart {
      */
     public void setParent(ChartPanel value) {
         this.parent = value;
-        for (Plot plot : this.plots) {
+        /*for (Plot plot : this.plots) {
             if (plot instanceof MapPlot) {
                 ((MapPlot) plot).setParent(value);
             }
-        }
+        }*/
     }
 
     /**
@@ -877,9 +877,9 @@ public class Chart {
      * @param plot Plot
      */
     public void addPlot(Plot plot) {
-        if (plot instanceof MapPlot) {
+        /*if (plot instanceof MapPlot) {
             ((MapPlot) plot).setParent(parent);
-        }
+        }*/
         this.plots.add(plot);
     }
 

@@ -1102,6 +1102,7 @@ import org.xml.sax.SAXException;
                      MinY = -deltaY;
                      MaxX = _currentLayoutMap.getWidth() - deltaX;
                      MaxY = _currentLayoutMap.getHeight() - deltaY;
+                     _currentLayoutMap.getMapFrame().getMapView().setFixMapScale(true);
                      _currentLayoutMap.getMapFrame().getMapView().zoomToExtentScreen(MinX, MaxX, MinY, MaxY, _zoom);
                  }
                  break;

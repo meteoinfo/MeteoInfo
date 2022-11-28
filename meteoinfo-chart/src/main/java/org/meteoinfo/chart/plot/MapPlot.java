@@ -56,7 +56,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     private boolean antialias;
     private MapLayer selectedLayer;
     protected TileLoadListener tileLoadListener = new TileLoadListener(this);
-    private ChartPanel parent;
+    private GLChartPanel parent;
     private float[] lonLim;
     private float[] latLim;
     private Graphic boundary;
@@ -127,7 +127,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      *
      * @param value ChartPanel
      */
-    public void setParent(ChartPanel value) {
+    public void setParent(GLChartPanel value) {
         this.parent = value;
     }
 
@@ -495,8 +495,13 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         this.mapView.setLockViewUpdate(false);
         this.mapView.setAntiAlias(this.antialias);        
         //this.mapView.setViewExtent((Extent) this.getDrawExtent().clone());
-        this.mapView.zoomToExtent((Extent) this.getDrawExtent().clone(),
-                (int) area.getWidth(), (int) area.getHeight());
+        if (this.mapView.hasWebMapLayer()) {
+            this.mapView.setViewExtent((Extent) this.getDrawExtent().clone());
+            this.mapView.refreshXYScaleWebMap((Extent) this.getDrawExtent().clone(), area.getWidth(),
+                    area.getHeight());
+            /*this.mapView.zoomToExtent((Extent) this.getDrawExtent().clone(),
+                    (int) area.getWidth(), (int) area.getHeight());*/
+        }
         if (this.boundary != null) {
             PolygonBreak pb = (PolygonBreak)this.boundary.getLegend().clone();
             if (pb.isDrawFill()) {

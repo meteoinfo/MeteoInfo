@@ -549,7 +549,7 @@ def eof(x, svd=True, transform=False):
         _PC = np.ones(x.shape) * np.nan
         _EOF[valid_idx,:] = EOF
         _PC[valid_idx,:] = PC
-        return _EOF, E, _PC
+        return _EOF, E, _PC, valid_idx
     else:
         return EOF, E, PC
     
@@ -558,7 +558,7 @@ def varimax(x, normalize=False, tol=1e-10, it_max=1000):
     Rotate EOFs according to varimax algorithm
     
     :param x: (*array_like*) Input 2-D array.
-    :param normalize: (*boolean*) Determines whether or not to normalize the rows or columns
+    :param normalize: (*boolean*) Determines whether to normalize the rows or columns
         of the loadings before performing the rotation.
     :param tol: (*float*) Tolerance.
     :param it_max: (*int*) Specifies the maximum number of iterations to do.

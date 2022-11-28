@@ -7,6 +7,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.linalg import LinalgUtil
+#from org.meteoinfo.math.linalg import LinalgUtilJava as LinalgUtil
 from org.meteoinfo.math.stats import StatsUtil
 
 from .. import core as np

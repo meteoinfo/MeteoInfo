@@ -574,6 +574,23 @@ class NDArray(object):
         r = NDArray(ArrayMath.inValues(self._array, other))
         return r
 
+    def any(self, axis=None):
+        """
+        Test whether any array element along a given axis evaluates to True.
+
+        :param axis: (*int*) Axis along which a logical OR reduction is performed.
+            The default (axis = None) is to perform a logical OR over all the
+            dimensions of the input array.
+
+        :returns: (*array_like*) Any result
+        """
+        if axis is None:
+            return ArrayMath.any(self._array)
+        else:
+            if axis < 0:
+                axis += self.ndim
+            return NDArray(ArrayMath.any(self._array, axis))
+
     def contains_nan(self):
         """
         Check if the array contains nan value.

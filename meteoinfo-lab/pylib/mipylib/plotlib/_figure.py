@@ -504,7 +504,7 @@ class Figure(GLChartPanel):
         """
         Set MouseMode.
         
-        :param mm: (*string*) MouseMode string [zoom_in | zoom_out | pan | identifer
+        :param mm: (*string*) MouseMode string [zoom_in | zoom_out | pan | identifier
             | rotate | select].
         """
         mm = MouseMode.valueOf(mm.upper())

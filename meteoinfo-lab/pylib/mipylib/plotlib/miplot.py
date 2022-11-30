@@ -846,7 +846,7 @@ def axes3dgl(*args, **kwargs):
 
 def axes3d_map(*args, **kwargs):
     """
-    Add an map 3d axes with JOGL to the figure.
+    Add a map 3d axes with JOGL to the figure.
 
     :returns: The axes.
     """

@@ -233,14 +233,14 @@ public class ArrayFloat extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public boolean getBoolean(Index i) {
-        throw new ForbiddenConversionException();
+        return storage[i.currentElement()] != 0;
     }
 
     /**
      * not legal, throw ForbiddenConversionException
      */
     public void setBoolean(Index i, boolean value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = value ? 1 : 0;
     }
 
     /**
@@ -341,11 +341,11 @@ public class ArrayFloat extends Array {
     }
 
     public boolean getBoolean(int index) {
-        throw new ForbiddenConversionException();
+        return storage[index] != 0;
     }
 
     public void setBoolean(int index, boolean value) {
-        throw new ForbiddenConversionException();
+        storage[index] = value ? 1 : 0;
     }
     
     public String getString(int index) {

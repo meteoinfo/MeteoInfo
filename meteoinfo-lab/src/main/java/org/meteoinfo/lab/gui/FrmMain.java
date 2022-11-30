@@ -157,8 +157,12 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         if (this.startupPath.endsWith("meteoinfo-lab")) {
             Path path = new File(this.startupPath).toPath();
             path = path.getParent();
-            path = path.resolve(Paths.get("auxdata", "toolbox"));
-            toolboxPath = path.toString();
+            Path toolPath = path.getParent();
+            toolPath = toolPath.resolve(Paths.get("toolbox"));
+            if (!toolPath.toFile().isDirectory()) {
+                toolPath = path.resolve(Paths.get("auxdata", "toolbox"));
+            }
+            toolboxPath = toolPath.toString();
         }
         String appConfFn = toolboxPath + File.separator + "apps.xml";
         if (new File(appConfFn).exists()) {

@@ -1166,12 +1166,7 @@ def any(x, axis=None):
     if isinstance(x, list):
         x = array(x)
         
-    if axis is None:
-        return ArrayMath.any(x._array)
-    else:
-        if axis < 0:
-            axis += x.ndim
-        return NDArray(ArrayMath.any(x._array, axis))
+    return x.any(axis)
         
 def all(x, axis=None):
     """

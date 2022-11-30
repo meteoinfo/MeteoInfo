@@ -248,14 +248,14 @@ public class ArrayInt extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public boolean getBoolean(Index i) {
-        throw new ForbiddenConversionException();
+        return storage[i.currentElement()] != 0;
     }
 
     /**
      * not legal, throw ForbiddenConversionException
      */
     public void setBoolean(Index i, boolean value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = value ? 1 : 0;
     }
     
     /**

@@ -3,6 +3,7 @@ package org.meteoinfo.chart.jogl;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import org.meteoinfo.chart.ChartText;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.GraphicProjectionUtil;
 import org.meteoinfo.chart.plot.MapGridLine;
 import org.meteoinfo.chart.plot.MapGridLine3D;
@@ -64,6 +65,9 @@ public class MapGLPlot extends GLPlot {
             super.addGraphic(graphic);
         } else {
             Graphic nGraphic = GraphicProjectionUtil.projectClipGraphic(graphic, proj, this.projInfo);
+            if (nGraphic instanceof GraphicCollection3D) {
+                ((GraphicCollection3D) nGraphic).setUsingLight(((GraphicCollection3D) graphic).isUsingLight());
+            }
             super.addGraphic(nGraphic);
         }
     }

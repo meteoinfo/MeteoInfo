@@ -228,14 +228,14 @@ public class ArrayDouble extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public boolean getBoolean(Index i) {
-        throw new ForbiddenConversionException();
+        return storageD[i.currentElement()] != 0;
     }
 
     /**
      * not legal, throw ForbiddenConversionException
      */
     public void setBoolean(Index i, boolean value) {
-        throw new ForbiddenConversionException();
+        storageD[i.currentElement()] = value ? 1 : 0;
     }
     
     /**
@@ -336,11 +336,11 @@ public class ArrayDouble extends Array {
     }
 
     public boolean getBoolean(int index) {
-        throw new ForbiddenConversionException();
+        return storageD[index] != 0;
     }
 
     public void setBoolean(int index, boolean value) {
-        throw new ForbiddenConversionException();
+        storageD[index] = value ? 1 : 0;
     }
 
     public String getString(int index) {

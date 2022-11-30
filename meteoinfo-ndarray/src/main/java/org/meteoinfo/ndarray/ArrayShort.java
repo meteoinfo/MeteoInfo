@@ -243,18 +243,12 @@ public class ArrayShort extends Array {
         storage[i.currentElement()] = (short) value;
     }
 
-    /**
-     * not legal, throw ForbiddenConversionException
-     */
     public boolean getBoolean(Index i) {
-        throw new ForbiddenConversionException();
+        return storage[i.currentElement()] != 0;
     }
 
-    /**
-     * not legal, throw ForbiddenConversionException
-     */
     public void setBoolean(Index i, boolean value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = value ? (short) 1 : 0;
     }
 
     /**
@@ -362,11 +356,11 @@ public class ArrayShort extends Array {
     }
 
     public boolean getBoolean(int index) {
-        throw new ForbiddenConversionException();
+        return storage[index] != 0;
     }
 
     public void setBoolean(int index, boolean value) {
-        throw new ForbiddenConversionException();
+        storage[index] = value ? (short)1 : 0;
     }
     
     public String getString(int index) {

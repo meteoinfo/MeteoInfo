@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.apache.commons:commons-math4-legacy-core:4.0-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-math4-legacy-core/4.0-SNAPSHOT/commons-math4-legacy-core-4.0-20221125.173343-620.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-math4-legacy-core/4.0-SNAPSHOT/commons-math4-legacy-core-4.0-20221129.175631-636.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-math4-legacy-core/4.0-SNAPSHOT/commons-math4-legacy-core-4.0-20221125.173343-620-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-math4-legacy-core/4.0-SNAPSHOT/commons-math4-legacy-core-4.0-20221129.175631-636-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-math4-legacy-core/4.0-SNAPSHOT/commons-math4-legacy-core-4.0-20221125.173343-620-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-math4-legacy-core/4.0-SNAPSHOT/commons-math4-legacy-core-4.0-20221129.175631-636-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

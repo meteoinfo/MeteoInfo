@@ -7848,9 +7848,6 @@ public class MapView extends JPanel implements IWebMapPanel {
         this._scaleX = scale;
         this._scaleY = scale;
         PointD center = (PointD)this._drawExtent.getCenterPoint().clone();
-        //PointD center = (PointD) this._viewExtent.getCenterPoint().clone();
-        //center.X -= g.getTransform().getTranslateX();
-        //center.Y -= g.getTransform().getTranslateY();        
         double xlen = width / scale * 0.5;
         double ylen = height / scale * 0.5;
         this._drawExtent.minX = center.X - xlen;

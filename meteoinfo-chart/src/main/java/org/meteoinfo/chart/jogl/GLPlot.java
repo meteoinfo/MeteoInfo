@@ -2499,13 +2499,17 @@ public class GLPlot extends Plot {
             } else {
                 boolean isDraw = true;
                 if (graphic instanceof GraphicCollection3D) {
-                    GraphicCollection3D gg = (GraphicCollection3D) graphic;
-                    if (gg.isAllQuads()) {
-                        this.drawQuadsPolygons(gl, gg);
+                    if (graphic.getNumGraphics() == 0) {
                         isDraw = false;
-                    } else if (gg.isAllTriangle()) {
-                        this.drawTrianglePolygons(gl, gg);
-                        isDraw = false;
+                    } else {
+                        GraphicCollection3D gg = (GraphicCollection3D) graphic;
+                        if (gg.isAllQuads()) {
+                            this.drawQuadsPolygons(gl, gg);
+                            isDraw = false;
+                        } else if (gg.isAllTriangle()) {
+                            this.drawTrianglePolygons(gl, gg);
+                            isDraw = false;
+                        }
                     }
                 }
                 if (isDraw) {

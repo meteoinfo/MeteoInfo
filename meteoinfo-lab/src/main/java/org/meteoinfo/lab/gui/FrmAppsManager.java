@@ -8,6 +8,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -204,9 +206,12 @@ public class FrmAppsManager extends javax.swing.JDialog {
                 File fs[] = f.listFiles();
                 for (File ff : fs) {
                     if (ff.isDirectory()) {
-                        Application plugin = this.readPyApp(ff.getName(), "loadApp.py");
-                        if (plugin != null) {
-                            plugins.add(plugin);
+                        Path loadApp = Paths.get(ff.getPath(), "loadApp.py");
+                        if (loadApp.toFile().isFile()) {
+                            Application plugin = this.readPyApp(ff.getName(), "loadApp.py");
+                            if (plugin != null) {
+                                plugins.add(plugin);
+                            }
                         }
                     }
                 }

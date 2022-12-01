@@ -513,7 +513,7 @@ public class ImageUtil {
         int origin = size / 2;
         for (int i = 0; i < size; i++)
         {
-            //The first constant does not need to be calculate, which will be eliminated finally
+            //The first constant does not need to be calculated, which will be eliminated finally
             double g = Math.exp(-(i - origin) * (i - origin) / (2 * sigma * sigma));
             sum += g;
             weights[i] = g;

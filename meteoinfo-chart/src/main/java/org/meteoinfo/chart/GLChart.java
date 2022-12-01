@@ -9,6 +9,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.jogl.Plot3DGL;
+import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.plot.MapPlot;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.common.PointF;
@@ -1037,7 +1038,9 @@ public class GLChart implements GLEventListener {
 
     @Override
     public void dispose(GLAutoDrawable drawable) {
-
+        GL2 gl = drawable.getGL().getGL2();
+        Program.destroyAllPrograms(gl);
+        this.setAlwaysUpdateBuffers(true);
     }
 
     @Override

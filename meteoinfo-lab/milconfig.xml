@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\taylor"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
-    <RecentFolder Folder="D:\Temp\test"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW\airship"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW\airship"/>
+    <RecentFolder Folder="D:\Temp\test"/>
+    <RecentFolder Folder="D:\Temp\test\eof"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\neural_network"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\typhoon_windspeed.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\typhoon_dBZ.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\typhoon_streamplot3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\eof_elnino.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\anomalies.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\typhoon_windspeed.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\typhoon_dBZ.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\airship\typhoon_streamplot3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\eof_elnino.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\anomalies.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1468,831"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1370,772"/>
 </MeteoInfo>

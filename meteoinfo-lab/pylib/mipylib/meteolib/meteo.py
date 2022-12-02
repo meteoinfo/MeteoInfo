@@ -511,7 +511,8 @@ def eof(x, svd=True, transform=False, return_index=False):
     """
     has_nan = False
     if x.contains_nan():       #Has NaN value
-        valid_idx = np.where(x[:,0]!=np.nan)[0]
+        mask = np.isnan(x).sum(axis=1)
+        valid_idx = np.where(mask==0)[0]
         xx = x[valid_idx,:]
         has_nan = True
     else:

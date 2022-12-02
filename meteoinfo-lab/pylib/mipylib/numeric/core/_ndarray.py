@@ -19,6 +19,10 @@ class NDArray(object):
     def __init__(self, array):
         if not isinstance(array, Array):
             array = ArrayUtil.array(array, None)
+
+        if array.getRank() == 0:
+            array = ArrayUtil.array([array.getIndexIterator().getObjectNext()])
+
         self._array = array
         self.ndim = array.getRank()
         s = array.getShape()

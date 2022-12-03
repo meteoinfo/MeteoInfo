@@ -124,7 +124,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
          List<String> layerNames = new ArrayList<>();
          for (MapLayer aLayer : _mapView.getLayers()) {
              if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
-                 if (aLayer.getShapeType() == ShapeTypes.POLYGON) {
+                 if (aLayer.getShapeType().isPolygon()) {
                      layerNames.add(aLayer.getLayerName());
                  }
              }

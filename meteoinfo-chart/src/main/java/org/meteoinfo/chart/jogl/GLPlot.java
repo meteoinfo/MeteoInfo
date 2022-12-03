@@ -2424,12 +2424,6 @@ public class GLPlot extends Plot {
             //Rendering text string
             Font font = title.getFont();
             this.updateTextRender(font);
-            if (this.dpiScale == 1) {
-                textRenderer = new TextRenderer(font, true, true);
-            } else {
-                textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
-                        (int)(font.getSize() * this.dpiScale)), true, true);
-            }
             textRenderer.beginRendering(this.width, this.height);
             textRenderer.setColor(title.getColor());
             textRenderer.setSmoothing(true);

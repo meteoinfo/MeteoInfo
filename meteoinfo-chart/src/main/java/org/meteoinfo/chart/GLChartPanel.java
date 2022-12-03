@@ -111,6 +111,15 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      * Constructor
      */
     public GLChartPanel() {
+        this(new GLChart());
+    }
+
+    /**
+     * Constructor
+     *
+     * @param chart Chart
+     */
+    public GLChartPanel(GLChart chart) {
         super(createCapabilities(true, true, 4));
 
         //this.setBackground(Color.white);
@@ -191,18 +200,9 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         });
         popupMenu.add(saveFigure);
 
-        this.chart = null;
         this.mouseMode = MouseMode.DEFAULT;
         //this.setMouseMode(mouseMode.ZOOM_IN);
-    }
 
-    /**
-     * Constructor
-     *
-     * @param chart Chart
-     */
-    public GLChartPanel(GLChart chart) {
-        this();
         this.chart = chart;
         if (this.chart != null) {
             this.chart.setParent(this);

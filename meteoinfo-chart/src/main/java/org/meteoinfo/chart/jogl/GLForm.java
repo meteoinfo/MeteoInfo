@@ -7,6 +7,8 @@ package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
+import org.meteoinfo.chart.GLChartPanel;
+import org.meteoinfo.chart.MouseMode;
 
 import javax.swing.*;
 
@@ -15,18 +17,18 @@ import javax.swing.*;
  * @author yaqiang
  */
 public class GLForm extends JFrame{
-    private Plot3DGL plt;
-    private GLChartPanel glcp;
+    private GLPlot plt;
+    private GLChartPanel chartPanel;
     
-    public GLForm(Plot3DGL plt) {
+    public GLForm(GLPlot plt) {
         this.plt = plt;
-        final GLProfile gp = GLProfile.get(GLProfile.GL2);
-        GLCapabilities cap = new GLCapabilities(gp);
 
-        glcp = new GLChartPanel(cap, plt);
-        glcp.setSize(400, 400);
+        chartPanel = new GLChartPanel();
+        chartPanel.setSize(400, 400);
+        chartPanel.setMouseMode(MouseMode.ROTATE);
+        chartPanel.getChart().addPlot(this.plt);
         
-        this.getContentPane().add(glcp);
+        this.getContentPane().add(chartPanel);
         
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {

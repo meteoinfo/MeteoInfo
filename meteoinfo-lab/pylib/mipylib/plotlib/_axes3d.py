@@ -628,7 +628,8 @@ class Axes3D(Axes):
         #Set plot data styles
         label = kwargs.pop('label', 'S_1')
         mvalues = kwargs.pop('mvalues', None)
-        if mvalues is None:
+        cdata = kwargs.pop('cdata', mvalues)
+        if cdata is None:
             if style is None:
                 line = plotutil.getlegendbreak('line', **kwargs)[0]
                 line.setCaption(label)
@@ -645,30 +646,30 @@ class Axes3D(Axes):
         else:
             ls = kwargs.pop('symbolspec', None)
             if ls is None:        
-                if isinstance(mvalues, (list, tuple)):
-                    mvalues = np.array(mvalues)
+                if isinstance(cdata, (list, tuple)):
+                    cdata = np.array(cdata)
                 levels = kwargs.pop('levs', None)
                 if levels is None:
                     levels = kwargs.pop('levels', None)
                 if levels is None:
                     cnum = kwargs.pop('cnum', None)
                     if cnum is None:
-                        ls = plotutil.getlegendscheme([], mvalues.min(), mvalues.max(), **kwargs)
+                        ls = plotutil.getlegendscheme([], cdata.min(), cdata.max(), **kwargs)
                     else:
-                        ls = plotutil.getlegendscheme([cnum], mvalues.min(), mvalues.max(), **kwargs)
+                        ls = plotutil.getlegendscheme([cnum], cdata.min(), cdata.max(), **kwargs)
                 else:
-                    ls = plotutil.getlegendscheme([levels], mvalues.min(), mvalues.max(), **kwargs)
+                    ls = plotutil.getlegendscheme([levels], cdata.min(), cdata.max(), **kwargs)
                 ls = plotutil.setlegendscheme_line(ls, **kwargs)
 
         #Add graphics
-        if mvalues is None:
+        if cdata is None:
             if colors is None:
                 graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, line)
             else:
                 graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, cbs)
         else:
-            mdata = plotutil.getplotdata(mvalues)
-            graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, mdata, ls)
+            cdata = plotutil.getplotdata(cdata)
+            graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, cdata, ls)
 
         #Pipe
         pipe = kwargs.pop('pipe', False)

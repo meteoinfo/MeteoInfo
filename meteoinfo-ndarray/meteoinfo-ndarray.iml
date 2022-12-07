@@ -34,10 +34,10 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-combinatorics:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-arrays:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-field:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-core:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-simple:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-client-api:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-statistics-distribution:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-core:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-simple:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-client-api:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-statistics-distribution:1.0" level="project" />
     <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.1.0" level="project" />
   </component>
 </module>

@@ -28,10 +28,10 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-combinatorics:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-arrays:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-field:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-core:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-simple:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-client-api:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-statistics-distribution:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-core:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-simple:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-client-api:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-statistics-distribution:1.0" level="project" />
     <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.1.0" level="project" />
     <orderEntry type="module" module-name="meteoinfo-common" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:31.1-jre" level="project" />
@@ -50,7 +50,7 @@
     <orderEntry type="library" name="Maven: org.ejml:ejml-fdense:0.41" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-cdense:0.41" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-fsparse:0.41" level="project" />
-    <orderEntry type="library" name="Maven: org.ojalgo:ojalgo:51.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ojalgo:ojalgo:52.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-interpolation:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-math:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />

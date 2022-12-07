@@ -176,13 +176,26 @@ class MapAxes(Axes):
         """
         if isinstance(layer, MILayer):
             layer = layer._layer
+
         if zorder is None:
             self._axes.addLayer(layer)
         else:
+            if zorder > self.num_layers():
+                zorder = self.num_layers()
+
             self._axes.addLayer(zorder, layer)
+
         if not select is None:
             if select:
                 self._axes.setSelectedLayer(layer)
+
+    def num_layers(self):
+        """
+        Get number of layers.
+
+        :return: (*int*) Number of layers
+        """
+        return self._axes.getLayerNum()
                 
     def get_layers(self):
         """

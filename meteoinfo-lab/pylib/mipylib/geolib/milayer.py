@@ -91,6 +91,19 @@ class MILayer(object):
             return np.array(self._coord_array[2])
         else:
             return None
+
+    @property
+    def m_coord(self):
+        """
+        Get M coordinate array.
+        :return: M coordinate array
+        """
+        if self.isvectorlayer():
+            if self._coord_array is None:
+                self._coord_array = GeometryUtil.getCoordinates(self._layer)
+            return np.array(self._coord_array[3])
+        else:
+            return None
     
     def isvectorlayer(self):
         """

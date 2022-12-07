@@ -761,9 +761,11 @@ public class GeometryUtil {
         Array xArray = Array.factory(DataType.DOUBLE, shape);
         Array yArray = Array.factory(DataType.DOUBLE, shape);
         Array zArray = null;
+        Array mArray = null;
         boolean isZ = pgs instanceof PolygonZShape ? true : false;
         if (isZ) {
             zArray = Array.factory(DataType.DOUBLE, shape);
+            mArray = Array.factory(DataType.DOUBLE, shape);
         }
         int i = 0;
         for (Polygon polygon : pgs.getPolygons()) {
@@ -773,12 +775,14 @@ public class GeometryUtil {
                         xArray.setDouble(i, p.X);
                         yArray.setDouble(i, p.Y);
                         zArray.setDouble(i, p.Z);
+                        mArray.setDouble(i, p.M);
                         i += 1;
                     }
                     if (i < n) {
                         xArray.setDouble(i, Double.NaN);
                         yArray.setDouble(i, Double.NaN);
                         zArray.setDouble(i, Double.NaN);
+                        mArray.setDouble(i, Double.NaN);
                     }
                 } else {
                     for (PointD p : (List<PointD>) points) {
@@ -813,9 +817,11 @@ public class GeometryUtil {
         Array xArray = Array.factory(DataType.DOUBLE, shape);
         Array yArray = Array.factory(DataType.DOUBLE, shape);
         Array zArray = null;
+        Array mArray = null;
         boolean isZ = pls instanceof PolylineZShape ? true : false;
         if (isZ) {
             zArray = Array.factory(DataType.DOUBLE, shape);
+            mArray = Array.factory(DataType.DOUBLE, shape);
         }
         int i = 0;
         for (Polyline polyline : pls.getPolylines()) {
@@ -824,12 +830,14 @@ public class GeometryUtil {
                     xArray.setDouble(i, p.X);
                     yArray.setDouble(i, p.Y);
                     zArray.setDouble(i, p.Z);
+                    mArray.setDouble(i, p.M);
                     i += 1;
                 }
                 if (i < n) {
                     xArray.setDouble(i, Double.NaN);
                     yArray.setDouble(i, Double.NaN);
                     zArray.setDouble(i, Double.NaN);
+                    mArray.setDouble(i, Double.NaN);
                 }
             } else {
                 for (PointD p : (List<PointD>) polyline.getPointList()) {
@@ -846,7 +854,7 @@ public class GeometryUtil {
         }
 
         if (isZ) {
-            return new Array[]{xArray, yArray, zArray};
+            return new Array[]{xArray, yArray, zArray, mArray};
         } else {
             return new Array[]{xArray, yArray};
         }
@@ -864,8 +872,10 @@ public class GeometryUtil {
             Array xArray = Array.factory(DataType.DOUBLE, new int[]{n});
             Array yArray = Array.factory(DataType.DOUBLE, new int[]{n});
             Array zArray = null;
+            Array mArray = null;
             if (isZ) {
                 zArray = Array.factory(DataType.DOUBLE, new int[]{n});
+                mArray = Array.factory(DataType.DOUBLE, new int[]{n});
                 int i = 0;
                 PointZ p;
                 for (PointShape shape : (List<PointShape>) layer.getShapes()) {
@@ -873,8 +883,9 @@ public class GeometryUtil {
                     xArray.setDouble(i, p.X);
                     yArray.setDouble(i, p.Y);
                     zArray.setDouble(i, p.Z);
+                    mArray.setDouble(i, p.M);
                 }
-                return new Array[]{xArray, yArray, zArray};
+                return new Array[]{xArray, yArray, zArray, mArray};
             } else {
                 int i = 0;
                 PointD p;
@@ -894,8 +905,10 @@ public class GeometryUtil {
             Array xArray = Array.factory(DataType.DOUBLE, new int[]{n});
             Array yArray = Array.factory(DataType.DOUBLE, new int[]{n});
             Array zArray = null;
+            Array mArray = null;
             if (isZ) {
                 zArray = Array.factory(DataType.DOUBLE, new int[]{n});
+                mArray = Array.factory(DataType.DOUBLE, new int[]{n});
             }
             int i = 0;
             int[] origin = new int[1];
@@ -908,14 +921,18 @@ public class GeometryUtil {
                     try {
                         ArrayMath.setSection(xArray, origin, shape, arrays[0]);
                         ArrayMath.setSection(yArray, origin, shape, arrays[1]);
-                        if (isZ)
+                        if (isZ) {
                             ArrayMath.setSection(zArray, origin, shape, arrays[2]);
+                            ArrayMath.setSection(mArray, origin, shape, arrays[3]);
+                        }
                         i += shape[0];
                         if (i < n) {
                             xArray.setDouble(i, Double.NaN);
                             yArray.setDouble(i, Double.NaN);
-                            if (isZ)
+                            if (isZ) {
                                 zArray.setDouble(i, Double.NaN);
+                                mArray.setDouble(i, Double.NaN);
+                            }
                         }
                         i += 1;
                     } catch (InvalidRangeException e) {
@@ -930,14 +947,18 @@ public class GeometryUtil {
                     try {
                         ArrayMath.setSection(xArray, origin, shape, arrays[0]);
                         ArrayMath.setSection(yArray, origin, shape, arrays[1]);
-                        if (isZ)
+                        if (isZ) {
                             ArrayMath.setSection(zArray, origin, shape, arrays[2]);
+                            ArrayMath.setSection(mArray, origin, shape, arrays[3]);
+                        }
                         i += shape[0];
                         if (i < n) {
                             xArray.setDouble(i, Double.NaN);
                             yArray.setDouble(i, Double.NaN);
-                            if (isZ)
+                            if (isZ) {
                                 zArray.setDouble(i, Double.NaN);
+                                mArray.setDouble(i, Double.NaN);
+                            }
                         }
                         i += 1;
                     } catch (InvalidRangeException e) {
@@ -946,7 +967,7 @@ public class GeometryUtil {
                 }
             }
             if (isZ) {
-                return new Array[]{xArray, yArray, zArray};
+                return new Array[]{xArray, yArray, zArray, mArray};
             } else {
                 return new Array[]{xArray, yArray};
             }

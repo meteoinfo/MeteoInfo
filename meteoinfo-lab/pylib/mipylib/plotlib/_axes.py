@@ -992,6 +992,10 @@ class Axes(object):
         :param zorder: (*int*) Z order of the graphic. Default is `None` that the graphic added
             to the end.
         """
+        if not zorder is None:
+            if zorder > self.num_graphics():
+                zorder = self.num_graphics()
+
         if projection is None:
             if zorder is None:
                 self._axes.addGraphic(graphic)

@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.ojalgo</groupId>
             <artifactId>ojalgo</artifactId>
-            <version>51.4.1</version>
+            <version>52.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.haifengl</groupId>

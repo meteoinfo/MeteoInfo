@@ -85,6 +85,12 @@
     <orderEntry type="module" module-name="meteoinfo-table" />
     <orderEntry type="module" module-name="meteoinfo-image" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-imaging:1.0-alpha3" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.imageio:imageio-jpeg:3.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.imageio:imageio-core:3.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.imageio:imageio-metadata:3.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.common:common-lang:3.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.common:common-io:3.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.common:common-image:3.9.4" level="project" />
     <orderEntry type="module" module-name="meteoinfo-data" />
     <orderEntry type="module" module-name="meteoinfo-projection" />
     <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.1.6-SNAPSHOT" level="project" />

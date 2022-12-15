@@ -23,10 +23,7 @@ import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.plot.GridLine;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.PlotType;
-import org.meteoinfo.chart.render.jogl.JOGLGraphicRender;
-import org.meteoinfo.chart.render.jogl.MeshRender;
-import org.meteoinfo.chart.render.jogl.TriMeshRender;
-import org.meteoinfo.chart.render.jogl.VolumeRender;
+import org.meteoinfo.chart.render.jogl.*;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
@@ -2444,87 +2441,121 @@ public class GLPlot extends Plot {
             }
         }
 
-        if (graphic.getNumGraphics() == 1) {
-            Graphic gg = graphic.getGraphicN(0);
-            this.drawGraphic(gl, gg);
+        if (graphic instanceof MeshGraphic) {
+            if (!this.renderMap.containsKey(graphic)) {
+                renderMap.put(graphic, new MeshRender(gl, (MeshGraphic) graphic));
+            }
+            MeshRender meshRender = (MeshRender) renderMap.get(graphic);
+            meshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+            meshRender.setOrthographic(this.orthographic);
+            meshRender.setLighting(this.lighting);
+            meshRender.updateMatrix();
+            meshRender.draw();
+        } else if (graphic instanceof IsosurfaceGraphics) {
+            this.drawIsosurface(gl, (IsosurfaceGraphics) graphic);
+        } else if (graphic instanceof ParticleGraphics) {
+            this.drawParticles(gl, (ParticleGraphics) graphic);
+        } else if (graphic instanceof TriMeshGraphic) {
+            if (!this.renderMap.containsKey(graphic)) {
+                renderMap.put(graphic, new TriMeshRender(gl, (TriMeshGraphic) graphic));
+            }
+            TriMeshRender triMeshRender = (TriMeshRender) renderMap.get(graphic);
+            triMeshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+            triMeshRender.setOrthographic(this.orthographic);
+            triMeshRender.setLighting(this.lighting);
+            triMeshRender.updateMatrix();
+            triMeshRender.draw();
+        } else if (graphic instanceof VolumeGraphic) {
+            try {
+                if (this.clipPlane)
+                    this.disableClipPlane(gl);
+                if (!this.renderMap.containsKey(graphic)) {
+                    renderMap.put(graphic, new VolumeRender(gl, (VolumeGraphic) graphic));
+                }
+                VolumeRender volumeRender = (VolumeRender) renderMap.get(graphic);
+                volumeRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                volumeRender.setOrthographic(this.orthographic);
+                volumeRender.updateMatrix();
+                volumeRender.draw();
+                if (this.clipPlane)
+                    this.enableClipPlane(gl);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
-            if (graphic instanceof MeshGraphic) {
-                //this.drawSurface(gl, (SurfaceGraphics) graphic);
-                if (!this.renderMap.containsKey(graphic)) {
-                    renderMap.put(graphic, new MeshRender(gl, (MeshGraphic) graphic));
-                }
-                MeshRender meshRender = (MeshRender) renderMap.get(graphic);
-                meshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
-                meshRender.setOrthographic(this.orthographic);
-                meshRender.setLighting(this.lighting);
-                meshRender.updateMatrix();
-                meshRender.draw();
-            } else if (graphic instanceof IsosurfaceGraphics) {
-                this.drawIsosurface(gl, (IsosurfaceGraphics) graphic);
-            } else if (graphic instanceof ParticleGraphics) {
-                this.drawParticles(gl, (ParticleGraphics) graphic);
-            } else if (graphic instanceof TriMeshGraphic) {
-                if (!this.renderMap.containsKey(graphic)) {
-                    renderMap.put(graphic, new TriMeshRender(gl, (TriMeshGraphic) graphic));
-                }
-                TriMeshRender triMeshRender = (TriMeshRender) renderMap.get(graphic);
-                triMeshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
-                triMeshRender.setOrthographic(this.orthographic);
-                triMeshRender.setLighting(this.lighting);
-                triMeshRender.updateMatrix();
-                triMeshRender.draw();
-            } else if (graphic instanceof VolumeGraphic) {
-                try {
-                    if (this.clipPlane)
-                        this.disableClipPlane(gl);
-                    if (!this.renderMap.containsKey(graphic)) {
-                        renderMap.put(graphic, new VolumeRender(gl, (VolumeGraphic) graphic));
-                    }
-                    VolumeRender volumeRender = (VolumeRender) renderMap.get(graphic);
-                    volumeRender.setTransform(this.transform, this.alwaysUpdateBuffers);
-                    volumeRender.setOrthographic(this.orthographic);
-                    volumeRender.updateMatrix();
-                    volumeRender.draw();
-                    if (this.clipPlane)
-                        this.enableClipPlane(gl);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                boolean isDraw = true;
-                if (graphic instanceof GraphicCollection3D) {
-                    if (graphic.getNumGraphics() == 0) {
+            boolean isDraw = true;
+            if (graphic instanceof GraphicCollection3D) {
+                if (graphic.getNumGraphics() == 0) {
+                    isDraw = false;
+                } else {
+                    GraphicCollection3D gg = (GraphicCollection3D) graphic;
+                    if (gg.isAllQuads()) {
+                        this.drawQuadsPolygons(gl, gg);
                         isDraw = false;
-                    } else {
-                        GraphicCollection3D gg = (GraphicCollection3D) graphic;
-                        if (gg.isAllQuads()) {
-                            this.drawQuadsPolygons(gl, gg);
-                            isDraw = false;
-                        } else if (gg.isAllTriangle()) {
-                            this.drawTrianglePolygons(gl, gg);
-                            isDraw = false;
-                        }
+                    } else if (gg.isAllTriangle()) {
+                        this.drawTrianglePolygons(gl, gg);
+                        isDraw = false;
                     }
                 }
-                if (isDraw) {
-                    switch (graphic.getGraphicN(0).getShape().getShapeType()) {
-                        case POINT_Z:
-                            if (((GraphicCollection3D) graphic).isSphere()) {
-                                this.drawSpheres(gl, graphic);
-                            } else {
-                                this.drawPoints(gl, graphic);
+            }
+            if (isDraw) {
+                switch (graphic.getGraphicN(0).getShape().getShapeType()) {
+                    case POINT_Z:
+                        if (((GraphicCollection3D) graphic).isSphere()) {
+                            this.drawSpheres(gl, graphic);
+                        } else {
+                            this.drawPoints(gl, graphic);
+                        }
+                        break;
+                    case POLYLINE_Z:
+                        boolean useRender = true;
+                        ColorBreak cb = graphic.getGraphicN(0).getLegend();
+                        if (cb instanceof StreamlineBreak) {
+                            useRender = false;
+                        } else if (cb instanceof ColorBreakCollection) {
+                            if (((ColorBreakCollection) cb).get(0) instanceof StreamlineBreak) {
+                                useRender = false;
                             }
-                            break;
-                        default:
+                        }
+                        if (useRender) {
+                            if (graphic.getGraphicN(0).getShape() instanceof PipeShape) {
+                                if (!this.renderMap.containsKey(graphic)) {
+                                    renderMap.put(graphic, new PipeRender(gl, (GraphicCollection3D) graphic));
+                                }
+                                PipeRender pipeRender = (PipeRender) renderMap.get(graphic);
+                                pipeRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                                pipeRender.setOrthographic(this.orthographic);
+                                pipeRender.setLighting(this.lighting);
+                                pipeRender.updateMatrix();
+                                pipeRender.draw();
+                            } else {
+                                if (!this.renderMap.containsKey(graphic)) {
+                                    renderMap.put(graphic, new LineRender(gl, (GraphicCollection3D) graphic));
+                                }
+                                LineRender lineRender = (LineRender) renderMap.get(graphic);
+                                lineRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                                lineRender.setOrthographic(this.orthographic);
+                                lineRender.setLighting(this.lighting);
+                                lineRender.updateMatrix();
+                                lineRender.draw();
+                            }
+                        } else {
                             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                                 Graphic gg = graphic.getGraphicN(i);
                                 this.drawGraphic(gl, gg);
                             }
-                            break;
-                    }
+                        }
+                        break;
+                    default:
+                        for (int i = 0; i < graphic.getNumGraphics(); i++) {
+                            Graphic gg = graphic.getGraphicN(i);
+                            this.drawGraphic(gl, gg);
+                        }
+                        break;
                 }
             }
         }
+
         if (graphic instanceof GraphicCollection3D) {
             if (lightEnabled && !((GraphicCollection3D)graphic).isUsingLight()) {
                 this.lighting.start(gl);
@@ -2878,7 +2909,7 @@ public class GLPlot extends Plot {
                     Vector<Vector3f> n1 = pipe.getNormal(i);
                     Vector<Vector3f> n2 = pipe.getNormal(i+1);
                     gl.glBegin(GL_TRIANGLE_STRIP);
-                    for(int j = 0; j < (int)c2.size(); ++j)
+                    for(int j = 0; j < c2.size(); ++j)
                     {
                         gl.glNormal3fv(JOGLUtil.toArray(n2.get(j)), 0);
                         gl.glVertex3fv(JOGLUtil.toArray(c2.get(j)), 0);

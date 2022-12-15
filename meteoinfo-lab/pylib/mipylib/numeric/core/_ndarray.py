@@ -6,7 +6,7 @@ NDArray class - multiple dimensional array
 from org.meteoinfo.data import GridArray
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.math.linalg import LinalgUtil
-from org.meteoinfo.ndarray import Array, Range, MAMath, Complex
+from org.meteoinfo.ndarray import Array, Range, MAMath, Complex, DataType
 
 import datetime
 
@@ -20,7 +20,7 @@ class NDArray(object):
         if not isinstance(array, Array):
             array = ArrayUtil.array(array, None)
 
-        if array.getRank() == 0:
+        if array.getRank() == 0 and array.getDataType() != DataType.STRUCTURE:
             array = ArrayUtil.array([array.getIndexIterator().getObjectNext()])
 
         self._array = array

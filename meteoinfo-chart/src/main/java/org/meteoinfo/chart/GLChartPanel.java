@@ -1647,7 +1647,12 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      * @return View image
      */
     public BufferedImage paintViewImage(int width, int height) {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image;
+        if (this.chart.containsGLPlot()) {
+            image = JOGLUtil.paintViewImage(this.chart, width, height);
+        } else {
+            image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        }
         Graphics2D g = image.createGraphics();
         paintGraphics(g);
 
@@ -1682,8 +1687,12 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      */
     public BufferedImage paintViewImage(int width, int height, int dpi) {
         double scaleFactor = dpi / 72.0;
-        BufferedImage image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor),
-                BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image;
+        if (this.chart.containsGLPlot()) {
+            image = JOGLUtil.paintViewImage(this.chart, width, height, dpi);
+        } else {
+            image = new BufferedImage((int)(width * scaleFactor), (int)(height * scaleFactor), BufferedImage.TYPE_INT_ARGB);
+        }
         Graphics2D g = image.createGraphics();
         AffineTransform at = g.getTransform();
         at.scale(scaleFactor, scaleFactor);

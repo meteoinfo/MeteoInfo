@@ -60,6 +60,10 @@ public class PipeShape extends PolylineZShape {
         return this.steps;
     }
 
+    public int getVertexCount() {
+        return this.getPointNum() * (this.steps + 1);
+    }
+
     void generatePipe() {
         Vector<Vector3f> path = new Vector<>();
         for (PointZ p : (List<PointZ>) this.getPoints()) {

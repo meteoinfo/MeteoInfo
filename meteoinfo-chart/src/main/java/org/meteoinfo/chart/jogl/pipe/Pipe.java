@@ -111,6 +111,14 @@ public class Pipe {
     }
 
     /**
+     * Get vertex number
+     * @return Vertex number
+     */
+    public int getVertexCount() {
+        return this.path.size() * this.contour.size();
+    }
+
+    /**
      * Get normal
      * @param idx Index
      * @return Normal

@@ -974,7 +974,7 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
     Save the current figure.
     
     :param fname: (*string*) A string containing a path to a filename. The output format
-        is deduced from the extention of the filename. Supported format: 'png', 'bmp',
+        is deduced from the extension of the filename. Supported format: 'png', 'bmp',
         'jpg', 'gif', 'tif', 'eps' and 'pdf'.
     :param width: (*int*) Optional, width of the output figure with pixel units. Default
         is None, the output figure size is same as *figures* window.
@@ -2129,7 +2129,7 @@ def gifanimation(filename, repeat=0, delay=1000):
 
 def gifaddframe(animation, width=None, height=None, dpi=None):
     """
-    Add a frame to an gif animation object
+    Add a frame to a gif animation object
     
     :param animation: Gif animation object
     :param width: (*int*) Image width

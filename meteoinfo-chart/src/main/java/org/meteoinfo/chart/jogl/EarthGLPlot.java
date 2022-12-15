@@ -268,6 +268,8 @@ public class EarthGLPlot extends GLPlot {
 
         this.setLight(gl);
 
+        this.updateTextRender(this.xAxis.getTickLabelFont());
+
         //Draw graphics
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
@@ -313,6 +315,9 @@ public class EarthGLPlot extends GLPlot {
 
         //Draw title
         this.drawTitle();
+
+        this.textRenderer.dispose();
+        this.textRenderer = null;
 
         gl.glFlush();
 

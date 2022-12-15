@@ -800,7 +800,7 @@ public class GeometryUtil {
         }
 
         if (isZ) {
-            return new Array[]{xArray, yArray, zArray};
+            return new Array[]{xArray, yArray, zArray, mArray};
         } else {
             return new Array[]{xArray, yArray};
         }

@@ -42,12 +42,14 @@ public class Pipe {
         this.path = pathPoint;
         this.contour = new Vector<>();
         float x, y, a;
-        for (int i = 0; i <= steps; i++) {
+        for (int i = 0; i < steps; i++) {
             a = (float) (Math.PI * 2 / steps * i);
             x = (float) (radius * Math.cos(a));
             y = (float) (radius * Math.sin(a));
             this.contour.add(new Vector3f(x, y, 0));
         }
+        Vector3f v = contour.get(0);
+        contour.add(new Vector3f(v.x, v.y, v.z));
         generateContours();
     }
 

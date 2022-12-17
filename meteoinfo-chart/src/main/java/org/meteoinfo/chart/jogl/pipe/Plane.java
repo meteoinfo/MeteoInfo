@@ -126,6 +126,9 @@ public class Plane {
 
         // find t = -(a*x0 + b*y0 + c*z0 + d) / (a*x + b*y + c*z)
         float t = -(dot1 + d) / dot2;
+        if (Math.abs(t) > 2) {
+            t = 1;
+        }
 
         // find intersection point
         return p.add(v.mul(t, new Vector3f()), new Vector3f());

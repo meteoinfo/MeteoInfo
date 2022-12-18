@@ -624,10 +624,11 @@ def round(x, decimals=0):
     """
     if isinstance(x, (list, tuple)):
         x = array(x)
+
     if isinstance(x, NDArray):
         return x.round(decimals)
     else:
-        return round(x, decimals)
+        return __builtin__.round(x, decimals)
 
 def square(x):
     """

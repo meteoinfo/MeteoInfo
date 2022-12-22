@@ -8,16 +8,12 @@ import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
-import org.meteoinfo.chart.jogl.pipe.Pipe;
-import org.meteoinfo.chart.jogl.pipe.PipeShape;
+import org.meteoinfo.chart.graphic.pipe.Pipe;
+import org.meteoinfo.chart.graphic.pipe.PipeShape;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.BreakTypes;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.ColorBreakCollection;
-import org.meteoinfo.geometry.legend.PolylineBreak;
-import org.meteoinfo.geometry.shape.PointZ;
-import org.meteoinfo.geometry.shape.Polyline;
-import org.meteoinfo.geometry.shape.PolylineZShape;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;

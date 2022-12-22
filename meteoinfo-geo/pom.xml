@@ -14,6 +14,8 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <freehep.version>2.4</freehep.version>
+        <flatlaf.version>3.0</flatlaf.version>
     </properties>
 
     <repositories>
@@ -83,12 +85,12 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>2.6</version>
+            <version>${flatlaf.version}</version>
         </dependency>
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf-extras</artifactId>
-            <version>2.6</version>
+            <version>${flatlaf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.freehep</groupId>
@@ -98,22 +100,22 @@
         <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-graphicsio-emf</artifactId>
-            <version>2.4</version>
+            <version>${freehep.version}</version>
         </dependency>
         <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-graphicsio-pdf</artifactId>
-            <version>2.4</version>
+            <version>${freehep.version}</version>
         </dependency>
         <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-graphics2d</artifactId>
-            <version>2.4</version>
+            <version>${freehep.version}</version>
         </dependency>
         <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-graphicsio-ps</artifactId>
-            <version>2.4</version>
+            <version>${freehep.version}</version>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>

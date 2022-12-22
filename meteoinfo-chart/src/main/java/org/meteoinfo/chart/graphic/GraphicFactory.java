@@ -10,7 +10,7 @@ import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.jogl.mc.MarchingCubes;
-import org.meteoinfo.chart.jogl.pipe.PipeShape;
+import org.meteoinfo.chart.graphic.pipe.PipeShape;
 import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;

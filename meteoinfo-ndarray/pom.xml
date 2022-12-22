@@ -16,6 +16,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <commons-numbers.version>1.1</commons-numbers.version>
+        <commons-rng.version>1.5</commons-rng.version>
     </properties>
 
     <repositories>
@@ -45,42 +47,42 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-numbers-core</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>${commons-numbers.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-numbers-gamma</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>${commons-numbers.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-numbers-combinatorics</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>${commons-numbers.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-numbers-arrays</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>${commons-numbers.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-numbers-field</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>${commons-numbers.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-rng-core</artifactId>
-            <version>1.5</version>
+            <version>${commons-rng.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-rng-simple</artifactId>
-            <version>1.5</version>
+            <version>${commons-rng.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-rng-client-api</artifactId>
-            <version>1.5</version>
+            <version>${commons-rng.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

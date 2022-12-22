@@ -1,4 +1,4 @@
-package org.meteoinfo.chart.jogl.pipe;
+package org.meteoinfo.chart.graphic.pipe;
 
 import org.joml.Vector3f;
 

@@ -14,6 +14,8 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <freehep.version>2.4</freehep.version>
+        <jogl.version>v2.4.0-rc4</jogl.version>
     </properties>
 
     <repositories>
@@ -75,31 +77,6 @@
             <artifactId>l2fprod-common-all</artifactId>
             <version>0.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-util</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-graphicsio-emf</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-graphicsio-pdf</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-graphics2d</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-graphicsio-ps</artifactId>
-            <version>2.4</version>
-        </dependency>
         <!--<dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-main</artifactId>
@@ -113,105 +90,89 @@
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-natives-linux-aarch64</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-natives-linux-amd64</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-natives-linux-armv6hf</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-natives-linux-i586</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-natives-macosx-universal</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-natives-windows-amd64</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-natives-windows-i586 </artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
 
         <!-- GLUEGEN -->
-
-
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-natives-macosx-universal</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-natives-linux-aarch64</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-natives-linux-amd64</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-natives-linux-armv6hf</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-natives-linux-i586</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-natives-macosx-universal</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-natives-windows-amd64</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-natives-windows-i586</artifactId>
-            <version>v2.4.0-rc4</version>
+            <version>${jogl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.joml</groupId>

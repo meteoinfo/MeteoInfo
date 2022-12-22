@@ -1,4 +1,4 @@
-package org.meteoinfo.chart.jogl.pipe;
+package org.meteoinfo.chart.graphic.pipe;
 
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.geometry.shape.PointZ;

@@ -22,12 +22,12 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy-exception:4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy-core:4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-core:4.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-core:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-gamma:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-fraction:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-combinatorics:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-arrays:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-field:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-core:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-gamma:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-fraction:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-combinatorics:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-arrays:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-field:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-core:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-simple:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-client-api:1.5" level="project" />
@@ -114,8 +114,8 @@
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-greek:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-cyrillic:1.0.7" level="project" />
-    <orderEntry type="library" name="Maven: com.formdev:flatlaf:2.6" level="project" />
-    <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:2.6" level="project" />
+    <orderEntry type="library" name="Maven: com.formdev:flatlaf:3.0" level="project" />
+    <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:3.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.formdev:svgSalamander:1.1.3" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-util:2.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.netbeans:openide-lookup:1.9-patched-1.0" level="project" />

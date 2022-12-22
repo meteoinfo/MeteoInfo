@@ -22,12 +22,12 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy-exception:4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy-core:4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-core:4.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-core:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-gamma:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-fraction:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-combinatorics:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-arrays:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-field:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-core:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-gamma:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-fraction:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-combinatorics:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-arrays:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-field:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-core:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-simple:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-client-api:1.5" level="project" />
@@ -88,5 +88,10 @@
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:windows-x86_64:0.3.10-1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-imaging:1.0-alpha3" level="project" />
     <orderEntry type="library" name="Maven: com.twelvemonkeys.imageio:imageio-jpeg:3.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.imageio:imageio-core:3.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.imageio:imageio-metadata:3.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.common:common-lang:3.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.common:common-io:3.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.common:common-image:3.9.4" level="project" />
   </component>
 </module>

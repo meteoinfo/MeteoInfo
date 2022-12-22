@@ -21,12 +21,12 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy-exception:4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy-core:4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-core:4.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-core:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-gamma:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-fraction:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-combinatorics:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-arrays:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-field:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-core:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-gamma:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-fraction:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-combinatorics:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-arrays:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-field:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-core:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-simple:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-client-api:1.5" level="project" />

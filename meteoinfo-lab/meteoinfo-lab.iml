@@ -24,15 +24,15 @@
     <orderEntry type="module" module-name="meteoinfo-chart" />
     <orderEntry type="module" module-name="meteoinfo-geo" />
     <orderEntry type="module" module-name="meteoinfo-math" />
-    <orderEntry type="library" name="Maven: org.ejml:ejml-experimental:0.41" level="project" />
-    <orderEntry type="library" name="Maven: org.ejml:ejml-core:0.41" level="project" />
-    <orderEntry type="library" name="Maven: org.ejml:ejml-ddense:0.41" level="project" />
-    <orderEntry type="library" name="Maven: org.ejml:ejml-dsparse:0.41" level="project" />
-    <orderEntry type="library" name="Maven: org.ejml:ejml-zdense:0.41" level="project" />
-    <orderEntry type="library" name="Maven: org.ejml:ejml-simple:0.41" level="project" />
-    <orderEntry type="library" name="Maven: org.ejml:ejml-fdense:0.41" level="project" />
-    <orderEntry type="library" name="Maven: org.ejml:ejml-cdense:0.41" level="project" />
-    <orderEntry type="library" name="Maven: org.ejml:ejml-fsparse:0.41" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-experimental:0.41.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-core:0.41.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-ddense:0.41.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-dsparse:0.41.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-zdense:0.41.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-simple:0.41.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-fdense:0.41.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-cdense:0.41.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-fsparse:0.41.1" level="project" />
     <orderEntry type="library" name="Maven: org.ojalgo:ojalgo:52.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-interpolation:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-math:2.6.0" level="project" />

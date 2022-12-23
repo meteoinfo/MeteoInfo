@@ -14,6 +14,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <ejml.version>0.41.1</ejml.version>
     </properties>
 
     <dependencies>
@@ -30,12 +31,12 @@
         <dependency>
             <groupId>org.ejml</groupId>
             <artifactId>ejml-experimental</artifactId>
-            <version>0.41</version>
+            <version>${ejml.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ejml</groupId>
             <artifactId>ejml-simple</artifactId>
-            <version>0.41</version>
+            <version>${ejml.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ojalgo</groupId>

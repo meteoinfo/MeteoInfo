@@ -154,9 +154,9 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             interp.exec("sys.path.append(u'" + pyPath + "')");
             System.out.println("Run milab.py ...");
             interp.execfile_(pyPath + "/milab.py");
-            //System.out.println("Set isinteractive...");
+            System.out.println("Set isinteractive...");
             interp.exec("mipylib.plotlib.miplot.isinteractive = True");
-            //System.out.println("Set milapp...");
+            System.out.println("Set milapp...");
             interp.exec("mipylib.migl.milapp = milapp");
             System.out.println("Set mifolder: " + miPath);
             interp.exec("mipylib.migl.mifolder = u'" + miPath + "'");

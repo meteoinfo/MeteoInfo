@@ -79,7 +79,7 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
     /**
      * Update in, out and err
      */
-    public void upate() {
+    public void update() {
         console.updateOut();
         in = console.getIn();
         out = console.getOut();

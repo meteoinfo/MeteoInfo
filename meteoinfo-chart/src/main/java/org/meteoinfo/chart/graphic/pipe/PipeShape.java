@@ -5,8 +5,8 @@ import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class PipeShape extends PolylineZShape {
     private float radius = 0.05f;
@@ -65,7 +65,7 @@ public class PipeShape extends PolylineZShape {
     }
 
     void generatePipe() {
-        Vector<Vector3f> path = new Vector<>();
+        List<Vector3f> path = new ArrayList<>();
         for (PointZ p : (List<PointZ>) this.getPoints()) {
             path.add(new Vector3f((float)p.X, (float)p.Y, (float)p.Z));
         }
@@ -83,7 +83,7 @@ public class PipeShape extends PolylineZShape {
         }
         this.transform = (Transform) transform.clone();
 
-        Vector<Vector3f> path = new Vector<>();
+        List<Vector3f> path = new ArrayList<>();
         for (PointZ p : (List<PointZ>) this.getPoints()) {
             path.add(new Vector3f(transform.transform_x((float)p.X), transform.transform_y((float)p.Y),
                     transform.transform_z((float)p.Z)));

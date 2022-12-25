@@ -2509,14 +2509,16 @@ public class GLPlot extends Plot {
                         break;
                     case POLYLINE_Z:
                         boolean useRender = true;
-                        ColorBreak cb = graphic.getGraphicN(0).getLegend();
+                        /*ColorBreak cb = graphic.getGraphicN(0).getLegend();
                         if (cb instanceof StreamlineBreak) {
-                            useRender = false;
+                            if (graphic.getGraphicN(0).getShape() instanceof PipeShape)
+                                useRender = false;
                         } else if (cb instanceof ColorBreakCollection) {
                             if (((ColorBreakCollection) cb).get(0) instanceof StreamlineBreak) {
-                                useRender = false;
+                                if (graphic.getGraphicN(0).getShape() instanceof PipeShape)
+                                    useRender = false;
                             }
-                        }
+                        }*/
                         if (useRender) {
                             if (graphic.getGraphicN(0).getShape() instanceof PipeShape) {
                                 if (!this.renderMap.containsKey(graphic)) {
@@ -2904,10 +2906,10 @@ public class GLPlot extends Plot {
                     PolylineBreak plb = (PolylineBreak) cbc.get(i);
                     rgba = plb.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    Vector<Vector3f> c1 = pipe.getContour(i);
-                    Vector<Vector3f> c2 = pipe.getContour(i+1);
-                    Vector<Vector3f> n1 = pipe.getNormal(i);
-                    Vector<Vector3f> n2 = pipe.getNormal(i+1);
+                    List<Vector3f> c1 = pipe.getContour(i);
+                    List<Vector3f> c2 = pipe.getContour(i+1);
+                    List<Vector3f> n1 = pipe.getNormal(i);
+                    List<Vector3f> n2 = pipe.getNormal(i+1);
                     gl.glBegin(GL_TRIANGLE_STRIP);
                     for(int j = 0; j < c2.size(); ++j)
                     {
@@ -2925,10 +2927,10 @@ public class GLPlot extends Plot {
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 for(int i = 0; i < count - 1; i++)
                 {
-                    Vector<Vector3f> c1 = pipe.getContour(i);
-                    Vector<Vector3f> c2 = pipe.getContour(i+1);
-                    Vector<Vector3f> n1 = pipe.getNormal(i);
-                    Vector<Vector3f> n2 = pipe.getNormal(i+1);
+                    List<Vector3f> c1 = pipe.getContour(i);
+                    List<Vector3f> c2 = pipe.getContour(i+1);
+                    List<Vector3f> n1 = pipe.getNormal(i);
+                    List<Vector3f> n2 = pipe.getNormal(i+1);
                     gl.glBegin(GL_TRIANGLE_STRIP);
                     for(int j = 0; j < (int)c2.size(); ++j)
                     {
@@ -2988,7 +2990,7 @@ public class GLPlot extends Plot {
                 }
             } else {
                 StreamlineBreak slb = (StreamlineBreak) cb;
-                int interval = slb.getInterval() * 3;
+                int interval = slb.getInterval();
                 float[] rgba = slb.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(slb.getWidth() * this.dpiScale);
@@ -3044,10 +3046,10 @@ public class GLPlot extends Plot {
                     StreamlineBreak plb = (StreamlineBreak) cbc.get(i);
                     rgba = plb.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                    Vector<Vector3f> c1 = pipe.getContour(i);
-                    Vector<Vector3f> c2 = pipe.getContour(i+1);
-                    Vector<Vector3f> n1 = pipe.getNormal(i);
-                    Vector<Vector3f> n2 = pipe.getNormal(i+1);
+                    List<Vector3f> c1 = pipe.getContour(i);
+                    List<Vector3f> c2 = pipe.getContour(i+1);
+                    List<Vector3f> n1 = pipe.getNormal(i);
+                    List<Vector3f> n2 = pipe.getNormal(i+1);
                     gl.glBegin(GL_TRIANGLE_STRIP);
                     for(int j = 0; j < (int)c2.size(); ++j)
                     {
@@ -3060,7 +3062,7 @@ public class GLPlot extends Plot {
                 }
 
                 //Draw arrow
-                Vector<Vector3f> path = pipe.getPath();
+                List<Vector3f> path = pipe.getPath();
                 StreamlineBreak slb = (StreamlineBreak) cbc.get(0);
                 int interval = slb.getInterval();
                 if (slb.getArrowHeadLength() > 0 || slb.getArrowHeadWidth() > 0) {
@@ -3084,10 +3086,10 @@ public class GLPlot extends Plot {
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 for(int i = 0; i < count - 1; i++)
                 {
-                    Vector<Vector3f> c1 = pipe.getContour(i);
-                    Vector<Vector3f> c2 = pipe.getContour(i+1);
-                    Vector<Vector3f> n1 = pipe.getNormal(i);
-                    Vector<Vector3f> n2 = pipe.getNormal(i+1);
+                    List<Vector3f> c1 = pipe.getContour(i);
+                    List<Vector3f> c2 = pipe.getContour(i+1);
+                    List<Vector3f> n1 = pipe.getNormal(i);
+                    List<Vector3f> n2 = pipe.getNormal(i+1);
                     gl.glBegin(GL_TRIANGLE_STRIP);
                     for(int j = 0; j < (int)c2.size(); ++j)
                     {
@@ -3100,7 +3102,7 @@ public class GLPlot extends Plot {
                 }
 
                 //Draw arrow
-                Vector<Vector3f> path = pipe.getPath();
+                List<Vector3f> path = pipe.getPath();
                 if (slb.getArrowHeadLength() > 0 || slb.getArrowHeadWidth() > 0) {
                     float[] p2, p1;
                     Vector3f pp;

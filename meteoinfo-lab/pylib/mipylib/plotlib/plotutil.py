@@ -703,7 +703,7 @@ def line2arrow(lb, **kwargs):
     
 def line2stream(lb, **kwargs):
     """
-    Convert linestring break to stream line break.
+    Convert linestring break to streamline break.
     
     :param lb: (*PolylineBreak*) Linestring break.
     :param headwidth: (*float*) Arrow head width. Default is ``width*5``.

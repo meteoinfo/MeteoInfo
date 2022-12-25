@@ -1048,7 +1048,7 @@ public class GLChart implements GLEventListener {
         if (this.containsGLPlot()) {
             float[] rgba = this.background.getRGBComponents(null);
             gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+            gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
 
             gl.glShadeModel(GL2.GL_SMOOTH);
 

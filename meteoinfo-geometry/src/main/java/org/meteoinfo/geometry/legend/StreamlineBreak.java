@@ -21,7 +21,7 @@ public class StreamlineBreak extends ArrowLineBreak {
         super();
         this.arrowHeadWidth = 7;
         this.arrowOverhang = 0.5f;
-        this.interval = 3;
+        this.interval = 10;
     }
     
     /**
@@ -30,7 +30,7 @@ public class StreamlineBreak extends ArrowLineBreak {
      */
     public StreamlineBreak(PolylineBreak pb) {
         super(pb);
-        this.interval = 3;
+        this.interval = 10;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

@@ -1,18 +1,20 @@
 package org.meteoinfo.chart.graphic.pipe;
 
 import org.joml.Vector3f;
+import org.meteoinfo.math.Matrix4f;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * base contour following a path
  * ported from C++ code by Song Ho Ahn (song.ahn@gmail.com)
  */
 public class Pipe {
-    private Vector<Vector3f> path;
-    private Vector<Vector3f> contour;
-    private Vector<Vector<Vector3f>> contours;
-    private Vector<Vector<Vector3f>> normals;
+    private List<Vector3f> path;
+    private List<Vector3f> contour;
+    private List<List<Vector3f>> contours;
+    private List<List<Vector3f>> normals;
 
     /**
      * Constructor
@@ -26,7 +28,7 @@ public class Pipe {
      * @param pathPoints Path points
      * @param contourPoints Contour points
      */
-    public Pipe(Vector<Vector3f> pathPoints, Vector<Vector3f> contourPoints) {
+    public Pipe(List<Vector3f> pathPoints, List<Vector3f> contourPoints) {
         this.path = pathPoints;
         this.contour = contourPoints;
         generateContours();
@@ -38,9 +40,9 @@ public class Pipe {
      * @param radius Contour radius
      * @param steps Contour steps
      */
-    public Pipe(Vector<Vector3f> pathPoint, float radius, int steps) {
+    public Pipe(List<Vector3f> pathPoint, float radius, int steps) {
         this.path = pathPoint;
-        this.contour = new Vector<>();
+        this.contour = new ArrayList<>();
         float x, y, a;
         for (int i = 0; i < steps; i++) {
             a = (float) (Math.PI * 2 / steps * i);
@@ -57,7 +59,7 @@ public class Pipe {
      * Get path
      * @return Path
      */
-    public Vector<Vector3f> getPath() {
+    public List<Vector3f> getPath() {
         return this.path;
     }
 
@@ -65,7 +67,7 @@ public class Pipe {
      * Set path
      * @param pathPoints Path points
      */
-    public void setPath(Vector<Vector3f> pathPoints) {
+    public void setPath(List<Vector3f> pathPoints) {
         this.path = pathPoints;
         generateContours();
     }
@@ -74,7 +76,7 @@ public class Pipe {
      * Get contour
      * @return Contour
      */
-    public Vector<Vector3f> getContour() {
+    public List<Vector3f> getContour() {
         return this.contour;
     }
 
@@ -83,7 +85,7 @@ public class Pipe {
      * @param idx Index
      * @return Contour
      */
-    public Vector<Vector3f> getContour(int idx) {
+    public List<Vector3f> getContour(int idx) {
         return this.contours.get(idx);
     }
 
@@ -91,7 +93,7 @@ public class Pipe {
      * Set contour
      * @param contourPoints Contour points
      */
-    public void setContour(Vector<Vector3f> contourPoints) {
+    public void setContour(List<Vector3f> contourPoints) {
         this.contour = contourPoints;
         generateContours();
     }
@@ -125,7 +127,7 @@ public class Pipe {
      * @param idx Index
      * @return Normal
      */
-    public Vector<Vector3f> getNormal(int idx) {
+    public List<Vector3f> getNormal(int idx) {
         return this.normals.get(idx);
     }
 
@@ -152,7 +154,7 @@ public class Pipe {
         else
         {
             // add dummy to match same # of contours/normals and path
-            Vector<Vector3f> dummy = new Vector<>();
+            List<Vector3f> dummy = new ArrayList<>();
             contours.add(dummy);
             normals.add(dummy);
 
@@ -169,8 +171,8 @@ public class Pipe {
     void generateContours()
     {
         // reset
-        contours = new Vector<>();
-        normals = new Vector<>();
+        contours = new ArrayList<>();
+        normals = new ArrayList<>();
 
         // path must have at least a point
         if(path.size() < 1)
@@ -223,7 +225,7 @@ public class Pipe {
      * @param toIndex To index
      * @return Projected contour
      */
-    Vector<Vector3f> projectContour(int fromIndex, int toIndex)
+    List<Vector3f> projectContour(int fromIndex, int toIndex)
     {
         Vector3f dir1, dir2, normal;
         Line line = new Line();
@@ -238,8 +240,8 @@ public class Pipe {
         Plane plane = new Plane(normal, path.get(toIndex));
 
         // project each vertex of contour to the plane
-        Vector<Vector3f> fromContour = contours.get(fromIndex);
-        Vector<Vector3f> toContour = new Vector<>();
+        List<Vector3f> fromContour = contours.get(fromIndex);
+        List<Vector3f> toContour = new ArrayList<>();
         int count = (int)fromContour.size();
         for(int i = 0; i < count; ++i)
         {
@@ -255,13 +257,13 @@ public class Pipe {
      * @param pathIndex Path index
      * @return Contour normal
      */
-    Vector<Vector3f> computeContourNormal(int pathIndex)
+    List<Vector3f> computeContourNormal(int pathIndex)
     {
         // get current contour and center point
-        Vector<Vector3f> contour = contours.get(pathIndex);
+        List<Vector3f> contour = contours.get(pathIndex);
         Vector3f center = path.get(pathIndex);
 
-        Vector<Vector3f> contourNormal = new Vector<>();
+        List<Vector3f> contourNormal = new ArrayList<>();
         Vector3f normal;
         for(int i = 0; i < (int)contour.size(); ++i)
         {

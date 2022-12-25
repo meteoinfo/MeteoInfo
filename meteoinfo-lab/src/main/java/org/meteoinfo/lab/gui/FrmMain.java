@@ -693,9 +693,9 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         jProgressBar_Run.setVisible(false);
         jPanel_Status.add(jProgressBar_Run, BorderLayout.WEST);
         //Memory progress bar
-        int maxMemory = (int)(Runtime.getRuntime().maxMemory() / (1024 * 1024 * 1024));
+        float maxMemory = (float) (Runtime.getRuntime().maxMemory() / (1024. * 1024. * 1024.));
         jProgressBar_Memory.setStringPainted(true);
-        jProgressBar_Memory.setString(String.format("%dG", maxMemory));
+        jProgressBar_Memory.setString(String.format("%.1fG", maxMemory));
         java.util.Timer timer = new java.util.Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -703,7 +703,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
                 int ratio = (int) ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) *
                         100. / Runtime.getRuntime().maxMemory());
                 jProgressBar_Memory.setValue(ratio);
-                jProgressBar_Memory.setString(String.format("%d%% / %dG", ratio, maxMemory));
+                jProgressBar_Memory.setString(String.format("%d%% / %.1fG", ratio, maxMemory));
             }
         }, 1000,1000);
         jPanel_Status.add(jProgressBar_Memory, java.awt.BorderLayout.EAST);

@@ -17,7 +17,7 @@ public class WindArrow3D extends PointZShape {
     public double v;
     public double w;
     public float scale = 1;
-    private float headWith = 1;
+    private float headWidth = 1;
     private float headLength = 2.5f;
     
     // </editor-fold>
@@ -40,16 +40,16 @@ public class WindArrow3D extends PointZShape {
      * Get head width
      * @return Head width
      */
-    public float getHeadWith() {
-        return this.headWith;
+    public float getHeadWidth() {
+        return this.headWidth;
     }
 
     /**
      * Set head width
      * @param value Head width
      */
-    public void setHeadWith(float value) {
-        this.headWith = value;
+    public void setHeadWidth(float value) {
+        this.headWidth = value;
     }
 
     /**

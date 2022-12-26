@@ -337,7 +337,7 @@ class Axes3DGL(Axes3D):
         """
         self._axes.addZAxis(x, y, left)
 
-    def bar(self, x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
+    def bar(self, *args, **kwargs):
         """
         Make a 3D bar plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
 
@@ -347,7 +347,7 @@ class Axes3DGL(Axes3D):
         :param width: (*float*) Bar width.
         :param cylinder: (*bool*) Is cylinder bar or rectangle bar.
         :param bottom: (*bool*) Color of the points. Or z values.
-        :param color: (*Color*) Optional, the color of the bar faces.
+        :param facecolor: (*Color*) Optional, the color of the bar faces.
         :param edgecolor: (*Color*) Optional, the color of the bar edge. Default is black color.
             Edge line will not be plotted if ``edgecolor`` is ``None``.
         :param linewidth: (*int*) Optional, width of bar edge.
@@ -362,15 +362,40 @@ class Axes3DGL(Axes3D):
         """
         #Add data series
         label = kwargs.pop('label', 'S_0')
-        xdata = plotutil.getplotdata(x)
-        ydata = plotutil.getplotdata(y)
-        zdata = plotutil.getplotdata(z)
+        if len(args) == 1:
+            z = np.asarray(args[0])
+            if z.ndim == 1:
+                nx, = z.shape
+                y = np.array([0] * nx)
+                x = np.arange(nx)
+            else:
+                ny, nx = z.shape
+                x = np.arange(nx)
+                y = np.arange(ny)
+                x, y = np.meshgrid(x, y)
+        elif len(args) == 2:
+            x = np.asarray(args[0])
+            z = np.asarray(args[1])
+            nx, = x.shape
+            y = np.array([0] * nx)
+        else:
+            x = np.asarray(args[0])
+            y = np.asarray(args[1])
+            z = np.asarray(args[2])
+
+        xdata = x._array
+        ydata = y._array
+        zdata = z._array
 
         autowidth = False
+        width = kwargs.pop('width', 0.8)
         width = np.asarray(width)
 
+        bottom = kwargs.pop('bottom', None)
         if not bottom is None:
             bottom = plotutil.getplotdata(bottom)
+
+        cylinder = kwargs.pop('cylinder', False)
 
         #Set plot data styles
         fcobj = kwargs.pop('color', None)

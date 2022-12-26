@@ -241,7 +241,7 @@ def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
     return r
 
 @_copy_docstring_and_deprecators(Axes3D.bar)
-def bar3(x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
+def bar3(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -249,7 +249,7 @@ def bar3(x, y, z, width=0.8, bottom=None, cylinder=False, **kwargs):
         if not isinstance(g_axes, Axes3D):
             g_axes = axes3d()
 
-    r = g_axes.bar(x, y, z, width, bottom, cylinder, **kwargs)
+    r = g_axes.bar(*args, **kwargs)
     draw_if_interactive()
     return r
 

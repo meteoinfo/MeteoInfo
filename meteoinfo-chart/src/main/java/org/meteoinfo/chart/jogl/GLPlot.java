@@ -2508,45 +2508,38 @@ public class GLPlot extends Plot {
                         }
                         break;
                     case POLYLINE_Z:
-                        boolean useRender = true;
-                        /*ColorBreak cb = graphic.getGraphicN(0).getLegend();
-                        if (cb instanceof StreamlineBreak) {
-                            if (graphic.getGraphicN(0).getShape() instanceof PipeShape)
-                                useRender = false;
-                        } else if (cb instanceof ColorBreakCollection) {
-                            if (((ColorBreakCollection) cb).get(0) instanceof StreamlineBreak) {
-                                if (graphic.getGraphicN(0).getShape() instanceof PipeShape)
-                                    useRender = false;
+                        if (graphic.getGraphicN(0).getShape() instanceof PipeShape) {
+                            if (!this.renderMap.containsKey(graphic)) {
+                                renderMap.put(graphic, new PipeRender(gl, (GraphicCollection3D) graphic));
                             }
-                        }*/
-                        if (useRender) {
-                            if (graphic.getGraphicN(0).getShape() instanceof PipeShape) {
-                                if (!this.renderMap.containsKey(graphic)) {
-                                    renderMap.put(graphic, new PipeRender(gl, (GraphicCollection3D) graphic));
-                                }
-                                PipeRender pipeRender = (PipeRender) renderMap.get(graphic);
-                                pipeRender.setTransform(this.transform, this.alwaysUpdateBuffers);
-                                pipeRender.setOrthographic(this.orthographic);
-                                pipeRender.setLighting(this.lighting);
-                                pipeRender.updateMatrix();
-                                pipeRender.draw();
-                            } else {
-                                if (!this.renderMap.containsKey(graphic)) {
-                                    renderMap.put(graphic, new LineRender(gl, (GraphicCollection3D) graphic));
-                                }
-                                LineRender lineRender = (LineRender) renderMap.get(graphic);
-                                lineRender.setTransform(this.transform, this.alwaysUpdateBuffers);
-                                lineRender.setOrthographic(this.orthographic);
-                                lineRender.setLighting(this.lighting);
-                                lineRender.updateMatrix();
-                                lineRender.draw();
-                            }
+                            PipeRender pipeRender = (PipeRender) renderMap.get(graphic);
+                            pipeRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                            pipeRender.setOrthographic(this.orthographic);
+                            pipeRender.setLighting(this.lighting);
+                            pipeRender.updateMatrix();
+                            pipeRender.draw();
                         } else {
-                            for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                                Graphic gg = graphic.getGraphicN(i);
-                                this.drawGraphic(gl, gg);
+                            if (!this.renderMap.containsKey(graphic)) {
+                                renderMap.put(graphic, new LineRender(gl, (GraphicCollection3D) graphic));
                             }
+                            LineRender lineRender = (LineRender) renderMap.get(graphic);
+                            lineRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                            lineRender.setOrthographic(this.orthographic);
+                            lineRender.setLighting(this.lighting);
+                            lineRender.updateMatrix();
+                            lineRender.draw();
                         }
+                        break;
+                    case WIND_ARROW:
+                        if (!this.renderMap.containsKey(graphic)) {
+                            renderMap.put(graphic, new QuiverRender(gl, (GraphicCollection3D) graphic));
+                        }
+                        QuiverRender quiverRender = (QuiverRender) renderMap.get(graphic);
+                        quiverRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                        quiverRender.setOrthographic(this.orthographic);
+                        quiverRender.setLighting(this.lighting);
+                        quiverRender.updateMatrix();
+                        quiverRender.draw();
                         break;
                     default:
                         for (int i = 0; i < graphic.getNumGraphics(); i++) {
@@ -3745,7 +3738,7 @@ public class GLPlot extends Plot {
             //float coneHgt = coneFractionAxially * norm_of_v;
             //float coneRadius = coneFractionRadially * norm_of_v;
             float coneRadius = shape.getHeadLength() * 0.02f;
-            float coneHgt = shape.getHeadWith() * 0.02f;
+            float coneHgt = shape.getHeadWidth() * 0.02f;
 
             // Set location of arrowhead to be at the startpoint of the line
             float[] vConeLocation = {x2, y2, z2};

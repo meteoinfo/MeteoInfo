@@ -5869,7 +5869,7 @@ public class GraphicFactory {
                 wa.v = v;
                 wa.w = w;
                 wa.scale = scale;
-                wa.setHeadWith(headWidth);
+                wa.setHeadWidth(headWidth);
                 wa.setHeadLength(headLength);
                 wa.setPoint(aPoint);
                 if (cdata == null) {

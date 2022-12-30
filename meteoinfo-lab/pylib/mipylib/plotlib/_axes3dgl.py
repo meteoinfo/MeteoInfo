@@ -295,19 +295,19 @@ class Axes3DGL(Axes3D):
             lighting.setSpecular(specular)
         mat_ambient = kwargs.pop('mat_ambient', None)
         if not mat_ambient is None:
-            lighting.setMat_Ambient(mat_ambient)
+            lighting.setMaterialAmbient(mat_ambient)
         mat_diffuse = kwargs.pop('mat_diffuse', None)
         if not mat_diffuse is None:
-            lighting.setMat_Diffuse(mat_diffuse)
+            lighting.setMaterailDiffuse(mat_diffuse)
         mat_specular = kwargs.pop('mat_specular', None)
         if not mat_specular is None:
-            lighting.setMat_Specular(mat_specular)
+            lighting.setMaterialSpecular(mat_specular)
         mat_emission = kwargs.pop('mat_emission', None)
         if not mat_emission is None:
-            lighting.setMat_Emission(mat_emission)
+            lighting.setMaterialEmission(mat_emission)
         mat_shininess = kwargs.pop('mat_shininess', None)
         if not mat_shininess is None:
-            lighting.setMat_Shininess(mat_shininess)
+            lighting.setMaterialShininess(mat_shininess)
 
     def set_material(self, mvalues):
         """

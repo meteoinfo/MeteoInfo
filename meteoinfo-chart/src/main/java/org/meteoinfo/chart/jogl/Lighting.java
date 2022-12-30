@@ -22,11 +22,11 @@ public class Lighting {
     float[] diffuse;
     float[] specular;
     float[] position;
-    float[] mat_ambient;
-    float[] mat_diffuse;
-    float[] mat_specular;
-    float[] mat_emission;
-    float mat_shininess;
+    float[] materialAmbient;
+    float[] materialDiffuse;
+    float[] materialSpecular;
+    float[] materialEmission;
+    float materialShininess;
     
     /**
      * Constructor
@@ -50,11 +50,11 @@ public class Lighting {
             this.position = new float[]{0.f, 0.f, 1.f, 0.f};
         else
             this.position = new float[]{1.f, 1.f, 2.f, 1.f};
-        this.mat_ambient = new float[]{0.2f, 0.2f, 0.2f, 1.f};
-        this.mat_diffuse = new float[]{0.8f, 0.8f, 0.8f, 1.f};
-        this.mat_specular = new float[]{ 0.0f, 0.0f, 0.0f, 1.0f };
-        this.mat_emission = new float[]{ 0.0f, 0.0f, 0.0f, 1.0f };
-        this.mat_shininess = 50.0f;
+        this.materialAmbient = new float[]{0.2f, 0.2f, 0.2f, 1.f};
+        this.materialDiffuse = new float[]{0.8f, 0.8f, 0.8f, 1.f};
+        this.materialSpecular = new float[]{ 0.0f, 0.0f, 0.0f, 1.0f };
+        this.materialEmission = new float[]{ 0.0f, 0.0f, 0.0f, 1.0f };
+        this.materialShininess = 50.0f;
     }
 
     /**
@@ -91,6 +91,15 @@ public class Lighting {
      */
     public void setAmbient(float[] value) {
         this.ambient = value;
+    }
+
+    /**
+     * Set ambient
+     *
+     * @param value Ambient
+     */
+    public void setAmbient(float value) {
+        this.ambient = new float[]{value, value, value, 1};
     }
     
     /**
@@ -133,6 +142,15 @@ public class Lighting {
     public void setDiffuse(float[] value) {
         this.diffuse = value;
     }
+
+    /**
+     * Get diffuse
+     *
+     * @param value Diffuse
+     */
+    public void setDiffuse(float value) {
+        this.diffuse = new float[]{value, value, value, 1};
+    }
     
     /**
      * Set diffuse
@@ -170,8 +188,8 @@ public class Lighting {
      * Get material shininess
      * @return Material shininess
      */
-    public float getMat_shininess() {
-        return this.mat_shininess;
+    public float getMaterialShininess() {
+        return this.materialShininess;
     }
 
     /**
@@ -181,6 +199,15 @@ public class Lighting {
      */
     public void setSpecular(float[] value) {
         this.specular = value;
+    }
+
+    /**
+     * Set specular
+     *
+     * @param value Specular
+     */
+    public void setSpecular(float value) {
+        this.specular = new float[]{value, value, value, 1};
     }
     
     /**
@@ -242,8 +269,8 @@ public class Lighting {
      * Set material ambient light
      * @param value Material ambient light
      */
-    public void setMat_Ambient(float[] value) {
-        this.mat_ambient = value;
+    public void setMaterialAmbient(float[] value) {
+        this.materialAmbient = value;
     }
     
     /**
@@ -251,12 +278,12 @@ public class Lighting {
      *
      * @param value Material ambient light
      */
-    public void setMat_Ambient(List value) {
+    public void setMaterialAmbient(List value) {
         if (value.size() < 4) {
             return;
         }
 
-        this.mat_ambient = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
+        this.materialAmbient = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
             (float) value.get(3)};
     }
 
@@ -264,16 +291,16 @@ public class Lighting {
      * Set material ambient light
      * @param value Material ambient light value
      */
-    public void setMat_Ambient(float value) {
-        this.mat_ambient = new float[]{value, value, value, 1};
+    public void setMaterialAmbient(float value) {
+        this.materialAmbient = new float[]{value, value, value, 1};
     }
 
     /**
      * Set material diffuse light
      * @param value Material diffuse light
      */
-    public void setMat_Diffuse(float[] value) {
-        this.mat_diffuse = value;
+    public void setMaterialDiffuse(float[] value) {
+        this.materialDiffuse = value;
     }
 
     /**
@@ -281,12 +308,12 @@ public class Lighting {
      *
      * @param value Material diffuse light
      */
-    public void setMat_Diffuse(List value) {
+    public void setMaterialDiffuse(List value) {
         if (value.size() < 4) {
             return;
         }
 
-        this.mat_diffuse = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
+        this.materialDiffuse = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
                 (float) value.get(3)};
     }
 
@@ -294,16 +321,16 @@ public class Lighting {
      * Set material diffuse light
      * @param value Material diffuse light value
      */
-    public void setMat_Diffuse(float value) {
-        this.mat_diffuse = new float[]{value, value, value, 1};
+    public void setMaterialDiffuse(float value) {
+        this.materialDiffuse = new float[]{value, value, value, 1};
     }
     
     /**
      * Set material specular light
      * @param value Material specular light
      */
-    public void setMat_Specular(float[] value) {
-        this.mat_specular = value;
+    public void setMaterialSpecular(float[] value) {
+        this.materialSpecular = value;
     }
     
     /**
@@ -311,12 +338,12 @@ public class Lighting {
      *
      * @param value Material specular light
      */
-    public void setMat_Specular(List value) {
+    public void setMaterialSpecular(List value) {
         if (value.size() < 4) {
             return;
         }
 
-        this.mat_specular = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
+        this.materialSpecular = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
             (float) value.get(3)};
     }
 
@@ -324,16 +351,16 @@ public class Lighting {
      * Set material specular light
      * @param value Material specular light
      */
-    public void setMat_Specular(float value) {
-        this.mat_specular = new float[]{value, value, value, 1};
+    public void setMaterialSpecular(float value) {
+        this.materialSpecular = new float[]{value, value, value, 1};
     }
 
     /**
      * Set material emission light
      * @param value Material emission light
      */
-    public void setMat_Emission(float[] value) {
-        this.mat_emission = value;
+    public void setMaterialEmission(float[] value) {
+        this.materialEmission = value;
     }
 
     /**
@@ -341,12 +368,12 @@ public class Lighting {
      *
      * @param value Material emission light
      */
-    public void setMat_Emission(List value) {
+    public void setMaterialEmission(List value) {
         if (value.size() < 4) {
             return;
         }
 
-        this.mat_emission = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
+        this.materialEmission = new float[]{(float) value.get(0), (float) value.get(1), (float) value.get(2),
                 (float) value.get(3)};
     }
 
@@ -354,16 +381,16 @@ public class Lighting {
      * Set material emission light
      * @param value Material emission light value
      */
-    public void setMat_Emission(float value) {
-        this.mat_emission = new float[]{value, value, value, 1};
+    public void setMaterialEmission(float value) {
+        this.materialEmission = new float[]{value, value, value, 1};
     }
     
     /**
      * Set material shininess
      * @param value Material shininess
      */
-    public void setMat_Shininess(float value) {
-        this.mat_shininess = value;
+    public void setMaterialShininess(float value) {
+        this.materialShininess = value;
     }
 
     /**
@@ -395,10 +422,10 @@ public class Lighting {
         //gl.glLightfv(this.light, GL2.GL_POSITION, position, 0);
         
         //Material
-        gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, mat_ambient, 0);
-        gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, mat_diffuse, 0);
-        gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, mat_specular, 0);
-        gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, mat_shininess);
+        gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, materialAmbient, 0);
+        gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, materialDiffuse, 0);
+        gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, materialSpecular, 0);
+        gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, materialShininess);
     }
     
     /**

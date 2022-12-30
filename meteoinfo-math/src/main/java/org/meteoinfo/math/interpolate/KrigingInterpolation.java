@@ -115,7 +115,7 @@ public class KrigingInterpolation {
             yv[i] = y[i];
 
             for (int j = i; j < n; j++) {
-                double var = variogram.f(rdist(x[i], x[j]));
+                double var = variogram.evaluate(rdist(x[i], x[j]));
                 v.setEntry(i, j, var);
                 v.setEntry(j, i, var);
             }
@@ -151,7 +151,7 @@ public class KrigingInterpolation {
         int n = this.x.length;
         double y = yvi[n];
         for (int i = 0; i < n; i++) {
-            y += yvi[i] * variogram.f(rdist(x, this.x[i]));
+            y += yvi[i] * variogram.evaluate(rdist(x, this.x[i]));
         }
 
         return y;

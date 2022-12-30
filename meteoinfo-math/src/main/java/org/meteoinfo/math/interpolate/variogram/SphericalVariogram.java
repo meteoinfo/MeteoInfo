@@ -81,7 +81,7 @@ public class SphericalVariogram implements Variogram {
     }
 
     @Override
-    public double f(double r) {
+    public double evaluate(double r) {
         if (a <= r)
             return c + b;
 

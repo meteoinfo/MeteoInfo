@@ -78,7 +78,7 @@ public class ExponentialVariogram implements Variogram {
     }
 
     @Override
-    public double f(double r) {
+    public double evaluate(double r) {
         return c + b * (1 - Math.exp(-3.0*r/a));
     }
 

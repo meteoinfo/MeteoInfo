@@ -18,13 +18,13 @@
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
-      <option name="name" value="Maven Central repository" />
-      <option name="url" value="https://repo1.maven.org/maven2" />
+      <option name="name" value="Maven Central" />
+      <option name="url" value="https://repo1.maven.org/maven2/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
-      <option name="name" value="Maven Central" />
-      <option name="url" value="https://repo1.maven.org/maven2/" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="apache.snapshots" />
@@ -62,6 +62,11 @@
       <option name="url" value="https://artifacts.unidata.ucar.edu/repository/unidata-all/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="jzy3d-snapshots" />
+      <option name="name" value="Jzy3d Snapshots" />
+      <option name="url" value="https://maven.jzy3d.org/snapshots/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="ebi" />
       <option name="name" value="ebiRepo" />
       <option name="url" value="http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/" />
@@ -70,11 +75,6 @@
       <option name="id" value="jzy3d-snapshots" />
       <option name="name" value="Jzy3d Snapshots" />
       <option name="url" value="http://maven.jzy3d.org/snapshots/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="jzy3d-snapshots" />
-      <option name="name" value="Jzy3d Snapshots" />
-      <option name="url" value="https://maven.jzy3d.org/snapshots/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="jboss.community" />

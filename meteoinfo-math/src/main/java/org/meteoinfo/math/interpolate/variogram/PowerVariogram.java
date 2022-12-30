@@ -109,7 +109,7 @@ public class PowerVariogram implements Variogram {
     }
 
     @Override
-    public double f(double r) {
+    public double evaluate(double r) {
         return nugget + alpha * Math.pow(r, beta);
     }
 

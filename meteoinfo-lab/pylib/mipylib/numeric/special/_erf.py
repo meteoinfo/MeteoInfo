@@ -2,7 +2,8 @@ from org.meteoinfo.math.special import SpecialUtil
 
 from ..core import numeric as np
 
-__all__ = ['erf','erfc']
+__all__ = ['erf', 'erfc']
+
 
 def erf(x):
     """
@@ -25,6 +26,7 @@ def erf(x):
         return r
     else:
         return np.array(r)
+
 
 def erfc(x):
     """

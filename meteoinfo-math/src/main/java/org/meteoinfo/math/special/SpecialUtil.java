@@ -138,4 +138,34 @@ public class SpecialUtil {
 
         return r;
     }
+
+    /**
+     * Airy functions and their derivatives.
+     * @param x Input array
+     * @return Airy functions Ai and its derivative Aip
+     */
+    public static double[] airy(double x) {
+        return new double[]{Airy.airy(x), Airy.airyDerivative(x)};
+    }
+
+    /**
+     * Airy functions and their derivatives.
+     * @param x Input array
+     * @return Airy functions Ai and its derivative Aip
+     */
+    public static Array[] airy(Array x) {
+        Array ai = Array.factory(DataType.DOUBLE, x.getShape());
+        Array aip = Array.factory(DataType.DOUBLE, x.getShape());
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator aiIter = ai.getIndexIterator();
+        IndexIterator aipIter = aip.getIndexIterator();
+        double v;
+        while(xIter.hasNext()) {
+            v = xIter.getDoubleNext();
+            aiIter.setDoubleNext(Airy.airy(v));
+            aipIter.setDoubleNext(Airy.airyDerivative(v));
+        }
+
+        return new Array[]{ai, aip};
+    }
 }

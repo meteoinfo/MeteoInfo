@@ -1,6 +1,7 @@
 package org.meteoinfo.chart.graphic;
 
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.locationtech.jts.triangulate.tri.Tri;
 import org.meteoinfo.chart.jogl.JOGLUtil;
 import org.meteoinfo.chart.jogl.Transform;
@@ -21,7 +22,7 @@ public class TriMeshGraphic extends GraphicCollection3D {
     private float[] vertexColor;
     private float[] vertexNormal;
     private int[] vertexIndices;
-    private List<List<Integer>> triangleMap;
+    private LinkedHashMap<Integer, List<Integer>> triangleMap;
     private boolean faceInterp;
     private boolean edgeInterp;
     private boolean mesh;
@@ -189,7 +190,7 @@ public class TriMeshGraphic extends GraphicCollection3D {
         this.vertexIndices = new int[n];
         Vector3f vector3f;
         int idx = 0, vertexIdx = 0, triangleIdx = 0, index, ii;
-        triangleMap = new ArrayList<>();
+        triangleMap = new LinkedHashMap<>();
         List<Integer> idxList = new ArrayList<>();
         for (int i = 0; i < n / 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -200,12 +201,12 @@ public class TriMeshGraphic extends GraphicCollection3D {
                     vertexIndices[vertexIdx] = index;
                     idxList = triangleMap.get(index);
                     idxList.add(triangleIdx);
-                    triangleMap.set(index, idxList);
+                    triangleMap.put(index, idxList);
                 } else {
                     vertexIndices[vertexIdx] = idx;
                     idxList = new ArrayList<>();
                     idxList.add(triangleIdx);
-                    triangleMap.add(idxList);
+                    triangleMap.put(idx, idxList);
                     map.put(vector3f, idx++);
                 }
 
@@ -228,6 +229,154 @@ public class TriMeshGraphic extends GraphicCollection3D {
 
     /**
      * Set triangles
+     * @param vertexData The triangle vertex
+     * @param faceIndices The triangle face indices
+     */
+    public void setTriangles(List<float[]> vertexes, List<int[]> faceIndices) {
+        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<Integer, Integer>();
+        int n = vertexes.size();
+        int idx = 0, vertexIdx = 0, triangleIdx = 0, index;
+        triangleMap = new LinkedHashMap<>();
+        List<Integer> idxList = new ArrayList<>();
+        int nFace = faceIndices.size();
+        this.vertexIndices = new int[nFace * 3];
+        int[] vIdx;
+        for (int i = 0; i < nFace; i++) {
+            vIdx = faceIndices.get(i);
+            for (int j = 0; j < vIdx.length; j++) {
+                vIdx[j] = vIdx[j] - 1;
+            }
+            System.arraycopy(vIdx, 0, vertexIndices, vertexIdx, 3);
+            for (int j : vIdx) {
+                if (map.containsKey(j)) {
+                    index = map.get(j);
+                    idxList = triangleMap.get(index);
+                    idxList.add(triangleIdx);
+                    triangleMap.put(index, idxList);
+                } else {
+                    idxList = new ArrayList<>();
+                    idxList.add(triangleIdx);
+                    triangleMap.put(idx, idxList);
+                    map.put(j, idx++);
+                }
+            }
+
+            vertexIdx += 3;
+            triangleIdx += 1;
+        }
+
+        this.vertexPosition = new float[n * 3];
+        idx = 0;
+        float[] v;
+        for (int i = 0; i < n; i++) {
+            v = vertexes.get(i);
+            System.arraycopy(v, 0, vertexPosition, idx, 3);
+            idx += 3;
+        }
+
+        updateExtent();
+    }
+
+    /**
+     * Set triangles
+     * @param vertexData The triangle vertex
+     * @param faceIndices The triangle face indices
+     */
+    public void setTriangles(Array vertexes, Array faceIndices) {
+        vertexes = vertexes.copyIfView();
+        faceIndices = faceIndices.copyIfView();
+
+        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<Integer, Integer>();
+        int n = vertexes.getShape()[0];
+        int idx = 0, vertexIdx = 0, triangleIdx = 0, index;
+        triangleMap = new LinkedHashMap<>();
+        List<Integer> idxList = new ArrayList<>();
+        int nFace = faceIndices.getShape()[0];
+        this.vertexIndices = new int[nFace * 3];
+        int v;
+        for (int i = 0; i < nFace; i++) {
+            for (int j = 0; j < 3; j++) {
+                v = faceIndices.getInt(i * 3 + j) - 1;
+                vertexIndices[vertexIdx] = v;
+                if (map.containsKey(j)) {
+                    index = map.get(j);
+                    idxList = triangleMap.get(index);
+                    idxList.add(triangleIdx);
+                    triangleMap.put(index, idxList);
+                } else {
+                    idxList = new ArrayList<>();
+                    idxList.add(triangleIdx);
+                    triangleMap.put(idx, idxList);
+                    map.put(j, idx++);
+                }
+                vertexIdx += 1;
+            }
+            triangleIdx += 1;
+        }
+
+        this.vertexPosition = new float[n * 3];
+        idx = 0;
+        for (int i = 0; i < n * 3; i++) {
+            vertexPosition[i] = vertexes.getFloat(i);
+        }
+
+        updateExtent();
+    }
+
+    /**
+     * Set triangles
+     * @param faceIndices The triangle face indices
+     * @param x X coordinate array
+     * @param y Y coordinate array
+     * @param z Z coordinate array
+     */
+    public void setTriangles(Array faceIndices, Array x, Array y, Array z) {
+        x = x.copyIfView();
+        y = y.copyIfView();
+        z = z.copyIfView();
+        faceIndices = faceIndices.copyIfView();
+
+        List<Integer> map = new ArrayList<>();
+        int n = x.getShape()[0];
+        int idx = 0, vertexIdx = 0, triangleIdx = 0, index;
+        triangleMap = new LinkedHashMap<>();
+        List<Integer> idxList = new ArrayList<>();
+        int nFace = faceIndices.getShape()[0];
+        this.vertexIndices = new int[nFace * 3];
+        int v;
+        for (int i = 0; i < nFace; i++) {
+            for (int j = 0; j < 3; j++) {
+                v = faceIndices.getInt(i * 3 + j) - 1;
+                vertexIndices[vertexIdx] = v;
+                if (map.contains(v)) {
+                    idxList = triangleMap.get(v);
+                    idxList.add(triangleIdx);
+                    triangleMap.put(v, idxList);
+                } else {
+                    idxList = new ArrayList<>();
+                    idxList.add(triangleIdx);
+                    triangleMap.put(v, idxList);
+                    map.add(v);
+                }
+                vertexIdx += 1;
+            }
+            triangleIdx += 1;
+        }
+
+        this.vertexPosition = new float[n * 3];
+        idx = 0;
+        for (int i = 0; i < n; i++) {
+            vertexPosition[idx] = x.getFloat(i);
+            vertexPosition[idx + 1] = y.getFloat(i);
+            vertexPosition[idx + 2] = z.getFloat(i);
+            idx += 3;
+        }
+
+        updateExtent();
+    }
+
+    /**
+     * Set triangles
      * @param vertexData The triangle vertex array
      * @param cData Color data array
      * @param xa X coordinate array
@@ -240,7 +389,7 @@ public class TriMeshGraphic extends GraphicCollection3D {
         this.vertexIndices = new int[n];
         Vector3f vector3f;
         int idx = 0, vertexIdx = 0, triangleIdx = 0, index, ii;
-        triangleMap = new ArrayList<>();
+        triangleMap = new LinkedHashMap<>();
         List<Integer> idxList = new ArrayList<>();
         for (int i = 0; i < n / 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -251,12 +400,12 @@ public class TriMeshGraphic extends GraphicCollection3D {
                     vertexIndices[vertexIdx] = index;
                     idxList = triangleMap.get(index);
                     idxList.add(triangleIdx);
-                    triangleMap.set(index, idxList);
+                    triangleMap.put(index, idxList);
                 } else {
                     vertexIndices[vertexIdx] = idx;
                     idxList = new ArrayList<>();
                     idxList.add(triangleIdx);
-                    triangleMap.add(idxList);
+                    triangleMap.put(idx, idxList);
                     map.put(vector3f, idx++);
                 }
 

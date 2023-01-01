@@ -1,10 +1,10 @@
 # coding=utf-8
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2019-9-4
 # Purpose: MeteoInfoLab axes3dgl module - using JOGL
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.chart import AspectType
@@ -33,10 +33,11 @@ import mipylib.numeric as np
 from mipylib import migl
 from mipylib.geolib import migeo
 
-__all__ = ['Axes3DGL','MapAxes3D','EarthAxes3D']
+__all__ = ['Axes3DGL', 'MapAxes3D', 'EarthAxes3D']
+
 
 class Axes3DGL(Axes3D):
-    
+
     def __init__(self, *args, **kwargs):
         """
         Axes 3d with openGL support.
@@ -48,22 +49,22 @@ class Axes3DGL(Axes3D):
         """
         axes = kwargs.pop('axes', None)
         self._set_plot(axes)
-        
+
         figure = kwargs.pop('figure', None)
         self.figure = figure
-        
+
         if len(args) > 0:
             position = args[0]
         else:
-            position = kwargs.pop('position', None)    
+            position = kwargs.pop('position', None)
         outerposition = kwargs.pop('outerposition', None)
         if position is None:
-            #position = [0.13, 0.11, 0.71, 0.815]
+            # position = [0.13, 0.11, 0.71, 0.815]
             position = [0, 0, 1, 1]
             self.active_outerposition(True)
-        else:        
-            self.active_outerposition(False)        
-        self.set_position(position)   
+        else:
+            self.active_outerposition(False)
+        self.set_position(position)
         if not outerposition is None:
             self.set_outerposition(outerposition)
             self.active_outerposition(True)
@@ -116,7 +117,7 @@ class Axes3DGL(Axes3D):
             self._axes.setBoxed(False)
             self._axes.setDisplayXY(False)
             self._axes.setDisplayZ(False)
-        
+
     def _set_plot(self, plot):
         """
         Set plot.
@@ -124,15 +125,15 @@ class Axes3DGL(Axes3D):
         :param plot: (*Axes3D*) Plot.
         """
         if plot is None:
-            #self._axes = Plot3DGL()
+            # self._axes = Plot3DGL()
             self._axes = GLPlot()
         else:
             self._axes = plot
-    
+
     @property
     def axestype(self):
         return '3d'
-        
+
     def get_rotation(self):
         """
         Get rotation angle.
@@ -140,7 +141,7 @@ class Axes3DGL(Axes3D):
         :returns: Rotation angle.
         """
         return self._axes.getAngleY()
-        
+
     def set_rotation(self, rotation):
         """
         Set rotation angle.
@@ -148,7 +149,7 @@ class Axes3DGL(Axes3D):
         :param rotation: (*float*) Rotation angle.
         """
         self._axes.setAngleY(rotation)
-        
+
     def get_elevation(self):
         """
         Get elevation angle.
@@ -156,7 +157,7 @@ class Axes3DGL(Axes3D):
         :returns: Elevation angle.
         """
         return self._axes.getAngleX()
-        
+
     def set_elevation(self, elevation):
         """
         Set elevation angle.
@@ -263,7 +264,7 @@ class Axes3DGL(Axes3D):
         :param dis: (*float*) Camera distance.
         """
         self._axes.setDistance(dis)
-        
+
     def set_lighting(self, enable=True, **kwargs):
         """
         Set lighting.
@@ -298,7 +299,7 @@ class Axes3DGL(Axes3D):
             lighting.setMaterialAmbient(mat_ambient)
         mat_diffuse = kwargs.pop('mat_diffuse', None)
         if not mat_diffuse is None:
-            lighting.setMaterailDiffuse(mat_diffuse)
+            lighting.setMaterialDiffuse(mat_diffuse)
         mat_specular = kwargs.pop('mat_specular', None)
         if not mat_specular is None:
             lighting.setMaterialSpecular(mat_specular)
@@ -317,15 +318,15 @@ class Axes3DGL(Axes3D):
             specular exponent, and specular color reflectance of the objects.
         """
         lighting = self._axes.getLighting()
-        lighting.setMat_Ambient(mvalues[0])
+        lighting.setMaterialAmbient(mvalues[0])
         if len(mvalues) > 1:
-            lighting.setMat_Diffuse(mvalues[1])
+            lighting.setMaterialDiffuse(mvalues[1])
         if len(mvalues) > 2:
-            lighting.setMat_Specular(mvalues[2])
+            lighting.setMaterialSpecular(mvalues[2])
         if len(mvalues) > 3:
-            lighting.setMat_Shininess(mvalues[3])
+            lighting.setMaterialShininess(mvalues[3])
         if len(mvalues) > 4:
-            lighting.setMat_Emission(mvalues[4])
+            lighting.setMaterialEmission(mvalues[4])
 
     def add_zaxis(self, x, y, left=True):
         """
@@ -360,7 +361,7 @@ class Axes3DGL(Axes3D):
 
         :returns: Bar 3D graphics.
         """
-        #Add data series
+        # Add data series
         label = kwargs.pop('label', 'S_0')
         if len(args) == 1:
             z = np.asarray(args[0])
@@ -397,7 +398,7 @@ class Axes3DGL(Axes3D):
 
         cylinder = kwargs.pop('cylinder', False)
 
-        #Set plot data styles
+        # Set plot data styles
         fcobj = kwargs.pop('color', None)
         if fcobj is None:
             fcobj = kwargs.pop('facecolor', 'b')
@@ -435,7 +436,7 @@ class Axes3DGL(Axes3D):
             lb.setErrorColor(ecolor)
             barbreaks.append(lb)
 
-        #Create bar graphics
+        # Create bar graphics
         if isinstance(width, NDArray):
             width = width.asarray()
         if cylinder:
@@ -544,7 +545,7 @@ class Axes3DGL(Axes3D):
         if not lighting is None:
             graphics.setUsingLight(lighting)
 
-        #Pipe
+        # Pipe
         pipe = kwargs.pop('pipe', False)
         if pipe:
             radius = kwargs.pop('radius', 0.02)
@@ -714,8 +715,8 @@ class Axes3DGL(Axes3D):
             layer.setLegendScheme(ls)
             graphics = GraphicFactory.createGraphicsFromLayer(layer, offset, xshift)
         else:
-            #interpolation = kwargs.pop('interpolation', None)
-            #graphics = GraphicFactory.createTexture(layer, offset, xshift, interpolation)
+            # interpolation = kwargs.pop('interpolation', None)
+            # graphics = GraphicFactory.createTexture(layer, offset, xshift, interpolation)
             nlat = kwargs.pop('nlat', 180)
             nlon = kwargs.pop('nlon', 360)
             if self._axes.getProjInfo() is None:
@@ -737,7 +738,7 @@ class Axes3DGL(Axes3D):
             projection = kwargs.pop('projection', layer.getProjInfo())
             self.add_graphic(graphics, projection)
         return graphics
-        
+
     def plot_layer(self, layer, **kwargs):
         """
         Plot a layer in 3D axes.
@@ -776,11 +777,11 @@ class Axes3DGL(Axes3D):
             data = args[3]
             args = args[4:]
         if x.ndim == 3:
-            x = x[0,0]
+            x = x[0, 0]
         if y.ndim == 3:
-            y = y[0,:,0]
+            y = y[0, :, 0]
         if z.ndim == 3:
-            z = z[:,0,0]
+            z = z[:, 0, 0]
 
         cmap = plotutil.getcolormap(**kwargs)
         if len(args) > 0:
@@ -800,7 +801,7 @@ class Axes3DGL(Axes3D):
         if not facecolor is None:
             face_interp = (facecolor == 'interp')
             if not face_interp:
-                if not facecolor in ['flat','texturemap','none']:
+                if not facecolor in ['flat', 'texturemap', 'none']:
                     facecolor = plotutil.getcolor(facecolor)
                     ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, facecolor, 1)
         plotutil.setlegendscheme(ls, **kwargs)
@@ -816,17 +817,17 @@ class Axes3DGL(Axes3D):
             zslice = [zslice]
         if isinstance(xslice, NDArray):
             graphics = GraphicFactory.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
-                                      xslice._array, yslice._array, zslice._array, ls)
+                                            xslice._array, yslice._array, zslice._array, ls)
         else:
             graphics = GraphicFactory.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
-                                      yslice, zslice, ls)
+                                            yslice, zslice, ls)
 
         xyslice = kwargs.pop('xyslice', None)
         if not xyslice is None:
             method = kwargs.pop('method', 'nearest')
             method = InterpolationMethod.valueOf(method.upper())
             gg = GraphicFactory.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
-                                xyslice, ls, method)
+                                      xyslice, ls, method)
             graphics.append(gg)
 
         if face_interp:
@@ -885,11 +886,11 @@ class Axes3DGL(Axes3D):
             data = args[3]
             args = args[4:]
         if x.ndim == 3:
-            x = x[0,0]
+            x = x[0, 0]
         if y.ndim == 3:
-            y = y[0,:,0]
+            y = y[0, :, 0]
         if z.ndim == 3:
-            z = z[:,0,0]
+            z = z[:, 0, 0]
 
         cmap = plotutil.getcolormap(**kwargs)
         if len(args) > 0:
@@ -917,14 +918,14 @@ class Axes3DGL(Axes3D):
             zslice = [zslice]
         smooth = kwargs.pop('smooth', True)
         graphics = GraphicFactory.contourSlice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
-                                  yslice, zslice, ls, smooth)
+                                               yslice, zslice, ls, smooth)
 
         xyslice = kwargs.pop('xyslice', None)
         if not xyslice is None:
             method = kwargs.pop('method', 'nearest')
             method = InterpolationMethod.valueOf(method.upper())
             gg = GraphicFactory.contourSlice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
-                                              xyslice, method, ls, smooth)
+                                             xyslice, method, ls, smooth)
             if not gg is None:
                 graphics.append(gg)
 
@@ -965,11 +966,11 @@ class Axes3DGL(Axes3D):
             data = args[3]
             args = args[4:]
         if x.ndim == 3:
-            x = x[0,0]
+            x = x[0, 0]
         if y.ndim == 3:
-            y = y[0,:,0]
+            y = y[0, :, 0]
         if z.ndim == 3:
-            z = z[:,0,0]
+            z = z[:, 0, 0]
 
         cmap = plotutil.getcolormap(**kwargs)
         if len(args) > 0:
@@ -997,7 +998,7 @@ class Axes3DGL(Axes3D):
             zslice = [zslice]
         smooth = kwargs.pop('smooth', True)
         graphics = GraphicFactory.contourfSlice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
-                                               yslice, zslice, ls, smooth)
+                                                yslice, zslice, ls, smooth)
 
         xyslice = kwargs.pop('xyslice', None)
         if not xyslice is None:
@@ -1065,14 +1066,14 @@ class Axes3DGL(Axes3D):
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
             else:
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
-        #ls = ls.convertTo(ShapeTypes.POLYGON, True)
+        # ls = ls.convertTo(ShapeTypes.POLYGON, True)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         face_interp = None
         if kwargs.has_key('facecolor'):
             facecolor = kwargs.pop('facecolor', None)
             face_interp = (facecolor == 'interp')
             if not face_interp:
-                if not facecolor in ['flat','texturemap','none']:
+                if not facecolor in ['flat', 'texturemap', 'none']:
                     kwargs['facecolor'] = facecolor
         else:
             kwargs['facecolor'] = None
@@ -1081,7 +1082,7 @@ class Axes3DGL(Axes3D):
         if not edgecolor is None:
             edge_interp = (edgecolor == 'interp')
             if not edge_interp:
-                if not edgecolor in ['flat','texturemap','none']:
+                if not edgecolor in ['flat', 'texturemap', 'none']:
                     kwargs['edgecolor'] = edgecolor
         plotutil.setlegendscheme(ls, **kwargs)
         graphics = GraphicFactory.surface(x.asarray(), y.asarray(), z.asarray(), ls)
@@ -1188,7 +1189,7 @@ class Axes3DGL(Axes3D):
                         image = cdata.getGraphicN(0).getShape().getImage()
                     else:
                         image = cdata.getShape().getImage()
-                elif not facecolor in ['flat','none']:
+                elif not facecolor in ['flat', 'none']:
                     facecolor = plotutil.getcolor(facecolor)
                     ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, facecolor, 1)
                     face_interp = True
@@ -1248,11 +1249,11 @@ class Axes3DGL(Axes3D):
             y = args[1]
             z = args[2]
             if x.ndim == 3:
-                x = x[0,0]
+                x = x[0, 0]
             if y.ndim == 3:
-                y = y[0,:,0]
+                y = y[0, :, 0]
             if z.ndim == 3:
-                z = z[:,0,0]
+                z = z[:, 0, 0]
             data = args[3]
             isovalue = args[4]
             args = args[5:]
@@ -1265,7 +1266,7 @@ class Axes3DGL(Axes3D):
 
         facecolor = kwargs.pop('facecolor', 'c')
 
-        if not cdata is None:
+        if cdata is not None:
             cmap = plotutil.getcolormap(**kwargs)
             if len(args) > 0:
                 level_arg = args[0]
@@ -1321,7 +1322,35 @@ class Axes3DGL(Axes3D):
         """
         return self.isosurface(*args, **kwargs)
 
-    def fimplicit3(self, f, interval=[-5.,5.], mesh_density=35, *args, **kwargs):
+    def trisurf(self, T, x, y, z, **kwargs):
+        """
+        Triangular surface plot.
+
+        :param T: (*array*) Triangle connectivity, specified as a 3-column matrix where each
+            row contains the point vertices defining a triangle face.
+        :param x: (*array*) X coordinates array.
+        :param y: (*array*) Y coordinates array.
+        :param z: (*array*) Z coordinates array.
+
+        :return: Triangle mesh graphic.
+        """
+        facecolor = kwargs.pop('facecolor', 'c')
+        facecolor = plotutil.getcolor(facecolor)
+        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, facecolor, 1)
+
+        if not kwargs.has_key('edgecolor'):
+            kwargs['edgecolor'] = None
+        plotutil.setlegendscheme(ls, **kwargs)
+
+        graphics = GraphicFactory.triSurface(T._array, x._array, y._array, z._array, ls)
+
+        visible = kwargs.pop('visible', True)
+        if visible:
+            self.add_graphic(graphics)
+
+        return graphics
+
+    def fimplicit3(self, f, interval=[-5., 5.], mesh_density=35, *args, **kwargs):
         """
         Plot the 3-D implicit function defined by f(x,y,z) = 0 over the default interval [-5, 5] for x, y, and z.
 
@@ -1497,12 +1526,12 @@ class Axes3DGL(Axes3D):
             ls.setNormalize(norm._norm)
             ls.setColorMap(cmap)
             graphics = GraphicFactory.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
-                                       alpha_min, alpha_max)
+                                             alpha_min, alpha_max)
         else:
             opacity_nodes = kwargs.pop('opacity_nodes', None)
             opacity_levels = kwargs.pop('opacity_levels', [0., 1.])
             graphics = GraphicFactory.volume(data.asarray(), x.asarray(), y.asarray(), z.asarray(), cmap, \
-                                       norm._norm, opacity_nodes, opacity_levels)
+                                             norm._norm, opacity_nodes, opacity_levels)
 
         ray_casting = kwargs.pop('ray_casting', None)
         if not ray_casting is None:
@@ -1525,11 +1554,12 @@ class Axes3DGL(Axes3D):
         form.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
         form.setVisible(True)
 
+
 class MapAxes3D(Axes3DGL):
     """
     Map 3D axes.
     """
-    
+
     def __init__(self, *args, **kwargs):
         super(MapAxes3D, self).__init__(*args, **kwargs)
 
@@ -1555,6 +1585,7 @@ class MapAxes3D(Axes3DGL):
     @property
     def projection(self):
         return self._axes.getProjInfo()
+
 
 class EarthAxes3D(Axes3DGL):
     """

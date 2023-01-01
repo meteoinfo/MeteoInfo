@@ -1,12 +1,12 @@
 # coding=utf-8
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2018-4-4
 # Purpose: MeteoInfoLab figure module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
-from org.meteoinfo.chart import GLChartPanel, GLChart, Location, MouseMode, ChartText
+from org.meteoinfo.chart import ChartPanel, Chart, Location, MouseMode, ChartText
 
 import plotutil
 from ._axes import Axes, PolarAxes
@@ -18,11 +18,12 @@ from java.awt import Font
 
 __all__ = ['Figure']
 
-class Figure(GLChartPanel):
+
+class Figure(ChartPanel):
     """
     top level container for all plot elements
     """
-    
+
     def __init__(self, figsize=None, dpi=None, facecolor='w', **kwargs):
         """
         Constructor
@@ -31,7 +32,7 @@ class Figure(GLChartPanel):
         :param facecolor: (*Color*) Optional, fill color of the figure. Default is ``w`` (white).
         :param dpi: (*int*) Dots per inch.
         """
-        chart = GLChart()
+        chart = Chart()
         facecolor = plotutil.getcolor(facecolor)
         if kwargs.has_key('bgcolor'):
             facecolor = plotutil.getcolor(kwargs.pop('bgcolor'))
@@ -68,7 +69,7 @@ class Figure(GLChartPanel):
         :returns: Figure width and height
         """
         return self.getFigureWidth(), self.getFigureHeight()
-     
+
     def __create_axes(self, *args, **kwargs):
         """
         Create an axes.
@@ -78,11 +79,11 @@ class Figure(GLChartPanel):
         :param outerposition: (*list*) Optional, axes size and location, including labels and margin.
         
         :returns: The axes.
-        """        
+        """
         if len(args) > 0:
             position = args[0]
         else:
-            position = kwargs.pop('position', None)    
+            position = kwargs.pop('position', None)
         outerposition = kwargs.pop('outerposition', None)
         axestype = kwargs.pop('axestype', 'cartesian')
         polar = kwargs.pop('polar', False)
@@ -99,20 +100,20 @@ class Figure(GLChartPanel):
         if position is None:
             position = [0.13, 0.11, 0.775, 0.815]
             ax.active_outerposition(True)
-        else:        
-            ax.active_outerposition(False)        
-        ax.set_position(position)   
+        else:
+            ax.active_outerposition(False)
+        ax.set_position(position)
         if not outerposition is None:
             ax.set_outerposition(outerposition)
             ax.active_outerposition(True)
-        
+
         return ax
-        
+
     def __set_axes_common(self, ax, *args, **kwargs):
         if len(args) > 0:
             position = args[0]
         else:
-            position = kwargs.pop('position', None)    
+            position = kwargs.pop('position', None)
         outerposition = kwargs.pop('outerposition', None)
         if position is None:
             if ax.axestype == '3d':
@@ -120,16 +121,16 @@ class Figure(GLChartPanel):
             else:
                 position = [0.13, 0.11, 0.775, 0.815]
             ax.active_outerposition(True)
-        else:        
-            ax.active_outerposition(False)        
-        ax.set_position(position)   
+        else:
+            ax.active_outerposition(False)
+        ax.set_position(position)
         if not outerposition is None:
             ax.set_outerposition(outerposition)
             ax.active_outerposition(True)
         units = kwargs.pop('units', None)
         if not units is None:
             ax._axes.setUnits(units)
-        
+
     def __set_axes(self, ax, **kwargs):
         """
         Set an axes.
@@ -147,7 +148,7 @@ class Figure(GLChartPanel):
         :param yreverse: (*boolean*) Optional, set yaxis reverse or not. Default is ``False`` .
         
         :returns: The axes.
-        """        
+        """
         aspect = kwargs.pop('aspect', 'auto')
         axis = kwargs.pop('axis', True)
         b_axis = ax.get_axis(Location.BOTTOM)
@@ -167,8 +168,8 @@ class Figure(GLChartPanel):
         xreverse = kwargs.pop('xreverse', False)
         yreverse = kwargs.pop('yreverse', False)
         xaxistype = kwargs.pop('xaxistype', None)
-        bgcobj = kwargs.pop('bgcolor', None)        
-        
+        bgcobj = kwargs.pop('bgcolor', None)
+
         if aspect == 'equal':
             ax._axes.setAutoAspect(False)
         else:
@@ -188,7 +189,7 @@ class Figure(GLChartPanel):
             t_axis.setInverse(True)
         if yreverse:
             l_axis.setInverse(True)
-            r_axis.setInverse(True)        
+            r_axis.setInverse(True)
         if not xaxistype is None:
             ax.set_xaxis_type(xaxistype)
         bgcolor = plotutil.getcolor(bgcobj)
@@ -206,8 +207,8 @@ class Figure(GLChartPanel):
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
         ax._axes.setAxisLabelFont(font)
-        
-    def __create_axesm(self, *args, **kwargs):  
+
+    def __create_axesm(self, *args, **kwargs):
         """
         Create an map axes.
         
@@ -216,18 +217,18 @@ class Figure(GLChartPanel):
             height] in normalized (0, 1) units. Default is [0.13, 0.11, 0.775, 0.815].
         
         :returns: The map axes.
-        """       
+        """
         ax = MapAxes(**kwargs)
         if len(args) > 0:
             position = args[0]
         else:
-            position = kwargs.pop('position', None)        
+            position = kwargs.pop('position', None)
         if position is None:
-           position = [0.13, 0.11, 0.775, 0.815]
-        ax.set_position(position)    
+            position = [0.13, 0.11, 0.775, 0.815]
+        ax.set_position(position)
         return ax
-        
-    def __set_axesm(self, ax, **kwargs):  
+
+    def __set_axesm(self, ax, **kwargs):
         """
         Create an map axes.
         
@@ -253,7 +254,7 @@ class Figure(GLChartPanel):
         :param boundaryprop: (*dict*) boundary property.
         
         :returns: The map axes.
-        """       
+        """
         aspect = kwargs.pop('aspect', 'equal')
         if aspect == 'equal':
             ax._axes.setAutoAspect(False)
@@ -273,7 +274,7 @@ class Figure(GLChartPanel):
             bottomaxis = False
             leftaxis = False
             topaxis = False
-            rightaxis = False            
+            rightaxis = False
         gridlabel = kwargs.pop('gridlabel', True)
         gridlabelloc = kwargs.pop('gridlabelloc', 'left_bottom')
         gridline = kwargs.pop('gridline', False)
@@ -285,7 +286,7 @@ class Figure(GLChartPanel):
             frameon = kwargs.pop('frameon', True)
         axison = kwargs.pop('axison', None)
         bgcobj = kwargs.pop('bgcolor', None)
-        xyscale = kwargs.pop('xyscale', 1)     
+        xyscale = kwargs.pop('xyscale', 1)
         tickfontname = kwargs.pop('tickfontname', 'Arial')
         tickfontsize = kwargs.pop('tickfontsize', 14)
         tickbold = kwargs.pop('tickbold', False)
@@ -293,7 +294,7 @@ class Figure(GLChartPanel):
             font = Font(tickfontname, Font.BOLD, tickfontsize)
         else:
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
-            
+
         mapview = ax._axes.getMapView()
         mapview.setXYScaleFactor(xyscale)
         ax._axes.setAspect(xyscale)
@@ -324,7 +325,7 @@ class Figure(GLChartPanel):
         if not boundaryprop is None:
             boundaryprop = plotutil.getlegendbreak('polygon', **boundaryprop)[0]
             ax._axes.setBoundaryProp(boundaryprop)
-     
+
         return ax
 
     def __create_axes3d(self, *args, **kwargs):
@@ -336,25 +337,25 @@ class Figure(GLChartPanel):
         :param outerposition: (*list*) Optional, axes size and location, including labels and margin.
         
         :returns: The axes.
-        """        
+        """
         if len(args) > 0:
             position = args[0]
         else:
-            position = kwargs.pop('position', None)    
+            position = kwargs.pop('position', None)
         outerposition = kwargs.pop('outerposition', None)
         ax = Axes3D(**kwargs)
         if position is None:
             position = [0.13, 0.11, 0.71, 0.815]
             ax.active_outerposition(True)
-        else:        
-            ax.active_outerposition(False)        
-        ax.set_position(position)   
+        else:
+            ax.active_outerposition(False)
+        ax.set_position(position)
         if not outerposition is None:
             ax.set_outerposition(outerposition)
             ax.active_outerposition(True)
-        
+
         return ax
-        
+
     def __set_axes3d(self, ax, **kwargs):
         """
         Set an axes.
@@ -372,7 +373,7 @@ class Figure(GLChartPanel):
         :param yreverse: (*boolean*) Optional, set yaxis reverse or not. Default is ``False`` .
         
         :returns: The axes.
-        """     
+        """
         tickfontname = kwargs.pop('tickfontname', 'Arial')
         tickfontsize = kwargs.pop('tickfontsize', 14)
         tickbold = kwargs.pop('tickbold', False)
@@ -382,7 +383,7 @@ class Figure(GLChartPanel):
             font = Font(tickfontname, Font.PLAIN, tickfontsize)
         ax._axes.setAxisTickFont(font)
         return ax
-        
+
     def new_axes(self, *args, **kwargs):
         """
         Add an axes to the figure.
@@ -408,25 +409,25 @@ class Figure(GLChartPanel):
         polar = kwargs.pop('polar', False)
         if polar:
             axestype = 'polar'
-         
+
         kwargs['figure'] = self
-         
+
         if axestype == 'polar':
             ax = PolarAxes(*args, **kwargs)
-            #self.__set_axes(ax, **kwargs)
+            # self.__set_axes(ax, **kwargs)
         elif axestype == 'map':
             ax = MapAxes(*args, **kwargs)
-            #self.__set_axesm(ax, **kwargs)
+            # self.__set_axesm(ax, **kwargs)
         elif axestype == '3d':
-            #ax = Axes3D(*args, **kwargs)
+            # ax = Axes3D(*args, **kwargs)
             ax = Axes3DGL(*args, **kwargs)
         else:
             ax = Axes(*args, **kwargs)
-            #self.__set_axes(ax, **kwargs)
-        #self.__set_axes_common(ax, *args, **kwargs)   
+            # self.__set_axes(ax, **kwargs)
+        # self.__set_axes_common(ax, *args, **kwargs)
 
         return ax
-     
+
     def add_axes(self, *args, **kwargs):
         """
         Add an axes to the figure.
@@ -462,11 +463,11 @@ class Figure(GLChartPanel):
                 ax._axes.isSubPlot = True
                 position = kwargs.pop('position', None)
                 if position is None:
-                    ax.set_position(plot.getPosition())  
+                    ax.set_position(plot.getPosition())
             chart.setCurrentPlot(ax._axes)
 
         return ax
-        
+
     def _add_axes(self, ax):
         """
         Add a axes.
@@ -477,7 +478,7 @@ class Figure(GLChartPanel):
         self.axes.append(ax)
         self.getChart().addPlot(ax._axes)
         self.getChart().setCurrentPlot(self.getChart().getPlots().size())
-        
+
     def remove_axes(self, ax=None):
         """
         Remove the axes.
@@ -493,13 +494,13 @@ class Figure(GLChartPanel):
         else:
             self.axes.remove(ax)
             self.getChart().removePlot(ax._axes)
-        
+
     def draw(self):
         """
         Re-paint the figure.
         """
         self.paintGraphics()
-        
+
     def set_mousemode(self, mm):
         """
         Set MouseMode.
@@ -512,7 +513,7 @@ class Figure(GLChartPanel):
 
     def subplot(self, nrows, ncols, plot_number, **kwargs):
         """
-        Returen a subplot axes positioned by the given grid definition.
+        Return a subplot axes positioned by the given grid definition.
 
         :param nrows, nrows: (*int*) Whree *nrows* and *ncols* are used to notionally spli the 
             figure into ``nrows * ncols`` sub-axes.
@@ -530,14 +531,14 @@ class Figure(GLChartPanel):
         isnew = True
         if isnew:
             ax = self.new_axes(**kwargs)
-            #polar = kwargs.pop('polar', False)
-            #if polar:
+            # polar = kwargs.pop('polar', False)
+            # if polar:
             #    ax = PolarAxes()
-            #else:
+            # else:
             #    ax = Axes()
             ax._axes.isSubPlot = True
         else:
-            chart.setCurrentPlot(plot_number - 1)  
+            chart.setCurrentPlot(plot_number - 1)
         position = kwargs.pop('position', None)
         if position is None:
             if isnew:
@@ -548,7 +549,7 @@ class Figure(GLChartPanel):
                         rowidx = pnum / ncols
                         colidx = pnum % ncols
                         width = 1. / ncols
-                        height = 1. / nrows                    
+                        height = 1. / nrows
                         x = width * colidx
                         y = 1. - height * (rowidx + 1)
                         if i == 0:
@@ -581,24 +582,24 @@ class Figure(GLChartPanel):
             ax.set_position(position)
             ax.active_outerposition(False)
         outerposition = kwargs.pop('outerposition', None)
-        if not outerposition is None:
+        if outerposition is not None:
             ax.set_outerposition(outerposition)
             ax.active_outerposition(True)
 
         # if isinstance(ax, MapAxes):
-            # self.__set_axesm(ax, **kwargs)
+        # self.__set_axesm(ax, **kwargs)
         # else:
-            # self.__set_axes(ax, **kwargs)
+        # self.__set_axes(ax, **kwargs)
 
         if isnew:
             self._add_axes(ax)
-            #chart.addPlot(ax._axes)
-            #chart.setCurrentPlot(chart.getPlots().size() - 1)
+            # chart.addPlot(ax._axes)
+            # chart.setCurrentPlot(chart.getPlots().size() - 1)
 
         return ax
 
     def subplots(self, nrows=1, ncols=1, position=None, sharex=False, sharey=False, \
-        wspace=None, hspace=None, axestype='Axes', **kwargs):
+                 wspace=None, hspace=None, axestype='Axes', **kwargs):
         """
         Create a figure and a set of subplots.
 
@@ -651,7 +652,7 @@ class Figure(GLChartPanel):
             if ishspace:
                 if i > 0:
                     y -= hspace
-            for j in range(ncols):   
+            for j in range(ncols):
                 if axestype == '3d':
                     ax = Axes3D(**kwargs)
                 elif axestype == 'map':
@@ -670,7 +671,7 @@ class Figure(GLChartPanel):
                 else:
                     if iswspace:
                         if j > 0:
-                            x += wspace                
+                            x += wspace
                     ax.set_position([x, y, w, h])
                     ax.active_outerposition(False)
                     x += w
@@ -680,7 +681,7 @@ class Figure(GLChartPanel):
                 if sharey:
                     if j > 0:
                         ax._axes.getAxis(Location.LEFT).setDrawTickLabel(False)
-                #chart.addPlot(ax._axes)
+                # chart.addPlot(ax._axes)
                 self._add_axes(ax)
                 if ax2d:
                     axs2d.append(ax)
@@ -689,16 +690,16 @@ class Figure(GLChartPanel):
             if ax2d:
                 axs.append(tuple(axs2d))
             y -= h
-        
+
         chart.setCurrentPlot(0)
         return tuple(axs)
-        
+
     def get_title(self):
         """
         Get title               
         """
-        return self.getChart().getTitle()  
-        
+        return self.getChart().getTitle()
+
     def set_title(self, label, fontname=None, fontsize=14, bold=True, color='black'):
         """
         Add a centered title to the figure.
@@ -714,7 +715,7 @@ class Figure(GLChartPanel):
             fontname = 'Arial'
         else:
             exfont = True
-        
+
         if bold:
             font = Font(fontname, Font.BOLD, fontsize)
         else:
@@ -762,7 +763,7 @@ class Figure(GLChartPanel):
             kwargs['rotation'] = 90
         ctext = plotutil.text(0, 0, label, **kwargs)
         self.getChart().setYLabel(ctext)
-        
+
     def set_antialias(self, b=None, symbol=None):
         """
         Set figure antialias or not.
@@ -773,6 +774,6 @@ class Figure(GLChartPanel):
         if b is None:
             b = not self.getChart().isAntialias()
         self.getChart().setAntialias(b)
-        
+
         if not symbol is None:
             self.getChart().setSymbolAntialias(symbol)

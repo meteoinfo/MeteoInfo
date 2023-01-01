@@ -243,7 +243,7 @@ public class Index implements Cloneable {
      * rank as original Array. A particular Range: 1) may be a subset; 2) may be
      * null, meaning use entire Range.
      * @return new Index, with same or smaller rank as original.
-     * @throws InvalidRangeException if ranges dont match current shape
+     * @throws InvalidRangeException if ranges don't match current shape
      */
     public Index section(List<Range> ranges) throws InvalidRangeException {
 

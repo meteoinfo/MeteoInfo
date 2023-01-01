@@ -8095,6 +8095,25 @@ public class GraphicFactory {
     }
 
     /**
+     * Create triangle mesh graphic
+     *
+     * @param faceIndices Vertex indices array
+     * @param x X coordinates array
+     * @param y Y coordinates array
+     * @param z Z coordinates array
+     * @param ls Legend scheme
+     * @return
+     */
+    public static TriMeshGraphic triSurface(Array faceIndices, Array x, Array y,
+                                            Array z, LegendScheme ls) {
+        TriMeshGraphic meshGraphic = new TriMeshGraphic();
+        meshGraphic.setTriangles(faceIndices, x, y, z);
+        meshGraphic.setLegendScheme(ls);
+
+        return meshGraphic;
+    }
+
+    /**
      * Create volume graphics
      *
      * @param data     3d data array

@@ -193,14 +193,6 @@ public class FrmAppsManager extends javax.swing.JDialog {
 
         String pluginPath = parent.getApplications().getPluginPath();
         if (new File(pluginPath).isDirectory()) {
-//            List<String> fileNames = GlobalUtil.getFiles(pluginPath, ".jar");
-//            for (String fn : fileNames) {
-//                Application plugin = this.readApplication(fn);
-//                if (plugin != null) {
-//                    plugins.add(plugin);
-//                }
-//            }
-
             File f = new File(pluginPath);
             if (f.isDirectory()) {
                 File fs[] = f.listFiles();
@@ -211,6 +203,18 @@ public class FrmAppsManager extends javax.swing.JDialog {
                             Application plugin = this.readPyApp(ff.getName(), "loadApp.py");
                             if (plugin != null) {
                                 plugins.add(plugin);
+                            }
+                        } else {
+                            Path appPath = Paths.get(ff.getPath(), ff.getName().toLowerCase());
+                            File fff = appPath.toFile();
+                            if (fff.isDirectory()) {
+                                loadApp = Paths.get(fff.getPath(), "loadApp.py");
+                                if (loadApp.toFile().isFile()) {
+                                    Application plugin = this.readPyApp(fff.getName(), "loadApp.py");
+                                    if (plugin != null) {
+                                        plugins.add(plugin);
+                                    }
+                                }
                             }
                         }
                     }

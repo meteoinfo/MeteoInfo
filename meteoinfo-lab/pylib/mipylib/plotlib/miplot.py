@@ -1,10 +1,10 @@
 # coding=utf-8
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2014-12-26
 # Purpose: MeteoInfoLab plot module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 from javax.swing import WindowConstants
 from org.meteoinfo.chart import Location
@@ -39,21 +39,28 @@ g_figure = None
 g_axes = None
 
 __all__ = [
-    'annotate','antialias','arrow','arrowline','axes','axes3d','axes3dgl','axesm','caxes','axis',
-    'axism','bar','bar3','barh','barbs','barbsm','bgcolor','box',
-    'boxplot','windrose','cla','clabel','clc','clear','clf','cll','cloudspec','colorbar','contour','contourf',
-    'contourfm','contourm','contourfslice','contourslice','delfig','draw','draw_if_interactive','errorbar',
-    'figure','glfigure','figsize','patch','rectangle','fill','fill_between','fill_betweenx','fimplicit3',
-    'webmap','gca','gcf','gc_collect','geoshow','get_figure','gifaddframe','gifanimation','giffinish',
-    'grid','gridshow','gridshowm','hist','imshow','imshowm','isosurface','legend','left_title','lighting','loglog','makecolors',
-    'makelegend','makesymbolspec','masklayer','material','mesh','particles','pcolor','pcolorm','pie','plot','plot3','plotm','quiver','quiver3',
-    'quiverkey','quiverm','readlegend','right_title','refresh','savefig','savefig_jpeg','scatter','scatter3','scatterm',
-    'semilogx','semilogy','show','slice3','stationmodel','stem','stem3','step','streamplot','streamplot3',
-    'streamplotm','streamslice','subplot','subplots','suptitle','supxlabel','supylabel',
-    'surf','taylor_diagram','text','text3','title','twinx','twiny','violinplot','volumeplot','weatherspec','xaxis',
-    'xlabel','xlim','xreverse','xticks','yaxis','ylabel','ylim','yreverse','yticks','zaxis','zlabel','zlim','zticks',
+    'annotate', 'antialias', 'arrow', 'arrowline', 'axes', 'axes3d', 'axes3dgl', 'axesm', 'caxes', 'axis',
+    'axism', 'bar', 'bar3', 'barh', 'barbs', 'barbsm', 'bgcolor', 'box',
+    'boxplot', 'windrose', 'cla', 'clabel', 'clc', 'clear', 'clf', 'cll', 'cloudspec', 'colorbar', 'contour',
+    'contourf',
+    'contourfm', 'contourm', 'contourfslice', 'contourslice', 'delfig', 'draw', 'draw_if_interactive', 'errorbar',
+    'figure', 'glfigure', 'figsize', 'patch', 'rectangle', 'fill', 'fill_between', 'fill_betweenx', 'fimplicit3',
+    'webmap', 'gca', 'gcf', 'gc_collect', 'geoshow', 'get_figure', 'gifaddframe', 'gifanimation', 'giffinish',
+    'grid', 'gridshow', 'gridshowm', 'hist', 'imshow', 'imshowm', 'isosurface', 'legend', 'left_title', 'lighting',
+    'loglog', 'makecolors',
+    'makelegend', 'makesymbolspec', 'masklayer', 'material', 'mesh', 'particles', 'pcolor', 'pcolorm', 'pie', 'plot',
+    'plot3', 'plotm', 'quiver', 'quiver3',
+    'quiverkey', 'quiverm', 'readlegend', 'right_title', 'refresh', 'savefig', 'savefig_jpeg', 'scatter', 'scatter3',
+    'scatterm',
+    'semilogx', 'semilogy', 'show', 'slice3', 'stationmodel', 'stem', 'stem3', 'step', 'streamplot', 'streamplot3',
+    'streamplotm', 'streamslice', 'subplot', 'subplots', 'suptitle', 'supxlabel', 'supylabel',
+    'surf', 'taylor_diagram', 'text', 'text3', 'title', 'trisurf', 'twinx', 'twiny', 'violinplot', 'volumeplot', 'weatherspec',
+    'xaxis',
+    'xlabel', 'xlim', 'xreverse', 'xticks', 'yaxis', 'ylabel', 'ylim', 'yreverse', 'yticks', 'zaxis', 'zlabel', 'zlim',
+    'zticks',
     'isinteractive'
-    ]
+]
+
 
 def _copy_docstring_and_deprecators(method, func=None):
     if func is None:
@@ -65,6 +72,7 @@ def _copy_docstring_and_deprecators(method, func=None):
         func = decorator(func)
     return func
 
+
 def gcf():
     """
     Get current figure.
@@ -73,6 +81,7 @@ def gcf():
     """
     return g_figure
 
+
 def gca():
     """
     Get current axes
@@ -80,7 +89,8 @@ def gca():
     :return: Current axes
     """
     return g_axes
-        
+
+
 def figsize():
     """
     Get current figure size.
@@ -89,23 +99,26 @@ def figsize():
     """
     if g_figure is None:
         return None
-    else:    
+    else:
         width = g_figure.getFigureWidth()
         height = g_figure.getFigureHeight()
         return width, height
+
 
 def draw_if_interactive():
     """
     Draw current figure if is interactive model.
     """
     if isinteractive:
-		g_figure.paintGraphics()
-        
+        g_figure.paintGraphics()
+
+
 def draw():
     """
     Draw the current figure.
     """
     g_figure.paintGraphics()
+
 
 @_copy_docstring_and_deprecators(Axes.plot)
 def plot(*args, **kwargs):
@@ -118,11 +131,12 @@ def plot(*args, **kwargs):
     else:
         if g_axes.ndim == 3:
             g_axes = axes()
-            
+
     r = g_axes.plot(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r    
+    return r
+
 
 @_copy_docstring_and_deprecators(Axes.step)
 def step(x, y, *args, **kwargs):
@@ -135,11 +149,12 @@ def step(x, y, *args, **kwargs):
     else:
         if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
             g_axes = axes()
-            
+
     r = g_axes.step(x, y, *args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r 
+    return r
+
 
 @_copy_docstring_and_deprecators(Axes3D.plot)
 def plot3(x, y, z, *args, **kwargs):
@@ -149,10 +164,11 @@ def plot3(x, y, z, *args, **kwargs):
     else:
         if not isinstance(g_axes, Axes3D):
             g_axes = axes3d()
-    
+
     r = g_axes.plot(x, y, z, *args, **kwargs)
     draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.semilogy)
 def semilogy(*args, **kwargs):
@@ -165,11 +181,12 @@ def semilogy(*args, **kwargs):
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.semilogy(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r 
+    return r
+
 
 @_copy_docstring_and_deprecators(Axes.semilogx)
 def semilogx(*args, **kwargs):
@@ -182,11 +199,12 @@ def semilogx(*args, **kwargs):
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.semilogx(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r 
+    return r
+
 
 @_copy_docstring_and_deprecators(Axes.loglog)
 def loglog(*args, **kwargs):
@@ -199,15 +217,16 @@ def loglog(*args, **kwargs):
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.loglog(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r    
+    return r
+
 
 @_copy_docstring_and_deprecators(Axes.errorbar)
 def errorbar(x, y, yerr=None, xerr=None, fmt='', ecolor=None, elinewidth=None, capsize=None,
-            **kwargs):
+             **kwargs):
     global g_axes
     if g_figure is None:
         figure()
@@ -217,11 +236,12 @@ def errorbar(x, y, yerr=None, xerr=None, fmt='', ecolor=None, elinewidth=None, c
     else:
         if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
             g_axes = axes()
-            
+
     r = g_axes.errorbar(x, y, yerr, xerr, fmt, ecolor, elinewidth, capsize, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r    
+    return r
+
 
 @_copy_docstring_and_deprecators(Axes.bar)
 def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
@@ -234,11 +254,12 @@ def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
     else:
         if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
             g_axes = axes()
-            
+
     r = g_axes.bar(x, height, width, bottom, align, data, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes3D.bar)
 def bar3(*args, **kwargs):
@@ -253,6 +274,7 @@ def bar3(*args, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes.barh)
 def barh(*args, **kwargs):
     global g_axes
@@ -264,16 +286,17 @@ def barh(*args, **kwargs):
     else:
         if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
             g_axes = axes()
-            
+
     r = g_axes.barh(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes.hist)
 def hist(x, bins=10, range=None, density=False, cumulative=False,
-        bottom=None, histtype='bar', align='mid',
-        orientation='vertical', rwidth=None, log=False, **kwargs):
+         bottom=None, histtype='bar', align='mid',
+         orientation='vertical', rwidth=None, log=False, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
@@ -283,12 +306,13 @@ def hist(x, bins=10, range=None, density=False, cumulative=False,
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.hist(x, bins, range, density, cumulative,
-        bottom, histtype, align, orientation, rwidth, log, **kwargs)
+                    bottom, histtype, align, orientation, rwidth, log, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.stem)
 def stem(*args, **kwargs):
@@ -301,15 +325,16 @@ def stem(*args, **kwargs):
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.stem(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes3D.stem)
 def stem3(x, y, z, s=8, c='b', marker='o', alpha=None, linewidth=None,
-         verts=None, **kwargs):
+          verts=None, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -320,6 +345,7 @@ def stem3(x, y, z, s=8, c='b', marker='o', alpha=None, linewidth=None,
     r = g_axes.stem(x, y, z, s, c, marker, alpha, linewidth, verts, **kwargs)
     draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.scatter)
 def scatter(*args, **kwargs):
@@ -332,11 +358,12 @@ def scatter(*args, **kwargs):
     # else:
     #     if g_axes.axestype != 'cartesian':
     #         g_axes = axes()
-            
+
     r = g_axes.scatter(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes3D.scatter)
 def scatter3(x, y, z, s=8, c='b', marker='o', **kwargs):
@@ -346,8 +373,9 @@ def scatter3(x, y, z, s=8, c='b', marker='o', **kwargs):
     else:
         if not isinstance(g_axes, Axes3D):
             g_axes = axes3d()
-    
+
     return g_axes.scatter(x, y, z, s, c, marker, **kwargs)
+
 
 @_copy_docstring_and_deprecators(Axes.arrow)
 def arrow(x, y, dx, dy, **kwargs):
@@ -360,11 +388,12 @@ def arrow(x, y, dx, dy, **kwargs):
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.arrow(x, y, dx, dy, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.arrowline)
 def arrowline(x, y, dx=0, dy=0, **kwargs):
@@ -377,11 +406,12 @@ def arrowline(x, y, dx=0, dy=0, **kwargs):
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.arrowline(x, y, dx, dy, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.annotate)
 def annotate(s, xy, *args, **kwargs):
@@ -394,11 +424,12 @@ def annotate(s, xy, *args, **kwargs):
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.annotate(s, xy, *args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.patch)
 def fill(x, y=None, **kwargs):
@@ -414,6 +445,7 @@ def fill(x, y=None, **kwargs):
         draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes.patch)
 def patch(x, y=None, **kwargs):
     global g_axes
@@ -423,13 +455,14 @@ def patch(x, y=None, **kwargs):
     if g_axes is None:
         g_axes = axes()
     # else:
-        # if g_axes.axestype != 'cartesian':
-            # g_axes = axes()
-            
+    # if g_axes.axestype != 'cartesian':
+    # g_axes = axes()
+
     r = g_axes.patch(x, y, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.rectangle)
 def rectangle(position, curvature=None, **kwargs):
@@ -442,11 +475,12 @@ def rectangle(position, curvature=None, **kwargs):
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.rectangle(position, curvature, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.fill_between)
 def fill_between(x, y1, y2=0, where=None, **kwargs):
@@ -459,11 +493,12 @@ def fill_between(x, y1, y2=0, where=None, **kwargs):
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.fill_between(x, y1, y2, where, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.fill_betweenx)
 def fill_betweenx(y, x1, x2=0, where=None, **kwargs):
@@ -476,15 +511,16 @@ def fill_betweenx(y, x1, x2=0, where=None, **kwargs):
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.fill_betweenx(y, x1, x2, where, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes.pie)
-def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6, shadow=False, 
-    labeldistance=1.1, startangle=0, radius=None, wedgeprops=None, **kwargs):
+def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6, shadow=False,
+        labeldistance=1.1, startangle=0, radius=None, wedgeprops=None, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
@@ -494,16 +530,19 @@ def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.pie(x, explode, labels, colors, autopct, pctdistance, shadow,
-        labeldistance, startangle, radius, wedgeprops, **kwargs)
+                   labeldistance, startangle, radius, wedgeprops, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.boxplot)
-def boxplot(x, sym=None, vert=True, positions=None, widths=None, color=None, showcaps=True, showfliers=True, showmeans=False, \
-        showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):
+def boxplot(x, sym=None, vert=True, positions=None, widths=None, color=None, showcaps=True, showfliers=True,
+            showmeans=False, \
+            showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None,
+            whiskerprops=None, capprops=None, flierprops=None):
     global g_axes
     if g_figure is None:
         figure()
@@ -513,16 +552,18 @@ def boxplot(x, sym=None, vert=True, positions=None, widths=None, color=None, sho
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.boxplot(x, sym, vert, positions, widths, color, showcaps, showfliers, showmeans, \
-        showmedians, meanline, medianline, boxprops, medianprops, meanprops, whiskerprops, capprops, flierprops)
+                       showmedians, meanline, medianline, boxprops, medianprops, meanprops, whiskerprops, capprops,
+                       flierprops)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.violinplot)
 def violinplot(dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None, \
-    whiskerprops=None, **kwargs):
+               whiskerprops=None, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
@@ -532,15 +573,16 @@ def violinplot(dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None
     else:
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
-            
+
     r = g_axes.violinplot(dataset, positions, widths, boxwidth, boxprops, whiskerprops, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(PolarAxes.windrose)
 def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='matlab_jet', \
-    alpha=0.7, rmax=None, rtickloc=None, rticks=None, rlabelpos=60, xticks=None, **kwargs):
+             alpha=0.7, rmax=None, rtickloc=None, rticks=None, rlabelpos=60, xticks=None, **kwargs):
     bottom = kwargs.pop('bottom', None)
     global g_axes
     if g_axes is None:
@@ -555,23 +597,30 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
         draw_if_interactive()
 
     return g_axes, bars
- 
-def figure(facecolor='w', figsize=None, newfig=True, **kwargs):
+
+
+def figure(opengl=True, facecolor='w', figsize=None, newfig=True, **kwargs):
     """
     Creates a figure.
-    
+
+    :param opengl: (*bool*) Optional, use opengl or not. Default is `True`.
     :param facecolor: (*Color*) Optional, fill color of the figure. Default is ``w`` (white) .
     :param figsize: (*list*) Optional, width and height of the figure such as ``[600, 400]`` .
         Default is ``None`` with changeable size same as *Figures* window.
     :param newfig: (*boolean*) Optional, if creates a new figure. Default is ``True`` .
     """
     global g_figure
-    g_figure = Figure(figsize, facecolor=facecolor, **kwargs)
+    if opengl:
+        g_figure = GLFigure(figsize, facecolor=facecolor, **kwargs)
+    else:
+        g_figure = Figure(figsize, facecolor=facecolor, **kwargs)
+
     if not batchmode:
         show(newfig)
-        
+
     return g_figure
-    
+
+
 def glfigure(bgcolor='w', newfig=True, **kwargs):
     """
     Creates a figure.
@@ -585,9 +634,10 @@ def glfigure(bgcolor='w', newfig=True, **kwargs):
         pass
     else:
         show(newfig)
-        
+
     return g_figure
-    
+
+
 def get_figure():
     """
     Get figure object.
@@ -595,16 +645,17 @@ def get_figure():
     :returns: (*Figure*) Figure object.
     """
     return g_figure
-        
+
+
 def show(newfig=True):
     if migl.milapp is None:
-        if not batchmode:            
+        if not batchmode:
             form = ChartForm(g_figure)
             g_figure.paintGraphics()
             form.setSize(600, 500)
             form.setLocationRelativeTo(None)
             form.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
-            form.setVisible(True)     
+            form.setVisible(True)
     else:
         figureDock = migl.milapp.getFigureDock()
         if newfig:
@@ -614,7 +665,8 @@ def show(newfig=True):
                 figureDock.addFigure(g_figure)
             else:
                 figureDock.setCurrentFigure(g_figure)
-    
+
+
 # Set figure background color
 def bgcolor(color):
     """
@@ -624,8 +676,9 @@ def bgcolor(color):
     """
     chart = g_figure.getChart()
     chart.setBackground(plotutil.getcolor(color))
-    draw_if_interactive()    
-    
+    draw_if_interactive()
+
+
 def caxes(ax=None):
     """
     Set or get current axes.
@@ -634,17 +687,18 @@ def caxes(ax=None):
         axes.
     """
     global g_axes
-    chart = g_figure.getChart()    
+    chart = g_figure.getChart()
     if isinstance(ax, int):
         if g_figure is None:
             figure()
-                        
+
         g_axes = __get_axes(chart, ax)
         chart.setCurrentPlot(ax - 1)
     elif not ax is None:
         g_axes = ax
         chart.setCurrentPlot(chart.getPlotIndex(ax._axes))
     return g_axes
+
 
 def subplot(nrows, ncols, plot_number, **kwargs):
     """
@@ -661,14 +715,15 @@ def subplot(nrows, ncols, plot_number, **kwargs):
     """
     if g_figure is None:
         figure()
-        
+
     global g_axes
     g_axes = g_figure.subplot(nrows, ncols, plot_number, **kwargs)
-    
+
     return g_axes
-    
+
+
 def subplots(nrows=1, ncols=1, position=None, sharex=False, sharey=False, \
-    wspace=None, hspace=None, axestype='Axes', **kwargs):
+             wspace=None, hspace=None, axestype='Axes', **kwargs):
     """
     Create a figure and a set of subplots.
     
@@ -690,10 +745,10 @@ def subplots(nrows=1, ncols=1, position=None, sharex=False, sharey=False, \
     global g_figure
     if g_figure is None:
         figure()
-        
+
     axs = g_figure.subplots(nrows, ncols, position, sharex, sharey, \
-        wspace, hspace, axestype, **kwargs)
-        
+                            wspace, hspace, axestype, **kwargs)
+
     global g_axes
     if isinstance(axs[0], tuple):
         g_axes = axs[0][0]
@@ -701,16 +756,18 @@ def subplots(nrows=1, ncols=1, position=None, sharex=False, sharey=False, \
         g_axes = axs[0]
     return g_figure, axs
 
+
 def currentplot(plot_number):
     if g_figure is None:
         figure()
-        
+
     global g_axes
     chart = g_figure.getChart()
     g_axes = __get_axes(chart, plot_number)
     chart.setCurrentPlot(plot_number - 1)
-    
+
     return plot
+
 
 def __get_axes(chart, idx):
     ax = chart.getPlot(idx)
@@ -723,7 +780,8 @@ def __get_axes(chart, idx):
     elif isinstance(ax, Plot3D):
         ax = Plot3D(ax)
     return ax
-    
+
+
 def axes(*args, **kwargs):
     """
     Add an axes to the figure.
@@ -746,17 +804,18 @@ def axes(*args, **kwargs):
     :returns: The axes.
     """
     global g_axes
-               
+
     if g_figure is None or isinstance(g_figure, GLFigure):
         figure()
-        
-    ax = g_figure.add_axes(*args, **kwargs) 
+
+    ax = g_figure.add_axes(*args, **kwargs)
 
     g_axes = ax
     draw_if_interactive()
     return ax
 
-def axesm(*args, **kwargs):  
+
+def axesm(*args, **kwargs):
     """
     Add a map axes to the figure.
     
@@ -785,7 +844,8 @@ def axesm(*args, **kwargs):
     """
     kwargs['axestype'] = 'map'
     return axes(*args, **kwargs)
-    
+
+
 def axes3d(*args, **kwargs):
     """
     Add an axes to the figure.
@@ -824,7 +884,8 @@ def axes3d(*args, **kwargs):
     else:
         kwargs['axestype'] = '3d'
         return axes(*args, **kwargs)
-    
+
+
 def axes3dgl(*args, **kwargs):
     """
     Add a 3d axes with JOGL to the figure.
@@ -843,6 +904,7 @@ def axes3dgl(*args, **kwargs):
 
     draw_if_interactive()
     return ax
+
 
 def axes3d_map(*args, **kwargs):
     """
@@ -863,6 +925,7 @@ def axes3d_map(*args, **kwargs):
     draw_if_interactive()
     return ax
 
+
 def axes3d_earth(*args, **kwargs):
     """
     Add an earth 3d axes with JOGL to the figure.
@@ -881,7 +944,8 @@ def axes3d_earth(*args, **kwargs):
 
     draw_if_interactive()
     return ax
-    
+
+
 def twinx(ax):
     """
     Make a second axes that shares the x-axis. The new axes will overlay *ax*. The ticks 
@@ -896,7 +960,8 @@ def twinx(ax):
     global g_axes
     g_axes = ax2
     return ax2
-    
+
+
 def twiny(ax):
     """
     Make a second axes that shares the y-axis. The new axes will overlay *ax*. The ticks 
@@ -912,12 +977,14 @@ def twiny(ax):
     g_axes = ax2
     return ax2
 
+
 @_copy_docstring_and_deprecators(Axes.xaxis)
 def xaxis(ax=None, **kwargs):
     if ax is None:
         ax = g_axes
     ax.xaxis(**kwargs)
     draw_if_interactive()
+
 
 @_copy_docstring_and_deprecators(Axes.yaxis)
 def yaxis(ax=None, **kwargs):
@@ -926,13 +993,15 @@ def yaxis(ax=None, **kwargs):
     ax.yaxis(**kwargs)
     draw_if_interactive()
 
+
 @_copy_docstring_and_deprecators(Axes3D.zaxis)
 def zaxis(ax=None, **kwargs):
     if ax is None:
         ax = g_axes
     ax.zaxis(**kwargs)
     draw_if_interactive()
-    
+
+
 def box(ax=None, on=None):
     """
     Display axes outline or not.
@@ -954,7 +1023,8 @@ def box(ax=None, on=None):
         else:
             axis.setVisible(on)
     draw_if_interactive()
-    
+
+
 def antialias(b=None, symbol=None):
     """
     Set figure antialias or not.
@@ -965,10 +1035,11 @@ def antialias(b=None, symbol=None):
     """
     if g_figure is None:
         figure()
-    
+
     g_figure.set_antialias(b, symbol)
     draw_if_interactive()
-    
+
+
 def savefig(fname, width=None, height=None, dpi=None, sleep=None):
     """
     Save the current figure.
@@ -1012,7 +1083,8 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
                 g_figure.saveImage(fname, dpi, width, height, sleep)
             else:
                 g_figure.saveImage(fname, dpi, sleep)
-        
+
+
 def savefig_jpeg(fname, width=None, height=None, dpi=None):
     """
     Save the current figure as a jpeg file.
@@ -1024,9 +1096,9 @@ def savefig_jpeg(fname, width=None, height=None, dpi=None):
     :param height: (*int*) Optional, height of the output figure with pixel units. Default
         is None, the output figure size is same as *figures* window.
     """
-    #if (not width is None) and (not height is None):
+    # if (not width is None) and (not height is None):
     #    g_figure.setSize(width, height)
-    #g_figure.paintGraphics()
+    # g_figure.paintGraphics()
     if not dpi is None:
         if (not width is None) and (not height is None):
             g_figure.saveImage_Jpeg(fname, width, height, dpi)
@@ -1036,9 +1108,11 @@ def savefig_jpeg(fname, width=None, height=None, dpi=None):
         if (not width is None) and (not height is None):
             g_figure.saveImage(fname, width, height)
         else:
-            g_figure.saveImage(fname)  
+            g_figure.saveImage(fname)
 
-# Clear current axes
+        # Clear current axes
+
+
 def cla():
     """
     Clear current axes.
@@ -1052,6 +1126,7 @@ def cla():
         g_axes = None
         draw_if_interactive()
 
+
 # Delete current figure
 def delfig():
     """
@@ -1059,14 +1134,15 @@ def delfig():
     """
     if g_figure is None:
         return
-    
+
     figureDock = migl.milapp.getFigureDock()
     figureDock.removeFigure(g_figure)
-    
+
     global g_axes
     g_axes = None
-    #draw_if_interactive()
-    
+    # draw_if_interactive()
+
+
 # Clear current figure    
 def clf():
     """
@@ -1081,11 +1157,12 @@ def clf():
 
     if g_figure.getChart() is None:
         return
-    
+
     g_figure.getChart().clearAll()
     global g_axes
     g_axes = None
     draw_if_interactive()
+
 
 def cll():
     """
@@ -1098,14 +1175,16 @@ def cll():
             g_axes._axes.removeLastGraphic()
             g_axes._axes.setAutoExtent()
         draw_if_interactive()
-        
+
+
 def clc():
     """
     Clear command window.
     """
     if not migl.milapp is None:
         console = migl.milapp.getConsoleDockable().getConsole()
-        console.getTextPane().setText('')   
+        console.getTextPane().setText('')
+
 
 @_copy_docstring_and_deprecators(Axes.set_title)
 def title(label, loc='center', fontname=None, fontsize=14, bold=True, color='black', **kwargs):
@@ -1113,11 +1192,13 @@ def title(label, loc='center', fontname=None, fontsize=14, bold=True, color='bla
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Figure.set_title)
 def suptitle(label, fontname=None, fontsize=14, bold=True, color='black'):
     r = g_figure.set_title(label, fontname, fontsize, bold, color)
     draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Figure.set_xlabel)
 def supxlabel(label, **kwargs):
@@ -1125,11 +1206,13 @@ def supxlabel(label, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Figure.set_ylabel)
 def supylabel(label, **kwargs):
     r = g_figure.set_ylabel(label, **kwargs)
     draw_if_interactive()
     return r
+
 
 def left_title(label, fontname=None, fontsize=14, bold=False, color='black', **kwargs):
     """
@@ -1144,7 +1227,8 @@ def left_title(label, fontname=None, fontsize=14, bold=False, color='black', **k
     r = g_axes.set_title(label, 'left', fontname, fontsize, bold, color, **kwargs)
     draw_if_interactive()
     return r
-    
+
+
 def right_title(label, fontname=None, fontsize=14, bold=False, color='black', **kwargs):
     """
     Set a right sub title of the current axes.
@@ -1159,15 +1243,18 @@ def right_title(label, fontname=None, fontsize=14, bold=False, color='black', **
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes.set_xlabel)
 def xlabel(label, **kwargs):
     g_axes.set_xlabel(label, **kwargs)
     draw_if_interactive()
 
+
 @_copy_docstring_and_deprecators(Axes.set_ylabel)
 def ylabel(label, **kwargs):
     g_axes.set_ylabel(label, **kwargs)
     draw_if_interactive()
+
 
 def zlabel(label, **kwargs):
     """
@@ -1185,6 +1272,7 @@ def zlabel(label, **kwargs):
 
     g_axes.set_zlabel(label, **kwargs)
     draw_if_interactive()
+
 
 def xticks(*args, **kwargs):
     """
@@ -1215,9 +1303,10 @@ def xticks(*args, **kwargs):
     else:
         labels = None
     g_axes.set_xticklabels(labels, **kwargs)
-    
+
     draw_if_interactive()
-    
+
+
 def yticks(*args, **kwargs):
     """
     Set the y-limits of the current tick locations and labels.
@@ -1247,9 +1336,10 @@ def yticks(*args, **kwargs):
     else:
         labels = None
     g_axes.set_yticklabels(labels, **kwargs)
-    
+
     draw_if_interactive()
-    
+
+
 def zticks(*args, **kwargs):
     """
     Set the z-limits of the current tick locations and labels.
@@ -1264,7 +1354,7 @@ def zticks(*args, **kwargs):
     """
     if not isinstance(g_axes, Axes3D):
         return
-        
+
     if len(args) > 0:
         locs = args[0]
         if len(locs) > 0:
@@ -1282,9 +1372,10 @@ def zticks(*args, **kwargs):
     else:
         labels = None
     g_axes.set_zticklabels(labels, **kwargs)
-    
+
     draw_if_interactive()
-    
+
+
 def text(x, y, s, **kwargs):
     """
     Add text to the axes. Add text in string *s* to axis at location *x* , *y* , data
@@ -1315,6 +1406,7 @@ def text(x, y, s, **kwargs):
     draw_if_interactive()
     return ctext
 
+
 @_copy_docstring_and_deprecators(Axes3D.text)
 def text3(x, y, z, s, zdir=None, **kwargs):
     global g_axes
@@ -1328,11 +1420,13 @@ def text3(x, y, z, s, zdir=None, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes.axis)
 def axis(limits):
     r = g_axes.axis(limits)
     if not r is None:
         draw_if_interactive()
+
 
 @_copy_docstring_and_deprecators(MapAxes.axis)
 def axism(limits=None, lonlat=True):
@@ -1340,35 +1434,42 @@ def axism(limits=None, lonlat=True):
     if not r is None:
         draw_if_interactive()
 
+
 @_copy_docstring_and_deprecators(Axes.grid)
 def grid(b=None, **kwargs):
     g_axes.grid(b, **kwargs)
     draw_if_interactive()
+
 
 @_copy_docstring_and_deprecators(Axes.set_xlim)
 def xlim(xmin, xmax):
     g_axes.set_xlim(xmin, xmax)
     draw_if_interactive()
 
+
 @_copy_docstring_and_deprecators(Axes.set_ylim)
 def ylim(ymin, ymax):
     g_axes.set_ylim(ymin, ymax)
-    draw_if_interactive()   
+    draw_if_interactive()
+
 
 @_copy_docstring_and_deprecators(Axes3D.set_zlim)
 def zlim(zmin, zmax):
     g_axes.set_zlim(zmin, zmax)
-    draw_if_interactive()   
+    draw_if_interactive()
+
 
 @_copy_docstring_and_deprecators(Axes.xreverse)
 def xreverse():
     g_axes.xreverse()
     draw_if_interactive()
 
+
 @_copy_docstring_and_deprecators(Axes.yreverse)
 def yreverse():
     g_axes.yreverse()
     draw_if_interactive()
+
 
 @_copy_docstring_and_deprecators(Axes.legend)
 def legend(*args, **kwargs):
@@ -1376,7 +1477,8 @@ def legend(*args, **kwargs):
     if not r is None:
         draw_if_interactive()
     return r
-    
+
+
 def readlegend(fn):
     """
     Read legend from a legend file (.lgs).
@@ -1393,6 +1495,7 @@ def readlegend(fn):
         print('File not exists: ' + fn)
         return None
 
+
 @_copy_docstring_and_deprecators(Axes.colorbar)
 def colorbar(mappable=None, **kwargs):
     cax = kwargs.pop('cax', None)
@@ -1401,6 +1504,7 @@ def colorbar(mappable=None, **kwargs):
     cb = cax.colorbar(mappable, **kwargs)
     draw_if_interactive()
     return cb
+
 
 # def set(obj, **kwargs):
 #     """
@@ -1435,11 +1539,12 @@ def imshow(*args, **kwargs):
     # else:
     #     if g_axes.axestype != 'cartesian':
     #         g_axes = axes()
-            
+
     r = g_axes.imshow(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.pcolor)
 def pcolor(*args, **kwargs):
@@ -1452,11 +1557,12 @@ def pcolor(*args, **kwargs):
     # else:
     #     if g_axes.axestype != 'cartesian':
     #         g_axes = axes()
-            
+
     r = g_axes.pcolor(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.gridshow)
 def gridshow(*args, **kwargs):
@@ -1469,11 +1575,12 @@ def gridshow(*args, **kwargs):
     # else:
     #     if g_axes.axestype != 'cartesian':
     #         g_axes = axes()
-            
+
     r = g_axes.gridshow(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.contour)
 def contour(*args, **kwargs):
@@ -1486,11 +1593,12 @@ def contour(*args, **kwargs):
     # else:
     #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
     #         g_axes = axes()
-            
+
     r = g_axes.contour(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.contourf)
 def contourf(*args, **kwargs):
@@ -1503,11 +1611,12 @@ def contourf(*args, **kwargs):
     # else:
     #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
     #         g_axes = axes()
-            
+
     r = g_axes.contourf(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.quiver)
 def quiver(*args, **kwargs):
@@ -1520,11 +1629,12 @@ def quiver(*args, **kwargs):
     # else:
     #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
     #         g_axes = axes()
-            
+
     r = g_axes.quiver(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r    
+    return r
+
 
 @_copy_docstring_and_deprecators(Axes3D.quiver)
 def quiver3(*args, **kwargs):
@@ -1537,6 +1647,7 @@ def quiver3(*args, **kwargs):
 
     return g_axes.quiver(*args, **kwargs)
 
+
 @_copy_docstring_and_deprecators(Axes.barbs)
 def barbs(*args, **kwargs):
     global g_axes
@@ -1548,11 +1659,12 @@ def barbs(*args, **kwargs):
     # else:
     #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
     #         g_axes = axes()
-            
+
     r = g_axes.barbs(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r  
+    return r
+
 
 @_copy_docstring_and_deprecators(Axes.streamplot)
 def streamplot(*args, **kwargs):
@@ -1565,11 +1677,12 @@ def streamplot(*args, **kwargs):
     # else:
     #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
     #         g_axes = axes()
-            
+
     r = g_axes.streamplot(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r      
+    return r
+
 
 @_copy_docstring_and_deprecators(MapAxes.scatter)
 def scatterm(*args, **kwargs):
@@ -1582,11 +1695,12 @@ def scatterm(*args, **kwargs):
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.scatter(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes3D.streamplot)
 def streamplot3(*args, **kwargs):
@@ -1601,6 +1715,7 @@ def streamplot3(*args, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes3DGL.streamslice)
 def streamslice(*args, **kwargs):
     global g_axes
@@ -1614,6 +1729,7 @@ def streamslice(*args, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(MapAxes.plot)
 def plotm(*args, **kwargs):
     global g_axes
@@ -1625,11 +1741,12 @@ def plotm(*args, **kwargs):
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.plot(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r  
+    return r
+
 
 @_copy_docstring_and_deprecators(MapAxes.stationmodel)
 def stationmodel(smdata, **kwargs):
@@ -1642,124 +1759,132 @@ def stationmodel(smdata, **kwargs):
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.stationmodel(smdata, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r  
+    return r
+
 
 @_copy_docstring_and_deprecators(MapAxes.imshow)
 def imshowm(*args, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
-        
+
     if g_axes is None:
         g_axes = axesm()
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.imshow(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    
+
     return r
+
 
 @_copy_docstring_and_deprecators(MapAxes.contour)
 def contourm(*args, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
-        
+
     if g_axes is None:
         g_axes = axesm()
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.contour(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    
+
     return r
+
 
 @_copy_docstring_and_deprecators(MapAxes.contourf)
 def contourfm(*args, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
-        
+
     if g_axes is None:
         g_axes = axesm()
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.contourf(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    
+
     return r
+
 
 @_copy_docstring_and_deprecators(MapAxes.pcolor)
 def pcolorm(*args, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
-        
+
     if g_axes is None:
         g_axes = axesm()
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.pcolor(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    
+
     return r
+
 
 @_copy_docstring_and_deprecators(MapAxes.gridshow)
 def gridshowm(*args, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
-        
+
     if g_axes is None:
         g_axes = axesm()
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.gridshow(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    
+
     return r
+
 
 @_copy_docstring_and_deprecators(MapAxes.quiver)
 def quiverm(*args, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
-        
+
     if g_axes is None:
         g_axes = axesm()
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.quiver(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    
+
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.quiverkey)
 def quiverkey(*args, **kwargs):
     g_axes.quiverkey(*args, **kwargs)
     draw_if_interactive()
+
 
 @_copy_docstring_and_deprecators(MapAxes.barbs)
 def barbsm(*args, **kwargs):
@@ -1772,11 +1897,12 @@ def barbsm(*args, **kwargs):
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.barbs(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r   
+    return r
+
 
 @_copy_docstring_and_deprecators(MapAxes.streamplot)
 def streamplotm(*args, **kwargs):
@@ -1789,11 +1915,12 @@ def streamplotm(*args, **kwargs):
     else:
         if g_axes.axestype != 'map':
             g_axes = axesm()
-            
+
     r = g_axes.streamplot(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    return r   
+    return r
+
 
 @_copy_docstring_and_deprecators(Axes.clabel)
 def clabel(layer, **kwargs):
@@ -1801,7 +1928,7 @@ def clabel(layer, **kwargs):
     Add contour layer labels.
     
     :param layer: (*MILayer*) The contour layer.
-    :param fontname, fontsize: The font auguments.
+    :param fontname, fontsize: The font arguments.
     :param color: (*color*) The label color. Default is ``None``, the label color will be set as
         same as color of the line.
     :param dynamic: (*boolean*) Draw labels dynamic or not. Default is ``True``.
@@ -1810,9 +1937,10 @@ def clabel(layer, **kwargs):
     :param xoffset: (*int*) X offset of the labels.
     :param yoffset: (int*) Y offset of the labels.
     :param avoidcoll: (*boolean*) Avoid labels collision or not.
-    """    
+    """
     g_axes.clabel(layer, **kwargs)
     draw_if_interactive()
+
 
 @_copy_docstring_and_deprecators(MapAxes.webmap)
 def webmap(provider='OpenStreetMap', zorder=0):
@@ -1820,23 +1948,25 @@ def webmap(provider='OpenStreetMap', zorder=0):
     draw_if_interactive()
     return layer
 
+
 @_copy_docstring_and_deprecators(MapAxes.geoshow)
 def geoshow(*args, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
-        
+
     if g_axes is None:
         g_axes = axesm()
     else:
         if not isinstance(g_axes, (MapAxes, Axes3D)):
             g_axes = axesm()
-            
+
     r = g_axes.geoshow(*args, **kwargs)
     if not r is None:
         draw_if_interactive()
-    
+
     return r
+
 
 @_copy_docstring_and_deprecators(Axes.taylor_diagram)
 def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., colors=None,
@@ -1849,12 +1979,13 @@ def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., c
         g_axes = axes()
     else:
         if g_axes.axestype != 'cartesian':
-            g_axes = axes(position=[0.13,0.11,0.775,0.75])
+            g_axes = axes(position=[0.13, 0.11, 0.775, 0.75])
 
     r = g_axes.taylor_diagram(stddev, correlation, std_max, labels, ref_std, colors, **kwargs)
     if not r is None:
         draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes3DGL.set_lighting)
 def lighting(enable=True, **kwargs):
@@ -1868,6 +1999,7 @@ def lighting(enable=True, **kwargs):
     g_axes.set_lighting(enable, **kwargs)
     draw_if_interactive()
 
+
 @_copy_docstring_and_deprecators(Axes3DGL.set_material)
 def material(mvalues):
     global g_axes
@@ -1879,6 +2011,7 @@ def material(mvalues):
 
     g_axes.set_material(mvalues)
     draw_if_interactive()
+
 
 @_copy_docstring_and_deprecators(Axes3D.mesh)
 def mesh(*args, **kwargs):
@@ -1893,6 +2026,7 @@ def mesh(*args, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes3D.surf)
 def surf(*args, **kwargs):
     global g_axes
@@ -1905,6 +2039,21 @@ def surf(*args, **kwargs):
     r = g_axes.surf(*args, **kwargs)
     draw_if_interactive()
     return r
+
+
+@_copy_docstring_and_deprecators(Axes3DGL.trisurf)
+def trisurf(T, x, y, z, **kwargs):
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
+
+    r = g_axes.trisurf(T, x, y, z, **kwargs)
+    draw_if_interactive()
+    return r
+
 
 @_copy_docstring_and_deprecators(Axes3DGL.slice)
 def slice3(*args, **kwargs):
@@ -1919,6 +2068,7 @@ def slice3(*args, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes3DGL.contourslice)
 def contourslice(*args, **kwargs):
     global g_axes
@@ -1931,6 +2081,7 @@ def contourslice(*args, **kwargs):
     r = g_axes.contourslice(*args, **kwargs)
     draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes3DGL.contourfslice)
 def contourfslice(*args, **kwargs):
@@ -1945,6 +2096,7 @@ def contourfslice(*args, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes3DGL.isosurface)
 def isosurface(*args, **kwargs):
     global g_axes
@@ -1958,8 +2110,9 @@ def isosurface(*args, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes3DGL.fimplicit3)
-def fimplicit3(f, interval=[-5.,5.], mesh_density=35, *args, **kwargs):
+def fimplicit3(f, interval=[-5., 5.], mesh_density=35, *args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -1970,6 +2123,7 @@ def fimplicit3(f, interval=[-5.,5.], mesh_density=35, *args, **kwargs):
     r = g_axes.fimplicit3(f, interval, mesh_density, *args, **kwargs)
     draw_if_interactive()
     return r
+
 
 @_copy_docstring_and_deprecators(Axes3DGL.particles)
 def particles(*args, **kwargs):
@@ -1984,6 +2138,7 @@ def particles(*args, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(Axes3DGL.volumeplot)
 def volumeplot(*args, **kwargs):
     global g_axes
@@ -1997,14 +2152,17 @@ def volumeplot(*args, **kwargs):
     draw_if_interactive()
     return r
 
+
 @_copy_docstring_and_deprecators(plotutil.makecolors)
 def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop=None):
     return plotutil.makecolors(n, cmap, reverse, alpha, start, stop)
 
+
 @_copy_docstring_and_deprecators(plotutil.makelegend)
 def makelegend(source, **kwargs):
     return plotutil.makelegend(source, **kwargs)
-    
+
+
 def makesymbolspec(geometry, *args, **kwargs):
     """
     Make a legend.
@@ -2024,7 +2182,7 @@ def makesymbolspec(geometry, *args, **kwargs):
         shapetype = ShapeTypes.POLYLINE
     elif geometry == 'polygon':
         shapetype = ShapeTypes.POLYGON
-        
+
     levels = kwargs.pop('levels', None)
     cols = kwargs.pop('colors', None)
     field = kwargs.pop('field', '')
@@ -2035,7 +2193,7 @@ def makesymbolspec(geometry, *args, **kwargs):
         for cobj in cols:
             colors.append(plotutil.getcolor(cobj))
         ls = LegendManage.createLegendScheme(shapetype, levels, colors)
-        plotutil.setlegendscheme(ls, **kwargs)         
+        plotutil.setlegendscheme(ls, **kwargs)
         ls.setFieldName(field)
         values = kwargs.pop('values', None)
         if values is None:
@@ -2045,7 +2203,7 @@ def makesymbolspec(geometry, *args, **kwargs):
             for v in values:
                 nls.addLegendBreak(ls.findLegendBreak(v))
             return nls
-           
+
     n = len(args)
     isunique = True
     if n == 0:
@@ -2068,16 +2226,17 @@ def makesymbolspec(geometry, *args, **kwargs):
                 if isunique and not isu:
                     isunique = False
                 ls.addLegendBreak(lb)
-       
+
     ls.setFieldName(field)
     if ls.getBreakNum() > 1:
         if isunique:
             ls.setLegendType(LegendType.UNIQUE_VALUE)
         else:
             ls.setLegendType(LegendType.GRADUATED_COLOR)
-            
+
     return ls
-    
+
+
 def weatherspec(weather='all', size=20, color='b'):
     """
     Make a weather symbol legend.
@@ -2094,7 +2253,8 @@ def weatherspec(weather='all', size=20, color='b'):
         wlist = weather
     c = plotutil.getcolor(color)
     return DrawMeteoData.createWeatherLegendScheme(wlist, size, c)
-    
+
+
 def cloudspec(size=12, color='b'):
     """
     Make a cloud amount symbol legend.
@@ -2107,11 +2267,13 @@ def cloudspec(size=12, color='b'):
     c = plotutil.getcolor(color)
     return DrawMeteoData.createCloudLegendScheme(size, c)
 
+
 @_copy_docstring_and_deprecators(MapAxes.masklayer)
 def masklayer(mobj, layers):
     g_axes.masklayer(mobj, layers)
     draw_if_interactive()
-        
+
+
 def gifanimation(filename, repeat=0, delay=1000):
     """
     Create a gif animation file
@@ -2127,6 +2289,7 @@ def gifanimation(filename, repeat=0, delay=1000):
     encoder.start(filename)
     return encoder
 
+
 def gifaddframe(animation, width=None, height=None, dpi=None):
     """
     Add a frame to a gif animation object
@@ -2136,7 +2299,7 @@ def gifaddframe(animation, width=None, height=None, dpi=None):
     :param height: (*int*) Image height
     :param dpi: (*int*) Image resolution
     """
-    #chartpanel.paintGraphics()
+    # chartpanel.paintGraphics()
     if dpi is None:
         if width is None or height is None:
             animation.addFrame(g_figure.paintViewImage())
@@ -2147,7 +2310,8 @@ def gifaddframe(animation, width=None, height=None, dpi=None):
             animation.addFrame(g_figure.paintViewImage(dpi))
         else:
             animation.addFrame(g_figure.paintViewImage(width, height, dpi))
-    
+
+
 def giffinish(animation):
     """
     Finish a gif animation object and write gif animation image file
@@ -2155,13 +2319,15 @@ def giffinish(animation):
     :param animation: Gif animation object
     """
     animation.finish()
-        
+
+
 def clear():
     """
     Clear all variables.
     """
     migl.milapp.delVariables()
-    
+
+
 def gc_collect():
     """
     Clear variables and release memory
@@ -2169,6 +2335,7 @@ def gc_collect():
     clear()
     import gc
     gc.collect()
+
 
 def refresh():
     """

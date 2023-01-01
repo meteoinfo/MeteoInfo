@@ -9,10 +9,11 @@ from ._glfigure import GLFigure
 from .patches import *
 from .lines import *
 from .colors import *
+from .io import *
 
-
-__all__ = ['Figure','GLFigure','Axes','PolarAxes','MapAxes','Axes3D','Axes3DGL']
+__all__ = ['Figure', 'GLFigure', 'Axes', 'PolarAxes', 'MapAxes', 'Axes3D', 'Axes3DGL']
 __all__ += miplot.__all__
 __all__ += patches.__all__
 __all__ += lines.__all__
 __all__ += colors.__all__
+__all__ += io.__all__

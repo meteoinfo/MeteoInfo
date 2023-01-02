@@ -1322,7 +1322,7 @@ class Axes3DGL(Axes3D):
         """
         return self.isosurface(*args, **kwargs)
 
-    def trisurf(self, T, x, y, z, **kwargs):
+    def trisurf(self, T, x, y, z, normal=None, **kwargs):
         """
         Triangular surface plot.
 
@@ -1331,6 +1331,7 @@ class Axes3DGL(Axes3D):
         :param x: (*array*) X coordinates array.
         :param y: (*array*) Y coordinates array.
         :param z: (*array*) Z coordinates array.
+        :param normal: (*array*) Normal array. Default is `None`.
 
         :return: Triangle mesh graphic.
         """
@@ -1342,7 +1343,11 @@ class Axes3DGL(Axes3D):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
 
-        graphics = GraphicFactory.triSurface(T._array, x._array, y._array, z._array, ls)
+        if normal is None:
+            graphics = GraphicFactory.triSurface(T._array, x._array, y._array, z._array, ls)
+        else:
+            graphics = GraphicFactory.triSurface(T._array, x._array, y._array, z._array,
+                                                 normal._array, ls)
 
         visible = kwargs.pop('visible', True)
         if visible:

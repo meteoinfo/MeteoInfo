@@ -2,6 +2,10 @@ package org.meteoinfo.chart.graphic;
 
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Triangle3D {
     private Vector3f pointA;
     private Vector3f pointB;
@@ -118,5 +122,21 @@ public class Triangle3D {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Get all points
+     * @return All points
+     */
+    public List<Vector3f> getPoints() {
+        return new ArrayList<Vector3f>(Arrays.asList(pointA, pointB, pointC));
+    }
+
+    /**
+     * Get all normals
+     * @return All normals
+     */
+    public List<Vector3f> getNormals() {
+        return new ArrayList<Vector3f>(Arrays.asList(getNormalA(), getNormalB(), getNormalC()));
     }
 }

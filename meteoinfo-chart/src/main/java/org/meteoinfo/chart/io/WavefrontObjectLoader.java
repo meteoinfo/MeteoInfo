@@ -6,6 +6,7 @@ import org.meteoinfo.ndarray.DataType;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -106,21 +107,34 @@ public class WavefrontObjectLoader {
         for (int loop = 1; loop < sdata.length; loop++) {
             String s = sdata[loop];
             String[] temp = s.split("/");
-            vdata[loop - 1] = Integer.valueOf(temp[0]);         //always add vertex indices
+            vdata[loop - 1] = Integer.valueOf(temp[0]) - 1;         //always add vertex indices
             if (temp.length > 1) {                              //we have v and vt data
-                vtdata[loop - 1] = Integer.valueOf(temp[1]);    //add in vt indices
+                vtdata[loop - 1] = Integer.valueOf(temp[1]) - 1;    //add in vt indices
             } else {
                 vtdata[loop - 1] = 0;                           //if no vt data is present fill in zeros
             }
             if (temp.length > 2) {                              //we have v, vt, and vn data
-                vndata[loop - 1] = Integer.valueOf(temp[2]);    //add in vn indices
+                vndata[loop - 1] = Integer.valueOf(temp[2]) - 1;    //add in vn indices
             } else {
                 vndata[loop - 1] = 0;                           //if no vn data is present fill in zeros
             }
         }
-        fv.add(vdata);
-        ft.add(vtdata);
-        fn.add(vndata);
+        if (vdata.length == 3) {
+            fv.add(vdata);
+            ft.add(vtdata);
+            fn.add(vndata);
+        } else {
+            fv.addAll(quad2Triangles(vdata));
+            ft.addAll(quad2Triangles(vtdata));
+            fn.addAll(quad2Triangles(vndata));
+        }
+    }
+
+    private ArrayList<int[]> quad2Triangles(int[] data) {
+        int[] triangle1 = new int[]{data[0], data[1], data[2]};
+        int[] triangle2 = new int[]{data[2], data[3], data[0]};
+
+        return new ArrayList<int[]>(Arrays.asList(triangle1, triangle2));
     }
 
     /**
@@ -237,6 +251,10 @@ public class WavefrontObjectLoader {
      */
     public Array getVertexNormalArray() {
         int n = vnData.size();
+        if (n == 0) {
+            return null;
+        }
+
         Array r = Array.factory(DataType.FLOAT, new int[]{n, 3});
         float[] v;
         int idx = 0;

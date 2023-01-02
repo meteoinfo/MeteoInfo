@@ -2042,7 +2042,7 @@ def surf(*args, **kwargs):
 
 
 @_copy_docstring_and_deprecators(Axes3DGL.trisurf)
-def trisurf(T, x, y, z, **kwargs):
+def trisurf(T, x, y, z, normal=None, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
@@ -2050,7 +2050,7 @@ def trisurf(T, x, y, z, **kwargs):
         if not isinstance(g_axes, Axes3DGL):
             g_axes = axes3dgl()
 
-    r = g_axes.trisurf(T, x, y, z, **kwargs)
+    r = g_axes.trisurf(T, x, y, z, normal, **kwargs)
     draw_if_interactive()
     return r
 

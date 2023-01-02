@@ -15,17 +15,21 @@ import org.meteoinfo.ndarray.math.ArrayUtil;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class TriMeshGraphic extends GraphicCollection3D {
+
+    private Logger logger = Logger.getLogger("TriMeshGraphic");
     private float[] vertexPosition;
     private float[] vertexValue;
     private float[] vertexColor;
     private float[] vertexNormal;
     private int[] vertexIndices;
-    private LinkedHashMap<Integer, List<Integer>> triangleMap;
+    //private LinkedHashMap<Integer, List<Integer>> triangleMap;
     private boolean faceInterp;
     private boolean edgeInterp;
     private boolean mesh;
+    private boolean normalLoaded = false;
 
     /**
      * Constructor
@@ -190,7 +194,6 @@ public class TriMeshGraphic extends GraphicCollection3D {
         this.vertexIndices = new int[n];
         Vector3f vector3f;
         int idx = 0, vertexIdx = 0, triangleIdx = 0, index, ii;
-        triangleMap = new LinkedHashMap<>();
         List<Integer> idxList = new ArrayList<>();
         for (int i = 0; i < n / 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -199,14 +202,8 @@ public class TriMeshGraphic extends GraphicCollection3D {
                 if (map.containsKey(vector3f)) {
                     index = map.get(vector3f);
                     vertexIndices[vertexIdx] = index;
-                    idxList = triangleMap.get(index);
-                    idxList.add(triangleIdx);
-                    triangleMap.put(index, idxList);
                 } else {
                     vertexIndices[vertexIdx] = idx;
-                    idxList = new ArrayList<>();
-                    idxList.add(triangleIdx);
-                    triangleMap.put(idx, idxList);
                     map.put(vector3f, idx++);
                 }
 
@@ -232,93 +229,13 @@ public class TriMeshGraphic extends GraphicCollection3D {
      * @param vertexData The triangle vertex
      * @param faceIndices The triangle face indices
      */
-    public void setTriangles(List<float[]> vertexes, List<int[]> faceIndices) {
-        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<Integer, Integer>();
-        int n = vertexes.size();
-        int idx = 0, vertexIdx = 0, triangleIdx = 0, index;
-        triangleMap = new LinkedHashMap<>();
-        List<Integer> idxList = new ArrayList<>();
-        int nFace = faceIndices.size();
-        this.vertexIndices = new int[nFace * 3];
-        int[] vIdx;
-        for (int i = 0; i < nFace; i++) {
-            vIdx = faceIndices.get(i);
-            for (int j = 0; j < vIdx.length; j++) {
-                vIdx[j] = vIdx[j] - 1;
-            }
-            System.arraycopy(vIdx, 0, vertexIndices, vertexIdx, 3);
-            for (int j : vIdx) {
-                if (map.containsKey(j)) {
-                    index = map.get(j);
-                    idxList = triangleMap.get(index);
-                    idxList.add(triangleIdx);
-                    triangleMap.put(index, idxList);
-                } else {
-                    idxList = new ArrayList<>();
-                    idxList.add(triangleIdx);
-                    triangleMap.put(idx, idxList);
-                    map.put(j, idx++);
-                }
-            }
-
-            vertexIdx += 3;
-            triangleIdx += 1;
-        }
-
-        this.vertexPosition = new float[n * 3];
-        idx = 0;
-        float[] v;
-        for (int i = 0; i < n; i++) {
-            v = vertexes.get(i);
-            System.arraycopy(v, 0, vertexPosition, idx, 3);
-            idx += 3;
-        }
-
-        updateExtent();
-    }
-
-    /**
-     * Set triangles
-     * @param vertexData The triangle vertex
-     * @param faceIndices The triangle face indices
-     */
     public void setTriangles(Array vertexes, Array faceIndices) {
         vertexes = vertexes.copyIfView();
         faceIndices = faceIndices.copyIfView();
 
-        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<Integer, Integer>();
-        int n = vertexes.getShape()[0];
-        int idx = 0, vertexIdx = 0, triangleIdx = 0, index;
-        triangleMap = new LinkedHashMap<>();
-        List<Integer> idxList = new ArrayList<>();
-        int nFace = faceIndices.getShape()[0];
-        this.vertexIndices = new int[nFace * 3];
-        int v;
-        for (int i = 0; i < nFace; i++) {
-            for (int j = 0; j < 3; j++) {
-                v = faceIndices.getInt(i * 3 + j) - 1;
-                vertexIndices[vertexIdx] = v;
-                if (map.containsKey(j)) {
-                    index = map.get(j);
-                    idxList = triangleMap.get(index);
-                    idxList.add(triangleIdx);
-                    triangleMap.put(index, idxList);
-                } else {
-                    idxList = new ArrayList<>();
-                    idxList.add(triangleIdx);
-                    triangleMap.put(idx, idxList);
-                    map.put(j, idx++);
-                }
-                vertexIdx += 1;
-            }
-            triangleIdx += 1;
-        }
+        this.vertexIndices = (int[]) faceIndices.getStorage();
 
-        this.vertexPosition = new float[n * 3];
-        idx = 0;
-        for (int i = 0; i < n * 3; i++) {
-            vertexPosition[i] = vertexes.getFloat(i);
-        }
+        this.vertexPosition = (float[]) vertexes.getStorage();
 
         updateExtent();
     }
@@ -331,40 +248,18 @@ public class TriMeshGraphic extends GraphicCollection3D {
      * @param z Z coordinate array
      */
     public void setTriangles(Array faceIndices, Array x, Array y, Array z) {
+        logger.info("Start set triangles...");
+
         x = x.copyIfView();
         y = y.copyIfView();
         z = z.copyIfView();
         faceIndices = faceIndices.copyIfView();
 
-        List<Integer> map = new ArrayList<>();
-        int n = x.getShape()[0];
-        int idx = 0, vertexIdx = 0, triangleIdx = 0, index;
-        triangleMap = new LinkedHashMap<>();
-        List<Integer> idxList = new ArrayList<>();
-        int nFace = faceIndices.getShape()[0];
-        this.vertexIndices = new int[nFace * 3];
-        int v;
-        for (int i = 0; i < nFace; i++) {
-            for (int j = 0; j < 3; j++) {
-                v = faceIndices.getInt(i * 3 + j) - 1;
-                vertexIndices[vertexIdx] = v;
-                if (map.contains(v)) {
-                    idxList = triangleMap.get(v);
-                    idxList.add(triangleIdx);
-                    triangleMap.put(v, idxList);
-                } else {
-                    idxList = new ArrayList<>();
-                    idxList.add(triangleIdx);
-                    triangleMap.put(v, idxList);
-                    map.add(v);
-                }
-                vertexIdx += 1;
-            }
-            triangleIdx += 1;
-        }
+        this.vertexIndices = (int[]) faceIndices.getStorage();
 
+        int n = x.getShape()[0];
         this.vertexPosition = new float[n * 3];
-        idx = 0;
+        int idx = 0;
         for (int i = 0; i < n; i++) {
             vertexPosition[idx] = x.getFloat(i);
             vertexPosition[idx + 1] = y.getFloat(i);
@@ -373,6 +268,72 @@ public class TriMeshGraphic extends GraphicCollection3D {
         }
 
         updateExtent();
+
+        logger.info("Set triangles finished!");
+    }
+
+    /**
+     * Set triangles
+     * @param faceIndices The triangle face indices
+     * @param x X coordinate array
+     * @param y Y coordinate array
+     * @param z Z coordinate array
+     */
+    public void setTriangles(Array faceIndices, Array x, Array y, Array z, Array normal) {
+        logger.info("Start set triangles...");
+
+        x = x.copyIfView();
+        y = y.copyIfView();
+        z = z.copyIfView();
+        normal = normal.copyIfView();
+        faceIndices = faceIndices.copyIfView();
+
+        int vertexIdx = 0;
+        int nFace = faceIndices.getShape()[0];
+        this.vertexIndices = (int[]) faceIndices.getStorage();
+        /*for (int i = 0; i < nFace; i++) {
+            for (int j = 0; j < 3; j++) {
+                vertexIndices[vertexIdx] = faceIndices.getInt(i * 3 + j) - 1;
+                vertexIdx += 1;
+            }
+        }*/
+
+        logger.info("Set vertex position and normal...");
+        int n = x.getShape()[0];
+        this.vertexPosition = new float[n * 3];
+        this.vertexNormal = (float[]) normal.getStorage();
+        int idx = 0;
+        float xx, yy, zz;
+        float minX = Float.MAX_VALUE, maxX = Float.MIN_VALUE, minY = minX, maxY = maxX,
+                minZ = minX, maxZ = maxX;
+        for (int i = 0; i < n; i++) {
+            xx = x.getFloat(i);
+            yy = y.getFloat(i);
+            zz = z.getFloat(i);
+            vertexPosition[idx] = xx;
+            vertexPosition[idx + 1] = yy;
+            vertexPosition[idx + 2] = zz;
+            idx += 3;
+            if (minX > xx)
+                minX = xx;
+            if (maxX < xx)
+                maxX = xx;
+            if (minY > yy)
+                minY = yy;
+            if (maxY < yy)
+                maxY = yy;
+            if (minZ > zz)
+                minZ = zz;
+            if (maxZ < zz)
+                maxZ = zz;
+        }
+        this._extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
+
+        this.normalLoaded = true;
+
+        //updateExtent();
+
+        logger.info("Set triangles finished!");
     }
 
     /**
@@ -389,7 +350,6 @@ public class TriMeshGraphic extends GraphicCollection3D {
         this.vertexIndices = new int[n];
         Vector3f vector3f;
         int idx = 0, vertexIdx = 0, triangleIdx = 0, index, ii;
-        triangleMap = new LinkedHashMap<>();
         List<Integer> idxList = new ArrayList<>();
         for (int i = 0; i < n / 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -398,14 +358,8 @@ public class TriMeshGraphic extends GraphicCollection3D {
                 if (map.containsKey(vector3f)) {
                     index = map.get(vector3f);
                     vertexIndices[vertexIdx] = index;
-                    idxList = triangleMap.get(index);
-                    idxList.add(triangleIdx);
-                    triangleMap.put(index, idxList);
                 } else {
                     vertexIndices[vertexIdx] = idx;
-                    idxList = new ArrayList<>();
-                    idxList.add(triangleIdx);
-                    triangleMap.put(idx, idxList);
                     map.put(vector3f, idx++);
                 }
 
@@ -500,7 +454,6 @@ public class TriMeshGraphic extends GraphicCollection3D {
         float x, y, z;
         float minX = Float.MAX_VALUE, maxX = Float.MIN_VALUE, minY = minX, maxY = maxX,
                 minZ = minX, maxZ = maxX;
-        int idx = 0;
         for (int i = 0; i < vertexPosition.length; i+=3) {
             x = vertexPosition[i];
             y = vertexPosition[i + 1];
@@ -571,8 +524,11 @@ public class TriMeshGraphic extends GraphicCollection3D {
     /**
      * Given the vertex coordinates of a shape this function calculates the
      * normal vector coordinates.
-     */
-    public void calculateNormalVectors(float[] vData) {
+     *//*
+    public void calculateNormalVectors_bak(float[] vData) {
+        if (this.normalLoaded)
+            return;
+
         List<Triangle3D> triangles = getTriangles(vData);
         int nVertex = getVertexNumber();
         vertexNormal = new float[vData.length];
@@ -593,66 +549,43 @@ public class TriMeshGraphic extends GraphicCollection3D {
             vertexNormal[i * 3 + 1] = normal.y;
             vertexNormal[i * 3 + 2] = normal.z;
         }
-    }
+    }*/
 
     /**
      * Given the vertex coordinates of a shape this function calculates the
      * normal vector coordinates.
      */
-    public void calculateNormalVectors_bak(float[] vData) {
-        // Temporary storage for the normal vector coordinates
-        // there's one temporary array for each dimension.
-        int n = vData.length / 3;
-        float[] nx = new float[n];
-        float[] ny = new float[n];
-        float[] nz = new float[n];
+    public void calculateNormalVectors(float[] vData) {
+        if (this.vertexNormal != null)
+            return;
 
-        // Temporary storage for the vertex coordinates
-        // there's one temporary array for each dimension.
-        float[] x = new float[n];
-        float[] y = new float[n];
-        float[] z = new float[n];
-
-        // Load the coordinate values into their respective arrays.
-        int counter = 0;
-        for (int i = 0; i < n; i++) {
-            x[i] = vData[counter];
-            counter++;
-            y[i] = vData[counter];
-            counter++;
-            z[i] = vData[counter];
-            counter++;
+        List<Triangle3D> triangles = getTriangles(vData);
+        int nVertex = getVertexNumber();
+        vertexNormal = new float[vData.length];
+        Vector3f vertex, normal;
+        List<Integer> indexes;
+        HashMap<Vector3f, Vector3f> normalMap = new LinkedHashMap<>();
+        for (Triangle3D triangle : triangles) {
+            List<Vector3f> points = triangle.getPoints();
+            List<Vector3f> normals = triangle.getNormals();
+            for (int i = 0; i < 3; i++) {
+                vertex = points.get(i);
+                normal = normals.get(i);
+                if (normalMap.containsKey(vertex)) {
+                    normalMap.put(vertex, normalMap.get(vertex).add(normal));
+                } else {
+                    normalMap.put(vertex, normal);
+                }
+            }
         }
-
-        // Compute normals for each vertex.
-        for (int i = 0; i < n; i += 3) {
-            float[] normal = JOGLUtil.normalize(new float[]{x[i], y[i], z[i]}, new float[]{x[i+1], y[i+1], z[i+1]},
-                    new float[]{x[i+2], y[i+2], z[i+2]});
-
-            nx[i] += normal[0];
-            ny[i] += normal[1];
-            nz[i] += normal[2];
-
-            nx[i + 1] += normal[0];
-            ny[i + 1] += normal[1];
-            nz[i + 1] += normal[2];
-
-            nx[i + 2] += normal[0];
-            ny[i + 2] += normal[1];
-            nz[i + 2] += normal[2];
-        }
-
-        // Copy the data for the normal vectors from the temporary arrays into
-        // the permanent normalArray vector.
-        vertexNormal = new float[n * 3];
-        counter = 0;
-        for (int i = 0; i < n; i++) {
-            vertexNormal[counter] = nx[i];
-            counter++;
-            vertexNormal[counter] = ny[i];
-            counter++;
-            vertexNormal[counter] = nz[i];
-            counter++;
+        for (int i = 0; i < nVertex; i++) {
+            vertex = getVertex(i);
+            normal = normalMap.get(vertex);
+            normal.normalize();
+            normal.negate();
+            vertexNormal[i * 3] = normal.x;
+            vertexNormal[i * 3 + 1] = normal.y;
+            vertexNormal[i * 3 + 2] = normal.z;
         }
     }
 }

@@ -18,5 +18,8 @@ def load_obj_model(filename):
     x = vertex[0]
     y = vertex[1]
     z = vertex[2]
+    normal = obj.getVertexNormalArray()
+    if normal is not None:
+        normal = np.array(normal)
 
-    return np.array(face), np.array(x), np.array(y), np.array(z)
+    return np.array(face), np.array(x), np.array(y), np.array(z), normal

@@ -10,6 +10,7 @@ import plotlib as plt
 import meteolib as meteo
 import imagelib
 from dataframe import *
+import enum
 
 import os
 mi_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

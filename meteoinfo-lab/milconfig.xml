@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\funny">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\others"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\special"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\emips">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\fill_between"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\slice"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
+    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui"/>
+    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\form"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\Run\emips"/>
+    <RecentFolder Folder="D:\Run\emips\test\setting"/>
+    <RecentFolder Folder="D:\Run\emips\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\emips"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\obj_human.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\obj_steampunk.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\obj_Lion_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\emips\test_species_profile.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\obj_human.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\obj_steampunk.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\obj_Lion_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\emips\test_species_profile.py"/>
     </RecentFiles>
   </File>
   <Font>

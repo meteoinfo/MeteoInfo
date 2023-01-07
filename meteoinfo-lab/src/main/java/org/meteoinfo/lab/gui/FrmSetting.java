@@ -9,6 +9,8 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.l2fprod.common.swing.JFontChooser;
 import java.awt.Font;
 import java.io.IOException;
@@ -47,6 +49,8 @@ public class FrmSetting extends javax.swing.JDialog {
         this.jComboBox_LookFeel.addItem("FlatDarkLaf");
         this.jComboBox_LookFeel.addItem("FlatDarculaLaf");
         this.jComboBox_LookFeel.addItem("FlatIntelliJLaf");
+        this.jComboBox_LookFeel.addItem("FlatMacLightLaf");
+        this.jComboBox_LookFeel.addItem("FlatMacDarkLaf");
         this.jComboBox_LookFeel.setSelectedItem(this.parent.getOptions().getLookFeel());
         
         //Decoration
@@ -254,6 +258,8 @@ public class FrmSetting extends javax.swing.JDialog {
                 case "FlatDarkLaf":
                 case "FlatDarculaLaf":
                 case "FlatIntelliJLaf":
+                case "FlatMacLightLaf":
+                case "FlatMacDarkLaf":
                     lafName = laf;
                     break;
                 default:
@@ -274,6 +280,12 @@ public class FrmSetting extends javax.swing.JDialog {
                     this.changeStyleViaThemeXml("dark");
                 } else if (lafName.equals("FlatDarkLaf")) {
                     UIManager.setLookAndFeel(new FlatDarkLaf());
+                    this.changeStyleViaThemeXml("dark");
+                } else if (lafName.equals("FlatMacLightLaf")) {
+                    UIManager.setLookAndFeel(new FlatMacLightLaf());
+                    this.changeStyleViaThemeXml("default");
+                } else if (lafName.equals("FlatMacDarkLaf")) {
+                    UIManager.setLookAndFeel(new FlatMacDarkLaf());
                     this.changeStyleViaThemeXml("dark");
                 } else {
                     UIManager.setLookAndFeel(lafName);
@@ -323,6 +335,7 @@ public class FrmSetting extends javax.swing.JDialog {
       try {
          Theme theme = Theme.load(getClass().getResourceAsStream(
                "/org/fife/ui/rsyntaxtextarea/themes/" +  themeName + ".xml"));
+         this.parent.getEditorDock().setTheme(theme);
          for (TextEditor textEditor : this.parent.getEditorDock().getAllTextEditor())
             theme.apply(textEditor.getTextArea());
       } catch (IOException ioe) { // Never happens

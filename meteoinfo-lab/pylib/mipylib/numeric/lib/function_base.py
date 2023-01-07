@@ -1,10 +1,10 @@
-
 from ..core import numeric as _nx
 from ..core._ndarray import NDArray
 from ..core.fromnumeric import (ravel, nonzero)
 from org.meteoinfo.ndarray.math import ArrayMath
 
-__all__ = ['extract','place']
+__all__ = ['extract', 'place', 'grid_edge']
+
 
 def extract(condition, arr):
     """
@@ -46,6 +46,7 @@ def extract(condition, arr):
     """
     return _nx.take(ravel(arr), nonzero(ravel(condition))[0])
 
+
 def place(arr, mask, vals):
     """
     Change elements of an array based on conditional and input values.
@@ -54,6 +55,7 @@ def place(arr, mask, vals):
     True values in `mask`, while `copyto` uses the elements where `mask`
     is True.
     Note that `extract` does the exact opposite of `place`.
+
     Parameters
     ----------
     arr : ndarray
@@ -65,9 +67,11 @@ def place(arr, mask, vals):
         N is the number of True values in `mask`. If `vals` is smaller
         than N, it will be repeated, and if elements of `a` are to be masked,
         this sequence must be non-empty.
+
     See Also
     --------
     copyto, put, take, extract
+
     Examples
     --------
     >>> arr = np.arange(6).reshape(2, 3)
@@ -84,3 +88,27 @@ def place(arr, mask, vals):
         vals = NDArray(vals)
 
     ArrayMath.place(arr.asarray(), mask.asarray(), vals.asarray())
+
+
+def grid_edge(x, y):
+    """
+    Return grid edge coordinate array.
+    :param x: (*array*) X coordinate array with one dimension.
+    :param y: (*array*) Y coordinate array width one dimension.
+    :return: Grid edge coordinate array of x and y with one dimension.
+    """
+    yn = y.size
+    xn = x.size
+    n = (xn + yn) * 2
+    xx = _nx.zeros(n)
+    yy = _nx.zeros(n)
+    xx[:xn] = x
+    yy[:xn] = y[0]
+    xx[xn:xn + yn] = x[-1]
+    yy[xn:xn + yn] = y
+    xx[xn + yn:xn + yn + xn] = x[::-1]
+    yy[xn + yn:xn + yn + xn] = y[-1]
+    xx[xn + yn + xn:] = x[0]
+    yy[xn + yn + xn:] = y[::-1]
+
+    return xx, yy

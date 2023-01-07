@@ -23,6 +23,8 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.ui.util.FontUtil;
 import org.meteoinfo.common.util.GlobalUtil;
@@ -285,6 +287,18 @@ public class MeteoInfoLab {
         } else if (laf.equals("FlatIntelliJLaf")) {
             try {
                 UIManager.setLookAndFeel(new FlatIntelliJLaf());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (laf.equals("FlatMacLightLaf")) {
+            try {
+                UIManager.setLookAndFeel(new FlatMacLightLaf());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (laf.equals("FlatMacDarkLaf")) {
+            try {
+                UIManager.setLookAndFeel(new FlatMacDarkLaf());
             } catch (Exception e) {
                 e.printStackTrace();
             }

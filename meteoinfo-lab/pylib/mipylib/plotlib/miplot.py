@@ -54,7 +54,8 @@ __all__ = [
     'scatterm',
     'semilogx', 'semilogy', 'show', 'slice3', 'stationmodel', 'stem', 'stem3', 'step', 'streamplot', 'streamplot3',
     'streamplotm', 'streamslice', 'subplot', 'subplots', 'suptitle', 'supxlabel', 'supylabel',
-    'surf', 'taylor_diagram', 'text', 'text3', 'title', 'trisurf', 'twinx', 'twiny', 'violinplot', 'volumeplot', 'weatherspec',
+    'surf', 'taylor_diagram', 'text', 'text3', 'title', 'trisurf', 'twinx', 'twiny', 'violinplot', 'volumeplot',
+    'weatherspec',
     'xaxis',
     'xlabel', 'xlim', 'xreverse', 'xticks', 'yaxis', 'ylabel', 'ylim', 'yreverse', 'yticks', 'zaxis', 'zlabel', 'zlim',
     'zticks',
@@ -133,7 +134,7 @@ def plot(*args, **kwargs):
             g_axes = axes()
 
     r = g_axes.plot(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -151,7 +152,7 @@ def step(x, y, *args, **kwargs):
             g_axes = axes()
 
     r = g_axes.step(x, y, *args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -183,7 +184,7 @@ def semilogy(*args, **kwargs):
             g_axes = axes()
 
     r = g_axes.semilogy(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -201,7 +202,7 @@ def semilogx(*args, **kwargs):
             g_axes = axes()
 
     r = g_axes.semilogx(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -219,7 +220,7 @@ def loglog(*args, **kwargs):
             g_axes = axes()
 
     r = g_axes.loglog(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -238,7 +239,7 @@ def errorbar(x, y, yerr=None, xerr=None, fmt='', ecolor=None, elinewidth=None, c
             g_axes = axes()
 
     r = g_axes.errorbar(x, y, yerr, xerr, fmt, ecolor, elinewidth, capsize, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -256,7 +257,7 @@ def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
             g_axes = axes()
 
     r = g_axes.bar(x, height, width, bottom, align, data, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -288,7 +289,7 @@ def barh(*args, **kwargs):
             g_axes = axes()
 
     r = g_axes.barh(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -309,7 +310,7 @@ def hist(x, bins=10, range=None, density=False, cumulative=False,
 
     r = g_axes.hist(x, bins, range, density, cumulative,
                     bottom, histtype, align, orientation, rwidth, log, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -327,7 +328,7 @@ def stem(*args, **kwargs):
             g_axes = axes()
 
     r = g_axes.stem(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -360,7 +361,7 @@ def scatter(*args, **kwargs):
     #         g_axes = axes()
 
     r = g_axes.scatter(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -390,7 +391,7 @@ def arrow(x, y, dx, dy, **kwargs):
             g_axes = axes()
 
     r = g_axes.arrow(x, y, dx, dy, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -408,7 +409,7 @@ def arrowline(x, y, dx=0, dy=0, **kwargs):
             g_axes = axes()
 
     r = g_axes.arrowline(x, y, dx, dy, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -426,7 +427,7 @@ def annotate(s, xy, *args, **kwargs):
             g_axes = axes()
 
     r = g_axes.annotate(s, xy, *args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -441,7 +442,7 @@ def fill(x, y=None, **kwargs):
         g_axes = axes()
 
     r = g_axes.patch(x, y, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -459,7 +460,7 @@ def patch(x, y=None, **kwargs):
     # g_axes = axes()
 
     r = g_axes.patch(x, y, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -477,7 +478,7 @@ def rectangle(position, curvature=None, **kwargs):
             g_axes = axes()
 
     r = g_axes.rectangle(position, curvature, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -495,7 +496,7 @@ def fill_between(x, y1, y2=0, where=None, **kwargs):
             g_axes = axes()
 
     r = g_axes.fill_between(x, y1, y2, where, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -513,7 +514,7 @@ def fill_betweenx(y, x1, x2=0, where=None, **kwargs):
             g_axes = axes()
 
     r = g_axes.fill_betweenx(y, x1, x2, where, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -533,16 +534,15 @@ def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6
 
     r = g_axes.pie(x, explode, labels, colors, autopct, pctdistance, shadow,
                    labeldistance, startangle, radius, wedgeprops, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
 
 @_copy_docstring_and_deprecators(Axes.boxplot)
 def boxplot(x, sym=None, vert=True, positions=None, widths=None, color=None, showcaps=True, showfliers=True,
-            showmeans=False, \
-            showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None,
-            whiskerprops=None, capprops=None, flierprops=None):
+            showmeans=False, showmedians=True, meanline=False, medianline=True, boxprops=None,
+            medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):
     global g_axes
     if g_figure is None:
         figure()
@@ -553,10 +553,10 @@ def boxplot(x, sym=None, vert=True, positions=None, widths=None, color=None, sho
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
 
-    r = g_axes.boxplot(x, sym, vert, positions, widths, color, showcaps, showfliers, showmeans, \
+    r = g_axes.boxplot(x, sym, vert, positions, widths, color, showcaps, showfliers, showmeans,
                        showmedians, meanline, medianline, boxprops, medianprops, meanprops, whiskerprops, capprops,
                        flierprops)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -575,7 +575,7 @@ def violinplot(dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None
             g_axes = axes()
 
     r = g_axes.violinplot(dataset, positions, widths, boxwidth, boxprops, whiskerprops, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -593,7 +593,7 @@ def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='ma
 
     bars = g_axes.windrose(wd, ws, nwdbins, wsbins, degree, colors, cmap, alpha,
                            rmax, rtickloc, rticks, rlabelpos, xticks, **kwargs)
-    if not bars is None:
+    if bars is not None:
         draw_if_interactive()
 
     return g_axes, bars
@@ -694,7 +694,7 @@ def caxes(ax=None):
 
         g_axes = __get_axes(chart, ax)
         chart.setCurrentPlot(ax - 1)
-    elif not ax is None:
+    elif ax is not None:
         g_axes = ax
         chart.setCurrentPlot(chart.getPlotIndex(ax._axes))
     return g_axes
@@ -722,7 +722,7 @@ def subplot(nrows, ncols, plot_number, **kwargs):
     return g_axes
 
 
-def subplots(nrows=1, ncols=1, position=None, sharex=False, sharey=False, \
+def subplots(nrows=1, ncols=1, position=None, sharex=False, sharey=False,
              wspace=None, hspace=None, axestype='Axes', **kwargs):
     """
     Create a figure and a set of subplots.
@@ -805,7 +805,7 @@ def axes(*args, **kwargs):
     """
     global g_axes
 
-    if g_figure is None or isinstance(g_figure, GLFigure):
+    if g_figure is None:
         figure()
 
     ax = g_figure.add_axes(*args, **kwargs)
@@ -1424,14 +1424,14 @@ def text3(x, y, z, s, zdir=None, **kwargs):
 @_copy_docstring_and_deprecators(Axes.axis)
 def axis(limits):
     r = g_axes.axis(limits)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
 
 
 @_copy_docstring_and_deprecators(MapAxes.axis)
 def axism(limits=None, lonlat=True):
     r = g_axes.axis(limits, lonlat)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
 
 
@@ -1474,7 +1474,7 @@ def yreverse():
 @_copy_docstring_and_deprecators(Axes.legend)
 def legend(*args, **kwargs):
     r = g_axes.legend(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1506,28 +1506,6 @@ def colorbar(mappable=None, **kwargs):
     return cb
 
 
-# def set(obj, **kwargs):
-#     """
-#     Set properties to an object. Used to change the plot parameters.
-#     """
-#     if isinstance(obj, Axes):
-#         xminortick = kwargs.pop('xminortick', None)
-#         if not xminortick is None:
-#             locs = [Location.BOTTOM, Location.TOP]
-#             for loc in locs:
-#                 axis = obj._axes.getAxis(loc)
-#                 axis.setMinorTickVisible(xminortick)
-#         yminortick = kwargs.pop('yminortick', None)
-#         if not yminortick is None:
-#             locs = [Location.LEFT, Location.RIGHT]
-#             for loc in locs:
-#                 axis = obj._axes.getAxis(loc)
-#                 axis.setMinorTickVisible(yminortick)
-#         tickin = kwargs.pop('tickin', None)
-#         if not tickin is None:
-#             obj._axes.setInsideTick(tickin)
-#     draw_if_interactive()
-
 @_copy_docstring_and_deprecators(Axes.imshow)
 def imshow(*args, **kwargs):
     global g_axes
@@ -1536,12 +1514,9 @@ def imshow(*args, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
-    # else:
-    #     if g_axes.axestype != 'cartesian':
-    #         g_axes = axes()
 
     r = g_axes.imshow(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1554,12 +1529,9 @@ def pcolor(*args, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
-    # else:
-    #     if g_axes.axestype != 'cartesian':
-    #         g_axes = axes()
 
     r = g_axes.pcolor(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1577,7 +1549,7 @@ def gridshow(*args, **kwargs):
     #         g_axes = axes()
 
     r = g_axes.gridshow(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1590,12 +1562,9 @@ def contour(*args, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
-    # else:
-    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
-    #         g_axes = axes()
 
     r = g_axes.contour(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1608,12 +1577,9 @@ def contourf(*args, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
-    # else:
-    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
-    #         g_axes = axes()
 
     r = g_axes.contourf(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1626,12 +1592,9 @@ def quiver(*args, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
-    # else:
-    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
-    #         g_axes = axes()
 
     r = g_axes.quiver(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1656,12 +1619,9 @@ def barbs(*args, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
-    # else:
-    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
-    #         g_axes = axes()
 
     r = g_axes.barbs(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1674,12 +1634,9 @@ def streamplot(*args, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
-    # else:
-    #     if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
-    #         g_axes = axes()
 
     r = g_axes.streamplot(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1697,7 +1654,7 @@ def scatterm(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.scatter(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1743,7 +1700,7 @@ def plotm(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.plot(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1761,7 +1718,7 @@ def stationmodel(smdata, **kwargs):
             g_axes = axesm()
 
     r = g_axes.stationmodel(smdata, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1779,7 +1736,7 @@ def imshowm(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.imshow(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
 
     return r
@@ -1798,7 +1755,7 @@ def contourm(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.contour(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
 
     return r
@@ -1817,7 +1774,7 @@ def contourfm(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.contourf(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
 
     return r
@@ -1836,7 +1793,7 @@ def pcolorm(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.pcolor(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
 
     return r
@@ -1855,7 +1812,7 @@ def gridshowm(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.gridshow(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
 
     return r
@@ -1874,7 +1831,7 @@ def quiverm(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.quiver(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
 
     return r
@@ -1899,7 +1856,7 @@ def barbsm(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.barbs(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1917,7 +1874,7 @@ def streamplotm(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.streamplot(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 
@@ -1962,7 +1919,7 @@ def geoshow(*args, **kwargs):
             g_axes = axesm()
 
     r = g_axes.geoshow(*args, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
 
     return r
@@ -1982,7 +1939,7 @@ def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., c
             g_axes = axes(position=[0.13, 0.11, 0.775, 0.75])
 
     r = g_axes.taylor_diagram(stddev, correlation, std_max, labels, ref_std, colors, **kwargs)
-    if not r is None:
+    if r is not None:
         draw_if_interactive()
     return r
 

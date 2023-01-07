@@ -71,6 +71,7 @@ public class EditorDockable extends DefaultSingleCDockable {
         switch (lfName) {
             case "FlatDarculaLaf":
             case "FlatDarkLaf":
+            case "FlatMacDarkLaf":
                 themeName = "dark";
                 break;
         }
@@ -130,6 +131,22 @@ public class EditorDockable extends DefaultSingleCDockable {
                 ((TextEditor) tab).setTextFont(this.textFont);
             }
         }
+    }
+
+    /**
+     * Get theme of the editor
+     * @return The theme
+     */
+    public Theme getTheme() {
+        return theme;
+    }
+
+    /**
+     * Set theme of the editor
+     * @param value The theme
+     */
+    public void setTheme(Theme value) {
+        this.theme = value;
     }
 
     /**

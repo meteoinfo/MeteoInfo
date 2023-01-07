@@ -32,6 +32,7 @@ public class ConsoleColors {
             case "Darcula":
             case "FlatDarculaLaf":
             case "FlatDarkLaf":
+            case "FlatMacDarkLaf":
                 this.promptColor = new Color(255, 100, 100);
                 this.commandColor = Color.WHITE;
                 this.codeLinesColor = new Color(0, 153, 204);

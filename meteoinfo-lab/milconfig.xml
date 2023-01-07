@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
   <Path OpenPath="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\slice"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
-    <RecentFolder Folder="D:\Run\emips\test\setting"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\emips"/>
     <RecentFolder Folder="D:\Run\emips"/>
     <RecentFolder Folder="D:\Run\emips\run_meic"/>
     <RecentFolder Folder="D:\Run\emips\test"/>
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips"/>
-    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\form"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grads"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\annotate"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\arrow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\boxplot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\main_gui.py"/>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\_reload.py"/>
+      <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\emission_panel.py"/>
+      <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\vertical_panel.py"/>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\temporal_panel.py"/>
-      <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\spatial_panel.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\main_gui.py"/>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\_reload.py"/>
+      <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\emission_panel.py"/>
+      <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\vertical_panel.py"/>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\temporal_panel.py"/>
-      <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\spatial_panel.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +37,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatLightLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1378,893"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

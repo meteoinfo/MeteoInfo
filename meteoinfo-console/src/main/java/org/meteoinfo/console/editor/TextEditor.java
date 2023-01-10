@@ -46,6 +46,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
      private MITextEditorPane _textArea;
      private String _title;
      private File _file = null;
+     private Font font;
      private JTabbedPane _parent;
      // </editor-fold>
      // <editor-fold desc="Constructor">
@@ -244,6 +245,26 @@ import org.fife.ui.rtextarea.RTextScrollPane;
       * @param font The font to use.
       */
      public void setTextFont(Font font) {
+         if (font != null) {
+             this.font = font;
+             SyntaxScheme ss = _textArea.getSyntaxScheme();
+             ss = (SyntaxScheme) ss.clone();
+             for (int i = 0; i < ss.getStyleCount(); i++) {
+                 if (ss.getStyle(i) != null) {
+                     ss.getStyle(i).font = font;
+                 }
+             }
+             _textArea.setSyntaxScheme(ss);
+             _textArea.setFont(font);
+         }
+     }
+
+     /**
+      * Set the font for all token types.
+      *
+      * @param font The font to use.
+      */
+     public void updateTextFont() {
          if (font != null) {
              SyntaxScheme ss = _textArea.getSyntaxScheme();
              ss = (SyntaxScheme) ss.clone();

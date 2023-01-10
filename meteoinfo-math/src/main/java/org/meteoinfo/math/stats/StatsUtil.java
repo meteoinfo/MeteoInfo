@@ -16,14 +16,9 @@ import org.apache.commons.math4.legacy.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math4.legacy.stat.correlation.SpearmansCorrelation;
 import org.apache.commons.math4.legacy.stat.inference.InferenceTestUtils;
 import org.apache.commons.math4.legacy.stat.regression.OLSMultipleLinearRegression;
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.Index;
-import org.meteoinfo.ndarray.InvalidRangeException;
-import org.meteoinfo.ndarray.MAMath;
-import org.meteoinfo.ndarray.Range;
 import smile.math.special.Erf;
 
 /**
@@ -527,5 +522,43 @@ public class StatsUtil {
         double p = InferenceTestUtils.chiSquareTest(od);
         
         return new double[]{s, p};
+    }
+
+    /**
+     * Calculate Jenks breaks
+     * @param a The input data array
+     * @param nClass Number of classes
+     * @return Jenks breaks value array
+     */
+    public static Array jenksBreaks(Array a, int nClass) {
+        Jenks jenks = new Jenks();
+        IndexIterator iterA = a.getIndexIterator();
+        while (iterA.hasNext()) {
+            jenks.addValue(iterA.getDoubleNext());
+        }
+
+        Jenks.Breaks breaks = jenks.computeBreaks(nClass);
+        Array r = breaks.getClassValues();
+
+        return r;
+    }
+
+    /**
+     * Calculate Jenks breaks
+     * @param a The input data array
+     * @param nClass Number of classes
+     * @return Jenks breaks value array and gvf value
+     */
+    public static Object[] jenksBreaksGvf(Array a, int nClass) {
+        Jenks jenks = new Jenks();
+        IndexIterator iterA = a.getIndexIterator();
+        while (iterA.hasNext()) {
+            jenks.addValue(iterA.getDoubleNext());
+        }
+
+        Jenks.Breaks breaks = jenks.computeBreaks(nClass);
+        Array r = breaks.getClassValues();
+
+        return new Object[]{r, breaks.gvf()};
     }
 }

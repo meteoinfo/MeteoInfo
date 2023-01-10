@@ -336,8 +336,10 @@ public class FrmSetting extends javax.swing.JDialog {
          Theme theme = Theme.load(getClass().getResourceAsStream(
                "/org/fife/ui/rsyntaxtextarea/themes/" +  themeName + ".xml"));
          this.parent.getEditorDock().setTheme(theme);
-         for (TextEditor textEditor : this.parent.getEditorDock().getAllTextEditor())
-            theme.apply(textEditor.getTextArea());
+         for (TextEditor textEditor : this.parent.getEditorDock().getAllTextEditor()) {
+             theme.apply(textEditor.getTextArea());
+             textEditor.updateTextFont();
+         }
       } catch (IOException ioe) { // Never happens
          ioe.printStackTrace();
       }

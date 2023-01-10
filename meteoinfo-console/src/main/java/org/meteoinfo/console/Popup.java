@@ -21,7 +21,7 @@ public class Popup extends JWindow {
     private final static int MAX_HEIGHT = 300;
     private final static int MIN_WIDTH = 200;
     private final static int MAX_WIDTH = 400;
-    private final JTextComponent textCompnent;
+    private final JTextComponent textComponent;
     private int dotPosition;
     private final JList list;
     private String[] originalData;
@@ -36,7 +36,7 @@ public class Popup extends JWindow {
      */
     public Popup(JFrame frame, JTextComponent textComponent){
         super(frame);
-        this.textCompnent = textComponent;
+        this.textComponent = textComponent;
         this.setSize(200, 200);
         this.list = new JList();
         this.list.addKeyListener(new KeyAdapter(){
@@ -86,7 +86,7 @@ public class Popup extends JWindow {
     
 //    @Override
 //    public void show(){
-//        this.dotPosition = this.textCompnent.getCaretPosition();
+//        this.dotPosition = this.textComponent.getCaretPosition();
 //        this.setSize(this.getPreferredSize());
 //        //super.show();
 //        this.setVisible(true);
@@ -97,12 +97,12 @@ public class Popup extends JWindow {
         this.setLocation(displayPoint);
         this.setBounds(displayPoint.x, displayPoint.y, size.width, size.height);
         this.setMethods(list);
-        if (this.textCompnent != null)
-            this.dotPosition = this.textCompnent.getCaretPosition();
+        if (this.textComponent != null)
+            this.dotPosition = this.textComponent.getCaretPosition();
         //this.show();
         this.setVisible(true);
         this.list.setSelectedIndex(0);
-        this.setAlwaysOnTop(true);
+        //this.setAlwaysOnTop(true);
     }
     
     /**
@@ -113,11 +113,11 @@ public class Popup extends JWindow {
         Dimension size = this.getPreferredSize();        
         this.setLocation(displayPoint);
         this.setBounds(displayPoint.x, displayPoint.y, size.width, size.height);
-        if (this.textCompnent != null)
-            this.dotPosition = this.textCompnent.getCaretPosition();
+        if (this.textComponent != null)
+            this.dotPosition = this.textComponent.getCaretPosition();
         this.setVisible(true);
         this.list.setSelectedIndex(0);
-        this.setAlwaysOnTop(true);
+        //this.setAlwaysOnTop(true);
     }
     
     @Override
@@ -201,12 +201,12 @@ public class Popup extends JWindow {
         Object value = this.list.getSelectedValue();
         if (value != null){
             int startPosition = this.dotPosition;
-            int caretPosition = this.textCompnent.getCaretPosition();
-            this.textCompnent.select(startPosition, caretPosition) ;
-            this.textCompnent.replaceSelection(value.toString());
+            int caretPosition = this.textComponent.getCaretPosition();
+            this.textComponent.select(startPosition, caretPosition) ;
+            this.textComponent.replaceSelection(value.toString());
             caretPosition = startPosition + value.toString().length();
             try {
-                this.textCompnent.setCaretPosition(caretPosition);
+                this.textComponent.setCaretPosition(caretPosition);
             } catch (Exception e){
                 
             }

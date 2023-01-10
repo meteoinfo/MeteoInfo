@@ -2,6 +2,7 @@ from ..core import numeric as np
 import stats
 from ..linalg import linalg
 
+
 class GaussianKDE(object):
     """
     Representation of a kernel-density estimate using Gaussian kernels.

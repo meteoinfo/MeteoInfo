@@ -31,7 +31,7 @@ public class Tip extends JWindow {
         this.textarea.setEditable(false);
         JScrollPane jscrollpane = new JScrollPane(this.textarea);
         this.getContentPane().add(jscrollpane);
-        this.setAlwaysOnTop(true);
+        //this.setAlwaysOnTop(true);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

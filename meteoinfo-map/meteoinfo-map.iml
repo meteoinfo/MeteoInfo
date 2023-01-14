@@ -130,7 +130,7 @@
     <orderEntry type="library" name="Maven: org.joml:joml:1.10.4" level="project" />
     <orderEntry type="module" module-name="meteoinfo-console" />
     <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.3" level="project" />
-    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.3.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.3.2" level="project" />
     <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:3.3.0" level="project" />
     <orderEntry type="module" module-name="meteoinfo-ndarray" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy:4.0-beta1" level="project" />

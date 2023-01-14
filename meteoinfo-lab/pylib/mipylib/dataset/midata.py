@@ -620,7 +620,7 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
     #Add dimensions
     dims = []
     dimnames = []
-    for dim in f.dimensions():
+    for dim in f.dimensions:
         dimname = dim.getShortName()
         if not dimname in dimnames:
             dims.append(ncfile.adddim(dimname, dim.getLength()))
@@ -634,8 +634,8 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
     tvar = None
     if writedimvar:
         dimvars = []
-        for i in range(len(f.dimensions())):
-            dim = f.dimensions()[i]
+        for i in range(len(f.dimensions)):
+            dim = f.dimensions[i]
             dname = dim.getShortName()
             if dim.getDimType() == DimensionType.T:
                 var = ncfile.addvar(dname, 'int', [dims[i]])
@@ -664,7 +664,7 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
         
     #Add variables
     variables = []
-    for var in f.variables():    
+    for var in f.variables:
         #print 'Variable: ' + var.name
         if var.variable.hasNullDimension():
             continue
@@ -682,7 +682,7 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
     
     #Write dimension variable data
     if writedimvar:
-        for dimvar, dim in zip(dimvars, f.dimensions()):
+        for dimvar, dim in zip(dimvars, f.dimensions):
             if dim.getDimType() != DimensionType.T:
                 ncfile.write(dimvar, np.array(dim.getDimValue()))
     
@@ -726,7 +726,7 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
 
     #Add dimensions
     dims = []
-    for dim in f.dimensions():
+    for dim in f.dimensions:
         dims.append(ncfile.adddim(dim.getShortName(), dim.getLength()))
     xdim = f.finddim('X')
     ydim = f.finddim('Y')
@@ -742,7 +742,7 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
 
     #Add dimension variables
     dimvars = []
-    for dim, mdim in zip(dims, f.dimensions()):
+    for dim, mdim in zip(dims, f.dimensions):
         dname = dim.getShortName()
         if dname == 'T':
             var = ncfile.addvar('time', 'int', [dim])
@@ -766,7 +766,7 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
 
     #Add variables
     variables = []
-    for var in f.variables():    
+    for var in f.variables:
         print('Variable: ' + var.name)
         vdims = []
         for vdim in var.dims:
@@ -784,7 +784,7 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
     ncfile.create()
 
     #Write variable data
-    for dimvar, dim in zip(dimvars, f.dimensions()):
+    for dimvar, dim in zip(dimvars, f.dimensions):
         if dim.getShortName() != 'T':
             ncfile.write(dimvar, np.array(dim.getDimValue()))
 

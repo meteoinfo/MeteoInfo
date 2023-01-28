@@ -123,6 +123,8 @@ public class Index<V> implements Iterable<V>{
             return new IntIndex(data);
         } else if (data.get(0) instanceof String) {
             return new StringIndex(data);
+        } else if (data.get(0) instanceof List) {
+            return new MultiIndex(data);
         } else {
             return null;
         }

@@ -1,9 +1,9 @@
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2018-7-18
 # Purpose: MeteoInfo index module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 from org.meteoinfo.dataframe import Index as MIIndex
 from org.meteoinfo.dataframe import DateTimeIndex as MIDateTimeIndex
@@ -15,8 +15,9 @@ import numbers
 import mipylib.numeric as np
 import mipylib.miutil as miutil
 
+
 class Index(object):
-    
+
     @staticmethod
     def factory(data=None, name='Index', index=None):
         """
@@ -32,7 +33,7 @@ class Index(object):
                 return DateTimeIndex(index=index)
             else:
                 return Index(index=index)
-    
+
     def __init__(self, data=None, name='Index', index=None):
         """
         Index 
@@ -57,22 +58,22 @@ class Index(object):
     @name.setter
     def name(self, value):
         self._index.setName(value)
-        
+
     def __len__(self):
         return self._index.size()
-        
+
     def __iter__(self):
         """
         provide iteration over the values of the Index
         """
         return iter(self._index)
-        
+
     def __str__(self):
         return self.__repr__()
-        
+
     def __repr__(self):
         return self._index.toString()
-        
+
     def __getitem__(self, k):
         if isinstance(k, int):
             return self.data[k]
@@ -82,17 +83,17 @@ class Index(object):
                 sidx = self.__len__() + sidx
             eidx = self.__len__() if k.stop is None else k.stop
             if eidx < 0:
-                eidx = self.__len__() + eidx                    
+                eidx = self.__len__() + eidx
             step = 1 if k.step is None else k.step
             r = self._index.subIndex(sidx, eidx, step)
             return Index.factory(index=r)
-            
+
     def __eq__(self, other):
         if isinstance(other, numbers.Number):
             return np.NDArray(self._index.equal(other))
         else:
             return False
-            
+
     def index(self, v):
         """
         Get index of a value.
@@ -120,14 +121,14 @@ class Index(object):
                 r = self._index.getIndices(key.asarray())
             else:
                 r = self._index.getIndices(key)
-            if outkeys:            
+            if outkeys:
                 return list(r[0]), list(r[1])
             else:
                 return list(r[0])
-        
+
     def fill_keylist(self, rdata, rfdata):
         return self._index.fillKeyList(rdata.asarray(), rfdata)
-        
+
     def get_format(self):
         """
         Get value to string format.
@@ -135,7 +136,7 @@ class Index(object):
         :returns: (*string*) Format string.
         """
         return self._index.getFormat()
-        
+
     def set_format(self, format):
         """
         Set value to string format.
@@ -143,10 +144,11 @@ class Index(object):
         :param format: (*string*) Format string.
         """
         self._index.setFormat(format)
-        
+
+
 ############################################
 class DateTimeIndex(Index):
-    
+
     def __init__(self, data=None, name='Index', start=None, end=None, periods=None, freq='D', index=None):
         if index is None:
             if not data is None:
@@ -169,7 +171,7 @@ class DateTimeIndex(Index):
             self._index = index
             self.data = miutil.pydate(list(self._index.getData()))
         self._index.setName(name)
-            
+
     def index(self, v):
         """
         Get index of a value.
@@ -183,7 +185,7 @@ class DateTimeIndex(Index):
         else:
             v = miutil.str2jdate(v)
         return self._index.indexOf(v)
-        
+
     def get_loc(self, key, outkeys=False):
         """
         Get integer location, slice or boolean mask for requested label.
@@ -201,11 +203,11 @@ class DateTimeIndex(Index):
         elif isinstance(key, (list, tuple, np.NDArray)) and isinstance(key[0], datetime.datetime):
             key = miutil.jdatetime(key)
         r = self._index.getIndices(key)
-        if outkeys:            
+        if outkeys:
             return list(r[0]), list(r[1])
         else:
             return list(r[0])
-            
+
     @property
     def year(self):
         """
@@ -213,7 +215,7 @@ class DateTimeIndex(Index):
         """
         r = self._index.getYear()
         return Index(index=r)
-    
+
     @property
     def month(self):
         """
@@ -221,7 +223,7 @@ class DateTimeIndex(Index):
         """
         r = self._index.getMonth()
         return Index(index=r)
-        
+
     @property
     def day(self):
         """
@@ -229,7 +231,7 @@ class DateTimeIndex(Index):
         """
         r = self._index.getDay()
         return Index(index=r)
-        
+
     @property
     def hour(self):
         """
@@ -237,7 +239,7 @@ class DateTimeIndex(Index):
         """
         r = self._index.getHour()
         return Index(index=r)
-        
+
     @property
     def minute(self):
         """
@@ -245,7 +247,7 @@ class DateTimeIndex(Index):
         """
         r = self._index.getMinute()
         return Index(index=r)
-        
+
     @property
     def second(self):
         """
@@ -254,7 +256,7 @@ class DateTimeIndex(Index):
         r = self._index.getSecond()
         return Index(index=r)
 
-        
+
 #############################################
 def date_range(start=None, end=None, periods=None, freq='D'):
     """
@@ -269,4 +271,3 @@ def date_range(start=None, end=None, periods=None, freq='D'):
     """
     r = DateTimeIndex(start=start, end=end, periods=periods, freq=freq)
     return r
-    

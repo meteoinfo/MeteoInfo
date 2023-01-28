@@ -2504,7 +2504,16 @@ public class GLPlot extends Plot {
                         if (((GraphicCollection3D) graphic).isSphere()) {
                             this.drawSpheres(gl, graphic);
                         } else {
-                            this.drawPoints(gl, graphic);
+                            //this.drawPoints(gl, graphic);
+                            if (!this.renderMap.containsKey(graphic)) {
+                                renderMap.put(graphic, new PointRender(gl, (GraphicCollection3D) graphic));
+                            }
+                            PointRender pointRender = (PointRender) renderMap.get(graphic);
+                            pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                            pointRender.setOrthographic(this.orthographic);
+                            pointRender.setLighting(this.lighting);
+                            pointRender.updateMatrix();
+                            pointRender.draw();
                         }
                         break;
                     case POLYLINE_Z:

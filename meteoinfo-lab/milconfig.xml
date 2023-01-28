@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\dataconvert">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\annotate"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\arrow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\boxplot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataframe">
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\particles"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
-    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui"/>
-    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\emips"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\dataconvert"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\pie"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\main_gui.py"/>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\_reload.py"/>
-      <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\emission_panel.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter\scatter3_4.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_groupby_3.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\main_gui.py"/>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\_reload.py"/>
-      <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui\emission_panel.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter\scatter3_4.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_groupby_3.py"/>
     </RecentFiles>
   </File>
   <Font>

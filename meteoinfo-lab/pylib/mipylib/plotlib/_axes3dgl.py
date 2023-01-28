@@ -1599,16 +1599,16 @@ class EarthAxes3D(Axes3DGL):
 
     def __init__(self, *args, **kwargs):
         kwargs['aspect'] = 'equal'
-        if not kwargs.has_key('bgcolor'):
+        if 'bgcolor' not in kwargs.keys():
             kwargs['bgcolor'] = 'k'
         kwargs['clip_plane'] = False
         kwargs['axis'] = False
-        if not kwargs.has_key('distance'):
+        if 'distance' not in kwargs.keys():
             kwargs['distance'] = 500
         super(EarthAxes3D, self).__init__(*args, **kwargs)
 
         image = kwargs.pop('image', 'world_topo.jpg')
-        if not image is None:
+        if image is not None:
             if not os.path.exists(image):
                 image = os.path.join(migl.get_map_folder(), image)
             if os.path.exists(image):
@@ -1650,7 +1650,7 @@ class EarthAxes3D(Axes3DGL):
 
         :return: Longitude and latitude lines.
         """
-        nlon = (int)(360. / lon_delta)
+        nlon = int(360. / lon_delta)
         lons = np.zeros([nlon, npoints])
         lats = np.zeros([nlon, npoints])
         alts = np.zeros([nlon, npoints]) + offset
@@ -1662,7 +1662,7 @@ class EarthAxes3D(Axes3DGL):
             idx += 1
         self.plot(lons, lats, alts, **kwargs)
 
-        nlat = (int)(180. / lat_delta)
+        nlat = int(180. / lat_delta)
         lons = np.zeros([nlat, npoints])
         lats = np.zeros([nlat, npoints])
         alts = np.zeros([nlat, npoints]) + offset

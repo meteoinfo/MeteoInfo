@@ -1326,7 +1326,7 @@ public class LayoutMap extends LayoutElement {
         }
 
         /**
-         * Set grid label positiont
+         * Set grid label position
          *
          * @param value Grid label position
          */

@@ -9594,7 +9594,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         File lFile = new File(fn);
         if (!lFile.isAbsolute()) {
             Path path = Paths.get(pPath, fn);
-            fn = path.toString();
+            fn = path.normalize().toString();
         } else {
             fn = lFile.getAbsolutePath();
         }

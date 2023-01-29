@@ -211,6 +211,78 @@ public class EarthGLPlot extends GLPlot {
     @Override
     public void display(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
+        gl.glLoadIdentity();
+
+        this.updateTextRender(this.xAxis.getTickLabelFont());
+
+        //Set light position - follow glLoadIdentity
+        this.lighting.setPosition(gl);
+
+        gl.glPushMatrix();
+
+        if (pitchAngle != 0) {
+            float scale = getScale();
+            gl.glTranslatef(0, 0, scale);
+            gl.glRotatef(70.f * (pitchAngle / 90.f), 1.0f, 0.0f, 0.0f);
+            gl.glTranslatef(0, 0, -scale);
+        }
+        gl.glRotatef(angleX, 1.0f, 0.0f, 0.0f);
+        gl.glRotatef(angleY, 0.0f, 0.0f, 1.0f);
+        if (headAngle != 0) {
+            gl.glRotatef(headAngle, 0.0f, 1.0f, 0.0f);
+        }
+
+        this.updateMatrix(gl);
+
+        //Lighting
+        this.setLight(gl);
+
+        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
+            Graphic graphic = this.graphics.get(m);
+            drawGraphics(gl, graphic);
+        }
+
+        //Stop lighting
+        if (this.lighting.isEnable()) {
+            this.lighting.stop(gl);
+        }
+
+        //Draw axis
+        this.drawAllZAxis(gl);
+
+        //Draw legend
+        gl.glPopMatrix();
+        this.updateMatrix(gl);
+        if (!this.legends.isEmpty()) {
+            ChartColorBar legend = (ChartColorBar) this.legends.get(0);
+            if (legend.getLegendScheme().getColorMap() == null)
+                this.drawLegend(gl, legend);
+            else
+                this.drawColorbar(gl, legend);
+        }
+
+        //Draw title
+        this.drawTitle();
+
+        this.textRenderer.dispose();
+        this.textRenderer = null;
+
+        gl.glFlush();
+
+        /*//Do screenshot
+        if (this.doScreenShot) {
+            AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
+            this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
+            this.doScreenShot = false;
+        }*/
+
+        //Disable always update buffers
+        if (this.alwaysUpdateBuffers)
+            this.alwaysUpdateBuffers = false;
+    }
+
+    public void display_bak(GLAutoDrawable drawable) {
+        final GL2 gl = drawable.getGL().getGL2();
         float[] rgba = this.background.getRGBComponents(null);
         gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);

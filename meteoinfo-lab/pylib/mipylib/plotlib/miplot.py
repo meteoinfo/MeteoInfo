@@ -939,6 +939,8 @@ def axes3d_earth(*args, **kwargs):
 
     if not batchmode:
         if g_figure is None:
+            if 'facecolor' not in kwargs.keys():
+                kwargs['facecolor'] = 'k'
             figure(**kwargs)
         g_figure.add_axes(ax)
 

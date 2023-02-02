@@ -397,6 +397,9 @@ public class MeshGraphic extends GraphicCollection3D {
      * @param vData Vertex position
      */
     public void calculateNormalVectors(float[] vData) {
+        if (this.vertexNormal != null)
+            return;
+
         int n = this.getVertexNumber();
         this.vertexNormal = new float[n * 3];
         Vector3f v, left, right, up, down;

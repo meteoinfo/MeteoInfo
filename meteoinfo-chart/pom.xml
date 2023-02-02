@@ -15,14 +15,19 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <freehep.version>2.4</freehep.version>
-        <jogl.version>v2.4.0-rc4</jogl.version>
+        <jogl.version>2.4.0</jogl.version>
     </properties>
 
     <repositories>
-        <repository>
+        <!--<repository>
             <id>central</id>
             <name>Maven Central</name>
             <url>https://repo1.maven.org/maven2/</url>
+        </repository>-->
+        <repository>
+            <id>jogamp-remote</id>
+            <name>jogamp mirror</name>
+            <url>https://www.jogamp.org/deployment/maven/</url>
         </repository>
         <repository>
             <id>freehep</id>
@@ -34,7 +39,7 @@
             <name>boundlessgeo</name>
             <url>https://repo.boundlessgeo.com/main/</url>
         </repository>-->
-        <repository>
+        <!--<repository>
             <id>jzy3d-snapshots</id>
             <name>Jzy3d Snapshots</name>
             <url>https://maven.jzy3d.org/snapshots/</url>
@@ -43,7 +48,7 @@
             <id>jzy3d-releases</id>
             <name>Jzy3d Releases</name>
             <url>https://maven.jzy3d.org/releases/</url>
-        </repository>
+        </repository>-->
     </repositories>
 
     <dependencies>
@@ -77,17 +82,17 @@
             <artifactId>l2fprod-common-all</artifactId>
             <version>0.1</version>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-main</artifactId>
-            <version>2.3.2</version>
+            <version>${jogl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-main</artifactId>
-            <version>2.3.2</version>
-        </dependency>-->
-        <dependency>
+            <version>${jogl.version}</version>
+        </dependency>
+        <!--<dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all</artifactId>
             <version>${jogl.version}</version>
@@ -128,7 +133,7 @@
             <version>${jogl.version}</version>
         </dependency>
 
-        <!-- GLUEGEN -->
+        &lt;!&ndash; GLUEGEN &ndash;&gt;
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt</artifactId>
@@ -173,7 +178,7 @@
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-natives-windows-i586</artifactId>
             <version>${jogl.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
@@ -183,7 +188,7 @@
 
     <build>
         <plugins>
-            <!--<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.1.1</version>
@@ -199,7 +204,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
             <plugin>
                 <inherited>true</inherited>
                 <groupId>org.apache.maven.plugins</groupId>

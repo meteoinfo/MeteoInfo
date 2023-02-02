@@ -111,22 +111,23 @@
     <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-cyrillic:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.12.0" level="project" />
     <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-natives-linux-aarch64:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-natives-linux-amd64:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-natives-linux-armv6hf:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-natives-linux-i586:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-natives-macosx-universal:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-natives-windows-amd64:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-natives-windows-i586:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-macosx-universal:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-linux-aarch64:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-linux-amd64:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-linux-armv6hf:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-linux-i586:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-windows-amd64:v2.4.0-rc4" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-natives-windows-i586:v2.4.0-rc4" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-main:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-android-aarch64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-amd64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-armv6hf:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-aarch64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-macosx-universal:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-windows-amd64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: antlr:antlr:2.7.7" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-main:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-android-aarch64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-amd64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-armv6hf:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-aarch64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-macosx-universal:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-amd64:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.joml:joml:1.10.4" level="project" />
     <orderEntry type="module" module-name="meteoinfo-console" />
     <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.3" level="project" />

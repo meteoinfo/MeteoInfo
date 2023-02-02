@@ -94,9 +94,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         }
         this.setIconImage(image);
 
-        //Load configure file
-        //System.out.println("Load configure file...");
-        //this.loadConfigureFile();
+        //Set main form location and size
         this.setLocation(this.options.getMainFormLocation());
         this.setSize(this.options.getMainFormSize());
 
@@ -366,9 +364,6 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
                             if (myWorker != null && !myWorker.isCancelled() && !myWorker.isDone()) {
                                 myWorker.cancel(true);
                                 myWorker = null;
-                                //myWorker = new SmallWorker();
-                                //myWorker.execute();
-                                //enter();
                             }
                         }
                         break;

@@ -11,6 +11,7 @@ public class NearestNDInterpolator {
     protected KDTree.Euclidean<Double> kdTree;
     protected DataType dataType;
     protected boolean excludeNaN = true;
+    protected double radius = Double.NaN;
 
     /**
      * Constructor
@@ -93,6 +94,22 @@ public class NearestNDInterpolator {
         }
     }
 
+    /**
+     * Get search radius
+     * @return The search radius
+     */
+    public double getRadius() {
+        return this.radius;
+    }
+
+    /**
+     * Set search radius
+     * @param value Search radius
+     */
+    public void setRadius(double value) {
+        this.radius = value;
+    }
+
     protected double[] getCoordinate(List<Array> points, int n, int idx) {
         double[] coord = new double[n];
         for (int i = 0; i < n; i++) {
@@ -116,9 +133,8 @@ public class NearestNDInterpolator {
      * @param location The search location
      * @return Nearest value
      */
-    public Object nearest(double[] location) {
-        KDTree.SearchResult r = this.kdTree.nearestNeighbours(location, 1).get(0);
-        return r.payload;
+    public KDTree.SearchResult nearest(double[] location) {
+        return this.kdTree.nearestNeighbours(location, 1).get(0);
     }
 
     /**
@@ -145,8 +161,21 @@ public class NearestNDInterpolator {
         int pNum = (int)location.get(0).getSize();
         Array r = Array.factory(this.dataType, location.get(0).getShape());
 
-        for (int i = 0; i < pNum; i++) {
-            r.setObject(i, nearest(getCoordinate(location, n, i)));
+        KDTree.SearchResult sr;
+        if (Double.isNaN(this.radius)) {
+            for (int i = 0; i < pNum; i++) {
+                sr = nearest(getCoordinate(location, n, i));
+                r.setObject(i, sr.payload);
+            }
+        } else {
+            for (int i = 0; i < pNum; i++) {
+                sr = nearest(getCoordinate(location, n, i));
+                if (sr.distance <= radius) {
+                    r.setObject(i, sr.payload);
+                } else {
+                    r.setObject(i, Double.NaN);
+                }
+            }
         }
 
         return r;
@@ -181,8 +210,21 @@ public class NearestNDInterpolator {
             int finalOffset = offset;
             Thread t = new Thread() {
                 public void run() {
-                    for (int i = finalOffset; i < finalSegEnd; i++) {
-                        r.setObject(i, nearest(getCoordinate(location, n, i)));
+                    KDTree.SearchResult sr;
+                    if (Double.isNaN(radius)) {
+                        for (int i = finalOffset; i < finalSegEnd; i++) {
+                            sr = nearest(getCoordinate(location, n, i));
+                            r.setObject(i, sr.payload);
+                        }
+                    } else {
+                        for (int i = finalOffset; i < finalSegEnd; i++) {
+                            sr = nearest(getCoordinate(location, n, i));
+                            if (sr.distance <= radius) {
+                                r.setObject(i, sr.payload);
+                            } else {
+                                r.setObject(i, Double.NaN);
+                            }
+                        }
                     }
                 }
             };

@@ -1,10 +1,10 @@
 # coding=utf-8
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2017-3-9
 # Purpose: MeteoInfoLab interpolate module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 from org.meteoinfo.math.interpolate import InterpUtil, RectLinearInterpolator, RectNearestInterpolator, \
     RectNearestInterpolator3D, RectLinearInterpolator3D
@@ -15,9 +15,10 @@ from ..core import NDArray
 from ..core import numeric as np
 
 __all__ = [
-    'interp1d','interp2d','linint2','nearestint2','RectBivariateSpline','RectInterpLinear',
-    'RectInterpLinear3D','RectInterpNearest','RectInterpNearest3D','griddata'
-    ]
+    'interp1d', 'interp2d', 'linint2', 'nearestint2', 'RectBivariateSpline', 'RectInterpLinear',
+    'RectInterpLinear3D', 'RectInterpNearest', 'RectInterpNearest3D', 'griddata'
+]
+
 
 class interp1d(object):
     """
@@ -28,6 +29,7 @@ class interp1d(object):
     :param kind: (*boolean*) Specifies the kind of interpolation as a string (‘linear’, 
         ‘cubic’,‘akima’,‘divided’,‘loess’,‘neville’,'kriging'). Default is ‘linear’.
     """
+
     def __init__(self, x, y, kind='linear', **kwargs):
         if isinstance(x, list):
             x = np.array(x)
@@ -54,7 +56,8 @@ class interp1d(object):
             return r
         else:
             return NDArray(r)
-            
+
+
 class interp2d(object):
     """
     Interpolate over a 2-D grid.
@@ -71,6 +74,7 @@ class interp2d(object):
     :param kind: (*boolean*) Specifies the kind of interpolation as a string (‘linear’, 
         ‘nearest’, 'kriging'). Default is ‘linear’.
     """
+
     def __init__(self, x, y, z, kind='linear', **kwargs):
         if isinstance(x, list):
             x = np.array(x)
@@ -89,7 +93,7 @@ class interp2d(object):
             self._func = InterpUtil.getKriging2D(x.asarray(), y.asarray(), z.asarray(), beta)
         else:
             self._func = InterpUtil.getBiInterpFunc(x.asarray(), y.asarray(), z.T.asarray(), kind)
-        
+
     def __call__(self, x, y):
         """
         Evaluate the interpolate values.
@@ -110,7 +114,8 @@ class interp2d(object):
             return r
         else:
             return NDArray(r)
-            
+
+
 class RectBivariateSpline(object):
     """
     Bivariate spline approximation over a rectangular mesh.
@@ -121,7 +126,8 @@ class RectBivariateSpline(object):
     :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
     :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
     """
-    def __init__(self, x, y, z):        
+
+    def __init__(self, x, y, z):
         if isinstance(x, list):
             x = np.array(x)
         if isinstance(y, list):
@@ -151,6 +157,7 @@ class RectBivariateSpline(object):
         else:
             return NDArray(r)
 
+
 class RectInterpLinear(object):
     """
     Bivariate linear interpolation over a rectangular mesh.
@@ -161,6 +168,7 @@ class RectInterpLinear(object):
     :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
     :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
     """
+
     def __init__(self, x, y, z):
         if isinstance(x, list):
             x = np.array(x)
@@ -191,6 +199,7 @@ class RectInterpLinear(object):
         else:
             return NDArray(r)
 
+
 class RectInterpNearest(object):
     """
     Bivariate nearest interpolation over a rectangular mesh.
@@ -201,6 +210,7 @@ class RectInterpNearest(object):
     :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
     :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
     """
+
     def __init__(self, x, y, z):
         if isinstance(x, list):
             x = np.array(x)
@@ -231,6 +241,7 @@ class RectInterpNearest(object):
         else:
             return NDArray(r)
 
+
 class RectInterpNearest3D(object):
     """
     3D nearest interpolation over a rectangular mesh.
@@ -242,19 +253,20 @@ class RectInterpNearest3D(object):
     :param z: (*array_like*) 1-D array of z coordinate in strictly ascending order.
     :param v: (*array_like*) 3-D array of data with shape (z.size,y.size,x.size).
     """
+
     def __init__(self, x, y, z, v):
         if isinstance(x, list):
             x = np.array(x)
         if x.ndim == 3:
-            x = x[0,0]
+            x = x[0, 0]
         if isinstance(y, list):
             y = np.array(y)
         if y.ndim == 3:
-            y = y[0,:,0]
+            y = y[0, :, 0]
         if isinstance(z, list):
             z = np.array(z)
         if z.ndim == 3:
-            z = z[:,0,0]
+            z = z[:, 0, 0]
         if isinstance(v, list):
             v = np.array(v)
         self._func = RectNearestInterpolator3D(x.asarray(), y.asarray(), z.asarray(), v.asarray())
@@ -285,6 +297,7 @@ class RectInterpNearest3D(object):
         else:
             return NDArray(r)
 
+
 class RectInterpLinear3D(object):
     """
     3D linear interpolation over a rectangular mesh.
@@ -296,19 +309,20 @@ class RectInterpLinear3D(object):
     :param z: (*array_like*) 1-D array of z coordinate in strictly ascending order.
     :param v: (*array_like*) 3-D array of data with shape (z.size,y.size,x.size).
     """
+
     def __init__(self, x, y, z, v):
         if isinstance(x, list):
             x = np.array(x)
         if x.ndim == 3:
-            x = x[0,0]
+            x = x[0, 0]
         if isinstance(y, list):
             y = np.array(y)
         if y.ndim == 3:
-            y = y[0,:,0]
+            y = y[0, :, 0]
         if isinstance(z, list):
             z = np.array(z)
         if z.ndim == 3:
-            z = z[:,0,0]
+            z = z[:, 0, 0]
         if isinstance(v, list):
             v = np.array(v)
         self._func = RectLinearInterpolator3D(x.asarray(), y.asarray(), z.asarray(), v.asarray())
@@ -338,6 +352,7 @@ class RectInterpLinear3D(object):
             return r
         else:
             return NDArray(r)
+
 
 def linint2(*args, **kwargs):
     """
@@ -371,6 +386,7 @@ def linint2(*args, **kwargs):
     r = ArrayUtil.linint2(z, x, y, xq, yq)
     return NDArray(r)
 
+
 def nearestint2(*args, **kwargs):
     """
     Interpolates from a rectilinear grid to another rectilinear grid using nearest interpolation.
@@ -402,6 +418,7 @@ def nearestint2(*args, **kwargs):
     yq = np.array(yq)._array
     r = InterpUtil.nearestint2(z, x, y, xq, yq)
     return NDArray(r)
+
 
 def griddata(points, values, xi=None, **kwargs):
     """
@@ -498,19 +515,24 @@ def griddata(points, values, xi=None, **kwargs):
                                                  y_g.asarray(), radius)
     elif method == 'inside' or method == 'inside_mean':
         centerpoint = kwargs.pop('centerpoint', True)
-        r = InterpUtil.interpolation_Inside_Mean(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(), centerpoint)
+        r = InterpUtil.interpolation_Inside_Mean(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray(),
+                                                 centerpoint)
     elif method == 'inside_max':
         centerpoint = kwargs.pop('centerpoint', True)
-        r = InterpUtil.interpolation_Inside_Max(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
+        r = InterpUtil.interpolation_Inside_Max(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(),
+                                                centerpoint)
     elif method == 'inside_min':
         centerpoint = kwargs.pop('centerpoint', True)
-        r = InterpUtil.interpolation_Inside_Min(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
+        r = InterpUtil.interpolation_Inside_Min(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(),
+                                                centerpoint)
     elif method == 'inside_sum':
         centerpoint = kwargs.pop('centerpoint', True)
-        r = InterpUtil.interpolation_Inside_Sum(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), centerpoint)
+        r = InterpUtil.interpolation_Inside_Sum(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(),
+                                                centerpoint)
     elif method == 'inside_count':
         centerpoint = kwargs.pop('centerpoint', True)
-        r = InterpUtil.interpolation_Inside_Count(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), True, centerpoint)
+        r = InterpUtil.interpolation_Inside_Count(x_s.aslist(), y_s.aslist(), values, x_g.aslist(), y_g.aslist(), True,
+                                                  centerpoint)
         return NDArray(r[0]), x_g, y_g, NDArray(r[1])
     elif method == 'surface':
         r = GeoComputation.interpolation_Surface(x_s.asarray(), y_s.asarray(), values, x_g.asarray(), y_g.asarray())

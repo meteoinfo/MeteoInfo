@@ -3,9 +3,8 @@ from org.meteoinfo.math.interpolate import IDWNDInterpolator as JIDWInterp
 from mipylib.numeric import NDArray
 from jarray import array
 
-__all__ = [
-    'NearestNDInterpolator','IDWNDInterpolator'
-    ]
+__all__ = ['NearestNDInterpolator', 'IDWNDInterpolator']
+
 
 class NearestNDInterpolator(object):
     """
@@ -21,9 +20,11 @@ class NearestNDInterpolator(object):
         Data point coordinates.
     y : (Npoints,) ndarray of float
         Data values.
+    radius : float
+        search radius. Default is `None`.
     """
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, radius=None):
         if isinstance(x, (list, tuple)):
             xx = []
             for xi in x:
@@ -32,6 +33,8 @@ class NearestNDInterpolator(object):
         else:
             x = x.asarray()
         self._interp = JInterp(x, y.asarray())
+        if radius is not None:
+            self._interp.setRadius(radius)
 
     def __call__(self, points, **kwargs):
         """
@@ -57,6 +60,7 @@ class NearestNDInterpolator(object):
             points = array(points, 'd')
             r = self._interp.nearest(points)
             return r
+
 
 class IDWNDInterpolator(object):
     """

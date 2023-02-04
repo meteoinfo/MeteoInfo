@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\interpolate">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\new"/>
@@ -13,20 +13,18 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\quiver"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_pumpkin_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\scatter_sphere.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\scatter.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\nearest_2d_radius.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_pumpkin_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\scatter_sphere.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\scatter.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\nearest_2d_radius.py"/>
     </RecentFiles>
   </File>
   <Font>

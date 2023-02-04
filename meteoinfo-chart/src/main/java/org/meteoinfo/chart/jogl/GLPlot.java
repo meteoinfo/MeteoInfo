@@ -2451,10 +2451,17 @@ public class GLPlot extends Plot {
             meshRender.setLighting(this.lighting);
             meshRender.updateMatrix();
             meshRender.draw();
-        } else if (graphic instanceof IsosurfaceGraphics) {
-            this.drawIsosurface(gl, (IsosurfaceGraphics) graphic);
         } else if (graphic instanceof ParticleGraphics) {
-            this.drawParticles(gl, (ParticleGraphics) graphic);
+            //this.drawParticles(gl, (ParticleGraphics) graphic);
+            if (!this.renderMap.containsKey(graphic)) {
+                renderMap.put(graphic, new PointRender(gl, (GraphicCollection3D) graphic));
+            }
+            PointRender pointRender = (PointRender) renderMap.get(graphic);
+            pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+            pointRender.setOrthographic(this.orthographic);
+            pointRender.setLighting(this.lighting);
+            pointRender.updateMatrix();
+            pointRender.draw();
         } else if (graphic instanceof TriMeshGraphic) {
             if (!this.renderMap.containsKey(graphic)) {
                 renderMap.put(graphic, new TriMeshRender(gl, (TriMeshGraphic) graphic));
@@ -2501,20 +2508,15 @@ public class GLPlot extends Plot {
             if (isDraw) {
                 switch (graphic.getGraphicN(0).getShape().getShapeType()) {
                     case POINT_Z:
-                        //if (((GraphicCollection3D) graphic).isSphere()) {
-                        //    this.drawSpheres(gl, graphic);
-                        //} else {
-                            //this.drawPoints(gl, graphic);
-                            if (!this.renderMap.containsKey(graphic)) {
-                                renderMap.put(graphic, new PointRender(gl, (GraphicCollection3D) graphic));
-                            }
-                            PointRender pointRender = (PointRender) renderMap.get(graphic);
-                            pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
-                            pointRender.setOrthographic(this.orthographic);
-                            pointRender.setLighting(this.lighting);
-                            pointRender.updateMatrix();
-                            pointRender.draw();
-                        //}
+                        if (!this.renderMap.containsKey(graphic)) {
+                            renderMap.put(graphic, new PointRender(gl, (GraphicCollection3D) graphic));
+                        }
+                        PointRender pointRender = (PointRender) renderMap.get(graphic);
+                        pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                        pointRender.setOrthographic(this.orthographic);
+                        pointRender.setLighting(this.lighting);
+                        pointRender.updateMatrix();
+                        pointRender.draw();
                         break;
                     case POLYLINE_Z:
                         if (graphic.getGraphicN(0).getShape() instanceof PipeShape) {

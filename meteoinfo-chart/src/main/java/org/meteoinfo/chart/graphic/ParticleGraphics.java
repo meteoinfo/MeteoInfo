@@ -71,6 +71,19 @@ public class ParticleGraphics extends GraphicCollection3D {
     }
 
     /**
+     * Get point number
+     * @return Point number
+     */
+    public int getPointNumber() {
+        int n = 0;
+        for (List list : this.particles.values()) {
+            n += list.size();
+        }
+
+        return n;
+    }
+
+    /**
      * Get sorted particle list
      * @return Particle list
      */

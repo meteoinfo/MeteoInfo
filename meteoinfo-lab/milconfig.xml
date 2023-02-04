@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\interpolate">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\new"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\others"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\wind">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\quiver"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\particles"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
   </Path>
   <File>
     <OpenedFiles>

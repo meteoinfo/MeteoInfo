@@ -5,7 +5,8 @@ from ._ndarray import NDArray
 from .dimarray import DimArray
 from org.meteoinfo.ndarray.math import ArrayUtil, ArrayMath
 
-__all__ = ['cumprod','cumsum','ndim','nonzero','prod','ravel','searchsorted','sum']
+__all__ = ['cumprod', 'cumsum', 'ndim', 'nonzero', 'prod', 'ravel', 'searchsorted', 'sum']
+
 
 def ndim(a):
     """
@@ -42,6 +43,7 @@ def ndim(a):
     except AttributeError:
         return asarray(a).ndim
 
+
 def ravel(a):
     """
     Return a contiguous flattened array.
@@ -53,6 +55,7 @@ def ravel(a):
         a = array(a)
 
     return a.ravel()
+
 
 def nonzero(a):
     """
@@ -75,6 +78,7 @@ def nonzero(a):
     for aa in ra:
         r.append(NDArray(aa))
     return tuple(r)
+
 
 def searchsorted(a, v, side='left', sorter=None):
     """
@@ -105,6 +109,7 @@ def searchsorted(a, v, side='left', sorter=None):
         return r
     else:
         return NDArray(r)
+
 
 def sum(x, axis=None):
     """
@@ -143,6 +148,7 @@ def sum(x, axis=None):
                     dims.append(x.dims[i])
             return DimArray(NDArray(r), dims, x.fill_value, x.proj)
 
+
 def prod(x, axis=None):
     """
     Product of array elements over a given axis.
@@ -169,6 +175,7 @@ def prod(x, axis=None):
                 if i != axis:
                     dims.append(x.dims[i])
             return DimArray(NDArray(r), dims, x.fill_value, x.proj)
+
 
 def cumsum(a, axis=None):
     """
@@ -199,6 +206,7 @@ def cumsum(a, axis=None):
         for i in range(0, a.ndim):
             dims.append(a.dims[i])
         return DimArray(r, dims, a.fill_value, a.proj)
+
 
 def cumprod(a, axis=None):
     """

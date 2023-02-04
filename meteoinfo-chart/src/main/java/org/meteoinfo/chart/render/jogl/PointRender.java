@@ -6,6 +6,7 @@ import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.ParticleGraphics;
 import org.meteoinfo.chart.graphic.sphere.Sphere;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -22,6 +23,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PointRender extends JOGLGraphicRender {
 
@@ -69,10 +71,14 @@ public class PointRender extends JOGLGraphicRender {
 
         this.graphics = pointGraphics;
         this.sphere = this.graphics.isSphere();
-        this.pointNum = pointGraphics.getNumGraphics();
-        PointBreak pb = (PointBreak) this.graphics.getGraphicN(0).getLegend();
-        this.pointSize = pb.getSize();
-        //this.updateVertex();
+        if (this.graphics instanceof ParticleGraphics) {
+            this.pointNum = ((ParticleGraphics) this.graphics).getPointNumber();
+            this.pointSize = ((ParticleGraphics) this.graphics).getPointSize();
+        } else {
+            this.pointNum = pointGraphics.getNumGraphics();
+            PointBreak pb = (PointBreak) this.graphics.getGraphicN(0).getLegend();
+            this.pointSize = pb.getSize();
+        }
     }
 
     void updateVertex() {
@@ -97,12 +103,22 @@ public class PointRender extends JOGLGraphicRender {
     private void updateVertexColor() {
         this.vertexColor = new float[this.pointNum * 4];
         int i = 0;
-        float[] color;
-        for (Graphic graphic : this.graphics.getGraphics()) {
-            PointBreak pb = (PointBreak) graphic.getLegend();
-            color = pb.getColor().getRGBComponents(null);
-            System.arraycopy(color, 0, vertexColor, i * 4, 4);
-            i++;
+        if (this.graphics instanceof ParticleGraphics) {
+            ParticleGraphics particles = (ParticleGraphics) graphics;
+            for (Map.Entry<Integer, java.util.List> map : particles.getParticleList()) {
+                for (ParticleGraphics.Particle p : (java.util.List<ParticleGraphics.Particle>)map.getValue()) {
+                    System.arraycopy(p.rgba, 0, vertexColor, i * 4, 4);
+                    i++;
+                }
+            }
+        } else {
+            float[] color;
+            for (Graphic graphic : this.graphics.getGraphics()) {
+                PointBreak pb = (PointBreak) graphic.getLegend();
+                color = pb.getColor().getRGBComponents(null);
+                System.arraycopy(color, 0, vertexColor, i * 4, 4);
+                i++;
+            }
         }
     }
 
@@ -112,13 +128,25 @@ public class PointRender extends JOGLGraphicRender {
         } else {
             this.vertexPosition = new float[this.pointNum * 3];
             int i = 0;
-            for (Graphic graphic : this.graphics.getGraphics()) {
-                PointZShape shape = (PointZShape) graphic.getShape();
-                PointZ p = (PointZ) shape.getPoint();
-                vertexPosition[i] = transform.transform_x((float) p.X);
-                vertexPosition[i + 1] = transform.transform_y((float) p.Y);
-                vertexPosition[i + 2] = transform.transform_z((float) p.Z);
-                i += 3;
+            if (this.graphics instanceof ParticleGraphics) {
+                ParticleGraphics particles = (ParticleGraphics) graphics;
+                for (Map.Entry<Integer, java.util.List> map : particles.getParticleList()) {
+                    for (ParticleGraphics.Particle p : (java.util.List<ParticleGraphics.Particle>)map.getValue()) {
+                        vertexPosition[i] = transform.transform_x((float) p.x);
+                        vertexPosition[i + 1] = transform.transform_y((float) p.y);
+                        vertexPosition[i + 2] = transform.transform_z((float) p.z);
+                        i += 3;
+                    }
+                }
+            } else {
+                for (Graphic graphic : this.graphics.getGraphics()) {
+                    PointZShape shape = (PointZShape) graphic.getShape();
+                    PointZ p = (PointZ) shape.getPoint();
+                    vertexPosition[i] = transform.transform_x((float) p.X);
+                    vertexPosition[i + 1] = transform.transform_y((float) p.Y);
+                    vertexPosition[i + 2] = transform.transform_z((float) p.Z);
+                    i += 3;
+                }
             }
         }
     }

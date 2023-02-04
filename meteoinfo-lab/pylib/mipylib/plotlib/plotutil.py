@@ -1,9 +1,9 @@
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2017-7-27
 # Purpose: MeteoInfo plotutil module in plotlib package
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 import os
 import datetime
@@ -23,6 +23,7 @@ import mipylib.numeric as np
 import mipylib.miutil as miutil
 import mipylib.migl as migl
 
+
 def getplotdata(data):
     if isinstance(data, NDArray):
         if data.dtype == np.dtype.date:
@@ -39,7 +40,8 @@ def getplotdata(data):
             return np.array(data)._array
     else:
         return np.array([data])._array
-        
+
+
 def getfont(fontdic, **kwargs):
     basefont = kwargs.pop('basefont', None)
     if basefont is None:
@@ -67,7 +69,8 @@ def getfont(fontdic, **kwargs):
         else:
             font = Font(name, Font.PLAIN, size)
     return font
-    
+
+
 def getfont_1(**kwargs):
     fontname = kwargs.pop('fontname', 'Arial')
     fontsize = kwargs.pop('fontsize', 14)
@@ -78,17 +81,18 @@ def getfont_1(**kwargs):
         font = Font(fontname, Font.PLAIN, fontsize)
     return font
 
+
 def getcolor(style, alpha=None):
     if style is None:
         return None
-        
+
     if isinstance(style, Color):
         c = style
         if not alpha is None:
             alpha = (int)(alpha * 255)
             c = Color(c.getRed(), c.getGreen(), c.getBlue(), alpha)
         return c
-        
+
     c = Color.black
     if isinstance(style, str):
         if style == 'red' or style == 'r':
@@ -125,13 +129,14 @@ def getcolor(style, alpha=None):
             c = Color(style[0], style[1], style[2])
         else:
             c = Color(style[0], style[1], style[2], style[3])
-    
+
     if not alpha is None:
         alpha = (int)(alpha * 255)
         c = Color(c.getRed(), c.getGreen(), c.getBlue(), alpha)
-    
+
     return c
-    
+
+
 def getcolor_style(style):
     c = Color.black
     rr = None
@@ -162,23 +167,25 @@ def getcolor_style(style):
     elif 'p' in style:
         c = Color.pink
         rr = 'p'
-    
+
     if not rr is None:
         style = style.replace(rr, '')
     return c, style
-    
+
+
 def getcolors(cs, alpha=None):
     colors = []
     if isinstance(cs, (tuple, list, NDArray)):
         if isinstance(cs[0], int):
             colors.append(getcolor(cs, alpha))
-        else:            
+        else:
             for c in cs:
                 colors.append(getcolor(c, alpha))
     else:
         colors.append(getcolor(cs, alpha))
     return colors
-    
+
+
 def getcolormap(**kwargs):
     colors = kwargs.pop('colors', None)
     is_single = False
@@ -217,7 +224,8 @@ def getcolormap(**kwargs):
     if reverse:
         cmap.reverse()
     return cmap
-    
+
+
 def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop=None):
     """
     Make colors.
@@ -234,7 +242,7 @@ def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop
     if isinstance(n, list):
         cols = getcolors(n, alpha)
     else:
-        #ocmap = ColorUtil.getColorMap(cmap)
+        # ocmap = ColorUtil.getColorMap(cmap)
         ocmap = getcolormap(cmap=cmap)
         if reverse:
             ocmap.reverse()
@@ -255,11 +263,12 @@ def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop
                 alpha = (int)(alpha * 255)
                 cols = ocmap.getColorListAlpha(n, alpha, start, stop)
     return list(cols)
-    
+
+
 def getpointstyle(style):
     if style is None:
         return None
-        
+
     pointStyle = None
     if 'do' in style:
         pointStyle = PointStyle.DOUBLE_CIRCLE
@@ -287,13 +296,14 @@ def getpointstyle(style):
         pointStyle = PointStyle.X_CROSS
     elif 'p' in style:
         pointStyle = PointStyle.PENTAGON
-    
+
     return pointStyle
-    
+
+
 def getlinestyle(style):
     if style is None:
         return None
-        
+
     lineStyle = None
     if style[0].isalpha():
         style = style.upper()
@@ -307,13 +317,14 @@ def getlinestyle(style):
             lineStyle = LineStyles.DASH_DOT
         elif '-' in style:
             lineStyle = LineStyles.SOLID
-    
+
     return lineStyle
-    
+
+
 def getlinestyle_1(style):
     if style is None:
         return None
-        
+
     lineStyle = None
     rr = None
     if '--' in style:
@@ -328,18 +339,20 @@ def getlinestyle_1(style):
     elif '-' in style:
         lineStyle = LineStyles.SOLID
         rr = '-'
-    
+
     if not rr is None:
         style = style.replace(rr, '')
     return lineStyle, style
-    
+
+
 def gethatch(h):
     if h is None:
         return h
     else:
         return HatchStyle.getStyle(h)
-    
-def getplotstyle(style, caption, **kwargs):    
+
+
+def getplotstyle(style, caption, **kwargs):
     linewidth = kwargs.pop('linewidth', 1.0)
     if style is None:
         color = kwargs.pop('color', 'red')
@@ -349,10 +362,10 @@ def getplotstyle(style, caption, **kwargs):
         if kwargs.has_key('color'):
             c = getcolor(kwargs.pop('color'))
     lineStyle, style = getlinestyle_1(style)
-    pointStyle = getpointstyle(style)    
+    pointStyle = getpointstyle(style)
     if not pointStyle is None:
         fill = kwargs.pop('fill', True)
-        if lineStyle is None:           
+        if lineStyle is None:
             pb = PointBreak()
             pb.setCaption(caption)
             if '.' in style:
@@ -363,7 +376,7 @@ def getplotstyle(style, caption, **kwargs):
             pb.setStyle(pointStyle)
             pb.setDrawFill(fill)
             if not c is None:
-                pb.setColor(c)      
+                pb.setColor(c)
             edgecolor = kwargs.pop('edgecolor', pb.getColor())
             edgecolor = getcolor(edgecolor)
             pb.setOutlineColor(edgecolor)
@@ -401,7 +414,8 @@ def getplotstyle(style, caption, **kwargs):
         if not lineStyle is None:
             plb.setStyle(lineStyle)
         return plb
-        
+
+
 def getlegendbreak(geometry, **kwargs):
     fill = True
     color = None
@@ -420,7 +434,7 @@ def getlegendbreak(geometry, **kwargs):
                 color = getcolor(color)
 
     if geometry == 'point':
-        lb = PointBreak()        
+        lb = PointBreak()
         marker = kwargs.pop('marker', 'o')
         if marker == 'image':
             imagepath = kwargs.pop('imagepath', None)
@@ -509,7 +523,7 @@ def getlegendbreak(geometry, **kwargs):
         if not size is None:
             lb.setOutlineSize(size)
         hatch = kwargs.pop('hatch', None)
-        hatch = gethatch(hatch) 
+        hatch = gethatch(hatch)
         hatchsize = kwargs.pop('hatchsize', None)
         hatchlinewidth = kwargs.pop('hatchlinewidth', None)
         bgcolor = kwargs.pop('bgcolor', None)
@@ -526,7 +540,7 @@ def getlegendbreak(geometry, **kwargs):
         lb = ColorBreak()
     caption = kwargs.pop('caption', None)
     if not caption is None:
-        lb.setCaption(caption) 
+        lb.setCaption(caption)
     if not color is None:
         lb.setColor(color)
     alpha = kwargs.pop('alpha', None)
@@ -543,11 +557,12 @@ def getlegendbreak(geometry, **kwargs):
             lb.setStartValue(value)
             lb.setEndValue(value)
     return lb, isunique
-    
+
+
 def getlegendscheme(args, min, max, **kwargs):
     ls = kwargs.pop('symbolspec', None)
     if ls is None:
-        cmap = getcolormap(**kwargs)        
+        cmap = getcolormap(**kwargs)
         if len(args) > 0:
             level_arg = args[0]
             if isinstance(level_arg, int):
@@ -557,7 +572,7 @@ def getlegendscheme(args, min, max, **kwargs):
                 if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
                 ls = LegendManage.createLegendScheme(min, max, level_arg, cmap)
-        else:    
+        else:
             ls = LegendManage.createLegendScheme(min, max, cmap)
         # ecobj = kwargs.pop('edgecolor', None)
         # if not ecobj is None:
@@ -567,7 +582,8 @@ def getlegendscheme(args, min, max, **kwargs):
         #         lb.setDrawOutline(True)
         #         lb.setOutlineColor(edgecolor)
     return ls
-    
+
+
 def setlegendscheme(ls, **kwargs):
     st = ls.getShapeType()
     if st == ShapeTypes.POINT:
@@ -579,20 +595,22 @@ def setlegendscheme(ls, **kwargs):
     else:
         setlegendscheme_image(ls, **kwargs)
 
+
 def setlegendscheme_image(ls, **kwargs):
     cobj = kwargs.pop('color', None)
     alpha = kwargs.pop('alpha', None)
     for lb in ls.getLegendBreaks():
         if not cobj is None:
             color = getcolor(cobj)
-            lb.setColor(color)   
+            lb.setColor(color)
         if not alpha is None:
             c = lb.getColor()
             c = getcolor(c, alpha)
             lb.setColor(c)
-        
+
     return ls
-        
+
+
 def setlegendscheme_point(ls, **kwargs):
     ls = ls.convertTo(ShapeTypes.POINT)
     sizes = kwargs.get('size', None)
@@ -601,7 +619,7 @@ def setlegendscheme_point(ls, **kwargs):
     marker = kwargs.get('marker', None)
     i = 0
     for lb in ls.getLegendBreaks():
-        if isinstance(sizes, (list, tuple, NDArray)): 
+        if isinstance(sizes, (list, tuple, NDArray)):
             kwargs['size'] = sizes[i]
         if isinstance(colors, (list, tuple, NDArray)):
             kwargs['color'] = colors[i]
@@ -613,7 +631,8 @@ def setlegendscheme_point(ls, **kwargs):
         i += 1
 
     return ls
-    
+
+
 def setlegendscheme_arrow(ls, **kwargs):
     """
     Set legend scheme as arrow breaks.
@@ -625,10 +644,10 @@ def setlegendscheme_arrow(ls, **kwargs):
     ls = ls.convertTo(ShapeTypes.POINT)
     sizes = kwargs.get('size', None)
     colors = kwargs.get('colors', None)
-    marker = kwargs.get('marker', None)    
+    marker = kwargs.get('marker', None)
     for i in range(ls.getBreakNum()):
         lb = ls.getLegendBreak(i)
-        if isinstance(sizes, (list, tuple, NDArray)): 
+        if isinstance(sizes, (list, tuple, NDArray)):
             kwargs['size'] = sizes[i]
         if isinstance(colors, (list, tuple, NDArray)):
             kwargs['color'] = colors[i]
@@ -641,7 +660,8 @@ def setlegendscheme_arrow(ls, **kwargs):
         ls.setLegendBreak(i, lb)
 
     return ls
-    
+
+
 def point2arrow(pb, **kwargs):
     """
     Convert point break to arrow break.
@@ -667,9 +687,10 @@ def point2arrow(pb, **kwargs):
     overhang = kwargs.pop('overhang', None)
     if not overhang is None:
         arrowbreak.setOverhang(overhang)
-    
+
     return arrowbreak
-    
+
+
 def line2arrow(lb, **kwargs):
     """
     Convert linestring break to arrow line break.
@@ -698,9 +719,10 @@ def line2arrow(lb, **kwargs):
     if kwargs.has_key('edgecolor'):
         edgecolor = kwargs.pop('edgecolor')
         albreak.setArrowOutlineColor(getcolor(edgecolor))
-    
+
     return albreak
-    
+
+
 def line2stream(lb, **kwargs):
     """
     Convert linestring break to streamline break.
@@ -739,9 +761,10 @@ def line2stream(lb, **kwargs):
     if kwargs.has_key('interval'):
         interval = kwargs['interval']
         albreak.setInterval(interval)
-    
+
     return albreak
-    
+
+
 def polygon2arrow(pb, **kwargs):
     """
     Convert polygon break to arrow polygon break.
@@ -767,9 +790,10 @@ def polygon2arrow(pb, **kwargs):
     overhang = kwargs.pop('overhang', None)
     if not overhang is None:
         arrowbreak.setOverhang(overhang)
-    
+
     return arrowbreak
-    
+
+
 def setlegendscheme_line(ls, **kwargs):
     ls = ls.convertTo(ShapeTypes.POLYLINE)
     size = kwargs.pop('size', None)
@@ -780,7 +804,7 @@ def setlegendscheme_line(ls, **kwargs):
     if cobj is None:
         color = None
     else:
-        color = getcolor(cobj)    
+        color = getcolor(cobj)
     for lb in ls.getLegendBreaks():
         if not color is None:
             lb.setColor(color)
@@ -789,7 +813,8 @@ def setlegendscheme_line(ls, **kwargs):
         if not size is None:
             lb.setSize(size)
     return ls
-    
+
+
 def setlegendscheme_polygon(ls, **kwargs):
     ls = ls.convertTo(ShapeTypes.POLYGON)
     fill = True
@@ -816,7 +841,7 @@ def setlegendscheme_polygon(ls, **kwargs):
     fill = kwargs.pop('fill', fill)
     alpha = kwargs.pop('alpha', None)
     hatch = kwargs.pop('hatch', None)
-    hatch = gethatch(hatch) 
+    hatch = gethatch(hatch)
     hatchsize = kwargs.pop('hatchsize', None)
     hatchlinewidth = kwargs.pop('hatchlinewidth', None)
     bgcolor = kwargs.pop('bgcolor', None)
@@ -848,7 +873,8 @@ def setlegendscheme_polygon(ls, **kwargs):
             if not hatchlinewidth is None:
                 lb.setStyleLineWidth(hatchlinewidth)
     return ls
-    
+
+
 def setpointlegendbreak(lb, **kwargs):
     if kwargs.has_key('marker'):
         marker = kwargs['marker']
@@ -907,7 +933,8 @@ def setpointlegendbreak(lb, **kwargs):
         lb.setOutlineSize(kwargs['edgesize'])
     elif kwargs.has_key('linewidth'):
         lb.setOutlineSize(kwargs['linewidth'])
-        
+
+
 def text(x, y, s, **kwargs):
     """
     Add text to the axes. Add text in string *s* to axis at location *x* , *y* , data
@@ -989,7 +1016,8 @@ def text(x, y, s, **kwargs):
     coordinates = kwargs.pop('coordinates', 'data')
     text.setCoordinates(coordinates)
     return text
-    
+
+
 def makesymbolspec(geometry, *args, **kwargs):
     """
     Make a legend.
@@ -1008,7 +1036,7 @@ def makesymbolspec(geometry, *args, **kwargs):
         shapetype = ShapeTypes.POLYLINE
     elif geometry == 'polygon':
         shapetype = ShapeTypes.POLYGON
-        
+
     levels = kwargs.pop('levels', None)
     cols = kwargs.pop('colors', None)
     field = kwargs.pop('field', '')
@@ -1019,7 +1047,7 @@ def makesymbolspec(geometry, *args, **kwargs):
         for cobj in cols:
             colors.append(getcolor(cobj))
         ls = LegendManage.createLegendScheme(shapetype, levels, colors)
-        setlegendscheme(ls, **kwargs)         
+        setlegendscheme(ls, **kwargs)
         ls.setFieldName(field)
         values = kwargs.pop('values', None)
         if values is None:
@@ -1029,7 +1057,7 @@ def makesymbolspec(geometry, *args, **kwargs):
             for v in values:
                 nls.addLegendBreak(ls.findLegendBreak(v))
             return nls
-           
+
     n = len(args)
     isunique = True
     if n == 0:
@@ -1052,16 +1080,17 @@ def makesymbolspec(geometry, *args, **kwargs):
                 if isunique and not isu:
                     isunique = False
                 ls.addLegendBreak(lb)
-       
+
     ls.setFieldName(field)
     if ls.getBreakNum() > 1:
         if isunique:
             ls.setLegendType(LegendType.UNIQUE_VALUE)
         else:
             ls.setLegendType(LegendType.GRADUATED_COLOR)
-            
+
     return ls
-    
+
+
 def makelegend(source, **kwargs):
     """
     Make a legend.

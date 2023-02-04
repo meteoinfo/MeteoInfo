@@ -1436,7 +1436,7 @@ class Axes3DGL(Axes3D):
         alpha_min = kwargs.pop('alpha_min', 0.1)
         alpha_max = kwargs.pop('alpha_max', 0.6)
         density = kwargs.pop('density', 2)
-        graphics = JOGLUtil.particles(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
+        graphics = GraphicFactory.particles(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
                                       alpha_min, alpha_max, density)
         s = kwargs.pop('s', None)
         if s is None:

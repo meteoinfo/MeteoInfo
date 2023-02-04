@@ -1,10 +1,10 @@
 # coding=utf-8
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2017-3-25
 # Purpose: MeteoInfoLab axes module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 from org.meteoinfo.chart import Location, ChartWindArrow, ChartText, LegendPosition, \
     ChartLegend, ChartColorBar, AspectType
@@ -35,7 +35,8 @@ import plotutil
 import colors
 import mipylib.miutil as miutil
 
-__all__ = ['Axes','PolarAxes']
+__all__ = ['Axes', 'PolarAxes']
+
 
 class Axes(object):
     """
@@ -45,28 +46,28 @@ class Axes(object):
     def __init__(self, *args, **kwargs):
         axes = kwargs.pop('axes', None)
         self._set_plot(axes)
-        
+
         figure = kwargs.pop('figure', None)
         self.figure = figure
-        
+
         if len(args) > 0:
             position = args[0]
         else:
-            position = kwargs.pop('position', None)    
+            position = kwargs.pop('position', None)
         outerposition = kwargs.pop('outerposition', None)
         if position is None:
             position = [0.13, 0.11, 0.775, 0.815]
             self.active_outerposition(True)
-        else:        
-            self.active_outerposition(False)        
-        self.set_position(position)   
+        else:
+            self.active_outerposition(False)
+        self.set_position(position)
         if not outerposition is None:
             self.set_outerposition(outerposition)
             self.active_outerposition(True)
         units = kwargs.pop('units', None)
         if not units is None:
             self._axes.setUnits(units)
-            
+
         aspect = kwargs.pop('aspect', 'auto')
         axis = kwargs.pop('axis', None)
         if axis is None:
@@ -88,8 +89,8 @@ class Axes(object):
         xreverse = kwargs.pop('xreverse', False)
         yreverse = kwargs.pop('yreverse', False)
         xaxistype = kwargs.pop('xaxistype', None)
-        bgcobj = kwargs.pop('bgcolor', None)        
-        
+        bgcobj = kwargs.pop('bgcolor', None)
+
         if aspect == 'equal':
             self._axes.setAspectType(AspectType.EQUAL)
         else:
@@ -109,7 +110,7 @@ class Axes(object):
             t_axis.setInverse(True)
         if yreverse:
             l_axis.setInverse(True)
-            r_axis.setInverse(True)        
+            r_axis.setInverse(True)
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
         bgcolor = plotutil.getcolor(bgcobj)
@@ -131,7 +132,7 @@ class Axes(object):
         clip = kwargs.pop('clip', None)
         if not clip is None:
             self._axes.setClip(clip)
-    
+
     def _set_plot(self, plot):
         """
         Set plot.
@@ -142,7 +143,7 @@ class Axes(object):
             self._axes = Plot2D()
         else:
             self._axes = plot
-    
+
     @property
     def axestype(self):
         return 'cartesian'
@@ -153,7 +154,7 @@ class Axes(object):
         Dimension number property
         """
         return 2
-    
+
     def get_type(self):
         """
         Get axes type
@@ -161,7 +162,7 @@ class Axes(object):
         :returns: Axes type
         """
         return self._axes.getPlotType()
-            
+
     def get_position(self):
         """
         Get axes position             
@@ -170,7 +171,7 @@ class Axes(object):
         """
         pos = self._axes.getPosition()
         return [pos.x, pos.y, pos.width, pos.height]
-        
+
     def set_position(self, pos):
         """
         Set axes position
@@ -179,7 +180,7 @@ class Axes(object):
             height] in normalized (0, 1) units
         """
         self._axes.setPosition(pos)
-        
+
     def get_outerposition(self):
         """
         Get axes outer position
@@ -188,7 +189,7 @@ class Axes(object):
         """
         pos = self._axes.getOuterPosition()
         return [pos.x, pos.y, pos.width, pos.height]
-        
+
     def set_outerposition(self, pos):
         """
         Set axes outer position
@@ -197,7 +198,7 @@ class Axes(object):
             height] in normalized (0, 1) units
         """
         self._axes.setOuterPosition(pos)
-        
+
     def active_outerposition(self, active):
         """
         Set axes outer position active or not.
@@ -205,7 +206,7 @@ class Axes(object):
         :param active: (*boolean*) Active or not
         """
         self._axes.setOuterPosActive(active)
-    
+
     def get_axis(self, loc):
         """
         Get axis by location.
@@ -238,7 +239,7 @@ class Axes(object):
         :param clip: (*bool*) Clip or not
         """
         self._axes.setClip(clip)
-        
+
     def get_title(self, loc='center'):
         """
         Get title            
@@ -254,7 +255,7 @@ class Axes(object):
             return self._axes.getRightTitle()
         else:
             return self._axes.getTitle()
-        
+
     def set_title(self, label, loc='center', fontname=None, fontsize=14, bold=True, color='black', **kwargs):
         """
         Set a title of the current axes.
@@ -273,7 +274,7 @@ class Axes(object):
             fontname = 'Arial'
         else:
             exfont = True
-            
+
         if bold:
             font = Font(fontname, Font.BOLD, fontsize)
         else:
@@ -286,16 +287,16 @@ class Axes(object):
         linespace = kwargs.pop('linespace', None)
         if not linespace is None:
             title.setLineSpace(linespace)
-        
+
         if loc == 'left':
             self._axes.setLeftTitle(title)
         elif loc == 'right':
             self._axes.setRightTitle(title)
         else:
             self._axes.setTitle(title)
-            
+
         return title
-            
+
     def set_xlabel(self, label, **kwargs):
         """
         Set the x axis label of the current axes.
@@ -320,7 +321,7 @@ class Axes(object):
             text.setXAlign('center')
             text.setYAlign('bottom')
             axis_t.setLabel(text)
-    
+
     def set_ylabel(self, label, **kwargs):
         """
         Set the y axis label of the current axes.
@@ -343,11 +344,11 @@ class Axes(object):
         axis.setDrawLabel(True)
         if self.axestype != '3d':
             axis_r = self._axes.getAxis(Location.RIGHT)
-            text = ctext.clone()            
+            text = ctext.clone()
             text.setXAlign('left')
             text.setYAlign('center')
             axis_r.setLabel(text)
-    
+
     def get_xticks(self):
         """
         Get x axis tick locations.
@@ -355,7 +356,7 @@ class Axes(object):
         axis = self._axes.getXAxis()
         axis.updateTickLabels()
         return axis.getTickLocations()
-        
+
     def set_xticks(self, locs):
         """
         Set x axis tick locations.
@@ -364,14 +365,14 @@ class Axes(object):
         if isinstance(locs, (NDArray, DimArray)):
             locs = locs.aslist()
         axis.setTickLocations(locs)
-        
+
         if self.axestype == '3d':
             axis_t = None
         else:
             axis_t = self._axes.getAxis(Location.TOP)
         if not axis_t is None:
             axis_t.setTickLocations(locs)
-        
+
     def get_yticks(self):
         """
         Get y axis tick locations.
@@ -379,7 +380,7 @@ class Axes(object):
         axis = self._axes.getYAxis()
         axis.updateTickLabels()
         return axis.getTickLocations()
-        
+
     def set_yticks(self, locs):
         """
         Set y axis tick locations.
@@ -388,14 +389,14 @@ class Axes(object):
         if isinstance(locs, NDArray):
             locs = locs.aslist()
         axis.setTickLocations(locs)
-        
+
         if self.axestype == '3d':
             axis_r = None
         else:
             axis_r = self._axes.getAxis(Location.RIGHT)
         if not axis_r is None:
             axis_r.setTickLocations(locs)
-        
+
     def get_xticklabels(self):
         """
         Get x axis tick labels.
@@ -403,7 +404,7 @@ class Axes(object):
         axis = self._axes.getXAxis()
         axis.updateTickLabels()
         return axis.getTickLabelText()
-        
+
     def set_xticklabels(self, labels, **kwargs):
         """
         Set x axis tick labels.
@@ -413,24 +414,24 @@ class Axes(object):
             axis_t = None
         else:
             axis_t = self._axes.getAxis(Location.TOP)
-            
+
         if not labels is None:
             if isinstance(labels, (NDArray, DimArray)):
                 labels = labels.aslist()
             if isinstance(labels[0], (int, long, float)):
                 axis.setTickLabels_Number(labels)
             else:
-                axis.setTickLabelText(labels)                   
-            
+                axis.setTickLabelText(labels)
+
             if not axis_t is None:
                 if isinstance(labels[0], (int, long, float)):
                     axis_t.setTickLabels_Number(labels)
                 else:
                     axis_t.setTickLabelText(labels)
-        
+
         fontname = kwargs.pop('fontname', axis.getTickLabelFont().getName())
         fontsize = kwargs.pop('fontsize', axis.getTickLabelFont().getSize())
-        bold =kwargs.pop('bold', axis.getTickLabelFont().isBold())
+        bold = kwargs.pop('bold', axis.getTickLabelFont().isBold())
         if bold:
             font = Font(fontname, Font.BOLD, fontsize)
         else:
@@ -447,7 +448,7 @@ class Axes(object):
             axis_t.setTickLabelFont(font)
             axis_t.setTickLabelColor(c)
             axis_t.setTickLabelAngle(angle)
-            
+
     def get_yticklabels(self):
         """
         Get y axis tick labels.
@@ -455,7 +456,7 @@ class Axes(object):
         axis = self._axes.getYAxis()
         axis.updateTickLabels()
         return axis.getTickLabelText()
-        
+
     def set_yticklabels(self, labels, **kwargs):
         """
         Set y axis tick labels.
@@ -465,24 +466,24 @@ class Axes(object):
             axis_r = None
         else:
             axis_r = self._axes.getAxis(Location.RIGHT)
-            
+
         if not labels is None:
             if isinstance(labels, (NDArray, DimArray)):
                 labels = labels.aslist()
             if isinstance(labels[0], (int, long, float)):
                 axis.setTickLabels_Number(labels)
             else:
-                axis.setTickLabelText(labels)        
-        
+                axis.setTickLabelText(labels)
+
             if not axis_r is None:
                 if isinstance(labels[0], (int, long, float)):
                     axis_r.setTickLabels_Number(labels)
                 else:
                     axis_r.setTickLabelText(labels)
-                
+
         fontname = kwargs.pop('fontname', axis.getTickLabelFont().getName())
         fontsize = kwargs.pop('fontsize', axis.getTickLabelFont().getSize())
-        bold =kwargs.pop('bold', axis.getTickLabelFont().isBold())
+        bold = kwargs.pop('bold', axis.getTickLabelFont().isBold())
         if bold:
             font = Font(fontname, Font.BOLD, fontsize)
         else:
@@ -499,7 +500,7 @@ class Axes(object):
             axis_r.setTickLabelFont(font)
             axis_r.setTickLabelColor(c)
             axis_r.setTickLabelAngle(angle)
-            
+
     def set_xaxis_type(self, axistype, timetickformat=None):
         """
         Set x axis type.
@@ -546,13 +547,13 @@ class Axes(object):
             if not isinstance(t_axis, LogAxis):
                 t_axis = LogAxis(t_axis)
                 t_axis.setMinorTickNum(10)
-            ax.setAxis(t_axis, Location.TOP)   
+            ax.setAxis(t_axis, Location.TOP)
         else:
             b_axis = Axis(ax.getAxis(Location.BOTTOM))
             ax.setAxis(b_axis, Location.BOTTOM)
             t_axis = Axis(ax.getAxis(Location.TOP))
             ax.setAxis(t_axis, Location.TOP)
-                    
+
     def set_yaxis_type(self, axistype, timetickformat=None):
         """
         Set y axis type.
@@ -563,20 +564,20 @@ class Axes(object):
         ax = self._axes
         if axistype == 'lon':
             b_axis = LonLatAxis(ax.getAxis(Location.LEFT))
-            #b_axis.setLabel('Longitude')
+            # b_axis.setLabel('Longitude')
             b_axis.setLongitude(True)
             ax.setAxis(b_axis, Location.LEFT)
             t_axis = LonLatAxis(ax.getAxis(Location.RIGHT))
-            #t_axis.setLabel('Longitude')
+            # t_axis.setLabel('Longitude')
             t_axis.setLongitude(True)
             ax.setAxis(t_axis, Location.RIGHT)
         elif axistype == 'lat':
             b_axis = LonLatAxis(ax.getAxis(Location.LEFT))
-            #b_axis.setLabel('Latitude')
+            # b_axis.setLabel('Latitude')
             b_axis.setLongitude(False)
             ax.setAxis(b_axis, Location.LEFT)
             t_axis = LonLatAxis(ax.getAxis(Location.RIGHT))
-            #t_axis.setLabel('Latitude')
+            # t_axis.setLabel('Latitude')
             t_axis.setLongitude(False)
             ax.setAxis(t_axis, Location.RIGHT)
         elif axistype == 'time':
@@ -589,11 +590,11 @@ class Axes(object):
                 ax.getAxis(Location.RIGHT).setTimeFormat(timetickformat)
         elif axistype == 'log':
             l_axis = LogAxis(ax.getAxis(Location.LEFT))
-            #l_axis.setLabel('Log')
+            # l_axis.setLabel('Log')
             l_axis.setMinorTickNum(10)
             ax.setAxis(l_axis, Location.LEFT)
             r_axis = LogAxis(ax.getAxis(Location.RIGHT))
-            #r_axis.setLabel('Log')
+            # r_axis.setLabel('Log')
             r_axis.setMinorTickNum(10)
             ax.setAxis(r_axis, Location.RIGHT)
         else:
@@ -601,7 +602,7 @@ class Axes(object):
             ax.setAxis(l_axis, Location.LEFT)
             r_axis = Axis(ax.getAxis(Location.RIGHT))
             ax.setAxis(r_axis, Location.RIGHT)
-        
+
     def axis(self, limits):
         """
         Sets the min and max of the x and y axes, with ``[xmin, xmax, ymin, ymax]`` .
@@ -615,13 +616,13 @@ class Axes(object):
             ymax = limits[3]
             extent = Extent(xmin, xmax, ymin, ymax)
             self._axes.setDrawExtent(extent)
-            #self._axes.setExtent(extent.clone())
+            # self._axes.setExtent(extent.clone())
             self._axes.setFixDrawExtent(True)
             return True
         else:
             print('The limits parameter must be a list with 4 elements: xmin, xmax, ymin, ymax!')
             return None
-            
+
     def get_xlim(self):
         """
         Get the *x* limits of the current axes.
@@ -630,7 +631,7 @@ class Axes(object):
         """
         extent = self._axes.getDrawExtent()
         return extent.minX, extent.maxX
-            
+
     def set_xlim(self, xmin, xmax):
         """
         Set the *x* limits of the current axes.
@@ -641,8 +642,8 @@ class Axes(object):
         if isinstance(xmin, datetime.datetime):
             xmin = miutil.date2num(xmin)
         if isinstance(xmax, datetime.datetime):
-            xmax = miutil.date2num(xmax)    
-            
+            xmax = miutil.date2num(xmax)
+
         extent = self._axes.getDrawExtent()
         extent.minX = xmin
         extent.maxX = xmax
@@ -658,7 +659,7 @@ class Axes(object):
         """
         extent = self._axes.getDrawExtent()
         return extent.minY, extent.maxY
-            
+
     def set_ylim(self, ymin, ymax):
         """
         Set the *yt* limits of the current axes.
@@ -669,15 +670,15 @@ class Axes(object):
         if isinstance(ymin, datetime.datetime):
             ymin = miutil.date2num(ymin)
         if isinstance(ymax, datetime.datetime):
-            ymax = miutil.date2num(ymax)    
-            
+            ymax = miutil.date2num(ymax)
+
         extent = self._axes.getDrawExtent()
         extent.minY = ymin
         extent.maxY = ymax
         self._axes.setDrawExtent(extent)
         self._axes.setExtent(extent.clone())
         self._axes.setFixDrawExtent(True)
-        
+
     def twinx(self):
         """
         Make a second axes that shares the x-axis. The new axes will overlay *ax*. The ticks 
@@ -699,7 +700,7 @@ class Axes(object):
         axis.setDrawTickLabel(True)
         axis.setDrawLabel(True)
         return ax2
-        
+
     def twiny(self):
         """
         Make a second axes that shares the y-axis. The new axes will overlay *ax*. The ticks 
@@ -841,7 +842,7 @@ class Axes(object):
             if not tickavoidcoll is None:
                 axis.setTickLabelAvoidCollision(tickavoidcoll)
             axis.setTickLabelFont(font)
-        
+
     def yaxis(self, **kwargs):
         """
         Set y-axis of the axes.
@@ -961,13 +962,13 @@ class Axes(object):
             if not tickavoidcoll is None:
                 axis.setTickLabelAvoidCollision(tickavoidcoll)
             axis.setTickLabelFont(font)
-    
+
     def xreverse(self):
         """
         Reverse x axis.
         """
         self._axes.getXAxis().setInverse(True)
-        
+
     def yreverse(self):
         """
         Reverse y axis.
@@ -982,7 +983,7 @@ class Axes(object):
         """
         self._axes.addGraphic(patch)
         self._axes.setAutoExtent()
-    
+
     def add_graphic(self, graphic, projection=None, zorder=None):
         """
         Add a graphic
@@ -1037,7 +1038,7 @@ class Axes(object):
         Remove all graphics.
         """
         self._axes.getGraphics().clear()
-        
+
     def data2pixel(self, x, y, z=None):
         """
         Transform data coordinate to screen coordinate
@@ -1052,7 +1053,7 @@ class Axes(object):
         sy = r[1] + rect.getY()
         sy = self.figure.get_size()[1] - sy
         return sx, sy
-        
+
     def grid(self, b=None, **kwargs):
         """
         Turn the axes grids on or off.
@@ -1095,7 +1096,7 @@ class Axes(object):
         top = kwargs.pop('top', None)
         if not top is None:
             gridline.setTop(top)
-            
+
     def plot(self, *args, **kwargs):
         """
         Plot lines and/or markers to the axes. *args* is a variable length argument, allowing
@@ -1145,7 +1146,7 @@ class Axes(object):
           =========  =====
         """
         xdatalist = []
-        ydatalist = []    
+        ydatalist = []
         styles = []
         xaxistype = None
         isxylistdata = False
@@ -1161,7 +1162,7 @@ class Axes(object):
                     if ydata.ndim == 2:
                         xdata = ydata.dimvalue(1)
                         xx = np.zeros(ydata.shape)
-                        xx[:,:] = xdata
+                        xx[:, :] = xdata
                         xdata = xx
                     # if ydata.islondim(0):
                     #     xaxistype = 'lon'
@@ -1173,7 +1174,7 @@ class Axes(object):
                     xdata = np.arange(ydata.shape[-1])
                     if ydata.ndim == 2:
                         xx = np.zeros(ydata.shape)
-                        xx[:,:] = xdata
+                        xx[:, :] = xdata
                         xdata = xx
                 xdatalist.append(xdata)
                 ydatalist.append(ydata)
@@ -1185,7 +1186,7 @@ class Axes(object):
                     if ydata.ndim == 2:
                         xdata = ydata.dimvalue(1)
                         xx = np.zeros(ydata.shape)
-                        xx[:,:] = xdata
+                        xx[:, :] = xdata
                         xdata = xx
                     # if ydata.islondim(0):
                     #     xaxistype = 'lon'
@@ -1197,7 +1198,7 @@ class Axes(object):
                     xdata = np.arange(ydata.shape[-1])
                     if ydata.ndim == 2:
                         xx = np.zeros(ydata.shape)
-                        xx[:,:] = xdata
+                        xx[:, :] = xdata
                         xdata = xx
                 styles.append(args[1])
             else:
@@ -1207,8 +1208,8 @@ class Axes(object):
             ydatalist.append(ydata)
         else:
             c = 'x'
-            for arg in args: 
-                if c == 'x':   
+            for arg in args:
+                if c == 'x':
                     xdatalist.append(arg)
                     c = 'y'
                 elif c == 'y':
@@ -1227,8 +1228,8 @@ class Axes(object):
         else:
             while len(styles) < len(xdatalist):
                 styles.append(None)
-        
-        #Set plot data styles
+
+        # Set plot data styles
         zvalues = kwargs.pop('zvalues', None)
         if zvalues is None:
             lines = []
@@ -1268,10 +1269,10 @@ class Axes(object):
                         line.setCaption(label)
                         if i < len(colors):
                             line.setColor(plotutil.getcolor(colors[i]))
-                        lines.append(line) 
+                        lines.append(line)
         else:
             ls = kwargs.pop('symbolspec', None)
-            if ls is None:        
+            if ls is None:
                 if isinstance(zvalues, (list, tuple)):
                     zvalues = np.array(zvalues)
                 levels = kwargs.pop('levs', None)
@@ -1286,9 +1287,9 @@ class Axes(object):
                 else:
                     ls = plotutil.getlegendscheme([levels], zvalues.min(), zvalues.max(), **kwargs)
                 ls = plotutil.setlegendscheme_line(ls, **kwargs)
-        
+
         if not xaxistype is None:
-            self.set_xaxis_type(xaxistype)    
+            self.set_xaxis_type(xaxistype)
         timetickformat = kwargs.pop('timetickformat', None)
         if not timetickformat is None:
             if not xaxistype == 'time':
@@ -1296,7 +1297,7 @@ class Axes(object):
             self._axes.getAxis(Location.BOTTOM).setTimeFormat(timetickformat)
             self._axes.getAxis(Location.TOP).setTimeFormat(timetickformat)
 
-        #Add graphics
+        # Add graphics
         zorder = kwargs.pop('zorder', None)
         iscurve = kwargs.pop('iscurve', False)
         graphics = []
@@ -1306,7 +1307,7 @@ class Axes(object):
             graphics.append(graphic)
         else:
             if zvalues is None:
-                #Add data series
+                # Add data series
                 snum = len(xdatalist)
                 if snum == 1:
                     xdata = plotutil.getplotdata(xdatalist[0])
@@ -1324,7 +1325,7 @@ class Axes(object):
                             graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
                         else:
                             graphic = GraphicFactory.createLineString(xdata, ydata, lines[0], iscurve)
-                    else:    #>1                        
+                    else:  # >1
                         graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
                     self.add_graphic(graphic, zorder=zorder)
                     graphics.append(graphic)
@@ -1349,7 +1350,7 @@ class Axes(object):
             return graphics
         else:
             return graphics[0]
-            
+
     def step(self, x, y, *args, **kwargs):
         """
         Make a step plot.
@@ -1372,16 +1373,16 @@ class Axes(object):
             fmt = plotutil.getplotstyle(fmt, label, **kwargs)
         else:
             fmt = plotutil.getlegendbreak('line', **kwargs)[0]
-            fmt.setCaption(label)        
+            fmt.setCaption(label)
         where = kwargs.pop('where', 'pre')
-        
-        #Create graphics
+
+        # Create graphics
         graphics = GraphicFactory.createStepLineString(xdata, ydata, fmt, where)
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
         self._axes.setAutoExtent()
-        return graphics 
-            
+        return graphics
+
     def scatter(self, *args, **kwargs):
         """
         Make a scatter plot of x vs y, where x and y are sequence like objects of the same lengths.
@@ -1410,30 +1411,30 @@ class Axes(object):
         s = kwargs.pop('s', 8)
         c = kwargs.pop('c', None)
 
-        #Add data series
+        # Add data series
         label = kwargs.pop('label', 'S_0')
         xdata = plotutil.getplotdata(x)
         ydata = plotutil.getplotdata(y)
-        
-        #Set plot data styles
+
+        # Set plot data styles
         pb, isunique = plotutil.getlegendbreak('point', **kwargs)
         if c is None:
             c = pb.getColor()
             if c is None:
                 c = 'b'
         pb.setCaption(label)
-        #pstyle = plotutil.getpointstyle(marker)    
-        #pb.setStyle(pstyle)
+        # pstyle = plotutil.getpointstyle(marker)
+        # pb.setStyle(pstyle)
         isvalue = False
 
         if isinstance(c, NDArray):
             isvalue = True
         elif isinstance(c, (list, tuple)):
             if len(x) == len(c) and isinstance(c[0], (int, long, float)):
-                isvalue = True            
+                isvalue = True
         if isvalue:
             ls = kwargs.pop('symbolspec', None)
-            if ls is None:        
+            if ls is None:
                 if isinstance(c, (list, tuple)):
                     c = np.array(c)
                 levels = kwargs.pop('levs', None)
@@ -1455,7 +1456,7 @@ class Axes(object):
                     n = len(s)
                     for i in range(0, n):
                         ls.getLegendBreaks()[i].setSize(s[i])
-            #Create graphics
+            # Create graphics
             graphics = GraphicFactory.createPoints(xdata, ydata, c.asarray(), ls)
         else:
             alpha = kwargs.pop('alpha', None)
@@ -1490,7 +1491,7 @@ class Axes(object):
                     npb = pb.clone()
                     plotutil.setpointlegendbreak(npb, **kwargs)
                     pbs.append(npb)
-            #Create graphics
+            # Create graphics
             graphics = GraphicFactory.createPoints(xdata, ydata, pbs)
 
         zorder = kwargs.pop('zorder', None)
@@ -1498,7 +1499,7 @@ class Axes(object):
         self._axes.setAutoExtent()
 
         return graphics
-        
+
     def semilogy(self, *args, **kwargs):
         """
         Make a plot with log scaling on the y axis.
@@ -1545,12 +1546,12 @@ class Axes(object):
           'y'        yellow
           'k'        black
           =========  =====
-        """       
+        """
         lines = self.plot(*args, **kwargs)
         self.set_yaxis_type('log')
         self._axes.setAutoExtent()
         return lines
-        
+
     def semilogx(self, *args, **kwargs):
         """
         Make a plot with log scaling on the x axis.
@@ -1597,12 +1598,12 @@ class Axes(object):
           'y'        yellow
           'k'        black
           =========  =====
-        """       
+        """
         lines = self.plot(*args, **kwargs)
         self.set_xaxis_type('log')
         self._axes.setAutoExtent()
         return lines
-        
+
     def loglog(self, *args, **kwargs):
         """
         Make a plot with log scaling on both x and y axis.
@@ -1649,15 +1650,15 @@ class Axes(object):
           'y'        yellow
           'k'        black
           =========  =====
-        """       
+        """
         lines = self.plot(*args, **kwargs)
         self.set_xaxis_type('log')
         self.set_yaxis_type('log')
         self._axes.setAutoExtent()
         return lines
-        
+
     def errorbar(self, x, y, yerr=None, xerr=None, fmt='', ecolor=None, elinewidth=None, capsize=None,
-            **kwargs):
+                 **kwargs):
         """
         Plot an errorbar graph.
         
@@ -1672,7 +1673,7 @@ class Axes(object):
 
         :returns: Error bar lines.
         """
-        #Add data series
+        # Add data series
         label = kwargs.pop('label', 'S_0')
         xdata = plotutil.getplotdata(x)
         ydata = plotutil.getplotdata(y)
@@ -1692,37 +1693,37 @@ class Axes(object):
                         yerrB = plotutil.getplotdata(yerr[0])
                         yerrU = plotutil.getplotdata(yerr[1])
                 elif yerr.ndim == 2:
-                    yerrB = yerr[0,:].asarray()
-                    yerrU = yerr[1,:].asarray()
+                    yerrB = yerr[0, :].asarray()
+                    yerrU = yerr[1, :].asarray()
                 else:
                     yerrB = plotutil.getplotdata(yerr)
                     yerrU = yerrB
         else:
             yerrB = None
             yerrU = None
-            
+
         if not xerr is None:
             if isinstance(xerr, (int, float)):
                 ye = []
                 for i in range(xdata.getSize()):
                     ye.append(xerr)
                 xerrL = np.array(ye)._array
-                xerrR = xerrL         
+                xerrR = xerrL
             else:
                 if isinstance(xerr, (list, tuple)):
                     xerrL = plotutil.getplotdata(xerr[0])
                     xerrR = plotutil.getplotdata(xerr[1])
                 elif xerr.ndim == 2:
-                    xerrL = xerr[0,:].asarray()
-                    xerrR = xerr[1,:].asarray()
+                    xerrL = xerr[0, :].asarray()
+                    xerrR = xerr[1, :].asarray()
                 else:
                     xerrL = plotutil.getplotdata(xerr)
                     xerrR = xerrL
         else:
             xerrL = None
             xerrR = None
-        
-        #Get plot data style
+
+        # Get plot data style
         if fmt == '':
             line = plotutil.getlegendbreak('line', **kwargs)[0]
             line.setCaption(label)
@@ -1739,18 +1740,18 @@ class Axes(object):
             eline.setColor(ecolor)
         if not elinewidth is None:
             eline.setSize(elinewidth)
-        
-        #Create graphics
+
+        # Create graphics
         if capsize is None:
             capsize = 10
         graphics = GraphicFactory.createErrorLineString(xdata, ydata, xerrL, xerrR, yerrB, \
-            yerrU, line, eline, capsize)
+                                                        yerrU, line, eline, capsize)
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
         self._axes.setAutoExtent()
 
-        return graphics 
-            
+        return graphics
+
     def bar(self, x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
         """
         Make a bar plot.
@@ -1795,7 +1796,7 @@ class Axes(object):
           =========  ===========
           
         """
-        #Add data series
+        # Add data series
         label = kwargs.pop('label', 'S_0')
         autowidth = False
         isdate = False
@@ -1809,15 +1810,15 @@ class Axes(object):
         width = np.asarray(width)
         if align == 'center':
             x = x - width / 2
-            
+
         yerr = kwargs.pop('yerr', None)
         if not yerr is None:
             if not isinstance(yerr, (int, float)):
-                yerr = plotutil.getplotdata(yerr)  
+                yerr = plotutil.getplotdata(yerr)
         if not bottom is None:
             bottom = plotutil.getplotdata(bottom)
-        
-        #Set plot data styles
+
+        # Set plot data styles
         fcobj = kwargs.pop('color', None)
         if fcobj is None:
             fcobj = kwargs.pop('facecolor', 'b')
@@ -1828,9 +1829,9 @@ class Axes(object):
             colors = [color]
         ecobj = kwargs.pop('edgecolor', 'k')
         edgecolor = plotutil.getcolor(ecobj)
-        linewidth = kwargs.pop('linewidth', 1.0) 
+        linewidth = kwargs.pop('linewidth', 1.0)
         hatch = kwargs.pop('hatch', None)
-        hatch = plotutil.gethatch(hatch) 
+        hatch = plotutil.gethatch(hatch)
         hatchsize = kwargs.pop('hatchsize', None)
         bgcolor = kwargs.pop('bgcolor', None)
         bgcolor = plotutil.getcolor(bgcolor)
@@ -1843,12 +1844,12 @@ class Axes(object):
         for color in colors:
             lb = BarBreak()
             lb.setCaption(label)
-            lb.setColor(color)    
+            lb.setColor(color)
             if edgecolor is None:
                 lb.setDrawOutline(False)
             else:
-                lb.setOutlineColor(edgecolor)  
-            lb.setOutlineSize(linewidth)   
+                lb.setOutlineColor(edgecolor)
+            lb.setOutlineSize(linewidth)
             if not hatch is None:
                 lb.setStyle(hatch)
                 if not bgcolor is None:
@@ -1861,16 +1862,18 @@ class Axes(object):
             if not capsize is None:
                 lb.setCapSize(capsize)
             barbreaks.append(lb)
-            
-        #Create bar graphics
+
+        # Create bar graphics
         if isinstance(width, NDArray):
             width = width.asarray()
         if morepoints:
-            graphics = GraphicFactory.createBars1(x.asarray(), height.asarray(), autowidth, width, not yerr is None, yerr, \
-                not bottom is None, bottom, barbreaks)
+            graphics = GraphicFactory.createBars1(x.asarray(), height.asarray(), autowidth, width, not yerr is None,
+                                                  yerr, \
+                                                  not bottom is None, bottom, barbreaks)
         else:
-            graphics = GraphicFactory.createBars(x.asarray(), height.asarray(), autowidth, width, not yerr is None, yerr, \
-                not bottom is None, bottom, barbreaks)
+            graphics = GraphicFactory.createBars(x.asarray(), height.asarray(), autowidth, width, not yerr is None,
+                                                 yerr, \
+                                                 not bottom is None, bottom, barbreaks)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
@@ -1880,7 +1883,7 @@ class Axes(object):
             self._axes.setBarsWidth(barswidth)
 
         return barbreaks
- 
+
     def barh(self, *args, **kwargs):
         """
         Make a horizontal bar plot.
@@ -1921,7 +1924,7 @@ class Axes(object):
           =========  ===========
           
         """
-        #Add data series
+        # Add data series
         label = kwargs.pop('label', 'S_0')
         xdata = None
         autoheight = True
@@ -1940,8 +1943,8 @@ class Axes(object):
             ydata = args[0]
             xdata = args[1]
             height = args[2]
-            autoheight = False        
-        
+            autoheight = False
+
         if ydata is None:
             ydata = []
             for i in range(1, len(args[0]) + 1):
@@ -1953,11 +1956,11 @@ class Axes(object):
         if not xerr is None:
             if not isinstance(xerr, (int, float)):
                 xerr = plotutil.getplotdata(xerr)
-        left = kwargs.pop('left', None)   
+        left = kwargs.pop('left', None)
         if not left is None:
             left = plotutil.getplotdata(left)
-        
-        #Set plot data styles
+
+        # Set plot data styles
         fcobj = kwargs.pop('color', None)
         if fcobj is None:
             fcobj = kwargs.pop('facecolor', 'b')
@@ -1968,9 +1971,9 @@ class Axes(object):
             colors = [color]
         ecobj = kwargs.pop('edgecolor', 'k')
         edgecolor = plotutil.getcolor(ecobj)
-        linewidth = kwargs.pop('linewidth', 1.0) 
+        linewidth = kwargs.pop('linewidth', 1.0)
         hatch = kwargs.pop('hatch', None)
-        hatch = plotutil.gethatch(hatch) 
+        hatch = plotutil.gethatch(hatch)
         hatchsize = kwargs.pop('hatchsize', None)
         bgcolor = kwargs.pop('bgcolor', None)
         bgcolor = plotutil.getcolor(bgcolor)
@@ -1980,12 +1983,12 @@ class Axes(object):
         for color in colors:
             lb = BarBreak()
             lb.setCaption(label)
-            lb.setColor(color)    
+            lb.setColor(color)
             if edgecolor is None:
                 lb.setDrawOutline(False)
             else:
-                lb.setOutlineColor(edgecolor)  
-            lb.setOutlineSize(linewidth)   
+                lb.setOutlineColor(edgecolor)
+            lb.setOutlineSize(linewidth)
             if not hatch is None:
                 lb.setStyle(hatch)
                 if not bgcolor is None:
@@ -1994,10 +1997,10 @@ class Axes(object):
                     lb.setStyleSize(hatchsize)
             lb.setErrorColor(ecolor)
             barbreaks.append(lb)
-            
-        #Create bar graphics
+
+        # Create bar graphics
         graphics = GraphicFactory.createHBars(ydata, xdata, autoheight, height, not xerr is None, xerr, \
-            not left is None, left, barbreaks)
+                                              not left is None, left, barbreaks)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
@@ -2007,10 +2010,10 @@ class Axes(object):
             self._axes.setBarsWidth(barsheight)
 
         return barbreaks
-        
+
     def hist(self, x, bins=10, range=None, density=False, cumulative=False,
-            bottom=None, histtype='bar', align='mid',
-            orientation='vertical', rwidth=None, log=False, **kwargs):
+             bottom=None, histtype='bar', align='mid',
+             orientation='vertical', rwidth=None, log=False, **kwargs):
         """
         Plot a histogram.
         
@@ -2018,10 +2021,10 @@ class Axes(object):
             which are not required to be of the same length.
         :param bins: (*int*) If an integer is given, bins + 1 bin edges are returned.
         """
-        #Add data series
+        # Add data series
         label = kwargs.pop('label', 'S_0')
-        
-        #histogram
+
+        # histogram
         m, bins = np.histogram(x, bins=bins, density=density)
         width = np.diff(bins)
         if cumulative:
@@ -2031,10 +2034,10 @@ class Axes(object):
         barbreaks = self.bar(bins[:-1], m, width, align='center', **kwargs)
 
         return m, bins, barbreaks
-        
+
     def hist_back(self, x, bins=10, range=None, density=False, cumulative=False,
-            bottom=None, histtype='bar', align='mid',
-            orientation='vertical', rwidth=None, log=False, **kwargs):
+                  bottom=None, histtype='bar', align='mid',
+                  orientation='vertical', rwidth=None, log=False, **kwargs):
         """
         Plot a histogram.
         
@@ -2042,10 +2045,10 @@ class Axes(object):
             which are not required to be of the same length.
         :param bins: (*int*) If an integer is given, bins + 1 bin edges are returned.
         """
-        #Add data series
+        # Add data series
         label = kwargs.pop('label', 'S_0')
-        
-        #Set plot data styles
+
+        # Set plot data styles
         fcobj = kwargs.pop('color', None)
         if fcobj is None:
             fcobj = kwargs.pop('facecolor', 'b')
@@ -2056,9 +2059,9 @@ class Axes(object):
             colors = [color]
         ecobj = kwargs.pop('edgecolor', 'k')
         edgecolor = plotutil.getcolor(ecobj)
-        linewidth = kwargs.pop('linewidth', 1.0) 
+        linewidth = kwargs.pop('linewidth', 1.0)
         hatch = kwargs.pop('hatch', None)
-        hatch = plotutil.gethatch(hatch) 
+        hatch = plotutil.gethatch(hatch)
         hatchsize = kwargs.pop('hatchsize', None)
         bgcolor = kwargs.pop('bgcolor', None)
         bgcolor = plotutil.getcolor(bgcolor)
@@ -2068,12 +2071,12 @@ class Axes(object):
         for color in colors:
             lb = BarBreak()
             lb.setCaption(label)
-            lb.setColor(color)    
+            lb.setColor(color)
             if edgecolor is None:
                 lb.setDrawOutline(False)
             else:
-                lb.setOutlineColor(edgecolor)  
-            lb.setOutlineSize(linewidth)   
+                lb.setOutlineColor(edgecolor)
+            lb.setOutlineSize(linewidth)
             if not hatch is None:
                 lb.setStyle(hatch)
                 if not bgcolor is None:
@@ -2082,17 +2085,17 @@ class Axes(object):
                     lb.setStyleSize(hatchsize)
             lb.setErrorColor(ecolor)
             barbreaks.append(lb)
-            
-        #Create bar graphics
+
+        # Create bar graphics
         x = plotutil.getplotdata(x)
         if not isinstance(bins, numbers.Number):
             bins = plotutil.getplotdata(bins)
-        graphics = GraphicFactory.createHistBars(x, bins, barbreaks)        
+        graphics = GraphicFactory.createHistBars(x, bins, barbreaks)
         self.add_graphic(graphics)
         self._axes.setAutoExtent()
 
         return lb
-        
+
     def stem(self, *args, **kwargs):
         """
         Make a stem plot.
@@ -2109,24 +2112,24 @@ class Axes(object):
         
         :returns: Stem line legend break.                  
         """
-        #Add data series
+        # Add data series
         label = kwargs.pop('label', 'S_0')
         xdata = None
         if len(args) == 1:
             ydata = args[0]
         else:
             xdata = args[0]
-            ydata = args[1]       
-        
+            ydata = args[1]
+
         if xdata is None:
             xdata = []
             for i in range(1, len(args[0]) + 1):
                 xdata.append(i)
         xdata = plotutil.getplotdata(xdata)
-        ydata = plotutil.getplotdata(ydata)        
-        bottom = kwargs.pop('bottom', 0)   
-        
-        #Set plot data styles
+        ydata = plotutil.getplotdata(ydata)
+        bottom = kwargs.pop('bottom', 0)
+
+        # Set plot data styles
         color = kwargs.pop('color', None)
         if not color is None:
             color = plotutil.getcolor(color)
@@ -2150,17 +2153,17 @@ class Axes(object):
             basefmt.setColor(color is None and Color.red or color)
         else:
             basefmt = plotutil.getlegendbreak('line', **basefmt)[0]
-        
-        #Create stem graphics
+
+        # Create stem graphics
         graphics = GraphicFactory.createStems(xdata, ydata, linefmt, markerfmt, \
-            basefmt, bottom)
+                                              basefmt, bottom)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
         self._axes.setAutoExtent()
 
         return linefmt
-        
+
     def contour(self, *args, **kwargs):
         """
         Plot contours.
@@ -2193,7 +2196,7 @@ class Axes(object):
                 x = np.arange(a.shape[1])
                 y = np.arange(a.shape[0])
             args = args[1:]
-        elif n <=4:
+        elif n <= 4:
             x = args[0]
             y = args[1]
             a = args[2]
@@ -2211,7 +2214,7 @@ class Axes(object):
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
                     ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
-            else:    
+            else:
                 ls = LegendManage.createLegendScheme(vmin, vmax, cmap)
             ls = ls.convertTo(ShapeTypes.POLYLINE)
             plotutil.setlegendscheme(ls, **kwargs)
@@ -2222,7 +2225,7 @@ class Axes(object):
         smooth = kwargs.pop('smooth', True)
         if x.ndim == 2 and y.ndim == 2:
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
-            a, x, y = np.griddata((x,y), a, **griddata_props)
+            a, x, y = np.griddata((x, y), a, **griddata_props)
         igraphic = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
 
         if not xaxistype is None:
@@ -2231,12 +2234,12 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)
-        #self._axes.setAutoExtent()
+        # self._axes.setAutoExtent()
         self._axes.setExtent(igraphic.getExtent())
         self._axes.setDrawExtent(igraphic.getExtent())
 
         return igraphic
-        
+
     def clabel(self, layer, **kwargs):
         """
         Add contour layer labels.
@@ -2252,14 +2255,14 @@ class Axes(object):
         :param yoffset: (int*) Y offset of the labels.
         :param avoidcoll: (*boolean*) Avoid labels collision or not.
         """
-        color = kwargs.pop('color', None)    
+        color = kwargs.pop('color', None)
         gc = layer
         if isinstance(layer, MILayer):
             gc = layer._layer
         dynamic = kwargs.pop('dynamic', True)
         if gc.getShapeType() != ShapeTypes.POLYLINE:
             dynamic = False
-        drawshadow = kwargs.pop('drawshadow', dynamic)    
+        drawshadow = kwargs.pop('drawshadow', dynamic)
         labelset = gc.getLabelSet()
         if isinstance(gc, MapLayer):
             fieldname = kwargs.pop('fieldname', labelset.getFieldName())
@@ -2294,7 +2297,7 @@ class Axes(object):
             gc.addLabelsContourDynamic(gc.getExtent())
         else:
             gc.addLabels()
-        
+
     def contourf(self, *args, **kwargs):
         """
         Plot filled contours.
@@ -2313,7 +2316,7 @@ class Axes(object):
         
         :returns: (*VectoryLayer*) Contour filled VectoryLayer created from array data.
         """
-        n = len(args)    
+        n = len(args)
         ls = kwargs.pop('symbolspec', None)
         cmap = plotutil.getcolormap(**kwargs)
         fill_value = kwargs.pop('fill_value', -9999.0)
@@ -2327,7 +2330,7 @@ class Axes(object):
                 x = np.arange(a.shape[1])
                 y = np.arange(a.shape[0])
             args = args[1:]
-        elif n <=4:
+        elif n <= 4:
             x = args[0]
             y = args[1]
             a = args[2]
@@ -2345,7 +2348,7 @@ class Axes(object):
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
                     ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
-            else:    
+            else:
                 ls = LegendManage.createLegendScheme(vmin, vmax, cmap)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
@@ -2357,9 +2360,9 @@ class Axes(object):
         smooth = kwargs.pop('smooth', True)
         if x.ndim == 2 and y.ndim == 2:
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
-            a, x, y = np.griddata((x,y), a, **griddata_props)
+            a, x, y = np.griddata((x, y), a, **griddata_props)
         igraphic = GraphicFactory.createContourPolygons(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
-        
+
         visible = kwargs.pop('visible', True)
         if visible:
             if not xaxistype is None:
@@ -2368,10 +2371,10 @@ class Axes(object):
 
             zorder = kwargs.pop('zorder', None)
             self.add_graphic(igraphic, zorder=zorder)
-            #self.setAutoExtent()
+            # self.setAutoExtent()
             self._axes.setExtent(igraphic.getExtent())
             self._axes.setDrawExtent(igraphic.getExtent())
-   
+
         return igraphic
 
     def imshow(self, *args, **kwargs):
@@ -2400,7 +2403,7 @@ class Axes(object):
         if n >= 3:
             xdata = args[0]
             ydata = args[1]
-            extent = [xdata[0],xdata[-1],ydata[0],ydata[-1]]
+            extent = [xdata[0], xdata[-1], ydata[0], ydata[-1]]
             args = args[2:]
         X = args[0]
         if isinstance(X, (list, tuple)):
@@ -2414,8 +2417,8 @@ class Axes(object):
                 gdata = np.asgridarray(X, xdata, ydata)
             else:
                 gdata = np.asgridarray(X)
-        args = args[1:]   
-        
+        args = args[1:]
+
         extent = kwargs.pop('extent', extent)
         if isrgb:
             if isinstance(X, (list, tuple)):
@@ -2471,7 +2474,7 @@ class Axes(object):
             return igraphic
         else:
             return ls
-        
+
     def pcolor(self, *args, **kwargs):
         """
         Draw a pseudocolor plot.
@@ -2489,7 +2492,7 @@ class Axes(object):
         
         :returns: (*GraphicCollection*) Polygon graphic collection.
         """
-        n = len(args) 
+        n = len(args)
         if n <= 2:
             a = args[0]
             if isinstance(a, DimArray):
@@ -2505,14 +2508,14 @@ class Axes(object):
             y = args[1]
             a = args[2]
             args = args[3:]
-        if a.ndim == 2 and x.ndim == 1:            
-            x, y = np.meshgrid(x, y)            
-        ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
+        if a.ndim == 2 and x.ndim == 1:
+            x, y = np.meshgrid(x, y)
+        ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
-        graphics = GraphicFactory.createPColorPolygons(x.asarray(), y.asarray(), a.asarray(), ls)            
+        graphics = GraphicFactory.createPColorPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
@@ -2520,7 +2523,7 @@ class Axes(object):
             self._axes.setExtent(graphics.getExtent())
             self._axes.setDrawExtent(graphics.getExtent())
         return graphics
-        
+
     def gridshow(self, *args, **kwargs):
         """
         Draw a grid plot.
@@ -2540,7 +2543,7 @@ class Axes(object):
         :returns: (*GraphicCollection*) Polygon graphic collection.
         """
         fill_value = kwargs.pop('fill_value', -9999.0)
-        n = len(args) 
+        n = len(args)
         if n <= 2:
             a = args[0]
             y = a.dimvalue(0)
@@ -2551,11 +2554,11 @@ class Axes(object):
             y = args[1]
             a = args[2]
             args = args[3:]
-            
-        ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
+
+        ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         plotutil.setlegendscheme(ls, **kwargs)
-        graphics = GraphicFactory.createGridPolygons(x.asarray(), y.asarray(), a.asarray(), ls)            
+        graphics = GraphicFactory.createGridPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
@@ -2563,7 +2566,7 @@ class Axes(object):
             self._axes.setExtent(graphics.getExtent())
             self._axes.setDrawExtent(graphics.getExtent())
         return graphics
-        
+
     def text(self, x, y, s, **kwargs):
         """
         Add text to the axes. Add text in string *s* to axis at location *x* , *y* , data
@@ -2584,7 +2587,7 @@ class Axes(object):
         ctext = plotutil.text(x, y, s, **kwargs)
         self._axes.addText(ctext)
         return ctext
-    
+
     def arrow(self, x, y, dx, dy, **kwargs):
         """
         Add an arrow to the axes.
@@ -2597,7 +2600,7 @@ class Axes(object):
         :returns: Arrow graphic.
         """
         if not kwargs.has_key('facecolor'):
-            kwargs['facecolor'] = (51,204,255)
+            kwargs['facecolor'] = (51, 204, 255)
         apb, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         apb = plotutil.polygon2arrow(apb, **kwargs)
         graphic = GraphicFactory.createArrow(x, y, dx, dy, apb)
@@ -2605,9 +2608,9 @@ class Axes(object):
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphic, zorder=zorder)
         self._axes.setAutoExtent()
-        
+
         return graphic
-    
+
     def arrowline(self, x, y, dx=0, dy=0, **kwargs):
         """
         Add an arrow line to the axes.
@@ -2623,7 +2626,7 @@ class Axes(object):
             x = np.array(x)
         if isinstance(y, (list, tuple)):
             y = np.array(y)
-            
+
         alb, isunique = plotutil.getlegendbreak('line', **kwargs)
         alb = plotutil.line2arrow(alb, **kwargs)
         if isinstance(x, NDArray):
@@ -2635,9 +2638,9 @@ class Axes(object):
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphic, zorder=zorder)
         self._axes.setAutoExtent()
-        
+
         return graphic
-        
+
     def annotate(self, s, xy, *args, **kwargs):
         """
         Annotate the point xy with text s.
@@ -2654,10 +2657,10 @@ class Axes(object):
             xytext = args[0]
         else:
             xytext = xy
-        
+
         ctext = plotutil.text(xytext[0], xytext[1], s, **kwargs)
         self._axes.addText(ctext)
-                
+
         arrowprops = kwargs.pop('arrowprops', dict())
         if not arrowprops.has_key('headwidth'):
             arrowprops['headwidth'] = 10
@@ -2680,7 +2683,7 @@ class Axes(object):
         graphic = GraphicFactory.createArrowLine(x0, y0, dx, dy, alb)
         self.add_graphic(graphic)
         self._axes.setAutoExtent()
-        
+
         return ctext, graphic
 
     def axhline(self, y=0, xmin=0, xmax=1, **kwargs):
@@ -2701,7 +2704,7 @@ class Axes(object):
         `~matplotlib.lines.Line2D`
         """
         pass
-    
+
     def patch(self, x, y=None, **kwargs):
         """
         Create one or more filled polygons.
@@ -2722,7 +2725,7 @@ class Axes(object):
         self.add_graphic(graphics, zorder=zorder)
         self._axes.setAutoExtent()
         return graphics
-        
+
     def rectangle(self, position, curvature=None, **kwargs):
         """
         Create one or more filled polygons.
@@ -2750,7 +2753,7 @@ class Axes(object):
         :param where: (*array_like*) If None, default to fill between everywhere. If not None, it is an 
             N-length boolean array and the fill will only happen over the regions where ``where==True``.
         """
-        #Add data series
+        # Add data series
         label = kwargs.pop('label', 'S_0')
         dn = len(x)
         xdata = plotutil.getplotdata(x)
@@ -2772,23 +2775,23 @@ class Axes(object):
             if isinstance(where, (tuple, list)):
                 where = np.array(where)
             where = where.asarray()
-        
-        #Set plot data styles
+
+        # Set plot data styles
         # if not 'fill' in kwargs:
-            # kwargs['fill'] = True
+        # kwargs['fill'] = True
         # if not 'edge' in kwargs:
-            # kwargs['edge'] = False
+        # kwargs['edge'] = False
         pb, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         pb.setCaption(label)
-        
-        #Create graphics
+
+        # Create graphics
         graphics = GraphicFactory.createFillBetweenPolygons(xdata, y1, y2, where, pb)
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
         self._axes.setAutoExtent()
 
-        return pb 
-        
+        return pb
+
     def fill_betweenx(self, y, x1, x2=0, where=None, **kwargs):
         """
         Make filled polygons between two curves (x1 and x2) where ``where==True``.
@@ -2799,7 +2802,7 @@ class Axes(object):
         :param where: (*array_like*) If None, default to fill between everywhere. If not None, it is an 
             N-length boolean array and the fill will only happen over the regions where ``where==True``.
         """
-        #Add data series
+        # Add data series
         label = kwargs.pop('label', 'S_0')
         dn = len(y)
         ydata = plotutil.getplotdata(y)
@@ -2821,16 +2824,16 @@ class Axes(object):
             if isinstance(where, (tuple, list)):
                 where = np.array(where)
             where = where.asarray()
-        
-        #Set plot data styles
+
+        # Set plot data styles
         # if not 'fill' in kwargs:
-            # kwargs['fill'] = True
+        # kwargs['fill'] = True
         # if not 'edge' in kwargs:
-            # kwargs['edge'] = False
+        # kwargs['edge'] = False
         pb, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         pb.setCaption(label)
-        
-        #Create graphics
+
+        # Create graphics
         graphics = GraphicFactory.createFillBetweenPolygonsX(ydata, x1, x2, where, pb)
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
@@ -2838,8 +2841,8 @@ class Axes(object):
 
         return pb
 
-    def pie(self, x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6, shadow=False, 
-        labeldistance=1.1, startangle=0, radius=None, wedgeprops=None, **kwargs):
+    def pie(self, x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6, shadow=False,
+            labeldistance=1.1, startangle=0, radius=None, wedgeprops=None, **kwargs):
         """
         Plot a pie chart.
         
@@ -2868,7 +2871,7 @@ class Axes(object):
         :param fontsize: (*int*) Font size. Default is ``14`` .
         
         :returns: (*tuple*) Patches and texts.
-        """        
+        """
         n = len(x)
         x = plotutil.getplotdata(x)
         if colors is None:
@@ -2876,7 +2879,7 @@ class Axes(object):
             colors = plotutil.makecolors(n, cmap=cmap)
         else:
             colors = plotutil.getcolors(colors)
-            
+
         fontname = kwargs.pop('fontname', 'Arial')
         fontsize = kwargs.pop('fontsize', 14)
         bold = kwargs.pop('bold', False)
@@ -2903,10 +2906,10 @@ class Axes(object):
                 else:
                     jmap[key] = value
             wedgeprops = jmap
-        
-        #Create graphics
+
+        # Create graphics
         graphics = GraphicFactory.createPieArcs(x, colors, labels, startangle, explode, font, fontcolor, \
-            labeldistance, autopct, pctdistance, radius, wedgeprops)
+                                                labeldistance, autopct, pctdistance, radius, wedgeprops)
 
         for graphic in graphics:
             self.add_graphic(graphic)
@@ -2918,9 +2921,11 @@ class Axes(object):
         self._axes.getAxis(Location.RIGHT).setVisible(False)
 
         return tuple(graphics)
-        
-    def boxplot(self, x, sym=None, vert=True, positions=None, widths=None, color=None, showcaps=True, showfliers=True, showmeans=False, \
-            showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None, whiskerprops=None, capprops=None, flierprops=None):
+
+    def boxplot(self, x, sym=None, vert=True, positions=None, widths=None, color=None, showcaps=True, showfliers=True,
+                showmeans=False, \
+                showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None,
+                whiskerprops=None, capprops=None, flierprops=None):
         """
         Make a box and whisker plot.
         
@@ -2961,11 +2966,11 @@ class Axes(object):
         else:
             x = plotutil.getplotdata(x)
             x = [x]
-        
+
         if not positions is None:
             if isinstance(positions, (NDArray, DimArray)):
                 positions = positions.tolist()
-        
+
         if not widths is None:
             if isinstance(widths, (int, float)):
                 nwidths = []
@@ -2974,8 +2979,8 @@ class Axes(object):
                 widths = nwidths
             elif isinstance(widths, (NDArray, DimArray)):
                 widths = widths.tolist()
-            
-        #Get box plot properties
+
+        # Get box plot properties
         if not color is None:
             color = plotutil.getcolor(color)
         if not sym is None:
@@ -3037,22 +3042,24 @@ class Axes(object):
             flierprops = PointBreak()
             flierprops.setColor(color is None and Color.red or color)
             flierprops.setStyle(PointStyle.PLUS)
-        
-        #Create graphics
+
+        # Create graphics
         if vert:
             graphics = GraphicFactory.createBox(x, positions, widths, showcaps, showfliers, showmeans, \
-                showmedians, boxprops, medianprops, whiskerprops, capprops, meanprops, flierprops)
+                                                showmedians, boxprops, medianprops, whiskerprops, capprops, meanprops,
+                                                flierprops)
         else:
             graphics = GraphicFactory.createHBox(x, positions, widths, showcaps, showfliers, showmeans, \
-                showmedians, boxprops, medianprops, whiskerprops, capprops, meanprops, flierprops)
+                                                 showmedians, boxprops, medianprops, whiskerprops, capprops, meanprops,
+                                                 flierprops)
 
         self.add_graphic(graphics)
         self._axes.setAutoExtent()
 
         return graphics
-        
+
     def violinplot(self, dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None, \
-        whiskerprops=None, **kwargs):
+                   whiskerprops=None, **kwargs):
         """
         Make a violin plot.
         
@@ -3070,42 +3077,42 @@ class Axes(object):
         if isinstance(dataset, NDArray):
             dataset = [dataset]
         n = len(dataset)
-        
+
         if positions is None:
-            positions = np.arange(1, n+1)
-            
+            positions = np.arange(1, n + 1)
+
         graphics = []
         pdfs = []
         xx = []
         max = 0
-        for data,position in zip(dataset, positions):
+        for data, position in zip(dataset, positions):
             if data.contains_nan():
                 data = np.delnan(data)
             kde = np.stats.GaussianKDE(data)
-            x = np.linspace(data.min(), data.max(), 100)            
+            x = np.linspace(data.min(), data.max(), 100)
             pdf = kde.evaluate(x)
             pdfs.append(pdf)
             xx.append(x)
             if pdf.max() > max:
                 max = pdf.max()
-            
+
         if boxprops is None:
-            boxprops = dict(color='k',edgecolor=None)
+            boxprops = dict(color='k', edgecolor=None)
         if whiskerprops is None:
-            whiskerprops = whiskerprops=dict(color='k')
+            whiskerprops = whiskerprops = dict(color='k')
         if not kwargs.has_key('color'):
             kwargs['color'] = 'c'
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = 'b'
         ratio = widths / max
-        for data,position,pdf,x in zip(dataset, positions, pdfs, xx):
+        for data, position, pdf, x in zip(dataset, positions, pdfs, xx):
             pdf = pdf * ratio
-            self.fill_betweenx(x, position-pdf, position+pdf, **kwargs)
+            self.fill_betweenx(x, position - pdf, position + pdf, **kwargs)
             ggs = self.boxplot(data, positions=[position], widths=boxwidth, showfliers=False, \
-                showcaps=False, medianline=False, boxprops=boxprops, \
-                whiskerprops=whiskerprops, medianprops=dict(color='w',edgecolor=None))
+                               showcaps=False, medianline=False, boxprops=boxprops, \
+                               whiskerprops=whiskerprops, medianprops=dict(color='w', edgecolor=None))
             graphics.extend(ggs)
-        
+
         return graphics
 
     def taylor_diagram(self, stddev, correlation, std_max=1.65, labels=None, ref_std=1., colors=None,
@@ -3128,18 +3135,18 @@ class Axes(object):
 
         :returns: Axes and Taylor graphic.
         """
-        #Set axes
+        # Set axes
         self.set_aspect('equal')
         self.set_clip(False)
         self.xaxis(location='top', visible=False)
         self.yaxis(location='right', visible=False)
 
-        #plot RMS circle
+        # plot RMS circle
         th = np.linspace(0, np.pi, 200)
         xunit = np.cos(th)
         yunit = np.sin(th)
         tickrms = np.arange(0.25, ref_std + 0.2, 0.25)
-        radius = np.sqrt(ref_std**2 + std_max**2 -
+        radius = np.sqrt(ref_std ** 2 + std_max ** 2 -
                          2 * ref_std * std_max * xunit)
         for iradius in tickrms:
             phi = th[np.where(radius >= iradius)]
@@ -3149,7 +3156,7 @@ class Axes(object):
                               std_max * np.cos(phi))
                 self.plot(xunit[ig] * iradius + ref_std, yunit[ig] * iradius, color='gray')
 
-        #plot stddev circle
+        # plot stddev circle
         self.set_xlim(0, std_max)
         self.set_ylim(0, std_max)
         std_ticks = np.arange(0, std_max, 0.25)
@@ -3171,9 +3178,9 @@ class Axes(object):
         std_max_axis_props = kwargs.pop('std_max_axis_props', dict(color='k'))
         self.plot(xunit * std_max, yunit * std_max, **std_max_axis_props)
 
-        #plot correlation lines
+        # plot correlation lines
         values = np.arange(0., 1., 0.1)
-        values = values.join(np.array([0.95,0.99,1.0]), 0)
+        values = values.join(np.array([0.95, 0.99, 1.0]), 0)
         corr_tick_props = kwargs.pop('corr_tick_props', dict(color='k'))
         corr_tick_label_props = kwargs.pop('corr_tick_label_props', dict(yalign='center'))
         if not corr_tick_label_props.has_key('yalign'):
@@ -3189,24 +3196,24 @@ class Axes(object):
             y = np.sin(theta) * std_max
             if 0 < t < 1:
                 if t == 0.6 or t == 0.9:
-                    self.plot([0,x], [0,y], color='gray', linestyle=':')
-                self.plot([x*0.98,x], [y*0.98,y], **corr_tick_props)
+                    self.plot([0, x], [0, y], color='gray', linestyle=':')
+                self.plot([x * 0.98, x], [y * 0.98, y], **corr_tick_props)
             x = x * 1.02
             y = y * 1.02
             self.text(x, y, str(t), rotation=np.degrees(theta), **corr_tick_label_props)
             if t == 0.7:
-                self.text(x*1.1, y*1.1, 'Correlation', rotation=np.degrees(theta)-90,
-                        **corr_label_props)
+                self.text(x * 1.1, y * 1.1, 'Correlation', rotation=np.degrees(theta) - 90,
+                          **corr_label_props)
 
         values = np.arange(0.05, 0.9, 0.1)
-        values = values.join(np.array([0.91,0.92,0.93,0.94,0.96,0.97,0.98]), 0)
+        values = values.join(np.array([0.91, 0.92, 0.93, 0.94, 0.96, 0.97, 0.98]), 0)
         for t in values:
             theta = np.acos(t)
             x = np.cos(theta) * std_max
             y = np.sin(theta) * std_max
-            self.plot([x*0.99,x], [y*0.99,y], **corr_tick_props)
+            self.plot([x * 0.99, x], [y * 0.99, y], **corr_tick_props)
 
-        #plot data
+        # plot data
         stddev = np.atleast_2d(stddev)
         correlation = np.atleast_2d(correlation)
         if not labels is None:
@@ -3227,7 +3234,7 @@ class Axes(object):
             if labels is None:
                 lbs = []
                 for j in range(len(rho)):
-                    lbs.append(str(j+1))
+                    lbs.append(str(j + 1))
             else:
                 lbs = labels[i]
             for xx, yy, label in zip(x, y, lbs):
@@ -3247,7 +3254,7 @@ class Axes(object):
             self.set_title(' ', loc='left')
 
         return self, gg
-        
+
     def barbs(self, *args, **kwargs):
         """
         Plot a 2-D field of barbs.
@@ -3272,7 +3279,7 @@ class Axes(object):
         fill_value = kwargs.pop('fill_value', -9999.0)
         order = kwargs.pop('order', None)
         isuv = kwargs.pop('isuv', True)
-        n = len(args) 
+        n = len(args)
         iscolor = False
         cdata = None
         xaxistype = None
@@ -3306,8 +3313,8 @@ class Axes(object):
         x = plotutil.getplotdata(x)
         y = plotutil.getplotdata(y)
         u = plotutil.getplotdata(u)
-        v = plotutil.getplotdata(v)    
-        
+        v = plotutil.getplotdata(v)
+
         if ls is None:
             if iscolor:
                 if len(args) > 0:
@@ -3321,14 +3328,14 @@ class Axes(object):
                         if isinstance(levs, NDArray):
                             levs = levs.aslist()
                         ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), levs, cmap)
-            else:    
+            else:
                 if cmap.getColorCount() == 1:
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
                 ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
-        
+
         if not cdata is None:
             cdata = plotutil.getplotdata(cdata)
         igraphic = GraphicFactory.createBarbs(x, y, u, v, cdata, ls, isuv)
@@ -3342,7 +3349,7 @@ class Axes(object):
         self._axes.setAutoExtent()
 
         return igraphic
-        
+
     def quiver(self, *args, **kwargs):
         """
         Plot a 2-D field of arrows.
@@ -3369,7 +3376,7 @@ class Axes(object):
         fill_value = kwargs.pop('fill_value', -9999.0)
         zorder = kwargs.pop('zorder', None)
         isuv = kwargs.pop('isuv', True)
-        n = len(args) 
+        n = len(args)
         iscolor = False
         cdata = None
         xaxistype = None
@@ -3407,8 +3414,8 @@ class Axes(object):
         x = plotutil.getplotdata(x)
         y = plotutil.getplotdata(y)
         u = plotutil.getplotdata(u)
-        v = plotutil.getplotdata(v)    
-        
+        v = plotutil.getplotdata(v)
+
         if ls is None:
             if iscolor:
                 if len(args) > 0:
@@ -3422,14 +3429,14 @@ class Axes(object):
                         if isinstance(levs, NDArray):
                             levs = levs.tolist()
                         ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), levs, cmap)
-            else:    
+            else:
                 if cmap.getColorCount() == 1:
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
                 ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
             ls = plotutil.setlegendscheme_arrow(ls, **kwargs)
-        
+
         if not cdata is None:
             cdata = plotutil.getplotdata(cdata)
         igraphic = GraphicFactory.createArrows(x, y, u, v, cdata, ls, isuv)
@@ -3443,7 +3450,7 @@ class Axes(object):
         self._axes.setAutoExtent()
 
         return igraphic
-        
+
     def quiverkey(self, *args, **kwargs):
         """
         Add a key to a quiver plot.
@@ -3526,7 +3533,7 @@ class Axes(object):
                 wa.setNeatlineSize(linewidth)
                 wa.setDrawNeatline(True)
         self._axes.setWindArrow(wa)
-        
+
     def streamplot(self, *args, **kwargs):
         """
         Plot 3D streamline.
@@ -3563,16 +3570,16 @@ class Axes(object):
         if not kwargs.has_key('overhang'):
             kwargs['overhang'] = 0.5
         alb = plotutil.line2stream(alb, **kwargs)
-        
-        igraphic = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array, 
-            density, alb, isuv)
+
+        igraphic = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array,
+                                                    density, alb, isuv)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)
         self._axes.setAutoExtent()
 
         return igraphic
-        
+
     def get_legend(self):
         """
         Get legend of the axes.
@@ -3580,7 +3587,7 @@ class Axes(object):
         :return: Legend
         """
         return self._axes.getLegendScheme()
-        
+
     def legend(self, *args, **kwargs):
         """
         Places a legend on the axes.
@@ -3614,7 +3621,7 @@ class Axes(object):
         :param yshift: (*float*) Y shift.
         
         :returns: (*ChartLegend*) The chart legend.
-        """ 
+        """
         newlegend = kwargs.pop('newlegend', True)
         ols = self._axes.getLegendScheme()
         if newlegend:
@@ -3675,15 +3682,15 @@ class Axes(object):
                 self._axes.setLegend(clegend)
             else:
                 clegend.setLegendScheme(ls)
-            
-        loc = kwargs.pop('loc', 'upper right')    
+
+        loc = kwargs.pop('loc', 'upper right')
         lp = LegendPosition.fromString(loc)
         clegend.setPosition(lp)
         if lp == LegendPosition.CUSTOM:
             x = kwargs.pop('x', 0)
             y = kwargs.pop('y', 0)
             clegend.setX(x)
-            clegend.setY(y) 
+            clegend.setY(y)
         orien = 'vertical'
         if lp == LegendPosition.UPPER_CENTER_OUTSIDE or lp == LegendPosition.LOWER_CENTER_OUTSIDE:
             orien = 'horizontal'
@@ -3704,7 +3711,7 @@ class Axes(object):
             clegend.setBackground(background)
         labelfontdic = kwargs.pop('labelfont', None)
         if labelfontdic is None:
-            labelfont = plotutil.getfont_1(**kwargs)    
+            labelfont = plotutil.getfont_1(**kwargs)
         else:
             labelfont = plotutil.getfont(labelfontdic)
         clegend.setTickLabelFont(labelfont)
@@ -3724,11 +3731,11 @@ class Axes(object):
                 else:
                     exfont = True
                 fontsize = kwargs.pop('titlefontsize', 14)
-                bold = kwargs.pop('titlebold', False)                  
+                bold = kwargs.pop('titlebold', False)
                 if bold:
                     titlefont = Font(fontname, Font.BOLD, fontsize)
                 else:
-                    titlefont = Font(fontname, Font.PLAIN, fontsize)                
+                    titlefont = Font(fontname, Font.PLAIN, fontsize)
             else:
                 titlefont = plotutil.getfont(titlefontdic)
             title = ChartText(title, titlefont)
@@ -3736,7 +3743,7 @@ class Axes(object):
             titlecolor = kwargs.pop('titlecolor', None)
             if not titlecolor is None:
                 titlecolor = plotutil.getcolor(titlecolor)
-                title.setColor(titlecolor)            
+                title.setColor(titlecolor)
             title.setXAlign(XAlign.CENTER)
             title.setYAlign(YAlign.TOP)
             clegend.setLabel(title)
@@ -3766,7 +3773,7 @@ class Axes(object):
             self._axes.addLegend(clegend)
 
         return clegend
-        
+
     def colorbar(self, mappable=None, **kwargs):
         """
         Add a colorbar to a plot.
@@ -3812,7 +3819,7 @@ class Axes(object):
         aspect = kwargs.pop('aspect', 20)
         tickfontdic = kwargs.pop('tickfont', None)
         if tickfontdic is None:
-            tickfont = plotutil.getfont_1(**kwargs)    
+            tickfont = plotutil.getfont_1(**kwargs)
         else:
             tickfont = plotutil.getfont(tickfontdic)
         exfont = False
@@ -3828,7 +3835,7 @@ class Axes(object):
             if labbold:
                 labelfont = Font(labfontname, Font.BOLD, labfontsize)
             else:
-                labelfont = Font(labfontname, Font.PLAIN, labfontsize)    
+                labelfont = Font(labfontname, Font.PLAIN, labfontsize)
         else:
             labelfont = plotutil.getfont(labelfontdic)
 
@@ -3843,7 +3850,7 @@ class Axes(object):
                 ls = mappable.getLegendScheme()
             else:
                 ls = plotutil.makelegend(mappable, **kwargs)
-        
+
         newlegend = kwargs.pop('newlegend', True)
         if newlegend:
             legend = ChartColorBar(ls)
@@ -3855,7 +3862,7 @@ class Axes(object):
                 self._axes.setLegend(legend)
             else:
                 legend.setLegendScheme(ls)
-        legend.setColorbar(True)   
+        legend.setColorbar(True)
         legend.setShrink(shrink)
         legend.setAspect(aspect)
         legend.setTickLabelFont(tickfont)
@@ -3863,7 +3870,7 @@ class Axes(object):
         if not label is None:
             label = ChartText(label, labelfont)
             label.setUseExternalFont(exfont)
-            legend.setLabel(label)        
+            legend.setLabel(label)
         labelloc = kwargs.pop('labelloc', None)
         if not labelloc is None:
             legend.setLabelLocation(labelloc)
@@ -3948,14 +3955,14 @@ class PolarAxes(Axes):
     """
     Axes with polar coordinate.
     """
-    
+
     def __init__(self, *args, **kwargs):
         super(PolarAxes, self).__init__(*args, **kwargs)
 
         bottom = kwargs.pop('bottom', None)
         if not bottom is None:
             self._axes.setBottom(bottom)
-        
+
     def _set_plot(self, plot):
         """
         Set plot.
@@ -3966,11 +3973,11 @@ class PolarAxes(Axes):
             self._axes = PolarPlot()
         else:
             self._axes = plot
-        
+
     @property
     def axestype(self):
         return 'polar'
-    
+
     def set_rmax(self, rmax):
         """
         Set radial max circle.
@@ -3978,7 +3985,7 @@ class PolarAxes(Axes):
         :param rmax: (*float*) Radial max value.
         """
         self._axes.setRadius(rmax)
-        
+
     def set_rlabel_position(self, pos):
         """
         Updates the theta position of the radial labels.
@@ -3988,7 +3995,7 @@ class PolarAxes(Axes):
         if isinstance(pos, (DimArray, NDArray)):
             pos = pos.tolist()
         self._axes.setYTickLabelPos(pos)
-        
+
     def set_rticks(self, ticks):
         """
         Set radial ticks.
@@ -3996,7 +4003,7 @@ class PolarAxes(Axes):
         :param ticks: (*string list*) Tick labels.
         """
         self._axes.setYTickLabels(ticks)
-        
+
     def set_rtick_format(self, fmt=''):
         """
         Set radial tick format.
@@ -4004,7 +4011,7 @@ class PolarAxes(Axes):
         :param ftm: (*string*) Tick format ['' | '%'].
         """
         self._axes.setYTickFormat(fmt)
-        
+
     def set_rtick_locations(self, loc):
         """
         Set radial tick locations.
@@ -4014,7 +4021,7 @@ class PolarAxes(Axes):
         if isinstance(loc, (DimArray, NDArray)):
             loc = loc.tolist()
         self._axes.setYTickLocations(loc)
-        
+
     def set_xtick_locations(self, loc):
         """
         Set angular tick locations.
@@ -4024,7 +4031,7 @@ class PolarAxes(Axes):
         if isinstance(loc, (DimArray, NDArray)):
             loc = loc.tolist()
         self._axes.setXTickLocations(loc)
-        
+
     def set_xticks(self, ticks):
         """
         Set angular ticks.
@@ -4032,7 +4039,7 @@ class PolarAxes(Axes):
         :param ticks: (*string list*) Tick labels.
         """
         self._axes.setXTickLabels(ticks)
-        
+
     def set_rtick_font(self, name=None, size=None, style=None):
         """
         Set radial tick font.
@@ -4066,7 +4073,7 @@ class PolarAxes(Axes):
         """
         color = plotutil.getcolor(color)
         self._axes.setYTickColor(color)
-        
+
     def set_xtick_font(self, name=None, size=None, style=None):
         """
         Set angular tick font.
@@ -4100,7 +4107,7 @@ class PolarAxes(Axes):
         """
         color = plotutil.getcolor(color)
         self._axes.setXTickColor(color)
-        
+
     def data2pixel(self, x, y, z=None):
         """
         Transform data coordinate to screen coordinate
@@ -4109,7 +4116,7 @@ class PolarAxes(Axes):
         :param y: (*float*) Y coordinate.
         :param z: (*float*) Z coordinate - only used for 3-D axes.
         """
-        r = MIMath.polarToCartesian(x, y) 
+        r = MIMath.polarToCartesian(x, y)
         x = r[0]
         y = r[1]
         rect = self._axes.getPositionArea()
@@ -4172,8 +4179,8 @@ class PolarAxes(Axes):
         if colors is None:
             colors = plotutil.makecolors(wsN, cmap=cmap, alpha=alpha)
 
-        wd = wd + 360./wdN/2
-        wd[wd>360] = wd - 360
+        wd = wd + 360. / wdN / 2
+        wd[wd > 360] = wd - 360
         rwd = np.radians(wd)
 
         width = kwargs.pop('width', 0.5)
@@ -4188,19 +4195,19 @@ class PolarAxes(Axes):
         hhist = 0
         rrmax = 0
         for i in range(wsN):
-            idx = np.where((ws>=wsbins[i]) * (ws<wsbins[i+1]))
+            idx = np.where((ws >= wsbins[i]) * (ws < wsbins[i + 1]))
             if idx is None:
                 continue
-            print(wsbins[i], wsbins[i+1])
+            print(wsbins[i], wsbins[i + 1])
             s_wd = rwd[idx]
             wdhist = np.histogram(s_wd, wdbins)[0].astype('float')
             wdhist = wdhist / N
             rrmax = max(rrmax, wdhist.max())
-            lab = '%s - %s' % (wsbins[i], wsbins[i+1])
+            lab = '%s - %s' % (wsbins[i], wsbins[i + 1])
             bb = self.bar(theta, wdhist, width, bottom=hhist, color=colors[i], \
-                     edgecolor='gray', label=lab, morepoints=True)[0]
+                          edgecolor='gray', label=lab, morepoints=True)[0]
             bb.setStartValue(wsbins[i])
-            bb.setEndValue(wsbins[i+1])
+            bb.setEndValue(wsbins[i + 1])
             bars.append(bb)
             hhist = hhist + wdhist
 
@@ -4213,11 +4220,11 @@ class PolarAxes(Axes):
             self.set_rticks(rticks)
         self.set_rtick_format('%')
         self.set_rlabel_position(rlabelpos)
-        self.set_xtick_locations(np.arange(0., 360., 360./wdN))
+        self.set_xtick_locations(np.arange(0., 360., 360. / wdN))
         step = 16 / nwdbins
         if xticks is None:
-            xticks = ['E','ENE','NE','NNE','N','NNW','NW','WNW','W','WSW', \
-                      'SW','SSW','S','SSE','SE','ESE']
+            xticks = ['E', 'ENE', 'NE', 'NNE', 'N', 'NNW', 'NW', 'WNW', 'W', 'WSW', \
+                      'SW', 'SSW', 'S', 'SSE', 'SE', 'ESE']
             xticks = xticks[::step]
         elif not xticks:
             xticks = [''] * nwdbins

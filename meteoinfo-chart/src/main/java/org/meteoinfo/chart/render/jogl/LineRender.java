@@ -185,9 +185,7 @@ public class LineRender extends JOGLGraphicRender {
                             vertexPositionList.add(matrix.mul(v));
                         }
                         List<Vector3f> normals = cylinder.getNormals();
-                        for (Vector3f v : normals) {
-                            vertexNormalList.add(matrix.mul(v));
-                        }
+                        vertexNormalList.addAll(normals);
                         float[] color = slb.getColor().getRGBComponents(null);
                         for (int j = 0; j < n; j++) {
                             vertexColorList.add(new Vector4f(color));

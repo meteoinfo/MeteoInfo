@@ -2501,9 +2501,9 @@ public class GLPlot extends Plot {
             if (isDraw) {
                 switch (graphic.getGraphicN(0).getShape().getShapeType()) {
                     case POINT_Z:
-                        if (((GraphicCollection3D) graphic).isSphere()) {
-                            this.drawSpheres(gl, graphic);
-                        } else {
+                        //if (((GraphicCollection3D) graphic).isSphere()) {
+                        //    this.drawSpheres(gl, graphic);
+                        //} else {
                             //this.drawPoints(gl, graphic);
                             if (!this.renderMap.containsKey(graphic)) {
                                 renderMap.put(graphic, new PointRender(gl, (GraphicCollection3D) graphic));
@@ -2514,7 +2514,7 @@ public class GLPlot extends Plot {
                             pointRender.setLighting(this.lighting);
                             pointRender.updateMatrix();
                             pointRender.draw();
-                        }
+                        //}
                         break;
                     case POLYLINE_Z:
                         if (graphic.getGraphicN(0).getShape() instanceof PipeShape) {

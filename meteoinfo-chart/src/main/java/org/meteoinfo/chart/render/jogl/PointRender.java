@@ -3,7 +3,10 @@ package org.meteoinfo.chart.render.jogl;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.sphere.Sphere;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
@@ -13,6 +16,7 @@ import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.PointZShape;
 import org.meteoinfo.geometry.shape.Polyline;
 import org.meteoinfo.geometry.shape.PolylineZShape;
+import org.meteoinfo.math.Matrix4f;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -24,12 +28,17 @@ public class PointRender extends JOGLGraphicRender {
     private GraphicCollection3D graphics;
     private IntBuffer vbo;
     private Program program;
-    private int vertexNum;
+    private int pointNum;
     private int sizePosition;
     private int sizeColor;
     private int sizeNormal;
-    private float[] vertexColor;
     private float pointSize;
+    private boolean sphere;
+    private float sphereScale = 0.005f;
+    private float[] vertexPosition;
+    private float[] vertexNormal;
+    private float[] vertexColor;
+    private int[] vertexIndices;
 
     /**
      * Constructor
@@ -59,10 +68,20 @@ public class PointRender extends JOGLGraphicRender {
         this(gl);
 
         this.graphics = pointGraphics;
-        this.vertexNum = pointGraphics.getNumGraphics();
+        this.sphere = this.graphics.isSphere();
+        this.pointNum = pointGraphics.getNumGraphics();
         PointBreak pb = (PointBreak) this.graphics.getGraphicN(0).getLegend();
         this.pointSize = pb.getSize();
-        this.updateVertexColor();
+        //this.updateVertex();
+    }
+
+    void updateVertex() {
+        if (this.sphere) {
+            this.updateSphereVertex();
+        } else {
+            this.updateVertexPosition();
+            this.updateVertexColor();
+        }
     }
 
     void compileShaders() throws Exception {
@@ -76,7 +95,7 @@ public class PointRender extends JOGLGraphicRender {
     }
 
     private void updateVertexColor() {
-        this.vertexColor = new float[this.vertexNum * 4];
+        this.vertexColor = new float[this.pointNum * 4];
         int i = 0;
         float[] color;
         for (Graphic graphic : this.graphics.getGraphics()) {
@@ -87,19 +106,110 @@ public class PointRender extends JOGLGraphicRender {
         }
     }
 
-    private float[] getVertexPosition() {
-        float[] vertexData = new float[this.vertexNum * 3];
-        int i = 0;
+    private void updateVertexPosition() {
+        if (this.sphere) {
+            this.updateSphereVertexPosition();
+        } else {
+            this.vertexPosition = new float[this.pointNum * 3];
+            int i = 0;
+            for (Graphic graphic : this.graphics.getGraphics()) {
+                PointZShape shape = (PointZShape) graphic.getShape();
+                PointZ p = (PointZ) shape.getPoint();
+                vertexPosition[i] = transform.transform_x((float) p.X);
+                vertexPosition[i + 1] = transform.transform_y((float) p.Y);
+                vertexPosition[i + 2] = transform.transform_z((float) p.Z);
+                i += 3;
+            }
+        }
+    }
+
+    private void updateSphereVertex() {
+        List<Vector3f> vertexPositionList = new ArrayList<>();
+        List<Vector3f> vertexNormalList = new ArrayList<>();
+        List<Vector4f> vertexColorList = new ArrayList<>();
+        List<Integer> vertexIndexList = new ArrayList<>();
+        Vector3f vp;
         for (Graphic graphic : this.graphics.getGraphics()) {
             PointZShape shape = (PointZShape) graphic.getShape();
             PointZ p = (PointZ) shape.getPoint();
-            vertexData[i] = transform.transform_x((float) p.X);
-            vertexData[i + 1] = transform.transform_y((float) p.Y);
-            vertexData[i + 2] = transform.transform_z((float) p.Z);
-            i += 3;
+            PointBreak pb = (PointBreak) graphic.getLegend();
+            Sphere sphere = new Sphere(pb.getSize() * sphereScale * dpiScale, 36, 18);
+            vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            Matrix4f matrix = new Matrix4f();
+            matrix.translate(vp);
+            List<Vector3f> vertices = sphere.getVertices();
+            int n = vertices.size();
+            int nAdded = vertexPositionList.size();
+            for (Vector3f v : vertices) {
+                vertexPositionList.add(matrix.mul(v));
+            }
+            List<Vector3f> normals = sphere.getNormals();
+            vertexNormalList.addAll(normals);
+            float[] color = pb.getColor().getRGBComponents(null);
+            for (int j = 0; j < n; j++) {
+                vertexColorList.add(new Vector4f(color));
+            }
+            if (nAdded == 0) {
+                vertexIndexList.addAll(sphere.getIndices());
+            } else {
+                for (int idx : sphere.getIndices()) {
+                    vertexIndexList.add(idx + nAdded);
+                }
+            }
         }
 
-        return vertexData;
+        int n = vertexPositionList.size();
+        this.vertexPosition = new float[n * 3];
+        this.vertexNormal = new float[n * 3];
+        this.vertexColor = new float[n * 4];
+        Vector3f v;
+        Vector4f v4;
+        for (int i = 0, j = 0, k = 0; i < n; i++, j+=3, k+=4) {
+            v = vertexPositionList.get(i);
+            vertexPosition[j] = v.x;
+            vertexPosition[j + 1] = v.y;
+            vertexPosition[j + 2] = v.z;
+            v = vertexNormalList.get(i);
+            vertexNormal[j] = v.x;
+            vertexNormal[j + 1] = v.y;
+            vertexNormal[j + 2] = v.z;
+            v4 = vertexColorList.get(i);
+            vertexColor[k] = v4.x;
+            vertexColor[k + 1] = v4.y;
+            vertexColor[k + 2] = v4.z;
+            vertexColor[k + 3] = v4.w;
+        }
+        vertexIndices = vertexIndexList.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    private void updateSphereVertexPosition() {
+        List<Vector3f> vertexPositionList = new ArrayList<>();
+        Vector3f vp;
+        for (Graphic graphic : this.graphics.getGraphics()) {
+            PointZShape shape = (PointZShape) graphic.getShape();
+            PointZ p = (PointZ) shape.getPoint();
+            PointBreak pb = (PointBreak) graphic.getLegend();
+            Sphere sphere = new Sphere(pb.getSize() * sphereScale * dpiScale, 36, 18);
+            vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            Matrix4f matrix = new Matrix4f();
+            matrix.translate(vp);
+            List<Vector3f> vertices = sphere.getVertices();
+            int n = vertices.size();
+            int nAdded = vertexPositionList.size();
+            for (Vector3f v : vertices) {
+                vertexPositionList.add(matrix.mul(v));
+            }
+        }
+
+        int n = vertexPositionList.size();
+        this.vertexPosition = new float[n * 3];
+        Vector3f v;
+        for (int i = 0, j = 0, k = 0; i < n; i++, j+=3, k+=4) {
+            v = vertexPositionList.get(i);
+            vertexPosition[j] = v.x;
+            vertexPosition[j + 1] = v.y;
+            vertexPosition[j + 2] = v.z;
+        }
     }
 
     @Override
@@ -111,20 +221,47 @@ public class PointRender extends JOGLGraphicRender {
         super.setTransform((Transform) transform.clone());
 
         if (updateBuffer) {
-            float[] vertexData = this.getVertexPosition();
-            FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
+            if (this.vertexPosition == null) {
+                this.updateVertex();
+            } else {
+                //this.updateVertex();
+                this.updateVertexPosition();
+            }
+            FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(this.vertexPosition);
             sizePosition = vertexBuffer.capacity() * Float.BYTES;
 
             FloatBuffer colorBuffer = GLBuffers.newDirectFloatBuffer(vertexColor);
             sizeColor = colorBuffer.capacity() * Float.BYTES;
-            int totalSize = sizePosition + sizeColor;
 
-            gl.glGenBuffers(1, vbo);
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, totalSize, null, GL.GL_STATIC_DRAW);
-            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
-            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeColor, colorBuffer);
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+            if (this.sphere) {
+                FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(vertexNormal);
+                sizeNormal = normalBuffer.capacity() * Float.BYTES;
+
+                int totalSize = sizePosition + sizeColor + sizeNormal;
+
+                vbo = GLBuffers.newDirectIntBuffer(2);
+                gl.glGenBuffers(2, vbo);
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+                gl.glBufferData(GL.GL_ARRAY_BUFFER, totalSize, null, GL.GL_STATIC_DRAW);
+                gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
+                gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeColor, colorBuffer);
+                gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeColor, sizeNormal, normalBuffer);
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+                IntBuffer indexBuffer = GLBuffers.newDirectIntBuffer(this.vertexIndices);
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
+                gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * Integer.BYTES, indexBuffer, GL.GL_STATIC_DRAW);
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+            } else {
+                int totalSize = sizePosition + sizeColor;
+
+                gl.glGenBuffers(1, vbo);
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+                gl.glBufferData(GL.GL_ARRAY_BUFFER, totalSize, null, GL.GL_STATIC_DRAW);
+                gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
+                gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeColor, colorBuffer);
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+            }
         }
     }
 
@@ -147,22 +284,38 @@ public class PointRender extends JOGLGraphicRender {
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
             gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
             gl.glColorPointer(4, GL.GL_FLOAT, 0, sizePosition);
+            if (this.sphere) {
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
 
-            boolean lightEnabled = this.lighting.isEnable();
-            if (lightEnabled) {
-                this.lighting.stop(gl);
+                gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+                gl.glNormalPointer(GL.GL_FLOAT, 0, sizePosition + sizeColor);
+
+                //gl.glEnable(GL.GL_CULL_FACE);
+                gl.glDrawElements(GL2.GL_TRIANGLES, this.vertexIndices.length, GL.GL_UNSIGNED_INT, 0);
+
+                gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+                gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
+                gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+            } else {
+                boolean lightEnabled = this.lighting.isEnable();
+                if (lightEnabled) {
+                    this.lighting.stop(gl);
+                }
+                gl.glPointSize(this.pointSize * this.dpiScale);
+                gl.glDrawArrays(GL.GL_POINTS, 0, this.pointNum);
+
+                if (lightEnabled) {
+                    this.lighting.start(gl);
+                }
+
+                gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+                gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
+
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
             }
-            gl.glPointSize(this.pointSize * this.dpiScale);
-            gl.glDrawArrays(GL.GL_POINTS, 0, this.vertexNum);
-
-            if (lightEnabled) {
-                this.lighting.start(gl);
-            }
-
-            gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-            gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
-
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
         }
     }
 }

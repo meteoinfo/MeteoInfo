@@ -278,8 +278,7 @@ public class Cylinder {
      * @param y Y coordinate
      * @param z Z coordinate
      */
-    void addVertex(float x, float y, float z)
-    {
+    void addVertex(float x, float y, float z) {
         vertices.add(new Vector3f(x, y, z));
     }
 

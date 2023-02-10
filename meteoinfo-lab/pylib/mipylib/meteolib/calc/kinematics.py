@@ -12,11 +12,12 @@ from .basic import coriolis_parameter
 from .. import constants
 
 __all__ = [
-    'cdiff','divergence','vorticity','advection','absolute_vorticity','potential_vorticity_barotropic',
-    'ageostrophic_wind','frontogenesis','geostrophic_wind','montgomery_streamfunction',
-    'potential_vorticity_baroclinic','shearing_deformation','storm_relative_helicity',
-    'stretching_deformation','total_deformation','inertial_advective_wind','q_vector'
-    ]
+    'cdiff', 'divergence', 'vorticity', 'advection', 'absolute_vorticity', 'potential_vorticity_barotropic',
+    'ageostrophic_wind', 'frontogenesis', 'geostrophic_wind', 'montgomery_streamfunction',
+    'potential_vorticity_baroclinic', 'shearing_deformation', 'storm_relative_helicity',
+    'stretching_deformation', 'total_deformation', 'inertial_advective_wind', 'q_vector'
+]
+
 
 def cdiff(a, dimidx):
     """
@@ -32,6 +33,7 @@ def cdiff(a, dimidx):
         return DimArray(NDArray(r), a.dims, a.fill_value, a.proj)
     else:
         return NDArray(r)
+
 
 def vorticity(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     r"""Calculate the vertical vorticity of the horizontal wind.
@@ -106,6 +108,7 @@ def vorticity(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     else:
         return r
 
+
 def vorticity_bak(u, v, x=None, y=None):
     """
     Calculates the vertical component of the curl (ie, vorticity). The data should be lon/lat projection.
@@ -140,6 +143,7 @@ def vorticity_bak(u, v, x=None, y=None):
         return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
     else:
         return NDArray(r)
+
 
 def divergence(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     r"""Calculate the horizontal divergence of the horizontal wind.
@@ -251,6 +255,7 @@ def divergence_bak(u, v, x=None, y=None):
     else:
         return NDArray(r)
 
+
 def shearing_deformation(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     r"""Calculate the shearing deformation of the horizontal wind.
 
@@ -288,6 +293,7 @@ def shearing_deformation(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     dvdx = first_derivative(v, delta=dx, axis=x_dim)
     return dvdx + dudy
 
+
 def stretching_deformation(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     r"""Calculate the stretching deformation of the horizontal wind.
 
@@ -324,6 +330,7 @@ def stretching_deformation(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     dudx = first_derivative(u, delta=dx, axis=x_dim)
     dvdy = first_derivative(v, delta=dy, axis=y_dim)
     return dudx - dvdy
+
 
 def total_deformation(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     r"""Calculate the total deformation of the horizontal wind.
@@ -365,10 +372,11 @@ def total_deformation(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     """
     dudy, dudx = gradient(u, deltas=(dy, dx), axes=(y_dim, x_dim))
     dvdy, dvdx = gradient(v, deltas=(dy, dx), axes=(y_dim, x_dim))
-    return np.sqrt((dvdx + dudy)**2 + (dudx - dvdy)**2)
+    return np.sqrt((dvdx + dudy) ** 2 + (dudx - dvdy) ** 2)
+
 
 def advection(scalar, u=None, v=None, w=None, dx=None, dy=None, dz=None, x_dim=-1,
-        y_dim=-2, vertical_dim=-3):
+              y_dim=-2, vertical_dim=-3):
     r"""
     Calculate the advection of a scalar field by the wind.
 
@@ -415,6 +423,7 @@ def advection(scalar, u=None, v=None, w=None, dx=None, dy=None, dz=None, x_dim=-
         )
         if wind is not None
     )
+
 
 def frontogenesis(potential_temperature, u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     r"""Calculate the 2D kinematic frontogenesis of a temperature field.
@@ -468,7 +477,7 @@ def frontogenesis(potential_temperature, u, v, dx=None, dy=None, x_dim=-1, y_dim
     ddx_theta = first_derivative(potential_temperature, delta=dx, axis=x_dim)
 
     # Compute the magnitude of the potential temperature gradient
-    mag_theta = np.sqrt(ddx_theta**2 + ddy_theta**2)
+    mag_theta = np.sqrt(ddx_theta ** 2 + ddy_theta ** 2)
 
     # Get the shearing, stretching, and total deformation of the wind field
     shrd = shearing_deformation(u, v, dx, dy, x_dim=x_dim, y_dim=y_dim)
@@ -483,6 +492,7 @@ def frontogenesis(potential_temperature, u, v, dx=None, dy=None, x_dim=-1, y_dim
     beta = np.arcsin((-ddx_theta * np.cos(psi) - ddy_theta * np.sin(psi)) / mag_theta)
 
     return 0.5 * mag_theta * (tdef * np.cos(2 * beta) - div)
+
 
 def geostrophic_wind(height, dx=None, dy=None, latitude=None, x_dim=-1, y_dim=-2):
     r"""Calculate the geostrophic wind given from the height or geopotential.
@@ -524,6 +534,7 @@ def geostrophic_wind(height, dx=None, dy=None, latitude=None, x_dim=-1, y_dim=-2
     dhdy = first_derivative(height, delta=dy, axis=y_dim)
     dhdx = first_derivative(height, delta=dx, axis=x_dim)
     return -norm_factor * dhdy, norm_factor * dhdx
+
 
 def ageostrophic_wind(height, u, v, dx=None, dy=None, latitude=None, x_dim=-1, y_dim=-2):
     r"""Calculate the ageostrophic wind given from the height or geopotential.
@@ -571,6 +582,7 @@ def ageostrophic_wind(height, u, v, dx=None, dy=None, latitude=None, x_dim=-1, y
     )
     return u - u_geostrophic, v - v_geostrophic
 
+
 def montgomery_streamfunction(height, temperature):
     r"""Compute the Montgomery Streamfunction on isentropic surfaces.
 
@@ -607,6 +619,7 @@ def montgomery_streamfunction(height, temperature):
     """
     from . import dry_static_energy
     return dry_static_energy(height, temperature)
+
 
 def storm_relative_helicity(height, u, v, depth, bottom=None, storm_u=None, storm_v=None):
     r"""Calculate storm relative helicity.
@@ -671,6 +684,7 @@ def storm_relative_helicity(height, u, v, depth, bottom=None, storm_u=None, stor
 
     return positive_srh, negative_srh, positive_srh + negative_srh
 
+
 def absolute_vorticity(u, v, dx=None, dy=None, latitude=None, x_dim=-1, y_dim=-2):
     """Calculate the absolute vorticity of the horizontal wind.
 
@@ -708,8 +722,9 @@ def absolute_vorticity(u, v, dx=None, dy=None, latitude=None, x_dim=-1, y_dim=-2
     relative_vorticity = vorticity(u, v, dx=dx, dy=dy, x_dim=x_dim, y_dim=y_dim)
     return relative_vorticity + f
 
+
 def potential_vorticity_baroclinic(potential_temperature, pressure, u, v,
-        dx=None, dy=None, latitude=None, x_dim=-1, y_dim=-2, vertical_dim=-3):
+                                   dx=None, dy=None, latitude=None, x_dim=-1, y_dim=-2, vertical_dim=-3):
     r"""Calculate the baroclinic potential vorticity.
 
     .. math:: PV = -g \left(\frac{\partial u}{\partial p}\frac{\partial \theta}{\partial y}
@@ -795,8 +810,9 @@ def potential_vorticity_baroclinic(potential_temperature, pressure, u, v,
     return -constants.g * (dudp * dthetady - dvdp * dthetadx
                            + avor * dthetadp)
 
+
 def potential_vorticity_barotropic(height, u, v, dx=None, dy=None, latitude=None,
-        x_dim=-1, y_dim=-2):
+                                   x_dim=-1, y_dim=-2):
     r"""Calculate the barotropic (Rossby) potential vorticity.
 
     .. math:: PV = \frac{f + \zeta}{H}
@@ -837,8 +853,9 @@ def potential_vorticity_barotropic(height, u, v, dx=None, dy=None, latitude=None
     avor = absolute_vorticity(u, v, dx, dy, latitude, x_dim=x_dim, y_dim=y_dim)
     return avor / height
 
+
 def inertial_advective_wind(u, v, u_geostrophic, v_geostrophic, dx=None, dy=None,
-        latitude=None, x_dim=-1, y_dim=-2):
+                            latitude=None, x_dim=-1, y_dim=-2):
     r"""Calculate the inertial advective wind.
 
     .. math:: \frac{\hat k}{f} \times (\vec V \cdot \nabla)\hat V_g
@@ -906,8 +923,9 @@ def inertial_advective_wind(u, v, u_geostrophic, v_geostrophic, dx=None, dy=None
 
     return u_component, v_component
 
+
 def q_vector(u, v, temperature, pressure, dx=None, dy=None,
-        static_stability=1, x_dim=-1, y_dim=-2):
+             static_stability=1, x_dim=-1, y_dim=-2):
     r"""Calculate Q-vector at a given pressure level using the u, v winds and temperature.
 
     .. math:: \vec{Q} = (Q_1, Q_2)

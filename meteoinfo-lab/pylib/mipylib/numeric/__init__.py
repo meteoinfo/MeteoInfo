@@ -13,9 +13,10 @@ from . import optimize
 from . import signal
 from . import spatial
 from . import special
+from . import integrate
 
 __all__ = ['linalg', 'fitting', 'random', 'ma', 'stats', 'interpolate', 'optimize', 'signal', 'spatial',
-           'special']
+           'special', 'integrate']
 __all__.extend(['__version__'])
 __all__.extend(core.__all__)
 __all__.extend(lib.__all__)

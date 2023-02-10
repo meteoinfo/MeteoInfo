@@ -9,8 +9,9 @@ from mipylib.geolib import Geod
 from ..interpolate import interpolate_1d
 from ..cbook import broadcast_indices
 
-__all__ = ['resample_nn_1d','nearest_intersection_idx','first_derivative','gradient',
-           'lat_lon_grid_deltas','get_layer_heights', 'find_bounding_indices']
+__all__ = ['resample_nn_1d', 'nearest_intersection_idx', 'first_derivative', 'gradient',
+           'lat_lon_grid_deltas', 'get_layer_heights', 'find_bounding_indices']
+
 
 def resample_nn_1d(a, centers):
     """Return one-dimensional nearest-neighbor indexes based on user-specified centers.
@@ -32,6 +33,7 @@ def resample_nn_1d(a, centers):
         if index not in ix:
             ix.append(index)
     return ix
+
 
 def nearest_intersection_idx(a, b):
     """Determine the index of the point just before two lines with common x values.
@@ -55,6 +57,7 @@ def nearest_intersection_idx(a, b):
 
     return sign_change_idx
 
+
 def _remove_nans(*variables):
     """Remove NaNs from arrays that cause issues with calculations.
     Takes a variable number of arguments and returns masked arrays in the same
@@ -72,6 +75,7 @@ def _remove_nans(*variables):
     for v in variables:
         ret.append(v[~mask])
     return ret
+
 
 def get_layer_heights(height, depth, *args, **kwargs):
     """Return an atmospheric layer from upper air data with the requested bottom and depth.
@@ -162,6 +166,7 @@ def get_layer_heights(height, depth, *args, **kwargs):
         ret.append(datavar)
     return ret
 
+
 def find_bounding_indices(arr, values, axis, from_below=True):
     """Find the indices surrounding the values within arr along axis.
 
@@ -242,6 +247,7 @@ def find_bounding_indices(arr, values, axis, from_below=True):
 
     return above, below, good
 
+
 def _greater_or_close(a, value, **kwargs):
     r"""Compare values for greater or close to boolean masks.
 
@@ -283,12 +289,16 @@ def _less_or_close(a, value, **kwargs):
     """
     return (a < value) | np.isclose(a, value, **kwargs)
 
+
 def make_take(ndims, slice_dim):
     """Generate a take function to index in a particular dimension."""
+
     def take(indexer):
         return tuple(indexer if slice_dim % ndims == i else slice(None)  # noqa: S001
                      for i in range(ndims))
+
     return take
+
 
 def _broadcast_to_axis(arr, axis, ndim):
     """Handle reshaping coordinate array to have proper dimensionality.
@@ -299,6 +309,7 @@ def _broadcast_to_axis(arr, axis, ndim):
         new_shape[axis] = arr.size
         arr = arr.reshape(*new_shape)
     return arr
+
 
 def lat_lon_grid_deltas(longitude, latitude, x_dim=-1, y_dim=-2, geod=None):
     r"""
@@ -362,6 +373,7 @@ def lat_lon_grid_deltas(longitude, latitude, x_dim=-1, y_dim=-2, geod=None):
 
     return dx, dy
 
+
 def _process_gradient_args(f, axes, coordinates, deltas):
     """Handle common processing of arguments for gradient and gradient-like functions."""
     axes_given = axes is not None
@@ -389,6 +401,7 @@ def _process_gradient_args(f, axes, coordinates, deltas):
         raise ValueError('Must specify either "coordinates" or "deltas" for value positions '
                          'when "f" is not a DataArray.')
 
+
 def _process_deriv_args(f, axis, x, delta):
     """Handle common processing of arguments for derivative functions."""
     n = f.ndim
@@ -415,6 +428,7 @@ def _process_deriv_args(f, axis, x, delta):
         raise ValueError('Must specify either "x" or "delta" for value positions.')
 
     return n, axis, delta
+
 
 def first_derivative(f, axis=None, x=None, delta=None):
     """Calculate the first derivative of a grid of values.
@@ -496,6 +510,7 @@ def first_derivative(f, axis=None, x=None, delta=None):
     data = np.concatenate(data, axis=axis)
 
     return data
+
 
 def gradient(f, axes=None, coordinates=None, deltas=None):
     """Calculate the gradient of a grid of values.

@@ -1239,8 +1239,6 @@ public class GLPlot extends Plot {
 
         this.updateMatrix(gl);
 
-        //gl.glColor3f(0.0f, 0.0f, 0.0f);
-
         //Draw base
         if (this.drawBase) {
             this.drawBase(gl);

@@ -1,20 +1,18 @@
 from org.meteoinfo.math.optimize import OptimizeUtil, ParamUnivariateFunction
-from org.apache.commons.math4.legacy.fitting.leastsquares import LeastSquaresBuilder
-from org.apache.commons.math4.legacy.fitting.leastsquares import LevenbergMarquardtOptimizer
 
-import warnings
 from ..core import numeric as np
-from ..linalg import cholesky, solve_triangular, svd
 from ..lib._util import _lazywhere
+from ..linalg import solve_triangular
 
-#__all__ = ['fsolve', 'leastsq', 'fixed_point', 'curve_fit']
-__all__ = ['curve_fit','fixed_point']
+# __all__ = ['fsolve', 'leastsq', 'fixed_point', 'curve_fit']
+__all__ = ['curve_fit', 'fixed_point']
+
 
 def _check_func(checker, argname, thefunc, x0, args, numinputs,
                 output_shape=None):
     res = np.atleast_1d(thefunc(*((x0[:numinputs],) + args)))
     if (output_shape is not None) and (np.shape(res) != output_shape):
-        if (output_shape[0] != 1):
+        if output_shape[0] != 1:
             if len(output_shape) > 1:
                 if output_shape[1] == 1:
                     return shape(res)
@@ -28,6 +26,7 @@ def _check_func(checker, argname, thefunc, x0, args, numinputs,
             msg += 'Shape should be %s but it is %s.' % (output_shape, np.shape(res))
             raise TypeError(msg)
     return np.shape(res), res.dtype
+
 
 def _wrap_func(func, xdata, ydata, transform):
     if transform is None:
@@ -49,6 +48,7 @@ def _wrap_func(func, xdata, ydata, transform):
             return solve_triangular(transform, func(xdata, *params) - ydata, lower=True)
     return func_wrapped
 
+
 def _wrap_jac(jac, xdata, transform):
     if transform is None:
         def jac_wrapped(params):
@@ -60,6 +60,7 @@ def _wrap_jac(jac, xdata, transform):
         def jac_wrapped(params):
             return solve_triangular(transform, np.asarray(jac(xdata, *params)), lower=True)
     return jac_wrapped
+
 
 def _initialize_feasible(lb, ub):
     p0 = np.ones_like(lb)
@@ -77,6 +78,7 @@ def _initialize_feasible(lb, ub):
 
     return p0
 
+
 class UniFunc(ParamUnivariateFunction):
     def __init__(self, f):
         """
@@ -92,6 +94,7 @@ class UniFunc(ParamUnivariateFunction):
     def value(self, x):
         args = tuple(self.getParameters())
         return self.f(x, *args)
+
 
 def curve_fit(f, xdata, ydata, p0=None, npoint=5, step=0.1):
     """
@@ -139,6 +142,7 @@ def curve_fit(f, xdata, ydata, p0=None, npoint=5, step=0.1):
     r = tuple(best)
 
     return r
+
 
 # def curve_fit(f, xdata, ydata, p0=None, npoint=5, step=0.1):
 #     """
@@ -202,6 +206,7 @@ def _del2(p0, p1, d):
 def _relerr(actual, desired):
     return (actual - desired) / desired
 
+
 def _fixed_point_helper(func, x0, args, xtol, maxiter, use_accel):
     p0 = x0
     for _ in range(maxiter):
@@ -257,6 +262,6 @@ def fixed_point(func, x0, args=(), xtol=1e-8, maxiter=500, method='del2'):
     array([ 1.4920333 ,  1.37228132])
     """
     use_accel = {'del2': True, 'iteration': False}[method]
-    #x0 = _asarray_validated(x0, as_inexact=True)
+    # x0 = _asarray_validated(x0, as_inexact=True)
     x0 = np.asarray(x0)
     return _fixed_point_helper(func, x0, args, xtol, maxiter, use_accel)

@@ -1,9 +1,9 @@
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2015-9-20
 # Purpose: MeteoInfoLab layer module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 import geoutil
 import mipylib.miutil as miutil
 import mipylib.numeric as np
@@ -18,6 +18,7 @@ from org.meteoinfo.geometry.shape import PolygonShape, ShapeTypes
 from org.meteoinfo.geo.analysis import GeometryUtil
 from org.meteoinfo.geo.util import GeoProjectionUtil
 
+
 class MILayer(object):
     """
     Map layer
@@ -26,6 +27,7 @@ class MILayer(object):
     :param shapetype: (*ShapeTypes*) Shape type ['point' | 'point_z' | 'line' | 'line_z' | 'polygon'
         | 'polygon_z']
     """
+
     def __init__(self, layer=None, shapetype=None):
         if layer is None:
             if shapetype is None:
@@ -49,7 +51,7 @@ class MILayer(object):
             self.shapetype = layer.getShapeType()
             self.proj = layer.getProjInfo()
         self._coord_array = None
-    
+
     def __repr__(self):
         return self._layer.getLayerInfo()
 
@@ -104,7 +106,7 @@ class MILayer(object):
             return np.array(self._coord_array[3])
         else:
             return None
-    
+
     def isvectorlayer(self):
         """
         Check this layer is VectorLayer or not.
@@ -112,7 +114,7 @@ class MILayer(object):
         :returns: (*boolean*) Is VectorLayer or not.
         """
         return self._layer.getLayerType() == LayerTypes.VECTOR_LAYER
-        
+
     def get_encoding(self):
         """
         Get encoding.
@@ -120,7 +122,17 @@ class MILayer(object):
         :returns: (*string*) Encoding
         """
         return self._layer.getAttributeTable().getEncoding()
-        
+
+    @property
+    def datatable(self):
+        """
+        Get attribute table.
+
+        :return: Attribute table.
+        """
+        r = self._layer.getAttributeTable().getTable()
+        return np.datatable(r)
+
     def gettable(self):
         """
         Get attribute table.
@@ -129,7 +141,7 @@ class MILayer(object):
         """
         r = self._layer.getAttributeTable().getTable()
         return np.datatable(r)
-    
+
     def cellvalue(self, fieldname, shapeindex):
         """
         Get attribute table cell value.
@@ -145,35 +157,50 @@ class MILayer(object):
             return dt
         else:
             return v
-            
+
     def setcellvalue(self, fieldname, shapeindex, value):
         """
         Set cell value in attribute table.
         
         :param fieldname: (*string*) Field name.
         :param shapeindex: (*int*) Shape index.
-        :param value: (*object*) Cell value to be asigned.
+        :param value: (*object*) Cell value to be assigned.
         """
         self._layer.editCellValue(fieldname, shapeindex, value)
-            
+
+    def setfieldvalue(self, fieldname, value, index=None):
+        """
+        Set field value.
+
+        :param fieldname: (*str*) The field name.
+        :param value: (*array*) The field data array.
+        :param index: (*array*) Optional. Field data index. Default is `None`.
+        """
+        value = np.asarray(value)
+        if index is None:
+            self._layer.getAttributeTable().getTable().setColumnData(fieldname, value.jarray)
+        else:
+            index = np.asarray(index)
+            self._layer.getAttributeTable().getTable().setColumnData(fieldname, value.jarray, index.jarray)
+
     def shapes(self):
         """
         Get shapes.
         """
         return self._layer.getShapes()
-        
+
     def shapenum(self):
         """
         Get shape number
         """
         return self._layer.getShapeNum()
-        
+
     def legend(self):
         """
         Get legend scheme.
         """
         return self._layer.getLegendScheme()
-        
+
     def setlegend(self, legend):
         """
         Set legend scheme.
@@ -181,7 +208,7 @@ class MILayer(object):
         :param legend: (*LegendScheme*) Legend scheme.
         """
         self._layer.setLegendScheme(legend)
-        
+
     def update_legend(self, ltype, fieldname):
         """
         Update legend scheme.
@@ -199,7 +226,7 @@ class MILayer(object):
             raise ValueError(ltype)
         self._layer.updateLegendScheme(ltype, fieldname)
         return self._layer.getLegendScheme()
-    
+
     def addfield(self, fieldname, dtype, values=None):
         """
         Add a field into the attribute table.
@@ -215,7 +242,7 @@ class MILayer(object):
             for i in range(n):
                 if i < len(values):
                     self._layer.editCellValue(fieldname, i, values[i])
-                    
+
     def delfield(self, fieldname):
         """
         Delete a field from the attribute table.
@@ -223,7 +250,7 @@ class MILayer(object):
         :param fieldname: (*string*) Filed name.
         """
         self._layer.editRemoveField(fieldname)
-        
+
     def renamefield(self, fieldname, newfieldname):
         """
         Rename the field.
@@ -232,7 +259,7 @@ class MILayer(object):
         :param newfieldname: (*string*) The new field name.
         """
         self._layer.editRenameField(fieldname, newfieldname)
-        
+
     def addshape(self, x, y, fields=None, z=None, m=None):
         """
         Add a shape.
@@ -266,7 +293,7 @@ class MILayer(object):
         :param yshift: (*float*) Y shift.
         """
         self._layer.move(xshift, yshift)
-                    
+
     def addlabels(self, fieldname, **kwargs):
         """
         Add labels
@@ -306,7 +333,7 @@ class MILayer(object):
             labelset.setAutoDecimal(False)
             labelset.setDecimalDigits(decimals)
         self._layer.addLabels()
-        
+
     def getlabel(self, text):
         """
         Get a label.
@@ -314,7 +341,7 @@ class MILayer(object):
         :param text: (*string*) The label text.
         """
         return self._layer.getLabel(text)
-        
+
     def movelabel(self, label, x=0, y=0):
         """
         Move a label.
@@ -324,7 +351,7 @@ class MILayer(object):
         :param y: (*float*) Y shift for moving in pixel unit.
         """
         self._layer.moveLabel(label, x, y)
-        
+
     def add_charts(self, fieldnames, legend=None, **kwargs):
         """
         Add charts
@@ -368,7 +395,7 @@ class MILayer(object):
             font = Font(fontname, Font.PLAIN, fontsize)
         labelcolor = kwargs.pop('labelcolor', None)
         decimals = kwargs.pop('decimals', None)
-        
+
         chartset = self._layer.getChartSet()
         chartset.setFieldNames(fieldnames)
         chartset.setLegendScheme(legend)
@@ -402,13 +429,13 @@ class MILayer(object):
         self._layer.updateChartSet()
         self._layer.addCharts()
         return chartset
-        
+
     def get_chartlegend(self):
         """
         Get legend of the chart graphics.
         """
         return self._layer.getChartSet().getLegendScheme()
-        
+
     def get_chart(self, index):
         """
         Get a chart graphic.
@@ -418,7 +445,7 @@ class MILayer(object):
         :returns: Chart graphic
         """
         return self._layer.getChartPoints()[index]
-        
+
     def move_chart(self, index, x=0, y=0):
         """
         Move a chart graphic.
@@ -432,7 +459,7 @@ class MILayer(object):
         p.X = p.X + x
         p.Y = p.Y + y
         s.setPoint(p)
-        
+
     def set_avoidcoll(self, avoidcoll):
         """
         Set if avoid collision or not. Only valid for VectorLayer with Point shapes.
@@ -440,7 +467,7 @@ class MILayer(object):
         :param avoidcoll: (*boolean*) Avoid collision or not.
         """
         self._layer.setAvoidCollision(avoidcoll)
-        
+
     def project(self, toproj):
         """
         Project to another projection.
@@ -448,7 +475,7 @@ class MILayer(object):
         :param toproj: (*ProjectionInfo*) The projection to be projected.
         """
         GeoProjectionUtil.projectLayer(self._layer, toproj)
-        
+
     def buffer(self, dist=0, merge=False):
         """
         Get the buffer layer.
@@ -460,7 +487,7 @@ class MILayer(object):
         """
         r = self._layer.buffer(dist, False, merge)
         return MILayer(r)
-        
+
     def clip(self, clipobj):
         """
         Clip this layer by polygon or another polygon layer.
@@ -475,7 +502,7 @@ class MILayer(object):
             clipobj = clipobj._layer
         r = self._layer.clip(clipobj)
         return MILayer(r)
-        
+
     def select(self, expression, seltype='new'):
         """
         Select shapes by SQL expression.
@@ -488,19 +515,19 @@ class MILayer(object):
         """
         self._layer.sqlSelect(expression, seltype)
         return self._layer.getSelectedShapes()
-        
+
     def clear_selection(self):
         """
         Clear shape selection.
         """
         self._layer.clearSelectedShapes()
-        
+
     def clone(self):
         """
         Clone self.
         """
         return MILayer(self._layer.clone())
-    
+
     def save(self, fn=None, encoding=None):
         """
         Save layer as shape file.
@@ -510,7 +537,7 @@ class MILayer(object):
         """
         if fn is None:
             fn = self._layer.getFileName()
-            
+
         if fn.strip() == '':
             print('File name is needed to save the layer!')
             raise IOError
@@ -519,7 +546,7 @@ class MILayer(object):
                 self._layer.saveFile(fn)
             else:
                 self._layer.saveFile(fn, encoding)
-    
+
     def savekml(self, fn):
         """
         Save layer as KML file.
@@ -547,32 +574,31 @@ class MIXYListData():
             self.data = XYListDataset()
         else:
             self.data = data
-        
+
     def __getitem__(self, indices):
         if not isinstance(indices, tuple):
             inds = []
             inds.append(indices)
             indices = inds
-            
+
         if isinstance(indices[0], int):
             if isinstance(indices[1], int):
                 x = self.data.getX(indices[0], indices[1])
                 y = self.data.getY(indices[0], indices[1])
                 return x, y
             else:
-                return self.data.getXValues(indices[0]), self.data.getXValues(indices[0])           
-        
+                return self.data.getXValues(indices[0]), self.data.getXValues(indices[0])
+
     def size(self, series=None):
         if series is None:
             return self.data.getSeriesCount()
         else:
             return self.data.getItemCount(series)
-            
+
     def addseries(self, xdata, ydata, key=None):
         if key is None:
             key = 'Series_' + str(self.size())
         if isinstance(xdata, list):
             self.data.addSeries(key, xdata, ydata)
         else:
-            self.data.addSeries(key, xdata.asarray(), ydata.asarray())   
-            
+            self.data.addSeries(key, xdata.asarray(), ydata.asarray())

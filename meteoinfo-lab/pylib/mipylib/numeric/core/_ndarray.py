@@ -37,6 +37,10 @@ class NDArray(object):
                 for i in range(1, self.ndim):
                     self.sizestr = self.sizestr + '*%s' % self.shape[i]
 
+    @property
+    def jarray(self):
+        return self._array
+
     #---- shape property
     def get_shape(self):
         return self._shape
@@ -1149,12 +1153,12 @@ class NDArray(object):
 
     def ravel(self):
         """
-        Return a copy of the array collapsed into one dimension.
+        Return a contiguous flattened array.
 
-        :returns: (*NDArray*) A copy of the input array, flattened to one dimension.
+        :returns: (*NDArray*) A contiguous flattened array.
         """
         shape = [self.size]
-        r = NDArray(self._array.reshape(shape))
+        r = NDArray(self._array.reshapeNoCopy(shape))
         return r
 
     def repeat(self, repeats, axis=None):

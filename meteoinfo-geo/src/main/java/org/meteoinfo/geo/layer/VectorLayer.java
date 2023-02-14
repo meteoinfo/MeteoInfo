@@ -1183,7 +1183,7 @@ public class VectorLayer extends MapLayer {
                 aField.setColumnName(aField.getColumnName() + "_1");
             }
         }
-        _attributeTable.getTable().getColumns().add(aField);
+        _attributeTable.getTable().addColumn(aField);
     }
 
     /**

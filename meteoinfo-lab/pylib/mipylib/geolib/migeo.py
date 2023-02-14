@@ -1,9 +1,9 @@
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2014-12-27
 # Purpose: MeteoInfo geo module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 import os
 import numbers
@@ -31,12 +31,13 @@ import mipylib.numeric as np
 from java.util import ArrayList
 
 __all__ = [
-    'arrayinpolygon','bilwrite','circle','convert_encoding_dbf','distance','georead','geotiffread','gridarea',
-    'maplayer','inpolygon','maskin','maskout','polyarea','polygon','rmaskin','rmaskout','shaperead',
-    'projinfo','project','projectxy','reproject','reproject_image'
-    ]
+    'arrayinpolygon', 'bilwrite', 'circle', 'convert_encoding_dbf', 'distance', 'georead', 'geotiffread', 'gridarea',
+    'maplayer', 'inpolygon', 'maskin', 'maskout', 'polyarea', 'polygon', 'rmaskin', 'rmaskout', 'shaperead',
+    'polygonindex', 'projinfo', 'project', 'projectxy', 'reproject', 'reproject_image'
+]
 
-def shaperead(fn, encoding=None):   
+
+def shaperead(fn, encoding=None):
     """
     Returns a layer readed from a shape file.
     
@@ -49,8 +50,8 @@ def shaperead(fn, encoding=None):
         fn = fn + '.shp'
     if not os.path.exists(fn):
         fn = os.path.join(migl.get_map_folder(), fn)
-        
-    if os.path.exists(fn):        
+
+    if os.path.exists(fn):
         try:
             if encoding is None:
                 encoding = IOUtil.encodingDetectShp(fn)
@@ -65,9 +66,11 @@ def shaperead(fn, encoding=None):
         except:
             raise
     else:
-        print 'File not exists: ' + fn
+        print
+        'File not exists: ' + fn
         raise
-    
+
+
 def georead(fn, encoding=None):
     """
     Returns a layer read from a supported geo-data file.
@@ -82,7 +85,7 @@ def georead(fn, encoding=None):
 
     if not os.path.exists(fn):
         fn = fn + '.shp'
-        
+
     if os.path.exists(fn):
         if fn.endswith('.shp'):
             return shaperead(fn, encoding)
@@ -99,7 +102,8 @@ def georead(fn, encoding=None):
     else:
         print('File not exists: ' + fn)
         raise IOError
-    
+
+
 def geotiffread(filename):
     """
     Return data array from a GeoTiff data file.
@@ -112,7 +116,8 @@ def geotiffread(filename):
     geotiff.read()
     r = geotiff.readArray()
     return NDArray(r)
-    
+
+
 def convert_encoding_dbf(filename, fromencoding, toencoding):
     """
     Convert encoding of a dBase file (.dbf).
@@ -121,16 +126,17 @@ def convert_encoding_dbf(filename, fromencoding, toencoding):
     :param fromencoding: (*string*) From encoding.
     :param toencoding: (*string*) To encoding.
     """
-    #Read dBase file
+    # Read dBase file
     atable = AttributeTable()
     atable.setEncoding(fromencoding)
     atable.openDBF(filename)
     atable.fill(atable.getNumRecords())
-    
-    #Save dBase file
+
+    # Save dBase file
     atable.setEncoding(toencoding)
     atable.save()
-    
+
+
 def maplayer(shapetype='polygon'):
     """
     Create a new map layer.
@@ -141,7 +147,8 @@ def maplayer(shapetype='polygon'):
     :returns: (*MILayer*) MILayer object.
     """
     return MILayer(shapetype=shapetype)
-    
+
+
 def polygon(x, y=None):
     """
     Create polygon from coordinate data.
@@ -159,7 +166,8 @@ def polygon(x, y=None):
         if isinstance(y, NDArray):
             y = y.aslist()
         polygon = ShapeUtil.createPolygonShape(x, y)
-    return polygon  
+    return polygon
+
 
 def circle(xy, radius=5):
     """
@@ -171,8 +179,9 @@ def circle(xy, radius=5):
     :returns: (*CircleShape*) Created circle.
     """
     cc = ShapeUtil.createCircleShape(xy[0], xy[1], radius)
-    return cc    
-    
+    return cc
+
+
 def inpolygon(x, y, polygon):
     """
     Check if x/y points are inside a polygon or not.
@@ -187,7 +196,7 @@ def inpolygon(x, y, polygon):
         x = np.array([x])
     if isinstance(y, numbers.Number):
         y = np.array([y])
-    
+
     if isinstance(x, (list, tuple)):
         x = np.array(x)
     if isinstance(y, (list, tuple)):
@@ -210,7 +219,8 @@ def inpolygon(x, y, polygon):
             return r[0]
         else:
             return r
-    
+
+
 def arrayinpolygon(a, polygon, x=None, y=None):
     """
     Set array element value as 1 if inside a polygon or set value as -1.
@@ -226,6 +236,7 @@ def arrayinpolygon(a, polygon, x=None, y=None):
         if x is None or y is None:
             x = self.dimvalue(1)
             y = self.dimvalue(0)
+
     if not x is None and not y is None:
         if isinstance(polygon, tuple):
             x_p = polygon[0]
@@ -241,7 +252,28 @@ def arrayinpolygon(a, polygon, x=None, y=None):
             return NDArray(GeometryUtil.inPolygon(a.asarray(), x.aslist(), y.aslist(), polygon))
     else:
         return None
-            
+
+
+def polygonindex(x, y, polygons):
+    """
+    Find polygon index by x, y coordinates.
+
+    :param x: (*float*) X coordinate of the point.
+    :param y: (*float*) Y coordinate of the point.
+    :param polygons: (*list of PolygonShape*) The polygons
+
+    :returns: (*array_like*) Result array.
+    """
+    if isinstance(x, (tuple, list)):
+        x = np.array(x)
+
+    if isinstance(x, (tuple, list)):
+        y = np.array(y)
+
+    r = GeometryUtil.polygonIndex(x.jarray, y.jarray, polygons)
+    return NDArray(r)
+
+
 def distance(*args, **kwargs):
     """
     Get distance of a line.
@@ -263,7 +295,8 @@ def distance(*args, **kwargs):
             y = y.aslist()
         r = GeoComputation.getDistance(x, y, islonlat)
     return r
-    
+
+
 def polyarea(*args, **kwargs):
     """
     Calculate area of polygon.
@@ -288,6 +321,7 @@ def polyarea(*args, **kwargs):
         r = GeoComputation.getArea(x, y, islonlat)
     return r
 
+
 def gridarea(x_orig, x_cell, x_num, y_orig, y_cell, y_num, islonlat=False,
              allcell=True, earth_radius=None):
     """
@@ -311,7 +345,8 @@ def gridarea(x_orig, x_cell, x_num, y_orig, y_cell, y_num, islonlat=False,
         a = GeoComputation.getGridArea(x_orig, x_cell, x_num, y_orig, y_cell, y_num,
                                        islonlat, allcell, earth_radius)
     return NDArray(a)
-    
+
+
 def maskout(data, mask, x=None, y=None):
     """
     Maskout data by polygons - NaN values of elements outside polygons.
@@ -331,7 +366,7 @@ def maskout(data, mask, x=None, y=None):
             return DimArray(r, data.dims, data.fill_value, data.proj)
         else:
             return NDArray(r)
-            
+
     if x is None or y is None:
         if isinstance(data, DimArray):
             x = data.dimvalue(data.ndim - 1)
@@ -347,16 +382,17 @@ def maskout(data, mask, x=None, y=None):
         for i in range(len(mask)):
             if isinstance(mask[i], Graphic):
                 mask[i] = mask[i].getShape()
-        
+
     if data.ndim == 2 and x.ndim == 1 and y.ndim == 1:
         x, y = np.meshgrid(x, y)
-        
+
     r = GeometryUtil.maskout(data._array, x._array, y._array, mask)
     if isinstance(data, DimArray):
         return DimArray(r, data.dims, data.fill_value, data.proj)
     else:
         return NDArray(r)
-        
+
+
 def rmaskout(data, x, y, mask):
     """
     Maskout data by polygons - the elements outside polygons will be removed
@@ -371,8 +407,9 @@ def rmaskout(data, x, y, mask):
     if not isinstance(mask, (list, ArrayList)):
         mask = [mask]
     r = GeometryUtil.maskout_Remove(data.asarray(), x.asarray(), y.asarray(), mask)
-    return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])  
-    
+    return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])
+
+
 def maskin(data, mask, x=None, y=None):
     """
     Maskin data by polygons - NaN values of elements inside polygons.
@@ -385,21 +422,21 @@ def maskin(data, mask, x=None, y=None):
     :returns: (*array_like*) Maskined data array.
     """
     if mask is None:
-        return data        
+        return data
     elif isinstance(mask, NDArray):
         r = ArrayMath.maskin(data._array, mask._array)
         if isinstance(data, DimArray):
             return DimArray(r, data.dims, data.fill_value, data.proj)
         else:
             return NDArray(r)
-        
+
     if x is None or y is None:
         if isinstance(data, DimArray):
             x = data.dimvalue(data.ndim - 1)
             y = data.dimvalue(data.ndim - 2)
         else:
             return None
-    
+
     if data.ndim == 2 and x.ndim == 1 and y.ndim == 1:
         x, y = np.meshgrid(x, y)
 
@@ -410,7 +447,8 @@ def maskin(data, mask, x=None, y=None):
         return DimArray(r, data.dims, data.fill_value, data.proj)
     else:
         return NDArray(r)
-        
+
+
 def rmaskin(data, x, y, mask):
     """
     Maskin data by polygons - the elements inside polygons will be removed
@@ -425,8 +463,9 @@ def rmaskin(data, x, y, mask):
     if not isinstance(mask, (list, ArrayList)):
         mask = [mask]
     r = GeometryUtil.maskin_Remove(data._array, x._array, y._array, mask)
-    return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])  
-    
+    return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])
+
+
 def projinfo(proj4string=None, proj='longlat', **kwargs):
     """
     Create a projection object with Proj.4 parameters (http://proj4.org/)
@@ -450,7 +489,7 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
     """
     if not proj4string is None:
         return ProjectionInfo.factory(proj4string)
-    
+
     if proj == 'longlat' and len(kwargs) == 0:
         return KnownCoordinateSystems.geographic.world.WGS1984
 
@@ -522,10 +561,12 @@ def projinfo(proj4string=None, proj='longlat', **kwargs):
     zone = kwargs.pop('zone', None)
     if not zone is None:
         projstr = projstr + ' +zone=' + str(zone)
-        
-    return ProjectionInfo.factory(projstr) 
 
-def project(x, y, fromproj=KnownCoordinateSystems.geographic.world.WGS1984, toproj=KnownCoordinateSystems.geographic.world.WGS1984):
+    return ProjectionInfo.factory(projstr)
+
+
+def project(x, y, fromproj=KnownCoordinateSystems.geographic.world.WGS1984,
+            toproj=KnownCoordinateSystems.geographic.world.WGS1984):
     """
     Project geographic coordinates from one projection to another.
     
@@ -551,7 +592,8 @@ def project(x, y, fromproj=KnownCoordinateSystems.geographic.world.WGS1984, topr
         inpt = PointD(x, y)
         outpt = Reproject.reprojectPoint(inpt, fromproj, toproj)
         return outpt.X, outpt.Y
-    
+
+
 def projectxy(lon, lat, xnum, ynum, dx, dy, toproj, fromproj=None, pos='lowerleft'):
     """
     Get projected x, y coordinates by projection and a given lon, lat coordinate.
@@ -580,7 +622,8 @@ def projectxy(lon, lat, xnum, ynum, dx, dy, toproj, fromproj=None, pos='lowerlef
         xx = np.arange1(llx, xnum, dx)
         yy = np.arange1(lly, ynum, dy)
     return xx, yy
-    
+
+
 def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, method='bilinear'):
     """
     Project array
@@ -608,7 +651,7 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
             fromproj = a.proj
         else:
             fromproj = KnownCoordinateSystems.geographic.world.WGS1984
-            
+
     if toproj is None:
         toproj = KnownCoordinateSystems.geographic.world.WGS1984
 
@@ -628,6 +671,7 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
     xp, yp = ArrayUtil.meshgrid(xp.asarray(), yp.asarray())
     r = Reproject.reproject(a.asarray(), x.aslist(), y.aslist(), xp, yp, fromproj, toproj, method)
     return NDArray(r)
+
 
 def reproject_image(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None):
     """
@@ -667,6 +711,7 @@ def reproject_image(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=N
     xp, yp = ArrayUtil.meshgrid(xp.asarray(), yp.asarray())
     r = Reproject.reprojectImage(a.asarray(), x.asarray(), y.asarray(), xp, yp, fromproj, toproj)
     return NDArray(r)
+
 
 def bilwrite(fn, data, x, y, proj=projinfo()):
     """

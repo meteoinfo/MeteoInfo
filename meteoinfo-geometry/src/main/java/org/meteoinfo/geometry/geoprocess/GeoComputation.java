@@ -243,6 +243,28 @@ public class GeoComputation {
         return isIn;
     }
 
+    /**
+     * Get polygon index from polygons by a point
+     * @param polygons The polygons
+     * @param point The point
+     * @return Polygon index - the point is inside the polygon
+     */
+    public static int polygonIndex(List<PolygonShape> polygons, PointD point) {
+        int idx = -1;
+        Extent ext = GeometryUtil.getExtent(polygons);
+        if (MIMath.pointInExtent(point, ext)) {
+            PolygonShape polygonShape;
+            for (int i = 0; i < polygons.size(); i++) {
+                polygonShape = polygons.get(i);
+                if (pointInPolygon(polygonShape, point)) {
+                    return i;
+                }
+            }
+        }
+
+        return idx;
+    }
+
 //    /**
 //     * Determine if a point loacted in a polygon layer
 //     *

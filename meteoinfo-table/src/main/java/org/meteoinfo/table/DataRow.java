@@ -121,7 +121,7 @@ public class DataRow {
     }
 
     /**
-     * Set a vlaue
+     * Set a value
      *
      * @param column The data column
      * @param value The value

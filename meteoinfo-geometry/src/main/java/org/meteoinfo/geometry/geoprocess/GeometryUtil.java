@@ -446,21 +446,28 @@ public class GeometryUtil {
 
         return inPolygon(x, y, shapes);
     }
-    
-//    /**
-//     * Maskout function
-//     *
-//     * @param a Array a
-//     * @param x X dimension values
-//     * @param y Y dimension values
-//     * @param layer VectorLayer
-//     * @param missingValue Missing value
-//     * @return Result array with cell values of missing outside polygons
-//     */
-//    public static Array maskout(Array a, List<Number> x, List<Number> y, VectorLayer layer, Number missingValue) {
-//        List<PolygonShape> polygons = (List<PolygonShape>) layer.getShapes();
-//        return maskout(a, x, y, polygons, missingValue);
-//    }
+
+    /**
+     * Find polygon index for each point
+     * @param x X coordinate of the points
+     * @param y Y coordinate of the points
+     * @param polygons The polygons
+     * @return Polygon index for each point
+     */
+    public static Array polygonIndex(Array x, Array y, List<PolygonShape> polygons) {
+        Array r = Array.factory(DataType.INT, x.getShape());
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        IndexIterator rIter = r.getIndexIterator();
+        int idx;
+        while (rIter.hasNext()){
+            idx = GeoComputation.polygonIndex(polygons, new PointD(xIter.getDoubleNext(),
+                    yIter.getDoubleNext()));
+            rIter.setIntNext(idx);
+        }
+
+        return r;
+    }
 
     /**
      * Maskout function

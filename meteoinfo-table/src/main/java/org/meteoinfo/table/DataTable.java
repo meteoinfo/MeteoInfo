@@ -14,6 +14,7 @@
 package org.meteoinfo.table;
 
 import org.meteoinfo.common.MIMath;
+import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.table.util.TableUtil;
@@ -606,6 +607,86 @@ public class DataTable {
         }
         
         setColumnData(col, colData);
+    }
+
+    /**
+     * Add column data
+     *
+     * @param col The column
+     * @param colData The column data
+     * @throws Exception
+     */
+    public void setColumnData(DataColumn col, Array colData) throws Exception {
+        colData = colData.copyIfView();
+        if (this.getRowCount() == 0) {
+            for (int i = 0; i < colData.getSize(); i++){
+                DataRow row = this.addRow();
+                row.setValue(col, colData.getObject(i));
+            }
+        } else {
+            int i = 0;
+            for (DataRow row : this.rows) {
+                if (i < colData.getSize()) {
+                    row.setValue(col, colData.getObject(i));
+                }
+                i++;
+            }
+        }
+    }
+
+    /**
+     * Add column data
+     *
+     * @param colName Column name
+     * @param colData The column data
+     * @throws Exception
+     */
+    public void setColumnData(String colName, Array colData) throws Exception {
+        DataColumn col = this.findColumn(colName);
+        if (col == null){
+            System.out.println("The column not exists: " + colName + "!");
+            return;
+        }
+
+        setColumnData(col, colData);
+    }
+
+    /**
+     * Add column data
+     *
+     * @param col The column
+     * @param colData The column data
+     * @param index Data index array
+     * @throws Exception
+     */
+    public void setColumnData(DataColumn col, Array colData, Array index) throws Exception {
+        colData = colData.copyIfView();
+        index = index.copyIfView();
+
+        int idx;
+        for (int i = 0; i < index.getSize(); i++) {
+            idx = index.getInt(i);
+            if (idx >=0 && idx < this.getRowCount())
+                this.rows.get(idx).setValue(col, colData.getObject(i));
+        }
+    }
+
+    /**
+     * Add column data
+     *
+     * @param colName Column name
+     * @param colData The column data
+     * @param index Data index array
+     * @throws Exception
+     */
+    public void setColumnData(String colName, Array colData, Array index) throws Exception {
+        DataColumn col = this.findColumn(colName);
+        if (col == null){
+            System.out.println("The column not exists: " + colName + "!");
+            return;
+        }
+
+        setColumnData(col, colData, index);
     }
 
     /**

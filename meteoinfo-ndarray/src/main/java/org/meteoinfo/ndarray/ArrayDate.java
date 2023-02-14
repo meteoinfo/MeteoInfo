@@ -32,6 +32,8 @@
  */
 package org.meteoinfo.ndarray;
 
+import org.meteoinfo.common.util.JDateUtil;
+
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.time.LocalDateTime;
@@ -181,11 +183,11 @@ public class ArrayDate extends Array {
     }
 
     public double getDouble(Index i) {
-        throw new ForbiddenConversionException();
+        return JDateUtil.toOADate(storage[i.currentElement()]);
     }
 
     public void setDouble(Index i, double value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = JDateUtil.fromOADate(value);
     }
 
     public float getFloat(Index i) {
@@ -288,11 +290,11 @@ public class ArrayDate extends Array {
 
     // trusted, assumes that individual dimension lengths have been checked
     public double getDouble(int index) {
-        throw new ForbiddenConversionException();
+        return JDateUtil.toOADate(storage[index]);
     }
 
     public void setDouble(int index, double value) {
-        throw new ForbiddenConversionException();
+        storage[index] = JDateUtil.fromOADate(value);
     }
 
     public float getFloat(int index) {

@@ -1,5 +1,6 @@
 package org.meteoinfo.chart.jogl;
 
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
@@ -30,6 +31,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.List;
 
 public class EarthGLPlot extends GLPlot {
@@ -220,7 +222,27 @@ public class EarthGLPlot extends GLPlot {
 
         gl.glPushMatrix();
 
+        Vector3f center = transform.getCenter();
+        Vector3f scale = transform.getScale();
+        this.modelViewMatrix = new Matrix4f();
         if (pitchAngle != 0) {
+            float ss = getScale();
+            modelViewMatrix.translate(0, 0, ss);
+            modelViewMatrix.rotate((float) Math.toRadians(70.f * (pitchAngle / 90.f)), 1.0f, 0.0f, 0.0f);
+            modelViewMatrix.translate(0, 0, -ss);
+        }
+        modelViewMatrix.rotate((float) Math.toRadians(angleX), 1.0f, 0.0f, 0.0f);
+        modelViewMatrix.rotate((float) Math.toRadians(angleY), 0.0f, 0.0f, 1.0f);
+        if (headAngle != 0) {
+            modelViewMatrix.rotate((float) Math.toRadians(headAngle), 0.0f, 1.0f, 0.0f);
+        }
+        modelViewMatrix.scale(scale);
+        modelViewMatrix.translate(center.negate());
+
+        FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
+        gl.glLoadMatrixf(modelViewMatrix.get(fb));
+
+        /*if (pitchAngle != 0) {
             float scale = getScale();
             gl.glTranslatef(0, 0, scale);
             gl.glRotatef(70.f * (pitchAngle / 90.f), 1.0f, 0.0f, 0.0f);
@@ -230,7 +252,7 @@ public class EarthGLPlot extends GLPlot {
         gl.glRotatef(angleY, 0.0f, 0.0f, 1.0f);
         if (headAngle != 0) {
             gl.glRotatef(headAngle, 0.0f, 1.0f, 0.0f);
-        }
+        }*/
 
         this.updateMatrix(gl);
 
@@ -281,126 +303,6 @@ public class EarthGLPlot extends GLPlot {
             this.alwaysUpdateBuffers = false;
     }
 
-    public void display_bak(GLAutoDrawable drawable) {
-        final GL2 gl = drawable.getGL().getGL2();
-        float[] rgba = this.background.getRGBComponents(null);
-        gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-        gl.glLoadIdentity();
-
-        this.lighting.setPosition(gl);
-
-        gl.glPushMatrix();
-
-        gl.glShadeModel(GL2.GL_SMOOTH);
-
-        gl.glEnable(GL2.GL_BLEND);
-        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
-        //gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE);
-
-        if (this.antialias) {
-            if (this.sampleBuffers)
-                gl.glEnable(GL2.GL_MULTISAMPLE);
-            else {
-                gl.glEnable(GL2.GL_LINE_SMOOTH);
-                gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_NICEST);
-                gl.glEnable(GL2.GL_POINT_SMOOTH);
-                gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
-                //gl.glEnable(GL2.GL_POLYGON_SMOOTH);
-                //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_NICEST);
-            }
-        } else {
-            if (this.sampleBuffers)
-                gl.glDisable(GL2.GL_MULTISAMPLE);
-            else {
-                gl.glDisable(GL2.GL_LINE_SMOOTH);
-                gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_FASTEST);
-                gl.glDisable(GL2.GL_POINT_SMOOTH);
-                gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_FASTEST);
-                //gl.glDisable(GL2.GL_POLYGON_SMOOTH);
-                //gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_FASTEST);
-            }
-        }
-
-        //gl.glScalef(scaleX, scaleY, scaleZ);
-
-        if (pitchAngle != 0) {
-            float scale = getScale();
-            gl.glTranslatef(0, 0, scale);
-            gl.glRotatef(70.f * (pitchAngle / 90.f), 1.0f, 0.0f, 0.0f);
-            gl.glTranslatef(0, 0, -scale);
-        }
-        gl.glRotatef(angleX, 1.0f, 0.0f, 0.0f);
-        gl.glRotatef(angleY, 0.0f, 0.0f, 1.0f);
-        if (headAngle != 0) {
-            gl.glRotatef(headAngle, 0.0f, 1.0f, 0.0f);
-        }
-
-        this.updateMatrix(gl);
-
-        this.setLight(gl);
-
-        this.updateTextRender(this.xAxis.getTickLabelFont());
-
-        //Draw graphics
-        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
-            Graphic graphic = this.graphics.get(m);
-            drawGraphics(gl, graphic);
-        }
-
-        //Draw text
-        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
-            Graphic graphic = this.graphics.get(m);
-            if (graphic.getNumGraphics() == 1) {
-                Shape shape = graphic.getGraphicN(0).getShape();
-                if (shape.getShapeType() == ShapeTypes.TEXT) {
-                    this.drawText(gl, (ChartText3D) shape);
-                }
-            } else {
-                for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                    Shape shape = graphic.getGraphicN(i).getShape();
-                    if (shape.getShapeType() == ShapeTypes.TEXT) {
-                        this.drawText(gl, (ChartText3D) shape);
-                    }
-                }
-            }
-        }
-
-        //Stop lighting
-        if (this.lighting.isEnable()) {
-            this.lighting.stop(gl);
-        }
-
-        //Draw axis
-        this.drawAllZAxis(gl);
-
-        //Draw legend
-        gl.glPopMatrix();
-        this.updateMatrix(gl);
-        if (!this.legends.isEmpty()) {
-            ChartColorBar legend = (ChartColorBar) this.legends.get(0);
-            if (legend.getLegendScheme().getColorMap() == null)
-                this.drawLegend(gl, legend);
-            else
-                this.drawColorbar(gl, legend);
-        }
-
-        //Draw title
-        this.drawTitle();
-
-        this.textRenderer.dispose();
-        this.textRenderer = null;
-
-        gl.glFlush();
-
-        //Do screen-shot
-        if (this.doScreenShot) {
-            AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
-            this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
-            this.doScreenShot = false;
-        }
-    }
-
     @Override
     protected void drawZAxis(GL2 gl, PointF loc) {
         float[] rgba;
@@ -417,14 +319,14 @@ public class EarthGLPlot extends GLPlot {
         gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
         gl.glBegin(GL2.GL_LINES);
         Vector3f xyz = SphericalTransform.transform(loc.X, loc.Y, (float) this.dataExtent.minZ);
-        x = this.transform.transform_x(xyz.x);
-        y = this.transform.transform_y(xyz.y);
-        z = this.transform.transform_z(xyz.z);
+        x = xyz.x;
+        y = xyz.y;
+        z = xyz.z;
         gl.glVertex3f(x, y, z);
         xyz = SphericalTransform.transform(loc.X, loc.Y, (float) this.dataExtent.maxZ);
-        x = this.transform.transform_x(xyz.x);
-        y = this.transform.transform_y(xyz.y);
-        z = this.transform.transform_z(xyz.z);
+        x = xyz.x;
+        y = xyz.y;
+        z = xyz.z;
         gl.glVertex3f(x, y, z);
         gl.glEnd();
 
@@ -438,6 +340,7 @@ public class EarthGLPlot extends GLPlot {
         float tickLen = this.zAxis.getTickLength() * this.lenScale;
         xAlign = XAlign.RIGHT;
         yAlign = YAlign.CENTER;
+        Vector3f center = this.transform.getCenter();
         strWidth = 0.0f;
         for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
             v = (float) this.zAxis.getTickValues()[i];
@@ -446,19 +349,19 @@ public class EarthGLPlot extends GLPlot {
             }
 
             xyz = SphericalTransform.transform(loc.X, loc.Y, v);
-            x = this.transform.transform_x(xyz.x);
-            y = this.transform.transform_y(xyz.y);
-            z = this.transform.transform_z(xyz.z);
+            x = xyz.x;
+            y = xyz.y;
+            z = xyz.z;
             x1 = x;
             y1 = y;
-            if (x < 0) {
-                if (y > 0) {
+            if (x < center.x) {
+                if (y > center.y) {
                     y1 += tickLen;
                 } else {
                     x1 -= tickLen;
                 }
             } else {
-                if (y > 0) {
+                if (y > center.y) {
                     x1 += tickLen;
                 } else {
                     y1 -= tickLen;
@@ -489,19 +392,19 @@ public class EarthGLPlot extends GLPlot {
         if (label != null) {
             v = (float) (dataExtent.minZ + dataExtent.maxZ) / 2;
             xyz = SphericalTransform.transform(loc.X, loc.Y, v);
-            x = this.transform.transform_x(xyz.x);
-            y = this.transform.transform_y(xyz.y);
-            z = this.transform.transform_z(xyz.z);
+            x = xyz.x;
+            y = xyz.y;
+            z = xyz.z;
             x1 = x;
             y1 = y;
-            if (x < 0) {
-                if (y > 0) {
+            if (x < center.x) {
+                if (y > center.y) {
                     y1 += tickLen;
                 } else {
                     x1 -= tickLen;
                 }
             } else {
-                if (y > 0) {
+                if (y > center.y) {
                     x1 += tickLen;
                 } else {
                     y1 -= tickLen;
@@ -533,10 +436,10 @@ public class EarthGLPlot extends GLPlot {
         gl.glLineWidth(this.zAxis.getLineWidth() * this.dpiScale);
         gl.glBegin(GL2.GL_LINES);
         Vector3f xyz = SphericalTransform.transform(loc.X, loc.Y, (float) this.dataExtent.minZ);
-        xyz = this.transform.transform(xyz);
+        //xyz = this.transform.transform(xyz);
         gl.glVertex3f(xyz.x, xyz.y, xyz.z);
         Vector3f xyz1 = SphericalTransform.transform(loc.X, loc.Y, (float) this.dataExtent.maxZ);
-        xyz1 = this.transform.transform(xyz1);
+        //xyz1 = this.transform.transform(xyz1);
         gl.glVertex3f(xyz1.x, xyz1.y, xyz1.z);
         gl.glEnd();
 
@@ -558,7 +461,7 @@ public class EarthGLPlot extends GLPlot {
             }
 
             xyz = SphericalTransform.transform(loc.X, loc.Y, v);
-            xyz = this.transform.transform(xyz);
+            //xyz = this.transform.transform(xyz);
             mvMatrix.transformPosition(xyz);
             xyz1 = new Vector3f(xyz.x, xyz.y, xyz.z);
             float xShift;
@@ -596,7 +499,7 @@ public class EarthGLPlot extends GLPlot {
         if (label != null) {
             v = (float) (dataExtent.minZ + dataExtent.maxZ) / 2;
             xyz = SphericalTransform.transform(loc.X, loc.Y, v);
-            xyz = this.transform.transform(xyz);
+            //xyz = this.transform.transform(xyz);
             mvMatrix.transformPosition(xyz);
             if (left) {
                 xyz.x -= tickLen;

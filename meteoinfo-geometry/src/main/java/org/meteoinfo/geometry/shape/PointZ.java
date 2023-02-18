@@ -97,6 +97,14 @@ public class PointZ extends PointD implements Cloneable{
     public double[] toArray() {
         return new double[]{X, Y, Z};
     }
+
+    /**
+     * To float array
+     * @return Float array
+     */
+    public float[] toFloatArray() {
+        return new float[]{(float) X, (float) Y, (float) Z};
+    }
     
     /**
      * Clone

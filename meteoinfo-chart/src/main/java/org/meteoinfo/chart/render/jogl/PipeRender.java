@@ -135,7 +135,7 @@ public class PipeRender extends JOGLGraphicRender{
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
             PipeShape shape = (PipeShape) graphic.getShape();
-            shape.transform(transform);
+            //shape.transform(transform);
             Pipe pipe = shape.getPipe();
             linePointNumbers.add(pipe.getVertexCount());
             for (int j = 0; j < pipe.getContourCount(); j++) {
@@ -221,8 +221,8 @@ public class PipeRender extends JOGLGraphicRender{
                     if (i % interval == 0) {
                         PointZ p2 = ps.get(i);
                         PointZ p1 = ps.get(i - 1);
-                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
+                        v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
                         slb = (StreamlineBreak) cbc.get(i);
                         Cylinder cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
                                 0, slb.getArrowHeadLength() * 0.02f, 8, 1, true);
@@ -260,8 +260,8 @@ public class PipeRender extends JOGLGraphicRender{
                     if (i % interval == 0) {
                         PointZ p2 = ps.get(i);
                         PointZ p1 = ps.get(i - 1);
-                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
+                        v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
                         Cylinder cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
                                 0, slb.getArrowHeadLength() * 0.02f, 8, 1, true);
                         Matrix4f matrix = new Matrix4f();

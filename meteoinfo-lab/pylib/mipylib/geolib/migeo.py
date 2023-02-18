@@ -66,8 +66,7 @@ def shaperead(fn, encoding=None):
         except:
             raise
     else:
-        print
-        'File not exists: ' + fn
+        print('File not exists: {}'.format(fn))
         raise
 
 

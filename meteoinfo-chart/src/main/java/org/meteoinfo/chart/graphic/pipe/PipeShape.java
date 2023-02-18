@@ -33,7 +33,7 @@ public class PipeShape extends PolylineZShape {
         this.setPoints(shape.getPoints());
         this.radius = radius;
         this.steps = steps;
-        //generatePipe();
+        generatePipe();
     }
 
     /**

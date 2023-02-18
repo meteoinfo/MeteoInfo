@@ -1022,8 +1022,7 @@ public class GLChart implements GLEventListener {
         GL2 gl = drawable.getGL().getGL2();
         this.gl = gl;
         this.glu = GLU.createGLU(gl);
-        //Background
-        //gl.glClearColor(1f, 1f, 1f, 1.0f);
+
         gl.glEnable(GL2.GL_POINT_SMOOTH);
         gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glShadeModel(GL2.GL_SMOOTH);

@@ -43,6 +43,15 @@ public class Extent3D extends Extent{
     public double getZLength() {
         return this.maxZ - this.minZ;
     }
+
+    /**
+     * Get center point
+     *
+     * @return Center point
+     */
+    public double[] getCenter() {
+        return new double[]{(maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2};
+    }
     
     /**
      * Get is 3D or not

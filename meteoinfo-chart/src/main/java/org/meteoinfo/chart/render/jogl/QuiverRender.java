@@ -87,8 +87,8 @@ public class QuiverRender extends JOGLGraphicRender {
             PointZ sp = (PointZ) shape.getPoint();
             PointZ ep = (PointZ) shape.getEndPoint();
 
-            Vector3f v1 = transform.transform((float) sp.X, (float) sp.Y, (float) sp.Z);
-            Vector3f v2 = transform.transform((float) ep.X, (float) ep.Y, (float) ep.Z);
+            Vector3f v1 = new Vector3f((float) sp.X, (float) sp.Y, (float) sp.Z);
+            Vector3f v2 = new Vector3f((float) ep.X, (float) ep.Y, (float) ep.Z);
             float[] color = pb.getColor().getRGBComponents(null);
             vertexPosition[pi] = v1.x;
             vertexPosition[pi + 1] = v1.y;
@@ -111,9 +111,10 @@ public class QuiverRender extends JOGLGraphicRender {
                 vertexPositionList.add(matrix.mul(v));
             }
             List<Vector3f> normals = cylinder.getNormals();
-            for (Vector3f v : normals) {
+            vertexNormalList.addAll(normals);
+            /*for (Vector3f v : normals) {
                 vertexNormalList.add(matrix.mul(v));
-            }
+            }*/
             for (int j = 0; j < n; j++) {
                 vertexColorList.add(new Vector4f(color));
             }
@@ -165,7 +166,9 @@ public class QuiverRender extends JOGLGraphicRender {
         super.setTransform((Transform) transform.clone());
 
         if (updateBuffer) {
-            this.updateVertexArrays();
+            if (this.vertexPosition == null) {
+                this.updateVertexArrays();
+            }
 
             FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
             sizePosition = vertexBuffer.capacity() * Float.BYTES;

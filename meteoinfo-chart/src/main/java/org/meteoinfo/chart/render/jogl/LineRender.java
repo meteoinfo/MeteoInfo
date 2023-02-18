@@ -35,6 +35,7 @@ public class LineRender extends JOGLGraphicRender {
     private int sizePosition;
     private int sizeColor;
     private int sizeNormal;
+    private float[] vertexPosition;
     private float[] vertexColor;
     private float lineWidth = 1.0f;
     private List<Integer> linePointNumbers;
@@ -131,7 +132,7 @@ public class LineRender extends JOGLGraphicRender {
     }
 
     private float[] getVertexPosition() {
-        float[] vertexData = new float[this.vertexNum * 3];
+        vertexPosition = new float[this.vertexNum * 3];
         int i = 0;
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
@@ -140,15 +141,15 @@ public class LineRender extends JOGLGraphicRender {
                 List<PointZ> ps = (List<PointZ>) line.getPointList();
                 linePointNumbers.add(ps.size());
                 for (PointZ p : ps) {
-                    vertexData[i] = transform.transform_x((float) p.X);
-                    vertexData[i + 1] = transform.transform_y((float) p.Y);
-                    vertexData[i + 2] = transform.transform_z((float) p.Z);
+                    vertexPosition[i] = (float) p.X;
+                    vertexPosition[i + 1] = (float) p.Y;
+                    vertexPosition[i + 2] = (float) p.Z;
                     i += 3;
                 }
             }
         }
 
-        return vertexData;
+        return vertexPosition;
     }
 
     private void updateConeVertex() {
@@ -170,8 +171,8 @@ public class LineRender extends JOGLGraphicRender {
                     if (i % interval == 0) {
                         PointZ p2 = ps.get(i);
                         PointZ p1 = ps.get(i - 1);
-                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
+                        v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
                         slb = (StreamlineBreak) cbc.get(i);
                         Cylinder cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
                                 0, slb.getArrowHeadLength() * 0.02f, 8, 1, true);
@@ -207,8 +208,8 @@ public class LineRender extends JOGLGraphicRender {
                     if (i % interval == 0) {
                         PointZ p2 = ps.get(i);
                         PointZ p1 = ps.get(i - 1);
-                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
+                        v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
                         Cylinder cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
                                 0, slb.getArrowHeadLength() * 0.02f, 8, 1, true);
                         Matrix4f matrix = new Matrix4f();
@@ -221,9 +222,10 @@ public class LineRender extends JOGLGraphicRender {
                             vertexPositionList.add(matrix.mul(v));
                         }
                         List<Vector3f> normals = cylinder.getNormals();
-                        for (Vector3f v : normals) {
+                        vertexNormalList.addAll(normals);
+                        /*for (Vector3f v : normals) {
                             vertexNormalList.add(matrix.mul(v));
-                        }
+                        }*/
                         float[] color = slb.getColor().getRGBComponents(null);
                         for (int j = 0; j < n; j++) {
                             vertexColorList.add(new Vector4f(color));
@@ -273,8 +275,10 @@ public class LineRender extends JOGLGraphicRender {
         super.setTransform((Transform) transform.clone());
 
         if (updateBuffer) {
-            float[] vertexData = this.getVertexPosition();
-            FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
+            if (this.vertexPosition == null) {
+                this.getVertexPosition();
+            }
+            FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
             sizePosition = vertexBuffer.capacity() * Float.BYTES;
 
             FloatBuffer colorBuffer = GLBuffers.newDirectFloatBuffer(vertexColor);

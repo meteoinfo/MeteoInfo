@@ -81,9 +81,10 @@ public class MeshRender extends JOGLGraphicRender {
         super.setTransform((Transform) transform.clone());
 
         if (updateBuffer) {
-            float[] vertexData = meshGraphic.getVertexPosition(this.transform);
+            //float[] vertexData = meshGraphic.getVertexPosition(this.transform);
+            float[] vertexData = meshGraphic.getVertexPosition();
             FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
-            meshGraphic.calculateNormalVectors(vertexData);
+            //meshGraphic.calculateNormalVectors(vertexData);
             FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
             sizePosition = vertexBuffer.capacity() * Float.BYTES;
             sizeNormal = normalBuffer.capacity() * Float.BYTES;

@@ -74,7 +74,7 @@ public class TriMeshGraphic extends GraphicCollection3D {
     public void setVertexPosition(float[] value) {
         vertexPosition = value;
         updateExtent();
-        //calculateNormalVectors(vertexPosition);
+        calculateNormalVectors(vertexPosition);
     }
 
     /**

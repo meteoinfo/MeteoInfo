@@ -41,6 +41,7 @@ public class PointRender extends JOGLGraphicRender {
     private float[] vertexNormal;
     private float[] vertexColor;
     private int[] vertexIndices;
+    private List<Vector3f> objNormals;
 
     /**
      * Constructor
@@ -132,9 +133,12 @@ public class PointRender extends JOGLGraphicRender {
                 ParticleGraphics particles = (ParticleGraphics) graphics;
                 for (Map.Entry<Integer, java.util.List> map : particles.getParticleList()) {
                     for (ParticleGraphics.Particle p : (java.util.List<ParticleGraphics.Particle>)map.getValue()) {
-                        vertexPosition[i] = transform.transform_x((float) p.x);
+                        vertexPosition[i] = (float) p.x;
+                        vertexPosition[i + 1] = (float) p.y;
+                        vertexPosition[i + 2] = (float) p.z;
+                        /*vertexPosition[i] = transform.transform_x((float) p.x);
                         vertexPosition[i + 1] = transform.transform_y((float) p.y);
-                        vertexPosition[i + 2] = transform.transform_z((float) p.z);
+                        vertexPosition[i + 2] = transform.transform_z((float) p.z);*/
                         i += 3;
                     }
                 }
@@ -142,9 +146,12 @@ public class PointRender extends JOGLGraphicRender {
                 for (Graphic graphic : this.graphics.getGraphics()) {
                     PointZShape shape = (PointZShape) graphic.getShape();
                     PointZ p = (PointZ) shape.getPoint();
-                    vertexPosition[i] = transform.transform_x((float) p.X);
+                    vertexPosition[i] = (float) p.X;
+                    vertexPosition[i + 1] = (float) p.Y;
+                    vertexPosition[i + 2] = (float) p.Z;
+                    /*vertexPosition[i] = transform.transform_x((float) p.X);
                     vertexPosition[i + 1] = transform.transform_y((float) p.Y);
-                    vertexPosition[i + 2] = transform.transform_z((float) p.Z);
+                    vertexPosition[i + 2] = transform.transform_z((float) p.Z);*/
                     i += 3;
                 }
             }
@@ -162,7 +169,8 @@ public class PointRender extends JOGLGraphicRender {
             PointZ p = (PointZ) shape.getPoint();
             PointBreak pb = (PointBreak) graphic.getLegend();
             Sphere sphere = new Sphere(pb.getSize() * sphereScale * dpiScale, 36, 18);
-            vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            //vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            vp = new Vector3f((float) p.X, (float) p.Y, (float) p.Z);
             Matrix4f matrix = new Matrix4f();
             matrix.translate(vp);
             List<Vector3f> vertices = sphere.getVertices();
@@ -172,6 +180,9 @@ public class PointRender extends JOGLGraphicRender {
                 vertexPositionList.add(matrix.mul(v));
             }
             List<Vector3f> normals = sphere.getNormals();
+            if (vertexNormalList.isEmpty()) {
+                this.objNormals = normals;
+            }
             vertexNormalList.addAll(normals);
             float[] color = pb.getColor().getRGBComponents(null);
             for (int j = 0; j < n; j++) {
@@ -218,7 +229,8 @@ public class PointRender extends JOGLGraphicRender {
             PointZ p = (PointZ) shape.getPoint();
             PointBreak pb = (PointBreak) graphic.getLegend();
             Sphere sphere = new Sphere(pb.getSize() * sphereScale * dpiScale, 36, 18);
-            vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            //vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            vp = new Vector3f((float) p.X, (float) p.Y, (float) p.Z);
             Matrix4f matrix = new Matrix4f();
             matrix.translate(vp);
             List<Vector3f> vertices = sphere.getVertices();
@@ -253,7 +265,8 @@ public class PointRender extends JOGLGraphicRender {
                 this.updateVertex();
             } else {
                 //this.updateVertex();
-                this.updateVertexPosition();
+                //this.updateVertexPosition();
+                //this.updateSphereVertexNormal();
             }
             FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(this.vertexPosition);
             sizePosition = vertexBuffer.capacity() * Float.BYTES;
@@ -318,7 +331,6 @@ public class PointRender extends JOGLGraphicRender {
                 gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
                 gl.glNormalPointer(GL.GL_FLOAT, 0, sizePosition + sizeColor);
 
-                //gl.glEnable(GL.GL_CULL_FACE);
                 gl.glDrawElements(GL2.GL_TRIANGLES, this.vertexIndices.length, GL.GL_UNSIGNED_INT, 0);
 
                 gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);

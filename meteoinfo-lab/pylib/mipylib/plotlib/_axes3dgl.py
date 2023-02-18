@@ -1047,7 +1047,7 @@ class Axes3DGL(Axes3D):
             z = args[2]
             args = args[3:]
 
-        if kwargs.has_key('colors'):
+        if 'colors' in kwargs.keys():
             cn = len(kwargs['colors'])
         else:
             cn = None
@@ -1069,20 +1069,20 @@ class Axes3DGL(Axes3D):
         # ls = ls.convertTo(ShapeTypes.POLYGON, True)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         face_interp = None
-        if kwargs.has_key('facecolor'):
+        if 'facecolor' in kwargs.keys():
             facecolor = kwargs.pop('facecolor', None)
             face_interp = (facecolor == 'interp')
             if not face_interp:
-                if not facecolor in ['flat', 'texturemap', 'none']:
+                if facecolor not in ['flat', 'texturemap', 'none']:
                     kwargs['facecolor'] = facecolor
         else:
             kwargs['facecolor'] = None
         edgecolor = kwargs.pop('edgecolor', None)
         edge_interp = None
-        if not edgecolor is None:
+        if edgecolor is not None:
             edge_interp = (edgecolor == 'interp')
             if not edge_interp:
-                if not edgecolor in ['flat', 'texturemap', 'none']:
+                if edgecolor not in ['flat', 'texturemap', 'none']:
                     kwargs['edgecolor'] = edgecolor
         plotutil.setlegendscheme(ls, **kwargs)
         graphics = GraphicFactory.surface(x.asarray(), y.asarray(), z.asarray(), ls)
@@ -1437,7 +1437,7 @@ class Axes3DGL(Axes3D):
         alpha_max = kwargs.pop('alpha_max', 0.6)
         density = kwargs.pop('density', 2)
         graphics = GraphicFactory.particles(data.asarray(), x.asarray(), y.asarray(), z.asarray(), ls, \
-                                      alpha_min, alpha_max, density)
+                                            alpha_min, alpha_max, density)
         s = kwargs.pop('s', None)
         if s is None:
             s = kwargs.pop('size', None)

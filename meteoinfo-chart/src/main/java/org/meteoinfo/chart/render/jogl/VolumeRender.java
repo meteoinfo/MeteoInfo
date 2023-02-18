@@ -114,7 +114,7 @@ public class VolumeRender extends JOGLGraphicRender {
         super.setTransform((Transform) transform.clone());
 
         if (updateBuffer) {
-            float[] vertexBufferData = volume.getVertexBufferData(this.transform);
+            float[] vertexBufferData = volume.getVertexBufferData();
 
             gl.glGenBuffers(1, vbo);
             gl.glBindBuffer(GL_ARRAY_BUFFER, vbo.get(0));

@@ -695,7 +695,7 @@ class Axes3D(Axes):
         :param y: (*array_like*) Input y data.
         :param z: (*array_like*) Input z data.
         :param s: (*int*) Size of points.
-        :param c: (*Color*) Color of the points. Or z vlaues.
+        :param c: (*Color*) Color of the points. Or z values.
         :param alpha: (*int*) The alpha blending value, between 0 (transparent) and 1 (opaque).
         :param marker: (*string*) Marker of the points.
         :param label: (*string*) Label of the points series.

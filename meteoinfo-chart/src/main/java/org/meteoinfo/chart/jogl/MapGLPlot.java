@@ -2,6 +2,7 @@ package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import org.joml.Vector3f;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.GraphicProjectionUtil;
@@ -138,12 +139,18 @@ public class MapGLPlot extends GLPlot {
             super.drawAxis(gl);
         } else {
             float xMin, xMax, yMin, yMax, zMin, zMax;
-            xMin = this.transform.transform_x((float) axesExtent.minX);
+            xMin = (float) axesExtent.minX;
+            xMax = (float) axesExtent.maxX;
+            yMin = (float) axesExtent.minY;
+            yMax = (float) axesExtent.maxY;
+            zMin = (float) axesExtent.minZ;
+            zMax = (float) axesExtent.maxZ;
+            /*xMin = this.transform.transform_x((float) axesExtent.minX);
             xMax = this.transform.transform_x((float) axesExtent.maxX);
             yMin = this.transform.transform_y((float) axesExtent.minY);
             yMax = this.transform.transform_y((float) axesExtent.maxY);
             zMin = this.transform.transform_z((float) axesExtent.minZ);
-            zMax = this.transform.transform_z((float) axesExtent.maxZ);
+            zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
             gl.glDepthFunc(GL.GL_ALWAYS);
 
@@ -154,6 +161,7 @@ public class MapGLPlot extends GLPlot {
             XAlign xAlign;
             YAlign yAlign;
             Rectangle2D rect;
+            Vector3f center = this.transform.getCenter();
             float strWidth, strHeight;
             MapGridLine3D mapGridLine = (MapGridLine3D) gridLine;
             if (this.displayXY) {
@@ -173,9 +181,9 @@ public class MapGLPlot extends GLPlot {
                 gl.glEnd();
 
                 //Longitude axis ticks
-                float tickLen = this.xAxis.getTickLength() * this.lenScale;
+                float tickLen = this.xAxis.getTickLength() * this.lenScale * transform.getYLength() / 2;
                 float axisLen = this.toScreenLength(xMin, y, zMin, xMax, y, zMin);
-                float y1 = y > 0 ? y + tickLen : y - tickLen;
+                float y1 = y > center.y ? y + tickLen : y - tickLen;
                 if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
                     xAlign = XAlign.LEFT;
                 } else {
@@ -196,7 +204,7 @@ public class MapGLPlot extends GLPlot {
                     if (x < axesExtent.minX || x > axesExtent.maxX) {
                         continue;
                     }
-                    x = this.transform.transform_x(x);
+                    //x = this.transform.transform_x(x);
 
                     //Draw tick line
                     rgba = this.xAxis.getLineColor().getRGBComponents(null);
@@ -223,12 +231,13 @@ public class MapGLPlot extends GLPlot {
                 if (label != null) {
                     strWidth += this.tickSpace;
                     float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
-                    angle = y < 0 ? 270 - angle : 90 - angle;
+                    angle = y < center.y ? 270 - angle : 90 - angle;
                     float yShift = Math.min(-strWidth, -strWidth);
                     if (this.angleX <= -120) {
                         yShift = -yShift;
                     }
-                    drawString(gl, label, 0.0f, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
+                    float x1 = (xMin + xMax) / 2;
+                    drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
                 }
 
                 ////////////////////////////////////////////
@@ -248,8 +257,8 @@ public class MapGLPlot extends GLPlot {
 
                 //y axis ticks
                 axisLen = this.toScreenLength(x, yMin, zMin, x, yMax, zMin);
-                tickLen = this.yAxis.getTickLength() * this.lenScale;
-                float x1 = x > 0 ? x + tickLen : x - tickLen;
+                tickLen = this.yAxis.getTickLength() * this.lenScale * transform.getXLength() / 2;
+                float x1 = x > center.x ? x + tickLen : x - tickLen;
                 if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
                     xAlign = XAlign.RIGHT;
                 } else {
@@ -270,7 +279,7 @@ public class MapGLPlot extends GLPlot {
                     if (y < axesExtent.minY || y > axesExtent.maxY) {
                         continue;
                     }
-                    y = this.transform.transform_y(y);
+                    //y = this.transform.transform_y(y);
 
                     //Draw tick line
                     rgba = this.yAxis.getLineColor().getRGBComponents(null);
@@ -297,12 +306,13 @@ public class MapGLPlot extends GLPlot {
                 if (label != null) {
                     strWidth += this.tickSpace;
                     float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, xMin);
-                    angle = x > 0 ? 270 - angle : 90 - angle;
+                    angle = x > center.x ? 270 - angle : 90 - angle;
                     float yShift = Math.min(-strWidth, -strWidth);
                     if (this.angleX <= -120) {
                         yShift = -yShift;
                     }
-                    drawString(gl, label, x1, 0.0f, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
+                    y1 = (yMin + yMax) / 2;
+                    drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
                 }
             }
 
@@ -337,15 +347,15 @@ public class MapGLPlot extends GLPlot {
                 skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
                 float x1 = x;
                 float y1 = y;
-                float tickLen = this.zAxis.getTickLength() * this.lenScale;
-                if (x < 0) {
-                    if (y > 0) {
+                float tickLen = this.zAxis.getTickLength() * this.lenScale * transform.getYLength() / 2;
+                if (x < center.x) {
+                    if (y > center.y) {
                         y1 += tickLen;
                     } else {
                         x1 -= tickLen;
                     }
                 } else {
-                    if (y > 0) {
+                    if (y > center.y) {
                         x1 += tickLen;
                     } else {
                         y1 -= tickLen;
@@ -360,7 +370,7 @@ public class MapGLPlot extends GLPlot {
                     if (v < axesExtent.minZ || v > axesExtent.maxZ) {
                         continue;
                     }
-                    v = this.transform.transform_z(v);
+                    //v = this.transform.transform_z(v);
                     if (i == tlabs.size()) {
                         break;
                     }
@@ -385,7 +395,8 @@ public class MapGLPlot extends GLPlot {
                 ChartText label = this.zAxis.getLabel();
                 if (label != null) {
                     float yShift = strWidth + this.tickSpace * 3;
-                    drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+                    float z1 = (zMax + zMin) * 0.5f;
+                    drawString(gl, label, x1, y1, z1, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
                 }
             }
             gl.glDepthFunc(GL2.GL_LEQUAL);

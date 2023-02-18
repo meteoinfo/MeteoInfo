@@ -74,7 +74,6 @@ public class MeshGraphic extends GraphicCollection3D {
     public void setVertexPosition(float[] value) {
         vertexPosition = value;
         updateExtent();
-        //calculateNormalVectors(vertexData);
     }
 
     /**
@@ -104,6 +103,7 @@ public class MeshGraphic extends GraphicCollection3D {
     public void setRows(int value) {
         this.rows = value;
         this.columns = this.getVertexNumber() / value;
+        calculateNormalVectors(vertexPosition);
     }
 
     /**
@@ -121,6 +121,7 @@ public class MeshGraphic extends GraphicCollection3D {
     public void setColumns(int value) {
         this.columns = value;
         this.rows = this.getVertexNumber() / value;
+        calculateNormalVectors(vertexPosition);
     }
 
     /**

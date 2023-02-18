@@ -18,6 +18,8 @@ public abstract class JOGLGraphicRender implements GraphicRender {
     protected float mvmatrix[] = new float[16];
     protected float projmatrix[] = new float[16];
     protected Matrix4f viewProjMatrix = new Matrix4f();
+    protected Matrix4f modelViewMatrix = new Matrix4f();
+    protected Matrix4f projectionMatrix = new Matrix4f();
     protected boolean useShader = false;
     protected Lighting lighting = new Lighting();
     protected float dpiScale = 1.0f;
@@ -132,7 +134,9 @@ public abstract class JOGLGraphicRender implements GraphicRender {
         gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
         gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
         gl.glGetFloatv(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
-        viewProjMatrix = toMatrix(projmatrix).
-                mul(toMatrix(mvmatrix));
+        modelViewMatrix = toMatrix(mvmatrix);
+        projectionMatrix = toMatrix(projmatrix);
+        viewProjMatrix = projectionMatrix.
+                mul(modelViewMatrix);
     }
 }

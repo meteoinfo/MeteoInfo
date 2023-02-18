@@ -10,9 +10,7 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
+import org.joml.*;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.graphic.*;
@@ -46,6 +44,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.Math;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -97,6 +96,8 @@ public class GLPlot extends Plot {
     protected int viewport[] = new int[4];
     protected float mvmatrix[] = new float[16];
     protected float projmatrix[] = new float[16];
+    protected Matrix4f modelViewMatrix = new Matrix4f();
+    protected Matrix4f projectionMatrix = new Matrix4f();
     protected Matrix4f viewProjMatrix = new Matrix4f();
 
     protected float angleX;
@@ -1229,13 +1230,19 @@ public class GLPlot extends Plot {
 
         gl.glPushMatrix();
 
-        //gl.glScalef(scaleX, scaleY, scaleZ);
-
-        gl.glRotatef(angleX, 1.0f, 0.0f, 0.0f);
-        gl.glRotatef(angleY, 0.0f, 0.0f, 1.0f);
+        Vector3f center = transform.getCenter();
+        Vector3f scale = transform.getScale();
+        this.modelViewMatrix = new Matrix4f();
+        modelViewMatrix.rotate((float) Math.toRadians(angleX), 1.0f, 0.0f, 0.0f);
+        modelViewMatrix.rotate((float) Math.toRadians(angleY), 0.0f, 0.0f, 1.0f);
         if (headAngle != 0) {
-            gl.glRotatef(headAngle, 0.0f, 1.0f, 0.0f);
+            modelViewMatrix.rotate((float) Math.toRadians(headAngle), 0.0f, 1.0f, 0.0f);
         }
+        modelViewMatrix.scale(scale);
+        modelViewMatrix.translate(center.negate());
+
+        FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
+        gl.glLoadMatrixf(modelViewMatrix.get(fb));
 
         this.updateMatrix(gl);
 
@@ -1324,24 +1331,24 @@ public class GLPlot extends Plot {
     }
 
     private void enableClipPlane(GL2 gl) {
-        float xMin = this.transform.transform_x((float) axesExtent.minX);
-        float xMax = this.transform.transform_x((float) axesExtent.maxX) + 0.01f;
-        float yMin = this.transform.transform_y((float) axesExtent.minY);
-        float yMax = this.transform.transform_y((float) axesExtent.maxY) + 0.01f;
-        float zMin = this.transform.transform_z((float) axesExtent.minZ);
-        float zMax = this.transform.transform_z((float) axesExtent.maxZ) + 0.01f;
-        float s = 1.01f;
-        gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{1, 0, 0, xMax}, 0);
+        float xMin = (float) axesExtent.minX - (float) axesExtent.getWidth() * 0.001f;
+        float xMax = (float) axesExtent.maxX + (float) axesExtent.getWidth() * 0.001f;
+        float yMin = (float) axesExtent.minY - (float) axesExtent.getHeight() * 0.001f;
+        float yMax = (float) axesExtent.maxY + (float) axesExtent.getHeight() * 0.001f;
+        float zMin = (float) axesExtent.minZ - (float) axesExtent.getZLength() * 0.001f;
+        float zMax = (float) axesExtent.maxZ + (float) axesExtent.getZLength() * 0.001f;
+
+        gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{-1, 0, 0, xMax}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE0);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[]{-1, 0, 0, xMax}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[]{1, 0, 0, -xMin}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE1);
         gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[]{0, -1, 0, yMax}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE2);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[]{0, 1, 0, yMax}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[]{0, 1, 0, -yMin}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE3);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE4, new double[]{0, 0, 1, zMax}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE4, new double[]{0, 0, -1, zMax}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE4);
-        gl.glClipPlane(GL2.GL_CLIP_PLANE5, new double[]{0, 0, -1, zMax}, 0);
+        gl.glClipPlane(GL2.GL_CLIP_PLANE5, new double[]{0, 0, 1, -zMin}, 0);
         gl.glEnable(GL2.GL_CLIP_PLANE5);
     }
 
@@ -1356,8 +1363,8 @@ public class GLPlot extends Plot {
             gl.glEnable(GL2.GL_COLOR_MATERIAL);
             //double side normalize
             gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
-            //gl.glEnable(GL2.GL_AUTO_NORMAL);
-            //gl.glEnable(GL2.GL_NORMALIZE);
+            //gl.glEnable(GL2.GL_RESCALE_NORMAL);
+            gl.glEnable(GL2.GL_NORMALIZE);
             //gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, FloatBuffer.wrap(this.lighting.mat_diffuse));
         }
     }
@@ -1392,11 +1399,16 @@ public class GLPlot extends Plot {
      */
     protected void drawBase(GL2 gl) {
         float xMin, xMax, yMin, yMax, zMin;
-        xMin = this.transform.transform_x((float) axesExtent.minX);
+        xMin = (float) axesExtent.minX;
+        xMax = (float) axesExtent.maxX;
+        yMin = (float) axesExtent.minY;
+        yMax = (float) axesExtent.maxY;
+        zMin = (float) axesExtent.minZ;
+        /*xMin = this.transform.transform_x((float) axesExtent.minX);
         xMax = this.transform.transform_x((float) axesExtent.maxX);
         yMin = this.transform.transform_y((float) axesExtent.minY);
         yMax = this.transform.transform_y((float) axesExtent.maxY);
-        zMin = this.transform.transform_z((float) axesExtent.minZ);
+        zMin = this.transform.transform_z((float) axesExtent.minZ);*/
 
         float[] rgba = this.boxColor.getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -1420,8 +1432,10 @@ public class GLPlot extends Plot {
         gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
         gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
         gl.glGetFloatv(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
-        viewProjMatrix = toMatrix(projmatrix).
-                mul(toMatrix(mvmatrix));
+        modelViewMatrix = toMatrix(mvmatrix);
+        projectionMatrix = toMatrix(projmatrix);
+        viewProjMatrix = projectionMatrix.
+                mul(modelViewMatrix);
     }
 
     /**
@@ -1547,12 +1561,18 @@ public class GLPlot extends Plot {
 
     protected void drawBox(GL2 gl) {
         float xMin, xMax, yMin, yMax, zMin, zMax;
-        xMin = this.transform.transform_x((float) axesExtent.minX);
+        xMin = (float) axesExtent.minX;
+        xMax = (float) axesExtent.maxX;
+        yMin = (float) axesExtent.minY;
+        yMax = (float) axesExtent.maxY;
+        zMin = (float) axesExtent.minZ;
+        zMax = (float) axesExtent.maxZ;
+        /*xMin = this.transform.transform_x((float) axesExtent.minX);
         xMax = this.transform.transform_x((float) axesExtent.maxX);
         yMin = this.transform.transform_y((float) axesExtent.minY);
         yMax = this.transform.transform_y((float) axesExtent.maxY);
         zMin = this.transform.transform_z((float) axesExtent.minZ);
-        zMax = this.transform.transform_z((float) axesExtent.maxZ);
+        zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
         float[] rgba = this.boxColor.getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -1595,12 +1615,18 @@ public class GLPlot extends Plot {
 
     protected void drawBoundingBox(GL2 gl) {
         float xMin, xMax, yMin, yMax, zMin, zMax;
-        xMin = this.transform.transform_x((float) axesExtent.minX);
+        xMin = (float) axesExtent.minX;
+        xMax = (float) axesExtent.maxX;
+        yMin = (float) axesExtent.minY;
+        yMax = (float) axesExtent.maxY;
+        zMin = (float) axesExtent.minZ;
+        zMax = (float) axesExtent.maxZ;
+        /*xMin = this.transform.transform_x((float) axesExtent.minX);
         xMax = this.transform.transform_x((float) axesExtent.maxX);
         yMin = this.transform.transform_y((float) axesExtent.minY);
         yMax = this.transform.transform_y((float) axesExtent.maxY);
         zMin = this.transform.transform_z((float) axesExtent.minZ);
-        zMax = this.transform.transform_z((float) axesExtent.maxZ);
+        zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
         float[] rgba = this.boxColor.getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -1643,12 +1669,18 @@ public class GLPlot extends Plot {
 
     protected void drawXYGridLine(GL2 gl) {
         float xMin, xMax, yMin, yMax, zMin, zMax;
-        xMin = this.transform.transform_x((float) axesExtent.minX);
+        xMin = (float) axesExtent.minX;
+        xMax = (float) axesExtent.maxX;
+        yMin = (float) axesExtent.minY;
+        yMax = (float) axesExtent.maxY;
+        zMin = (float) axesExtent.minZ;
+        zMax = (float) axesExtent.maxZ;
+        /*xMin = this.transform.transform_x((float) axesExtent.minX);
         xMax = this.transform.transform_x((float) axesExtent.maxX);
         yMin = this.transform.transform_y((float) axesExtent.minY);
         yMax = this.transform.transform_y((float) axesExtent.maxY);
         zMin = this.transform.transform_z((float) axesExtent.minZ);
-        zMax = this.transform.transform_z((float) axesExtent.maxZ);
+        zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
         float[] rgba;
         float x, y, x1, y1, v;
@@ -1668,20 +1700,20 @@ public class GLPlot extends Plot {
 
             this.xAxis.updateTickLabels();
             java.util.List<ChartText> tlabs = this.xAxis.getTickLabels();
-            float axisLen = this.toScreenLength(-1.0f, y, -1.0f, 1.0f, y, -1.0f);
+            float axisLen = this.toScreenLength(xMin, y, zMin, xMax, y, zMin);
             skip = getLabelGap(this.xAxis.getTickLabelFont(), tlabs, axisLen);
             for (int i = 0; i < this.xAxis.getTickValues().length; i += skip) {
                 v = (float) this.xAxis.getTickValues()[i];
-                if (v < axesExtent.minX || v > axesExtent.maxX) {
+                if (v <= axesExtent.minX || v >= axesExtent.maxX) {
                     continue;
                 }
-                v = this.transform.transform_x(v);
+                //v = this.transform.transform_x(v);
                 if (i == tlabs.size()) {
                     break;
                 }
 
                 //Draw grid line
-                if (this.gridLine.isDrawXLine() && (v != -1.0f && v != 1.0f)) {
+                if (this.gridLine.isDrawXLine()) {
                     rgba = this.gridLine.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
@@ -1710,20 +1742,20 @@ public class GLPlot extends Plot {
 
             this.yAxis.updateTickLabels();
             tlabs = this.yAxis.getTickLabels();
-            axisLen = this.toScreenLength(x, -1.0f, -1.0f, x, 1.0f, -1.0f);
+            axisLen = this.toScreenLength(x, yMin, zMin, x, yMax, zMin);
             skip = getLabelGap(this.yAxis.getTickLabelFont(), tlabs, axisLen);
             for (int i = 0; i < this.yAxis.getTickValues().length; i += skip) {
                 v = (float) this.yAxis.getTickValues()[i];
-                if (v < axesExtent.minY || v > axesExtent.maxY) {
+                if (v <= axesExtent.minY || v >= axesExtent.maxY) {
                     continue;
                 }
-                v = this.transform.transform_y(v);
+                //v = this.transform.transform_y(v);
                 if (i == tlabs.size()) {
                     break;
                 }
 
                 //Draw grid line
-                if (this.gridLine.isDrawYLine() && (v != -1.0f && v != 1.0f)) {
+                if (this.gridLine.isDrawYLine()) {
                     rgba = this.gridLine.getColor().getRGBComponents(null);
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
@@ -1744,12 +1776,18 @@ public class GLPlot extends Plot {
 
     protected void drawZGridLine(GL2 gl) {
         float xMin, xMax, yMin, yMax, zMin, zMax;
-        xMin = this.transform.transform_x((float) axesExtent.minX);
+        xMin = (float) axesExtent.minX;
+        xMax = (float) axesExtent.maxX;
+        yMin = (float) axesExtent.minY;
+        yMax = (float) axesExtent.maxY;
+        zMin = (float) axesExtent.minZ;
+        zMax = (float) axesExtent.maxZ;
+        /*xMin = this.transform.transform_x((float) axesExtent.minX);
         xMax = this.transform.transform_x((float) axesExtent.maxX);
         yMin = this.transform.transform_y((float) axesExtent.minY);
         yMax = this.transform.transform_y((float) axesExtent.maxY);
         zMin = this.transform.transform_z((float) axesExtent.minZ);
-        zMax = this.transform.transform_z((float) axesExtent.maxZ);
+        zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
         float[] rgba;
         float x, y, x1, y1, v;
@@ -1787,23 +1825,23 @@ public class GLPlot extends Plot {
         skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
         for (int i = 0; i < this.zAxis.getTickValues().length; i += skip) {
             v = (float) this.zAxis.getTickValues()[i];
-            if (v < axesExtent.minZ || v > axesExtent.maxZ) {
+            if (v <= axesExtent.minZ || v >= axesExtent.maxZ) {
                 continue;
             }
-            v = this.transform.transform_z(v);
+            //v = this.transform.transform_z(v);
             if (i == tlabs.size()) {
                 break;
             }
 
             //Draw grid line
-            if (this.gridLine.isDrawZLine() && this.boxed && (v != zMin && v != zMax)) {
+            if (this.gridLine.isDrawZLine() && this.boxed) {
                 rgba = this.gridLine.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 gl.glVertex3f(x, y, v);
-                if (x < 0) {
-                    if (y > 0) {
+                if (x < x1) {
+                    if (y > y1) {
                         gl.glVertex3f(x1, y, v);
                         gl.glVertex3f(x1, y1, v);
                     } else {
@@ -1811,7 +1849,7 @@ public class GLPlot extends Plot {
                         gl.glVertex3f(x1, y1, v);
                     }
                 } else {
-                    if (y > 0) {
+                    if (y > y1) {
                         gl.glVertex3f(x, y1, v);
                         gl.glVertex3f(x1, y1, v);
                     } else {
@@ -1853,12 +1891,18 @@ public class GLPlot extends Plot {
 
     protected void drawAxis(GL2 gl) {
         float xMin, xMax, yMin, yMax, zMin, zMax;
-        xMin = this.transform.transform_x((float) axesExtent.minX);
+        xMin = (float) axesExtent.minX;
+        xMax = (float) axesExtent.maxX;
+        yMin = (float) axesExtent.minY;
+        yMax = (float) axesExtent.maxY;
+        zMin = (float) axesExtent.minZ;
+        zMax = (float) axesExtent.maxZ;
+        /*xMin = this.transform.transform_x((float) axesExtent.minX);
         xMax = this.transform.transform_x((float) axesExtent.maxX);
         yMin = this.transform.transform_y((float) axesExtent.minY);
         yMax = this.transform.transform_y((float) axesExtent.maxY);
         zMin = this.transform.transform_z((float) axesExtent.minZ);
-        zMax = this.transform.transform_z((float) axesExtent.maxZ);
+        zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
         gl.glDepthFunc(GL.GL_ALWAYS);
 
@@ -1869,6 +1913,7 @@ public class GLPlot extends Plot {
         XAlign xAlign;
         YAlign yAlign;
         Rectangle2D rect;
+        Vector3f center = this.transform.getCenter();
         float strWidth, strHeight;
         if (this.displayXY) {
             //Draw x/y axis lines
@@ -1887,12 +1932,12 @@ public class GLPlot extends Plot {
             gl.glEnd();
 
             //x axis ticks
-            float tickLen = this.xAxis.getTickLength() * this.lenScale;
+            float tickLen = this.xAxis.getTickLength() * this.lenScale * transform.getYLength() / 2;
             this.xAxis.updateTickLabels();
             java.util.List<ChartText> tlabs = this.xAxis.getTickLabels();
             float axisLen = this.toScreenLength(xMin, y, zMin, xMax, y, zMin);
             skip = getLabelGap(this.xAxis.getTickLabelFont(), tlabs, axisLen);
-            float y1 = y > 0 ? y + tickLen : y - tickLen;
+            float y1 = y > center.y ? y + tickLen : y - tickLen;
             if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
                 xAlign = XAlign.LEFT;
             } else {
@@ -1913,7 +1958,7 @@ public class GLPlot extends Plot {
                 if (v < axesExtent.minX || v > axesExtent.maxX) {
                     continue;
                 }
-                v = this.transform.transform_x(v);
+                //v = this.transform.transform_x(v);
                 if (i == tlabs.size()) {
                     break;
                 }
@@ -1946,12 +1991,13 @@ public class GLPlot extends Plot {
                     this.updateTextRender(label.getFont());
                     strWidth += this.tickSpace;
                     float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
-                    angle = y < 0 ? 270 - angle : 90 - angle;
+                    angle = y < center.y ? 270 - angle : 90 - angle;
                     float yShift = Math.min(-strWidth, -strWidth);
                     if (this.angleX <= -120) {
                         yShift = -yShift;
                     }
-                    drawString(gl, label, 0.0f, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
+                    float x1 = (xMin + xMax) / 2;
+                    drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
                 }
             }
 
@@ -1975,8 +2021,8 @@ public class GLPlot extends Plot {
             tlabs = this.yAxis.getTickLabels();
             axisLen = this.toScreenLength(x, yMin, zMin, x, yMax, zMin);
             skip = getLabelGap(this.yAxis.getTickLabelFont(), tlabs, axisLen);
-            tickLen = this.yAxis.getTickLength() * this.lenScale;
-            float x1 = x > 0 ? x + tickLen : x - tickLen;
+            tickLen = this.yAxis.getTickLength() * this.lenScale * transform.getXLength() / 2;
+            float x1 = x > center.x ? x + tickLen : x - tickLen;
             if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
                 xAlign = XAlign.RIGHT;
             } else {
@@ -1997,7 +2043,7 @@ public class GLPlot extends Plot {
                 if (v < axesExtent.minY || v > axesExtent.maxY) {
                     continue;
                 }
-                v = this.transform.transform_y(v);
+                //v = this.transform.transform_y(v);
                 if (i == tlabs.size()) {
                     break;
                 }
@@ -2029,13 +2075,14 @@ public class GLPlot extends Plot {
                 if (label != null) {
                     this.updateTextRender(label.getFont());
                     strWidth += this.tickSpace;
-                    float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, xMin);
-                    angle = x > 0 ? 270 - angle : 90 - angle;
+                    float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, zMin);
+                    angle = x > center.x ? 270 - angle : 90 - angle;
                     float yShift = Math.min(-strWidth, -strWidth);
                     if (this.angleX <= -120) {
                         yShift = -yShift;
                     }
-                    drawString(gl, label, x1, 0.0f, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
+                    y1 = (yMin + yMax) / 2;
+                    drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
                 }
             }
         }
@@ -2065,11 +2112,16 @@ public class GLPlot extends Plot {
         YAlign yAlign;
         Rectangle2D rect;
         float strWidth, strHeight;
+        Vector3f center = this.transform.getCenter();
 
-        x = this.transform.transform_x(loc.X);
+        x = loc.X;
+        y = loc.Y;
+        float zMin = (float) axesExtent.minZ;
+        float zMax = (float) axesExtent.maxZ;
+        /*x = this.transform.transform_x(loc.X);
         y = this.transform.transform_y(loc.Y);
         float zMin = this.transform.transform_z((float) axesExtent.minZ);
-        float zMax = this.transform.transform_z((float) axesExtent.maxZ);
+        float zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
         //z axis line
         rgba = this.zAxis.getLineColor().getRGBComponents(null);
@@ -2087,15 +2139,15 @@ public class GLPlot extends Plot {
         skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
         float x1 = x;
         float y1 = y;
-        float tickLen = this.zAxis.getTickLength() * this.lenScale;
-        if (x < 0) {
-            if (y > 0) {
+        float tickLen = this.zAxis.getTickLength() * this.lenScale * transform.getYLength() / 2;
+        if (x < center.x) {
+            if (y > center.y) {
                 y1 += tickLen;
             } else {
                 x1 -= tickLen;
             }
         } else {
-            if (y > 0) {
+            if (y > center.y) {
                 x1 += tickLen;
             } else {
                 y1 -= tickLen;
@@ -2112,7 +2164,7 @@ public class GLPlot extends Plot {
             if (v < axesExtent.minZ || v > axesExtent.maxZ) {
                 continue;
             }
-            v = this.transform.transform_z(v);
+            //v = this.transform.transform_z(v);
             if (i == tlabs.size()) {
                 break;
             }
@@ -2141,7 +2193,8 @@ public class GLPlot extends Plot {
             if (label != null) {
                 this.updateTextRender(label.getFont());
                 float yShift = strWidth + this.tickSpace * 3;
-                drawString(gl, label, x1, y1, 0.0f, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
+                float z1 = (zMax + zMin) * 0.5f;
+                drawString(gl, label, x1, y1, z1, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
             }
         }
     }
@@ -2161,14 +2214,14 @@ public class GLPlot extends Plot {
         PointF loc = zAxisOption.getLocation();
         boolean left = zAxisOption.isLeft();
 
-        x = this.transform.transform_x(loc.X);
+        x = loc.X;
+        y = loc.Y;
+        float zMin = (float) axesExtent.minZ;
+        float zMax = (float) axesExtent.maxZ;
+        /*x = this.transform.transform_x(loc.X);
         y = this.transform.transform_y(loc.Y);
         float zMin = this.transform.transform_z((float) axesExtent.minZ);
-        float zMax = this.transform.transform_z((float) axesExtent.maxZ);
-
-        /*gl.glTranslatef(x, y, 0);
-        x = y = 0;
-        gl.glRotatef(-angleY, 0.0f, 0.0f, 1.0f);*/
+        float zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
         //z axis line
         rgba = this.zAxis.getLineColor().getRGBComponents(null);
@@ -2198,7 +2251,7 @@ public class GLPlot extends Plot {
             if (v < axesExtent.minZ || v > axesExtent.maxZ) {
                 continue;
             }
-            v = this.transform.transform_z(v);
+            //v = this.transform.transform_z(v);
             if (i == tlabs.size()) {
                 break;
             }
@@ -2359,6 +2412,7 @@ public class GLPlot extends Plot {
         Rectangle2D rect = textRenderer.getBounds(str.subSequence(0, str.length()));
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glPushMatrix();
+        gl.glLoadIdentity();
         gl.glTranslatef(x, y, 0.0f);
         if (angle != 0) {
             gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
@@ -2635,7 +2689,7 @@ public class GLPlot extends Plot {
     }
 
     protected void drawText(GL2 gl, ChartText3D text) {
-        Vector3f xyz = this.transform.transform((float) text.getX(), (float) text.getY(), (float) text.getZ());
+        Vector3f xyz = new Vector3f((float) text.getX(), (float) text.getY(), (float) text.getZ());
         this.updateTextRender(text.getFont());
         if (text.isDraw3D()) {
             this.drawString3D(gl, text, xyz.x, xyz.y, xyz.z);
@@ -2645,7 +2699,7 @@ public class GLPlot extends Plot {
     }
 
     protected void drawText3D(GL2 gl, ChartText3D text) {
-        Vector3f xyz = this.transform.transform((float) text.getX(), (float) text.getY(), (float) text.getZ());
+        Vector3f xyz = new Vector3f((float) text.getX(), (float) text.getY(), (float) text.getZ());
         this.drawString3D(gl, text, xyz.x, xyz.y, xyz.z);
     }
 
@@ -2662,7 +2716,7 @@ public class GLPlot extends Plot {
             gl.glPointSize(pb.getSize() * this.dpiScale);
             gl.glBegin(GL2.GL_POINTS);
             PointZ p = (PointZ) shape.getPoint();
-            gl.glVertex3fv(Transform.toArray(transform.transform((float) p.X, (float) p.Y, (float) p.Z)), 0);
+            gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
             gl.glEnd();
         }
     }
@@ -2677,7 +2731,7 @@ public class GLPlot extends Plot {
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             PointZ p = (PointZ) shape.getPoint();
-            gl.glVertex3fv(Transform.toArray(transform.transform((float) p.X, (float) p.Y, (float) p.Z)), 0);
+            gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
         }
         gl.glEnd();
     }
@@ -2694,7 +2748,7 @@ public class GLPlot extends Plot {
             gl.glColor4fv(rgba, 0);
             gl.glPushMatrix();
             PointZ p = (PointZ) shape.getPoint();
-            Vector3f xyz = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            Vector3f xyz = new Vector3f((float) p.X, (float) p.Y, (float) p.Z);
             gl.glTranslated(xyz.x, xyz.y, xyz.z);
             GLUquadric sphere = glu.gluNewQuadric();
             glu.gluQuadricDrawStyle(sphere, GLU.GLU_FILL);
@@ -2719,7 +2773,7 @@ public class GLPlot extends Plot {
             for (ParticleGraphics.Particle p : (java.util.List<ParticleGraphics.Particle>)map.getValue()) {
                 float[] rgba = p.rgba;
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glVertex3fv(transform.transformArray((float) p.x, (float) p.y, (float) p.z), 0);
+                gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             }
             gl.glEnd();
         }
@@ -2870,7 +2924,7 @@ public class GLPlot extends Plot {
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(plb.getWidth() * this.dpiScale);
                     p = ps.get(i);
-                    gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                    gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
                 }
                 gl.glEnd();
             } else {
@@ -2882,7 +2936,7 @@ public class GLPlot extends Plot {
                     gl.glBegin(GL2.GL_LINE_STRIP);
                     java.util.List<PointZ> ps = (java.util.List<PointZ>) line.getPointList();
                     for (PointZ p : ps) {
-                        gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                        gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
                     }
                     gl.glEnd();
                 }
@@ -3165,7 +3219,7 @@ public class GLPlot extends Plot {
                     for (Primitive primitive : tessPolygon.getPrimitives()) {
                         gl.glBegin(primitive.type);
                         for (PointZ p : primitive.vertices) {
-                            gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                            gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
                         }
                         gl.glEnd();
                     }
@@ -3182,7 +3236,7 @@ public class GLPlot extends Plot {
             PointZ p;
             for (int i = 0; i < tessPolygon.getOutLine().size(); i++) {
                 p = ((java.util.List<PointZ>) tessPolygon.getOutLine()).get(i);
-                gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
             }
             gl.glEnd();
 
@@ -3193,7 +3247,7 @@ public class GLPlot extends Plot {
                     newPList = (java.util.List<PointZ>) tessPolygon.getHoleLines().get(h);
                     for (int j = 0; j < newPList.size(); j++) {
                         p = newPList.get(j);
-                        gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                        gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
                     }
                     gl.glEnd();
                 }
@@ -3215,7 +3269,7 @@ public class GLPlot extends Plot {
                 for (Primitive primitive : tessPolygon.getPrimitives()) {
                     gl.glBegin(primitive.type);
                     for (PointZ p : primitive.vertices) {
-                        gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                        gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
                     }
                     gl.glEnd();
                 }
@@ -3232,7 +3286,7 @@ public class GLPlot extends Plot {
             PointZ p;
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
             }
             gl.glEnd();
 
@@ -3243,7 +3297,7 @@ public class GLPlot extends Plot {
                     newPList = (java.util.List<PointZ>) aPG.getHoleLines().get(h);
                     for (int j = 0; j < newPList.size(); j++) {
                         p = newPList.get(j);
-                        gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                        gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
                     }
                 }
                 gl.glEnd();
@@ -3337,7 +3391,7 @@ public class GLPlot extends Plot {
             gl.glBegin(GL2.GL_POLYGON);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
             }
             gl.glEnd();
         }
@@ -3349,7 +3403,7 @@ public class GLPlot extends Plot {
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
             }
             gl.glEnd();
         }
@@ -3381,7 +3435,7 @@ public class GLPlot extends Plot {
             gl.glBegin(GL2.GL_QUADS);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
             }
             gl.glEnd();
         }
@@ -3393,7 +3447,7 @@ public class GLPlot extends Plot {
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
             }
             gl.glEnd();
         }
@@ -3425,7 +3479,7 @@ public class GLPlot extends Plot {
             gl.glBegin(GL2.GL_TRIANGLES);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
             }
             gl.glEnd();
         }
@@ -3437,7 +3491,7 @@ public class GLPlot extends Plot {
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
                 p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
             }
             gl.glEnd();
         }
@@ -3450,9 +3504,9 @@ public class GLPlot extends Plot {
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
             gl.glPolygonOffset(1.0f, 1.0f);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            float[] x0 = transform.transformf(points[0]);
-            float[] x1 = transform.transformf(points[1]);
-            float[] x2 = transform.transformf(points[2]);
+            float[] x0 = points[0].toFloatArray();
+            float[] x1 = points[1].toFloatArray();
+            float[] x2 = points[2].toFloatArray();
             gl.glBegin(GL2.GL_TRIANGLES);
             if (this.lighting.isEnable()) {
                 float[] normal = JOGLUtil.normalize(x0, x1, x2);
@@ -3471,7 +3525,7 @@ public class GLPlot extends Plot {
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < 3; i++) {
                 p = points[i];
-                gl.glVertex3fv(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z), 0);
+                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
             }
             gl.glEnd();
         }
@@ -3506,16 +3560,16 @@ public class GLPlot extends Plot {
         // Front Face
         //gl.glTexCoord2f(0.0f, 0.0f);
         gl.glTexCoord2f(0.0f, 1.0f);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(0).X, (float) coords.get(0).Y, (float) coords.get(0).Z), 0);
+        gl.glVertex3f((float) coords.get(0).X, (float) coords.get(0).Y, (float) coords.get(0).Z);
         //gl.glTexCoord2f(1.0f, 0.0f);
         gl.glTexCoord2f(1.0f, 1.0f);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(1).X, (float) coords.get(1).Y, (float) coords.get(1).Z), 0);
+        gl.glVertex3f((float) coords.get(1).X, (float) coords.get(1).Y, (float) coords.get(1).Z);
         //gl.glTexCoord2f(1.0f, 1.0f);
         gl.glTexCoord2f(1.0f, 0.0f);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(2).X, (float) coords.get(2).Y, (float) coords.get(2).Z), 0);
+        gl.glVertex3f((float) coords.get(2).X, (float) coords.get(2).Y, (float) coords.get(2).Z);
         //gl.glTexCoord2f(0.0f, 1.0f);
         gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(3).X, (float) coords.get(3).Y, (float) coords.get(3).Z), 0);
+        gl.glVertex3f((float) coords.get(3).X, (float) coords.get(3).Y, (float) coords.get(3).Z);
         gl.glEnd();
 
         // Unbinding the texture
@@ -3582,16 +3636,16 @@ public class GLPlot extends Plot {
         // Front Face
         //gl.glTexCoord2f(0.0f, 0.0f);
         gl.glTexCoord2f(0.0f, 1.0f * yRepeat);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(0).X, (float) coords.get(0).Y + height, (float) coords.get(0).Z), 0);
+        gl.glVertex3f((float) coords.get(0).X, (float) coords.get(0).Y + height, (float) coords.get(0).Z);
         //gl.glTexCoord2f(1.0f, 0.0f);
         gl.glTexCoord2f(1.0f * xRepeat, 1.0f * yRepeat);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(1).X + width, (float) coords.get(1).Y + height, (float) coords.get(1).Z), 0);
+        gl.glVertex3f((float) coords.get(1).X + width, (float) coords.get(1).Y + height, (float) coords.get(1).Z);
         //gl.glTexCoord2f(1.0f, 1.0f);
         gl.glTexCoord2f(1.0f * xRepeat, 0.0f);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(2).X + width, (float) coords.get(2).Y, (float) coords.get(2).Z), 0);
+        gl.glVertex3f((float) coords.get(2).X + width, (float) coords.get(2).Y, (float) coords.get(2).Z);
         //gl.glTexCoord2f(0.0f, 1.0f);
         gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glVertex3fv(transform.transformArray((float) coords.get(3).X, (float) coords.get(3).Y, (float) coords.get(3).Z), 0);
+        gl.glVertex3f((float) coords.get(3).X, (float) coords.get(3).Y, (float) coords.get(3).Z);
         gl.glEnd();
         gl.glFlush();
 
@@ -3894,7 +3948,7 @@ public class GLPlot extends Plot {
             java.util.List<PointZ> ps = cubic.getPoints();
             java.util.List<float[]> vertex = new ArrayList<>();
             for (PointZ p : ps) {
-                vertex.add(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z));
+                vertex.add(new float[]{(float) p.X, (float) p.Y, (float) p.Z});
             }
 
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
@@ -3941,7 +3995,7 @@ public class GLPlot extends Plot {
             java.util.List<PointZ> ps = cylinder.getPoints();
             java.util.List<float[]> vertex = new ArrayList<>();
             for (PointZ p : ps) {
-                vertex.add(transform.transformArray((float) p.X, (float) p.Y, (float) p.Z));
+                vertex.add(new float[]{(float) p.X, (float) p.Y, (float) p.Z});
             }
             double height = vertex.get(1)[2] - vertex.get(0)[2];
 

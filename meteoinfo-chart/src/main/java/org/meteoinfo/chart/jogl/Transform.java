@@ -104,8 +104,56 @@ public class Transform {
         }
 
         this.transformMatrix = new Matrix4f()
-                .translate((this.xmax + this.xmin) / 2, (this.ymax + this.ymin) / 2, (this.zmax + this.zmin) / 2)
-                .scale((this.xmax - this.xmin) / 2, (this.ymax - this.ymin) / 2, (this.zmax - this.zmin) / 2);
+                .translate((this.xmax + this.xmin) / 2, (this.ymax + this.ymin) / 2, -(this.zmax + this.zmin) / 2)
+                .scale(2 / (this.xmax - this.xmin), 2 / (this.ymax - this.ymin), 2 / (this.zmax - this.zmin));
+    }
+
+    /**
+     * Get transform center
+     * @return The center
+     */
+    public Vector3f getCenter() {
+        return new Vector3f((xmax + xmin) / 2, (ymax + ymin) / 2, (zmax + zmin) / 2);
+    }
+
+    /**
+     * Get transform scale
+     * @return The scale
+     */
+    public Vector3f getScale() {
+        return new Vector3f(2 / (this.xmax - this.xmin), 2 / (this.ymax - this.ymin), 2 / (this.zmax - this.zmin));
+    }
+
+    /**
+     * Get transform extent
+     * @return The extent
+     */
+    public Extent3D getExtent() {
+        return new Extent3D(xmin, xmax, ymin, ymax, zmin, zmax);
+    }
+
+    /**
+     * Get x length
+     * @return X length
+     */
+    public float getXLength() {
+        return xmax - xmin;
+    }
+
+    /**
+     * Get y length
+     * @return Y length
+     */
+    public float getYLength() {
+        return ymax - ymin;
+    }
+
+    /**
+     * Get z length
+     * @return Z length
+     */
+    public float getZLength() {
+        return zmax - zmin;
     }
 
     /**

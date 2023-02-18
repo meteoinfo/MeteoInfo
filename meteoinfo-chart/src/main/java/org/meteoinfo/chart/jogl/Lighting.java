@@ -6,6 +6,7 @@
 package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.GL2;
+import org.joml.Vector4f;
 
 import java.awt.*;
 import java.util.List;
@@ -399,6 +400,16 @@ public class Lighting {
      */
     public void setPosition(GL2 gl) {
         gl.glLightfv(this.light, GL2.GL_POSITION, position, 0);
+    }
+
+    /**
+     * Set light position
+     * @param gl GL2
+     * @param pos Light position
+     */
+    public void setPosition(GL2 gl, Vector4f pos) {
+        float[] posf = new float[]{pos.x, pos.y, pos.z, pos.w};
+        gl.glLightfv(this.light, GL2.GL_POSITION, posf, 0);
     }
 
     /**

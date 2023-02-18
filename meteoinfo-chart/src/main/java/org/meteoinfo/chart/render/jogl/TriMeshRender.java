@@ -71,9 +71,13 @@ public class TriMeshRender extends JOGLGraphicRender {
         super.setTransform((Transform) transform.clone());
 
         if (updateBuffer) {
-            vertexPosition = meshGraphic.getVertexPosition(this.transform);
+            if (vertexPosition == null) {
+                vertexPosition = meshGraphic.getVertexPosition();
+            }
             FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
-            meshGraphic.calculateNormalVectors(vertexPosition);
+            if (meshGraphic.getVertexNormal() == null) {
+                meshGraphic.calculateNormalVectors(vertexPosition);
+            }
             FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
             FloatBuffer colorBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexColor());
             sizePosition = vertexBuffer.capacity() * Float.BYTES;

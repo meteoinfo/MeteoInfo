@@ -1,6 +1,7 @@
 package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.chart.jogl.Transform;
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.geometry.colors.OpacityTransferFunction;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
 import org.meteoinfo.common.Extent3D;
@@ -19,7 +20,6 @@ import java.util.List;
 import static org.joml.Math.clamp;
 
 public class VolumeGraphic extends GraphicCollection3D {
-    //public static Buffer buffer = null;
     final int width;
     final int height;
     final int depth;
@@ -163,6 +163,67 @@ public class VolumeGraphic extends GraphicCollection3D {
 
         this.setLegendScheme(ls);
         this.setSingleLegend(false);
+    }
+
+    @Override
+    public void setExtent(Extent value) {
+        super.setExtent(value);
+
+        Extent3D extent = (Extent3D) this.getExtent();
+        float xMin = (float) extent.minX;
+        float xMax = (float) extent.maxX;
+        float yMin = (float) extent.minY;
+        float yMax = (float) extent.maxY;
+        float zMin = (float) extent.minZ;
+        float zMax = (float) extent.maxZ;
+        float[] p0 = new float[]{xMin, yMin, zMin};
+        float[] p1 = new float[]{xMax, yMin, zMin};
+        float[] p2 = new float[]{xMax, yMax, zMin};
+        float[] p3 = new float[]{xMin, yMax, zMin};
+        float[] p4 = new float[]{xMin, yMin, zMax};
+        float[] p5 = new float[]{xMax, yMin, zMax};
+        float[] p6 = new float[]{xMax, yMax, zMax};
+        float[] p7 = new float[]{xMin, yMax, zMax};
+        this.aabbMin = p0;
+        this.aabbMax = p6;
+        this.vertexBufferData = new float[] {
+                p0[0], p0[1], p0[2], // triangle 1 : begin
+                p1[0], p1[1], p1[2],
+                p4[0], p4[1], p4[2], // triangle 1 : end
+                p4[0], p4[1], p4[2], // triangle 2 : begin
+                p5[0], p5[1], p5[2],
+                p1[0], p1[1], p1[2], // triangle 2 : end
+                p1[0], p1[1], p1[2],
+                p5[0], p5[1], p5[2],
+                p2[0], p2[1], p2[2], //3
+                p5[0], p5[1], p5[2],
+                p2[0], p2[1], p2[2],
+                p6[0], p6[1], p6[2], //4
+                p2[0], p2[1], p2[2],
+                p6[0], p6[1], p6[2],
+                p3[0], p3[1], p3[2], //5
+                p6[0], p6[1], p6[2],
+                p3[0], p3[1], p3[2],
+                p7[0], p7[1], p7[2], //6
+                p3[0], p3[1], p3[2],
+                p7[0], p7[1], p7[2],
+                p0[0], p0[1], p0[2], //7
+                p7[0], p7[1], p7[2],
+                p0[0], p0[1], p0[2],
+                p4[0], p4[1], p4[2], //8
+                p0[0], p0[1], p0[2],
+                p1[0], p1[1], p1[2],
+                p3[0], p3[1], p3[2], //9
+                p1[0], p1[1], p1[2],
+                p3[0], p3[1], p3[2],
+                p2[0], p2[1], p2[2], //10
+                p4[0], p4[1], p4[2],
+                p5[0], p5[1], p5[2],
+                p7[0], p7[1], p7[2], //11
+                p5[0], p5[1], p5[2],
+                p7[0], p7[1], p7[2],
+                p6[0], p6[1], p6[2], //12
+        };
     }
 
     /**
@@ -434,7 +495,7 @@ public class VolumeGraphic extends GraphicCollection3D {
         this.rayCastingType = RayCastingType.valueOf(value.toUpperCase());
     }
 
-    final float[] vertexBufferData = new float[]{
+    private float[] vertexBufferData = new float[]{
             -1.0f, -1.0f, -1.0f, // triangle 1 : begin
             -1.0f, -1.0f, 1.0f,
             -1.0f, 1.0f, 1.0f, // triangle 1 : end

@@ -93,6 +93,7 @@ public class SphericalTransform {
                 vertexPosition[i+2] = vector3f.z;
             }
             surfaceGraphic.setVertexPosition(vertexPosition);
+            surfaceGraphic.calculateNormalVectors(vertexPosition);
             surfaceGraphic.updateVertexTexture();
             return surfaceGraphic;
         } else if (graphic instanceof IsosurfaceGraphics) {
@@ -118,6 +119,7 @@ public class SphericalTransform {
                 vertexData[i+2] = vector3f.z;
             }
             meshGraphic.setVertexPosition(vertexData);
+            meshGraphic.calculateNormalVectors(vertexData);
             return meshGraphic;
         } else if (graphic instanceof ParticleGraphics) {
             ParticleGraphics particleGraphics = (ParticleGraphics) graphic;

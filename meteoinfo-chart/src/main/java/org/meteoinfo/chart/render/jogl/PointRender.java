@@ -1,5 +1,6 @@
 package org.meteoinfo.chart.render.jogl;
 
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
@@ -164,13 +165,18 @@ public class PointRender extends JOGLGraphicRender {
         List<Vector4f> vertexColorList = new ArrayList<>();
         List<Integer> vertexIndexList = new ArrayList<>();
         Vector3f vp;
+        float size = -1;
+        Sphere sphere = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
             PointZShape shape = (PointZShape) graphic.getShape();
             PointZ p = (PointZ) shape.getPoint();
             PointBreak pb = (PointBreak) graphic.getLegend();
-            Sphere sphere = new Sphere(pb.getSize() * sphereScale * dpiScale, 36, 18);
-            //vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
-            vp = new Vector3f((float) p.X, (float) p.Y, (float) p.Z);
+            if (size != pb.getSize()) {
+                size = pb.getSize();
+                sphere = new Sphere(size * sphereScale * dpiScale, 36, 18);
+            }
+            vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            //vp = new Vector3f((float) p.X, (float) p.Y, (float) p.Z);
             Matrix4f matrix = new Matrix4f();
             matrix.translate(vp);
             List<Vector3f> vertices = sphere.getVertices();
@@ -224,13 +230,18 @@ public class PointRender extends JOGLGraphicRender {
     private void updateSphereVertexPosition() {
         List<Vector3f> vertexPositionList = new ArrayList<>();
         Vector3f vp;
+        float size = -1;
+        Sphere sphere = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
             PointZShape shape = (PointZShape) graphic.getShape();
             PointZ p = (PointZ) shape.getPoint();
             PointBreak pb = (PointBreak) graphic.getLegend();
-            Sphere sphere = new Sphere(pb.getSize() * sphereScale * dpiScale, 36, 18);
-            //vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
-            vp = new Vector3f((float) p.X, (float) p.Y, (float) p.Z);
+            if (size != pb.getSize()) {
+                size = pb.getSize();
+                sphere = new Sphere(size * sphereScale * dpiScale, 36, 18);
+            }
+            vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            //vp = new Vector3f((float) p.X, (float) p.Y, (float) p.Z);
             Matrix4f matrix = new Matrix4f();
             matrix.translate(vp);
             List<Vector3f> vertices = sphere.getVertices();
@@ -264,9 +275,9 @@ public class PointRender extends JOGLGraphicRender {
             if (this.vertexPosition == null) {
                 this.updateVertex();
             } else {
-                //this.updateVertex();
-                //this.updateVertexPosition();
-                //this.updateSphereVertexNormal();
+                if (this.sphere) {
+                    this.updateSphereVertexPosition();
+                }
             }
             FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(this.vertexPosition);
             sizePosition = vertexBuffer.capacity() * Float.BYTES;
@@ -326,6 +337,10 @@ public class PointRender extends JOGLGraphicRender {
             gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
             gl.glColorPointer(4, GL.GL_FLOAT, 0, sizePosition);
             if (this.sphere) {
+                gl.glPushMatrix();
+                FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
+                gl.glLoadMatrixf(this.modelViewMatrixR.get(fb));
+
                 gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
 
                 gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
@@ -339,6 +354,8 @@ public class PointRender extends JOGLGraphicRender {
 
                 gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
                 gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+
+                gl.glPopMatrix();
             } else {
                 boolean lightEnabled = this.lighting.isEnable();
                 if (lightEnabled) {

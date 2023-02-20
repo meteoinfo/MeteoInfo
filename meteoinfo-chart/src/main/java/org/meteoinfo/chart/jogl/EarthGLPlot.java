@@ -222,8 +222,6 @@ public class EarthGLPlot extends GLPlot {
 
         gl.glPushMatrix();
 
-        Vector3f center = transform.getCenter();
-        Vector3f scale = transform.getScale();
         this.modelViewMatrix = new Matrix4f();
         if (pitchAngle != 0) {
             float ss = getScale();
@@ -236,6 +234,10 @@ public class EarthGLPlot extends GLPlot {
         if (headAngle != 0) {
             modelViewMatrix.rotate((float) Math.toRadians(headAngle), 0.0f, 1.0f, 0.0f);
         }
+        modelViewMatrixR = new Matrix4f(modelViewMatrix);
+
+        Vector3f center = transform.getCenter();
+        Vector3f scale = transform.getScale();
         modelViewMatrix.scale(scale);
         modelViewMatrix.translate(center.negate());
 

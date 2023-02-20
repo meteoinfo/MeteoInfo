@@ -1,5 +1,6 @@
 package org.meteoinfo.chart.render.jogl;
 
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
@@ -152,11 +153,31 @@ public class LineRender extends JOGLGraphicRender {
         return vertexPosition;
     }
 
+    private void updateVertexPosition() {
+        vertexPosition = new float[this.vertexNum * 3];
+        int i = 0;
+        linePointNumbers = new ArrayList<>();
+        for (Graphic graphic : this.graphics.getGraphics()) {
+            PolylineZShape shape = (PolylineZShape) graphic.getShape();
+            for (Polyline line : shape.getPolylines()) {
+                List<PointZ> ps = (List<PointZ>) line.getPointList();
+                linePointNumbers.add(ps.size());
+                for (PointZ p : ps) {
+                    vertexPosition[i] = transform.transform_x((float) p.X);
+                    vertexPosition[i + 1] = transform.transform_y((float) p.Y);
+                    vertexPosition[i + 2] = transform.transform_z((float) p.Z);
+                    i += 3;
+                }
+            }
+        }
+    }
+
     private void updateConeVertex() {
         List<Vector3f> vertexPositionList = new ArrayList<>();
         List<Vector3f> vertexNormalList = new ArrayList<>();
         List<Vector4f> vertexColorList = new ArrayList<>();
         List<Integer> vertexIndices = new ArrayList<>();
+        Cylinder cylinder = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
             int pointNum = shape.getPointNum();
@@ -171,11 +192,13 @@ public class LineRender extends JOGLGraphicRender {
                     if (i % interval == 0) {
                         PointZ p2 = ps.get(i);
                         PointZ p1 = ps.get(i - 1);
-                        v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
+                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
                         slb = (StreamlineBreak) cbc.get(i);
-                        Cylinder cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
-                                0, slb.getArrowHeadLength() * 0.02f, 8, 1, true);
+                        if (cylinder == null) {
+                            cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
+                                    0, slb.getArrowHeadLength() * 0.02f, 8, 1, true);
+                        }
                         Matrix4f matrix = new Matrix4f();
                         matrix.lookAt(v2.sub(v1, new Vector3f()));
                         matrix.translate(v2);
@@ -208,10 +231,12 @@ public class LineRender extends JOGLGraphicRender {
                     if (i % interval == 0) {
                         PointZ p2 = ps.get(i);
                         PointZ p1 = ps.get(i - 1);
-                        v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
-                        Cylinder cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
-                                0, slb.getArrowHeadLength() * 0.02f, 8, 1, true);
+                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
+                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        if (cylinder == null) {
+                            cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
+                                    0, slb.getArrowHeadLength() * 0.02f, 8, 1, true);
+                        }
                         Matrix4f matrix = new Matrix4f();
                         matrix.lookAt(v2.sub(v1, new Vector3f()));
                         matrix.translate(v2);
@@ -362,6 +387,10 @@ public class LineRender extends JOGLGraphicRender {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 
             if (this.streamline) {
+                gl.glPushMatrix();
+                FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
+                gl.glLoadMatrixf(this.modelViewMatrixR.get(fb));
+
                 gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboCone.get(0));
                 gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboCone.get(1));
 
@@ -381,6 +410,8 @@ public class LineRender extends JOGLGraphicRender {
 
                 gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
                 gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+
+                gl.glPopMatrix();
             }
         }
     }

@@ -99,6 +99,7 @@ public class GLPlot extends Plot {
     protected Matrix4f modelViewMatrix = new Matrix4f();
     protected Matrix4f projectionMatrix = new Matrix4f();
     protected Matrix4f viewProjMatrix = new Matrix4f();
+    protected Matrix4f modelViewMatrixR = new Matrix4f();
 
     protected float angleX;
     protected float angleY;
@@ -1230,14 +1231,16 @@ public class GLPlot extends Plot {
 
         gl.glPushMatrix();
 
-        Vector3f center = transform.getCenter();
-        Vector3f scale = transform.getScale();
         this.modelViewMatrix = new Matrix4f();
         modelViewMatrix.rotate((float) Math.toRadians(angleX), 1.0f, 0.0f, 0.0f);
         modelViewMatrix.rotate((float) Math.toRadians(angleY), 0.0f, 0.0f, 1.0f);
         if (headAngle != 0) {
             modelViewMatrix.rotate((float) Math.toRadians(headAngle), 0.0f, 1.0f, 0.0f);
         }
+        modelViewMatrixR = new Matrix4f(modelViewMatrix);
+
+        Vector3f center = transform.getCenter();
+        Vector3f scale = transform.getScale();
         modelViewMatrix.scale(scale);
         modelViewMatrix.translate(center.negate());
 
@@ -2568,6 +2571,7 @@ public class GLPlot extends Plot {
                         pointRender.setOrthographic(this.orthographic);
                         pointRender.setLighting(this.lighting);
                         pointRender.updateMatrix();
+                        pointRender.setRotateModelView(this.modelViewMatrixR);
                         pointRender.draw();
                         break;
                     case POLYLINE_Z:
@@ -2580,6 +2584,7 @@ public class GLPlot extends Plot {
                             pipeRender.setOrthographic(this.orthographic);
                             pipeRender.setLighting(this.lighting);
                             pipeRender.updateMatrix();
+                            pipeRender.setRotateModelView(this.modelViewMatrixR);
                             pipeRender.draw();
                         } else {
                             if (!this.renderMap.containsKey(graphic)) {
@@ -2590,6 +2595,7 @@ public class GLPlot extends Plot {
                             lineRender.setOrthographic(this.orthographic);
                             lineRender.setLighting(this.lighting);
                             lineRender.updateMatrix();
+                            lineRender.setRotateModelView(this.modelViewMatrixR);
                             lineRender.draw();
                         }
                         break;
@@ -2602,6 +2608,7 @@ public class GLPlot extends Plot {
                         quiverRender.setOrthographic(this.orthographic);
                         quiverRender.setLighting(this.lighting);
                         quiverRender.updateMatrix();
+                        quiverRender.setRotateModelView(this.modelViewMatrixR);
                         quiverRender.draw();
                         break;
                     default:

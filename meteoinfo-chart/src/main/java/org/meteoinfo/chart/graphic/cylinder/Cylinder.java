@@ -1,12 +1,15 @@
 package org.meteoinfo.chart.graphic.cylinder;
 
+import com.jogamp.opengl.GL2;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.meteoinfo.chart.graphic.Model;
+import org.meteoinfo.chart.graphic.TriMeshGraphic;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cylinder {
+public class Cylinder extends Model {
     private float baseRadius;
     private float topRadius;
     private float height;
@@ -44,6 +47,7 @@ public class Cylinder {
         this.smooth = smooth;
 
         updateVertices();
+        //buildTriMeshGraphic();
     }
 
     /**
@@ -58,6 +62,29 @@ public class Cylinder {
         } else {
             buildVerticesFlat();
         }
+    }
+
+    @Override
+    protected void buildTriMeshGraphic() {
+        this.triMeshGraphic = new TriMeshGraphic();
+        int n = this.vertices.size();
+        float[] vertexPosition = new float[n * 3];
+        float[] vertexNormal = new float[n * 3];
+        Vector3f v;
+        for (int i = 0, j = 0; i < n; i++, j+=3) {
+            v = this.vertices.get(i);
+            vertexPosition[j] = v.x;
+            vertexPosition[j + 1] = v.y;
+            vertexPosition[j + 2] = v.z;
+            v = this.normals.get(i);
+            vertexNormal[j] = v.x;
+            vertexNormal[j + 1] = v.y;
+            vertexNormal[j + 2] = v.z;
+        }
+        int[] vertexIndices = this.indices.stream().mapToInt(Integer::intValue).toArray();
+        this.triMeshGraphic.setVertexPosition(vertexPosition);
+        this.triMeshGraphic.setVertexNormal(vertexNormal);
+        this.triMeshGraphic.setVertexIndices(vertexIndices);
     }
 
     /**
@@ -235,9 +262,7 @@ public class Cylinder {
         for(i = 0; i < count; i++)
         {
             interleavedVertices.add(vertices.get(i));
-
             interleavedVertices.add(normals.get(i));
-
             //interleavedVertices.add(texCoords.get(j));
             //interleavedVertices.add(texCoords.get(j+1));
         }
@@ -651,5 +676,13 @@ public class Cylinder {
         }
 
         return normal;
+    }
+
+    /**
+     * Draw cylinder
+     * @param gl GL2 object
+     */
+    public void draw(GL2 gl) {
+
     }
 }

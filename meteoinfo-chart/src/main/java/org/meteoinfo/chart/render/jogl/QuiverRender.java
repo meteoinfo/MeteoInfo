@@ -1,5 +1,6 @@
 package org.meteoinfo.chart.render.jogl;
 
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
@@ -34,6 +35,7 @@ public class QuiverRender extends JOGLGraphicRender {
     private int sizePosition;
     private int sizeColor;
     private IntBuffer vboCone;
+    private Cylinder arrow;
     private float[] coneVertexPosition;
     private float[] coneVertexNormal;
     private float[] coneVertexColor;
@@ -80,6 +82,7 @@ public class QuiverRender extends JOGLGraphicRender {
         List<Vector3f> vertexNormalList = new ArrayList<>();
         List<Vector4f> vertexColorList = new ArrayList<>();
         List<Integer> vertexIndices = new ArrayList<>();
+        Cylinder cylinder = null;
         for (int i = 0, pi = 0, ci = 0; i < quiverNumber; i++, pi+=6, ci+=8) {
             Graphic graphic = graphics.getGraphicN(i);
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
@@ -87,8 +90,8 @@ public class QuiverRender extends JOGLGraphicRender {
             PointZ sp = (PointZ) shape.getPoint();
             PointZ ep = (PointZ) shape.getEndPoint();
 
-            Vector3f v1 = new Vector3f((float) sp.X, (float) sp.Y, (float) sp.Z);
-            Vector3f v2 = new Vector3f((float) ep.X, (float) ep.Y, (float) ep.Z);
+            Vector3f v1 = transform.transform((float) sp.X, (float) sp.Y, (float) sp.Z);
+            Vector3f v2 = transform.transform((float) ep.X, (float) ep.Y, (float) ep.Z);
             float[] color = pb.getColor().getRGBComponents(null);
             vertexPosition[pi] = v1.x;
             vertexPosition[pi + 1] = v1.y;
@@ -99,8 +102,10 @@ public class QuiverRender extends JOGLGraphicRender {
             System.arraycopy(color, 0, vertexColor, ci, 4);
             System.arraycopy(color, 0, vertexColor, ci + 4, 4);
 
-            Cylinder cylinder = new Cylinder(shape.getHeadWidth() * 0.02f,
-                    0, shape.getHeadLength() * 0.02f, 8, 1, true);
+            if (cylinder == null) {
+                cylinder = new Cylinder(shape.getHeadWidth() * 0.02f,
+                        0, shape.getHeadLength() * 0.02f, 8, 1, true);
+            }
             Matrix4f matrix = new Matrix4f();
             matrix.lookAt(v2.sub(v1, new Vector3f()));
             matrix.translate(v2);
@@ -166,9 +171,7 @@ public class QuiverRender extends JOGLGraphicRender {
         super.setTransform((Transform) transform.clone());
 
         if (updateBuffer) {
-            if (this.vertexPosition == null) {
-                this.updateVertexArrays();
-            }
+            this.updateVertexArrays();
 
             FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
             sizePosition = vertexBuffer.capacity() * Float.BYTES;
@@ -217,6 +220,10 @@ public class QuiverRender extends JOGLGraphicRender {
 
     @Override
     public void draw() {
+        gl.glPushMatrix();
+        FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
+        gl.glLoadMatrixf(this.modelViewMatrixR.get(fb));
+
         if (useShader) {    //  not working now
             program.use(gl);
             setUniforms();
@@ -267,5 +274,7 @@ public class QuiverRender extends JOGLGraphicRender {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
+
+        gl.glPopMatrix();
     }
 }

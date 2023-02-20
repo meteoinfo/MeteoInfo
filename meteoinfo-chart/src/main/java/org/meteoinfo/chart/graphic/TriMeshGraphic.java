@@ -74,7 +74,6 @@ public class TriMeshGraphic extends GraphicCollection3D {
     public void setVertexPosition(float[] value) {
         vertexPosition = value;
         updateExtent();
-        calculateNormalVectors(vertexPosition);
     }
 
     /**
@@ -102,6 +101,14 @@ public class TriMeshGraphic extends GraphicCollection3D {
     }
 
     /**
+     * Set vertex indices
+     * @param value Vertex indices
+     */
+    public void setVertexIndices(int[] value) {
+        this.vertexIndices = value;
+    }
+
+    /**
      * Get vertex color data
      * @return Vertex color data
      */
@@ -115,6 +122,14 @@ public class TriMeshGraphic extends GraphicCollection3D {
      */
     public float[] getVertexNormal() {
         return vertexNormal;
+    }
+
+    /**
+     * Set vertex normal
+     * @param value Vertex normal
+     */
+    public void setVertexNormal(float[] value) {
+        this.vertexNormal = value;
     }
 
     /**

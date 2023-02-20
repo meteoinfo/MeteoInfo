@@ -42,14 +42,14 @@
       <option name="url" value="http://repo.boundlessgeo.com/main/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="freehep" />
-      <option name="name" value="freehep" />
-      <option name="url" value="https://java.freehep.org/maven2/" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="sonatype-nexus-snapshots" />
       <option name="name" value="Sonatype Nexus Snapshots" />
       <option name="url" value="https://oss.sonatype.org/content/repositories/snapshots" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="freehep" />
+      <option name="name" value="freehep" />
+      <option name="url" value="https://java.freehep.org/maven2/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="boundless" />

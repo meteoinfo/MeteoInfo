@@ -1640,12 +1640,15 @@ def histogram(a, bins=10, density=False):
         a = array(a)
     elif isinstance(a, numbers.Number):
         a = array([a])
+
     if isinstance(bins, list):
         bins = array(bins)
+
     if isinstance(bins, int):
         r = ArrayUtil.histogram(a.asarray(), bins)
     else:
         r = ArrayUtil.histogram(a.asarray(), bins.asarray())
+
     h = NDArray(r[0])
     b = NDArray(r[1])
     

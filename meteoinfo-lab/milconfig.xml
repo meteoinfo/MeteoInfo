@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamslice"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\hist">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\quiver"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter"/>
@@ -16,15 +12,21 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\hist"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\scatter_sphere.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\contour.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\hist\hist_muti_array.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\scatter_sphere.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\contour.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\hist\hist_muti_array.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -32,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1341,810"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

@@ -295,9 +295,8 @@ def barh(*args, **kwargs):
 
 
 @_copy_docstring_and_deprecators(Axes.hist)
-def hist(x, bins=10, range=None, density=False, cumulative=False,
-         bottom=None, histtype='bar', align='mid',
-         orientation='vertical', rwidth=None, log=False, **kwargs):
+def hist(x, bins=10, density=False, cumulative=False,
+         rwidth=None, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
@@ -308,8 +307,8 @@ def hist(x, bins=10, range=None, density=False, cumulative=False,
         if g_axes.axestype != 'cartesian':
             g_axes = axes()
 
-    r = g_axes.hist(x, bins, range, density, cumulative,
-                    bottom, histtype, align, orientation, rwidth, log, **kwargs)
+    r = g_axes.hist(x, bins, density, cumulative,
+                    rwidth, **kwargs)
     if r is not None:
         draw_if_interactive()
     return r

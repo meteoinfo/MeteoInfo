@@ -88,8 +88,8 @@ def getcolor(style, alpha=None):
 
     if isinstance(style, Color):
         c = style
-        if not alpha is None:
-            alpha = (int)(alpha * 255)
+        if alpha is not None:
+            alpha = int(alpha * 255)
             c = Color(c.getRed(), c.getGreen(), c.getBlue(), alpha)
         return c
 
@@ -117,6 +117,10 @@ def getcolor(style, alpha=None):
             c = Color.magenta
         elif style == 'pink' or style == 'p':
             c = Color.pink
+        elif style == 'tan':
+            c = Color(210, 180, 140)
+        elif style == 'lime':
+            c = Color(124, 252, 0)
         else:
             try:
                 c = ColorUtil.parseToColor(style)
@@ -130,8 +134,8 @@ def getcolor(style, alpha=None):
         else:
             c = Color(style[0], style[1], style[2], style[3])
 
-    if not alpha is None:
-        alpha = (int)(alpha * 255)
+    if alpha is not None:
+        alpha = int(alpha * 255)
         c = Color(c.getRed(), c.getGreen(), c.getBlue(), alpha)
 
     return c

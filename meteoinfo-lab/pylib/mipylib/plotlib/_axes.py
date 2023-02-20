@@ -2011,29 +2011,68 @@ class Axes(object):
 
         return barbreaks
 
-    def hist(self, x, bins=10, range=None, density=False, cumulative=False,
-             bottom=None, histtype='bar', align='mid',
-             orientation='vertical', rwidth=None, log=False, **kwargs):
+    def hist(self, x, bins=10, density=False, cumulative=False,
+             rwidth=None, **kwargs):
         """
         Plot a histogram.
         
-        :param x: (*array_like*) Input values, this takes either a single array or a sequency of arrays 
+        :param x: (*array_like*) Input values, this takes either a single array or a sequence of arrays
             which are not required to be of the same length.
         :param bins: (*int*) If an integer is given, bins + 1 bin edges are returned.
+        :param density: (*bool*) Default is `False`. If `True`, draw and return a probability
+            density: each bin will display the bin's raw count divided by the total number of
+            counts and the bin width
+        :param cumulative: (*bool*) Default is `False`. If `True`, then a histogram is computed
+            where each bin gives the counts in that bin plus all bins for smaller values. The
+            last bin gives the total number of datapoints.
+        :param rwidth: (*float or None*) Default is `None`. The relative width of the bars as a
+            fraction of the bin width. If None, automatically compute the width.
         """
-        # Add data series
-        label = kwargs.pop('label', 'S_0')
+        if isinstance(x, NDArray) and x.ndim == 1:
+            m, bins = np.histogram(x, bins=bins, density=density)
+            width = np.diff(bins)
+            if cumulative:
+                m = np.cumsum(m * width)
 
-        # histogram
-        m, bins = np.histogram(x, bins=bins, density=density)
-        width = np.diff(bins)
-        if cumulative:
-            m = np.cumsum(m * width)
-        if not rwidth is None:
-            width = width * rwidth
-        barbreaks = self.bar(bins[:-1], m, width, align='center', **kwargs)
+            if rwidth is not None:
+                width = width * rwidth
 
-        return m, bins, barbreaks
+            barbreaks = self.bar(bins[:-1], m, width, align='center', **kwargs)
+
+            return m, bins, barbreaks
+        else:
+            mlist = []
+            barbreaklist = []
+            if isinstance(x, (list, tuple)):
+                n = len(x)
+            else:
+                n = x.shape[1]
+
+            colors = kwargs.pop('color', None)
+            if colors is None:
+                colors = plotutil.makecolors(n)
+            labels = kwargs.pop('label', None)
+
+            for i in range(n):
+                if isinstance(x, NDArray):
+                    xx = x[:,i]
+                else:
+                    xx = x[i]
+
+                m, bins = np.histogram(xx, bins=bins, density=density)
+                width = np.diff(bins) / n
+                if cumulative:
+                    m = np.cumsum(m * width)
+                mlist.append(m)
+                if rwidth is not None:
+                    width = width * rwidth
+                kwargs['color'] = colors[i]
+                if labels is not None:
+                    kwargs['label'] = labels[i]
+                barbreaks = self.bar(bins[:-1] + width * i, m, width, align='center', **kwargs)
+                barbreaklist.append(barbreaks)
+
+            return mlist, bins, barbreaklist
 
     def hist_back(self, x, bins=10, range=None, density=False, cumulative=False,
                   bottom=None, histtype='bar', align='mid',

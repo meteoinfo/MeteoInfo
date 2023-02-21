@@ -1,4 +1,4 @@
-from ..core import numeric as np
+from .. import core as np
 import stats
 from ..linalg import linalg
 

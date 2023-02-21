@@ -3097,12 +3097,12 @@ class Axes(object):
 
         return graphics
 
-    def violinplot(self, dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None, \
+    def violinplot(self, dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None,
                    whiskerprops=None, **kwargs):
         """
         Make a violin plot.
         
-        :param dateset: (*Array or a sequence of vectors*) The input data.
+        :param dataset: (*Array or a sequence of vectors*) The input data.
         :param positions: (*array_like*) Sets the positions of the violins. The ticks and limits are automatically 
             set to match the positions. Defaults to range(1, N+1) where N is the number of violins to be drawn.
         :param widths: (*scalar or array_like*) Sets the width of each box either with a scalar or a sequence. 
@@ -3138,7 +3138,7 @@ class Axes(object):
         if boxprops is None:
             boxprops = dict(color='k', edgecolor=None)
         if whiskerprops is None:
-            whiskerprops = whiskerprops = dict(color='k')
+            whiskerprops = dict(color='k')
         if not kwargs.has_key('color'):
             kwargs['color'] = 'c'
         if not kwargs.has_key('edgecolor'):

@@ -43,7 +43,7 @@ __all__ = [
     'concatenate','conj','conjugate','corrcoef','cos','cosh','cylinder','degrees','delete','delnan','diag','diff',
     'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','identity','interp2d','interpn','isarray',
-    'isclose','isfinite','isinf','isnan','linspace','log','log10','logical_not','logspace',
+    'isclose','isfinite','isinf','isnan','isscalar','linspace','log','log10','logical_not','logspace',
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reciprocal','reshape',
     'repeat','roll','rolling_mean','rot90','round','sec','sign','sin','sinh','shape','smooth5','smooth9','sort',
@@ -1738,6 +1738,16 @@ def isfinite(x):
         return NDArray(ArrayMath.isFinite(x._array))
     else:
         return Double.isFinite(x)
+
+def isscalar(element):
+    """
+    Returns True if the type of `element` is a scalar type.
+
+    :param element: Input argument, can be of any type and shape.
+
+    :return: (*bool*) True if `element` is a scalar type, False if it is not.
+    """
+    return isinstance(element, (numbers.Number, basestring, bool))
 
 def delnan(a):
     """

@@ -1,10 +1,10 @@
 # coding=utf-8
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2018-3-20
 # Purpose: MeteoInfoLab stats.distributions module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 from org.apache.commons.statistics.distribution import NormalDistribution, BetaDistribution, CauchyDistribution, \
     ChiSquaredDistribution, ExponentialDistribution, FDistribution, GammaDistribution, GumbelDistribution, \
@@ -14,9 +14,10 @@ from org.apache.commons.statistics.distribution import NormalDistribution, BetaD
 from _distn_infrastructure import rv_continuous
 
 __all__ = [
-    'norm','beta','cauchy','chi2','expon','f','gamma','gumbel','laplace','levy','logistic','lognorm',
-    'nakagami','pareto','t','triang','uniform','weibull'
-    ]
+    'norm', 'beta', 'cauchy', 'chi2', 'expon', 'f', 'gamma', 'gumbel', 'laplace', 'levy', 'logistic', 'lognorm',
+    'nakagami', 'pareto', 't', 'triang', 'uniform', 'weibull'
+]
+
 
 class norm_gen(rv_continuous):
     """
@@ -31,16 +32,18 @@ class norm_gen(rv_continuous):
         """
         self.name = "norm"
         self._dist = NormalDistribution.of(mean, std)
-    
+
     def _create_distribution(self, *args):
         """
         Create a normal distribution object.
         """
-        loc, scale = self._parse_args(*args)        
+        loc, scale = self._parse_args(*args)
         dist = NormalDistribution.of(loc, scale)
         return dist
 
+
 norm = norm_gen()
+
 
 class beta_gen(rv_continuous):
     """
@@ -55,16 +58,18 @@ class beta_gen(rv_continuous):
         """
         self.name = "beta"
         self._dist = BetaDistribution.of(alpha, beta)
-    
+
     def _create_distribution(self, *args):
         """
         Create a normal distribution object.
         """
-        loc, scale = self._parse_args(*args)        
+        loc, scale = self._parse_args(*args)
         dist = BetaDistribution.of(loc, scale)
         return dist
 
+
 beta = beta_gen()
+
 
 class cauchy_gen(rv_continuous):
     """
@@ -79,16 +84,18 @@ class cauchy_gen(rv_continuous):
         """
         self.name = "cauchy"
         self._dist = CauchyDistribution.of(median, scale)
-    
+
     def _create_distribution(self, *args):
         """
         Create a cauchy distribution object.
         """
-        loc, scale = self._parse_args(*args)        
+        loc, scale = self._parse_args(*args)
         dist = CauchyDistribution.of(loc, scale)
         return dist
 
+
 cauchy = cauchy_gen()
+
 
 class chi2_gen(rv_continuous):
     """
@@ -102,16 +109,18 @@ class chi2_gen(rv_continuous):
         """
         self.name = "chi2"
         self._dist = ChiSquaredDistribution.of(dof)
-    
+
     def _create_distribution(self, *args):
         """
         Create a chi squared distribution object.
         """
-        dof = self._parse_args(*args)[0]     
+        dof = self._parse_args(*args)[0]
         dist = ChiSquaredDistribution.of(dof)
         return dist
 
+
 chi2 = chi2_gen()
+
 
 class expon_gen(rv_continuous):
     """
@@ -125,16 +134,18 @@ class expon_gen(rv_continuous):
         """
         self.name = "expon"
         self._dist = ExponentialDistribution.of(mean)
-    
+
     def _create_distribution(self, *args):
         """
         Create a exponential distribution object.
         """
-        mean = self._parse_args(*args)[0]      
+        mean = self._parse_args(*args)[0]
         dist = ExponentialDistribution.of(mean)
         return dist
 
+
 expon = expon_gen()
+
 
 class f_gen(rv_continuous):
     """
@@ -149,16 +160,18 @@ class f_gen(rv_continuous):
         """
         self.name = "f"
         self._dist = FDistribution.of(ndof, ddof)
-    
+
     def _create_distribution(self, *args):
         """
         Create a F distribution object.
         """
-        loc, scale = self._parse_args(*args)        
+        loc, scale = self._parse_args(*args)
         dist = FDistribution.of(loc, scale)
         return dist
 
+
 f = f_gen()
+
 
 class gamma_gen(rv_continuous):
     """
@@ -173,16 +186,18 @@ class gamma_gen(rv_continuous):
         """
         self.name = "gamma"
         self._dist = GammaDistribution.of(shape, scale)
-    
+
     def _create_distribution(self, *args):
         """
         Create a gamma distribution object.
         """
-        loc, scale = self._parse_args(*args)        
+        loc, scale = self._parse_args(*args)
         dist = GammaDistribution.of(loc, scale)
         return dist
 
+
 gamma = gamma_gen()
+
 
 class gumbel_gen(rv_continuous):
     """
@@ -202,11 +217,13 @@ class gumbel_gen(rv_continuous):
         """
         Create a gumbel distribution object.
         """
-        loc, scale = self._parse_args(*args)        
+        loc, scale = self._parse_args(*args)
         dist = GumbelDistribution.of(loc, scale)
         return dist
 
+
 gumbel = gumbel_gen()
+
 
 class laplace_gen(rv_continuous):
     """
@@ -221,16 +238,18 @@ class laplace_gen(rv_continuous):
         """
         self.name = "laplace"
         self._dist = LaplaceDistribution.of(loc, scale)
-    
+
     def _create_distribution(self, *args):
         """
         Create a Laplace distribution object.
         """
-        loc, scale = self._parse_args(*args)        
+        loc, scale = self._parse_args(*args)
         dist = LaplaceDistribution.of(loc, scale)
         return dist
 
+
 laplace = laplace_gen()
+
 
 class levy_gen(rv_continuous):
     """
@@ -245,16 +264,18 @@ class levy_gen(rv_continuous):
         """
         self.name = "levy"
         self._dist = LevyDistribution.of(loc, scale)
-    
+
     def _create_distribution(self, *args):
         """
         Create a Levy distribution object.
         """
-        loc, scale = self._parse_args(*args)        
+        loc, scale = self._parse_args(*args)
         dist = LevyDistribution.of(loc, scale)
         return dist
 
+
 levy = levy_gen()
+
 
 class logistic_gen(rv_continuous):
     """
@@ -269,16 +290,18 @@ class logistic_gen(rv_continuous):
         """
         self.name = "logistic"
         self._dist = LogisticDistribution.of(loc, scale)
-    
+
     def _create_distribution(self, *args):
         """
         Create a logistic distribution object.
         """
-        loc, scale = self._parse_args(*args)        
+        loc, scale = self._parse_args(*args)
         dist = LogisticDistribution.of(loc, scale)
         return dist
 
+
 logistic = logistic_gen()
+
 
 class lognorm_gen(rv_continuous):
     """
@@ -293,16 +316,18 @@ class lognorm_gen(rv_continuous):
         """
         self.name = "lognorm"
         self._dist = LevyDistribution.of(scale, shape)
-    
+
     def _create_distribution(self, *args):
         """
         Create a Log-normal distribution object.
         """
-        scale, shape = self._parse_args(*args)        
+        scale, shape = self._parse_args(*args)
         dist = LogNormalDistribution.of(scale, shape)
         return dist
 
+
 lognorm = lognorm_gen()
+
 
 class nakagami_gen(rv_continuous):
     """
@@ -317,7 +342,7 @@ class nakagami_gen(rv_continuous):
         """
         self.name = "nakagami"
         self._dist = NakagamiDistribution.of(loc, scale)
-    
+
     def _create_distribution(self, *args):
         """
         Create a Nakagami distribution object.
@@ -326,7 +351,9 @@ class nakagami_gen(rv_continuous):
         dist = NakagamiDistribution.of(shape, scale)
         return dist
 
+
 nakagami = nakagami_gen()
+
 
 class pareto_gen(rv_continuous):
     """
@@ -341,16 +368,18 @@ class pareto_gen(rv_continuous):
         """
         self.name = "pareto"
         self._dist = ParetoDistribution.of(scale, shape)
-    
+
     def _create_distribution(self, *args):
         """
         Create a Pareto distribution object.
         """
-        scale, shape = self._parse_args(*args)        
+        scale, shape = self._parse_args(*args)
         dist = ParetoDistribution.of(scale, shape)
         return dist
 
+
 pareto = pareto_gen()
+
 
 class t_gen(rv_continuous):
     """
@@ -364,16 +393,18 @@ class t_gen(rv_continuous):
         """
         self.name = "t"
         self._dist = TDistribution.of(dof)
-    
+
     def _create_distribution(self, *args):
         """
         Create a Student's t-distribution object.
         """
-        dof = self._parse_args(*args)[0]     
+        dof = self._parse_args(*args)[0]
         dist = TDistribution.of(dof)
         return dist
 
+
 t = t_gen()
+
 
 class triang_gen(rv_continuous):
     """
@@ -389,7 +420,7 @@ class triang_gen(rv_continuous):
         """
         self.name = "triang"
         self._dist = TriangularDistribution.of(a, c, b)
-    
+
     def _create_distribution(self, *args):
         """
         Create a Triangular distribution object.
@@ -406,7 +437,9 @@ class triang_gen(rv_continuous):
         dist = TriangularDistribution.of(a, c, b)
         return dist
 
+
 triang = triang_gen()
+
 
 class uniform_gen(rv_continuous):
     """
@@ -421,16 +454,18 @@ class uniform_gen(rv_continuous):
         """
         self.name = "uniform"
         self._dist = UniformContinuousDistribution.of(a, b)
-    
+
     def _create_distribution(self, *args):
         """
         Create a Uniform distribution object.
         """
-        scale, shape = self._parse_args(*args)        
+        scale, shape = self._parse_args(*args)
         dist = UniformContinuousDistribution.of(scale, shape)
         return dist
 
+
 uniform = uniform_gen()
+
 
 class weibull_gen(rv_continuous):
     """
@@ -445,7 +480,7 @@ class weibull_gen(rv_continuous):
         """
         self.name = "weibull"
         self._dist = WeibullDistribution.of(shape, scale)
-    
+
     def _create_distribution(self, *args):
         """
         Create a Weibull distribution object.
@@ -453,5 +488,6 @@ class weibull_gen(rv_continuous):
         shape, scale = self._parse_args(*args)
         dist = WeibullDistribution.of(shape, scale)
         return dist
+
 
 weibull = weibull_gen()

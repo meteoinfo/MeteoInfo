@@ -1,21 +1,22 @@
 # coding=utf-8
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2017-1-12
 # Purpose: MeteoInfoLab linear algebra module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 from org.meteoinfo.math.linalg import LinalgUtil
-#from org.meteoinfo.math.linalg import LinalgUtilJava as LinalgUtil
+# from org.meteoinfo.math.linalg import LinalgUtilJava as LinalgUtil
 from org.meteoinfo.math.stats import StatsUtil
 
 from .. import core as np
 
 __all__ = [
-    'solve','cholesky','det','lu','qr', 'svd','eig','inv','lstsq','slogdet','solve_triangular',
+    'solve', 'cholesky', 'det', 'lu', 'qr', 'svd', 'eig', 'inv', 'lstsq', 'slogdet', 'solve_triangular',
     'norm'
-    ]
+]
+
 
 class LinAlgError(Exception):
     """
@@ -27,11 +28,13 @@ class LinAlgError(Exception):
     """
     pass
 
+
 def _assert_2d(*arrays):
     for a in arrays:
         if a.ndim != 2:
             raise LinAlgError('%d-dimensional array given. Array must be '
                               'two-dimensional' % a.ndim)
+
 
 def solve(a, b):
     """
@@ -57,6 +60,7 @@ def solve(a, b):
     r = np.NDArray(x)
     return r
 
+
 def solve_triangular(a, b, lower=False):
     """
     Solve the equation `a x = b` for `x`, assuming a is a triangular matrix.
@@ -78,7 +82,8 @@ def solve_triangular(a, b, lower=False):
     """
     x = LinalgUtil.solve(a.asarray(), b.asarray())
     return np.NDArray(x)
-    
+
+
 def cholesky(a, lower=True):
     """
     Cholesky decomposition.
@@ -105,7 +110,8 @@ def cholesky(a, lower=True):
     """
     r = LinalgUtil.cholesky(a.asarray(), lower)
     return np.NDArray(r)
-    
+
+
 def lu(a):
     """
     Compute pivoted LU decomposition of a matrix.
@@ -144,7 +150,8 @@ def lu(a):
     l = np.NDArray(r[1])
     u = np.NDArray(r[2])
     return p, l, u
-    
+
+
 def qr(a):
     """
     Compute QR decomposition of a matrix.
@@ -170,6 +177,7 @@ def qr(a):
     q = np.NDArray(r[0])
     r = np.NDArray(r[1])
     return q, r
+
 
 def svd(a, full_matrices=True):
     """
@@ -201,7 +209,7 @@ def svd(a, full_matrices=True):
         Of shape ``(N,N)``.
     """
     r = LinalgUtil.svd(a.asarray())
-    #r = LinalgUtil.svd_EJML(a.asarray())
+    # r = LinalgUtil.svd_EJML(a.asarray())
     U = np.NDArray(r[0])
     s = np.NDArray(r[1])
     Vh = np.NDArray(r[2])
@@ -210,11 +218,12 @@ def svd(a, full_matrices=True):
         if m != n:
             k = min(m, n)
             if k == m:
-                Vh = Vh[:k,:].copy()
+                Vh = Vh[:k, :].copy()
             else:
-                U = U[:,:k].copy()
+                U = U[:, :k].copy()
     return U, s, Vh
-    
+
+
 def eig(a):
     """
     Compute the eigenvalues and right eigenvectors of a square array.
@@ -240,11 +249,12 @@ def eig(a):
         eigenvalue ``w[i]``.
     """
     r = LinalgUtil.eigen(a.asarray())
-    #r = LinalgUtil.eigen_EJML(a.asarray())
+    # r = LinalgUtil.eigen_EJML(a.asarray())
     w = np.NDArray(r[0])
     v = np.NDArray(r[1])
     return w, v
-    
+
+
 def inv(a):
     """
     Compute the (multiplicative) inverse of a matrix.
@@ -253,9 +263,11 @@ def inv(a):
     
     :returns: Inverse matrix.
     """
+    a = np.asarray(a)
     r = LinalgUtil.inv(a.asarray())
     return np.NDArray(r)
-    
+
+
 def lstsq(a, b):
     """
     Compute least-squares solution to equation Ax = b.
@@ -278,7 +290,8 @@ def lstsq(a, b):
     """
     r = StatsUtil.multipleLineRegress_OLS(b.asarray(), a.asarray(), True)
     return np.NDArray(r[0]), np.NDArray(r[1])
-    
+
+
 def det(a):
     """
     Compute the determinant of an array.
@@ -293,9 +306,10 @@ def det(a):
     det : (...) array_like
         Determinant of `a`.
     """
-    #r = LinalgUtil.determinantOfMatrix(a.asarray())
+    # r = LinalgUtil.determinantOfMatrix(a.asarray())
     r = LinalgUtil.det(a.asarray())
     return r
+
 
 def slogdet(a):
     """
@@ -307,6 +321,7 @@ def slogdet(a):
     """
     r = LinalgUtil.sLogDet(a.asarray())
     return r[0], r[1]
+
 
 def norm(x, ord=None, axis=None, keepdims=False):
     """
@@ -359,7 +374,7 @@ def norm(x, ord=None, axis=None, keepdims=False):
                 sqnorm = x.dot(x)
             ret = np.sqrt(sqnorm)
             if keepdims:
-                ret = ret.reshape(ndim*[1])
+                ret = ret.reshape(ndim * [1])
             return ret
 
     # Normalize the `axis` argument to a tuple.

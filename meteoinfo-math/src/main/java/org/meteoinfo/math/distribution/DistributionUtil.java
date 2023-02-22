@@ -72,6 +72,43 @@ public class DistributionUtil {
         Array r = Array.factory(DataType.DOUBLE, new int[]{n, dim}, s);
         return r;
     }
+
+    /**
+     * Random variates of given type.
+     * @param dis Distribution.
+     * @param n Size.
+     * @return Result array.
+     */
+    public static Array rvs(MultivariateNormalDistribution dis, int n) {
+        MultivariateNormalDistribution.Sampler sampler = dis.createSampler(RandomSource.MT.create());
+        int dim = dis.getDimension();
+        double[][] samples = new double[n][dim];
+        for (int i = 0; i < n; i++) {
+            samples[i] = sampler.sample();
+        }
+        double[] s = Arrays.stream(samples).flatMapToDouble(x -> Arrays.stream(x)).toArray();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{n, dim}, s);
+        return r;
+    }
+
+    /**
+     * Random variates of given type.
+     * @param dis Distribution.
+     * @param n Size.
+     * @return Result array.
+     */
+    public static Array rvs(MultivariateNormalDistribution dis, Array size) {
+        MultivariateNormalDistribution.Sampler sampler = dis.createSampler(RandomSource.MT.create());
+        int dim = dis.getDimension();
+        int n = (int) size.getSize();
+        double[][] samples = new double[n][dim];
+        for (int i = 0; i < n; i++) {
+            samples[i] = sampler.sample();
+        }
+        double[] s = Arrays.stream(samples).flatMapToDouble(x -> Arrays.stream(x)).toArray();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{n, dim}, s);
+        return r;
+    }
     
     /**
      * Probability density function at x

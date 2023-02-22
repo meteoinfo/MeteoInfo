@@ -1423,10 +1423,10 @@ def text3(x, y, z, s, zdir=None, **kwargs):
 
 
 @_copy_docstring_and_deprecators(Axes.axis)
-def axis(limits):
-    r = g_axes.axis(limits)
-    if r is not None:
-        draw_if_interactive()
+def axis(arg=None, **kwargs):
+    r = g_axes.axis(arg, **kwargs)
+    draw_if_interactive()
+    return r
 
 
 @_copy_docstring_and_deprecators(MapAxes.axis)

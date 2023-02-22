@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\particles"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\random">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\text"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
@@ -10,25 +9,24 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\hist"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\others"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\violinplot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\random"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\hist\hist_muti_array_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\violinplot\violinplot_3.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\plot_cluster_3d.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\plot_cluster_color_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\random\multivariate_normal_3.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\hist\hist_muti_array_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\violinplot\violinplot_3.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\plot_cluster_3d.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\plot_cluster_color_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\random\multivariate_normal_3.py"/>
     </RecentFiles>
   </File>
   <Font>

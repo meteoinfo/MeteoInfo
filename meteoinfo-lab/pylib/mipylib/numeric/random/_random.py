@@ -1,10 +1,10 @@
 # coding=utf-8
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2016-7-10
 # Purpose: MeteoInfoLab random module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 from org.meteoinfo.math.random import RandomUtil
 from org.meteoinfo.math.distribution import DistributionUtil
@@ -14,13 +14,14 @@ from org.apache.commons.statistics.distribution import NormalDistribution, BetaD
     LogNormalDistribution, ParetoDistribution, TDistribution, TriangularDistribution, \
     UniformContinuousDistribution, WeibullDistribution
 
-from ..core import NDArray
+from .. import core as np
 
 __all__ = [
-    'chisquare','exponential','f','gamma','gumbel','laplace','logistic',
-    'lognormal','normal','rand','randn','randint','random','pareto','poisson','seed','standard_t',
-    'triangular','uniform','weibull'
-    ]
+    'chisquare', 'exponential', 'f', 'gamma', 'gumbel', 'laplace', 'logistic',
+    'lognormal', 'multivariate_normal', 'normal', 'rand', 'randn', 'randint', 'random', 'pareto',
+    'poisson', 'seed', 'standard_t', 'triangular', 'uniform', 'weibull'
+]
+
 
 def seed(seed=None):
     """
@@ -33,6 +34,7 @@ def seed(seed=None):
     else:
         RandomUtil.useSeed = True
         RandomUtil.seed = seed
+
 
 def random(size=None):
     """
@@ -49,7 +51,8 @@ def random(size=None):
     if size is None:
         return RandomUtil.rand()
     else:
-        return NDArray(RandomUtil.rand(size))
+        return np.NDArray(RandomUtil.rand(size))
+
 
 def rand(*args):
     """
@@ -66,10 +69,11 @@ def rand(*args):
     if len(args) == 0:
         return RandomUtil.rand()
     elif len(args) == 1:
-        return NDArray(RandomUtil.rand(args[0]))
+        return np.NDArray(RandomUtil.rand(args[0]))
     else:
-        return NDArray(RandomUtil.rand(args))
-        
+        return np.NDArray(RandomUtil.rand(args))
+
+
 def randn(*args):
     """
     Return a sample (or samples) from the “standard normal” distribution.
@@ -85,10 +89,11 @@ def randn(*args):
     if len(args) == 0:
         return RandomUtil.randn()
     elif len(args) == 1:
-        return NDArray(RandomUtil.randn(args[0]))
+        return np.NDArray(RandomUtil.randn(args[0]))
     else:
-        return NDArray(RandomUtil.randn(args))
-        
+        return np.NDArray(RandomUtil.randn(args))
+
+
 def randint(low, high=None, size=None):
     """
     Return random integers from low (inclusive) to high (exclusive).
@@ -114,11 +119,12 @@ def randint(low, high=None, size=None):
         r = RandomUtil.randint(high)
         r += low
     else:
-        r = NDArray(RandomUtil.randint(high, size))
+        r = np.NDArray(RandomUtil.randint(high, size))
         if low != 0:
             r += low
     return r
-    
+
+
 def poisson(lam=1.0, size=None):
     """
     Draw samples from a Poisson distribution.
@@ -132,9 +138,10 @@ def poisson(lam=1.0, size=None):
     if size is None:
         r = RandomUtil.poisson(lam)
     else:
-        r = NDArray(RandomUtil.poisson(lam, size))
+        r = np.NDArray(RandomUtil.poisson(lam, size))
     return r
-    
+
+
 def normal(loc=0.0, scale=1.0, size=None):
     """
     Draw random samples from a normal (Gaussian) distribution.
@@ -148,8 +155,9 @@ def normal(loc=0.0, scale=1.0, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def chisquare(df, size=None):
     """
     Draw samples from a chi-square distribution.
@@ -163,8 +171,9 @@ def chisquare(df, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def exponential(scale=1.0, size=None):
     """
     Draw samples from a exponential distribution.
@@ -178,8 +187,9 @@ def exponential(scale=1.0, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def f(dfnum, dfden, size=None):
     """
     Draw random samples from a F distribution.
@@ -194,8 +204,9 @@ def f(dfnum, dfden, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def gamma(shape, scale=1.0, size=None):
     """
     Draw random samples from a Gamma distribution.
@@ -210,8 +221,9 @@ def gamma(shape, scale=1.0, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def gumbel(loc=0.0, scale=1.0, size=None):
     """
     Draw random samples from a Gumbel distribution.
@@ -226,8 +238,9 @@ def gumbel(loc=0.0, scale=1.0, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def laplace(loc=0.0, scale=1.0, size=None):
     """
     Draw samples from the Laplace or double exponential distribution with specified location (or mean) and scale (decay).
@@ -242,8 +255,9 @@ def laplace(loc=0.0, scale=1.0, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def logistic(loc=0.0, scale=1.0, size=None):
     """
     Draw samples from the Logistic distribution.
@@ -258,8 +272,9 @@ def logistic(loc=0.0, scale=1.0, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def lognormal(mean=0.0, sigma=1.0, size=None):
     """
     Draw samples from the log-normal distribution.
@@ -274,8 +289,9 @@ def lognormal(mean=0.0, sigma=1.0, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def pareto(a, size=None):
     """
     Draw samples from a Pareto II or Lomax distribution with specified shape.
@@ -289,8 +305,9 @@ def pareto(a, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def standard_t(df, size=None):
     """
     Draw samples from a standard Student’s t distribution with df degrees of freedom.
@@ -304,8 +321,9 @@ def standard_t(df, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def triangular(left, mode, right, size=None):
     """
     Draw samples from the triangular distribution over the interval [left, right].
@@ -322,8 +340,9 @@ def triangular(left, mode, right, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def uniform(low=0.0, high=1.0, size=None):
     """
     Draw samples from the uniform distribution.
@@ -340,8 +359,9 @@ def uniform(low=0.0, high=1.0, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
-    
+    return np.NDArray(r)
+
+
 def weibull(a, size=None):
     """
     Draw samples from a Weibull distribution.
@@ -355,4 +375,23 @@ def weibull(a, size=None):
     if size is None:
         size = 1
     r = DistributionUtil.rvs(dist, size)
-    return NDArray(r)
+    return np.NDArray(r)
+
+
+def multivariate_normal(mean, cov, size=None):
+    """
+    Draw samples from a multiple variate normal distribution.
+
+    :param mean: (*array*) Mean values.
+    :param cov: (*array*) Covariant matrix.
+    :param size: (*int*) Output shape. If size is None (default), a single value is returned.
+
+    :return: (*ndarray or scalar*) Drawn samples from the multiple variate normal distribution.
+    """
+    mean = np.asarray(mean)
+    cov = np.asarray(cov)
+    dist = DistributionUtil.mvNormDist(mean.asarray(), cov.asarray())
+    if size is None:
+        size = 1
+    r = DistributionUtil.rvs(dist, size)
+    return np.NDArray(r)

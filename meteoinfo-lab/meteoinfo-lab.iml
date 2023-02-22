@@ -22,103 +22,22 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="meteoinfo-chart" />
-    <orderEntry type="module" module-name="meteoinfo-console" />
-    <orderEntry type="library" name="Maven: de.sciss:docking-frames-common:2.0.0" level="project" />
-    <orderEntry type="library" name="Maven: de.sciss:docking-frames-core:2.0.0" level="project" />
     <orderEntry type="module" module-name="meteoinfo-geo" />
-    <orderEntry type="module" module-name="meteoinfo-ui" />
-    <orderEntry type="library" name="Maven: org.meteothink:wContour:1.7.1" level="project" />
-    <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath:1.0.7" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.12.0" level="project" />
-    <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-main:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-main:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.joml:joml:1.10.4" level="project" />
-    <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.3" level="project" />
-    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.3.2" level="project" />
-    <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:3.3.0" level="project" />
-    <orderEntry type="module" module-name="meteoinfo-ndarray" />
     <orderEntry type="module" module-name="meteoinfo-math" />
-    <orderEntry type="module" module-name="meteoinfo-geometry" />
-    <orderEntry type="module" module-name="meteoinfo-table" />
-    <orderEntry type="module" module-name="meteoinfo-image" />
-    <orderEntry type="module" module-name="meteoinfo-data" />
-    <orderEntry type="library" name="Maven: com.formdev:flatlaf:3.0" level="project" />
-    <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:3.0" level="project" />
-    <orderEntry type="library" name="Maven: org.freehep:freehep-util:2.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-emf:2.4" level="project" />
-    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-pdf:2.4" level="project" />
-    <orderEntry type="library" name="Maven: org.freehep:freehep-graphics2d:2.4" level="project" />
-    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-ps:2.4" level="project" />
-    <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.13.3" level="project" />
-    <orderEntry type="module" module-name="meteoinfo-common" />
-    <orderEntry type="library" name="Maven: com.toedter:jcalendar:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-greek:1.0.7" level="project" />
-    <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-cyrillic:1.0.7" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-android-aarch64:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-amd64:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-armv6hf:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-aarch64:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-macosx-universal:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-windows-amd64:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: antlr:antlr:2.7.7" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-android-aarch64:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-amd64:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-armv6hf:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-aarch64:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-macosx-universal:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-amd64:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy:4.0-beta1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-core:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-gamma:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-combinatorics:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-arrays:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-field:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-core:1.5" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-simple:1.5" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-client-api:1.5" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-statistics-distribution:1.0" level="project" />
-    <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-experimental:0.41.1" level="project" />
-    <orderEntry type="library" name="Maven: org.ejml:ejml-simple:0.41.1" level="project" />
-    <orderEntry type="library" name="Maven: org.ojalgo:ojalgo:52.0.1" level="project" />
-    <orderEntry type="library" name="Maven: com.github.haifengl:smile-interpolation:2.6.0" level="project" />
-    <orderEntry type="library" name="Maven: org.bytedeco:javacpp-platform:1.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.bytedeco:openblas-platform:0.3.10-1.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.locationtech.jts:jts-core:1.19.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-imaging:1.0-alpha3" level="project" />
-    <orderEntry type="library" name="Maven: com.twelvemonkeys.imageio:imageio-jpeg:3.9.4" level="project" />
-    <orderEntry type="module" module-name="meteoinfo-projection" />
-    <orderEntry type="module" module-name="meteoinfo-dataframe" />
-    <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.5.3" level="project" />
-    <orderEntry type="library" name="Maven: com.github.albfernandez:juniversalchardet:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: commons-io:commons-io:2.11.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.21" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.formdev:svgSalamander:1.1.3" level="project" />
-    <orderEntry type="library" name="Maven: org.netbeans:openide-lookup:1.9-patched-1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio:2.4" level="project" />
-    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-tests:2.4" level="project" />
-    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsbase:2.4" level="project" />
-    <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:guava:31.1-jre" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-complex:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-angle:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-rootfinder:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-quaternion:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-sampling:1.5" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy-exception:4.0-beta1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy-core:4.0-beta1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-fraction:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-core:0.41.1" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-ddense:0.41.1" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-dsparse:0.41.1" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-zdense:0.41.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ejml:ejml-simple:0.41.1" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-fdense:0.41.1" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-cdense:0.41.1" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-fsparse:0.41.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ojalgo:ojalgo:52.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.haifengl:smile-interpolation:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile-math:2.6.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp-platform:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:android-arm:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:android-arm64:1.5.4" level="project" />
@@ -134,6 +53,7 @@
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:macosx-x86_64:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:windows-x86:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:windows-x86_64:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:openblas-platform:0.3.10-1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:0.3.10-1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:android-arm:0.3.10-1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:android-arm64:0.3.10-1.5.4" level="project" />
@@ -149,22 +69,102 @@
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:macosx-x86_64:0.3.10-1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:windows-x86:0.3.10-1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:windows-x86_64:0.3.10-1.5.4" level="project" />
+    <orderEntry type="module" module-name="meteoinfo-geometry" />
+    <orderEntry type="library" name="Maven: org.locationtech.jts:jts-core:1.19.0" level="project" />
+    <orderEntry type="module" module-name="meteoinfo-table" />
+    <orderEntry type="module" module-name="meteoinfo-image" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-imaging:1.0-alpha3" level="project" />
+    <orderEntry type="library" name="Maven: com.twelvemonkeys.imageio:imageio-jpeg:3.9.4" level="project" />
     <orderEntry type="library" name="Maven: com.twelvemonkeys.imageio:imageio-core:3.9.4" level="project" />
     <orderEntry type="library" name="Maven: com.twelvemonkeys.imageio:imageio-metadata:3.9.4" level="project" />
     <orderEntry type="library" name="Maven: com.twelvemonkeys.common:common-lang:3.9.4" level="project" />
     <orderEntry type="library" name="Maven: com.twelvemonkeys.common:common-io:3.9.4" level="project" />
     <orderEntry type="library" name="Maven: com.twelvemonkeys.common:common-image:3.9.4" level="project" />
+    <orderEntry type="module" module-name="meteoinfo-data" />
+    <orderEntry type="module" module-name="meteoinfo-projection" />
     <orderEntry type="library" name="Maven: org.locationtech.proj4j:proj4j:1.2.2" level="project" />
     <orderEntry type="library" name="Maven: net.sf.geographiclib:GeographicLib-Java:2.0" level="project" />
+    <orderEntry type="module" module-name="meteoinfo-dataframe" />
+    <orderEntry type="library" name="Maven: edu.ucar:netcdfAll:5.5.3" level="project" />
+    <orderEntry type="library" name="Maven: com.github.albfernandez:juniversalchardet:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.11.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.21" level="project" />
+    <orderEntry type="library" name="Maven: com.formdev:flatlaf:3.0" level="project" />
+    <orderEntry type="library" name="Maven: com.formdev:flatlaf-extras:3.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.formdev:svgSalamander:1.1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.freehep:freehep-util:2.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.netbeans:openide-lookup:1.9-patched-1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-emf:2.4" level="project" />
+    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio:2.4" level="project" />
     <orderEntry type="library" name="Maven: org.freehep:freehep-io:2.2.2" level="project" />
+    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-tests:2.4" level="project" />
+    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsbase:2.4" level="project" />
+    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-pdf:2.4" level="project" />
+    <orderEntry type="library" name="Maven: org.freehep:freehep-graphics2d:2.4" level="project" />
+    <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.freehep:freehep-graphicsio-ps:2.4" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.13.3" level="project" />
+    <orderEntry type="module" module-name="meteoinfo-ui" />
+    <orderEntry type="module" module-name="meteoinfo-common" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:31.1-jre" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:failureaccess:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:3.12.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.3" level="project" />
+    <orderEntry type="library" name="Maven: com.toedter:jcalendar:1.4" level="project" />
+    <orderEntry type="library" name="Maven: org.meteothink:wContour:1.7.1" level="project" />
+    <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath:1.0.7" level="project" />
+    <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-greek:1.0.7" level="project" />
+    <orderEntry type="library" name="Maven: org.scilab.forge:jlatexmath-font-cyrillic:1.0.7" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.12.0" level="project" />
+    <orderEntry type="library" name="Maven: com.l2fprod:l2fprod-common-all:0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-main:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-android-aarch64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-amd64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-armv6hf:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-aarch64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-macosx-universal:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-windows-amd64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: antlr:antlr:2.7.7" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-main:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-android-aarch64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-amd64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-armv6hf:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-aarch64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-macosx-universal:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-amd64:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.joml:joml:1.10.4" level="project" />
+    <orderEntry type="module" module-name="meteoinfo-console" />
+    <orderEntry type="library" name="Maven: org.python:jython-standalone:2.7.3" level="project" />
+    <orderEntry type="library" name="Maven: com.fifesoft:rsyntaxtextarea:3.3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.fifesoft:autocomplete:3.3.0" level="project" />
+    <orderEntry type="module" module-name="meteoinfo-ndarray" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy:4.0-beta1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-complex:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-angle:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-rootfinder:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-quaternion:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-sampling:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy-exception:4.0-beta1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-legacy-core:4.0-beta1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-math4-core:4.0-beta1" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-core:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-gamma:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-fraction:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-combinatorics:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-arrays:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-numbers-field:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-core:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-simple:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-rng-client-api:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-statistics-distribution:1.0" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.1.0" level="project" />
+    <orderEntry type="library" name="Maven: de.sciss:docking-frames-common:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: de.sciss:docking-frames-core:2.0.0" level="project" />
   </component>
 </module>

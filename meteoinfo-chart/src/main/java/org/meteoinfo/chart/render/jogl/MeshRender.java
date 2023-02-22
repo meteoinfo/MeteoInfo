@@ -60,6 +60,7 @@ public class MeshRender extends JOGLGraphicRender {
         this(gl);
 
         this.meshGraphic = meshGraphic;
+        setBufferData();
         if (meshGraphic.isUsingTexture()) {
             texture = AWTTextureIO.newTexture(gl.getGLProfile(), meshGraphic.getImage(), true);
             this.textureID = texture.getTextureObject(gl);
@@ -72,6 +73,37 @@ public class MeshRender extends JOGLGraphicRender {
         vbo = GLBuffers.newDirectIntBuffer(2);
     }
 
+    private void setBufferData() {
+        float[] vertexData = meshGraphic.getVertexPosition();
+        FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
+        FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
+        sizePosition = vertexBuffer.capacity() * Float.BYTES;
+        sizeNormal = normalBuffer.capacity() * Float.BYTES;
+        int totalSize = sizePosition + sizeNormal;
+
+        FloatBuffer ctBuffer;
+        if (meshGraphic.isUsingTexture()) {
+            ctBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexTexture());
+        } else {
+            ctBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexColor());
+        }
+        sizeColorTexture = ctBuffer.capacity() * Float.BYTES;
+        totalSize += sizeColorTexture;
+
+        gl.glGenBuffers(2, vbo);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, totalSize, null, GL.GL_STATIC_DRAW);
+        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
+        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeNormal, normalBuffer);
+        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal, sizeColorTexture, ctBuffer);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+        IntBuffer indexBuffer = GLBuffers.newDirectIntBuffer(meshGraphic.getVertexIndices());
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * Integer.BYTES, indexBuffer, GL.GL_STATIC_DRAW);
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
     @Override
     public void setTransform(Transform transform, boolean alwaysUpdateBuffers) {
         boolean updateBuffer = true;
@@ -80,43 +112,13 @@ public class MeshRender extends JOGLGraphicRender {
 
         super.setTransform((Transform) transform.clone());
 
-        if (updateBuffer) {
-            //float[] vertexData = meshGraphic.getVertexPosition(this.transform);
-            float[] vertexData = meshGraphic.getVertexPosition();
-            FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
-            //meshGraphic.calculateNormalVectors(vertexData);
-            FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
-            sizePosition = vertexBuffer.capacity() * Float.BYTES;
-            sizeNormal = normalBuffer.capacity() * Float.BYTES;
-            int totalSize = sizePosition + sizeNormal;
-
-            FloatBuffer ctBuffer;
+        if (alwaysUpdateBuffers) {
+            setBufferData();
             if (meshGraphic.isUsingTexture()) {
-                ctBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexTexture());
-            } else {
-                ctBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexColor());
+                texture = AWTTextureIO.newTexture(gl.getGLProfile(), meshGraphic.getImage(), true);
+                this.textureID = texture.getTextureObject(gl);
+                this.bindingTextures();
             }
-            sizeColorTexture = ctBuffer.capacity() * Float.BYTES;
-            totalSize += sizeColorTexture;
-
-            gl.glGenBuffers(2, vbo);
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, totalSize, null, GL.GL_STATIC_DRAW);
-            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
-            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeNormal, normalBuffer);
-            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal, sizeColorTexture, ctBuffer);
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-
-            IntBuffer indexBuffer = GLBuffers.newDirectIntBuffer(meshGraphic.getVertexIndices());
-            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
-            gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * Integer.BYTES, indexBuffer, GL.GL_STATIC_DRAW);
-            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-        }
-
-        if (alwaysUpdateBuffers && meshGraphic.getImage() != null) {
-            texture = AWTTextureIO.newTexture(gl.getGLProfile(), meshGraphic.getImage(), true);
-            this.textureID = texture.getTextureObject(gl);
-            this.bindingTextures();
         }
     }
 

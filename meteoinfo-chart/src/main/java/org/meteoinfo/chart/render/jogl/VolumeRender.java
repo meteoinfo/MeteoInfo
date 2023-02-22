@@ -77,6 +77,7 @@ public class VolumeRender extends JOGLGraphicRender {
      */
     public void setVolume(VolumeGraphic value) {
         this.volume = value;
+        setBufferData();
         this.bindingTextures();
         try {
             this.compileShaders();
@@ -105,6 +106,16 @@ public class VolumeRender extends JOGLGraphicRender {
         vbo = GLBuffers.newDirectIntBuffer(1);
     }
 
+    private void setBufferData() {
+        float[] vertexBufferData = volume.getVertexBufferData();
+
+        gl.glGenBuffers(1, vbo);
+        gl.glBindBuffer(GL_ARRAY_BUFFER, vbo.get(0));
+        gl.glBufferData(GL_ARRAY_BUFFER, vertexBufferData.length * Float.BYTES,
+                Buffers.newDirectFloatBuffer(vertexBufferData), GL_STATIC_DRAW);
+        gl.glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
     @Override
     public void setTransform(Transform transform, boolean alwaysUpdateBuffers) {
         boolean updateBuffer = true;
@@ -113,7 +124,7 @@ public class VolumeRender extends JOGLGraphicRender {
 
         super.setTransform((Transform) transform.clone());
 
-        if (updateBuffer) {
+        /*if (updateBuffer) {
             float[] vertexBufferData = volume.getVertexBufferData();
 
             gl.glGenBuffers(1, vbo);
@@ -121,9 +132,10 @@ public class VolumeRender extends JOGLGraphicRender {
             gl.glBufferData(GL_ARRAY_BUFFER, vertexBufferData.length * Float.BYTES,
                     Buffers.newDirectFloatBuffer(vertexBufferData), GL_STATIC_DRAW);
             gl.glBindBuffer(GL_ARRAY_BUFFER, 0);
-        }
+        }*/
 
         if (alwaysUpdateBuffers) {
+            setBufferData();
             this.bindingTextures();
             try {
                 this.compileShaders();

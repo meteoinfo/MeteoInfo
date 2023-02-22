@@ -56,10 +56,39 @@ public class TriMeshRender extends JOGLGraphicRender {
         this(gl);
 
         this.meshGraphic = meshGraphic;
+        this.setBufferData();
     }
 
     private void initVertexBuffer() {
         vbo = GLBuffers.newDirectIntBuffer(2);
+    }
+
+    private void setBufferData() {
+        if (vertexPosition == null) {
+            vertexPosition = meshGraphic.getVertexPosition();
+        }
+        FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
+        if (meshGraphic.getVertexNormal() == null) {
+            meshGraphic.calculateNormalVectors(vertexPosition);
+        }
+        FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
+        FloatBuffer colorBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexColor());
+        sizePosition = vertexBuffer.capacity() * Float.BYTES;
+        sizeNormal = normalBuffer.capacity() * Float.BYTES;
+        sizeColor = colorBuffer.capacity() * Float.BYTES;
+
+        gl.glGenBuffers(2, vbo);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal + sizeColor, null, GL.GL_STATIC_DRAW);
+        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
+        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeNormal, normalBuffer);
+        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal, sizeColor, colorBuffer);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+        IntBuffer indexBuffer = GLBuffers.newDirectIntBuffer(meshGraphic.getVertexIndices());
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * Integer.BYTES, indexBuffer, GL.GL_STATIC_DRAW);
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     @Override
@@ -70,32 +99,8 @@ public class TriMeshRender extends JOGLGraphicRender {
 
         super.setTransform((Transform) transform.clone());
 
-        if (updateBuffer) {
-            if (vertexPosition == null) {
-                vertexPosition = meshGraphic.getVertexPosition();
-            }
-            FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
-            if (meshGraphic.getVertexNormal() == null) {
-                meshGraphic.calculateNormalVectors(vertexPosition);
-            }
-            FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
-            FloatBuffer colorBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexColor());
-            sizePosition = vertexBuffer.capacity() * Float.BYTES;
-            sizeNormal = normalBuffer.capacity() * Float.BYTES;
-            sizeColor = colorBuffer.capacity() * Float.BYTES;
-
-            gl.glGenBuffers(2, vbo);
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal + sizeColor, null, GL.GL_STATIC_DRAW);
-            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
-            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeNormal, normalBuffer);
-            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal, sizeColor, colorBuffer);
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-
-            IntBuffer indexBuffer = GLBuffers.newDirectIntBuffer(meshGraphic.getVertexIndices());
-            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
-            gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * Integer.BYTES, indexBuffer, GL.GL_STATIC_DRAW);
-            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+        if (alwaysUpdateBuffers) {
+            setBufferData();
         }
     }
 

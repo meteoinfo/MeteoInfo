@@ -2083,7 +2083,7 @@ class Axes(object):
         return barbreaks
 
     def hist(self, x, bins=10, density=False, cumulative=False,
-             rwidth=None, **kwargs):
+             rwidth=None, orientation='vertical', **kwargs):
         """
         Plot a histogram.
         
@@ -2098,6 +2098,27 @@ class Axes(object):
             last bin gives the total number of datapoints.
         :param rwidth: (*float or None*) Default is `None`. The relative width of the bars as a
             fraction of the bin width. If None, automatically compute the width.
+        :param orientation: (*str*) {'vertical', 'horizontal'}, default: 'vertical'. If
+            'horizontal', barh will be used for bar-type histograms and the bottom kwarg will be
+            the left edges.
+
+        Returns
+        -------
+        n : array or list of arrays
+            The values of the histogram bins. See *density* and *weights* for a
+            description of the possible semantics.  If input *x* is an array,
+            then this is an array of length *nbins*. If input is a sequence of
+            arrays ``[data1, data2, ...]``, then this is a list of arrays with
+            the values of the histograms for each of the arrays in the same
+            order.  The dtype of the array *n* (or of its element arrays) will
+            always be float even if no weighting or normalization is used.
+        bins : array
+            The edges of the bins. Length nbins + 1 (nbins left edges and right
+            edge of last bin).  Always a single array even when multiple data
+            sets are passed in.
+        patches : `.BarContainer` or list of a single `.Polygon` or list of such objects
+            Container of individual artists used to create the histogram
+            or list of such containers if there are multiple input datasets.
         """
         if isinstance(x, NDArray) and x.ndim == 1:
             m, bins = np.histogram(x, bins=bins, density=density)
@@ -2108,7 +2129,10 @@ class Axes(object):
             if rwidth is not None:
                 width = width * rwidth
 
-            barbreaks = self.bar(bins[:-1], m, width, align='center', **kwargs)
+            if orientation == 'vertical':
+                barbreaks = self.bar(bins[:-1], m, width, align='center', **kwargs)
+            else:
+                barbreaks = self.barh(bins[:-1], m, width, align='center', **kwargs)
 
             return m, bins, barbreaks
         else:
@@ -2140,7 +2164,10 @@ class Axes(object):
                 kwargs['color'] = colors[i]
                 if labels is not None:
                     kwargs['label'] = labels[i]
-                barbreaks = self.bar(bins[:-1] + width * i, m, width, align='center', **kwargs)
+                if orientation == 'vertical':
+                    barbreaks = self.bar(bins[:-1] + width * i, m, width, align='center', **kwargs)
+                else:
+                    barbreaks = self.barh(bins[:-1] + width * i, m, width, align='center', **kwargs)
                 barbreaklist.append(barbreaks)
 
             return mlist, bins, barbreaklist
@@ -2461,7 +2488,7 @@ class Axes(object):
             else:
                 ls = LegendManage.createLegendScheme(vmin, vmax, cmap)
         ls = ls.convertTo(ShapeTypes.POLYGON)
-        if not kwargs.has_key('edgecolor'):
+        if 'edgecolor' not in kwargs.keys():
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
         # norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
@@ -2475,7 +2502,7 @@ class Axes(object):
 
         visible = kwargs.pop('visible', True)
         if visible:
-            if not xaxistype is None:
+            if xaxistype is not None:
                 self.set_xaxis_type(xaxistype)
                 self._axes.updateDrawExtent()
 

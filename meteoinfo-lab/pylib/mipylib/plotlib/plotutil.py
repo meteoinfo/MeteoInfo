@@ -822,7 +822,7 @@ def setlegendscheme_line(ls, **kwargs):
 def setlegendscheme_polygon(ls, **kwargs):
     ls = ls.convertTo(ShapeTypes.POLYGON)
     fill = True
-    if kwargs.has_key('facecolor'):
+    if 'facecolor' in kwargs.keys():
         facecolor = kwargs['facecolor']
         if facecolor is None:
             fill = False
@@ -832,7 +832,7 @@ def setlegendscheme_polygon(ls, **kwargs):
         facecolor = None
     edge = True
     edgealpha = kwargs.pop('edgealpha', None)
-    if kwargs.has_key('edgecolor'):
+    if 'edgecolor' in kwargs.keys():
         edgecolor = kwargs['edgecolor']
         if edgecolor is None:
             edge = False
@@ -852,29 +852,29 @@ def setlegendscheme_polygon(ls, **kwargs):
     bgcolor = getcolor(bgcolor)
     for lb in ls.getLegendBreaks():
         lb.setDrawFill(fill)
-        if not facecolor is None:
+        if facecolor is not None:
             lb.setColor(facecolor)
-        if not alpha is None:
+        if alpha is not None:
             c = lb.getColor()
             c = getcolor(c, alpha)
             lb.setColor(c)
-        if not edgesize is None:
+        if edgesize is not None:
             lb.setOutlineSize(edgesize)
         lb.setDrawOutline(edge)
         if edgecolor is None:
-            if not edgealpha is None:
+            if edgealpha is not None:
                 edgecolor = lb.getOutlineColor()
                 edgecolor = getcolor(edgecolor, edgealpha)
                 lb.setOutlineColor(edgecolor)
         else:
             lb.setOutlineColor(edgecolor)
-        if not hatch is None:
+        if hatch is not None:
             lb.setStyle(hatch)
-            if not bgcolor is None:
+            if bgcolor is not None:
                 lb.setBackColor(bgcolor)
-            if not hatchsize is None:
+            if hatchsize is not None:
                 lb.setStyleSize(hatchsize)
-            if not hatchlinewidth is None:
+            if hatchlinewidth is not None:
                 lb.setStyleLineWidth(hatchlinewidth)
     return ls
 

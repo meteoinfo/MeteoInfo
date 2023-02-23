@@ -364,7 +364,7 @@ public class StatsUtil {
      * @return Estimated regression parameters and residuals
      */
     public static Array[] multipleLineRegress_OLS(Array y, Array x, boolean noIntercept) {
-        OLSMultipleLinearRegression regression = new OLSMultipleLinearRegression();
+        OLSMultipleLinearRegression regression = new MIOLSMultipleLinearRegression();
         regression.setNoIntercept(noIntercept);
         y = y.reduce();
         double[] yy = (double[])ArrayUtil.copyToNDJavaArray_Double(y);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\contour">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\stats">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\random"/>
@@ -8,7 +8,6 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\integrate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
@@ -16,15 +15,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\hist"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model\obj_Lion_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\hist\hist_h_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\linregress_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\mlinregress_3.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model\obj_Lion_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\hist\hist_h_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\linregress_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\mlinregress_3.py"/>
     </RecentFiles>
   </File>
   <Font>

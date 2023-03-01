@@ -351,7 +351,7 @@ public class StatsUtil {
      * @param x X sample data - two dimension array
      * @return Estimated regression parameters and residuals
      */
-    public static Array[] multipleLineRegress_OLS(Array y, Array x) {
+    public static Object[] multipleLineRegress_OLS(Array y, Array x) {
         return multipleLineRegress_OLS(y, x, false);
     }
     
@@ -363,7 +363,7 @@ public class StatsUtil {
      * @param noIntercept No intercept
      * @return Estimated regression parameters and residuals
      */
-    public static Array[] multipleLineRegress_OLS(Array y, Array x, boolean noIntercept) {
+    public static Object[] multipleLineRegress_OLS(Array y, Array x, boolean noIntercept) {
         OLSMultipleLinearRegression regression = new MIOLSMultipleLinearRegression();
         regression.setNoIntercept(noIntercept);
         y = y.reduce();
@@ -382,8 +382,9 @@ public class StatsUtil {
         for (int i = 0; i < k; i++){
             aResiduals.setDouble(i, residuals[i]);
         }
+        double r2 = regression.calculateRSquared();
         
-        return new Array[]{aPara, aResiduals};
+        return new Object[]{aPara, aResiduals, r2};
     }
     
     /**

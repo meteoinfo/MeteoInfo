@@ -2,12 +2,13 @@ from .. import core as np
 import stats
 from ..linalg import linalg
 
-__all__ = ['gaussian_kde']
+__all__ = ['gaussian_kde', 'GaussianKDE']
 
 
 class GaussianKDE(object):
     """
     Representation of a kernel-density estimate using Gaussian kernels.
+
     Parameters
     ----------
     dataset : array_like
@@ -19,6 +20,7 @@ class GaussianKDE(object):
         scalar, this will be used directly as `kde.factor`.  If a
         callable, it should take a `GaussianKDE` instance as only
         parameter and return a scalar. If None (default), 'scott' is used.
+
     Attributes
     ----------
     dataset : ndarray
@@ -35,6 +37,7 @@ class GaussianKDE(object):
         (`kde.factor`).
     inv_cov : ndarray
         The inverse of `covariance`.
+
     Methods
     -------
     kde.evaluate(points) : ndarray

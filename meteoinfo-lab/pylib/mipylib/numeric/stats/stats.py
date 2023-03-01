@@ -1,10 +1,10 @@
 # coding=utf-8
-#-----------------------------------------------------
+# -----------------------------------------------------
 # Author: Yaqiang Wang
 # Date: 2017-3-9
 # Purpose: MeteoInfoLab stats module
 # Note: Jython
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 from org.meteoinfo.math.stats import StatsUtil
 from org.meteoinfo.ndarray.math import ArrayMath
@@ -15,9 +15,15 @@ from collections import namedtuple
 import warnings
 
 __all__ = [
-    'chi2_contingency','chisquare','covariance','cov','pearsonr','spearmanr','kendalltau','kurtosis',
-    'linregress','mlinregress','percentile','skew','ttest_1samp', 'ttest_ind','ttest_rel','taylor_stats'
-    ]
+    'chi2_contingency', 'chisquare', 'covariance', 'cov', 'pearsonr', 'spearmanr', 'kendalltau', 'kurtosis',
+    'linregress', 'mlinregress', 'percentile', 'skew', 'ttest_1samp', 'ttest_ind', 'ttest_rel', 'taylor_stats'
+]
+
+LinregressResult = namedtuple('LinregressResult',
+                              ['slope', 'intercept', 'rvalue', 'pvalue', 'stderr'])
+KendalltauResult = namedtuple('KendalltauResult', ('correlation', 'pvalue'))
+MLinregressResult = namedtuple('MLinregressResult', ['beta', 'residuals', 'r2'])
+
 
 def _contains_nan(a, nan_policy='propagate'):
     policies = ['propagate', 'raise', 'omit']
@@ -46,6 +52,7 @@ def _contains_nan(a, nan_policy='propagate'):
         raise ValueError("The input contains nan values")
 
     return contains_nan, nan_policy
+
 
 # Moment with optional pre-computed mean, equal to a.mean(axis, keepdims=True)
 def _moment(a, moment, axis, mean=None):
@@ -78,14 +85,15 @@ def _moment(a, moment, axis, mean=None):
         if n_list[-1] == 1:
             s = a_zero_mean.copy()
         else:
-            s = a_zero_mean**2
+            s = a_zero_mean ** 2
 
         # Perform multiplications
         for n in n_list[-2::-1]:
-            s = s**2
+            s = s ** 2
             if n % 2:
                 s *= a_zero_mean
         return np.mean(s, axis)
+
 
 def skew(a, axis=0, bias=True):
     r"""Compute the sample skewness of a data set.
@@ -153,6 +161,7 @@ def skew(a, axis=0, bias=True):
         g1 = np.sqrt((n - 1.0) * n) / (n - 2.0) * g1
 
     return g1
+
 
 def kurtosis(a, axis=0, fisher=True, bias=True):
     """Compute the kurtosis (Fisher or Pearson) of a dataset.
@@ -225,12 +234,13 @@ def kurtosis(a, axis=0, fisher=True, bias=True):
     mean = a.mean(axis, keepdims=True)
     m2 = _moment(a, 2, axis, mean=mean)
     m4 = _moment(a, 4, axis, mean=mean)
-    g1 =  m4 / m2 ** 2.0
+    g1 = m4 / m2 ** 2.0
 
     if not bias:
-        g1 = 1.0/(n-2)/(n-3) * ((n**2-1.0)*m4/m2**2.0 - 3*(n-1)**2.0)
+        g1 = 1.0 / (n - 2) / (n - 3) * ((n ** 2 - 1.0) * m4 / m2 ** 2.0 - 3 * (n - 1) ** 2.0)
 
     return g1 - 3 if fisher else g1
+
 
 def covariance(x, y, bias=False):
     """
@@ -250,7 +260,8 @@ def covariance(x, y, bias=False):
         y = np.array(y)
     r = StatsUtil.covariance(x.asarray(), y.asarray(), bias)
     return r
-    
+
+
 def cov(m, y=None, rowvar=True, bias=False):
     """
     Estimate a covariance matrix.
@@ -270,7 +281,7 @@ def cov(m, y=None, rowvar=True, bias=False):
         m = np.array(m)
     if rowvar == True and m.ndim == 2:
         m = m.T
-    if y is None:        
+    if y is None:
         r = StatsUtil.cov(m.asarray(), not bias)
         if isinstance(r, Array):
             return np.array(r)
@@ -283,7 +294,8 @@ def cov(m, y=None, rowvar=True, bias=False):
             y = y.T
         r = StatsUtil.cov(m.asarray(), y.asarray(), not bias)
         return np.array(r)
-        
+
+
 def pearsonr(x, y, axis=None):
     """
     Calculates a Pearson correlation coefficient and the p-value for testing non-correlation.
@@ -318,7 +330,6 @@ def pearsonr(x, y, axis=None):
         r = StatsUtil.pearsonr(x.asarray(), y.asarray(), axis)
         return np.array(r[0]), np.array(r[1])
 
-KendalltauResult = namedtuple('KendalltauResult', ('correlation', 'pvalue'))
 
 def kendalltau(x, y, nan_policy='propagate', method='auto', variant='b'):
     """
@@ -399,6 +410,7 @@ def kendalltau(x, y, nan_policy='propagate', method='auto', variant='b'):
     r = StatsUtil.kendalltau(x.asarray(), y.asarray())
     return r[0], r[1]
 
+
 def spearmanr(m, y=None, axis=0):
     """
     Calculates a Spearman rank-order correlation coefficient.
@@ -423,7 +435,7 @@ def spearmanr(m, y=None, axis=0):
         m = np.array(m)
     if axis == 1 and m.ndim == 2:
         m = m.T
-    if y is None:        
+    if y is None:
         r = StatsUtil.spearmanr(m.asarray())
         if isinstance(r, Array):
             return np.array(r)
@@ -436,13 +448,14 @@ def spearmanr(m, y=None, axis=0):
             y = y.T
         r = StatsUtil.spearmanr(m.asarray(), y.asarray())
         return r[0], r[1]
-        
-def linregress(x, y, outvdn=False):
+
+
+def linregress(x, y, outnvd=False):
     """
     Calculate a linear least-squares regression for two sets of measurements.
     
     :param x, y: (*array_like*) Two sets of measurements. Both arrays should have the same length.
-    :param outvdn: (*boolean*) Output validate data number or not. Default is False.
+    :param outnvd: (*boolean*) Output validate data number or not. Default is False.
     
     :returns: Result slope, intercept, relative coefficient, two-sided p-value for a hypothesis test 
         whose null hypothesis is that the slope is zero, standard error of the estimated gradient, 
@@ -453,11 +466,14 @@ def linregress(x, y, outvdn=False):
     if isinstance(y, list):
         y = np.array(y)
     r = ArrayMath.lineRegress(x.asarray(), y.asarray())
-    if outvdn:
-        return r[0], r[1], r[2], r[3], r[4], r[5]
+    if outnvd:
+        return LinregressResult(slope=r[0], intercept=r[1], rvalue=r[2], pvalue=r[3],
+                                stderr=r[4]), r[5]
     else:
-        return r[0], r[1], r[2], r[3], r[4]
-    
+        return LinregressResult(slope=r[0], intercept=r[1], rvalue=r[2], pvalue=r[3],
+                                stderr=r[4])
+
+
 def mlinregress(y, x):
     """
     Implements ordinary least squares (OLS) to estimate the parameters of a multiple linear 
@@ -466,15 +482,16 @@ def mlinregress(y, x):
     :param y: (*array_like*) Y sample data - one dimension array.
     :param x: (*array_like*) X sample data - two dimension array.
     
-    :returns: Estimated regression parameters and residuals.
+    :returns: Estimated regression parameters, residuals and R-Squared.
     """
     if isinstance(x, list):
         x = np.array(x)
     if isinstance(y, list):
         y = np.array(y)
     r = StatsUtil.multipleLineRegress_OLS(y.asarray(), x.asarray())
-    return np.array(r[0]), np.array(r[1])
-    
+    return MLinregressResult(beta=np.array(r[0]), residuals=np.array(r[1]), r2=r[2])
+
+
 def percentile(a, q, axis=None):
     """
     Compute the qth percentile of the data along the specified axis.
@@ -495,7 +512,8 @@ def percentile(a, q, axis=None):
         r = StatsUtil.percentile(a.asarray(), q, axis)
         r = np.array(r)
     return r
-    
+
+
 def ttest_1samp(a, popmean):
     """
     Calculate the T-test for the mean of ONE group of scores.
@@ -512,7 +530,8 @@ def ttest_1samp(a, popmean):
         a = np.array(x)
     r = StatsUtil.tTest(a.asarray(), popmean)
     return r[0], r[1]
-    
+
+
 def ttest_rel(a, b):
     """
     Calculates the T-test on TWO RELATED samples of scores, a and b.
@@ -531,7 +550,8 @@ def ttest_rel(a, b):
         b = np.array(b)
     r = StatsUtil.pairedTTest(a.asarray(), b.asarray())
     return r[0], r[1]
-    
+
+
 def ttest_ind(a, b):
     """
     Calculates the T-test for the means of TWO INDEPENDENT samples of scores.
@@ -551,7 +571,8 @@ def ttest_ind(a, b):
         b = np.array(b)
     r = StatsUtil.tTest(a.asarray(), b.asarray())
     return r[0], r[1]
-    
+
+
 def chisquare(f_obs, f_exp=None):
     """
     Calculates a one-way chi square test.
@@ -574,7 +595,8 @@ def chisquare(f_obs, f_exp=None):
         f_exp = np.array(f_exp)
     r = StatsUtil.chiSquareTest(f_exp.asarray(), f_obs.asarray())
     return r[0], r[1]
-    
+
+
 def chi2_contingency(observed):
     """
     Chi-square test of independence of variables in a contingency table.
@@ -592,6 +614,7 @@ def chi2_contingency(observed):
         observed = np.array(observed)
     r = StatsUtil.chiSquareTest(observed.asarray())
     return r[0], r[1]
+
 
 def taylor_stats(p, r):
     """
@@ -638,8 +661,8 @@ def taylor_stats(p, r):
     Created on Dec 3, 2016
     """
     # Check that dimensions of predicted and reference fields match
-    pdims= p.shape
-    rdims= r.shape
+    pdims = p.shape
+    rdims = r.shape
     if pdims != rdims:
         message = 'predicted and reference field dimensions do not' + \
                   ' match.\n' + \
@@ -659,7 +682,7 @@ def taylor_stats(p, r):
 
     # Calculate (E')^2
     crmsd = np.square((p - pmean) - (r - rmean))
-    crmsd = np.sum(crmsd)/p.size
+    crmsd = np.sum(crmsd) / p.size
     crmsd = np.sqrt(crmsd)
     crmsd = [0.0, crmsd]
 

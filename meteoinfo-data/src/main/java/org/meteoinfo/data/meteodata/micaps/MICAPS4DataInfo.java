@@ -88,31 +88,34 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             this.setFileName(fileName);
             aLine = sr.readLine().trim();
             _description = aLine;
-            aLine = sr.readLine().trim();
+            _headLineNum = 1;
+            //aLine = sr.readLine().trim();
             dataArray = aLine.split("\\s+");
             for (i = 0; i < dataArray.length; i++) {
                 if (!dataArray[i].isEmpty()) {
                     dataList.add(dataArray[i]);
                 }
             }
-            _headLineNum = 2;
-            for (n = 0; n <= 10; n++) {
-                if (dataList.size() < 19) {
-                    aLine = sr.readLine().trim();
-                    dataArray = aLine.split("\\s+");
-                    for (i = 0; i < dataArray.length; i++) {
-                        if (!dataArray[i].isEmpty()) {
-                            dataList.add(dataArray[i]);
+            if (dataList.size() < 21) {
+                for (n = 0; n <= 10; n++) {
+                    if (dataList.size() < 21) {
+                        aLine = sr.readLine().trim();
+                        dataArray = aLine.split("\\s+");
+                        for (i = 0; i < dataArray.length; i++) {
+                            if (!dataArray[i].isEmpty()) {
+                                dataList.add(dataArray[i]);
+                            }
                         }
+                        _headLineNum += 1;
+                    } else {
+                        break;
                     }
-                    _headLineNum += 1;
-                } else {
-                    break;
                 }
             }
             sr.close();
 
-            int year = Integer.parseInt(dataList.get(0));
+            int idx = 3;
+            int year = Integer.parseInt(dataList.get(idx));
             if (year < 100) {
                 if (year < 50) {
                     year = 2000 + year;
@@ -120,27 +123,28 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
                     year = 1900 + year;
                 }
             }
-            _preHours = Integer.parseInt(dataList.get(4));
-            LocalDateTime time = LocalDateTime.of(year, Integer.parseInt(dataList.get(1)), Integer.parseInt(dataList.get(2)),
-                    Integer.parseInt(dataList.get(3)), 0, 0);
+            _preHours = Integer.parseInt(dataList.get(idx + 4));
+            LocalDateTime time = LocalDateTime.of(year, Integer.parseInt(dataList.get(idx + 1)),
+                    Integer.parseInt(dataList.get(idx + 2)),
+                    Integer.parseInt(dataList.get(idx + 3)), 0, 0);
             time = time.plusHours(_preHours);
             
-            _level = Integer.parseInt(dataList.get(5));
-            float XDelt = Float.parseFloat(dataList.get(6));
-            float YDelt = Float.parseFloat(dataList.get(7));
-            float XMin = Float.parseFloat(dataList.get(8));
-            float XMax = Float.parseFloat(dataList.get(9));
-            float YMin = Float.parseFloat(dataList.get(10));
-            float YMax = Float.parseFloat(dataList.get(11));
-            int XNum = Integer.parseInt(dataList.get(12));
-            int YNum = Integer.parseInt(dataList.get(13));
-            float contourDelt = Float.parseFloat(dataList.get(14));
-            float contourSValue = Float.parseFloat(dataList.get(15));
-            float contourEValue = Float.parseFloat(dataList.get(16));
-            float smoothCo = Float.parseFloat(dataList.get(17));
-            float boldValue = Float.parseFloat(dataList.get(18));
+            _level = Integer.parseInt(dataList.get(idx + 5));
+            float XDelt = Float.parseFloat(dataList.get(idx + 6));
+            float YDelt = Float.parseFloat(dataList.get(idx + 7));
+            float XMin = Float.parseFloat(dataList.get(idx + 8));
+            float XMax = Float.parseFloat(dataList.get(idx + 9));
+            float YMin = Float.parseFloat(dataList.get(idx + 10));
+            float YMax = Float.parseFloat(dataList.get(idx + 11));
+            int XNum = Integer.parseInt(dataList.get(idx + 12));
+            int YNum = Integer.parseInt(dataList.get(idx + 13));
+            float contourDelt = Float.parseFloat(dataList.get(idx + 14));
+            float contourSValue = Float.parseFloat(dataList.get(idx + 15));
+            float contourEValue = Float.parseFloat(dataList.get(idx + 16));
+            float smoothCo = Float.parseFloat(dataList.get(idx + 17));
+            float boldValue = Float.parseFloat(dataList.get(idx + 18));
             boolean isLonLat;
-            if (dataList.get(16).equals("-1") || dataList.get(16).equals("-2") || dataList.get(16).equals("-3")) {
+            if (dataList.get(idx + 16).equals("-1") || dataList.get(idx + 16).equals("-2") || dataList.get(idx + 16).equals("-3")) {
                 isLonLat = false;
             } else {
                 isLonLat = true;

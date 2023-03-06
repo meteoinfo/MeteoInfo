@@ -128,29 +128,21 @@ public class MICAPSDataInfo {
                     String dataType = stoker.nextToken() + " " + stoker.nextToken();
                     if (dataType.contains("diamond 1")) {
                         dataInfo = new MICAPS1DataInfo();
-                    }
-                    if (dataType.equals("diamond 2")) {
+                    } else if (dataType.equals("diamond 2")) {
                         dataInfo = new MICAPS2DataInfo();
-                    }
-                    if (dataType.equals("diamond 3")) {
+                    } else if (dataType.equals("diamond 3")) {
                         dataInfo = new MICAPS3DataInfo();
-                    }
-                    if (dataType.equals("diamond 4")) {
+                    } else if (dataType.equals("diamond 4")) {
                         dataInfo = new MICAPS4DataInfo();
-                    }
-                    if (dataType.equals("diamond 7")) {
+                    } else if (dataType.equals("diamond 7")) {
                         dataInfo = new MICAPS7DataInfo();
-                    }
-                    if (dataType.equals("diamond 11")) {
+                    } else if (dataType.equals("diamond 11")) {
                         dataInfo = new MICAPS11DataInfo();
-                    }
-                    if (dataType.equals("diamond 13")) {
+                    } else if (dataType.equals("diamond 13")) {
                         dataInfo = new MICAPS13DataInfo();
-                    }
-                    if (dataType.contains("iamond 120")) {
+                    } else if (dataType.contains("iamond 120")) {
                         dataInfo = new MICAPS120DataInfo();
-                    }
-                    if (dataType.contains("diamond 131")) {
+                    } else if (dataType.contains("diamond 131")) {
                         dataInfo = new MICAPS131DataInfo();
                     }
                 }

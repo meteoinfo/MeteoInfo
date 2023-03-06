@@ -72,7 +72,7 @@ class interp2d(object):
     :param y: (*array_like*) 1-D arrays of y coordinate in strictly ascending order.
     :param z: (*array_like*) 2-D array of data with shape (x.size,y.size).
     :param kind: (*boolean*) Specifies the kind of interpolation as a string (‘linear’, 
-        ‘nearest’, 'kriging'). Default is ‘linear’.
+        ‘spline’, 'kriging'). Default is ‘linear’.
     """
 
     def __init__(self, x, y, z, kind='linear', **kwargs):

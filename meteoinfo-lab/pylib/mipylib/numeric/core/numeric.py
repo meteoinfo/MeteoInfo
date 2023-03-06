@@ -2904,7 +2904,7 @@ def interp2d(*args, **kwargs):
     xq = array(xq)._array
     yq = array(yq)._array
     kind = kwargs.pop('kind', 'linear')
-    if kind == 'neareast':
+    if kind == 'nearest':
         r = ArrayUtil.resample_Neighbor(z, x, y, xq, yq)
     else:
         r = ArrayUtil.resample_Bilinear(z, x, y, xq, yq)

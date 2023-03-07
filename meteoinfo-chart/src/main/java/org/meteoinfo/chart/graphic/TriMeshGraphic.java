@@ -20,16 +20,16 @@ import java.util.logging.Logger;
 public class TriMeshGraphic extends GraphicCollection3D {
 
     private Logger logger = Logger.getLogger("TriMeshGraphic");
-    private float[] vertexPosition;
-    private float[] vertexValue;
-    private float[] vertexColor;
-    private float[] vertexNormal;
-    private int[] vertexIndices;
+    protected float[] vertexPosition;
+    protected float[] vertexValue;
+    protected float[] vertexColor;
+    protected float[] vertexNormal;
+    protected int[] vertexIndices;
     //private LinkedHashMap<Integer, List<Integer>> triangleMap;
-    private boolean faceInterp;
-    private boolean edgeInterp;
-    private boolean mesh;
-    private boolean normalLoaded = false;
+    protected boolean faceInterp;
+    protected boolean edgeInterp;
+    protected boolean mesh;
+    protected boolean normalLoaded = false;
 
     /**
      * Constructor

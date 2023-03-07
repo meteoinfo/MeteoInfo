@@ -2518,15 +2518,28 @@ public class GLPlot extends Plot {
             pointRender.updateMatrix();
             pointRender.draw();
         } else if (graphic instanceof TriMeshGraphic) {
-            if (!this.renderMap.containsKey(graphic)) {
-                renderMap.put(graphic, new TriMeshRender(gl, (TriMeshGraphic) graphic));
+            if (graphic instanceof Model) {
+                if (!this.renderMap.containsKey(graphic)) {
+                    renderMap.put(graphic, new ModelRender(gl, (Model) graphic));
+                }
+                ModelRender modelRender = (ModelRender) renderMap.get(graphic);
+                modelRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                modelRender.setOrthographic(this.orthographic);
+                modelRender.setLighting(this.lighting);
+                modelRender.updateMatrix();
+                modelRender.setRotateModelView(this.modelViewMatrixR);
+                modelRender.draw();
+            } else {
+                if (!this.renderMap.containsKey(graphic)) {
+                    renderMap.put(graphic, new TriMeshRender(gl, (TriMeshGraphic) graphic));
+                }
+                TriMeshRender triMeshRender = (TriMeshRender) renderMap.get(graphic);
+                triMeshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                triMeshRender.setOrthographic(this.orthographic);
+                triMeshRender.setLighting(this.lighting);
+                triMeshRender.updateMatrix();
+                triMeshRender.draw();
             }
-            TriMeshRender triMeshRender = (TriMeshRender) renderMap.get(graphic);
-            triMeshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
-            triMeshRender.setOrthographic(this.orthographic);
-            triMeshRender.setLighting(this.lighting);
-            triMeshRender.updateMatrix();
-            triMeshRender.draw();
         } else if (graphic instanceof VolumeGraphic) {
             try {
                 if (this.clipPlane)

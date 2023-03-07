@@ -9,7 +9,7 @@ import org.meteoinfo.chart.graphic.TriMeshGraphic;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cylinder extends Model {
+public class Cylinder {
     private float baseRadius;
     private float topRadius;
     private float height;
@@ -64,9 +64,9 @@ public class Cylinder extends Model {
         }
     }
 
-    @Override
-    protected void buildTriMeshGraphic() {
-        this.triMeshGraphic = new TriMeshGraphic();
+
+    protected TriMeshGraphic buildTriMeshGraphic() {
+        TriMeshGraphic triMeshGraphic = new TriMeshGraphic();
         int n = this.vertices.size();
         float[] vertexPosition = new float[n * 3];
         float[] vertexNormal = new float[n * 3];
@@ -82,9 +82,11 @@ public class Cylinder extends Model {
             vertexNormal[j + 2] = v.z;
         }
         int[] vertexIndices = this.indices.stream().mapToInt(Integer::intValue).toArray();
-        this.triMeshGraphic.setVertexPosition(vertexPosition);
-        this.triMeshGraphic.setVertexNormal(vertexNormal);
-        this.triMeshGraphic.setVertexIndices(vertexIndices);
+        triMeshGraphic.setVertexPosition(vertexPosition);
+        triMeshGraphic.setVertexNormal(vertexNormal);
+        triMeshGraphic.setVertexIndices(vertexIndices);
+
+        return triMeshGraphic;
     }
 
     /**

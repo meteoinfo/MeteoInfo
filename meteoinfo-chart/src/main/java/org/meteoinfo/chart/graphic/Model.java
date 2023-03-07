@@ -1,7 +1,13 @@
 package org.meteoinfo.chart.graphic;
 
-public class Model {
-    protected TriMeshGraphic triMeshGraphic;
+import org.joml.Vector3f;
+
+import java.util.List;
+
+public class Model extends TriMeshGraphic {
+
+    protected Vector3f angle = new Vector3f();
+    protected float scale = 1;
 
     /**
      * Constructor
@@ -11,28 +17,43 @@ public class Model {
     }
 
     /**
-     * Constructor
-     *
-     * @param triMeshGraphic Triangle mesh graphic
+     * Get angle
+     * @return The angle
      */
-    public Model(TriMeshGraphic triMeshGraphic) {
-        this.triMeshGraphic = triMeshGraphic;
+    public Vector3f getAngle() {
+        return angle;
     }
 
     /**
-     * Get triangle mesh graphic
-     * @return Triangle mesh graphic
+     * Set angle
+     * @param value Then angle
      */
-    public TriMeshGraphic getTriMeshGraphic() {
-        return this.triMeshGraphic;
+    public void setAngle(Vector3f value) {
+        angle = value;
     }
 
     /**
-     * Set triangle mesh graphic
-     * @param value Triangle mesh graphic
+     * Set angle
+     * @param value The angle
      */
-    public void setTriMeshGraphic(TriMeshGraphic value) {
-        this.triMeshGraphic = value;
+    public void setAngle(List<Float> value) {
+        angle = new Vector3f(value.get(0), value.get(1), value.get(2));
+    }
+
+    /**
+     * Get scale
+     * @return The scale
+     */
+    public float getScale() {
+        return scale;
+    }
+
+    /**
+     * Set value
+     * @param value The value
+     */
+    public void setScale(float value) {
+        scale = value;
     }
 
     /**

@@ -8138,6 +8138,49 @@ public class GraphicFactory {
     }
 
     /**
+     * Create model graphic
+     *
+     * @param faceIndices Vertex indices array
+     * @param x X coordinates array
+     * @param y Y coordinates array
+     * @param z Z coordinates array
+     * @param ls Legend scheme
+     * @return
+     */
+    public static Model model(Array faceIndices, Array x, Array y,
+                                            Array z, LegendScheme ls) {
+        Model model = new Model();
+        model.setTriangles(faceIndices, x, y, z);
+        model.setLegendScheme(ls);
+
+        return model;
+    }
+
+    /**
+     * Create model graphic
+     *
+     * @param faceIndices Vertex indices array
+     * @param x X coordinates array
+     * @param y Y coordinates array
+     * @param z Z coordinates array
+     * @param normal Normal array
+     * @param ls Legend scheme
+     * @return
+     */
+    public static Model model(Array faceIndices, Array x, Array y,
+                                            Array z, Array normal, LegendScheme ls) {
+        if (normal == null) {
+            return model(faceIndices, x, y, z, ls);
+        }
+
+        Model model = new Model();
+        model.setTriangles(faceIndices, x, y, z, normal);
+        model.setLegendScheme(ls);
+
+        return model;
+    }
+
+    /**
      * Create volume graphics
      *
      * @param data     3d data array

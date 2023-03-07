@@ -12,10 +12,8 @@ from org.meteoinfo.math.stats import StatsUtil
 
 from .. import core as np
 
-__all__ = [
-    'solve', 'cholesky', 'det', 'lu', 'qr', 'svd', 'eig', 'inv', 'lstsq', 'slogdet', 'solve_triangular',
-    'norm'
-]
+__all__ = ['solve', 'cholesky', 'det', 'lu', 'qr', 'svd', 'eig', 'inv', 'lstsq', 'slogdet',
+           'solve_triangular', 'norm', 'pinv']
 
 
 class LinAlgError(Exception):
@@ -265,6 +263,19 @@ def inv(a):
     """
     a = np.asarray(a)
     r = LinalgUtil.inv(a.asarray())
+    return np.NDArray(r)
+
+
+def pinv(a):
+    """
+    Compute the pseudo inverse of a matrix.
+
+    :param a: (*array_like*) Input array.
+
+    :returns: Pseudo inverse matrix.
+    """
+    a = np.asarray(a)
+    r = LinalgUtil.pinv(a.asarray())
     return np.NDArray(r)
 
 

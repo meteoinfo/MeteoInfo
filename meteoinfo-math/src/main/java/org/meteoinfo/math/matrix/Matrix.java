@@ -1645,31 +1645,35 @@ public class Matrix extends DMatrix {
      * Returns {@code A * D * B}, where D is a diagonal matrix.
      * @param transA normal, transpose, or conjugate transpose
      *               operation on the matrix A.
+     * @param A the operand.
+     * @param D the diagonal matrix.
      * @param transB normal, transpose, or conjugate transpose
      *               operation on the matrix B.
      * @param B the operand.
-     * @param diag the diagonal matrix.
      * @return the multiplication.
      */
-    public Matrix adb(Transpose transA, Transpose transB, Matrix B, double[] diag) {
-        Matrix C;
+    public static Matrix adb(Transpose transA, Matrix A, double[] D, Transpose transB, Matrix B) {
+        Matrix AD;
+        int m = A.m, n = A.n;
         if (transA == NO_TRANSPOSE) {
-            C = new Matrix(m, n);
+            AD = new Matrix(m, n);
             for (int j = 0; j < n; j++) {
+                double dj = D[j];
                 for (int i = 0; i < m; i++) {
-                    C.set(i, j, diag[j] * get(i, j));
+                    AD.set(i, j, dj * A.get(i, j));
                 }
             }
         } else {
-            C = new Matrix(n, m);
+            AD = new Matrix(n, m);
             for (int j = 0; j < m; j++) {
+                double dj = D[j];
                 for (int i = 0; i < n; i++) {
-                    C.set(i, j, diag[j] * get(j, i));
+                    AD.set(i, j, dj * A.get(j, i));
                 }
             }
         }
 
-        return transB == NO_TRANSPOSE ? C.mm(B) : C.mt(B);
+        return transB == NO_TRANSPOSE ? AD.mm(B) : AD.mt(B);
     }
 
     /**
@@ -2179,7 +2183,8 @@ public class Matrix extends DMatrix {
                 sigma[i] = 1.0f / s[i];
             }
 
-            return V.adb(NO_TRANSPOSE, TRANSPOSE, U, sigma);
+            //return V.adb(NO_TRANSPOSE, TRANSPOSE, U, sigma);
+            return adb(NO_TRANSPOSE, V, sigma, TRANSPOSE, U);
         }
 
         /**

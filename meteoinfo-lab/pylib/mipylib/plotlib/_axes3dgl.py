@@ -1355,6 +1355,46 @@ class Axes3DGL(Axes3D):
 
         return graphics
 
+    def model(self, T, x, y, z, normal=None, **kwargs):
+        """
+        Model plot.
+
+        :param T: (*array*) Triangle connectivity, specified as a 3-column matrix where each
+            row contains the point vertices defining a triangle face.
+        :param x: (*array*) X coordinates array.
+        :param y: (*array*) Y coordinates array.
+        :param z: (*array*) Z coordinates array.
+        :param normal: (*array*) Normal array. Default is `None`.
+
+        :return: Triangle mesh graphic.
+        """
+        facecolor = kwargs.pop('facecolor', 'c')
+        facecolor = plotutil.getcolor(facecolor)
+        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, facecolor, 1)
+
+        if 'edgecolor' not in kwargs.keys():
+            kwargs['edgecolor'] = None
+        plotutil.setlegendscheme(ls, **kwargs)
+
+        if normal is None:
+            graphics = GraphicFactory.model(T._array, x._array, y._array, z._array, ls)
+        else:
+            graphics = GraphicFactory.model(T._array, x._array, y._array, z._array,
+                                                 normal._array, ls)
+
+        angle = kwargs.pop('angle', None)
+        if angle is not None:
+            graphics.setAngle(angle)
+        scale = kwargs.pop('scale', None)
+        if scale is not None:
+            graphics.setScale(scale)
+
+        visible = kwargs.pop('visible', True)
+        if visible:
+            self.add_graphic(graphics)
+
+        return graphics
+
     def fimplicit3(self, f, interval=[-5., 5.], mesh_density=35, *args, **kwargs):
         """
         Plot the 3-D implicit function defined by f(x,y,z) = 0 over the default interval [-5, 5] for x, y, and z.

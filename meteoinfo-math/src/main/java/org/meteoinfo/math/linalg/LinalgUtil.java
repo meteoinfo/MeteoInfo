@@ -215,6 +215,44 @@ public class LinalgUtil {
     }
 
     /**
+     * Calculate pseudo inverse matrix
+     *
+     * @param a The matrix
+     * @return Pseudo inverse matrix array
+     */
+    public static Array pinv(Array a) {
+        double[][] aa = (double[][]) ArrayUtil.copyToNDJavaArray_Double(a);
+        RealMatrix matrix = new Array2DRowRealMatrix(aa, false);
+        SingularValueDecomposition svd = new SingularValueDecomposition(matrix);
+        DecompositionSolver solver = svd.getSolver();
+        RealMatrix pinv = solver.getInverse();
+        int n = pinv.getColumnDimension();
+        int m = pinv.getRowDimension();
+        Array r = Array.factory(DataType.DOUBLE, new int[]{m, n});
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                r.setDouble(i * n + j, pinv.getEntry(i, j));
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Calculate pseudo inverse matrix
+     *
+     * @param a The matrix
+     * @return Pseudo inverse matrix array
+     *//*
+    public static Array pinv(Array a) {
+        Matrix ma = MatrixUtil.arrayToMatrix(a);
+        Matrix.SVD svd = ma.svd();
+        Matrix r = svd.pinv();
+
+        return r == null ? null : MatrixUtil.matrixToArray(r);
+    }*/
+
+    /**
      * Compute the determinant of an array
      * @param a The matrix array
      * @return Determinant

@@ -842,12 +842,12 @@ public class Plot2D extends AbstractPlot2D {
     private void drawRectangle(Graphics2D g, RectangleShape rs, PolygonBreak aPGB,
             boolean isSelected, Rectangle2D area) {
         Extent extent = rs.getExtent();
-        double[] sXY;
-        sXY = projToScreen(extent.minX, extent.minY + extent.getHeight(), area);
-        double x = sXY[0];
-        double y = sXY[1];
-        double width = this.projXLength(extent.getWidth(), area);
-        double height = this.projYLength(extent.getHeight(), area);
+        double[] xy = projToScreen(extent.minX, extent.minY + extent.getHeight(), area);
+        double x = xy[0];
+        double y = xy[1];
+        xy = projToScreen(extent.maxX, extent.minY, area);
+        double width = Math.abs(xy[0] - x);
+        double height = Math.abs(xy[1] - y);
         RectangularShape rshape;
         if (rs.isRound())
             rshape = new RoundRectangle2D.Double(x, y, width, height, width * rs.getRoundX(), height * rs.getRoundY());

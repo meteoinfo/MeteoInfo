@@ -548,6 +548,7 @@ class Axes(object):
                 t_axis = LogAxis(t_axis)
                 t_axis.setMinorTickNum(10)
             ax.setAxis(t_axis, Location.TOP)
+            ax.setAutoExtent()
         else:
             b_axis = Axis(ax.getAxis(Location.BOTTOM))
             ax.setAxis(b_axis, Location.BOTTOM)
@@ -597,6 +598,7 @@ class Axes(object):
             # r_axis.setLabel('Log')
             r_axis.setMinorTickNum(10)
             ax.setAxis(r_axis, Location.RIGHT)
+            ax.setAutoExtent()
         else:
             l_axis = Axis(ax.getAxis(Location.LEFT))
             ax.setAxis(l_axis, Location.LEFT)

@@ -38,7 +38,7 @@ newaxis = None
 __all__ = [
     'pi','e','inf','nan','acos','abs','all','allclose','any','arange','arange1',
     'argmin','argmax','argsort','array','array_split','asanyarray','asarray','asgridarray',
-    'asgriddata','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
+    'asgriddata','arcsin','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
     'concatenate','conj','conjugate','corrcoef','cos','cosh','cylinder','degrees','delete','delnan','diag','diff',
     'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
@@ -876,8 +876,34 @@ def tanh(x):
             return cmath.tanh(x)
         else:
             return math.tanh(x)
-        
+
+
 def asin(x):
+    """
+    Trigonometric inverse sine, element-wise.
+
+    :param x: (*array_like*) *x*-coordinate on the unit circle.
+
+    :returns: (*array_like*) The inverse sine of each element of *x*, in radians and in the
+        closed interval ``[-pi/2, pi/2]``.
+
+    Examples::
+
+        >>> asin(array([1,-1,0]))
+        array([1.5707964, -1.5707964, 0.0])
+    """
+    if isinstance(x, list):
+        return array(x).asin()
+    elif isinstance(x, NDArray):
+        return x.asin()
+    else:
+        if isinstance(x, complex):
+            return cmath.asin(x)
+        else:
+            return math.asin(x)
+
+
+def arcsin(x):
     """
     Trigonometric inverse sine, element-wise.
     
@@ -888,7 +914,7 @@ def asin(x):
     
     Examples::
     
-        >>> asin(array([1,-1,0]))
+        >>> arcsin(array([1,-1,0]))
         array([1.5707964, -1.5707964, 0.0])
     """
     if isinstance(x, list):

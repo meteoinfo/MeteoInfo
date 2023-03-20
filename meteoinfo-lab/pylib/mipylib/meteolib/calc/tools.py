@@ -10,7 +10,7 @@ from ..interpolate import interpolate_1d
 from ..cbook import broadcast_indices
 
 __all__ = ['resample_nn_1d', 'nearest_intersection_idx', 'first_derivative', 'gradient',
-           'lat_lon_grid_deltas', 'get_layer_heights', 'find_bounding_indices']
+           'lat_lon_grid_deltas', 'get_layer_heights', 'find_bounding_indices', 'geospatial_gradient']
 
 
 def resample_nn_1d(a, centers):
@@ -517,6 +517,7 @@ def gradient(f, axes=None, coordinates=None, deltas=None):
     Works for both regularly-spaced data, and grids with varying spacing.
     Either `coordinates` or `deltas` must be specified, or `f` must be given as an
     `DimArray` with  attached coordinate and projection information.
+
     Parameters
     ----------
     f : array-like
@@ -536,13 +537,16 @@ def gradient(f, axes=None, coordinates=None, deltas=None):
         Sequence of arrays or scalars that specify the spacing between the grid points in `f`
         in axis order. There should be one item less than the size of `f` along the applicable
         axis.
+
     Returns
     -------
     tuple of array-like
         The first derivative calculated along each specified axis of the original array
+
     See Also
     --------
     laplacian, first_derivative
+
     Notes
     -----
     If this function is used without the `axes` parameter, the length of `coordinates` or
@@ -551,3 +555,80 @@ def gradient(f, axes=None, coordinates=None, deltas=None):
     pos_kwarg, positions, axes = _process_gradient_args(f, axes, coordinates, deltas)
     return tuple(first_derivative(f, axis=axis, **{pos_kwarg: positions[ind]})
                  for ind, axis in enumerate(axes))
+
+
+def geospatial_gradient(f, dx=None, dy=None, x_dim=-1, y_dim=-2,
+                        parallel_scale=None, meridional_scale=None, return_only=None):
+    r"""Calculate the projection-correct gradient of a 2D scalar field.
+
+    Parameters
+    ----------
+    f : (..., M, N) `array`
+        scalar field for which the horizontal gradient should be calculated
+    return_only : str or Sequence[str], optional
+        Sequence of which components of the gradient to compute and return. If none,
+        returns the gradient tuple ('df/dx', 'df/dy'). Otherwise, matches the return
+        pattern of the given strings. Only valid strings are 'df/dx', 'df/dy'.
+
+    Returns
+    -------
+    `array`, tuple of `array`, or tuple of pairs of `array`
+        Component(s) of vector derivative
+
+    Other Parameters
+    ----------------
+    dx : `array`, optional
+        The grid spacing(s) in the x-direction. If an array, there should be one item less than
+        the size of `u` along the applicable axis. Optional if `DimArray` with
+        latitude/longitude coordinates used as input. Also optional if one-dimensional
+        longitude and latitude arguments are given for your data on a non-projected grid.
+        Keyword-only argument.
+    dy : `array`, optional
+        The grid spacing(s) in the y-direction. If an array, there should be one item less than
+        the size of `u` along the applicable axis. Optional if `DimArray` with
+        latitude/longitude coordinates used as input. Also optional if one-dimensional
+        longitude and latitude arguments are given for your data on a non-projected grid.
+        Keyword-only argument.
+    x_dim : int, optional
+        Axis number of x dimension. Defaults to -1 (implying [..., Y, X] order). Automatically
+        parsed from input if using `DimArray`. Keyword-only argument.
+    y_dim : int, optional
+        Axis number of y dimension. Defaults to -2 (implying [..., Y, X] order). Automatically
+        parsed from input if using `DimArray`. Keyword-only argument.
+    parallel_scale : `array`, optional
+        Parallel scale of map projection at data coordinate. Optional if `DimArray`
+        with latitude/longitude coordinates and MetPy CRS used as input. Also optional if
+        longitude, latitude, and crs are given. If otherwise omitted, calculation will be
+        carried out on a Cartesian, rather than geospatial, grid. Keyword-only argument.
+    meridional_scale : `array`, optional
+        Meridional scale of map projection at data coordinate. Optional if `DimArray`
+        with latitude/longitude coordinates and MetPy CRS used as input. Also optional if
+        longitude, latitude, and crs are given. If otherwise omitted, calculation will be
+        carried out on a Cartesian, rather than geospatial, grid. Keyword-only argument.
+
+    See Also
+    --------
+    vector_derivative, gradient, geospatial_laplacian
+    """
+    derivatives = {component: None
+                   for component in ('df/dx', 'df/dy')
+                   if (return_only is None or component in return_only)}
+
+    scales = {'df/dx': parallel_scale, 'df/dy': meridional_scale}
+
+    map_factor_correction = parallel_scale is not None and meridional_scale is not None
+
+    for component in derivatives:
+        delta, dim = (dx, x_dim) if component[-2:] == 'dx' else (dy, y_dim)
+        derivatives[component] = first_derivative(f, delta=delta, axis=dim)
+
+        if map_factor_correction:
+            derivatives[component] *= scales[component]
+
+    # Build return collection
+    if return_only is None:
+        return derivatives['df/dx'], derivatives['df/dy']
+    elif isinstance(return_only, str):
+        return derivatives[return_only]
+    else:
+        return tuple(derivatives[component] for component in return_only)

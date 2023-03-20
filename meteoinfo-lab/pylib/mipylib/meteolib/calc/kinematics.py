@@ -7,7 +7,7 @@ Ported from MetPy.
 from org.meteoinfo.math.meteo import MeteoMath
 import mipylib.numeric as np
 from mipylib.numeric.core import NDArray, DimArray
-from .tools import first_derivative, gradient, get_layer_heights, lat_lon_grid_deltas
+from .tools import first_derivative, gradient, get_layer_heights, lat_lon_grid_deltas, geospatial_gradient
 from .basic import coriolis_parameter
 from .. import constants
 
@@ -21,7 +21,7 @@ __all__ = [
 
 def cdiff(a, dimidx):
     """
-    Performs a centered difference operation on a array in a specific direction
+    Performs a centered difference operation on an array in a specific direction
 
     :param a: (*array*) The input array.
     :param dimidx: (*int*) Dimension index of the specific direction.

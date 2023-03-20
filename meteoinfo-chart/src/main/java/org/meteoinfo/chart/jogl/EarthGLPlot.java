@@ -191,6 +191,7 @@ public class EarthGLPlot extends GLPlot {
         ((PolygonBreak) ls.getLegendBreak(0)).setDrawOutline(false);
         ((PolygonBreak) ls.getLegendBreak(0)).setOutlineColor(Color.white);
         surface = GraphicFactory.surface(lon, lat, alt, ls);
+        surface.setFaceInterp(true);
 
         return surface;
     }

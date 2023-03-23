@@ -36,8 +36,9 @@ public class Model extends TriMeshGraphic {
      * Set angle
      * @param value The angle
      */
-    public void setAngle(List<Float> value) {
-        angle = new Vector3f(value.get(0), value.get(1), value.get(2));
+    public void setAngle(List<Number> value) {
+        angle = new Vector3f(value.get(0).floatValue(), value.get(1).floatValue(),
+                value.get(2).floatValue());
     }
 
     /**
@@ -54,6 +55,15 @@ public class Model extends TriMeshGraphic {
      */
     public void setScale(float value) {
         scale = value;
+    }
+
+    /**
+     * Get radians angle
+     * @return Radians
+     */
+    public Vector3f getRadians() {
+        return new Vector3f((float) Math.toRadians(angle.x), (float) Math.toRadians(angle.y),
+                (float) Math.toRadians(angle.z));
     }
 
     /**

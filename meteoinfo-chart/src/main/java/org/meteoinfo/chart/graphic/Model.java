@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Model extends TriMeshGraphic {
 
+    protected Vector3f location = new Vector3f();
     protected Vector3f angle = new Vector3f();
     protected float scale = 1;
 
@@ -14,6 +15,31 @@ public class Model extends TriMeshGraphic {
      */
     public Model() {
 
+    }
+
+    /**
+     * Get location
+     * @return Location
+     */
+    public Vector3f getLocation() {
+        return location;
+    }
+
+    /**
+     * Set location
+     * @param value Location
+     */
+    public void setLocation(Vector3f value) {
+        location = value;
+    }
+
+    /**
+     * Set location
+     * @param value Location
+     */
+    public void setLocation(List<Number> value) {
+        location = new Vector3f(value.get(0).floatValue(), value.get(1).floatValue(),
+                value.get(2).floatValue());
     }
 
     /**

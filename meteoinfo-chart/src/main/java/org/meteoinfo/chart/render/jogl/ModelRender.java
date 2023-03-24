@@ -161,7 +161,8 @@ public class ModelRender extends JOGLGraphicRender {
         gl.glPushMatrix();
         FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
         Matrix4f modelView = new Matrix4f(this.modelViewMatrixR);
-        modelView.scale(this.model.getScale());
+        modelView.translate(this.transform.transform(model.getLocation()));
+        modelView.scale(model.getScale());
         modelView.rotateXYZ(model.getRadians());
         gl.glLoadMatrixf(modelView.get(fb));
 

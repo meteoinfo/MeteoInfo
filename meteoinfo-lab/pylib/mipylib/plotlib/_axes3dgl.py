@@ -1382,6 +1382,9 @@ class Axes3DGL(Axes3D):
             graphics = GraphicFactory.model(T._array, x._array, y._array, z._array,
                                                  normal._array, ls)
 
+        location = kwargs.pop('location', None)
+        if location is not None:
+            graphics.setLocation(location)
         angle = kwargs.pop('angle', None)
         if angle is not None:
             graphics.setAngle(angle)

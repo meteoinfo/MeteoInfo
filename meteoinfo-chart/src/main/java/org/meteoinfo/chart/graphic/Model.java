@@ -6,9 +6,10 @@ import java.util.List;
 
 public class Model extends TriMeshGraphic {
 
-    protected Vector3f location = new Vector3f();
-    protected Vector3f angle = new Vector3f();
+    protected Vector3f location = null;
+    protected Vector3f rotation = null;
     protected float scale = 1;
+    protected Vector3f direction = null;
 
     /**
      * Constructor
@@ -43,28 +44,82 @@ public class Model extends TriMeshGraphic {
     }
 
     /**
-     * Get angle
-     * @return The angle
+     * Set location
+     * @param x X
+     * @param y Y
+     * @param z Z
      */
-    public Vector3f getAngle() {
-        return angle;
+    public void setLocation(float x, float y, float z) {
+        location = new Vector3f(x, y, z);
     }
 
     /**
-     * Set angle
-     * @param value Then angle
+     * Get rotation
+     * @return The rotation
      */
-    public void setAngle(Vector3f value) {
-        angle = value;
+    public Vector3f getRotation() {
+        return rotation;
     }
 
     /**
-     * Set angle
-     * @param value The angle
+     * Set rotation
+     * @param value Then rotation
      */
-    public void setAngle(List<Number> value) {
-        angle = new Vector3f(value.get(0).floatValue(), value.get(1).floatValue(),
+    public void setRotation(Vector3f value) {
+        rotation = value;
+    }
+
+    /**
+     * Set rotation
+     * @param value The rotation
+     */
+    public void setRotation(List<Number> value) {
+        rotation = new Vector3f(value.get(0).floatValue(), value.get(1).floatValue(),
                 value.get(2).floatValue());
+    }
+
+    /**
+     * Get direction
+     * @return direction
+     */
+    public Vector3f getDirection() {
+        return direction;
+    }
+
+    /**
+     * Set direction
+     * @param value direction
+     */
+    public void setDirection(Vector3f value) {
+        direction = value;
+    }
+
+    /**
+     * Set direction
+     * @param value direction
+     */
+    public void setDirection(List<Number> value) {
+        direction = new Vector3f(value.get(0).floatValue(), value.get(1).floatValue(), value.get(2).floatValue());
+    }
+
+    /**
+     * Set direction
+     * @param start Start location
+     * @param end End location
+     */
+    public void setDirection(Vector3f start, Vector3f end) {
+        direction = end.sub(start);
+    }
+
+    /**
+     * Set look at
+     * @param start Start location
+     * @param end End location
+     */
+    public void setLookAt(List<Number> start, List<Number> end) {
+        Vector3f sv = new Vector3f(start.get(0).floatValue(), start.get(1).floatValue(), start.get(2).floatValue());
+        Vector3f ev = new Vector3f(end.get(0).floatValue(), end.get(1).floatValue(), end.get(2).floatValue());
+        direction = ev.sub(sv);
     }
 
     /**
@@ -84,12 +139,12 @@ public class Model extends TriMeshGraphic {
     }
 
     /**
-     * Get radians angle
+     * Get radians rotation
      * @return Radians
      */
-    public Vector3f getRadians() {
-        return new Vector3f((float) Math.toRadians(angle.x), (float) Math.toRadians(angle.y),
-                (float) Math.toRadians(angle.z));
+    public Vector3f getRotationRadians() {
+        return new Vector3f((float) Math.toRadians(rotation.x), (float) Math.toRadians(rotation.y),
+                (float) Math.toRadians(rotation.z));
     }
 
     /**

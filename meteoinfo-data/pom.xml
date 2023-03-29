@@ -43,7 +43,7 @@
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdfAll</artifactId>
-            <version>5.5.3</version>
+            <version>5.5.4-SNAPSHOT</version>
             <!--<scope>system</scope>
             <systemPath>${project.basedir}/lib/netcdfAll-5.5.3-SNAPSHOT.jar</systemPath>-->
         </dependency>

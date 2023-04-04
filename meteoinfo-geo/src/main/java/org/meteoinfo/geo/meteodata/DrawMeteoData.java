@@ -1681,6 +1681,8 @@ public class DrawMeteoData {
      */
     public static VectorLayer createStreamlineLayer(GridData uData, GridData vData, int density, LegendScheme aLS,
                                                     String lName, boolean isUV) {
+        uData.asAscending();
+        vData.asAscending();
         GridData uGridData;
         GridData vGridData;
         if (isUV) {

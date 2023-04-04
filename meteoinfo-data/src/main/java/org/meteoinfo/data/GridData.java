@@ -15,6 +15,7 @@ package org.meteoinfo.data;
 
 import java.io.BufferedReader;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
@@ -3700,6 +3701,20 @@ public class GridData {
     }
 
     /**
+     * Change all dimensions to be ascending
+     */
+    public void asAscending() {
+        if (this.getXDelta() < 0) {
+            ArrayUtils.reverse(xArray);
+            this.xReverse();
+        }
+        if (this.getYDelta() < 0) {
+            ArrayUtils.reverse(yArray);
+            this.yReverse();
+        }
+    }
+
+    /**
      * Convert to GridArray object
      *
      * @return GridArray object
@@ -3707,6 +3722,7 @@ public class GridData {
     public GridArray toGridArray() {
         Array a = Array.factory(DataType.DOUBLE, new int[]{this.getYNum(), this.getXNum()});
         int idx = 0;
+        this.asAscending();
         for (int i = 0; i < this.getYNum(); i++) {
             for (int j = 0; j < this.getXNum(); j++) {
                 a.setDouble(idx, this.getDoubleValue(i, j));

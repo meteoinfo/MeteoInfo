@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 public class TriMeshGraphic extends GraphicCollection3D {
 
-    private Logger logger = Logger.getLogger("TriMeshGraphic");
+    protected Logger logger = Logger.getLogger("TriMeshGraphic");
     protected float[] vertexPosition;
     protected float[] vertexValue;
     protected float[] vertexColor;

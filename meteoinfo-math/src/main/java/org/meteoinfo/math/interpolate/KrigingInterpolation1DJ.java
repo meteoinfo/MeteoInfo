@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Copyright (c) 2010-2020 Haifeng Li. All rights reserved.
  *
  * Smile is free software: you can redistribute it and/or modify
@@ -13,13 +13,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Smile.  If not, see <https://www.gnu.org/licenses/>.
- ******************************************************************************/
+ */
 
 package org.meteoinfo.math.interpolate;
 
 import org.meteoinfo.math.MathEx;
-import org.meteoinfo.math.blas.UPLO;
-import org.meteoinfo.math.matrix.Matrix;
+import org.ojalgo.matrix.decomposition.SingularValue;
+import org.ojalgo.matrix.store.MatrixStore;
+import org.ojalgo.matrix.store.Primitive64Store;
 
 /**
  * Kriging interpolation for the data points irregularly distributed in space.
@@ -29,67 +30,60 @@ import org.meteoinfo.math.matrix.Matrix;
  *
  * @author Haifeng Li
  */
-public class KrigingInterpolation2D implements Interpolation2D {
+public class KrigingInterpolation1DJ implements Interpolation {
 
-    private double[] x1;
-    private double[] x2;
-    private double[] yvi;
-    private double alpha;
-    private double beta;
+    /** The control points. */
+    private final double[] x;
+    /** The linear weights. */
+    private final double[] yvi;
+    /** The parameter of power variogram. */
+    private final double alpha;
+    /** The parameter of power variogram. */
+    private final double beta;
 
     /**
      * Constructor. The power variogram is employed for interpolation.
-     * @param x1 the 1st dimension of data points.
-     * @param x2 the 2nd dimension of data points.
-     * @param y the function values.
+     *
+     * @param x the tabulated points.
+     * @param y the function values at <code>x</code>.
      */
-    public KrigingInterpolation2D(double[] x1, double[] x2, double[] y) {
-        this(x1, x2, y, 1.5);
+    public KrigingInterpolation1DJ(double[] x, double[] y) {
+        this(x, y, 1.5);
     }
 
     /**
      * Constructor. The power variogram is employed for interpolation.
-     * @param x1 the 1st dimension of data points.
-     * @param x2 the 2nd dimension of data points.
-     * @param y the function values.
+     *
+     * @param x the tabulated points.
+     * @param y the function values at <code>x</code>.
      * @param beta the parameter of power variogram. The value of &beta;
-     *             should be in the range <code>1 &le; &beta; &lt; 2</code>.
+     *             should be in the range {@code 1 <=} &beta; {@code < 2}.
      *             A good general choice is 1.5, but for functions with
      *             a strong linear trend, we may experiment with values as
      *             large as 1.99.
      */
-    public KrigingInterpolation2D(double[] x1, double[] x2, double[] y, double beta) {
+    public KrigingInterpolation1DJ(double[] x, double[] y, double beta) {
         if (beta < 1.0 || beta >= 2.0) {
             throw new IllegalArgumentException("Invalid beta: " + beta);
         }
 
-        if (x1.length != x2.length) {
-            throw new IllegalArgumentException("x1.length != x2.length");
-        }
-
-        if (x1.length != y.length) {
+        if (x.length != y.length) {
             throw new IllegalArgumentException("x.length != y.length");
         }
 
-        this.x1 = x1;
-        this.x2 = x2;
+        this.x = x;
         this.beta = beta;
-        pow(x1, x2, y);
+        this.alpha = pow(x, y);
 
-        int n = x1.length;
-        yvi = new double[n + 1];
+        int n = x.length;
+        double[] yv = new double[n + 1];
 
-        Matrix v = new Matrix(n + 1, n + 1);
-        v.uplo(UPLO.LOWER);
+        Primitive64Store v = Primitive64Store.FACTORY.make(n + 1, n + 1);
         for (int i = 0; i < n; i++) {
-            yvi[i] = y[i];
+            yv[i] = y[i];
 
             for (int j = i; j < n; j++) {
-                double d1 = x1[i] - x1[j];
-                double d2 = x2[i] - x2[j];
-                double d = d1 * d1 + d2 * d2;
-
-                double var = variogram(d);
+                double var = variogram(Math.abs(x[i] - x[j]));
                 v.set(i, j, var);
                 v.set(j, i, var);
             }
@@ -97,49 +91,43 @@ public class KrigingInterpolation2D implements Interpolation2D {
             v.set(i, n, 1.0);
         }
 
-        yvi[n] = 0.0;
+        yv[n] = 0.0;
         v.set(n, n, 0.0);
 
-        Matrix.SVD svd = v.svd(true, true);
-        yvi = svd.solve(yvi);
+        SingularValue<Double> tmpSVD = SingularValue.PRIMITIVE.make(v);
+        tmpSVD.decompose(v);
+        MatrixStore<Double> solution = tmpSVD.getSolution(Primitive64Store.FACTORY.column(yv));
+        yvi = solution.toRawCopy1D();
     }
 
     @Override
-    public double interpolate(double x1, double x2) {
-        int n = this.x1.length;
+    public double interpolate(double x) {
+        int n = this.x.length;
         double y = yvi[n];
         for (int i = 0; i < n; i++) {
-            double d1 = x1 - this.x1[i];
-            double d2 = x2 - this.x2[i];
-            double d = d1 * d1 + d2 * d2;
-
-            y += yvi[i] * variogram(d);
+            y += yvi[i] * variogram(Math.abs(x - this.x[i]));
         }
-
         return y;
     }
 
-    private void pow(double[] x1, double[] x2, double[] y) {
-        int n = x1.length;
+    private double pow(double[] x, double[] y) {
+        int n = x.length;
 
         double num = 0.0, denom = 0.0;
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
-                double d1 = x1[i] - x1[j];
-                double d2 = x2[i] - x2[j];
-                double d = d1 * d1 + d2 * d2;
-
-                double rb = Math.pow(d, beta/2);
-                num += rb * 0.5 * MathEx.sqr(y[i] - y[j]);
+                double rb = MathEx.pow2(x[i] - x[j]);
+                rb = Math.pow(rb, 0.5 * beta);
+                num += rb * 0.5 * MathEx.pow2(y[i] - y[j]);
                 denom += rb * rb;
             }
         }
 
-        alpha = num / denom;
+        return num / denom;
     }
 
     private double variogram(double r) {
-        return alpha * Math.pow(r, beta/2);
+        return alpha * Math.pow(r, beta);
     }
 
     @Override

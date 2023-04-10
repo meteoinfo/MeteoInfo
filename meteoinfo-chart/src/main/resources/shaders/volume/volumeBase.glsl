@@ -86,6 +86,8 @@ float calculateDepth(vec3 pos)
 {
     vec4 ndc = MVP * vec4(pos, 1.0);
     ndc.xyz /= ndc.w;
-    return 0.5 * (gl_DepthRange.diff * ndc.z + (gl_DepthRange.near + gl_DepthRange.far));
+    float depth = 0.5 * (gl_DepthRange.diff * ndc.z + (gl_DepthRange.near + gl_DepthRange.far));
+    //return depth;
+    return depth + 0.005;
     //return ndc.z * 0.5 + 0.5;
 }

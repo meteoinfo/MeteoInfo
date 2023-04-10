@@ -5,9 +5,9 @@ import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Complex;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.math.ArrayUtil;
-import smile.math.blas.UPLO;
-import smile.math.matrix.DMatrix;
-import smile.math.matrix.SymmMatrix;
+import org.meteoinfo.math.blas.UPLO;
+import org.meteoinfo.math.matrix.DMatrix;
+import org.meteoinfo.math.matrix.SymmMatrix;
 
 public class MatrixUtil {
 

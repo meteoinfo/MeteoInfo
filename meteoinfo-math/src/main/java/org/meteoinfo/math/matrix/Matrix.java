@@ -7,26 +7,24 @@ import java.io.Serializable;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
-import org.meteoinfo.math.blas.LAPACK;
-import org.meteoinfo.math.blas.BLAS;
-import smile.math.MathEx;
-import smile.math.blas.*;
-import smile.math.matrix.DMatrix;
-import smile.sort.QuickSort;
-import smile.stat.distribution.Distribution;
-import smile.stat.distribution.GaussianDistribution;
+import org.meteoinfo.math.blas.*;
+import org.meteoinfo.math.MathEx;
+import org.meteoinfo.math.sort.QuickSort;
+import org.meteoinfo.math.stats.distribution.Distribution;
+import org.meteoinfo.math.stats.distribution.GaussianDistribution;
 
-import static smile.math.blas.Diag.*;
-import static smile.math.blas.Layout.*;
-import static smile.math.blas.Side.*;
-import static smile.math.blas.Transpose.*;
-import static smile.math.blas.UPLO.*;
+import static org.meteoinfo.math.blas.Diag.*;
+import static org.meteoinfo.math.blas.Layout.*;
+import static org.meteoinfo.math.blas.Side.*;
+import static org.meteoinfo.math.blas.Transpose.*;
+import static org.meteoinfo.math.blas.UPLO.*;
 
 public class Matrix extends DMatrix {
 
     private static final long serialVersionUID = 2L;
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Matrix.class);
+    private static final Logger logger = Logger.getLogger("Matrix.class");
 
     /**
      * The matrix storage.
@@ -488,6 +486,14 @@ public class Matrix extends DMatrix {
     }
 
     /**
+     * Returns the storage.
+     * @return The storage.
+     */
+    public DoubleBuffer getA() {
+        return A;
+    }
+
+    /**
      * Returns the leading dimension.
      * @return the leading dimension.
      */
@@ -513,7 +519,7 @@ public class Matrix extends DMatrix {
 
     /**
      * Sets the format of packed matrix.
-     * @param uplo the format of packed matrix..
+     * @param uplo the format of packed matrix.
      * @return this matrix.
      */
     public Matrix uplo(UPLO uplo) {
@@ -1755,7 +1761,7 @@ public class Matrix extends DMatrix {
         int[] ipiv = new int[Math.min(m, n)];
         int info = LAPACK.engine.getrf(lu.layout(), lu.m, lu.n, lu.A, lu.ld, IntBuffer.wrap(ipiv));
         if (info < 0) {
-            logger.error("LAPACK GETRF error code: {}", info);
+            logger.severe(String.format("LAPACK GETRF error code: {%d}", info));
             throw new ArithmeticException("LAPACK GETRF error code: " + info);
         }
 
@@ -1787,7 +1793,7 @@ public class Matrix extends DMatrix {
         Matrix lu = overwrite ? this : clone();
         int info = LAPACK.engine.potrf(lu.layout(), lu.uplo, lu.n, lu.A, lu.ld);
         if (info != 0) {
-            logger.error("LAPACK GETRF error code: {}", info);
+            logger.severe(String.format("LAPACK GETRF error code: {%d}", info));
             throw new ArithmeticException("LAPACK GETRF error code: " + info);
         }
 
@@ -1813,7 +1819,7 @@ public class Matrix extends DMatrix {
         double[] tau = new double[Math.min(m, n)];
         int info = LAPACK.engine.geqrf(qr.layout(), qr.m, qr.n, qr.A, qr.ld, DoubleBuffer.wrap(tau));
         if (info != 0) {
-            logger.error("LAPACK GEQRF error code: {}", info);
+            logger.severe(String.format("LAPACK GEQRF error code: {%d}", info));
             throw new ArithmeticException("LAPACK GEQRF error code: " + info);
         }
 
@@ -1863,23 +1869,23 @@ public class Matrix extends DMatrix {
 
         Matrix W = overwrite ? this : clone();
         if (vectors) {
-            Matrix U = new Matrix(m, m);
-            Matrix VT = new Matrix(n, n);
+            Matrix U = new Matrix(m, k);
+            Matrix VT = new Matrix(k, n);
 
-            int info = LAPACK.engine.gesdd(W.layout(), SVDJob.ALL, W.m, W.n, W.A, W.ld, DoubleBuffer.wrap(s), U.A, U.ld, VT.A, VT.ld);
+            int info = LAPACK.engine.gesdd(W.layout(), SVDJob.COMPACT, W.m, W.n, W.A, W.ld, DoubleBuffer.wrap(s), U.A, U.ld, VT.A, VT.ld);
             if (info != 0) {
-                logger.error("LAPACK GESDD error code: {}", info);
+                logger.severe(String.format("LAPACK GESDD error code: {%s}", info));
                 throw new ArithmeticException("LAPACK GESDD error code: " + info);
             }
 
-            return new SVD(s, U, VT);
+            return new SVD(s, U, VT.transpose());
         } else {
             Matrix U = new Matrix(1, 1);
             Matrix VT = new Matrix(1, 1);
 
             int info = LAPACK.engine.gesdd(W.layout(), SVDJob.NO_VECTORS, W.m, W.n, W.A, W.ld, DoubleBuffer.wrap(s), U.A, U.ld, VT.A, VT.ld);
             if (info != 0) {
-                logger.error("LAPACK GESDD error code: {}", info);
+                logger.severe(String.format("LAPACK GESDD error code: {}", info));
                 throw new ArithmeticException("LAPACK GESDD error code: " + info);
             }
 
@@ -1925,7 +1931,7 @@ public class Matrix extends DMatrix {
             double[] w = new double[n];
             int info = LAPACK.engine.syevd(eig.layout(), vr ? EVDJob.VECTORS : EVDJob.NO_VECTORS, eig.uplo, n, eig.A, eig.ld, DoubleBuffer.wrap(w));
             if (info != 0) {
-                logger.error("LAPACK SYEV error code: {}", info);
+                logger.severe(String.format("LAPACK SYEV error code: {%d}", info));
                 throw new ArithmeticException("LAPACK SYEV error code: " + info);
             }
             return new EVD(w, vr ? eig : null);
@@ -1936,7 +1942,7 @@ public class Matrix extends DMatrix {
             Matrix Vr = vr ? new Matrix(n, n) : new Matrix(1, 1);
             int info = LAPACK.engine.geev(eig.layout(), vl ? EVDJob.VECTORS : EVDJob.NO_VECTORS, vr ? EVDJob.VECTORS : EVDJob.NO_VECTORS, n, eig.A, eig.ld, DoubleBuffer.wrap(wr), DoubleBuffer.wrap(wi), Vl.A, Vl.ld, Vr.A, Vr.ld);
             if (info != 0) {
-                logger.error("LAPACK GEEV error code: {}", info);
+                logger.severe(String.format("LAPACK GEEV error code: {%d}", info));
                 throw new ArithmeticException("LAPACK GEEV error code: " + info);
             }
 
@@ -2532,7 +2538,7 @@ public class Matrix extends DMatrix {
 
             int ret = LAPACK.engine.getrs(lu.layout(), NO_TRANSPOSE, lu.n, B.n, lu.A, lu.ld, IntBuffer.wrap(ipiv), B.A, B.ld);
             if (ret != 0) {
-                logger.error("LAPACK GETRS error code: {}", ret);
+                logger.severe(String.format("LAPACK GETRS error code: {%d}", ret));
                 throw new ArithmeticException("LAPACK GETRS error code: " + ret);
             }
         }
@@ -2641,7 +2647,7 @@ public class Matrix extends DMatrix {
 
             int info = LAPACK.engine.potrs(lu.layout(), lu.uplo, lu.n, B.n, lu.A, lu.ld, B.A, B.ld);
             if (info != 0) {
-                logger.error("LAPACK POTRS error code: {}", info);
+                logger.severe(String.format("LAPACK POTRS error code: {%d}", info));
                 throw new ArithmeticException("LAPACK POTRS error code: " + info);
             }
         }
@@ -2723,7 +2729,7 @@ public class Matrix extends DMatrix {
             Matrix Q = qr.clone();
             int info = LAPACK.engine.orgqr(qr.layout(), m, n, k, Q.A, qr.ld, DoubleBuffer.wrap(tau));
             if (info != 0) {
-                logger.error("LAPACK ORGRQ error code: {}", info);
+                logger.severe(String.format("LAPACK ORGRQ error code: {%d}", info));
                 throw new ArithmeticException("LAPACK ORGRQ error code: " + info);
             }
             return Q;
@@ -2764,14 +2770,14 @@ public class Matrix extends DMatrix {
 
             int info = LAPACK.engine.ormqr(qr.layout(), LEFT, TRANSPOSE, B.nrows(), B.ncols(), k, qr.A, qr.ld, DoubleBuffer.wrap(tau), B.A, B.ld);
             if (info != 0) {
-                logger.error("LAPACK ORMQR error code: {}", info);
+                logger.severe(String.format("LAPACK ORMQR error code: {%d}", info));
                 throw new IllegalArgumentException("LAPACK ORMQR error code: " + info);
             }
 
             info = LAPACK.engine.trtrs(qr.layout(), UPPER, NO_TRANSPOSE, NON_UNIT, qr.n, B.n, qr.A, qr.ld, B.A, B.ld);
 
             if (info != 0) {
-                logger.error("LAPACK TRTRS error code: {}", info);
+                logger.severe(String.format("LAPACK TRTRS error code: {%d}", info));
                 throw new IllegalArgumentException("LAPACK TRTRS error code: " + info);
             }
         }

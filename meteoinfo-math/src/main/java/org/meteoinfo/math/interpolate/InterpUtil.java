@@ -13,8 +13,8 @@ import org.meteoinfo.common.PointD;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.math.spatial.KDTree;
-import smile.interpolation.KrigingInterpolation1D;
-import smile.interpolation.KrigingInterpolation2D;
+import org.meteoinfo.math.interpolate.KrigingInterpolation1D;
+import org.meteoinfo.math.interpolate.KrigingInterpolation2D;
 
 import java.util.ArrayList;
 import java.util.Arrays;

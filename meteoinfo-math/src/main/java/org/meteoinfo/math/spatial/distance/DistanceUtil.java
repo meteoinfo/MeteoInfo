@@ -3,7 +3,7 @@ package org.meteoinfo.math.spatial.distance;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.InvalidRangeException;
-import smile.math.distance.*;
+import org.meteoinfo.math.distance.*;
 
 public class DistanceUtil {
 

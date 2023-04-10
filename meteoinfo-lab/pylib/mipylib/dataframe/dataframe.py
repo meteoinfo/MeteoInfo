@@ -631,7 +631,7 @@ class DataFrame(object):
         
         :returns: Top rows
         """
-        print self._dataframe.head(n)
+        print(self._dataframe.head(n))
         
     def tail(self, n=5):
         """
@@ -641,7 +641,7 @@ class DataFrame(object):
         
         :returns: Bottom rows
         """
-        print self._dataframe.tail(n)
+        print(self._dataframe.tail(n))
         
     def transpose(self):
         """

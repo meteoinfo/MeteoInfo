@@ -5,6 +5,8 @@ import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -50,7 +52,7 @@ public class WavefrontObjectLoader {
                     logger.severe("ERROR! ZIP ENTRY IS DIRECTORY! SHOULD BE PLAIN FILE!");
                 }
             } else {
-                br = new BufferedReader(new InputStreamReader(new FileInputStream(objFileName)));
+                br = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(objFileName))));
             }
 
             String line = null;

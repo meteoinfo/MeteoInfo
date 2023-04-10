@@ -24,23 +24,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="MeteoInfo" target="1.8" />
-      <module name="meteoinfo-chart" target="1.8" />
-      <module name="meteoinfo-common" target="1.8" />
-      <module name="meteoinfo-console" target="1.8" />
-      <module name="meteoinfo-data" target="1.8" />
-      <module name="meteoinfo-dataframe" target="1.8" />
-      <module name="meteoinfo-geo" target="1.8" />
-      <module name="meteoinfo-geometry" target="1.8" />
-      <module name="meteoinfo-image" target="1.8" />
-      <module name="meteoinfo-lab" target="1.8" />
       <module name="meteoinfo-legend" target="11" />
-      <module name="meteoinfo-map" target="1.8" />
-      <module name="meteoinfo-math" target="1.8" />
-      <module name="meteoinfo-ndarray" target="1.8" />
-      <module name="meteoinfo-projection" target="1.8" />
-      <module name="meteoinfo-table" target="1.8" />
-      <module name="meteoinfo-ui" target="1.8" />
       <module name="MeteoInfoLib" target="1.8" />
     </bytecodeTargetLevel>
   </component>

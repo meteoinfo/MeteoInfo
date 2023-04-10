@@ -20,8 +20,8 @@ package org.meteoinfo.math.blas;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.logging.Logger;
 
-import smile.math.blas.*;
 
 /**
  * Linear Algebra Package. LAPACK is a standard software library for numerical
@@ -50,14 +50,14 @@ public interface LAPACK {
      * @return a LAPACK instance of MKL.
      */
     static LAPACK MKL() {
-        org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LAPACK.class);
+        Logger logger = Logger.getLogger("LAPACK.class");
 
         try {
             Class<?> clazz = Class.forName("smile.math.blas.mkl.MKL");
             logger.info("smile-mkl module is available.");
             return (LAPACK) clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            logger.debug("Failed to create MKL instance: ", e);
+            logger.info(String.format("Failed to create MKL instance: %s", e));
         }
 
         return null;

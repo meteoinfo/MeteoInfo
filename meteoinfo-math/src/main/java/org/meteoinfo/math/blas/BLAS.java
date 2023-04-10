@@ -17,10 +17,11 @@
 
 package org.meteoinfo.math.blas;
 
-import smile.math.blas.*;
+//import smile.math.blas.*;
 
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
+import java.util.logging.Logger;
 
 /**
  * Basic Linear Algebra Subprograms. BLAS is a specification that prescribes
@@ -49,14 +50,14 @@ public interface BLAS {
      * @return a BLAS instance of MKL.
      */
     static BLAS MKL() {
-        org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BLAS.class);
+        Logger logger = Logger.getLogger("BLAS.class");
 
         try {
             Class<?> clazz = Class.forName("smile.math.blas.mkl.MKL");
             logger.info("smile-mkl module is available.");
             return (BLAS) clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            logger.debug("Failed to create MKL instance: ", e);
+            logger.info(String.format("Failed to create MKL instance: %s", e));
         }
 
         return null;

@@ -19,7 +19,7 @@ import org.apache.commons.math4.legacy.stat.regression.OLSMultipleLinearRegressi
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
-import smile.math.special.Erf;
+import org.meteoinfo.math.special.Erf;
 
 /**
  *

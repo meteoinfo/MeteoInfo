@@ -11,7 +11,7 @@ import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.geo.analysis.InterpolationSetting;
 import org.meteoinfo.math.interpolate.InterpUtil;
-import smile.interpolation.KrigingInterpolation2D;
+import org.meteoinfo.math.interpolate.KrigingInterpolation2D;
 
 import java.util.ArrayList;
 import java.util.List;

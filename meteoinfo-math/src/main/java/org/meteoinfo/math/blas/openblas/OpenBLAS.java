@@ -17,9 +17,7 @@
 
 package org.meteoinfo.math.blas.openblas;
 
-import smile.math.blas.*;
-import org.meteoinfo.math.blas.BLAS;
-import org.meteoinfo.math.blas.LAPACK;
+import org.meteoinfo.math.blas.*;
 
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;

@@ -115,19 +115,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (arr[l] > arr[ir]) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (arr[l + 1] > arr[ir]) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (arr[l] > arr[l + 1]) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -143,13 +143,115 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;
                 brr[l + 1] = brr[j];
                 brr[j] = b;
+                jstack += 2;
+
+                if (jstack >= NSTACK) {
+                    throw new IllegalStateException("NSTACK too small in sort.");
+                }
+
+                if (ir - i + 1 >= j - l) {
+                    istack[jstack] = ir;
+                    istack[jstack - 1] = i;
+                    ir = j - 1;
+                } else {
+                    istack[jstack] = j - 1;
+                    istack[jstack - 1] = l;
+                    l = i;
+                }
+            }
+        }
+    }
+
+    /**
+     * Besides sorting the array x, the array y will be also
+     * rearranged as the same order of x.
+     * @param x the array to sort.
+     * @param y the associate array.
+     */
+    public static void sort(int[] x, double[] y) {
+        sort(x, y, x.length);
+    }
+
+    /**
+     * This is an efficient implementation Quick Sort algorithm without
+     * recursive. Besides sorting the first n elements of array x, the first
+     * n elements of array y will be also rearranged as the same order of x.
+     * @param x the array to sort.
+     * @param y the associate array.
+     * @param n the first n elements to sort.
+     */
+    public static void sort(int[] x, double[] y, int n) {
+        int jstack = -1;
+        int l = 0;
+        int[] istack = new int[NSTACK];
+        int ir = n - 1;
+
+        int i, j, k, a;
+        double b;
+        for (;;) {
+            if (ir - l < M) {
+                for (j = l + 1; j <= ir; j++) {
+                    a = x[j];
+                    b = y[j];
+                    for (i = j - 1; i >= l; i--) {
+                        if (x[i] <= a) {
+                            break;
+                        }
+                        x[i + 1] = x[i];
+                        y[i + 1] = y[i];
+                    }
+                    x[i + 1] = a;
+                    y[i + 1] = b;
+                }
+                if (jstack < 0) {
+                    break;
+                }
+                ir = istack[jstack--];
+                l = istack[jstack--];
+            } else {
+                k = (l + ir) >> 1;
+                Sort.swap(x, k, l + 1);
+                Sort.swap(y, k, l + 1);
+                if (x[l] > x[ir]) {
+                    Sort.swap(x, l, ir);
+                    Sort.swap(y, l, ir);
+                }
+                if (x[l + 1] > x[ir]) {
+                    Sort.swap(x, l + 1, ir);
+                    Sort.swap(y, l + 1, ir);
+                }
+                if (x[l] > x[l + 1]) {
+                    Sort.swap(x, l, l + 1);
+                    Sort.swap(y, l, l + 1);
+                }
+                i = l + 1;
+                j = ir;
+                a = x[l + 1];
+                b = y[l + 1];
+                for (;;) {
+                    do {
+                        i++;
+                    } while (x[i] < a);
+                    do {
+                        j--;
+                    } while (x[j] > a);
+                    if (j < i) {
+                        break;
+                    }
+                    Sort.swap(x, i, j);
+                    Sort.swap(y, i, j);
+                }
+                x[l + 1] = x[j];
+                x[j] = a;
+                y[l + 1] = y[j];
+                y[j] = b;
                 jstack += 2;
 
                 if (jstack >= NSTACK) {
@@ -212,19 +314,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (arr[l] > arr[ir]) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (arr[l + 1] > arr[ir]) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (arr[l] > arr[l + 1]) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -240,8 +342,8 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;
@@ -323,19 +425,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (arr[l] > arr[ir]) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (arr[l + 1] > arr[ir]) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (arr[l] > arr[l + 1]) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -351,8 +453,8 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;
@@ -420,19 +522,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (arr[l] > arr[ir]) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (arr[l + 1] > arr[ir]) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (arr[l] > arr[l + 1]) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -448,8 +550,8 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;
@@ -518,19 +620,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (arr[l] > arr[ir]) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (arr[l + 1] > arr[ir]) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (arr[l] > arr[l + 1]) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -546,8 +648,8 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;
@@ -629,19 +731,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (arr[l] > arr[ir]) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (arr[l + 1] > arr[ir]) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (arr[l] > arr[l + 1]) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -657,8 +759,8 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;
@@ -727,19 +829,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (arr[l] > arr[ir]) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (arr[l + 1] > arr[ir]) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (arr[l] > arr[l + 1]) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -755,8 +857,8 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;
@@ -825,19 +927,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (arr[l] > arr[ir]) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (arr[l + 1] > arr[ir]) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (arr[l] > arr[l + 1]) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -853,8 +955,8 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;
@@ -936,19 +1038,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (arr[l].compareTo(arr[ir]) > 0) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (arr[l + 1].compareTo(arr[ir]) > 0) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (arr[l].compareTo(arr[l + 1]) > 0) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -964,8 +1066,8 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;
@@ -1026,19 +1128,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (comparator.compare(arr[l], arr[ir]) > 0) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (comparator.compare(arr[l + 1], arr[ir]) > 0) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (comparator.compare(arr[l], arr[l + 1]) > 0) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -1054,8 +1156,8 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;
@@ -1124,19 +1226,19 @@ public class QuickSort {
                 l = istack[jstack--];
             } else {
                 k = (l + ir) >> 1;
-                SortUtils.swap(arr, k, l + 1);
-                SortUtils.swap(brr, k, l + 1);
+                Sort.swap(arr, k, l + 1);
+                Sort.swap(brr, k, l + 1);
                 if (arr[l].compareTo(arr[ir]) > 0) {
-                    SortUtils.swap(arr, l, ir);
-                    SortUtils.swap(brr, l, ir);
+                    Sort.swap(arr, l, ir);
+                    Sort.swap(brr, l, ir);
                 }
                 if (arr[l + 1].compareTo(arr[ir]) > 0) {
-                    SortUtils.swap(arr, l + 1, ir);
-                    SortUtils.swap(brr, l + 1, ir);
+                    Sort.swap(arr, l + 1, ir);
+                    Sort.swap(brr, l + 1, ir);
                 }
                 if (arr[l].compareTo(arr[l + 1]) > 0) {
-                    SortUtils.swap(arr, l, l + 1);
-                    SortUtils.swap(brr, l, l + 1);
+                    Sort.swap(arr, l, l + 1);
+                    Sort.swap(brr, l, l + 1);
                 }
                 i = l + 1;
                 j = ir;
@@ -1152,8 +1254,8 @@ public class QuickSort {
                     if (j < i) {
                         break;
                     }
-                    SortUtils.swap(arr, i, j);
-                    SortUtils.swap(brr, i, j);
+                    Sort.swap(arr, i, j);
+                    Sort.swap(brr, i, j);
                 }
                 arr[l + 1] = arr[j];
                 arr[j] = a;

@@ -206,19 +206,11 @@ def svd(a, full_matrices=True):
         Unitary matrix having right singular vectors as rows.
         Of shape ``(N,N)``.
     """
-    r = LinalgUtil.svd(a.asarray())
+    r = LinalgUtil.svd(a.asarray(), full_matrices)
     # r = LinalgUtil.svd_EJML(a.asarray())
     U = np.NDArray(r[0])
     s = np.NDArray(r[1])
     Vh = np.NDArray(r[2])
-    if not full_matrices:
-        m, n = a.shape
-        if m != n:
-            k = min(m, n)
-            if k == m:
-                Vh = Vh[:k, :].copy()
-            else:
-                U = U[:, :k].copy()
     return U, s, Vh
 
 

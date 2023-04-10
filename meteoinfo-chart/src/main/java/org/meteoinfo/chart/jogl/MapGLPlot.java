@@ -229,6 +229,7 @@ public class MapGLPlot extends GLPlot {
                 //Draw x axis label
                 ChartText label = this.xAxis.getLabel();
                 if (label != null) {
+                    this.updateTextRender(label.getFont());
                     strWidth += this.tickSpace;
                     float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
                     angle = y < center.y ? 270 - angle : 90 - angle;
@@ -304,8 +305,9 @@ public class MapGLPlot extends GLPlot {
                 //Draw y axis label
                 label = this.yAxis.getLabel();
                 if (label != null) {
+                    this.updateTextRender(label.getFont());
                     strWidth += this.tickSpace;
-                    float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, xMin);
+                    float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, zMin);
                     angle = x > center.x ? 270 - angle : 90 - angle;
                     float yShift = Math.min(-strWidth, -strWidth);
                     if (this.angleX <= -120) {

@@ -8,18 +8,25 @@ package org.meteoinfo.math.linalg;
 import org.apache.commons.math4.legacy.fitting.leastsquares.*;
 import org.apache.commons.math4.legacy.linear.*;
 import org.apache.commons.math4.legacy.core.Pair;
+import org.meteoinfo.math.blas.LAPACK;
+import org.meteoinfo.math.blas.SVDJob;
 import org.meteoinfo.math.matrix.Matrix;
 import org.meteoinfo.math.matrix.MatrixUtil;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
-import smile.math.blas.UPLO;
+import org.meteoinfo.math.blas.UPLO;
+
+import java.nio.DoubleBuffer;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Yaqiang Wang
  */
 public class LinalgUtil {
+
+    static Logger logger = Logger.getLogger("LinalgUtil class");
 
     /**
      * Matrix dot operator
@@ -154,13 +161,39 @@ public class LinalgUtil {
      * @param a Given matrix.
      * @return Result U/S/V arrays.
      */
-    public static Array[] svd(Array a) {
+    public static Array[] svd(Array a, boolean fullMatrices) {
         Matrix ma = MatrixUtil.arrayToMatrix(a);
-        Matrix.SVD svd = ma.svd();
 
-        Array Ua = MatrixUtil.matrixToArray(svd.U);
-        Array Va = MatrixUtil.matrixToArray(svd.V);
-        Array Sa = Array.factory(DataType.DOUBLE, new int[]{svd.s.length}, svd.s);
+        int m = ma.nrows();
+        int n = ma.ncols();
+        int k = Math.min(m, n);
+        double[] s = new double[k];
+
+        Matrix W = ma;
+        Matrix U, VT;
+        if (fullMatrices) {
+            U = new Matrix(m, m);
+            VT = new Matrix(n, n);
+
+            int info = LAPACK.engine.gesdd(W.layout(), SVDJob.ALL, m, n, W.getA(), W.ld(), DoubleBuffer.wrap(s), U.getA(), U.ld(), VT.getA(), VT.ld());
+            if (info != 0) {
+                logger.severe(String.format("LAPACK GESDD error code: {%s}", info));
+                throw new ArithmeticException("LAPACK GESDD error code: " + info);
+            }
+        } else {
+            U = new Matrix(m, k);
+            VT = new Matrix(k, n);
+
+            int info = LAPACK.engine.gesdd(W.layout(), SVDJob.COMPACT, m, n, W.getA(), W.ld(), DoubleBuffer.wrap(s), U.getA(), U.ld(), VT.getA(), VT.ld());
+            if (info != 0) {
+                logger.severe(String.format("LAPACK GESDD error code: {%s}", info));
+                throw new ArithmeticException("LAPACK GESDD error code: " + info);
+            }
+        }
+
+        Array Ua = MatrixUtil.matrixToArray(U);
+        Array Va = MatrixUtil.matrixToArray(VT);
+        Array Sa = Array.factory(DataType.DOUBLE, new int[]{s.length}, s);
 
         return new Array[]{Ua, Sa, Va};
     }

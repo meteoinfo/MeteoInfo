@@ -44,11 +44,6 @@
             <version>52.0.1</version>
         </dependency>
         <dependency>
-            <groupId>com.github.haifengl</groupId>
-            <artifactId>smile-interpolation</artifactId>
-            <version>2.6.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp-platform</artifactId>
             <version>1.5.4</version>

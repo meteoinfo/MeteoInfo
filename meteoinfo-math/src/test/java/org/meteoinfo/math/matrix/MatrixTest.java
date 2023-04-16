@@ -23,20 +23,23 @@ public class MatrixTest {
 
     @Test
     public void testMv() {
+        matrix = new Matrix(A);
         double[] d = matrix.mv(b);
         assertEquals(0.65, d[0], 1E-7);
     }
 
     @Test
     public void testTv() {
+        matrix = new Matrix(A);
         double[] d = matrix.tv(b);
-        assertEquals(d[0], 0.65, 1E-7);
+        assertEquals(0.65, d[0], 1E-7);
     }
 
     @Test
     public void testSVDSolve() {
+        matrix = new Matrix(A);
         Matrix.SVD svd = matrix.svd(true, true);
         double[] d = svd.solve(b);
-        assertEquals(d[0], 0.3642384179155737, 1E-7);
+        assertEquals(0.3642384179155737, d[0], 1E-7);
     }
 }

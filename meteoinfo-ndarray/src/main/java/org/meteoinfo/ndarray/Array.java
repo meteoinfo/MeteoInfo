@@ -846,7 +846,7 @@ public abstract class Array {
     }
 
     /**
-     * Get if the this Array is view - the physical order is not same as
+     * Get if this Array is view - the physical order is not same as
      * logical order
      *
      * @return Is view or not

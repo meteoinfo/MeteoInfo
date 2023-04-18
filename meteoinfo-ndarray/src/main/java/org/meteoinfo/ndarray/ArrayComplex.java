@@ -55,7 +55,7 @@ public class ArrayComplex extends Array {
     /* Create new ArrayComplex with given indexImpl and backing store.
     * Should be private.
     * @param index use this Index
-    * @param stor. use this storage. if null, allocate.
+    * @param storage use this storage. if null, allocate.
     * @return. new ArrayDouble.D<rank> or ArrayDouble object.
      */
     static ArrayComplex factory(Index index, Complex[] storage) {

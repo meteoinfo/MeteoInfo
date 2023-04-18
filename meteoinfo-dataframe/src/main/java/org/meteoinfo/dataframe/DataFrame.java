@@ -2025,6 +2025,115 @@ public class DataFrame implements Iterable {
     }
 
     /**
+     * Reindex by row and column ranges
+     *
+     * @param rowKeys Row keys
+     * @param rowRange Row range
+     * @param colRange Column indices
+     * @param colNames Column names
+     * @return Reindex data frame or series
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public Object reIndex(List rowKeys, List<Integer> rowRange, List<Integer> colRange,
+                           List<String> colNames) throws InvalidRangeException {
+        ColumnIndex cols = new ColumnIndex();
+        int idx = 0;
+        for (int i : colRange) {
+            if (i >= 0) {
+                cols.add(this.columns.get(i));
+            } else {
+                cols.add(new Column(colNames.get(idx), DataType.FLOAT));
+            }
+            idx += 1;
+        }
+
+        Object r;
+        if (this.array2D) {
+            int n = ((Array) data).getShape()[1];
+            int rn = rowRange.size();
+            int cn = colRange.size();
+            DataType dtype = ((Array) data).getDataType();
+            r = Array.factory(dtype, new int[]{rn, cn});
+            String format = this.columns.get(0).getFormat();
+            Object v = DataTypeUtil.convertTo(null, dtype, format);
+            idx = 0;
+            int jj = 0;
+            for (int j : colRange) {
+                if (j < 0) {
+                    int ii = 0;
+                    for (int i : rowRange) {
+                        idx = ii * cn + jj;
+                        ((Array) r).setObject(idx, v);
+                        ii += 1;
+                    }
+                } else {
+                    int ii = 0;
+                    for (int i : rowRange) {
+                        idx = ii * cn + jj;
+                        if (i < 0) {
+                            ((Array) r).setObject(idx, v);
+                        } else {
+                            ((Array) r).setObject(idx, ((Array) data).getObject(i * n + j));
+                        }
+                        ii += 1;
+                    }
+                }
+                jj += 1;
+            }
+        } else {
+            r = new ArrayList<>();
+            int rn = rowRange.size();
+            for (int j : colRange) {
+                Array rr;
+                idx = 0;
+                if (j < 0) {
+                    rr = Array.factory(DataType.FLOAT, new int[]{rn});
+                    for (int i : rowRange) {
+                        rr.setObject(idx, Float.NaN);
+                        idx += 1;
+                    }
+                } else {
+                    DataType dtype = this.columns.get(j).getDataType();
+                    String format = this.columns.get(j).getFormat();
+                    rr = Array.factory(dtype, new int[]{rn});
+                    Array mr = ((List<Array>) this.data).get(j);
+                    Object v = DataTypeUtil.convertTo(null, dtype, format);
+                    for (int i : rowRange) {
+                        if (i < 0) {
+                            rr.setObject(idx, v);
+                        } else {
+                            rr.setObject(idx, mr.getObject(i));
+                        }
+                        idx += 1;
+                    }
+                }
+                ((ArrayList) r).add(rr);
+            }
+            if (cols.size() == 1) {
+                r = ((ArrayList) r).get(0);
+            }
+        }
+
+        if (r == null) {
+            return null;
+        } else {
+            Index rIndex = Index.factory(rowKeys);
+            if (cols.size() == 1 && this.columns.size() > 1) {
+                Series s = new Series((Array) r, rIndex, cols.get(0).getName());
+                return s;
+            } else {
+                DataFrame df;
+                if (r instanceof Array) {
+                    df = new DataFrame((Array) r, rIndex, cols);
+                } else {
+                    df = new DataFrame((ArrayList) r, rIndex, cols);
+                }
+                return df;
+            }
+        }
+    }
+
+    /**
      * Extract DataFrame by row and column ranges
      *
      * @param rowRange Row range

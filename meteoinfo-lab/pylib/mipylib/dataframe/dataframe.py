@@ -801,6 +801,88 @@ class DataFrame(object):
             ascending = [ascending] * len(by)
         df = self._dataframe.sortBy(by, ascending)
         return DataFrame(dataframe=df)
+
+    def reindex(self, index=None, columns=None, axis=None):
+        """
+        Conform DataFrame to new index with optional filling logic.
+
+        :param index: (*array-like*) New labels for the index. Preferably an Index object to avoid
+            duplicating data.
+        :param columns: (*array-like*) New labels for the columns. Preferably an Index object to
+            avoid duplicating data.
+        :param axis: (*int or str*) Axis to target. Can be either the axis name (‘index’, ‘columns’)
+            or number (0, 1).
+
+        :return: DataFrame with changed index.
+        """
+        if index is None:
+            index = slice(None)
+
+        k = index
+        rkeys = index
+        if isinstance(k, slice):
+            sidx = 0 if k.start is None else self._index.index(k.start)
+            if sidx < 0:
+                raise KeyError(key)
+            eidx = self.shape[0] - 1 if k.stop is None else self._index.index(k.stop)
+            if eidx < 0:
+                raise KeyError(key)
+            step = 1 if k.step is None else k.step
+            rowkey = Range(sidx, eidx, step)
+        else:
+            rowkey = self._index.get_indexer(k)
+            if len(rowkey) == 0:
+                raise KeyError(key)
+
+        k = columns
+        if k is None:
+            colkey = range(0, self.shape[1], 1)
+        else:
+            if isinstance(k, slice):
+                sidx = 0 if k.start is None else self.columns.indexOfName(k.start)
+                if sidx < 0:
+                    raise KeyError(key)
+                eidx = self.shape[1] - 1 if k.stop is None else self.columns.indexOfName(k.stop)
+                if eidx < 0:
+                    raise KeyError(key)
+                step = 1 if k.step is None else k.step
+                colkey = Range(sidx, eidx, step)
+            elif isinstance(k, list):
+                colkey = self.columns.indexOfName(k)
+            elif isinstance(k, basestring):
+                col = self.columns.indexOfName(k)
+                if col < 0:
+                    raise KeyError(key)
+                colkey = [col]
+            else:
+                return None
+
+        if isinstance(rowkey, (int, Range)):
+            r = self._dataframe.select(rowkey, colkey)
+        else:
+            if isinstance(colkey, Range):
+                ncol = colkey.length()
+            else:
+                ncol = len(colkey)
+
+            if rkeys is None:
+                r = self._dataframe.select(rowkey, colkey)
+            else:
+                if not isinstance(rkeys, list):
+                    rkeys = [rkeys]
+                if columns is None:
+                    columns = self.columns.names
+                r = self._dataframe.reIndex(rkeys, rowkey, colkey, columns)
+
+        if r is None:
+            return None
+
+        if isinstance(r, MISeries):
+            r = series.Series(series=r)
+        else:
+            r = DataFrame(dataframe=r)
+
+        return r
     
     def groupby(self, by):
         """

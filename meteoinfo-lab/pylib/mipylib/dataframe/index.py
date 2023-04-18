@@ -129,6 +129,22 @@ class Index(object):
     def fill_keylist(self, rdata, rfdata):
         return self._index.fillKeyList(rdata.asarray(), rfdata)
 
+    def get_indexer(self, key):
+        """
+        Compute indexer and mask for new index given the current index.
+
+        :param key: Index.
+
+        :return: (*array*) Integers from 0 to n - 1 indicating that the index at these positions matches
+            the corresponding target values. Missing values in the target are marked by -1.
+        """
+        if isinstance(key, np.NDArray):
+            r = self._index.getIndices(key.asarray())
+        else:
+            r = self._index.getIndices(key)
+
+        return list(r[2])
+
     def get_format(self):
         """
         Get value to string format.

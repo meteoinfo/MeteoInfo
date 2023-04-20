@@ -20,6 +20,8 @@ import org.meteoinfo.ndarray.util.DataTypeUtil;
 import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
@@ -2311,7 +2313,7 @@ public class DataFrame implements Iterable {
      *
      * @param fileName File name
      * @param delimiter Delimiter
-     * @param skipRows Number of lines to skip at begining of the file
+     * @param skipRows Number of lines to skip at beginning of the file
      * @param formatSpec Format specifiers string
      * @param encoding Fle encoding
      * @param indexCol Column to be used as index
@@ -2328,7 +2330,7 @@ public class DataFrame implements Iterable {
             encoding = UniversalDetector.detectCharset(new File(fileName));
         }
 
-        BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), encoding));
+        BufferedReader sr = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(fileName)), encoding));
         if (skipRows > 0) {
             for (int i = 0; i < skipRows; i++) {
                 sr.readLine();
@@ -2597,7 +2599,7 @@ public class DataFrame implements Iterable {
             encoding = UniversalDetector.detectCharset(new File(fileName));
         }
 
-        BufferedReader sr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), encoding));
+        BufferedReader sr = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(fileName)), encoding));
         if (skipRows > 0) {
             for (int i = 0; i < skipRows; i++) {
                 sr.readLine();

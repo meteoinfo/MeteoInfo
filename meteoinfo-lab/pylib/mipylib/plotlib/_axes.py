@@ -3733,7 +3733,7 @@ class Axes(object):
         
         :param breaks: (*ColorBreak*) Legend breaks (optional).
         :param labels: (*list of string*) Legend labels (optional).
-        :param orientation: (*string*) Colorbar orientation: ``vertical`` or ``horizontal``.
+        :param orientation: (*string*) Legend orientation: ``vertical`` or ``horizontal``.
         :param loc: (*string*) The location of the legend, including: 'upper right', 'upper left',
             'lower left', 'lower right', 'right', 'ceter left', 'center right', lower center',
             'upper center', 'center' and 'custom'. Default is 'upper right'.
@@ -3751,7 +3751,8 @@ class Axes(object):
         :param titlefontname: (*string*) Title font name.
         :param titlefontsize: (*int*) Title font size.
         :param titlecolor: (*color*) Title color. Default is ``black`` .
-        :param breakspace: (*float*) Break space.
+        :param breakspace: (*float*) Break space. Default is `3`.
+        :param titlespace: (*float*) Title space. Default is `5`.
         :param markerscale: (*float*) Marker symbol scale.
         :param markerwidth: (*float*) Marker symbol width.
         :param markerheight: (*float*) Marker symbol height.
@@ -3889,6 +3890,9 @@ class Axes(object):
         breakspace = kwargs.pop('breakspace', None)
         if not breakspace is None:
             clegend.setBreakSpace(breakspace)
+        titlespace = kwargs.pop('titlespace', None)
+        if titlespace is not None:
+            clegend.setTitleSpace(titlespace)
         markerscale = kwargs.pop('markerscale', None)
         if not markerscale is None:
             clegend.setSymbolScale(markerscale)

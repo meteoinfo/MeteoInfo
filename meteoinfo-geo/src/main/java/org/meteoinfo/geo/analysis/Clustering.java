@@ -474,7 +474,9 @@ public class Clustering {
         int j;
         int k;
         int IND;
-        double[] DISS = new double[N * (N - 1) / 2];
+        long nl = (long) N * (N - 1) / 2;
+        int n = (int) nl;
+        double[] DISS = new double[n];
         if (distanceType == DistanceType.ANGLE) {
             double X0;
             double Y0;
@@ -528,22 +530,6 @@ public class Clustering {
                     //---- rather than distances.)
                 }
             }
-
-            //For i = 0 To N - 2
-            //For j = i + 1 To N - 1
-            //IND = IOFFSET(N, i + 1, j + 1)
-            //DISS(IND) = 0.0
-            //For k = 0 To M - 1
-            //DISS(IND) = DISS(IND) + (DATA(i, k) - DATA(j, k)) ^ 2
-            //Next
-            //If IOPT = 1 Then
-            //DISS(IND) = DISS(IND) / 2
-            //End If
-            //---- (Above is done for the case of the min. var. method
-            //---- where merging criteria are defined in terms of variances
-            //---- rather than distances.)
-            //Next
-            //Next
         }
 
         return DISS;
@@ -556,7 +542,9 @@ public class Clustering {
         int j;
         int k;
         int IND;
-        double[] DISS = new double[N * (N - 1) / 2];
+        long nl = (long) N * (N - 1) / 2;
+        int n = (int) nl;
+        double[] DISS = new double[n];
         for (i = 0; i <= N - 2; i++) {
             for (j = i + 1; j <= N - 1; j++) {
                 IND = IOFFSET(N, i + 1, j + 1);

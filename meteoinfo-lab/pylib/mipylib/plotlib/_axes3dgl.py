@@ -558,7 +558,7 @@ class Axes3DGL(Axes3D):
 
     def streamslice(self, *args, **kwargs):
         """
-        Plot stream lines slice in 3D axes.
+        Plot streamlines slice in 3D axes.
 
         :param x: (*array_like*) X coordinate array.
         :param y: (*array_like*) Y coordinate array.

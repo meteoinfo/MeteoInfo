@@ -159,10 +159,12 @@ public class Plot2D extends AbstractPlot2D {
 
     @Override
     void drawGraph(Graphics2D g, Rectangle2D area) {
-        if (isPiePlot()){
+        /*if (isPiePlot()){
             plotPie(g, area);
         } else
-            plotGraphics(g, area);
+            plotGraphics(g, area);*/
+
+        plotGraphics(g, area);
     }
     
     private boolean isPiePlot(){

@@ -153,8 +153,13 @@ public class GeoComputation {
             return false;
         }
 
-        if (aPolygon instanceof CircleShape) {
-            return ((CircleShape) aPolygon).contains(aPoint);
+        switch (aPolygon.getShapeType()) {
+            case CIRCLE:
+                return ((CircleShape) aPolygon).contains(aPoint);
+            case ELLIPSE:
+                return ((EllipseShape) aPolygon).contains(aPoint);
+            case ARC:
+                return ((ArcShape) aPolygon).contains(aPoint);
         }
 
         boolean isIn = false;

@@ -19,9 +19,8 @@ import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.geoprocess.Spline;
 import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.shape.Polyline;
-import org.meteoinfo.geometry.shape.WindArrow;
-import org.meteoinfo.geometry.shape.WindBarb;
+import org.meteoinfo.geometry.shape.*;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -49,10 +48,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
-import org.meteoinfo.geometry.shape.EllipseShape;
-import org.meteoinfo.geometry.shape.Polygon;
-import org.meteoinfo.geometry.shape.PolygonShape;
-import org.meteoinfo.geometry.shape.StationModelShape;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
@@ -2440,9 +2435,9 @@ public class Draw {
      * @param points The points
      * @param aGraphic The graphic
      * @param g Graphics2D
-     * @param isEditingVertice Is editing vertice
+     * @param isEditingVertices Is editing vertices
      */
-    public static void drawGrahpic(PointF[] points, Graphic aGraphic, Graphics2D g, boolean isEditingVertice) {
+    public static void drawGraphic(PointF[] points, Graphic aGraphic, Graphics2D g, boolean isEditingVertices) {
         Rectangle rect = new Rectangle();
         Extent aExtent = MIMath.getPointFsExtent(points);
         rect.x = (int) aExtent.minX;
@@ -2498,11 +2493,16 @@ public class Draw {
                 EllipseShape eshape = (EllipseShape) aGraphic.getShape();
                 drawEllipse(points, eshape.getAngle(), (PolygonBreak) aGraphic.getLegend(), g);
                 break;
+            case ARC:
+                ArcShape arcShape = (ArcShape) aGraphic.getShape();
+                drawArc(points, arcShape.getAngle(), arcShape.getStartAngle(), arcShape.getSweepAngle(),
+                        (PolygonBreak) aGraphic.getLegend(), g);
+                break;
         }
 
         //Draw selected rectangle
         if (aGraphic.getShape().isSelected()) {
-            if (isEditingVertice) {
+            if (isEditingVertices) {
                 drawSelectedVertices(g, points);
             } else {
                 float[] dashPattern = new float[]{2.0F, 1.0F};
@@ -4116,7 +4116,7 @@ public class Draw {
      * @param points The points
      * @param angle The angle
      * @param aPGB The polygon break
-     * @param g Grahpics2D
+     * @param g Graphics2D
      */
     public static void drawEllipse(PointF[] points, float angle, PolygonBreak aPGB, Graphics2D g) {
         float sx = Math.min(points[0].X, points[2].X);
@@ -4165,7 +4165,7 @@ public class Draw {
      *
      * @param points The points
      * @param aPGB The polygon break
-     * @param g Grahpics2D
+     * @param g Graphics2D
      */
     public static void drawEllipse(PointF[] points, PolygonBreak aPGB, Graphics2D g) {
         float sx = Math.min(points[0].X, points[2].X);
@@ -4181,6 +4181,37 @@ public class Draw {
             g.setColor(aPGB.getOutlineColor());
             g.setStroke(new BasicStroke(aPGB.getOutlineSize()));
             g.draw(new Ellipse2D.Float(sx, sy, width, height));
+        }
+    }
+
+    /**
+     * Draw Arc
+     *
+     * @param points The points
+     * @param angle The angle
+     * @param aPGB The polygon break
+     * @param g Graphics2D
+     */
+    public static void drawArc(PointF[] points, float angle, float startAngle, float sweepAngle,
+                               PolygonBreak aPGB, Graphics2D g) {
+        float sx = Math.min(points[0].X, points[2].X);
+        float sy = Math.min(points[0].Y, points[2].Y);
+        float width = Math.abs(points[2].X - points[0].X);
+        float height = Math.abs(points[2].Y - points[0].Y);
+
+        if (angle != 0) {
+            AffineTransform tempTrans = g.getTransform();
+            AffineTransform myTrans = (AffineTransform) tempTrans.clone();
+            myTrans.translate(sx + width / 2, sy + height / 2);
+            g.setTransform(myTrans);
+
+            Draw.drawPie(new PointF((float)sx, (float)sy),
+                    (float) width, (float) height, startAngle, sweepAngle, aPGB, g);
+
+            g.setTransform(tempTrans);
+        } else {
+            Draw.drawPie(new PointF((float)sx, (float)sy),
+                    (float) width, (float) height, startAngle, sweepAngle, aPGB, g);
         }
     }
 

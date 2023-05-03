@@ -112,7 +112,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -120,7 +119,6 @@ import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
@@ -5952,6 +5950,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 case CIRCLE:
                 case CURVE_POLYGON:
                 case ELLIPSE:
+                case ARC:
                     if (((PolygonBreak) aGraphic.getLegend()).isMaskout()) {
                         setClipRegion(g);
                     }
@@ -5961,23 +5960,12 @@ public class MapView extends JPanel implements IWebMapPanel {
             //Get screen points
             double[] sXY;
             List<PointD> points = (List<PointD>) aGraphic.getShape().getPoints();
-//            if (aGraphic.getShape().getShapeType().isPolygon()){
-//                this.drawPolygonShape(g, (PolygonShape)aGraphic.getShape(), 
-//                        (PolygonBreak)aGraphic.getLegend(), lonShift);
-//            } else {
-//                PointF[] screenPoints = new PointF[points.size()];
-//                for (int i = 0; i < points.size(); i++) {
-//                    sXY = projToScreen(points.get(i).X, points.get(i).Y, lonShift);
-//                    screenPoints[i] = new PointF((float) sXY[0], (float) sXY[1]);
-//                }
-//                Draw.drawGrahpic(screenPoints, aGraphic, g, _mouseTool == MouseTools.EditVertices);
-//            }
             PointF[] screenPoints = new PointF[points.size()];
             for (int i = 0; i < points.size(); i++) {
                 sXY = projToScreen(points.get(i).X, points.get(i).Y, lonShift);
                 screenPoints[i] = new PointF((float) sXY[0], (float) sXY[1]);
             }
-            Draw.drawGrahpic(screenPoints, aGraphic, g, _mouseTool == MouseTools.EDIT_VERTICES);
+            Draw.drawGraphic(screenPoints, aGraphic, g, _mouseTool == MouseTools.EDIT_VERTICES);
 
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, rend);
         }

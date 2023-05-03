@@ -40,6 +40,14 @@ public class PointShape extends Shape implements Cloneable{
     public PointShape(){
         
     }
+
+    /**
+     * Constructor
+     * @param point The point
+     */
+    public PointShape(PointD point) {
+        this.setPoint(point);
+    }
     
     /**
      * Constructor

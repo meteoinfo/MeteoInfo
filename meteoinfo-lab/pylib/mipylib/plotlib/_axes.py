@@ -3052,12 +3052,14 @@ class Axes(object):
 
         for graphic in graphics:
             self.add_graphic(graphic)
+
         self._axes.setAutoExtent()
         self._axes.setAspectType(AspectType.EQUAL)
         self._axes.getAxis(Location.BOTTOM).setVisible(False)
         self._axes.getAxis(Location.LEFT).setVisible(False)
         self._axes.getAxis(Location.TOP).setVisible(False)
         self._axes.getAxis(Location.RIGHT).setVisible(False)
+        self._axes.setClip(False)
 
         return tuple(graphics)
 

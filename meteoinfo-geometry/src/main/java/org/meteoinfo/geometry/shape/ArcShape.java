@@ -13,13 +13,16 @@
  */
 package org.meteoinfo.geometry.shape;
 
+import org.meteoinfo.common.PointD;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Yaqiang Wang
  */
-public class ArcShape extends PolygonShape {
+public class ArcShape extends EllipseShape {
     // <editor-fold desc="Variables">
     private float startAngle;
     private float sweepAngle;
@@ -27,7 +30,28 @@ public class ArcShape extends PolygonShape {
     private Float wedgeWidth = null;
     // </editor-fold>
     // <editor-fold desc="Constructor">
+    /**
+     * Constructor
+     */
+    public ArcShape() {
 
+    }
+
+    /**
+     * Constructor
+     * @param x Center x
+     * @param y Center y
+     * @param width Width
+     * @param height Height
+     */
+    public ArcShape(double x, double y, double width, double height) {
+        List<PointD> points = new ArrayList<>();
+        points.add(new PointD(x - width * 0.5, y - height * 0.5));
+        points.add(new PointD(x - width * 0.5, y + height * 0.5));
+        points.add(new PointD(x + width * 0.5, y + height * 0.5));
+        points.add(new PointD(x + width * 0.5, y - height * 0.5));
+        super.setPoints(points);
+    }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
     @Override
@@ -100,6 +124,35 @@ public class ArcShape extends PolygonShape {
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
+
+    /**
+     * If this shape contains a point
+     * @param p Point
+     * @return Contains a point or not
+     */
+    public boolean contains(PointD p){
+        PointD center = this.getCenter();
+        double a = this.getA();
+        double b = this.getB();
+
+        // checking the equation of
+        // ellipse with the given point
+        double r = (Math.pow((p.X - center.X), 2)
+                / Math.pow(a, 2))
+                + (Math.pow((p.Y - center.Y), 2)
+                / Math.pow(b, 2));
+
+        if (r > 1) {
+            return false;
+        }
+
+        double angle = Math.toDegrees(Math.atan2(p.Y - center.Y, p.X - center.X));
+        if (angle < 0) {
+            angle += 360;
+        }
+
+        return angle >= this.startAngle && angle <= this.startAngle + this.sweepAngle;
+    }
 
     /**
      * Clone

@@ -14,6 +14,7 @@
  package org.meteoinfo.geometry.shape;
 
  import org.meteoinfo.common.PointD;
+ import org.meteoinfo.geometry.geoprocess.GeoComputation;
  import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 
  import java.util.ArrayList;
@@ -26,7 +27,7 @@
   */
  public class EllipseShape extends PolygonShape {
      // <editor-fold desc="Variables">
-     private float angle = 0.0f;
+     protected float angle = 0.0f;
      // </editor-fold>
      // <editor-fold desc="Constructor">
 
@@ -45,10 +46,10 @@
       */
      public EllipseShape(double x, double y, double width, double height) {
          List<PointD> points = new ArrayList<>();
-         points.add(new PointD(x - width * 0.5, y));
-         points.add(new PointD(x, y - height * 0.5));
-         points.add(new PointD(x + width * 0.5, y));
-         points.add(new PointD(x, y + height * 0.5));
+         points.add(new PointD(x - width * 0.5, y - height * 0.5));
+         points.add(new PointD(x - width * 0.5, y + height * 0.5));
+         points.add(new PointD(x + width * 0.5, y + height * 0.5));
+         points.add(new PointD(x + width * 0.5, y - height * 0.5));
          super.setPoints(points);
      }
 
@@ -102,6 +103,42 @@
      }
      // </editor-fold>
      // <editor-fold desc="Methods">
+
+     /**
+      * Get semi-major axis a
+      * @return Semi-major axis a
+      */
+     public double getA() {
+        return getWidth() / 2;
+     }
+
+     /**
+      * Get semi-minor axis b
+      * @return Semi-minor axis b
+      */
+     public double getB() {
+        return getHeight() / 2;
+     }
+
+     /**
+      * If this shape contains a point
+      * @param p Point
+      * @return Contains a point or not
+      */
+     public boolean contains(PointD p){
+         PointD center = this.getCenter();
+         double a = this.getA();
+         double b = this.getB();
+
+         // checking the equation of
+         // ellipse with the given point
+         double r = ((double)Math.pow((p.X - center.X), 2)
+                 / (double)Math.pow(a, 2))
+                 + ((double)Math.pow((p.Y - center.Y), 2)
+                 / (double)Math.pow(b, 2));
+
+         return r <= 1;
+     }
 
      /**
       * Clone

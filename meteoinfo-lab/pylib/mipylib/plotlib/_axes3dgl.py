@@ -265,6 +265,25 @@ class Axes3DGL(Axes3D):
         """
         self._axes.setDistance(dis)
 
+    def get_fov(self):
+        """
+        Get field of view angles in degrees for perspective projection.
+
+        :return: (*float*) Field of view angles in degrees.
+        """
+        return self._axes.getFieldOfView()
+
+    def set_fov(self, fov):
+        """
+        Set field of view angles in degrees for perspective projection.
+
+        :param fov: (*float*) Field of view angles in degrees.
+        """
+        if fov <= 0 or fov >= 180:
+            warnings.warn('Field of view angles should be in the range of (0, 180)')
+        else:
+            self._axes.setFieldOfView(fov)
+
     def set_lighting(self, enable=True, **kwargs):
         """
         Set lighting.

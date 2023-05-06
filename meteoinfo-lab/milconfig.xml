@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\maskout">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamslice"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
@@ -16,19 +13,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\reindex_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\maskout\maskout_data_arc_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\maskout\maskout_data_arc.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\volumeplot_perspective_sagittal_specular.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\dataframe_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\reindex_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\maskout\maskout_data_arc_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\maskout\maskout_data_arc.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\volumeplot_perspective_sagittal_specular.py"/>
     </RecentFiles>
   </File>
   <Font>

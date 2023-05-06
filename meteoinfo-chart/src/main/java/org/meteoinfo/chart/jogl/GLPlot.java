@@ -117,6 +117,7 @@ public class GLPlot extends Plot {
     protected float dpiScale;   //DPI scale factor
     protected boolean orthographic;
     protected float distance;
+    protected float fieldOfView;
     protected GLAutoDrawable drawable;
 
     protected Map<Graphic, JOGLGraphicRender> renderMap = new HashMap<>();
@@ -151,6 +152,7 @@ public class GLPlot extends Plot {
         this.dpiScale = 1;
         this.orthographic = true;
         this.distance = 5.f;
+        this.fieldOfView = 45.f;
         this.initAngles();
         this.graphicExtent = new Extent3D();
         Extent3D extent3D = new Extent3D(-1, 1, -1, 1, -1, 1);
@@ -1014,6 +1016,22 @@ public class GLPlot extends Plot {
      */
     public void setDistance(float value) {
         this.distance = value;
+    }
+
+    /**
+     * Get field of view angle for perspective projection
+     * @return Field of view angle in degrees
+     */
+    public float getFieldOfView() {
+        return this.fieldOfView;
+    }
+
+    /**
+     * Set field of view angle for perspective projection
+     * @param value Field of view angle in degrees
+     */
+    public void setFieldOfView(float value) {
+        this.fieldOfView = value;
     }
 
     // </editor-fold>
@@ -4426,13 +4444,14 @@ public class GLPlot extends Plot {
             float far = 1000.0f;
             switch (this.aspectType) {
                 case EQUAL:
-                    glu.gluPerspective(45.0f, h, near, far);
+                    glu.gluPerspective(fieldOfView, h, near, far);
                     break;
                 default:
-                    glu.gluPerspective(45.0f, 1.0f, near, far);
+                    glu.gluPerspective(fieldOfView, 1.0f, near, far);
                     break;
             }
-            glu.gluLookAt(0.0f, 0.0f, distance, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+            float z = distance * 45.f / fieldOfView;
+            glu.gluLookAt(0.0f, 0.0f, z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
         }
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();

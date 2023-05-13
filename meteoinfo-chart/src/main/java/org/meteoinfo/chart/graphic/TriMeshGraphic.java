@@ -6,6 +6,8 @@ import org.locationtech.jts.triangulate.tri.Tri;
 import org.meteoinfo.chart.jogl.JOGLUtil;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.ndarray.Array;
@@ -393,9 +395,9 @@ public class TriMeshGraphic extends GraphicCollection3D {
             vertexPosition[idx * 3] = vector3f.x;
             vertexPosition[idx * 3 + 1] = vector3f.y;
             vertexPosition[idx * 3 + 2] = vector3f.z;
-            xi = ArrayUtil.searchSorted(xa, vector3f.x);
-            yi = ArrayUtil.searchSorted(ya, vector3f.y);
-            zi = ArrayUtil.searchSorted(za, vector3f.z);
+            xi = ArrayUtil.searchSorted(xa, vector3f.x, true);
+            yi = ArrayUtil.searchSorted(ya, vector3f.y, true);
+            zi = ArrayUtil.searchSorted(za, vector3f.z, true);
             cIndex.set(zi, yi, xi);
             vertexValue[idx] = cData.getFloat(cIndex);
             idx += 1;
@@ -404,10 +406,55 @@ public class TriMeshGraphic extends GraphicCollection3D {
         updateExtent();
     }
 
+    /**
+     * Set triangles
+     * @param vertexData The triangle vertex array
+     * @param cData Color data array
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate array
+     */
+    public void setVertexValue(Array cData, Array xa, Array ya, Array za) {
+        int n = getVertexNumber();
+        this.vertexValue = new float[n];
+        Index cIndex = cData.getIndex();
+        int xi, yi, zi;
+        float x, y, z;
+        for (int i = 0; i < n; i++) {
+            x = vertexPosition[i * 3];
+            y = vertexPosition[i * 3 + 1];
+            z = vertexPosition[i * 3 + 2];
+            xi = ArrayUtil.searchSorted(xa, x, true);
+            yi = ArrayUtil.searchSorted(ya, y, true);
+            zi = ArrayUtil.searchSorted(za, z, true);
+            cIndex.set(zi, yi, xi);
+            vertexValue[i] = cData.getFloat(cIndex);
+        }
+    }
+
     @Override
     public void setLegendScheme(LegendScheme ls) {
         super.setLegendScheme(ls);
         updateVertexColor();
+    }
+
+    /**
+     * Set transfer function
+     * @param transferFunction Transfer function
+     */
+    public void setTransferFunction(TransferFunction transferFunction) {
+        if (vertexValue != null) {
+            vertexColor = new float[getVertexNumber() * 4];
+            float[] color;
+            for (int i = 0; i < vertexValue.length; i++) {
+                color = transferFunction.getColor(vertexValue[i]).getRGBComponents(null);
+                System.arraycopy(color, 0, vertexColor, i * 4, 4);
+            }
+        }
+
+        LegendScheme ls = LegendManage.createLegendScheme(transferFunction);
+        this.legendScheme = ls;
+        this.setSingleLegend(false);
     }
 
     /**

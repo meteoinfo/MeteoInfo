@@ -2254,17 +2254,15 @@ public class ArrayUtil {
                 break;
         }
 
-        if (idx >= 0) {
+        if (idx < 0) {
+            if (idx == -1) {
+                idx = 0;
+            } else {
+                idx = -idx - 2;
+            }
+
             if (!left)
                 idx += 1;
-        } else {
-            if (idx == -1)
-                idx = 0;
-            else if (idx == -(a.getSize() + 1))
-                idx = (int)a.getSize();
-            else {
-                idx = -idx - 1;
-            }
         }
 
         return idx;

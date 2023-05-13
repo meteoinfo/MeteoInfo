@@ -277,7 +277,7 @@ class Axes3DGL(Axes3D):
         """
         Set field of view angles in degrees for perspective projection.
 
-        :param fov: (*float*) Field of view angles in degrees.
+        :param fov: (*float*) Field of view angles in degrees with the range of (0, 180).
         """
         if fov <= 0 or fov >= 180:
             warnings.warn('Field of view angles should be in the range of (0, 180)')

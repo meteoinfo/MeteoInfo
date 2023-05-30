@@ -2565,7 +2565,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             case POLYLINE:
             case POLYLINE_Z:
                 ColorBreak cb = graphic.getLegend();
-                if (cb instanceof StreamlineBreak) {
+                /*if (cb instanceof StreamlineBreak) {
                     if (shape instanceof PipeShape) {
                         this.drawPipeStreamline(gl, graphic);
                     } else {
@@ -2591,14 +2591,14 @@ public class Plot3DGL extends Plot implements GLEventListener {
                     } else {
                         this.drawLineString(gl, graphic);
                     }
-                }
+                }*/
                 break;
             case POLYGON:
             case POLYGON_Z:
                 this.drawPolygonShape(gl, graphic);
                 break;
             case WIND_ARROW:
-                this.drawWindArrow(gl, graphic);
+                //this.drawWindArrow(gl, graphic);
                 break;
             case CUBIC:
                 this.drawCubic(gl, graphic);
@@ -2927,7 +2927,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         }
     }
 
-    private void drawStreamline(GL2 gl, Graphic graphic) {
+    /*private void drawStreamline(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
             isDraw = drawExtent.intersects(graphic.getExtent());
@@ -3100,7 +3100,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
                 }
             }
         }
-    }
+    }*/
 
     protected void drawPolygonShape(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
@@ -3580,7 +3580,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
         gl.glDisable(GL2.GL_TEXTURE_2D);
     }
 
-    void drawArrow(GL2 gl, float[] p1, float[] p2, StreamlineBreak slb) {
+    /*void drawArrow(GL2 gl, float[] p1, float[] p2, StreamlineBreak slb) {
         // Calculate vector along direction of line
         float[] v = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
         float norm_of_v = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
@@ -3683,9 +3683,9 @@ public class Plot3DGL extends Plot implements GLEventListener {
 
         gl.glPopAttrib(); // GL_CULL_FACE
         gl.glPopMatrix();
-    }
+    }*/
 
-    void drawWindArrow(GL2 gl, Graphic graphic) {
+    /*void drawWindArrow(GL2 gl, Graphic graphic) {
         boolean isDraw = true;
         if (this.clipPlane)
             isDraw = drawExtent.intersects(graphic.getExtent());
@@ -3813,7 +3813,7 @@ public class Plot3DGL extends Plot implements GLEventListener {
             gl.glPopAttrib(); // GL_CULL_FACE
             gl.glPopMatrix();
         }
-    }
+    }*/
 
     void drawCircle(GL2 gl, float z, float radius, PolygonBreak bb) {
         drawCircle(gl, z, radius, bb, false);

@@ -431,8 +431,8 @@ def annotate(s, xy, *args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes.patch)
-def fill(x, y=None, **kwargs):
+@_copy_docstring_and_deprecators(Axes.fill)
+def fill(x, y, color=None, **kwargs):
     global g_axes
     if g_figure is None:
         figure()
@@ -440,7 +440,7 @@ def fill(x, y=None, **kwargs):
     if g_axes is None:
         g_axes = axes()
 
-    r = g_axes.patch(x, y, **kwargs)
+    r = g_axes.fill(x, y, color, **kwargs)
     if r is not None:
         draw_if_interactive()
     return r

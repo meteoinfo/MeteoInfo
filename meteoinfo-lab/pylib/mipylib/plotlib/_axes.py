@@ -2844,6 +2844,33 @@ class Axes(object):
         """
         pass
 
+    def fill(self, x, y, color=None, **kwargs):
+        """
+        Plot filled polygons.
+
+        - To plot one region, specify x and y as vectors.
+        - To plot multiple regions, specify x and y as matrices where each column corresponds to a polygon.
+
+        :param x: (*array_like*) X coordinates for each vertex.
+        :param y: (*array_like*) Y coordinates for each vertex.
+        :param color: (*Color*) Fill color.
+        """
+        if color is not None:
+            kwargs['facecolor'] = color
+        lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
+
+        if y is None:
+            graphics = Graphic(x, lbreak)
+        else:
+            x = plotutil.getplotdata(x)
+            y = plotutil.getplotdata(y)
+            graphics = GraphicFactory.createPolygons(x, y, lbreak)
+
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
+        self._axes.setAutoExtent()
+        return graphics
+
     def patch(self, x, y=None, **kwargs):
         """
         Create one or more filled polygons.

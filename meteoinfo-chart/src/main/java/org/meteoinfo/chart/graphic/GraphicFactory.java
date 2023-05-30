@@ -1613,35 +1613,57 @@ public class GraphicFactory {
      * @return Graphics
      */
     public static GraphicCollection createPolygons(Array xa, Array ya, PolygonBreak pgb) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+
         GraphicCollection graphics = new GraphicCollection();
         double x, y;
         int n = (int) xa.getSize();
         PolygonShape pgs;
         PointD p;
         List<PointD> points = new ArrayList<>();
-        IndexIterator xIter = xa.getIndexIterator();
-        IndexIterator yIter = ya.getIndexIterator();
-        while (xIter.hasNext()){
-            x = xIter.getDoubleNext();
-            y = yIter.getDoubleNext();
-            if (Double.isNaN(x)) {
-                if (points.size() > 2) {
-                    pgs = new PolygonShape();
-                    pgs.setPoints(points);
-                    Graphic aGraphic = new Graphic(pgs, pgb);
-                    graphics.add(aGraphic);
+        if (xa.getRank() == 1) {
+            IndexIterator xIter = xa.getIndexIterator();
+            IndexIterator yIter = ya.getIndexIterator();
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                if (Double.isNaN(x)) {
+                    if (points.size() > 2) {
+                        pgs = new PolygonShape();
+                        pgs.setPoints(points);
+                        Graphic aGraphic = new Graphic(pgs, pgb);
+                        graphics.add(aGraphic);
+                    }
+                    points = new ArrayList<>();
+                } else {
+                    p = new PointD(x, y);
+                    points.add(p);
                 }
-                points = new ArrayList<>();
-            } else {
-                p = new PointD(x, y);
-                points.add(p);
             }
-        }
-        if (points.size() > 2) {
-            pgs = new PolygonShape();
-            pgs.setPoints(points);
-            Graphic aGraphic = new Graphic(pgs, pgb);
-            graphics.add(aGraphic);
+            if (points.size() > 2) {
+                pgs = new PolygonShape();
+                pgs.setPoints(points);
+                Graphic aGraphic = new Graphic(pgs, pgb);
+                graphics.add(aGraphic);
+            }
+        } else {
+            int[] shape = xa.getShape();
+            int nRow = shape[0];
+            int nCol = shape[1];
+            int idx;
+            for (int i = 0; i < nCol; i++) {
+                points = new ArrayList<>();
+                for (int j = 0; j < nRow; j++) {
+                    idx = j * nCol + i;
+                    x = xa.getDouble(idx);
+                    y = ya.getDouble(idx);
+                    points.add(new PointD(x, y));
+                }
+                pgs = new PolygonShape();
+                pgs.setPoints(points);
+                graphics.add(new Graphic(pgs, pgb));
+            }
         }
         return graphics;
     }

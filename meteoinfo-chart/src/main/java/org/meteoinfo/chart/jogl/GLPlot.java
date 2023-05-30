@@ -1127,6 +1127,7 @@ public class GLPlot extends Plot {
         if (!ex.is3D()) {
             ex = ex.to3D();
         }
+        ex.asNonZero();
         this.graphicExtent = (Extent3D) ex;
         if (!fixExtent) {
             this.setAxesExtent((Extent3D) graphicExtent.clone());
@@ -1146,6 +1147,7 @@ public class GLPlot extends Plot {
         if (!ex.is3D()) {
             ex = ex.to3D();
         }
+        ex.asNonZero();
         this.graphicExtent = (Extent3D) ex;
         if (!fixExtent) {
             this.setAxesExtent((Extent3D) graphicExtent.clone());

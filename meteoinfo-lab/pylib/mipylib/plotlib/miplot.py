@@ -44,7 +44,7 @@ __all__ = [
     'boxplot', 'windrose', 'cla', 'clabel', 'clc', 'clear', 'clf', 'cll', 'cloudspec', 'colorbar', 'contour',
     'contourf',
     'contourfm', 'contourm', 'contourfslice', 'contourslice', 'delfig', 'draw', 'draw_if_interactive', 'errorbar',
-    'figure', 'glfigure', 'figsize', 'patch', 'rectangle', 'fill', 'fill_between', 'fill_betweenx', 'fimplicit3',
+    'figure', 'glfigure', 'figsize', 'patch', 'rectangle', 'fill', 'fill3', 'fill_between', 'fill_betweenx', 'fimplicit3',
     'webmap', 'gca', 'gcf', 'gc_collect', 'geoshow', 'get_figure', 'gifaddframe', 'gifanimation', 'giffinish',
     'grid', 'gridshow', 'gridshowm', 'hist', 'imshow', 'imshowm', 'isosurface', 'legend', 'left_title', 'lighting',
     'loglog', 'makecolors',
@@ -55,8 +55,7 @@ __all__ = [
     'semilogx', 'semilogy', 'show', 'slice3', 'stationmodel', 'stem', 'stem3', 'step', 'streamplot', 'streamplot3',
     'streamplotm', 'streamslice', 'subplot', 'subplots', 'suptitle', 'supxlabel', 'supylabel',
     'surf', 'taylor_diagram', 'text', 'text3', 'title', 'trisurf', 'twinx', 'twiny', 'violinplot', 'volumeplot',
-    'weatherspec',
-    'xaxis',
+    'weatherspec', 'xaxis',
     'xlabel', 'xlim', 'xreverse', 'xticks', 'yaxis', 'ylabel', 'ylim', 'yreverse', 'yticks', 'zaxis', 'zlabel', 'zlim',
     'zticks',
     'isinteractive'
@@ -441,6 +440,21 @@ def fill(x, y, color=None, **kwargs):
         g_axes = axes()
 
     r = g_axes.fill(x, y, color, **kwargs)
+    if r is not None:
+        draw_if_interactive()
+    return r
+
+
+@_copy_docstring_and_deprecators(Axes3DGL.fill)
+def fill3(x, y, z, color=None, **kwargs):
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
+
+    r = g_axes.fill(x, y, z, color, **kwargs)
     if r is not None:
         draw_if_interactive()
     return r

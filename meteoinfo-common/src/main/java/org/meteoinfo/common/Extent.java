@@ -114,7 +114,7 @@ public class Extent implements Cloneable {
     /**
      * Convert to rectangle
      *
-     * @return rectangel
+     * @return rectangle
      */
     public Rectangle convertToRectangle() {
         return new Rectangle((int) minX, (int) minY, (int) getWidth(), (int) getHeight());
@@ -187,6 +187,23 @@ public class Extent implements Cloneable {
     public Extent3D to3D() {
         Extent3D ex3d = new Extent3D(this.minX, this.maxX, this.minY, this.maxY, 0, 0);
         return ex3d;
+    }
+
+    /**
+     * Make the extent with non-zero length of the dimensions
+     */
+    public void asNonZero() {
+        double width = this.getWidth();
+        double height = this.getHeight();
+        if (width == 0) {
+            double v = height / 2.;
+            this.minX -= v;
+            this.maxX += v;
+        } else if (height == 0) {
+            double v = width / 2.;
+            this.minY -= v;
+            this.maxY += v;
+        }
     }
 
     /**

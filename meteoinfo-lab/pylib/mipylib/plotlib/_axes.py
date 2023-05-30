@@ -2854,17 +2854,16 @@ class Axes(object):
         :param x: (*array_like*) X coordinates for each vertex.
         :param y: (*array_like*) Y coordinates for each vertex.
         :param color: (*Color*) Fill color.
+
+        :return: Filled polygons
         """
         if color is not None:
             kwargs['facecolor'] = color
         lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
 
-        if y is None:
-            graphics = Graphic(x, lbreak)
-        else:
-            x = plotutil.getplotdata(x)
-            y = plotutil.getplotdata(y)
-            graphics = GraphicFactory.createPolygons(x, y, lbreak)
+        x = plotutil.getplotdata(x)
+        y = plotutil.getplotdata(y)
+        graphics = GraphicFactory.createPolygons(x, y, lbreak)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)

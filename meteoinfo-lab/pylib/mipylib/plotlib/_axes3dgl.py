@@ -357,6 +357,29 @@ class Axes3DGL(Axes3D):
         """
         self._axes.addZAxis(x, y, left)
 
+    def fill(self, x, y, z, color=None, **kwargs):
+        """
+        Create filled 3D patches.
+
+        :param x: (*array_like*) X coordinates for each vertex.
+        :param y: (*array_like*) Y coordinates for each vertex.
+        :param z: (*array_like*) Z coordinates for each vertex.
+        :param color: (*Color*) Fill color.
+
+        :return: Filled 3D patches.
+        """
+        if color is not None:
+            kwargs['facecolor'] = color
+        lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
+
+        x = plotutil.getplotdata(x)
+        y = plotutil.getplotdata(y)
+        z = plotutil.getplotdata(z)
+        graphics = GraphicFactory.createPolygons3D(x, y, z, lbreak)
+
+        self.add_graphic(graphics)
+        return graphics
+
     def bar(self, *args, **kwargs):
         """
         Make a 3D bar plot of x, y and z, where x, y and z are sequence like objects of the same lengths.

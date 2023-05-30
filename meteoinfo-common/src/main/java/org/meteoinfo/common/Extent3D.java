@@ -133,6 +133,30 @@ public class Extent3D extends Extent{
     public Extent3D extend(double dx, double dy, double dz) {
         return new Extent3D(minX - dx, maxX + dx, minY - dy, maxY + dy, minZ - dz, maxZ + dz);
     }
+
+    /**
+     * Make the extent with non-zero length of the dimensions
+     */
+    public void asNonZero() {
+        double width = this.getWidth();
+        double height = this.getHeight();
+        double zLength = this.getZLength();
+        double v = Math.max(width, height);
+        v = Math.max(v, zLength);
+        v = v / 2.;
+        if (width == 0) {
+            this.minX -= v;
+            this.maxX += v;
+        }
+        if (height == 0) {
+            this.minY -= v;
+            this.maxY += v;
+        }
+        if (zLength == 0) {
+            this.minZ -= v;
+            this.maxZ += v;
+        }
+    }
     
     /**
      * Clone

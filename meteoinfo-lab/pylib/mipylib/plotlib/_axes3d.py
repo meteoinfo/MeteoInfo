@@ -1129,42 +1129,39 @@ class Axes3D(Axes):
             string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
             color args (string, float, rgb, etc), different levels will be plotted in different colors in 
             the order specified.
-        :param smooth: (*boolean*) Smooth countour lines or not.
+        :param smooth: (*boolean*) Smooth contour lines or not.
         
-        :returns: (*VectoryLayer*) Contour VectoryLayer created from array data.
+        :returns: (*graphics*) Contour graphics created from array data.
         """
         n = len(args)
         cmap = plotutil.getcolormap(**kwargs)
         fill_value = kwargs.pop('fill_value', -9999.0)
         offset = kwargs.pop('offset', 0)
-        xaxistype = None
         if n <= 2:
-            gdata = np.asgriddata(args[0])
-            if isinstance(args[0], DimArray):
-                if args[0].islondim(1):
-                    xaxistype = 'lon'
-                elif args[0].islatdim(1):
-                    xaxistype = 'lat'
-                elif args[0].istimedim(1):
-                    xaxistype = 'time'
+            a = args[0]
+            if isinstance(a, DimArray):
+                y = a.dimvalue(0)
+                x = a.dimvalue(1)
+            else:
+                x = np.arange(a.shape[1])
+                y = np.arange(a.shape[0])
             args = args[1:]
         elif n <=4:
             x = args[0]
             y = args[1]
             a = args[2]
-            gdata = np.asgriddata(a, x, y, fill_value)
             args = args[3:]
         if len(args) > 0:
             level_arg = args[0]
             if isinstance(level_arg, int):
                 cn = level_arg
-                ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cn, cmap)
+                ls = LegendManage.createLegendScheme(a.min(), a.max(), cn, cmap)
             else:
                 if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
-                ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), level_arg, cmap)
+                ls = LegendManage.createLegendScheme(a.min(), a.max(), level_arg, cmap)
         else:    
-            ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cmap)
+            ls = LegendManage.createLegendScheme(a.min(), a.max(), cmap)
         ls = ls.convertTo(ShapeTypes.POLYLINE)
         plotutil.setlegendscheme(ls, **kwargs)
         
@@ -1172,10 +1169,10 @@ class Axes3D(Axes):
         zdir = kwargs.pop('zdir', 'z')
         if zdir == 'xy':
             sepoint = kwargs.pop('sepoint', [0,0,1,1])
-            igraphic = GraphicFactory.createContourLines(gdata.data, offset, zdir, ls, smooth, \
+            igraphic = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), offset, zdir, ls, smooth, \
                 sepoint)
         else:
-            igraphic = GraphicFactory.createContourLines(gdata.data, offset, zdir, ls, smooth)
+            igraphic = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), offset, zdir, ls, smooth)
 
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:
@@ -1200,7 +1197,7 @@ class Axes3D(Axes):
             string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
             color args (string, float, rgb, etc), different levels will be plotted in different colors in 
             the order specified.
-        :param smooth: (*boolean*) Smooth countour lines or not.
+        :param smooth: (*boolean*) Smooth contour lines or not.
         
         :returns: (*VectoryLayer*) Contour VectoryLayer created from array data.
         """
@@ -1208,34 +1205,31 @@ class Axes3D(Axes):
         cmap = plotutil.getcolormap(**kwargs)
         fill_value = kwargs.pop('fill_value', -9999.0)
         offset = kwargs.pop('offset', 0)
-        xaxistype = None
         if n <= 2:
-            gdata = np.asgriddata(args[0])
-            if isinstance(args[0], DimArray):
-                if args[0].islondim(1):
-                    xaxistype = 'lon'
-                elif args[0].islatdim(1):
-                    xaxistype = 'lat'
-                elif args[0].istimedim(1):
-                    xaxistype = 'time'
+            a = args[0]
+            if isinstance(a, DimArray):
+                y = a.dimvalue(0)
+                x = a.dimvalue(1)
+            else:
+                x = np.arange(a.shape[1])
+                y = np.arange(a.shape[0])
             args = args[1:]
         elif n <=4:
             x = args[0]
             y = args[1]
             a = args[2]
-            gdata = np.asgriddata(a, x, y, fill_value)
             args = args[3:]
         if len(args) > 0:
             level_arg = args[0]
             if isinstance(level_arg, int):
                 cn = level_arg
-                ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cn, cmap)
+                ls = LegendManage.createLegendScheme(a.min(), a.max(), cn, cmap)
             else:
                 if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
-                ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), level_arg, cmap)
+                ls = LegendManage.createLegendScheme(a.min(), a.max(), level_arg, cmap)
         else:    
-            ls = LegendManage.createLegendScheme(gdata.min(), gdata.max(), cmap)
+            ls = LegendManage.createLegendScheme(a.min(), a.max(), cmap)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
@@ -1245,10 +1239,10 @@ class Axes3D(Axes):
         zdir = kwargs.pop('zdir', 'z')
         if zdir == 'xy':
             sepoint = kwargs.pop('sepoint', [0,0,1,1])
-            igraphic = GraphicFactory.createContourPolygons(gdata.data, offset, zdir, ls, smooth, \
+            igraphic = GraphicFactory.createContourPolygons(x.asarray(), y.asarray(), a.asarray(), offset, zdir, ls, smooth, \
                 sepoint)
         else:
-            igraphic = GraphicFactory.createContourPolygons(gdata.data, offset, zdir, ls, smooth)
+            igraphic = GraphicFactory.createContourPolygons(x.asarray(), y.asarray(), a.asarray(), offset, zdir, ls, smooth)
 
         visible = kwargs.pop('visible', True)
         if visible:

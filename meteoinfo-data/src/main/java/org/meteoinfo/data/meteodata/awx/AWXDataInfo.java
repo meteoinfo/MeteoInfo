@@ -497,8 +497,8 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
             case 4:
                 _xDelt = (_lrLongitude - _ulLongitude) / xNum;
                 _yDelt = (_ulLatitude - _lrLatitude) / yNum;
-                _xLB = _ulLongitude + _xDelt;
-                _yLB = _lrLatitude + _yDelt;
+                _xLB = _ulLongitude + _xDelt / 2;
+                _yLB = _lrLatitude + _yDelt / 2;
                 break;
             default:
                 ProjectionInfo fromProj = KnownCoordinateSystems.geographic.world.WGS1984;

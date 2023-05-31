@@ -1586,7 +1586,7 @@ def diff(a, axis=-1):
     :param a: (*array_like*) Input array.
     :param axis: (*int*) The axis along which the difference is taken, default is the last axis.
         
-    :returns: The n-th differences. The shape of the output is the same as a except along axis 
+    :returns: The n-th differences. The shape of the output is the same as an except along axis
         where the dimension is smaller by n.
     """
     a = asarray(a)

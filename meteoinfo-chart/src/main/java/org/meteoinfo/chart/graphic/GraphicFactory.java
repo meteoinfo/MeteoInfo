@@ -1727,6 +1727,68 @@ public class GraphicFactory {
     }
 
     /**
+     * Create 3D polygons
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @param za Z coordinate array
+     * @param pgbs PolygonBreak list
+     * @return Graphics
+     */
+    public static GraphicCollection3D createPolygons3D(Array xa, Array ya, Array za, List<PolygonBreak> pgbs) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        double x, y, z;
+        int n = (int) xa.getSize();
+        PolygonZShape pgs;
+        PointZ p;
+        List<PointZ> points = new ArrayList<>();
+        if (xa.getRank() == 1) {
+            IndexIterator xIter = xa.getIndexIterator();
+            IndexIterator yIter = ya.getIndexIterator();
+            IndexIterator zIter = za.getIndexIterator();
+            int ii = 0;
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                z = zIter.getDoubleNext();
+                points.add(new PointZ(x, y, z));
+            }
+            if (points.size() > 2) {
+                points.add((PointZ) points.get(0).clone());
+                pgs = new PolygonZShape();
+                pgs.setPoints(points);
+                Graphic aGraphic = new Graphic(pgs, pgbs.get(ii));
+                graphics.add(aGraphic);
+                ii++;
+            }
+        } else {
+            int[] shape = xa.getShape();
+            int nRow = shape[0];
+            int nCol = shape[1];
+            int idx;
+            for (int i = 0; i < nCol; i++) {
+                points = new ArrayList<>();
+                for (int j = 0; j < nRow; j++) {
+                    idx = j * nCol + i;
+                    x = xa.getDouble(idx);
+                    y = ya.getDouble(idx);
+                    z = za.getDouble(idx);
+                    points.add(new PointZ(x, y, z));
+                }
+                points.add((PointZ) points.get(0).clone());
+                pgs = new PolygonZShape();
+                pgs.setPoints(points);
+                graphics.add(new Graphic(pgs, pgbs.get(i)));
+            }
+        }
+        return graphics;
+    }
+
+    /**
      * Add wireframe polylines
      *
      * @param xa X coordinate array

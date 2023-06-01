@@ -2162,18 +2162,19 @@ public class GLPlot extends Plot {
         skip = getLabelGap(this.zAxis.getTickLabelFont(), tlabs, axisLen);
         float x1 = x;
         float y1 = y;
-        float tickLen = this.zAxis.getTickLength() * this.lenScale * transform.getYLength() / 2;
+        float yTickLen = this.zAxis.getTickLength() * this.lenScale * transform.getYLength() / 2;
+        float xTickLen = this.zAxis.getTickLength() * this.lenScale * transform.getXLength() / 2;
         if (x < center.x) {
             if (y > center.y) {
-                y1 += tickLen;
+                y1 += yTickLen;
             } else {
-                x1 -= tickLen;
+                x1 -= xTickLen;
             }
         } else {
             if (y > center.y) {
-                x1 += tickLen;
+                x1 += xTickLen;
             } else {
-                y1 -= tickLen;
+                y1 -= yTickLen;
             }
         }
         xAlign = XAlign.RIGHT;

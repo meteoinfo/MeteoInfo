@@ -478,6 +478,10 @@ class GLFigure(GLChartPanel):
         self.axes.append(ax)
         self.getChart().addPlot(ax._axes)
         self.getChart().setCurrentPlot(self.getChart().getPlots().size())
+        if isinstance(ax, Axes3DGL):
+            self.set_mousemode("rotate")
+        else:
+            self.set_mousemode("pan")
 
     def remove_axes(self, ax=None):
         """

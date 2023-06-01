@@ -368,14 +368,26 @@ class Axes3DGL(Axes3D):
 
         :return: Filled 3D patches.
         """
-        if color is not None:
-            kwargs['facecolor'] = color
-        lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
-
         x = plotutil.getplotdata(x)
         y = plotutil.getplotdata(y)
         z = plotutil.getplotdata(z)
-        graphics = GraphicFactory.createPolygons3D(x, y, z, lbreak)
+
+        lb, isunique = plotutil.getlegendbreak('polygon', **kwargs)
+        if color is None:
+            graphics = GraphicFactory.createPolygons3D(x, y, z, lb)
+        else:
+            alpha = kwargs.pop('alpha', None)
+            colors = plotutil.getcolors(color, alpha)
+            if len(colors) == 1:
+                lb.setColor(colors[0])
+                graphics = GraphicFactory.createPolygons3D(x, y, z, lb)
+            else:
+                lbs = []
+                for c in colors:
+                    nlb = lb.clone()
+                    nlb.setColor(c)
+                    lbs.append(nlb)
+                graphics = GraphicFactory.createPolygons3D(x, y, z, lbs)
 
         self.add_graphic(graphics)
         return graphics

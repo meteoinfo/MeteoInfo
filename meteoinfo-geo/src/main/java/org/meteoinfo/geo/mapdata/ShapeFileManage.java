@@ -29,6 +29,7 @@ package org.meteoinfo.geo.mapdata;
  import java.nio.Buffer;
  import java.nio.ByteBuffer;
  import java.nio.ByteOrder;
+ import java.nio.file.Files;
  import java.util.ArrayList;
  import java.util.List;
  import java.util.logging.Level;
@@ -106,7 +107,7 @@ public class ShapeFileManage {
         loadShxFile(shxFile);
 
         //Open shp file 
-        DataInputStream br = new DataInputStream(new BufferedInputStream(new FileInputStream(shpFile)));
+        DataInputStream br = new DataInputStream(new BufferedInputStream(Files.newInputStream(shpFile.toPath())));
         VectorLayer aLayer;
         //byte[] arr = new byte[(int)shpFile.length()];
         byte[] arr = new byte[100];
@@ -394,11 +395,13 @@ public class ShapeFileManage {
             }
 
             //Read measure
-            double mmin = buffer.getDouble();
-            double mmax = buffer.getDouble();
             double[] mArray = new double[numPoints];
-            for (int j = 0; j < numPoints; j++) {
-                mArray[j] = buffer.getDouble();
+            if (buffer.position() < buffer.capacity()) {
+                double mmin = buffer.getDouble();
+                double mmax = buffer.getDouble();
+                for (int j = 0; j < numPoints; j++) {
+                    mArray[j] = buffer.getDouble();
+                }
             }
 
             //Get pointZ list

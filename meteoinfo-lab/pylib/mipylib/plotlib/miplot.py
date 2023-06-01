@@ -40,25 +40,21 @@ g_axes = None
 
 __all__ = [
     'annotate', 'antialias', 'arrow', 'arrowline', 'axes', 'axes3d', 'axes3dgl', 'axesm', 'caxes', 'axis',
-    'axism', 'bar', 'bar3', 'barh', 'barbs', 'barbsm', 'bgcolor', 'box',
-    'boxplot', 'windrose', 'cla', 'clabel', 'clc', 'clear', 'clf', 'cll', 'cloudspec', 'colorbar', 'contour',
-    'contourf',
-    'contourfm', 'contourm', 'contourfslice', 'contourslice', 'delfig', 'draw', 'draw_if_interactive', 'errorbar',
-    'figure', 'glfigure', 'figsize', 'patch', 'rectangle', 'fill', 'fill3', 'fill_between', 'fill_betweenx', 'fimplicit3',
-    'webmap', 'gca', 'gcf', 'gc_collect', 'geoshow', 'get_figure', 'gifaddframe', 'gifanimation', 'giffinish',
-    'grid', 'gridshow', 'gridshowm', 'hist', 'imshow', 'imshowm', 'isosurface', 'legend', 'left_title', 'lighting',
-    'loglog', 'makecolors',
-    'makelegend', 'makesymbolspec', 'masklayer', 'material', 'mesh', 'model', 'particles', 'pcolor', 'pcolorm', 'pie', 'plot',
-    'plot3', 'plotm', 'quiver', 'quiver3',
-    'quiverkey', 'quiverm', 'readlegend', 'right_title', 'refresh', 'savefig', 'savefig_jpeg', 'scatter', 'scatter3',
-    'scatterm',
-    'semilogx', 'semilogy', 'show', 'slice3', 'stationmodel', 'stem', 'stem3', 'step', 'streamplot', 'streamplot3',
-    'streamplotm', 'streamslice', 'subplot', 'subplots', 'suptitle', 'supxlabel', 'supylabel',
-    'surf', 'taylor_diagram', 'text', 'text3', 'title', 'trisurf', 'twinx', 'twiny', 'violinplot', 'volumeplot',
-    'weatherspec', 'xaxis',
-    'xlabel', 'xlim', 'xreverse', 'xticks', 'yaxis', 'ylabel', 'ylim', 'yreverse', 'yticks', 'zaxis', 'zlabel', 'zlim',
-    'zticks',
-    'isinteractive'
+    'axism', 'bar', 'bar3', 'barh', 'barbs', 'barbsm', 'bgcolor', 'box', 'boxplot', 'windrose', 'cla',
+    'clabel', 'clc', 'clear', 'clf', 'cll', 'cloudspec', 'colorbar', 'contour', 'contourf',
+    'contourfm', 'contourm', 'contourfslice', 'contourslice', 'delfig', 'draw', 'draw_if_interactive',
+    'errorbar', 'figure', 'glfigure', 'figsize', 'patch', 'rectangle', 'fill', 'fill3', 'fill_between',
+    'fill_betweenx', 'fimplicit3', 'webmap', 'gca', 'gcf', 'gc_collect', 'geoshow', 'get_figure',
+    'gifaddframe', 'gifanimation', 'giffinish', 'grid', 'gridshow', 'gridshowm', 'hist', 'imshow',
+    'imshowm', 'isosurface', 'legend', 'left_title', 'lighting', 'loglog', 'makecolors', 'makelegend',
+    'makesymbolspec', 'masklayer', 'material', 'mesh', 'meshc', 'model', 'particles', 'pcolor', 'pcolorm',
+    'pie', 'plot', 'plot3', 'plotm', 'quiver', 'quiver3', 'quiverkey', 'quiverm', 'readlegend',
+    'right_title', 'refresh', 'savefig', 'savefig_jpeg', 'scatter', 'scatter3', 'scatterm', 'semilogx',
+    'semilogy', 'show', 'slice3', 'stationmodel', 'stem', 'stem3', 'step', 'streamplot', 'streamplot3',
+    'streamplotm', 'streamslice', 'subplot', 'subplots', 'suptitle', 'supxlabel', 'supylabel', 'surf',
+    'surfc', 'taylor_diagram', 'text', 'text3', 'title', 'trisurf', 'twinx', 'twiny', 'violinplot',
+    'volumeplot', 'weatherspec', 'xaxis', 'xlabel', 'xlim', 'xreverse', 'xticks', 'yaxis', 'ylabel',
+    'ylim', 'yreverse', 'yticks', 'zaxis', 'zlabel', 'zlim', 'zticks', 'isinteractive'
 ]
 
 
@@ -1999,6 +1995,20 @@ def mesh(*args, **kwargs):
     return r
 
 
+@_copy_docstring_and_deprecators(Axes3DGL.mesh)
+def meshc(*args, **kwargs):
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
+
+    r = g_axes.meshc(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+
 @_copy_docstring_and_deprecators(Axes3D.surf)
 def surf(*args, **kwargs):
     global g_axes
@@ -2009,6 +2019,20 @@ def surf(*args, **kwargs):
             g_axes = axes3d()
 
     r = g_axes.surf(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+
+@_copy_docstring_and_deprecators(Axes3DGL.surfc)
+def surfc(*args, **kwargs):
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
+
+    r = g_axes.surfc(*args, **kwargs)
     draw_if_interactive()
     return r
 

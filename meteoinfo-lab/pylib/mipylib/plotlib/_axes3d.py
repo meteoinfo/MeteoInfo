@@ -1146,11 +1146,17 @@ class Axes3D(Axes):
                 x = np.arange(a.shape[1])
                 y = np.arange(a.shape[0])
             args = args[1:]
-        elif n <=4:
+        else:
             x = args[0]
             y = args[1]
             a = args[2]
             args = args[3:]
+
+        if x.ndim == 2:
+            x = x[0]
+        if y.ndim == 2:
+            y = y[:,0]
+
         if len(args) > 0:
             level_arg = args[0]
             if isinstance(level_arg, int):
@@ -1214,11 +1220,17 @@ class Axes3D(Axes):
                 x = np.arange(a.shape[1])
                 y = np.arange(a.shape[0])
             args = args[1:]
-        elif n <=4:
+        else:
             x = args[0]
             y = args[1]
             a = args[2]
             args = args[3:]
+
+        if x.ndim == 2:
+            x = x[0]
+        if y.ndim == 2:
+            y = y[:,0]
+
         if len(args) > 0:
             level_arg = args[0]
             if isinstance(level_arg, int):

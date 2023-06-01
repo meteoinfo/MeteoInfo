@@ -1075,18 +1075,13 @@ public class Axis implements Cloneable {
         }
 
         updateTickValues();
-//        if (this.timeAxis) {
-//            this.updateTimeLabels();
-//        } else {
-//            tickValues = MIMath.getIntervalValues(minValue, maxValue);
-//        }
     }
 
     /**
      * Update tick values
      */
     public void updateTickValues() {
-        List<Object> r = MIMath.getIntervalValues1(minValue, maxValue);
+        List<Object> r = MIMath.getIntervalValuesAxis(minValue, maxValue);
         this.tickValues = (double[]) r.get(0);
         this.tickDeltaValue = (Double) r.get(1);
     }

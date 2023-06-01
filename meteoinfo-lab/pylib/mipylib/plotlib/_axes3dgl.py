@@ -1138,6 +1138,40 @@ class Axes3DGL(Axes3D):
             self.add_graphic(graphics)
         return graphics
 
+    def meshc(self, *args, **kwargs):
+        """
+        Contour plot under mesh surface plot.
+
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param z: (*array_like*) 2-D z value array.
+        :param cmap: (*string*) Color map string.
+
+        :returns: 3D mesh and contour graphics.
+        """
+        if len(args) <= 2:
+            z = args[0]
+            if isinstance(z, DimArray):
+                x = args[0].dimvalue(1)
+                y = args[0].dimvalue(0)
+            else:
+                ny, nx = z.shape
+                x = np.arange(nx)
+                y = np.arange(ny)
+            x, y = np.meshgrid(x, y)
+            args1 = [x, y, z] + args[1:]
+        else:
+            args1 = args
+
+        gmesh = self.mesh(*args1, **kwargs)
+        zmin = args1[2].min()
+
+        kwargs['offset'] = zmin
+        args1 = args1[:3]
+        gcontour = self.contour(*args1, **kwargs)
+
+        return gmesh, gcontour
+
     def surf(self, *args, **kwargs):
         """
         creates a three-dimensional surface plot
@@ -1252,6 +1286,41 @@ class Axes3DGL(Axes3D):
         if visible:
             self.add_graphic(graphics)
         return graphics
+
+    def surfc(self, *args, **kwargs):
+        """
+        Contour plot under surface plot.
+
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param z: (*array_like*) 2-D z value array.
+        :param cmap: (*string*) Color map string.
+        :param lighting: (*bool*) Using light or not.
+
+        :returns: 3D surface and contour graphics.
+        """
+        if len(args) <= 2:
+            z = args[0]
+            if isinstance(z, DimArray):
+                x = args[0].dimvalue(1)
+                y = args[0].dimvalue(0)
+            else:
+                ny, nx = z.shape
+                x = np.arange(nx)
+                y = np.arange(ny)
+            x, y = np.meshgrid(x, y)
+            args1 = [x, y, z] + args[1:]
+        else:
+            args1 = args
+
+        gsurf = self.surf(*args1, **kwargs)
+        zmin = args1[2].min()
+
+        kwargs['offset'] = zmin
+        args1 = args1[:3]
+        gcontour = self.contour(*args1, **kwargs)
+
+        return gsurf, gcontour
 
     def plot_surface(self, *args, **kwargs):
         """

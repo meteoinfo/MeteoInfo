@@ -969,6 +969,103 @@ public class MIMath {
      *
      * @param min Minimum value
      * @param max Maximum value
+     * @return Contour values
+     */
+    public static List<Object> getIntervalValuesAxis(double min, double max) {
+        return getIntervalValuesAxis(min, max, false);
+    }
+
+    /**
+     * Create contour values by minimum and maximum values
+     *
+     * @param min Minimum value
+     * @param max Maximum value
+     * @param isExtend If extend values
+     * @return Contour values
+     */
+    public static List<Object> getIntervalValuesAxis(double min, double max, boolean isExtend) {
+        int i, cNum, aD, aE;
+        double cDelt, range, newMin;
+        String eStr;
+        List<Object> r = new ArrayList<>();
+
+        range = BigDecimalUtil.sub(max, min);
+        if (range == 0.0) {
+            r.add(new double[]{min});
+            r.add(0.0);
+            return r;
+        } else if (range < 0) {
+            range = -range;
+            double temp = min;
+            min = max;
+            max = temp;
+        }
+
+        eStr = String.format("%1$E", range);
+        aD = Integer.parseInt(eStr.substring(0, 1));
+        aE = (int) Math.floor(Math.log10(range));
+        int nMin = 4;
+        if (aD >= nMin) {
+            cDelt = BigDecimalUtil.pow(10, aE);
+            cNum = aD;
+        } else {
+            double cd = BigDecimalUtil.pow(10, aE - 1);
+            i = 5;
+            cDelt = BigDecimalUtil.mul(i, cd);
+            cNum = (int) (range / cDelt);
+            while (cNum < nMin && i > 1) {
+                i--;
+                cDelt = BigDecimalUtil.mul(i, cd);
+                cNum = (int) (range / cDelt);
+            }
+        }
+        int temp = (int) (min / cDelt + 1);
+        newMin = BigDecimalUtil.mul(temp, cDelt);
+        if (newMin - min >= cDelt) {
+            newMin = BigDecimalUtil.sub(newMin, cDelt);
+            cNum += 1;
+        }
+
+        if (newMin + (cNum - 1) * cDelt > max) {
+            cNum -= 1;
+        } else if (newMin + (cNum - 1) * cDelt + cDelt < max) {
+            cNum += 1;
+        }
+
+        //Get values
+        List<Double> values = new ArrayList<>();
+        double v;
+        for (i = 0; i < cNum; i++) {
+            v = BigDecimalUtil.add(newMin, BigDecimalUtil.mul(i, cDelt));
+            if (v >= min && v <= max)
+                values.add(v);
+        }
+
+        //Extend values
+        if (isExtend) {
+            if (values.get(0) > min) {
+                values.add(0, BigDecimalUtil.sub(newMin, cDelt));
+            }
+            if (values.get(values.size() - 1) < max) {
+                values.add(BigDecimalUtil.add(values.get(values.size() - 1), cDelt));
+            }
+        }
+
+        double[] cValues = new double[values.size()];
+        for (i = 0; i < values.size(); i++) {
+            cValues[i] = values.get(i);
+        }
+
+        r.add(cValues);
+        r.add(cDelt);
+        return r;
+    }
+
+    /**
+     * Create contour values by minimum and maximum values
+     *
+     * @param min Minimum value
+     * @param max Maximum value
      * @param isExtend If extend values
      * @return Contour values
      */
@@ -993,29 +1090,15 @@ public class MIMath {
         eStr = String.format("%1$E", range);
         aD = Integer.parseInt(eStr.substring(0, 1));
         aE = (int) Math.floor(Math.log10(range));
-//        int idx = eStr.indexOf("E");
-//        if (idx < 0) {
-//            aE = 0;
-//        } else {
-//            aE = Integer.parseInt(eStr.substring(eStr.indexOf("E") + 1));
-//        }
         if (aD > 5) {
-            //cDelt = Math.pow(10, aE);
             cDelt = BigDecimalUtil.pow(10, aE);
             cNum = aD;
-            //newMin = Convert.ToInt32((min + cDelt) / Math.Pow(10, aE)) * Math.Pow(10, aE);
-            //newMin = (int) (min / cDelt + 1) * cDelt;
         } else if (aD == 5) {
-            //cDelt = aD * Math.pow(10, aE - 1);
             cDelt = aD * BigDecimalUtil.pow(10, aE - 1);
             cNum = 10;
-            //newMin = Convert.ToInt32((min + cDelt) / Math.Pow(10, aE)) * Math.Pow(10, aE);
-            //newMin = (int) (min / cDelt + 1) * cDelt;
             cNum++;
         } else {
-            //cDelt = aD * Math.pow(10, aE - 1);
             double cd = BigDecimalUtil.pow(10, aE - 1);
-            //cDelt = BigDecimalUtil.mul(aD, cDelt);
             cDelt = BigDecimalUtil.mul(5, cd);
             cNum = (int) (range / cDelt);
             if (cNum < 5) {
@@ -1026,8 +1109,6 @@ public class MIMath {
                     cNum = (int) (range / cDelt);
                 }
             }
-            //newMin = Convert.ToInt32((min + cDelt) / Math.Pow(10, aE - 1)) * Math.Pow(10, aE - 1);
-            //newMin = (int) (min / cDelt + 1) * cDelt;            
         }
         int temp = (int) (min / cDelt + 1);
         newMin = BigDecimalUtil.mul(temp, cDelt);

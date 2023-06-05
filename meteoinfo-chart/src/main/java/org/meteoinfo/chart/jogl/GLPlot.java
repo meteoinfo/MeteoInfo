@@ -1433,7 +1433,7 @@ public class GLPlot extends Plot {
         yMax = this.transform.transform_y((float) axesExtent.maxY);
         zMin = this.transform.transform_z((float) axesExtent.minZ);*/
 
-        float[] rgba = this.boxColor.getRGBComponents(null);
+        float[] rgba = this.gridLine.getColor().getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
         gl.glBegin(GL2.GL_LINE_STRIP);
@@ -1590,14 +1590,8 @@ public class GLPlot extends Plot {
         yMax = (float) axesExtent.maxY;
         zMin = (float) axesExtent.minZ;
         zMax = (float) axesExtent.maxZ;
-        /*xMin = this.transform.transform_x((float) axesExtent.minX);
-        xMax = this.transform.transform_x((float) axesExtent.maxX);
-        yMin = this.transform.transform_y((float) axesExtent.minY);
-        yMax = this.transform.transform_y((float) axesExtent.maxY);
-        zMin = this.transform.transform_z((float) axesExtent.minZ);
-        zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
-        float[] rgba = this.boxColor.getRGBComponents(null);
+        float[] rgba = this.gridLine.getColor().getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
         if (this.angleY >= 180 && this.angleY < 360) {
@@ -1644,14 +1638,8 @@ public class GLPlot extends Plot {
         yMax = (float) axesExtent.maxY;
         zMin = (float) axesExtent.minZ;
         zMax = (float) axesExtent.maxZ;
-        /*xMin = this.transform.transform_x((float) axesExtent.minX);
-        xMax = this.transform.transform_x((float) axesExtent.maxX);
-        yMin = this.transform.transform_y((float) axesExtent.minY);
-        yMax = this.transform.transform_y((float) axesExtent.maxY);
-        zMin = this.transform.transform_z((float) axesExtent.minZ);
-        zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
-        float[] rgba = this.boxColor.getRGBComponents(null);
+        float[] rgba = this.gridLine.getColor().getRGBComponents(null);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glLineWidth(this.gridLine.getSize() * this.dpiScale);
         if (this.angleY >= 180 && this.angleY < 360) {

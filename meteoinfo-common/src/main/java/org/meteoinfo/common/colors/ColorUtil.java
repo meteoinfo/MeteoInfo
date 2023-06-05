@@ -70,6 +70,27 @@ public class ColorUtil {
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
 
+     /**
+      * Get new color from existing color and alpha
+      * @param color Existing color
+      * @param alpha Alpha
+      * @return
+      */
+     public static Color getColor(Color color, int alpha) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+     }
+
+     /**
+      * Get new color from existing color and alpha
+      * @param color Existing color
+      * @param alpha Alpha
+      * @return
+      */
+     public static Color getColor(Color color, float alpha) {
+         float[] rgba = color.getRGBColorComponents(null);
+         return new Color(rgba[0], rgba[1], rgba[2], alpha);
+     }
+
     /**
      * Get common color
      *

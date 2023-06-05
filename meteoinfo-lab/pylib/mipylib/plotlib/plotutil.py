@@ -210,7 +210,7 @@ def getcolormap(**kwargs):
                 cs.append(c)
             cmap = ColorMap(cs)
     else:
-        cmapstr = kwargs.pop('cmap', 'matlab_jet')
+        cmapstr = kwargs.pop('cmap', 'parula')
         if len(cmapstr) > 2 and cmapstr[-2:] == '_r':
             cmapstr = cmapstr[:-2]
             reverse = True
@@ -843,7 +843,9 @@ def setlegendscheme_polygon(ls, **kwargs):
     edge = kwargs.pop('edge', edge)
     edgesize = kwargs.pop('edgesize', None)
     fill = kwargs.pop('fill', fill)
-    alpha = kwargs.pop('alpha', None)
+    alpha = kwargs.pop('facealpha', None)
+    if alpha is None:
+        alpha = kwargs.pop('alpha', None)
     hatch = kwargs.pop('hatch', None)
     hatch = gethatch(hatch)
     hatchsize = kwargs.pop('hatchsize', None)

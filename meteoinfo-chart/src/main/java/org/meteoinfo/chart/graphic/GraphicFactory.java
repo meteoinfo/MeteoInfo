@@ -8033,16 +8033,31 @@ public class GraphicFactory {
             float[] vertexColor = new float[rowNum * colNum * 4];
             Color color;
             Index index = va.getIndex();
-            for (int i = 0; i < rowNum; i++) {
-                for (int j = 0; j < colNum; j++) {
-                    idx = i * colNum + j;
-                    vertexPosition[idx * 3] = xa.getFloat(idx);
-                    vertexPosition[idx * 3 + 1] = ya.getFloat(idx);
-                    vertexPosition[idx * 3 + 2] = za.getFloat(idx);
-                    index.set0(i);
-                    index.set1(j);
-                    color = new Color(va.getInt(index.set2(0)), va.getInt(index.set2(1)), va.getInt(index.set2(2)));
-                    System.arraycopy(color.getRGBComponents(null), 0, vertexColor, idx * 4, 4);
+            if (va.getDataType() == DataType.INT) {
+                for (int i = 0; i < rowNum; i++) {
+                    for (int j = 0; j < colNum; j++) {
+                        idx = i * colNum + j;
+                        vertexPosition[idx * 3] = xa.getFloat(idx);
+                        vertexPosition[idx * 3 + 1] = ya.getFloat(idx);
+                        vertexPosition[idx * 3 + 2] = za.getFloat(idx);
+                        index.set0(i);
+                        index.set1(j);
+                        color = new Color(va.getInt(index.set2(0)), va.getInt(index.set2(1)), va.getInt(index.set2(2)));
+                        System.arraycopy(color.getRGBComponents(null), 0, vertexColor, idx * 4, 4);
+                    }
+                }
+            } else {
+                for (int i = 0; i < rowNum; i++) {
+                    for (int j = 0; j < colNum; j++) {
+                        idx = i * colNum + j;
+                        vertexPosition[idx * 3] = xa.getFloat(idx);
+                        vertexPosition[idx * 3 + 1] = ya.getFloat(idx);
+                        vertexPosition[idx * 3 + 2] = za.getFloat(idx);
+                        index.set0(i);
+                        index.set1(j);
+                        color = new Color(va.getFloat(index.set2(0)), va.getFloat(index.set2(1)), va.getFloat(index.set2(2)));
+                        System.arraycopy(color.getRGBComponents(null), 0, vertexColor, idx * 4, 4);
+                    }
                 }
             }
             surfaceGraphic.setVertexPosition(vertexPosition, rowNum);

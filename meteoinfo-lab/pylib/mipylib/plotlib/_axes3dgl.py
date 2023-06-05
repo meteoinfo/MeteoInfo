@@ -8,8 +8,7 @@
 
 from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.chart import AspectType
-from org.meteoinfo.geometry.legend import BreakTypes, BarBreak
-from org.meteoinfo.geo.legend import LegendManage
+from org.meteoinfo.geometry.legend import BreakTypes, BarBreak, LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection

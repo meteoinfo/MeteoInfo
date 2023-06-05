@@ -5,6 +5,7 @@
  */
 package org.meteoinfo.chart.plot;
 
+import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.geometry.legend.PolylineBreak;
 
@@ -36,7 +37,7 @@ public class GridLine {
      */
     public GridLine(boolean visible) {
         this.lineBreak = new PolylineBreak();
-        this.lineBreak.setColor(Color.LIGHT_GRAY);
+        this.lineBreak.setColor(new Color(0.15f, 0.15f, 0.15f, 0.15f));
         this.lineBreak.setStyle(LineStyles.DASH);
         this.top = false;
         this.drawXLine = visible;
@@ -58,7 +59,35 @@ public class GridLine {
      * @param value Color
      */
     public void setColor(Color value){
+        int alpha = this.getColor().getAlpha();
+        Color color = ColorUtil.getColor(value, alpha);
+        this.lineBreak.setColor(color);
+    }
+
+    /**
+     * Set color
+     * @param value Color
+     */
+    public void setColorAndAlpha(Color value){
         this.lineBreak.setColor(value);
+    }
+
+    /**
+     * Set alpha
+     * @param value Alpha
+     */
+    public void setAlpha(int value) {
+        Color color = ColorUtil.getColor(this.getColor(), value);
+        this.lineBreak.setColor(color);
+    }
+
+    /**
+     * Set alpha
+     * @param value Alpha
+     */
+    public void setAlpha(float value) {
+        Color color = ColorUtil.getColor(this.getColor(), value);
+        this.lineBreak.setColor(color);
     }
     
     /**

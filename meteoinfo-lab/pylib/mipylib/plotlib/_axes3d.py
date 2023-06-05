@@ -606,7 +606,7 @@ class Axes3D(Axes):
                 axis.setTickLabelColor(ticklabelcolor)
             axis.setTickLabelFont(font)
 
-    def grid(self, b, **kwargs):
+    def grid(self, b=None, **kwargs):
         """
         Turn the axes grids on or off.
 
@@ -615,23 +615,29 @@ class Axes3D(Axes):
         :param kwargs: *kwargs* are used to set the grid line properties.
         """
         gridline = self._axes.getGridLine()
-        if b is None:
+        if b is None and len(kwargs) == 0:
             b = not gridline.isDrawZLine()
+
         axis = kwargs.pop('axis', 'all')
-        if axis == 'all':
-            gridline.setDrawXLine(b)
-            gridline.setDrawYLine(b)
-            gridline.setDrawZLine(b)
-        elif axis == 'x':
-            gridline.setDrawXLine(b)
-        elif axis == 'y':
-            gridline.setDrawYLine(b)
-        elif axis == 'z':
-            gridline.setDrawZLine(b)
+        if b is not None:
+            if axis == 'all':
+                gridline.setDrawXLine(b)
+                gridline.setDrawYLine(b)
+                gridline.setDrawZLine(b)
+            elif axis == 'x':
+                gridline.setDrawXLine(b)
+            elif axis == 'y':
+                gridline.setDrawYLine(b)
+            elif axis == 'z':
+                gridline.setDrawZLine(b)
+
         color = kwargs.pop('color', None)
         if not color is None:
             c = plotutil.getcolor(color)
             gridline.setColor(c)
+        alpha = kwargs.pop('alpha', None)
+        if alpha is not None:
+            gridline.setAlpha(float(alpha))
         linewidth = kwargs.pop('linewidth', None)
         if not linewidth is None:
             gridline.setSize(linewidth)

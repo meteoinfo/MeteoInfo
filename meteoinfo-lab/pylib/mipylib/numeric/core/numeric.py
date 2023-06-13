@@ -42,7 +42,7 @@ __all__ = [
     'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
     'concatenate','conj','conjugate','corrcoef','cos','cosh','cylinder','degrees','delete','delnan','diag','diff',
     'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
-    'fmax','fmin','full','hcurl','hdivg','hstack','identity','interp2d','interpn','isarray',
+    'fmax','fmin','full','hcurl','hdivg','hstack','identity','indices','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','isscalar','linspace','log','log10','logical_not','logspace',
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reciprocal','reshape',
@@ -1714,6 +1714,83 @@ def argsort(a, axis=-1):
         a = array(a)
     r = ArrayUtil.argSort(a.asarray(), axis)
     return NDArray(r)
+
+def indices(dimensions, dtype='int'):
+    """
+    Return an array representing the indices of a grid.
+
+    Compute an array where the subarrays contain index values 0, 1, ...
+    varying only along the corresponding axis.
+
+    Parameters
+    ----------
+    dimensions : sequence of ints
+        The shape of the grid.
+    dtype : dtype, optional
+        Data type of the result.
+
+    Returns
+    -------
+    grid : one ndarray or tuple of ndarrays
+        If sparse is False:
+            Returns one array of grid indices,
+            ``grid.shape = (len(dimensions),) + tuple(dimensions)``.
+        If sparse is True:
+            Returns a tuple of arrays, with
+            ``grid[i].shape = (1, ..., 1, dimensions[i], 1, ..., 1)`` with
+            dimensions[i] in the ith place
+
+    See Also
+    --------
+    mgrid, ogrid, meshgrid
+
+    Notes
+    -----
+    The output shape in the dense case is obtained by prepending the number
+    of dimensions in front of the tuple of dimensions, i.e. if `dimensions`
+    is a tuple ``(r0, ..., rN-1)`` of length ``N``, the output shape is
+    ``(N, r0, ..., rN-1)``.
+
+    The subarrays ``grid[k]`` contains the N-D array of indices along the
+    ``k-th`` axis. Explicitly::
+
+        grid[k, i0, i1, ..., iN-1] = ik
+
+    Examples
+    --------
+    >>> grid = np.indices((2, 3))
+    >>> grid.shape
+    (2, 2, 3)
+    >>> grid[0]        # row indices
+    array([[0, 0, 0],
+           [1, 1, 1]])
+    >>> grid[1]        # column indices
+    array([[0, 1, 2],
+           [0, 1, 2]])
+
+    The indices can be used as an index into an array.
+
+    >>> x = np.arange(20).reshape(5, 4)
+    >>> row, col = np.indices((2, 3))
+    >>> x[row, col]
+    array([[0, 1, 2],
+           [4, 5, 6]])
+
+    Note that it would be more straightforward in the above example to
+    extract the required elements directly with ``x[:2, :3]``.
+    """
+    dimensions = tuple(dimensions)
+    N = len(dimensions)
+    shape = (1,)*N
+    res = empty((N,)+dimensions, dtype=dtype)
+
+    for i, dim in enumerate(dimensions):
+        idx = arange(dim, dtype=dtype).reshape(
+            shape[:i] + (dim,) + shape[i+1:]
+        )
+        res[i] = idx
+
+    return res
     
 def isnan(a):
     """
@@ -2235,7 +2312,7 @@ def meshgrid(*args):
         if isinstance(x, list):
             x = array(x)
         if x.ndim != 1:
-            print 'The paramters must be vector arrays!'
+            print('The parameters must be vector arrays!')
             return None
         xs.append(x._array)
 

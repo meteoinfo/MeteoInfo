@@ -1,7 +1,129 @@
+import math
+
 from mipylib.numeric import core as _nx
 from ..core.numerictypes import ScalarType, find_common_type
 
-__all__ = ['r_','c_']
+__all__ = ['r_','c_','mgrid']
+
+class nd_grid(object):
+    """
+    Construct a multi-dimensional "meshgrid".
+
+    ``grid = nd_grid()`` creates an instance which will return a mesh-grid
+    when indexed.  The dimension and number of the output arrays are equal
+    to the number of indexing dimensions.  If the step length is not a
+    complex number, then the stop is not inclusive.
+
+    However, if the step length is a **complex number** (e.g. 5j), then the
+    integer part of its magnitude is interpreted as specifying the
+    number of points to create between the start and stop values, where
+    the stop value **is inclusive**.
+
+    If instantiated with an argument of ``sparse=True``, the mesh-grid is
+    open (or not fleshed out) so that only one-dimension of each returned
+    argument is greater than 1.
+
+    Parameters
+    ----------
+    sparse : bool, optional
+        Whether the grid is sparse or not. Default is False.
+
+    Notes
+    -----
+    The instances of `nd_grid`, `mgrid`, approximately defined as::
+
+        mgrid = nd_grid(sparse=False)
+
+    Users should use these pre-defined instances instead of using `nd_grid`
+    directly.
+    """
+
+    def __init__(self, sparse=False):
+        self.sparse = sparse
+
+    def __getitem__(self, key):
+        try:
+            num_list = []
+            for k in range(len(key)):
+                step = key[k].step
+                start = key[k].start
+                stop = key[k].stop
+                if start is None:
+                    start = 0
+                if step is None:
+                    step = 1
+                if isinstance(step, complex):
+                    step = abs(step)
+                    length = int(step)
+                    num_list.insert(0, _nx.linspace(start, stop, length))
+                else:
+                    num_list.insert(0, _nx.arange(start, stop, step))
+            nn = _nx.meshgrid(*num_list)
+            return nn[::-1]
+        except (IndexError, TypeError):
+            step = key.step
+            stop = key.stop
+            start = key.start
+            if start is None:
+                start = 0
+            if isinstance(step, complex):
+                # Prevent the (potential) creation of integer arrays
+                step_float = abs(step)
+                length = int(step_float)
+                return _nx.linspace(start, stop, length)
+            else:
+                return _nx.arange(start, stop, step)
+
+
+class MGridClass(nd_grid):
+    """
+    An instance which returns a dense multi-dimensional "meshgrid".
+
+    An instance which returns a dense (or fleshed out) mesh-grid
+    when indexed, so that each returned argument has the same shape.
+    The dimensions and number of the output arrays are equal to the
+    number of indexing dimensions.  If the step length is not a complex
+    number, then the stop is not inclusive.
+
+    However, if the step length is a **complex number** (e.g. 5j), then
+    the integer part of its magnitude is interpreted as specifying the
+    number of points to create between the start and stop values, where
+    the stop value **is inclusive**.
+
+    Returns
+    -------
+    mesh-grid `ndarrays` all of the same dimensions
+
+    See Also
+    --------
+    ogrid : like `mgrid` but returns open (not fleshed out) mesh grids
+    meshgrid: return coordinate matrices from coordinate vectors
+    r_ : array concatenator
+    :ref:`how-to-partition`
+
+    Examples
+    --------
+    >>> np.mgrid[0:5, 0:5]
+    array([[[0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1],
+            [2, 2, 2, 2, 2],
+            [3, 3, 3, 3, 3],
+            [4, 4, 4, 4, 4]],
+           [[0, 1, 2, 3, 4],
+            [0, 1, 2, 3, 4],
+            [0, 1, 2, 3, 4],
+            [0, 1, 2, 3, 4],
+            [0, 1, 2, 3, 4]]])
+    >>> np.mgrid[-1:1:5j]
+    array([-1. , -0.5,  0. ,  0.5,  1. ])
+
+    """
+
+    def __init__(self):
+        super(MGridClass, self).__init__(sparse=False)
+
+
+mgrid = MGridClass()
 
 class AxisConcatenator:
     """

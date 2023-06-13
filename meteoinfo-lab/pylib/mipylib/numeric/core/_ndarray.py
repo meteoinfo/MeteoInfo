@@ -279,7 +279,7 @@ class NDArray(object):
             return None
 
         if len(indices) != self.ndim:
-            print 'indices must be ' + str(self.ndim) + ' dimensions!'
+            print('indices must be ' + str(self.ndim) + ' dimensions!')
             raise IndexError()
 
         ranges = []

@@ -6,6 +6,7 @@
 package org.meteoinfo.chart.graphic;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math4.legacy.analysis.BivariateFunction;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
@@ -36,6 +37,7 @@ import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 import org.meteoinfo.math.interpolate.InterpUtil;
 import org.meteoinfo.math.interpolate.InterpolationMethod;
+import org.meteoinfo.math.interpolate.RectLinearInterpolator;
 import org.meteoinfo.math.interpolate.RectNearestInterpolator3D;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.ndarray.*;
@@ -4241,6 +4243,79 @@ public class GraphicFactory {
         }
 
         return sgs;
+    }
+
+    /**
+     * Create contour slice graphics
+     *
+     * @param data   Data array - 3D
+     * @param xa     X coordinate array - 1D
+     * @param ya     Y coordinate array - 1D
+     * @param za     Z coordinate array - 1D
+     * @param xSlice X slice array - 2D
+     * @param ySlice Y slice array - 2D
+     * @param zSlice Z slice array - 2D
+     * @param ls     Legend scheme
+     * @param isSmooth Smooth contour lines or not
+     * @return Contour slice graphics
+     */
+    public static GraphicCollection3D contourSlice(Array data, Array xa, Array ya, Array za, Array xSlice,
+                                                         Array ySlice, Array zSlice, LegendScheme ls,
+                                                         boolean isSmooth) throws InvalidRangeException {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+        xSlice = xSlice.copyIfView();
+        ySlice = ySlice.copyIfView();
+        zSlice = zSlice.copyIfView();
+
+        RectNearestInterpolator3D interpolator3D = new RectNearestInterpolator3D(xa, ya, za, data);
+        Array r = interpolator3D.interpolate(xSlice, ySlice, zSlice);
+        int[] shape = r.getShape();
+        int dim1 = shape[0], dim2 = shape[1];
+        double x, y, z;
+        int[] origin = new int[2];
+        Array xa1d = xSlice.section(origin, new int[]{1, dim2}).copy();
+        Array ya1d = ySlice.section(origin, new int[]{dim1, 1}).copy();
+
+        Object[] ccs = LegendManage.getContoursAndColors(ls);
+        double[] cValues = (double[]) ccs[0];
+        double[] xx = (double[])ArrayUtil.copyToNDJavaArray_Double(xa1d);
+        double[] yy = (double[])ArrayUtil.copyToNDJavaArray_Double(ya1d);
+
+        // Trace contours
+        double[][] grid = (double[][]) ArrayUtil.copyToNDJavaArray_Double(r);
+        int[][] S1 = new int[dim1][dim2];
+        Object[] cbs = ContourDraw.tracingContourLines(grid,
+                cValues, xx, yy, Double.NaN, S1);
+        List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+
+        if (contourLines.isEmpty()) {
+            return null;
+        }
+
+        if (isSmooth) {
+            contourLines = Contour.smoothLines(contourLines);
+        }
+
+        BivariateFunction interpolator = InterpUtil.getBiInterpFunc(xa1d, ya1d, zSlice.transpose(0, 1), "linear");
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        ColorBreak cb;
+        for (PolyLine line : contourLines) {
+            PolylineZShape pls = new PolylineZShape();
+            List<PointZ> points = new ArrayList<>();
+            for (wcontour.global.PointD p : line.PointList) {
+                points.add(new PointZ(p.X, p.Y, interpolator.value(p.X, p.Y)));
+            }
+            pls.setPoints(points);
+            pls.setValue(line.Value);
+            cb = ls.findLegendBreak(line.Value);
+            graphics.add(new Graphic(pls, cb));
+        }
+        graphics.setLegendScheme(ls);
+
+        return graphics;
     }
 
     /**

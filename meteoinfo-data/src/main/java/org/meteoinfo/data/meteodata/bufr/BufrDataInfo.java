@@ -139,9 +139,9 @@ public class BufrDataInfo {
      *
      * @param len Section length
      * @param master_table Master table
-     * @param subcenter_id Subcenter id
+     * @param subcenter_id Sub center id
      * @param center_id Center id
-     * @param update_sequence Update sequency
+     * @param update_sequence Update sequence
      * @param optional Optional
      * @param category Category
      * @param sub_category Sub category
@@ -332,7 +332,7 @@ public class BufrDataInfo {
             return new byte[0];
         }
 
-        // Find highest bit
+        // Find the highest bit
         int hiBit = -1;
         for (int i = 0; i < bs.size(); i++) {
             if (bs.get(i)) {

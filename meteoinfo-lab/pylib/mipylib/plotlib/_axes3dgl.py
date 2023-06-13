@@ -503,7 +503,7 @@ class Axes3DGL(Axes3D):
 
     def streamplot(self, *args, **kwargs):
         """
-        Plot stream lines in 3D axes.
+        Plot streamlines in 3D axes.
 
         :param x: (*array_like*) X coordinate array.
         :param y: (*array_like*) Y coordinate array.
@@ -872,7 +872,7 @@ class Axes3DGL(Axes3D):
             graphics = GraphicFactory.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
                                             xslice._array, yslice._array, zslice._array, ls)
         else:
-            graphics = GraphicFactory.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
+            graphics = GraphicFactory.slice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice,
                                             yslice, zslice, ls)
 
         xyslice = kwargs.pop('xyslice', None)
@@ -969,9 +969,16 @@ class Axes3DGL(Axes3D):
         zslice = kwargs.pop('zslice', [])
         if isinstance(zslice, numbers.Number):
             zslice = [zslice]
-        smooth = kwargs.pop('smooth', True)
-        graphics = GraphicFactory.contourSlice(data.asarray(), x.asarray(), y.asarray(), z.asarray(), xslice, \
-                                               yslice, zslice, ls, smooth)
+        graphics = []
+        if isinstance(xslice, NDArray):
+            smooth = kwargs.pop('smooth', False)
+            gg = GraphicFactory.contourSlice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
+                                                   xslice._array, yslice._array, zslice._array, ls, smooth)
+            graphics.append(gg)
+        else:
+            smooth = kwargs.pop('smooth', True)
+            graphics = GraphicFactory.contourSlice(data.asarray(), x.asarray(), y.asarray(), z.asarray(),
+                                                   xslice, yslice, zslice, ls, smooth)
 
         xyslice = kwargs.pop('xyslice', None)
         if not xyslice is None:

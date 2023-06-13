@@ -1319,8 +1319,10 @@ public class Plot2D extends AbstractPlot2D {
             Graphic g = this.graphics.getGraphicN(i);
             if (g instanceof ImageGraphic) {
                 ls = ((ImageGraphic)g).getLegendScheme();
+                break;
             } else if (g instanceof GraphicCollection) {
                 ls = ((GraphicCollection)g).getLegendScheme();
+                break;
             }
         }
 

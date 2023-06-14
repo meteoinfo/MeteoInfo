@@ -224,6 +224,30 @@ public enum DataType {
         return (this == DataType.ENUM1) || (this == DataType.ENUM2) || (this == DataType.ENUM4);
     }
 
+    /**
+     * Convert a number to this data type
+     * @param n The number
+     * @return New data type number
+     */
+    public Number asNumber(Number n) {
+        switch (this) {
+            case INT:
+                return n.intValue();
+            case BYTE:
+                return n.byteValue();
+            case FLOAT:
+                return n.floatValue();
+            case DOUBLE:
+                return n.doubleValue();
+            case SHORT:
+                return n.shortValue();
+            case LONG:
+                return n.longValue();
+            default:
+                return n;
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Find the DataType that matches this name.
@@ -379,7 +403,6 @@ public enum DataType {
     static public short unsignedByteToShort(byte b) {
         return (short) (b & 0xff);
     }
-    //      return (short)((b<0)? (short)b + 256 : (short)b);
 
     public static void main(String[] args) {
         for (int i = 0; i < 260; i++) {

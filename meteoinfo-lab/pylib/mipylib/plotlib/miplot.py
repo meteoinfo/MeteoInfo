@@ -41,7 +41,7 @@ g_axes = None
 __all__ = [
     'annotate', 'antialias', 'arrow', 'arrowline', 'axes', 'axes3d', 'axes3dgl', 'axesm', 'caxes', 'axis',
     'axism', 'bar', 'bar3', 'barh', 'barbs', 'barbsm', 'bgcolor', 'box', 'boxplot', 'windrose', 'cla',
-    'clabel', 'clc', 'clear', 'clf', 'cll', 'cloudspec', 'colorbar', 'contour', 'contourf',
+    'clabel', 'clc', 'clear', 'clf', 'cll', 'cloudspec', 'colorbar', 'contour', 'contour3', 'contourf',
     'contourfm', 'contourm', 'contourfslice', 'contourslice', 'delfig', 'draw', 'draw_if_interactive',
     'errorbar', 'figure', 'glfigure', 'figsize', 'patch', 'rectangle', 'fill', 'fill3', 'fill_between',
     'fill_betweenx', 'fimplicit3', 'webmap', 'gca', 'gcf', 'gc_collect', 'geoshow', 'get_figure',
@@ -2075,6 +2075,20 @@ def slice3(*args, **kwargs):
             g_axes = axes3dgl()
 
     r = g_axes.slice(*args, **kwargs)
+    draw_if_interactive()
+    return r
+
+
+@_copy_docstring_and_deprecators(Axes3D.contour3)
+def contour3(*args, **kwargs):
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
+
+    r = g_axes.contour3(*args, **kwargs)
     draw_if_interactive()
     return r
 

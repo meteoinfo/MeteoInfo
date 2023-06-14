@@ -3674,6 +3674,81 @@ public class GraphicFactory {
     }
 
     /**
+     * Create 3-D contour lines
+     *
+     * @param xa X coordinate array - one dimension
+     * @param ya Y coordinate array - one dimension
+     * @param za Z coordinate array - two dimension
+     * @param ls Legend scheme
+     * @param isSmooth Is smooth or not
+     * @return Contour lines
+     */
+    public static GraphicCollection createContourLines3D(Array xa, Array ya, Array za, LegendScheme ls, boolean isSmooth) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        ls = ls.convertTo(ShapeTypes.POLYLINE);
+        Object[] ccs = LegendManage.getContoursAndColors(ls);
+        double[] cValues = (double[]) ccs[0];
+
+        int[] shape = za.getShape();
+        int[][] S1 = new int[shape[0]][shape[1]];
+        double[] x = (double[])ArrayUtil.copyToNDJavaArray_Double(xa);
+        double[] y = (double[])ArrayUtil.copyToNDJavaArray_Double(ya);
+        if (x[1] - x[0] < 0) {
+            ArrayUtils.reverse(x);
+            za = za.flip(1);
+        }
+        if (y[1] - y[0] < 0) {
+            ArrayUtils.reverse(y);
+            za = za.flip(0);
+        }
+        double missingValue = -9999.0;
+        double[][] data = (double[][]) ArrayUtil.copyToNDJavaArray_Double(za, missingValue);
+        Object[] cbs = ContourDraw.tracingContourLines(data,
+                cValues, x, y, missingValue, S1);
+        List<PolyLine> ContourLines = (List<PolyLine>) cbs[0];
+
+        if (ContourLines.isEmpty()) {
+            return null;
+        }
+
+        if (isSmooth) {
+            ContourLines = Contour.smoothLines(ContourLines);
+        }
+
+        PolyLine aLine;
+        double v;
+        ColorBreak cbb;
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        BivariateFunction interpolator = InterpUtil.getBiInterpFunc(xa, ya, za.transpose(0, 1), "linear");
+        for (int i = 0; i < ContourLines.size(); i++) {
+            aLine = ContourLines.get(i);
+            v = aLine.Value;
+
+            PolylineZShape aPolyline = new PolylineZShape();
+            PointZ aPoint;
+            List<PointZ> pList = new ArrayList<>();
+            for (int j = 0; j < aLine.PointList.size(); j++) {
+                aPoint = new PointZ();
+                aPoint.X = aLine.PointList.get(j).X;
+                aPoint.Y = aLine.PointList.get(j).Y;
+                aPoint.Z = interpolator.value(aPoint.X, aPoint.Y);
+                pList.add(aPoint);
+            }
+            aPolyline.setPoints(pList);
+            aPolyline.setValue(v);
+            cbb = ls.findLegendBreak(v);
+            graphics.add(new Graphic(aPolyline, cbb));
+        }
+        graphics.setSingleLegend(false);
+        graphics.setLegendScheme(ls);
+
+        return graphics;
+    }
+
+    /**
      * Create contour lines
      *
      * @param xa X coordinate array - one dimension

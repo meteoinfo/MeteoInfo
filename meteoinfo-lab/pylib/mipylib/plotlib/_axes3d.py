@@ -1265,6 +1265,74 @@ class Axes3D(Axes):
         if visible:
             self.add_graphic(igraphic)
         return igraphic
+
+    def contour3(self, *args, **kwargs):
+        """
+        3-D contour plot.
+
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param z: (*array_like*) 2-D z value array.
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
+            to draw, in increasing order.
+        :param cmap: (*string*) Color map string.
+        :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a
+            string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib
+            color args (string, float, rgb, etc), different levels will be plotted in different colors in
+            the order specified.
+        :param smooth: (*boolean*) Smooth contour lines or not.
+
+        :returns: (*graphics*) Contour graphics created from array data.
+        """
+        n = len(args)
+        cmap = plotutil.getcolormap(**kwargs)
+        fill_value = kwargs.pop('fill_value', -9999.0)
+        offset = kwargs.pop('offset', 0)
+        if n <= 2:
+            z = args[0]
+            if isinstance(z, DimArray):
+                y = z.dimvalue(0)
+                x = z.dimvalue(1)
+            else:
+                x = np.arange(z.shape[1])
+                y = np.arange(z.shape[0])
+            args = args[1:]
+        else:
+            x = args[0]
+            y = args[1]
+            z = args[2]
+            args = args[3:]
+
+        if x.ndim == 2:
+            x = x[0]
+        if y.ndim == 2:
+            y = y[:,0]
+
+        if len(args) > 0:
+            level_arg = args[0]
+            if isinstance(level_arg, int):
+                cn = level_arg
+                ls = LegendManage.createLegendScheme(z.min(), z.max(), cn, cmap)
+            else:
+                if isinstance(level_arg, NDArray):
+                    level_arg = level_arg.aslist()
+                ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
+        else:
+            ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
+        ls = ls.convertTo(ShapeTypes.POLYLINE)
+        plotutil.setlegendscheme(ls, **kwargs)
+
+        smooth = kwargs.pop('smooth', True)
+        igraphic = GraphicFactory.createContourLines3D(x.asarray(), y.asarray(), z.asarray(), ls, smooth)
+
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            igraphic.setUsingLight(lighting)
+
+        visible = kwargs.pop('visible', True)
+        if visible:
+            self.add_graphic(igraphic)
+        return igraphic
         
     def contourf(self, *args, **kwargs):
         """

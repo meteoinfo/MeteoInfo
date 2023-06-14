@@ -8597,6 +8597,9 @@ public class ArrayMath {
      * @param value New value
      */
     public static void replaceValue(Array a, Object oValue, Object value) {
+        if (oValue instanceof Number) {
+            oValue = a.getDataType().asNumber((Number) oValue);
+        }
         if (a.getIndexPrivate().isFastIterator()) {
             for (int i = 0; i < a.getSize(); i++) {
                 if (oValue.equals(a.getObject(i))) {
@@ -8650,6 +8653,31 @@ public class ArrayMath {
                 return n.byteValue();
         }
         return n;
+    }
+
+    /**
+     * Convert a number to data type
+     * @param v Number value
+     * @param dt Data type
+     * @return Number
+     */
+    public static Number toDataType(Number v, DataType dt) {
+        switch (dt) {
+            case INT:
+            case BOOLEAN:
+                return v.intValue();
+            case FLOAT:
+                return v.floatValue();
+            case SHORT:
+                return v.shortValue();
+            case BYTE:
+                return v.byteValue();
+            case LONG:
+                return v.longValue();
+            case DOUBLE:
+                return v.doubleValue();
+        }
+        return v;
     }
 
     // </editor-fold>       

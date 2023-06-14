@@ -14,6 +14,7 @@ import numbers
 
 import mipylib.numeric as np
 import mipylib.miutil as miutil
+import series
 
 
 class Index(object):
@@ -113,6 +114,9 @@ class Index(object):
         
         :returns: int if unique index, slice if monotonic index, else mask.
         """
+        if isinstance(key, series.Series):
+            key = key.values
+
         if isinstance(key, np.NDArray) and key.dtype == np.dtype.bool:
             r = self._index.filterIndices(key.asarray())
             return list(r)

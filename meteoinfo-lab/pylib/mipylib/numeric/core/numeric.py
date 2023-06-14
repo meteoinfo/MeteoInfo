@@ -2322,32 +2322,6 @@ def meshgrid(*args):
         rs.append(NDArray(r))
     return tuple(rs)
     
-def meshgrid_bak(*args):
-    """
-    Return coordinate matrices from coordinate vectors.
-
-    Make N-D coordinate arrays for vectorized evaluations of N-D scalar/vector fields 
-    over N-D grids, given one-dimensional coordinate arrays x1, x2,…, xn.
-
-    :param x1,x2...xn: (*array_like*) 1-D arrays representing the coordinates of a grid.. 
-    
-    :returns X1,X2...XN: For vectors x1, x2,…, ‘xn’ with lengths Ni=len(xi) , 
-        return (N1, N2, N3,...Nn) shaped arrays
-    """
-    if isinstance(x, list):
-        x = array(x)
-    if isinstance(y, list):
-        y = array(y)
-        
-    if x.ndim != 1 or y.ndim != 1:
-        print 'The paramters must be vector arrays!'
-        return None
-        
-    xa = x.asarray()
-    ya = y.asarray()
-    ra = ArrayUtil.meshgrid(xa, ya)
-    return NDArray(ra[0]), NDArray(ra[1])
-
 def sphere(n=20, radius=1):
     """
     Create sphere surface coordinate x,y,z array with a radius equal to 1.

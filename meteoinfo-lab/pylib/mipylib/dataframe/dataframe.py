@@ -478,15 +478,74 @@ class DataFrame(object):
         
     def _setitem_loc(self, key, value):
         if isinstance(value, datetime.datetime):
-            value = [miutil.jdatetime(value)]
+            value = miutil.jdatetime(value)
         if isinstance(value, (list, tuple)):
-            if isinstance(value[0], datetime.datetime):
-                value = miutil.jdatetime(value)
-            #value = np.array(value)
+            value = np.array(value)
         if isinstance(value, np.NDArray):
-            value = value._array            
-                    
-        self._dataframe.setRow(key, value)
+            value = value._array
+
+        if not isinstance(key, tuple):
+            key = (key, None)
+
+        k = key[0]
+        rkeys = key[0]
+        if isinstance(k, slice):
+            sidx = 0 if k.start is None else self._index.index(k.start)
+            if sidx < 0:
+                raise KeyError(key)
+            eidx = self.shape[0] - 1 if k.stop is None else self._index.index(k.stop)
+            if eidx < 0:
+                raise KeyError(key)
+            step = 1 if k.step is None else k.step
+            rowkey = Range(sidx, eidx, step)
+        else:
+            rloc = self._index.get_loc(k, outkeys=True)
+            if isinstance(rloc, tuple):
+                rowkey = rloc[0]
+                rkeys = rloc[1]
+            else:
+                rowkey = rloc
+                rkeys = None
+            if len(rowkey) == 0:
+                raise KeyError(key)
+
+        k = key[1]
+        if k is None:
+            colkey = Range(0, self.shape[1] - 1, 1)
+        else:
+            if isinstance(k, slice):
+                sidx = 0 if k.start is None else self.columns.indexOfName(k.start)
+                if sidx < 0:
+                    raise KeyError(key)
+                eidx = self.shape[1] - 1 if k.stop is None else self.columns.indexOfName(k.stop)
+                if eidx < 0:
+                    raise KeyError(key)
+                step = 1 if k.step is None else k.step
+                colkey = Range(sidx, eidx, step)
+            elif isinstance(k, list):
+                colkey = self.columns.indexOfName(k)
+            elif isinstance(k, basestring):
+                col = self.columns.indexOfName(k)
+                if col < 0:
+                    raise KeyError(key)
+                colkey = [col]
+            else:
+                raise KeyError(key)
+
+        if isinstance(rowkey, (int, Range)):
+            r = self._dataframe.setValues(rowkey, colkey, value)
+        else:
+            if isinstance(colkey, Range):
+                ncol = colkey.length()
+            else:
+                ncol = len(colkey)
+            if len(rowkey) == 1 and ncol == 1:
+                if isinstance(colkey, Range):
+                    self._dataframe.setValue(rowkey[0], colkey.first(), value)
+                else:
+                    self._dataframe.setValue(rowkey[0], colkey[0], value)
+            else:
+                r = self._dataframe.setValues(rowkey, colkey, value)
         
     def _getitem_iloc(self, key):
         if not isinstance(key, tuple): 
@@ -742,6 +801,7 @@ class DataFrame(object):
 
         :param to_replace: (*object*) The value to be replaced.
         :param value: (*object*) The replacing value.
+
         :return: (*DataFrame*) New data frame with after value replaced.
         """
         r = self._dataframe.replace(to_replace, value)

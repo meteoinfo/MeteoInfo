@@ -1396,11 +1396,6 @@ public class DataFrame implements Iterable {
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public void setValues(int row, Range colRange, Number value) throws InvalidRangeException {
-        ColumnIndex cols = new ColumnIndex();
-        for (int i = colRange.first(); i <= colRange.last(); i += colRange.stride()) {
-            cols.add((Column) this.columns.get(i).clone());
-        }
-
         if (this.array2D) {
             List ranges = new ArrayList<>();
             ranges.add(new Range(row, row, 1));
@@ -1416,12 +1411,194 @@ public class DataFrame implements Iterable {
     /**
      * Set values by row and column ranges
      *
+     * @param rowRange Row range
+     * @param colRange Column range
+     * @param value The value
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public void setValues(Range rowRange, Range colRange, Number value) throws InvalidRangeException {
+        if (this.array2D) {
+            List ranges = new ArrayList<>();
+            ranges.add(rowRange);
+            ranges.add(colRange);
+            ArrayMath.setSection((Array) this.data, ranges, value);
+        } else {
+            for (int j = colRange.first(); j <= colRange.last(); j += colRange.stride()) {
+                Array array = ((List<Array>) this.data).get(j);
+                for (int i = rowRange.first(); i <= rowRange.last(); i += rowRange.stride()) {
+                    array.setObject(i, value);
+                }
+            }
+        }
+    }
+
+    /**
+     * Set values by row and column ranges
+     *
+     * @param rowRange Row range
+     * @param colRange Column range
+     * @param value The value
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public void setValues(List<Integer> rowRange, Range colRange, Number value) throws InvalidRangeException {
+        if (this.array2D) {
+            List ranges = new ArrayList<>();
+            ranges.add(rowRange);
+            ranges.add(colRange);
+            ArrayMath.setSection_Mix((Array) this.data, ranges, value);
+        } else {
+            for (int j = colRange.first(); j <= colRange.last(); j += colRange.stride()) {
+                Array array = ((List<Array>) this.data).get(j);
+                for (int i : rowRange) {
+                    array.setObject(i, value);
+                }
+            }
+        }
+    }
+
+    /**
+     * Set values by row and column ranges
+     *
+     * @param rowRange Row range
+     * @param colRange Column range
+     * @param value The value
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public void setValues(Range rowRange, List<Integer> colRange, Number value) throws InvalidRangeException {
+        if (this.array2D) {
+            List ranges = new ArrayList<>();
+            ranges.add(rowRange);
+            ranges.add(colRange);
+            ArrayMath.setSection_Mix((Array) this.data, ranges, value);
+        } else {
+            for (int j : colRange) {
+                Array array = ((List<Array>) this.data).get(j);
+                for (int i = rowRange.first(); i <= rowRange.last(); i += rowRange.stride()) {
+                    array.setObject(i, value);
+                }
+            }
+        }
+    }
+
+    /**
+     * Set values by row and column ranges
+     *
+     * @param rowRange Row range
+     * @param colRange Column range
+     * @param value The value
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public void setValues(List<Integer> rowRange, List<Integer> colRange, Number value) throws InvalidRangeException {
+        if (this.array2D) {
+            List ranges = new ArrayList<>();
+            ranges.add(rowRange);
+            ranges.add(colRange);
+            ArrayMath.setSection_List((Array) this.data, ranges, value);
+        } else {
+            for (int j : colRange) {
+                Array array = ((List<Array>) this.data).get(j);
+                for (int i : rowRange) {
+                    array.setObject(i, value);
+                }
+            }
+        }
+    }
+
+    /**
+     * Set values by row and column ranges
+     *
+     * @param rowRange Row range
+     * @param colRange Column range
+     * @param value The value
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public void setValues(List<Integer> rowRange, Range colRange, Array value) throws InvalidRangeException {
+        value = value.copyIfView();
+
+        if (this.array2D) {
+            List ranges = new ArrayList<>();
+            ranges.add(rowRange);
+            ranges.add(colRange);
+            ArrayMath.setSection_Mix((Array) this.data, ranges, value);
+        } else {
+            int idx = 0;
+            for (int j = colRange.first(); j <= colRange.last(); j += colRange.stride()) {
+                Array array = ((List<Array>) this.data).get(j);
+                for (int i : rowRange) {
+                    array.setObject(i, value.getObject(idx));
+                    idx += 1;
+                }
+            }
+        }
+    }
+
+    /**
+     * Set values by row and column ranges
+     *
+     * @param rowRange Row range
+     * @param colRange Column range
+     * @param value The value
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public void setValues(Range rowRange, List<Integer> colRange, Array value) throws InvalidRangeException {
+        value = value.copyIfView();
+
+        if (this.array2D) {
+            List ranges = new ArrayList<>();
+            ranges.add(rowRange);
+            ranges.add(colRange);
+            ArrayMath.setSection_Mix((Array) this.data, ranges, value);
+        } else {
+            int idx = 0;
+            for (int j : colRange) {
+                Array array = ((List<Array>) this.data).get(j);
+                for (int i = rowRange.first(); i <= rowRange.last(); i += rowRange.stride()) {
+                    array.setObject(i, value.getObject(idx));
+                    idx += 1;
+                }
+            }
+        }
+    }
+
+    /**
+     * Set values by row and column ranges
+     *
+     * @param rowRange Row range
+     * @param colRange Column range
+     * @param value The value
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public void setValues(List<Integer> rowRange, List<Integer> colRange, Array value) throws InvalidRangeException {
+        value = value.copyIfView();
+
+        if (this.array2D) {
+            List ranges = new ArrayList<>();
+            ranges.add(rowRange);
+            ranges.add(colRange);
+            ArrayMath.setSection_List((Array) this.data, ranges, value);
+        } else {
+            int idx = 0;
+            for (int j : colRange) {
+                Array array = ((List<Array>) this.data).get(j);
+                for (int i : rowRange) {
+                    array.setObject(i, value.getObject(idx));
+                    idx += 1;
+                }
+            }
+        }
+    }
+
+    /**
+     * Set values by row and column ranges
+     *
      * @param row Row index
      * @param colRange Column range
      * @param value The value array
      * @throws org.meteoinfo.ndarray.InvalidRangeException
      */
     public void setValues(int row, Range colRange, Array value) throws InvalidRangeException {
+        value = value.copyIfView();
+
         ColumnIndex cols = new ColumnIndex();
         for (int i = colRange.first(); i <= colRange.last(); i += colRange.stride()) {
             cols.add((Column) this.columns.get(i).clone());
@@ -1437,6 +1614,39 @@ public class DataFrame implements Iterable {
             for (int j = colRange.first(); j <= colRange.last(); j += colRange.stride()) {
                 ((List<Array>) this.data).get(j).setObject(row, value.getObject(i));
                 i += 1;
+            }
+        }
+    }
+
+    /**
+     * Set values by row and column ranges
+     *
+     * @param rowRange Row range
+     * @param colRange Column range
+     * @param value The value array
+     * @throws org.meteoinfo.ndarray.InvalidRangeException
+     */
+    public void setValues(Range rowRange, Range colRange, Array value) throws InvalidRangeException {
+        value = value.copyIfView();
+
+        ColumnIndex cols = new ColumnIndex();
+        for (int i = colRange.first(); i <= colRange.last(); i += colRange.stride()) {
+            cols.add((Column) this.columns.get(i).clone());
+        }
+
+        if (this.array2D) {
+            List ranges = new ArrayList<>();
+            ranges.add(rowRange);
+            ranges.add(colRange);
+            ArrayMath.setSection((Array) this.data, ranges, value);
+        } else {
+            int idx = 0;
+            for (int j = colRange.first(); j <= colRange.last(); j += colRange.stride()) {
+                Array array =  ((List<Array>) this.data).get(j);
+                for (int i = rowRange.first(); i <= rowRange.last(); i += rowRange.stride()) {
+                    array.setObject(i, value.getObject(idx));
+                    idx += 1;
+                }
             }
         }
     }

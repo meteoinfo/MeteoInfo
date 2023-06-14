@@ -8599,14 +8599,14 @@ public class ArrayMath {
     public static void replaceValue(Array a, Object oValue, Object value) {
         if (a.getIndexPrivate().isFastIterator()) {
             for (int i = 0; i < a.getSize(); i++) {
-                if (a.getObject(i) == oValue) {
+                if (oValue.equals(a.getObject(i))) {
                     a.setObject(i, value);
                 }
             }
         } else {
             IndexIterator iterA = a.getIndexIterator();
             while (iterA.hasNext()) {
-                if (iterA.getObjectNext() == oValue) {
+                if (oValue.equals(iterA.getObjectNext())) {
                     iterA.setObjectCurrent(value);
                 } else {
                     iterA.next();

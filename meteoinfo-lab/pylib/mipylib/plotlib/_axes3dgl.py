@@ -503,6 +503,107 @@ class Axes3DGL(Axes3D):
 
     def streamplot(self, *args, **kwargs):
         """
+        Plot 2D streamline.
+
+        :param x: (*array_like*) Optional. X coordinate array.
+        :param y: (*array_like*) Optional. Y coordinate array.
+        :param u: (*array_like*) U component of the arrow vectors (wind field) or wind direction.
+        :param v: (*array_like*) V component of the arrow vectors (wind field) or wind speed.
+        :param z: (*array_like*) Optional, 2-D z value array.
+        :param color: (*Color*) Streamline color.
+        :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
+        :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
+        :param density: (*int*) Streamline density. Default is 4.
+        :param offset: (*float*) Z direction offset. Default is 0.
+        :param zdir: (*int*) Z direction ['x'|'y'|'z']. Default is `z`.
+
+        :returns: (*graphics*) 2D streamline graphics.
+        """
+        ls = kwargs.pop('symbolspec', None)
+        cmap = plotutil.getcolormap(**kwargs)
+        density = kwargs.pop('density', 4)
+        iscolor = False
+        cdata = None
+        if len(args) < 4:
+            u = args[0]
+            v = args[1]
+            u = np.asarray(u)
+            nz, ny, nx = u.shape
+            x = np.arange(nx)
+            y = np.arange(ny)
+            args = args[2:]
+        else:
+            x = args[0]
+            y = args[1]
+            u = args[2]
+            v = args[3]
+            args = args[4:]
+        if len(args) > 0:
+            cdata = args[0]
+            iscolor = True
+            args = args[1:]
+        x = plotutil.getplotdata(x)
+        y = plotutil.getplotdata(y)
+        u = plotutil.getplotdata(u)
+        v = plotutil.getplotdata(v)
+
+        if ls is None:
+            if iscolor:
+                if len(args) > 0:
+                    cn = args[0]
+                    if isinstance(cn, NDArray):
+                        cn = cn.aslist()
+                    ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cn, cmap)
+                else:
+                    levs = kwargs.pop('levels', None)
+                    if levs is None:
+                        ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
+                    else:
+                        if isinstance(levs, NDArray):
+                            levs = levs.tolist()
+                        ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), levs, cmap)
+            else:
+                if cmap.getColorCount() == 1:
+                    c = cmap.getColor(0)
+                else:
+                    c = Color.black
+                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, c, 1)
+            ls = plotutil.setlegendscheme_line(ls, **kwargs)
+
+        if not kwargs.has_key('headwidth'):
+            kwargs['headwidth'] = 1
+        if not kwargs.has_key('headlength'):
+            kwargs['headlength'] = 2.5 * kwargs['headwidth']
+        for i in range(ls.getBreakNum()):
+            lb = plotutil.line2stream(ls.getLegendBreak(i), **kwargs)
+            ls.setLegendBreak(i, lb)
+
+        if not cdata is None:
+            cdata = plotutil.getplotdata(cdata)
+
+        isuv = kwargs.pop('isuv', True)
+        offset = kwargs.pop('offset', 0)
+        zdir = kwargs.pop('zdir', 'z')
+        graphics = GraphicFactory.createStreamlines(x, y, u, v, cdata, density, ls, isuv,
+                                                    offset, zdir)
+
+        lighting = kwargs.pop('lighting', None)
+        if not lighting is None:
+            graphics.setUsingLight(lighting)
+
+        # Pipe
+        pipe = kwargs.pop('pipe', False)
+        if pipe:
+            radius = kwargs.pop('radius', 0.02)
+            steps = kwargs.pop('steps', 48)
+            graphics = GraphicFactory.lineString3DToPipe(graphics, radius, steps)
+
+        self.add_graphic(graphics)
+
+        return graphics
+
+    def streamplot3(self, *args, **kwargs):
+        """
         Plot streamlines in 3D axes.
 
         :param x: (*array_like*) X coordinate array.

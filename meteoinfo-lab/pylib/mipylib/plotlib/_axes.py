@@ -3703,7 +3703,7 @@ class Axes(object):
 
     def streamplot(self, *args, **kwargs):
         """
-        Plot 3D streamline.
+        Plot 2D streamline.
         
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
@@ -3716,7 +3716,7 @@ class Axes(object):
         :param density: (*int*) Streamline density. Default is 4.
         :param zorder: (*int*) Z-order of streamline graphic for display.
         
-        :returns: (*graphics*) 3D streamline graphics.
+        :returns: (*graphics*) 2D streamline graphics.
         """
         isuv = kwargs.pop('isuv', True)
         density = kwargs.pop('density', 4)

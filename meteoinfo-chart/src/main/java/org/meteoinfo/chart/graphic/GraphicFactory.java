@@ -6992,20 +6992,23 @@ public class GraphicFactory {
     }
 
     /**
-     * Create stream line
+     * Create streamline
      *
      * @param xdata X data array
      * @param ydata Y data array
      * @param udata U/WindDirection data array
      * @param vdata V/WindSpeed data array
+     * @param cdata Color value data array
      * @param density Streamline density
-     * @param slb Streamline break
+     * @param ls Legend scheme
      * @param isUV Is U/V or not
-     * @return GraphicCollection
+     * @param offset Offset in z direction
+     * @param zdir Z direction - x, y or z
+     * @return GraphicCollection3D
      */
-    public static GraphicCollection createStreamlines(Array xdata, Array ydata, Array udata, Array vdata,
-            int density, StreamlineBreak slb, boolean isUV) {
-        GraphicCollection gc = new GraphicCollection();
+    public static GraphicCollection3D createStreamlines(Array xdata, Array ydata, Array udata, Array vdata,
+            Array cdata, int density, LegendScheme ls, boolean isUV, double offset, String zdir) {
+        GraphicCollection3D graphics = new GraphicCollection3D();
         if (!isUV) {            
             Array[] uvData = MeteoMath.ds2uv(udata, vdata);
             udata = uvData[0];
@@ -7018,8 +7021,137 @@ public class GraphicFactory {
         double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
         List<PolyLine> streamlines = Contour.tracingStreamline(u, v,
                 x, y, density);
+
+        int ny = u.length;
+        int nx = u[0].length;
+        ColorBreak cb = ls.getLegendBreak(0);
+        if (cdata == null) {
+            for (PolyLine line : streamlines) {
+                PolylineZShape shape = new PolylineZShape();
+                List<PointZ> points = new ArrayList<>();
+                PointZ p;
+                if (zdir.equals("x")) {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.Y = (line.PointList.get(j)).X;
+                        p.Z = (line.PointList.get(j)).Y;
+                        p.X = offset;
+                        points.add(p);
+                    }
+                } else if (zdir.equals("y")) {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.X = (line.PointList.get(j)).X;
+                        p.Z = (line.PointList.get(j)).Y;
+                        p.Y = offset;
+                        points.add(p);
+                    }
+                } else {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.X = (line.PointList.get(j)).X;
+                        p.Y = (line.PointList.get(j)).Y;
+                        p.Z = offset;
+                        points.add(p);
+                    }
+                }
+                shape.setPoints(points);
+                graphics.add(new Graphic(shape, cb));
+            }
+        } else {
+            cdata = cdata.copyIfView();
+            for (PolyLine line : streamlines) {
+                PolylineZShape shape = new PolylineZShape();
+                List<PointZ> points = new ArrayList<>();
+                PointZ p;
+                ColorBreakCollection cbs = new ColorBreakCollection();
+                if (zdir.equals("x")) {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.Y = (line.PointList.get(j)).X;
+                        p.Z = (line.PointList.get(j)).Y;
+                        p.X = offset;
+                        int[] idx = ArrayUtil.gridIndex(xdata, ydata, p.Y, p.Z);
+                        if (idx != null) {
+                            int yi = idx[0];
+                            int xi = idx[1];
+                            p.M = cdata.getDouble(yi * nx + xi);
+                        }
+                        cb = ls.findLegendBreak(p.M);
+                        cbs.add(cb);
+                        points.add(p);
+                    }
+                } else if (zdir.equals("y")) {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.X = (line.PointList.get(j)).X;
+                        p.Z = (line.PointList.get(j)).Y;
+                        p.Y = offset;
+                        int[] idx = ArrayUtil.gridIndex(xdata, ydata, p.X, p.Z);
+                        if (idx != null) {
+                            int yi = idx[0];
+                            int xi = idx[1];
+                            p.M = cdata.getDouble(yi * nx + xi);
+                        }
+                        cb = ls.findLegendBreak(p.M);
+                        cbs.add(cb);
+                        points.add(p);
+                    }
+                } else {
+                    for (int j = 0; j < line.PointList.size(); j++) {
+                        p = new PointZ();
+                        p.X = (line.PointList.get(j)).X;
+                        p.Y = (line.PointList.get(j)).Y;
+                        p.Z = offset;
+                        int[] idx = ArrayUtil.gridIndex(xdata, ydata, p.X, p.Y);
+                        if (idx != null) {
+                            int yi = idx[0];
+                            int xi = idx[1];
+                            p.M = cdata.getDouble(yi * nx + xi);
+                        }
+                        cb = ls.findLegendBreak(p.M);
+                        cbs.add(cb);
+                        points.add(p);
+                    }
+                }
+                shape.setPoints(points);
+                graphics.add(new Graphic(shape, cbs));
+            }
+        }
+        graphics.setLegendScheme(ls);
+
+        return graphics;
+    }
+
+    /**
+     * Create streamline
+     *
+     * @param xdata X data array
+     * @param ydata Y data array
+     * @param udata U/WindDirection data array
+     * @param vdata V/WindSpeed data array
+     * @param density Streamline density
+     * @param slb Streamline break
+     * @param isUV Is U/V or not
+     * @return GraphicCollection
+     */
+    public static GraphicCollection createStreamlines(Array xdata, Array ydata, Array udata, Array vdata,
+                                                      int density, StreamlineBreak slb, boolean isUV) {
+        GraphicCollection gc = new GraphicCollection();
+        if (!isUV) {
+            Array[] uvData = MeteoMath.ds2uv(udata, vdata);
+            udata = uvData[0];
+            vdata = uvData[1];
+        }
+
+        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
+        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
+        double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
+        double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
+        List<PolyLine> streamlines = Contour.tracingStreamline(u, v,
+                x, y, density);
         PolyLine line;
-        for (int i = 0; i < streamlines.size() - 1; i++) {
+        for (int i = 0; i < streamlines.size(); i++) {
             line = streamlines.get(i);
             PolylineShape aPolyline = new PolylineShape();
             PointD aPoint;
@@ -7039,7 +7171,7 @@ public class GraphicFactory {
     }
 
     /**
-     * Trace streamlines
+     * Trace 3D streamlines
      * @param xa X coordinate array
      * @param ya Y coordinate array
      * @param z Z value
@@ -7174,7 +7306,7 @@ public class GraphicFactory {
     }
 
     /**
-     * Trace streamlines
+     * Trace 3D streamlines
      * @param xa X coordinate array
      * @param ya Y coordinate array
      * @param xySlice XY slice value - [x1,y1,x2,y2]

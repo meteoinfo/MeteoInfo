@@ -1670,7 +1670,7 @@ def scatterm(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.streamplot)
+@_copy_docstring_and_deprecators(Axes3DGL.streamplot3)
 def streamplot3(*args, **kwargs):
     global g_axes
     if g_axes is None:
@@ -1679,7 +1679,7 @@ def streamplot3(*args, **kwargs):
         if not isinstance(g_axes, Axes3DGL):
             g_axes = axes3dgl()
 
-    r = g_axes.streamplot(*args, **kwargs)
+    r = g_axes.streamplot3(*args, **kwargs)
     draw_if_interactive()
     return r
 

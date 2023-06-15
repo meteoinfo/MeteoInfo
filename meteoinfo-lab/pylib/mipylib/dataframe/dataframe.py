@@ -303,6 +303,12 @@ class DataFrame(object):
                 value = value.values._array
             self._dataframe.setColumn(key, value)
             return
+
+        if isinstance(key, DataFrame):
+            key = key.values
+
+        if isinstance(key, np.NDArray):
+            self._dataframe.setValues(key.asarray(), value)
             
         hascolkey = True
         if isinstance(key, tuple): 
@@ -680,7 +686,27 @@ class DataFrame(object):
         return self._dataframe.toString() 
         
     def __repr__(self):
-        return self._dataframe.toString()    
+        return self._dataframe.toString()
+
+    def __eq__(self, other):
+        r = DataFrame(dataframe=self._dataframe.equal(other))
+        return r
+
+    def __lt__(self, other):
+        r = DataFrame(dataframe=self._dataframe.lessThan(other))
+        return r
+
+    def __le__(self, other):
+        r = DataFrame(dataframe=self._dataframe.lessThanOrEqual(other))
+        return r
+
+    def __gt__(self, other):
+        r = DataFrame(dataframe=self._dataframe.greaterThan(other))
+        return r
+
+    def __ge__(self, other):
+        r = DataFrame(dataframe=self._dataframe.greaterThanOrEqual(other))
+        return r
         
     def head(self, n=5):
         """

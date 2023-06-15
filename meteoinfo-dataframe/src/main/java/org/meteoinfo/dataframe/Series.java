@@ -503,7 +503,7 @@ public class Series implements Iterable {
     }
 
     /**
-     * Less then
+     * Less than
      *
      * @param v Value
      * @return Result series
@@ -515,7 +515,7 @@ public class Series implements Iterable {
     }
 
     /**
-     * Less then or equal
+     * Less than or equal
      *
      * @param v Value
      * @return Result series
@@ -527,7 +527,7 @@ public class Series implements Iterable {
     }
 
     /**
-     * Greater then
+     * Greater than
      *
      * @param v Value
      * @return Result series
@@ -539,7 +539,7 @@ public class Series implements Iterable {
     }
 
     /**
-     * Greater then or equal
+     * Greater than or equal
      *
      * @param v Value
      * @return Result series

@@ -145,5 +145,18 @@ public class ColumnIndex extends Index<Column> {
         r.format = this.format;
         return r;
     }
+
+    /**
+     * Copy column index with all boolean data type
+     * @return New column index
+     */
+    public ColumnIndex copyAsBoolean() {
+        ColumnIndex r = new ColumnIndex();
+        for (Column col : this.data) {
+            r.add(new Column(col.name, DataType.BOOLEAN));
+        }
+        r.format = this.format;
+        return r;
+    }
     // </editor-fold>
 }

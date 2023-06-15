@@ -10,12 +10,9 @@ import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.common.util.TypeUtils;
 import org.meteoinfo.dataframe.impl.*;
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.InvalidRangeException;
-import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.util.DataTypeUtil;
 import org.mozilla.universalchardet.UniversalDetector;
 
@@ -25,6 +22,7 @@ import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -406,7 +404,7 @@ public class DataFrame implements Iterable {
      * > df.isEmpty();
      * true }</pre>
      *
-     * @return the number of columns
+     * @return If data is empty
      */
     public boolean isEmpty() {
         return this.data == null ? true : length() == 0;
@@ -1647,6 +1645,37 @@ public class DataFrame implements Iterable {
                     array.setObject(i, value.getObject(idx));
                     idx += 1;
                 }
+            }
+        }
+    }
+
+    /**
+     * Set data values by boolean key array
+     * @param keyArray Boolean key array
+     * @param value The value
+     */
+    public void setValues(Array keyArray, Number value) {
+        if (this.array2D) {
+            ArrayMath.setValue((Array) this.data, keyArray, value);
+        } else {
+            List<Array> arrays = (List<Array>) this.data;
+            org.meteoinfo.ndarray.Index iKey = keyArray.getIndex();
+            int i = 0;
+            Boolean b;
+            for (Array array : arrays) {
+                IndexIterator iterA = array.getIndexIterator();
+                int j = 0;
+                while (iterA.hasNext()) {
+                    iKey.set(j, i);
+                    b = keyArray.getBoolean(iKey);
+                    if (b) {
+                        iterA.setObjectNext(value);
+                    } else {
+                        iterA.next();
+                    }
+                    j += 1;
+                }
+                i += 1;
             }
         }
     }
@@ -3349,6 +3378,139 @@ public class DataFrame implements Iterable {
     public DataFrame stdDev() {
         DataFrame r = this.apply(new Aggregation.StdDev<>());
         return r;
+    }
+
+    /**
+     * Equal
+     *
+     * @param v Value
+     * @return Result DataFrame
+     */
+    public DataFrame equal(Number v) {
+        if (this.array2D) {
+            Array a = ArrayMath.equal((Array) this.data, v);
+            return new DataFrame(a, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        } else {
+            List<Array> arrays = (List<Array>) this.data;
+            List<Array> r = new ArrayList<>();
+            for (Array arr : arrays) {
+                Array a = ArrayMath.equal(arr, v);
+                r.add(a);
+            }
+            return new DataFrame(r, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        }
+    }
+
+    /**
+     * Equal
+     *
+     * @param v Value
+     * @return Result DataFrame
+     */
+    public DataFrame equal(String v) {
+        if (this.array2D) {
+            Array a = ArrayMath.equal((Array) this.data, v);
+            return new DataFrame(a, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        } else {
+            List<Array> arrays = (List<Array>) this.data;
+            List<Array> r = new ArrayList<>();
+            for (Array arr : arrays) {
+                Array a = ArrayMath.equal(arr, v);
+                r.add(a);
+            }
+            return new DataFrame(r, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        }
+    }
+
+    /**
+     * Less than
+     *
+     * @param v Value
+     * @return Result DataFrame
+     */
+    public DataFrame lessThan(Number v) {
+        if (this.array2D) {
+            Array a = ArrayMath.lessThan((Array) this.data, v);
+            return new DataFrame(a, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        } else {
+            List<Array> arrays = (List<Array>) this.data;
+            List<Array> r = new ArrayList<>();
+            for (Array arr : arrays) {
+                Array a = ArrayMath.lessThan(arr, v);
+                r.add(a);
+            }
+            return new DataFrame(r, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        }
+    }
+
+    /**
+     * Less than or equal
+     *
+     * @param v Value
+     * @return Result DataFrame
+     */
+    public DataFrame lessThanOrEqual(Number v) {
+        if (this.array2D) {
+            Array a = ArrayMath.lessThanOrEqual((Array) this.data, v);
+            return new DataFrame(a, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        } else {
+            List<Array> arrays = (List<Array>) this.data;
+            List<Array> r = new ArrayList<>();
+            for (Array arr : arrays) {
+                Array a = ArrayMath.lessThanOrEqual(arr, v);
+                r.add(a);
+            }
+            return new DataFrame(r, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        }
+    }
+
+    /**
+     * Greater than
+     *
+     * @param v Value
+     * @return Result DataFrame
+     */
+    public DataFrame greaterThan(Number v) {
+        if (this.array2D) {
+            Array a = ArrayMath.greaterThan((Array) this.data, v);
+            return new DataFrame(a, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        } else {
+            List<Array> arrays = (List<Array>) this.data;
+            List<Array> r = new ArrayList<>();
+            for (Array arr : arrays) {
+                Array a = ArrayMath.greaterThan(arr, v);
+                int n = a.getShape()[0];
+                a = a.reshapeNoCopy(new int[]{n, 1});
+                r.add(a);
+            }
+            try {
+                Array rr = ArrayUtil.concatenate(r, 1);
+                return new DataFrame(rr, (Index) this.index.clone(), this.columns.copyAsBoolean());
+            } catch (InvalidRangeException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * Greater than or equal
+     *
+     * @param v Value
+     * @return Result DataFrame
+     */
+    public DataFrame greaterThanOrEqual(Number v) {
+        if (this.array2D) {
+            Array a = ArrayMath.greaterThanOrEqual((Array) this.data, v);
+            return new DataFrame(a, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        } else {
+            List<Array> arrays = (List<Array>) this.data;
+            List<Array> r = new ArrayList<>();
+            for (Array arr : arrays) {
+                Array a = ArrayMath.greaterThanOrEqual(arr, v);
+                r.add(a);
+            }
+            return new DataFrame(r, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        }
     }
 
     @Override

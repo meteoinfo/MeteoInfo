@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW\ZhengZhou"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataframe">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\savefig"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\_reload.py"/>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\loc_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\loc_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\replace_4.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\compare_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataframe\compare_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\_reload.py"/>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\loc_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\loc_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\replace_4.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\compare_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\dataframe\compare_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -38,5 +38,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1366,778"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1421,827"/>
 </MeteoInfo>

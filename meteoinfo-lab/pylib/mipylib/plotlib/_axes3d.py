@@ -1413,7 +1413,7 @@ class Axes3D(Axes):
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) 2-D or 3-D (RGB) z value array.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
             to draw, in increasing order.
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 

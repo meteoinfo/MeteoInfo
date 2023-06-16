@@ -3073,7 +3073,10 @@ def peaks(*args, **kwargs):
     :return: (*array*) Peaks function result array.
     """
     n = len(args)
-    if n == 1:
+    if n == 0:
+        x = linspace(-3, 3, 49)
+        x, y = meshgrid(x, x)
+    elif n == 1:
         x = args[0]
         if isinstance(x, int):
             x = linspace(-3, 3, x)

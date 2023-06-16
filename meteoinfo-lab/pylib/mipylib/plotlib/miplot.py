@@ -52,7 +52,7 @@ __all__ = [
     'right_title', 'refresh', 'savefig', 'savefig_jpeg', 'scatter', 'scatter3', 'scatterm', 'semilogx',
     'semilogy', 'show', 'slice3', 'stationmodel', 'stem', 'stem3', 'step', 'streamplot', 'streamplot3',
     'streamplotm', 'streamslice', 'subplot', 'subplots', 'suptitle', 'supxlabel', 'supylabel', 'surf',
-    'surfc', 'taylor_diagram', 'text', 'text3', 'title', 'trisurf', 'twinx', 'twiny', 'violinplot',
+    'surfc', 'taylor_diagram', 'text', 'text3', 'title', 'trisurf', 'twinx', 'twiny', 'view', 'violinplot',
     'volumeplot', 'weatherspec', 'xaxis', 'xlabel', 'xlim', 'xreverse', 'xticks', 'yaxis', 'ylabel',
     'ylim', 'yreverse', 'yticks', 'zaxis', 'zlabel', 'zlim', 'zticks', 'isinteractive'
 ]
@@ -1979,6 +1979,20 @@ def material(mvalues):
 
     g_axes.set_material(mvalues)
     draw_if_interactive()
+
+
+@_copy_docstring_and_deprecators(Axes3DGL.view)
+def view(*args):
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3DGL):
+            g_axes = axes3dgl()
+
+    r = g_axes.view(*args)
+    draw_if_interactive()
+    return r
 
 
 @_copy_docstring_and_deprecators(Axes3D.mesh)

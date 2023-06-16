@@ -165,6 +165,40 @@ class Axes3DGL(Axes3D):
         """
         self._axes.setAngleX(elevation)
 
+    def view(self, *args):
+        """
+        Set camera line of sight.
+
+        view(az, el)
+
+        view(dim)
+
+        :param az: (*float*) Azimuth angle.
+        :param el: (*float*) Elevation angle.
+        :param dim: (*int*) Uses the default line of sight for 2-D or 3-D plots. Specify dim as 2
+            for the default 2-D view or 3 for the default 3-D view.
+
+        :return: Current azimuth and elevation angle.
+        """
+        if len(args) == 1:
+            dim = args[0]
+            if dim == 2:
+                self.set_rotation(0)
+                self.set_elevation(0)
+            elif dim == 3:
+                self.set_rotation(45)
+                self.set_elevation(-45)
+        elif len(args) == 2:
+            az = args[0]
+            el = args[1]
+            self.set_rotation(-az)
+            self.set_elevation(el - 90)
+
+        az = -self.get_rotation()
+        el = self.get_elevation() + 90
+
+        return az, el
+
     def get_head(self):
         """
         Get head angle.
@@ -527,10 +561,13 @@ class Axes3DGL(Axes3D):
         if len(args) < 4:
             u = args[0]
             v = args[1]
-            u = np.asarray(u)
-            nz, ny, nx = u.shape
-            x = np.arange(nx)
-            y = np.arange(ny)
+            if isinstance(u, DimArray):
+                y = u.dimvalue(0)
+                x = u.dimvalue(1)
+            else:
+                ny, nx = u.shape
+                x = np.arange(nx)
+                y = np.arange(ny)
             args = args[2:]
         else:
             x = args[0]
@@ -542,6 +579,12 @@ class Axes3DGL(Axes3D):
             cdata = args[0]
             iscolor = True
             args = args[1:]
+
+        if x.ndim == 2:
+            x = x[0]
+        if y.ndim == 2:
+            y = y[:,0]
+
         x = plotutil.getplotdata(x)
         y = plotutil.getplotdata(y)
         u = plotutil.getplotdata(u)
@@ -765,9 +808,11 @@ class Axes3DGL(Axes3D):
             if iscolor:
                 if len(args) > 0:
                     cn = args[0]
+                    if isinstance(cn, NDArray):
+                        cn = cn.aslist()
                     ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cn, cmap)
                 else:
-                    levs = kwargs.pop('levs', None)
+                    levs = kwargs.pop('levels', None)
                     if levs is None:
                         ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
                     else:
@@ -1822,7 +1867,7 @@ class Axes3DGL(Axes3D):
             self.add_graphic(graphics)
         return graphics
 
-    def view(self):
+    def view_form(self):
         """
         Open GLForm
         """

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\wind">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\projection">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\savefig"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
@@ -16,6 +13,9 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
   </Path>
   <File>
     <OpenedFiles>
@@ -23,14 +23,14 @@
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour\contour3_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot\streamplot_3.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot\streamplot_2d_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot\streamplot_2d_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\_reload.py"/>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour\contour3_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot\streamplot_3.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot\streamplot_2d_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\streamplot\streamplot_2d_2.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -38,5 +38,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1399,787"/>
 </MeteoInfo>

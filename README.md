@@ -1,8 +1,9 @@
 MeteoInfo: GIS and scientific computation environment for meteorological community
 ==================================================================================
 
-[![Join the chat at https://gitter.im/meteoinfo/community](https://badges.gitter.im/meteoinfo/community/meteoinfo.svg)](https://gitter.im/meteoinfo/community)
+[![Join the chat at https://gitter.im/meteoinfo/community](https://badges.gitter.im/meteoinfo/community.svg)](https://gitter.im/meteoinfo/community)
 [![DOI](https://zenodo.org/badge/172686439.svg)](https://zenodo.org/badge/latestdoi/172686439)
+[![Project Map](https://sourcespy.com/shield.svg)](https://sourcespy.com/github/meteoinfometeoinfo/)
 
 **MeteoInfo** is an intergrated framework for GIS application (**MeteoInfoMap**), scientific computation and 
 visualization environment (**MeteoInfoLab**), especially for meteorological community.
@@ -26,7 +27,7 @@ already installed.
 Documentation
 -------------
 
-Learn more about MeteoInfo in its official documentation at http://meteothink.org/
+Learn more about MeteoInfo in its official documentation at http://meteothink.org/. For a general project overview refer to [build, module, dependency and other diagrams](https://sourcespy.com/github/meteoinfometeoinfo/).
 
 Publication
 -----------

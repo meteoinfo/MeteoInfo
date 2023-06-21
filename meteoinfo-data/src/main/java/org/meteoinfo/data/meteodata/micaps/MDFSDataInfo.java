@@ -363,6 +363,34 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
         }
     }
 
+    private Array initDataArray(DataType dataType) {
+        Array array = Array.factory(dataType, new int[]{numStation});
+        switch (dataType) {
+            case FLOAT:
+                for (int i = 0; i < numStation; i++) {
+                    array.setFloat(i, Float.NaN);
+                }
+                break;
+            case DOUBLE:
+                for (int i = 0; i < numStation; i++) {
+                    array.setDouble(i, Double.NaN);
+                }
+                break;
+            case SHORT:
+                for (int i = 0; i < numStation; i++) {
+                    array.setShort(i, Short.MIN_VALUE);
+                }
+                break;
+            case INT:
+                for (int i = 0; i < numStation; i++) {
+                    array.setInt(i, Integer.MIN_VALUE);
+                }
+                break;
+        }
+
+        return array;
+    }
+
     private DataFrame readDataFrame(RandomAccessFile br) throws IOException {
         List<Array> data = new ArrayList<>();
         ColumnIndex columns = new ColumnIndex();
@@ -370,7 +398,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
         for (Variable var : this.variables) {
             varSizes.add(this.getDataTypeSize(var.getDataType()));
             columns.add(new Column(var.getName(), var.getDataType()));
-            data.add(Array.factory(var.getDataType(), new int[]{numStation}));
+            data.add(initDataArray(var.getDataType()));
         }
 
         List<String> idxList = new ArrayList<>();
@@ -720,7 +748,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
         if (this.varMap.containsKey(varId)) {
             return (String)varMap.get(varId);
         } else {
-            return "Undefine";
+            return "Undefine_" + String.valueOf(varId);
         }
     }
 

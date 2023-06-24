@@ -383,6 +383,24 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public void addAll(List<Graphic> gs) {
         this.graphics.addAll(gs);
+
+        // Update extent
+        int i = 0;
+        Extent extent;
+        for (Graphic g : gs) {
+            if (g instanceof GraphicCollection) {
+                extent = g.getExtent();
+            } else {
+                extent = g.getShape().getExtent();
+            }
+            if (i == 0) {
+                _extent = extent;
+            } else {
+                _extent = MIMath.getLagerExtent(_extent, extent);
+            }
+
+            i += 1;
+        }
     }
 
     /**

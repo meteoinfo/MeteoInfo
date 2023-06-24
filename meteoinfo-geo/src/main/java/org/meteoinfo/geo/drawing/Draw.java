@@ -2495,8 +2495,7 @@ public class Draw {
                 break;
             case ARC:
                 ArcShape arcShape = (ArcShape) aGraphic.getShape();
-                drawArc(points, arcShape.getAngle(), arcShape.getStartAngle(), arcShape.getSweepAngle(),
-                        (PolygonBreak) aGraphic.getLegend(), g);
+                drawArc(points, arcShape, (PolygonBreak) aGraphic.getLegend(), g);
                 break;
         }
 
@@ -3944,6 +3943,32 @@ public class Draw {
     }
 
     /**
+     * Draw arc
+     *
+     * @param aPoint Start point
+     * @param width Width
+     * @param height Height
+     * @param startAngle Start angle
+     * @param sweepAngle Sweep angle
+     * @param aPGB Polygon break
+     * @param g Graphics2D
+     * @param type Closure type
+     */
+    public static void drawArc(PointF aPoint, float width, float height, float startAngle, float sweepAngle,
+                               PolygonBreak aPGB, Graphics2D g, int type) {
+        Color aColor = aPGB.getColor();
+        if (aPGB.isDrawFill()) {
+            g.setColor(aColor);
+            g.fill(new Arc2D.Float(aPoint.X, aPoint.Y, width, height, startAngle, sweepAngle, type));
+        }
+        if (aPGB.isDrawOutline()) {
+            g.setColor(aPGB.getOutlineColor());
+            g.setStroke(new BasicStroke(aPGB.getOutlineSize()));
+            g.draw(new Arc2D.Float(aPoint.X, aPoint.Y, width, height, startAngle, sweepAngle, type));
+        }
+    }
+
+    /**
      * Draw pie
      *
      * @param aPoint Start point
@@ -4212,6 +4237,74 @@ public class Draw {
         } else {
             Draw.drawPie(new PointF((float)sx, (float)sy),
                     (float) width, (float) height, startAngle, sweepAngle, aPGB, g);
+        }
+    }
+
+    /**
+     * Draw Arc
+     *
+     * @param points The points
+     * @param angle The angle
+     * @param startAngle Arc start angle
+     * @param sweepAngle Arc sweep angle
+     * @param aPGB The polygon break
+     * @param g Graphics2D
+     * @param type Closure type
+     */
+    public static void drawArc(PointF[] points, float angle, float startAngle, float sweepAngle,
+                               PolygonBreak aPGB, Graphics2D g, int type) {
+        float sx = Math.min(points[0].X, points[2].X);
+        float sy = Math.min(points[0].Y, points[2].Y);
+        float width = Math.abs(points[2].X - points[0].X);
+        float height = Math.abs(points[2].Y - points[0].Y);
+
+        if (angle != 0) {
+            AffineTransform tempTrans = g.getTransform();
+            AffineTransform myTrans = (AffineTransform) tempTrans.clone();
+            myTrans.translate(sx + width / 2, sy + height / 2);
+            g.setTransform(myTrans);
+
+            Draw.drawArc(new PointF((float)sx, (float)sy),
+                    (float) width, (float) height, startAngle, sweepAngle, aPGB, g, type);
+
+            g.setTransform(tempTrans);
+        } else {
+            Draw.drawArc(new PointF((float)sx, (float)sy),
+                    (float) width, (float) height, startAngle, sweepAngle, aPGB, g, type);
+        }
+    }
+
+    /**
+     * Draw Arc
+     *
+     * @param points The points
+     * @param angle The angle
+     * @param startAngle Arc start angle
+     * @param sweepAngle Arc sweep angle
+     * @param aPGB The polygon break
+     * @param g Graphics2D
+     * @param type Closure type
+     */
+    public static void drawArc(PointF[] points, ArcShape arcShape,
+                               PolygonBreak legend, Graphics2D g) {
+        float sx = Math.min(points[0].X, points[2].X);
+        float sy = Math.min(points[0].Y, points[2].Y);
+        float width = Math.abs(points[2].X - points[0].X);
+        float height = Math.abs(points[2].Y - points[0].Y);
+
+        if (arcShape.getAngle() != 0) {
+            AffineTransform tempTrans = g.getTransform();
+            AffineTransform myTrans = (AffineTransform) tempTrans.clone();
+            myTrans.translate(sx + width / 2, sy + height / 2);
+            g.setTransform(myTrans);
+
+            Draw.drawArc(new PointF((float)sx, (float)sy), (float) width, (float) height,
+                    arcShape.getStartAngle(), arcShape.getSweepAngle(), legend, g, arcShape.getClosure());
+
+            g.setTransform(tempTrans);
+        } else {
+            Draw.drawArc(new PointF((float)sx, (float)sy), (float) width, (float) height,
+                    arcShape.getStartAngle(), arcShape.getSweepAngle(), legend, g, arcShape.getClosure());
         }
     }
 

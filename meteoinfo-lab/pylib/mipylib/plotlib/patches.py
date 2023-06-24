@@ -5,7 +5,7 @@ from org.meteoinfo.geometry.shape import ShapeUtil, CircleShape, EllipseShape, \
 from . import plotutil
 import mipylib.numeric as np
 
-__all__ = ['Arc','Circle','Ellipse','Rectangle','Polygon']
+__all__ = ['Arc','Circle','Ellipse','Rectangle','Polygon','Wedge']
 
 class Circle(Graphic):
     """
@@ -87,6 +87,7 @@ class Arc(Graphic):
         :param angle: (float) Ellipse angle. Default is `0`.
         :param theta1: (float) Starting angle of the arc in degrees. Default is `0.0`.
         :param theta2: (float) Ending angle of the arc in degrees. Default is `360`.
+        :param closure: (str) Closure type ['open' | 'chord' | 'pie']. Default is `pie`.
         """
         self._center = xy
         self._width = width
@@ -98,6 +99,19 @@ class Arc(Graphic):
         shape.setAngle(angle)
         shape.setStartAngle(theta1)
         shape.setSweepAngle(theta2 - theta1)
+        self._closure = kwargs.pop('closure', None)
+        if self._closure is None:
+            self._closure = 'pie'
+        else:
+            if self._closure == 'open':
+                closure = 0
+            elif self._closure == 'chord':
+                closure = 1
+            else:
+                self._closure = 'pie'
+                closure = 2
+            shape.setClosure(closure)
+
         legend, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         super(Arc, self).__init__(shape, legend)
 
@@ -124,6 +138,71 @@ class Arc(Graphic):
     @property
     def theta2(self):
         return self._theta2
+
+    @property
+    def closure(self):
+        return self._closure
+
+class Wedge(Graphic):
+    """
+    Wedge shaped patch.
+
+    A wedge centered at x, y center with radius r that sweeps theta1 to theta2 (in degrees). If width is
+    given, then a partial wedge is drawn from inner radius r - width to outer radius r.
+    """
+
+    def __init__(self, center, r, theta1, theta2, **kwargs):
+        """
+        Create an arc at anchor point *xy* = (*x*, *y*) with given *width* and *height*.
+
+        :param center: (float, float) xy coordinates of wedge center point.
+        :param r: (float) Radius.
+        :param theta1: (float) Starting angle of the arc in degrees.
+        :param theta2: (float) Ending angle of the arc in degrees.
+        :param closure: (str) Closure type ['open' | 'chord' | 'pie']. Default is `pie`.
+        """
+        self._center = center
+        self._r = r
+        self._theta1 = theta1
+        self._theta2 = theta2
+        shape = ArcShape(center[0], center[1], r * 2, r * 2)
+        shape.setStartAngle(theta1)
+        shape.setSweepAngle(theta2 - theta1)
+        self._closure = kwargs.pop('closure', None)
+        if self._closure is None:
+            self._closure = 'pie'
+        else:
+            if self._closure == 'open':
+                closure = 0
+            elif self._closure == 'chord':
+                closure = 1
+            else:
+                self._closure = 'pie'
+                closure = 2
+            shape.setClosure(closure)
+
+        legend, isunique = plotutil.getlegendbreak('polygon', **kwargs)
+        super(Wedge, self).__init__(shape, legend)
+
+    @property
+    def center(self):
+        return self._center
+
+    @property
+    def r(self):
+        return self._r
+
+    @property
+    def theta1(self):
+        return self._theta1
+
+    @property
+    def theta2(self):
+        return self._theta2
+
+    @property
+    def closure(self):
+        return self._closure
 
 class Rectangle(Graphic):
     """

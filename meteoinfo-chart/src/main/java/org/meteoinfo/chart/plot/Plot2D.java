@@ -1049,8 +1049,8 @@ public class Plot2D extends AbstractPlot2D {
         double height = this.projYLength(extent.getHeight(), area);
         Float wedgeWidth = aShape.getWedgeWidth();
         if (wedgeWidth == null) {
-            Draw.drawPie(new PointF((float)x, (float)y),
-                (float) width, (float) height, startAngle, sweepAngle, aPGB, g);
+            Draw.drawArc(new PointF((float)x, (float)y),
+                (float) width, (float) height, startAngle, sweepAngle, aPGB, g, aShape.getClosure());
         } else {
             wedgeWidth = (float)this.projXLength(wedgeWidth, area);
             Draw.drawPie(new PointF((float)x, (float)y),

@@ -1943,7 +1943,7 @@ public class DrawMeteoData {
             aPoint.X = xIter.getDoubleNext();
             aPoint.Y = yIter.getDoubleNext();
             v = iter.getDoubleNext();
-            if (Double.isNaN(aPoint.X) || Double.isNaN(aPoint.Y)) {
+            if (Double.isNaN(aPoint.X) || Double.isNaN(aPoint.Y) || Double.isNaN(v)) {
                 continue;
             }
             PointShape aPointShape = new PointShape();

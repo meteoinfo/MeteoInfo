@@ -15,6 +15,7 @@ package org.meteoinfo.geometry.shape;
 
 import org.meteoinfo.common.PointD;
 
+import java.awt.geom.Arc2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class ArcShape extends EllipseShape {
     private float sweepAngle;
     private float explode = 0;
     private Float wedgeWidth = null;
+    private int closure = Arc2D.PIE;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -122,6 +124,22 @@ public class ArcShape extends EllipseShape {
     public void setWedgeWidth(Float value) {
         this.wedgeWidth = value;
     }
+
+    /**
+     * Get closure type
+     * @return Closure type
+     */
+    public int getClosure() {
+        return this.closure;
+    }
+
+    /**
+     * Set closure type
+     * @param value Closure type
+     */
+    public void setClosure(int value) {
+        this.closure = value;
+    }
     // </editor-fold>
     // <editor-fold desc="Methods">
 
@@ -166,6 +184,13 @@ public class ArcShape extends EllipseShape {
         aPGS.setPoints(new ArrayList<>(this.getPoints()));
         aPGS.setVisible(this.isVisible());
         aPGS.setSelected(this.isSelected());
+        aPGS.setClosure(this.closure);
+        aPGS.setExplode(this.explode);
+        aPGS.setStartAngle(this.startAngle);
+        aPGS.setSweepAngle(this.sweepAngle);
+        aPGS.setAngle(this.angle);
+        aPGS.setWedgeWidth(this.wedgeWidth);
+        aPGS.setLegendIndex(this.getLegendIndex());
 
         return aPGS;
     }

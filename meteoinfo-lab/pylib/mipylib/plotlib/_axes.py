@@ -1052,9 +1052,12 @@ class Axes(object):
         """
         Add a patch.
 
-        :param patch: (*Graphic*) The patch to be added.
+        :param patch: (*Graphic or list of graphics*) The patch(s) to be added.
         """
-        self._axes.addGraphic(patch)
+        if isinstance(patch, (list, tuple)):
+            self._axes.addGraphics(patch)
+        else:
+            self._axes.addGraphic(patch)
         self._axes.setAutoExtent()
 
     def add_graphic(self, graphic, projection=None, zorder=None):

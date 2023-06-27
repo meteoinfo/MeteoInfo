@@ -1501,16 +1501,19 @@ class Axes3DGL(Axes3D):
 
     def isosurface(self, *args, **kwargs):
         """
-        creates a three-dimensional isosurface plot
+        creates a three-dimensional isosurface plot.
 
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) Optional. Z coordinate array.
-        :param data: (*array_like*) 3D data array.
-        :param cmap: (*string*) Color map string.
-        :param nthread: (*int*) Thread number. Default is 4.
+        :param data: (*array_like*) Volume data array.
+        :param isovalue: (*float*) Specified isosurface value.
+        :param cdata: (*array_like*) Optional. Volume color data array.
+        :param facecolor: (*color*) Optional. Color map string.
+        :param cmap: (*string*) Optional. Color map string.
+        :param nthread: (*int*) Optional. Thread number. Default is 4.
 
-        :returns: 3D Mesh graphic
+        :returns: 3D Mesh graphic.
         """
         if len(args) <= 3:
             x = args[0].dimvalue(2)

@@ -698,6 +698,16 @@ class NDArray(object):
             else:
                 ArrayMath.setImage(self._array, val)
 
+    def conj(self):
+        """
+        Return the complex conjugate, element-wise.
+
+        The complex conjugate of a complex number is obtained by changing the sign of its imaginary part.
+
+        :return: (*array*) Complex conjugate array.
+        """
+        return NDArray(ArrayMath.conj(self._array))
+
     def min(self, axis=None):
         """
         Get minimum value along an axis.
@@ -707,8 +717,13 @@ class NDArray(object):
 
         :returns: Minimum values.
         """
-        if isinstance(axis, (list, tuple)) and len(axis) == self.ndim:
+        if self.ndim == 1:
             axis = None
+        elif isinstance(axis, (list, tuple)):
+            if len(axis) == 1:
+                axis = axis[0]
+            elif len(axis) == self.ndim:
+                axis = None
 
         if axis is None:
             r = ArrayMath.min(self._array)
@@ -768,8 +783,13 @@ class NDArray(object):
 
         :returns: Maximum values.
         """
-        if isinstance(axis, (list, tuple)) and len(axis) == self.ndim:
+        if self.ndim == 1:
             axis = None
+        elif isinstance(axis, (list, tuple)):
+            if len(axis) == 1:
+                axis = axis[0]
+            elif len(axis) == self.ndim:
+                axis = None
 
         if axis is None:
             r = ArrayMath.max(self._array)
@@ -787,12 +807,27 @@ class NDArray(object):
 
         returns: (*array_like*) Sum result
         """
-        if isinstance(axis, (list, tuple)) and len(axis) == self.ndim:
+        if self.ndim == 1:
             axis = None
+        elif isinstance(axis, (list, tuple)):
+            if len(axis) == 1:
+                axis = axis[0]
+            elif len(axis) == self.ndim:
+                axis = None
 
         if axis is None:
             return ArrayMath.sum(self._array)
         else:
+            if isinstance(axis, (list, tuple)):
+                aa = []
+                for a in axis:
+                    if a < 0:
+                        a = self.ndim + a
+                    aa.append(a)
+                axis = aa
+            else:
+                if axis < 0:
+                    axis = self.ndim + axis
             r = ArrayMath.sum(self._array, axis)
             return NDArray(r)
 

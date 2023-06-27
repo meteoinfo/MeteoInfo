@@ -138,15 +138,15 @@ def sum(x, axis=None):
         r = ArrayMath.sum(x.asarray())
         return r
     else:
-        r = ArrayMath.sum(x.asarray(), axis)
-        if type(x) is NDArray:
-            return NDArray(r)
-        else:
+        r = x.sum(axis)
+        if isinstance(x, DimArray):
             dims = []
             for i in range(0, x.ndim):
                 if i != axis:
                     dims.append(x.dims[i])
-            return DimArray(NDArray(r), dims, x.fill_value, x.proj)
+            return DimArray(r, dims, x.fill_value, x.proj)
+        else:
+            return r
 
 
 def prod(x, axis=None):

@@ -6729,7 +6729,50 @@ public class ArrayMath {
                     ranges.add(new Range(current[idx], current[idx], 1));
                 }
             }
-            s = sum(a, ranges);
+            s = sumRange(a, ranges);
+            r.setDouble(i, s);
+            indexr.incr();
+        }
+
+        return r;
+    }
+
+    /**
+     * Compute sum value of an array along axes (dimension)
+     *
+     * @param a Array a
+     * @param axes Axes
+     * @return Sum value array
+     * @throws InvalidRangeException
+     */
+    public static Array sum(Array a, List<Integer> axes) throws InvalidRangeException {
+        int[] dataShape = a.getShape();
+        int[] shape = new int[dataShape.length - axes.size()];
+        int idx = 0;
+        for (int i = 0; i < dataShape.length; i++) {
+            if (axes.contains(i)) {
+                continue;
+            }
+            shape[idx] = dataShape[i];
+            idx += 1;
+        }
+        Array r = Array.factory(a.getDataType(), shape);
+        double s;
+        Index indexr = r.getIndex();
+        int[] current;
+        for (int i = 0; i < r.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            List<Range> ranges = new ArrayList<>();
+            idx = 0;
+            for (int j = 0; j < dataShape.length; j++) {
+                if (axes.contains(j)) {
+                    ranges.add(new Range(0, dataShape[j] - 1, 1));
+                } else {
+                    ranges.add(new Range(current[idx], current[idx], 1));
+                    idx += 1;
+                }
+            }
+            s = sumRange(a, ranges);
             r.setDouble(i, s);
             indexr.incr();
         }
@@ -6745,7 +6788,7 @@ public class ArrayMath {
      * @return Sum value
      * @throws InvalidRangeException
      */
-    public static double sum(Array a, List<Range> ranges) throws InvalidRangeException {
+    public static double sumRange(Array a, List<Range> ranges) throws InvalidRangeException {
         double s = 0.0, v;
         int n = 0;
         IndexIterator ii = a.getRangeIterator(ranges);
@@ -6763,7 +6806,7 @@ public class ArrayMath {
     }
 
     /**
-     * Compute the sum arry from a list of arrays
+     * Compute the sum array from a list of arrays
      *
      * @param alist list of arrays
      * @return Sum array

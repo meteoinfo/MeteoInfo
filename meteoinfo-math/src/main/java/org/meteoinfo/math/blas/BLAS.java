@@ -53,8 +53,8 @@ public interface BLAS {
         Logger logger = Logger.getLogger("BLAS.class");
 
         try {
-            Class<?> clazz = Class.forName("smile.math.blas.mkl.MKL");
-            logger.info("smile-mkl module is available.");
+            Class<?> clazz = Class.forName("org.meteoinfo.math.blas.mkl.MKL");
+            logger.info("mkl module is available.");
             return (BLAS) clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             logger.info(String.format("Failed to create MKL instance: %s", e));

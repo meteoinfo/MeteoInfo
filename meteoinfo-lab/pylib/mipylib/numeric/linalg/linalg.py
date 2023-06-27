@@ -12,7 +12,7 @@ from org.meteoinfo.math.stats import StatsUtil
 
 from .. import core as np
 
-__all__ = ['solve', 'cholesky', 'det', 'lu', 'qr', 'svd', 'eig', 'inv', 'lstsq', 'slogdet',
+__all__ = ['solve', 'cholesky', 'cond', 'det', 'lu', 'qr', 'svd', 'eig', 'inv', 'lstsq', 'slogdet',
            'solve_triangular', 'norm', 'pinv']
 
 
@@ -177,7 +177,7 @@ def qr(a):
     return q, r
 
 
-def svd(a, full_matrices=True):
+def svd(a, full_matrices=True, compute_uv=True):
     """
     Singular Value Decomposition.
     
@@ -193,9 +193,13 @@ def svd(a, full_matrices=True):
     full_matrices: bool, optional
         If True (default), u and vh have the shapes (..., M, M) and (..., N, N), respectively.
         Otherwise, the shapes are (..., M, K) and (..., K, N), respectively, where K = min(M, N).
+    compute_uv:bool, optional
+        Whether to compute u and vh in addition to s. True by default.
         
     Returns
     -------
+    When `compute_uv` is True, the result is a namedtuple with the following attribute names:
+
     U : ndarray
         Unitary matrix having left singular vectors as columns.
         Of shape ``(M,K)``.
@@ -208,10 +212,13 @@ def svd(a, full_matrices=True):
     """
     r = LinalgUtil.svd(a.asarray(), full_matrices)
     # r = LinalgUtil.svd_EJML(a.asarray())
-    U = np.NDArray(r[0])
     s = np.NDArray(r[1])
-    Vh = np.NDArray(r[2])
-    return U, s, Vh
+    if compute_uv:
+        U = np.NDArray(r[0])
+        Vh = np.NDArray(r[2])
+        return U, s, Vh
+    else:
+        return s
 
 
 def eig(a):
@@ -326,6 +333,34 @@ def slogdet(a):
     return r[0], r[1]
 
 
+def _multi_svd_norm(x, row_axis, col_axis, op):
+    """Compute a function of the singular values of the 2-D matrices in `x`.
+
+    This is a private utility function used by `numpy.linalg.norm()`.
+
+    Parameters
+    ----------
+    x : ndarray
+    row_axis, col_axis : int
+        The axes of `x` that hold the 2-D matrices.
+    op : callable
+        This should be either amin or `amax` or `sum`.
+
+    Returns
+    -------
+    result : float or ndarray
+        If `x` is 2-D, the return values is a float.
+        Otherwise, it is an array with ``x.ndim - 2`` dimensions.
+        The return values are either the minimum or maximum or sum of the
+        singular values of the matrices, depending on whether `op`
+        is `amin` or `amax` or `sum`.
+
+    """
+    y = np.moveaxis(x, (row_axis, col_axis), (-2, -1))
+    result = op(svd(y, compute_uv=False), axis=-1)
+    return result
+
+
 def norm(x, ord=None, axis=None, keepdims=False):
     """
     Matrix or vector norm.
@@ -407,50 +442,144 @@ def norm(x, ord=None, axis=None, keepdims=False):
         # None of the str-type keywords for ord ('fro', 'nuc')
         # are valid for vectors
         elif isinstance(ord, str):
-            raise ValueError("Invalid norm order '{ord}' for vectors".format(ord))
+            raise ValueError("Invalid norm order {} for vectors".format(ord))
         else:
             absx = np.abs(x)
             absx **= ord
             ret = absx.sum(axis=axis)
-            ret **= np.reciprocal(ord)
+            ret **= (1. / ord)
             return ret
-    # elif len(axis) == 2:
-    #     row_axis, col_axis = axis
-    #     row_axis = np.normalize_axis_index(row_axis, nd)
-    #     col_axis = np.normalize_axis_index(col_axis, nd)
-    #     if row_axis == col_axis:
-    #         raise ValueError('Duplicate axes given.')
-    #     if ord == 2:
-    #         ret =  _multi_svd_norm(x, row_axis, col_axis, amax)
-    #     elif ord == -2:
-    #         ret = _multi_svd_norm(x, row_axis, col_axis, amin)
-    #     elif ord == 1:
-    #         if col_axis > row_axis:
-    #             col_axis -= 1
-    #         ret = add.reduce(np.abs(x), axis=row_axis).max(axis=col_axis)
-    #     elif ord == np.inf:
-    #         if row_axis > col_axis:
-    #             row_axis -= 1
-    #         ret = add.reduce(np.abs(x), axis=col_axis).max(axis=row_axis)
-    #     elif ord == -1:
-    #         if col_axis > row_axis:
-    #             col_axis -= 1
-    #         ret = add.reduce(np.abs(x), axis=row_axis).min(axis=col_axis)
-    #     elif ord == -np.inf:
-    #         if row_axis > col_axis:
-    #             row_axis -= 1
-    #         ret = add.reduce(np.abs(x), axis=col_axis).min(axis=row_axis)
-    #     elif ord in [None, 'fro', 'f']:
-    #         ret = np.sqrt(add.reduce((x.conj() * x).real, axis=axis))
-    #     elif ord == 'nuc':
-    #         ret = _multi_svd_norm(x, row_axis, col_axis, sum)
-    #     else:
-    #         raise ValueError("Invalid norm order for matrices.")
-    #     if keepdims:
-    #         ret_shape = list(x.shape)
-    #         ret_shape[axis[0]] = 1
-    #         ret_shape[axis[1]] = 1
-    #         ret = ret.reshape(ret_shape)
-    #     return ret
-    # else:
-    #     raise ValueError("Improper number of dimensions to norm.")
+    elif len(axis) == 2:
+        row_axis, col_axis = axis
+        row_axis = np.normalize_axis_index(row_axis, nd)
+        col_axis = np.normalize_axis_index(col_axis, nd)
+        if row_axis == col_axis:
+            raise ValueError('Duplicate axes given.')
+        if ord == 2:
+            ret =  _multi_svd_norm(x, row_axis, col_axis, np.amax)
+        elif ord == -2:
+            ret = _multi_svd_norm(x, row_axis, col_axis, np.amin)
+        elif ord == 1:
+            if col_axis > row_axis:
+                col_axis -= 1
+            ret = np.sum(np.abs(x), axis=row_axis).max(axis=col_axis)
+        elif ord == np.inf:
+            if row_axis > col_axis:
+                row_axis -= 1
+            ret = np.sum(np.abs(x), axis=col_axis).max(axis=row_axis)
+        elif ord == -1:
+            if col_axis > row_axis:
+                col_axis -= 1
+            ret = np.sum(np.abs(x), axis=row_axis).min(axis=col_axis)
+        elif ord == -np.inf:
+            if row_axis > col_axis:
+                row_axis -= 1
+            ret = np.sum(np.abs(x), axis=col_axis).min(axis=row_axis)
+        elif ord in [None, 'fro', 'f']:
+            ret = np.sqrt(np.sum((x.conj() * x).real, axis=axis))
+        elif ord == 'nuc':
+            ret = _multi_svd_norm(x, row_axis, col_axis, np.sum)
+        else:
+            raise ValueError("Invalid norm order for matrices.")
+        if keepdims:
+            ret_shape = list(x.shape)
+            ret_shape[axis[0]] = 1
+            ret_shape[axis[1]] = 1
+            ret = ret.reshape(ret_shape)
+        return ret
+    else:
+        raise ValueError("Improper number of dimensions to norm.")
+
+
+def cond(x, p=None):
+    """
+    Compute the condition number of a matrix.
+
+    This function is capable of returning the condition number using
+    one of seven different norms, depending on the value of `p` (see
+    Parameters below).
+
+    Parameters
+    ----------
+    x : (..., M, N) array_like
+        The matrix whose condition number is sought.
+    p : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
+        Order of the norm used in the condition number computation:
+
+        =====  ============================
+        p      norm for matrices
+        =====  ============================
+        None   2-norm, computed directly using the ``SVD``
+        'fro'  Frobenius norm
+        inf    max(sum(abs(x), axis=1))
+        -inf   min(sum(abs(x), axis=1))
+        1      max(sum(abs(x), axis=0))
+        -1     min(sum(abs(x), axis=0))
+        2      2-norm (largest sing. value)
+        -2     smallest singular value
+        =====  ============================
+
+        inf means the `numpy.inf` object, and the Frobenius norm is
+        the root-of-sum-of-squares norm.
+
+    Returns
+    -------
+    c : {float, inf}
+        The condition number of the matrix. May be infinite.
+
+    See Also
+    --------
+    numpy.linalg.norm
+
+    Notes
+    -----
+    The condition number of `x` is defined as the norm of `x` times the
+    norm of the inverse of `x` [1]_; the norm can be the usual L2-norm
+    (root-of-sum-of-squares) or one of a number of other matrix norms.
+
+    References
+    ----------
+    .. [1] G. Strang, *Linear Algebra and Its Applications*, Orlando, FL,
+           Academic Press, Inc., 1980, pg. 285.
+
+    Examples
+    --------
+    >>> from mipylib.numeric import linalg as LA
+    >>> a = np.array([[1, 0, -1], [0, 1, 0], [1, 0, 1]])
+    >>> a
+    array([[ 1,  0, -1],
+           [ 0,  1,  0],
+           [ 1,  0,  1]])
+    >>> LA.cond(a)
+    1.4142135623730951
+    >>> LA.cond(a, 'fro')
+    3.1622776601683795
+    >>> LA.cond(a, np.inf)
+    2.0
+    >>> LA.cond(a, -np.inf)
+    1.0
+    >>> LA.cond(a, 1)
+    2.0
+    >>> LA.cond(a, -1)
+    1.0
+    >>> LA.cond(a, 2)
+    1.4142135623730951
+    >>> LA.cond(a, -2)
+    0.70710678118654746 # may vary
+    >>> min(LA.svd(a, compute_uv=False))*min(LA.svd(LA.inv(a), compute_uv=False))
+    0.70710678118654746 # may vary
+    """
+    x = np.asarray(x)  # in case we have a matrix
+    if p is None or p == 2 or p == -2:
+        s = svd(x, compute_uv=False)
+        if p == -2:
+            r = s[..., -1] / s[..., 0]
+        else:
+            r = s[..., 0] / s[..., -1]
+    else:
+        # Call inv(x) ignoring errors. The result array will
+        # contain nans in the entries where inversion failed.
+        invx = inv(x)
+        r = norm(x, p, axis=(-2, -1)) * norm(invx, p, axis=(-2, -1))
+
+    return r

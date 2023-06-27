@@ -37,7 +37,7 @@ newaxis = None
 
 __all__ = [
     'pi','e','inf','nan','acos','abs','all','allclose','any','arange','arange1',
-    'argmin','argmax','argsort','array','array_split','asanyarray','asarray','asgridarray',
+    'argmin','argmax','argsort','array','array_split','amax','amin','asanyarray','asarray','asgridarray',
     'asgriddata','arcsin','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
     'concatenate','conj','conjugate','corrcoef','cos','cosh','cylinder','degrees','delete','delnan','diag','diff',
@@ -1525,6 +1525,19 @@ def min(a, axis=None):
     if isinstance(a, (list, tuple)):
         a = array(a)
     return a.min(axis)
+
+def amin(a, axis=None):
+    """
+    Return the minimum of an array or minimum along an axis.
+
+    `amin` is an alias of `~numeric.min`.
+
+    See Also
+    --------
+    min : alias of this function
+    NDArray.min : equivalent method
+    """
+    return min(a, axis)
     
 def max(a, axis=None):
     """
@@ -1540,6 +1553,19 @@ def max(a, axis=None):
     if isinstance(a, (list, tuple)):
         a = array(a)
     return a.max(axis)
+
+def amax(a, axis=None):
+    """
+    Return the maximum of an array or maximum along an axis.
+
+    `amax` is an alias of `~numeric.max`.
+
+    See Also
+    --------
+    max : alias of this function
+    NDArray.max : equivalent method
+    """
+    return max(a, axis)
         
 def argmin(a, axis=None):
     """

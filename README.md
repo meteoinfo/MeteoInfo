@@ -5,7 +5,7 @@ MeteoInfo: GIS and scientific computation environment for meteorological communi
 [![DOI](https://zenodo.org/badge/172686439.svg)](https://zenodo.org/badge/latestdoi/172686439)
 [![Project Map](https://sourcespy.com/shield.svg)](https://sourcespy.com/github/meteoinfometeoinfo/)
 
-**MeteoInfo** is an intergrated framework for GIS application (**MeteoInfoMap**), scientific computation and 
+**MeteoInfo** is an integrated framework for GIS application (**MeteoInfoMap**), scientific computation and 
 visualization environment (**MeteoInfoLab**), especially for meteorological community.
 
 **MeteoInfoMap** is a GIS application which enables the user to visualize and analyze
@@ -17,8 +17,6 @@ the spatial and meteorological data with multiple data formats.
 ability of multiple dimensional array calculation and 2D/3D plotting.
 
 ![MeteoInfoLab GUI](images/MeteoInfoLab.PNG)
-
-**MeteoInfoLib** is a Java library providing main functions of MeteoInfoMap and MeteoInfoLab.
 
 It requires that Java 8 or greater be installed on your computer. See the
 http://www.java.com website for a free download of Java if you do not have it

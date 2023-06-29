@@ -1298,6 +1298,11 @@ public class ChartPanel extends JPanel implements IChartPanel{
                 DocPrintJob job = service.createPrintJob();
                 PrintRequestAttributeSet attributes = new HashPrintRequestAttributeSet();
                 job.print(doc, attributes);
+
+                if (sleep != null) {
+                    Thread.sleep(sleep * 1000);
+                }
+
                 out.close();
             }
         } else if (aFile.endsWith(".eps")) {
@@ -1308,6 +1313,11 @@ public class ChartPanel extends JPanel implements IChartPanel{
             g.startExport();
             //this.paintGraphics(g);
             this.paintGraphics(g, width, height);
+
+            if (sleep != null) {
+                Thread.sleep(sleep * 1000);
+            }
+
             g.endExport();
             g.dispose();
         } else if (aFile.endsWith(".pdf")) {
@@ -1319,6 +1329,11 @@ public class ChartPanel extends JPanel implements IChartPanel{
                 PdfTemplate pdfTemp = cb.createTemplate(width, height); 
                 Graphics2D g2 = new PdfGraphics2D(pdfTemp, width, height, true);
                 this.paintGraphics(g2, width, height);
+
+                if (sleep != null) {
+                    Thread.sleep(sleep * 1000);
+                }
+
                 g2.dispose(); 
                 cb.addTemplate(pdfTemp, 0, 0);
                 document.close();
@@ -1331,6 +1346,11 @@ public class ChartPanel extends JPanel implements IChartPanel{
             g.startExport();
             //this.paintGraphics(g);
             this.paintGraphics(g, width, height);
+
+            if (sleep != null) {
+                Thread.sleep(sleep * 1000);
+            }
+
             g.endExport();
             g.dispose();
         } else {

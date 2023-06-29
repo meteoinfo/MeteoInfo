@@ -5,7 +5,8 @@ from ._ndarray import NDArray
 from .dimarray import DimArray
 from org.meteoinfo.ndarray.math import ArrayUtil, ArrayMath
 
-__all__ = ['cumprod', 'cumsum', 'ndim', 'nonzero', 'prod', 'ravel', 'searchsorted', 'sum']
+__all__ = ['cumprod', 'cumsum', 'ndim', 'nonzero', 'prod', 'ravel', 'searchsorted', 'sum',
+           'where']
 
 
 def ndim(a):
@@ -78,6 +79,19 @@ def nonzero(a):
     for aa in ra:
         r.append(NDArray(aa))
     return tuple(r)
+
+
+def where(condition):
+    """
+    Return elements, either from x or y, depending on condition.
+
+    If only condition is given, return condition.nonzero().
+
+    :param condition: (*array_like*) Input array.
+
+    :returns: (*tuple*) Indices of elements that are non-zero.
+    """
+    return nonzero(condition)
 
 
 def searchsorted(a, v, side='left', sorter=None):

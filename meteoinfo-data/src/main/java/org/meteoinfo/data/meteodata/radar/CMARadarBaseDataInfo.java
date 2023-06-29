@@ -39,6 +39,46 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> (String) data[1]));
     private Map<String, RadialRecord> recordMap = new HashMap<>();
 
+    /**
+     * Get generic header
+     * @return Generic header
+     */
+    public GenericHeader getGenericHeader() {
+        return this.genericHeader;
+    }
+
+    /**
+     * Get site config
+     * @return Site config
+     */
+    public SiteConfig getSiteConfig() {
+        return this.siteConfig;
+    }
+
+    /**
+     * Get task config
+     * @return Task config
+     */
+    public TaskConfig getTaskConfig() {
+        return this.taskConfig;
+    }
+
+    /**
+     * Get cut config list
+     * @return Cut config list
+     */
+    public List<CutConfig> getCutConfigs() {
+        return this.cutConfigs;
+    }
+
+    /**
+     * Get record map
+     * @return Record map
+     */
+    public Map<String, RadialRecord> getRecordMap() {
+        return this.recordMap;
+    }
+
     @Override
     public GridArray getGridArray(String varName) {
         return null;
@@ -184,7 +224,7 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
                     } else {
                         record = new RadialRecord(product);
                         record.setBinLength(momentHeader.binLength);
-                        record.scale = momentHeader.scale;;
+                        record.scale = momentHeader.scale;
                         record.offset = momentHeader.offset;
                         this.recordMap.put(product, record);
                     }
@@ -232,6 +272,7 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
             this.addAttribute(new Attribute("StationLongitude", siteConfig.longitude));
             this.addAttribute(new Attribute("AntennaHeight", siteConfig.antennaHeight));
             this.addAttribute(new Attribute("GroundHeight", siteConfig.groundHeight));
+            this.addAttribute(new Attribute("RadarType", siteConfig.getRadarType()));
 
             //Read radial data
             taskConfig = new TaskConfig(raf);

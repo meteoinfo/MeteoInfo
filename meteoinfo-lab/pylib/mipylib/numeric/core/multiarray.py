@@ -5,10 +5,9 @@ multiarray module
 from org.meteoinfo.ndarray.math import ArrayMath
 
 from ._ndarray import NDArray
-from .fromnumeric import nonzero
 from ._exceptions import AxisError
 
-__all__ = ['normalize_axis_index','where','bincount']
+__all__ = ['normalize_axis_index','bincount']
 
 def normalize_axis_index(axis, ndim, msg_prefix=None):
     """
@@ -32,18 +31,6 @@ def normalize_axis_index(axis, ndim, msg_prefix=None):
             raise AxisError(axis, ndim, msg_prefix)
     else:
         raise AxisError(axis, ndim, msg_prefix)
-
-def where(condition):
-    """
-    Return elements, either from x or y, depending on condition.
-
-    If only condition is given, return condition.nonzero().
-
-    :param condition: (*array_like*) Input array.
-
-    :returns: (*tuple*) Indices of elements that are non-zero.
-    """
-    return nonzero(condition)
 
 def bincount(x, weights=None, minlength=0):
     """

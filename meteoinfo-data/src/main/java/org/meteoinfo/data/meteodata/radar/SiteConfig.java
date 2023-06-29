@@ -111,4 +111,51 @@ public class SiteConfig {
         reserved = new byte[46];
         raf.read(reserved);
     }
+
+    /**
+     * Get radar type string
+     * @return Radar type string
+     */
+    public String getRadarType() {
+        switch (radarType) {
+            case 1:
+                return "SA";
+            case 2:
+                return "SB";
+            case 3:
+                return "SC";
+            case 4:
+                return "SAD";
+            case 5:
+                return "SBD";
+            case 6:
+                return "SCD";
+            case 33:
+                return "CA";
+            case 34:
+                return "CB";
+            case 35:
+                return "CC";
+            case 36:
+                return "CCJ";
+            case 37:
+                return "CD";
+            case 38:
+                return "CAD";
+            case 39:
+                return "CBD";
+            case 40:
+                return "CCD";
+            case 41:
+                return "CCJD";
+            case 42:
+                return "CDD";
+            case 65:
+                return "XA";
+            case 66:
+                return "XAD";
+            default:
+                return "UNDEFINE";
+        }
+    }
 }

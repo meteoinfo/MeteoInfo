@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\linalg">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+  <Path OpenPath="D:\Temp\test\webmap">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\complex"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\slice"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW\ZhengZhou"/>
+    <RecentFolder Folder="D:\Temp\test\webmap"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\_reload.py"/>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\svd.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\cond.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\norm_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\ZhengZhou\radar_bz2_3d.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\LaSW\ZhengZhou\radar_bz2_3d_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\_reload.py"/>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\svd.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\cond.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\norm_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\ZhengZhou\radar_bz2_3d.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\LaSW\ZhengZhou\radar_bz2_3d_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -38,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1393,844"/>
 </MeteoInfo>

@@ -16,7 +16,7 @@ package org.meteoinfo.data.mapdata.webmap;
 public class DefaultTileFactory extends AbstractTileFactory {
     
     /**
-     * Creates a new instance of DefaultTileFactory using the spcified TileFactoryInfo
+     * Creates a new instance of DefaultTileFactory using the specified TileFactoryInfo
      * @param info a TileFactoryInfo to configure this TileFactory
      */
     public DefaultTileFactory(TileFactoryInfo info) {

@@ -9,6 +9,7 @@ from org.meteoinfo.common import PointD
 from org.meteoinfo.common.util import JDateUtil
 from org.meteoinfo.ndarray import Complex
 from org.meteoinfo.geometry.shape import PointShape, ShapeUtil
+from org.python.core import PyComplex
 from java.util import Locale
 from java.time import LocalDateTime
 from java.time.format import DateTimeFormatter
@@ -221,6 +222,23 @@ def jcomplex(v):
     :returns: (*Complex*) Java Complex object.
     """
     return Complex(v.real, v.imag)
+
+
+def iscomplex(a):
+    """
+    Check if the number or list `a` is complex data type.
+
+    :param a: (*number or list*) Number of list of number.
+
+    :return: (*bool*) Complex data type or not.
+    """
+    if isinstance(a, (list, tuple)):
+        for v in a:
+            if isinstance(v, PyComplex):
+                return True
+        return False
+    else:
+        return isinstance(a, PyComplex);
 
 
 def makeshapes(x, y, type=None, z=None, m=None):

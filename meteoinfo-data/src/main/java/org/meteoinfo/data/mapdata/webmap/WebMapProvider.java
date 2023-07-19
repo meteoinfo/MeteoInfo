@@ -39,7 +39,7 @@ public enum WebMapProvider {
     YahooHybridMap,
     CMA_CVA_MAP,
     CMA_VEC_MAP,
-    CMA_IMG_MAP
+    CMA_IMG_MAP,
     //ArcGISImage
-    //Custom
+    Custom
 }

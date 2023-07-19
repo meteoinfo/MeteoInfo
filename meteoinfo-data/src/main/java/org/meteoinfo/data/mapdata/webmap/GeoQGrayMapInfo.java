@@ -19,7 +19,7 @@ public class GeoQGrayMapInfo extends TileFactoryInfo {
     public GeoQGrayMapInfo() {
         super("GeoQMap", 0, 18, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "http://cache1.arcgisonline.cn/arcgis/rest/services/ChinaOnlineStreetGray/MapServer/tile/%1$d/%2$d/%3$d",
+                "https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetGray/MapServer/tile/%1$d/%2$d/%3$d",
                 "x", "y", "z");
     }
 //    // </editor-fold>

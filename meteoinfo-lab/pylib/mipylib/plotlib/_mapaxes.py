@@ -21,7 +21,7 @@ from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.projection import ProjectionInfo
 from org.meteoinfo.common import Extent
 from org.meteoinfo.geo.layer import LayerTypes, WebMapLayer
-from org.meteoinfo.data.mapdata.webmap import WebMapProvider
+from org.meteoinfo.data.mapdata.webmap import WebMapProvider, DefaultTileFactory, TileFactoryInfo
 from org.meteoinfo.geo.layout import ScaleBarType
 
 from java.awt import Font, Color
@@ -1716,8 +1716,13 @@ class MapAxes(Axes):
         :returns: Web map layer
         """
         layer = WebMapLayer()
-        provider = WebMapProvider.valueOf(provider)
-        layer.setWebMapProvider(provider)
+        if isinstance(provider, TileFactoryInfo):
+            tf = DefaultTileFactory(provider)
+            layer.setTileFactory(tf)
+        else:
+            provider = WebMapProvider.valueOf(provider)
+            layer.setWebMapProvider(provider)
+
         self.add_layer(layer, zorder)
         return MILayer(layer)
         

@@ -23,7 +23,7 @@ public class RadialRecord {
     public List<List<Float>> elevation = new ArrayList<>();
     public List<List<Float>> azimuth = new ArrayList<>();
     public List<Array> distance = new ArrayList<>();
-    private List<List<Array>> data = new ArrayList<>();
+    private final List<List<Array>> data = new ArrayList<>();
 
     /**
      * Constructor
@@ -115,43 +115,6 @@ public class RadialRecord {
     }
 
     /**
-     * Convert antenna coordinate to cartesian coordinate
-     * @param r Distances to the center of the radar gates (bins) in meters
-     * @param a Azimuth angle of the radar in radians
-     * @param e Elevation angle of the radar in radians
-     * @return Cartesian coordinate in meters from the radar
-     */
-    public double[] antennaToCartesian(float r, float a, float e) {
-        double R = 6371.0 * 1000.0 * 4.0 / 3.0;     // effective radius of earth in meters.
-
-        double z = Math.pow(r * r + R * R + 2.0 * r * R * Math.sin(e), 0.5) - R;
-        double s = R * Math.asin(r * Math.cos(e) / (R + z));  // arc length in m.
-        double x = s * Math.sin(a);
-        double y = s * Math.cos(a);
-
-        return new double[]{x, y, z};
-    }
-
-    /**
-     * Convert antenna coordinate to cartesian coordinate
-     * @param r Distances to the center of the radar gates (bins) in meters
-     * @param a Azimuth angle of the radar in radians
-     * @param e Elevation angle of the radar in radians
-     * @param h Altitude of the instrument, above sea level, units:m
-     * @return Cartesian coordinate in meters from the radar
-     */
-    public double[] antennaToCartesian(float r, float a, float e, float h) {
-        double R = 6371.0 * 1000.0 * 4.0 / 3.0;     // effective radius of earth in meters.
-
-        double z = Math.pow(Math.pow(r * Math.cos(e), 2) + Math.pow(R + h + r * Math.sin(e), 2), 0.5) - R;
-        double s = R * Math.asin(r * Math.cos(e) / (R + z));  // arc length in m.
-        double x = s * Math.sin(a);
-        double y = s * Math.cos(a);
-
-        return new double[]{x, y, z};
-    }
-
-    /**
      * Get XYZ data array
      * @param scanIdx The scan index
      * @return XYZ data array
@@ -171,7 +134,7 @@ public class RadialRecord {
             a = (float) Math.toRadians(azi.get(i));
             e = (float) Math.toRadians(ele.get(i));
             for (int j = 0; j < nx; j++) {
-                xyz = antennaToCartesian(dis.getFloat(j), a, e);
+                xyz = Transform.antennaToCartesian(dis.getFloat(j), a, e);
                 index.set(0, i, j);
                 r.setFloat(index, (float) xyz[0]);
                 index.set(1, i, j);

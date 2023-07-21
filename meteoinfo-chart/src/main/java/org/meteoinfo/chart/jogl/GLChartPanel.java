@@ -28,6 +28,7 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -804,6 +805,11 @@ public class GLChartPanel extends GLJPanel implements IChartPanel {
     @Override
     public void paintGraphics() {
         this.repaint();
+    }
+
+    @Override
+    public void paintGraphics(Graphics2D g, int width, int height) {
+
     }
 
     /**

@@ -877,9 +877,9 @@ public class Chart {
      * @param plot Plot
      */
     public void addPlot(Plot plot) {
-        /*if (plot instanceof MapPlot) {
+        if (plot instanceof MapPlot) {
             ((MapPlot) plot).setParent(parent);
-        }*/
+        }
         this.plots.add(plot);
     }
 

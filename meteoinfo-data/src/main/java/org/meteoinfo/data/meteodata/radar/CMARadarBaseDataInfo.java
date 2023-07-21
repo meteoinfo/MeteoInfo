@@ -6,10 +6,7 @@ import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.dimarray.DimensionType;
-import org.meteoinfo.data.meteodata.Attribute;
-import org.meteoinfo.data.meteodata.DataInfo;
-import org.meteoinfo.data.meteodata.IGridDataInfo;
-import org.meteoinfo.data.meteodata.Variable;
+import org.meteoinfo.data.meteodata.*;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
@@ -17,6 +14,8 @@ import org.meteoinfo.ndarray.math.ArrayUtil;
 import java.awt.image.ImagingOpException;
 import java.io.*;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,14 +29,22 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
     private SiteConfig siteConfig;
     private TaskConfig taskConfig;
     private List<CutConfig> cutConfigs;
-    private Map<Integer, String> productMap = Stream.of(new Object[][]{{1,"dBT"}, {2,"dBZ"},
+    private List<RadialHeader> radialHeaders;
+    private final Map<Integer, String> productMap = Stream.of(new Object[][]{{1,"dBT"}, {2,"dBZ"},
             {3,"V"}, {4,"W"}, {5,"SQI"}, {6,"CPA"}, {7,"ZDR"}, {8,"LDR"}, {9,"CC"}, {10,"PhiDP"},
             {11,"KDP"}, {12,"CP"}, {13,"Flag"}, {14,"HCL"}, {15,"CF"}, {16,"SNRH"}, {17,"SNRV"},
             {18,"Flag"}, {19,"Flag"}, {20,"Flag"}, {21,"Flag"}, {22,"Flag"}, {23,"Flag"},
             {24,"Flag"}, {25,"Flag"}, {26,"Flag"}, {27,"Flag"}, {28,"Flag"}, {29,"Flag"},
             {30,"Flag"}, {31,"Flag"}, {32,"Zc"}, {33,"Vc"}, {34,"Wc"}, {35,"ZDRc"}, {0,"Flag"}
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> (String) data[1]));
-    private Map<String, RadialRecord> recordMap = new HashMap<>();
+    private final Map<String, RadialRecord> recordMap = new HashMap<>();
+
+    /**
+     * Constructor
+     */
+    public CMARadarBaseDataInfo() {
+        this.meteoDataType = MeteoDataType.RADAR;
+    }
 
     /**
      * Get generic header
@@ -69,6 +76,14 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
      */
     public List<CutConfig> getCutConfigs() {
         return this.cutConfigs;
+    }
+
+    /**
+     * Get radial header list
+     * @return Radial header list
+     */
+    public List<RadialHeader> getRadialHeaders() {
+        return this.radialHeaders;
     }
 
     /**
@@ -155,7 +170,7 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         try {
             byte[] bytes = new byte[4];
             if (fileName.endsWith("bz2")) {
-                BZip2CompressorInputStream inputStream = new BZip2CompressorInputStream(new FileInputStream(fileName));
+                BZip2CompressorInputStream inputStream = new BZip2CompressorInputStream(Files.newInputStream(Paths.get(fileName)));
                 inputStream.read(bytes);
             } else {
                 RandomAccessFile raf = new RandomAccessFile(fileName, "r");
@@ -178,7 +193,7 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         this.fileName = fileName;
         if (fileName.endsWith(".bz2")) {
             try {
-                BZip2CompressorInputStream inputStream = new BZip2CompressorInputStream(new FileInputStream(fileName));
+                BZip2CompressorInputStream inputStream = new BZip2CompressorInputStream(Files.newInputStream(Paths.get(fileName)));
                 readDataInfo(inputStream);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -212,7 +227,7 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
             for (int i = 0; i < taskConfig.cutNumber; i++) {
                 cutConfigs.add(new CutConfig(raf));
             }
-            List<RadialHeader> radialHeaders = new ArrayList<>();
+            radialHeaders = new ArrayList<>();
             while (raf.length() - raf.getFilePointer() > RadialHeader.length) {
                 RadialHeader radialHeader = new RadialHeader(raf);
                 for (int i = 0; i < radialHeader.momentNumber; i++) {
@@ -280,7 +295,7 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
             for (int i = 0; i < taskConfig.cutNumber; i++) {
                 cutConfigs.add(new CutConfig(raf));
             }
-            List<RadialHeader> radialHeaders = new ArrayList<>();
+            radialHeaders = new ArrayList<>();
             byte[] rhBytes = new byte[RadialHeader.length];
             while (raf.read(rhBytes) != -1) {
                 RadialHeader radialHeader = new RadialHeader(rhBytes);
@@ -327,6 +342,47 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Get product names
+     * @return product names
+     */
+    public List<String> getProducts() {
+        List<String> products = new ArrayList<>();
+        for (String product : this.recordMap.keySet()) {
+            products.add(product);
+        }
+
+        return products;
+    }
+
+    /**
+     * Get scan elevations
+     * @return Scan elevations
+     */
+    public List<Float> getElevations() {
+        List<Float> elevations = new ArrayList<>();
+        for (CutConfig cutConfig : this.cutConfigs) {
+            if (!elevations.contains(cutConfig.elevation))
+                elevations.add(cutConfig.elevation);
+        }
+
+        return elevations;
+    }
+
+    /**
+     * Get scan elevations
+     * @return Scan elevations
+     */
+    public List<Float> getElevations(String product) {
+        RadialRecord radialRecord = this.recordMap.get(product);
+        List<Float> elevations = new ArrayList<>();
+        for (List<Float> elist : radialRecord.elevation) {
+            elevations.add(elist.get(0));
+        }
+
+        return elevations;
     }
 
     @Override

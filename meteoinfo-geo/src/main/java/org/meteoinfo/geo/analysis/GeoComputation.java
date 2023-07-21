@@ -196,31 +196,33 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
                             }
                             q1 = q2;
                         }
-                        GridLabel aGL = new GridLabel();
-                        aGL.setBorder(true);
-                        aGL.setLongitude(isVertical);
-                        aGL.setCoord(IPoint);
-                        if (MIMath.doubleEquals(q1.X, borderList.get(j).Point.X)) {
-                            if (MIMath.doubleEquals(q1.X, clipExtent.minX)) {
-                                aGL.setLabDirection(Direction.Weast);
+                        if (j < borderList.size()) {
+                            GridLabel aGL = new GridLabel();
+                            aGL.setBorder(true);
+                            aGL.setLongitude(isVertical);
+                            aGL.setCoord(IPoint);
+                            if (MIMath.doubleEquals(q1.X, borderList.get(j).Point.X)) {
+                                if (MIMath.doubleEquals(q1.X, clipExtent.minX)) {
+                                    aGL.setLabDirection(Direction.Weast);
+                                } else {
+                                    aGL.setLabDirection(Direction.East);
+                                }
                             } else {
-                                aGL.setLabDirection(Direction.East);
+                                if (MIMath.doubleEquals(q1.Y, clipExtent.minY)) {
+                                    aGL.setLabDirection(Direction.South);
+                                } else {
+                                    aGL.setLabDirection(Direction.North);
+                                }
                             }
-                        } else {
-                            if (MIMath.doubleEquals(q1.Y, clipExtent.minY)) {
-                                aGL.setLabDirection(Direction.South);
-                            } else {
-                                aGL.setLabDirection(Direction.North);
-                            }
-                        }
 
-                        if (isVertical) {
-                            if (aGL.getLabDirection() == Direction.South || aGL.getLabDirection() == Direction.North) {
-                                gridLabels.add(aGL);
-                            }
-                        } else {
-                            if (aGL.getLabDirection() == Direction.East || aGL.getLabDirection() == Direction.Weast) {
-                                gridLabels.add(aGL);
+                            if (isVertical) {
+                                if (aGL.getLabDirection() == Direction.South || aGL.getLabDirection() == Direction.North) {
+                                    gridLabels.add(aGL);
+                                }
+                            } else {
+                                if (aGL.getLabDirection() == Direction.East || aGL.getLabDirection() == Direction.Weast) {
+                                    gridLabels.add(aGL);
+                                }
                             }
                         }
 

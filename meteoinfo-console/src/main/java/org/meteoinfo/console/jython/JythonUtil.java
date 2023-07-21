@@ -1,5 +1,6 @@
 package org.meteoinfo.console.jython;
 
+import org.checkerframework.checker.units.qual.C;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Complex;
 import org.meteoinfo.ndarray.DataType;
@@ -27,15 +28,7 @@ public class JythonUtil {
      * @return ArrayComplex
      */
     public static Array toComplexArray(List<Object> data) {
-        if (data.get(0) instanceof PyComplex) {
-            Array a = Array.factory(DataType.COMPLEX, new int[]{data.size()});
-            PyComplex pd;
-            for (int i = 0; i < data.size(); i++) {
-                pd = (PyComplex)data.get(i);
-                a.setObject(i, new Complex(pd.real, pd.imag));
-            }
-            return a;
-        } else if (data.get(0) instanceof List) {
+        if (data.get(0) instanceof List) {
             int ndim = data.size();
             int len = ((List) data.get(0)).size();
             Array a = Array.factory(DataType.COMPLEX, new int[]{ndim, len});
@@ -43,13 +36,28 @@ public class JythonUtil {
             for (int i = 0; i < ndim; i++) {
                 List<Object> d = (List) data.get(i);
                 for (int j = 0; j < len; j++) {
-                    pd = (PyComplex) d.get(j);
-                    a.setObject(i * len + j, new Complex(pd.real, pd.imag));
+                    if (d.get(j) instanceof PyComplex) {
+                        pd = (PyComplex) d.get(j);
+                        a.setComplex(i * len + j, new Complex(pd.real, pd.imag));
+                    } else {
+                        a.setComplex(i * len + j, new Complex((double) d.get(j), 0));
+                    }
+                }
+            }
+            return a;
+        } else {
+            Array a = Array.factory(DataType.COMPLEX, new int[]{data.size()});
+            PyComplex pd;
+            for (int i = 0; i < data.size(); i++) {
+                if (data.get(i) instanceof PyComplex) {
+                    pd = (PyComplex) data.get(i);
+                    a.setComplex(i, new Complex(pd.real, pd.imag));
+                } else {
+                    a.setComplex(i, new Complex((double) data.get(i), 0));
                 }
             }
             return a;
         }
-        return null;
     }
 
 }

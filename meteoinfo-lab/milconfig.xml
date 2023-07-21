@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
   <Path OpenPath="D:\Working\MIScript\Jython\mis\map\webmap">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\LaSW\ZhengZhou"/>
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\MeteoInfo\meteoinfo-lab"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
@@ -14,6 +13,7 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\complex"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
   </Path>
@@ -22,15 +22,17 @@
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\_reload.py"/>
       <OpenedFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bz2_3d_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\new_tilefactory_geoq.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_cma.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_cma_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\_reload.py"/>
       <RecentFile File="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d\mainGUI.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bz2_3d_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\new_tilefactory_geoq.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_cma.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\webmap_cma_2.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -38,5 +40,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1400,796"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1359,785"/>
 </MeteoInfo>

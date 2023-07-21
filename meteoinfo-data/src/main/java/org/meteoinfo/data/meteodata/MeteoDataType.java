@@ -51,6 +51,7 @@ public enum MeteoDataType {
         MM5IM,
         GEOTIFF,
         BIL,
+        RADAR,
         NULL;
         
         /**

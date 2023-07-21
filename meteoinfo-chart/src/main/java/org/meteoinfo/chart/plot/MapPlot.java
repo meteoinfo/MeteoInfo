@@ -56,7 +56,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     private boolean antialias;
     private MapLayer selectedLayer;
     protected TileLoadListener tileLoadListener = new TileLoadListener(this);
-    private GLChartPanel parent;
+    private IChartPanel parent;
     private float[] lonLim;
     private float[] latLim;
     private Graphic boundary;
@@ -127,7 +127,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      *
      * @param value ChartPanel
      */
-    public void setParent(GLChartPanel value) {
+    public void setParent(IChartPanel value) {
         this.parent = value;
     }
 

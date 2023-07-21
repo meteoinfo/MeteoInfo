@@ -352,7 +352,7 @@ public class FigureDockable extends DefaultSingleCDockable {
      *
      * @param cp ChartPanel
      */
-    public void setCurrentFigure(GLChartPanel cp) {
+    public void setCurrentFigure(JPanel cp) {
         if (this.tabbedPanel.getTabCount() > 0) {
             JScrollPane sp = new JScrollPane(cp);
             this.tabbedPanel.setComponentAt(this.tabbedPanel.getSelectedIndex(), sp);

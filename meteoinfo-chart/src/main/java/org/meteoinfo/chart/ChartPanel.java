@@ -582,29 +582,26 @@ public class ChartPanel extends JPanel implements IChartPanel{
 
         if (this.chart != null) {
             Graphics2D g = this.mapBitmap.createGraphics();
-            Rectangle2D chartArea;
-            if (this.chartSize == null) {
-                chartArea = new Rectangle2D.Double(0.0, 0.0, this.mapBitmap.getWidth(), this.mapBitmap.getHeight());
-            } else {
-                chartArea = new Rectangle2D.Double(0.0, 0.0, this.chartSize.width, this.chartSize.height);
-            }
+            Rectangle2D chartArea = new Rectangle2D.Double(0.0, 0.0, width, height);
             this.chart.draw(g, chartArea);
         }
         this.repaint();
     }
 
     public void paintGraphics(Graphics2D g) {
-        if (this.chart != null) {
-            Rectangle2D chartArea;
-            if (this.chartSize == null) {
-                chartArea = new Rectangle2D.Double(0.0, 0.0, this.getWidth(), this.getHeight());
-            } else {
-                chartArea = new Rectangle2D.Double(0.0, 0.0, this.chartSize.width, this.chartSize.height);
-            }
-            this.chart.draw(g, chartArea);
+        int width, height;
+        if (this.chartSize != null) {
+            height = this.chartSize.height;
+            width = this.chartSize.width;
+        } else {
+            width = this.getWidth();
+            height = this.getHeight();
         }
+
+        paintGraphics(g, width, height);
     }
 
+    @Override
     public void paintGraphics(Graphics2D g, int width, int height) {
         if (this.chart != null) {
             Rectangle2D chartArea;
@@ -614,11 +611,13 @@ public class ChartPanel extends JPanel implements IChartPanel{
     }
 
     void onComponentResized(ComponentEvent e) {
-        if (!loading) {
-            if (this.getWidth() > 0 && this.getHeight() > 0) {
-                if (this.chart != null) {
-                    //this.paintGraphics();
+        if (this.getWidth() > 0 && this.getHeight() > 0) {
+            if (this.chart != null) {
+                if (this.chart.hasWebMap()) {
                     this.repaintNew();
+                } else {
+                    if (!loading)
+                        this.repaintNew();
                 }
             }
         }

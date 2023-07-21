@@ -5,16 +5,7 @@ from .dimdatafile import DimDataFile
 class ARLDataFile(DimDataFile):
 
     def __init__(self, dataset=None, access='r', arldata=None):
-        self.dataset = dataset
-        self.access = access
-        self._variables = []
-        if not dataset is None:
-            self.filename = dataset.getFileName()
-            for v in dataset.getDataInfo().getVariables():
-                self._variables.append(DimVariable(v))
-            self.nvar = dataset.getDataInfo().getVariableNum()
-            self.fill_value = dataset.getMissingValue()
-            self.proj = dataset.getProjectionInfo()
+        super(ARLDataFile, self).__init__(dataset, access)
         self.arldata = arldata
 
     # Write ARL data

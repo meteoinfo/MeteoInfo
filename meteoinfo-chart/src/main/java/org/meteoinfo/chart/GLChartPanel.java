@@ -618,6 +618,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         }
     }
 
+    @Override
     public void paintGraphics(Graphics2D g, int width, int height) {
         if (this.chart != null) {
             Rectangle2D chartArea;

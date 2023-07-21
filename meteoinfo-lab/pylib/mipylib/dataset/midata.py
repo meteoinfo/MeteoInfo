@@ -8,7 +8,7 @@
 import os
 import datetime
 
-from org.meteoinfo.data.meteodata import MeteoDataInfo
+from org.meteoinfo.data.meteodata import MeteoDataInfo, MeteoDataType
 from org.meteoinfo.ndarray import DataType
 from org.meteoinfo.data.dimarray import Dimension, DimensionType
 from org.meteoinfo.data.meteodata.arl import ARLDataInfo
@@ -24,6 +24,9 @@ import mipylib.miutil as miutil
 from mipylib.numeric.core import NDArray, DimArray, PyTableData
 
 from dimdatafile import DimDataFile, DimDataFiles
+from arldatafile import ARLDataFile
+from bufrdatafile import BUFRDataFile
+from radardatafile import RadarDataFile
 import mipylib.migl as migl
 
 __all__ = [
@@ -113,13 +116,16 @@ def addfile(fname, access='r', dtype='netcdf', keepopen=False, **kwargs):
         
         meteodata = MeteoDataInfo()
         meteodata.openData(fname, keepopen)
-        datafile = DimDataFile(meteodata, access=access)
+        if meteodata.getDataInfo().getDataType() == MeteoDataType.RADAR:
+            datafile = RadarDataFile(meteodata, access=access)
+        else:
+            datafile = DimDataFile(meteodata, access=access)
         return datafile
     elif access == 'c':
         if dtype == 'arl':
             arldata = ARLDataInfo()
             arldata.createDataFile(fname)
-            datafile = DimDataFile(arldata=arldata)
+            datafile = ARLDataFile(arldata=arldata)
         elif dtype == 'bufr':
             bufrdata = BufrDataInfo()
             if os.path.exists(fname):
@@ -127,9 +133,9 @@ def addfile(fname, access='r', dtype='netcdf', keepopen=False, **kwargs):
                     os.remove(fname)
                 except:   
                     info=sys.exc_info()   
-                    print info[0],":",info[1]
+                    print(info[0],":",info[1])
             bufrdata.createDataFile(fname)
-            datafile = DimDataFile(bufrdata=bufrdata)
+            datafile = BUFRDataFile(bufrdata=bufrdata)
         else:
             version = kwargs.pop('version', 'netcdf3')
             if version == 'netcdf3':

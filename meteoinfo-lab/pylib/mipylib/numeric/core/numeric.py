@@ -104,11 +104,11 @@ def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
             if len(object) > 0:
                 if isinstance(object[0], datetime.datetime):
                     object = miutil.dates2nums(object)
-                elif isinstance(object[0], PyComplex):
-                    a = NDArray(JythonUtil.toComplexArray(object))
                 elif isinstance(object[0], (list, tuple)):
-                    if isinstance(object[0][0], PyComplex):
+                    if miutil.iscomplex(object[0]):
                         a = NDArray(JythonUtil.toComplexArray(object))
+                elif miutil.iscomplex(object):
+                    a = NDArray(JythonUtil.toComplexArray(object))
 
         if isinstance(dtype, basestring):
             dtype = _dtype.DataType(dtype)

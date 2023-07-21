@@ -1,9 +1,10 @@
 from ..core import numeric as _nx
+from ..core import dtype
 from ..core._ndarray import NDArray
 from ..core.fromnumeric import (ravel, nonzero)
 from org.meteoinfo.ndarray.math import ArrayMath
 
-__all__ = ['extract', 'place', 'grid_edge']
+__all__ = ['angle','extract', 'place', 'grid_edge']
 
 
 def extract(condition, arr):
@@ -112,3 +113,51 @@ def grid_edge(x, y):
     yy[xn + yn + xn:] = y[::-1]
 
     return xx, yy
+
+def angle(z, deg=False):
+    """
+    Return the angle of the complex argument.
+
+    Parameters
+    ----------
+    z : array_like
+        A complex number or sequence of complex numbers.
+    deg : bool, optional
+        Return angle in degrees if True, radians if False (default).
+
+    Returns
+    -------
+    angle : ndarray or scalar
+        The counterclockwise angle from the positive real axis on the complex
+        plane in the range ``(-pi, pi]``, with dtype as double.
+
+    See Also
+    --------
+    arctan2
+    absolute
+
+    Notes
+    -----
+    Although the angle of the complex number 0 is undefined, ``angle(0)``
+    returns the value 0.
+
+    Examples
+    --------
+    >>> np.angle([1.0, 1.0j, 1+1j])               # in radians
+    array([ 0.        ,  1.57079633,  0.78539816]) # may vary
+    >>> np.angle(1+1j, deg=True)                  # in degrees
+    45.0
+
+    """
+    z = _nx.asanyarray(z)
+    if z.dtype == dtype.complex:
+        zimag = z.imag
+        zreal = z.real
+    else:
+        zimag = 0
+        zreal = z
+
+    a = _nx.arctan2(zimag, zreal)
+    if deg:
+        a *= 180 / _nx.pi
+    return a

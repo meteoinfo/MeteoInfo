@@ -8,7 +8,7 @@ package org.meteoinfo.chart.form;
 import org.meteoinfo.chart.ChartPanel;
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.chart.MouseMode;
-import org.meteoinfo.chart.jogl.GLChartPanel;
+import org.meteoinfo.chart.GLChartPanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

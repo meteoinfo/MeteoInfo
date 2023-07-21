@@ -5,6 +5,8 @@
  */
 package org.meteoinfo.chart;
 
+import java.awt.*;
+
 /**
  *
  * @author yaqiang
@@ -43,4 +45,6 @@ public interface IChartPanel {
      * Paint graphics
      */
     public abstract void paintGraphics();
+
+    public abstract void paintGraphics(Graphics2D g, int width, int height);
 }

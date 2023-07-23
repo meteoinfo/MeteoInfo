@@ -66,7 +66,7 @@ public class MeteoInfoLab {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // Disable illegal access warning message  
         disableAccessWarnings();
 
@@ -91,11 +91,12 @@ public class MeteoInfoLab {
                     System.exit(0);
                 } else {
                     String fn = args[1];
-                    if (new File(fn).isFile()) {
+                    File file = new File(fn);
+                    if (file.isFile()) {
                         System.setProperty("java.awt.headless", "true");
                         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                         System.out.println("Headless mode: " + ge.isHeadless());
-                        runScript(args, fn, 1);
+                        runScript(args, file.getCanonicalPath(), 1);
                     } else {
                         System.out.println("The script file does not exist!");
                         System.exit(0);
@@ -105,8 +106,9 @@ public class MeteoInfoLab {
                 runApplication(true);
             } else {
                 String fn = args[0];
-                if (new File(fn).isFile()) {
-                    runScript(args, fn, 0);
+                File file = new File(fn);
+                if (file.isFile()) {
+                    runScript(args, file.getCanonicalPath(), 0);
                 } else {
                     System.out.println("The script file does not exist!");
                     System.exit(0);
@@ -120,7 +122,7 @@ public class MeteoInfoLab {
     private static void runScript(String args[], String fn, int idx) {
         FontUtil.registerWeatherFont();
 
-        System.out.println("Running Jython script...");
+        System.out.println("Running Jython script: " + fn);
         PySystemState state = new PySystemState();
         if (args.length > idx + 1) {
             for (int i = idx + 1; i < args.length; i++) {
@@ -189,6 +191,7 @@ public class MeteoInfoLab {
             interp.exec("mipylib.migl.mifolder = u'" + miPath + "'");
             System.out.println("mipylib is loaded...");
             interp.execfile(fn);
+            System.out.println("End of run!");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

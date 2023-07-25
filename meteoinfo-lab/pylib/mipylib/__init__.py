@@ -12,11 +12,12 @@ import imagelib
 from dataframe import *
 import enum
 
-print('MeteoInfoLab 3.6.3')
-
 import os
 mi_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 migl.mifolder = mi_dir
+
+__version__ = '3.6.3'
+pstr = 'MeteoInfoLab {}'.format(__version__)
 
 lookup_cma = os.path.join(mi_dir, 'tables', 'bufr', 'tablelookup_cma.csv')
 if os.path.isfile(lookup_cma):
@@ -25,4 +26,6 @@ if os.path.isfile(lookup_cma):
     except:
         is_ok = False
     if is_ok:
-        print('CMA Bufr lookup file added.')
+        pstr += ' (CMA Bufr lookup file added)'
+
+print(pstr)

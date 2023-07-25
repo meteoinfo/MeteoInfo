@@ -2,46 +2,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>MeteoInfo</artifactId>
         <groupId>org.meteothink</groupId>
+        <artifactId>MeteoInfo</artifactId>
         <version>3.7.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>meteoinfo-math</artifactId>
+    <artifactId>meteoinfo-mkl</artifactId>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <ejml.version>0.41.1</ejml.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>meteoinfo-ndarray</artifactId>
+            <artifactId>meteoinfo-math</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>meteoinfo-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ejml</groupId>
-            <artifactId>ejml-experimental</artifactId>
-            <version>${ejml.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ejml</groupId>
-            <artifactId>ejml-simple</artifactId>
-            <version>${ejml.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ojalgo</groupId>
-            <artifactId>ojalgo</artifactId>
-            <version>52.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
@@ -50,14 +29,13 @@
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
-            <artifactId>openblas-platform</artifactId>
-            <version>0.3.10-1.5.4</version>
+            <artifactId>mkl-platform</artifactId>
+            <version>2020.3-1.5.4</version>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.9.0</version>
-            <scope>test</scope>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>mkl-platform-redist</artifactId>
+            <version>2020.3-1.5.4</version>
         </dependency>
     </dependencies>
     <build>
@@ -103,4 +81,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

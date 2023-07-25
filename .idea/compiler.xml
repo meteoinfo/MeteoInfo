@@ -11,6 +11,7 @@
         <module name="meteoinfo-geometry" />
         <module name="meteoinfo-lab" />
         <module name="meteoinfo-projection" />
+        <module name="meteoinfo-mkl" />
         <module name="meteoinfo-console" />
         <module name="meteoinfo-geo" />
         <module name="meteoinfo-chart" />
@@ -19,8 +20,8 @@
         <module name="meteoinfo-data" />
         <module name="meteoinfo-dataframe" />
         <module name="meteoinfo-map" />
-        <module name="meteoinfo-math" />
         <module name="meteoinfo-ui" />
+        <module name="meteoinfo-math" />
         <module name="meteoinfo-common" />
       </profile>
     </annotationProcessing>

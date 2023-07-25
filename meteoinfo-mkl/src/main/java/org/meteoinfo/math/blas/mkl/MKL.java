@@ -17,10 +17,12 @@
 
 package org.meteoinfo.math.blas.mkl;
 
+import org.meteoinfo.math.blas.*;
+
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import org.meteoinfo.math.blas.*;
+
 import static org.bytedeco.mkl.global.mkl_rt.*;
 import static org.bytedeco.openblas.global.openblas.LAPACKE_dorgqr;
 import static org.bytedeco.openblas.global.openblas.LAPACKE_dorgrq;

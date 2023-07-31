@@ -42,7 +42,7 @@ __all__ = [
     'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
     'concatenate','conj','conjugate','corrcoef','cos','cosh','cylinder','degrees','delete','delnan','diag','diff',
     'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
-    'fmax','fmin','full','hcurl','hdivg','hstack','identity','indices','interp2d','interpn','isarray',
+    'fmax','fmin','full','hcurl','hdivg','hstack','hypot','identity','indices','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','isscalar','linspace','log','log10','logical_not','logspace',
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reciprocal','reshape',
@@ -1055,6 +1055,30 @@ def arctan2(x1, x2):
             return r
     else:
         return math.atan2(x1, x2)
+
+def hypot(x1, x2):
+    """
+    Given the “legs” of a right triangle, return its hypotenuse.
+
+    Equivalent to sqrt(x1**2 + x2**2), element-wise. If x1 or x2 is scalar_like (i.e., unambiguously
+    cast-able to a scalar type), it is broadcast for use with each element of the other argument.
+
+    Parameters
+    ----------
+    x1, x2 : array_like
+        Leg of the triangle(s). If x1.shape != x2.shape, they must be broadcastable to a common
+        shape (which becomes the shape of the output).
+
+    Returns
+    -------
+    z : array
+      The hypotenuse of the triangle(s). This is a scalar if both x1 and x2 are scalars.
+
+    """
+    x1 = asarray(x1)
+    x2 = asarray(x2)
+    z = sqrt(x1 * x1 + x2 * x2)
+    return z
         
 def exp(x):
     """

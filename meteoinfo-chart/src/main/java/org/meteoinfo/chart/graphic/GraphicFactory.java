@@ -1312,7 +1312,7 @@ public class GraphicFactory {
         double c;
         ColorBreak cb;
         boolean fixZ = false;
-        double z = 0;
+        double x, y, z = 0;
         if (zdata.getSize() == 1 && xdata.getSize() > 1) {
             fixZ = true;
             z = zdata.getDouble(0);
@@ -1322,13 +1322,18 @@ public class GraphicFactory {
         IndexIterator zIter = zdata.getIndexIterator();
         IndexIterator cIter = cdata.getIndexIterator();
         while (xIter.hasNext()) {
-            ps = new PointZShape();
-            if (fixZ) {
-                ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext(), z));
-            } else {
-                ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext(), zIter.getDoubleNext()));
-            }
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             c = cIter.getDoubleNext();
+            if (!fixZ) {
+                z = zIter.getDoubleNext();
+            }
+            if (Double.isNaN(x) || Double.isNaN(y) || Double.isNaN(z) || Double.isNaN(c)) {
+                continue;
+            }
+
+            ps = new PointZShape();
+            ps.setPoint(new PointZ(x, y, z));
             cb = ls.findLegendBreak(c);
             graphics.add(new Graphic(ps, cb));
         }

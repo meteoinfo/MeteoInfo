@@ -723,5 +723,21 @@ import org.meteoinfo.projection.ProjectionInfo;
          return null;
      }
 
+     /**
+      * Get the data is Radial (Radar) or not
+      * @return Is Radial or not
+      */
+     public boolean isRadial() {
+         Attribute ra = findGlobalAttribute("featureType");
+         if (ra != null) {
+             String va = ra.getStringValue();
+             if (va.equalsIgnoreCase("RADIAL")) {
+                 return true;
+             }
+         }
+
+         return false;
+     }
+
      // </editor-fold>
  }

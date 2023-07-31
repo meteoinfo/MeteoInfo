@@ -118,6 +118,8 @@ def addfile(fname, access='r', dtype='netcdf', keepopen=False, **kwargs):
         meteodata.openData(fname, keepopen)
         if meteodata.getDataInfo().getDataType() == MeteoDataType.RADAR:
             datafile = RadarDataFile(meteodata, access=access)
+        elif meteodata.getDataInfo().isRadial():
+            datafile = RadarDataFile(meteodata, access=access)
         else:
             datafile = DimDataFile(meteodata, access=access)
         return datafile

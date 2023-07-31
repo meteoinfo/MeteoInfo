@@ -1,5 +1,7 @@
 package org.meteoinfo.data.meteodata.radar;
 
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.math.ArrayMath;
 
 public class Transform {
@@ -41,7 +43,7 @@ public class Transform {
         return new double[]{x, y, z};
     }
 
-    private static double azimuth(float x, float y) {
+    private static double xyToAzimuth(float x, float y) {
         double az = Math.PI / 2 - Math.atan2(x + y, 1);
         if (az < 0) {
             az = 2 * Math.PI + az;
@@ -62,8 +64,39 @@ public class Transform {
                 Math.cos(Math.sqrt(x * x + y * y)  / R));
         double elevation = Math.acos((R + z) * Math.sin(Math.sqrt(x * x + y * y) / R) / ranges) *
                 180. / Math.PI;
-        double azimuth = azimuth(x, y);
+        double azimuth = xyToAzimuth(x, y);
 
         return new double[]{azimuth, ranges, elevation};
+    }
+
+    /**
+     * Convert cartesian coordinate to antenna coordinate
+     * @param xa x coordinate array in meters
+     * @param ya y coordinate array in meters
+     * @param za z coordinate array in meters
+     * @param h Altitude of the instrument, above sea level, units:m
+     * @return Antenna coordinate from the radar
+     */
+    public static Array[] cartesianToAntenna(Array xa, Array ya, Array za, float h) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+
+        Array ranges = Array.factory(DataType.DOUBLE, xa.getShape());
+        Array azimuth = Array.factory(DataType.DOUBLE, xa.getShape());
+        Array elevation = Array.factory(DataType.DOUBLE, xa.getShape());
+        float x, y, z;
+
+        for (int i = 0; i < xa.getSize(); i++) {
+            x = xa.getFloat(i);
+            y = ya.getFloat(i);
+            z = za.getFloat(i);
+            double[] rr = cartesianToAntenna(x, y, z, h);
+            azimuth.setDouble(i, rr[0]);
+            ranges.setDouble(i, rr[1]);
+            elevation.setDouble(i, rr[2]);
+        }
+
+        return new Array[]{azimuth, ranges, elevation};
     }
 }

@@ -3,7 +3,7 @@ import math
 from mipylib.numeric import core as _nx
 from ..core.numerictypes import ScalarType, find_common_type
 
-__all__ = ['r_','c_','mgrid']
+__all__ = ['r_','c_','mgrid','s_','index_exp']
 
 class nd_grid(object):
     """
@@ -342,3 +342,72 @@ class CClass(AxisConcatenator):
 
 
 c_ = CClass()
+
+
+# You can do all this with slice() plus a few special objects,
+# but there's a lot to remember. This version is simpler because
+# it uses the standard array indexing syntax.
+#
+# Written by Konrad Hinsen <hinsen@cnrs-orleans.fr>
+# last revision: 1999-7-23
+#
+# Cosmetic changes by T. Oliphant 2001
+#
+#
+
+class IndexExpression:
+    """
+    A nicer way to build up index tuples for arrays.
+
+    .. note::
+       Use one of the two predefined instances `index_exp` or `s_`
+       rather than directly using `IndexExpression`.
+
+    For any index combination, including slicing and axis insertion,
+    ``a[indices]`` is the same as ``a[np.index_exp[indices]]`` for any
+    array `a`. However, ``np.index_exp[indices]`` can be used anywhere
+    in Python code and returns a tuple of slice objects that can be
+    used in the construction of complex index expressions.
+
+    Parameters
+    ----------
+    maketuple : bool
+        If True, always returns a tuple.
+
+    See Also
+    --------
+    index_exp : Predefined instance that always returns a tuple:
+       `index_exp = IndexExpression(maketuple=True)`.
+    s_ : Predefined instance without tuple conversion:
+       `s_ = IndexExpression(maketuple=False)`.
+
+    Notes
+    -----
+    You can do all this with `slice()` plus a few special objects,
+    but there's a lot to remember and this version is simpler because
+    it uses the standard array indexing syntax.
+
+    Examples
+    --------
+    >>> np.s_[2::2]
+    slice(2, None, 2)
+    >>> np.index_exp[2::2]
+    (slice(2, None, 2),)
+
+    >>> np.array([0, 1, 2, 3, 4])[np.s_[2::2]]
+    array([2, 4])
+
+    """
+
+    def __init__(self, maketuple):
+        self.maketuple = maketuple
+
+    def __getitem__(self, item):
+        if self.maketuple and not isinstance(item, tuple):
+            return (item,)
+        else:
+            return item
+
+
+index_exp = IndexExpression(maketuple=True)
+s_ = IndexExpression(maketuple=False)

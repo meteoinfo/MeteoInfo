@@ -220,6 +220,9 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
             _numHeadRecord = DataConvert.bytes2Int(bytes, byteOrder);
             br.read(bytes);
             _numDataRecord = DataConvert.bytes2Int(bytes, byteOrder);
+            if (_numDataRecord < 0) {
+                _numDataRecord = DataConvert.bytes2UShort(bytes, byteOrder);
+            }
             br.read(bytes);
             _productType = DataConvert.bytes2Int(bytes, byteOrder);
             br.read(bytes);
@@ -288,7 +291,12 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                 tbytes = Arrays.copyOfRange(bytes, yearIdx + 18, yearIdx + 20);
                 _endMinute = DataConvert.bytes2Int(tbytes, byteOrder);
                 if (_endYear > 0) {
-                    ETime = LocalDateTime.of(_endYear, _endMonth, _endDay, _endHour, _endMinute, 0);
+                    if (_endMinute < 60) {
+                        ETime = LocalDateTime.of(_endYear, _endMonth, _endDay, _endHour, _endMinute, 0);
+                    } else {
+                        ETime = LocalDateTime.of(_endYear, _endMonth, _endDay, _endHour, 0, 0);
+                        ETime = ETime.plusMinutes(_endMinute);
+                    }
                 }
             }
 
@@ -327,18 +335,22 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                 getProjection(bytes);
             }
 
-            tbytes = Arrays.copyOfRange(bytes, yearIdx + 48, yearIdx + 50);
-            lenColorTable = DataConvert.bytes2Int(tbytes, byteOrder);
-            tbytes = Arrays.copyOfRange(bytes, yearIdx + 50, yearIdx + 52);
-            lenCalibration = DataConvert.bytes2Int(tbytes, byteOrder);
-            tbytes = Arrays.copyOfRange(bytes, yearIdx + 52, yearIdx + 54);
-            lenLocation = DataConvert.bytes2Int(tbytes, byteOrder);
+            if (_productType != 4) {
+                tbytes = Arrays.copyOfRange(bytes, yearIdx + 48, yearIdx + 50);
+                lenColorTable = DataConvert.bytes2Int(tbytes, byteOrder);
+                tbytes = Arrays.copyOfRange(bytes, yearIdx + 50, yearIdx + 52);
+                lenCalibration = DataConvert.bytes2Int(tbytes, byteOrder);
+                tbytes = Arrays.copyOfRange(bytes, yearIdx + 52, yearIdx + 54);
+                lenLocation = DataConvert.bytes2Int(tbytes, byteOrder);
+            }
 
             br.close();
 
-            //Set variable list
+            // Add dimensions, attributes and variables
+            this.addAttribute(new Attribute("Data type", "AWX"));
+            this.addAttribute(new Attribute("Product type", this._productType));
+
             VarList = new ArrayList<>();
-            List<Variable> variables = new ArrayList<>();
             Variable var;
             switch (_productType) {
                 case 1:
@@ -349,7 +361,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                     var.setName("var");
                     var.setDimension(this.getYDimension());
                     var.setDimension(this.getXDimension());
-                    variables.add(var);
+                    this.addVariable(var);
                     break;
                 case 4:
                     VarList.add("Latitude");
@@ -368,6 +380,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                     VarList.add("LastCol");
                     VarList.add("BrightTemp");
                     Dimension stdim = new Dimension(DimensionType.OTHER);
+                    stdim.setName("stations");
                     double[] values = new double[this._numDataRecord];
                     stdim.setValues(values);
                     this.addDimension(stdim);
@@ -376,7 +389,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                         var.setName(vName);
                         var.setStation(true);
                         var.setDimension(stdim);
-                        variables.add(var);
+                        this.addVariable(var);
                     }
 
                     FieldList = new ArrayList<>();
@@ -385,7 +398,6 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                     FieldList.addAll(VarList);
                     break;
             }
-            this.setVariables(variables);
         } catch (IOException ex) {
             Logger.getLogger(AWXDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -532,10 +544,12 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
         xdim.setShortName("X");
         xdim.setValues(x);
         this.setXDimension(xdim);
+        this.addDimension(xdim);
         Dimension ydim = new Dimension(DimensionType.Y);
         ydim.setShortName("Y");
         ydim.setValues(y);
         this.setYDimension(ydim);
+        this.addDimension(ydim);
     }
 
     private void calCoordinate_3() {
@@ -563,10 +577,12 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
         xdim.setShortName("X");
         xdim.setValues(x);
         this.setXDimension(xdim);
+        this.addDimension(xdim);
         Dimension ydim = new Dimension(DimensionType.Y);
         ydim.setShortName("Y");
         ydim.setValues(y);
         this.setYDimension(ydim);
+        this.addDimension(ydim);
     }
 
     /**
@@ -577,30 +593,6 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
     @Override
     public List<Attribute> getGlobalAttributes() {
         return new ArrayList<>();
-    }
-
-    @Override
-    public String generateInfoText() {
-        String dataInfo;
-        dataInfo = "File Name: " + this.getFileName();
-        dataInfo += System.getProperty("line.separator") + "Data Type: AWX";
-        if (this._productType != 4) {
-            Dimension xdim = this.getXDimension();
-            Dimension ydim = this.getYDimension();
-            dataInfo += System.getProperty("line.separator") + "XNum = " + String.valueOf(xdim.getLength())
-                    + "  YNum = " + String.valueOf(ydim.getLength());
-            dataInfo += System.getProperty("line.separator") + "XMin = " + String.valueOf(xdim.getValues()[0])
-                    + "  YMin = " + String.valueOf(ydim.getValues()[0]);
-            dataInfo += System.getProperty("line.separator") + "XSize = " + String.valueOf(xdim.getValues()[1] - xdim.getValues()[0])
-                    + "  YSize = " + String.valueOf(ydim.getValues()[1] - ydim.getValues()[0]);
-        }
-        dataInfo += System.getProperty("line.separator") + "Product Type = " + String.valueOf(this._productType);
-        dataInfo += System.getProperty("line.separator") + "Number of Variables = " + String.valueOf(this.getVariableNum());
-        for (int i = 0; i < this.getVariableNum(); i++) {
-            dataInfo += System.getProperty("line.separator") + "\t" + this.getVariableNames().get(i);
-        }
-
-        return dataInfo;
     }
 
     /**

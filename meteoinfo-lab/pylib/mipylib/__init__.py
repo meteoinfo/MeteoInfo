@@ -16,7 +16,8 @@ import os
 mi_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 migl.mifolder = mi_dir
 
-__version__ = '3.6.3'
+from org.meteoinfo.common.util import GlobalUtil
+__version__ = GlobalUtil.getVersion()
 pstr = 'MeteoInfoLab {}'.format(__version__)
 
 lookup_cma = os.path.join(mi_dir, 'tables', 'bufr', 'tablelookup_cma.csv')

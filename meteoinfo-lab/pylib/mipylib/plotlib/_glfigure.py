@@ -419,8 +419,11 @@ class GLFigure(GLChartPanel):
             ax = MapAxes(*args, **kwargs)
             # self.__set_axesm(ax, **kwargs)
         elif axestype == '3d':
-            # ax = Axes3D(*args, **kwargs)
-            ax = Axes3DGL(*args, **kwargs)
+            opengl = kwargs.pop('opengl', True)
+            if opengl:
+                ax = Axes3DGL(*args, **kwargs)
+            else:
+                ax = Axes3D(*args, **kwargs)
         else:
             ax = Axes(*args, **kwargs)
             # self.__set_axes(ax, **kwargs)
@@ -479,7 +482,7 @@ class GLFigure(GLChartPanel):
         self.getChart().addPlot(ax._axes)
         self.getChart().setCurrentPlot(self.getChart().getPlots().size())
         if not GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadless():
-            if isinstance(ax, Axes3DGL):
+            if isinstance(ax, (Axes3DGL, Axes3D)):
                 self.set_mousemode("rotate")
             else:
                 self.set_mousemode("pan")

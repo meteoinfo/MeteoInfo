@@ -14,8 +14,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <commons-math.version>4.0-beta1</commons-math.version>
         <commons-numbers.version>1.1</commons-numbers.version>
         <commons-rng.version>1.5</commons-rng.version>

@@ -808,7 +808,7 @@ def axes(*args, **kwargs):
     :param rightaxis: (*boolean*) Optional, set right axis visible or not. Default is ``True`` .
     :param xaxistype: (*string*) Optional, set x axis type as 'normal', 'lon', 'lat' or 'time'.
     :param xreverse: (*boolean*) Optional, set x axis reverse or not. Default is ``False`` .
-    :param yreverse: (*boolean*) Optional, set yaxis reverse or not. Default is ``False`` .
+    :param yreverse: (*boolean*) Optional, set y axis reverse or not. Default is ``False`` .
     
     :returns: The axes.
     """
@@ -865,7 +865,7 @@ def axes3d(*args, **kwargs):
     :param projection: (*str or ProjectionInfo*) If ``earth``, 3D earth axes will be created. If a
         ``ProjectionInfo``, 3D map axes will be created. Default is ``None`` with normal 3D axes.
     :param opengl: (*bool*) Using opengl backend or not. Default is ``True``.
-    :param orthographic: (*bool*) Using orthographic orthographic or perspective view. Default is
+    :param orthographic: (*bool*) Using orthographic or perspective view. Default is
         ``True``.
     :param aspect: (*str*) ['equal' | 'xy_equal' | None]. Default is ``None``.
     :param bgcolor: (*color*) Background color. Default is white.
@@ -892,6 +892,7 @@ def axes3d(*args, **kwargs):
             return axes3d_map(*args, **kwargs)
     else:
         kwargs['axestype'] = '3d'
+        kwargs['opengl'] = False
         return axes(*args, **kwargs)
 
 

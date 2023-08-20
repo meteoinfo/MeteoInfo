@@ -12,8 +12,8 @@
     <artifactId>meteoinfo-math</artifactId>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <ejml.version>0.41.1</ejml.version>
     </properties>
 

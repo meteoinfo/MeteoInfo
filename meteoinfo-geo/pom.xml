@@ -12,8 +12,8 @@
     <artifactId>meteoinfo-geo</artifactId>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <freehep.version>2.4</freehep.version>
         <flatlaf.version>3.1.1</flatlaf.version>
     </properties>

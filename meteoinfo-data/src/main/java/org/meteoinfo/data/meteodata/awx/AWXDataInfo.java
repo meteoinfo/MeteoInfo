@@ -219,10 +219,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
             br.read(bytes);
             _numHeadRecord = DataConvert.bytes2Int(bytes, byteOrder);
             br.read(bytes);
-            _numDataRecord = DataConvert.bytes2Int(bytes, byteOrder);
-            if (_numDataRecord < 0) {
-                _numDataRecord = DataConvert.bytes2UShort(bytes, byteOrder);
-            }
+            _numDataRecord = DataConvert.bytes2UShort(bytes, byteOrder);
             br.read(bytes);
             _productType = DataConvert.bytes2Int(bytes, byteOrder);
             br.read(bytes);
@@ -745,7 +742,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
             Array a = Array.factory(DataType.FLOAT, new int[]{this._numDataRecord});
             RandomAccessFile br = new RandomAccessFile(this.getFileName(), "r");
             float t;
-            br.seek(_lenRecord * _numHeadRecord);
+            br.seek((long) _lenRecord * _numHeadRecord);
             long bP = br.getFilePointer();
             byte[] bytes = new byte[2];
             int varIdx = this.VarList.indexOf(varName);

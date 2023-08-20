@@ -16,10 +16,7 @@ import java.io.*;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,6 +35,8 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
             {30,"Flag"}, {31,"Flag"}, {32,"Zc"}, {33,"Vc"}, {34,"Wc"}, {35,"ZDRc"}, {0,"Flag"}
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> (String) data[1]));
     private final Map<String, RadialRecord> recordMap = new HashMap<>();
+    private final List<String> velocityGroup = new ArrayList<>(Arrays.asList("V", "W"));
+    private Dimension radialDim, scanDim, gateRDim, gateVDim;
 
     /**
      * Constructor
@@ -200,9 +199,11 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
             }
         } else {
             try {
-                RandomAccessFile raf = new RandomAccessFile(fileName, "r");
-                readDataInfo(raf);
-            } catch (FileNotFoundException e) {
+                //RandomAccessFile raf = new RandomAccessFile(fileName, "r");
+                //readDataInfo(raf);
+                BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(Paths.get(fileName)));
+                readDataInfo(inputStream);
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -220,6 +221,8 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
             this.addAttribute(new Attribute("StationLongitude", siteConfig.longitude));
             this.addAttribute(new Attribute("AntennaHeight", siteConfig.antennaHeight));
             this.addAttribute(new Attribute("GroundHeight", siteConfig.groundHeight));
+            this.addAttribute(new Attribute("featureType", "RADIAL"));
+            this.addAttribute(new Attribute("DataType", "Radial"));
 
             //Read radial data
             taskConfig = new TaskConfig(raf);
@@ -288,6 +291,8 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
             this.addAttribute(new Attribute("AntennaHeight", siteConfig.antennaHeight));
             this.addAttribute(new Attribute("GroundHeight", siteConfig.groundHeight));
             this.addAttribute(new Attribute("RadarType", siteConfig.getRadarType()));
+            this.addAttribute(new Attribute("featureType", "RADIAL"));
+            this.addAttribute(new Attribute("DataType", "Radial"));
 
             //Read radial data
             taskConfig = new TaskConfig(raf);
@@ -308,19 +313,22 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
                     } else {
                         record = new RadialRecord(product);
                         record.setBinLength(momentHeader.binLength);
-                        record.scale = momentHeader.scale;;
+                        record.scale = momentHeader.scale;
                         record.offset = momentHeader.offset;
                         this.recordMap.put(product, record);
                     }
                     if (radialHeader.radialNumber == 1) {
+                        record.fixedElevation.add(cutConfigs.get(radialHeader.elevationNumber - 1).elevation);
                         record.elevation.add(new ArrayList<>());
                         record.azimuth.add(new ArrayList<>());
+                        record.azimuthMinIndex.add(0);
+                        record.disResolution.add(cutConfigs.get(radialHeader.elevationNumber - 1).logResolution);
                         record.distance.add(ArrayUtil.arrayRange1(0, momentHeader.dataLength / momentHeader.binLength,
-                                cutConfigs.get(0).logResolution));
+                                cutConfigs.get(radialHeader.elevationNumber - 1).logResolution));
                         record.newScanData();
                     }
                     record.elevation.get(record.elevation.size() - 1).add(radialHeader.elevation);
-                    record.azimuth.get(record.azimuth.size() - 1).add(radialHeader.azimuth);
+                    record.addAzimuth(radialHeader.azimuth);
                     byte[] bytes = new byte[momentHeader.dataLength];
                     raf.read(bytes);
                     record.addDataBytes(bytes);
@@ -330,18 +338,202 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
             raf.close();
 
             //Add dimensions and variables
-            Dimension xyzDim = new Dimension(DimensionType.OTHER);
+            RadialRecord refRadialRecord = this.recordMap.get("dBZ");
+            radialDim = new Dimension();
+            radialDim.setName("radial");
+            radialDim.setLength(refRadialRecord.getMaxRadials());
+            this.addDimension(radialDim);
+            scanDim = new Dimension();
+            scanDim.setName("scan");
+            scanDim.setLength(refRadialRecord.getScanNumber());
+            this.addDimension(scanDim);
+            gateRDim = new Dimension();
+            gateRDim.setName("gateR");
+            gateRDim.setLength(refRadialRecord.getGateNumber(0));
+            this.addDimension(gateRDim);
+            makeRefVariables(refRadialRecord);
+
+            RadialRecord velRadialRecord = this.recordMap.get("V");
+            gateVDim = new Dimension();
+            gateVDim.setName("gateV");
+            gateVDim.setLength(velRadialRecord.getGateNumber(0));
+            this.addDimension(gateVDim);
+            makeVelVariables(velRadialRecord);
+
+            /*Dimension xyzDim = new Dimension(DimensionType.OTHER);
             xyzDim.setShortName("xyz");
             xyzDim.setDimValue(Array.factory(DataType.INT, new int[]{3}, new int[]{1,2,3}));
             this.addDimension(xyzDim);
             for (String product : this.recordMap.keySet()) {
                 this.recordMap.get(product).makeVariables(this, xyzDim);
-            }
+            }*/
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void makeRefVariables(RadialRecord refRadialRecord) {
+        Dimension[] dimensions = new Dimension[]{scanDim, radialDim, gateRDim};
+        for (RadialRecord radialRecord : this.recordMap.values()) {
+            if (!radialRecord.isVelocityGroup())
+                radialRecord.makeVariable(this, dimensions);
+        }
+
+        //coordinate variables
+        Variable elevation = new Variable();
+        elevation.setName("elevationR");
+        elevation.setDataType(DataType.FLOAT);
+        elevation.addDimension(scanDim);
+        elevation.addDimension(radialDim);
+        elevation.addAttribute(new Attribute("units", "degree"));
+        elevation.addAttribute(new Attribute("long_name", "elevation angle in degrees"));
+        this.addVariable(elevation);
+
+        Variable azimuth = new Variable();
+        azimuth.setName("azimuthR");
+        azimuth.setDataType(DataType.FLOAT);
+        azimuth.addDimension(scanDim);
+        azimuth.addDimension(radialDim);
+        azimuth.addAttribute(new Attribute("units", "degree"));
+        azimuth.addAttribute(new Attribute("long_name", "azimuth angle in degrees"));
+        this.addVariable(azimuth);
+
+        Variable distance = new Variable();
+        distance.setName("distanceR");
+        distance.setDataType(DataType.FLOAT);
+        distance.addDimension(gateRDim);
+        distance.addAttribute(new Attribute("units", "m"));
+        distance.addAttribute(new Attribute("long_name", "radial distance to start of gate"));
+        this.addVariable(distance);
+
+        Variable nRadials = new Variable();
+        nRadials.setName("numRadialsR");
+        nRadials.setDataType(DataType.INT);
+        nRadials.addDimension(scanDim);
+        nRadials.addAttribute(new Attribute("long_name", "number of valid radials in this scan"));
+        this.addVariable(nRadials);
+
+        Variable nGates = new Variable();
+        nGates.setName("numGatesR");
+        nGates.setDataType(DataType.INT);
+        nGates.addDimension(scanDim);
+        nGates.addAttribute(new Attribute("long_name", "number of valid gates in this scan"));
+        this.addVariable(nGates);
+
+        int nScan = scanDim.getLength();
+        int nRadial = radialDim.getLength();
+        int nGate = gateRDim.getLength();
+        Array elevData = Array.factory(DataType.FLOAT, new int[]{nScan, nRadial});
+        Array aziData = Array.factory(DataType.FLOAT, new int[]{nScan, nRadial});
+        Array nRData = Array.factory(DataType.INT, new int[]{nScan});
+        Array nGData = Array.factory(DataType.INT, new int[]{nScan});
+        Index elevIndex = elevData.getIndex();
+        Index aziIndex = aziData.getIndex();
+        for (int i = 0; i < nScan; i++) {
+            List<Float> elevList = refRadialRecord.elevation.get(i);
+            List<Float> aziList = refRadialRecord.azimuth.get(i);
+            nRData.setInt(i, aziList.size());
+            nGData.setInt(i, (int) refRadialRecord.distance.get(i).getSize());
+            for (int j = 0; j < nRadial; j++) {
+                if (j < elevList.size()) {
+                    elevData.setFloat(elevIndex.set(i, j), elevList.get(j));
+                    aziData.setFloat(aziIndex.set(i, j), aziList.get(j));
+                } else {
+                    elevData.setFloat(elevIndex.set(i, j), Float.NaN);
+                    aziData.setFloat(aziIndex.set(i, j), Float.NaN);
+                }
+            }
+        }
+        Array disData = refRadialRecord.distance.get(0);
+
+        elevation.setCachedData(elevData);
+        azimuth.setCachedData(aziData);
+        distance.setCachedData(disData);
+        nRadials.setCachedData(nRData);
+        nGates.setCachedData(nGData);
+    }
+
+    private void makeVelVariables(RadialRecord velRadialRecord) {
+        Dimension[] dimensions = new Dimension[]{scanDim, radialDim, gateVDim};
+        for (RadialRecord radialRecord : this.recordMap.values()) {
+            if (radialRecord.isVelocityGroup())
+                radialRecord.makeVariable(this, dimensions);
+        }
+
+        //coordinate variables
+        Variable elevation = new Variable();
+        elevation.setName("elevationV");
+        elevation.setDataType(DataType.FLOAT);
+        elevation.addDimension(scanDim);
+        elevation.addDimension(radialDim);
+        elevation.addAttribute(new Attribute("units", "degree"));
+        elevation.addAttribute(new Attribute("long_name", "elevation angle in degrees"));
+        this.addVariable(elevation);
+
+        Variable azimuth = new Variable();
+        azimuth.setName("azimuthV");
+        azimuth.setDataType(DataType.FLOAT);
+        azimuth.addDimension(scanDim);
+        azimuth.addDimension(radialDim);
+        azimuth.addAttribute(new Attribute("units", "degree"));
+        azimuth.addAttribute(new Attribute("long_name", "azimuth angle in degrees"));
+        this.addVariable(azimuth);
+
+        Variable distance = new Variable();
+        distance.setName("distanceV");
+        distance.setDataType(DataType.FLOAT);
+        distance.addDimension(gateVDim);
+        distance.addAttribute(new Attribute("units", "m"));
+        distance.addAttribute(new Attribute("long_name", "radial distance to start of gate"));
+        this.addVariable(distance);
+
+        Variable nRadials = new Variable();
+        nRadials.setName("numRadialsR");
+        nRadials.setDataType(DataType.INT);
+        nRadials.addDimension(scanDim);
+        nRadials.addAttribute(new Attribute("long_name", "number of valid radials in this scan"));
+        this.addVariable(nRadials);
+
+        Variable nGates = new Variable();
+        nGates.setName("numGatesR");
+        nGates.setDataType(DataType.INT);
+        nGates.addDimension(scanDim);
+        nGates.addAttribute(new Attribute("long_name", "number of valid gates in this scan"));
+        this.addVariable(nGates);
+
+        int nScan = scanDim.getLength();
+        int nRadial = radialDim.getLength();
+        int nGate = gateVDim.getLength();
+        Array elevData = Array.factory(DataType.FLOAT, new int[]{nScan, nRadial});
+        Array aziData = Array.factory(DataType.FLOAT, new int[]{nScan, nRadial});
+        Array nRData = Array.factory(DataType.INT, new int[]{nScan});
+        Array nGData = Array.factory(DataType.INT, new int[]{nScan});
+        Index elevIndex = elevData.getIndex();
+        Index aziIndex = aziData.getIndex();
+        for (int i = 0; i < nScan; i++) {
+            List<Float> elevList = velRadialRecord.elevation.get(i);
+            List<Float> aziList = velRadialRecord.azimuth.get(i);
+            nRData.setInt(i, aziList.size());
+            nGData.setInt(i, (int) velRadialRecord.distance.get(i).getSize());
+            for (int j = 0; j < nRadial; j++) {
+                if (j < elevList.size()) {
+                    elevData.setFloat(elevIndex.set(i, j), elevList.get(j));
+                    aziData.setFloat(aziIndex.set(i, j), aziList.get(j));
+                } else {
+                    elevData.setFloat(elevIndex.set(i, j), Float.NaN);
+                    aziData.setFloat(aziIndex.set(i, j), Float.NaN);
+                }
+            }
+        }
+        Array disData = velRadialRecord.distance.get(0);
+
+        elevation.setCachedData(elevData);
+        azimuth.setCachedData(aziData);
+        distance.setCachedData(disData);
+        nRadials.setCachedData(nRData);
+        nGates.setCachedData(nGData);
     }
 
     /**
@@ -377,12 +569,8 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
      */
     public List<Float> getElevations(String product) {
         RadialRecord radialRecord = this.recordMap.get(product);
-        List<Float> elevations = new ArrayList<>();
-        for (List<Float> elist : radialRecord.elevation) {
-            elevations.add(elist.get(0));
-        }
 
-        return elevations;
+        return radialRecord.fixedElevation;
     }
 
     @Override
@@ -406,6 +594,75 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
     @Override
     public Array read(String varName, int[] origin, int[] size, int[] stride) {
         try {
+            Variable variable = this.getVariable(varName);
+            if (variable.hasCachedData()) {
+                return variable.getCachedData().section(origin, size, stride).copy();
+            }
+
+            Section section = new Section(origin, size, stride);
+            RadialRecord record = this.recordMap.get(varName);
+            Array dataArray = Array.factory(record.getDataType(), section.getShape());
+            Range zRange = section.getRange(0);
+            Range yRange = section.getRange(1);
+            Range xRange = section.getRange(2);
+            IndexIterator iter = dataArray.getIndexIterator();
+            for (int s = zRange.first(); s <= zRange.last(); s += zRange.stride()) {
+                List<Array> arrays = record.getDataArray(s);
+                for (int i = yRange.first(); i <= yRange.last(); i += yRange.stride()) {
+                    if (i < arrays.size()) {
+                        Array array = arrays.get(i);
+                        for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
+                            if (j < array.getSize())
+                                iter.setObjectNext(array.getObject(j));
+                            else
+                                iter.setObjectNext(Float.NaN);
+                        }
+                    } else {
+                        for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
+                            iter.setObjectNext(Float.NaN);
+                        }
+                    }
+                }
+
+                Attribute aoAttr = variable.findAttribute("add_offset");
+                Attribute sfAttr = variable.findAttribute("scale_factor");
+                if (aoAttr != null || sfAttr != null) {
+                    Number add_offset = 0.f;
+                    Number scale_factor = 1.f;
+                    if (aoAttr != null) {
+                        switch (aoAttr.getDataType()) {
+                            case DOUBLE:
+                                add_offset = aoAttr.getValues().getDouble(0);
+                                break;
+                            case FLOAT:
+                            case INT:
+                                add_offset = aoAttr.getValues().getFloat(0);
+                                break;
+                        }
+                    }
+                    if (sfAttr != null) {
+                        switch (sfAttr.getDataType()) {
+                            case DOUBLE:
+                                scale_factor = sfAttr.getValues().getDouble(0);
+                                break;
+                            case FLOAT:
+                            case INT:
+                                scale_factor = sfAttr.getValues().getFloat(0);
+                                break;
+                        }
+                    }
+                    dataArray = ArrayMath.div(ArrayMath.sub(dataArray, add_offset), scale_factor);
+                }
+            }
+
+            return dataArray;
+        } catch (InvalidRangeException e) {
+            return null;
+        }
+    }
+
+    public Array read_bak(String varName, int[] origin, int[] size, int[] stride) {
+        try {
             int idx = varName.lastIndexOf("_s");
             int scanIdx = Integer.parseInt(varName.substring(idx + 2)) - 1;
             String product = varName.substring(0, idx);
@@ -426,9 +683,18 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
                 Range xRange = section.getRange(1);
                 IndexIterator iter = dataArray.getIndexIterator();
                 for (int i = yRange.first(); i <= yRange.last(); i += yRange.stride()) {
-                    Array array = arrays.get(i);
-                    for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
-                        iter.setObjectNext(array.getObject(j));
+                    if (i < arrays.size()) {
+                        Array array = arrays.get(i);
+                        for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
+                            if (j < array.getSize())
+                                iter.setObjectNext(array.getObject(j));
+                            else
+                                iter.setObjectNext(Float.NaN);
+                        }
+                    } else {
+                        for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
+                            iter.setObjectNext(Float.NaN);
+                        }
                     }
                 }
 
@@ -473,5 +739,55 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
     @Override
     public List<Attribute> getGlobalAttributes() {
         return this.attributes;
+    }
+
+    /**
+     * Get VCS data
+     * @param varName Variable name
+     * @param startX Start x, km
+     * @param startY Start y, km
+     * @param endX End x, km
+     * @param endY End y, km
+     * @return VCS data
+     */
+    public Array[] getVCSData(String varName, float startX, float startY, float endX, float endY) {
+        RadialRecord record = this.recordMap.get(varName);
+        int nScan = record.getScanNumber();
+        float halfBeamWidth = this.siteConfig.beamWidthVert / 2;
+        float binRes = this.cutConfigs.get(0).logResolution;
+        float height = this.siteConfig.antennaHeight / 1000.f;
+        float startEndDistance = (float) Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+        int nPoints = (int) (startEndDistance * 1000 / binRes + 1);
+        Array xa = ArrayUtil.lineSpace(startX, endX, nPoints);
+        Array ya = ArrayUtil.lineSpace(startY, endY, nPoints);
+        Array aa = Transform.xyToAzimuth(xa, ya);
+        int[] shape = new int[]{nScan, 2, nPoints};
+        Array data = Array.factory(DataType.FLOAT, shape);
+        Array meshXY = Array.factory(DataType.FLOAT, shape);
+        Array meshZ = Array.factory(DataType.FLOAT, shape);
+        Index dataIndex = data.getIndex();
+        Index meshXYIndex = meshXY.getIndex();
+        Index meshZIndex = meshZ.getIndex();
+        float x, y, z1, z2, dis, azi, v, ele;
+        for (int i = 0; i < nScan; i++) {
+            ele = record.fixedElevation.get(i);
+            for (int j = 0; j < nPoints; j++) {
+                x = xa.getFloat(j);
+                y = ya.getFloat(j);
+                dis = (float) Math.sqrt(x * x + y * y);
+                azi = aa.getFloat(j);
+                v = record.getValue(i, azi, dis * 1000);
+                z1 = (float) (dis * Math.sin(Math.toRadians(ele - halfBeamWidth))) + height;
+                z2 = (float) (dis * Math.sin(Math.toRadians(ele + halfBeamWidth))) + height;
+                for (int k = 0; k < 2; k++) {
+                    data.setFloat(dataIndex.set(i, k, j), v);
+                    meshXY.setFloat(meshXYIndex.set(i, k, j), dis);
+                }
+                meshZ.setFloat(meshZIndex.set(i, 0, j), z1);
+                meshZ.setFloat(meshZIndex.set(i, 1, j), z2);
+            }
+        }
+
+        return new Array[]{data, meshXY, meshZ};
     }
 }

@@ -26,6 +26,7 @@ public class Transform {
 
     /**
      * Convert antenna coordinate to cartesian coordinate
+     *
      * @param r Distances to the center of the radar gates (bins) in meters
      * @param a Azimuth angle of the radar in radians
      * @param e Elevation angle of the radar in radians
@@ -33,8 +34,6 @@ public class Transform {
      * @return Cartesian coordinate in meters from the radar
      */
     public static double[] antennaToCartesian(float r, float a, float e, float h) {
-        double R = 6371.0 * 1000.0 * 4.0 / 3.0;     // effective radius of earth in meters.
-
         double z = Math.pow(Math.pow(r * Math.cos(e), 2) + Math.pow(R + h + r * Math.sin(e), 2), 0.5) - R;
         double s = R * Math.asin(r * Math.cos(e) / (R + z));  // arc length in m.
         double x = s * Math.sin(a);
@@ -43,12 +42,158 @@ public class Transform {
         return new double[]{x, y, z};
     }
 
-    private static double xyToAzimuth(float x, float y) {
-        double az = Math.PI / 2 - Math.atan2(x + y, 1);
+    /**
+     * Convert antenna coordinate to cartesian coordinate
+     *
+     * @param r Distances to the center of the radar gates (bins) in meters
+     * @param a Azimuth angle of the radar in radians
+     * @param e Elevation angle of the radar in radians
+     * @return Cartesian coordinate in meters from the radar
+     */
+    public static Array[] antennaToCartesian(Array ra, Array aa, Array ea) {
+        ra = ra.copyIfView();
+        aa = aa.copyIfView();
+        ea = ea.copyIfView();
+
+        Array xa = Array.factory(DataType.DOUBLE, ra.getShape());
+        Array ya = Array.factory(DataType.DOUBLE, ra.getShape());
+        Array za = Array.factory(DataType.DOUBLE, ra.getShape());
+        float r, a, e;
+
+        for (int i = 0; i < ra.getSize(); i++) {
+            r = ra.getFloat(i);
+            a = aa.getFloat(i);
+            e = ea.getFloat(i);
+            double[] xyz = antennaToCartesian(r, a, e);
+            xa.setDouble(i, xyz[0]);
+            ya.setDouble(i, xyz[1]);
+            za.setDouble(i, xyz[2]);
+        }
+
+        return new Array[]{xa, ya, za};
+    }
+
+    /**
+     * Convert antenna coordinate to cartesian coordinate
+     *
+     * @param r Distances to the center of the radar gates (bins) in meters
+     * @param a Azimuth angle of the radar in radians
+     * @param e Elevation angle of the radar in radians
+     * @return Cartesian coordinate in meters from the radar
+     */
+    public static Array[] antennaToCartesian(Array ra, Array aa, float e) {
+        ra = ra.copyIfView();
+        aa = aa.copyIfView();
+
+        Array xa = Array.factory(DataType.DOUBLE, ra.getShape());
+        Array ya = Array.factory(DataType.DOUBLE, ra.getShape());
+        Array za = Array.factory(DataType.DOUBLE, ra.getShape());
+        float r, a;
+
+        for (int i = 0; i < ra.getSize(); i++) {
+            r = ra.getFloat(i);
+            a = aa.getFloat(i);
+            double[] xyz = antennaToCartesian(r, a, e);
+            xa.setDouble(i, xyz[0]);
+            ya.setDouble(i, xyz[1]);
+            za.setDouble(i, xyz[2]);
+        }
+
+        return new Array[]{xa, ya, za};
+    }
+
+    /**
+     * Convert antenna coordinate to cartesian coordinate
+     *
+     * @param r Distances to the center of the radar gates (bins) in meters
+     * @param a Azimuth angle of the radar in radians
+     * @param e Elevation angle of the radar in radians
+     * @param h Altitude of the instrument, above sea level, units:m
+     * @return Cartesian coordinate in meters from the radar
+     */
+    public static Array[] antennaToCartesian(Array ra, Array aa, Array ea, float h) {
+        ra = ra.copyIfView();
+        aa = aa.copyIfView();
+        ea = ea.copyIfView();
+
+        Array xa = Array.factory(DataType.DOUBLE, ra.getShape());
+        Array ya = Array.factory(DataType.DOUBLE, ra.getShape());
+        Array za = Array.factory(DataType.DOUBLE, ra.getShape());
+        float r, a, e;
+
+        for (int i = 0; i < ra.getSize(); i++) {
+            r = ra.getFloat(i);
+            a = aa.getFloat(i);
+            e = ea.getFloat(i);
+            double[] xyz = antennaToCartesian(r, a, e, h);
+            xa.setDouble(i, xyz[0]);
+            ya.setDouble(i, xyz[1]);
+            za.setDouble(i, xyz[2]);
+        }
+
+        return new Array[]{xa, ya, za};
+    }
+
+    /**
+     * Convert antenna coordinate to cartesian coordinate
+     *
+     * @param r Distances to the center of the radar gates (bins) in meters
+     * @param a Azimuth angle of the radar in radians
+     * @param e Elevation angle of the radar in radians
+     * @param h Altitude of the instrument, above sea level, units:m
+     * @return Cartesian coordinate in meters from the radar
+     */
+    public static Array[] antennaToCartesian(Array ra, Array aa, float e, float h) {
+        ra = ra.copyIfView();
+        aa = aa.copyIfView();
+
+        Array xa = Array.factory(DataType.DOUBLE, ra.getShape());
+        Array ya = Array.factory(DataType.DOUBLE, ra.getShape());
+        Array za = Array.factory(DataType.DOUBLE, ra.getShape());
+        float r, a;
+
+        for (int i = 0; i < ra.getSize(); i++) {
+            r = ra.getFloat(i);
+            a = aa.getFloat(i);
+            double[] xyz = antennaToCartesian(r, a, e, h);
+            xa.setDouble(i, xyz[0]);
+            ya.setDouble(i, xyz[1]);
+            za.setDouble(i, xyz[2]);
+        }
+
+        return new Array[]{xa, ya, za};
+    }
+
+    /**
+     * Get antenna azimuth from cartesian x, y coordinate
+     * @param x X value
+     * @param y Y value
+     * @return Azimuth value
+     */
+    public static double xyToAzimuth(float x, float y) {
+        double az = Math.PI / 2 - Math.atan2(y, x);
         if (az < 0) {
             az = 2 * Math.PI + az;
         }
         return Math.toDegrees(az);
+    }
+
+    /**
+     * Get antenna azimuth from cartesian x, y coordinate
+     * @param x X array value
+     * @param y Y array value
+     * @return Azimuth array value
+     */
+    public static Array xyToAzimuth(Array xa, Array ya) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+
+        Array aa = Array.factory(DataType.FLOAT, xa.getShape());
+        for (int i = 0; i < aa.getSize(); i++) {
+            aa.setFloat(i, (float) xyToAzimuth(xa.getFloat(i), ya.getFloat(i)));
+        }
+
+        return aa;
     }
 
     /**

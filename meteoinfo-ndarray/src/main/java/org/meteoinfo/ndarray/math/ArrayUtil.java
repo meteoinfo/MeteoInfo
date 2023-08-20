@@ -898,6 +898,18 @@ public class ArrayUtil {
     }
 
     /**
+     * Array line space - stop is included
+     *
+     * @param start Start value
+     * @param stop Stop value
+     * @param n Number value
+     * @return Array
+     */
+    public static Array lineSpace(Number start, Number stop, final int n) {
+        return lineSpace(start, stop, n, true);
+    }
+
+    /**
      * Array line space
      *
      * @param start Start value

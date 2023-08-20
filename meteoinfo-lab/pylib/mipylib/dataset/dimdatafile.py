@@ -16,7 +16,7 @@ from mipylib.dataframe.dataframe import DataFrame
 import mipylib.miutil as miutil
 import mipylib.numeric as np
 from mipylib.numeric.core._dtype import DataType
-from .ncutil import to_dtype
+from .util.ncutil import to_dtype
 
 import datetime
 
@@ -46,12 +46,12 @@ class DimDataFile(object):
         if isinstance(key, basestring):
             var = self.dataset.getDataInfo().getVariable(key)
             if var is None:
-                print key + ' is not a variable name'
+                print(key + ' is not a variable name')
                 raise ValueError()
             else:
                 return DimVariable(self.dataset.getDataInfo().getVariable(key), self)
         else:
-            print key + ' is not a variable name'
+            print(key + ' is not a variable name')
             raise ValueError()
         
     def __str__(self):
@@ -192,7 +192,7 @@ class DimDataFile(object):
         """
         Print data file information
         """
-        print self.dataset.getInfoText()
+        print(self.dataset.getInfoText())
         
     def read_dataframe(self, tidx=None):
         """

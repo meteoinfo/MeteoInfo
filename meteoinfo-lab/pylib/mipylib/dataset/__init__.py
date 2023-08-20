@@ -1,7 +1,9 @@
 import midata
 from .midata import *
-import ncutil
+from .util import ncutil
 from .dimvariable import DimVariable
+from .util import *
 
-__all__ = ['ncutil', 'DimVariable']
+__all__ = ['DimVariable']
 __all__ += midata.__all__
+__all__ += util.__all__

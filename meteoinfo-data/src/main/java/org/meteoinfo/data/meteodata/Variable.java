@@ -52,6 +52,7 @@ public class Variable {
     private double fill_value = -9999.0;
     private double scale_factor = 1;
     private double add_offset = 0;
+    private Array cachedData;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -599,6 +600,30 @@ public class Variable {
      */
     public void setAddOffset(double value) {
         this.add_offset = value;
+    }
+
+    /**
+     * Get cached data array
+     * @return Cached data array
+     */
+    public Array getCachedData() {
+        return this.cachedData;
+    }
+
+    /**
+     * Set cached data array
+     * @param value Cached data array
+     */
+    public void setCachedData(Array value) {
+        this.cachedData = value;
+    }
+
+    /**
+     * Check has cached data or not
+     * @return Has cached data or not
+     */
+    public boolean hasCachedData() {
+        return this.cachedData != null;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

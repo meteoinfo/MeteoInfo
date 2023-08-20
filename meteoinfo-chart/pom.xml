@@ -12,8 +12,8 @@
     <artifactId>meteoinfo-chart</artifactId>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <freehep.version>2.4</freehep.version>
         <jogl.version>2.4.0</jogl.version>
     </properties>

@@ -97,15 +97,20 @@ public class Reproject {
             if (i >= points.length) {
                 break;
             }
-            ProjCoordinate p1 = new ProjCoordinate(points[i][0], points[i][1]);
-            ProjCoordinate p2 = new ProjCoordinate();
-            try {
-                trans.transform(p1, p2);
-                points[i][0] = p2.x;
-                points[i][1] = p2.y;
-            } catch (ProjectionException e) {
+            if (Double.isNaN(points[i][0]) || Double.isNaN(points[i][1])) {
                 points[i][0] = Double.NaN;
                 points[i][1] = Double.NaN;
+            } else {
+                ProjCoordinate p1 = new ProjCoordinate(points[i][0], points[i][1]);
+                ProjCoordinate p2 = new ProjCoordinate();
+                try {
+                    trans.transform(p1, p2);
+                    points[i][0] = p2.x;
+                    points[i][1] = p2.y;
+                } catch (ProjectionException e) {
+                    points[i][0] = Double.NaN;
+                    points[i][1] = Double.NaN;
+                }
             }
         }
     }

@@ -25,9 +25,6 @@
         <module name="meteoinfo-common" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="meteoinfo-legend" target="11" />
-      <module name="MeteoInfoLib" target="1.8" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="11" />
   </component>
 </project>

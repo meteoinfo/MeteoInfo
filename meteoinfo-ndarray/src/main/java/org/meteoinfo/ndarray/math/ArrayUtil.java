@@ -652,7 +652,7 @@ public class ArrayUtil {
         } else {
             if (dt == null)
                 dt = ArrayMath.getDataType(data);
-            Array a = Array.factory(dt, new int[]{1});
+            Array a = Array.factory(dt, new int[0]);
             if (data instanceof String) {
                 a.setString(0, (String)data);
             } else {

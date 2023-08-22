@@ -20,8 +20,8 @@ class NDArray(object):
         if not isinstance(array, Array):
             array = ArrayUtil.array(array, None)
 
-        if array.getRank() == 0 and array.getDataType() != DataType.STRUCTURE:
-            array = ArrayUtil.array([array.getIndexIterator().getObjectNext()])
+        # if array.getRank() == 0 and array.getDataType() != DataType.STRUCTURE:
+        #     array = ArrayUtil.array([array.getIndexIterator().getObjectNext()])
 
         self._array = array
         self.ndim = array.getRank()
@@ -153,7 +153,7 @@ class NDArray(object):
             indices = nindices
 
         if len(indices) != self.ndim:
-            print 'indices must be ' + str(self.ndim) + ' dimensions!'
+            print('indices must be ' + str(self.ndim) + ' dimensions!')
             raise IndexError()
 
         ranges = []
@@ -582,6 +582,24 @@ class NDArray(object):
         r = NDArray(ArrayMath.inValues(self._array, other))
         return r
 
+    def all(self, axis=None):
+        """
+        Test whether all array element along a given axis evaluates to True.
+
+        :param x: (*array_like or list*) Input values.
+        :param axis: (*int*) Axis along which a logical OR reduction is performed.
+            The default (axis = None) is to perform a logical OR over all the
+            dimensions of the input array.
+
+        :returns: (*array_like*) All result
+        """
+        if axis is None:
+            return ArrayMath.all(self._array)
+        else:
+            if axis < 0:
+                axis += self.ndim
+            return NDArray(ArrayMath.all(self._array, axis))
+
     def any(self, axis=None):
         """
         Test whether any array element along a given axis evaluates to True.
@@ -942,7 +960,7 @@ class NDArray(object):
         :param axis: (*int*) Axis along which the standard deviation is computed.
             The default is to compute the standard deviation of the flattened array.
         :param ddof: (*int*) Delta Degrees of Freedom: the divisor used in the calculation is
-            N - ddof, where N represents the number of elements. By default ddof is zero.
+            N - ddof, where N represents the number of elements. By default, ddof is zero.
 
         returns: (*array_like*) Standart deviation result.
         """
@@ -1222,7 +1240,7 @@ class NDArray(object):
         :param indices: (*array_like*) The indices of the values to extract.
         :param axis: (*int*) The axis over which to select values.
 
-        :returns: (*array*) The returned array has the same type as a.
+        :returns: (*array*) The returned array has the same type as this array.
         """
         if isinstance(indices, (list, tuple)):
             indices = NDArray(indices)

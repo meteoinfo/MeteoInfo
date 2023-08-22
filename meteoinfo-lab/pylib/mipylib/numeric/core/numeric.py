@@ -110,14 +110,15 @@ def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
                 elif miutil.iscomplex(object):
                     a = NDArray(JythonUtil.toComplexArray(object))
 
-        if isinstance(dtype, basestring):
-            dtype = _dtype.DataType(dtype)
-
-        if not dtype is None:
-            dtype = dtype._dtype
-
         if a is None:
-            a = NDArray(ArrayUtil.array(object, dtype))
+            if isinstance(dtype, basestring):
+                dtype = _dtype.DataType(dtype)
+
+            if not dtype is None:
+                dtype = dtype._dtype
+                a = NDArray(ArrayUtil.array(object, dtype))
+            else:
+                a = NDArray(object)
 
     if a.ndim < ndmin:
         shape = []
@@ -1233,12 +1234,7 @@ def all(x, axis=None):
     if isinstance(x, list):
         x = array(x)
         
-    if axis is None:
-        return ArrayMath.all(x._array)
-    else:
-        if axis < 0:
-            axis += x.ndim
-        return NDArray(ArrayMath.all(x._array, axis))
+    return x.all(axis)
 
 def isclose(a, b, rtol=1e-05, atol=1e-08, equal_nan=False):
     """

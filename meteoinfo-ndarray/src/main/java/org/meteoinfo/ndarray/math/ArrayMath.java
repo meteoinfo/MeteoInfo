@@ -6022,8 +6022,10 @@ public class ArrayMath {
     public static Array setSection(Array a, List<Range> ranges, Array v) throws InvalidRangeException {
         Array r = a.section(ranges);
         IndexIterator iter = r.getIndexIterator();
-        if (r.getShape() != v.getShape()) {
-            v = ArrayUtil.broadcast(v, r.getShape());
+        if (r.getSize() != v.getSize()) {
+            if (r.getShape() != v.getShape()) {
+                v = ArrayUtil.broadcast(v, r.getShape());
+            }
         }
         Index index = v.getIndex();
         while (iter.hasNext()) {

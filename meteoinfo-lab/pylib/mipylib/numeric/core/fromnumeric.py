@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from .numeric import asarray, array
+from .numeric import asarray, array, isscalar
 from ._ndarray import NDArray
 from .dimarray import DimArray
 from org.meteoinfo.ndarray.math import ArrayUtil, ArrayMath
@@ -39,6 +39,9 @@ def ndim(a):
     >>> np.ndim(1)
     0
     """
+    if isscalar(a):
+        return 0
+
     try:
         return a.ndim
     except AttributeError:

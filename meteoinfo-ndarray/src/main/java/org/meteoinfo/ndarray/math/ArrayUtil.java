@@ -1633,6 +1633,12 @@ public class ArrayUtil {
         StringBuilder sbuff = new StringBuilder();
         sbuff.append("array(");
         int ndim = a.getRank();
+        if (ndim == 0) {
+            sbuff.append(a.getObject(0));
+            sbuff.append(")");
+            return sbuff.toString();
+        }
+
         if (ndim > 1) {
             for (int i = 0; i < ndim - 1; i++)
                 sbuff.append("[");

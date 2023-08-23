@@ -601,7 +601,7 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
 
             Section section = new Section(origin, size, stride);
             RadialRecord record = this.recordMap.get(varName);
-            Array dataArray = Array.factory(record.getDataType(), section.getShape());
+            Array dataArray = Array.factory(DataType.FLOAT, section.getShape());
             Range zRange = section.getRange(0);
             Range yRange = section.getRange(1);
             Range xRange = section.getRange(2);
@@ -623,36 +623,36 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
                         }
                     }
                 }
+            }
 
-                Attribute aoAttr = variable.findAttribute("add_offset");
-                Attribute sfAttr = variable.findAttribute("scale_factor");
-                if (aoAttr != null || sfAttr != null) {
-                    Number add_offset = 0.f;
-                    Number scale_factor = 1.f;
-                    if (aoAttr != null) {
-                        switch (aoAttr.getDataType()) {
-                            case DOUBLE:
-                                add_offset = aoAttr.getValues().getDouble(0);
-                                break;
-                            case FLOAT:
-                            case INT:
-                                add_offset = aoAttr.getValues().getFloat(0);
-                                break;
-                        }
+            Attribute aoAttr = variable.findAttribute("add_offset");
+            Attribute sfAttr = variable.findAttribute("scale_factor");
+            if (aoAttr != null || sfAttr != null) {
+                Number add_offset = 0.f;
+                Number scale_factor = 1.f;
+                if (aoAttr != null) {
+                    switch (aoAttr.getDataType()) {
+                        case DOUBLE:
+                            add_offset = aoAttr.getValues().getDouble(0);
+                            break;
+                        case FLOAT:
+                        case INT:
+                            add_offset = aoAttr.getValues().getFloat(0);
+                            break;
                     }
-                    if (sfAttr != null) {
-                        switch (sfAttr.getDataType()) {
-                            case DOUBLE:
-                                scale_factor = sfAttr.getValues().getDouble(0);
-                                break;
-                            case FLOAT:
-                            case INT:
-                                scale_factor = sfAttr.getValues().getFloat(0);
-                                break;
-                        }
-                    }
-                    dataArray = ArrayMath.div(ArrayMath.sub(dataArray, add_offset), scale_factor);
                 }
+                if (sfAttr != null) {
+                    switch (sfAttr.getDataType()) {
+                        case DOUBLE:
+                            scale_factor = sfAttr.getValues().getDouble(0);
+                            break;
+                        case FLOAT:
+                        case INT:
+                            scale_factor = sfAttr.getValues().getFloat(0);
+                            break;
+                    }
+                }
+                dataArray = ArrayMath.div(ArrayMath.sub(dataArray, add_offset), scale_factor);
             }
 
             return dataArray;

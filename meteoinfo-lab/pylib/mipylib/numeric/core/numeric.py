@@ -40,7 +40,7 @@ __all__ = [
     'argmin','argmax','argsort','array','array_split','amax','amin','asanyarray','asarray','asgridarray',
     'asgriddata','arcsin','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
-    'concatenate','conj','conjugate','corrcoef','cos','cosh','cylinder','degrees','delete','delnan','diag','diff',
+    'concatenate','conj','conjugate','corrcoef','cos','cosh','cylinder','degrees','delnan','diag','diff',
     'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','hypot','identity','indices','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','isscalar','linspace','log','log10','logical_not','logspace',
@@ -65,7 +65,7 @@ def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
     :param dtype: (*DataType*) Data type
     :param copy: (*bool*) If true (default), then the object is copied.
     :param order: (*str*) Specify the memory layout of the array.
-    :param subok: (*bool*) If True, then sub-classes will be passed-through,
+    :param subok: (*bool*) If True, then subclasses will be passed-through,
         otherwise the returned array will be forced to be a base-class array (default).
     :param ndmin: (*int*) Specifies the minimum number of dimensions that the
         resulting array should have.
@@ -1753,8 +1753,8 @@ def argsort(a, axis=-1):
     :param axis: (*int or None*) Optional. Axis along which to sort. If None, the array is
         flattened after sorting. The default is ``-1`` , which sorts along the last axis.
         
-    :returns: (*NDArray*) Array of indices that sort a along the specified axis. If a is 
-        one-dimensional, a[index_array] yields a sorted a.
+    :returns: (*NDArray*) Array of indices that sort `a` along the specified axis. If `a` is
+        one-dimensional, a[index_array] yields a sorted `a`.
     """
     if isinstance(a, list):
         a = array(a)
@@ -1992,7 +1992,7 @@ def concatenate(arrays, axis=0):
     """
     ars = []
     for a in arrays:
-        ars.append(a.asarray())
+        ars.append(asanyarray(a).asarray())
     r = ArrayUtil.concatenate(ars, axis)
     return NDArray(r)
 
@@ -2801,7 +2801,7 @@ def smooth5(x):
     if isinstance(x, list):
         x = array(x)
     if x.ndim != 2:
-        print 'The array must be 2 dimension!'
+        print('The array must be 2 dimension!')
         raise ValueError()
     r = ArrayUtil.smooth5(x._array)
     if isinstance(x, DimArray):
@@ -2829,7 +2829,7 @@ def smooth9(x):
     if isinstance(x, list):
         x = array(x)
     if x.ndim != 2:
-        print 'The array must be 2 dimension!'
+        print('The array must be 2 dimension!')
         raise ValueError()
     r = ArrayUtil.smooth9(x._array)
     if isinstance(x, DimArray):

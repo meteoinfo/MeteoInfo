@@ -183,8 +183,12 @@ def getcolors(cs, alpha=None):
         if isinstance(cs[0], int):
             colors.append(getcolor(cs, alpha))
         else:
-            for c in cs:
-                colors.append(getcolor(c, alpha))
+            if isinstance(alpha, (tuple, list)):
+                for c, a in zip(cs, alpha):
+                    colors.append(getcolor(c, a))
+            else:
+                for c in cs:
+                    colors.append(getcolor(c, alpha))
     else:
         colors.append(getcolor(cs, alpha))
     return colors

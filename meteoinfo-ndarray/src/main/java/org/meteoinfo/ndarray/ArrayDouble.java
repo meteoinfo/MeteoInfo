@@ -275,7 +275,11 @@ public class ArrayDouble extends Array {
     }
 
     public void setObject(Index i, Object value) {
-        storageD[i.currentElement()] = ((Number) value).doubleValue();
+        if (value instanceof Boolean) {
+            storageD[i.currentElement()] = ((Boolean) value) ? 1 : 0;
+        } else {
+            storageD[i.currentElement()] = ((Number) value).doubleValue();
+        }
     }
 
     // trusted, assumes that individual dimension lengths have been checked
@@ -368,7 +372,11 @@ public class ArrayDouble extends Array {
     }
 
     public void setObject(int index, Object value) {
-        storageD[index] = ((Number) value).doubleValue();
+        if (value instanceof Boolean) {
+            storageD[index] = ((Boolean) value) ? 1 : 0;
+        } else {
+            storageD[index] = ((Number) value).doubleValue();
+        }
     }
 
     /**

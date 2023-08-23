@@ -1,6 +1,9 @@
 package org.meteoinfo.ndarray;
 
+import org.meteoinfo.ndarray.math.ArrayUtil;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MixIterator implements IndexIterator {
@@ -29,7 +32,21 @@ public class MixIterator implements IndexIterator {
             if (range instanceof Range) {
                 shape[i] = ((Range) range).length();
             } else {
-                shape[i] = ((List) range).size();
+                Array arr = (Array) range;
+                if (arr.getDataType() == DataType.BOOLEAN) {
+                    List<Integer> tList = new ArrayList<>();
+                    IndexIterator iter = arr.getIndexIterator();
+                    int j = 0;
+                    while (iter.hasNext()) {
+                        if (iter.getBooleanNext()) {
+                            tList.add(j);
+                        }
+                        j += 1;
+                    }
+                    arr = ArrayUtil.array_list(tList, DataType.INT);
+                    this.ranges.set(i, arr);
+                }
+                shape[i] = (int) arr.getSize();
             }
             i += 1;
         }
@@ -297,9 +314,9 @@ public class MixIterator implements IndexIterator {
         int c;
         for (Object range : this.ranges) {
             if (range instanceof Range) {
-                c = ((Range)range).elementNC(rangeCounter[i]);
+                c = ((Range) range).elementNC(rangeCounter[i]);
             } else {
-                c = ((List<Integer>)range).get(rangeCounter[i]);
+                c = ((Array) range).getInt(rangeCounter[i]);
             }
             currentCounter[i] = c;
             i += 1;

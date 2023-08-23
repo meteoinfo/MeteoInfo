@@ -298,7 +298,11 @@ public class ArrayInt extends Array {
     }
 
     public void setObject(Index i, Object value) {
-        storage[i.currentElement()] = ((Number) value).intValue();
+        if (value instanceof Boolean) {
+            storage[i.currentElement()] = ((Boolean) value) ? 1 : 0;
+        } else {
+            storage[i.currentElement()] = ((Number) value).intValue();
+        }
     }
 
     // package private : mostly for iterators
@@ -397,7 +401,11 @@ public class ArrayInt extends Array {
     }
 
     public void setObject(int index, Object value) {
-        storage[index] = ((Number) value).intValue();
+        if (value instanceof Boolean) {
+            storage[index] = ((Boolean) value) ? 1 : 0;
+        } else {
+            storage[index] = ((Number) value).intValue();
+        }
     }
 
     /**

@@ -305,7 +305,11 @@ public class ArrayBoolean extends Array {
     }
 
     public void setObject(Index i, Object value) {
-        storage[i.currentElement()] = (Boolean) value;
+        if (value instanceof Integer) {
+            storage[i.currentElement()] = ((Integer) value == 1);
+        } else {
+            storage[i.currentElement()] = (Boolean) value;
+        }
     }
 
     // package private : mostly for iterators

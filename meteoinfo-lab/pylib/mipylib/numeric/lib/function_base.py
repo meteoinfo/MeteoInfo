@@ -4,8 +4,10 @@ from ..core import dtype
 from ..core._ndarray import NDArray
 from ..core.fromnumeric import (ravel, nonzero)
 from org.meteoinfo.ndarray.math import ArrayMath
+import warnings
 
-__all__ = ['angle','extract', 'place', 'grid_edge', 'gradient']
+__all__ = ['angle','extract', 'place', 'grid_edge', 'gradient', 'append',
+           'delete', 'insert']
 
 
 def extract(condition, arr):
@@ -366,3 +368,401 @@ def gradient(f, *varargs, **kwargs):
         return outvals[0]
     else:
         return outvals
+
+def append(arr, values, axis=None):
+    """
+    Append values to the end of an array.
+
+    Parameters
+    ----------
+    arr : array_like
+        Values are appended to a copy of this array.
+    values : array_like
+        These values are appended to a copy of `arr`.  It must be of the
+        correct shape (the same shape as `arr`, excluding `axis`).  If
+        `axis` is not specified, `values` can be any shape and will be
+        flattened before use.
+    axis : int, optional
+        The axis along which `values` are appended.  If `axis` is not
+        given, both `arr` and `values` are flattened before use.
+
+    Returns
+    -------
+    append : ndarray
+        A copy of `arr` with `values` appended to `axis`.  Note that
+        `append` does not occur in-place: a new array is allocated and
+        filled.  If `axis` is None, `out` is a flattened array.
+
+    See Also
+    --------
+    insert : Insert elements into an array.
+    delete : Delete elements from an array.
+
+    Examples
+    --------
+    >>> np.append([1, 2, 3], [[4, 5, 6], [7, 8, 9]])
+    array([1, 2, 3, ..., 7, 8, 9])
+
+    When `axis` is specified, `values` must have the correct shape.
+
+    >>> np.append([[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], axis=0)
+    array([[1, 2, 3],
+           [4, 5, 6],
+           [7, 8, 9]])
+    >>> np.append([[1, 2, 3], [4, 5, 6]], [7, 8, 9], axis=0)
+    Traceback (most recent call last):
+        ...
+    ValueError: all the input arrays must have same number of dimensions, but
+    the array at index 0 has 2 dimension(s) and the array at index 1 has 1
+    dimension(s)
+
+    """
+    arr = np.asanyarray(arr)
+    if axis is None:
+        if arr.ndim != 1:
+            arr = arr.ravel()
+        values = ravel(values)
+        axis = arr.ndim-1
+    return np.concatenate((arr, values), axis=axis)
+
+def delete(arr, obj, axis=None):
+    """
+    Return a new array with sub-arrays along an axis deleted. For a one
+    dimensional array, this returns those entries not returned by
+    `arr[obj]`.
+
+    Parameters
+    ----------
+    arr : array_like
+        Input array.
+    obj : slice, int or array of ints
+        Indicate indices of sub-arrays to remove along the specified axis.
+
+        .. versionchanged:: 1.19.0
+            Boolean indices are now treated as a mask of elements to remove,
+            rather than being cast to the integers 0 and 1.
+
+    axis : int, optional
+        The axis along which to delete the subarray defined by `obj`.
+        If `axis` is None, `obj` is applied to the flattened array.
+
+    Returns
+    -------
+    out : ndarray
+        A copy of `arr` with the elements specified by `obj` removed. Note
+        that `delete` does not occur in-place. If `axis` is None, `out` is
+        a flattened array.
+
+    See Also
+    --------
+    insert : Insert elements into an array.
+    append : Append elements at the end of an array.
+
+    Notes
+    -----
+    Often it is preferable to use a boolean mask. For example:
+
+    >>> arr = np.arange(12) + 1
+    >>> mask = np.ones(len(arr), dtype=bool)
+    >>> mask[[0,2,4]] = False
+    >>> result = arr[mask,...]
+
+    Is equivalent to ``np.delete(arr, [0,2,4], axis=0)``, but allows further
+    use of `mask`.
+
+    Examples
+    --------
+    >>> arr = np.array([[1,2,3,4], [5,6,7,8], [9,10,11,12]])
+    >>> arr
+    array([[ 1,  2,  3,  4],
+           [ 5,  6,  7,  8],
+           [ 9, 10, 11, 12]])
+    >>> np.delete(arr, 1, 0)
+    array([[ 1,  2,  3,  4],
+           [ 9, 10, 11, 12]])
+
+    >>> np.delete(arr, np.s_[::2], 1)
+    array([[ 2,  4],
+           [ 6,  8],
+           [10, 12]])
+    >>> np.delete(arr, [1,3,5], None)
+    array([ 1,  3,  5,  7,  8,  9, 10, 11, 12])
+
+    """
+    arr = np.asarray(arr)
+    ndim = arr.ndim
+    if axis is None:
+        if ndim != 1:
+            arr = arr.ravel()
+        # needed for np.matrix, which is still not 1d after being ravelled
+        ndim = arr.ndim
+        axis = ndim - 1
+    else:
+        axis = np.normalize_axis_index(axis, ndim)
+
+    slobj = [slice(None)]*ndim
+    N = arr.shape[axis]
+    newshape = list(arr.shape)
+
+    if isinstance(obj, slice):
+        start, stop, step = obj.indices(N)
+        xr = range(start, stop, step)
+        numtodel = len(xr)
+
+        if numtodel <= 0:
+            return arr.copy()
+
+        # Invert if step is negative:
+        if step < 0:
+            step = -step
+            start = xr[-1]
+            stop = xr[0] + 1
+
+        newshape[axis] -= numtodel
+        new = np.empty(newshape, arr.dtype)
+        # copy initial chunk
+        if start == 0:
+            pass
+        else:
+            slobj[axis] = slice(None, start)
+            new[tuple(slobj)] = arr[tuple(slobj)]
+        # copy end chunk
+        if stop == N:
+            pass
+        else:
+            slobj[axis] = slice(stop-numtodel, None)
+            slobj2 = [slice(None)]*ndim
+            slobj2[axis] = slice(stop, None)
+            new[tuple(slobj)] = arr[tuple(slobj2)]
+        # copy middle pieces
+        if step == 1:
+            pass
+        else:  # use array indexing.
+            keep = np.ones(stop-start, dtype=np.dtype.bool)
+            keep[:stop-start:step] = False
+            slobj[axis] = slice(start, stop-numtodel)
+            slobj2 = [slice(None)]*ndim
+            slobj2[axis] = slice(start, stop)
+            arr = arr[tuple(slobj2)]
+            slobj2[axis] = keep
+            new[tuple(slobj)] = arr[tuple(slobj2)]
+        return new
+
+    if isinstance(obj, int) and not isinstance(obj, bool):
+        single_value = True
+    else:
+        single_value = False
+        _obj = obj
+        obj = np.asarray(obj)
+        # `size == 0` to allow empty lists similar to indexing, but (as there)
+        # is really too generic:
+        if obj.size == 0 and not isinstance(_obj, np.NDArray):
+            obj = obj.astype(np.dtype.int)
+        elif obj.size == 1 and obj.dtype.kind in "ui":
+            # For a size 1 integer array we can use the single-value path
+            # (most dtypes, except boolean, should just fail later).
+            obj = obj.item()
+            single_value = True
+
+    if single_value:
+        # optimization for a single value
+        if (obj < -N or obj >= N):
+            raise IndexError(
+                "index %i is out of bounds for axis %i with "
+                "size %i" % (obj, axis, N))
+        if (obj < 0):
+            obj += N
+        newshape[axis] -= 1
+        new = np.empty(newshape, arr.dtype,)
+        slobj[axis] = slice(None, obj)
+        new[tuple(slobj)] = arr[tuple(slobj)]
+        slobj[axis] = slice(obj, None)
+        slobj2 = [slice(None)]*ndim
+        slobj2[axis] = slice(obj+1, None)
+        new[tuple(slobj)] = arr[tuple(slobj2)]
+    else:
+        if obj.dtype == np.dtype.bool:
+            if obj.shape != (N,):
+                raise ValueError('boolean array argument obj to delete '
+                                 'must be one dimensional and match the axis '
+                                 'length of {}'.format(N))
+
+            # optimization, the other branch is slower
+            keep = ~obj
+        else:
+            keep = np.ones(N, dtype=np.dtype.bool)
+            keep[obj,] = False
+
+        slobj[axis] = keep
+        new = arr[tuple(slobj)]
+
+    return new
+
+def insert(arr, obj, values, axis=None):
+    """
+    Insert values along the given axis before the given indices.
+
+    Parameters
+    ----------
+    arr : array_like
+        Input array.
+    obj : int, slice or sequence of ints
+        Object that defines the index or indices before which `values` is
+        inserted.
+
+        Support for multiple insertions when `obj` is a single scalar or a
+        sequence with one element (similar to calling insert multiple
+        times).
+    values : array_like
+        Values to insert into `arr`. If the type of `values` is different
+        from that of `arr`, `values` is converted to the type of `arr`.
+        `values` should be shaped so that ``arr[...,obj,...] = values``
+        is legal.
+    axis : int, optional
+        Axis along which to insert `values`.  If `axis` is None then `arr`
+        is flattened first.
+
+    Returns
+    -------
+    out : ndarray
+        A copy of `arr` with `values` inserted.  Note that `insert`
+        does not occur in-place: a new array is returned. If
+        `axis` is None, `out` is a flattened array.
+
+    See Also
+    --------
+    append : Append elements at the end of an array.
+    concatenate : Join a sequence of arrays along an existing axis.
+    delete : Delete elements from an array.
+
+    Notes
+    -----
+    Note that for higher dimensional inserts ``obj=0`` behaves very different
+    from ``obj=[0]`` just like ``arr[:,0,:] = values`` is different from
+    ``arr[:,[0],:] = values``.
+
+    Examples
+    --------
+    >>> a = np.array([[1, 1], [2, 2], [3, 3]])
+    >>> a
+    array([[1, 1],
+           [2, 2],
+           [3, 3]])
+    >>> np.insert(a, 1, 5)
+    array([1, 5, 1, ..., 2, 3, 3])
+    >>> np.insert(a, 1, 5, axis=1)
+    array([[1, 5, 1],
+           [2, 5, 2],
+           [3, 5, 3]])
+
+    Difference between sequence and scalars:
+
+    >>> np.insert(a, [1], [[1],[2],[3]], axis=1)
+    array([[1, 1, 1],
+           [2, 2, 2],
+           [3, 3, 3]])
+    >>> np.array_equal(np.insert(a, 1, [1, 2, 3], axis=1),
+    ...                np.insert(a, [1], [[1],[2],[3]], axis=1))
+    True
+
+    >>> b = a.flatten()
+    >>> b
+    array([1, 1, 2, 2, 3, 3])
+    >>> np.insert(b, [2, 2], [5, 6])
+    array([1, 1, 5, ..., 2, 3, 3])
+
+    >>> np.insert(b, slice(2, 4), [5, 6])
+    array([1, 1, 5, ..., 2, 3, 3])
+
+    >>> np.insert(b, [2, 2], [7.13, False]) # type casting
+    array([1, 1, 7, ..., 2, 3, 3])
+
+    >>> x = np.arange(8).reshape(2, 4)
+    >>> idx = (1, 3)
+    >>> np.insert(x, idx, 999, axis=1)
+    array([[  0, 999,   1,   2, 999,   3],
+           [  4, 999,   5,   6, 999,   7]])
+
+    """
+    arr = np.asarray(arr)
+    ndim = arr.ndim
+    if axis is None:
+        if ndim != 1:
+            arr = arr.ravel()
+        # needed for np.matrix, which is still not 1d after being ravelled
+        ndim = arr.ndim
+        axis = ndim - 1
+    else:
+        axis = np.normalize_axis_index(axis, ndim)
+    slobj = [slice(None)]*ndim
+    N = arr.shape[axis]
+    newshape = list(arr.shape)
+
+    if isinstance(obj, slice):
+        # turn it into a range object
+        indices = np.arange(*obj.indices(N), dtype=np.dtype.int)
+    else:
+        # need to copy obj, because indices will be changed in-place
+        indices = np.array(obj).copy()
+        if indices.dtype == np.dtype.bool:
+            # See also delete
+            warnings.warn(
+                "in the future insert will treat boolean arrays and "
+                "array-likes as a boolean index instead of casting it to "
+                "integer", FutureWarning, stacklevel=2)
+            indices = indices.astype(np.dtype.int)
+        elif indices.ndim > 1:
+            raise ValueError(
+                "index array argument obj to insert must be one dimensional "
+                "or scalar")
+    if indices.size == 1:
+        index = indices.item()
+        if index < -N or index > N:
+            raise IndexError("index {} is out of bounds for axis {} with size {}".
+                             format(obj, axis, N))
+        if (index < 0):
+            index += N
+
+        # There are some object array corner cases here, but we cannot avoid
+        # that:
+        values = np.array(values, copy=False, ndmin=arr.ndim, dtype=arr.dtype)
+        if indices.ndim == 0:
+            # broadcasting is very different here, since a[:,0,:] = ... behaves
+            # very different from a[:,[0],:] = ...! This changes values so that
+            # it works likes the second case. (here a[:,0:1,:])
+            values = np.moveaxis(values, 0, axis)
+        numnew = values.shape[axis]
+        newshape[axis] += numnew
+        new = np.empty(newshape, arr.dtype,)
+        slobj[axis] = slice(None, index)
+        new[tuple(slobj)] = arr[tuple(slobj)]
+        slobj[axis] = slice(index, index+numnew)
+        new[tuple(slobj)] = values
+        slobj[axis] = slice(index+numnew, None)
+        slobj2 = [slice(None)] * ndim
+        slobj2[axis] = slice(index, None)
+        new[tuple(slobj)] = arr[tuple(slobj2)]
+        return new
+    elif indices.size == 0 and not isinstance(obj, np.NDArray):
+        # Can safely cast the empty list to intp
+        indices = indices.astype(np.dtype.int)
+
+    indices[indices < 0] += N
+
+    numnew = len(indices)
+    #order = indices.argsort(kind='mergesort')   # stable sort
+    order = np.argsort(indices)
+    indices[order] += np.arange(numnew)
+
+    newshape[axis] += numnew
+    old_mask = np.ones(newshape[axis], dtype=np.dtype.bool)
+    old_mask[indices] = False
+
+    new = np.empty(newshape, arr.dtype)
+    slobj2 = [slice(None)]*ndim
+    slobj[axis] = indices
+    slobj2[axis] = old_mask
+    new[tuple(slobj)] = values
+    new[tuple(slobj2)] = arr
+
+    return new

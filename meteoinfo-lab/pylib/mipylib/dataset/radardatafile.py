@@ -26,9 +26,9 @@ class RadarDataFile(DimDataFile):
         :return: Scan elevation angles.
         """
         if product is None:
-            return list(self.datainfo.getElevations())
+            return np.array(self.datainfo.getElevations())
         else:
-            return list(self.datainfo.getElevations(product))
+            return np.array(self.datainfo.getElevations(product))
 
     def get_vcs_data(self, product, start_point, end_point):
         """

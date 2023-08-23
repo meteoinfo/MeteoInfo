@@ -6022,11 +6022,11 @@ public class ArrayMath {
     public static Array setSection(Array a, List<Range> ranges, Array v) throws InvalidRangeException {
         Array r = a.section(ranges);
         IndexIterator iter = r.getIndexIterator();
-        if (r.getSize() != v.getSize()) {
+        /*if (r.getSize() != v.getSize()) {
             if (r.getShape() != v.getShape()) {
                 v = ArrayUtil.broadcast(v, r.getShape());
             }
-        }
+        }*/
         Index index = v.getIndex();
         while (iter.hasNext()) {
             iter.setObjectNext(v.getObject(index));
@@ -6207,18 +6207,34 @@ public class ArrayMath {
      * @param v Number value
      * @return Result array
      */
-    public static Array setSection_List(Array a, List<List<Integer>> ranges, Number v) {
+    public static Array setSection_List(Array a, List<Array> ranges, Number v) {
         //Array r = copy(a);
         int n = a.getRank();
         int[] count = new int[n];
         Index index = a.getIndex();
-        int m = ranges.get(0).size();
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                count[j] = ranges.get(j).get(i);
+        int m = (int) ranges.get(0).getSize();
+        if (ranges.get(0).getDataType() == DataType.BOOLEAN) {
+            for (int i = 0; i < m; i++) {
+                boolean bool = true;
+                for (int j = 0; j < n; j++) {
+                    if (!ranges.get(j).getBoolean(i)) {
+                        bool = false;
+                        break;
+                    }
+                }
+                if (bool) {
+                    a.setObject(index, v);
+                }
+                index.incr();
             }
-            index.set(count);
-            a.setObject(index, v);
+        } else {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    count[j] = ranges.get(j).getInt(i);
+                }
+                index.set(count);
+                a.setObject(index, v);
+            }
         }
 
         return a;
@@ -6232,20 +6248,37 @@ public class ArrayMath {
      * @param v Array value
      * @return Result array
      */
-    public static Array setSection_List(Array a, List<List<Integer>> ranges, Array v) {
+    public static Array setSection_List(Array a, List<Array> ranges, Array v) {
         //Array r = copy(a);
         int n = a.getRank();
         int[] count = new int[n];
         Index index = a.getIndex();
         Index vIndex = v.getIndex();
-        int m = ranges.get(0).size();
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                count[j] = ranges.get(j).get(i);
+        int m = (int) ranges.get(0).getSize();
+        if (ranges.get(0).getDataType() == DataType.BOOLEAN) {
+            for (int i = 0; i < m; i++) {
+                boolean bool = true;
+                for (int j = 0; j < n; j++) {
+                    if (!ranges.get(j).getBoolean(i)) {
+                        bool = false;
+                        break;
+                    }
+                }
+                if (bool) {
+                    a.setObject(index, v.getObject(vIndex));
+                    vIndex.incr();
+                }
+                index.incr();
             }
-            index.set(count);
-            a.setObject(index, v.getObject(vIndex));
-            vIndex.incr();
+        } else {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    count[j] = ranges.get(j).getInt(i);
+                }
+                index.set(count);
+                a.setObject(index, v.getObject(vIndex));
+                vIndex.incr();
+            }
         }
 
         return a;

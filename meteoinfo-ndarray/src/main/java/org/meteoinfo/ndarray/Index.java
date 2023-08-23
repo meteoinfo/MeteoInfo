@@ -673,6 +673,18 @@ public class Index implements Cloneable {
     }
 
     /**
+     * Set the current element's index. General-rank case.
+     *
+     * @param index set current value to these values
+     * @return this, so you can use A.get(i.set(i))
+     * @throws ArrayIndexOutOfBoundsException if index.length != rank.
+     */
+    public Index set(List<Integer> indexList) {
+        int[] index = indexList.stream().mapToInt(Integer::intValue).toArray();
+        return set(index);
+    }
+
+    /**
      * set current element at dimension dim to v
      *
      * @param dim set this dimension

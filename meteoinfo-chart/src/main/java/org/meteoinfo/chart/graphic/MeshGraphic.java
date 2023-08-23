@@ -331,7 +331,11 @@ public class MeshGraphic extends GraphicCollection3D {
             vertexColor = new float[getVertexNumber() * 4];
             float[] color;
             for (int i = 0; i < vertexValue.length; i++) {
-                color = legendScheme.findLegendBreak(vertexValue[i]).getColor().getRGBComponents(null);
+                if (Float.isNaN(vertexValue[i])) {
+                    color = legendScheme.getLegendBreak(0).getColor().getRGBComponents(null);
+                } else {
+                    color = legendScheme.findLegendBreak(vertexValue[i]).getColor().getRGBComponents(null);
+                }
                 System.arraycopy(color, 0, vertexColor, i * 4, 4);
             }
         }

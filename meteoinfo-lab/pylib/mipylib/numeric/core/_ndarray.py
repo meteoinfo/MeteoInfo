@@ -80,7 +80,10 @@ class NDArray(object):
         return self.dtype.itemsize
 
     def __len__(self):
-        return self._shape[0]
+        if self.ndim == 0:
+            return 0
+        else:
+            return self._shape[0]
 
     def __str__(self):
         return ArrayUtil.convertToString(self._array)
@@ -296,10 +299,10 @@ class NDArray(object):
                 step = 1
                 alllist = False
             elif isinstance(k, (list, tuple, NDArray)):
-                if isinstance(k, NDArray):
-                    k = k.aslist()
+                if isinstance(k, (list, tuple)):
+                    k = NDArray(k)
                 onlyrange = False
-                ranges.append(k)
+                ranges.append(k._array)
                 continue
             else:
                 sidx = 0 if k.start is None else k.start
@@ -516,6 +519,32 @@ class NDArray(object):
             return self.iterator.getObjectNext()
         else:
             raise StopIteration()
+
+    def item(self, *args):
+        """
+        Copy an element of an array to a standard Python scalar and return it.
+
+        :param args: none: in this case, the method only works for arrays with one element
+            (a.size == 1), which element is copied into a standard Python scalar object and returned.
+            int_type: this argument is interpreted as a flat index into the array, specifying which
+            element to copy and return.
+            tuple of int_types: functions as does a single int_type argument, except that the argument
+            is interpreted as a nd-index into the array.
+
+        :return: A copy of the specified element of the array as a suitable Python scalar
+        """
+        if self.ndim == 0:
+            return  self._array.get()
+        else:
+            index = self._array.getIndex()
+            if len(args) == 1:
+                if isinstance(args[0], int):
+                    index.setCurrentIndex(args[0])
+                else:
+                    index.set(args[0])
+            elif len(args) > 1:
+                index.set(args)
+            return  self._array.getObject(index)
 
     def copy(self):
         """

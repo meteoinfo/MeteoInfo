@@ -111,40 +111,33 @@ class NDArray(object):
                     indices1.append(ii)
             indices = indices1
 
-        #add slice(None) to end
-        if len(indices) < self.ndim:
-            if isinstance(indices, tuple):
-                indices = list(indices)
-            for _ in range(self.ndim - len(indices)):
-                indices.append(slice(None))
-
-        allint = True
-        aindex = self._array.getIndex()
-        i = 0
-        for ii in indices:
-            if isinstance(ii, int):
-                if ii < 0:
-                    ii = self.shape[i] + ii
-                aindex.setDim(i, ii)
-            else:
-                allint = False
-                break
-            i += 1
-        if allint:
-            if self.dtype == _dtype.dtype.char:
-                return self._array.getString(aindex)
-            else:
-                r = self._array.getObject(aindex)
-                if isinstance(r, Complex):
-                    return complex(r.getReal(), r.getImaginary())
+#for all int indices
+        if len(indices) == self.ndim:
+            allint = True
+            aindex = self._array.getIndex()
+            i = 0
+            for ii in indices:
+                if isinstance(ii, int):
+                    if ii < 0:
+                        ii = self.shape[i] + ii
+                    aindex.setDim(i, ii)
                 else:
-                    return r
+                    allint = False
+                    break
+                i += 1
+            if allint:
+                if self.dtype == _dtype.dtype.char:
+                    return self._array.getString(aindex)
+                else:
+                    r = self._array.getObject(aindex)
+                    if isinstance(r, Complex):
+                        return complex(r.getReal(), r.getImaginary())
+                    else:
+                        return r
 
-        if self.ndim == 0:
-            return self
-
+        #for None index - np.newaxis
         newaxis = []
-        if len(indices) > self.ndim:
+        if None in indices:
             nindices = []
             i = 0
             for ii in indices:
@@ -154,6 +147,13 @@ class NDArray(object):
                     nindices.append(ii)
                 i += 1
             indices = nindices
+
+        #add slice(None) to end
+        if len(indices) < self.ndim:
+            if isinstance(indices, tuple):
+                indices = list(indices)
+            for _ in range(self.ndim - len(indices)):
+                indices.append(slice(None))
 
         if len(indices) != self.ndim:
             print('indices must be ' + str(self.ndim) + ' dimensions!')

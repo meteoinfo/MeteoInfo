@@ -78,28 +78,25 @@ class DimArray(NDArray):
                 else:
                     indices1.append(ii)
             indices = indices1
-            
-        if len(indices) < self.ndim:
-            if isinstance(indices, tuple):
-                indices = list(indices)
-            for i in range(self.ndim - len(indices)):
-                indices.append(slice(None))
-            
-        allint = True
-        aindex = self._array.getIndex()
-        i = 0
-        for ii in indices:
-            if isinstance(ii, int):
-                if ii < 0:
-                    ii = self.shape[i] + ii
-                aindex.setDim(i, ii)
-            else:
-                allint = False
-                break
-            i += 1
-        if allint:
-            return self._array.getObject(aindex)
 
+        #for all int indices
+        if len(indices) == self.ndim:
+            allint = True
+            aindex = self._array.getIndex()
+            i = 0
+            for ii in indices:
+                if isinstance(ii, int):
+                    if ii < 0:
+                        ii = self.shape[i] + ii
+                    aindex.setDim(i, ii)
+                else:
+                    allint = False
+                    break
+                i += 1
+            if allint:
+                return self._array.getObject(aindex)
+
+        #for None index - np.newaxis
         newaxis = []
         if len(indices) > self.ndim:
             nindices = []
@@ -111,9 +108,16 @@ class DimArray(NDArray):
                     nindices.append(ii)
                 i += 1
             indices = nindices
+
+        #add slice(None) to end
+        if len(indices) < self.ndim:
+            if isinstance(indices, tuple):
+                indices = list(indices)
+            for i in range(self.ndim - len(indices)):
+                indices.append(slice(None))
         
         if len(indices) != self.ndim:
-            print 'indices must be ' + str(self.ndim) + ' dimensions!'
+            print('indices must be ' + str(self.ndim) + ' dimensions!')
             raise IndexError()
             
         if not self.proj is None and not self.proj.isLonLat():

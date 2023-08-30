@@ -18,6 +18,7 @@ public class RadialRecord {
     public String product;
     private int binLength;
     private DataType dataType;
+    private int fillValue;
     public int scale;
     public int offset;
     public List<Float> fixedElevation = new ArrayList<>();
@@ -43,7 +44,7 @@ public class RadialRecord {
     public void setBinLength(int value) {
         this.binLength = value;
         this.dataType = this.binLength == 1 ? DataType.UBYTE : DataType.USHORT;
-        //this.dataType = DataType.FLOAT;
+        this.fillValue = this.dataType == DataType.UBYTE ? 0 : Short.MIN_VALUE;
     }
 
     /**
@@ -301,6 +302,25 @@ public class RadialRecord {
     }
 
     /**
+     * Get sorted azimuth list
+     * @param scanIndex Scan index
+     * @return Sorted azimuth list
+     */
+    public List<Float> getSortedAzimuth(int scanIndex) {
+        int sIdx = this.azimuthMinIndex.get(scanIndex);
+        if (sIdx == 0) {
+            return this.azimuth.get(scanIndex);
+        }
+
+        List<Float> azs = this.azimuth.get(scanIndex);
+        List<Float> sortedAzimuth = new ArrayList<>();
+        sortedAzimuth.addAll(azs.subList(sIdx, azs.size()));
+        sortedAzimuth.addAll(azs.subList(0, sIdx));
+
+        return sortedAzimuth;
+    }
+
+    /**
      * Get azimuth value index
      * @param ei Scan index
      * @param a Azimuth value
@@ -353,7 +373,80 @@ public class RadialRecord {
     }
 
     /**
-     * Get value by elevation, azimuth and distance
+     * Get azimuth value indices
+     * @param ei Scan index
+     * @param a Azimuth value
+     * @return Azimuth value indices - 2 elements
+     */
+    public int[] getAzimuthIndices(int ei, float a) {
+        List<Float> azs = this.azimuth.get(ei);
+        int n = azs.size();
+        int sIdx = this.azimuthMinIndex.get(ei);
+        int eIdx = sIdx - 1;
+        if (eIdx < 0) {
+            eIdx = n - 1;
+        }
+
+        int i1 = -1, i2 = -1;
+        if (a < azs.get(sIdx) || a > azs.get(eIdx)) {
+            i1 = eIdx;
+            i2 = sIdx;
+        } else {
+            for (int i = sIdx + 1; i < n; i++) {
+                if (a == azs.get(i)) {
+                    return new int[]{i, i};
+                } else if (a < azs.get(i)) {
+                    i1 = i - 1;
+                    i2 = i;
+                    break;
+                }
+            }
+            if (i1 < 0) {
+                for (int i = 0; i <= eIdx; i++) {
+                    if (a == azs.get(i)) {
+                        return new int[]{i, i};
+                    } else if (a < azs.get(i)) {
+                        i1 = i - 1;
+                        i2 = i;
+                        if (i1 < 0) {
+                            i1 = n - 1;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        return new int[]{i1, i2};
+    }
+
+    /**
+     * Get scan indices
+     *
+     * @param e Elevation value
+     * @return Scan indices - 2 elements
+     */
+    public int[] getScanIndices(float e) {
+        if (e < fixedElevation.get(0) || e > fixedElevation.get(fixedElevation.size() - 1)) {
+            return new int[]{-1, -1};
+        } else if (e == fixedElevation.get(0)) {
+            return new int[]{0, 0};
+        } else if (e == fixedElevation.get(fixedElevation.size() - 1)) {
+            return new int[]{fixedElevation.size() - 1, fixedElevation.size() - 1};
+        }
+
+        for (int i = 1; i < fixedElevation.size(); i++) {
+            if (e <= fixedElevation.get(i)) {
+                return new int[]{i - 1, i};
+            }
+        }
+
+        return new int[]{-1, -1};
+    }
+
+    /**
+     * Get value by elevation index, azimuth and distance
+     *
      * @param ei Elevation index
      * @param a Azimuth value
      * @param r Distance value
@@ -364,13 +457,125 @@ public class RadialRecord {
         int aziIdx = getAzimuthIndex(ei, a);
         int disRes = this.disResolution.get(ei);
         int disIdx = (int) (r / disRes);
-        Array rData = this.data.get(ei).get(aziIdx);
+        Array rData = sData.get(aziIdx);
         float v;
         if (disIdx < rData.getSize()) {
             v = rData.getFloat(disIdx);
             v = (v - this.offset) / this.scale;
         } else {
             v = Float.NaN;
+        }
+
+        return v;
+    }
+
+    /**
+     * Interpolate value by elevation index, azimuth index and distance
+     *
+     * @param ei Elevation index
+     * @param ai Azimuth index
+     * @param r Distance value
+     * @return Data value
+     */
+    public float interpolateValue(int ei, int ai, float r) {
+        List<Array> sData = this.data.get(ei);
+        int disRes = this.disResolution.get(ei);
+        float v;
+        Array rData = sData.get(ai);
+        float disIdx = r / disRes;
+        int di1 = (int) Math.floor(disIdx);
+        int di2 = (int) Math.ceil(disIdx);
+        if (di1 < rData.getSize()) {
+            v = rData.getFloat(di1);
+            if (v == this.fillValue) {
+                v = Float.NaN;
+            }
+        } else {
+            v = Float.NaN;
+        }
+        if (di1 != di2) {
+            float v2;
+            if (di2 < rData.getSize()) {
+                v2 = rData.getFloat(di2);
+                if (v2 == this.fillValue) {
+                    v2 = Float.NaN;
+                }
+            } else {
+                v2 = Float.NaN;
+            }
+
+            if (Float.isNaN(v)) {
+                v = v2;
+            } else {
+                if (!Float.isNaN(v2)) {
+                    Array dis = this.distance.get(ei);
+                    v = v + (v2 - v) * (r - dis.getFloat(di1)) / (dis.getFloat(di2) - dis.getFloat(di1));
+                }
+            }
+        }
+
+        return v;
+    }
+
+    /**
+     * Interpolate value by elevation index, azimuth and distance
+     *
+     * @param ei Elevation index
+     * @param a Azimuth value
+     * @param r Distance value
+     * @return Data value
+     */
+    public float interpolateValue(int ei, float a, float r) {
+        List<Array> sData = this.data.get(ei);
+        int[] aziIndices = getAzimuthIndices(ei, a);
+        int ai1 = aziIndices[0];
+        int ai2 = aziIndices[1];
+        float v = interpolateValue(ei, ai1, r);
+        if (ai2 != ai1) {
+            float v2 = interpolateValue(ei, ai2, r);
+            if (Float.isNaN(v)) {
+                v = v2;
+            } else {
+                if (!Float.isNaN(v2)) {
+                    List<Float> azi = this.azimuth.get(ei);
+                    v = v + (v2 - v) * (a - azi.get(ai1)) / (azi.get(ai2) - azi.get(ai1));
+                }
+            }
+        }
+
+        if (!Float.isNaN(v))
+            v = (v - this.offset) / this.scale;
+
+        return v;
+    }
+
+    /**
+     * Interpolate value by elevation, azimuth and distance - linear interpolate
+     *
+     * @param e Elevation value
+     * @param a Azimuth value
+     * @param r Distance value
+     * @return Data value
+     */
+    public float interpolateValue(float e, float a, float r) {
+        int[] scanIdx = getScanIndices(e);
+        if (scanIdx[0] < 0) {
+            return Float.NaN;
+        }
+
+        int ei1 = scanIdx[0];
+        int ei2 = scanIdx[1];
+        float v = interpolateValue(ei1, a, r);
+        if (ei2 != ei1) {
+            float v2 = interpolateValue(ei2, a, r);
+            if (Float.isNaN(v)) {
+                v = v2;
+            } else {
+                if (!Float.isNaN(v2)) {
+                    v = v + (v2 - v) * (e - fixedElevation.get(ei1)) / (fixedElevation.get(ei2) -
+                            fixedElevation.get(ei1));
+                }
+            }
         }
 
         return v;

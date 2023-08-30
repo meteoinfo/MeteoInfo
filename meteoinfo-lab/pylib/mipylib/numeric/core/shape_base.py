@@ -29,7 +29,7 @@ def stack(arrays, axis=0):
     See Also
     --------
     concatenate : Join a sequence of arrays along an existing axis.
-    block : Assemble an nd-array from nested lists of blocks.
+    block : Assemble a nd-array from nested lists of blocks.
     split : Split array into a list of multiple sub-arrays of equal size.
 
     Examples

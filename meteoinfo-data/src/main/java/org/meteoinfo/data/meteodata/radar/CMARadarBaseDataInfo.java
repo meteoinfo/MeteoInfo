@@ -148,6 +148,15 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         return null;
     }
 
+    /**
+     * Is a radial record is in velocity group or not
+     * @param record The radial record
+     * @return Velocity group or not
+     */
+    public boolean isVelocityGroup(RadialRecord record) {
+        return velocityGroup.contains(record.product);
+    }
+
     @Override
     public boolean isValidFile(RandomAccessFile raf) {
         try {
@@ -307,6 +316,9 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
                 for (int i = 0; i < radialHeader.momentNumber; i++) {
                     MomentHeader momentHeader = new MomentHeader(raf);
                     String product = this.productMap.get(momentHeader.dataType);
+                    /*if (product.equals("dBZ")) {
+                        System.out.printf("scale: %d; offset: %d\n", momentHeader.scale, momentHeader.offset);
+                    }*/
                     RadialRecord record;
                     if (this.recordMap.containsKey(product)) {
                         record = this.recordMap.get(product);
@@ -322,9 +334,15 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
                         record.elevation.add(new ArrayList<>());
                         record.azimuth.add(new ArrayList<>());
                         record.azimuthMinIndex.add(0);
-                        record.disResolution.add(cutConfigs.get(radialHeader.elevationNumber - 1).logResolution);
-                        record.distance.add(ArrayUtil.arrayRange1(0, momentHeader.dataLength / momentHeader.binLength,
-                                cutConfigs.get(radialHeader.elevationNumber - 1).logResolution));
+                        if (isVelocityGroup(record)) {
+                            record.disResolution.add(cutConfigs.get(radialHeader.elevationNumber - 1).dopplerResolution);
+                            record.distance.add(ArrayUtil.arrayRange1(0, momentHeader.dataLength / momentHeader.binLength,
+                                    cutConfigs.get(radialHeader.elevationNumber - 1).dopplerResolution));
+                        } else {
+                            record.disResolution.add(cutConfigs.get(radialHeader.elevationNumber - 1).logResolution);
+                            record.distance.add(ArrayUtil.arrayRange1(0, momentHeader.dataLength / momentHeader.binLength,
+                                    cutConfigs.get(radialHeader.elevationNumber - 1).logResolution));
+                        }
                         record.newScanData();
                     }
                     record.elevation.get(record.elevation.size() - 1).add(radialHeader.elevation);
@@ -613,13 +631,13 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
                         Array array = arrays.get(i);
                         for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
                             if (j < array.getSize())
-                                iter.setObjectNext(array.getObject(j));
+                                iter.setFloatNext(array.getFloat(j));
                             else
-                                iter.setObjectNext(Float.NaN);
+                                iter.setFloatNext(Float.NaN);
                         }
                     } else {
                         for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
-                            iter.setObjectNext(Float.NaN);
+                            iter.setFloatNext(Float.NaN);
                         }
                     }
                 }
@@ -739,6 +757,159 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
     @Override
     public List<Attribute> getGlobalAttributes() {
         return this.attributes;
+    }
+
+    /**
+     * Read grid ppi data
+     * @param varName Variable name
+     * @param scanIdx Scan index
+     * @param xa X coordinates array
+     * @param ya Y coordinates array
+     * @param h Radar height
+     * @return Grid ppi data
+     */
+    public Array readGridData(String varName, int scanIdx, Array xa, Array ya, Float h) {
+        RadialRecord record = this.recordMap.get(varName);
+        if (h == null) {
+            h = (float) siteConfig.antennaHeight;
+        }
+        Array[] rr = Transform.cartesianToAntennaElevation(xa, ya, record.fixedElevation.get(scanIdx), h);
+        Array azimuth = rr[0];
+        Array ranges = rr[1];
+        Array data = Array.factory(DataType.FLOAT, xa.getShape());
+        IndexIterator iterA = azimuth.getIndexIterator();
+        IndexIterator iterR = ranges.getIndexIterator();
+        IndexIterator iterData = data.getIndexIterator();
+        float v;
+        while (iterData.hasNext()) {
+            v = record.interpolateValue(scanIdx, iterA.getFloatNext(), iterR.getFloatNext());
+            iterData.setFloatNext(v);
+        }
+
+        return data;
+    }
+
+    /**
+     * Read CR data
+     * @param varName Variable name
+     * @param xa X coordinates array - 2D
+     * @param ya Y coordinates array - 2D
+     * @param h Radar height
+     * @return CR data
+     */
+    public Array getCRData(String varName, Array xa, Array ya, Float h) {
+        RadialRecord record = this.recordMap.get(varName);
+        int nScan = record.getScanNumber();
+        if (h == null) {
+            h = (float) siteConfig.antennaHeight;
+        }
+
+        int[] shape = xa.getShape();
+        int ny = shape[0];
+        int nx = shape[1];
+        Array data = Array.factory(DataType.FLOAT, shape);
+        Index2D index2D = (Index2D) data.getIndex();
+        float v;
+        for (int s = 0; s < nScan; s++) {
+            Array[] rr = Transform.cartesianToAntennaElevation(xa, ya, record.fixedElevation.get(s), h);
+            Array azimuth = rr[0];
+            Array ranges = rr[1];
+            IndexIterator iterA = azimuth.getIndexIterator();
+            IndexIterator iterR = ranges.getIndexIterator();
+            if (s == 0) {
+                for (int i = 0; i < ny; i++) {
+                    for (int j = 0; j < nx; j++) {
+                        v = record.interpolateValue(s, iterA.getFloatNext(), iterR.getFloatNext());
+                        data.setFloat(index2D.set(i, j), v);
+                    }
+                }
+            } else {
+                float v1;
+                for (int i = 0; i < ny; i++) {
+                    for (int j = 0; j < nx; j++) {
+                        v = record.interpolateValue(s, iterA.getFloatNext(), iterR.getFloatNext());
+                        index2D.set(i, j);
+                        v1 = data.getFloat(index2D);
+                        if (Float.isNaN(v1) || (v > v1))
+                            data.setFloat(index2D, v);
+                    }
+                }
+            }
+        }
+
+        return data;
+    }
+
+    /**
+     * Read CAPPI data
+     * @param varName Variable name
+     * @param xa X coordinates array
+     * @param ya Y coordinates array
+     * @param z Z coordinates value
+     * @param h Radar height
+     * @return Grid ppi data
+     */
+    public Array getCAPPIData(String varName, Array xa, Array ya, float z, Float h) {
+        RadialRecord record = this.recordMap.get(varName);
+        if (h == null) {
+            h = (float) siteConfig.antennaHeight;
+        }
+        Array[] rr = Transform.cartesianToAntenna(xa, ya, z, h);
+        Array azimuth = rr[0];
+        Array ranges = rr[1];
+        Array elevation = rr[2];
+        Array data = Array.factory(DataType.FLOAT, xa.getShape());
+        IndexIterator iterA = azimuth.getIndexIterator();
+        IndexIterator iterR = ranges.getIndexIterator();
+        IndexIterator iterE = elevation.getIndexIterator();
+        IndexIterator iterData = data.getIndexIterator();
+        float v;
+        while (iterData.hasNext()) {
+            v = record.interpolateValue(iterE.getFloatNext(), iterA.getFloatNext(), iterR.getFloatNext());
+            iterData.setFloatNext(v);
+        }
+
+        return data;
+    }
+
+    /**
+     * Read grid 3d data
+     * @param varName Variable name
+     * @param xa X coordinates array
+     * @param ya Y coordinates array
+     * @param z Z coordinates array
+     * @param h Radar height
+     * @return Grid ppi data
+     */
+    public Array getGrid3DData(String varName, Array xa, Array ya, Array za, Float h) {
+        RadialRecord record = this.recordMap.get(varName);
+        if (h == null) {
+            h = (float) siteConfig.antennaHeight;
+        }
+
+        int nz = (int) za.getSize();
+        int[] shape2D = xa.getShape();
+        int[] shape3D = new int[]{nz, shape2D[0], shape2D[1]};
+        Array data = Array.factory(DataType.FLOAT, shape3D);
+        IndexIterator iterData = data.getIndexIterator();
+        IndexIterator iterZ = za.getIndexIterator();
+        while(iterZ.hasNext()) {
+            float z = iterZ.getFloatNext();
+            Array[] rr = Transform.cartesianToAntenna(xa, ya, z, h);
+            Array azimuth = rr[0];
+            Array ranges = rr[1];
+            Array elevation = rr[2];
+            IndexIterator iterA = azimuth.getIndexIterator();
+            IndexIterator iterR = ranges.getIndexIterator();
+            IndexIterator iterE = elevation.getIndexIterator();
+            float v;
+            while (iterA.hasNext()) {
+                v = record.interpolateValue(iterE.getFloatNext(), iterA.getFloatNext(), iterR.getFloatNext());
+                iterData.setFloatNext(v);
+            }
+        }
+
+        return data;
     }
 
     /**

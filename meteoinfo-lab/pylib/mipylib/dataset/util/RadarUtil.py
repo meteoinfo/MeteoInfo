@@ -41,7 +41,7 @@ def antenna_to_cartesian(distance, azimuth, elevation, h=None):
         z = np.empty((ns,na,nd))
         for i in range(ns):
             dis, azi = np.meshgrid(distance, azimuth[i])
-            if elevation.ndim   == 1:
+            if elevation.ndim == 1:
                 ele = elevation[i]
             else:
                 ele = elevation[i].reshape(na, 1).copy()

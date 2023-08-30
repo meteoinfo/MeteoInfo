@@ -207,8 +207,10 @@ public class Transform {
     public static double[] cartesianToAntenna(float x, float y, float z, float h) {
         double ranges = Math.sqrt(Math.pow(R + h, 2) + Math.pow(R + z, 2) - 2 * (R + h) * (R + z) *
                 Math.cos(Math.sqrt(x * x + y * y)  / R));
-        double elevation = Math.acos((R + z) * Math.sin(Math.sqrt(x * x + y * y) / R) / ranges) *
-                180. / Math.PI;
+        //double elevation = Math.acos((R + z) * Math.sin(Math.sqrt(x * x + y * y) / R) / ranges) *
+        //        180. / Math.PI;
+        double elevation = (Math.acos(((R + h) * (R + h) + ranges * ranges - (R + z) * (R + z)) /
+                (2 * (R + h) * ranges)) - Math.PI / 2) * 180. / Math.PI;
         double azimuth = xyToAzimuth(x, y);
 
         return new double[]{azimuth, ranges, elevation};
@@ -243,5 +245,80 @@ public class Transform {
         }
 
         return new Array[]{azimuth, ranges, elevation};
+    }
+
+    /**
+     * Convert cartesian coordinate to antenna coordinate
+     * @param xa x coordinate array in meters
+     * @param ya y coordinate array in meters
+     * @param z z coordinate value in meters
+     * @param h Altitude of the instrument, above sea level, units:m
+     * @return Antenna coordinate from the radar
+     */
+    public static Array[] cartesianToAntenna(Array xa, Array ya, float z, float h) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+
+        Array ranges = Array.factory(DataType.DOUBLE, xa.getShape());
+        Array azimuth = Array.factory(DataType.DOUBLE, xa.getShape());
+        Array elevation = Array.factory(DataType.DOUBLE, xa.getShape());
+        float x, y;
+
+        for (int i = 0; i < xa.getSize(); i++) {
+            x = xa.getFloat(i);
+            y = ya.getFloat(i);
+            double[] rr = cartesianToAntenna(x, y, z, h);
+            azimuth.setDouble(i, rr[0]);
+            ranges.setDouble(i, rr[1]);
+            elevation.setDouble(i, rr[2]);
+        }
+
+        return new Array[]{azimuth, ranges, elevation};
+    }
+
+    /**
+     * Convert cartesian coordinate to antenna coordinate
+     * @param x x coordinate in meters
+     * @param y y coordinate in meters
+     * @param e Elevation angle of the radar in radians
+     * @param h Altitude of the instrument, above sea level, units:m
+     * @return Antenna coordinate from the radar - azimuth, range and z
+     */
+    public static double[] cartesianToAntennaElevation(float x, float y, float e, float h) {
+        double s = Math.sqrt(x * x + y * y);
+        double range = Math.tan(s / R) * (R + h) * Math.cosh(e);
+        double z = (R + h) / Math.cos(e + s/R) * Math.cos(e) - R;
+        double azimuth = xyToAzimuth(x, y);
+
+        return new double[]{azimuth, range, z};
+    }
+
+    /**
+     * Convert cartesian coordinate to antenna coordinate
+     * @param xa x coordinate array in meters
+     * @param ya y coordinate array in meters
+     * @param e Elevation angle of the radar in radians
+     * @param h Altitude of the instrument, above sea level, units:m
+     * @return Antenna coordinate from the radar - azimuth, range and z
+     */
+    public static Array[] cartesianToAntennaElevation(Array xa, Array ya, float e, float h) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+
+        Array ranges = Array.factory(DataType.DOUBLE, xa.getShape());
+        Array azimuth = Array.factory(DataType.DOUBLE, xa.getShape());
+        Array za = Array.factory(DataType.DOUBLE, xa.getShape());
+        float x, y, z;
+
+        for (int i = 0; i < xa.getSize(); i++) {
+            x = xa.getFloat(i);
+            y = ya.getFloat(i);
+            double[] rr = cartesianToAntennaElevation(x, y, e, h);
+            azimuth.setDouble(i, rr[0]);
+            ranges.setDouble(i, rr[1]);
+            za.setDouble(i, rr[2]);
+        }
+
+        return new Array[]{azimuth, ranges, za};
     }
 }

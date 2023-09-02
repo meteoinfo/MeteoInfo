@@ -5,3 +5,4 @@ target/
 **/.settings/*
 .classpath
 .project
+.flattened-pom.xml

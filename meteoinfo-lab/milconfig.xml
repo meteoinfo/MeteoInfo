@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\miml">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\no_opengl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\radar">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\complex"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
@@ -11,24 +9,22 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d_geo_to_nc.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\grid3d_to_nc.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\test_plot_grid_3d_nc.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d_geo_to_nc.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\grid3d_to_nc.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\test_plot_grid_3d_nc.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster\dbscan_1.py"/>
     </RecentFiles>
   </File>
   <Font>

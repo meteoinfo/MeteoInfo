@@ -95,9 +95,10 @@ class RadarDataFile(DimDataFile):
 
         :return: (*array*) Grid 3d data.
         """
-        xg, yg = np.meshgrid(x, y)
+        if x.ndim == 1:
+            x, y = np.meshgrid(x, y)
 
-        r = self.datainfo.getGrid3DData(product, xg._array, yg._array, z._array, h)
+        r = self.datainfo.getGrid3DData(product, x._array, y._array, z._array, h)
         return np.array(r)
 
     def get_vcs_data(self, product, start_point, end_point):

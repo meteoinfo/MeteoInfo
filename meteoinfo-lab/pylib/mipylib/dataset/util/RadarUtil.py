@@ -3,7 +3,8 @@ import mipylib.numeric as np
 from org.meteoinfo.data.meteodata.radar import Transform
 
 
-__all__ = ['antenna_to_cartesian','antenna_to_geographic']
+__all__ = ['antenna_to_cartesian','antenna_to_geographic','get_aeqd_projection',
+           'geographic_to_cartesian','cartesian_to_geographic']
 
 
 def antenna_to_cartesian(distance, azimuth, elevation, h=None):
@@ -57,12 +58,12 @@ def antenna_to_cartesian(distance, azimuth, elevation, h=None):
 
         return x, y, z
 
-def antenna_to_geographic(lon, lat, distance, azimuth, elevation, h=None):
+def antenna_to_geographic(rlon, rlat, distance, azimuth, elevation, h=None):
     """
     Convert antenna coordinate to geographic (longitude/latitude) coordinate.
 
-    :param lon: (*float*) Longitude of the radar.
-    :param lat: (*float*) Latitude of the radar.
+    :param rlon: (*float*) Longitude of the radar.
+    :param rlat: (*float*) Latitude of the radar.
     :param distance: (*array*) Distances to the center of the radar gates (bins) in meters.
     :param azimuth: (*array*) Azimuth angle of the radar in degrees.
     :param elevation: (*array*) Elevation angle of the radar in degrees.
@@ -71,7 +72,45 @@ def antenna_to_geographic(lon, lat, distance, azimuth, elevation, h=None):
     :return: Geographic coordinate.
     """
     x, y, z = antenna_to_cartesian(distance, azimuth, elevation, h)
-    proj = geolib.projinfo(proj='aeqd', lon_0=lon, lat_0=lat)
-    rlon, rlat = geolib.project(x, y, fromproj=proj)
+    lon, lat = cartesian_to_geographic(rlon, rlat, x, y)
 
-    return rlon, rlat, z
+    return lon, lat, z
+
+def get_aeqd_projection(rlon, rlat):
+    """
+    Get azimuth equidistant projection.
+
+    :param rlon: (*float*) Radar longitude.
+    :param rlat: (*float*) Radar latitude.
+
+    :return: Azimuth equidistant projection.
+    """
+    return geolib.projinfo(proj='aeqd', lon_0=rlon, lat_0=rlat)
+
+def geographic_to_cartesian(rlon, rlat, lon, lat):
+    """
+    Convert cartesian coordinates to geographic coordinates.
+
+    :param rlon: (*float*) Radar longitude.
+    :param rlat: (*float*) Radar latitude.
+    :param lon: (*array*) Longitude coordinates in degrees.
+    :param lat: (*array*) Latitude coordinates in degrees.
+
+    :return: Cartesian coordinates in meters from the radar (x, y).
+    """
+    proj = get_aeqd_projection(rlon, rlat)
+    return geolib.project(lon, lat, toproj=proj)
+
+def cartesian_to_geographic(rlon, rlat, x, y):
+    """
+    Convert geographic coordinates to cartesian coordinates.
+
+    :param rlon: (*float*) Radar longitude.
+    :param rlat: (*float*) Radar latitude.
+    :param x: (*array*) X coordinates in meters.
+    :param y: (*array*) Y coordinates in meters.
+
+    :return: Cartesian coordinates in meters from the radar (x, y).
+    """
+    proj = get_aeqd_projection(rlon, rlat)
+    return geolib.project(x, y, fromproj=proj)

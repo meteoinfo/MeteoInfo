@@ -130,6 +130,9 @@ public class MapGLPlot extends GLPlot {
                     this.drawGraphics(gl, mapGridLine.getLatitudeLines());
                 }
             }
+            if (this.lighting.isStarted()) {
+                this.lighting.stop(gl);
+            }
         }
     }
 

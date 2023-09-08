@@ -1021,29 +1021,42 @@ class MapAxes(Axes):
             else:
                 ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
-        
-        if a.size == ls.getBreakNum() and ls.getLegendType() == LegendType.UNIQUE_VALUE:
-            layer = DrawMeteoData.createSTPointLayer_Unique(a._array, x._array, y._array, ls, 'layer', 'data')
-        else:
-            layer = DrawMeteoData.createSTPointLayer(a._array, x._array, y._array, ls, 'layer', 'data')
-        
+
         proj = kwargs.pop('proj', None)
-        if not proj is None:
-            layer.setProjInfo(proj)
-        avoidcoll = kwargs.pop('avoidcoll', None)
-        if not avoidcoll is None:
-            layer.setAvoidCollision(avoidcoll)
-        
-        # Add layer
-        isadd = kwargs.pop('isadd', True)
-        if isadd:
-            zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
-        
-        return MILayer(layer)
+        aslayer = kwargs.pop('aslayer', True)
+        if aslayer:
+            if a.size == ls.getBreakNum() and ls.getLegendType() == LegendType.UNIQUE_VALUE:
+                layer = DrawMeteoData.createSTPointLayer_Unique(a._array, x._array, y._array, ls, 'layer', 'data')
+            else:
+                layer = DrawMeteoData.createSTPointLayer(a._array, x._array, y._array, ls, 'layer', 'data')
+
+            if not proj is None:
+                layer.setProjInfo(proj)
+            avoidcoll = kwargs.pop('avoidcoll', None)
+            if not avoidcoll is None:
+                layer.setAvoidCollision(avoidcoll)
+
+            # Add layer
+            isadd = kwargs.pop('isadd', True)
+            if isadd:
+                zorder = kwargs.pop('zorder', None)
+                select = kwargs.pop('select', True)
+                self.add_layer(layer, zorder, select)
+                self._axes.setDrawExtent(layer.getExtent().clone())
+                self._axes.setExtent(layer.getExtent().clone())
+
+            return MILayer(layer)
+        else:
+            # Create graphics
+            if a.ndim == 0:
+                graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
+            else:
+                graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
+
+            self.add_graphic(graphics, proj)
+            self._axes.setAutoExtent()
+
+            return graphics
 
     def text(self, x, y, s, **kwargs):
         """

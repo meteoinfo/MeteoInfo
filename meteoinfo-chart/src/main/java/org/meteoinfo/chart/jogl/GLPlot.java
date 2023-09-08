@@ -2499,7 +2499,6 @@ public class GLPlot extends Plot {
     protected void drawGraphics(GL2 gl, Graphic graphic) {
         boolean lightEnabled = this.lighting.isEnable();
         if (graphic instanceof GraphicCollection3D) {
-            boolean usingLight = lightEnabled && ((GraphicCollection3D)graphic).isUsingLight();
             if (lightEnabled && !((GraphicCollection3D)graphic).isUsingLight()) {
                 this.lighting.stop(gl);
             }

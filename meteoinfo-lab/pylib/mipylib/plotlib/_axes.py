@@ -1469,7 +1469,7 @@ class Axes(object):
         :param c: (*Color or array*) Color of the points. Or z values.
         :param alpha: (*int*) The alpha blending value, between 0 (transparent) and 1 (opaque).
         :param marker: (*string*) Marker of the points.
-        :param label: (*string*) Label of the points series.
+        :param label: (*string*) Label of the point series.
         :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
             points to draw, in increasing order.
         

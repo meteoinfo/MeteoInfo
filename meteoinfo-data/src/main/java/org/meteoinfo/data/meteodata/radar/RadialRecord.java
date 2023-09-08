@@ -445,6 +445,32 @@ public class RadialRecord {
     }
 
     /**
+     * Get scan indices
+     *
+     * @param e Elevation value
+     * @param halfBeamWidth Half beam width
+     * @return Scan indices - 2 elements
+     */
+    public int[] getScanIndices(float e, float halfBeamWidth) {
+        if (e < fixedElevation.get(0) - halfBeamWidth || e > fixedElevation.get(fixedElevation.size() - 1) +
+                halfBeamWidth) {
+            return new int[]{-1, -1};
+        } else if (e <= fixedElevation.get(0)) {
+            return new int[]{0, 0};
+        } else if (e >= fixedElevation.get(fixedElevation.size() - 1)) {
+            return new int[]{fixedElevation.size() - 1, fixedElevation.size() - 1};
+        }
+
+        for (int i = 1; i < fixedElevation.size(); i++) {
+            if (e <= fixedElevation.get(i)) {
+                return new int[]{i - 1, i};
+            }
+        }
+
+        return new int[]{-1, -1};
+    }
+
+    /**
      * Get value by elevation index, azimuth and distance
      *
      * @param ei Elevation index
@@ -559,6 +585,39 @@ public class RadialRecord {
      */
     public float interpolateValue(float e, float a, float r) {
         int[] scanIdx = getScanIndices(e);
+        if (scanIdx[0] < 0) {
+            return Float.NaN;
+        }
+
+        int ei1 = scanIdx[0];
+        int ei2 = scanIdx[1];
+        float v = interpolateValue(ei1, a, r);
+        if (ei2 != ei1) {
+            float v2 = interpolateValue(ei2, a, r);
+            if (Float.isNaN(v)) {
+                v = v2;
+            } else {
+                if (!Float.isNaN(v2)) {
+                    v = v + (v2 - v) * (e - fixedElevation.get(ei1)) / (fixedElevation.get(ei2) -
+                            fixedElevation.get(ei1));
+                }
+            }
+        }
+
+        return v;
+    }
+
+    /**
+     * Interpolate value by elevation, azimuth and distance - linear interpolate
+     *
+     * @param e Elevation value
+     * @param a Azimuth value
+     * @param r Distance value
+     * @param halfBeamWidth Half beam width
+     * @return Data value
+     */
+    public float interpolateValue(float e, float a, float r, float halfBeamWidth) {
+        int[] scanIdx = getScanIndices(e, halfBeamWidth);
         if (scanIdx[0] < 0) {
             return Float.NaN;
         }

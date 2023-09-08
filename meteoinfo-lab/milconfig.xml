@@ -1,30 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
   <Path OpenPath="D:\Working\MIScript\Jython\mis\io\radar">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\complex"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\cluster"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d_geo_to_nc.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\test_plot_grid_3d_nc.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\patch\wind_circle_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_4.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d_geo_to_nc.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\test_plot_grid_3d_nc.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\patch\wind_circle_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_4.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -32,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1365,791"/>
 </MeteoInfo>

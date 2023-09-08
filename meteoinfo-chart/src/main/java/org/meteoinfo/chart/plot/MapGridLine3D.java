@@ -28,6 +28,7 @@ public class MapGridLine3D extends MapGridLine {
 
     protected void updateLongitudeLines() {
         this.longitudeLines = new GraphicCollection3D();
+        ((GraphicCollection3D) this.longitudeLines).setUsingLight(false);
         double latMin = this.lonLatExtent.minY;
         double latMax = this.lonLatExtent.maxY;
         double delta = this.lonLatExtent.getHeight() / (this.nPoints - 1);
@@ -50,6 +51,7 @@ public class MapGridLine3D extends MapGridLine {
 
     protected void updateLatitudeLines() {
         this.latitudeLines = new GraphicCollection3D();
+        ((GraphicCollection3D) this.latitudeLines).setUsingLight(false);
         double lonMin = this.lonLatExtent.minX;
         double lonMax = this.lonLatExtent.maxX;
         if (lonMin < - 170) {

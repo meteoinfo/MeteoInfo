@@ -679,81 +679,6 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         }
     }
 
-    public Array read_bak(String varName, int[] origin, int[] size, int[] stride) {
-        try {
-            int idx = varName.lastIndexOf("_s");
-            int scanIdx = Integer.parseInt(varName.substring(idx + 2)) - 1;
-            String product = varName.substring(0, idx);
-            boolean isXYZ = product.startsWith("xyz_");
-            if (isXYZ) {
-                product = product.substring(4);
-            }
-            RadialRecord record = this.recordMap.get(product);
-
-            Array dataArray;
-            if (isXYZ) {
-                dataArray = record.getXYZ(scanIdx).section(origin, size, stride).copy();
-            } else {
-                List<Array> arrays = record.getDataArray(scanIdx);
-                Section section = new Section(origin, size, stride);
-                dataArray = Array.factory(record.getDataType(), section.getShape());
-                Range yRange = section.getRange(0);
-                Range xRange = section.getRange(1);
-                IndexIterator iter = dataArray.getIndexIterator();
-                for (int i = yRange.first(); i <= yRange.last(); i += yRange.stride()) {
-                    if (i < arrays.size()) {
-                        Array array = arrays.get(i);
-                        for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
-                            if (j < array.getSize())
-                                iter.setObjectNext(array.getObject(j));
-                            else
-                                iter.setObjectNext(Float.NaN);
-                        }
-                    } else {
-                        for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
-                            iter.setObjectNext(Float.NaN);
-                        }
-                    }
-                }
-
-                Variable variable = this.getVariable(varName);
-                Attribute aoAttr = variable.findAttribute("add_offset");
-                Attribute sfAttr = variable.findAttribute("scale_factor");
-                if (aoAttr != null || sfAttr != null) {
-                    Number add_offset = 0.f;
-                    Number scale_factor = 1.f;
-                    if (aoAttr != null) {
-                        switch (aoAttr.getDataType()) {
-                            case DOUBLE:
-                                add_offset = aoAttr.getValues().getDouble(0);
-                                break;
-                            case FLOAT:
-                            case INT:
-                                add_offset = aoAttr.getValues().getFloat(0);
-                                break;
-                        }
-                    }
-                    if (sfAttr != null) {
-                        switch (sfAttr.getDataType()) {
-                            case DOUBLE:
-                                scale_factor = sfAttr.getValues().getDouble(0);
-                                break;
-                            case FLOAT:
-                            case INT:
-                                scale_factor = sfAttr.getValues().getFloat(0);
-                                break;
-                        }
-                    }
-                    dataArray = ArrayMath.div(ArrayMath.sub(dataArray, add_offset), scale_factor);
-                }
-            }
-
-            return dataArray;
-        } catch (InvalidRangeException e) {
-            return null;
-        }
-    }
-
     @Override
     public List<Attribute> getGlobalAttributes() {
         return this.attributes;
@@ -864,8 +789,10 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         IndexIterator iterE = elevation.getIndexIterator();
         IndexIterator iterData = data.getIndexIterator();
         float v;
+        float halfBeamWidth = this.siteConfig.beamWidthVert / 2;
         while (iterData.hasNext()) {
-            v = record.interpolateValue(iterE.getFloatNext(), iterA.getFloatNext(), iterR.getFloatNext());
+            v = record.interpolateValue(iterE.getFloatNext(), iterA.getFloatNext(),
+                    iterR.getFloatNext(), halfBeamWidth);
             iterData.setFloatNext(v);
         }
 
@@ -893,6 +820,7 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         Array data = Array.factory(DataType.FLOAT, shape3D);
         IndexIterator iterData = data.getIndexIterator();
         IndexIterator iterZ = za.getIndexIterator();
+        float halfBeamWidth = this.siteConfig.beamWidthVert / 2;
         while(iterZ.hasNext()) {
             float z = iterZ.getFloatNext();
             Array[] rr = Transform.cartesianToAntenna(xa, ya, z, h);
@@ -904,7 +832,8 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
             IndexIterator iterE = elevation.getIndexIterator();
             float v;
             while (iterA.hasNext()) {
-                v = record.interpolateValue(iterE.getFloatNext(), iterA.getFloatNext(), iterR.getFloatNext());
+                v = record.interpolateValue(iterE.getFloatNext(), iterA.getFloatNext(),
+                        iterR.getFloatNext(), halfBeamWidth);
                 iterData.setFloatNext(v);
             }
         }

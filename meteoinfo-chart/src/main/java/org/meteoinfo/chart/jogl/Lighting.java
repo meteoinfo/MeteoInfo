@@ -19,6 +19,7 @@ public class Lighting {
 
     private boolean enable;
     private int light;
+    private boolean started;
     float[] ambient;
     float[] diffuse;
     float[] specular;
@@ -42,6 +43,7 @@ public class Lighting {
      */
     public Lighting(boolean far) {        
         this.enable = false;
+        this.started = false;
         this.light = GL2.GL_LIGHT1;
         //this.ambient = new float[]{0.f, 0.f, 0.f, 1.f};
         this.ambient = new float[]{0.2f, 0.2f, 0.2f, 1.f};
@@ -74,6 +76,15 @@ public class Lighting {
      */
     public void setEnable(boolean value) {
         this.enable = value;
+    }
+
+    /**
+     * Get lighting is started or not
+     *
+     * @return Lighting is started or not
+     */
+    public boolean isStarted() {
+        return this.started;
     }
 
     /**
@@ -437,6 +448,8 @@ public class Lighting {
         gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, materialDiffuse, 0);
         gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, materialSpecular, 0);
         gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, materialShininess);
+
+        this.started = true;
     }
     
     /**
@@ -449,5 +462,7 @@ public class Lighting {
         //gl.glDisable(GL2.GL_AUTO_NORMAL);
         //gl.glDisable(GLLightingFunc.GL_NORMALIZE);
         //gl.glPopAttrib();
+
+        this.started = false;
     }
 }

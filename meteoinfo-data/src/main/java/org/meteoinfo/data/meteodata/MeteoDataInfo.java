@@ -478,7 +478,7 @@ public class MeteoDataInfo {
                 di = new NetCDFDataInfo();
             } else if (ARLDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
                 di = new ARLDataInfo();
-            } else if (CMARadarBaseDataInfo.class.getDeclaredConstructor().newInstance().canOpen(fileName)) {
+            } else if (CMARadarBaseDataInfo.canOpen(fileName)) {
                 di = new CMARadarBaseDataInfo();
             } else {
                 di = MICAPSDataInfo.getDataInfo(raf);

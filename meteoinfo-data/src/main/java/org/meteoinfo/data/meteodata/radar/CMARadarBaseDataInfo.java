@@ -174,16 +174,23 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         }
     }
 
-    public boolean canOpen(String fileName) {
+    /**
+     * Check the data file format
+     * @param fileName Data file name
+     * @return Boolean
+     */
+    public static boolean canOpen(String fileName) {
         try {
             byte[] bytes = new byte[4];
             if (fileName.endsWith("bz2")) {
                 BZip2CompressorInputStream inputStream = new BZip2CompressorInputStream(Files.newInputStream(Paths.get(fileName)));
                 inputStream.read(bytes);
+                inputStream.close();
             } else {
                 RandomAccessFile raf = new RandomAccessFile(fileName, "r");
                 raf.seek(0);
                 raf.read(bytes);
+                raf.close();
             }
             int magic = DataConvert.bytes2Int(bytes, ByteOrder.LITTLE_ENDIAN);
             if (magic == 1297371986) {

@@ -22,13 +22,13 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\patch\wind_circle_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_4.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\patch\wind_circle_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_4.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1365,791"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

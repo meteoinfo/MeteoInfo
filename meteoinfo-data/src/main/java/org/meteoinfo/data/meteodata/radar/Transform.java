@@ -25,6 +25,20 @@ public class Transform {
     }
 
     /**
+     * Convert antenna coordinate to cartesian coordinate Z
+     *
+     * @param r Distances to the center of the radar gates (bins) in meters
+     * @param e Elevation angle of the radar in radians
+     * @param h Altitude of the instrument, above sea level, units:m
+     * @return Cartesian Z coordinate in meters from the radar
+     */
+    public static float toCartesianZ(float r, float e, float h) {
+        float z = (float) (Math.pow(Math.pow(r * Math.cos(e), 2) +
+                Math.pow(R + h + r * Math.sin(e), 2), 0.5) - R);
+        return z;
+    }
+
+    /**
      * Convert antenna coordinate to cartesian coordinate
      *
      * @param r Distances to the center of the radar gates (bins) in meters

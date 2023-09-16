@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\radar">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
+  <Path OpenPath="D:\Temp\test\test">
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
@@ -16,19 +15,18 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
+    <RecentFolder Folder="D:\Temp\test\test"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\patch\wind_circle_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_vcs_2.py"/>
+      <OpenedFile File="D:\Temp\test\test\ok_3d.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\patch\wind_circle_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_bin_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_vcs_2.py"/>
+      <RecentFile File="D:\Temp\test\test\ok_3d.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1331,777"/>
 </MeteoInfo>

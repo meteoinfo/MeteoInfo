@@ -89,6 +89,7 @@ def addfile(fname, access='r', dtype='netcdf', keepopen=False, **kwargs):
     :param dtype: (*string*) The data type of the data file. Default is ``netcdf``.
     :param keepopen: (*boolean*) If the file keep open after this function. Default is ``False``. The
         file need to be closed later if ``keepopen`` is ``True``.
+    :param largefile: (*boolean*) Large NetCDF data file or not. Only valid for creating NetCDF data file.
     
     :returns: (*DimDataFile*) Opened file object.
     """

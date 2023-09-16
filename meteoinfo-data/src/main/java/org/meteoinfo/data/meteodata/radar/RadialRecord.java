@@ -487,10 +487,15 @@ public class RadialRecord {
         float v;
         if (disIdx < rData.getSize()) {
             v = rData.getFloat(disIdx);
-            v = (v - this.offset) / this.scale;
+            if (v == this.fillValue) {
+                v = Float.NaN;
+            }
         } else {
             v = Float.NaN;
         }
+
+        if (!Float.isNaN(v))
+            v = (v - this.offset) / this.scale;
 
         return v;
     }

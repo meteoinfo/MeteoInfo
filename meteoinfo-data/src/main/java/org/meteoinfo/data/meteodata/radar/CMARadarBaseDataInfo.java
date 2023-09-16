@@ -323,9 +323,6 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
                 for (int i = 0; i < radialHeader.momentNumber; i++) {
                     MomentHeader momentHeader = new MomentHeader(raf);
                     String product = this.productMap.get(momentHeader.dataType);
-                    /*if (product.equals("dBZ")) {
-                        System.out.printf("scale: %d; offset: %d\n", momentHeader.scale, momentHeader.offset);
-                    }*/
                     RadialRecord record;
                     if (this.recordMap.containsKey(product)) {
                         record = this.recordMap.get(product);
@@ -862,7 +859,7 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         int nScan = record.getScanNumber();
         float halfBeamWidth = this.siteConfig.beamWidthVert / 2;
         float binRes = this.cutConfigs.get(0).logResolution;
-        float height = this.siteConfig.antennaHeight / 1000.f;
+        float height = this.siteConfig.antennaHeight;
         float startEndDistance = (float) Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
         int nPoints = (int) (startEndDistance * 1000 / binRes + 1);
         Array xa = ArrayUtil.lineSpace(startX, endX, nPoints);
@@ -884,8 +881,10 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
                 dis = (float) Math.sqrt(x * x + y * y);
                 azi = aa.getFloat(j);
                 v = record.getValue(i, azi, dis * 1000);
-                z1 = (float) (dis * Math.sin(Math.toRadians(ele - halfBeamWidth))) + height;
-                z2 = (float) (dis * Math.sin(Math.toRadians(ele + halfBeamWidth))) + height;
+                z1 = Transform.toCartesianZ(dis * 1000, (float) Math.toRadians(ele -
+                        halfBeamWidth), height) / 1000.f;
+                z2 = Transform.toCartesianZ(dis * 1000, (float) Math.toRadians(ele +
+                        halfBeamWidth), height) / 1000.f;
                 for (int k = 0; k < 2; k++) {
                     data.setFloat(dataIndex.set(i, k, j), v);
                     meshXY.setFloat(meshXYIndex.set(i, k, j), dis);

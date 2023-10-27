@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Temp\test\test">
-    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\meteoview3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\topology">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
     <RecentFolder Folder="D:\Temp\test\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_vcs_2.py"/>
-      <OpenedFile File="D:\Temp\test\test\ok_3d.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\topology\difference_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_grid_3d.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_vcs_2.py"/>
-      <RecentFile File="D:\Temp\test\test\ok_3d.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\topology\difference_1.py"/>
     </RecentFiles>
   </File>
   <Font>

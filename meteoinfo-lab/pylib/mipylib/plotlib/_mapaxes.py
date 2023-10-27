@@ -230,7 +230,7 @@ class MapAxes(Axes):
         """
         self._axes.setSelectedLayer(layer._layer)
         
-    def add_graphic(self, graphic, proj=None):
+    def add_graphic(self, graphic, proj=None, **kwargs):
         """
         Add a graphic
         

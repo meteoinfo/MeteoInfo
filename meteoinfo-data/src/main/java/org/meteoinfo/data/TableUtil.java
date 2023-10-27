@@ -447,6 +447,9 @@ public class TableUtil {
             case "i":
             case "int":
                 return DataType.INT;
+            case "l":
+            case "long":
+                return DataType.LONG;
             case "f":
             case "float":
                 return DataType.FLOAT;

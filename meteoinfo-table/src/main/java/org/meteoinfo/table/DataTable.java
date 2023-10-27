@@ -236,7 +236,7 @@ public class DataTable {
     }
 
     /**
-     * Set a vlaue by row and column index
+     * Set a value by row and column index
      *
      * @param row Row index
      * @param col Column index

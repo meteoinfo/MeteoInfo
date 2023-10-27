@@ -1388,14 +1388,14 @@ public class VectorLayer extends MapLayer {
      * Edit: Add a shape
      *
      * @param aShape The shape
-     * @param fvalues Field values
+     * @param fieldValues Field values
      * @throws Exception
      */
-    public void editAddShape(Shape aShape, List<Object> fvalues) throws Exception {
+    public void editAddShape(Shape aShape, List<Object> fieldValues) throws Exception {
         int pos = _shapeList.size();
         this.editInsertShape(aShape, pos);
         for (int i = 0; i < this.getFieldNumber(); i++) {
-            this.editCellValue(i, pos, fvalues.get(i));
+            this.editCellValue(i, pos, fieldValues.get(i));
         }
     }
 

@@ -571,8 +571,13 @@ def getlegendscheme(args, min, max, **kwargs):
     ls = kwargs.pop('symbolspec', None)
     if ls is None:
         cmap = getcolormap(**kwargs)
-        if len(args) > 0:
+        level_arg = kwargs.pop('levels', None)
+        if level_arg is None and len(args) > 0:
             level_arg = args[0]
+
+        if level_arg is None:
+            ls = LegendManage.createLegendScheme(min, max, cmap)
+        else:
             if isinstance(level_arg, int):
                 cn = level_arg
                 ls = LegendManage.createLegendScheme(min, max, cn, cmap)
@@ -580,8 +585,7 @@ def getlegendscheme(args, min, max, **kwargs):
                 if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
                 ls = LegendManage.createLegendScheme(min, max, level_arg, cmap)
-        else:
-            ls = LegendManage.createLegendScheme(min, max, cmap)
+
         # ecobj = kwargs.pop('edgecolor', None)
         # if not ecobj is None:
         #     edgecolor = getcolor(ecobj)

@@ -654,6 +654,7 @@ class Axes3D(Axes):
         :param x: (*array_like*) Input x data.
         :param y: (*array_like*) Input y data.
         :param z: (*array_like*) Input z data.
+        :param cdata: (*array_like*) Optional, data for colors.
         :param style: (*string*) Line style for plot.
         
         :returns: Legend breaks of the lines.
@@ -772,12 +773,13 @@ class Axes3D(Axes):
         :param y: (*array_like*) Input y data.
         :param z: (*array_like*) Input z data.
         :param s: (*int*) Size of points.
-        :param c: (*Color*) Color of the points. Or z values.
+        :param c: (*color or array*) Color of the points. Or data values for colors.
         :param alpha: (*int*) The alpha blending value, between 0 (transparent) and 1 (opaque).
         :param marker: (*string*) Marker of the points.
-        :param label: (*string*) Label of the points series.
+        :param label: (*string*) Label of the point series.
         :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level
             points to draw, in increasing order.
+        :param sphere: (*bool*) Draw point as sphere or not. Default is `None` that means `False`.
         
         :returns: Point 3D graphics.
         """        

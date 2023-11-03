@@ -44,8 +44,7 @@ public class RectNearestInterpolator3D extends RectInterpolator3D{
         index.setDim(0, kk);
         index.setDim(1, ii);
         index.setDim(2, jj);
-        double v = va.getDouble(index);
 
-        return v;
+        return va.getDouble(index);
     }
 }

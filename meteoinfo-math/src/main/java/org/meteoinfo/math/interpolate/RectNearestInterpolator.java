@@ -46,4 +46,31 @@ public class RectNearestInterpolator extends RectInterpolator{
 
         return v;
     }
+
+    @Override
+    double interpolate(double x, double y) {
+        int[] xyIdx = gridIndex(xa, ya, x, y);
+        if (xyIdx == null) {
+            return Double.NaN;
+        }
+
+        int i1 = xyIdx[0];
+        int j1 = xyIdx[1];
+        int i2 = i1 + 1;
+        int j2 = j1 + 1;
+
+        double x1 = xa.getDouble(j1);
+        double x2 = xa.getDouble(j2);
+        double y1 = ya.getDouble(i1);
+        double y2 = ya.getDouble(i2);
+        int ii = (y - y1) < (y2 - y) ? i1 : i2;
+        int jj = (x - x1) < (x2 - x) ? j1 : j2;
+
+
+        Index index = va.getIndex();
+        index.setDim(0, ii);
+        index.setDim(1, jj);
+
+        return va.getDouble(index);
+    }
 }

@@ -133,6 +133,8 @@ public abstract class RectInterpolator {
 
     abstract double cellValue(Index index, double x, double y);
 
+    abstract double interpolate(double x, double y);
+
     /**
      * Interpolate
      * @param newX Interpolated x array
@@ -140,29 +142,45 @@ public abstract class RectInterpolator {
      * @return Interpolated result
      */
     public Array interpolate(Array newX, Array newY) {
-        int xn = (int) newX.getSize();
-        int yn = (int) newY.getSize();
-        int[] shape = this.va.getShape();
-        int n = shape.length;
-        shape[n - 1] = xn;
-        shape[n - 2] = yn;
-        double x, y, v;
-        Array r = Array.factory(DataType.DOUBLE, shape);
+        newX = newX.copyIfView();
+        newY = newY.copyIfView();
+        if (this.va.getRank() == 2 && (newY.getSize() == newX.getSize())) {
+            double x, y, v;
+            Array r = Array.factory(DataType.DOUBLE, newX.getShape());
 
-        Index index = r.getIndex();
-        int[] counter;
-        int yi, xi;
-        for (int k = 0; k < r.getSize(); k++) {
-            counter = index.getCurrentCounter();
-            yi = counter[n - 2];
-            xi = counter[n - 1];
-            y = newY.getDouble(yi);
-            x = newX.getDouble(xi);
-            v = cellValue(index, x, y);
-            r.setDouble(index, v);
-            index.incr();
+            for (int k = 0; k < r.getSize(); k++) {
+                y = newY.getDouble(k);
+                x = newX.getDouble(k);
+                v = interpolate(x, y);
+                r.setDouble(k, v);
+            }
+
+            return r;
+        } else {
+            int xn = (int) newX.getSize();
+            int yn = (int) newY.getSize();
+            int[] shape = this.va.getShape();
+            int n = shape.length;
+            shape[n - 1] = xn;
+            shape[n - 2] = yn;
+            double x, y, v;
+            Array r = Array.factory(DataType.DOUBLE, shape);
+
+            Index index = r.getIndex();
+            int[] counter;
+            int yi, xi;
+            for (int k = 0; k < r.getSize(); k++) {
+                counter = index.getCurrentCounter();
+                yi = counter[n - 2];
+                xi = counter[n - 1];
+                y = newY.getDouble(yi);
+                x = newX.getDouble(xi);
+                v = cellValue(index, x, y);
+                r.setDouble(index, v);
+                index.incr();
+            }
+
+            return r;
         }
-
-        return r;
     }
 }

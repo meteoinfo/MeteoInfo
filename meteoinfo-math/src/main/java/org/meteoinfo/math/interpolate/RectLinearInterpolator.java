@@ -1,9 +1,12 @@
 package org.meteoinfo.math.interpolate;
 
 import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RectLinearInterpolator extends RectInterpolator{
@@ -79,5 +82,14 @@ public class RectLinearInterpolator extends RectInterpolator{
         }
 
         return iValue;
+    }
+
+    double interpolate(double x, double y) {
+        List<Array> points = Arrays.asList(this.ya, this.xa);
+        Array xi = Array.factory(DataType.DOUBLE, new int[]{3});
+        xi.setDouble(0, y);
+        xi.setDouble(1, x);
+
+        return ArrayUtil.interpn_s(points, this.va, xi);
     }
 }

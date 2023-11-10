@@ -483,19 +483,22 @@ public class ColorUtil {
      * @return Color
      */
     public static Color createColor(Color sColor, Color eColor, float p) {
-        int sR, sG, sB, eR, eG, eB, r, g, b;
+        int sR, sG, sB, sA, eR, eG, eB, eA, r, g, b, a;
         
         sR = sColor.getRed();
         sG = sColor.getGreen();
         sB = sColor.getBlue();
+        sA = sColor.getAlpha();
         eR = eColor.getRed();
         eG = eColor.getGreen();
         eB = eColor.getBlue();
+        eA = eColor.getAlpha();
         r = (int) (sR + (eR - sR) * p);
         g = (int) (sG + (eG - sG) * p);
-        b = (int) (sB + (eB - sB) * p);        
+        b = (int) (sB + (eB - sB) * p);
+        a = (int) (sA + (eA - sA) * p);
         
-        return new Color(r, g, b);
+        return new Color(r, g, b, a);
     }
     
     /**

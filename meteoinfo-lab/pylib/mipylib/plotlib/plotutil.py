@@ -11,7 +11,8 @@ import datetime
 from org.meteoinfo.geometry.legend import LineStyles, HatchStyle, ColorBreak, PointBreak, PolylineBreak, \
     PolygonBreak, ArrowBreak, ArrowLineBreak, ArrowPolygonBreak, StreamlineBreak, \
     PointStyle, MarkerType, LegendScheme
-from org.meteoinfo.geo.legend import LegendManage
+#from org.meteoinfo.geo.legend import LegendManage
+from org.meteoinfo.geometry.legend import LegendManage
 from org.meteoinfo.common.colors import ColorUtil, ColorMap
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.chart import ChartText

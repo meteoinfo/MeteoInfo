@@ -73,6 +73,7 @@ public class QuiverRender extends JOGLGraphicRender {
         this.quiverNumber = graphics.getNumGraphics();
         PointBreak pb = (PointBreak) graphics.getGraphicN(0).getLegend();
         this.lineWidth = pb.getOutlineSize();
+        updateVertexArrays();
     }
 
     private void updateVertexArrays() {
@@ -90,8 +91,8 @@ public class QuiverRender extends JOGLGraphicRender {
             PointZ sp = (PointZ) shape.getPoint();
             PointZ ep = (PointZ) shape.getEndPoint();
 
-            Vector3f v1 = transform.transform((float) sp.X, (float) sp.Y, (float) sp.Z);
-            Vector3f v2 = transform.transform((float) ep.X, (float) ep.Y, (float) ep.Z);
+            Vector3f v1 = new Vector3f((float) sp.X, (float) sp.Y, (float) sp.Z);
+            Vector3f v2 = new Vector3f((float) ep.X, (float) ep.Y, (float) ep.Z);
             float[] color = pb.getColor().getRGBComponents(null);
             vertexPosition[pi] = v1.x;
             vertexPosition[pi + 1] = v1.y;
@@ -171,8 +172,6 @@ public class QuiverRender extends JOGLGraphicRender {
         super.setTransform((Transform) transform.clone());
 
         if (updateBuffer) {
-            this.updateVertexArrays();
-
             FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
             sizePosition = vertexBuffer.capacity() * Float.BYTES;
 
@@ -220,11 +219,7 @@ public class QuiverRender extends JOGLGraphicRender {
 
     @Override
     public void draw() {
-        gl.glPushMatrix();
-        FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
-        gl.glLoadMatrixf(this.modelViewMatrixR.get(fb));
-
-        if (useShader) {    //  not working now
+         if (useShader) {    //  not working now
             program.use(gl);
             setUniforms();
 
@@ -243,7 +238,7 @@ public class QuiverRender extends JOGLGraphicRender {
                 this.lighting.stop(gl);
             }
             gl.glLineWidth(this.lineWidth * this.dpiScale);
-            gl.glDrawArrays(GL.GL_LINES, 0, quiverNumber);
+            gl.glDrawArrays(GL.GL_LINES, 0, quiverNumber * 2);
             if (lightEnabled) {
                 this.lighting.start(gl);
             }
@@ -274,7 +269,5 @@ public class QuiverRender extends JOGLGraphicRender {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
-
-        gl.glPopMatrix();
     }
 }

@@ -1168,6 +1168,9 @@ public class MIMath {
         if (max == 0) {
             maxE = minE + 2;
         }
+        if (maxE == minE) {
+            maxE = minE + 1;
+        }
 
         List<Double> values = new ArrayList<>();
         double v;
@@ -1175,7 +1178,7 @@ public class MIMath {
             v = Math.pow(10, i);
             if (v < min) {
                 continue;
-            } else if (v > max) {
+            } else if (v > max && values.size() > 1) {
                 break;
             } else {
                 values.add(v);

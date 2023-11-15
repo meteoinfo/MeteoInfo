@@ -86,7 +86,7 @@ public class RectLinearInterpolator extends RectInterpolator{
 
     double interpolate(double x, double y) {
         List<Array> points = Arrays.asList(this.ya, this.xa);
-        Array xi = Array.factory(DataType.DOUBLE, new int[]{3});
+        Array xi = Array.factory(DataType.DOUBLE, new int[]{2});
         xi.setDouble(0, y);
         xi.setDouble(1, x);
 

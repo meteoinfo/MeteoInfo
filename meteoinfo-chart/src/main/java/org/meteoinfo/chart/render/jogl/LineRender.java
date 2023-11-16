@@ -192,10 +192,10 @@ public class LineRender extends JOGLGraphicRender {
                     if (i % interval == 0) {
                         PointZ p2 = ps.get(i);
                         PointZ p1 = ps.get(i - 1);
-                        //v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        //v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
-                        v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
+                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        //v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
+                        //v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
                         slb = (StreamlineBreak) cbc.get(i);
                         if (cylinder == null) {
                             cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
@@ -233,10 +233,10 @@ public class LineRender extends JOGLGraphicRender {
                     if (i % interval == 0) {
                         PointZ p2 = ps.get(i);
                         PointZ p1 = ps.get(i - 1);
-                        //v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        //v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
-                        v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
+                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        //v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
+                        //v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
                         if (cylinder == null) {
                             cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
                                     0, slb.getArrowHeadLength() * 0.02f, 8, 1, true);
@@ -322,8 +322,7 @@ public class LineRender extends JOGLGraphicRender {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 
             if (this.streamline) {
-                if (this.coneVertexPosition == null)
-                    this.updateConeVertex();
+                this.updateConeVertex();
 
                 FloatBuffer coneVertexBuffer = GLBuffers.newDirectFloatBuffer(coneVertexPosition);
                 sizeConePosition = coneVertexBuffer.capacity() * Float.BYTES;
@@ -392,9 +391,9 @@ public class LineRender extends JOGLGraphicRender {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 
             if (this.streamline) {
-                //gl.glPushMatrix();
-                //FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
-                //gl.glLoadMatrixf(this.modelViewMatrixR.get(fb));
+                gl.glPushMatrix();
+                FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
+                gl.glLoadMatrixf(this.modelViewMatrixR.get(fb));
 
                 gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboCone.get(0));
                 gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboCone.get(1));
@@ -416,7 +415,7 @@ public class LineRender extends JOGLGraphicRender {
                 gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
                 gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
 
-                //gl.glPopMatrix();
+                gl.glPopMatrix();
             }
         }
     }

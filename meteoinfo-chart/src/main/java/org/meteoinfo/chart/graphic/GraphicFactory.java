@@ -467,7 +467,6 @@ public class GraphicFactory {
             fixZ = true;
             z = zdata.getDouble(0);
         }
-        System.out.println(cb.getColor().getAlpha());
         if (xdata.getRank() == 1) {
             while (xIter.hasNext()) {
                 x = xIter.getDoubleNext();

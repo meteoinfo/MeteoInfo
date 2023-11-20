@@ -61,6 +61,7 @@ public class Axis implements Cloneable {
     protected boolean inverse;
     protected List<Double> tickLocations;
     protected List<ChartText> tickLabels;
+    protected List<ChartText> fixTickLabels;
     protected boolean autoTick;
     protected boolean minorTickVisible;
     protected int minorTickNum;
@@ -864,6 +865,7 @@ public class Axis implements Cloneable {
             this.tickLocations.add(v.doubleValue());
             this.tickLabels.add(new ChartText(String.valueOf(v), this.tickLabelFont, this.tickColor));
         }
+        this.fixTickLabels = new ArrayList<>(tickLabels);
         this.autoTick = false;
         if (this.tickLocations.size() > 1) {
             this.tickDeltaValue = this.tickLocations.get(1) - this.tickLocations.get(0);
@@ -885,6 +887,7 @@ public class Axis implements Cloneable {
             tick = DataConvert.removeTailingZeros(tick);
             this.tickLabels.add(new ChartText(tick, this.tickLabelFont, this.tickColor));
         }
+        this.fixTickLabels = new ArrayList<>(tickLabels);
         this.autoTick = false;
         if (this.tickLocations.size() > 1) {
             this.tickDeltaValue = this.tickLocations.get(1) - this.tickLocations.get(0);
@@ -924,6 +927,7 @@ public class Axis implements Cloneable {
         for (String v : value) {
             this.tickLabels.add(new ChartText(v, this.tickLabelFont, this.tickColor));
         }
+        this.fixTickLabels = new ArrayList<>(tickLabels);
         this.autoTick = false;
     }
 
@@ -946,6 +950,7 @@ public class Axis implements Cloneable {
         for (Number v : value) {
             this.tickLabels.add(new ChartText(v.toString(), this.tickLabelFont, this.tickColor));
         }
+        this.fixTickLabels = new ArrayList<>(this.tickLabels);
         this.autoTick = false;
     }
 
@@ -1236,15 +1241,15 @@ public class Axis implements Cloneable {
         } else {
             ChartText ct;
             for (int i = 0; i < this.tickLocations.size(); i++) {
-                if (i >= this.tickLabels.size()) {
+                if (i >= this.fixTickLabels.size()) {
                     break;
                 }
                 double v = this.tickLocations.get(i);
                 if (v >= this.minValue && v <= this.maxValue) {
-                    ct = tickLabels.get(i);
+                    ct = fixTickLabels.get(i);
                     ct.setFont(this.tickLabelFont);
                     ct.setColor(this.tickColor);
-                    tls.add(this.tickLabels.get(i));
+                    tls.add(ct);
                 }
             }
         }

@@ -26,6 +26,8 @@ import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.data.Dataset;
+import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.geo.drawing.StringType;
 import org.meteoinfo.geometry.colors.BoundaryNorm;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.graphic.Graphic;
@@ -36,6 +38,9 @@ import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -1946,69 +1951,71 @@ public class GLPlot extends Plot {
             float tickLen = this.xAxis.getTickLength() * this.lenScale * transform.getYLength() / 2;
             this.xAxis.updateTickLabels();
             java.util.List<ChartText> tlabs = this.xAxis.getTickLabels();
-            float axisLen = this.toScreenLength(xMin, y, zMin, xMax, y, zMin);
-            skip = getLabelGap(this.xAxis.getTickLabelFont(), tlabs, axisLen);
-            float y1 = y > center.y ? y + tickLen : y - tickLen;
-            if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
-                xAlign = XAlign.LEFT;
-            } else {
-                xAlign = XAlign.RIGHT;
-            }
-            if (this.angleX > -120) {
-                yAlign = YAlign.TOP;
-            } else {
-                yAlign = YAlign.BOTTOM;
-            }
-            strWidth = 0.0f;
-            strHeight = 0.0f;
-            if (this.xAxis.isDrawTickLabel()) {
-                this.updateTextRender(tlabs.get(0).getFont());
-            }
-            for (int i = 0; i < this.xAxis.getTickValues().length; i += skip) {
-                v = (float) this.xAxis.getTickValues()[i];
-                if (v < axesExtent.minX || v > axesExtent.maxX) {
-                    continue;
+            if (tlabs.size() > 0) {
+                float axisLen = this.toScreenLength(xMin, y, zMin, xMax, y, zMin);
+                skip = getLabelGap(this.xAxis.getTickLabelFont(), tlabs, axisLen);
+                float y1 = y > center.y ? y + tickLen : y - tickLen;
+                if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
+                    xAlign = XAlign.LEFT;
+                } else {
+                    xAlign = XAlign.RIGHT;
                 }
-                //v = this.transform.transform_x(v);
-                if (i == tlabs.size()) {
-                    break;
+                if (this.angleX > -120) {
+                    yAlign = YAlign.TOP;
+                } else {
+                    yAlign = YAlign.BOTTOM;
                 }
-
-                //Draw tick line
-                rgba = this.xAxis.getLineColor().getRGBComponents(null);
-                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.xAxis.getLineWidth() * this.dpiScale);
-                gl.glBegin(GL2.GL_LINES);
-                gl.glVertex3f(v, y, zMin);
-                gl.glVertex3f(v, y1, zMin);
-                gl.glEnd();
-
-                //Draw tick label
+                strWidth = 0.0f;
+                strHeight = 0.0f;
                 if (this.xAxis.isDrawTickLabel()) {
-                    rect = drawString(gl, tlabs.get(i), v, y1, zMin, xAlign, yAlign);
-                    if (strWidth < rect.getWidth()) {
-                        strWidth = (float) rect.getWidth();
+                    this.updateTextRender(tlabs.get(0).getFont());
+                }
+                for (int i = 0; i < this.xAxis.getTickValues().length; i += skip) {
+                    v = (float) this.xAxis.getTickValues()[i];
+                    if (v < axesExtent.minX || v > axesExtent.maxX) {
+                        continue;
                     }
-                    if (strHeight < rect.getHeight()) {
-                        strHeight = (float) rect.getHeight();
+                    //v = this.transform.transform_x(v);
+                    if (i == tlabs.size()) {
+                        break;
+                    }
+
+                    //Draw tick line
+                    rgba = this.xAxis.getLineColor().getRGBComponents(null);
+                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    gl.glLineWidth(this.xAxis.getLineWidth() * this.dpiScale);
+                    gl.glBegin(GL2.GL_LINES);
+                    gl.glVertex3f(v, y, zMin);
+                    gl.glVertex3f(v, y1, zMin);
+                    gl.glEnd();
+
+                    //Draw tick label
+                    if (this.xAxis.isDrawTickLabel()) {
+                        rect = drawString(gl, tlabs.get(i), v, y1, zMin, xAlign, yAlign);
+                        if (strWidth < rect.getWidth()) {
+                            strWidth = (float) rect.getWidth();
+                        }
+                        if (strHeight < rect.getHeight()) {
+                            strHeight = (float) rect.getHeight();
+                        }
                     }
                 }
-            }
 
-            //Draw x axis label
-            if (this.xAxis.isDrawLabel()) {
-                ChartText label = this.xAxis.getLabel();
-                if (label != null) {
-                    this.updateTextRender(label.getFont());
-                    strWidth += this.tickSpace;
-                    float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
-                    angle = y < center.y ? 270 - angle : 90 - angle;
-                    float yShift = Math.min(-strWidth, -strWidth);
-                    if (this.angleX <= -120) {
-                        yShift = -yShift;
+                //Draw x axis label
+                if (this.xAxis.isDrawLabel()) {
+                    ChartText label = this.xAxis.getLabel();
+                    if (label != null) {
+                        this.updateTextRender(label.getFont());
+                        strWidth += this.tickSpace;
+                        float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
+                        angle = y < center.y ? 270 - angle : 90 - angle;
+                        float yShift = Math.min(-strWidth, -strWidth);
+                        if (this.angleX <= -120) {
+                            yShift = -yShift;
+                        }
+                        float x1 = (xMin + xMax) / 2;
+                        drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
                     }
-                    float x1 = (xMin + xMax) / 2;
-                    drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
                 }
             }
 
@@ -2030,70 +2037,72 @@ public class GLPlot extends Plot {
             //y axis ticks
             this.yAxis.updateTickLabels();
             tlabs = this.yAxis.getTickLabels();
-            axisLen = this.toScreenLength(x, yMin, zMin, x, yMax, zMin);
-            skip = getLabelGap(this.yAxis.getTickLabelFont(), tlabs, axisLen);
-            tickLen = this.yAxis.getTickLength() * this.lenScale * transform.getXLength() / 2;
-            float x1 = x > center.x ? x + tickLen : x - tickLen;
-            if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
-                xAlign = XAlign.RIGHT;
-            } else {
-                xAlign = XAlign.LEFT;
-            }
-            if (this.angleX > -120) {
-                yAlign = YAlign.TOP;
-            } else {
-                yAlign = YAlign.BOTTOM;
-            }
-            strWidth = 0.0f;
-            strHeight = 0.0f;
-            if (this.yAxis.isDrawTickLabel()) {
-                this.updateTextRender(tlabs.get(0).getFont());
-            }
-            for (int i = 0; i < this.yAxis.getTickValues().length; i += skip) {
-                v = (float) this.yAxis.getTickValues()[i];
-                if (v < axesExtent.minY || v > axesExtent.maxY) {
-                    continue;
+            if (tlabs.size() > 0) {
+                float axisLen = this.toScreenLength(x, yMin, zMin, x, yMax, zMin);
+                skip = getLabelGap(this.yAxis.getTickLabelFont(), tlabs, axisLen);
+                tickLen = this.yAxis.getTickLength() * this.lenScale * transform.getXLength() / 2;
+                float x1 = x > center.x ? x + tickLen : x - tickLen;
+                if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
+                    xAlign = XAlign.RIGHT;
+                } else {
+                    xAlign = XAlign.LEFT;
                 }
-                //v = this.transform.transform_y(v);
-                if (i == tlabs.size()) {
-                    break;
+                if (this.angleX > -120) {
+                    yAlign = YAlign.TOP;
+                } else {
+                    yAlign = YAlign.BOTTOM;
                 }
-
-                //Draw tick line
-                rgba = this.yAxis.getLineColor().getRGBComponents(null);
-                gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-                gl.glLineWidth(this.yAxis.getLineWidth() * this.dpiScale);
-                gl.glBegin(GL2.GL_LINES);
-                gl.glVertex3f(x, v, zMin);
-                gl.glVertex3f(x1, v, zMin);
-                gl.glEnd();
-
-                //Draw tick label
+                strWidth = 0.0f;
+                strHeight = 0.0f;
                 if (this.yAxis.isDrawTickLabel()) {
-                    rect = drawString(gl, tlabs.get(i), x1, v, zMin, xAlign, yAlign);
-                    if (strWidth < rect.getWidth()) {
-                        strWidth = (float) rect.getWidth();
+                    this.updateTextRender(tlabs.get(0).getFont());
+                }
+                for (int i = 0; i < this.yAxis.getTickValues().length; i += skip) {
+                    v = (float) this.yAxis.getTickValues()[i];
+                    if (v < axesExtent.minY || v > axesExtent.maxY) {
+                        continue;
                     }
-                    if (strHeight < rect.getHeight()) {
-                        strHeight = (float) rect.getHeight();
+                    //v = this.transform.transform_y(v);
+                    if (i == tlabs.size()) {
+                        break;
+                    }
+
+                    //Draw tick line
+                    rgba = this.yAxis.getLineColor().getRGBComponents(null);
+                    gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    gl.glLineWidth(this.yAxis.getLineWidth() * this.dpiScale);
+                    gl.glBegin(GL2.GL_LINES);
+                    gl.glVertex3f(x, v, zMin);
+                    gl.glVertex3f(x1, v, zMin);
+                    gl.glEnd();
+
+                    //Draw tick label
+                    if (this.yAxis.isDrawTickLabel()) {
+                        rect = drawString(gl, tlabs.get(i), x1, v, zMin, xAlign, yAlign);
+                        if (strWidth < rect.getWidth()) {
+                            strWidth = (float) rect.getWidth();
+                        }
+                        if (strHeight < rect.getHeight()) {
+                            strHeight = (float) rect.getHeight();
+                        }
                     }
                 }
-            }
 
-            //Draw y axis label
-            if (this.yAxis.isDrawLabel()) {
-                ChartText label = this.yAxis.getLabel();
-                if (label != null) {
-                    this.updateTextRender(label.getFont());
-                    strWidth += this.tickSpace;
-                    float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, zMin);
-                    angle = x > center.x ? 270 - angle : 90 - angle;
-                    float yShift = Math.min(-strWidth, -strWidth);
-                    if (this.angleX <= -120) {
-                        yShift = -yShift;
+                //Draw y axis label
+                if (this.yAxis.isDrawLabel()) {
+                    ChartText label = this.yAxis.getLabel();
+                    if (label != null) {
+                        this.updateTextRender(label.getFont());
+                        strWidth += this.tickSpace;
+                        float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, zMin);
+                        angle = x > center.x ? 270 - angle : 90 - angle;
+                        float yShift = Math.min(-strWidth, -strWidth);
+                        if (this.angleX <= -120) {
+                            yShift = -yShift;
+                        }
+                        float y1 = (yMin + yMax) / 2;
+                        drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
                     }
-                    y1 = (yMin + yMax) / 2;
-                    drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
                 }
             }
         }
@@ -2361,6 +2370,10 @@ public class GLPlot extends Plot {
 
     Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
                            XAlign xAlign, YAlign yAlign, float xShift, float yShift) {
+        if (Draw.getStringType(str) == StringType.LATEX) {
+            return drawLaTex(gl, str, font, color, vx, vy, vz, xAlign, yAlign, xShift, yShift);
+        }
+
         //Get screen coordinates
         Vector2f coord = this.toScreen(vx, vy, vz);
         float x = coord.x;
@@ -2389,6 +2402,88 @@ public class GLPlot extends Plot {
         }
         textRenderer.draw(str, (int) (x + xShift), (int) (y + yShift));
         textRenderer.endRendering();
+
+        return rect;
+    }
+
+    Rectangle2D drawLaTex(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
+                           XAlign xAlign, YAlign yAlign, float xShift, float yShift) {
+        //Get screen coordinates
+        Vector2f coord = this.toScreen(vx, vy, vz);
+        float x = coord.x;
+        float y = coord.y;
+
+        return drawLaTex(gl, str, font, color, x, y, xAlign, yAlign, xShift, yShift);
+    }
+
+    Rectangle2D drawLaTex(GL2 gl, String str, Font font, Color color, float x, float y,
+                          XAlign xAlign, YAlign yAlign, float xShift, float yShift) {
+        // create a formula
+        TeXFormula formula = new TeXFormula(str);
+
+        // render the formula to an icon of the same size as the formula.
+        TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, font.getSize());
+
+        // insert a border
+        icon.setInsets(new Insets(5, 5, 5, 5));
+
+        BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+
+        //Dimension dim = Draw.getStringDimension(str, g2);
+        Dimension dim = new Dimension(icon.getIconWidth(), icon.getIconHeight());
+        switch (xAlign) {
+            case CENTER:
+                x -= dim.width * 0.5;
+                break;
+            case RIGHT:
+                x -= dim.width;
+                break;
+        }
+        switch (yAlign) {
+            case CENTER:
+                y -= dim.height * 0.3;
+                break;
+            case TOP:
+                y -= dim.height;
+                break;
+        }
+
+        icon.setForeground(color);
+        x += xShift;
+        y += yShift;
+        icon.paintIcon(null, g2, 0, 0);
+
+        Rectangle2D rect = new Rectangle2D.Float(x, y, icon.getIconWidth(), icon.getIconHeight());
+
+        final int attribBits =
+                GL2.GL_ENABLE_BIT | GL2.GL_TEXTURE_BIT | GL.GL_COLOR_BUFFER_BIT |
+                        (GL.GL_DEPTH_BUFFER_BIT | GL2.GL_TRANSFORM_BIT);
+        gl.glPushAttrib(attribBits);
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glDisable(GL.GL_CULL_FACE);
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+        glu.gluOrtho2D(0, width, 0, height);
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+        gl.glMatrixMode(GL.GL_TEXTURE);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+
+        Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(), image, true);
+        drawTexture(gl, texture, rect);
+
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glPopMatrix();
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPopMatrix();
+        gl.glMatrixMode(GL.GL_TEXTURE);
+        gl.glPopMatrix();
+        gl.glPopAttrib();
 
         return rect;
     }
@@ -2482,17 +2577,27 @@ public class GLPlot extends Plot {
 
     void drawTitle() {
         if (title != null) {
-            //Rendering text string
-            Font font = title.getFont();
-            this.updateTextRender(font);
-            textRenderer.beginRendering(this.width, this.height);
-            textRenderer.setColor(title.getColor());
-            textRenderer.setSmoothing(true);
-            Rectangle2D rect = textRenderer.getBounds(title.getText().subSequence(0, title.getText().length()));
-            float x = (float) (this.width / 2.0f) - (float) rect.getWidth() / 2.0f;
-            float y = this.height - (float) rect.getHeight();
-            textRenderer.draw(title.getText(), (int) x, (int) y);
-            textRenderer.endRendering();
+            float x = (float) (this.width / 2.0f);
+            float y = this.height;
+            if (Draw.getStringType(title.getText()) == StringType.LATEX) {
+                if (gl == null) {
+                    gl = GLContext.getCurrentGL().getGL2();
+                }
+                drawLaTex(gl, title.getText(), title.getFont(), title.getColor(),
+                        x, y, XAlign.CENTER, YAlign.TOP, 0, 0);
+            } else {
+                //Rendering text string
+                Font font = title.getFont();
+                this.updateTextRender(font);
+                textRenderer.beginRendering(this.width, this.height);
+                textRenderer.setColor(title.getColor());
+                textRenderer.setSmoothing(true);
+                Rectangle2D rect = textRenderer.getBounds(title.getText().subSequence(0, title.getText().length()));
+                x = (float) (this.width / 2.0f) - (float) rect.getWidth() / 2.0f;
+                y = this.height - (float) rect.getHeight();
+                textRenderer.draw(title.getText(), (int) x, (int) y);
+                textRenderer.endRendering();
+            }
         }
     }
 
@@ -3499,6 +3604,41 @@ public class GLPlot extends Plot {
         //gl.glTexCoord2f(0.0f, 1.0f);
         gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex3f((float) coords.get(3).X, (float) coords.get(3).Y, (float) coords.get(3).Z);
+        gl.glEnd();
+        gl.glFlush();
+
+        // Unbinding the texture
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+        gl.glDisable(GL2.GL_TEXTURE_2D);
+    }
+
+    private void drawTexture(GL2 gl, Texture texture, Rectangle2D rect) {
+        int idTexture = texture.getTextureObject(gl);
+        int width = texture.getWidth();
+        int height = texture.getHeight();
+
+        gl.glEnable(GL2.GL_TEXTURE_2D);
+        gl.glColor3f(1f, 1f, 1f);
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, idTexture);
+
+        // Texture parameterization
+        //gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR_MIPMAP_LINEAR);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+
+        // Draw image
+        gl.glBegin(GL2.GL_QUADS);
+        // Front Face
+        gl.glTexCoord2f(0.0f, 1.0f);
+        gl.glVertex2f((float) rect.getX(), (float) rect.getY());
+        gl.glTexCoord2f(1.0f, 1.0f);
+        gl.glVertex2f((float) rect.getMaxX(), (float) rect.getY());
+        gl.glTexCoord2f(1.0f, 0.0f);
+        gl.glVertex2f((float) rect.getMaxX(), (float) rect.getMaxY());
+        gl.glTexCoord2f(0.0f, 0.0f);
+        gl.glVertex2f((float) rect.getX(), (float) rect.getMaxY());
         gl.glEnd();
         gl.glFlush();
 

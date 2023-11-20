@@ -454,7 +454,7 @@ public class Draw {
         // create a formula
         TeXFormula formula = new TeXFormula(str);
 
-        // render the formla to an icon of the same size as the formula.
+        // render the formula to an icon of the same size as the formula.
         TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, size);
 
         // insert a border 

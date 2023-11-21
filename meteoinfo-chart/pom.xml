@@ -58,11 +58,6 @@
             <version>3.12.0</version>
         </dependency>
         <dependency>
-            <groupId>com.l2fprod</groupId>
-            <artifactId>l2fprod-common-all</artifactId>
-            <version>0.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-main</artifactId>
             <version>${jogl.version}</version>
@@ -75,7 +70,7 @@
         <dependency>
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
-            <version>1.10.4</version>
+            <version>1.10.5</version>
         </dependency>
     </dependencies>
 

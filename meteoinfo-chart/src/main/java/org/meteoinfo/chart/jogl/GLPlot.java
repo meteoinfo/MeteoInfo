@@ -1913,12 +1913,6 @@ public class GLPlot extends Plot {
         yMax = (float) axesExtent.maxY;
         zMin = (float) axesExtent.minZ;
         zMax = (float) axesExtent.maxZ;
-        /*xMin = this.transform.transform_x((float) axesExtent.minX);
-        xMax = this.transform.transform_x((float) axesExtent.maxX);
-        yMin = this.transform.transform_y((float) axesExtent.minY);
-        yMax = this.transform.transform_y((float) axesExtent.maxY);
-        zMin = this.transform.transform_z((float) axesExtent.minZ);
-        zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
         gl.glDepthFunc(GL.GL_ALWAYS);
 
@@ -2490,27 +2484,31 @@ public class GLPlot extends Plot {
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
                            XAlign xAlign, YAlign yAlign, float angle) {
-        return drawString(gl, text.getText(), text.getColor(), vx, vy, vz, xAlign, yAlign, angle,
+        return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy, vz, xAlign, yAlign, angle,
                 (float)text.getXShift(), (float)text.getYShift());
     }
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz,
                            XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
-        return drawString(gl, text.getText(), text.getColor(), vx, vy,
+        return drawString(gl, text.getText(), text.getFont(), text.getColor(), vx, vy,
                 vz, xAlign, yAlign, angle, (float)text.getXShift() + xShift, (float)text.getYShift() + yShift);
     }
 
-    Rectangle2D drawString(GL2 gl, String str, Color color, float vx, float vy, float vz,
+    Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
                            XAlign xAlign, YAlign yAlign, float angle) {
-        return drawString(gl, str, color, vx, vy, vz, xAlign, yAlign, angle, 0, 0);
+        return drawString(gl, str, font, color, vx, vy, vz, xAlign, yAlign, angle, 0, 0);
     }
 
-    Rectangle2D drawString(GL2 gl, String str, Color color, float vx, float vy, float vz,
+    Rectangle2D drawString(GL2 gl, String str, Font font, Color color, float vx, float vy, float vz,
                            XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
         //Get screen coordinates
         Vector2f coord = this.toScreen(vx, vy, vz);
         float x = coord.x;
         float y = coord.y;
+
+        if (Draw.getStringType(str) == StringType.LATEX) {
+            return drawLaTex(gl, str, font, color, x, y, xAlign, yAlign, angle, xShift, yShift);
+        }
 
         //Rendering text string
         textRenderer.beginRendering(this.width, this.height);
@@ -2547,6 +2545,85 @@ public class GLPlot extends Plot {
         textRenderer.draw(str, (int) x, (int) y);
         textRenderer.endRendering();
         gl.glPopMatrix();
+
+        return rect;
+    }
+
+    Rectangle2D drawLaTex(GL2 gl, String str, Font font, Color color, float x, float y,
+                          XAlign xAlign, YAlign yAlign, float angle, float xShift, float yShift) {
+        // create a formula
+        TeXFormula formula = new TeXFormula(str);
+
+        // render the formula to an icon of the same size as the formula.
+        TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, font.getSize());
+
+        // insert a border
+        icon.setInsets(new Insets(5, 5, 5, 5));
+
+        BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+
+        final int attribBits =
+                GL2.GL_ENABLE_BIT | GL2.GL_TEXTURE_BIT | GL.GL_COLOR_BUFFER_BIT |
+                        (GL.GL_DEPTH_BUFFER_BIT | GL2.GL_TRANSFORM_BIT);
+        gl.glPushAttrib(attribBits);
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glDisable(GL.GL_CULL_FACE);
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+        glu.gluOrtho2D(0, width, 0, height);
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+        gl.glTranslatef(x, y, 0.0f);
+        if (angle != 0) {
+            gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
+        }
+        x = 0;
+        y = 0;
+
+        //Dimension dim = Draw.getStringDimension(str, g2);
+        Dimension dim = new Dimension(icon.getIconWidth(), icon.getIconHeight());
+        switch (xAlign) {
+            case CENTER:
+                x -= dim.width * 0.5;
+                break;
+            case RIGHT:
+                x -= dim.width;
+                break;
+        }
+        switch (yAlign) {
+            case CENTER:
+                y -= dim.height * 0.3;
+                break;
+            case TOP:
+                y -= dim.height;
+                break;
+        }
+
+        icon.setForeground(color);
+        x += xShift;
+        y += yShift;
+        icon.paintIcon(null, g2, 0, 0);
+
+        Rectangle2D rect = new Rectangle2D.Float(x, y, icon.getIconWidth(), icon.getIconHeight());
+
+        gl.glMatrixMode(GL.GL_TEXTURE);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+
+        Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(), image, true);
+        drawTexture(gl, texture, rect, angle);
+
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glPopMatrix();
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPopMatrix();
+        gl.glMatrixMode(GL.GL_TEXTURE);
+        gl.glPopMatrix();
+        gl.glPopAttrib();
 
         return rect;
     }
@@ -3613,6 +3690,10 @@ public class GLPlot extends Plot {
     }
 
     private void drawTexture(GL2 gl, Texture texture, Rectangle2D rect) {
+        drawTexture(gl, texture, rect, 0);
+    }
+
+    private void drawTexture(GL2 gl, Texture texture, Rectangle2D rect, float angle) {
         int idTexture = texture.getTextureObject(gl);
         int width = texture.getWidth();
         int height = texture.getHeight();
@@ -3622,11 +3703,12 @@ public class GLPlot extends Plot {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, idTexture);
 
         // Texture parameterization
-        //gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
-        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR_MIPMAP_LINEAR);
-        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
-        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
-        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+        int filter = GL2.GL_NEAREST;
+        if (angle != 0 && angle != 90) {
+            filter = GL_LINEAR;
+        }
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, filter);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, filter);
 
         // Draw image
         gl.glBegin(GL2.GL_QUADS);

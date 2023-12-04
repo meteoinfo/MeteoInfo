@@ -1323,6 +1323,7 @@ public class GLPlot extends Plot {
         this.updateMatrix(gl);
         if (!this.legends.isEmpty()) {
             ChartColorBar legend = (ChartColorBar) this.legends.get(0);
+            updateTextRender(legend.getTickLabelFont());
             if (legend.getLegendScheme().getColorMap() == null)
                 this.drawLegend(gl, legend);
             else
@@ -3985,6 +3986,7 @@ public class GLPlot extends Plot {
         //Draw label
         ChartText label = legend.getLabel();
         if (label != null) {
+            this.updateTextRender(legend.getLabelFont());
             label.setColor(legend.getTickColor());
             float sx, sy;
             float yShift = this.tickSpace * this.dpiScale;
@@ -4115,6 +4117,7 @@ public class GLPlot extends Plot {
         //Draw label
         ChartText label = legend.getLabel();
         if (label != null) {
+            this.updateTextRender(legend.getLabelFont());
             label.setColor(legend.getTickColor());
             float sx, sy;
             float yShift = this.tickSpace * this.dpiScale;

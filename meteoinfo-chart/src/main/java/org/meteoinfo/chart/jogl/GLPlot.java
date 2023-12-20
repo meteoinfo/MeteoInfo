@@ -2634,21 +2634,14 @@ public class GLPlot extends Plot {
     }
 
     Rectangle2D drawString3D(GL2 gl, String str, Color color, float vx, float vy, float vz) {
-        //Get screen coordinates
-        Vector2f coord = this.toScreen(vx, vy, vz);
-        float x = coord.x;
-        float y = coord.y;
-
         //Rendering text string
-        textRenderer.beginRendering(this.width, this.height, false);
-        //textRenderer.begin3DRendering();
+        float scale = 0.5f;
+        textRenderer.begin3DRendering();
         textRenderer.setColor(color);
         textRenderer.setSmoothing(true);
         Rectangle2D rect = textRenderer.getBounds(str.subSequence(0, str.length()));
-        textRenderer.draw3D(str, x, y, vz, 1.0f);
-        //textRenderer.draw3D(str, vx, vy, vz, 1.0f);
-        textRenderer.endRendering();
-        //textRenderer.end3DRendering();
+        textRenderer.draw3D(str, vx, vy, vz, scale);
+        textRenderer.end3DRendering();
 
         return rect;
     }

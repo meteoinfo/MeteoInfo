@@ -640,7 +640,7 @@ public class EditorDockable extends DefaultSingleCDockable {
     }
     
     /**
-     * Insert first 4 spaces to the seleted lines
+     * Insert first 4 spaces to the selected lines
      */
     public void insertTab() {
         try {
@@ -657,94 +657,4 @@ public class EditorDockable extends DefaultSingleCDockable {
         robot.keyPress(KeyEvent.VK_TAB);
     }
 
-    /**
-     * Run Jython script
-     *
-     * @param jTextArea_Output
-     */
-    public void runPythonScript(final JTextArea jTextArea_Output) {
-
-        SwingWorker worker = new SwingWorker<String, String>() {
-            PrintStream oout = System.out;
-            PrintStream oerr = System.err;
-
-            @Override
-            protected String doInBackground() throws Exception {
-                JTextAreaWriter writer = new JTextAreaWriter(jTextArea_Output);
-                JTextAreaPrintStream printStream = new JTextAreaPrintStream(System.out, jTextArea_Output);
-                jTextArea_Output.setText("");
-
-                // Create an instance of the PythonInterpreter        
-                //Py.getSystemState().setdefaultencoding("utf-8");
-                //UPythonInterpreter interp = new UPythonInterpreter();
-                PythonInterpreter interp = new PythonInterpreter();
-                interp.setOut(writer);
-                interp.setErr(writer);
-                System.setOut(printStream);
-                System.setErr(printStream);
-                //System.out.println("Out test!");
-                //System.err.println("Error test!");
-
-//                boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
-//                        getInputArguments().toString().contains("jdwp");
-                //String pluginPath = startupPath + File.separator + "plugins";
-                //List<String> jarfns = GlobalUtil.getFiles(pluginPath, ".jar");
-                //String path = startupPath + File.separator + "pylib";
-//                if (isDebug) {
-//                    path = "D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo/pylib";
-//                }
-                try {
-                    interp.exec("import sys");
-                    interp.set("milapp", EditorDockable.this.parent);
-                    //interp.exec("sys.path.append('" + path + "')");
-                    //interp.exec("import mipylib");
-                    //interp.exec("from mipylib.miscript import *");                    
-                    //interp.exec("from meteoinfo.numeric.JNumeric import *");
-                    //interp.exec("mis = MeteoInfoScript()");
-                    //interp.set("miapp", _parent);
-                    //for (String jarfn : jarfns) {
-                    //    interp.exec("sys.path.append('" + jarfn + "')");
-                    //}
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                TextEditorPane textArea = getActiveTextArea();
-                //textArea.setEncoding(fn);
-                String code = textArea.getText();
-//                if (code.contains("coding=utf-8")){
-//                    code = code.replace("coding=utf-8", "coding = utf-8");
-//                }
-                String encoding = EncodingUtil.findEncoding(code);
-                if (encoding != null) {
-                    try {
-                        interp.execfile(new ByteArrayInputStream(code.getBytes(encoding)));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    try {
-                        interp.execfile(new ByteArrayInputStream(code.getBytes()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-//                try {
-//                    //interp.exec(code);
-//                    interp.execfile(new ByteArrayInputStream(code.getBytes()));
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-
-                return "";
-            }
-
-            @Override
-            protected void done() {
-                System.setOut(oout);
-                System.setErr(oerr);
-            }
-        };
-        worker.execute();
-    }
 }

@@ -2387,7 +2387,7 @@ class Axes(object):
         Add contour layer labels.
         
         :param layer: (*MILayer*) The contour layer.
-        :param fontname, fontsize: The font auguments.
+        :param fontname, fontsize: The font augments.
         :param color: (*color*) The label color. Default is ``None``, the label color will be set as
             same as color of the line.
         :param dynamic: (*boolean*) Draw labels dynamic or not. Default is ``True``.

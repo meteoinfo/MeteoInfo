@@ -352,8 +352,8 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             this.interp.console.println("run script...");
             this.interp.setOut(this.interp.console.getOut());
             this.interp.setErr(this.interp.console.getErr());
-            System.setOut(this.interp.console.getOut());
-            System.setErr(this.interp.console.getErr());
+            //System.setOut(this.interp.console.getOut());
+            //System.setErr(this.interp.console.getErr());
             String encoding = EncodingUtil.findEncoding(code);
             if (encoding != null) {
                 try {

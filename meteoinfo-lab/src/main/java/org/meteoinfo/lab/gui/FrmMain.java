@@ -348,6 +348,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         System.out.println("Main form is loaded!");
 
         System.setOut(this.consoleDock.getConsole().getOut());
+        System.setErr(this.consoleDock.getConsole().getOut());
 
         this.addKeyListener(new KeyListener() {
             @Override

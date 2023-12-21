@@ -650,7 +650,7 @@ public abstract class Array {
 
     /**
      * Get an index iterator for traversing the array in arbitrary order. Use
-     * this if you dont care what order the elements are returned, eg if you are
+     * this if you don't care what order the elements are returned, eg if you are
      * summing an Array. To get an iteration in order, use getIndexIterator(),
      * which returns a fast iterator if possible.
      *

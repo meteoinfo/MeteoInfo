@@ -32,9 +32,9 @@ import mipylib.migl as migl
 __all__ = [
     'addfile','addfiles','addfile_arl','addfile_ascii_grid','addfile_awx','addfile_geotiff',
     'addfile_grads','addfile_hyconc','addfile_hytraj','addfile_hypart','addfile_lonlat',
-    'addfile_micaps','addfile_mm5','addfile_nc','addfile_grib','addfile_surfer','add_bufr_lookup',
-    'addtimedim','joinncfile','asciiread','asciiwrite','bincreate','binread','binwrite',
-    'numasciicol','numasciirow','readtable','convert2nc','grads2nc','ncwrite'
+    'addfile_matlab','addfile_micaps','addfile_mm5','addfile_nc','addfile_grib','addfile_surfer',
+    'add_bufr_lookup', 'addtimedim','joinncfile','asciiread','asciiwrite','bincreate','binread',
+    'binwrite', 'numasciicol','numasciirow','readtable','convert2nc','grads2nc','ncwrite'
     ]
 
 def isgriddata(gdata):
@@ -267,6 +267,22 @@ def addfile_mm5(fname, getfn=True, reffile=None):
         meteodata.openMM5Data(fname)
     else:
         meteodata.openMM5Data(fname, reffile)
+    datafile = DimDataFile(meteodata)
+    return datafile
+
+def addfile_matlab(fname, getfn=True):
+    """
+    Add a MatLab data file.
+
+    :param fname: (*string*) The MatLab file name.
+    :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
+
+    :returns: (*DimDataFile*) Opened file object.
+    """
+    if getfn:
+        fname, isweb = __getfilename(fname)
+    meteodata = MeteoDataInfo()
+    meteodata.openMatLabData(fname)
     datafile = DimDataFile(meteodata)
     return datafile
     

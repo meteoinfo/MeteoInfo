@@ -29,6 +29,7 @@ import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
 import org.meteoinfo.data.meteodata.hysplit.HYSPLITConcDataInfo;
 import org.meteoinfo.data.meteodata.hysplit.HYSPLITPartDataInfo;
 import org.meteoinfo.data.meteodata.hysplit.HYSPLITTrajDataInfo;
+import org.meteoinfo.data.meteodata.matlab.MatLabDataInfo;
 import org.meteoinfo.data.meteodata.micaps.*;
 import org.meteoinfo.data.meteodata.netcdf.NetCDFDataInfo;
 import java.io.IOException;
@@ -474,6 +475,8 @@ public class MeteoDataInfo {
             RandomAccessFile raf = new RandomAccessFile(fileName, "r");
             if (GrADSDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
                 di = new GrADSDataInfo();
+            } else if (MatLabDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
+                di = new MatLabDataInfo();
             } else if (NetcdfFiles.canOpen(fileName)) {
                 di = new NetCDFDataInfo();
             } else if (ARLDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
@@ -735,33 +738,6 @@ public class MeteoDataInfo {
         _infoText = aDataInfo.generateInfoText();
     }
 
-//    /**
-//     * Open HYSPLIT traject data
-//     *
-//     * @param trajFiles File paths
-//     */
-//    public void openHYSPLITTrajData(String[] trajFiles) {
-//        try {
-//            //Read data info                            
-//            HYSPLITTrajDataInfo aDataInfo = new HYSPLITTrajDataInfo();
-//            aDataInfo.readDataInfo(trajFiles);
-//            dataInfo = aDataInfo;
-//            _infoText = aDataInfo.generateInfoText();
-//        } catch (IOException ex) {
-//            Logger.getLogger(MeteoDataInfo.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-//
-//    /**
-//     * Open HYSPLIT traject data
-//     *
-//     * @param trajFiles File paths
-//     */
-//    public void openHYSPLITTrajData(List<String> trajFiles) {
-//        String[] files = trajFiles.toArray(new String[0]);
-//        openHYSPLITTrajData(files);
-//    }
-
     /**
      * Open HYSPLIT particle data
      *
@@ -893,6 +869,17 @@ public class MeteoDataInfo {
      */
     public void openMM5IMData(String fileName) {
         dataInfo = new MM5IMDataInfo();
+        dataInfo.readDataInfo(fileName);
+        _infoText = dataInfo.generateInfoText();
+    }
+
+    /**
+     * Open MatLab data file
+     *
+     * @param fileName File path
+     */
+    public void openMatLabData(String fileName) {
+        dataInfo = new MatLabDataInfo();
         dataInfo.readDataInfo(fileName);
         _infoText = dataInfo.generateInfoText();
     }

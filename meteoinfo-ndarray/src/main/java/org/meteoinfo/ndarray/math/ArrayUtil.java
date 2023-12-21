@@ -204,7 +204,7 @@ public class ArrayUtil {
     }
 
     /**
-     * Get row number of a ASCII file
+     * Get row number of an ASCII file
      *
      * @param fileName File name
      * @param delimiter

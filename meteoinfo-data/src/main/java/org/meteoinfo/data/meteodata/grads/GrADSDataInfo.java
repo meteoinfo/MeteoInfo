@@ -286,9 +286,6 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             }
 
             return false;
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(GrADSDataInfo.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
         } catch (IOException e) {
             return false;
         }

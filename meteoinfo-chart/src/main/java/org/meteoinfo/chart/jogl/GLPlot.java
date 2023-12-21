@@ -2010,6 +2010,7 @@ public class GLPlot extends Plot {
                         }
                         float x1 = (xMin + xMax) / 2;
                         drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
+                        //drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, 0, yShift);
                     }
                 }
             }
@@ -2097,6 +2098,7 @@ public class GLPlot extends Plot {
                         }
                         float y1 = (yMin + yMax) / 2;
                         drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
+                        //drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, 0, yShift);
                     }
                 }
             }
@@ -2556,7 +2558,7 @@ public class GLPlot extends Plot {
         TeXFormula formula = new TeXFormula(str);
 
         // render the formula to an icon of the same size as the formula.
-        TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, font.getSize());
+        TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, font.getSize2D());
 
         // insert a border
         icon.setInsets(new Insets(5, 5, 5, 5));

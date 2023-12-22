@@ -32,7 +32,7 @@ import mipylib.migl as migl
 __all__ = [
     'addfile','addfiles','addfile_arl','addfile_ascii_grid','addfile_awx','addfile_geotiff',
     'addfile_grads','addfile_hyconc','addfile_hytraj','addfile_hypart','addfile_lonlat',
-    'addfile_matlab','addfile_micaps','addfile_mm5','addfile_nc','addfile_grib','addfile_surfer',
+    'addfile_matlab','addfile_micaps','addfile_mm5','addfile_nc','addfile_numpy','addfile_grib','addfile_surfer',
     'add_bufr_lookup', 'addtimedim','joinncfile','asciiread','asciiwrite','bincreate','binread',
     'binwrite', 'numasciicol','numasciirow','readtable','convert2nc','grads2nc','ncwrite'
     ]
@@ -283,6 +283,22 @@ def addfile_matlab(fname, getfn=True):
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
     meteodata.openMatLabData(fname)
+    datafile = DimDataFile(meteodata)
+    return datafile
+
+def addfile_numpy(fname, getfn=True):
+    """
+    Add a numpy data file.
+
+    :param fname: (*string*) The numpy file name.
+    :param getfn: (*string*) If run ``__getfilename`` function or not. Default is ``True``.
+
+    :returns: (*DimDataFile*) Opened file object.
+    """
+    if getfn:
+        fname, isweb = __getfilename(fname)
+    meteodata = MeteoDataInfo()
+    meteodata.openNumpyData(fname)
     datafile = DimDataFile(meteodata)
     return datafile
     

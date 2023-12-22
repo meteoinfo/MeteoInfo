@@ -39,6 +39,7 @@ import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.ArrayList;
 
+import org.meteoinfo.data.meteodata.numpy.NumpyDataInfo;
 import org.meteoinfo.data.meteodata.radar.CMARadarBaseDataInfo;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -880,6 +881,17 @@ public class MeteoDataInfo {
      */
     public void openMatLabData(String fileName) {
         dataInfo = new MatLabDataInfo();
+        dataInfo.readDataInfo(fileName);
+        _infoText = dataInfo.generateInfoText();
+    }
+
+    /**
+     * Open numpy data file
+     *
+     * @param fileName File path
+     */
+    public void openNumpyData(String fileName) {
+        dataInfo = new NumpyDataInfo();
         dataInfo.readDataInfo(fileName);
         _infoText = dataInfo.generateInfoText();
     }

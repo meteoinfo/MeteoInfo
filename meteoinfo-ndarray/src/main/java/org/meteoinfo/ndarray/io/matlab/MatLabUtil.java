@@ -1,10 +1,12 @@
-package org.meteoinfo.data.meteodata.matlab;
+package org.meteoinfo.ndarray.io.matlab;
 
+import com.google.common.base.Charsets;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;
 import us.hebi.matlab.mat.types.MatlabType;
 import us.hebi.matlab.mat.types.Matrix;
+import us.hebi.matlab.mat.util.Bytes;
 
 public class MatLabUtil {
 
@@ -67,22 +69,69 @@ public class MatLabUtil {
                 break;
             case LONG:
             case ULONG:
-                for (int i = 0; i < matArray.getNumElements(); i++) {
-                    array.setLong(i, matArray.getLong(i));
+                for (int i = 0; i < array.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    for (int j = 0; j < ndim; j++) {
+                        if (current[j] < shape[j] - 1) {
+                            current[j] = current[j] + 1;
+                            break;
+                        } else {
+                            current[j] = 0;
+                        }
+                    }
+                    index.set(current);
+                    array.setLong(index, matArray.getLong(i));
                 }
                 break;
             case FLOAT:
-                for (int i = 0; i < matArray.getNumElements(); i++) {
-                    array.setFloat(i, matArray.getFloat(i));
+                for (int i = 0; i < array.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    for (int j = 0; j < ndim; j++) {
+                        if (current[j] < shape[j] - 1) {
+                            current[j] = current[j] + 1;
+                            break;
+                        } else {
+                            current[j] = 0;
+                        }
+                    }
+                    index.set(current);
+                    array.setFloat(index, matArray.getFloat(i));
                 }
                 break;
             case DOUBLE:
-                for (int i = 0; i < matArray.getNumElements(); i++) {
-                    array.setDouble(i, matArray.getDouble(i));
+                for (int i = 0; i < array.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    for (int j = 0; j < ndim; j++) {
+                        if (current[j] < shape[j] - 1) {
+                            current[j] = current[j] + 1;
+                            break;
+                        } else {
+                            current[j] = 0;
+                        }
+                    }
+                    index.set(current);
+                    array.setDouble(index, matArray.getDouble(i));
                 }
                 break;
         }
 
         return array;
+    }
+
+    public static String parseAsciiString(byte[] buffer) {
+        return parseAsciiString(buffer, 0, buffer.length);
+    }
+
+    public static String parseAsciiString(byte[] buffer, int offset, int maxLength) {
+        // Stop at String end character
+        int length = Bytes.findFirst(buffer, offset, maxLength, (byte) '\0', maxLength);
+
+        // Remove right-side trailing spaces
+        while (length > 0 && buffer[length - 1] == ' ') {
+            length--;
+        }
+
+        // Convert to String
+        return length == 0 ? "" : new String(buffer, offset, length, Charsets.US_ASCII);
     }
 }

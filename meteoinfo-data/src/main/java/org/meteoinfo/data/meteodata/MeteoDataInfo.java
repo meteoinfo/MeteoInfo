@@ -476,14 +476,14 @@ public class MeteoDataInfo {
             RandomAccessFile raf = new RandomAccessFile(fileName, "r");
             if (GrADSDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
                 di = new GrADSDataInfo();
-            } else if (MatLabDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
-                di = new MatLabDataInfo();
             } else if (NetcdfFiles.canOpen(fileName)) {
                 di = new NetCDFDataInfo();
             } else if (ARLDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
                 di = new ARLDataInfo();
             } else if (CMARadarBaseDataInfo.canOpen(fileName)) {
                 di = new CMARadarBaseDataInfo();
+            } else if (MatLabDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
+                di = new MatLabDataInfo();
             } else {
                 di = MICAPSDataInfo.getDataInfo(raf);
             }
@@ -881,17 +881,6 @@ public class MeteoDataInfo {
      */
     public void openMatLabData(String fileName) {
         dataInfo = new MatLabDataInfo();
-        dataInfo.readDataInfo(fileName);
-        _infoText = dataInfo.generateInfoText();
-    }
-
-    /**
-     * Open numpy data file
-     *
-     * @param fileName File path
-     */
-    public void openNumpyData(String fileName) {
-        dataInfo = new NumpyDataInfo();
         dataInfo.readDataInfo(fileName);
         _infoText = dataInfo.generateInfoText();
     }

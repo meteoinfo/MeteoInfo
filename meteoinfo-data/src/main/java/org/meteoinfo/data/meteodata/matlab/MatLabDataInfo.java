@@ -1,8 +1,6 @@
 package org.meteoinfo.data.meteodata.matlab;
 
 import com.google.common.base.Charsets;
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.dimarray.Dimension;
@@ -12,17 +10,13 @@ import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.InvalidRangeException;
-import us.hebi.matlab.mat.format.CharEncoding;
+import org.meteoinfo.ndarray.io.matlab.MatLabUtil;
 import us.hebi.matlab.mat.format.Mat5;
-import us.hebi.matlab.mat.format.Mat5File;
 import us.hebi.matlab.mat.types.*;
 import us.hebi.matlab.mat.util.Bytes;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteOrder;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +30,7 @@ public class MatLabDataInfo extends DataInfo implements IGridDataInfo {
             byte[] bytes = new byte[116];
             raf.seek(0);
             raf.read(bytes);
-            String magic = MatLabDataInfo.parseAsciiString(bytes);
+            String magic = MatLabUtil.parseAsciiString(bytes);
             if (magic.startsWith(MAT5_IDENTIFIER)) {
                 return true;
             } else {
@@ -59,7 +53,7 @@ public class MatLabDataInfo extends DataInfo implements IGridDataInfo {
             raf.seek(0);
             raf.read(bytes);
             raf.close();
-            String magic = MatLabDataInfo.parseAsciiString(bytes);
+            String magic = MatLabUtil.parseAsciiString(bytes);
             if (magic.startsWith(MAT5_IDENTIFIER)) {
                 return true;
             } else {
@@ -68,23 +62,6 @@ public class MatLabDataInfo extends DataInfo implements IGridDataInfo {
         } catch (IOException e) {
             return false;
         }
-    }
-
-    static String parseAsciiString(byte[] buffer) {
-        return parseAsciiString(buffer, 0, buffer.length);
-    }
-
-    static String parseAsciiString(byte[] buffer, int offset, int maxLength) {
-        // Stop at String end character
-        int length = Bytes.findFirst(buffer, offset, maxLength, (byte) '\0', maxLength);
-
-        // Remove right-side trailing spaces
-        while (length > 0 && buffer[length - 1] == ' ') {
-            length--;
-        }
-
-        // Convert to String
-        return length == 0 ? "" : new String(buffer, offset, length, Charsets.US_ASCII);
     }
 
     @Override

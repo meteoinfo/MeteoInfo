@@ -68,11 +68,6 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
         </dependency>
-        <dependency>
-            <groupId>us.hebi.matlab.mat</groupId>
-            <artifactId>mfl-core</artifactId>
-            <version>0.5.15</version>
-        </dependency>
     </dependencies>
 
     <build>

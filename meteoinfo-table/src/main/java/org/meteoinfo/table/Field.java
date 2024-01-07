@@ -68,6 +68,7 @@ import org.meteoinfo.ndarray.DataType;
                  fieldNumDec = 9;
                  break;
              case INT:
+             case LONG:
                  fieldLen = 11;
                  break;
              case BOOLEAN:
@@ -183,6 +184,7 @@ import org.meteoinfo.ndarray.DataType;
                  return 'F';
              case DOUBLE:
              case INT:
+             case LONG:
                  return 'N';
              default:
                  return 'C';

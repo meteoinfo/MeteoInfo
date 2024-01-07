@@ -92,38 +92,6 @@ public class Npz {
     }
 
     /**
-     * Read an array from an entry of a NPZ file.
-     *
-     * @param npz   the NPZ file
-     * @param entry the name of the entry in which the array is stored
-     * @return the NPY array of the entry
-     */
-    public static NpyArray<?> read(File npz, String entry) {
-        try (ZipFile zip = new ZipFile(npz)) {
-            return read(zip, entry);
-        } catch (IOException e) {
-            throw new RuntimeException("failed to read zip file: " + npz, e);
-        }
-    }
-
-    /**
-     * Read an array from an entry of a NPZ file.
-     *
-     * @param npz   the NPZ file
-     * @param entry the name of the entry in which the array is stored
-     * @return the NPY array of the entry
-     */
-    public static NpyArray<?> read(ZipFile npz, String entry) {
-        ZipEntry e = npz.getEntry(entry);
-        try (java.io.InputStream stream = npz.getInputStream(e);
-             java.nio.channels.ReadableByteChannel channel = Channels.newChannel(stream)) {
-            return Npy.read(channel);
-        } catch (IOException ex) {
-            throw new RuntimeException("failed to read entry " + entry, ex);
-        }
-    }
-
-    /**
      * Open the given file as an NPZ file. This function is useful when you want
      * to do multiple things with a NPZ file, e.g.
      *
@@ -177,17 +145,6 @@ public class Npz {
         try {
             npz.putNextEntry(e);
             Npy.save(npz, array);
-            npz.closeEntry();
-        } catch (IOException ex) {
-            throw new RuntimeException("failed to write NPZ entry: " + entry, ex);
-        }
-    }
-
-    public static void write(ZipOutputStream npz, String entry, NpyArray<?> array) {
-        ZipEntry e = new ZipEntry(entry);
-        try {
-            npz.putNextEntry(e);
-            Npy.write(npz, array);
             npz.closeEntry();
         } catch (IOException ex) {
             throw new RuntimeException("failed to write NPZ entry: " + entry, ex);

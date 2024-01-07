@@ -161,21 +161,4 @@ public class NpyUtil {
                 throw new NpyFormatException("Unsupported data type: " + dataType);
         }
     }
-
-    /**
-     * Convert Npy array to MeteoInfo array
-     *
-     * @param npyArray Npy array
-     * @return MeteoInfo array
-     */
-    public static Array toMIArray(NpyArray npyArray) {
-        DataType dataType = toMIDataType(npyArray.dataType());
-        int[] shape = npyArray.shape();
-        Array array = Array.factory(dataType, shape);
-        for (int i = 0; i < array.getSize(); i++) {
-            array.setObject(i, npyArray.getElement(i));
-        }
-
-        return array;
-    }
 }

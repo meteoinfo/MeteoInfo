@@ -41,7 +41,7 @@ public final class AttributeTable implements Cloneable {
     private int _headerLength;
     private int _recordLength;
     private int _numFields;
-    private List<Field> _columns;
+    private List<Field> fields;
     private byte _fileType;
     private EndianDataOutputStream _writer;
     private File _file;
@@ -87,7 +87,7 @@ public final class AttributeTable implements Cloneable {
     private void configure() {
         _fileType = 0x03;
         _dataTable = new DataTable();
-        _columns = new ArrayList<>();
+        fields = new ArrayList<>();
         _attributesPopulated = true; // only turn this false during an "open" method
         _deletedRows = new ArrayList<>();
         _characterContent = new char[1];
@@ -263,7 +263,7 @@ public final class AttributeTable implements Cloneable {
         _numFields = (_headerLength - FileDescriptorSize - 1) / FileDescriptorSize;
 
         // _numFields = (_headerLength - FileDescriptorSize) / FileDescriptorSize;
-        _columns = new ArrayList<>();
+        fields = new ArrayList<>();
 
         for (int i = 0; i < _numFields; i++) {
             arr = new byte[18];
@@ -304,7 +304,7 @@ public final class AttributeTable implements Cloneable {
             Field myField = new Field(name, Code, tempLength, decimalcount);
             //myField.DataAddress = dataAddress; // not sure what this does yet
 
-            _columns.add(myField); // Store fields accessible by an index
+            fields.add(myField); // Store fields accessible by an index
             _dataTable.getColumns().add(myField);
         }
 
@@ -416,7 +416,7 @@ public final class AttributeTable implements Cloneable {
 
         for (int col = 0; col < _dataTable.getColumns().size(); col++) {
             // find the length of the field.
-            Field CurrentField = _columns.get(col);
+            Field CurrentField = fields.get(col);
 
             // find the field type
             char tempFieldType = CurrentField.getTypeCharacter();
@@ -495,6 +495,19 @@ public final class AttributeTable implements Cloneable {
     }
 
     /**
+     * Add a field
+     *
+     * @param field The field to be added
+     */
+    public void addField(Field field) {
+        if (fields == null) {
+            fields = new ArrayList<>();
+        }
+        fields.add(field);
+        this._dataTable.addColumn(field);
+    }
+
+    /**
      * Save the file
      */
     public void save() {
@@ -565,13 +578,13 @@ public final class AttributeTable implements Cloneable {
         _numRecords = this._dataTable.getRows().size();
         _updateDate = LocalDateTime.now();
         _headerLength = FileDescriptorSize + FileDescriptorSize * _dataTable.getColumns().size() + 1;
-        if (_columns == null) {
-            _columns = new ArrayList<>();
+        if (fields == null) {
+            fields = new ArrayList<>();
         }
         // Delete any fields from the columns list that are no 
         // longer in the data Table.
         List<Field> removeFields = new ArrayList<>();
-        for (Field fld : _columns) {
+        for (Field fld : fields) {
             if (!_dataTable.getColumnNames().contains(fld.getColumnName())) {
                 removeFields.add(fld);
             } else {
@@ -579,7 +592,7 @@ public final class AttributeTable implements Cloneable {
             }
         }
         for (Field field : removeFields) {
-            _columns.remove(field);
+            fields.remove(field);
         }
 
         // Add new columns that exist in the data Table, but don't have a matching field yet.
@@ -588,28 +601,23 @@ public final class AttributeTable implements Cloneable {
                 if (columnNameExists(dc.getColumnName())) {
                     continue;
                 }
-//                Field fld = (Field) dc;
-//                if (fld == null) {
-//                    fld = new Field(dc);
-//                }
-
                 Field fld = new Field(dc);
 
                 tempColumns.add(fld);
             }
         }
 
-        _columns = tempColumns;
+        fields = tempColumns;
 
         // Recalculate the recordlength
-        for (Field fld : _columns) {
+        for (Field fld : fields) {
             //_recordLength = _recordLength + fld.Length + 1;
             _recordLength = _recordLength + fld.getLength();
         }
     }
 
     private boolean columnNameExists(String name) {
-        for (Field fld : _columns) {
+        for (Field fld : fields) {
             if (fld.getColumnName().equals(name)) {
                 return true;
             }
@@ -647,8 +655,8 @@ public final class AttributeTable implements Cloneable {
 
         // write all of the header records
         Field currentField;
-        for (int i = 0; i < _columns.size(); i++) {
-            currentField = _columns.get(i);
+        for (int i = 0; i < fields.size(); i++) {
+            currentField = fields.get(i);
             // write the field name
             byte[] bytes = currentField.getColumnName().getBytes(this.encoding);
             for (int j = 0; j < 11; j++) {
@@ -695,8 +703,8 @@ public final class AttributeTable implements Cloneable {
             //int len = _recordLength - 1;
             StringBuffer tmps;
             //String s;
-            for (int fld = 0; fld < _columns.size(); fld++) {
-                Field currentField = _columns.get(fld);
+            for (int fld = 0; fld < fields.size(); fld++) {
+                Field currentField = fields.get(fld);
                 String name = currentField.getColumnName();
 
                 Object columnValue = _dataTable.getRows().get(row).getValue(name);
@@ -727,11 +735,15 @@ public final class AttributeTable implements Cloneable {
                     case 'n':
                         // int?
                         String fs;
-                        if (currentField.getDataType() == DataType.INT) {
-                            fs = String.format("%1$" + String.valueOf(currentField.getLength()) + "d", columnValue);
-                        } else {
-                            fs = String.format("%1$" + String.valueOf(currentField.getLength()) + "."
-                                    + String.valueOf(currentField.getDecimalCount()) + "f", columnValue);
+                        switch (currentField.getDataType()) {
+                            case INT:
+                            case LONG:
+                                fs = String.format("%1$" + String.valueOf(currentField.getLength()) + "d", columnValue);
+                                break;
+                            default:
+                                fs = String.format("%1$" + String.valueOf(currentField.getLength()) + "."
+                                        + String.valueOf(currentField.getDecimalCount()) + "f", columnValue);
+                                break;
                         }
                         if (fs.length() > currentField.getLength()) {
                             fs = fs.substring(0, currentField.getLength());

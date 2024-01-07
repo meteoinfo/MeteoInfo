@@ -54,6 +54,7 @@ public class MatLabUtil {
             case INT:
             case UINT:
                 for (int i = 0; i < array.getSize(); i++) {
+                    array.setInt(index, matArray.getInt(i));
                     current = index.getCurrentCounter();
                     for (int j = 0; j < ndim; j++) {
                         if (current[j] < shape[j] - 1) {
@@ -64,12 +65,12 @@ public class MatLabUtil {
                         }
                     }
                     index.set(current);
-                    array.setInt(index, matArray.getInt(i));
                 }
                 break;
             case LONG:
             case ULONG:
                 for (int i = 0; i < array.getSize(); i++) {
+                    array.setLong(index, matArray.getLong(i));
                     current = index.getCurrentCounter();
                     for (int j = 0; j < ndim; j++) {
                         if (current[j] < shape[j] - 1) {
@@ -80,11 +81,11 @@ public class MatLabUtil {
                         }
                     }
                     index.set(current);
-                    array.setLong(index, matArray.getLong(i));
                 }
                 break;
             case FLOAT:
                 for (int i = 0; i < array.getSize(); i++) {
+                    array.setFloat(index, matArray.getFloat(i));
                     current = index.getCurrentCounter();
                     for (int j = 0; j < ndim; j++) {
                         if (current[j] < shape[j] - 1) {
@@ -95,11 +96,11 @@ public class MatLabUtil {
                         }
                     }
                     index.set(current);
-                    array.setFloat(index, matArray.getFloat(i));
                 }
                 break;
             case DOUBLE:
                 for (int i = 0; i < array.getSize(); i++) {
+                    array.setDouble(index, matArray.getDouble(i));
                     current = index.getCurrentCounter();
                     for (int j = 0; j < ndim; j++) {
                         if (current[j] < shape[j] - 1) {
@@ -110,9 +111,20 @@ public class MatLabUtil {
                         }
                     }
                     index.set(current);
-                    array.setDouble(index, matArray.getDouble(i));
                 }
                 break;
+        }
+
+        if (ndim >= 3) {
+            int[] shapeIdx = new int[ndim];
+            int idx = 0;
+            for (int i = ndim - 1; i > 1; i--) {
+                shapeIdx[idx] = i;
+                idx += 1;
+            }
+            shapeIdx[idx] = 0;
+            shapeIdx[idx + 1] = 1;
+            array = array.permute(shapeIdx);
         }
 
         return array;

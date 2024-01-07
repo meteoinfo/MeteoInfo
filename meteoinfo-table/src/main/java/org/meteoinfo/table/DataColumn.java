@@ -254,6 +254,8 @@ public class DataColumn {
             switch (this.dataType) {
                 case INT:
                     return Integer.MIN_VALUE;
+                case LONG:
+                    return Long.MIN_VALUE;
                 case FLOAT:
                     return Float.NaN;
                 case DOUBLE:
@@ -273,6 +275,14 @@ public class DataColumn {
                         if (vStr.isEmpty())
                             return Integer.MIN_VALUE;
                         return Integer.valueOf(vStr);
+                    }
+                    break;
+                case LONG:
+                    if (!(value instanceof Long)) {
+                        String vStr = value.toString();
+                        if (vStr.isEmpty())
+                            return Long.MIN_VALUE;
+                        return Long.valueOf(vStr);
                     }
                     break;
                 case DOUBLE:

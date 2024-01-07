@@ -10,7 +10,6 @@ import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.io.npy.Npy;
-import org.meteoinfo.ndarray.io.npy.NpyArray;
 import org.meteoinfo.ndarray.io.npy.NpyUtil;
 
 import java.io.*;
@@ -25,15 +24,14 @@ public class NumpyDataInfo extends DataInfo implements IGridDataInfo {
     public void readDataInfo(String fileName) {
         this.setFileName(fileName);
         File file = new File(fileName);
-        NpyArray npyArray = Npy.read(file);
-        Array array = NpyUtil.toMIArray(npyArray);
+        Array array = Npy.load(file);
 
         this.addAttribute(new Attribute("File type", "Numpy"));
-        int[] shape = npyArray.shape();
+        int[] shape = array.getShape();
         String name = "a";
         Variable variable = new Variable();
         variable.setName(name);
-        variable.setDataType(NpyUtil.toMIDataType(npyArray.dataType()));
+        variable.setDataType(array.getDataType());
         variable.setCachedData(array);
         for (int i = 0; i < shape.length; i++) {
             Dimension dim = new Dimension();

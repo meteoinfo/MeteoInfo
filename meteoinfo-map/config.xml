@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="config.xml" Type="configurefile">
-  <Path OpenPath="D:\Temp\test"/>
+  <Path OpenPath="D:\Temp\traj\Sample"/>
   <Font>
     <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
     <LegendFont FontName="宋体" FontSize="12"/>
@@ -8,5 +8,5 @@
   <ScriptLanguage Language="Jython"/>
   <LookFeel LafDecorated="true" Name="FlatLightLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-5,1" MainFormSize="1293,685" ShowMeteoDataDlg="true"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685" ShowMeteoDataDlg="true"/>
 </MeteoInfo>

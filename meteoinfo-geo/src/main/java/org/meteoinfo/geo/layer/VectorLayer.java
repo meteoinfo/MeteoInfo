@@ -1175,15 +1175,15 @@ public class VectorLayer extends MapLayer {
     /**
      * Edit: Add a field
      *
-     * @param aField The field
+     * @param field The field
      */
-    public void editAddField(Field aField) {
+    public void editAddField(Field field) {
         for (int i = 0; i < this.getFieldNumber(); i++) {
-            if (aField.getColumnName().equals(_attributeTable.getTable().getColumns().get(i).getColumnName())) {
-                aField.setColumnName(aField.getColumnName() + "_1");
+            if (field.getColumnName().equals(_attributeTable.getTable().getColumns().get(i).getColumnName())) {
+                field.setColumnName(field.getColumnName() + "_1");
             }
         }
-        _attributeTable.getTable().addColumn(aField);
+        _attributeTable.addField(field);
     }
 
     /**

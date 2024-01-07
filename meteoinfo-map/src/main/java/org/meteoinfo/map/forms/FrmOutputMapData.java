@@ -40,9 +40,9 @@ import org.meteoinfo.geometry.shape.Shape;
  */
 public class FrmOutputMapData extends javax.swing.JDialog {
 
-    private List<VectorLayer> _mapLayers = new ArrayList<>();
-    private VectorLayer _currentLayer;
-    private FrmMain _parent;
+    private List<VectorLayer> mapLayers = new ArrayList<>();
+    private VectorLayer currentLayer;
+    private FrmMain parent;
 
     /**
      * Creates new form FrmOutputMapData
@@ -53,7 +53,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        _parent = (FrmMain) parent;
+        this.parent = (FrmMain) parent;
         initialize();
     }
 
@@ -62,17 +62,17 @@ public class FrmOutputMapData extends javax.swing.JDialog {
 
         //Get map layer list
         int i;
-        for (i = 0; i < _parent.getMapDocument().getActiveMapFrame().getMapView().getLayerNum(); i++) {
-            if (_parent.getMapDocument().getActiveMapFrame().getMapView().getLayers().get(i).getLayerType() == LayerTypes.VECTOR_LAYER) {
-                VectorLayer aLayer = (VectorLayer) _parent.getMapDocument().getActiveMapFrame().getMapView().getLayers().get(i);
-                _mapLayers.add(aLayer);
+        for (i = 0; i < parent.getMapDocument().getActiveMapFrame().getMapView().getLayerNum(); i++) {
+            if (parent.getMapDocument().getActiveMapFrame().getMapView().getLayers().get(i).getLayerType() == LayerTypes.VECTOR_LAYER) {
+                VectorLayer aLayer = (VectorLayer) parent.getMapDocument().getActiveMapFrame().getMapView().getLayers().get(i);
+                mapLayers.add(aLayer);
             }
         }
 
         this.jComboBox_MapLayer.removeAllItems();
-        if (_mapLayers.size() > 0) {
-            for (i = 0; i < _mapLayers.size(); i++) {
-                this.jComboBox_MapLayer.addItem(_mapLayers.get(i).getLayerName());
+        if (mapLayers.size() > 0) {
+            for (i = 0; i < mapLayers.size(); i++) {
+                this.jComboBox_MapLayer.addItem(mapLayers.get(i).getLayerName());
             }
             this.jComboBox_MapLayer.setSelectedIndex(0);
         }
@@ -175,7 +175,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
     private void jComboBox_MapLayerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_MapLayerActionPerformed
         // TODO add your handling code here:
         if (this.jComboBox_MapLayer.getItemCount() > 0) {
-            _currentLayer = _mapLayers.get(this.jComboBox_MapLayer.getSelectedIndex());
+            currentLayer = mapLayers.get(this.jComboBox_MapLayer.getSelectedIndex());
 
             int i;
             String str = this.jComboBox_OutputFormat.getSelectedItem().toString();
@@ -183,7 +183,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
             this.jComboBox_OutputFormat.addItem("ASCII wmp File");
             this.jComboBox_OutputFormat.addItem("Shape File");
             this.jComboBox_OutputFormat.addItem("KML File");
-            switch (_currentLayer.getShapeType()) {
+            switch (currentLayer.getShapeType()) {
                 case POLYGON:
                 case POLYGON_M:
                 case POLYGON_Z:
@@ -268,14 +268,14 @@ public class FrmOutputMapData extends javax.swing.JDialog {
             }
 
             BufferedWriter sw = new BufferedWriter(new FileWriter(file));
-            List<Integer> selIndexes = _currentLayer.getSelectedShapeIndexes();
-            boolean hasSelShape = _currentLayer.hasSelectedShapes();
-            int shpNum = _currentLayer.getShapeNum();
+            List<Integer> selIndexes = currentLayer.getSelectedShapeIndexes();
+            boolean hasSelShape = currentLayer.hasSelectedShapes();
+            int shpNum = currentLayer.getShapeNum();
             if (hasSelShape) {
                 shpNum = selIndexes.size();
             }
             int i;
-            switch (_currentLayer.getShapeType()) {
+            switch (currentLayer.getShapeType()) {
                 case POINT:
                     sw.write("Point");
                     sw.newLine();
@@ -283,20 +283,20 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     sw.newLine();
                     PointShape aPS;
                     if (hasSelShape) {
-                        for (i = 0; i < _currentLayer.getShapeNum(); i++) {
-                            aPS = (PointShape) _currentLayer.getShapes().get(i);
+                        for (i = 0; i < currentLayer.getShapeNum(); i++) {
+                            aPS = (PointShape) currentLayer.getShapes().get(i);
                             if (aPS.isSelected()) {
                                 sw.write(String.valueOf(aPS.getPoint().X) + "," + String.valueOf(aPS.getPoint().Y));
                                 sw.newLine();
                             }
-                            this.jProgressBar1.setValue((i + 1) * 100 / _currentLayer.getShapeNum());
+                            this.jProgressBar1.setValue((i + 1) * 100 / currentLayer.getShapeNum());
                         }
                     } else {
-                        for (i = 0; i < _currentLayer.getShapeNum(); i++) {
-                            aPS = (PointShape) _currentLayer.getShapes().get(i);
+                        for (i = 0; i < currentLayer.getShapeNum(); i++) {
+                            aPS = (PointShape) currentLayer.getShapes().get(i);
                             sw.write(String.valueOf(aPS.getPoint().X) + "," + String.valueOf(aPS.getPoint().Y));
                             sw.newLine();
-                            this.jProgressBar1.setValue((i + 1) * 100 / _currentLayer.getShapeNum());
+                            this.jProgressBar1.setValue((i + 1) * 100 / currentLayer.getShapeNum());
                         }
                     }
                     break;
@@ -306,8 +306,8 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     sw.newLine();
                     int shapeNum = 0;
                     PolylineShape aPLS;
-                    for (i = 0; i < _currentLayer.getShapeNum(); i++) {
-                        aPLS = (PolylineShape) _currentLayer.getShapes().get(i);
+                    for (i = 0; i < currentLayer.getShapeNum(); i++) {
+                        aPLS = (PolylineShape) currentLayer.getShapes().get(i);
                         if (hasSelShape) {
                             if (!aPLS.isSelected()) {
                                 continue;
@@ -318,8 +318,8 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     sw.write(String.valueOf(shpNum));
                     sw.newLine();
 
-                    for (i = 0; i < _currentLayer.getShapeNum(); i++) {
-                        aPLS = (PolylineShape) _currentLayer.getShapes().get(i);
+                    for (i = 0; i < currentLayer.getShapeNum(); i++) {
+                        aPLS = (PolylineShape) currentLayer.getShapes().get(i);
                         if (hasSelShape) {
                             if (!aPLS.isSelected()) {
                                 continue;
@@ -347,7 +347,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                             shapeNum += 1;
                         }
 
-                        this.jProgressBar1.setValue((i + 1) * 100 / _currentLayer.getShapeNum());
+                        this.jProgressBar1.setValue((i + 1) * 100 / currentLayer.getShapeNum());
                     }
                     break;
                 case POLYGON:
@@ -355,8 +355,8 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     sw.newLine();
                     shapeNum = 0;
                     PolygonShape aPGS;
-                    for (i = 0; i < _currentLayer.getShapeNum(); i++) {
-                        aPGS = (PolygonShape) _currentLayer.getShapes().get(i);
+                    for (i = 0; i < currentLayer.getShapeNum(); i++) {
+                        aPGS = (PolygonShape) currentLayer.getShapes().get(i);
                         if (hasSelShape) {
                             if (!aPGS.isSelected()) {
                                 continue;
@@ -367,8 +367,8 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     sw.write(String.valueOf(shapeNum));
                     sw.newLine();
 
-                    for (i = 0; i < _currentLayer.getShapeNum(); i++) {
-                        aPGS = (PolygonShape) _currentLayer.getShapes().get(i);
+                    for (i = 0; i < currentLayer.getShapeNum(); i++) {
+                        aPGS = (PolygonShape) currentLayer.getShapes().get(i);
                         if (hasSelShape) {
                             if (!aPGS.isSelected()) {
                                 continue;
@@ -397,7 +397,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                             shapeNum += 1;
                         }
 
-                        this.jProgressBar1.setValue((i + 1) * 100 / _currentLayer.getShapeNum());
+                        this.jProgressBar1.setValue((i + 1) * 100 / currentLayer.getShapeNum());
                     }
                     break;
             }
@@ -436,14 +436,14 @@ public class FrmOutputMapData extends javax.swing.JDialog {
             }
 
             int i;
-            boolean hasSelShape = _currentLayer.hasSelectedShapes();
+            boolean hasSelShape = currentLayer.hasSelectedShapes();
 
             //Get grid set
             PolygonShape aPGS;
             Extent aExtent = new Extent();
             int n = 0;
-            for (i = 0; i < _currentLayer.getShapeNum(); i++) {
-                aPGS = (PolygonShape) _currentLayer.getShapes().get(i);
+            for (i = 0; i < currentLayer.getShapeNum(); i++) {
+                aPGS = (PolygonShape) currentLayer.getShapes().get(i);
                 if (hasSelShape) {
                     if (!aPGS.isSelected()) {
                         continue;
@@ -490,8 +490,8 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     for (j = 0; j < aGDP.xNum; j++) {
                         aPoint.X = aGDP.dataExtent.minX + j * xSize;
                         isIn = false;
-                        for (p = 0; p < _currentLayer.getShapeNum(); p++) {
-                            aPGS = (PolygonShape) _currentLayer.getShapes().get(p);
+                        for (p = 0; p < currentLayer.getShapeNum(); p++) {
+                            aPGS = (PolygonShape) currentLayer.getShapes().get(p);
                             if (hasSelShape) {
                                 if (!aPGS.isSelected()) {
                                     continue;
@@ -586,14 +586,14 @@ public class FrmOutputMapData extends javax.swing.JDialog {
 
                 //Create a VectorLayer with selected shapes
                 int i, j;
-                VectorLayer aLayer = new VectorLayer(_currentLayer.getShapeType());
-                for (i = 0; i < _currentLayer.getFieldNumber(); i++) {
-                    aLayer.editAddField(_currentLayer.getField(i).getColumnName(), _currentLayer.getField(i).getDataType());
+                VectorLayer aLayer = new VectorLayer(currentLayer.getShapeType());
+                for (i = 0; i < currentLayer.getFieldNumber(); i++) {
+                    aLayer.editAddField(currentLayer.getField(i).getColumnName(), currentLayer.getField(i).getDataType());
                 }
-                boolean hasSelShape = _currentLayer.hasSelectedShapes();
+                boolean hasSelShape = currentLayer.hasSelectedShapes();
 
-                for (i = 0; i < _currentLayer.getShapeNum(); i++) {
-                    Shape aPS = _currentLayer.getShapes().get(i);
+                for (i = 0; i < currentLayer.getShapeNum(); i++) {
+                    Shape aPS = currentLayer.getShapes().get(i);
                     if (hasSelShape) {
                         if (!aPS.isSelected()) {
                             continue;
@@ -603,15 +603,15 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     try {
                         if (aLayer.editInsertShape(aPS, sNum)) {
                             for (j = 0; j < aLayer.getFieldNumber(); j++) {
-                                aLayer.editCellValue(j, sNum, _currentLayer.getCellValue(j, i));
+                                aLayer.editCellValue(j, sNum, currentLayer.getCellValue(j, i));
                             }
                         }
                     } catch (Exception ex) {
                         Logger.getLogger(FrmOutputMapData.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    FrmOutputMapData.this.jProgressBar1.setValue((int) ((double) i / _currentLayer.getShapeNum() * 100));
+                    FrmOutputMapData.this.jProgressBar1.setValue((int) ((double) i / currentLayer.getShapeNum() * 100));
                 }
-                aLayer.setProjInfo(_currentLayer.getProjInfo());
+                aLayer.setProjInfo(currentLayer.getProjInfo());
                 aLayer.saveFile(fileName);
 
                 return "";
@@ -634,14 +634,14 @@ public class FrmOutputMapData extends javax.swing.JDialog {
 
         //Create a VectorLayer with selected shapes
         int i, j;
-        VectorLayer aLayer = new VectorLayer(_currentLayer.getShapeType());
-        for (i = 0; i < _currentLayer.getFieldNumber(); i++) {
-            aLayer.editAddField(_currentLayer.getField(i).getColumnName(), _currentLayer.getField(i).getDataType());
+        VectorLayer aLayer = new VectorLayer(currentLayer.getShapeType());
+        for (i = 0; i < currentLayer.getFieldNumber(); i++) {
+            aLayer.editAddField(currentLayer.getField(i));
         }
-        boolean hasSelShape = _currentLayer.hasSelectedShapes();
+        boolean hasSelShape = currentLayer.hasSelectedShapes();
 
-        for (i = 0; i < _currentLayer.getShapeNum(); i++) {
-            Shape aPS = _currentLayer.getShapes().get(i);
+        for (i = 0; i < currentLayer.getShapeNum(); i++) {
+            Shape aPS = currentLayer.getShapes().get(i);
             if (hasSelShape) {
                 if (!aPS.isSelected()) {
                     continue;
@@ -651,15 +651,15 @@ public class FrmOutputMapData extends javax.swing.JDialog {
             try {
                 if (aLayer.editInsertShape(aPS, sNum)) {
                     for (j = 0; j < aLayer.getFieldNumber(); j++) {
-                        aLayer.editCellValue(j, sNum, _currentLayer.getCellValue(j, i));
+                        aLayer.editCellValue(j, sNum, currentLayer.getCellValue(j, i));
                     }
                 }
             } catch (Exception ex) {
                 Logger.getLogger(FrmOutputMapData.class.getName()).log(Level.SEVERE, null, ex);
             }
-            FrmOutputMapData.this.jProgressBar1.setValue((int) ((double) i / _currentLayer.getShapeNum() * 100));
+            FrmOutputMapData.this.jProgressBar1.setValue((int) ((double) i / currentLayer.getShapeNum() * 100));
         }
-        aLayer.setProjInfo(_currentLayer.getProjInfo());
+        aLayer.setProjInfo(currentLayer.getProjInfo());
         aLayer.saveFile(fileName);
         
         FrmOutputMapData.this.setCursor(Cursor.getDefaultCursor());
@@ -689,7 +689,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
             if (!fileName.substring(fileName.length() - extent.length()).equals(extent)) {
                 fileName = fileName + "." + extent;
             }
-            _currentLayer.saveAsKMLFile(fileName);
+            currentLayer.saveAsKMLFile(fileName);
 
             this.setCursor(Cursor.getDefaultCursor());
         }

@@ -145,6 +145,7 @@ public class DataRow {
         Object value = null;
         switch (column.getDataType()) {
             case INT:
+            case LONG:
                 value = 0;
                 break;
             case STRING:

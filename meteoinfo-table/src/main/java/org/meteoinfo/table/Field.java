@@ -22,9 +22,6 @@ import org.meteoinfo.ndarray.DataType;
   */
  public class Field extends DataColumn {
      // <editor-fold desc="Variables">
-
-     //private String fieldName;
-     //private char fieldType;
      private int fieldLen;
      private int fieldNumDec = 0;
      // </editor-fold>
@@ -32,13 +29,13 @@ import org.meteoinfo.ndarray.DataType;
 
      /**
       * Constructor
-      * @param fName Field name
+      * @param name Field name
       * @param type Data type
       * @param fLen Field length
       * @param fNumDec Field decimal number
       */
-     public Field(String fName, DataType type, int fLen, int fNumDec){
-         this.setColumnName(fName);
+     public Field(String name, DataType type, int fLen, int fNumDec){
+         this.setColumnName(name);
          this.setDataType(type);
          this.fieldLen = fLen;
          this.fieldNumDec = fNumDec;
@@ -46,11 +43,11 @@ import org.meteoinfo.ndarray.DataType;
 
      /**
       * Constructor
-      * @param fName Field name
+      * @param name Field name
       * @param type Field data type
       */
-     public Field(String fName, DataType type) {
-         this.setColumnName(fName);
+     public Field(String name, DataType type) {
+         this.setColumnName(name);
          this.setDataType(type);
          switch (type) {
              case STRING:
@@ -68,8 +65,10 @@ import org.meteoinfo.ndarray.DataType;
                  fieldNumDec = 9;
                  break;
              case INT:
-             case LONG:
                  fieldLen = 11;
+                 break;
+             case LONG:
+                 fieldLen = 20;
                  break;
              case BOOLEAN:
                  fieldLen = 1;
@@ -103,7 +102,7 @@ import org.meteoinfo.ndarray.DataType;
                  break;
              case 'N':
                  if (fNumDec == 0){
-                     if (fLen <= 9)
+                     if (fLen <= 11)
                         this.setDataType(DataType.INT);
                      else
                         this.setDataType(DataType.LONG);

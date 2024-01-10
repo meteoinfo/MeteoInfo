@@ -36,6 +36,7 @@ import org.meteoinfo.ndarray.IndexIterator;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.table.Field;
+import wcontour.Contour;
 import wcontour.global.PolyLine;
 import wcontour.global.Polygon;
 
@@ -1651,21 +1652,146 @@ public class DrawMeteoData {
     /**
      * Create streamline layer by U/V or wind direction/speed grid data
      *
-     * @param u U grid data
-     * @param v V grid data
-     * @param x X array
-     * @param y Y array
+     * @param udata U data array
+     * @param vdata V data array
+     * @param xdata X array
+     * @param ydata Y array
      * @param density Density
-     * @param aLS Legend scheme
+     * @param ls Legend scheme
      * @param lName Layer name
      * @param isUV If is U/V
      * @return Vector layer
      */
-    public static VectorLayer createStreamlineLayer(Array u, Array v, Array x, Array y, int density, LegendScheme aLS,
+    public static VectorLayer createStreamlineLayer(Array udata, Array vdata, Array xdata, Array ydata, int density, LegendScheme ls,
                                                     String lName, boolean isUV) {
-        GridData uData = new GridData(u, x, y);
-        GridData vData = new GridData(v, x, y);
-        return createStreamlineLayer(uData, vData, density, aLS, lName, isUV);
+        if (!isUV) {
+            Array[] uvData = MeteoMath.ds2uv(udata, vdata);
+            udata = uvData[0];
+            vdata = uvData[1];
+        }
+
+        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
+        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
+        double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
+        double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
+        List<PolyLine> streamlines = Contour.tracingStreamline(u, v,
+                x, y, density);
+
+        PolyLine aLine;
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE_Z);
+        aLayer.editAddField("ID", DataType.INT);
+
+        for (int i = 0; i < streamlines.size() - 1; i++) {
+            aLine = streamlines.get(i);
+
+            PolylineShape aPolyline = new PolylineShape();
+            PointD aPoint;
+            List<PointD> pList = new ArrayList<>();
+            for (int j = 0; j < aLine.PointList.size(); j++) {
+                aPoint = new PointD();
+                aPoint.X = (aLine.PointList.get(j)).X;
+                aPoint.Y = (aLine.PointList.get(j)).Y;
+                pList.add(aPoint);
+            }
+            aPolyline.setPoints(pList);
+            aPolyline.setValue(density);
+
+            int shapeNum = aLayer.getShapeNum();
+            try {
+                if (aLayer.editInsertShape(aPolyline, shapeNum)) {
+                    aLayer.editCellValue("ID", shapeNum, shapeNum + 1);
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        aLayer.setLayerName(lName);
+        ls.setFieldName("ID");
+        if (ls.getShapeType() != ShapeTypes.POLYLINE)
+            ls = ls.convertTo(ShapeTypes.POLYLINE);
+        aLayer.setLegendScheme(ls);
+        aLayer.setLayerDrawType(LayerDrawType.STREAMLINE);
+
+        return aLayer;
+    }
+
+    /**
+     * Create streamline layer by U/V or wind direction/speed grid data
+     *
+     * @param udata U data array
+     * @param vdata V data array
+     * @param xdata X array
+     * @param ydata Y array
+     * @param cdata Color data array
+     * @param density Density
+     * @param ls Legend scheme
+     * @param lName Layer name
+     * @param isUV If is U/V
+     * @return Vector layer
+     */
+    public static VectorLayer createStreamlineLayer(Array udata, Array vdata, Array xdata, Array ydata, Array cdata,
+                                                    int density, LegendScheme ls, String lName, boolean isUV) {
+        if (!isUV) {
+            Array[] uvData = MeteoMath.ds2uv(udata, vdata);
+            udata = uvData[0];
+            vdata = uvData[1];
+        }
+
+        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
+        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
+        double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
+        double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
+        List<PolyLine> streamlines = Contour.tracingStreamline(u, v,
+                x, y, density);
+        int ny = u.length;
+        int nx = u[0].length;
+
+        PolyLine aLine;
+        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE_Z);
+        aLayer.editAddField("ID", DataType.INT);
+
+        for (int i = 0; i < streamlines.size() - 1; i++) {
+            aLine = streamlines.get(i);
+
+            PolylineZShape aPolyline = new PolylineZShape();
+            PointZ p;
+            List<PointD> pList = new ArrayList<>();
+            double c = 0;
+            for (int j = 0; j < aLine.PointList.size(); j++) {
+                p = new PointZ();
+                p.X = (aLine.PointList.get(j)).X;
+                p.Y = (aLine.PointList.get(j)).Y;
+                int[] idx = ArrayUtil.gridIndex(xdata, ydata, p.X, p.Y);
+                if (idx != null) {
+                    int yi = idx[0];
+                    int xi = idx[1];
+                    c = cdata.getDouble(yi * nx + xi);
+                }
+                p.Z = c;
+                pList.add(p);
+            }
+            aPolyline.setPoints(pList);
+            aPolyline.setValue(density);
+
+            int shapeNum = aLayer.getShapeNum();
+            try {
+                if (aLayer.editInsertShape(aPolyline, shapeNum)) {
+                    aLayer.editCellValue("ID", shapeNum, shapeNum + 1);
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        aLayer.setLayerName(lName);
+        ls.setFieldName("Geometry_Z");
+        if (ls.getShapeType() != ShapeTypes.POLYLINE)
+            ls = ls.convertTo(ShapeTypes.POLYLINE);
+        aLayer.setLegendScheme(ls);
+        aLayer.setLayerDrawType(LayerDrawType.STREAMLINE);
+
+        return aLayer;
     }
 
     /**

@@ -647,7 +647,7 @@ class MapAxes(Axes):
         :param linewidth: (*float*) Line width.
         :param color: (*Color*) Line color.
         
-        :returns: (*VectoryLayer*) Line VectoryLayer.
+        :returns: (*VectorLayer*) Line VectorLayer.
         """
         fill_value = kwargs.pop('fill_value', -9999.0)
         proj = kwargs.pop('proj', None)
@@ -712,7 +712,8 @@ class MapAxes(Axes):
         
         #Get plot data styles - Legend
         zvalues = kwargs.pop('zvalues', None)
-        if zvalues is None:
+        cdata = kwargs.pop('cdata', zvalues)
+        if cdata is None:
             lines = []
             ls = kwargs.pop('legend', None) 
             if ls is None:
@@ -734,25 +735,25 @@ class MapAxes(Axes):
         else:
             ls = kwargs.pop('symbolspec', None)
             if ls is None:        
-                if isinstance(zvalues, (list, tuple)):
-                    zvalues = np.array(zvalues)
+                if isinstance(cdata, (list, tuple)):
+                    cdata = np.array(cdata)
                 levels = kwargs.pop('levs', None)
                 if levels is None:
                     levels = kwargs.pop('levels', None)
                 if levels is None:
                     cnum = kwargs.pop('cnum', None)
                     if cnum is None:
-                        ls = plotutil.getlegendscheme([], zvalues.min(), zvalues.max(), **kwargs)
+                        ls = plotutil.getlegendscheme([], cdata.min(), cdata.max(), **kwargs)
                     else:
-                        ls = plotutil.getlegendscheme([cnum], zvalues.min(), zvalues.max(), **kwargs)
+                        ls = plotutil.getlegendscheme([cnum], cdata.min(), cdata.max(), **kwargs)
                 else:
-                    ls = plotutil.getlegendscheme([levels], zvalues.min(), zvalues.max(), **kwargs)
+                    ls = plotutil.getlegendscheme([levels], cdata.min(), cdata.max(), **kwargs)
                 ls = plotutil.setlegendscheme_line(ls, **kwargs)
             ls.setFieldName('Geometry_Z')
         
         aslayer = kwargs.pop('aslayer', True)
         if aslayer:            
-            if zvalues is None:
+            if cdata is None:
                 for i in range(snum):
                     xdatalist[i] = plotutil.getplotdata(xdatalist[i])
                     ydatalist[i] = plotutil.getplotdata(ydatalist[i])
@@ -781,7 +782,7 @@ class MapAxes(Axes):
             else:
                 xdata = plotutil.getplotdata(xdatalist[0])
                 ydata = plotutil.getplotdata(ydatalist[0])
-                zdata = plotutil.getplotdata(zvalues)
+                zdata = plotutil.getplotdata(cdata)
                 if is_lonlat:
                     layer = DrawMeteoData.createPolylineLayer(xdata, ydata, zdata, ls, \
                         'Plot_lines', 'ID', -180, 180)
@@ -804,7 +805,7 @@ class MapAxes(Axes):
         else:
             iscurve = False
             graphics = []
-            if zvalues is None:
+            if cdata is None:
                 #Add data series
                 if snum == 1:
                     xdata = plotutil.getplotdata(xdatalist[0])
@@ -837,7 +838,7 @@ class MapAxes(Axes):
             else:
                 xdata = plotutil.getplotdata(xdatalist[0])
                 ydata = plotutil.getplotdata(ydatalist[0])
-                zdata = plotutil.getplotdata(zvalues)
+                zdata = plotutil.getplotdata(cdata)
                 graphic = GraphicFactory.createLineString(xdata, ydata, zdata, ls, iscurve)
                 self.add_graphic(graphic, proj)
                 graphics.append(graphic)
@@ -848,109 +849,7 @@ class MapAxes(Axes):
                 return graphics
             else:
                 return graphics[0]
-        
-    def plot_bak(self, *args, **kwargs):
-        """
-        Plot lines and/or markers to the map.
-        
-        :param x: (*array_like*) Input x data.
-        :param y: (*array_like*) Input y data.
-        :param style: (*string*) Line style for plot.
-        :param linewidth: (*float*) Line width.
-        :param color: (*Color*) Line color.
-        
-        :returns: (*VectoryLayer*) Line VectoryLayer.
-        """
-        fill_value = kwargs.pop('fill_value', -9999.0)
-        proj = kwargs.pop('proj', None)    
-        order = kwargs.pop('order', None)
-        n = len(args) 
-        xdatalist = []
-        ydatalist = []    
-        styles = []
-        if n == 1:
-            ydata = plotutil.getplotdata(args[0])
-            if isinstance(args[0], DimArray):
-                xdata = args[0].dimvalue(0)
-            else:
-                xdata = []
-                for i in range(0, len(args[0])):
-                    xdata.append(i)
-            xdatalist.append(np.asarray(xdata)._array)
-            ydatalist.append(np.asarray(ydata)._array)
-        elif n == 2:
-            if isinstance(args[1], basestring):
-                ydata = plotutil.getplotdata(args[0])
-                if isinstance(args[0], DimArray):
-                    xdata = args[0].dimvalue(0)
-                else:
-                    xdata = []
-                    for i in range(0, len(args[0])):
-                        xdata.append(i)
-                styles.append(args[1])
-            else:
-                xdata = plotutil.getplotdata(args[0])
-                ydata = plotutil.getplotdata(args[1])
-            xdatalist.append(np.asarray(xdata)._array)
-            ydatalist.append(np.asarray(ydata)._array)
-        else:
-            c = 'x'
-            for arg in args: 
-                if c == 'x':    
-                    xdatalist.append(np.asarray(arg)._array)
-                    c = 'y'
-                elif c == 'y':
-                    ydatalist.append(np.asarray(arg)._array)
-                    c = 's'
-                elif c == 's':
-                    if isinstance(arg, basestring):
-                        styles.append(arg)
-                        c = 'x'
-                    else:
-                        styles.append('-')
-                        xdatalist.append(np.asarray(arg)._array)
-                        c = 'y'
-        
-        snum = len(xdatalist)
-            
-        if len(styles) == 0:
-            styles = None
-        else:
-            while len(styles) < snum:
-                styles.append('-')
-        
-        #Get plot data styles - Legend
-        lines = []
-        ls = kwargs.pop('legend', None) 
-        if ls is None:
-            if styles != None:
-                for i in range(0, len(styles)):
-                    line = plotutil.getplotstyle(styles[i], str(i), **kwargs)
-                    lines.append(line)
-            else:
-                for i in range(0, snum):
-                    label = kwargs.pop('label', 'S_' + str(i + 1))
-                    line = plotutil.getlegendbreak('line', **kwargs)[0]
-                    line.setCaption(label)
-                    lines.append(line)
-            ls = LegendScheme(lines)
-        
-        layer = DrawMeteoData.createPolylineLayer(xdatalist, ydatalist, ls, \
-                'Plot_lines', 'ID', -180, 180)
-        if (proj != None):
-            layer.setProjInfo(proj)
-     
-        # Add layer
-        isadd = kwargs.pop('isadd', True)
-        if isadd:
-            zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
-            
-        return MILayer(layer)
-        
+
     def scatter(self, *args, **kwargs):
         """
         Make a scatter plot on a map.
@@ -1660,18 +1559,38 @@ class MapAxes(Axes):
             y = args[1]
             u = args[2]
             v = args[3]
-        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE)
-        #plotutil.setlegendscheme(ls, **kwargs)
-        lb, isunique = plotutil.getlegendbreak('line', **kwargs)
+
         if not kwargs.has_key('headwidth'):
             kwargs['headwidth'] = 8
         if not kwargs.has_key('overhang'):
             kwargs['overhang'] = 0.5
-        lb = plotutil.line2stream(lb, **kwargs)
-        ls.setLegendBreak(0, lb)
 
-        #layer = __plot_uvgriddata_m(plot, udata, vdata, None, ls, 'streamplot', isuv, proj=proj, density=density)
-        layer = DrawMeteoData.createStreamlineLayer(u._array, v._array, x._array, y._array, density, ls, 'layer', isuv)
+        cdata = kwargs.pop('cdata', None)
+        if cdata is None:
+            ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE)
+            lb, isunique = plotutil.getlegendbreak('line', **kwargs)
+            lb = plotutil.line2stream(lb, **kwargs)
+            ls.setLegendBreak(0, lb)
+            layer = DrawMeteoData.createStreamlineLayer(u._array, v._array, x._array, y._array, density, ls, 'layer', isuv)
+        else:
+            if isinstance(cdata, (list, tuple)):
+                cdata = np.array(cdata)
+            levels = kwargs.pop('levels', None)
+            if levels is None:
+                cnum = kwargs.pop('cnum', None)
+                if cnum is None:
+                    ls = plotutil.getlegendscheme([], cdata.min(), cdata.max(), **kwargs)
+                else:
+                    ls = plotutil.getlegendscheme([cnum], cdata.min(), cdata.max(), **kwargs)
+            else:
+                ls = plotutil.getlegendscheme([levels], cdata.min(), cdata.max(), **kwargs)
+            ls = plotutil.setlegendscheme_line(ls, **kwargs)
+            for i in range(ls.getBreakNum()):
+                lb = plotutil.line2stream(ls.getLegendBreak(i), **kwargs)
+                ls.setLegendBreak(i, lb)
+            layer = DrawMeteoData.createStreamlineLayer(u._array, v._array, x._array, y._array, cdata._array,
+                                                        density, ls, 'layer', isuv)
+
         if not proj is None:
             layer.setProjInfo(proj)
             

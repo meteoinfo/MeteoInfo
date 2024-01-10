@@ -3004,7 +3004,7 @@ public class Draw {
         int interval = alb.getInterval() * 3;
         for (int i = 0; i < points.length; i++) {
             if (i > 0 && i < points.length - 2 && i % interval == 0) {
-                //Draw arraw
+                //Draw arrow
                 p1 = points[i];
                 p2 = points[i + 1];
                 u = p2.X - p1.X;
@@ -3054,6 +3054,75 @@ public class Draw {
             }
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, rend);
         }        
+    }
+
+    /**
+     * Draw streamline
+     *
+     * @param points The points
+     * @param cbc The streamline breaks
+     * @param g Graphics2D
+     */
+    public static void drawStreamline(PointF[] points, ColorBreakCollection cbc, Graphics2D g) {
+        drawPolyline(points, cbc, g);
+
+        PointF p1, p2;
+        double u, v, radian, angle;
+        StreamlineBreak slb = (StreamlineBreak) cbc.get(0);
+        int interval = slb.getInterval() * 3;
+        for (int i = 0; i < points.length; i++) {
+            if (i > 0 && i < points.length - 2 && i % interval == 0) {
+                //Draw arraw
+                p1 = points[i];
+                p2 = points[i + 1];
+                u = p2.X - p1.X;
+                v = p2.Y - p1.Y;
+                radian = Math.atan(v / u);
+                angle = radian * 180 / Math.PI;
+                angle = angle + 90;
+                if (u < 0) {
+                    angle = angle + 180;
+                }
+                if (angle >= 360) {
+                    angle = angle - 360;
+                }
+
+                //Draw arrow
+                slb = (StreamlineBreak) cbc.get(i);
+                Draw.drawArraw(g, p1, angle, slb.getArrowHeadLength(), slb.getArrowHeadWidth(),
+                        slb.getArrowOverhang(), slb.getArrowFillColor(), slb.getArrowOutlineColor());
+            }
+        }
+
+        //Draw symbol
+        if (slb.isDrawSymbol()) {
+            Object rend = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            Rectangle clip = g.getClipBounds();
+            PointF p;
+            if (clip != null) {
+                g.setClip(null);
+                for (int i = 0; i < points.length; i++) {
+                    p = new PointF(points[i].X, points[i].Y);
+                    if (p.X >= clip.x && p.X <= clip.x + clip.width && p.Y >= clip.y && p.Y <= clip.y + clip.height) {
+                        if (i % slb.getSymbolInterval() == 0) {
+                            drawPoint(slb.getSymbolStyle(), p, slb.getSymbolFillColor(), slb.getSymbolColor(),
+                                    slb.getSymbolSize(), slb.isDrawSymbolOutline(), slb.isFillSymbol(), g);
+                        }
+                    }
+                }
+                g.setClip(clip);
+            } else {
+                for (int i = 0; i < points.length; i++) {
+                    if (i % slb.getSymbolInterval() == 0) {
+                        p = new PointF(points[i].X, points[i].Y);
+                        drawPoint(slb.getSymbolStyle(), p, slb.getSymbolFillColor(), slb.getSymbolColor(),
+                                slb.getSymbolSize(), slb.isDrawSymbolOutline(), slb.isFillSymbol(), g);
+                    }
+                }
+            }
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, rend);
+        }
     }
 
     /**

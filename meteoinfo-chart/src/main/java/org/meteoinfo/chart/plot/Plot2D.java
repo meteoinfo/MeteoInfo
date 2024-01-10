@@ -470,7 +470,11 @@ public class Plot2D extends AbstractPlot2D {
                 sXY = projToScreen(wPoint.X, wPoint.Y, area);
                 points[i] = new PointF((float) sXY[0], (float) sXY[1]);
             }
-            Draw.drawPolyline(points, cpc, g);
+            if (cpc.get(0) instanceof StreamlineBreak) {
+                Draw.drawStreamline(points, cpc, g);
+            } else {
+                Draw.drawPolyline(points, cpc, g);
+            }
         }
     }
     

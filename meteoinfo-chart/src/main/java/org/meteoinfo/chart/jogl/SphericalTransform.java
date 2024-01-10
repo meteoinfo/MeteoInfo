@@ -1,6 +1,7 @@
 package org.meteoinfo.chart.jogl;
 
 import org.joml.Vector3f;
+import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.jogl.tessellator.Primitive;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
@@ -132,53 +133,64 @@ public class SphericalTransform {
         } else if (graphic instanceof VolumeGraphic) {
             return graphic;
         } else {
-            GraphicCollection3D graphics = (GraphicCollection3D) graphic;
-            for (int i = 0; i < graphics.getNumGraphics(); i++) {
-                Graphic gg = graphics.getGraphicN(i);
-                Shape shape = gg.getGraphicN(0).getShape();
-                boolean isTess = false;
-                if (shape instanceof PolygonZShape) {
-                    PolygonBreak pb = (PolygonBreak) gg.getGraphicN(0).getLegend();
-                    isTess = pb.isDrawFill();
-                }
-                if (isTess) {
-                    PolygonZShape polygonZShape = (PolygonZShape) shape;
-                    List<PolygonZ> polygonZS = (List<PolygonZ>) polygonZShape.getPolygons();
-                    for (int j = 0; j < polygonZS.size(); j++) {
-                        PolygonZ polygonZ = polygonZS.get(j);
-                        TessPolygon tessPolygon = new TessPolygon(polygonZ);
-                        for (Primitive primitive : tessPolygon.getPrimitives()) {
-                            for (int k = 0; k < primitive.vertices.size(); k++) {
-                                primitive.vertices.set(k, transform(primitive.vertices.get(k)));
-                            }
-                        }
-                        List<PointZ> outLine = (List<PointZ>) tessPolygon.getOutLine();
-                        for (int k = 0; k < outLine.size(); k++) {
-                            outLine.set(k, transform(outLine.get(k)));
-                        }
-                        for (int k = 0; k < tessPolygon.getHoleLineNumber(); k++) {
-                            List<PointZ> holeLine = (List<PointZ>) tessPolygon.getHoleLine(k);
-                            for (int l = 0; l < holeLine.size(); l++) {
-                                holeLine.set(l, transform(holeLine.get(l)));
-                            }
-                        }
-                        polygonZS.set(j, tessPolygon);
+            if (graphic instanceof GraphicCollection3D) {
+                GraphicCollection3D graphics = (GraphicCollection3D) graphic;
+                for (int i = 0; i < graphics.getNumGraphics(); i++) {
+                    Graphic gg = graphics.getGraphicN(i);
+                    Shape shape = gg.getGraphicN(0).getShape();
+                    boolean isTess = false;
+                    if (shape instanceof PolygonZShape) {
+                        PolygonBreak pb = (PolygonBreak) gg.getGraphicN(0).getLegend();
+                        isTess = pb.isDrawFill();
                     }
+                    if (isTess) {
+                        PolygonZShape polygonZShape = (PolygonZShape) shape;
+                        List<PolygonZ> polygonZS = (List<PolygonZ>) polygonZShape.getPolygons();
+                        for (int j = 0; j < polygonZS.size(); j++) {
+                            PolygonZ polygonZ = polygonZS.get(j);
+                            TessPolygon tessPolygon = new TessPolygon(polygonZ);
+                            for (Primitive primitive : tessPolygon.getPrimitives()) {
+                                primitive.vertices.replaceAll(SphericalTransform::transform);
+                            }
+                            List<PointZ> outLine = (List<PointZ>) tessPolygon.getOutLine();
+                            outLine.replaceAll(SphericalTransform::transform);
+                            for (int k = 0; k < tessPolygon.getHoleLineNumber(); k++) {
+                                List<PointZ> holeLine = (List<PointZ>) tessPolygon.getHoleLine(k);
+                                holeLine.replaceAll(SphericalTransform::transform);
+                            }
+                            polygonZS.set(j, tessPolygon);
+                        }
+                    } else {
+                        List<PointZ> points = (List<PointZ>) shape.getPoints();
+                        points.replaceAll(SphericalTransform::transform);
+                        if (shape instanceof PolygonZShape)
+                            ((PolygonZShape) shape).setPoints_keep(points);
+                        else
+                            shape.setPoints(points);
+                    }
+                    gg.setShape(shape);
+                    graphics.setGraphicN(i, gg);
+                }
+                graphics.updateExtent();
+                return graphics;
+            } else {
+                Graphic gg = graphic.getGraphicN(0);
+                Shape shape = gg.getShape();
+                if (shape instanceof ChartText3D) {
+                    PointZ p = ((ChartText3D) shape).getPoint();
+                    ((ChartText3D) shape).setPoint(SphericalTransform.transform(p));
                 } else {
                     List<PointZ> points = (List<PointZ>) shape.getPoints();
-                    for (int j = 0; j < points.size(); j++) {
-                        points.set(j, transform(points.get(j)));
-                    }
+                    points.replaceAll(SphericalTransform::transform);
                     if (shape instanceof PolygonZShape)
                         ((PolygonZShape) shape).setPoints_keep(points);
                     else
                         shape.setPoints(points);
                 }
+
                 gg.setShape(shape);
-                graphics.setGraphicN(i, gg);
+                return gg;
             }
-            graphics.updateExtent();
-            return graphics;
         }
     }
 }

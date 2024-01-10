@@ -106,6 +106,15 @@ public class ChartText3D extends ChartText {
     public void setDraw3D(boolean value) {
         this.draw3D = value;
     }
+
+    /**
+     * Get point
+     *
+     * @return The point coordinates
+     */
+    public PointZ getPoint() {
+        return new PointZ(x, y, z);
+    }
     
     /**
      * Set point
@@ -126,6 +135,15 @@ public class ChartText3D extends ChartText {
         aExtent.minZ = z;
         aExtent.maxZ = z;
         this.setExtent(aExtent);
+    }
+
+    /**
+     * Set point
+     *
+     * @param point The point
+     */
+    public void setPoint(PointZ point) {
+        setPoint(point.X, point.Y, point.Z);
     }
     
     /**

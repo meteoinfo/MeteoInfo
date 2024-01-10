@@ -375,9 +375,6 @@ public class GraphicFactory {
                     x = xIter.getDoubleNext();
                     y = yIter.getDoubleNext();
                     z = zIter.getDoubleNext();
-                    //x = xdata.getDouble(j * xn + i);
-                    //y = ydata.getDouble(j * xn + i);
-                    //z = zdata.getDouble(j * xn + i);
                     cb = ls.findLegendBreak(z);
                     if (Double.isNaN(y) || Double.isNaN(x)) {
                         if (points.isEmpty()) {
@@ -7171,6 +7168,70 @@ public class GraphicFactory {
             aPolyline.setValue(density);
             gc.add(new Graphic(aPolyline, slb));
         }
+
+        return gc;
+    }
+
+    /**
+     * Create streamline
+     *
+     * @param xdata X data array
+     * @param ydata Y data array
+     * @param udata U/WindDirection data array
+     * @param vdata V/WindSpeed data array
+     * @param cdata Color data array
+     * @param density Streamline density
+     * @param ls Legend scheme
+     * @param isUV Is U/V or not
+     * @return GraphicCollection
+     */
+    public static GraphicCollection createStreamlines(Array xdata, Array ydata, Array udata, Array vdata,
+                                                      Array cdata, int density, LegendScheme ls, boolean isUV) {
+        GraphicCollection gc = new GraphicCollection();
+        if (!isUV) {
+            Array[] uvData = MeteoMath.ds2uv(udata, vdata);
+            udata = uvData[0];
+            vdata = uvData[1];
+        }
+
+        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
+        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
+        double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
+        double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
+        List<PolyLine> streamlines = Contour.tracingStreamline(u, v,
+                x, y, density);
+        PolyLine line;
+        ColorBreakCollection cbc;
+        int ny = u.length;
+        int nx = u[0].length;
+        double c = 0;
+        ColorBreak cb;
+        for (int i = 0; i < streamlines.size(); i++) {
+            line = streamlines.get(i);
+            PolylineShape aPolyline = new PolylineShape();
+            PointD p;
+            List<PointD> pList = new ArrayList<>();
+            cbc = new ColorBreakCollection();
+            for (int j = 0; j < line.PointList.size(); j++) {
+                p = new PointD();
+                p.X = (line.PointList.get(j)).X;
+                p.Y = (line.PointList.get(j)).Y;
+                int[] idx = ArrayUtil.gridIndex(xdata, ydata, p.X, p.Y);
+                if (idx != null) {
+                    int yi = idx[0];
+                    int xi = idx[1];
+                    c = cdata.getDouble(yi * nx + xi);
+                }
+                cb = ls.findLegendBreak(c);
+                cbc.add(cb);
+                pList.add(p);
+            }
+            aPolyline.setPoints(pList);
+            aPolyline.setValue(density);
+            gc.add(new Graphic(aPolyline, cbc));
+        }
+        gc.setSingleLegend(false);
+        gc.setLegendScheme(ls);
 
         return gc;
     }

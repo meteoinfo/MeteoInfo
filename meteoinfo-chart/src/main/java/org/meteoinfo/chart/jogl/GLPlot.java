@@ -3941,6 +3941,7 @@ public class GLPlot extends Plot {
         float strWidth = 0;
         Rectangle2D rect;
         float xShift = this.tickSpace * this.dpiScale;
+        this.updateTextRender(legend.getTickLabelFont());
         for (int i = 0; i < bNum; i++) {
             if (labelIdxs.contains(i)) {
                 ColorBreak cb = ls.getLegendBreaks().get(i);
@@ -4090,6 +4091,7 @@ public class GLPlot extends Plot {
         float strWidth = 0;
         Rectangle2D rect;
         float xShift = this.tickSpace * this.dpiScale;
+        this.updateTextRender(legend.getTickLabelFont());
         for (int i = 0; i < legend.getTickLocations().size(); i++) {
             yy = y + minMaxHeight * normalize.apply(legend.getTickLocations().get(i)).floatValue();
             String label = legend.getTickLabels().get(i).getText();

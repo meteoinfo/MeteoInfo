@@ -1240,12 +1240,6 @@ class Axes(object):
                         xx = np.zeros(ydata.shape)
                         xx[:, :] = xdata
                         xdata = xx
-                    # if ydata.islondim(0):
-                    #     xaxistype = 'lon'
-                    # elif ydata.islatdim(0):
-                    #     xaxistype = 'lat'
-                    # elif ydata.istimedim(0):
-                    #     xaxistype = 'time'
                 else:
                     xdata = np.arange(ydata.shape[-1])
                     if ydata.ndim == 2:
@@ -1264,12 +1258,6 @@ class Axes(object):
                         xx = np.zeros(ydata.shape)
                         xx[:, :] = xdata
                         xdata = xx
-                    # if ydata.islondim(0):
-                    #     xaxistype = 'lon'
-                    # elif ydata.islatdim(0):
-                    #     xaxistype = 'lat'
-                    # elif ydata.istimedim(0):
-                    #     xaxistype = 'time'
                 else:
                     xdata = np.arange(ydata.shape[-1])
                     if ydata.ndim == 2:
@@ -1307,7 +1295,8 @@ class Axes(object):
 
         # Set plot data styles
         zvalues = kwargs.pop('zvalues', None)
-        if zvalues is None:
+        cdata = kwargs.pop('cdata', zvalues)
+        if cdata is None:
             lines = []
             legend = kwargs.pop('legend', None)
             if not legend is None:
@@ -1349,19 +1338,18 @@ class Axes(object):
         else:
             ls = kwargs.pop('symbolspec', None)
             if ls is None:
-                if isinstance(zvalues, (list, tuple)):
-                    zvalues = np.array(zvalues)
+                if isinstance(cdata, (list, tuple)):
+                    cdata = np.array(cdata)
                 levels = kwargs.pop('levs', None)
-                if levels is None:
-                    levels = kwargs.pop('levels', None)
+                levels = kwargs.pop('levels', levels)
                 if levels is None:
                     cnum = kwargs.pop('cnum', None)
                     if cnum is None:
-                        ls = plotutil.getlegendscheme([], zvalues.min(), zvalues.max(), **kwargs)
+                        ls = plotutil.getlegendscheme([], cdata.min(), cdata.max(), **kwargs)
                     else:
-                        ls = plotutil.getlegendscheme([cnum], zvalues.min(), zvalues.max(), **kwargs)
+                        ls = plotutil.getlegendscheme([cnum], cdata.min(), cdata.max(), **kwargs)
                 else:
-                    ls = plotutil.getlegendscheme([levels], zvalues.min(), zvalues.max(), **kwargs)
+                    ls = plotutil.getlegendscheme([levels], cdata.min(), cdata.max(), **kwargs)
                 ls = plotutil.setlegendscheme_line(ls, **kwargs)
 
         if not xaxistype is None:
@@ -1382,7 +1370,7 @@ class Axes(object):
             self.add_graphic(graphic, zorder=zorder)
             graphics.append(graphic)
         else:
-            if zvalues is None:
+            if cdata is None:
                 # Add data series
                 snum = len(xdatalist)
                 if snum == 1:
@@ -1416,7 +1404,7 @@ class Axes(object):
             else:
                 xdata = plotutil.getplotdata(xdatalist[0])
                 ydata = plotutil.getplotdata(ydatalist[0])
-                zdata = plotutil.getplotdata(zvalues)
+                zdata = plotutil.getplotdata(cdata)
                 graphic = GraphicFactory.createLineString(xdata, ydata, zdata, ls, iscurve)
                 self.add_graphic(graphic, zorder=zorder)
                 graphics.append(graphic)
@@ -2313,14 +2301,14 @@ class Axes(object):
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) 2-D z value array.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
             to draw, in increasing order.
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
             string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-            color args (string, float, rgb, etc), different levels will be plotted in different colors in 
+            color args (string, float, rgb, etc.), different levels will be plotted in different colors in
             the order specified.
-        :param smooth: (*boolean*) Smooth countour lines or not.
+        :param smooth: (*boolean*) Smooth contour lines or not.
         
         :returns: (*VectoryLayer*) Contour VectoryLayer created from array data.
         """
@@ -2447,14 +2435,14 @@ class Axes(object):
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) 2-D z value array.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
             to draw, in increasing order.
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
             string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-            color args (string, float, rgb, etc), different levels will be plotted in different colors in 
+            color args (string, float, rgb, etc.), different levels will be plotted in different colors in
             the order specified.
-        :param smooth: (*boolean*) Smooth countour lines or not.
+        :param smooth: (*boolean*) Smooth contour lines or not.
         
         :returns: (*VectoryLayer*) Contour filled VectoryLayer created from array data.
         """
@@ -3734,15 +3722,37 @@ class Axes(object):
             y = args[1]
             u = args[2]
             v = args[3]
-        alb, isunique = plotutil.getlegendbreak('line', **kwargs)
+
         if not kwargs.has_key('headwidth'):
             kwargs['headwidth'] = 8
         if not kwargs.has_key('overhang'):
             kwargs['overhang'] = 0.5
-        alb = plotutil.line2stream(alb, **kwargs)
 
-        igraphic = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array,
-                                                    density, alb, isuv)
+        cdata = kwargs.pop('cdata', None)
+        if cdata is None:
+            alb, isunique = plotutil.getlegendbreak('line', **kwargs)
+            alb = plotutil.line2stream(alb, **kwargs)
+            igraphic = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array,
+                                                        density, alb, isuv)
+        else:
+            if isinstance(cdata, (list, tuple)):
+                cdata = np.array(cdata)
+            levels = kwargs.pop('levels', None)
+            if levels is None:
+                cnum = kwargs.pop('cnum', None)
+                if cnum is None:
+                    ls = plotutil.getlegendscheme([], cdata.min(), cdata.max(), **kwargs)
+                else:
+                    ls = plotutil.getlegendscheme([cnum], cdata.min(), cdata.max(), **kwargs)
+            else:
+                ls = plotutil.getlegendscheme([levels], cdata.min(), cdata.max(), **kwargs)
+            ls = plotutil.setlegendscheme_line(ls, **kwargs)
+            for i in range(ls.getBreakNum()):
+                lb = plotutil.line2stream(ls.getLegendBreak(i), **kwargs)
+                ls.setLegendBreak(i, lb)
+
+            igraphic = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array,
+                                                        cdata._array, density, ls, isuv)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)

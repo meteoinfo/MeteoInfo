@@ -151,6 +151,14 @@ public class PolygonShape extends Shape implements Cloneable {
     }
 
     /**
+     * Get is multi polygon or not
+     * @return Multi polygon or not
+     */
+    public boolean isMultiPolygon() {
+        return this._numParts > 1;
+    }
+
+    /**
      * To geometry method
      *
      * @param factory GeometryFactory
@@ -277,6 +285,15 @@ public class PolygonShape extends Shape implements Cloneable {
      */
     public List<? extends Polygon> getPolygons() {
         return _polygons;
+    }
+
+    /**
+     * Get a polygon
+     * @param index The polygon index
+     * @return The polygon
+     */
+    public Polygon getPolygon(int index) {
+        return _polygons.get(index);
     }
 
     /**

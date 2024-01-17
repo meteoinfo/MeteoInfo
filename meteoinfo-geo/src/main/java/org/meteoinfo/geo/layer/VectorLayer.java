@@ -1412,6 +1412,17 @@ public class VectorLayer extends MapLayer {
         }
     }
 
+    /**
+     * Edit: Remove a shape by index
+     * @param idx The index
+     */
+    public void editRemoveShape(int idx) {
+        if (idx >= 0 && idx < this.getShapeNum() - 1) {
+            this._shapeList.remove(idx);
+            this._attributeTable.getTable().removeRow(idx);
+        }
+    }
+
     private void updateLayerExtent(Shape aShape) {
         if (this.getShapeNum() == 1) {
             this.setExtent((Extent) aShape.getExtent().clone());

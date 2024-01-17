@@ -17,6 +17,7 @@ from org.meteoinfo.projection import ProjectionUtil, KnownCoordinateSystems
 from org.meteoinfo.geometry.shape import PolygonShape, ShapeTypes
 from org.meteoinfo.geo.analysis import GeometryUtil
 from org.meteoinfo.geo.util import GeoProjectionUtil
+from org.meteoinfo.geo.io import GeoJSONReader, GeoJSONWriter
 
 
 class MILayer(object):
@@ -276,6 +277,14 @@ class MILayer(object):
         else:
             for shape, field in zip(shapes, fields):
                 self._layer.editAddShape(shape, field)
+
+    def del_shape(self, shape):
+        """
+        Delete a shape.
+
+        :param shape: (*Shape or int*) The shape or shape index to be deleted.
+        """
+        self._layer.editRemoveShape(shape)
 
     def copy(self):
         """
@@ -547,7 +556,7 @@ class MILayer(object):
             else:
                 self._layer.saveFile(fn, encoding)
 
-    def savekml(self, fn):
+    def save_kml(self, fn):
         """
         Save layer as KML file.
         
@@ -555,7 +564,7 @@ class MILayer(object):
         """
         self._layer.saveAsKMLFile(fn)
 
-    def savebil(self, fn, proj=None):
+    def save_bil(self, fn, proj=None):
         """
         Save layer as bil file.
 
@@ -566,6 +575,27 @@ class MILayer(object):
             self._layer.saveFile(fn)
         else:
             self._layer.saveFile(fn, proj)
+
+    def save_geojson(self, fn):
+        """
+        Save layer as GeoJSON file.
+
+        :param fn: (*str*) GeoJSON file name.
+        """
+        features = GeoJSONWriter.write(self._layer)
+        with open(fn, 'w') as f:
+            f.write("{\n")
+            f.write(""""type": "FeatureCollection",\n""")
+            f.write(""""features": [\n""")
+            for i in range(features.getNumFeatures()):
+                feature = features.getFeature(i)
+                f.write(feature.toString())
+                if i < features.getNumFeatures() - 1:
+                    f.write(",\n")
+                else:
+                    f.write("\n")
+            f.write("]\n")
+            f.write("}")
 
 
 class MIXYListData():

@@ -137,6 +137,15 @@ public class ColorUtil {
     // </editor-fold>
     // <editor-fold desc="Methods">
 
+     /**
+      * Convert color r,g,b to hex string
+      * @param color The color
+      * @return Hex string
+      */
+     public static String toHex(Color color) {
+        return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
+     }
+
     /**
      * Convert a color to hex string
      *

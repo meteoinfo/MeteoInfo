@@ -94,6 +94,7 @@ public class PointZ extends PointD implements Cloneable{
      * To double array
      * @return Double array
      */
+    @Override
     public double[] toArray() {
         return new double[]{X, Y, Z};
     }
@@ -102,6 +103,7 @@ public class PointZ extends PointD implements Cloneable{
      * To float array
      * @return Float array
      */
+    @Override
     public float[] toFloatArray() {
         return new float[]{(float) X, (float) Y, (float) Z};
     }

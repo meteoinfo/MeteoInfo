@@ -33,7 +33,8 @@ public class PointD implements Cloneable{
     }
 
     /**
-     * Contructor
+     * Constructor
+     *
      * @param x
      * @param y 
      */
@@ -45,6 +46,22 @@ public class PointD implements Cloneable{
     // <editor-fold desc="Get Set Methods">
     // </editor-fold>
     // <editor-fold desc="Methods">
+
+    /**
+     * To double array
+     * @return Double array
+     */
+    public double[] toArray() {
+        return new double[]{X, Y};
+    }
+
+    /**
+     * To float array
+     * @return Float array
+     */
+    public float[] toFloatArray() {
+        return new float[]{(float) X, (float) Y};
+    }
 
     /**
      * Equals of two pointDs

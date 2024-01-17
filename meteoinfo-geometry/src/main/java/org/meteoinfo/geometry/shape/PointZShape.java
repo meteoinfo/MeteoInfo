@@ -38,6 +38,15 @@ public class PointZShape extends PointShape {
         this.point = new PointZ();
         this.updateExtent((PointZ)this.point);
     }
+
+    /**
+     * Constructor
+     * @param pointZ The PointZ object
+     */
+    public PointZShape(PointZ pointZ) {
+        this.point = pointZ;
+        this.updateExtent(pointZ);
+    }
     
     /**
      * Constructor

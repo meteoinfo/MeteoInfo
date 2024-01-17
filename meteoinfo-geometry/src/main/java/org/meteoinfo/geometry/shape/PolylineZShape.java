@@ -41,6 +41,14 @@ public class PolylineZShape extends PolylineShape {
     public PolylineZShape() {
         super();
     }
+
+     /**
+      * Constructor
+      * @param points Points
+      */
+    public PolylineZShape(List<PointZ> points) {
+        this.setPoints(points);
+    }
     
     /**
      * Constructor

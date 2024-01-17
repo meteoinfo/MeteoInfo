@@ -60,6 +60,14 @@ public class PolylineShape extends Shape implements Cloneable {
 
     /**
      * Constructor
+     * @param points Point list
+     */
+    public PolylineShape(List<PointD> points) {
+        this.setPoints(points);
+    }
+
+    /**
+     * Constructor
      *
      * @param geometry Geometry
      */
@@ -107,6 +115,14 @@ public class PolylineShape extends Shape implements Cloneable {
     @Override
     public ShapeTypes getShapeType() {
         return ShapeTypes.POLYLINE;
+    }
+
+    /**
+     * Get is multi line or not
+     * @return Multi line or not
+     */
+    public boolean isMultiLine() {
+        return this._numParts > 1;
     }
 
     /**

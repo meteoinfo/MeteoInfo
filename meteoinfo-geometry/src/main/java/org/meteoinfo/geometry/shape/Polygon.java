@@ -78,19 +78,6 @@ public class Polygon {
     }
     
     /**
-     * Get hole lines
-     *
-     * @return hole lines
-     */
-    public List<List<? extends PointD>> getHoleLines_bak() {
-        List<List<? extends PointD>> hlines = new ArrayList<>();
-        for (List<? extends PointD> hline : _holeLines){
-            hlines.add((List<PointD>)hline);
-        }
-        return hlines;
-    }
-    
-    /**
      * Get a hole line
      * @param idx Index
      * @return A hole line

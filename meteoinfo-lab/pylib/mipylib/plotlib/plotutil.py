@@ -112,6 +112,8 @@ def getcolor(style, alpha=None):
             c = Color.gray
         elif style == 'lightgray':
             c = Color.lightGray
+        elif style == 'darkgray':
+            c = Color.darkGray
         elif style == 'cyan' or style == 'c':
             c = Color.cyan
         elif style == 'magenta' or style == 'm':
@@ -601,6 +603,9 @@ def getlegendscheme(args, min, max, **kwargs):
 
 
 def setlegendscheme(ls, **kwargs):
+    extend = kwargs.pop('extend', None)
+    if extend is not None:
+        ls.setExtendType(extend)
     st = ls.getShapeType()
     if st == ShapeTypes.POINT:
         setlegendscheme_point(ls, **kwargs)
@@ -968,7 +973,7 @@ def text(x, y, s, **kwargs):
     :param coordinates=['axes'|'figure'|'data'|'inches']: (*string*) Coordinate system and units for 
         *X, Y*. 'axes' and 'figure' are normalized coordinate system with 0,0 in the lower left and 
         1,1 in the upper right, 'data' are the axes data coordinates (Default value); 'inches' is 
-        position in the figure in inches, with 0,0 at the lower left corner.
+        position in the figure in inches, with 0,0 in the lower left corner.
     
     :returns: (*ChartText*) text.
     """

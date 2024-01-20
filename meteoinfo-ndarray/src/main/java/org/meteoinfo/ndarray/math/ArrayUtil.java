@@ -2365,6 +2365,30 @@ public class ArrayUtil {
     }
 
     /**
+     * Check array is unique by unique value number
+     * @param a The array
+     * @param limit The limit unique value number
+     * @return Is unique or not
+     */
+    public static boolean isUnique(Array a, int limit) {
+        IndexIterator iter = a.getIndexIterator();
+        List<Object> values = new ArrayList<>();
+        int n = 0;
+        Object v;
+        while (iter.hasNext()) {
+            v = iter.getObjectNext();
+            if (!values.contains(v)) {
+                values.add(v);
+            }
+            if (values.size() > limit) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Find the unique elements and index of an array.
      *
      * @param a Array a

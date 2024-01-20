@@ -1675,7 +1675,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
             image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         }
         Graphics2D g = image.createGraphics();
-        paintGraphics(g);
+        paintGraphics(g, width, height);
 
         return image;
     }

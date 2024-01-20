@@ -37,8 +37,9 @@ public class LogNorm extends Normalize {
     }
 
     @Override
-    public Number apply(double v) {
+    public Number apply(Number value) {
         double range = max - min;
+        double v = value.doubleValue();
         v = Math.log10(v);
         v = (v - min) / range;
         if (clip) {

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.meteoinfo.common.MIMath;
-//import org.meteoinfo.legend.LegendManage;
 
 /**
  *
@@ -30,6 +29,8 @@ public class ColorMap {
     private Color[] colors;
     private String name = "";
     private Color fillColor = Color.white;
+    private Color overColor;
+    private Color underColor;
     
     final static int GRADS_RAINBOW = 0;
     // </editor-fold>
@@ -124,6 +125,54 @@ public class ColorMap {
     public void setFillColor(Color value) {
         this.fillColor = value;
     }
+
+    /**
+     * Get over color
+     * @return Over color
+     */
+    public Color getOverColor() {
+        return overColor == null ? colors[colors.length - 1] : overColor;
+    }
+
+    /**
+     * Set over color
+     * @param value Over color
+     */
+    public void setOverColor(Color value) {
+        overColor = value;
+    }
+
+    /**
+     * Get has over color or not
+     * @return Has over color or not
+     */
+    public boolean hasOverColor() {
+        return overColor != null;
+    }
+
+    /**
+     * Get under color
+     * @return Under color
+     */
+    public Color getUnderColor() {
+        return underColor == null ? colors[0] : underColor;
+    }
+
+    /**
+     * Set under color
+     * @param value Under color
+     */
+    public void setUnderColor(Color value) {
+        underColor = value;
+    }
+
+    /**
+     * Get has under color or not
+     * @return Has under color or not
+     */
+    public boolean hasUnderColor() {
+        return underColor != null;
+    }
     // </editor-fold>
     // <editor-fold desc="Methods">
     
@@ -163,8 +212,10 @@ public class ColorMap {
      * @return Mapped color
      */
     public Color map(double value) {
-        if (value < 0 || value > 1) {
-            return this.fillColor;
+        if (value < 0) {
+            return getUnderColor();
+        } else if (value > 1) {
+            return getOverColor();
         }
 
         int idx = (int)(value * this.colors.length);

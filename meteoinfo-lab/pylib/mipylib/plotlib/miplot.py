@@ -2329,7 +2329,7 @@ def gifanimation(filename, repeat=0, delay=1000):
     return encoder
 
 
-def gifaddframe(animation, width=None, height=None, dpi=None):
+def gifaddframe(animation, width=None, height=None, dpi=None, image=None):
     """
     Add a frame to a gif animation object
     
@@ -2337,18 +2337,22 @@ def gifaddframe(animation, width=None, height=None, dpi=None):
     :param width: (*int*) Image width
     :param height: (*int*) Image height
     :param dpi: (*int*) Image resolution
+    :param image: (*image*) The image, default is None means the image will be created from the current
+        figure.
     """
-    # chartpanel.paintGraphics()
-    if dpi is None:
-        if width is None or height is None:
-            animation.addFrame(g_figure.paintViewImage())
+    if image is None:
+        if dpi is None:
+            if width is None or height is None:
+                animation.addFrame(g_figure.paintViewImage())
+            else:
+                animation.addFrame(g_figure.paintViewImage(width, height))
         else:
-            animation.addFrame(g_figure.paintViewImage(width, height))
+            if width is None or height is None:
+                animation.addFrame(g_figure.paintViewImage(dpi))
+            else:
+                animation.addFrame(g_figure.paintViewImage(width, height, dpi))
     else:
-        if width is None or height is None:
-            animation.addFrame(g_figure.paintViewImage(dpi))
-        else:
-            animation.addFrame(g_figure.paintViewImage(width, height, dpi))
+        animation.addFrame(image)
 
 
 def giffinish(animation):

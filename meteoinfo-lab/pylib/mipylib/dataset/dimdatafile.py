@@ -818,7 +818,8 @@ class DimDataFiles(list):
             return TDimVariable(self[0].dataset.getDataInfo().getVariable(key), self)
         else:
             return list.__getitem__(self, key)
-    
+
+    @property
     def filenames(self):
         """
         Get file names.
@@ -907,11 +908,12 @@ class DimDataFiles(list):
         :returns: (*datetime*) The time
         """        
         return self.times[idx]
-        
+
+    @property
     def varnames(self):
         """
         Get variable names
         """
-        return self[0].varnames()
+        return self[0].varnames
         
 #############################################

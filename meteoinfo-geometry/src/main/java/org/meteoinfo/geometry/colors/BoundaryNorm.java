@@ -11,7 +11,6 @@ import java.util.List;
  */
 public class BoundaryNorm extends Normalize {
     private Array boundaries;
-    private int nColors;
     private int size;
     private int nRegions;    //Number of colors needed
     private int offset;
@@ -20,17 +19,15 @@ public class BoundaryNorm extends Normalize {
     /**
      * Constructor
      * @param boundaries Boundaries
-     * @param nColors Number of colors
      * @param extendType Extend type
      */
-    public BoundaryNorm(Array boundaries, int nColors, ExtendType extendType) {
+    public BoundaryNorm(Array boundaries, ExtendType extendType) {
         super();
         boundaries = boundaries.copyIfView();
         this.setMinValue(boundaries.getDouble(0));
         this.setMaxValue(boundaries.getDouble((int)boundaries.getSize() - 1));
 
         this.boundaries = boundaries;
-        this.nColors = nColors;
         this.size = (int) this.boundaries.getSize();
         this.extendType = extendType;
         this.nRegions = this.size - 1;
@@ -51,6 +48,38 @@ public class BoundaryNorm extends Normalize {
     }
 
     /**
+     * Get boundaries
+     * @return Boundaries
+     */
+    public Array getBoundaries() {
+        return this.boundaries;
+    }
+
+    /**
+     * Get extend type
+     * @return Extend type
+     */
+    public ExtendType getExtendType() {
+        return this.extendType;
+    }
+
+    /**
+     * Get boundaries size
+     * @return Boundaries size
+     */
+    public int getSize() {
+        return this.size;
+    }
+
+    /**
+     * Get offset
+     * @return The offset
+     */
+    public int getOffset() {
+        return this.offset;
+    }
+
+    /**
      * Get number of color regions
      * @return Number of color regions
      */
@@ -59,16 +88,17 @@ public class BoundaryNorm extends Normalize {
     }
 
     @Override
-    public Number apply(double v) {
+    public Number apply(Number v) {
         int idx = ArrayUtil.searchSorted(this.boundaries, v, true) - 1 + this.offset;
 
-        return idx;
+        return (float) idx / this.nRegions;
     }
 
     @Override
     public Array apply(Array a) {
         Array r = ArrayUtil.searchSorted(this.boundaries, a, false);
         r = ArrayMath.add(r, this.offset - 1);
+        r = ArrayMath.div(r, (float) this.nRegions);
 
         return r;
     }

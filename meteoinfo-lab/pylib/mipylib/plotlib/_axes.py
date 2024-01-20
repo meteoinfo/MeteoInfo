@@ -12,11 +12,12 @@ from org.meteoinfo.chart.plot import Plot2D, PolarPlot, PlotOrientation
 from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.common import XAlign, YAlign
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
-from org.meteoinfo.geo.legend import LegendManage
+#from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geometry.legend import BarBreak, PolygonBreak, PolylineBreak, \
-    PointBreak, LineStyles, PointStyle, LegendScheme, LegendType
+    PointBreak, LineStyles, PointStyle, LegendScheme, LegendType, LegendManage
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
+from org.meteoinfo.geometry.colors import ExtendType
 from org.meteoinfo.common import MIMath, Extent
 from org.meteoinfo.geo.layer import MapLayer
 
@@ -2442,6 +2443,10 @@ class Axes(object):
             string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
             color args (string, float, rgb, etc.), different levels will be plotted in different colors in
             the order specified.
+        :param extend: (*string*) {'neither', 'both', 'min', 'max'}, default: 'neither'. Determines the
+            contourf-coloring of values that are outside the levels range. If 'neither', values outside
+            the levels range are not colored. If 'min', 'max' or 'both', color the values below, above
+            or below and above the levels range.
         :param smooth: (*boolean*) Smooth contour lines or not.
         
         :returns: (*VectoryLayer*) Contour filled VectoryLayer created from array data.
@@ -2468,18 +2473,19 @@ class Axes(object):
 
         vmin = kwargs.pop('vmin', a.min())
         vmax = kwargs.pop('vmax', a.max())
+        extend = ExtendType.valueOf(kwargs.pop('extend', 'neither').upper())
         if ls is None:
             if len(args) > 0:
                 level_arg = args[0]
                 if isinstance(level_arg, int):
                     cn = level_arg
-                    ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap)
+                    ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap, True)
                 else:
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
-                    ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
+                    ls = LegendManage.createLegendScheme(level_arg, cmap, extend)
             else:
-                ls = LegendManage.createLegendScheme(vmin, vmax, cmap)
+                ls = LegendManage.createLegendScheme(vmin, vmax, cmap, True)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if 'edgecolor' not in kwargs.keys():
             kwargs['edgecolor'] = None
@@ -2517,7 +2523,7 @@ class Axes(object):
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
             string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-            color args (string, float, rgb, etc), different levels will be plotted in different colors in 
+            color args (string, float, rgb, etc.), different levels will be plotted in different colors in
             the order specified.
         :param interpolation: (*string*) Interpolation option [None | bilinear | bicubic].
         
@@ -2607,7 +2613,7 @@ class Axes(object):
 
     def pcolor(self, *args, **kwargs):
         """
-        Draw a pseudocolor plot.
+        Draw a pseudo color plot.
         
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
@@ -2712,7 +2718,7 @@ class Axes(object):
         :param coordinates=['axes'|'figure'|'data'|'inches']: (*string*) Coordinate system and units for 
             *X, Y*. 'axes' and 'figure' are normalized coordinate system with 0,0 in the lower left and 
             1,1 in the upper right, 'data' are the axes data coordinates (Default value); 'inches' is 
-            position in the figure in inches, with 0,0 at the lower left corner.
+            position in the figure in inches, with 0,0 in the lower left corner.
         """
         ctext = plotutil.text(x, y, s, **kwargs)
         self._axes.addText(ctext)

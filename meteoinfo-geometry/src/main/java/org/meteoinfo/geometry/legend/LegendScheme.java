@@ -13,11 +13,10 @@
  */
 package org.meteoinfo.geometry.legend;
 
-//import org.meteoinfo.data.meteodata.DrawType2D;
-
  import org.meteoinfo.common.DataConvert;
  import org.meteoinfo.common.colors.ColorMap;
  import org.meteoinfo.common.colors.ColorUtil;
+ import org.meteoinfo.geometry.colors.ExtendType;
  import org.meteoinfo.geometry.colors.Normalize;
  import org.meteoinfo.geometry.shape.ShapeTypes;
  import org.w3c.dom.*;
@@ -50,6 +49,7 @@ package org.meteoinfo.geometry.legend;
      private String fieldName = "";
      private LegendType legendType = LegendType.SINGLE_SYMBOL;
      private ShapeTypes shapeType;
+     private ExtendType extendType = ExtendType.NEITHER;
      private List<ColorBreak> legendBreaks;
      private boolean hasNoData;
      private double minValue;
@@ -202,6 +202,30 @@ package org.meteoinfo.geometry.legend;
       */
      public void setShapeType(ShapeTypes st) {
          shapeType = st;
+     }
+
+     /**
+      * Get extend type
+      * @return Extend type
+      */
+     public ExtendType getExtendType() {
+         return extendType;
+     }
+
+     /**
+      * Set extend type
+      * @param value Extend type
+      */
+     public void setExtendType(ExtendType value) {
+         extendType = value;
+     }
+
+     /**
+      * Set extend type
+      * @param value Extend type
+      */
+     public void setExtendType(String value) {
+         extendType = ExtendType.valueOf(value.toUpperCase());
      }
 
      /**
@@ -456,6 +480,18 @@ package org.meteoinfo.geometry.legend;
      }
 
      /**
+      * Add a legend break by index
+      *
+      * @param index The index
+      * @param lb Legend break
+      */
+     public void addLegendBreak(int index, ColorBreak lb){
+         this.legendBreaks.add(index, lb);
+         if (this.legendType == LegendType.UNIQUE_VALUE)
+             this.updateUniqueValueMap();
+     }
+
+     /**
       * Add a legend breaks
       * @param lb Legend breaks
       */
@@ -564,6 +600,45 @@ package org.meteoinfo.geometry.legend;
                 } else {
                     values.add(Double.parseDouble(cb.getEndValue().toString()));
                 }
+             }
+         }
+
+         double[] vs = new double[values.size()];
+         for (int i = 0; i < values.size(); i++) {
+             vs[i] = values.get(i);
+         }
+
+         return vs;
+     }
+
+     /**
+      * Get legend values
+      * @return Legend values
+      */
+     public double[] getValues(double min, double max) {
+         List<Double> values = new ArrayList<>();
+         ColorBreak cb;
+         double v = 0;
+         for (int i = 0; i < legendBreaks.size(); i++) {
+             cb = legendBreaks.get(i);
+             if (!cb.isNoData()) {
+                 if (values.isEmpty()) {
+                     if (this.legendType == LegendType.UNIQUE_VALUE) {
+                         v = Double.parseDouble(cb.getEndValue().toString());
+                     } else {
+                         v = Double.parseDouble(cb.getStartValue().toString());
+                         if (v >= min && v <= max) {
+                             values.add(v);
+                         }
+                         v = Double.parseDouble(cb.getEndValue().toString());
+                     }
+                 } else {
+                     v = Double.parseDouble(cb.getEndValue().toString());
+                 }
+
+                 if (v >= min && v <= max) {
+                     values.add(v);
+                 }
              }
          }
 
@@ -709,6 +784,7 @@ package org.meteoinfo.geometry.legend;
          }
 
          LegendScheme ls = new LegendScheme(shapeType);
+         ls.extendType = this.extendType;
          ls.fieldName = this.fieldName;
          ls.hasNoData = this.hasNoData;
          ls.legendType = this.legendType;
@@ -781,6 +857,7 @@ package org.meteoinfo.geometry.legend;
          }
 
          LegendScheme ls = new LegendScheme(shapeType);
+         ls.extendType = this.extendType;
          ls.fieldName = this.fieldName;
          ls.hasNoData = this.hasNoData;
          ls.legendType = this.legendType;

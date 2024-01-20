@@ -110,7 +110,7 @@ def gifanimation(filename, repeat=0, delay=1000):
 
 def gifaddframe(animation, dpi=None):
     """
-    Add a frame to an gif animation object
+    Add a frame to a gif animation object
     
     :param animation: Gif animation object
     :param dpi: (*int*) Image resolution
@@ -136,7 +136,7 @@ def gifwrite(imfns, giffn, repeat=0, delay=1000):
     :param imfns: (*list*) Input image file names.
     :param giffn: (*string*) Output gif file name.
     :param: repeat: (*int, Default 0*) Animation repeat time number. 0 means repeat forever.
-    :param: delay: (*int, Default 1000*) Animation frame delay time with units of millsecond.
+    :param: delay: (*int, Default 1000*) Animation frame delay time with units of millisecond.
     """
     ImageUtil.createGifAnimator(imfns, giffn, delay, repeat)
     

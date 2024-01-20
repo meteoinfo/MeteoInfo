@@ -785,3 +785,19 @@ class GLFigure(GLChartPanel):
 
         if not symbol is None:
             self.getChart().setSymbolAntialias(symbol)
+
+    def get_image(self):
+        """
+        Get view image.
+
+        :return: (*BufferedImage*) Current view image.
+        """
+        return self.getViewImage()
+
+    def draw_image(self):
+        """
+        Draw view image.
+
+        :return: (*BufferedImage*) View image.
+        """
+        return self.paintViewImage()

@@ -16,10 +16,14 @@ package org.meteoinfo.geometry.legend;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;
-import org.meteoinfo.geometry.colors.Normalize;
-import org.meteoinfo.geometry.colors.TransferFunction;
+import org.meteoinfo.geometry.colors.*;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.ndarray.InvalidRangeException;
+import org.meteoinfo.ndarray.math.ArrayMath;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
 import java.awt.*;
@@ -751,6 +755,176 @@ public class LegendManage {
     }
 
     /**
+     * Create graduated color legend scheme
+     *
+     * @param values The values
+     * @param colors The colors
+     * @param shapeType Shape type
+     * @return The legend scheme
+     */
+    public static LegendScheme createGraduatedLegendScheme(double[] values, Color[] colors, ShapeTypes shapeType) {
+        int nv = values.length;
+        double min = values[0];
+        double max = values[nv - 1];
+
+        LegendScheme legendScheme = new LegendScheme(shapeType);
+        legendScheme.setLegendType(LegendType.GRADUATED_COLOR);
+        legendScheme.setMinValue(min);
+        legendScheme.setMaxValue(max);
+        int i;
+        if (shapeType.isPoint()) {
+            for (i = 0; i < colors.length; i++) {
+                PointBreak aPB = new PointBreak();
+                aPB.setColor(colors[i]);
+                aPB.setOutlineColor(Color.black);
+                aPB.setNoData(false);
+                aPB.setDrawOutline(true);
+                aPB.setDrawFill(true);
+                aPB.setDrawShape(true);
+                aPB.setStartValue(values[i]);
+                aPB.setEndValue(values[i + 1]);
+                aPB.setSize(8);
+                aPB.setStyle(PointStyle.CIRCLE);
+                if (aPB.getStartValue() == aPB.getEndValue()) {
+                    aPB.setCaption(DataConvert.removeTailingZeros(aPB.getStartValue().toString()));
+                } else if (i == 0) {
+                    aPB.setCaption("< " + DataConvert.removeTailingZeros(aPB.getEndValue().toString()));
+                } else if (i == colors.length - 1) {
+                    aPB.setCaption("> " + DataConvert.removeTailingZeros(aPB.getStartValue().toString()));
+                } else {
+                    aPB.setCaption(DataConvert.removeTailingZeros(aPB.getStartValue().toString())
+                            + " - " + DataConvert.removeTailingZeros(aPB.getEndValue().toString()));
+                }
+
+                legendScheme.addLegendBreak(aPB);
+            }
+        } else if (shapeType.isLine()) {
+            for (i = 0; i < colors.length; i++) {
+                PolylineBreak aPLB = new PolylineBreak();
+                aPLB.setColor(colors[i]);
+                aPLB.setWidth(1.0F);
+                aPLB.setStyle(LineStyles.SOLID);
+                aPLB.setDrawPolyline(true);
+                aPLB.setStartValue(values[i]);
+                aPLB.setEndValue(values[i + 1]);
+                if (aPLB.getStartValue() == aPLB.getEndValue()) {
+                    aPLB.setCaption(DataConvert.removeTailingZeros(aPLB.getStartValue().toString()));
+                } else if (i == 0) {
+                    aPLB.setCaption("< " + DataConvert.removeTailingZeros(aPLB.getEndValue().toString()));
+                } else if (i == colors.length - 1) {
+                    aPLB.setCaption("> " + DataConvert.removeTailingZeros(aPLB.getStartValue().toString()));
+                } else {
+                    aPLB.setCaption(DataConvert.removeTailingZeros(aPLB.getStartValue().toString())
+                            + " - " + DataConvert.removeTailingZeros(aPLB.getEndValue().toString()));
+                }
+                aPLB.setSymbolColor(aPLB.getColor());
+                if (i < PointStyle.values().length) {
+                    aPLB.setSymbolStyle(PointStyle.values()[i]);
+                }
+
+                legendScheme.addLegendBreak(aPLB);
+            }
+        } else if (shapeType.isPolygon()) {
+            for (i = 0; i < colors.length; i++) {
+                PolygonBreak aPGB = new PolygonBreak();
+                aPGB.setColor(colors[i]);
+                aPGB.setOutlineColor(Color.gray);
+                aPGB.setOutlineSize(1.0F);
+                aPGB.setDrawFill(true);
+                aPGB.setDrawOutline(false);
+                aPGB.setDrawShape(true);
+                aPGB.setStartValue(values[i]);
+                aPGB.setEndValue(values[i + 1]);
+                if (aPGB.getStartValue() == aPGB.getEndValue()) {
+                    aPGB.setCaption(DataConvert.removeTailingZeros(aPGB.getStartValue().toString()));
+                } else if (i == 0) {
+                    aPGB.setCaption("< " + DataConvert.removeTailingZeros(aPGB.getEndValue().toString()));
+                } else if (i == colors.length - 1) {
+                    aPGB.setCaption("> " + DataConvert.removeTailingZeros(aPGB.getStartValue().toString()));
+                } else {
+                    aPGB.setCaption(DataConvert.removeTailingZeros(aPGB.getStartValue().toString())
+                            + " - " + DataConvert.removeTailingZeros(aPGB.getEndValue().toString()));
+                }
+
+                legendScheme.addLegendBreak(aPGB);
+            }
+        } else {
+            for (i = 0; i < colors.length; i++) {
+                ColorBreak aCB = new ColorBreak();
+                aCB.setColor(colors[i]);
+                aCB.setStartValue(values[i]);
+                aCB.setEndValue(values[i + 1]);
+                if (aCB.getStartValue() == aCB.getEndValue()) {
+                    aCB.setCaption(DataConvert.removeTailingZeros(aCB.getStartValue().toString()));
+                } else if (i == 0) {
+                    aCB.setCaption("< " + DataConvert.removeTailingZeros(aCB.getEndValue().toString()));
+                } else if (i == colors.length - 1) {
+                    aCB.setCaption("> " + DataConvert.removeTailingZeros(aCB.getStartValue().toString()));
+                } else {
+                    aCB.setCaption(DataConvert.removeTailingZeros(aCB.getStartValue().toString())
+                            + " - " + DataConvert.removeTailingZeros(aCB.getEndValue().toString()));
+                }
+
+                legendScheme.addLegendBreak(aCB);
+            }
+        }
+
+        return legendScheme;
+    }
+
+    /**
+     * Create graduated color legend scheme
+     *
+     * @param norm The BoundaryNorm
+     * @param colorMap The color map
+     * @return The legend scheme
+     */
+    public static LegendScheme createGraduatedLegendScheme(BoundaryNorm norm, ColorMap colorMap) {
+        Array values = norm.getBoundaries();
+        int nv = (int) values.getSize();
+        double min = values.getDouble(0);
+        double max = values.getDouble(nv - 1);
+
+        LegendScheme legendScheme = new LegendScheme(ShapeTypes.IMAGE);
+        legendScheme.setLegendType(LegendType.GRADUATED_COLOR);
+        legendScheme.setMinValue(min);
+        legendScheme.setMaxValue(max);
+        Color[] colors = colorMap.getColors(norm.getNRegions());
+        ExtendType extendType = norm.getExtendType();
+        legendScheme.setExtendType(extendType);
+        int offset = norm.getOffset();
+        for (int i = 0; i < nv - 1; i++) {
+            ColorBreak cb = new ColorBreak();
+            cb.setColor(colors[i + offset]);
+            cb.setStartValue(values.getDouble(i));
+            cb.setEndValue(values.getDouble(i + 1));
+            cb.setCaption(DataConvert.removeTailingZeros(cb.getStartValue().toString())
+                    + " - " + DataConvert.removeTailingZeros(cb.getEndValue().toString()));
+            legendScheme.addLegendBreak(cb);
+        }
+
+        if (extendType.isExtendMin()) {
+            ColorBreak cb = new ColorBreak();
+            cb.setColor(colors[0]);
+            cb.setStartValue(Double.MIN_VALUE);
+            cb.setEndValue(values.getDouble(0));
+            cb.setCaption("< " + DataConvert.removeTailingZeros(cb.getEndValue().toString()));
+            legendScheme.addLegendBreak(0, cb);
+        }
+
+        if (extendType.isExtendMax()) {
+            ColorBreak cb = new ColorBreak();
+            cb.setColor(colors[colors.length - 1]);
+            cb.setStartValue(values.getDouble(nv - 1));
+            cb.setEndValue(Double.MAX_VALUE);
+            cb.setCaption("> " + DataConvert.removeTailingZeros(cb.getStartValue().toString()));
+            legendScheme.addLegendBreak(cb);
+        }
+
+        return legendScheme;
+    }
+
+    /**
      * Create legend scheme
      * @param values Value list
      * @param colors Color list
@@ -905,6 +1079,26 @@ public class LegendManage {
      * @param min Minimum
      * @param max Maximum
      * @param ct Color table
+     * @param extend Extend min/max values or not
+     * @return LegendScheme
+     */
+    public static LegendScheme createLegendScheme(double min, double max, ColorMap ct, boolean extend) {
+        double[] values = (double[]) MIMath.getIntervalValues(min, max, extend).get(0);
+        if (extend) {
+            Color[] colors = ct.getColors(values.length - 1);
+            return createLegendScheme(values, colors);
+        } else {
+            Color[] colors = ct.getColors(values.length + 1);
+            return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
+        }
+    }
+
+    /**
+     * Create legend scheme
+     *
+     * @param min Minimum
+     * @param max Maximum
+     * @param ct Color table
      * @param missingValue Missing value
      * @return LegendScheme
      */
@@ -1016,6 +1210,17 @@ public class LegendManage {
     /**
      * Create legend scheme
      *
+     * @param values Values
+     * @param colors Colors
+     * @return Legend scheme
+     */
+    public static LegendScheme createLegendScheme(double[] values, Color[] colors) {
+        return createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE);
+    }
+
+    /**
+     * Create legend scheme
+     *
      * @param min Minimum
      * @param max Maximum
      * @param n Level number
@@ -1106,15 +1311,84 @@ public class LegendManage {
      *
      * @param min Minimum
      * @param max Maximum
+     * @param levels Level values
+     * @param ct Color table
+     * @param extend Extend min/max values or not
+     * @return LegendScheme
+     */
+    public static LegendScheme createLegendScheme(double min, double max, List<Number> levels,
+                                                  ColorMap ct, boolean extend) {
+        if (levels.size() == ct.getColorCount()){
+            return createUniqValueLegendScheme(levels, ct.getColors(), ShapeTypes.IMAGE);
+        }
+
+        double[] values = new double[levels.size()];
+        for (int i = 0; i < levels.size(); i++) {
+            values[i] = levels.get(i).doubleValue();
+        }
+
+        if (extend) {
+            Color[] colors = ct.getColors(values.length - 1);
+
+            return createLegendScheme(values, colors);
+        } else {
+            Color[] colors = ct.getColors(levels.size() + 1);
+
+            return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
+        }
+    }
+
+    /**
+     * Create legend scheme
+     *
+     * @param levels Level values
+     * @param colorMap Color map
+     * @param extendType ExtendType
+     * @return LegendScheme Legend scheme
+     */
+    public static LegendScheme createLegendScheme(List<Number> levels, ColorMap colorMap,
+                                                  ExtendType extendType) {
+        Array boundaries = ArrayUtil.array(levels);
+        BoundaryNorm norm = new BoundaryNorm(boundaries, extendType);
+
+        return createGraduatedLegendScheme(norm, colorMap);
+    }
+
+    /**
+     * Create legend scheme
+     *
+     * @param min Minimum
+     * @param max Maximum
      * @param n Level number
      * @param ct Color table
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, int n, ColorMap ct) {
-        double[] values = MIMath.getIntervalValues(min, max, n);
-        Color[] colors = ct.getColors(values.length + 1);
+        return createLegendScheme(min, max, n, ct, false);
+    }
 
-        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
+    /**
+     * Create legend scheme
+     *
+     * @param min Minimum
+     * @param max Maximum
+     * @param n Level number
+     * @param ct Color table
+     * @param extend Extend min/max values or not
+     * @return LegendScheme
+     */
+    public static LegendScheme createLegendScheme(double min, double max, int n, ColorMap ct, boolean extend) {
+        if (extend) {
+            double[] values = MIMath.getIntervalValues(min, max, n);
+            Color[] colors = ct.getColors(values.length - 1);
+
+            return createLegendScheme(values, colors);
+        } else {
+            double[] values = MIMath.getIntervalValues(min, max, n);
+            Color[] colors = ct.getColors(values.length + 1);
+
+            return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
+        }
     }
 
     /**
@@ -1133,6 +1407,89 @@ public class LegendManage {
                 norm.getMinValue(), norm.getMaxValue());
         ls.setColorMap(colorMap);
         ls.setNormalize(norm);
+
+        return ls;
+    }
+
+    /**
+     * Create image legend from array data
+     *
+     * @param array Array data
+     * @param colorMap Color map
+     * @return Legend scheme
+     */
+    public static LegendScheme createImageLegend(Array array, ColorMap colorMap) {
+        boolean isUnique = ArrayUtil.isUnique(array, 20);
+        LegendScheme ls;
+        if (isUnique) {
+            try {
+                Array ua = ArrayUtil.unique(array, null);
+                List<Number> values = new ArrayList<>();
+                IndexIterator iter = ua.getIndexIterator();
+                while (iter.hasNext()) {
+                    values.add((Number) iter.getObjectNext());
+                }
+                ls = LegendManage.createUniqValueLegendScheme(values, colorMap, ShapeTypes.IMAGE);
+            } catch (InvalidRangeException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (ArrayMath.containsNaN(array)) {
+            ls = LegendManage.createLegendScheme(ArrayMath.min(array).doubleValue(),
+                    ArrayMath.max(array).doubleValue(), colorMap, Double.NaN);
+        } else {
+            ls = LegendManage.createLegendScheme(ArrayMath.min(array).doubleValue(),
+                    ArrayMath.max(array).doubleValue(), colorMap);
+        }
+
+        return ls;
+    }
+
+    /**
+     * Create image legend from grid data
+     *
+     * @param array Array data
+     * @param n Legend break number
+     * @param colorMap Color map
+     * @return Legend scheme
+     */
+    public static LegendScheme createImageLegend(Array array, int n, ColorMap colorMap) {
+        LegendScheme ls;
+        double min = ArrayMath.min(array).doubleValue();
+        double max = ArrayMath.max(array).doubleValue();
+        if (ArrayMath.containsNaN(array)) {
+            ls = LegendManage.createLegendScheme(min, max, n, colorMap,
+                    LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, true, Double.NaN);
+        } else {
+            ls = LegendManage.createLegendScheme(min, max, n, colorMap,
+                    LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, Double.NaN);
+        }
+
+        return ls;
+    }
+
+    /**
+     * Create image legend from array data
+     *
+     * @param array Array data
+     * @param levels Legend break values
+     * @param colorMap Color map
+     * @return Legend scheme
+     */
+    public static LegendScheme createImageLegend(Array array, List<Number> levels, ColorMap colorMap) {
+        LegendScheme ls;
+        if (colorMap.getColorCount() == levels.size()){
+            ls = LegendManage.createUniqValueLegendScheme(levels, colorMap, ShapeTypes.IMAGE);
+        } else {
+            double min = ArrayMath.min(array).doubleValue();
+            double max = ArrayMath.max(array).doubleValue();
+            if (ArrayMath.containsNaN(array)) {
+                ls = LegendManage.createLegendScheme(min, max, levels, colorMap,
+                        LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, true, Double.NaN);
+            } else {
+                ls = LegendManage.createLegendScheme(min, max, levels, colorMap,
+                        LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, Double.NaN);
+            }
+        }
 
         return ls;
     }

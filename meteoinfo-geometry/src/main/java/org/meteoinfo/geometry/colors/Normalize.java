@@ -126,8 +126,9 @@ public class Normalize {
      * @param v The value
      * @return Normalized value
      */
-    public Number apply(double v) {
+    public Number apply(Number value) {
         double range = maxValue - minValue;
+        double v = value.doubleValue();
         v = (v - minValue) / range;
         if (clip) {
             if (v < 0)

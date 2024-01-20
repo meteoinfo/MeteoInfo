@@ -24,6 +24,7 @@ import org.meteoinfo.geo.drawing.Draw;
 import org.meteoinfo.geo.layer.ImageLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.colors.ExtendType;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.colors.OpacityTransferFunction;
 import org.meteoinfo.geometry.colors.TransferFunction;
@@ -5014,7 +5015,7 @@ public class GraphicFactory {
      * @param isSmooth Is smooth or not
      * @return Contour polygons
      */
-    public static GraphicCollection createContourPolygons(Array xa, Array ya, Array va, LegendScheme ls, boolean isSmooth) {
+    public static GraphicCollection createContourPolygons_bak(Array xa, Array ya, Array va, LegendScheme ls, boolean isSmooth) {
         ls = ls.convertTo(ShapeTypes.POLYGON);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
@@ -5096,6 +5097,167 @@ public class GraphicFactory {
                     aPolygonShape.lowValue = minData;
                 } else {
                     aPolygonShape.lowValue = cValues[valueIdx - 1];
+                }
+            }
+
+            v = aPolygonShape.lowValue;
+            switch (ls.getLegendType()) {
+                case UNIQUE_VALUE:
+                    for (int j = 0; j < ls.getBreakNum(); j++) {
+                        ColorBreak cb = ls.getLegendBreaks().get(j);
+                        if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))) {
+                            cbb = cb;
+                            break;
+                        }
+                    }
+                    break;
+                case GRADUATED_COLOR:
+                    int blNum = 0;
+                    for (int j = 0; j < ls.getBreakNum(); j++) {
+                        ColorBreak cb = ls.getLegendBreaks().get(j);
+                        blNum += 1;
+                        if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))
+                                || (v > Double.parseDouble(cb.getStartValue().toString())
+                                && v < Double.parseDouble(cb.getEndValue().toString()))
+                                || (blNum == ls.getBreakNum() && v == Double.parseDouble(cb.getEndValue().toString()))) {
+                            cbb = cb;
+                            break;
+                        }
+                    }
+                    break;
+            }
+            graphics.add(new Graphic(aPolygonShape, cbb));
+        }
+        graphics.setSingleLegend(false);
+        graphics.setLegendScheme(ls);
+
+        return graphics;
+    }
+
+    /**
+     * Create contour polygons
+     *
+     * @param xa X coordinate array - one dimension
+     * @param ya Y coordinate array - one dimension
+     * @param va Data array - two dimension
+     * @param ls Legend scheme
+     * @param isSmooth Is smooth or not
+     * @return Contour polygons
+     */
+    public static GraphicCollection createContourPolygons(Array xa, Array ya, Array va, LegendScheme ls, boolean isSmooth) {
+        double minData = ArrayMath.min(va).doubleValue();
+        double maxData = ArrayMath.max(va).doubleValue();
+
+        ls = ls.convertTo(ShapeTypes.POLYGON);
+        double[] cValues = ls.getValues(minData, maxData);
+        int nv = cValues.length;
+
+        int[] shape = va.getShape();
+        int[][] S1 = new int[shape[0]][shape[1]];
+        double[] x = (double[])ArrayUtil.copyToNDJavaArray_Double(xa);
+        double[] y = (double[])ArrayUtil.copyToNDJavaArray_Double(ya);
+        if (x[1] - x[0] < 0) {
+            ArrayUtils.reverse(x);
+            va = va.flip(1);
+        }
+        if (y[1] - y[0] < 0) {
+            ArrayUtils.reverse(y);
+            va = va.flip(0);
+        }
+        double missingValue = -9999.0;
+        double[][] data = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va, missingValue);
+        Object[] cbs = ContourDraw.tracingContourLines(data,
+                cValues, x, y, missingValue, S1);
+        List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+        List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
+
+        if (isSmooth) {
+            contourLines = Contour.smoothLines(contourLines);
+        }
+        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(data, contourLines, borders, cValues);
+
+        double v, min, max;
+        ColorBreak cbb = ls.findLegendBreak(0);
+        ExtendType extendType = ls.getExtendType();
+        GraphicCollection graphics = new GraphicCollection();
+        for (int i = 0; i < contourPolygons.size(); i++) {
+            wcontour.global.Polygon poly = contourPolygons.get(i);
+            v = poly.LowValue;
+            int valueIdx = Arrays.binarySearch(cValues, v);
+            if (valueIdx < 0) {
+                valueIdx = -valueIdx;
+            }
+            if (valueIdx == nv - 1) {
+                if (poly.IsHighCenter) {
+                    if (maxData > ls.getMaxValue()) {
+                        switch (extendType) {
+                            case NEITHER:
+                            case MIN:
+                                continue;
+                        }
+                    }
+                    min = v;
+                    max = maxData;
+                } else {
+                    max = v;
+                    min = cValues[valueIdx - 1];
+                }
+            } else if (valueIdx == 0){
+                if (poly.IsHighCenter) {
+                    min = v;
+                    max = cValues[valueIdx + 1];
+                } else {
+                    if (minData < ls.getMinValue()) {
+                        switch (extendType) {
+                            case NEITHER:
+                            case MAX:
+                                continue;
+                        }
+                    }
+                    max = v;
+                    min = minData;
+                }
+            } else {
+                if (poly.LowValue == poly.HighValue) {
+                    if (poly.IsHighCenter) {
+                        min = v;
+                        max = cValues[valueIdx + 1];
+                    } else {
+                        max = v;
+                        min = cValues[valueIdx - 1];
+                    }
+                } else {
+                    min = v;
+                    max = poly.HighValue;
+                }
+            }
+
+            PointD aPoint;
+            List<PointD> pList = new ArrayList<>();
+            for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
+                aPoint = new PointD();
+                aPoint.X = pointList.X;
+                aPoint.Y = pointList.Y;
+                pList.add(aPoint);
+            }
+            if (!GeoComputation.isClockwise(pList)) {
+                Collections.reverse(pList);
+            }
+            PolygonShape aPolygonShape = new PolygonShape();
+            aPolygonShape.setPoints(pList);
+            aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
+            aPolygonShape.lowValue = min;
+            aPolygonShape.highValue = max;
+            if (poly.HasHoles()) {
+                for (PolyLine holeLine : poly.HoleLines) {
+                    pList = new ArrayList<>();
+                    for (wcontour.global.PointD pointList : holeLine.PointList) {
+                        aPoint = new PointD();
+                        aPoint.X = pointList.X;
+                        aPoint.Y = pointList.Y;
+                        pList.add(aPoint);
+                    }
+                    aPolygonShape.addHole(pList, 0);
                 }
             }
 

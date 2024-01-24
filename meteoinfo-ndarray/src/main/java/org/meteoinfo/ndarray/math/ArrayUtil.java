@@ -1281,8 +1281,8 @@ public class ArrayUtil {
             r = Array.factory(a.getDataType(), new int[]{(int) a.getSize() * n});
             int i = 0;
             while(iterA.hasNext()) {
+                o = iterA.getObjectNext();
                 for (int j = 0; j < n; j++) {
-                    o = iterA.getObjectNext();
                     r.setObject(i * n + j, o);
                 }
                 i += 1;

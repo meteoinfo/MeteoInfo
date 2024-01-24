@@ -5291,7 +5291,11 @@ public class GraphicFactory {
             v = poly.LowValue;
             int valueIdx = Arrays.binarySearch(cValues, v);
             if (valueIdx < 0) {
-                valueIdx = -valueIdx;
+                if (valueIdx == -1) {
+                    valueIdx = 0;
+                } else {
+                    valueIdx = -valueIdx;
+                }
             }
             if (valueIdx == nv - 1) {
                 if (poly.IsHighCenter) {
@@ -5305,11 +5309,25 @@ public class GraphicFactory {
                     min = v;
                     max = maxData;
                 } else {
+                    if (v > ls.getMaxValue()) {
+                        switch (extendType) {
+                            case NEITHER:
+                            case MIN:
+                                continue;
+                        }
+                    }
                     max = v;
                     min = cValues[valueIdx - 1];
                 }
             } else if (valueIdx == 0){
                 if (poly.IsHighCenter) {
+                    if (poly.HighValue < ls.getMinValue()) {
+                        switch (extendType) {
+                            case NEITHER:
+                            case MAX:
+                                continue;
+                        }
+                    }
                     min = v;
                     max = cValues[valueIdx + 1];
                 } else {

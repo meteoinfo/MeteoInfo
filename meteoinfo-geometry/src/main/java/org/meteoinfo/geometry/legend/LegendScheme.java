@@ -49,7 +49,8 @@ package org.meteoinfo.geometry.legend;
      private String fieldName = "";
      private LegendType legendType = LegendType.SINGLE_SYMBOL;
      private ShapeTypes shapeType;
-     private ExtendType extendType = ExtendType.NEITHER;
+     private ExtendType extendType = ExtendType.NONE;
+     private ExtendFraction extendFraction = ExtendFraction.NONE;
      private List<ColorBreak> legendBreaks;
      private boolean hasNoData;
      private double minValue;
@@ -218,6 +219,22 @@ package org.meteoinfo.geometry.legend;
       */
      public void setExtendType(ExtendType value) {
          extendType = value;
+     }
+
+     /**
+      * Get extend fraction
+      * @return Extend fraction
+      */
+     public ExtendFraction getExtendFraction() {
+         return this.extendFraction;
+     }
+
+     /**
+      * Set extend fraction
+      * @param value
+      */
+     public void setExtendFraction(ExtendFraction value) {
+         this.extendFraction = value;
      }
 
      /**

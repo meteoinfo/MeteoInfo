@@ -24,8 +24,10 @@ import org.meteoinfo.geo.drawing.ContourDraw;
 import org.meteoinfo.geo.drawing.Draw;
 import org.meteoinfo.geo.layer.*;
 import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.colors.ExtendType;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
@@ -33,6 +35,7 @@ import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.table.DataTable;
 import org.meteoinfo.table.Field;
@@ -874,6 +877,161 @@ public class DrawMeteoData {
     /**
      * Create shaded layer
      *
+     * @param va Grid data array
+     * @param xa X array
+     * @param ya Y array
+     * @param ls Legend scheme
+     * @param lName Layer name
+     * @param fieldName Field name
+     * @param isSmooth If smooth the contour lines
+     * @return Vector layer
+     */
+    public static VectorLayer createShadedLayer(Array va, Array xa, Array ya, LegendScheme ls, String lName, String fieldName, boolean isSmooth) {
+        double minData = ArrayMath.min(va).doubleValue();
+        double maxData = ArrayMath.max(va).doubleValue();
+
+        ls = ls.convertTo(ShapeTypes.POLYGON);
+        double[] cValues = ls.getValues(minData, maxData);
+        int nv = cValues.length;
+
+        int[] shape = va.getShape();
+        int[][] S1 = new int[shape[0]][shape[1]];
+        double[] x = (double[])ArrayUtil.copyToNDJavaArray_Double(xa);
+        double[] y = (double[])ArrayUtil.copyToNDJavaArray_Double(ya);
+        if (x[1] - x[0] < 0) {
+            ArrayUtils.reverse(x);
+            va = va.flip(1);
+        }
+        if (y[1] - y[0] < 0) {
+            ArrayUtils.reverse(y);
+            va = va.flip(0);
+        }
+        double missingValue = -9999.0;
+        double[][] data = (double[][]) ArrayUtil.copyToNDJavaArray_Double(va, missingValue);
+        Object[] cbs = ContourDraw.tracingContourLines(data,
+                cValues, x, y, missingValue, S1);
+        List<PolyLine> contourLines = (List<PolyLine>) cbs[0];
+        List<wcontour.global.Border> borders = (List<wcontour.global.Border>) cbs[1];
+
+        if (isSmooth) {
+            contourLines = Contour.smoothLines(contourLines);
+        }
+        List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(data, contourLines, borders, cValues);
+
+        //Create contour polygon layer
+        VectorLayer layer = new VectorLayer(ShapeTypes.POLYGON);
+        Field field = new Field(fieldName + "_Low", DataType.DOUBLE);
+        layer.editAddField(field);
+        field = new Field(fieldName + "_High", DataType.DOUBLE);
+        layer.editAddField(field);
+
+        //Add polygon shape
+        double v, min, max;
+        ColorBreak cbb = ls.findLegendBreak(0);
+        ExtendType extendType = ls.getExtendType();
+        for (int i = 0; i < contourPolygons.size(); i++) {
+            wcontour.global.Polygon poly = contourPolygons.get(i);
+            v = poly.LowValue;
+            int valueIdx = Arrays.binarySearch(cValues, v);
+            if (valueIdx < 0) {
+                valueIdx = -valueIdx;
+            }
+            if (valueIdx == nv - 1) {
+                if (poly.IsHighCenter) {
+                    if (maxData > ls.getMaxValue()) {
+                        switch (extendType) {
+                            case NEITHER:
+                            case MIN:
+                                continue;
+                        }
+                    }
+                    min = v;
+                    max = maxData;
+                } else {
+                    max = v;
+                    min = cValues[valueIdx - 1];
+                }
+            } else if (valueIdx == 0){
+                if (poly.IsHighCenter) {
+                    min = v;
+                    max = cValues[valueIdx + 1];
+                } else {
+                    if (minData < ls.getMinValue()) {
+                        switch (extendType) {
+                            case NEITHER:
+                            case MAX:
+                                continue;
+                        }
+                    }
+                    max = v;
+                    min = minData;
+                }
+            } else {
+                if (poly.LowValue == poly.HighValue) {
+                    if (poly.IsHighCenter) {
+                        min = v;
+                        max = cValues[valueIdx + 1];
+                    } else {
+                        max = v;
+                        min = cValues[valueIdx - 1];
+                    }
+                } else {
+                    min = v;
+                    max = poly.HighValue;
+                }
+            }
+
+            PointD aPoint;
+            List<PointD> pList = new ArrayList<>();
+            for (wcontour.global.PointD pointList : poly.OutLine.PointList) {
+                aPoint = new PointD();
+                aPoint.X = pointList.X;
+                aPoint.Y = pointList.Y;
+                pList.add(aPoint);
+            }
+            if (!GeoComputation.isClockwise(pList)) {
+                Collections.reverse(pList);
+            }
+            PolygonShape aPolygonShape = new PolygonShape();
+            aPolygonShape.setPoints(pList);
+            aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
+            aPolygonShape.lowValue = min;
+            aPolygonShape.highValue = max;
+            if (poly.HasHoles()) {
+                for (PolyLine holeLine : poly.HoleLines) {
+                    pList = new ArrayList<>();
+                    for (wcontour.global.PointD pointList : holeLine.PointList) {
+                        aPoint = new PointD();
+                        aPoint.X = pointList.X;
+                        aPoint.Y = pointList.Y;
+                        pList.add(aPoint);
+                    }
+                    aPolygonShape.addHole(pList, 0);
+                }
+            }
+
+            int shapeNum = layer.getShapeNum();
+            try {
+                if (layer.editInsertShape(aPolygonShape, shapeNum)) {
+                    layer.editCellValue(fieldName + "_Low", shapeNum, aPolygonShape.lowValue);
+                    layer.editCellValue(fieldName + "_High", shapeNum, aPolygonShape.highValue);
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(DrawMeteoData.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        layer.setLayerName(lName);
+        ls.setFieldName(fieldName + "_Low");
+        layer.setLegendScheme(ls);
+        layer.setLayerDrawType(LayerDrawType.SHADED);
+
+        return layer;
+    }
+
+    /**
+     * Create shaded layer
+     *
      * @param data Grid data array
      * @param x X array
      * @param y Y array
@@ -883,7 +1041,7 @@ public class DrawMeteoData {
      * @param isSmooth If smooth the contour lines
      * @return Vector layer
      */
-    public static VectorLayer createShadedLayer(Array data, Array x, Array y, LegendScheme aLS, String lName, String fieldName, boolean isSmooth) {
+    public static VectorLayer createShadedLayer_bak(Array data, Array x, Array y, LegendScheme aLS, String lName, String fieldName, boolean isSmooth) {
         GridData gridData = new GridData(data, x, y);
         return createShadedLayer(gridData, aLS, lName, fieldName, isSmooth);
     }
@@ -934,8 +1092,6 @@ public class DrawMeteoData {
         }
         ContourPolygons = ContourDraw.tracingPolygons(gridData.getData(), ContourLines, borders, cValues);
 
-        //wContour.Global.Polygon aPolygon;
-        //Color aColor;
         double aValue;
         int valueIdx;
         VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYGON);
@@ -945,7 +1101,6 @@ public class DrawMeteoData {
         aLayer.editAddField(aDC);
 
         for (Polygon aPolygon : ContourPolygons) {
-            //aPolygon = ContourPolygon;
             aValue = aPolygon.LowValue;
             PointD aPoint;
             List<PointD> pList = new ArrayList<>();
@@ -981,22 +1136,11 @@ public class DrawMeteoData {
             if (valueIdx < 0) {
                 valueIdx = -valueIdx - 1;
             }
-            //valueIdx = Arrays.asList(cValues).indexOf(aValue);
             if (valueIdx >= cValues.length - 1) {
                 aPolygonShape.highValue = maxData;
             } else {
                 aPolygonShape.highValue = cValues[valueIdx + 1];
             }
-//            if (!aPolygon.IsBorder) {
-//                if (!aPolygon.IsHighCenter) {
-//                    aPolygonShape.highValue = aValue;
-//                    if (valueIdx == 0) {
-//                        aPolygonShape.lowValue = minData;
-//                    } else {
-//                        aPolygonShape.lowValue = cValues[valueIdx - 1];
-//                    }
-//                }
-//            }
             if (!aPolygon.IsHighCenter && aPolygon.HighValue == aPolygon.LowValue) {
                 aPolygonShape.highValue = aValue;
                 if (valueIdx == 0) {
@@ -1020,9 +1164,6 @@ public class DrawMeteoData {
         ls.setFieldName(fieldName + "_Low");
         aLayer.setLegendScheme(ls);
         aLayer.setLayerDrawType(LayerDrawType.SHADED);
-//        for (org.meteoinfo.legend.ColorBreak cb : aLayer.getLegendScheme().getLegendBreaks()){
-//            System.out.println(cb.getColor().getAlpha());
-//        }
 
         return aLayer;
     }

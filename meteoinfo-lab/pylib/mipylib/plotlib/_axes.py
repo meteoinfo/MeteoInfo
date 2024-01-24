@@ -14,7 +14,7 @@ from org.meteoinfo.common import XAlign, YAlign
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
 #from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geometry.legend import BarBreak, PolygonBreak, PolylineBreak, \
-    PointBreak, LineStyles, PointStyle, LegendScheme, LegendType, LegendManage
+    PointBreak, LineStyles, PointStyle, LegendScheme, LegendType, LegendManage, ExtendFraction
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
 from org.meteoinfo.geometry.colors import ExtendType
@@ -2311,7 +2311,7 @@ class Axes(object):
             the order specified.
         :param smooth: (*boolean*) Smooth contour lines or not.
         
-        :returns: (*VectoryLayer*) Contour VectoryLayer created from array data.
+        :returns: (*contour graphics*) Contour graphics created from array data.
         """
         n = len(args)
         ls = kwargs.pop('symbolspec', None)
@@ -2447,9 +2447,15 @@ class Axes(object):
             contourf-coloring of values that are outside the levels range. If 'neither', values outside
             the levels range are not colored. If 'min', 'max' or 'both', color the values below, above
             or below and above the levels range.
+        :param extendfrac: (*string or float*) {None, 'auto', length}, If set to None, both the minimum
+            and maximum triangular colorbar extensions will have a length of 5% of the interior colorbar
+            length (this is the default setting). If set to 'auto', makes the triangular colorbar
+            extensions the same lengths as the interior boxes. If a scalar, indicates the length of both
+            the minimum and maximum triangular colorbar extensions as a fraction of the interior colorbar
+            length.
         :param smooth: (*boolean*) Smooth contour lines or not.
         
-        :returns: (*VectoryLayer*) Contour filled VectoryLayer created from array data.
+        :returns: (*GraphicCollection*) Contour filled graphics created from array data.
         """
         n = len(args)
         ls = kwargs.pop('symbolspec', None)
@@ -2479,17 +2485,25 @@ class Axes(object):
                 level_arg = args[0]
                 if isinstance(level_arg, int):
                     cn = level_arg
-                    ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap, True)
+                    ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap, extend)
                 else:
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
                     ls = LegendManage.createLegendScheme(level_arg, cmap, extend)
             else:
-                ls = LegendManage.createLegendScheme(vmin, vmax, cmap, True)
+                ls = LegendManage.createLegendScheme(vmin, vmax, cmap, extend)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if 'edgecolor' not in kwargs.keys():
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
+        extendfrac = kwargs.pop('extendfrac', None)
+        if extendfrac is not None:
+            if extendfrac == 'auto':
+                efrac = ExtendFraction.AUTO
+            else:
+                efrac = ExtendFraction.LENGTH
+                efrac.fraction = extendfrac
+            ls.setExtendFraction(efrac)
         # norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
         # ls.setNormalize(norm._norm)
         # ls.setColorMap(cmap)
@@ -2518,7 +2532,7 @@ class Axes(object):
         Display an image on the axes.
         
         :param X: (*array_like*) 2-D or 3-D (RGB or RGBA) image value array or BufferedImage.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
             to draw, in increasing order.
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
@@ -2527,6 +2541,108 @@ class Axes(object):
             the order specified.
         :param interpolation: (*string*) Interpolation option [None | bilinear | bicubic].
         
+        :returns: (*Image graphic*) Image graphic created from array data.
+        """
+        n = len(args)
+        cmap = plotutil.getcolormap(**kwargs)
+        fill_value = kwargs.pop('fill_value', -9999.0)
+        xaxistype = None
+        isrgb = False
+        isimage = False
+        extent = None
+        if n >= 3:
+            xdata = args[0]
+            ydata = args[1]
+            extent = [xdata[0], xdata[-1], ydata[0], ydata[-1]]
+            args = args[2:]
+        X = args[0]
+        if isinstance(X, (list, tuple)):
+            isrgb = True
+        elif isinstance(X, BufferedImage):
+            isimage = True
+        elif X.ndim > 2:
+            isrgb = True
+        else:
+            if n < 3:
+                if isinstance(X, DimArray):
+                    xdata = X.dimvalue(-1)
+                    ydata = X.dimvalue(-2)
+                else:
+                    ny, nx = X.shape
+                    xdata = np.arange(nx)
+                    ydata = np.arange(ny)
+        args = args[1:]
+
+        extent = kwargs.pop('extent', extent)
+        if isrgb:
+            if isinstance(X, (list, tuple)):
+                rgbd = []
+                for d in rgbdata:
+                    rgbd.append(d.asarray())
+                rgbdata = rgbd
+            else:
+                rgbdata = X.asarray()
+            igraphic = GraphicFactory.createImage(rgbdata, extent)
+            ls = None
+        elif isimage:
+            igraphic = GraphicFactory.createImage(X)
+            ls = None
+        else:
+            ls = kwargs.pop('symbolspec', None)
+            if ls is None:
+                vmin = kwargs.pop('vmin', X.min())
+                vmax = kwargs.pop('vmax', X.max())
+                if len(args) > 0:
+                    level_arg = args[0]
+                    if isinstance(level_arg, int):
+                        cn = level_arg
+                        ls = LegendManage.createImageLegend(X._array, cn, cmap)
+                    else:
+                        if isinstance(level_arg, NDArray):
+                            level_arg = level_arg.aslist()
+                        ls = LegendManage.createImageLegend(X._array, level_arg, cmap)
+                else:
+                    ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
+                    norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
+                    ls.setNormalize(norm._norm)
+                    ls.setColorMap(cmap)
+                ls = ls.convertTo(ShapeTypes.IMAGE)
+                plotutil.setlegendscheme(ls, **kwargs)
+            igraphic = GraphicFactory.createImage(X._array, xdata._array, ydata._array, ls, extent)
+
+        interpolation = kwargs.pop('interpolation', None)
+        if not interpolation is None:
+            igraphic.getShape().setInterpolation(interpolation)
+
+        if not xaxistype is None:
+            self.set_xaxis_type(xaxistype)
+            self._axes.updateDrawExtent()
+
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(igraphic, zorder=zorder)
+        self._axes.setAutoExtent()
+        gridline = self._axes.getGridLine()
+        gridline.setTop(True)
+
+        if ls is None:
+            return igraphic
+        else:
+            return ls
+
+    def imshow_bak(self, *args, **kwargs):
+        """
+        Display an image on the axes.
+
+        :param X: (*array_like*) 2-D or 3-D (RGB or RGBA) image value array or BufferedImage.
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
+            to draw, in increasing order.
+        :param cmap: (*string*) Color map string.
+        :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a
+            string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib
+            color args (string, float, rgb, etc.), different levels will be plotted in different colors in
+            the order specified.
+        :param interpolation: (*string*) Interpolation option [None | bilinear | bicubic].
+
         :returns: (*Image graphic*) Image graphic created from array data.
         """
         n = len(args)
@@ -3986,7 +4102,7 @@ class Axes(object):
             for out-of- range values. These are set for a given colormap using the colormap set_under and
             set_over methods.
         :param extendrect: (*boolean*) If ``True`` the minimum and maximum colorbar extensions will be
-            rectangular (the default). If ``False`` the extensions will be triangular.
+            rectangular. If ``False`` the extensions will be triangular (the default).
         :param extendfrac: [None | 'auto' | length] If set to *None*, both the minimum and maximum triangular
             colorbar extensions with have a length of 5% of the interior colorbar length (the default). If
             set to 'auto', makes the triangular colorbar extensions the same lengths as the interior boxes
@@ -3994,7 +4110,7 @@ class Axes(object):
             as a fraction of the interior colorbar length.
         :param ticks: [None | list of ticks] If None, ticks are determined automatically from the input.
         :param ticklabels: [None | list of ticklabels] Tick labels.
-        :param tickin: (*boolean*) Draw tick line inside or outside of the colorbar.
+        :param tickin: (*boolean*) Draw tick line inside or outside the colorbar.
         :param tickrotation: (*float*) Set tick label rotation angle.
         :param xshift: (*float*) X shift of the colorbar with pixel coordinate.
         :param yshift: (*float*) Y shift of the colorbar with pixel coordinate.
@@ -4074,13 +4190,19 @@ class Axes(object):
             legend.setPlotOrientation(PlotOrientation.VERTICAL)
             legend.setPosition(LegendPosition.RIGHT_OUTSIDE)
         legend.setDrawNeatLine(False)
-        extend = kwargs.pop('extend', 'neither')
-        legend.setExtendType(extend)
-        extendrect = kwargs.pop('extendrect', True)
+        extend = kwargs.pop('extend', None)
+        if extend is not None:
+            legend.setExtendType(extend)
+        extendrect = kwargs.pop('extendrect', False)
         legend.setExtendRect(extendrect)
         extendfrac = kwargs.pop('extendfrac', None)
-        if extendfrac == 'auto':
-            legend.setAutoExtendFrac(True)
+        if extendfrac is not None:
+            if extendfrac == 'auto':
+                efrac = ExtendFraction.AUTO
+            else:
+                efrac = ExtendFraction.LENGTH
+                efrac.fraction = extendfrac
+            legend.setExtendFraction(efrac)
         tickvisible = kwargs.pop('tickvisible', None)
         if not tickvisible is None:
             legend.setTickVisible(tickvisible)

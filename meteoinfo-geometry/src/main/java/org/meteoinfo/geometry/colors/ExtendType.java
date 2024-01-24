@@ -4,7 +4,8 @@ public enum ExtendType {
     NEITHER,
     BOTH,
     MIN,
-    MAX;
+    MAX,
+    NONE;
 
     /**
      * Get is extend max or not

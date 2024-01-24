@@ -1045,17 +1045,17 @@ class MapAxes(Axes):
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) 2-D z value array.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
             to draw, in increasing order.
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
             string, like ``r`` or ``red``, all levels will be plotted in this color. If a tuple of matplotlib 
-            color args (string, float, rgb, etc), different levels will be plotted in different colors in 
+            color args (string, float, rgb, etc.), different levels will be plotted in different colors in
             the order specified.
         :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
         :param isadd: (*boolean*) Add layer or not. Default is ``True``.
         :param zorder: (*int*) Z-order of created layer for display.
-        :param smooth: (*boolean*) Smooth countour lines or not.
+        :param smooth: (*boolean*) Smooth contour lines or not.
         :param select: (*boolean*) Set the return layer as selected layer or not.
         
         :returns: (*VectoryLayer*) Contour VectoryLayer created from array data.
@@ -1071,6 +1071,9 @@ class MapAxes(Axes):
             y = args[1]
             a = args[2]
             args = args[3:]
+
+        if not kwargs.has_key('extend'):
+            kwargs['extend'] = 'neither'
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):

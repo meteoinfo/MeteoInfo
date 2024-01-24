@@ -3344,6 +3344,112 @@ public class GraphicFactory {
     /**
      * Create image
      *
+     * @param data Grid data array
+     * @param xa X coordinates array
+     * @param ya Y coordinates array
+     * @param ls Legend scheme
+     * @param extent Extent
+     * @return Image graphic
+     */
+    public static Graphic createImage(Array data, Array xa, Array ya, LegendScheme ls, List<Number> extent) {
+        int width, height, breakNum;
+        width = (int) xa.getSize();
+        height = (int) ya.getSize();
+        BufferedImage aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        if (ls.getColorMap() == null) {
+            breakNum = ls.getValidBreakNum();
+            double[] breakValue = new double[breakNum];
+            Color[] breakColor = new Color[breakNum];
+            Color undefColor = Color.white;
+            int idx = 0;
+            for (ColorBreak cb : ls.getLegendBreaks()) {
+                if (cb.isNoData()) {
+                    undefColor = cb.getColor();
+                } else {
+                    breakValue[idx] = Double.parseDouble(cb.getEndValue().toString());
+                    breakColor[idx] = cb.getColor();
+                    idx += 1;
+                }
+            }
+            Color defaultColor = breakColor[breakNum - 1];    //Last color
+            double oneValue;
+            Color oneColor;
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    oneValue = data.getDouble(i * width + j);
+                    if (Double.isNaN(oneValue)) {
+                        oneColor = undefColor;
+                    } else {
+                        oneColor = defaultColor;
+                        if (ls.getLegendType() == LegendType.GRADUATED_COLOR) {
+                            for (int k = 0; k < breakNum - 1; k++) {
+                                if (oneValue < breakValue[k]) {
+                                    oneColor = breakColor[k];
+                                    break;
+                                }
+                            }
+                        } else {
+                            for (int k = 0; k < breakNum - 1; k++) {
+                                if (oneValue == breakValue[k]) {
+                                    oneColor = breakColor[k];
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    aImage.setRGB(j, height - i - 1, oneColor.getRGB());
+                }
+            }
+        } else {
+            ColorMap colorMap = ls.getColorMap();
+            int n = colorMap.getColorCount();
+            Normalize normalize = ls.getNormalize();
+            double v;
+            Color fillColor = colorMap.getFillColor();
+            Color color;
+            int idx;
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    v = data.getDouble(i * width + j);
+                    if (Double.isNaN(v)) {
+                        color = fillColor;
+                    } else {
+                        idx = (int) (normalize.apply(v).floatValue() * n);
+                        if (idx < 0)
+                            idx = 0;
+                        else if (idx >= n)
+                            idx = n - 1;
+                        color = colorMap.getColor(idx);
+                    }
+                    aImage.setRGB(j, height - i - 1, color.getRGB());
+                }
+            }
+        }
+
+        ImageShape ishape = new ImageShape();
+        double xmin, xmax, ymin, ymax;
+        if (extent == null) {
+            double xdelta = BigDecimalUtil.mul(xa.getDouble(1) - xa.getDouble(0), 0.5);
+            xmin = BigDecimalUtil.sub(xa.getDouble(0), xdelta);
+            xmax = BigDecimalUtil.add(xa.getDouble(width - 1), xdelta);
+            double ydelta = BigDecimalUtil.mul(ya.getDouble(1) - ya.getDouble(0), 0.5);
+            ymin = BigDecimalUtil.sub(ya.getDouble(0), ydelta);
+            ymax = BigDecimalUtil.add(ya.getDouble(height - 1), ydelta);
+        } else {
+            xmin = extent.get(0).doubleValue();
+            xmax = extent.get(1).doubleValue();
+            ymin = extent.get(2).doubleValue();
+            ymax = extent.get(3).doubleValue();
+        }
+        ishape.setPoint(new PointD(xmin, ymin));
+        ishape.setImage(aImage);
+        ishape.setExtent(new Extent(xmin, xmax, ymin, ymax));
+        return new ImageGraphic(ishape, ls);
+    }
+
+    /**
+     * Create image
+     *
      * @param gdata Grid data array
      * @param ls Legend scheme
      * @param offset Offset of z axis

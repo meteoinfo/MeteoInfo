@@ -893,15 +893,40 @@ public class MIMath {
      * @return Value array
      */
     public static double[] getIntervalValues(double min, double max, double interval, int n) {
-        double[] cValues;
-        min = BigDecimalUtil.add(min, interval);
-        double mod = BigDecimalUtil.mod(min, interval);
-        min = BigDecimalUtil.sub(min, mod);
+        return getIntervalValues(min, max, interval, n, false);
+    }
 
-        cValues = new double[n];
+    /**
+     * Create values by interval
+     *
+     * @param min Minimum value
+     * @param max Maximum value
+     * @param interval Interval value
+     * @param n Value number
+     * @param isExtend Extend values or not
+     * @return Value array
+     */
+    public static double[] getIntervalValues(double min, double max, double interval, int n, boolean isExtend) {
+        double minV = BigDecimalUtil.add(min, interval);
+        double mod = BigDecimalUtil.mod(minV, interval);
+        minV = BigDecimalUtil.sub(minV, mod);
+
+        List<Double> values = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            cValues[i] = BigDecimalUtil.add(min, BigDecimalUtil.mul(i, interval));
+            values.add(BigDecimalUtil.add(minV, BigDecimalUtil.mul(i, interval)));
         }
+
+        //Extend values
+        if (isExtend) {
+            if (values.get(0) > min) {
+                values.add(0, BigDecimalUtil.sub(values.get(0), interval));
+            }
+            if (values.get(values.size() - 1) < max) {
+                values.add(BigDecimalUtil.add(values.get(values.size() - 1), interval));
+            }
+        }
+
+        double[] cValues = values.stream().mapToDouble(Double::doubleValue).toArray();
 
         return cValues;
     }
@@ -915,6 +940,19 @@ public class MIMath {
      * @return Values
      */
     public static double[] getIntervalValues(double min, double max, int n) {
+        return getIntervalValues(min, max, n, false);
+    }
+
+    /**
+     * Get interval values
+     *
+     * @param min Minimum value
+     * @param max Maximum value
+     * @param n Level number
+     * @param isExtend Extend values or not
+     * @return Values
+     */
+    public static double[] getIntervalValues(double min, double max, int n, boolean isExtend) {
         int aD, aE;
         double range;
         String eStr;
@@ -939,7 +977,7 @@ public class MIMath {
         double bb = b.setScale(ln, RoundingMode.HALF_UP).doubleValue();
         double interval = BigDecimalUtil.mul(bb, Math.pow(10, aE));
 
-        return getIntervalValues(min, max, interval, n);
+        return getIntervalValues(min, max, interval, n, isExtend);
     }
 
     /**
@@ -1142,10 +1180,7 @@ public class MIMath {
             }
         }
 
-        double[] cValues = new double[values.size()];
-        for (i = 0; i < values.size(); i++) {
-            cValues[i] = values.get(i);
-        }
+        double[] cValues = values.stream().mapToDouble(Double::doubleValue).toArray();
 
         r.add(cValues);
         r.add(cDelt);

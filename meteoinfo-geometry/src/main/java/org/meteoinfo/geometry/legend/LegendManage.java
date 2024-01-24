@@ -906,7 +906,7 @@ public class LegendManage {
         if (extendType.isExtendMin()) {
             ColorBreak cb = new ColorBreak();
             cb.setColor(colors[0]);
-            cb.setStartValue(Double.MIN_VALUE);
+            cb.setStartValue(-Double.MAX_VALUE);
             cb.setEndValue(values.getDouble(0));
             cb.setCaption("< " + DataConvert.removeTailingZeros(cb.getEndValue().toString()));
             legendScheme.addLegendBreak(0, cb);
@@ -1082,15 +1082,13 @@ public class LegendManage {
      * @param extend Extend min/max values or not
      * @return LegendScheme
      */
-    public static LegendScheme createLegendScheme(double min, double max, ColorMap ct, boolean extend) {
-        double[] values = (double[]) MIMath.getIntervalValues(min, max, extend).get(0);
-        if (extend) {
-            Color[] colors = ct.getColors(values.length - 1);
-            return createLegendScheme(values, colors);
-        } else {
-            Color[] colors = ct.getColors(values.length + 1);
-            return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
-        }
+    public static LegendScheme createLegendScheme(double min, double max, ColorMap ct, ExtendType extendType) {
+        double[] values = (double[]) MIMath.getIntervalValues(min, max, true).get(0);
+        Color[] colors = ct.getColors(values.length - 1);
+        LegendScheme ls = createLegendScheme(values, colors);
+        ls.setExtendType(extendType);
+
+        return ls;
     }
 
     /**
@@ -1364,7 +1362,10 @@ public class LegendManage {
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, int n, ColorMap ct) {
-        return createLegendScheme(min, max, n, ct, false);
+        double[] values = MIMath.getIntervalValues(min, max, n);
+        Color[] colors = ct.getColors(values.length + 1);
+
+        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
     }
 
     /**
@@ -1377,18 +1378,15 @@ public class LegendManage {
      * @param extend Extend min/max values or not
      * @return LegendScheme
      */
-    public static LegendScheme createLegendScheme(double min, double max, int n, ColorMap ct, boolean extend) {
-        if (extend) {
-            double[] values = MIMath.getIntervalValues(min, max, n);
-            Color[] colors = ct.getColors(values.length - 1);
+    public static LegendScheme createLegendScheme(double min, double max, int n, ColorMap ct,
+                                                  ExtendType extendType) {
+        double[] values = MIMath.getIntervalValues(min, max, n, true);
+        Color[] colors = ct.getColors(values.length - 1);
 
-            return createLegendScheme(values, colors);
-        } else {
-            double[] values = MIMath.getIntervalValues(min, max, n);
-            Color[] colors = ct.getColors(values.length + 1);
+        LegendScheme ls = createLegendScheme(values, colors);
+        ls.setExtendType(extendType);
 
-            return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
-        }
+        return ls;
     }
 
     /**

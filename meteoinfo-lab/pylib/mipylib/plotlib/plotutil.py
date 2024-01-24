@@ -10,9 +10,8 @@ import datetime
 
 from org.meteoinfo.geometry.legend import LineStyles, HatchStyle, ColorBreak, PointBreak, PolylineBreak, \
     PolygonBreak, ArrowBreak, ArrowLineBreak, ArrowPolygonBreak, StreamlineBreak, \
-    PointStyle, MarkerType, LegendScheme
-#from org.meteoinfo.geo.legend import LegendManage
-from org.meteoinfo.geometry.legend import LegendManage
+    PointStyle, MarkerType, LegendScheme, LegendManage, ExtendFraction
+from org.meteoinfo.geometry.colors import ExtendType
 from org.meteoinfo.common.colors import ColorUtil, ColorMap
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.chart import ChartText
@@ -576,29 +575,43 @@ def getlegendbreak(geometry, **kwargs):
 def getlegendscheme(args, min, max, **kwargs):
     ls = kwargs.pop('symbolspec', None)
     if ls is None:
+        extend = kwargs.pop('extend', None)
+        if extend is not None:
+            extend = ExtendType.valueOf(extend.upper())
         cmap = getcolormap(**kwargs)
         level_arg = kwargs.pop('levels', None)
         if level_arg is None and len(args) > 0:
             level_arg = args[0]
 
         if level_arg is None:
-            ls = LegendManage.createLegendScheme(min, max, cmap)
+            if extend is None:
+                ls = LegendManage.createLegendScheme(min, max, cmap)
+            else:
+                ls = LegendManage.createLegendScheme(min, max, cmap, extend)
         else:
             if isinstance(level_arg, int):
                 cn = level_arg
-                ls = LegendManage.createLegendScheme(min, max, cn, cmap)
+                if extend is None:
+                    ls = LegendManage.createLegendScheme(min, max, cn, cmap)
+                else:
+                    ls = LegendManage.createLegendScheme(min, max, cn, cmap, extend)
             else:
                 if isinstance(level_arg, NDArray):
                     level_arg = level_arg.aslist()
-                ls = LegendManage.createLegendScheme(min, max, level_arg, cmap)
+                if extend is None:
+                    ls = LegendManage.createLegendScheme(min, max, level_arg, cmap)
+                else:
+                    ls = LegendManage.createLegendScheme(level_arg, cmap, extend)
 
-        # ecobj = kwargs.pop('edgecolor', None)
-        # if not ecobj is None:
-        #     edgecolor = getcolor(ecobj)
-        #     ls = ls.convertTo(ShapeTypes.POLYGON)
-        #     for lb in ls.getLegendBreaks():
-        #         lb.setDrawOutline(True)
-        #         lb.setOutlineColor(edgecolor)
+        extendfrac = kwargs.pop('extendfrac', None)
+        if extendfrac is not None:
+            if extendfrac == 'auto':
+                efrac = ExtendFraction.AUTO
+            else:
+                efrac = ExtendFraction.LENGTH
+                efrac.fraction = extendfrac
+            ls.setExtendFraction(efrac)
+
     return ls
 
 

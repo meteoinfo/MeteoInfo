@@ -71,7 +71,7 @@ public class ChartLegend {
     private boolean autoRowColNum = true;
     private Dimension symbolDimension;
     protected boolean extendRect;
-    protected boolean autoExtendFrac;
+    protected ExtendFraction extendFraction;
     protected float xshift;
     protected float yshift;
     // </editor-fold>
@@ -107,8 +107,8 @@ public class ChartLegend {
         this.tickLabelColor = Color.black;
         this.tickLabelAngle = 0;
         this.symbolDimension = new Dimension(16, 10);
-        this.extendRect = true;
-        this.autoExtendFrac = false;
+        this.extendRect = false;
+        this.extendFraction = ls.getExtendFraction();
         this.xshift = 0;
         this.yshift = 0;
     }
@@ -699,23 +699,19 @@ public class ChartLegend {
     }
 
     /**
-     * Get if auto set extend fraction - extend has save width and height Only
-     * valid for colorbar
-     *
-     * @return Boolean
+     * Get extend fraction
+     * @return Extend fraction
      */
-    public boolean isAutoExtendFrac() {
-        return this.autoExtendFrac;
+    public ExtendFraction getExtendFraction() {
+        return this.extendFraction;
     }
 
     /**
-     * Set if auto set extend fraction - extend has save width and height Only
-     * valid for colorbar
-     *
+     * Set extend fraction
      * @param value
      */
-    public void setAutoExtendFrac(boolean value) {
-        this.autoExtendFrac = value;
+    public void setExtendFraction(ExtendFraction value) {
+        this.extendFraction = value;
     }
 
     /**

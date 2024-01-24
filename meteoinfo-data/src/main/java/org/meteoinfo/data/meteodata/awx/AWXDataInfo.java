@@ -672,10 +672,26 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
 
         float[] data = new float[yNum * xNum];
         if (calibration.length > 0) {
-            for (i = 0; i < yNum; i++) {
-                for (j = 0; j < xNum; j++) {
-                    data[(yNum - i - 1) * xNum + j] = calibration[DataConvert.byte2Int(
-                            imageBytes[i * xNum + j]) * 4] * 0.01f;
+            if (channelNumber < 4) {
+                for (i = 0; i < yNum; i++) {
+                    for (j = 0; j < xNum; j++) {
+                        data[(yNum - i - 1) * xNum + j] = calibration[DataConvert.byte2Int(
+                                imageBytes[i * xNum + j]) * 4] * 0.01f;
+                    }
+                }
+            } else {
+                int n = 64 * 4;
+                int[] cali = new int[n];
+                for (i = 0; i < 64; i++) {
+                    for (j = 0; j < 4; j++) {
+                        cali[i * 4 + j] = calibration[i];
+                    }
+                }
+                for (i = 0; i < yNum; i++) {
+                    for (j = 0; j < xNum; j++) {
+                        data[(yNum - i - 1) * xNum + j] = cali[DataConvert.byte2Int(
+                                imageBytes[i * xNum + j])] * 0.0001f;
+                    }
                 }
             }
         } else {

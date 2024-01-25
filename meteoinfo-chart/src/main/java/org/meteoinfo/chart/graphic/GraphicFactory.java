@@ -5309,7 +5309,7 @@ public class GraphicFactory {
                     min = v;
                     max = maxData;
                 } else {
-                    if (v > ls.getMaxValue()) {
+                    if (poly.HighValue > ls.getMaxValue()) {
                         switch (extendType) {
                             case NEITHER:
                             case MIN:
@@ -5321,7 +5321,7 @@ public class GraphicFactory {
                 }
             } else if (valueIdx == 0){
                 if (poly.IsHighCenter) {
-                    if (poly.HighValue < ls.getMinValue()) {
+                    if (v < ls.getMinValue()) {
                         switch (extendType) {
                             case NEITHER:
                             case MAX:
@@ -5338,7 +5338,7 @@ public class GraphicFactory {
                                 continue;
                         }
                     }
-                    max = v;
+                    max = poly.HighValue;
                     min = minData;
                 }
             } else {

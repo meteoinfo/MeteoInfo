@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\json">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\contour">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\imshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
@@ -14,19 +14,19 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\awx"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\json"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_bgcolor.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_extend_max.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\json\hy_conc_nuclear_geojson.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\json\hy_conc_geojson_extend.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_extend_both.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_bgcolor.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_extend_max.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\json\hy_conc_nuclear_geojson.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\json\hy_conc_geojson_extend.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_extend_both.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1366,770"/>
 </MeteoInfo>

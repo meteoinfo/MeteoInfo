@@ -1966,14 +1966,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         setXYCoords(_gridData);
 
         if (this.jCheckBox_YReverse.isVisible() && this.jCheckBox_YReverse.isSelected()) {
-            double[][] aGD = (double[][]) _gridData.getData().clone();
-            int yn = _gridData.getYNum();
-            int xn = _gridData.getXNum();
-            for (int i = 0; i < yn; i++) {
-                for (int j = 0; j < xn; j++) {
-                    _gridData.setValue(i, j, aGD[yn - i - 1][j]);
-                }
-            }
+            _gridData.yReverse();
         }
 
         if (!_useSameLegendScheme) {

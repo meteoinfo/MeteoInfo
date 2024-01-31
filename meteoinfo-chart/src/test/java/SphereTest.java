@@ -1,21 +1,11 @@
 import com.jogamp.opengl.*;
-import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
-import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.chart.graphic.sphere.Sphere;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.legend.PointBreak;
-import org.meteoinfo.geometry.shape.PointZ;
-import org.meteoinfo.geometry.shape.PointZShape;
 import org.meteoinfo.math.Matrix4f;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.math.ArrayMath;
-import org.meteoinfo.ndarray.math.ArrayUtil;
 
 import javax.swing.*;
 import java.awt.*;

@@ -6,7 +6,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -14,7 +14,6 @@ import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.PointZ;
-import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.geometry.shape.WindArrow3D;
 import org.meteoinfo.math.Matrix4f;
 

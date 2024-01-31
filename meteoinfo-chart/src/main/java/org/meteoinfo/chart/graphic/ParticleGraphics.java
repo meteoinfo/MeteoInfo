@@ -1,5 +1,7 @@
 package org.meteoinfo.chart.graphic;
 
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
+
 import java.util.*;
 
 public class ParticleGraphics extends GraphicCollection3D {

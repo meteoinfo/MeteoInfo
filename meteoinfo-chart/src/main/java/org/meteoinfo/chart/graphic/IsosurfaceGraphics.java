@@ -7,6 +7,7 @@ package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 

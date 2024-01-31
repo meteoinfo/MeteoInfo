@@ -6,6 +6,7 @@ import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.jogl.tessellator.Primitive;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.PolygonZ;

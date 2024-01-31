@@ -1,28 +1,18 @@
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.awt.GLJPanel;
-import com.jogamp.opengl.util.GLBuffers;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.meteoinfo.chart.GLChart;
 import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.MouseMode;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.GraphicFactory;
-import org.meteoinfo.chart.graphic.sphere.Sphere;
 import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.jogl.Lighting;
 import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 public class SphereTest1 {
 

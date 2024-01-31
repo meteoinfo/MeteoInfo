@@ -10,6 +10,7 @@ import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.colors.TransferFunction;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.Array;

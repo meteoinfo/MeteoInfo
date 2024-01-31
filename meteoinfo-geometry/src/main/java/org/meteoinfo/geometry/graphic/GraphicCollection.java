@@ -259,9 +259,9 @@ public class GraphicCollection extends Graphic implements Iterator {
 
         //Update extent
         if (this.graphics.size() == 1) {
-            _extent = aGraphic.getShape().getExtent();
+            _extent = aGraphic.getExtent();
         } else {
-            _extent = MIMath.getLagerExtent(_extent, aGraphic.getShape().getExtent());
+            _extent = MIMath.getLagerExtent(_extent, aGraphic.getExtent());
         }
     }
 

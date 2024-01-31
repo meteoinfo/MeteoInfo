@@ -3,12 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.chart.graphic;
+package org.meteoinfo.geometry.graphic;
 
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointD;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.BreakTypes;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.ColorBreakCollection;

@@ -501,17 +501,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
         if (this.currentPlot != null) {
             if (this.currentPlot instanceof MapPlot) {
                 MapPlot plot = (MapPlot) this.currentPlot;
-                if (plot.getMapView().isDrawIdentiferShape()) {
-                    if (plot.getSelectedLayer() != null) {
-                        if (plot.getSelectedLayer().getLayerType() == LayerTypes.VECTOR_LAYER) {
-                            VectorLayer layer = (VectorLayer) plot.getSelectedLayer();
-                            Rectangle2D rect = plot.getGraphArea();
-                            Rectangle rr = new Rectangle((int) rect.getX(), (int) rect.getY(),
-                                    (int) rect.getWidth(), (int) rect.getHeight());
-                            plot.getMapView().drawIdShape(g2, layer.getShapes().get(layer.getIdentiferShape()), rr);
-                        }
-                    }
-                }
+
             }
         }
 
@@ -971,7 +961,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
     }
 
     void onMouseClicked(MouseEvent e) {
-        int clickTimes = e.getClickCount();
+        /*int clickTimes = e.getClickCount();
         if (clickTimes == 1) {
             if (e.getButton() == MouseEvent.BUTTON1) {
                 switch (this.mouseMode) {
@@ -1084,7 +1074,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
             } else if (e.getButton() == MouseEvent.BUTTON3) {
                 popupMenu.show(this, e.getX(), e.getY());
             }
-        }
+        }*/
     }
 
     void onMouseWheelMoved(MouseWheelEvent e) {

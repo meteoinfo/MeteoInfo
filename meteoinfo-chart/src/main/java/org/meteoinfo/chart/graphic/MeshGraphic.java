@@ -1,21 +1,15 @@
 package org.meteoinfo.chart.graphic;
 
-import com.jogamp.opengl.util.texture.Texture;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.geo.legend.LegendManage;
-import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.colors.TransferFunction;
-import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.geometry.shape.ShapeTypes;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 
 public class MeshGraphic extends GraphicCollection3D {
     private float[] vertexPosition;

@@ -48,7 +48,7 @@ import static org.meteoinfo.geo.drawing.Draw.getHatchImage;
 public class Plot2D extends AbstractPlot2D {
 
     // <editor-fold desc="Variables">
-    private GraphicCollection graphics;
+    protected GraphicCollection graphics;
     private float barsWidth = 0.8f;
 
     // </editor-fold>
@@ -159,11 +159,6 @@ public class Plot2D extends AbstractPlot2D {
 
     @Override
     void drawGraph(Graphics2D g, Rectangle2D area) {
-        /*if (isPiePlot()){
-            plotPie(g, area);
-        } else
-            plotGraphics(g, area);*/
-
         plotGraphics(g, area);
     }
     

@@ -6,7 +6,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -23,7 +23,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class PipeRender extends JOGLGraphicRender{
 

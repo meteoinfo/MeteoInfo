@@ -522,9 +522,7 @@ public class Chart {
                         plot.setPlotShrink(this.getPlotShrink(g, plotArea, plot));
                     }
                 }
-                if (plot instanceof MapPlot) {
-                    ((MapPlot) plot).setAntialias(this.antiAlias);
-                }
+
                 if (plot instanceof Plot3DGL) {
                     Rectangle2D graphArea = plot.getPositionArea();
                     plot.setGraphArea(graphArea);

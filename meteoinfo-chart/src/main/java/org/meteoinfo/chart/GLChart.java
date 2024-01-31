@@ -577,9 +577,7 @@ public class GLChart implements GLEventListener {
                         plot.setPlotShrink(this.getPlotShrink(g, plotArea, plot));
                     }
                 }
-                if (plot instanceof MapPlot) {
-                    ((MapPlot) plot).setAntialias(this.antialias);
-                }
+
                 if (plot instanceof GLPlot) {
                     Rectangle2D graphArea = plot.getPositionArea();
                     plot.setGraphArea(graphArea);

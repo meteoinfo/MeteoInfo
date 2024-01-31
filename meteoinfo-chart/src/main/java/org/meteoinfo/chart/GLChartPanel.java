@@ -510,7 +510,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
             }
         }
 
-        //Draw identifer shape
+        /*//Draw identifer shape
         if (this.currentPlot != null) {
             if (this.currentPlot instanceof MapPlot) {
                 MapPlot plot = (MapPlot) this.currentPlot;
@@ -526,7 +526,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                     }
                 }
             }
-        }
+        }*/
 
         g2.dispose();
     }
@@ -997,7 +997,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
     }
 
     void onMouseClicked(MouseEvent e) {
-        int clickTimes = e.getClickCount();
+        /*int clickTimes = e.getClickCount();
         if (clickTimes == 1) {
             if (e.getButton() == MouseEvent.BUTTON1) {
                 switch (this.mouseMode) {
@@ -1110,7 +1110,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
             } else if (e.getButton() == MouseEvent.BUTTON3) {
                 popupMenu.show(this, e.getX(), e.getY());
             }
-        }
+        }*/
     }
 
     void onMouseWheelMoved(MouseWheelEvent e) {

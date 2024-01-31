@@ -4,7 +4,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.ChartText;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.GraphicProjectionUtil;
 import org.meteoinfo.chart.plot.MapGridLine;
 import org.meteoinfo.chart.plot.MapGridLine3D;
@@ -16,7 +16,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public class MapGLPlot extends GLPlot {
-    private ProjectionInfo projInfo;
 
     /**
      * Constructor

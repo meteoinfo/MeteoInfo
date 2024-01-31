@@ -118,24 +118,6 @@ class MapAxes(Axes):
         start_lon = kwargs.pop('start_lon', -180)
         start_lat = kwargs.pop('start_lat', -90)
         xyscale = kwargs.pop('xyscale', 1)
-        mapframe = self._axes.getMapFrame()
-        mapframe.setDrawGridLabel(gridlabel)
-        mapframe.setDrawGridTickLine(gridlabel)
-        mapframe.setInsideTickLine(tickin)
-        if not ticklength is None:
-            mapframe.setTickLineLength(ticklength)
-        if not tickwidth is None:
-            mapframe.setTickLineWidth(tickwidth)
-        if not tickcolor is None:
-            mapframe.setTickLineColor(tickcolor)
-        mapframe.setGridLabelPosition(gridlabelloc)
-        mapframe.setDrawGridLine(gridline)
-        mapframe.setGridXDelt(griddx)
-        mapframe.setGridYDelt(griddy)
-        mapframe.setGridXOrigin(start_lon)
-        mapframe.setGridYOrigin(start_lat)
-        mapview = self._axes.getMapView()
-        mapview.setXYScaleFactor(xyscale)
         self._axes.setAspect(xyscale)
         boundaryprop = kwargs.pop('boundaryprop', None)
         if not boundaryprop is None:
@@ -149,8 +131,7 @@ class MapAxes(Axes):
         :param plot: (*Axes3D*) Plot.
         """
         if plot is None:
-            mapview = MapView()
-            self._axes = MapPlot(mapview)
+            self._axes = MapPlot()
         else:
             self._axes = plot
     
@@ -165,86 +146,7 @@ class MapAxes(Axes):
         :returns: (*boolean*) Is lonlat projection or not.
         """
         return self.proj.isLonLat()
-            
-    def add_layer(self, layer, zorder=None, select=None):
-        """
-        Add a map layer
-        
-        :param layer: (*MapLayer*) The map layer.
-        :param zorder: (*int*) Layer z order.
-        :param select: (*boolean*) Select layer or not.
-        """
-        if isinstance(layer, MILayer):
-            layer = layer._layer
 
-        if zorder is None:
-            self._axes.addLayer(layer)
-        else:
-            if zorder > self.num_layers():
-                zorder = self.num_layers()
-
-            self._axes.addLayer(zorder, layer)
-
-        if not select is None:
-            if select:
-                self._axes.setSelectedLayer(layer)
-
-    def num_layers(self):
-        """
-        Get number of layers.
-
-        :return: (*int*) Number of layers
-        """
-        return self._axes.getLayerNum()
-                
-    def get_layers(self):
-        """
-        Get all layers.
-        
-        :returns: All layers
-        """
-        r = self._axes.getLayers()
-        layers = []
-        for layer in r:
-            layers.append(MILayer(layer))
-        return layers
-    
-    def get_layer(self, by):
-        """
-        Get a layer by name or index.
-        
-        :param by: (*string or int*) Layer name or index.
-        
-        :returns: The layer.
-        """
-        r = self._axes.getLayer(by)
-        if not r is None:
-            r = MILayer(r)
-        return r
-            
-    def set_active_layer(self, layer):
-        """
-        Set active layer
-        
-        :param layer: (*MILayer*) The map layer.
-        """
-        self._axes.setSelectedLayer(layer._layer)
-        
-    def add_graphic(self, graphic, proj=None, **kwargs):
-        """
-        Add a graphic
-        
-        :param graphic: (*Graphic*) The graphic to be added.
-        :param proj: (*ProjectionInfo*) Graphic projection.
-        
-        :returns: Added graphic
-        """
-        if proj is None:
-            self._axes.addGraphic(graphic)
-        else:
-            graphic = self._axes.addGraphic(graphic, proj)
-        return graphic
-        
     def add_circle(self, xy, radius=5, **kwargs):
         """
         Add a circle patch
@@ -396,31 +298,7 @@ class MapAxes(Axes):
         if self.islonlat():
             super(MapAxes, self).grid(b, **kwargs)
         else:
-            mapframe = self._axes.getMapFrame()
-            gridline = mapframe.isDrawGridLine()
-            if b is None:
-                gridline = not gridline
-            else:
-                gridline = b
-            griddx = kwargs.pop('griddx', None)
-            griddy = kwargs.pop('griddy', None)            
-            if not gridline is None:
-                mapframe.setDrawGridLine(gridline)
-            if not griddx is None:
-                mapframe.setGridXDelt(griddx)
-            if not griddy is None:
-                mapframe.setGridYDelt(griddy)
-            color = kwargs.pop('color', None)
-            if not color is None:
-                c = plotutil.getcolor(color)
-                mapframe.setGridLineColor(c)
-            linewidth = kwargs.pop('linewidth', None)
-            if not linewidth is None:
-                mapframe.setGridLineSize(linewidth)
-            linestyle = kwargs.pop('linestyle', None)
-            if not linestyle is None:
-                linestyle = plotutil.getlinestyle(linestyle)
-                mapframe.setGridLineStyle(linestyle)
+            pass
                 
     def axis(self, limits=None, lonlat=True):
         """
@@ -469,15 +347,6 @@ class MapAxes(Axes):
         sy = self.figure.get_size()[1] - sy
         return sx, sy
         
-    def loadmip(self, mipfn, mfidx=0):
-        """
-        Load one map frame from a MeteoInfo project file.
-        
-        :param mipfn: (*string*) MeteoInfo project file name.
-        :param mfidx: (*int*) Map frame index.
-        """
-        self._axes.loadMIProjectFile(mipfn, mfidx)
-        
     def geoshow(self, *args, **kwargs):
         """
         Display map layer or longitude latitude data.
@@ -504,6 +373,8 @@ class MapAxes(Axes):
         if islayer:    
             layer = layer._layer
             layer.setVisible(visible)
+            offset = kwargs.pop('offset', 0)
+            xshift = kwargs.pop('xshift', 0)
             zorder = kwargs.pop('zorder', None)
             interpolation = kwargs.pop('interpolation', None)
             if not interpolation is None:
@@ -534,10 +405,9 @@ class MapAxes(Axes):
                         layer.getLegendScheme().getLegendBreaks().set(0, lb)
                 else:
                     layer.setLegendScheme(ls)
-                if zorder is None:
-                    self.add_layer(layer)
-                else:
-                    self.add_layer(layer, zorder)
+                graphics = GraphicFactory.createGraphicsFromLayer(layer, offset, xshift)
+                self.add_graphic(graphics, zorder=zorder)
+
                 #Labels        
                 labelfield = kwargs.pop('labelfield', None)
                 if not labelfield is None:

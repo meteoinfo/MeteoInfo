@@ -6,7 +6,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.ParticleGraphics;
 import org.meteoinfo.chart.graphic.sphere.Sphere;
 import org.meteoinfo.chart.jogl.Program;
@@ -16,8 +16,6 @@ import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.PointZShape;
-import org.meteoinfo.geometry.shape.Polyline;
-import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.math.Matrix4f;
 
 import java.nio.FloatBuffer;

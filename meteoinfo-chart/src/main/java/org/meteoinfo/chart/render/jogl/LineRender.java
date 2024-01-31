@@ -4,10 +4,9 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
-import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -16,7 +15,6 @@ import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.Polyline;
-import org.meteoinfo.geometry.shape.PolylineZ;
 import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.math.Matrix4f;
 
@@ -24,8 +22,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.jogamp.opengl.GL.GL_TEXTURE_2D;
 
 public class LineRender extends JOGLGraphicRender {
 

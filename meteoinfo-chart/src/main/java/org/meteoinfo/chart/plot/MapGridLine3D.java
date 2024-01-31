@@ -1,13 +1,10 @@
 package org.meteoinfo.chart.plot;
 
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.shape.PointZ;
-import org.meteoinfo.geometry.shape.PolylineShape;
 import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;

@@ -348,8 +348,8 @@ public class ChartScaleBar extends ChartElement {
     }
 
     private double getGeoWidth(double width) {
-        double geoWidth = width / mapPlot.getMapFrame().getMapView().getXScale() / getConversionFactor(_unit);
-        if (mapPlot.getMapFrame().getMapView().getProjection().isLonLatMap()) {
+        double geoWidth = width / mapPlot.getXScale() / getConversionFactor(_unit);
+        if (mapPlot.isLonLatMap()) {
             geoWidth = geoWidth * getLonDistScale();
         }
 
@@ -357,8 +357,8 @@ public class ChartScaleBar extends ChartElement {
     }
 
     private double getWidth(double geoWidth) {
-        double width = geoWidth * mapPlot.getMapFrame().getMapView().getXScale() * getConversionFactor(_unit);
-        if (mapPlot.getMapFrame().getMapView().getProjection().isLonLatMap()) {
+        double width = geoWidth * mapPlot.getXScale() * getConversionFactor(_unit);
+        if (mapPlot.isLonLatMap()) {
             width = width / getLonDistScale();
         }
 
@@ -367,7 +367,7 @@ public class ChartScaleBar extends ChartElement {
 
     private double getLonDistScale() {
         //Get meters of one longitude degree
-        double pY = (mapPlot.getMapFrame().getMapView().getViewExtent().maxY + mapPlot.getMapFrame().getMapView().getViewExtent().minY) / 2;
+        double pY = (mapPlot.getDrawExtent().maxY + mapPlot.getDrawExtent().minY) / 2;
         double ProjX = 0, ProjY = pY, pProjX = 1, pProjY = pY;
         double dx = Math.abs(ProjX - pProjX);
         double dy = Math.abs(ProjY - pProjY);

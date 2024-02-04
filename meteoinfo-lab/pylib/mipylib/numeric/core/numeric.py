@@ -12,6 +12,7 @@ import math
 from ... import miutil
 import numbers
 import operator
+import sys
 import __builtin__
 from java.lang import Math, Double
 from java.util import Calendar
@@ -47,7 +48,7 @@ __all__ = [
     'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reciprocal','reshape',
     'repeat','roll','rolling_mean','rot90','round','sec','sign','sin','sinh','shape','smooth5','smooth9','sort',
-    'sphere','squeeze','split','sqrt','square','std','swapaxes','take','tan','tanh','tile',
+    'spacing','sphere','squeeze','split','sqrt','square','std','swapaxes','take','tan','tanh','tile',
     'transpose','trapz','vdot','unravel_index','var','vstack','zeros','zeros_like'
     ]
 
@@ -1203,6 +1204,22 @@ def conj(x):
     :return: (*array*) Complex conjugate array.
     """
     return conjugate(x)
+
+def spacing(x):
+    """
+    Return the distance between x and the nearest adjacent number.
+
+    :param x: (*array*) Values to find the spacing of.
+
+    :return: (*array*) The spacing of values of x. This is a scalar if x is a scalar.
+    """
+    if isinstance(x, (list, tuple)):
+        x = array(x)
+
+    if isinstance(x, NDArray):
+        return NDArray(ArrayMath.spacing(x._array))
+    else:
+        return Math.ulp(x)
         
 def any(x, axis=None):
     """

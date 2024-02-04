@@ -4955,6 +4955,33 @@ public class ArrayMath {
         return r;
     }
 
+    /**
+     * Return the distance between x and the nearest adjacent number
+     *
+     * @param x Input array
+     * @return Spacing array
+     */
+    public static Array spacing(Array x) {
+        DataType dataType = DataType.FLOAT;
+        if (x.getDataType() == DataType.DOUBLE) {
+            dataType = DataType.DOUBLE;
+        }
+        Array r = Array.factory(dataType, x.getShape());
+        if (x.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setObject(i, Math.ulp(x.getDouble(i)));
+            }
+        } else {
+            IndexIterator iterX = x.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterX.hasNext()) {
+                iterR.setObjectNext(Math.ulp(iterX.getDoubleNext()));
+            }
+        }
+
+        return r;
+    }
+
     // </editor-fold>
     // <editor-fold desc="Matrix">
     /**
